@@ -36,7 +36,6 @@ class KonanClassDataFinder(
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassDataWithSource? {
         val proto = fragment.classes
-        val classList = proto.getClassesList()
         val nameList = proto.getClassNameList()
 
         val index = nameList.indexOfFirst({ 

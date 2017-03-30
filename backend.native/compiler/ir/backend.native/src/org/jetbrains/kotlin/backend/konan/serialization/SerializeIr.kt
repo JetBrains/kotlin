@@ -50,7 +50,7 @@ internal class IrSerializer(val context: Context,
     fun serializeInlineBody(): String {
         val declaration = context.ir.originalModuleIndex.functions[rootFunction]!!
         context.log("INLINE: ${ir2stringWhole(declaration)}")
-        return encodeDeclaration(declaration as IrFunction)
+        return encodeDeclaration(declaration)
     }
 
     fun serializeKotlinType(type: KotlinType): KonanIr.KotlinType {
@@ -174,7 +174,7 @@ internal class IrSerializer(val context: Context,
                 assert(it.varargElementType != null ||
                     it.declaresDefaultValue())
             } else {
-                val arg = actual!!
+                val arg = actual
                 val argProto = serializeExpression(arg)
                 proto.addValueArgument(argProto)
             }
@@ -366,7 +366,7 @@ internal class IrSerializer(val context: Context,
         if (label != null) {
             proto.setLabel(label)
         }
-        val loopId = loopIndex[expression.loop!!]!!
+        val loopId = loopIndex[expression.loop]!!
         proto.setLoopId(loopId)
 
         return proto.build()
@@ -378,7 +378,7 @@ internal class IrSerializer(val context: Context,
         if (label != null) {
             proto.setLabel(label)
         }
-        val loopId = loopIndex[expression.loop!!]!!
+        val loopId = loopIndex[expression.loop]!!
         proto.setLoopId(loopId)
 
         return proto.build()
@@ -490,9 +490,7 @@ internal class IrSerializer(val context: Context,
     fun serializeIrEnumEntry(enumEntry: IrEnumEntry): KonanIr.IrEnumEntry {
         val proto = KonanIr.IrEnumEntry.newBuilder()
         val initializer = enumEntry.initializerExpression
-        if (initializer != null) {
-            proto.setInitializer(serializeExpression(initializer))
-        }
+        proto.setInitializer(serializeExpression(initializer))
         val correspondingClass = enumEntry.correspondingClass
         if (correspondingClass != null) {
             proto.setCorrespondingClass(serializeDeclaration(correspondingClass))
@@ -566,7 +564,7 @@ internal class IrDeserializer(val context: Context,
 
     val loopIndex = mutableMapOf<Int, IrLoop>()
 
-    val localDeserializer = LocalDeclarationDeserializer(rootFunction, context.moduleDescriptor!!)
+    val localDeserializer = LocalDeclarationDeserializer(rootFunction, context.moduleDescriptor)
 
     val descriptorDeserializer = IrDescriptorDeserializer(
         context, descriptorIndex, rootFunction, localDeserializer)
@@ -657,7 +655,7 @@ internal class IrDeserializer(val context: Context,
         return block
     }
 
-    fun deserializeMemberAccessCommon(access: IrMemberAccessExpression, descriptor: CallableDescriptor, proto: KonanIr.MemberAccessCommon) {
+    fun deserializeMemberAccessCommon(access: IrMemberAccessExpression, proto: KonanIr.MemberAccessCommon) {
 
         proto.valueArgumentList.mapIndexed { i, expr ->
             access.putValueArgument(i, deserializeExpression(expr))
@@ -689,8 +687,9 @@ internal class IrDeserializer(val context: Context,
                 IrUnaryPrimitiveImpl(start, end, null, descriptor)
             KonanIr.IrCall.Primitive.BINARY ->
                 IrBinaryPrimitiveImpl(start, end, null, descriptor)
+            else -> error("Unexpected primitive IrCall.")
         }
-        deserializeMemberAccessCommon(call, descriptor, proto.memberAccess)
+        deserializeMemberAccessCommon(call, proto.memberAccess)
         return call
     }
 
@@ -709,14 +708,14 @@ internal class IrDeserializer(val context: Context,
 
         val call = IrDelegatingConstructorCallImpl(start, end, descriptor, typeArgs)
 
-        deserializeMemberAccessCommon(call, descriptor, proto.memberAccess)
+        deserializeMemberAccessCommon(call, proto.memberAccess)
         return call
     }
 
     fun deserializeEnumConstructorCall(proto: KonanIr.IrEnumConstructorCall, start: Int, end: Int, type: KotlinType): IrEnumConstructorCall {
         val descriptor = deserializeDescriptor(proto.getDescriptor()) as ClassConstructorDescriptor
         val call = IrEnumConstructorCallImpl(start, end, descriptor)
-        deserializeMemberAccessCommon(call, descriptor, proto.memberAccess)
+        deserializeMemberAccessCommon(call, proto.memberAccess)
         return call
     }
 
@@ -991,9 +990,7 @@ internal class IrDeserializer(val context: Context,
         if (proto.hasCorrespondingClass()) {
             enumEntry.correspondingClass = deserializeDeclaration(proto.correspondingClass) as IrClass
         }
-        if (proto.hasInitializer()) {
-            enumEntry.initializerExpression = deserializeExpression(proto.initializer)
-        }
+        enumEntry.initializerExpression = deserializeExpression(proto.initializer)
 
         return enumEntry
     }

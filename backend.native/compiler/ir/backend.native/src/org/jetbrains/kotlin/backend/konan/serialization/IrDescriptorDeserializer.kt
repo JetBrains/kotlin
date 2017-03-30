@@ -81,7 +81,7 @@ internal class IrDescriptorDeserializer(val context: Context,
 
         val index = proto.getIndex()
         val text = proto.getDebugText()
-        val typeProto = localDeserializer.typeTable!![index]
+        val typeProto = localDeserializer.typeTable[index]
         val type = localDeserializer.deserializeInlineType(typeProto)
         context.log("### deserialized Kotlin Type index=$index, text=$text:\t$type")
 
@@ -313,7 +313,7 @@ internal class IrDescriptorDeserializer(val context: Context,
     }
 
     fun parentByFqNameIndex(index: Int): DeclarationDescriptor {
-        val module = context.moduleDescriptor!!
+        val module = context.moduleDescriptor
         val parent = nameResolver.getDescriptorByFqNameIndex(module, nameTable, index)
         return parent
 
@@ -327,7 +327,7 @@ internal class IrDescriptorDeserializer(val context: Context,
             KotlinDescriptor.Kind.CLASS -> {
                 val parentScope = 
                     parentMemberScopeByFqNameIndex(classOrPackage)
-                val clazz =  parentScope.getContributedClassifier(
+                val clazz = parentScope.getContributedClassifier(
                     Name.identifier(name), NoLookupLocation.FROM_BACKEND)
                 return listOf(clazz!!)
 
@@ -351,10 +351,10 @@ internal class IrDescriptorDeserializer(val context: Context,
 
     fun selectFunction(
         functions: Collection<DeclarationDescriptor>,
-        proto: KonanIr.KotlinDescriptor ): 
+        descriptorProto: KonanIr.KotlinDescriptor):
         DeserializedSimpleFunctionDescriptor {
 
-        val originalIndex = proto.originalIndex
+        val originalIndex = descriptorProto.originalIndex
         return functions.single() {
             val proto = (it as DeserializedSimpleFunctionDescriptor).proto
             proto.getExtension(KonanLinkData.functionIndex) == originalIndex
@@ -363,10 +363,10 @@ internal class IrDescriptorDeserializer(val context: Context,
 
     fun selectConstructor(
         constructors: Collection<DeclarationDescriptor>,
-        proto: KonanIr.KotlinDescriptor): 
+        descriptorProto: KonanIr.KotlinDescriptor): 
         DeserializedClassConstructorDescriptor {
 
-        val originalIndex = proto.originalIndex
+        val originalIndex = descriptorProto.originalIndex
         return constructors.single {
             val proto = (it as DeserializedClassConstructorDescriptor).proto
             proto.getExtension(KonanLinkData.constructorIndex) == originalIndex

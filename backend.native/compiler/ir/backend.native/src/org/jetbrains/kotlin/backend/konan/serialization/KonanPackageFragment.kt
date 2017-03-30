@@ -53,7 +53,7 @@ class KonanPackageFragment( val proto: KonanLinkData.PackageFragment,
             if (!classId.isNestedClass) shortName else null
        }
 
-       return names ?: listOf()
+       return names
     }
 }
 

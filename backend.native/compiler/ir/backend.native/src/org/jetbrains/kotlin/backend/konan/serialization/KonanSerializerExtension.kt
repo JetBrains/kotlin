@@ -49,15 +49,15 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
     override val stringTable = KonanStringTable()
     override fun shouldUseTypeTable(): Boolean = true
 
-    override fun serializeType(descriptor: KotlinType, proto: ProtoBuf.Type.Builder) {
+    override fun serializeType(type: KotlinType, proto: ProtoBuf.Type.Builder) {
 
-        proto.setExtension(KonanLinkData.typeText, descriptor.toString())
+        proto.setExtension(KonanLinkData.typeText, type.toString())
 
-        super.serializeType(descriptor, proto)
+        super.serializeType(type, proto)
     }
 
-    override fun serializeTypeParameter(descriptor: TypeParameterDescriptor, proto: ProtoBuf.TypeParameter.Builder) {
-        super.serializeTypeParameter(descriptor, proto)
+    override fun serializeTypeParameter(typeParameter: TypeParameterDescriptor, proto: ProtoBuf.TypeParameter.Builder) {
+        super.serializeTypeParameter(typeParameter, proto)
     }
 
     override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.ValueParameter.Builder) {
@@ -131,21 +131,21 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
        backingFieldClass, emptyMap(), SourceElement.NO_SOURCE)
 
 
-    override fun serializeProperty(property: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
-        val parentIndex = property.parentFqNameIndex()
+    override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
+        val parentIndex = descriptor.parentFqNameIndex()
         proto.setExtension(KonanLinkData.propertyParent, parentIndex)
-        val variable = originalVariables[property]
+        val variable = originalVariables[descriptor]
         if (variable != null) {
             proto.setExtension(KonanLinkData.usedAsVariable, true)
             proto.setExtension(KonanLinkData.propertyIndex, inlineDescriptorTable.indexByValue(variable))
 
         } else {
-            proto.setExtension(KonanLinkData.propertyIndex, inlineDescriptorTable.indexByValue(property))
+            proto.setExtension(KonanLinkData.propertyIndex, inlineDescriptorTable.indexByValue(descriptor))
         }
 
-        super.serializeProperty(property, proto)
+        super.serializeProperty(descriptor, proto)
 
-        if (context.ir.propertiesWithBackingFields.contains(property)) {
+        if (context.ir.propertiesWithBackingFields.contains(descriptor)) {
             proto.addExtension(KonanLinkData.propertyAnnotation, 
                 annotationSerializer.serializeAnnotation(backingFieldAnnotation))
 

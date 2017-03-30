@@ -40,7 +40,7 @@ internal class IrDescriptorSerializer(
     var rootFunction: FunctionDescriptor) {
 
     fun serializeKotlinType(type: KotlinType): KonanIr.KotlinType {
-        val index = this.typeSerializer!!(type)
+        val index = this.typeSerializer(type)
         val proto =  KonanIr.KotlinType.newBuilder()
             .setIndex(index)
             .setDebugText(type.toString())
@@ -94,7 +94,7 @@ internal class IrDescriptorSerializer(
             proto.setExtensionReceiverIndex(
                 descriptorTable.indexByValue(extensionReceiver))
             proto.setExtensionReceiverType(
-                serializeKotlinType(extensionReceiver.type!!))
+                serializeKotlinType(extensionReceiver.type))
         }
                 
         proto.setType(serializeKotlinType(

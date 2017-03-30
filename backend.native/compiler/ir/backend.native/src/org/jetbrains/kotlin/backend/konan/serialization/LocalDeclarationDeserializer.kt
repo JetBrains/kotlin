@@ -64,7 +64,6 @@ class LocalDeclarationDeserializer(val rootFunction: FunctionDescriptor, val mod
     fun getDescriptorByFqNameIndex(module: ModuleDescriptor, fqNameIndex: Int): DeclarationDescriptor {
 
         val packageName = nameResolver.getPackageFqName(fqNameIndex)
-        val shortName = nameResolver.getString(fqNameIndex)
         // Here we using internals of NameresolverImpl. 
         val proto = nameTable.getQualifiedName(fqNameIndex)
         when (proto.kind) {
@@ -73,6 +72,7 @@ class LocalDeclarationDeserializer(val rootFunction: FunctionDescriptor, val mod
                 return module.findClassAcrossModuleDependencies(nameResolver.getClassId(fqNameIndex))!!
             QualifiedName.Kind.PACKAGE ->
                 return module.getPackage(packageName)
+            else -> error("Unexpected descriptor kind.")
         }
     }
 
