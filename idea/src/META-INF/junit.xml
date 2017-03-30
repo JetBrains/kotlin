@@ -1,6 +1,6 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
-    <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinJUnitRunConfigurationProducer"/>
+    <runConfigurationProducer implementation="org.jetbrains.kotlin.android.run.KotlinAndroidJUnitRunConfigurationProducer"/>
     <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinPatternConfigurationProducer"/>
     <junitRecognizer implementation="org.jetbrains.kotlin.idea.run.KotlinMultiplatformJUnitRecognizer"/>
   </extensions>
