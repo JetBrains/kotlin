@@ -39,6 +39,6 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-interop -def:$DIR/sdl.def -copt:"$CFLAGS" -target:$TARGET || exit 1
-konanc $COMPILER_ARGS -target $TARGET sdl $DIR/Tetris.kt -nativelibrary sdlstubs.bc -linkerArgs "$LINKER_ARGS" -o Tetris.kexe || exit 1
+interop -def:$DIR/sdl.def -copt:"$CFLAGS" -target:$TARGET -o:sdl.kt.bc || exit 1
+konanc $COMPILER_ARGS -target $TARGET $DIR/Tetris.kt -library sdl.kt.bc -linkerArgs "$LINKER_ARGS" -o Tetris.kexe || exit 1
 #strip Tetris.kexe

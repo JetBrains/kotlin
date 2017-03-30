@@ -18,5 +18,5 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-interop -def:$DIR/sockets.def -copt:"$CFLAGS" -target:$TARGET || exit 1
-konanc $COMPILER_ARGS -target $TARGET $DIR/EchoServer.kt sockets -nativelibrary socketsstubs.bc -o EchoServer.kexe || exit 1
+interop -def:$DIR/sockets.def -copt:"$CFLAGS" -target:$TARGET -o:sockets.kt.bc || exit 1
+konanc $COMPILER_ARGS -target $TARGET $DIR/EchoServer.kt -library sockets.kt.bc -o EchoServer.kexe || exit 1

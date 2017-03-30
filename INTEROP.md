@@ -10,7 +10,7 @@ everything needed to interact with an external library.
 
  Following workflow is expected when interacting with the native library.
    * create `.def` file describing what to include into bindings
-   * use `interop` tool to produce `stubs.bc` and Kotlin bindings
+   * use `interop` tool to produce Kotlin bindings
    * run _Kotlin N_ compiler on an application to produce the final executable
 
  Interoperability tool analyses C headers and produces "natural" mapping of
@@ -24,11 +24,11 @@ Build the dependencies and the compiler (see `README.md`).
 Prepare stubs for the system sockets library:
 
     cd samples/socket
-    ../../dist/bin/interop -def:sockets.def
+    ../../dist/bin/interop -def:sockets.def -o:sockets.kt.bc
 
 Compile the echo server:
 
-    ../../dist/bin/kotlinc EchoServer.kt sockets -nativelibrary socketsstubs.bc \
+    ../../dist/bin/kotlinc EchoServer.kt -library sockets.kt.bc \
      -o EchoServer.kexe
 
 This whole process is automated in `build.sh` script, which also support cross-compilation
@@ -60,10 +60,10 @@ Structurally it's a simple property file, looking like this:
 Then run interop tool with something like (note that for host libraries not included
 in sysroot search paths for headers may be needed):
 
-    interop -def:zlib.def -copt:-I/opt/local/include
+    interop -def:zlib.def -copt:-I/opt/local/include -o:zlib.kt.bc
 
-This command will produce directory named `zlib` containing file `zlib.kt`
-and file `zlibstubs.bc` containing implementation specific glue bitcode.
+This command will produce `zlib.kt.bc` compiled library and
+`zlib.kt.bc-build/kotlin` directory containing Kotlin source code for the library.
 
 If behavior for certain platform shall be modified, one may use format like
 `compilerOpts.osx` or `compilerOpts.linux` to provide platform-specific values

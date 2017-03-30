@@ -112,6 +112,14 @@ private fun Properties.getSpaceSeparated(name: String): List<String> {
     return this.getProperty(name)?.split(' ')?.filter { it.isNotEmpty() } ?: emptyList()
 }
 
+private fun <T> Collection<T>.atMostOne(): T? {
+    return when (this.size) {
+        0 -> null
+        1 -> this.iterator().next()
+        else -> throw IllegalArgumentException("Collection has more than one element.")
+    }
+}
+
 private fun Properties.getOsSpecific(name: String, 
     host: String = detectHost()): String? {
 
@@ -323,7 +331,7 @@ private fun processLib(konanHome: String,
     val outKtFileRelative = (fqParts + outKtFileName).joinToString("/")
     val outKtFile = File(ktGenRoot, outKtFileRelative)
 
-    val libName = fqParts.joinToString("") + "stubs"
+    val libName = args["-cstubsname"]?.atMostOne() ?: fqParts.joinToString("") + "stubs"
 
     val library = NativeLibrary(headerFiles, compilerOpts, language, excludeSystemLibs)
     val configuration = InteropConfiguration(

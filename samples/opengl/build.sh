@@ -21,6 +21,5 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-interop -def:$DIR/opengl.def -target:$TARGET || exit 1
-# OpenGL stubs are rather big, so we need more heap space.
-konanc -J-Xmx3G -target $TARGET opengl $DIR/OpenGlTeapot.kt -nativelibrary openglstubs.bc -linkerArgs "$LINKER_ARGS" -o OpenGlTeapot.kexe || exit 1
+interop -def:$DIR/opengl.def -target:$TARGET -o:opengl.kt.bc || exit 1
+konanc -target $TARGET $DIR/OpenGlTeapot.kt -library opengl.kt.bc -linkerArgs "$LINKER_ARGS" -o OpenGlTeapot.kexe || exit 1
