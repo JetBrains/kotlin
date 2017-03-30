@@ -51,23 +51,28 @@ object JpsJsModuleUtils {
                 if (module.moduleType != JpsJavaModuleType.INSTANCE) return
 
                 if ((module != target.module || target.isTests) && module.sourceRoots.any { it.rootType == JavaSourceRootType.SOURCE}) {
-                    addTarget(module, JavaModuleBuildTargetType.PRODUCTION)
+                    addTarget(module, isTests = false)
                 }
 
                 if (module != target.module && target.isTests && module.sourceRoots.any { it.rootType == JavaSourceRootType.TEST_SOURCE}) {
-                    addTarget(module, JavaModuleBuildTargetType.TEST)
+                    addTarget(module, isTests = true)
                 }
             }
 
-            fun addTarget(module: JpsModule, targetType: JavaModuleBuildTargetType) {
-                val moduleBuildTarget = ModuleBuildTarget(module, targetType)
-                val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(moduleBuildTarget)
-                val metaInfoFile = getOutputMetaFile(outputDir, module.name, targetType.isTests)
+            fun addTarget(module: JpsModule, isTests: Boolean) {
+                val metaInfoFile = getOutputMetaFile(module, isTests)
                 if (metaInfoFile.exists()) {
                     result.add(metaInfoFile.absolutePath)
                 }
             }
         })
+    }
+
+    @JvmStatic
+    fun getOutputMetaFile(module: JpsModule, isTests: Boolean): File {
+        val moduleBuildTarget = ModuleBuildTarget(module, if (isTests) JavaModuleBuildTargetType.TEST else JavaModuleBuildTargetType.PRODUCTION)
+        val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(moduleBuildTarget)
+        return getOutputMetaFile(outputDir, module.name, isTests)
     }
 
     @JvmStatic
