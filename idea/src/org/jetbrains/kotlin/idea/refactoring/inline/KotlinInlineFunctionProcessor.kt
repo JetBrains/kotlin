@@ -22,6 +22,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.RefactoringBundle
+import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
@@ -48,18 +49,34 @@ class KotlinInlineFunctionProcessor(
         if (inlineThisOnly && reference != null) return arrayOf(UsageInfo(reference))
         val usages = runReadAction {
             val searchScope = KotlinSourceFilterScope.projectSources(GlobalSearchScope.projectScope(myProject), myProject)
-            ReferencesSearch.search(function, searchScope).filterIsInstance<KtSimpleNameReference>()
+            ReferencesSearch.search(function, searchScope)
         }
         return usages.map(::UsageInfo).toTypedArray()
     }
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
+        val simpleNameUsages = usages.mapNotNull { it.element as? KtSimpleNameExpression }
         replacementStrategy.replaceUsages(
-                usages.mapNotNull { it.element as? KtSimpleNameExpression },
+                simpleNameUsages,
                 function,
                 myProject,
                 commandName,
-                { if (deleteAfter) function.delete() }
+                {
+                    if (deleteAfter) {
+                        if (usages.size == simpleNameUsages.size) {
+                            function.delete()
+                        }
+                        else {
+                            CommonRefactoringUtil.showErrorHint(
+                                    function.project,
+                                    null,
+                                    "Cannot inline ${usages.size - simpleNameUsages.size}/${usages.size} usages",
+                                    "Inline Function",
+                                    null
+                            )
+                        }
+                    }
+                }
         )
     }
 
