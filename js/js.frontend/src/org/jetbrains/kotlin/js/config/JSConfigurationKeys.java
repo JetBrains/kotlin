@@ -45,4 +45,10 @@ public class JSConfigurationKeys {
             CompilerConfigurationKey.create("fallback metadata");
 
     public static final CompilerConfigurationKey<Boolean> SERIALIZE_FRAGMENTS = CompilerConfigurationKey.create("serialize fragments");
+
+    public static final CompilerConfigurationKey<Boolean> FRIEND_PATHS_DISABLED =
+            CompilerConfigurationKey.create("disable support for friend paths");
+
+    public static final CompilerConfigurationKey<List<String>> FRIEND_PATHS =
+            CompilerConfigurationKey.create("friend module paths");
 }

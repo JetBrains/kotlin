@@ -125,6 +125,15 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
     }
 
     @Test
+    fun testCompilerTestAccessInternalProduction() {
+        val project = Project("kotlin2JsInternalTest", "2.10")
+
+        project.build("runRhino") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
     fun testJsCustomSourceSet() {
         val project = Project("kotlin2JsProjectWithCustomSourceset", "2.10")
 

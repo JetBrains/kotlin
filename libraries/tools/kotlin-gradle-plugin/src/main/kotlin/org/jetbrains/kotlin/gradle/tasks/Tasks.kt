@@ -372,6 +372,8 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
                 null
         }
 
+        args.friendModules = friendDependency
+
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
 
         val messageCollector = GradleMessageCollector(logger)

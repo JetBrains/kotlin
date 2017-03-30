@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.maven;
 
+import com.intellij.openapi.util.text.StringUtil;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -27,8 +28,9 @@ import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 
+import java.io.File;
 import java.util.List;
-
+import java.util.Collections;
 /**
  * Converts Kotlin to JavaScript code
  *
@@ -79,6 +81,8 @@ public class KotlinTestJSCompilerMojo extends K2JSCompilerMojo {
 
     @Override
     protected void configureSpecificCompilerArguments(@NotNull K2JSCompilerArguments arguments) throws MojoExecutionException {
+        List<String> friends = getOutputDirectoriesCollector().getOrDefault(project.getArtifactId(), Collections.emptyList());
+        arguments.friendModules = StringUtil.join(friends, File.pathSeparator);
         output = testOutput;
 
         super.configureSpecificCompilerArguments(arguments);
