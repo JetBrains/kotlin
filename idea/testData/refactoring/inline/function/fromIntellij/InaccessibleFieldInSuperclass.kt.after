@@ -1,0 +1,10 @@
+class A {
+    private val i = 0
+
+}
+
+class B : A() {
+    fun bar() {
+        i.toString()
+    }
+}

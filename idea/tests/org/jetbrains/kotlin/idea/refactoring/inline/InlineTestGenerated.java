@@ -173,6 +173,129 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
         }
 
+        @TestMetadata("idea/testData/refactoring/inline/function/fromIntellij")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FromIntellij extends AbstractInlineTest {
+            public void testAllFilesPresentInFromIntellij() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/function/fromIntellij"), Pattern.compile("^(\\w+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("ArrayAccess.kt")
+            public void testArrayAccess() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/ArrayAccess.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AvoidMultipleSubstitutionsInParameterTypes.kt")
+            public void testAvoidMultipleSubstitutionsInParameterTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/AvoidMultipleSubstitutionsInParameterTypes.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("CallInFor.kt")
+            public void testCallInFor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/CallInFor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("CallUnderIf.kt")
+            public void testCallUnderIf() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/CallUnderIf.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("EnumConstructor.kt")
+            public void testEnumConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/EnumConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FieldInitializer.kt")
+            public void testFieldInitializer() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/FieldInitializer.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FlatVarargs.kt")
+            public void testFlatVarargs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/FlatVarargs.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InaccessibleFieldInSuperclass.kt")
+            public void testInaccessibleFieldInSuperclass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/InaccessibleFieldInSuperclass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InferredType.kt")
+            public void testInferredType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/InferredType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InlineAnonymousClassWithPrivateMethod.kt")
+            public void testInlineAnonymousClassWithPrivateMethod() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/InlineAnonymousClassWithPrivateMethod.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InlineMultipleOccurrencesInFieldInitializer.kt")
+            public void testInlineMultipleOccurrencesInFieldInitializer() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/InlineMultipleOccurrencesInFieldInitializer.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InlineWithQualifier.kt")
+            public void testInlineWithQualifier() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/InlineWithQualifier.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InlineWithTry.kt")
+            public void testInlineWithTry() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/InlineWithTry.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NotAStatement.kt")
+            public void testNotAStatement() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/NotAStatement.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParamNameConflictsWithLocalVar.kt")
+            public void testParamNameConflictsWithLocalVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/ParamNameConflictsWithLocalVar.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SideEffect.kt")
+            public void testSideEffect() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/SideEffect.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Substitution.kt")
+            public void testSubstitution() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/Substitution.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("VoidWithReturn.kt")
+            public void testVoidWithReturn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/VoidWithReturn.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("WithSuperInside.kt")
+            public void testWithSuperInside() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/fromIntellij/WithSuperInside.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/refactoring/inline/function/returnAtEnd")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
