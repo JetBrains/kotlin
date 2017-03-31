@@ -48,12 +48,7 @@ public class NameGenerator {
     }
 
     public NameGenerator subGenerator(String inliningMethod) {
-        NameGenerator generator = subGenerators.get(inliningMethod);
-        if (generator == null) {
-            generator = new NameGenerator(generatorClass + "$" + inliningMethod);
-            subGenerators.put(inliningMethod, generator);
-        }
-        return generator;
+        return subGenerators.computeIfAbsent(inliningMethod, method -> new NameGenerator(generatorClass + "$" + method));
     }
 
     @NotNull

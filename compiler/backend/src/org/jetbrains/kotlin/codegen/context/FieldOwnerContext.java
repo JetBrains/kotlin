@@ -56,11 +56,8 @@ public abstract class FieldOwnerContext<T extends DeclarationDescriptor> extends
 
         String defaultPropertyName = KotlinTypeMapper.mapDefaultFieldName(descriptor, isDelegated);
 
-        Map<PropertyDescriptor, String> descriptor2Name = fieldNames.get(defaultPropertyName);
-        if (descriptor2Name == null) {
-            descriptor2Name = new HashMap<PropertyDescriptor, String>();
-            fieldNames.put(defaultPropertyName, descriptor2Name);
-        }
+        Map<PropertyDescriptor, String> descriptor2Name =
+                fieldNames.computeIfAbsent(defaultPropertyName, unused -> new HashMap<PropertyDescriptor, String>());
 
         String actualName = descriptor2Name.get(descriptor);
         if (actualName != null) return actualName;

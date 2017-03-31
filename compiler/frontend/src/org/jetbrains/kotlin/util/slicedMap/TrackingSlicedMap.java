@@ -33,11 +33,7 @@ public class TrackingSlicedMap extends SlicedMapImpl {
     }
 
     private <K, V> SliceWithStackTrace<K, V> wrapSlice(ReadOnlySlice<K, V> slice) {
-        SliceWithStackTrace<?, ?> translated = sliceTranslationMap.get(slice);
-        if (translated == null) {
-            translated = new SliceWithStackTrace<K, V>(slice);
-            sliceTranslationMap.put(slice, translated);
-        }
+        SliceWithStackTrace<?, ?> translated = sliceTranslationMap.computeIfAbsent(slice, k -> new SliceWithStackTrace<K, V>(slice));
         //noinspection unchecked
         return (SliceWithStackTrace) translated;
     }

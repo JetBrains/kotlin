@@ -237,11 +237,7 @@ public final class StaticContext {
 
     @NotNull
     private JsExpression getQualifiedExpression(@NotNull DeclarationDescriptor descriptor) {
-        JsExpression fqn = fqnCache.get(descriptor);
-        if (fqn == null) {
-            fqn = buildQualifiedExpression(descriptor);
-            fqnCache.put(descriptor, fqn);
-        }
+        JsExpression fqn = fqnCache.computeIfAbsent(descriptor, this::buildQualifiedExpression);
         return fqn.deepCopy();
     }
 

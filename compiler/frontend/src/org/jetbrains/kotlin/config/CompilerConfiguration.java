@@ -76,9 +76,7 @@ public class CompilerConfiguration {
     public <T> void add(@NotNull CompilerConfigurationKey<List<T>> key, @NotNull T value) {
         checkReadOnly();
         Key<List<T>> ideaKey = key.ideaKey;
-        if (map.get(ideaKey) == null) {
-            map.put(ideaKey, new ArrayList<T>());
-        }
+        map.computeIfAbsent(ideaKey, k -> new ArrayList<T>());
         List<T> list = (List<T>) map.get(ideaKey);
         list.add(value);
     }
@@ -86,9 +84,7 @@ public class CompilerConfiguration {
     public <K, V> void put(@NotNull CompilerConfigurationKey<Map<K, V>> configurationKey, @NotNull K key, @NotNull V value) {
         checkReadOnly();
         Key<Map<K, V>> ideaKey = configurationKey.ideaKey;
-        if (map.get(ideaKey) == null) {
-            map.put(ideaKey, new HashMap<K, V>());
-        }
+        map.computeIfAbsent(ideaKey, k -> new HashMap<K, V>());
         Map<K, V> data = (Map<K, V>) map.get(ideaKey);
         data.put(key, value);
     }
@@ -97,9 +93,7 @@ public class CompilerConfiguration {
         checkReadOnly();
         checkForNullElements(values);
         Key<List<T>> ideaKey = key.ideaKey;
-        if (map.get(ideaKey) == null) {
-            map.put(ideaKey, new ArrayList<T>());
-        }
+        map.computeIfAbsent(ideaKey, k -> new ArrayList<T>());
         List<T> list = (List<T>) map.get(ideaKey);
         list.addAll(values);
     }

@@ -524,11 +524,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
 
     @NotNull
     private String addUniqueField(@NotNull String name) {
-        List<String> existNames = fieldNames.get(name);
-        if (existNames == null) {
-            existNames = new LinkedList<String>();
-            fieldNames.put(name, existNames);
-        }
+        List<String> existNames = fieldNames.computeIfAbsent(name, unused -> new LinkedList<String>());
         String suffix = existNames.isEmpty() ? "" : "$" + existNames.size();
         String newName = name + suffix;
         existNames.add(newName);

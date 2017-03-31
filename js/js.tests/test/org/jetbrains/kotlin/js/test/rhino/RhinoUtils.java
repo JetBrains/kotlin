@@ -179,12 +179,7 @@ public final class RhinoUtils {
 
     @NotNull
     private static Scriptable getParentScope(@NotNull EcmaVersion version, @NotNull Context context, @NotNull List<String> jsLibraries) {
-        ScriptableObject parentScope = versionToScope.get(version);
-        if (parentScope == null) {
-            parentScope = initScope(version, context, jsLibraries);
-            versionToScope.put(version, parentScope);
-        }
-        return parentScope;
+        return versionToScope.computeIfAbsent(version, v -> initScope(v, context, jsLibraries));
     }
 
     @NotNull

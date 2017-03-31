@@ -348,13 +348,9 @@ public class CommonSupertypes {
                 new DFS.NodeHandlerWithListResult<SimpleType, TypeConstructor>() {
                     @Override
                     public boolean beforeChildren(SimpleType current) {
-                        TypeConstructor constructor = current.getConstructor();
-
-                        Set<SimpleType> instances = constructorToAllInstances.get(constructor);
-                        if (instances == null) {
-                            instances = new HashSet<SimpleType>();
-                            constructorToAllInstances.put(constructor, instances);
-                        }
+                        Set<SimpleType> instances = constructorToAllInstances.computeIfAbsent(
+                                current.getConstructor(), k -> new HashSet<SimpleType>()
+                        );
                         instances.add(current);
 
                         return true;

@@ -332,11 +332,7 @@ public class ValueArgumentsToParametersMapper {
 
         private void putVararg(ValueParameterDescriptor valueParameterDescriptor, ValueArgument valueArgument) {
             if (valueParameterDescriptor.getVarargElementType() != null) {
-                VarargValueArgument vararg = varargs.get(valueParameterDescriptor);
-                if (vararg == null) {
-                    vararg = new VarargValueArgument();
-                    varargs.put(valueParameterDescriptor, vararg);
-                }
+                VarargValueArgument vararg = varargs.computeIfAbsent(valueParameterDescriptor, k -> new VarargValueArgument());
                 vararg.addArgument(valueArgument);
             }
             else {

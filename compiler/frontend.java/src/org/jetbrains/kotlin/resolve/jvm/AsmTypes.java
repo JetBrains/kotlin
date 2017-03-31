@@ -120,12 +120,7 @@ public class AsmTypes {
 
     @NotNull
     public static Type getType(@NotNull Class<?> javaClass) {
-        Type type = TYPES_MAP.get(javaClass);
-        if (type == null) {
-            type = Type.getType(javaClass);
-            TYPES_MAP.put(javaClass, type);
-        }
-        return type;
+        return TYPES_MAP.computeIfAbsent(javaClass, k -> Type.getType(javaClass));
     }
 
     private AsmTypes() {
