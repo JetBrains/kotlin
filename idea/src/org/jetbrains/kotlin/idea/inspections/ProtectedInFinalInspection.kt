@@ -20,6 +20,7 @@ import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.core.implicitVisibility
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -38,7 +39,8 @@ class ProtectedInFinalInspection  : AbstractKotlinInspection() {
                 val modifierType = visibilityModifier.node?.elementType
                 if (modifierType == KtTokens.PROTECTED_KEYWORD) {
                     val parentClass = declaration.getParentOfType<KtClass>(true) ?: return
-                    if (!parentClass.isInheritable() && !parentClass.isEnum()) {
+                    if (!parentClass.isInheritable() && !parentClass.isEnum() &&
+                        declaration.implicitVisibility() != KtTokens.PROTECTED_KEYWORD) {
                         holder.registerProblem(visibilityModifier,
                                                "'protected' visibility is effectively 'private' in a final class",
                                                ProblemHighlightType.WEAK_WARNING,
