@@ -16,15 +16,14 @@
 
 package org.jetbrains.kotlin.types
 
-import com.google.common.base.Predicates
 import com.google.common.collect.Maps
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 object CastDiagnosticsUtil {
 
@@ -150,8 +149,8 @@ object CastDiagnosticsUtil {
         if (supertypeWithVariables != null) {
             // Now, let's try to unify Collection<T> and Collection<Foo> solution is a map from T to Foo
             val solution = TypeUnifier.unify(
-                    TypeProjectionImpl(supertype), TypeProjectionImpl(supertypeWithVariables),
-                    Predicates.`in`(variableConstructors))
+                    TypeProjectionImpl(supertype), TypeProjectionImpl(supertypeWithVariables), variableConstructors::contains
+            )
             substitution = Maps.newHashMap(solution.substitution)
         }
         else {

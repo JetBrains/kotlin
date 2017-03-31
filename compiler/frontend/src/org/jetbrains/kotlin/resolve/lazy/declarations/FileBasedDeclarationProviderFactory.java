@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.lazy.declarations;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,17 +71,12 @@ public class FileBasedDeclarationProviderFactory extends AbstractDeclarationProv
         }
     }
 
-    /*package*/ boolean isPackageDeclaredExplicitly(@NotNull FqName packageFqName) {
+    private boolean isPackageDeclaredExplicitly(@NotNull FqName packageFqName) {
         return index.invoke().declaredPackages.contains(packageFqName);
     }
 
-    /*package*/ Collection<FqName> getAllDeclaredSubPackagesOf(@NotNull final FqName parent) {
-        return Collections2.filter(index.invoke().declaredPackages, new Predicate<FqName>() {
-            @Override
-            public boolean apply(FqName fqName) {
-                return !fqName.isRoot() && fqName.parent().equals(parent);
-            }
-        });
+    /*package*/ Collection<FqName> getAllDeclaredSubPackagesOf(@NotNull FqName parent) {
+        return CollectionsKt.filter(index.invoke().declaredPackages, fqName -> !fqName.isRoot() && fqName.parent().equals(parent));
     }
 
     @Nullable

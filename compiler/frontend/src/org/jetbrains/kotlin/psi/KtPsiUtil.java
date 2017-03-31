@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiComment;
@@ -47,6 +46,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class KtPsiUtil {
     private KtPsiUtil() {
@@ -587,13 +587,6 @@ public class KtPsiUtil {
         return null;
     }
 
-    public static final Predicate<KtElement> ANY_JET_ELEMENT = new Predicate<KtElement>() {
-        @Override
-        public boolean apply(@Nullable KtElement input) {
-            return true;
-        }
-    };
-
     @NotNull
     public static String getText(@Nullable PsiElement element) {
         return element != null ? element.getText() : "";
@@ -644,17 +637,17 @@ public class KtPsiUtil {
     public static KtElement getOutermostDescendantElement(
             @Nullable PsiElement root,
             boolean first,
-            final @NotNull Predicate<KtElement> predicate
+            @NotNull Predicate<KtElement> predicate
     ) {
         if (!(root instanceof KtElement)) return null;
 
-        final List<KtElement> results = Lists.newArrayList();
+        List<KtElement> results = Lists.newArrayList();
 
         root.accept(
                 new KtVisitorVoid() {
                     @Override
                     public void visitKtElement(@NotNull KtElement element) {
-                        if (predicate.apply(element)) {
+                        if (predicate.test(element)) {
                             //noinspection unchecked
                             results.add(element);
                         }
@@ -680,7 +673,7 @@ public class KtPsiUtil {
     public static PsiElement skipSiblingsBackwardByPredicate(@Nullable PsiElement element, Predicate<PsiElement> elementsToSkip) {
         if (element == null) return null;
         for (PsiElement e = element.getPrevSibling(); e != null; e = e.getPrevSibling()) {
-            if (elementsToSkip.apply(e)) continue;
+            if (elementsToSkip.test(e)) continue;
             return e;
         }
         return null;

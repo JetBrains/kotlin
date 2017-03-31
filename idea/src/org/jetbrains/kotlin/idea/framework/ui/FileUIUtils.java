@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.idea.framework.ui;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.intellij.ide.util.projectWizard.ProjectWizardUtil;
 import com.intellij.openapi.project.Project;
@@ -28,6 +25,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,13 +75,8 @@ public class FileUIUtils {
             targetFiles.put(file, new File(destinationPath, fileName));
         }
 
-        Collection<Map.Entry<File, File>> existentFiles = Collections2.filter(targetFiles.entrySet(), new Predicate<Map.Entry<File, File>>() {
-            @Override
-            public boolean apply(@Nullable Map.Entry<File, File> sourceToTarget) {
-                assert sourceToTarget != null;
-                return sourceToTarget.getValue().exists();
-            }
-        });
+        Collection<Map.Entry<File, File>> existentFiles =
+                CollectionsKt.filter(targetFiles.entrySet(), sourceToTarget -> sourceToTarget.getValue().exists());
 
         if (!existentFiles.isEmpty()) {
             String message;
@@ -94,13 +87,7 @@ public class FileUIUtils {
                                         conflictingFile.getParentFile().getAbsolutePath());
             }
             else {
-                Collection<File> conflictFiles = Collections2.transform(existentFiles, new Function<Map.Entry<File, File>, File>() {
-                    @Override
-                    public File apply(@Nullable Map.Entry<File, File> pair) {
-                        assert pair != null;
-                        return pair.getValue();
-                    }
-                });
+                Collection<File> conflictFiles = CollectionsKt.map(existentFiles, Map.Entry::getValue);
                 message = String.format("Files already exist:\n%s\nDo you want to overwrite them?", StringUtil.join(conflictFiles, "\n"));
             }
 

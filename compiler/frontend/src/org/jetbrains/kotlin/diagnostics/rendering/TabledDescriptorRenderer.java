@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,6 +30,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class TabledDescriptorRenderer {
     public interface TableOrTextRenderer {}
@@ -68,8 +67,7 @@ public class TabledDescriptorRenderer {
         }
 
         public TableRenderer functionArgumentTypeList(@Nullable KotlinType receiverType, @NotNull List<KotlinType> argumentTypes) {
-
-            return functionArgumentTypeList(receiverType, argumentTypes, Predicates.<ConstraintPosition>alwaysFalse());
+            return functionArgumentTypeList(receiverType, argumentTypes, position -> false);
         }
 
         public TableRenderer functionArgumentTypeList(@Nullable KotlinType receiverType,

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.jvm
 
-import com.google.common.base.Predicates.`in`
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -142,7 +141,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val destination = arguments.destination
 
             if (arguments.module != null) {
-                val sanitizedCollector = FilteringMessageCollector(messageCollector, `in`(CompilerMessageSeverity.VERBOSE))
+                val sanitizedCollector = FilteringMessageCollector(messageCollector, CompilerMessageSeverity.VERBOSE::contains)
                 val moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(arguments.module, sanitizedCollector)
 
                 if (destination != null) {

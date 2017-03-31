@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.test.util;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import kotlin.Unit;
@@ -44,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
@@ -68,24 +67,18 @@ public class RecursiveDescriptorComparator {
     );
 
     public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false, false,
-                                                                                         Predicates.<DeclarationDescriptor>alwaysTrue(),
-                                                                                         errorTypesForbidden(), DEFAULT_RENDERER);
+                                                                                         descriptor -> true, errorTypesForbidden(), DEFAULT_RENDERER);
     public static final Configuration RECURSIVE = new Configuration(false, false, true, false,
-                                                                    Predicates.<DeclarationDescriptor>alwaysTrue(),
-                                                                    errorTypesForbidden(), DEFAULT_RENDERER);
+                                                                    descriptor -> true, errorTypesForbidden(), DEFAULT_RENDERER);
 
     public static final Configuration RECURSIVE_ALL = new Configuration(true, true, true, false,
-                                                                        Predicates.<DeclarationDescriptor>alwaysTrue(),
-                                                                        errorTypesForbidden(), DEFAULT_RENDERER);
+                                                                        descriptor -> true, errorTypesForbidden(), DEFAULT_RENDERER);
 
-    public static final Predicate<DeclarationDescriptor> SKIP_BUILT_INS_PACKAGES = new Predicate<DeclarationDescriptor>() {
-        @Override
-        public boolean apply(DeclarationDescriptor descriptor) {
-            if (descriptor instanceof PackageViewDescriptor) {
-                return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(((PackageViewDescriptor) descriptor).getFqName());
-            }
-            return true;
+    public static final Predicate<DeclarationDescriptor> SKIP_BUILT_INS_PACKAGES = descriptor -> {
+        if (descriptor instanceof PackageViewDescriptor) {
+            return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(((PackageViewDescriptor) descriptor).getFqName());
         }
+        return true;
     };
 
     private static final ImmutableSet<String> KOTLIN_ANY_METHOD_NAMES = ImmutableSet.of("equals", "hashCode", "toString");
@@ -216,7 +209,7 @@ public class RecursiveDescriptorComparator {
         boolean isFunctionFromAny = subDescriptor.getContainingDeclaration() instanceof ClassDescriptor
                                     && subDescriptor instanceof FunctionDescriptor
                                     && KOTLIN_ANY_METHOD_NAMES.contains(subDescriptor.getName().asString());
-        return (isFunctionFromAny && !conf.includeMethodsOfKotlinAny) || !conf.recursiveFilter.apply(subDescriptor);
+        return (isFunctionFromAny && !conf.includeMethodsOfKotlinAny) || !conf.recursiveFilter.test(subDescriptor);
     }
 
     private void appendSubDescriptors(

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.highlighter;
 
-import com.google.common.base.Predicate;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +40,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION;
@@ -136,7 +136,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         String receiver = "";
         if (hasReceiver) {
             boolean error = false;
-            if (isErrorPosition.apply(RECEIVER_POSITION.position())) {
+            if (isErrorPosition.test(RECEIVER_POSITION.position())) {
                 error = true;
             }
             receiver = "receiver: " + RenderersUtilKt.renderStrong(getTypeRenderer().render(receiverType, context), error);
@@ -153,7 +153,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         for (Iterator<KotlinType> iterator = argumentTypes.iterator(); iterator.hasNext(); ) {
             KotlinType argumentType = iterator.next();
             boolean error = false;
-            if (isErrorPosition.apply(VALUE_PARAMETER_POSITION.position(i))) {
+            if (isErrorPosition.test(VALUE_PARAMETER_POSITION.position(i))) {
                 error = true;
             }
             String renderedArgument = argumentType == null ? "unknown" : getTypeRenderer().render(argumentType, context);

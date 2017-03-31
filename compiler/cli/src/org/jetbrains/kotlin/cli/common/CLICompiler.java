@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.common;
 
-import com.google.common.base.Predicates;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
@@ -41,6 +40,7 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.*;
 import static org.jetbrains.kotlin.cli.common.environment.UtilKt.setIdeaIoUseFallback;
@@ -139,7 +139,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         printVersionIfNeeded(messageCollector, arguments);
 
         if (arguments.suppressWarnings) {
-            messageCollector = new FilteringMessageCollector(messageCollector, Predicates.equalTo(CompilerMessageSeverity.WARNING));
+            messageCollector = new FilteringMessageCollector(messageCollector, Predicate.isEqual(CompilerMessageSeverity.WARNING));
         }
 
         reportUnknownExtraFlags(messageCollector, arguments);

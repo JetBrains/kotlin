@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.checkers;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.TextRange;
@@ -415,19 +413,14 @@ public class CheckerTestUtil {
     }
 
     public static StringBuffer addDiagnosticMarkersToText(
-            @NotNull final PsiFile psiFile,
+            @NotNull PsiFile psiFile,
             @NotNull Collection<ActualDiagnostic> diagnostics,
             @NotNull Map<ActualDiagnostic, TextDiagnostic> diagnosticToExpectedDiagnostic,
             @NotNull Function<PsiFile, String> getFileText
     ) {
         String text = getFileText.fun(psiFile);
         StringBuffer result = new StringBuffer();
-        diagnostics = Collections2.filter(diagnostics, new Predicate<ActualDiagnostic>() {
-            @Override
-            public boolean apply(ActualDiagnostic actualDiagnostic) {
-                return psiFile.equals(actualDiagnostic.getFile());
-            }
-        });
+        diagnostics = CollectionsKt.filter(diagnostics, actualDiagnostic -> psiFile.equals(actualDiagnostic.getFile()));
         if (!diagnostics.isEmpty()) {
             List<DiagnosticDescriptor> diagnosticDescriptors = getSortedDiagnosticDescriptors(diagnostics);
 

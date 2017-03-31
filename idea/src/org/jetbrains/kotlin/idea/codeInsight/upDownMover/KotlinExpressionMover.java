@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.upDownMover;
 
-import com.google.common.base.Predicate;
 import com.intellij.codeInsight.editorActions.moveUpDown.LineRange;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -33,15 +32,11 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
 
-    private static final Predicate<KtElement> IS_CALL_EXPRESSION = new Predicate<KtElement>() {
-        @Override
-        public boolean apply(@Nullable KtElement input) {
-            return input instanceof KtCallExpression;
-        }
-    };
+    private static final Predicate<KtElement> IS_CALL_EXPRESSION = input -> input instanceof KtCallExpression;
 
     public KotlinExpressionMover() {
     }
@@ -70,20 +65,12 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
     private final static Class[] FUNCTIONLIKE_ELEMENT_CLASSES =
             {KtFunction.class, KtPropertyAccessor.class, KtAnonymousInitializer.class};
 
-    private static final Predicate<KtElement> CHECK_BLOCK_LIKE_ELEMENT = new Predicate<KtElement>() {
-        @Override
-        public boolean apply(@Nullable KtElement input) {
-            return (input instanceof KtBlockExpression || input instanceof KtClassBody)
-                   && !PsiTreeUtil.instanceOf(input.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES);
-        }
-    };
+    private static final Predicate<KtElement> CHECK_BLOCK_LIKE_ELEMENT =
+            input -> (input instanceof KtBlockExpression || input instanceof KtClassBody)
+                     && !PsiTreeUtil.instanceOf(input.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES);
 
-    private static final Predicate<KtElement> CHECK_BLOCK = new Predicate<KtElement>() {
-        @Override
-        public boolean apply(@Nullable KtElement input) {
-            return input instanceof KtBlockExpression && !PsiTreeUtil.instanceOf(input.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES);
-        }
-    };
+    private static final Predicate<KtElement> CHECK_BLOCK =
+            input -> input instanceof KtBlockExpression && !PsiTreeUtil.instanceOf(input.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES);
 
     @Nullable
     private static PsiElement getStandaloneClosingBrace(@NotNull PsiFile file, @NotNull Editor editor) {

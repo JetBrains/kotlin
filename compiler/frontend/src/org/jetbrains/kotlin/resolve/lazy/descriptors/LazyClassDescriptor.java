@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import kotlin.collections.CollectionsKt;
@@ -73,13 +70,11 @@ import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.*;
 
 public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptorWithResolutionScopes, LazyEntity {
-    private static final Predicate<KotlinType> VALID_SUPERTYPE = new Predicate<KotlinType>() {
-        @Override
-        public boolean apply(KotlinType type) {
-            assert !type.isError() : "Error types must be filtered out in DescriptorResolver";
-            return TypeUtils.getClassDescriptor(type) != null;
-        }
+    private static final Function1<KotlinType, Boolean> VALID_SUPERTYPE = type -> {
+        assert !type.isError() : "Error types must be filtered out in DescriptorResolver";
+        return TypeUtils.getClassDescriptor(type) != null;
     };
+
     private final LazyClassContext c;
 
     @Nullable // can be null in KtScript
@@ -735,6 +730,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                         .resolveSupertypes(getScopeForClassHeaderResolution(), this, classOrObject,
                                            c.getTrace());
 
-        return Lists.newArrayList(Collections2.filter(allSupertypes, VALID_SUPERTYPE));
+        return new ArrayList<>(CollectionsKt.filter(allSupertypes, VALID_SUPERTYPE));
     }
 }

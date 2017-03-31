@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.test.util;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,6 +30,7 @@ import org.junit.Assert;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class DescriptorValidator {
 
@@ -67,7 +66,7 @@ public class DescriptorValidator {
         }
 
         private boolean allowErrorTypes = false;
-        private Predicate<DeclarationDescriptor> recursiveFilter = Predicates.alwaysTrue();
+        private Predicate<DeclarationDescriptor> recursiveFilter = descriptor -> true;
 
         protected ValidationVisitor() {
         }
@@ -86,7 +85,7 @@ public class DescriptorValidator {
 
         protected void validateScope(DeclarationDescriptor scopeOwner, @NotNull MemberScope scope, @NotNull DiagnosticCollector collector) {
             for (DeclarationDescriptor descriptor : DescriptorUtils.getAllDescriptors(scope)) {
-                if (recursiveFilter.apply(descriptor)) {
+                if (recursiveFilter.test(descriptor)) {
                     descriptor.accept(new ScopeValidatorVisitor(collector), scope);
                 }
             }
@@ -197,7 +196,7 @@ public class DescriptorValidator {
 
         @Override
         public Boolean visitPackageViewDescriptor(PackageViewDescriptor descriptor, DiagnosticCollector collector) {
-            if (!recursiveFilter.apply(descriptor)) return false;
+            if (!recursiveFilter.test(descriptor)) return false;
 
             validateScope(descriptor, descriptor.getMemberScope(), collector);
             return true;

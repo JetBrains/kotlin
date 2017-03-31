@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -120,15 +119,10 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         doTest(code, classFilePart);
     }
 
-    private void doTest(@NotNull String code, @NotNull final String classFilePart) {
+    private void doTest(@NotNull String code, @NotNull String classFilePart) {
         loadText("package " + PACKAGE_NAME + "\n\n" + code);
         List<OutputFile> output = generateClassesInFile().asList();
-        Collection<OutputFile> files = Collections2.filter(output, new Predicate<OutputFile>() {
-            @Override
-            public boolean apply(OutputFile file) {
-                return file.getRelativePath().contains(classFilePart);
-            }
-        });
+        Collection<OutputFile> files = CollectionsKt.filter(output, file -> file.getRelativePath().contains(classFilePart));
         assertFalse("No files with \"" + classFilePart + "\" in the name are found: " + output, files.isEmpty());
         assertTrue("Exactly one file with \"" + classFilePart + "\" in the name should be found: " + files, files.size() == 1);
 

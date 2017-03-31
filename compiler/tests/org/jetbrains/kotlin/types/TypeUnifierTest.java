@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import kotlin.Unit;
@@ -181,16 +180,7 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
     }
 
     private void doTest(String known, String withVariables, @NotNull Map<String, String> expected) {
-        TypeUnifier.UnificationResult map = TypeUnifier.unify(
-                makeType(known),
-                makeType(withVariables),
-                new Predicate<TypeConstructor>() {
-                    @Override
-                    public boolean apply(TypeConstructor tc) {
-                        return variables.contains(tc);
-                    }
-                }
-        );
+        TypeUnifier.UnificationResult map = TypeUnifier.unify(makeType(known), makeType(withVariables), variables::contains);
         assertEquals(expected, toStrings(map));
     }
 
