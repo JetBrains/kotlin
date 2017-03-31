@@ -215,13 +215,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
     }
 
+
     private fun createEnvironmentWithScriptingSupport(rootDisposable: Disposable,
                                                       configuration: CompilerConfiguration,
                                                       arguments: K2JVMCompilerArguments,
                                                       messageCollector: MessageCollector
     ): KotlinCoreEnvironment? {
 
-        val scriptResolverEnv = hashMapOf<String, Any?>()
+        val scriptResolverEnv = createScriptResolverEnvironment(arguments, messageCollector) ?: return null
         configureScriptDefinitions(arguments.scriptTemplates, configuration, messageCollector, scriptResolverEnv)
         if (!messageCollector.hasErrors()) {
             val environment = createCoreEnvironment(rootDisposable, configuration)
@@ -415,6 +416,27 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 }
             }
             configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
+        }
+
+        fun createScriptResolverEnvironment(arguments: K2JVMCompilerArguments, messageCollector: MessageCollector): HashMap<String, Any?>? {
+            val scriptResolverEnv = hashMapOf<String, Any?>()
+            // parses key/value pairs in the form <key>=<value>, where
+            //   <key> - is a single word (\w+ pattern)
+            //   <value> - optionally quoted string with allowed escaped chars (only double-quote and backslash chars are supported)
+            // TODO: implement generic unescaping
+            val envParseRe = """(\w+)=(?:"((?:\\.|[^"])*)"|([^\s]*))""".toRegex()
+            val unescapeRe = """\\(["\\])""".toRegex()
+            if (arguments.scriptResolverEnvironment != null) {
+                for (envParam in arguments.scriptResolverEnvironment) {
+                    val match = envParseRe.matchEntire(envParam)
+                    if (match == null || match.groupValues.size < 4 || match.groupValues[1].isBlank()) {
+                        messageCollector.report(CompilerMessageSeverity.ERROR, "Unable to parse script-resolver-environment argument $envParam", CompilerMessageLocation.NO_LOCATION)
+                        return null
+                    }
+                    scriptResolverEnv.put(match.groupValues[1], match.groupValues.drop(2).firstOrNull { it.isNotEmpty() }?.let { unescapeRe.replace(it, "\$1") })
+                }
+            }
+            return scriptResolverEnv
         }
     }
 }
