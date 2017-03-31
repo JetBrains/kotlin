@@ -8,10 +8,7 @@ import com.android.build.gradle.internal.variant.BaseVariantOutputData
 import com.android.build.gradle.internal.variant.TestVariantData
 import com.android.builder.model.SourceProvider
 import groovy.lang.Closure
-import org.gradle.api.InvalidUserDataException
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.api.ProjectConfigurationException
+import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -275,6 +272,8 @@ internal abstract class AbstractKotlinPlugin(
 
         configureSourceSetDefaults(project, javaBasePlugin, javaPluginConvention)
         configureDefaultVersionsResolutionStrategy(project)
+        configureStdlib(project)
+        configureJvmTarget(project)
     }
 
     open protected fun configureSourceSetDefaults(
@@ -297,6 +296,38 @@ internal abstract class AbstractKotlinPlugin(
             }
         }
     }
+
+    private fun configureStdlib(project: Project) {
+        with(project) {
+            afterEvaluate {
+                val sourceCompatibility = project.sourceCompatibility()
+                val jreSuffix = when {
+                    sourceCompatibility == JavaVersion.VERSION_1_7 -> {
+                        "-jre7"
+                    }
+                    sourceCompatibility >= JavaVersion.VERSION_1_8 -> {
+                        "-jre8"
+                    }
+                    else -> ""
+                }
+                dependencies.add("compile", "org.jetbrains.kotlin:kotlin-stdlib$jreSuffix:$kotlinPluginVersion")
+            }
+        }
+    }
+
+    private fun configureJvmTarget(project: Project) {
+        with(project) {
+            afterEvaluate {
+                val kotlinOptions = tasks.filter { it is KotlinCompile }.map { (it as KotlinCompile).kotlinOptions }
+                if (project.sourceCompatibility() >= JavaVersion.VERSION_1_8) {
+                    kotlinOptions.forEach { it.jvmTarget = "1.8" }
+                }
+            }
+        }
+    }
+
+    private fun Project.sourceCompatibility(): JavaVersion =
+            convention.getPlugin(JavaPluginConvention::class.java).sourceCompatibility
 }
 
 internal open class KotlinPlugin(
