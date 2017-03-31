@@ -63,7 +63,7 @@ public class FunctionDescriptorUtil {
     @NotNull
     public static LexicalScope getFunctionInnerScope(
             @NotNull LexicalScope outerScope,
-            @NotNull final FunctionDescriptor descriptor,
+            @NotNull FunctionDescriptor descriptor,
             @NotNull LocalRedeclarationChecker redeclarationChecker
     ) {
         ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();

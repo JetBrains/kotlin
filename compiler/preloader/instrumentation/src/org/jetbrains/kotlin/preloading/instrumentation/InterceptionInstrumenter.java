@@ -54,7 +54,7 @@ public class InterceptionInstrumenter {
     }
 
     private void addHandlerClass(Class<?> handlerClass) {
-        for (final Field field : handlerClass.getFields()) {
+        for (Field field : handlerClass.getFields()) {
             MethodInterceptor annotation = field.getAnnotation(MethodInterceptor.class);
             if (annotation == null) continue;
 
@@ -71,7 +71,7 @@ public class InterceptionInstrumenter {
                     throw new IllegalArgumentException("Interceptor is null: " + field);
                 }
 
-                final Class<?> interceptorClass = interceptor.getClass();
+                Class<?> interceptorClass = interceptor.getClass();
 
                 FieldData fieldData = getFieldData(field, interceptorClass);
 
@@ -214,7 +214,7 @@ public class InterceptionInstrumenter {
             allArgsParameterIndex);
     }
 
-    private void addDumpTask(final Object interceptor, final Method method, final MethodInstrumenter instrumenter) {
+    private void addDumpTask(Object interceptor, Method method, MethodInstrumenter instrumenter) {
         dumpTasks.add(new DumpAction() {
             @Override
             public void dump(PrintStream out) {
@@ -272,17 +272,17 @@ public class InterceptionInstrumenter {
         return name.substring(0, name.length() - suffix.length());
     }
 
-    private byte[] instrument(byte[] classData, final List<MethodInstrumenter> instrumenters) {
-        final ClassReader cr = new ClassReader(classData);
+    private byte[] instrument(byte[] classData, List<MethodInstrumenter> instrumenters) {
+        ClassReader cr = new ClassReader(classData);
         ClassWriter cw = new ClassWriter(cr, 0);
         cr.accept(new ClassVisitor(ASM5, cw) {
             private final Map<MethodInstrumenter, String> matchedMethods = new HashMap<MethodInstrumenter, String>();
 
             @Override
             public MethodVisitor visitMethod(
-                    final int access,
-                    final String name,
-                    final String desc,
+                    int access,
+                    String name,
+                    String desc,
                     String signature,
                     String[] exceptions
             ) {
@@ -304,9 +304,9 @@ public class InterceptionInstrumenter {
                 if (applicableInstrumenters.isEmpty()) return mv;
 
                 boolean dumpByteCode = false;
-                final List<MethodData> normalReturnData = new ArrayList<MethodData>();
-                final List<MethodData> enterData = new ArrayList<MethodData>();
-                final List<MethodData> exceptionData = new ArrayList<MethodData>();
+                List<MethodData> normalReturnData = new ArrayList<MethodData>();
+                List<MethodData> enterData = new ArrayList<MethodData>();
+                List<MethodData> exceptionData = new ArrayList<MethodData>();
                 for (MethodInstrumenter instrumenter : applicableInstrumenters) {
                     enterData.addAll(instrumenter.getEnterData());
 
@@ -323,8 +323,8 @@ public class InterceptionInstrumenter {
                     mv = getDumpingVisitorWrapper(mv, name, desc);
                 }
 
-                final int maxStackDepth = getMaxStackDepth(name, desc, normalReturnData, enterData, exceptionData);
-                final boolean isConstructor = "<init>".equals(name);
+                int maxStackDepth = getMaxStackDepth(name, desc, normalReturnData, enterData, exceptionData);
+                boolean isConstructor = "<init>".equals(name);
 
                 return new MethodVisitor(ASM5, mv) {
 
@@ -430,7 +430,7 @@ public class InterceptionInstrumenter {
                 }
             }
 
-            private TraceMethodVisitor getDumpingVisitorWrapper(MethodVisitor mv, final String methodName, final String methodDesc) {
+            private TraceMethodVisitor getDumpingVisitorWrapper(MethodVisitor mv, String methodName, String methodDesc) {
                 return new TraceMethodVisitor(mv, new Textifier(ASM5) {
                     @Override
                     public void visitMethodEnd() {

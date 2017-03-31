@@ -114,7 +114,7 @@ public class LazyDeclarationResolver {
     }
 
     @NotNull
-    private DeclarationDescriptor resolveToDescriptor(@NotNull KtDeclaration declaration, final boolean track) {
+    private DeclarationDescriptor resolveToDescriptor(@NotNull KtDeclaration declaration, boolean track) {
         DeclarationDescriptor result = declaration.accept(new KtVisitor<DeclarationDescriptor, Void>() {
             @NotNull
             private LookupLocation lookupLocationFor(@NotNull KtDeclaration declaration, boolean isTopLevel) {

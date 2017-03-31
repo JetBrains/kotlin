@@ -94,7 +94,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     protected ExitCode doExecute(
             @NotNull K2JSCompilerArguments arguments, @NotNull CompilerConfiguration configuration, @NotNull Disposable rootDisposable
     ) {
-        final MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
+        MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
 
         if (arguments.freeArgs.isEmpty()) {
             if (arguments.version) {
@@ -242,7 +242,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     }
 
     private static AnalyzerWithCompilerReport analyzeAndReportErrors(
-            @NotNull MessageCollector messageCollector, @NotNull final List<KtFile> sources, @NotNull final JsConfig config
+            @NotNull MessageCollector messageCollector, @NotNull List<KtFile> sources, @NotNull JsConfig config
     ) {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
         analyzerWithCompilerReport.analyzeAndReport(sources, new AnalyzerWithCompilerReport.Analyzer() {

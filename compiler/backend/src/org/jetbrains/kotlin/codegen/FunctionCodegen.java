@@ -268,7 +268,7 @@ public class FunctionCodegen {
     }
 
     private void generateDelegateForDefaultImpl(
-            @NotNull final FunctionDescriptor functionDescriptor,
+            @NotNull FunctionDescriptor functionDescriptor,
             @Nullable PsiElement element
     ) {
         Method defaultImplMethod = typeMapper.mapAsmMethod(functionDescriptor, OwnerKind.DEFAULT_IMPLS);
@@ -825,7 +825,7 @@ public class FunctionCodegen {
     }
 
     @NotNull
-    private static Function1<FunctionDescriptor, Method> getSignatureMapper(final @NotNull KotlinTypeMapper typeMapper) {
+    private static Function1<FunctionDescriptor, Method> getSignatureMapper(@NotNull KotlinTypeMapper typeMapper) {
         return new Function1<FunctionDescriptor, Method>() {
             @Override
             public Method invoke(FunctionDescriptor descriptor) {
@@ -847,7 +847,7 @@ public class FunctionCodegen {
     }
 
     @NotNull
-    public static String[] getThrownExceptions(@NotNull FunctionDescriptor function, @NotNull final KotlinTypeMapper mapper) {
+    public static String[] getThrownExceptions(@NotNull FunctionDescriptor function, @NotNull KotlinTypeMapper mapper) {
         AnnotationDescriptor annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.throws"));
         if (annotation == null) {
             annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.jvm.Throws"));
@@ -1234,11 +1234,11 @@ public class FunctionCodegen {
     }
 
     private void genDelegate(
-            @NotNull final FunctionDescriptor delegateFunction,
-            final FunctionDescriptor delegatedTo,
+            @NotNull FunctionDescriptor delegateFunction,
+            FunctionDescriptor delegatedTo,
             @NotNull JvmDeclarationOrigin declarationOrigin,
-            final ClassDescriptor toClass,
-            final StackValue field
+            ClassDescriptor toClass,
+            StackValue field
     ) {
         generateMethod(
                 declarationOrigin, delegateFunction,

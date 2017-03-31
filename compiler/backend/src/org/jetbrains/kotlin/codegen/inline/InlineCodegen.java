@@ -229,7 +229,7 @@ public class InlineCodegen extends CallGenerator {
 
     @NotNull
     static SMAPAndMethodNode createMethodNode(
-            @NotNull final FunctionDescriptor functionDescriptor,
+            @NotNull FunctionDescriptor functionDescriptor,
             @NotNull JvmMethodSignature jvmSignature,
             @NotNull ExpressionCodegen codegen,
             @NotNull CodegenContext context,
@@ -259,14 +259,14 @@ public class InlineCodegen extends CallGenerator {
             );
         }
 
-        final GenerationState state = codegen.getState();
-        final Method asmMethod =
+        GenerationState state = codegen.getState();
+        Method asmMethod =
                 callDefault
                 ? state.getTypeMapper().mapDefaultMethod(functionDescriptor, context.getContextKind())
                 : jvmSignature.getAsmMethod();
 
         MethodId methodId = new MethodId(DescriptorUtils.getFqNameSafe(functionDescriptor.getContainingDeclaration()), asmMethod);
-        final CallableMemberDescriptor directMember = getDirectMemberAndCallableFromObject(functionDescriptor);
+        CallableMemberDescriptor directMember = getDirectMemberAndCallableFromObject(functionDescriptor);
         if (!isBuiltInArrayIntrinsic(functionDescriptor) && !(directMember instanceof DeserializedCallableMemberDescriptor)) {
             return doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, codegen, context, callDefault, state, asmMethod);
         }
@@ -310,7 +310,7 @@ public class InlineCodegen extends CallGenerator {
     @Nullable
     private static SMAPAndMethodNode doCreateMethodNodeFromCompiled(
             @NotNull CallableMemberDescriptor callableDescriptor,
-            @NotNull final GenerationState state,
+            @NotNull GenerationState state,
             @NotNull Method asmMethod
     ) {
         if (isBuiltInArrayIntrinsic(callableDescriptor)) {
@@ -330,7 +330,7 @@ public class InlineCodegen extends CallGenerator {
         KotlinTypeMapper.ContainingClassesInfo containingClasses =
                 state.getTypeMapper().getContainingClassesForDeserializedCallable((DeserializedCallableMemberDescriptor) callableDescriptor);
 
-        final ClassId containerId = containingClasses.getImplClassId();
+        ClassId containerId = containingClasses.getImplClassId();
 
         byte[] bytes = InlineCacheKt.getOrPut(state.getInlineCache().getClassBytes(), containerId, new Function0<byte[]>() {
             @Override
@@ -454,7 +454,7 @@ public class InlineCodegen extends CallGenerator {
         result.getReifiedTypeParametersUsages().mergeAll(reificationResult);
 
         CallableMemberDescriptor descriptor = getLabelOwnerDescriptor(codegen.getContext());
-        final Set<String> labels = getDeclarationLabels(DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor);
+        Set<String> labels = getDeclarationLabels(DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor);
         LabelOwner labelOwner = new LabelOwner() {
             @Override
             public boolean isMyLabel(@NotNull String name) {
@@ -747,8 +747,8 @@ public class InlineCodegen extends CallGenerator {
         return true;
     }
 
-    private Runnable recordParameterValueInLocalVal(boolean delayedWritingToLocals, @NotNull final ParameterInfo... infos) {
-        final int[] index = new int[infos.length];
+    private Runnable recordParameterValueInLocalVal(boolean delayedWritingToLocals, @NotNull ParameterInfo... infos) {
+        int[] index = new int[infos.length];
         for (int i = 0; i < infos.length; i++) {
             ParameterInfo info = infos[i];
             if (!info.isSkippedOrRemapped()) {

@@ -233,7 +233,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         reader.accept(new ClassVisitor(Opcodes.ASM5) {
             @Override
             public MethodVisitor visitMethod(
-                    int access, @NotNull final String callerName, @NotNull final String callerDesc, String signature, String[] exceptions
+                    int access, @NotNull String callerName, @NotNull String callerDesc, String signature, String[] exceptions
             ) {
                 return new MethodVisitor(Opcodes.ASM5) {
                     @Override

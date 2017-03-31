@@ -78,10 +78,10 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
          */
 
         KtCallExpression fakeExpression = CodegenUtil.constructFakeFunctionCall(state.getProject(), referencedFunction);
-        final List<? extends ValueArgument> fakeArguments = fakeExpression.getValueArguments();
+        List<? extends ValueArgument> fakeArguments = fakeExpression.getValueArguments();
 
-        final ReceiverValue dispatchReceiver = computeAndSaveReceiver(signature, codegen, referencedFunction.getDispatchReceiverParameter());
-        final ReceiverValue extensionReceiver = computeAndSaveReceiver(signature, codegen, referencedFunction.getExtensionReceiverParameter());
+        ReceiverValue dispatchReceiver = computeAndSaveReceiver(signature, codegen, referencedFunction.getDispatchReceiverParameter());
+        ReceiverValue extensionReceiver = computeAndSaveReceiver(signature, codegen, referencedFunction.getExtensionReceiverParameter());
         computeAndSaveArguments(fakeArguments, codegen);
 
         ResolvedCall<CallableDescriptor> fakeResolvedCall = new DelegatingResolvedCall<CallableDescriptor>(resolvedCall) {

@@ -125,8 +125,8 @@ public class ExpressionTypingUtils {
 
     public static ObservableBindingTrace makeTraceInterceptingTypeMismatch(
             @NotNull BindingTrace trace,
-            @NotNull final KtElement expressionToWatch,
-            @NotNull final boolean[] mismatchFound
+            @NotNull KtElement expressionToWatch,
+            @NotNull boolean[] mismatchFound
     ) {
         return new ObservableBindingTrace(trace) {
 

@@ -295,9 +295,12 @@ public class DescriptorResolver {
 
     @NotNull
     public ValueParameterDescriptorImpl resolveValueParameterDescriptor(
-            @NotNull final LexicalScope scope, @NotNull final FunctionDescriptor owner,
-            @NotNull KtParameter valueParameter, int index,
-            @NotNull final KotlinType type, @NotNull final BindingTrace trace
+            @NotNull LexicalScope scope,
+            @NotNull FunctionDescriptor owner,
+            @NotNull KtParameter valueParameter,
+            int index,
+            @NotNull KotlinType type,
+            @NotNull BindingTrace trace
     ) {
         KotlinType varargElementType = null;
         KotlinType variableType = type;
@@ -323,7 +326,7 @@ public class DescriptorResolver {
             }
         }
 
-        final KtDestructuringDeclaration destructuringDeclaration = valueParameter.getDestructuringDeclaration();
+        KtDestructuringDeclaration destructuringDeclaration = valueParameter.getDestructuringDeclaration();
 
         Function0<List<VariableDescriptor>> destructuringVariables;
         if (destructuringDeclaration != null) {
@@ -436,11 +439,11 @@ public class DescriptorResolver {
     }
 
     private TypeParameterDescriptorImpl resolveTypeParameterForDescriptor(
-            final DeclarationDescriptor containingDescriptor,
+            DeclarationDescriptor containingDescriptor,
             LexicalScope scopeForAnnotationsResolve,
-            final KtTypeParameter typeParameter,
+            KtTypeParameter typeParameter,
             int index,
-            final BindingTrace trace
+            BindingTrace trace
     ) {
         if (typeParameter.getVariance() != Variance.INVARIANT) {
             trace.report(VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED.on(typeParameter));
@@ -701,7 +704,7 @@ public class DescriptorResolver {
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull LexicalScope scope,
             @NotNull KtTypeAlias typeAlias,
-            @NotNull final BindingTrace trace
+            @NotNull BindingTrace trace
     ) {
         if (!(containingDeclaration instanceof PackageFragmentDescriptor)) {
             trace.report(TOPLEVEL_TYPEALIASES_ONLY.on(typeAlias));
@@ -711,13 +714,13 @@ public class DescriptorResolver {
         Visibility visibility = resolveVisibilityFromModifiers(typeAlias, getDefaultVisibility(typeAlias, containingDeclaration));
 
         Annotations allAnnotations = annotationResolver.resolveAnnotationsWithArguments(scope, modifierList, trace);
-        final Name name = KtPsiUtil.safeName(typeAlias.getName());
+        Name name = KtPsiUtil.safeName(typeAlias.getName());
         SourceElement sourceElement = KotlinSourceElementKt.toSourceElement(typeAlias);
-        final LazyTypeAliasDescriptor typeAliasDescriptor = LazyTypeAliasDescriptor.create(
+        LazyTypeAliasDescriptor typeAliasDescriptor = LazyTypeAliasDescriptor.create(
                 storageManager, trace, containingDeclaration, allAnnotations, name, sourceElement, visibility);
 
         List<TypeParameterDescriptorImpl> typeParameterDescriptors;
-        final LexicalScope scopeWithTypeParameters;
+        LexicalScope scopeWithTypeParameters;
         {
             List<KtTypeParameter> typeParameters = typeAlias.getTypeParameters();
             if (typeParameters.isEmpty()) {
@@ -737,7 +740,7 @@ public class DescriptorResolver {
             }
         }
 
-        final KtTypeReference typeReference = typeAlias.getTypeReference();
+        KtTypeReference typeReference = typeAlias.getTypeReference();
         if (typeReference == null) {
             typeAliasDescriptor.initialize(
                     typeParameterDescriptors,
@@ -797,7 +800,7 @@ public class DescriptorResolver {
             @NotNull LexicalScope scopeForDeclarationResolution,
             @NotNull LexicalScope scopeForInitializerResolution,
             @NotNull KtProperty property,
-            @NotNull final BindingTrace trace,
+            @NotNull BindingTrace trace,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
         KtModifierList modifierList = property.getModifierList();
@@ -810,7 +813,7 @@ public class DescriptorResolver {
                                                                  trace.getBindingContext(), containingDeclaration)
                             : Modality.FINAL;
 
-        final AnnotationSplitter.PropertyWrapper wrapper = new AnnotationSplitter.PropertyWrapper(property);
+        AnnotationSplitter.PropertyWrapper wrapper = new AnnotationSplitter.PropertyWrapper(property);
 
         Annotations allAnnotations = annotationResolver.resolveAnnotationsWithoutArguments(scopeForDeclarationResolution, modifierList, trace);
         AnnotationSplitter annotationSplitter =
@@ -1108,11 +1111,11 @@ public class DescriptorResolver {
 
     @NotNull
     /*package*/ KotlinType inferReturnTypeFromExpressionBody(
-            @NotNull final BindingTrace trace,
-            @NotNull final LexicalScope scope,
-            @NotNull final DataFlowInfo dataFlowInfo,
-            @NotNull final KtDeclarationWithBody function,
-            @NotNull final FunctionDescriptor functionDescriptor
+            @NotNull BindingTrace trace,
+            @NotNull LexicalScope scope,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull KtDeclarationWithBody function,
+            @NotNull FunctionDescriptor functionDescriptor
     ) {
         return wrappedTypeFactory.createRecursionIntolerantDeferredType(trace, new Function0<KotlinType>() {
             @Override
@@ -1132,7 +1135,8 @@ public class DescriptorResolver {
             @NotNull ClassDescriptor classDescriptor,
             @NotNull ValueParameterDescriptor valueParameter,
             @NotNull LexicalScope scope,
-            @NotNull KtParameter parameter, final BindingTrace trace
+            @NotNull KtParameter parameter,
+            BindingTrace trace
     ) {
         KotlinType type = resolveParameterType(scope, parameter, trace);
         Name name = parameter.getNameAsSafeName();
@@ -1145,7 +1149,7 @@ public class DescriptorResolver {
             }
         }
 
-        final AnnotationSplitter.PropertyWrapper propertyWrapper = new AnnotationSplitter.PropertyWrapper(parameter);
+        AnnotationSplitter.PropertyWrapper propertyWrapper = new AnnotationSplitter.PropertyWrapper(parameter);
         Annotations allAnnotations = annotationResolver.resolveAnnotationsWithoutArguments(scope, parameter.getModifierList(), trace);
         AnnotationSplitter annotationSplitter =
                 new AnnotationSplitter(storageManager, allAnnotations, new Function0<Set<AnnotationUseSiteTarget>>() {

@@ -403,7 +403,7 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static KtFile createFile(@NotNull @NonNls final String name, @NotNull String text, @NotNull Project project) {
+    public static KtFile createFile(@NotNull @NonNls String name, @NotNull String text, @NotNull Project project) {
         String shortName = name.substring(name.lastIndexOf('/') + 1);
         shortName = shortName.substring(shortName.lastIndexOf('\\') + 1);
         LightVirtualFile virtualFile = new LightVirtualFile(shortName, KotlinLanguage.INSTANCE, text) {
@@ -909,12 +909,12 @@ public class KotlinTestUtils {
     public static void assertAllTestsPresentInSingleGeneratedClass(
             @NotNull Class<?> testCaseClass,
             @NotNull File testDataDir,
-            @NotNull final Pattern filenamePattern,
-            @NotNull final TargetBackend targetBackend
+            @NotNull Pattern filenamePattern,
+            @NotNull TargetBackend targetBackend
     ) {
-        final File rootFile = new File(getTestsRoot(testCaseClass));
+        File rootFile = new File(getTestsRoot(testCaseClass));
 
-        final Set<String> filePaths = collectPathsMetadata(testCaseClass);
+        Set<String> filePaths = collectPathsMetadata(testCaseClass);
 
         FileUtil.processFilesRecursively(testDataDir, new Processor<File>() {
             @Override

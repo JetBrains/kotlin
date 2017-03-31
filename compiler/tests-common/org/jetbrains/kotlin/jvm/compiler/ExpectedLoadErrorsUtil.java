@@ -55,7 +55,7 @@ public class ExpectedLoadErrorsUtil {
     }
 
     private static Map<SourceElement, List<String>> getExpectedLoadErrors(@NotNull PackageViewDescriptor packageFromJava) {
-        final Map<SourceElement, List<String>> map = new HashMap<SourceElement, List<String>>();
+        Map<SourceElement, List<String>> map = new HashMap<SourceElement, List<String>>();
 
         packageFromJava.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
             @Override

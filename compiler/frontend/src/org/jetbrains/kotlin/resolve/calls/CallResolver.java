@@ -176,10 +176,10 @@ public class CallResolver {
 
     @NotNull
     private <D extends CallableDescriptor> OverloadResolutionResults<D> computeTasksAndResolveCall(
-            @NotNull final BasicCallResolutionContext context,
-            @NotNull final Name name,
-            @NotNull final TracingStrategy tracing,
-            @NotNull final NewResolutionOldInference.ResolutionKind<D> kind
+            @NotNull BasicCallResolutionContext context,
+            @NotNull Name name,
+            @NotNull TracingStrategy tracing,
+            @NotNull NewResolutionOldInference.ResolutionKind<D> kind
     ) {
         return callResolvePerfCounter.time(new Function0<OverloadResolutionResults<D>>() {
             @Override
@@ -204,9 +204,9 @@ public class CallResolver {
 
     @NotNull
     private <D extends CallableDescriptor> OverloadResolutionResults<D> computeTasksFromCandidatesAndResolvedCall(
-            @NotNull final BasicCallResolutionContext context,
-            @NotNull final Collection<ResolutionCandidate<D>> candidates,
-            @NotNull final TracingStrategy tracing
+            @NotNull BasicCallResolutionContext context,
+            @NotNull Collection<ResolutionCandidate<D>> candidates,
+            @NotNull TracingStrategy tracing
     ) {
         return callResolvePerfCounter.time(new Function0<OverloadResolutionResults<D>>() {
             @Override
@@ -492,11 +492,11 @@ public class CallResolver {
     }
 
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithKnownCandidate(
-            @NotNull final Call call,
-            @NotNull final TracingStrategy tracing,
-            @NotNull final ResolutionContext<?> context,
-            @NotNull final ResolutionCandidate<FunctionDescriptor> candidate,
-            @Nullable final MutableDataFlowInfoForArguments dataFlowInfoForArguments
+            @NotNull Call call,
+            @NotNull TracingStrategy tracing,
+            @NotNull ResolutionContext<?> context,
+            @NotNull ResolutionCandidate<FunctionDescriptor> candidate,
+            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
         return callResolvePerfCounter.time(new Function0<OverloadResolutionResults<FunctionDescriptor>>() {
             @Override

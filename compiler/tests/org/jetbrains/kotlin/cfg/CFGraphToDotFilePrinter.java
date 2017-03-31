@@ -74,7 +74,7 @@ public class CFGraphToDotFilePrinter {
         out.close();
     }
 
-    private static void dumpEdges(List<Instruction> instructions, final PrintStream out, final int[] count, final Map<Instruction, String> nodeToName) {
+    private static void dumpEdges(List<Instruction> instructions, PrintStream out, int[] count, Map<Instruction, String> nodeToName) {
         for (Instruction fromInst : instructions) {
             fromInst.accept(new InstructionVisitor() {
                 @Override

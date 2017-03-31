@@ -59,9 +59,9 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
     @Override
     @NotNull
     public InlineResult doTransform(@NotNull FieldRemapper parentRemapper) {
-        final List<InnerClassNode> innerClassNodes = new ArrayList<InnerClassNode>();
-        final ClassBuilder classBuilder = createRemappingClassBuilderViaFactory(inliningContext);
-        final List<MethodNode> methodsToTransform = new ArrayList<MethodNode>();
+        List<InnerClassNode> innerClassNodes = new ArrayList<InnerClassNode>();
+        ClassBuilder classBuilder = createRemappingClassBuilderViaFactory(inliningContext);
+        List<MethodNode> methodsToTransform = new ArrayList<MethodNode>();
 
         createClassReader().accept(new ClassVisitor(InlineCodegenUtil.API, classBuilder.getVisitor()) {
             @Override
@@ -273,7 +273,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
                 NO_ORIGIN, constructor.access, "<init>", constructorDescriptor, null, ArrayUtil.EMPTY_STRING_ARRAY
         );
 
-        final Label newBodyStartLabel = new Label();
+        Label newBodyStartLabel = new Label();
         constructorVisitor.visitLabel(newBodyStartLabel);
         //initialize captured fields
         List<NewJavaField> newFieldsWithSkipped = TransformationUtilsKt.getNewFieldsToGenerate(allCapturedBuilder.listCaptured());
@@ -316,7 +316,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
         InlineCodegenUtil.removeFinallyMarkers(intermediateMethodNode);
 
         AbstractInsnNode first = intermediateMethodNode.instructions.getFirst();
-        final Label oldStartLabel = first instanceof LabelNode ? ((LabelNode) first).getLabel() : null;
+        Label oldStartLabel = first instanceof LabelNode ? ((LabelNode) first).getLabel() : null;
         intermediateMethodNode.accept(new MethodBodyVisitor(capturedFieldInitializer) {
             @Override
             public void visitLocalVariable(
@@ -344,7 +344,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
     }
 
     @NotNull
-    private static DeferredMethodVisitor newMethod(@NotNull final ClassBuilder builder, @NotNull final MethodNode original) {
+    private static DeferredMethodVisitor newMethod(@NotNull ClassBuilder builder, @NotNull MethodNode original) {
         return new DeferredMethodVisitor(
                 new MethodNode(
                         original.access, original.name, original.desc, original.signature,

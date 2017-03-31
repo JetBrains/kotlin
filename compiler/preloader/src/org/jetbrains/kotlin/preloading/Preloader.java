@@ -43,13 +43,13 @@ public class Preloader {
     }
 
     private static void run(String[] args) throws Exception {
-        final long startTime = System.nanoTime();
+        long startTime = System.nanoTime();
 
-        final Options options = parseOptions(args);
+        Options options = parseOptions(args);
 
         ClassLoader classLoader = createClassLoader(options);
 
-        final Handler handler = getHandler(options, classLoader);
+        Handler handler = getHandler(options, classLoader);
         ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(options.classpath, options.estimate, classLoader, null, handler);
 
         Class<?> mainClass = preloaded.loadClass(options.mainClass);
@@ -147,10 +147,10 @@ public class Preloader {
     private static Handler getHandler(Options options, ClassLoader withInstrumenter) {
         if (!options.measure) return new Handler();
 
-        final Instrumenter instrumenter = options.instrumenters.isEmpty() ? Instrumenter.DO_NOTHING : loadInstrumenter(withInstrumenter);
+        Instrumenter instrumenter = options.instrumenters.isEmpty() ? Instrumenter.DO_NOTHING : loadInstrumenter(withInstrumenter);
 
-        final int[] counter = new int[1];
-        final int[] size = new int[1];
+        int[] counter = new int[1];
+        int[] size = new int[1];
         return new Handler() {
             @Override
             public void beforeDefineClass(String name, int sizeInBytes) {

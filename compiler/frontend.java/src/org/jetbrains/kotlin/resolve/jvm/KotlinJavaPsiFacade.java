@@ -76,7 +76,7 @@ public class KotlinJavaPsiFacade {
 
         emptyModifierList = new LightModifierList(PsiManager.getInstance(project), KotlinLanguage.INSTANCE);
 
-        final PsiModificationTracker modificationTracker = PsiManager.getInstance(project).getModificationTracker();
+        PsiModificationTracker modificationTracker = PsiManager.getInstance(project).getModificationTracker();
         MessageBus bus = project.getMessageBus();
 
         bus.connect().subscribe(PsiModificationTracker.TOPIC, new PsiModificationTracker.Listener() {
@@ -415,7 +415,7 @@ public class KotlinJavaPsiFacade {
             return false;
         }
 
-        private static boolean hasDirectoriesInScope(Query<VirtualFile> dirs, final GlobalSearchScope scope) {
+        private static boolean hasDirectoriesInScope(Query<VirtualFile> dirs, GlobalSearchScope scope) {
             CommonProcessors.FindProcessor<VirtualFile> findProcessor = new CommonProcessors.FindProcessor<VirtualFile>() {
                 @Override
                 protected boolean accept(VirtualFile file) {

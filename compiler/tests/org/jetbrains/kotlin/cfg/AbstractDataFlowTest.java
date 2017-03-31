@@ -39,13 +39,13 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
             @NotNull BindingContext bindingContext
     ) {
         PseudocodeVariablesData pseudocodeVariablesData = new PseudocodeVariablesData(pseudocode.getRootPseudocode(), bindingContext);
-        final Map<Instruction, Edges<InitControlFlowInfo>> variableInitializers =
+        Map<Instruction, Edges<InitControlFlowInfo>> variableInitializers =
                 pseudocodeVariablesData.getVariableInitializers();
-        final Map<Instruction, Edges<UseControlFlowInfo>> useStatusData =
+        Map<Instruction, Edges<UseControlFlowInfo>> useStatusData =
                 pseudocodeVariablesData.getVariableUseStatusData();
-        final String initPrefix = "    INIT:";
-        final String usePrefix  = "    USE:";
-        final int initializersColumnWidth = countDataColumnWidth(initPrefix, pseudocode.getInstructionsIncludingDeadCode(), variableInitializers);
+        String initPrefix = "    INIT:";
+        String usePrefix = "    USE:";
+        int initializersColumnWidth = countDataColumnWidth(initPrefix, pseudocode.getInstructionsIncludingDeadCode(), variableInitializers);
 
         dumpInstructions(pseudocode, out, new Function3<Instruction, Instruction, Instruction, String>() {
             @Override

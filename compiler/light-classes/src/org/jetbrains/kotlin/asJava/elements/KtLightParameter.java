@@ -46,7 +46,7 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
     private final KtLightMethod method;
     private KtLightIdentifier lightIdentifier = null;
 
-    public KtLightParameter(final PsiParameter delegate, int index, KtLightMethod method) {
+    public KtLightParameter(PsiParameter delegate, int index, KtLightMethod method) {
         super(getName(delegate, index), delegate.getType(), method, KotlinLanguage.INSTANCE);
 
         this.delegate = delegate;

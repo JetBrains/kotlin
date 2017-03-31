@@ -299,7 +299,7 @@ public class CallMaker {
     }
 
     @NotNull
-    public static Call makeConstructorCallForEnumEntryWithoutInitializer(@NotNull final KtSuperTypeCallEntry callElement) {
+    public static Call makeConstructorCallForEnumEntryWithoutInitializer(@NotNull KtSuperTypeCallEntry callElement) {
         return new Call() {
             @Nullable
             @Override
@@ -370,7 +370,7 @@ public class CallMaker {
     }
 
     @NotNull
-    public static Call makeCall(@Nullable final Receiver explicitReceiver, @Nullable final ASTNode callOperationNode, @NotNull final KtCallElement callElement) {
+    public static Call makeCall(@Nullable Receiver explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull KtCallElement callElement) {
         return new Call() {
             @Override
             public ASTNode getCallOperationNode() {

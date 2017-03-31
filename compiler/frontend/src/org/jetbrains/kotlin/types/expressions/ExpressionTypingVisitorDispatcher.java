@@ -168,7 +168,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
     }
 
     @NotNull
-    private KotlinTypeInfo getTypeInfo(@NotNull final KtExpression expression, final ExpressionTypingContext context, final KtVisitor<KotlinTypeInfo, ExpressionTypingContext> visitor) {
+    private KotlinTypeInfo getTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context, KtVisitor<KotlinTypeInfo, ExpressionTypingContext> visitor) {
         return typeInfoPerfCounter.time(new Function0<KotlinTypeInfo>() {
             @Override
             public KotlinTypeInfo invoke() {

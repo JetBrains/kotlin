@@ -127,7 +127,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    static List<String> readArgs(@NotNull final String argsFilePath, @NotNull final String tempDir) throws IOException {
+    static List<String> readArgs(@NotNull String argsFilePath, @NotNull String tempDir) throws IOException {
         List<String> lines = FilesKt.readLines(new File(argsFilePath), Charsets.UTF_8);
 
         return CollectionsKt.mapNotNull(lines, new Function1<String, String>() {

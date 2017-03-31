@@ -230,7 +230,7 @@ public class BindingContextUtils {
     }
 
     static void addOwnDataTo(
-            @NotNull final BindingTrace trace, @Nullable final TraceEntryFilter filter, boolean commitDiagnostics,
+            @NotNull BindingTrace trace, @Nullable TraceEntryFilter filter, boolean commitDiagnostics,
             @NotNull MutableSlicedMap map, MutableDiagnosticsWithSuppression diagnostics
     ) {
         map.forEach(new Function3<WritableSlice, Object, Object, Void>() {

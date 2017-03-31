@@ -297,7 +297,7 @@ public class StorageManagerTest extends TestCase {
     }
 
     public void testRecursionToleranceAndPostCompute() throws Exception {
-        final CounterImpl counter = new CounterImpl();
+        CounterImpl counter = new CounterImpl();
         class C {
             NotNullLazyValue<String> rec = m.createLazyValueWithPostCompute(
                     new Function0<String>() {
@@ -330,7 +330,7 @@ public class StorageManagerTest extends TestCase {
     }
 
     public void testPostComputeNoRecursion() throws Exception {
-        final CounterImpl counter = new CounterImpl();
+        CounterImpl counter = new CounterImpl();
         NotNullLazyValue<Collection<String>> v = m.createLazyValueWithPostCompute(
                 new Function0<Collection<String>>() {
                     @Override
@@ -357,7 +357,7 @@ public class StorageManagerTest extends TestCase {
     }
 
     public void testNullablePostComputeNoRecursion() throws Exception {
-        final CounterImpl counter = new CounterImpl();
+        CounterImpl counter = new CounterImpl();
         NullableLazyValue<Collection<String>> v = m.createNullableLazyValueWithPostCompute(
                 new Function0<Collection<String>>() {
                     @Override
@@ -424,7 +424,7 @@ public class StorageManagerTest extends TestCase {
     }
 
     public void testFallThrough() throws Exception {
-        final CounterImpl c = new CounterImpl();
+        CounterImpl c = new CounterImpl();
         class C {
             NotNullLazyValue<Integer> rec = LockBasedStorageManager.NO_LOCKS.createLazyValue(new Function0<Integer>() {
                 @Override
@@ -500,7 +500,7 @@ public class StorageManagerTest extends TestCase {
 
     // Utilities
 
-    private static <K, V> Function0<V> apply(final Function1<K, V> f, final K x) {
+    private static <K, V> Function0<V> apply(Function1<K, V> f, K x) {
         return new Function0<V>() {
             @Override
             public V invoke() {

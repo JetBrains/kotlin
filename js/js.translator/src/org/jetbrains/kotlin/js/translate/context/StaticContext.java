@@ -431,7 +431,7 @@ public final class StaticContext {
     }
 
     @NotNull
-    private JsName getNameForPackage(@NotNull final FqName packageFqName) {
+    private JsName getNameForPackage(@NotNull FqName packageFqName) {
         return ContainerUtil.getOrCreate(packageNames, packageFqName, new Factory<JsName>() {
             @Override
             public JsName create() {

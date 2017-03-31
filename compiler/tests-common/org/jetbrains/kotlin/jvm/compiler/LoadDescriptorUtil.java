@@ -106,7 +106,7 @@ public class LoadDescriptorUtil {
     }
 
     @NotNull
-    private static List<KtFile> createKtFiles(@NotNull List<File> kotlinFiles, @NotNull final KotlinCoreEnvironment environment) {
+    private static List<KtFile> createKtFiles(@NotNull List<File> kotlinFiles, @NotNull KotlinCoreEnvironment environment) {
         return CollectionsKt.map(kotlinFiles, new Function1<File, KtFile>() {
             @Override
             public KtFile invoke(File kotlinFile) {

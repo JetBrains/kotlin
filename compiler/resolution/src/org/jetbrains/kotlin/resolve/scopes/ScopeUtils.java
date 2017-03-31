@@ -30,7 +30,7 @@ public final class ScopeUtils {
 
     public static LexicalScope makeScopeForPropertyHeader(
             @NotNull LexicalScope parent,
-            @NotNull final PropertyDescriptor propertyDescriptor
+            @NotNull PropertyDescriptor propertyDescriptor
     ) {
         return new LexicalScopeImpl(parent, propertyDescriptor, false, null, LexicalScopeKind.PROPERTY_HEADER,
                                     // redeclaration on type parameters should be reported early, see: DescriptorResolver.resolvePropertyDescriptor()

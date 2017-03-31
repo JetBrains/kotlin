@@ -288,10 +288,10 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
     private void doTestKotlinLibraryWithWrongMetadataVersion(
             @NotNull String libraryName,
-            @Nullable final Function2<String, Object, Object> additionalTransformation,
+            @Nullable Function2<String, Object, Object> additionalTransformation,
             @NotNull String... additionalOptions
     ) throws Exception {
-        final int[] version = new JvmMetadataVersion(42, 0, 0).toArray();
+        int[] version = new JvmMetadataVersion(42, 0, 0).toArray();
         File library = transformJar(compileLibrary(libraryName), new Function2<String, byte[], byte[]>() {
             @Override
             public byte[] invoke(String name, byte[] bytes) {
@@ -570,7 +570,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
         compileKotlin("source.kt", tmpdir, tmpdir);
 
-        final Ref<String> debugInfo = new Ref<String>();
+        Ref<String> debugInfo = new Ref<String>();
         File resultFile = new File(tmpdir.getAbsolutePath(), "test/B.class");
         new ClassReader(FilesKt.readBytes(resultFile)).accept(new ClassVisitor(Opcodes.ASM5) {
             @Override
@@ -644,8 +644,8 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     public void testInnerClassPackageConflict2() throws Exception {
-        final File library1 = compileJava("library1");
-        final File library2 = compileJava("library2");
+        File library1 = compileJava("library1");
+        File library2 = compileJava("library2");
 
         // Copy everything from library2 to library1
         FileUtil.visitFiles(library2, new Processor<File>() {

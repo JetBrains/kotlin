@@ -34,7 +34,7 @@ public abstract class AbstractControlFlowTest extends AbstractPseudocodeTest {
             @NotNull StringBuilder out,
             @NotNull BindingContext bindingContext
     ) {
-        final int nextInstructionsColumnWidth = countNextInstructionsColumnWidth(pseudocode.getInstructionsIncludingDeadCode());
+        int nextInstructionsColumnWidth = countNextInstructionsColumnWidth(pseudocode.getInstructionsIncludingDeadCode());
 
         dumpInstructions(pseudocode, out, new Function3<Instruction, Instruction, Instruction, String>() {
             @Override

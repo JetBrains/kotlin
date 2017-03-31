@@ -148,17 +148,17 @@ public class CompileEnvironmentUtil {
 
     @NotNull
     public static List<KtFile> getKtFiles(
-            @NotNull final Project project,
+            @NotNull Project project,
             @NotNull Collection<String> sourceRoots,
             @NotNull CompilerConfiguration configuration,
             @NotNull Function1<String, Unit> reportError
     ) throws IOException {
-        final VirtualFileSystem localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
+        VirtualFileSystem localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
 
-        final Set<VirtualFile> processedFiles = Sets.newHashSet();
-        final List<KtFile> result = Lists.newArrayList();
+        Set<VirtualFile> processedFiles = Sets.newHashSet();
+        List<KtFile> result = Lists.newArrayList();
 
-        final PreprocessedFileCreator virtualFileCreator = new PreprocessedFileCreator(project);
+        PreprocessedFileCreator virtualFileCreator = new PreprocessedFileCreator(project);
 
         for (String sourceRootPath : sourceRoots) {
             if (sourceRootPath == null) {

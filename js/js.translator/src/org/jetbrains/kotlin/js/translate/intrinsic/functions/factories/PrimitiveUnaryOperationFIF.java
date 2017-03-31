@@ -281,7 +281,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
             jsOperator = OperatorTable.getUnaryOperator(jetToken);
         }
 
-        final JsUnaryOperator finalJsOperator = jsOperator;
+        JsUnaryOperator finalJsOperator = jsOperator;
         return new FunctionIntrinsicWithReceiverComputed() {
             @NotNull
             @Override

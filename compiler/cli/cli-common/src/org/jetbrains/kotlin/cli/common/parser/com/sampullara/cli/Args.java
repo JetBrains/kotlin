@@ -480,7 +480,7 @@ public class Args {
      * @param methodName     the name of the one arg method taking a String as parameter that will be used to built a new value
      * @return null if the object could not be created, the value otherwise
      */
-    public static ValueCreator byStaticMethodInvocation(final Class<?> compatibleType, final String methodName) {
+    public static ValueCreator byStaticMethodInvocation(Class<?> compatibleType, String methodName) {
         return new ValueCreator() {
             public Object createValue(Class<?> type, String value) {
                 Object v = null;

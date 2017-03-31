@@ -109,7 +109,7 @@ public class KtPsiUtil {
     @NotNull
     public static Set<KtElement> findRootExpressions(@NotNull Collection<KtElement> unreachableElements) {
         Set<KtElement> rootElements = new HashSet<KtElement>();
-        final Set<KtElement> shadowedElements = new HashSet<KtElement>();
+        Set<KtElement> shadowedElements = new HashSet<KtElement>();
         KtVisitorVoid shadowAllChildren = new KtVisitorVoid() {
             @Override
             public void visitKtElement(@NotNull KtElement element) {

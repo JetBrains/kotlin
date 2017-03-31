@@ -101,7 +101,7 @@ public class ClassBuilderFactories {
     }
     
     @NotNull
-    public static ClassBuilderFactory binaries(final boolean generateSourceRetentionAnnotations) {
+    public static ClassBuilderFactory binaries(boolean generateSourceRetentionAnnotations) {
         return new ClassBuilderFactory() {
             @NotNull
             @Override

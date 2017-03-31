@@ -42,7 +42,7 @@ import static org.jetbrains.kotlin.resolve.BindingContextUtils.variableDescripto
 
 public class PseudocodeUtil {
     @NotNull
-    public static Pseudocode generatePseudocode(@NotNull KtDeclaration declaration, @NotNull final BindingContext bindingContext) {
+    public static Pseudocode generatePseudocode(@NotNull KtDeclaration declaration, @NotNull BindingContext bindingContext) {
         BindingTrace mockTrace = new BindingTrace() {
             @NotNull
             @Override

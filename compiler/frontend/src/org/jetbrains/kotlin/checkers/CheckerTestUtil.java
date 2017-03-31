@@ -153,11 +153,11 @@ public class CheckerTestUtil {
     private static List<ActualDiagnostic> getDebugInfoDiagnostics(
             @NotNull PsiElement root,
             @NotNull BindingContext bindingContext,
-            final boolean markDynamicCalls,
-            @Nullable final List<DeclarationDescriptor> dynamicCallDescriptors,
-            @Nullable final String platform
+            boolean markDynamicCalls,
+            @Nullable List<DeclarationDescriptor> dynamicCallDescriptors,
+            @Nullable String platform
     ) {
-        final List<ActualDiagnostic> debugAnnotations = new ArrayList<ActualDiagnostic>();
+        List<ActualDiagnostic> debugAnnotations = new ArrayList<ActualDiagnostic>();
 
         DebugInfoUtil.markDebugAnnotations(root, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
             @Override
@@ -297,7 +297,7 @@ public class CheckerTestUtil {
         Map<ActualDiagnostic, TextDiagnostic> actualDiagnostics = currentActual.getTextDiagnosticsMap();
         List<TextDiagnostic> expectedDiagnostics = currentExpected.getDiagnostics();
 
-        for (final TextDiagnostic expectedDiagnostic : expectedDiagnostics) {
+        for (TextDiagnostic expectedDiagnostic : expectedDiagnostics) {
             Map.Entry<ActualDiagnostic, TextDiagnostic> actualDiagnosticEntry = CollectionsKt.firstOrNull(
                     actualDiagnostics.entrySet(), new Function1<Map.Entry<ActualDiagnostic, TextDiagnostic>, Boolean>() {
                         @Override

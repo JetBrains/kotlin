@@ -56,9 +56,9 @@ public abstract class TranslatorTestCaseBuilder {
     }
 
     public static void appendTestsInDirectory(String dataPath, boolean recursive,
-                                              final FilenameFilter filter, NamedTestFactory factory, TestSuite suite) {
-        final String extensionKt = ".kt";
-        final FilenameFilter extensionFilter = new FilenameFilter() {
+                                              FilenameFilter filter, NamedTestFactory factory, TestSuite suite) {
+        String extensionKt = ".kt";
+        FilenameFilter extensionFilter = new FilenameFilter() {
             @Override
             public boolean accept(@NotNull File dir, @NotNull String name) {
                 return name.endsWith(extensionKt);

@@ -43,7 +43,7 @@ public class SourceInfoGenTest extends CodegenTestCase {
 
         ClassReader classReader = new ClassReader(file.asByteArray());
 
-        final String [] producer = new String[1];
+        String[] producer = new String[1];
         classReader.accept(new ClassVisitor(Opcodes.ASM5) {
 
             @Override

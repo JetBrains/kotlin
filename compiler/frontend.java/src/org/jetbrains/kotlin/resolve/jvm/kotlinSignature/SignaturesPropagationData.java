@@ -128,8 +128,8 @@ public class SignaturesPropagationData {
 
         boolean shouldBeExtension = checkIfShouldBeExtension();
 
-        for (final ValueParameterDescriptor originalParam : parameters) {
-            final int originalIndex = originalParam.getIndex();
+        for (ValueParameterDescriptor originalParam : parameters) {
+            int originalIndex = originalParam.getIndex();
             List<TypeAndName> typesFromSuperMethods = ContainerUtil.map(superFunctions,
                     new Function<FunctionDescriptor, TypeAndName>() {
                         @Override

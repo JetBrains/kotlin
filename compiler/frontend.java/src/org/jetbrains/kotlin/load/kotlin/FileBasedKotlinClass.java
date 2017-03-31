@@ -89,10 +89,10 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
             @NotNull byte[] fileContents,
             @NotNull Function4<ClassId, Integer, KotlinClassHeader, InnerClassesInfo, T> factory
     ) {
-        final ReadKotlinClassHeaderAnnotationVisitor readHeaderVisitor = new ReadKotlinClassHeaderAnnotationVisitor();
-        final Ref<String> classNameRef = Ref.create();
-        final Ref<Integer> classVersion = Ref.create();
-        final InnerClassesInfo innerClasses = new InnerClassesInfo();
+        ReadKotlinClassHeaderAnnotationVisitor readHeaderVisitor = new ReadKotlinClassHeaderAnnotationVisitor();
+        Ref<String> classNameRef = Ref.create();
+        Ref<Integer> classVersion = Ref.create();
+        InnerClassesInfo innerClasses = new InnerClassesInfo();
         new ClassReader(fileContents).accept(new ClassVisitor(ASM5) {
             @Override
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
@@ -143,7 +143,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     }
 
     @Override
-    public void loadClassAnnotations(@NotNull final AnnotationVisitor annotationVisitor, @Nullable byte[] cachedContents) {
+    public void loadClassAnnotations(@NotNull AnnotationVisitor annotationVisitor, @Nullable byte[] cachedContents) {
         byte[] fileContents = cachedContents != null ? cachedContents : getFileContents();
         new ClassReader(fileContents).accept(new ClassVisitor(ASM5) {
             @Override
@@ -168,7 +168,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
     @NotNull
     private static org.jetbrains.org.objectweb.asm.AnnotationVisitor convertAnnotationVisitor(
-            @NotNull final AnnotationArgumentVisitor v, @NotNull final InnerClassesInfo innerClasses
+            @NotNull AnnotationArgumentVisitor v, @NotNull InnerClassesInfo innerClasses
     ) {
         return new org.jetbrains.org.objectweb.asm.AnnotationVisitor(ASM5) {
             @Override
@@ -178,7 +178,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
             @Override
             public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitArray(String name) {
-                final AnnotationArrayArgumentVisitor arv = v.visitArray(Name.identifier(name));
+                AnnotationArrayArgumentVisitor arv = v.visitArray(Name.identifier(name));
                 return arv == null ? null : new org.jetbrains.org.objectweb.asm.AnnotationVisitor(ASM5) {
                     @Override
                     public void visit(String name, @NotNull Object value) {
@@ -216,12 +216,12 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     }
 
     @Override
-    public void visitMembers(@NotNull final MemberVisitor memberVisitor, @Nullable byte[] cachedContents) {
+    public void visitMembers(@NotNull MemberVisitor memberVisitor, @Nullable byte[] cachedContents) {
         byte[] fileContents = cachedContents != null ? cachedContents : getFileContents();
         new ClassReader(fileContents).accept(new ClassVisitor(ASM5) {
             @Override
             public FieldVisitor visitField(int access, @NotNull String name, @NotNull String desc, String signature, Object value) {
-                final AnnotationVisitor v = memberVisitor.visitField(Name.identifier(name), desc, value);
+                AnnotationVisitor v = memberVisitor.visitField(Name.identifier(name), desc, value);
                 if (v == null) return null;
 
                 return new FieldVisitor(ASM5) {
@@ -239,7 +239,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
             @Override
             public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
-                final MethodAnnotationVisitor v = memberVisitor.visitMethod(Name.identifier(name), desc);
+                MethodAnnotationVisitor v = memberVisitor.visitMethod(Name.identifier(name), desc);
                 if (v == null) return null;
 
                 return new MethodVisitor(ASM5) {

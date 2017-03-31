@@ -691,8 +691,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
     private void generateSyntheticAccessor(@NotNull AccessorForCallableDescriptor<?> accessorForCallableDescriptor) {
         if (accessorForCallableDescriptor instanceof FunctionDescriptor) {
-            final FunctionDescriptor accessor = (FunctionDescriptor) accessorForCallableDescriptor;
-            final FunctionDescriptor original = (FunctionDescriptor) accessorForCallableDescriptor.getCalleeDescriptor();
+            FunctionDescriptor accessor = (FunctionDescriptor) accessorForCallableDescriptor;
+            FunctionDescriptor original = (FunctionDescriptor) accessorForCallableDescriptor.getCalleeDescriptor();
             functionCodegen.generateMethod(
                     Synthetic(null, original), accessor,
                     new FunctionGenerationStrategy.CodegenBased(state) {
@@ -708,8 +708,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             );
         }
         else if (accessorForCallableDescriptor instanceof AccessorForPropertyDescriptor) {
-            final AccessorForPropertyDescriptor accessor = (AccessorForPropertyDescriptor) accessorForCallableDescriptor;
-            final PropertyDescriptor original = accessor.getCalleeDescriptor();
+            AccessorForPropertyDescriptor accessor = (AccessorForPropertyDescriptor) accessorForCallableDescriptor;
+            PropertyDescriptor original = accessor.getCalleeDescriptor();
 
             class PropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
                 private final PropertyAccessorDescriptor callableDescriptor;
@@ -815,10 +815,10 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     }
 
     protected void generateKotlinClassMetadataAnnotation(@NotNull ClassDescriptor descriptor, boolean isScript) {
-        final DescriptorSerializer serializer =
+        DescriptorSerializer serializer =
                 DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), state));
 
-        final ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
+        ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
         int flags = isScript ? JvmAnnotationNames.METADATA_SCRIPT_FLAG : 0;
 

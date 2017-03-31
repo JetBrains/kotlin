@@ -151,7 +151,7 @@ public class CodegenTestsOnAndroidRunner {
 
         for (int i = 0; i < testCases.getLength(); i++) {
             Element item = (Element) testCases.item(i);
-            final NodeList failure = item.getElementsByTagName("failure");
+            NodeList failure = item.getElementsByTagName("failure");
             String name = item.getAttribute("name");
             String clazz = item.getAttribute("classname");
 

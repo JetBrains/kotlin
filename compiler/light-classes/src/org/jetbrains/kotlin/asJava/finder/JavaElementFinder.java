@@ -174,7 +174,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
     @NotNull
     @Override
-    public PsiPackage[] getSubPackages(@NotNull PsiPackage psiPackage, @NotNull final GlobalSearchScope scope) {
+    public PsiPackage[] getSubPackages(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
 
         Collection<FqName> subpackages = lightClassGenerationSupport.getSubPackages(packageFQN, scope);
@@ -218,7 +218,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
     @Override
     @Nullable
-    public Condition<PsiFile> getPackageFilesFilter(@NotNull final PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
+    public Condition<PsiFile> getPackageFilesFilter(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
         return new Condition<PsiFile>() {
             @Override
             public boolean value(PsiFile input) {
@@ -231,7 +231,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
     }
 
     @NotNull
-    public static Comparator<PsiElement> byClasspathComparator(@NotNull final GlobalSearchScope searchScope) {
+    public static Comparator<PsiElement> byClasspathComparator(@NotNull GlobalSearchScope searchScope) {
         return new Comparator<PsiElement>() {
             @Override
             public int compare(@NotNull PsiElement o1, @NotNull PsiElement o2) {

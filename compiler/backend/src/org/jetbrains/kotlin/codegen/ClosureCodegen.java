@@ -236,10 +236,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         assert method != null : "No method for " + frontendFunDescriptor;
         v.getSerializationBindings().put(METHOD_FOR_FUNCTION, freeLambdaDescriptor, method);
 
-        final DescriptorSerializer serializer =
+        DescriptorSerializer serializer =
                 DescriptorSerializer.createForLambda(new JvmSerializerExtension(v.getSerializationBindings(), state));
 
-        final ProtoBuf.Function functionProto = serializer.functionProto(freeLambdaDescriptor).build();
+        ProtoBuf.Function functionProto = serializer.functionProto(freeLambdaDescriptor).build();
 
         WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0, new Function1<AnnotationVisitor, Unit>() {
             @Override
@@ -281,7 +281,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     }
 
     @NotNull
-    public StackValue putInstanceOnStack(@NotNull final ExpressionCodegen codegen, @Nullable final StackValue functionReferenceReceiver) {
+    public StackValue putInstanceOnStack(@NotNull ExpressionCodegen codegen, @Nullable StackValue functionReferenceReceiver) {
         return StackValue.operation(
                 functionReferenceTarget != null ? K_FUNCTION : asmType,
                 new Function1<InstructionAdapter, Unit>() {

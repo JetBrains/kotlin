@@ -173,7 +173,7 @@ public class TypeIntersector {
 
         private static boolean unify(KotlinType withParameters, KotlinType expected) {
             // T -> how T is used
-            final Map<TypeParameterDescriptor, Variance> parameters = new HashMap<TypeParameterDescriptor, Variance>();
+            Map<TypeParameterDescriptor, Variance> parameters = new HashMap<TypeParameterDescriptor, Variance>();
             Function1<TypeParameterUsage, Unit> processor = new Function1<TypeParameterUsage, Unit>() {
                 @Override
                 public Unit invoke(TypeParameterUsage parameterUsage) {

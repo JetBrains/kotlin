@@ -69,10 +69,10 @@ public class DebugInfoUtil {
 
     public static void markDebugAnnotations(
             @NotNull PsiElement root,
-            @NotNull final BindingContext bindingContext,
-            @NotNull final DebugInfoReporter debugInfoReporter
+            @NotNull BindingContext bindingContext,
+            @NotNull DebugInfoReporter debugInfoReporter
     ) {
-        final Map<KtReferenceExpression, DiagnosticFactory<?>> markedWithErrorElements = Maps.newHashMap();
+        Map<KtReferenceExpression, DiagnosticFactory<?>> markedWithErrorElements = Maps.newHashMap();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             DiagnosticFactory<?> factory = diagnostic.getFactory();
             if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {

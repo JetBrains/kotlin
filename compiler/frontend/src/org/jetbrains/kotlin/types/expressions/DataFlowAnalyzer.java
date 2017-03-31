@@ -119,12 +119,12 @@ public class DataFlowAnalyzer {
 
     @NotNull
     public DataFlowInfo extractDataFlowInfoFromCondition(
-            @Nullable final KtExpression condition,
-            final boolean conditionValue,
-            final ExpressionTypingContext context
+            @Nullable KtExpression condition,
+            boolean conditionValue,
+            ExpressionTypingContext context
     ) {
         if (condition == null) return context.dataFlowInfo;
-        final Ref<DataFlowInfo> result = new Ref<DataFlowInfo>(null);
+        Ref<DataFlowInfo> result = new Ref<DataFlowInfo>(null);
         condition.accept(new KtVisitorVoid() {
             @Override
             public void visitIsExpression(@NotNull KtIsExpression expression) {

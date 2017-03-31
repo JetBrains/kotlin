@@ -208,7 +208,7 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     @Override
     protected void runTest() throws Throwable {
-        final Throwable[] throwables = new Throwable[1];
+        Throwable[] throwables = new Throwable[1];
 
         Runnable runnable = new Runnable() {
             @Override

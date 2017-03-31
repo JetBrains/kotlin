@@ -714,10 +714,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public KotlinTypeInfo visitObjectLiteralExpression(
-            @NotNull final KtObjectLiteralExpression expression,
-            final ExpressionTypingContext context
+            @NotNull KtObjectLiteralExpression expression,
+            ExpressionTypingContext context
     ) {
-        final KotlinType[] result = new KotlinType[1];
+        KotlinType[] result = new KotlinType[1];
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace,
                                                                             "trace to resolve object literal expression", expression);
         ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor> handler =
@@ -727,7 +727,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     public void handleRecord(
                             WritableSlice<PsiElement, ClassDescriptor> slice,
                             PsiElement declaration,
-                            final ClassDescriptor descriptor
+                            ClassDescriptor descriptor
                     ) {
                         if (slice == CLASS && declaration == expression.getObjectDeclaration()) {
                             KotlinType defaultType = components.wrappedTypeFactory.createRecursionIntolerantDeferredType(
@@ -1160,8 +1160,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             KtBinaryExpression expression,
             ExpressionTypingContext context,
             KtSimpleNameExpression operationSign,
-            final KtExpression left,
-            final KtExpression right
+            KtExpression left,
+            KtExpression right
     ) {
         if (right == null || left == null) {
             ExpressionTypingUtils.getTypeInfoOrNullType(right, context, facade);
@@ -1445,7 +1445,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return true;
     }
 
-    private void ensureNonemptyIntersectionOfOperandTypes(KtBinaryExpression expression, final ExpressionTypingContext context) {
+    private void ensureNonemptyIntersectionOfOperandTypes(KtBinaryExpression expression, ExpressionTypingContext context) {
         KtExpression left = expression.getLeft();
         if (left == null) return;
 
@@ -1580,8 +1580,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull KtStringTemplateExpression expression,
             ExpressionTypingContext contextWithExpectedType
     ) {
-        final ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE)
-                                                                       .replaceContextDependency(INDEPENDENT);
+        ExpressionTypingContext context = contextWithExpectedType
+                .replaceExpectedType(NO_EXPECTED_TYPE)
+                .replaceContextDependency(INDEPENDENT);
 
         checkLiteralPrefixAndSuffix(expression, context);
 

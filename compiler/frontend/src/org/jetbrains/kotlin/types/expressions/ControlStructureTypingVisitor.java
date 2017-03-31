@@ -269,8 +269,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 .replaceDataFlowInfo(dataFlowInfo);
     }
 
-    private boolean containsJumpOutOfLoop(@NotNull final KtExpression expression, final ExpressionTypingContext context) {
-        final boolean[] result = new boolean[1];
+    private boolean containsJumpOutOfLoop(@NotNull KtExpression expression, ExpressionTypingContext context) {
+        boolean[] result = new boolean[1];
         result[0] = false;
         //todo breaks in inline function literals
         expression.accept(new KtTreeVisitor<List<KtLoopExpression>>() {

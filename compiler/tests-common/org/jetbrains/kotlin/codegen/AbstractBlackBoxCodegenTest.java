@@ -80,7 +80,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
     @NotNull
     protected static List<String> findJavaSourcesInDirectory(@NotNull File directory) {
-        final List<String> javaFilePaths = new ArrayList<String>(1);
+        List<String> javaFilePaths = new ArrayList<String>(1);
 
         FileUtil.processFilesRecursively(directory, new Processor<File>() {
             @Override

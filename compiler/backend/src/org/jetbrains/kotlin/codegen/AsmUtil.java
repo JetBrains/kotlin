@@ -500,7 +500,7 @@ public class AsmUtil {
         v.invokevirtual("java/lang/StringBuilder", "append", "(" + type.getDescriptor() + ")Ljava/lang/StringBuilder;", false);
     }
 
-    public static StackValue genToString(final StackValue receiver, final Type receiverType) {
+    public static StackValue genToString(StackValue receiver, Type receiverType) {
         return StackValue.operation(JAVA_STRING_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
@@ -563,12 +563,12 @@ public class AsmUtil {
 
     @NotNull
     public static StackValue genEqualsForExpressionsOnStack(
-            final @NotNull IElementType opToken,
-            final @NotNull StackValue left,
-            final @NotNull StackValue right
+            @NotNull IElementType opToken,
+            @NotNull StackValue left,
+            @NotNull StackValue right
     ) {
-        final Type leftType = left.type;
-        final Type rightType = right.type;
+        Type leftType = left.type;
+        Type rightType = right.type;
         if (isPrimitive(leftType) && leftType == rightType) {
             return StackValue.cmp(opToken, leftType, left, right);
         }
@@ -686,8 +686,8 @@ public class AsmUtil {
     @NotNull
     public static StackValue genNotNullAssertions(
             @NotNull GenerationState state,
-            @NotNull final StackValue stackValue,
-            @Nullable final RuntimeAssertionInfo runtimeAssertionInfo
+            @NotNull StackValue stackValue,
+            @Nullable RuntimeAssertionInfo runtimeAssertionInfo
     ) {
         if (state.isCallAssertionsDisabled()) return stackValue;
         if (runtimeAssertionInfo == null || !runtimeAssertionInfo.getNeedNotNullAssertion()) return stackValue;

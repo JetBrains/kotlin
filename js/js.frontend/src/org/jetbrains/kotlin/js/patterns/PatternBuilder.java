@@ -121,7 +121,7 @@ public final class PatternBuilder {
     @NotNull
     private static DescriptorPredicate pattern(@NotNull List<NamePredicate> checkers, @Nullable List<NamePredicate> arguments) {
         assert !checkers.isEmpty();
-        final List<NamePredicate> checkersWithPrefixChecker = Lists.newArrayList();
+        List<NamePredicate> checkersWithPrefixChecker = Lists.newArrayList();
         if (!checkers.get(0).test(KOTLIN_NAME)) {
             checkersWithPrefixChecker.add(KOTLIN_NAME_PREDICATE);
         }
@@ -130,7 +130,7 @@ public final class PatternBuilder {
 
         assert checkersWithPrefixChecker.size() > 1;
 
-        final List<NamePredicate> argumentCheckers = arguments != null ? Lists.newArrayList(arguments) : null;
+        List<NamePredicate> argumentCheckers = arguments != null ? Lists.newArrayList(arguments) : null;
 
         return new DescriptorPredicate() {
             @Override

@@ -218,7 +218,7 @@ public class OuterClassGenTest extends CodegenTestCase {
 
     @Nullable
     private static OuterClassInfo readOuterClassInfo(@NotNull ClassReader reader) {
-        final Ref<OuterClassInfo> info = Ref.create();
+        Ref<OuterClassInfo> info = Ref.create();
         reader.accept(new ClassVisitor(Opcodes.ASM5) {
             @Override
             public void visitOuterClass(@NotNull String owner, @Nullable String name, @Nullable String desc) {

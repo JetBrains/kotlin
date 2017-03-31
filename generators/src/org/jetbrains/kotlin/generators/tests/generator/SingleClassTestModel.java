@@ -76,7 +76,7 @@ public class SingleClassTestModel implements TestClassModel {
     @Override
     public Collection<MethodModel> getMethods() {
         if (methods == null) {
-            final List<TestMethodModel> result = Lists.newArrayList();
+            List<TestMethodModel> result = Lists.newArrayList();
 
             result.add(new TestAllFilesPresentMethodModel());
 

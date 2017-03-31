@@ -154,7 +154,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         JvmContentRootsKt.addJavaSourceRoot(configuration, new File("compiler/testData/loadJava/include"));
         JvmContentRootsKt.addJavaSourceRoot(configuration, tmpdir);
 
-        final KotlinCoreEnvironment environment =
+        KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         AnalysisResult result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
@@ -227,7 +227,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     }
 
     private void doTestCompiledJava(@NotNull String javaFileName, Configuration configuration) throws Exception {
-        final File srcDir = new File(tmpdir, "src");
+        File srcDir = new File(tmpdir, "src");
         File compiledDir = new File(tmpdir, "compiled");
         assertTrue(srcDir.mkdir());
         assertTrue(compiledDir.mkdir());

@@ -395,7 +395,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateToArray() {
         if (descriptor.getKind() == ClassKind.INTERFACE) return;
 
-        final KotlinBuiltIns builtIns = DescriptorUtilsKt.getBuiltIns(descriptor);
+        KotlinBuiltIns builtIns = DescriptorUtilsKt.getBuiltIns(descriptor);
         if (!isSubclass(descriptor, builtIns.getCollection())) return;
 
         if (CollectionsKt.any(DescriptorUtilsKt.getAllSuperclassesWithoutAny(descriptor), new Function1<ClassDescriptor, Boolean>() {
@@ -637,7 +637,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         @Override
-        public void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull final ValueParameterDescriptor parameter) {
+        public void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter) {
             PsiElement originalElement = DescriptorToSourceUtils.descriptorToDeclaration(parameter);
             functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(originalElement, function), function, new FunctionGenerationStrategy() {
                 @Override
@@ -665,10 +665,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         @Override
         public void generateCopyFunction(
-                @NotNull final FunctionDescriptor function,
+                @NotNull FunctionDescriptor function,
                 @NotNull List<? extends KtParameter> constructorParameters
         ) {
-            final Type thisDescriptorType = typeMapper.mapType(descriptor);
+            Type thisDescriptorType = typeMapper.mapType(descriptor);
 
             functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(myClass, function), function, new FunctionGenerationStrategy() {
                 @Override
@@ -896,15 +896,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         StackValue.singleton(companionObject, typeMapper).store(instance, codegen.v, true);
     }
 
-    private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
+    private void generatePrimaryConstructor(DelegationFieldsInfo delegationFieldsInfo) {
         if (isInterface(descriptor) || isAnnotationClass(descriptor)) return;
 
-        final ClassConstructorDescriptor constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor();
+        ClassConstructorDescriptor constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor();
         if (constructorDescriptor == null) return;
 
         ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
 
-        final KtPrimaryConstructor primaryConstructor = myClass.getPrimaryConstructor();
+        KtPrimaryConstructor primaryConstructor = myClass.getPrimaryConstructor();
         JvmDeclarationOrigin origin = JvmDeclarationOriginKt
                 .OtherOrigin(primaryConstructor != null ? primaryConstructor : myClass.getPsiOrParent(), constructorDescriptor);
         functionCodegen.generateMethod(origin, constructorDescriptor, constructorContext,
@@ -922,7 +922,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         new DefaultParameterValueSubstitutor(state).generatePrimaryConstructorOverloadsIfNeeded(constructorDescriptor, v, this, kind, myClass);
     }
 
-    private void generateSecondaryConstructor(@NotNull final ClassConstructorDescriptor constructorDescriptor) {
+    private void generateSecondaryConstructor(@NotNull ClassConstructorDescriptor constructorDescriptor) {
         if (!canHaveDeclaredConstructors(descriptor)) return;
 
         ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
@@ -994,7 +994,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         if (JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
-            final ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
+            ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
             generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override
                 public ExpressionCodegen invoke() {
@@ -1063,7 +1063,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private void generateInitializers(@NotNull final ExpressionCodegen codegen) {
+    private void generateInitializers(@NotNull ExpressionCodegen codegen) {
         generateInitializers(new Function0<ExpressionCodegen>() {
             @Override
             public ExpressionCodegen invoke() {
@@ -1306,7 +1306,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         CodegenUtilKt.reportTarget6InheritanceErrorIfNeeded(descriptor, myClass.getPsiOrParent(), restrictedInheritance, state);
     }
 
-    private void generateDelegationToDefaultImpl(@NotNull final FunctionDescriptor traitFun, @NotNull final FunctionDescriptor inheritedFun) {
+    private void generateDelegationToDefaultImpl(@NotNull FunctionDescriptor traitFun, @NotNull FunctionDescriptor inheritedFun) {
         functionCodegen.generateMethod(
                 JvmDeclarationOriginKt.DelegationToDefaultImpls(descriptorToDeclaration(traitFun), traitFun),
                 inheritedFun,

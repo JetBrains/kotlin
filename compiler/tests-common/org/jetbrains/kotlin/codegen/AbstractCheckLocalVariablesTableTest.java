@@ -73,7 +73,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
         String classAndMethod = parseClassAndMethodSignature();
         String[] split = classAndMethod.split("\\.");
         assert split.length == 2 : "Exactly one dot is expected: " + classAndMethod;
-        final String classFileRegex = StringUtil.escapeToRegexp(split[0] + ".class").replace("\\*", ".+");
+        String classFileRegex = StringUtil.escapeToRegexp(split[0] + ".class").replace("\\*", ".+");
         String methodName = split[1];
 
         OutputFile outputFile = ContainerUtil.find(outputFiles.asList(), new Condition<OutputFile>() {
@@ -144,7 +144,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
     }
 
     @NotNull
-    private static List<LocalVariable> readLocalVariable(ClassReader cr, final String methodName) throws Exception {
+    private static List<LocalVariable> readLocalVariable(ClassReader cr, String methodName) throws Exception {
         class Visitor extends ClassVisitor {
             List<LocalVariable> readVariables = new ArrayList<LocalVariable>();
 

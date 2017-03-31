@@ -126,7 +126,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
         return needToRepeat;
     }
 
-    private static boolean isUnsafeToRemoveBoxingForConnectedValues(List<BasicValue> usedValues, final Type unboxedType) {
+    private static boolean isUnsafeToRemoveBoxingForConnectedValues(List<BasicValue> usedValues, Type unboxedType) {
         return CollectionsKt.any(usedValues, new Function1<BasicValue, Boolean>() {
             @Override
             public Boolean invoke(BasicValue input) {

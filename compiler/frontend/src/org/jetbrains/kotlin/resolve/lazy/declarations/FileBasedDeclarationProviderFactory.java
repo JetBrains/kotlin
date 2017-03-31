@@ -42,7 +42,7 @@ public class FileBasedDeclarationProviderFactory extends AbstractDeclarationProv
     private final StorageManager storageManager;
     private final NotNullLazyValue<Index> index;
 
-    public FileBasedDeclarationProviderFactory(@NotNull StorageManager storageManager, @NotNull final Collection<KtFile> files) {
+    public FileBasedDeclarationProviderFactory(@NotNull StorageManager storageManager, @NotNull Collection<KtFile> files) {
         super(storageManager);
         this.storageManager = storageManager;
         this.index = storageManager.createLazyValue(new Function0<Index>() {

@@ -91,14 +91,14 @@ public class InlineCodegenUtil {
     @Nullable
     public static SMAPAndMethodNode getMethodNode(
             byte[] classData,
-            final String methodName,
-            final String methodDescriptor,
+            String methodName,
+            String methodDescriptor,
             ClassId classId
     ) {
         ClassReader cr = new ClassReader(classData);
-        final MethodNode[] node = new MethodNode[1];
-        final String[] debugInfo = new String[2];
-        final int[] lines = new int[2];
+        MethodNode[] node = new MethodNode[1];
+        String[] debugInfo = new String[2];
+        int[] lines = new int[2];
         lines[0] = Integer.MAX_VALUE;
         lines[1] = Integer.MIN_VALUE;
         //noinspection PointlessBitwiseExpression

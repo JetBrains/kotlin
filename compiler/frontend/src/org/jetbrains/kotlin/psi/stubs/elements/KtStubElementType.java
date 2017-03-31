@@ -47,7 +47,7 @@ public abstract class KtStubElementType<StubT extends StubElement, PsiT extends 
     @NotNull
     private final ArrayFactory<PsiT> arrayFactory;
 
-    public KtStubElementType(@NotNull @NonNls String debugName, @NotNull final Class<PsiT> psiClass, @NotNull Class<?> stubClass) {
+    public KtStubElementType(@NotNull @NonNls String debugName, @NotNull Class<PsiT> psiClass, @NotNull Class<?> stubClass) {
         super(debugName, KotlinLanguage.INSTANCE);
         try {
             byNodeConstructor = psiClass.getConstructor(ASTNode.class);

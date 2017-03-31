@@ -67,7 +67,7 @@ public class CommonSupertypes {
         return max;
     }
 
-    private static int depth(@NotNull final KotlinType type) {
+    private static int depth(@NotNull KotlinType type) {
         return 1 + maxDepth(CollectionsKt.map(type.getArguments(), new Function1<TypeProjection, KotlinType>() {
             @Override
             public KotlinType invoke(TypeProjection projection) {
@@ -331,8 +331,8 @@ public class CommonSupertypes {
     @NotNull
     public static List<TypeConstructor> topologicallySortSuperclassesAndRecordAllInstances(
             @NotNull SimpleType type,
-            @NotNull final Map<TypeConstructor, Set<SimpleType>> constructorToAllInstances,
-            @NotNull final Set<TypeConstructor> visited
+            @NotNull Map<TypeConstructor, Set<SimpleType>> constructorToAllInstances,
+            @NotNull Set<TypeConstructor> visited
     ) {
         return DFS.dfs(
                 Collections.singletonList(type),

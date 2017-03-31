@@ -200,7 +200,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
                 iv.putfield(classType.getInternalName(), context.getScriptFieldName(earlierScript), earlierClassType.getDescriptor());
             }
 
-            final ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this);
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this);
 
             generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override

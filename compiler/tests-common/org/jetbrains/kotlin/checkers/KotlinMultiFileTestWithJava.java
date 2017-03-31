@@ -106,7 +106,7 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinTestWithEn
 
         String expectedText = KotlinTestUtils.doLoadFile(file);
 
-        final Map<String, ModuleAndDependencies> modules = new HashMap<String, ModuleAndDependencies>();
+        Map<String, ModuleAndDependencies> modules = new HashMap<String, ModuleAndDependencies>();
 
         List<F> testFiles =
                 KotlinTestUtils.createTestFiles(file.getName(), expectedText, new KotlinTestUtils.TestFileFactory<M, F>() {

@@ -464,7 +464,7 @@ public class KotlinTypeMapper {
     @NotNull
     public Type mapType(
             @NotNull KotlinType kotlinType,
-            @Nullable final JvmSignatureWriter signatureVisitor,
+            @Nullable JvmSignatureWriter signatureVisitor,
             @NotNull TypeMappingMode mode
     ) {
         return TypeSignatureMappingKt.mapType(

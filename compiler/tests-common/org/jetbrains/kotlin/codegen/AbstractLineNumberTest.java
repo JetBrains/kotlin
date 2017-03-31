@@ -167,8 +167,8 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
 
     @NotNull
     private static List<String> readTestFunLineNumbers(@NotNull ClassReader cr) {
-        final List<Label> labels = Lists.newArrayList();
-        final Map<Label, String> labels2LineNumbers = Maps.newHashMap();
+        List<Label> labels = Lists.newArrayList();
+        Map<Label, String> labels2LineNumbers = Maps.newHashMap();
 
         ClassVisitor visitor = new ClassVisitor(Opcodes.ASM5) {
             @Override
@@ -212,8 +212,8 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
 
     @NotNull
     private static List<String> readAllLineNumbers(@NotNull ClassReader reader) {
-        final List<String> result = new ArrayList<String>();
-        final Set<String> visitedLabels = new HashSet<String>();
+        List<String> result = new ArrayList<String>();
+        Set<String> visitedLabels = new HashSet<String>();
 
         reader.accept(new ClassVisitor(Opcodes.ASM5) {
             @Override

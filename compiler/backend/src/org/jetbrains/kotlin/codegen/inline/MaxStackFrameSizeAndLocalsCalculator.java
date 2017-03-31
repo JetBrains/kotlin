@@ -429,7 +429,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     // Utility methods
     // ------------------------------------------------------------------------
 
-    private LabelWrapper getLabelWrapper(final Label label) {
+    private LabelWrapper getLabelWrapper(Label label) {
         return ContainerUtil.getOrCreate(labelWrappersMap, label, new Factory<LabelWrapper>() {
             @Override
             public LabelWrapper create() {

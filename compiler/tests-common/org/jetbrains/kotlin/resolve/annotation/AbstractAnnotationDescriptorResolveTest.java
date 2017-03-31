@@ -365,7 +365,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
         return KotlinTestUtils.doLoadFile(file).replaceAll("ANNOTATION", annotationText);
     }
 
-    private static String renderAnnotations(Annotations annotations, @Nullable final AnnotationUseSiteTarget defaultTarget) {
+    private static String renderAnnotations(Annotations annotations, @Nullable AnnotationUseSiteTarget defaultTarget) {
         return StringUtil.join(annotations.getAllAnnotations(), new Function<AnnotationWithTarget, String>() {
             @Override
             public String fun(AnnotationWithTarget annotationWithTarget) {

@@ -58,7 +58,7 @@ public abstract class MainCallParameters {
     }
 
     @NotNull
-    public static MainCallParameters mainWithArguments(@NotNull final List<String> parameters) {
+    public static MainCallParameters mainWithArguments(@NotNull List<String> parameters) {
         return new MainCallParameters() {
 
             @NotNull

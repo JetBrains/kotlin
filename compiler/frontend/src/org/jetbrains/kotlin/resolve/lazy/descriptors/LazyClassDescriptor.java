@@ -110,10 +110,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final NotNullLazyValue<Collection<ClassDescriptor>> sealedSubclasses;
 
     public LazyClassDescriptor(
-            @NotNull final LazyClassContext c,
+            @NotNull LazyClassContext c,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
-            @NotNull final KtClassLikeInfo classLikeInfo,
+            @NotNull KtClassLikeInfo classLikeInfo,
             boolean isExternal
     ) {
         super(c.getStorageManager(), containingDeclaration, name,
@@ -140,7 +140,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.isCompanionObject = classLikeInfo instanceof KtObjectInfo && ((KtObjectInfo) classLikeInfo).isCompanionObject();
 
-        final KtModifierList modifierList = classLikeInfo.getModifierList();
+        KtModifierList modifierList = classLikeInfo.getModifierList();
         if (kind.isSingleton()) {
             this.modality = storageManager.createLazyValue(new Function0<Modality>() {
                 @Override
@@ -150,7 +150,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             });
         }
         else {
-            final Modality defaultModality = kind == ClassKind.INTERFACE ? Modality.ABSTRACT : Modality.FINAL;
+            Modality defaultModality = kind == ClassKind.INTERFACE ? Modality.ABSTRACT : Modality.FINAL;
             this.modality = storageManager.createLazyValue(new Function0<Modality>() {
                 @Override
                 public Modality invoke() {
@@ -431,7 +431,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @NotNull
     @ReadOnly
     public List<ClassDescriptor> getDescriptorsForExtraCompanionObjects() {
-        final KtObjectDeclaration allowedCompanionObject = getCompanionObjectIfAllowed();
+        KtObjectDeclaration allowedCompanionObject = getCompanionObjectIfAllowed();
 
         return CollectionsKt.map(
                 CollectionsKt.filter(

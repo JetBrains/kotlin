@@ -308,9 +308,9 @@ public abstract class AnnotationCodegen {
     }
 
     private void genCompileTimeValue(
-            @Nullable final String name,
+            @Nullable String name,
             @NotNull ConstantValue<?> value,
-            @NotNull final AnnotationVisitor annotationVisitor
+            @NotNull AnnotationVisitor annotationVisitor
     ) {
         AnnotationArgumentVisitor argumentVisitor = new AnnotationArgumentVisitor<Void, Void>() {
             @Override
@@ -485,7 +485,7 @@ public abstract class AnnotationCodegen {
     abstract AnnotationVisitor visitAnnotation(String descr, boolean visible);
 
     public static AnnotationCodegen forClass(
-            final @NotNull ClassVisitor cv,
+            @NotNull ClassVisitor cv,
             @NotNull InnerClassConsumer innerClassConsumer,
             @NotNull KotlinTypeMapper mapper
     ) {
@@ -499,7 +499,7 @@ public abstract class AnnotationCodegen {
     }
 
     public static AnnotationCodegen forMethod(
-            final @NotNull MethodVisitor mv,
+            @NotNull MethodVisitor mv,
             @NotNull InnerClassConsumer innerClassConsumer,
             @NotNull KotlinTypeMapper mapper
     ) {
@@ -513,7 +513,7 @@ public abstract class AnnotationCodegen {
     }
 
     public static AnnotationCodegen forField(
-            final @NotNull FieldVisitor fv,
+            @NotNull FieldVisitor fv,
             @NotNull InnerClassConsumer innerClassConsumer,
             @NotNull KotlinTypeMapper mapper
     ) {
@@ -527,8 +527,8 @@ public abstract class AnnotationCodegen {
     }
 
     public static AnnotationCodegen forParameter(
-            final int parameter,
-            final @NotNull MethodVisitor mv,
+            int parameter,
+            @NotNull MethodVisitor mv,
             @NotNull InnerClassConsumer innerClassConsumer,
             @NotNull KotlinTypeMapper mapper
     ) {
@@ -542,7 +542,7 @@ public abstract class AnnotationCodegen {
     }
 
     public static AnnotationCodegen forAnnotationDefaultValue(
-            final @NotNull MethodVisitor mv,
+            @NotNull MethodVisitor mv,
             @NotNull InnerClassConsumer innerClassConsumer,
             @NotNull KotlinTypeMapper mapper
     ) {

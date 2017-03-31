@@ -537,7 +537,7 @@ public class PropertyCodegen {
             @NotNull ExpressionCodegen codegen,
             @NotNull KotlinTypeMapper typeMapper,
             @NotNull ResolvedCall<FunctionDescriptor> resolvedCall,
-            final int indexInPropertyMetadataArray,
+            int indexInPropertyMetadataArray,
             int propertyMetadataArgumentIndex
     ) {
         StackValue.Property receiver = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.LOCAL_0);
@@ -551,14 +551,14 @@ public class PropertyCodegen {
             @NotNull ExpressionCodegen codegen,
             @NotNull KotlinTypeMapper typeMapper,
             @NotNull ResolvedCall<FunctionDescriptor> resolvedCall,
-            final int indexInPropertyMetadataArray,
+            int indexInPropertyMetadataArray,
             int propertyMetadataArgumentIndex,
             @Nullable StackValue receiver,
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
-        final Type owner = JvmAbi.isPropertyWithBackingFieldInOuterClass(propertyDescriptor) ?
-                           codegen.getState().getTypeMapper().mapOwner(propertyDescriptor)  :
-                           getDelegatedPropertyMetadataOwner(codegen, typeMapper);
+        Type owner = JvmAbi.isPropertyWithBackingFieldInOuterClass(propertyDescriptor) ?
+                     codegen.getState().getTypeMapper().mapOwner(propertyDescriptor) :
+                     getDelegatedPropertyMetadataOwner(codegen, typeMapper);
 
         codegen.tempVariables.put(
                 resolvedCall.getCall().getValueArguments().get(propertyMetadataArgumentIndex).asElement(),

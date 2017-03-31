@@ -194,7 +194,7 @@ public class DirectiveTestUtils {
     private static final DirectiveHandler NOT_REFERENCED = new DirectiveHandler("CHECK_NOT_REFERENCED") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            final String reference = arguments.getPositionalArgument(0);
+            String reference = arguments.getPositionalArgument(0);
 
             JsVisitor visitor = new RecursiveJsVisitor() {
                 @Override

@@ -191,7 +191,7 @@ public class ControlStructureTypingUtils {
 
     private static MutableDataFlowInfoForArguments createIndependentDataFlowInfoForArgumentsForCall(
             @NotNull DataFlowInfo initialDataFlowInfo,
-            final Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap
+            Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap
     ) {
         return new MutableDataFlowInfoForArguments(initialDataFlowInfo) {
 
@@ -235,11 +235,11 @@ public class ControlStructureTypingUtils {
     }
 
     /*package*/ static Call createCallForSpecialConstruction(
-            @NotNull final KtExpression expression,
-            @NotNull final KtExpression calleeExpression,
+            @NotNull KtExpression expression,
+            @NotNull KtExpression calleeExpression,
             @NotNull List<? extends KtExpression> arguments
     ) {
-        final List<ValueArgument> valueArguments = Lists.newArrayList();
+        List<ValueArgument> valueArguments = Lists.newArrayList();
         for (KtExpression argument : arguments) {
             valueArguments.add(CallMaker.makeValueArgument(argument));
         }
@@ -314,9 +314,9 @@ public class ControlStructureTypingUtils {
 
     @NotNull
     private TracingStrategy createTracingForSpecialConstruction(
-            final @NotNull Call call,
+            @NotNull Call call,
             @NotNull String constructionName,
-            final @NotNull ExpressionTypingContext context
+            @NotNull ExpressionTypingContext context
     ) {
         class CheckTypeContext {
             public BindingTrace trace;
@@ -333,8 +333,7 @@ public class ControlStructureTypingUtils {
             }
         }
 
-        final KtVisitor<Boolean, CheckTypeContext> checkTypeVisitor = new KtVisitor<Boolean, CheckTypeContext>() {
-
+        KtVisitor<Boolean, CheckTypeContext> checkTypeVisitor = new KtVisitor<Boolean, CheckTypeContext>() {
             private boolean checkExpressionType(@NotNull KtExpression expression, CheckTypeContext c) {
                 KotlinTypeInfo typeInfo = BindingContextUtils.getRecordedTypeInfo(expression, c.trace.getBindingContext());
                 if (typeInfo == null) return false;

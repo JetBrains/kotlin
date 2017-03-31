@@ -94,7 +94,7 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     private void writeModuleMappings() {
-        final JvmPackageTable.PackageTable.Builder builder = JvmPackageTable.PackageTable.newBuilder();
+        JvmPackageTable.PackageTable.Builder builder = JvmPackageTable.PackageTable.newBuilder();
         String outputFilePath = getMappingFileName(state.getModuleName());
 
         for (PackageParts part : ClassFileUtilsKt.addCompiledPartsAndSort(partsGroupedByPackage.values(), state)) {
@@ -182,7 +182,7 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     private PackagePartRegistry buildNewPackagePartRegistry(@NotNull FqName packageFqName) {
-        final String packageFqNameAsString = packageFqName.asString();
+        String packageFqNameAsString = packageFqName.asString();
         return new PackagePartRegistry() {
             @Override
             public void addPart(@NotNull String partShortName, @Nullable String facadeShortName) {

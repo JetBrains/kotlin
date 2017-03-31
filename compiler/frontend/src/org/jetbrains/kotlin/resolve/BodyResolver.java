@@ -140,10 +140,10 @@ public class BodyResolver {
     }
 
     public void resolveSecondaryConstructorBody(
-            @NotNull final DataFlowInfo outerDataFlowInfo,
-            @NotNull final BindingTrace trace,
-            @NotNull final KtSecondaryConstructor constructor,
-            @NotNull final ClassConstructorDescriptor descriptor,
+            @NotNull DataFlowInfo outerDataFlowInfo,
+            @NotNull BindingTrace trace,
+            @NotNull KtSecondaryConstructor constructor,
+            @NotNull ClassConstructorDescriptor descriptor,
             @NotNull LexicalScope declaringScope
     ) {
         ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
@@ -266,21 +266,21 @@ public class BodyResolver {
     }
 
     public void resolveSuperTypeEntryList(
-            @NotNull final DataFlowInfo outerDataFlowInfo,
+            @NotNull DataFlowInfo outerDataFlowInfo,
             @NotNull KtClassOrObject ktClass,
-            @NotNull final ClassDescriptor descriptor,
-            @Nullable final ConstructorDescriptor primaryConstructor,
+            @NotNull ClassDescriptor descriptor,
+            @Nullable ConstructorDescriptor primaryConstructor,
             @NotNull LexicalScope scopeForConstructorResolution,
-            @NotNull final LexicalScope scopeForMemberResolution
+            @NotNull LexicalScope scopeForMemberResolution
     ) {
-        final LexicalScope scopeForConstructor =
+        LexicalScope scopeForConstructor =
                 primaryConstructor == null
                 ? null
                 : FunctionDescriptorUtil.getFunctionInnerScope(scopeForConstructorResolution, primaryConstructor, trace, overloadChecker);
-        final ExpressionTypingServices typeInferrer = expressionTypingServices; // TODO : flow
+        ExpressionTypingServices typeInferrer = expressionTypingServices; // TODO : flow
 
-        final Map<KtTypeReference, KotlinType> supertypes = Maps.newLinkedHashMap();
-        final ResolvedCall<?>[] primaryConstructorDelegationCall = new ResolvedCall[1];
+        Map<KtTypeReference, KotlinType> supertypes = Maps.newLinkedHashMap();
+        ResolvedCall<?>[] primaryConstructorDelegationCall = new ResolvedCall[1];
         KtVisitorVoid visitor = new KtVisitorVoid() {
             private void recordSupertype(KtTypeReference typeReference, KotlinType supertype) {
                 if (supertype == null) return;
@@ -633,7 +633,7 @@ public class BodyResolver {
 
     private static LexicalScope getPrimaryConstructorParametersScope(
             LexicalScope originalScope,
-            final ConstructorDescriptor unsubstitutedPrimaryConstructor
+            ConstructorDescriptor unsubstitutedPrimaryConstructor
     ) {
         return new LexicalScopeImpl(originalScope, unsubstitutedPrimaryConstructor, false, null,
                                     LexicalScopeKind.DEFAULT_VALUE, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
@@ -736,7 +736,7 @@ public class BodyResolver {
         }
     }
 
-    private ObservableBindingTrace createFieldTrackingTrace(final PropertyDescriptor propertyDescriptor) {
+    private ObservableBindingTrace createFieldTrackingTrace(PropertyDescriptor propertyDescriptor) {
         return new ObservableBindingTrace(trace).addHandler(
                 BindingContext.REFERENCE_TARGET,
                 new ObservableBindingTrace.RecordHandler<KtReferenceExpression, DeclarationDescriptor>() {
@@ -847,7 +847,7 @@ public class BodyResolver {
         if (functionDescriptor instanceof PropertyAccessorDescriptor && functionDescriptor.getExtensionReceiverParameter() == null) {
             PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) functionDescriptor;
             KtProperty property = (KtProperty) function.getParent();
-            final SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
+            SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
             innerScope = new LexicalScopeImpl(innerScope, functionDescriptor, true, null,
                                               LexicalScopeKind.PROPERTY_ACCESSOR_BODY,
                                               LocalRedeclarationChecker.DO_NOTHING.INSTANCE, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
@@ -913,7 +913,7 @@ public class BodyResolver {
             return;
         }
         // +1 is a work around against new Queue(0).addLast(...) bug // stepan.koltsov@ 2011-11-21
-        final Queue<DeferredType> queue = new Queue<DeferredType>(deferredTypes.size() + 1);
+        Queue<DeferredType> queue = new Queue<DeferredType>(deferredTypes.size() + 1);
         trace.addHandler(DEFERRED_TYPE, new ObservableBindingTrace.RecordHandler<Box<DeferredType>, Boolean>() {
             @Override
             public void handleRecord(

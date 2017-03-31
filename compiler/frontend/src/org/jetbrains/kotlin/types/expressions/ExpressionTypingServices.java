@@ -99,12 +99,12 @@ public class ExpressionTypingServices {
     @NotNull
     public KotlinTypeInfo getTypeInfo(
             @NotNull LexicalScope scope,
-            @NotNull final KtExpression expression,
+            @NotNull KtExpression expression,
             @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace,
             boolean isStatement,
-            @NotNull final KtExpression contextExpression,
+            @NotNull KtExpression contextExpression,
             @NotNull ContextDependency contextDependency
     ) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(

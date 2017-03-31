@@ -86,7 +86,7 @@ public class RunUtils {
         return run(settings);
     }
 
-    public static void executeOnSeparateThread(@NotNull final RunSettings settings) {
+    public static void executeOnSeparateThread(@NotNull RunSettings settings) {
         assert !settings.waitForEnd : "Use execute() instead";
         Thread t = new Thread(new Runnable() {
             @Override
@@ -98,10 +98,10 @@ public class RunUtils {
         t.start();
     }
 
-    private static RunResult run(final RunSettings settings) {
+    private static RunResult run(RunSettings settings) {
         System.out.println("RUN COMMAND: " + settings);
-        final StringBuilder stdOut = new StringBuilder();
-        final StringBuilder stdErr = new StringBuilder();
+        StringBuilder stdOut = new StringBuilder();
+        StringBuilder stdErr = new StringBuilder();
 
         OSProcessHandler handler;
         try {

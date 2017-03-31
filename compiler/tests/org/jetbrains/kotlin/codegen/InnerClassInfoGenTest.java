@@ -119,7 +119,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
 
 
 
-    private void checkAccess(@NotNull String outerName, @NotNull final String innerName, int accessFlags) {
+    private void checkAccess(@NotNull String outerName, @NotNull String innerName, int accessFlags) {
         String name = outerName + "$" + innerName;
         InnerClassAttribute attribute = CollectionsKt.single(extractInnerClasses(name),
              new Function1<InnerClassAttribute, Boolean>() {
@@ -145,7 +145,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         assertNotNull(outputFile);
         byte[] bytes = outputFile.asByteArray();
         ClassReader reader = new ClassReader(bytes);
-        final List<InnerClassAttribute> result = new ArrayList<InnerClassAttribute>();
+        List<InnerClassAttribute> result = new ArrayList<InnerClassAttribute>();
 
         reader.accept(new ClassVisitor(ASM5) {
             @Override

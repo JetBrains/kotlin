@@ -64,7 +64,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private static KotlinParsing createForByClause(SemanticWhitespaceAwarePsiBuilder builder) {
-        final SemanticWhitespaceAwarePsiBuilderForByClause builderForByClause = new SemanticWhitespaceAwarePsiBuilderForByClause(builder);
+        SemanticWhitespaceAwarePsiBuilderForByClause builderForByClause = new SemanticWhitespaceAwarePsiBuilderForByClause(builder);
         KotlinParsing kotlinParsing = new KotlinParsing(builderForByClause);
         kotlinParsing.myExpressionParsing = new KotlinExpressionParsing(builderForByClause, kotlinParsing) {
             @Override

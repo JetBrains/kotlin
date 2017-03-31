@@ -88,7 +88,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         ModuleDescriptor module = analysisResult.getModuleDescriptor();
 
         LexicalScope topLevelScope = analysisResult.getBindingContext().get(BindingContext.LEXICAL_SCOPE, ktFile);
-        final ClassifierDescriptor contextClass =
+        ClassifierDescriptor contextClass =
                 ScopeUtilsKt.findClassifier(topLevelScope, Name.identifier("___Context"), NoLookupLocation.FROM_TEST);
         assert contextClass instanceof ClassDescriptor;
         LocalRedeclarationChecker redeclarationChecker =

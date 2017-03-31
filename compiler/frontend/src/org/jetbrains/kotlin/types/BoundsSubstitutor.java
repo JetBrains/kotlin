@@ -75,7 +75,7 @@ public class BoundsSubstitutor {
     }
 
     @NotNull
-    private static List<TypeParameterDescriptor> topologicallySortTypeParameters(@NotNull final List<TypeParameterDescriptor> typeParameters) {
+    private static List<TypeParameterDescriptor> topologicallySortTypeParameters(@NotNull List<TypeParameterDescriptor> typeParameters) {
         // In the end, we want every parameter to have no references to those after it in the list
         // This gives us the reversed order: the one that refers to everybody else comes first
         List<TypeParameterDescriptor> topOrder = DFS.topologicalOrder(
@@ -98,7 +98,7 @@ public class BoundsSubstitutor {
     @NotNull
     private static List<TypeParameterDescriptor> getTypeParametersFromUpperBounds(
             @NotNull TypeParameterDescriptor current,
-            @NotNull final List<TypeParameterDescriptor> typeParameters
+            @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
         return DFS.dfs(
                 current.getUpperBounds(),
