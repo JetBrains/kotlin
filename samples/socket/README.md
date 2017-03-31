@@ -4,6 +4,10 @@ Compile the echo server (in EAP only supported on Mac host):
 
     ./build.sh
 
+You also may use Gradle to build the server:
+
+    ../gradlew build
+
 Run the server:
 
     ./EchoServer.kexe 3000 &

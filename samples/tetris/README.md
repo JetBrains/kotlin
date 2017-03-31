@@ -11,13 +11,26 @@ Install SDL2 development files (see https://www.libsdl.org/download-2.0.php). Fo
 copy `SDL2.framework` to `$HOME/Library/Frameworks`. For Debian-like Linux -
 use `apt-get install libsdl2-dev`.
 
-To build Tetris application for your host platform use
-	./build.sh
-note that SDL2 must be installed on the host.
+To build Tetris application for your host platform use 
+    
+    ./build.sh
+ 
+You also may use gradle to build this sample: `../gradlew buildMacbook` or `../gradlew buildLinux`.
+Note that SDL2 must be installed on the host.
+
 For cross-compilation to iOS (on Mac host) use
+
 	TARGET=iphone ./build.sh
+or
+    
+    ../gradlew buildIphone
+    
 For cross-compilation to Raspberry Pi (on Linux host) use
+
 	TARGET=raspberrypi ./build.sh
+or
+
+    ../gradlew buildRaspberry
 
 During build process compilation script creates interoperability bindings to SDL2, using SDL C headers,
 and then compiles an application with the produced bindings.

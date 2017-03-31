@@ -4,6 +4,7 @@
 libgit2 is required for this to work (`apt-get install libgit2-dev`).
 
 To build use `./build.sh` script without arguments (or specify `TARGET` variable if cross-compiling).
+You also may use Gradle to build this sample: `../gradlew build`.
 
 To run use
 

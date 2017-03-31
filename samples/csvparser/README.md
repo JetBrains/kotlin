@@ -5,6 +5,7 @@ A sample data [European Mammals Red List for 2009] (https://data.europa.eu/euodp
 from EU is being used.
 
 To build use `./build.sh` script without arguments (or specify `TARGET` variable if cross-compiling).
+You also may use Gradle to build this sample: `../gradlew build`.
 
 To run use
 

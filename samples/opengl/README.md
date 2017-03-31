@@ -4,6 +4,7 @@
 MacOS shall work as is.
 
 To build use `./build.sh` script without arguments (or specify `TARGET` variable if cross-compiling).
+You also may use Gradle to build this sample: `../gradlew build`.
 
 To run use
 
