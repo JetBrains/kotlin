@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen;
 
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -127,14 +126,7 @@ public class CodegenTestUtil {
             ));
             options.addAll(additionalOptions);
 
-            List<File> fileList = CollectionsKt.map(fileNames, new Function1<String, File>() {
-                @Override
-                public File invoke(String input) {
-                    return new File(input);
-                }
-            });
-
-            KotlinTestUtils.compileJavaFiles(fileList, options);
+            KotlinTestUtils.compileJavaFiles(CollectionsKt.map(fileNames, File::new), options);
 
             return javaClassesTempDirectory;
         }

@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.js.patterns;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.name.Name;
@@ -34,23 +33,15 @@ public final class NamePredicate implements Predicate<Name> {
 
     @NotNull
     public static final NamePredicate PRIMITIVE_NUMBERS = new NamePredicate(
-            ContainerUtil.map(PrimitiveType.NUMBER_TYPES,
-                              new Function<PrimitiveType, String>() {
-                                  @Override
-                                  public String fun(PrimitiveType type) {
-                                      return type.getTypeName().asString();
-                                  }
-                              }));
+            CollectionsKt.map(PrimitiveType.NUMBER_TYPES, (PrimitiveType type) -> type.getTypeName().asString())
+    );
 
     @NotNull
     public static final NamePredicate PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS = new NamePredicate(
-            ContainerUtil.mapNotNull(PrimitiveType.NUMBER_TYPES,
-                              new Function<PrimitiveType, String>() {
-                                  @Override
-                                  public String fun(PrimitiveType type) {
-                                      return type != PrimitiveType.LONG ? type.getTypeName().asString() : null;
-                                  }
-                              }));
+            CollectionsKt.mapNotNull(PrimitiveType.NUMBER_TYPES, (PrimitiveType type) ->
+                    type != PrimitiveType.LONG ? type.getTypeName().asString() : null
+            )
+    );
 
     @NotNull
     public static final NamePredicate STRING = new NamePredicate("String");

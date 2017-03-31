@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.types.expressions.ValueParameterResolver;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.Box;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
-import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.*;
 
@@ -149,21 +148,13 @@ public class BodyResolver {
         ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
 
         resolveFunctionBody(outerDataFlowInfo, trace, constructor, descriptor, declaringScope,
-                            new Function1<LexicalScope, DataFlowInfo>() {
-                                @Override
-                                public DataFlowInfo invoke(@NotNull LexicalScope headerInnerScope) {
-                                    return resolveSecondaryConstructorDelegationCall(outerDataFlowInfo, trace, headerInnerScope,
-                                                                                     constructor, descriptor);
-                                }
-                            },
-                            new Function1<LexicalScope, LexicalScope>() {
-                                @Override
-                                public LexicalScope invoke(LexicalScope scope) {
-                                    return new LexicalScopeImpl(
-                                            scope, descriptor, scope.isOwnerDescriptorAccessibleByLabel(), scope.getImplicitReceiver(),
-                                            LexicalScopeKind.CONSTRUCTOR_HEADER);
-                                }
-                            });
+                            headerInnerScope -> resolveSecondaryConstructorDelegationCall(
+                                    outerDataFlowInfo, trace, headerInnerScope, constructor, descriptor
+                            ),
+                            scope -> new LexicalScopeImpl(
+                                    scope, descriptor, scope.isOwnerDescriptorAccessibleByLabel(), scope.getImplicitReceiver(),
+                                    LexicalScopeKind.CONSTRUCTOR_HEADER
+                            ));
     }
 
     @Nullable
@@ -637,15 +628,11 @@ public class BodyResolver {
     ) {
         return new LexicalScopeImpl(originalScope, unsubstitutedPrimaryConstructor, false, null,
                                     LexicalScopeKind.DEFAULT_VALUE, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
-                                    new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
-                                        @Override
-                                        public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
-                                            for (ValueParameterDescriptor
-                                                    valueParameterDescriptor : unsubstitutedPrimaryConstructor.getValueParameters()) {
-                                                handler.addVariableDescriptor(valueParameterDescriptor);
-                                            }
-                                            return Unit.INSTANCE;
+                                    handler -> {
+                                        for (ValueParameterDescriptor valueParameter : unsubstitutedPrimaryConstructor.getValueParameters()) {
+                                            handler.addVariableDescriptor(valueParameter);
                                         }
+                                        return Unit.INSTANCE;
                                     });
     }
 
@@ -739,20 +726,14 @@ public class BodyResolver {
     private ObservableBindingTrace createFieldTrackingTrace(PropertyDescriptor propertyDescriptor) {
         return new ObservableBindingTrace(trace).addHandler(
                 BindingContext.REFERENCE_TARGET,
-                new ObservableBindingTrace.RecordHandler<KtReferenceExpression, DeclarationDescriptor>() {
-            @Override
-            public void handleRecord(
-                    WritableSlice<KtReferenceExpression, DeclarationDescriptor> slice,
-                    KtReferenceExpression expression,
-                    DeclarationDescriptor descriptor
-            ) {
-                if (expression instanceof KtSimpleNameExpression &&
-                    descriptor instanceof SyntheticFieldDescriptor) {
-                    trace.record(BindingContext.BACKING_FIELD_REQUIRED,
-                                 propertyDescriptor);
+                (slice, expression, descriptor) -> {
+                    if (expression instanceof KtSimpleNameExpression &&
+                        descriptor instanceof SyntheticFieldDescriptor) {
+                        trace.record(BindingContext.BACKING_FIELD_REQUIRED,
+                                     propertyDescriptor);
+                    }
                 }
-            }
-        });
+        );
     }
 
     private void resolvePropertyDelegate(
@@ -850,13 +831,10 @@ public class BodyResolver {
             SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
             innerScope = new LexicalScopeImpl(innerScope, functionDescriptor, true, null,
                                               LexicalScopeKind.PROPERTY_ACCESSOR_BODY,
-                                              LocalRedeclarationChecker.DO_NOTHING.INSTANCE, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
-                @Override
-                public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
-                    handler.addVariableDescriptor(fieldDescriptor);
-                    return Unit.INSTANCE;
-                }
-            });
+                                              LocalRedeclarationChecker.DO_NOTHING.INSTANCE, handler -> {
+                                                  handler.addVariableDescriptor(fieldDescriptor);
+                                                  return Unit.INSTANCE;
+                                              });
             // Check parameter name shadowing
             for (KtParameter parameter : function.getValueParameters()) {
                 if (SyntheticFieldDescriptor.NAME.equals(parameter.getNameAsName())) {
@@ -914,16 +892,7 @@ public class BodyResolver {
         }
         // +1 is a work around against new Queue(0).addLast(...) bug // stepan.koltsov@ 2011-11-21
         Queue<DeferredType> queue = new Queue<DeferredType>(deferredTypes.size() + 1);
-        trace.addHandler(DEFERRED_TYPE, new ObservableBindingTrace.RecordHandler<Box<DeferredType>, Boolean>() {
-            @Override
-            public void handleRecord(
-                    WritableSlice<Box<DeferredType>, Boolean> deferredTypeKeyDeferredTypeWritableSlice,
-                    Box<DeferredType> key,
-                    Boolean value
-            ) {
-                queue.addLast(key.getData());
-            }
-        });
+        trace.addHandler(DEFERRED_TYPE, (deferredTypeKeyDeferredTypeWritableSlice, key, value) -> queue.addLast(key.getData()));
         for (Box<DeferredType> deferredType : deferredTypes) {
             queue.addLast(deferredType.getData());
         }

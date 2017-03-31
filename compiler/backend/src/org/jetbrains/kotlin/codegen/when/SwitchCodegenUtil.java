@@ -158,14 +158,8 @@ public class SwitchCodegenUtil {
             return false;
         }
 
-        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, shouldInlineConstVals, new Function1<ConstantValue<?>, Boolean>() {
-            @Override
-            public Boolean invoke(
-                    @NotNull ConstantValue<?> constant
-            ) {
-                return constant instanceof IntegerValueConstant;
-            }
-        });
+        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, shouldInlineConstVals,
+                                                   constant -> constant instanceof IntegerValueConstant);
     }
 
     private static boolean isStringConstantsSwitch(
@@ -179,13 +173,7 @@ public class SwitchCodegenUtil {
             return false;
         }
 
-        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, shouldInlineConstVals, new Function1<ConstantValue<?>, Boolean>() {
-            @Override
-            public Boolean invoke(
-                    @NotNull ConstantValue<?> constant
-            ) {
-                return constant instanceof StringValue || constant instanceof NullValue;
-            }
-        });
+        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, shouldInlineConstVals,
+                                                   constant -> constant instanceof StringValue || constant instanceof NullValue);
     }
 }

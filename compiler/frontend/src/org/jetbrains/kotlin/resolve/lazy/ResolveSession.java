@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.lazy;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension;
-import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassOrObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory;
@@ -165,14 +163,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         this.trace = lockBasedLazyResolveStorageManager.createSafeTrace(delegationTrace);
         this.module = rootDescriptor;
 
-        this.packages =
-                storageManager.createMemoizedFunctionWithNullableValues(new Function1<FqName, LazyPackageDescriptor>() {
-                    @Override
-                    @Nullable
-                    public LazyPackageDescriptor invoke(FqName fqName) {
-                        return createPackage(fqName);
-                    }
-                });
+        this.packages = storageManager.createMemoizedFunctionWithNullableValues(this::createPackage);
 
         this.declarationProviderFactory = declarationProviderFactory;
 
@@ -196,19 +187,9 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
             }
         };
 
-        fileAnnotations = storageManager.createMemoizedFunction(new Function1<KtFile, LazyAnnotations>() {
-            @Override
-            public LazyAnnotations invoke(KtFile file) {
-                return createAnnotations(file, file.getAnnotationEntries());
-            }
-        });
+        fileAnnotations = storageManager.createMemoizedFunction(file -> createAnnotations(file, file.getAnnotationEntries()));
 
-        danglingAnnotations = storageManager.createMemoizedFunction(new Function1<KtFile, LazyAnnotations>() {
-            @Override
-            public LazyAnnotations invoke(KtFile file) {
-                return createAnnotations(file, file.getDanglingAnnotations());
-            }
-        });
+        danglingAnnotations = storageManager.createMemoizedFunction(file -> createAnnotations(file, file.getDanglingAnnotations()));
 
         syntheticResolveExtension = SyntheticResolveExtension.Companion.getInstance(project);
     }
@@ -271,33 +252,25 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
         result.addAll(ContainerUtil.mapNotNull(
                 provider.getClassOrObjectDeclarations(fqName.shortName()),
-                new Function<KtClassLikeInfo, ClassifierDescriptor>() {
-                    @Override
-                    public ClassDescriptor fun(KtClassLikeInfo classLikeInfo) {
-                        if (classLikeInfo instanceof KtClassOrObjectInfo) {
-                            //noinspection RedundantCast
-                            return getClassDescriptor(((KtClassOrObjectInfo) classLikeInfo).getCorrespondingClassOrObject(), location);
-                        }
-                        else if (classLikeInfo instanceof KtScriptInfo) {
-                            return getScriptDescriptor(((KtScriptInfo) classLikeInfo).getScript());
-                        }
-                        else {
-                            throw new IllegalStateException(
-                                    "Unexpected " + classLikeInfo + " of type " + classLikeInfo.getClass().getName()
-                            );
-                        }
+                classLikeInfo -> {
+                    if (classLikeInfo instanceof KtClassOrObjectInfo) {
+                        //noinspection RedundantCast
+                        return getClassDescriptor(((KtClassOrObjectInfo) classLikeInfo).getCorrespondingClassOrObject(), location);
+                    }
+                    else if (classLikeInfo instanceof KtScriptInfo) {
+                        return getScriptDescriptor(((KtScriptInfo) classLikeInfo).getScript());
+                    }
+                    else {
+                        throw new IllegalStateException(
+                                "Unexpected " + classLikeInfo + " of type " + classLikeInfo.getClass().getName()
+                        );
                     }
                 }
         ));
 
         result.addAll(ContainerUtil.map(
                 provider.getTypeAliasDeclarations(fqName.shortName()),
-                new Function<KtTypeAlias, ClassifierDescriptor>() {
-                    @Override
-                    public ClassifierDescriptor fun(KtTypeAlias alias) {
-                        return (ClassifierDescriptor) lazyDeclarationResolver.resolveToDescriptor(alias);
-                    }
-                }
+                alias -> (ClassifierDescriptor) lazyDeclarationResolver.resolveToDescriptor(alias)
         ));
 
         return result;

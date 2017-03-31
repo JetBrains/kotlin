@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.diagnostics.rendering;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.util.io.FileUtil;
 import kotlin.Pair;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -27,14 +26,8 @@ import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.diagnostics.TypeMismatchDueToTypeProjectionsData;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
-import org.jetbrains.kotlin.psi.KtTypeConstraint;
 import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
-import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo;
-import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.MappedExtensionProvider;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
@@ -59,16 +52,13 @@ public class DefaultErrorMessages {
     private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap("Default");
     private static final MappedExtensionProvider<Extension, List<DiagnosticFactoryToRendererMap>> RENDERER_MAPS = MappedExtensionProvider.create(
             Extension.EP_NAME,
-            new Function1<List<? extends Extension>, List<DiagnosticFactoryToRendererMap>>() {
-                @Override
-                public List<DiagnosticFactoryToRendererMap> invoke(List<? extends Extension> extensions) {
-                    List<DiagnosticFactoryToRendererMap> result = new ArrayList<DiagnosticFactoryToRendererMap>(extensions.size() + 1);
-                    for (Extension extension : extensions) {
-                        result.add(extension.getMap());
-                    }
-                    result.add(MAP);
-                    return result;
+            extensions -> {
+                List<DiagnosticFactoryToRendererMap> result = new ArrayList<DiagnosticFactoryToRendererMap>(extensions.size() + 1);
+                for (Extension extension : extensions) {
+                    result.add(extension.getMap());
                 }
+                result.add(MAP);
+                return result;
             });
 
     @NotNull
@@ -133,19 +123,15 @@ public class DefaultErrorMessages {
                 RENDER_TYPE);
         MAP.put(TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS,
                 "Type mismatch: inferred type is {1} but {0} was expected. Projected type {2} restricts use of {3}",
-                new MultiRenderer<TypeMismatchDueToTypeProjectionsData>() {
-                    @NotNull
-                    @Override
-                    public String[] render(@NotNull TypeMismatchDueToTypeProjectionsData object) {
-                        RenderingContext context =
-                                of(object.getExpectedType(), object.getExpressionType(), object.getReceiverType(), object.getCallableDescriptor());
-                        return new String[] {
-                                RENDER_TYPE.render(object.getExpectedType(), context),
-                                RENDER_TYPE.render(object.getExpressionType(), context),
-                                RENDER_TYPE.render(object.getReceiverType(), context),
-                                FQ_NAMES_IN_TYPES.render(object.getCallableDescriptor(), context)
-                        };
-                    }
+                object -> {
+                    RenderingContext context =
+                            of(object.getExpectedType(), object.getExpressionType(), object.getReceiverType(), object.getCallableDescriptor());
+                    return new String[] {
+                            RENDER_TYPE.render(object.getExpectedType(), context),
+                            RENDER_TYPE.render(object.getExpressionType(), context),
+                            RENDER_TYPE.render(object.getReceiverType(), context),
+                            FQ_NAMES_IN_TYPES.render(object.getCallableDescriptor(), context)
+                    };
                 });
 
         MAP.put(MEMBER_PROJECTED_OUT, "Out-projected type ''{1}'' prohibits the use of ''{0}''", FQ_NAMES_IN_TYPES, RENDER_TYPE);
@@ -198,20 +184,16 @@ public class DefaultErrorMessages {
         MAP.put(MIXING_NAMED_AND_POSITIONED_ARGUMENTS, "Mixing named and positioned arguments is not allowed");
         MAP.put(ARGUMENT_PASSED_TWICE, "An argument is already passed for this parameter");
         MAP.put(NAMED_PARAMETER_NOT_FOUND, "Cannot find a parameter with this name: {0}", ELEMENT_TEXT);
-        MAP.put(NAMED_ARGUMENTS_NOT_ALLOWED, "Named arguments are not allowed for {0}", new DiagnosticParameterRenderer<BadNamedArgumentsTarget>() {
-            @NotNull
-            @Override
-            public String render(@NotNull BadNamedArgumentsTarget target, @NotNull RenderingContext context) {
-                switch (target) {
-                    case NON_KOTLIN_FUNCTION:
-                        return "non-Kotlin functions";
-                    case INVOKE_ON_FUNCTION_TYPE:
-                        return "function types";
-                    case HEADER_CLASS_MEMBER:
-                        return "members of header classes";
-                    default:
-                        throw new AssertionError(target);
-                }
+        MAP.put(NAMED_ARGUMENTS_NOT_ALLOWED, "Named arguments are not allowed for {0}", (target, context) -> {
+            switch (target) {
+                case NON_KOTLIN_FUNCTION:
+                    return "non-Kotlin functions";
+                case INVOKE_ON_FUNCTION_TYPE:
+                    return "function types";
+                case HEADER_CLASS_MEMBER:
+                    return "members of header classes";
+                default:
+                    throw new AssertionError(target);
             }
         });
 
@@ -333,28 +315,14 @@ public class DefaultErrorMessages {
         MAP.put(DEPRECATION, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
         MAP.put(DEPRECATION_ERROR, "Using ''{0}'' is an error. {1}", DEPRECATION_RENDERER, STRING);
 
-        DiagnosticParameterRenderer<Pair<LanguageVersion, String>> sinceKotlinInfoMessage = new DiagnosticParameterRenderer<Pair<LanguageVersion, String>>() {
-            @NotNull
-            @Override
-            public String render(@NotNull Pair<LanguageVersion, String> pair, @NotNull RenderingContext renderingContext) {
-                String message = pair.getSecond();
-                return pair.getFirst().getVersionString() + (message != null ? ". " + message : "");
-            }
+        DiagnosticParameterRenderer<Pair<LanguageVersion, String>> sinceKotlinInfoMessage = (pair, renderingContext) -> {
+            String message = pair.getSecond();
+            return pair.getFirst().getVersionString() + (message != null ? ". " + message : "");
         };
-        MAP.put(SINCE_KOTLIN_INFO_DEPRECATION, "''{0}''{1} should not be used in Kotlin {2}", DEPRECATION_RENDERER, new DiagnosticParameterRenderer<SinceKotlinInfo.Version>() {
-            @NotNull
-            @Override
-            public String render(@NotNull SinceKotlinInfo.Version obj, @NotNull RenderingContext renderingContext) {
-                return obj.equals(SinceKotlinInfo.Version.INFINITY) ? "" : " is only supported since Kotlin " + obj.asString() + " and";
-            }
-        }, sinceKotlinInfoMessage);
-        MAP.put(SINCE_KOTLIN_INFO_DEPRECATION_ERROR, "''{0}''{1} cannot be used in Kotlin {2}", DEPRECATION_RENDERER, new DiagnosticParameterRenderer<SinceKotlinInfo.Version>() {
-            @NotNull
-            @Override
-            public String render(@NotNull SinceKotlinInfo.Version obj, @NotNull RenderingContext renderingContext) {
-                return obj.equals(SinceKotlinInfo.Version.INFINITY) ? "" : " is only available since Kotlin " + obj.asString() + " and";
-            }
-        }, sinceKotlinInfoMessage);
+        MAP.put(SINCE_KOTLIN_INFO_DEPRECATION, "''{0}''{1} should not be used in Kotlin {2}", DEPRECATION_RENDERER,
+                (obj, renderingContext) -> obj.equals(SinceKotlinInfo.Version.INFINITY) ? "" : " is only supported since Kotlin " + obj.asString() + " and", sinceKotlinInfoMessage);
+        MAP.put(SINCE_KOTLIN_INFO_DEPRECATION_ERROR, "''{0}''{1} cannot be used in Kotlin {2}", DEPRECATION_RENDERER,
+                (obj, renderingContext) -> obj.equals(SinceKotlinInfo.Version.INFINITY) ? "" : " is only available since Kotlin " + obj.asString() + " and", sinceKotlinInfoMessage);
 
         MAP.put(API_NOT_AVAILABLE, "This declaration is only available since Kotlin {0} and cannot be used with the specified API version {1}", STRING, STRING);
 
@@ -362,15 +330,12 @@ public class DefaultErrorMessages {
         MAP.put(PRE_RELEASE_CLASS, "{0} is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler", TO_STRING);
         MAP.put(INCOMPATIBLE_CLASS,
                 "{0} was compiled with an incompatible version of Kotlin. {1}",
-                TO_STRING, new DiagnosticParameterRenderer<IncompatibleVersionErrorData<?>>() {
-                    @NotNull
-                    @Override
-                    public String render(@NotNull IncompatibleVersionErrorData<?> incompatibility, @NotNull RenderingContext renderingContext) {
-                        return "The binary version of its metadata is " + incompatibility.getActualVersion() +
-                               ", expected version is " + incompatibility.getExpectedVersion() + ".\n" +
-                               "The class is loaded from " + FileUtil.toSystemIndependentName(incompatibility.getFilePath());
-                    }
-                });
+                TO_STRING,
+                (incompatibility, renderingContext) ->
+                        "The binary version of its metadata is " + incompatibility.getActualVersion() +
+                        ", expected version is " + incompatibility.getExpectedVersion() + ".\n" +
+                        "The class is loaded from " + FileUtil.toSystemIndependentName(incompatibility.getFilePath())
+        );
 
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
         MAP.put(LOCAL_INTERFACE_NOT_ALLOWED, "''{0}'' is an interface so it cannot be local. Try to use anonymous object or abstract class instead", NAME);
@@ -493,14 +458,10 @@ public class DefaultErrorMessages {
 
         MAP.put(IMPLICIT_CAST_TO_ANY, "Conditional branch result of type {0} is implicitly cast to {1}",
                 RENDER_TYPE, RENDER_TYPE);
-        MAP.put(EXPRESSION_EXPECTED, "{0} is not an expression, and only expressions are allowed here", new DiagnosticParameterRenderer<KtExpression>() {
-            @NotNull
-            @Override
-            public String render(@NotNull KtExpression expression, @NotNull RenderingContext context) {
-                String expressionType = expression.toString();
-                return expressionType.substring(0, 1) +
-                       expressionType.substring(1).toLowerCase();
-            }
+        MAP.put(EXPRESSION_EXPECTED, "{0} is not an expression, and only expressions are allowed here", (expression, context) -> {
+            String expressionType = expression.toString();
+            return expressionType.substring(0, 1) +
+                   expressionType.substring(1).toLowerCase();
         });
 
         MAP.put(UPPER_BOUND_VIOLATED, "Type argument is not within its bounds: should be subtype of ''{0}''", RENDER_TYPE, RENDER_TYPE);
@@ -613,13 +574,9 @@ public class DefaultErrorMessages {
         MAP.put(UNEXPECTED_SAFE_CALL, "Safe-call is not allowed here");
         MAP.put(UNNECESSARY_NOT_NULL_ASSERTION, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}", RENDER_TYPE);
         MAP.put(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, "Non-null assertion (!!) is called on a lambda expression");
-        MAP.put(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER, "{0} does not refer to a type parameter of {1}", new DiagnosticParameterRenderer<KtTypeConstraint>() {
-            @NotNull
-            @Override
-            public String render(@NotNull KtTypeConstraint typeConstraint, @NotNull RenderingContext context) {
-                //noinspection ConstantConditions
-                return typeConstraint.getSubjectTypeParameterName().getReferencedName();
-            }
+        MAP.put(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER, "{0} does not refer to a type parameter of {1}", (typeConstraint, context) -> {
+            //noinspection ConstantConditions
+            return typeConstraint.getSubjectTypeParameterName().getReferencedName();
         }, DECLARATION_NAME);
         MAP.put(SMARTCAST_IMPOSSIBLE,
                 "Smart cast to ''{0}'' is impossible, because ''{1}'' is a {2}", RENDER_TYPE, STRING, STRING);
@@ -637,20 +594,16 @@ public class DefaultErrorMessages {
 
         MAP.put(MISPLACED_TYPE_PARAMETER_CONSTRAINTS, "If a type parameter has multiple constraints, they all need to be placed in the 'where' clause");
 
-        MultiRenderer<VarianceConflictDiagnosticData> varianceConflictDataRenderer = new MultiRenderer<VarianceConflictDiagnosticData>() {
-            @NotNull
-            @Override
-            public String[] render(@NotNull VarianceConflictDiagnosticData data) {
-                RenderingContext context =
-                        of(data.getTypeParameter(), data.getTypeParameter().getVariance(), data.getOccurrencePosition(),
-                           data.getContainingType());
-                return new String[] {
-                        NAME.render(data.getTypeParameter(), context),
-                        RENDER_POSITION_VARIANCE.render(data.getTypeParameter().getVariance(), context),
-                        RENDER_POSITION_VARIANCE.render(data.getOccurrencePosition(), context),
-                        RENDER_TYPE.render(data.getContainingType(), context)
-                };
-            }
+        MultiRenderer<VarianceConflictDiagnosticData> varianceConflictDataRenderer = data -> {
+            RenderingContext context =
+                    of(data.getTypeParameter(), data.getTypeParameter().getVariance(), data.getOccurrencePosition(),
+                       data.getContainingType());
+            return new String[] {
+                    NAME.render(data.getTypeParameter(), context),
+                    RENDER_POSITION_VARIANCE.render(data.getTypeParameter().getVariance(), context),
+                    RENDER_POSITION_VARIANCE.render(data.getOccurrencePosition(), context),
+                    RENDER_TYPE.render(data.getContainingType(), context)
+            };
         };
         MAP.put(TYPE_VARIANCE_CONFLICT, "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type {3}",
                 varianceConflictDataRenderer);
@@ -687,13 +640,9 @@ public class DefaultErrorMessages {
         MAP.put(INCONSISTENT_TYPE_PARAMETER_VALUES, "Type parameter {0} of ''{1}'' has inconsistent values: {2}", NAME, NAME, RENDER_COLLECTION_OF_TYPES);
         MAP.put(INCONSISTENT_TYPE_PARAMETER_BOUNDS, "Type parameter {0} of ''{1}'' has inconsistent bounds: {2}", NAME, NAME, RENDER_COLLECTION_OF_TYPES);
 
-        MAP.put(EQUALITY_NOT_APPLICABLE, "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''", new DiagnosticParameterRenderer<KtSimpleNameExpression>() {
-            @NotNull
-            @Override
-            public String render(@NotNull KtSimpleNameExpression nameExpression, @NotNull RenderingContext context) {
-                //noinspection ConstantConditions
-                return nameExpression.getReferencedName();
-            }
+        MAP.put(EQUALITY_NOT_APPLICABLE, "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''", (nameExpression, context) -> {
+            //noinspection ConstantConditions
+            return nameExpression.getReferencedName();
         }, RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(SENSELESS_COMPARISON, "Condition ''{0}'' is always ''{1}''", ELEMENT_TEXT, TO_STRING);
@@ -745,21 +694,12 @@ public class DefaultErrorMessages {
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. " +
                                    "The function ''" + OperatorNameConventions.INVOKE.asString() + "()'' is not found",
-                ELEMENT_TEXT, new DiagnosticParameterRenderer<KotlinType>() {
-                    @NotNull
-                    @Override
-                    public String render(@NotNull KotlinType type, @NotNull RenderingContext context) {
-                        if (type.isError()) return "";
-                        return " of type '" + RENDER_TYPE.render(type, context) + "'";
-                    }
+                ELEMENT_TEXT, (type, context) -> {
+                    if (type.isError()) return "";
+                    return " of type '" + RENDER_TYPE.render(type, context) + "'";
                 });
-        MAP.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", ELEMENT_TEXT, new DiagnosticParameterRenderer<Boolean>() {
-            @NotNull
-            @Override
-            public String render(@NotNull Boolean hasValueParameters, @NotNull RenderingContext context) {
-                return hasValueParameters ? "..." : "";
-            }
-        });
+        MAP.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", ELEMENT_TEXT,
+                (hasValueParameters, context) -> hasValueParameters ? "..." : "");
         MAP.put(NON_TAIL_RECURSIVE_CALL, "Recursive call is not a tail call");
         MAP.put(TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED, "Tail recursion optimization inside try/catch/finally is not supported");
 

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.calls.inference.CallHandle;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl;
-import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
@@ -174,17 +173,14 @@ public class TypeIntersector {
         private static boolean unify(KotlinType withParameters, KotlinType expected) {
             // T -> how T is used
             Map<TypeParameterDescriptor, Variance> parameters = new HashMap<TypeParameterDescriptor, Variance>();
-            Function1<TypeParameterUsage, Unit> processor = new Function1<TypeParameterUsage, Unit>() {
-                @Override
-                public Unit invoke(TypeParameterUsage parameterUsage) {
-                    Variance howTheTypeIsUsedBefore = parameters.get(parameterUsage.typeParameterDescriptor);
-                    if (howTheTypeIsUsedBefore == null) {
-                        howTheTypeIsUsedBefore = Variance.INVARIANT;
-                    }
-                    parameters.put(parameterUsage.typeParameterDescriptor,
-                                   parameterUsage.howTheTypeParameterIsUsed.superpose(howTheTypeIsUsedBefore));
-                    return Unit.INSTANCE;
+            Function1<TypeParameterUsage, Unit> processor = parameterUsage -> {
+                Variance howTheTypeIsUsedBefore = parameters.get(parameterUsage.typeParameterDescriptor);
+                if (howTheTypeIsUsedBefore == null) {
+                    howTheTypeIsUsedBefore = Variance.INVARIANT;
                 }
+                parameters.put(parameterUsage.typeParameterDescriptor,
+                               parameterUsage.howTheTypeParameterIsUsed.superpose(howTheTypeIsUsedBefore));
+                return Unit.INSTANCE;
             };
             processAllTypeParameters(withParameters, Variance.INVARIANT, processor);
             processAllTypeParameters(expected, Variance.INVARIANT, processor);

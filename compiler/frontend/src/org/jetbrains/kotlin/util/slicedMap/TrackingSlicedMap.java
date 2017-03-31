@@ -54,12 +54,9 @@ public class TrackingSlicedMap extends SlicedMapImpl {
 
     @Override
     public void forEach(@NotNull Function3<WritableSlice, Object, Object, Void> f) {
-        super.forEach(new Function3<WritableSlice, Object, Object, Void>() {
-            @Override
-            public Void invoke(WritableSlice slice, Object key, Object value) {
-                f.invoke(((SliceWithStackTrace) slice).getWritableDelegate(), key, ((TrackableValue<?>) value).value);
-                return null;
-            }
+        super.forEach((slice, key, value) -> {
+            f.invoke(((SliceWithStackTrace) slice).getWritableDelegate(), key, ((TrackableValue<?>) value).value);
+            return null;
         });
     }
 

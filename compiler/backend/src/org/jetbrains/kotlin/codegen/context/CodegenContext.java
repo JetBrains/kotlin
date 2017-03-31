@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.context;
 
-import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
@@ -160,12 +159,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         this.closure = closure;
         this.thisDescriptor = thisDescriptor;
         this.enclosingLocalLookup = localLookup;
-        this.outerExpression = LockBasedStorageManager.NO_LOCKS.createNullableLazyValue(new Function0<StackValue.Field>() {
-            @Override
-            public StackValue.Field invoke() {
-                return computeOuterExpression();
-            }
-        });
+        this.outerExpression = LockBasedStorageManager.NO_LOCKS.createNullableLazyValue(this::computeOuterExpression);
 
         if (parentContext != null) {
             parentContext.addChild(this);

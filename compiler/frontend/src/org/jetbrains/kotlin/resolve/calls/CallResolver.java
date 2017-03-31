@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.calls;
 
 import com.intellij.psi.PsiElement;
 import kotlin.Pair;
-import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
@@ -181,14 +180,9 @@ public class CallResolver {
             @NotNull TracingStrategy tracing,
             @NotNull NewResolutionOldInference.ResolutionKind<D> kind
     ) {
-        return callResolvePerfCounter.time(new Function0<OverloadResolutionResults<D>>() {
-            @Override
-            public OverloadResolutionResults<D> invoke() {
-                ResolutionTask<D> resolutionTask = new ResolutionTask<D>(
-                        kind, name, null
-                );
-                return doResolveCallOrGetCachedResults(context, resolutionTask, tracing);
-            }
+        return callResolvePerfCounter.<OverloadResolutionResults<D>>time(() -> {
+            ResolutionTask<D> resolutionTask = new ResolutionTask<>(kind, name, null);
+            return doResolveCallOrGetCachedResults(context, resolutionTask, tracing);
         });
     }
 
@@ -208,14 +202,11 @@ public class CallResolver {
             @NotNull Collection<ResolutionCandidate<D>> candidates,
             @NotNull TracingStrategy tracing
     ) {
-        return callResolvePerfCounter.time(new Function0<OverloadResolutionResults<D>>() {
-            @Override
-            public OverloadResolutionResults<D> invoke() {
-                ResolutionTask<D> resolutionTask = new ResolutionTask<D>(
-                        new NewResolutionOldInference.ResolutionKind.GivenCandidates<D>(), null, candidates
-                );
-                return doResolveCallOrGetCachedResults(context, resolutionTask, tracing);
-            }
+        return callResolvePerfCounter.<OverloadResolutionResults<D>>time(() -> {
+            ResolutionTask<D> resolutionTask = new ResolutionTask<>(
+                    new NewResolutionOldInference.ResolutionKind.GivenCandidates<>(), null, candidates
+            );
+            return doResolveCallOrGetCachedResults(context, resolutionTask, tracing);
         });
     }
 
@@ -498,22 +489,18 @@ public class CallResolver {
             @NotNull ResolutionCandidate<FunctionDescriptor> candidate,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        return callResolvePerfCounter.time(new Function0<OverloadResolutionResults<FunctionDescriptor>>() {
-            @Override
-            public OverloadResolutionResults<FunctionDescriptor> invoke() {
-                BasicCallResolutionContext basicCallResolutionContext =
-                        BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, dataFlowInfoForArguments);
+        return callResolvePerfCounter.<OverloadResolutionResults<FunctionDescriptor>>time(() -> {
+            BasicCallResolutionContext basicCallResolutionContext =
+                    BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, dataFlowInfoForArguments);
 
-                Set<ResolutionCandidate<FunctionDescriptor>> candidates = Collections.singleton(candidate);
+            Set<ResolutionCandidate<FunctionDescriptor>> candidates = Collections.singleton(candidate);
 
-                ResolutionTask<FunctionDescriptor> resolutionTask =
-                        new ResolutionTask<FunctionDescriptor>(
-                                new NewResolutionOldInference.ResolutionKind.GivenCandidates<FunctionDescriptor>(), null, candidates
-                        );
+            ResolutionTask<FunctionDescriptor> resolutionTask =
+                    new ResolutionTask<FunctionDescriptor>(
+                            new NewResolutionOldInference.ResolutionKind.GivenCandidates<FunctionDescriptor>(), null, candidates
+                    );
 
-
-                return doResolveCallOrGetCachedResults(basicCallResolutionContext, resolutionTask, tracing);
-            }
+            return doResolveCallOrGetCachedResults(basicCallResolutionContext, resolutionTask, tracing);
         });
     }
 

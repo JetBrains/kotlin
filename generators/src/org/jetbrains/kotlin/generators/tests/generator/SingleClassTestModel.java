@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.generators.tests.generator;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.utils.Printer;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -80,23 +78,15 @@ public class SingleClassTestModel implements TestClassModel {
 
             result.add(new TestAllFilesPresentMethodModel());
 
-            FileUtil.processFilesRecursively(rootFile, new Processor<File>() {
-                @Override
-                public boolean process(File file) {
-                    if (!file.isDirectory() && filenamePattern.matcher(file.getName()).matches()) {
-                        result.addAll(getTestMethodsFromFile(file));
-                    }
-
-                    return true;
+            FileUtil.processFilesRecursively(rootFile, file -> {
+                if (!file.isDirectory() && filenamePattern.matcher(file.getName()).matches()) {
+                    result.addAll(getTestMethodsFromFile(file));
                 }
+
+                return true;
             });
 
-            ContainerUtil.sort(result, new Comparator<TestMethodModel>() {
-                @Override
-                public int compare(@NotNull TestMethodModel o1, @NotNull TestMethodModel o2) {
-                    return StringUtil.compare(o1.getName(), o2.getName(), true);
-                }
-            });
+            ContainerUtil.sort(result, (o1, o2) -> StringUtil.compare(o1.getName(), o2.getName(), true));
 
             methods = Lists.<MethodModel>newArrayList(result);
         }

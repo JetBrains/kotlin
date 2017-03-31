@@ -50,12 +50,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
     private static final Predicate<FunctionDescriptor> PRIMITIVE_UNARY_OPERATION_NAMES =
             UNARY_OPERATION_FOR_PRIMITIVE_NUMBER.or(pattern("Boolean.not")).or(pattern("Int|Short|Byte.inv"));
     @NotNull
-    private static final DescriptorPredicate NO_PARAMETERS = new DescriptorPredicate() {
-        @Override
-        public boolean test(FunctionDescriptor descriptor) {
-            return !JsDescriptorUtils.hasParameters(descriptor);
-        }
-    };
+    private static final DescriptorPredicate NO_PARAMETERS = descriptor -> !JsDescriptorUtils.hasParameters(descriptor);
     @NotNull
     private static final Predicate<FunctionDescriptor> PATTERN = PRIMITIVE_UNARY_OPERATION_NAMES.and(NO_PARAMETERS);
 

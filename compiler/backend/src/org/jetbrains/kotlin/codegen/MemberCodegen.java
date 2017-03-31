@@ -816,12 +816,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
         int flags = isScript ? JvmAnnotationNames.METADATA_SCRIPT_FLAG : 0;
 
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.CLASS, flags, new Function1<AnnotationVisitor, Unit>() {
-            @Override
-            public Unit invoke(AnnotationVisitor av) {
-                writeAnnotationData(av, serializer, classProto);
-                return Unit.INSTANCE;
-            }
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.CLASS, flags, av -> {
+            writeAnnotationData(av, serializer, classProto);
+            return Unit.INSTANCE;
         });
     }
 }

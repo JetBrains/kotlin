@@ -22,7 +22,6 @@ import com.intellij.util.ArrayUtil;
 import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
-import kotlin.jvm.functions.Function1;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
@@ -130,23 +129,20 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     static List<String> readArgs(@NotNull String argsFilePath, @NotNull String tempDir) throws IOException {
         List<String> lines = FilesKt.readLines(new File(argsFilePath), Charsets.UTF_8);
 
-        return CollectionsKt.mapNotNull(lines, new Function1<String, String>() {
-            @Override
-            public String invoke(String arg) {
-                if (arg.isEmpty()) {
-                    return null;
-                }
-
-                // Do not replace ':' after '\' (used in compiler plugin tests)
-                String argsWithColonsReplaced = arg
-                        .replace("\\:", "$COLON$")
-                        .replace(":", File.pathSeparator)
-                        .replace("$COLON$", ":");
-
-                return argsWithColonsReplaced
-                        .replace("$TEMP_DIR$", tempDir)
-                        .replace("$TESTDATA_DIR$", new File(argsFilePath).getParent());
+        return CollectionsKt.mapNotNull(lines, arg -> {
+            if (arg.isEmpty()) {
+                return null;
             }
+
+            // Do not replace ':' after '\' (used in compiler plugin tests)
+            String argsWithColonsReplaced = arg
+                    .replace("\\:", "$COLON$")
+                    .replace(":", File.pathSeparator)
+                    .replace("$COLON$", ":");
+
+            return argsWithColonsReplaced
+                    .replace("$TEMP_DIR$", tempDir)
+                    .replace("$TESTDATA_DIR$", new File(argsFilePath).getParent());
         });
     }
 

@@ -27,27 +27,24 @@ import java.util.List;
 
 public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
-    private static final DiagnosticParameterRenderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA = new DiagnosticParameterRenderer<ConflictingJvmDeclarationsData>() {
-        @NotNull
-        @Override
-        public String render(@NotNull ConflictingJvmDeclarationsData data, @NotNull RenderingContext context) {
-            List<DeclarationDescriptor> renderedDescriptors = new ArrayList<DeclarationDescriptor>();
-            for (JvmDeclarationOrigin origin : data.getSignatureOrigins()) {
-                DeclarationDescriptor descriptor = origin.getDescriptor();
-                if (descriptor != null) {
-                    renderedDescriptors.add(descriptor);
+    private static final DiagnosticParameterRenderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA =
+            (data, context) -> {
+                List<DeclarationDescriptor> renderedDescriptors = new ArrayList<DeclarationDescriptor>();
+                for (JvmDeclarationOrigin origin : data.getSignatureOrigins()) {
+                    DeclarationDescriptor descriptor = origin.getDescriptor();
+                    if (descriptor != null) {
+                        renderedDescriptors.add(descriptor);
+                    }
                 }
-            }
-            Collections.sort(renderedDescriptors, MemberComparator.INSTANCE);
-            RenderingContext.Impl renderingContext = new RenderingContext.Impl(renderedDescriptors);
+                Collections.sort(renderedDescriptors, MemberComparator.INSTANCE);
+                RenderingContext.Impl renderingContext = new RenderingContext.Impl(renderedDescriptors);
 
-            StringBuilder sb = new StringBuilder();
-            for (DeclarationDescriptor descriptor : renderedDescriptors) {
-                sb.append("    ").append(Renderers.COMPACT.render(descriptor, renderingContext)).append("\n");
-            }
-            return ("The following declarations have the same JVM signature (" + data.getSignature().getName() + data.getSignature().getDesc() + "):\n" + sb).trim();
-        }
-    };
+                StringBuilder sb = new StringBuilder();
+                for (DeclarationDescriptor descriptor : renderedDescriptors) {
+                    sb.append("    ").append(Renderers.COMPACT.render(descriptor, renderingContext)).append("\n");
+                }
+                return ("The following declarations have the same JVM signature (" + data.getSignature().getName() + data.getSignature().getDesc() + "):\n" + sb).trim();
+            };
 
     private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap("JVM");
     static {

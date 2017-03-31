@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.translate.general;
 
 import com.google.common.collect.Lists;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -99,16 +98,13 @@ public class JetTestFunctionDetector {
                 Collection<DeclarationDescriptor> allDescriptors = DescriptorUtils.getAllDescriptors(scope);
                 List<FunctionDescriptor> testFunctions = ContainerUtil.mapNotNull(
                         allDescriptors,
-                        new Function<DeclarationDescriptor, FunctionDescriptor>() {
-                            @Override
-                            public FunctionDescriptor fun(DeclarationDescriptor descriptor) {
-                                if (descriptor instanceof FunctionDescriptor) {
-                                    FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-                                    if (isTest(functionDescriptor)) return functionDescriptor;
-                                }
-
-                                return null;
+                        descriptor -> {
+                            if (descriptor instanceof FunctionDescriptor) {
+                                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+                                if (isTest(functionDescriptor)) return functionDescriptor;
                             }
+
+                            return null;
                         });
 
                 answer.addAll(testFunctions);

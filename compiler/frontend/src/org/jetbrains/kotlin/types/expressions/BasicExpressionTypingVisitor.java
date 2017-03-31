@@ -23,8 +23,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.TuplesKt;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -73,7 +71,6 @@ import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.Resolv
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.types.expressions.unqualifiedSuper.UnqualifiedSuperKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
-import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -720,30 +717,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KotlinType[] result = new KotlinType[1];
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace,
                                                                             "trace to resolve object literal expression", expression);
-        ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor> handler =
-                new ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor>() {
-
-                    @Override
-                    public void handleRecord(
-                            WritableSlice<PsiElement, ClassDescriptor> slice,
-                            PsiElement declaration,
-                            ClassDescriptor descriptor
-                    ) {
-                        if (slice == CLASS && declaration == expression.getObjectDeclaration()) {
-                            KotlinType defaultType = components.wrappedTypeFactory.createRecursionIntolerantDeferredType(
-                                    context.trace,
-                                    new Function0<KotlinType>() {
-                                        @Override
-                                        public KotlinType invoke() {
-                                            return descriptor.getDefaultType();
-                                        }
-                                    });
-                            result[0] = defaultType;
-                        }
-                    }
-                };
         ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
-        traceAdapter.addHandler(CLASS, handler);
+        traceAdapter.addHandler(CLASS, (slice, declaration, descriptor) -> {
+            if (slice == CLASS && declaration == expression.getObjectDeclaration()) {
+                result[0] = components.wrappedTypeFactory.createRecursionIntolerantDeferredType(context.trace, descriptor::getDefaultType);
+            }
+        });
         components.localClassifierAnalyzer.processClassOrObject(null, // don't need to add classifier of object literal to any scope
                                                                 context.replaceBindingTrace(traceAdapter)
                                                                        .replaceContextDependency(INDEPENDENT),
@@ -1199,13 +1178,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         OverloadResolutionResults<FunctionDescriptor> resolutionResults =
                 components.callResolver.resolveCallWithGivenName(newContext, call, operationSign, OperatorNameConventions.EQUALS);
 
-        traceInterpretingRightAsNullableAny.commit(new TraceEntryFilter() {
-            @Override
-            public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
-                // the type of the right (and sometimes left) expression isn't 'Any?' actually
-                if ((key == right || key == left) && slice == EXPRESSION_TYPE_INFO) return false;
-                return true;
-            }
+        traceInterpretingRightAsNullableAny.commit((slice, key) -> {
+            // the type of the right (and sometimes left) expression isn't 'Any?' actually
+            if ((key == right || key == left) && slice == EXPRESSION_TYPE_INFO) return false;
+            return true;
         }, true);
 
         if (resolutionResults.isSuccess()) {
@@ -1462,18 +1438,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
                 SenselessComparisonChecker.checkSenselessComparisonWithNull(
                         expression, left, right, context,
-                        new Function1<KtExpression, KotlinType>() {
-                            @Override
-                            public KotlinType invoke(KtExpression expression) {
-                                return facade.getTypeInfo(expression, context).getType();
-                            }
-                        },
-                        new Function1<DataFlowValue, Nullability>() {
-                            @Override
-                            public Nullability invoke(DataFlowValue value) {
-                                return context.dataFlowInfo.getStableNullability(value);
-                            }
-                        });
+                        expr -> facade.getTypeInfo(expr, context).getType(),
+                        context.dataFlowInfo::getStableNullability
+                );
             }
         }
     }

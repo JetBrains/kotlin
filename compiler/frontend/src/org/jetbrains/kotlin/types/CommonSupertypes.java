@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types;
 
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -68,15 +67,12 @@ public class CommonSupertypes {
     }
 
     private static int depth(@NotNull KotlinType type) {
-        return 1 + maxDepth(CollectionsKt.map(type.getArguments(), new Function1<TypeProjection, KotlinType>() {
-            @Override
-            public KotlinType invoke(TypeProjection projection) {
-                if (projection.isStarProjection()) {
-                    // any type is good enough for depth here
-                    return type.getConstructor().getBuiltIns().getAnyType();
-                }
-                return projection.getType();
+        return 1 + maxDepth(CollectionsKt.map(type.getArguments(), projection -> {
+            if (projection.isStarProjection()) {
+                // any type is good enough for depth here
+                return type.getConstructor().getBuiltIns().getAnyType();
             }
+            return projection.getType();
         }));
     }
 
@@ -336,28 +332,19 @@ public class CommonSupertypes {
     ) {
         return DFS.dfs(
                 Collections.singletonList(type),
-                new DFS.Neighbors<SimpleType>() {
-                    @NotNull
-                    @Override
-                    public Iterable<? extends SimpleType> getNeighbors(SimpleType current) {
-                        TypeSubstitutor substitutor = TypeSubstitutor.create(current);
-                        Collection<KotlinType> supertypes = current.getConstructor().getSupertypes();
-                        List<SimpleType> result = new ArrayList<SimpleType>(supertypes.size());
-                        for (KotlinType supertype : supertypes) {
-                            if (visited.contains(supertype.getConstructor())) {
-                                continue;
-                            }
-                            result.add(FlexibleTypesKt.lowerIfFlexible(substitutor.safeSubstitute(supertype, Variance.INVARIANT)));
+                current -> {
+                    TypeSubstitutor substitutor = TypeSubstitutor.create(current);
+                    Collection<KotlinType> supertypes = current.getConstructor().getSupertypes();
+                    List<SimpleType> result = new ArrayList<SimpleType>(supertypes.size());
+                    for (KotlinType supertype : supertypes) {
+                        if (visited.contains(supertype.getConstructor())) {
+                            continue;
                         }
-                        return result;
+                        result.add(FlexibleTypesKt.lowerIfFlexible(substitutor.safeSubstitute(supertype, Variance.INVARIANT)));
                     }
+                    return result;
                 },
-                new DFS.Visited<SimpleType>() {
-                    @Override
-                    public boolean checkAndMarkVisited(SimpleType current) {
-                        return visited.add(current.getConstructor());
-                    }
-                },
+                current -> visited.add(current.getConstructor()),
                 new DFS.NodeHandlerWithListResult<SimpleType, TypeConstructor>() {
                     @Override
                     public boolean beforeChildren(SimpleType current) {

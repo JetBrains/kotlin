@@ -20,8 +20,6 @@ import junit.framework.TestCase;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 
 import java.util.ArrayList;
@@ -278,12 +276,7 @@ public class StorageManagerTest extends TestCase {
                         }
                     },
                     null,
-                    new Function1<String, Unit>() {
-                        @Override
-                        public Unit invoke(String s) {
-                            return Unit.INSTANCE;
-                        }
-                    }
+                    s -> Unit.INSTANCE
             );
         }
 
@@ -306,19 +299,11 @@ public class StorageManagerTest extends TestCase {
                             return rec.invoke();
                         }
                     },
-                    new Function1<Boolean, String>() {
-                        @Override
-                        public String invoke(Boolean aBoolean) {
-                            return "tolerant";
-                        }
-                    },
-                    new Function1<String, Unit>() {
-                        @Override
-                        public Unit invoke(String s) {
-                            counter.inc();
-                            assertEquals("tolerant", s);
-                            return Unit.INSTANCE;
-                        }
+                    aBoolean -> "tolerant",
+                    s -> {
+                        counter.inc();
+                        assertEquals("tolerant", s);
+                        return Unit.INSTANCE;
                     }
             );
         }
@@ -332,22 +317,16 @@ public class StorageManagerTest extends TestCase {
     public void testPostComputeNoRecursion() throws Exception {
         CounterImpl counter = new CounterImpl();
         NotNullLazyValue<Collection<String>> v = m.createLazyValueWithPostCompute(
-                new Function0<Collection<String>>() {
-                    @Override
-                    public Collection<String> invoke() {
-                        List<String> strings = new ArrayList<String>();
-                        strings.add("first");
-                        return strings;
-                    }
+                () -> {
+                    List<String> strings = new ArrayList<String>();
+                    strings.add("first");
+                    return strings;
                 },
                 null,
-                new Function1<Collection<String>, Unit>() {
-                    @Override
-                    public Unit invoke(Collection<String> strings) {
-                        counter.inc();
-                        strings.add("postComputed");
-                        return Unit.INSTANCE;
-                    }
+                strings -> {
+                    counter.inc();
+                    strings.add("postComputed");
+                    return Unit.INSTANCE;
                 }
         );
 
@@ -359,21 +338,15 @@ public class StorageManagerTest extends TestCase {
     public void testNullablePostComputeNoRecursion() throws Exception {
         CounterImpl counter = new CounterImpl();
         NullableLazyValue<Collection<String>> v = m.createNullableLazyValueWithPostCompute(
-                new Function0<Collection<String>>() {
-                    @Override
-                    public Collection<String> invoke() {
-                        ArrayList<String> strings = new ArrayList<String>();
-                        strings.add("first");
-                        return strings;
-                    }
+                () -> {
+                    ArrayList<String> strings = new ArrayList<String>();
+                    strings.add("first");
+                    return strings;
                 },
-                new Function1<Collection<String>, Unit>() {
-                    @Override
-                    public Unit invoke(Collection<String> strings) {
-                        counter.inc();
-                        strings.add("postComputed");
-                        return Unit.INSTANCE;
-                    }
+                strings -> {
+                    counter.inc();
+                    strings.add("postComputed");
+                    return Unit.INSTANCE;
                 }
         );
 
@@ -392,21 +365,15 @@ public class StorageManagerTest extends TestCase {
                             return rec.invoke();
                         }
                     },
-                    new Function1<Boolean, String>() {
-                        @Override
-                        public String invoke(Boolean firstTime) {
-                            if (firstTime) {
-                                throw new ReenteringLazyValueComputationException();
-                            }
-                            return "second";
+                    firstTime -> {
+                        if (firstTime) {
+                            throw new ReenteringLazyValueComputationException();
                         }
+                        return "second";
                     },
-                    new Function1<String, Unit>() {
-                        @Override
-                        public Unit invoke(String s) {
-                            fail("Recursion-tolerating value should not be post computed");
-                            return Unit.INSTANCE;
-                        }
+                    s -> {
+                        fail("Recursion-tolerating value should not be post computed");
+                        return Unit.INSTANCE;
                     }
             );
         }
@@ -449,23 +416,13 @@ public class StorageManagerTest extends TestCase {
     public void testExceptionHandlingStrategyForLazyValues() throws Exception {
         class RethrownException extends RuntimeException {}
 
-        LockBasedStorageManager m = LockBasedStorageManager.createWithExceptionHandling(new LockBasedStorageManager.ExceptionHandlingStrategy() {
-            @NotNull
-            @Override
-            public RuntimeException handleException(@NotNull Throwable throwable) {
-                throw new RethrownException();
-            }
+        LockBasedStorageManager m = LockBasedStorageManager.createWithExceptionHandling(throwable -> {
+            throw new RethrownException();
         });
         try {
-            m.createLazyValue(
-                    new Function0<Object>() {
-                        @Nullable
-                        @Override
-                        public Object invoke() {
-                            throw new RuntimeException();
-                        }
-                    }
-            ).invoke();
+            m.createLazyValue(() -> {
+                throw new RuntimeException();
+            }).invoke();
             fail("Exception should have occurred");
         }
         catch (RethrownException ignored) {
@@ -475,23 +432,13 @@ public class StorageManagerTest extends TestCase {
     public void testExceptionHandlingStrategyForMemoizedFunctions() throws Exception {
         class RethrownException extends RuntimeException {}
 
-        LockBasedStorageManager m = LockBasedStorageManager.createWithExceptionHandling(new LockBasedStorageManager.ExceptionHandlingStrategy() {
-            @NotNull
-            @Override
-            public RuntimeException handleException(@NotNull Throwable throwable) {
-                throw new RethrownException();
-            }
+        LockBasedStorageManager m = LockBasedStorageManager.createWithExceptionHandling(throwable -> {
+            throw new RethrownException();
         });
         try {
-            m.createMemoizedFunction(
-                    new Function1<Object, Object>() {
-                        @Nullable
-                        @Override
-                        public Object invoke(@Nullable Object o) {
-                            throw new RuntimeException();
-                        }
-                    }
-            ).invoke("");
+            m.createMemoizedFunction(o -> {
+                throw new RuntimeException();
+            }).invoke("");
             fail("Exception should have occurred");
         }
         catch (RethrownException ignored) {
@@ -501,12 +448,7 @@ public class StorageManagerTest extends TestCase {
     // Utilities
 
     private static <K, V> Function0<V> apply(Function1<K, V> f, K x) {
-        return new Function0<V>() {
-            @Override
-            public V invoke() {
-                return f.invoke(x);
-            }
-        };
+        return () -> f.invoke(x);
     }
 
     private interface Counter {

@@ -88,14 +88,7 @@ public class RunUtils {
 
     public static void executeOnSeparateThread(@NotNull RunSettings settings) {
         assert !settings.waitForEnd : "Use execute() instead";
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                RunUtils.run(settings);
-            }
-        });
-
-        t.start();
+        new Thread(() -> run(settings)).start();
     }
 
     private static RunResult run(RunSettings settings) {

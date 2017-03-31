@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.Processor;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,14 +81,11 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     protected static List<String> findJavaSourcesInDirectory(@NotNull File directory) {
         List<String> javaFilePaths = new ArrayList<String>(1);
 
-        FileUtil.processFilesRecursively(directory, new Processor<File>() {
-            @Override
-            public boolean process(File file) {
-                if (file.isFile() && FilesKt.getExtension(file).equals(JavaFileType.DEFAULT_EXTENSION)) {
-                    javaFilePaths.add(file.getPath());
-                }
-                return true;
+        FileUtil.processFilesRecursively(directory, file -> {
+            if (file.isFile() && FilesKt.getExtension(file).equals(JavaFileType.DEFAULT_EXTENSION)) {
+                javaFilePaths.add(file.getPath());
             }
+            return true;
         });
 
         return javaFilePaths;

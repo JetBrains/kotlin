@@ -22,7 +22,6 @@ import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function2;
-import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment;
@@ -469,13 +468,11 @@ public class KotlinTypeMapper {
     ) {
         return TypeSignatureMappingKt.mapType(
                 kotlinType, AsmTypeFactory.INSTANCE, mode, typeMappingConfiguration, signatureVisitor,
-                new Function3<KotlinType, Type, TypeMappingMode, Unit>() {
-                    @Override
-                    public Unit invoke(KotlinType kotlinType, Type type, TypeMappingMode mode) {
-                        writeGenericType(kotlinType, type, signatureVisitor, mode);
-                        return Unit.INSTANCE;
-                    }
-                });
+                (ktType, asmType, typeMappingMode) -> {
+                    writeGenericType(ktType, asmType, signatureVisitor, typeMappingMode);
+                    return Unit.INSTANCE;
+                }
+        );
     }
 
     @NotNull

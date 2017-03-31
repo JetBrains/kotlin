@@ -20,7 +20,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
-import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
@@ -272,15 +271,12 @@ public class InlineCodegen extends CallGenerator {
         }
 
         SMAPAndMethodNode resultInCache = InlineCacheKt.getOrPut(
-                state.getInlineCache().getMethodNodeById(), methodId, new Function0<SMAPAndMethodNode>() {
-                    @Override
-                    public SMAPAndMethodNode invoke() {
-                        SMAPAndMethodNode result = doCreateMethodNodeFromCompiled(directMember, state, asmMethod);
-                        if (result == null) {
-                            throw new IllegalStateException("Couldn't obtain compiled function body for " + functionDescriptor);
-                        }
-                        return result;
+                state.getInlineCache().getMethodNodeById(), methodId, () -> {
+                    SMAPAndMethodNode result = doCreateMethodNodeFromCompiled(directMember, state, asmMethod);
+                    if (result == null) {
+                        throw new IllegalStateException("Couldn't obtain compiled function body for " + functionDescriptor);
                     }
+                    return result;
                 }
         );
 
@@ -315,13 +311,8 @@ public class InlineCodegen extends CallGenerator {
     ) {
         if (isBuiltInArrayIntrinsic(callableDescriptor)) {
             ClassId classId = IntrinsicArrayConstructorsKt.getClassId();
-            byte[] bytes = InlineCacheKt.getOrPut(state.getInlineCache().getClassBytes(), classId, new Function0<byte[]>() {
-                @Override
-                public byte[] invoke() {
-                    return IntrinsicArrayConstructorsKt.getBytecode();
-                }
-            });
-
+            byte[] bytes =
+                    InlineCacheKt.getOrPut(state.getInlineCache().getClassBytes(), classId, IntrinsicArrayConstructorsKt::getBytecode);
             return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), classId);
         }
 
@@ -332,22 +323,18 @@ public class InlineCodegen extends CallGenerator {
 
         ClassId containerId = containingClasses.getImplClassId();
 
-        byte[] bytes = InlineCacheKt.getOrPut(state.getInlineCache().getClassBytes(), containerId, new Function0<byte[]>() {
-            @Override
-            public byte[] invoke() {
-                VirtualFile file = InlineCodegenUtil.findVirtualFile(state, containerId);
-                if (file == null) {
-                    throw new IllegalStateException("Couldn't find declaration file for " + containerId);
-                }
-                try {
-                    return file.contentsToByteArray();
-                }
-                catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+        byte[] bytes = InlineCacheKt.getOrPut(state.getInlineCache().getClassBytes(), containerId, () -> {
+            VirtualFile file = InlineCodegenUtil.findVirtualFile(state, containerId);
+            if (file == null) {
+                throw new IllegalStateException("Couldn't find declaration file for " + containerId);
+            }
+            try {
+                return file.contentsToByteArray();
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
             }
         });
-
 
         return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), containerId);
     }
@@ -455,14 +442,8 @@ public class InlineCodegen extends CallGenerator {
 
         CallableMemberDescriptor descriptor = getLabelOwnerDescriptor(codegen.getContext());
         Set<String> labels = getDeclarationLabels(DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor);
-        LabelOwner labelOwner = new LabelOwner() {
-            @Override
-            public boolean isMyLabel(@NotNull String name) {
-                return labels.contains(name);
-            }
-        };
 
-        List<MethodInliner.PointForExternalFinallyBlocks> infos = MethodInliner.processReturns(adapter, labelOwner, true, null);
+        List<MethodInliner.PointForExternalFinallyBlocks> infos = MethodInliner.processReturns(adapter, labels::contains, true, null);
         generateAndInsertFinallyBlocks(
                 adapter, infos, ((StackValue.Local) remapper.remap(parameters.getArgsSizeOnStack() + 1).value).index
         );
@@ -759,19 +740,16 @@ public class InlineCodegen extends CallGenerator {
             }
         }
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                for (int i = infos.length - 1; i >= 0; i--) {
-                    ParameterInfo info = infos[i];
-                    if (!info.isSkippedOrRemapped()) {
-                        Type type = info.type;
-                        StackValue.Local local = StackValue.local(index[i], type);
-                        local.store(StackValue.onStack(type), codegen.v);
-                        if (info instanceof CapturedParamInfo) {
-                            info.setRemapValue(local);
-                            ((CapturedParamInfo) info).setSynthetic(true);
-                        }
+        Runnable runnable = () -> {
+            for (int i = infos.length - 1; i >= 0; i--) {
+                ParameterInfo info = infos[i];
+                if (!info.isSkippedOrRemapped()) {
+                    Type type = info.type;
+                    StackValue.Local local = StackValue.local(index[i], type);
+                    local.store(StackValue.onStack(type), codegen.v);
+                    if (info instanceof CapturedParamInfo) {
+                        info.setRemapValue(local);
+                        ((CapturedParamInfo) info).setSynthetic(true);
                     }
                 }
             }

@@ -82,16 +82,11 @@ public final class OutputPrefixPostfixTest extends SingleFileTranslationTest {
     }
 
     public static Test suite() throws Exception {
-        return TranslatorTestCaseBuilder
-                .suiteForDirectory(TEST_DATA_DIR_PATH + "outputPrefixPostfix/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
-                    @NotNull
-                    @Override
-                    public Test createTest(@NotNull String filename) {
-                        OutputPrefixPostfixTest examplesTest = new OutputPrefixPostfixTest(filename);
-                        examplesTest.setName(filename);
-                        return examplesTest;
-                    }
-                });
+        return TranslatorTestCaseBuilder.suiteForDirectory(TEST_DATA_DIR_PATH + "outputPrefixPostfix/cases/", filename -> {
+            OutputPrefixPostfixTest examplesTest = new OutputPrefixPostfixTest(filename);
+            examplesTest.setName(filename);
+            return examplesTest;
+        });
     }
 
     @Nullable

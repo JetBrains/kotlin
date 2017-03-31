@@ -36,8 +36,6 @@ import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
-import com.intellij.util.Function;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import kotlin.collections.CollectionsKt;
@@ -384,19 +382,11 @@ public class KotlinTestUtils {
 
     public static void deleteOnShutdown(File file) {
         if (filesToDelete.isEmpty()) {
-            ShutDownTracker.getInstance().registerShutdownTask(new Runnable() {
-                @Override
-                public void run() {
-                    ShutDownTracker.invokeAndWait(true, true, new Runnable() {
-                        @Override
-                        public void run() {
-                            for (File victim : filesToDelete) {
-                                FileUtil.delete(victim);
-                            }
-                        }
-                    });
+            ShutDownTracker.getInstance().registerShutdownTask(() -> ShutDownTracker.invokeAndWait(true, true, () -> {
+                for (File victim : filesToDelete) {
+                    FileUtil.delete(victim);
                 }
-            });
+            }));
         }
 
         filesToDelete.add(file);
@@ -525,12 +515,7 @@ public class KotlinTestUtils {
     }
 
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull String actual) {
-        assertEqualsToFile(expectedFile, actual, new Function1<String, String>() {
-            @Override
-            public String invoke(String s) {
-                return s;
-            }
-        });
+        assertEqualsToFile(expectedFile, actual, s -> s);
     }
 
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
@@ -916,15 +901,12 @@ public class KotlinTestUtils {
 
         Set<String> filePaths = collectPathsMetadata(testCaseClass);
 
-        FileUtil.processFilesRecursively(testDataDir, new Processor<File>() {
-            @Override
-            public boolean process(File file) {
-                if (file.isFile() && filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file)) {
-                    assertFilePathPresent(file, rootFile, filePaths);
-                }
-
-                return true;
+        FileUtil.processFilesRecursively(testDataDir, file -> {
+            if (file.isFile() && filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file)) {
+                assertFilePathPresent(file, rootFile, filePaths);
             }
+
+            return true;
         });
     }
 
@@ -939,13 +921,7 @@ public class KotlinTestUtils {
     }
 
     private static Set<String> collectPathsMetadata(Class<?> testCaseClass) {
-        return ContainerUtil.newHashSet(
-                ContainerUtil.map(collectMethodsMetadata(testCaseClass), new Function<String, String>() {
-                    @Override
-                    public String fun(String pathData) {
-                        return nameToCompare(pathData);
-                    }
-                }));
+        return ContainerUtil.newHashSet(ContainerUtil.map(collectMethodsMetadata(testCaseClass), KotlinTestUtils::nameToCompare));
     }
 
     @Nullable

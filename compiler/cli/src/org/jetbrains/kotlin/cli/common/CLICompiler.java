@@ -20,7 +20,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import kotlin.collections.ArraysKt;
-import kotlin.jvm.functions.Function1;
 import org.fusesource.jansi.AnsiConsole;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -314,12 +313,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             return version;
         }
 
-        List<String> versionStrings = ArraysKt.map(LanguageVersion.values(), new Function1<LanguageVersion, String>() {
-            @Override
-            public String invoke(LanguageVersion version) {
-                return version.getDescription();
-            }
-        });
+        List<String> versionStrings = ArraysKt.map(LanguageVersion.values(), LanguageVersion::getDescription);
         String message = "Unknown " + versionOf + " version: " + value + "\n" +
                          "Supported " + versionOf + " versions: " + StringsKt.join(versionStrings, ", ");
         configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(

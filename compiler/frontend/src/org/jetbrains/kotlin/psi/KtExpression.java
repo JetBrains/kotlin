@@ -22,13 +22,7 @@ import org.jetbrains.annotations.NotNull;
 public interface KtExpression extends KtElement {
     KtExpression[] EMPTY_ARRAY = new KtExpression[0];
 
-    ArrayFactory<KtExpression> ARRAY_FACTORY = new ArrayFactory<KtExpression>() {
-        @NotNull
-        @Override
-        public KtExpression[] create(int count) {
-            return count == 0 ? EMPTY_ARRAY : new KtExpression[count];
-        }
-    };
+    ArrayFactory<KtExpression> ARRAY_FACTORY = count -> count == 0 ? EMPTY_ARRAY : new KtExpression[count];
 
     @Override
     <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data);

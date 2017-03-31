@@ -22,7 +22,6 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
 import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
@@ -675,12 +674,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                        expression,
                        bindingContext,
                        shouldInlineConstVals,
-                       new Function1<ConstantValue<?>, Boolean>() {
-                           @Override
-                           public Boolean invoke(@NotNull ConstantValue<?> constant) {
-                               return constant instanceof EnumValue || constant instanceof NullValue;
-                           }
-                       }
+                       constant -> constant instanceof EnumValue || constant instanceof NullValue
                );
     }
 

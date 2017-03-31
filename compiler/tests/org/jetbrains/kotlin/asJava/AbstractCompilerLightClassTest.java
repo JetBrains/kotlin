@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.asJava;
 
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder;
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava;
@@ -54,22 +52,14 @@ public abstract class AbstractCompilerLightClassTest extends KotlinMultiFileTest
 
     @Override
     protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<Void> files) throws IOException {
-        LightClassTestCommon.INSTANCE.testLightClass(file, new Function1<String, PsiClass>() {
-            @Override
-            public PsiClass invoke(String s) {
-                try {
-                    return createFinder(getEnvironment()).findClass(s, GlobalSearchScope.allScope(getEnvironment().getProject()));
-                }
-                catch (IOException e) {
-                    throw ExceptionUtilsKt.rethrow(e);
-                }
+        LightClassTestCommon.INSTANCE.testLightClass(file, s -> {
+            try {
+                return createFinder(getEnvironment()).findClass(s, GlobalSearchScope.allScope(getEnvironment().getProject()));
             }
-        }, new Function1<String, String>() {
-            @Override
-            public String invoke(String s) {
-                return LightClassTestCommon.INSTANCE.removeEmptyDefaultImpls(s);
+            catch (IOException e) {
+                throw ExceptionUtilsKt.rethrow(e);
             }
-        });
+        }, LightClassTestCommon.INSTANCE::removeEmptyDefaultImpls);
     }
 
     @Override

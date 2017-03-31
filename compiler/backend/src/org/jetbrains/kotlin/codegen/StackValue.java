@@ -65,12 +65,9 @@ public abstract class StackValue {
     private static final String NULLABLE_LONG_TYPE_NAME = "java/lang/Long";
 
     public static final StackValue.Local LOCAL_0 = local(0, OBJECT_TYPE);
-    private static final StackValue UNIT = operation(UNIT_TYPE, new Function1<InstructionAdapter, Unit>() {
-        @Override
-        public Unit invoke(InstructionAdapter v) {
-            v.visitFieldInsn(GETSTATIC, UNIT_TYPE.getInternalName(), JvmAbi.INSTANCE_FIELD, UNIT_TYPE.getDescriptor());
-            return null;
-        }
+    private static final StackValue UNIT = operation(UNIT_TYPE, v -> {
+        v.visitFieldInsn(GETSTATIC, UNIT_TYPE.getInternalName(), JvmAbi.INSTANCE_FIELD, UNIT_TYPE.getDescriptor());
+        return null;
     });
 
     @NotNull

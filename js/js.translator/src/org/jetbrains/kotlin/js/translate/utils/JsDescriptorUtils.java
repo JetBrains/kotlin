@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
-import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,14 +75,11 @@ public final class JsDescriptorUtils {
     @NotNull
     public static List<KotlinType> getSupertypesWithoutFakes(ClassDescriptor descriptor) {
         Collection<KotlinType> supertypes = descriptor.getTypeConstructor().getSupertypes();
-        return ContainerUtil.filter(supertypes, new Condition<KotlinType>() {
-            @Override
-            public boolean value(KotlinType type) {
-                ClassDescriptor classDescriptor = getClassDescriptorForType(type);
+        return ContainerUtil.filter(supertypes, type -> {
+            ClassDescriptor classDescriptor = getClassDescriptorForType(type);
 
-                return !FAKE_CLASSES.contains(getFqNameSafe(classDescriptor).asString()) &&
-                       !(classDescriptor.getKind() == ClassKind.INTERFACE && isNativeObject(classDescriptor));
-            }
+            return !FAKE_CLASSES.contains(getFqNameSafe(classDescriptor).asString()) &&
+                   !(classDescriptor.getKind() == ClassKind.INTERFACE && isNativeObject(classDescriptor));
         });
     }
 

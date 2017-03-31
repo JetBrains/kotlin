@@ -20,7 +20,6 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.FqName;
@@ -45,12 +44,7 @@ public class FileBasedDeclarationProviderFactory extends AbstractDeclarationProv
     public FileBasedDeclarationProviderFactory(@NotNull StorageManager storageManager, @NotNull Collection<KtFile> files) {
         super(storageManager);
         this.storageManager = storageManager;
-        this.index = storageManager.createLazyValue(new Function0<Index>() {
-            @Override
-            public Index invoke() {
-                return computeFilesByPackage(files);
-            }
-        });
+        this.index = storageManager.createLazyValue(() -> computeFilesByPackage(files));
     }
 
     @NotNull

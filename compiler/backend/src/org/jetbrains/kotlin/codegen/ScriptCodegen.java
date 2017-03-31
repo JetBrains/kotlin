@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
@@ -202,12 +201,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
 
             ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this);
 
-            generateInitializers(new Function0<ExpressionCodegen>() {
-                @Override
-                public ExpressionCodegen invoke() {
-                    return codegen;
-                }
-            });
+            generateInitializers(() -> codegen);
 
             iv.areturn(Type.VOID_TYPE);
         }

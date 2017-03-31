@@ -81,14 +81,11 @@ public class GroupingMessageCollector implements MessageCollector {
     private Collection<String> sortedKeys() {
         List<String> sortedKeys = new ArrayList<String>(groupedMessages.keySet());
         // ensure that messages with no location i.e. perf, incomplete hierarchy are always reported first
-        Collections.sort(sortedKeys, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                if (o1 == o2) return 0;
-                if (o1 == null) return -1;
-                if (o2 == null) return 1;
-                return o1.compareTo(o2);
-            }
+        Collections.sort(sortedKeys, (o1, o2) -> {
+            if (o1 == o2) return 0;
+            if (o1 == null) return -1;
+            if (o2 == null) return 1;
+            return o1.compareTo(o2);
         });
         return sortedKeys;
     }

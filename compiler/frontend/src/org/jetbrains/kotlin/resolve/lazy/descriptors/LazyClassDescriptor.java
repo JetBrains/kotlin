@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -142,24 +141,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         KtModifierList modifierList = classLikeInfo.getModifierList();
         if (kind.isSingleton()) {
-            this.modality = storageManager.createLazyValue(new Function0<Modality>() {
-                @Override
-                public Modality invoke() {
-                    return Modality.FINAL;
-                }
-            });
+            this.modality = storageManager.createLazyValue(() -> Modality.FINAL);
         }
         else {
             Modality defaultModality = kind == ClassKind.INTERFACE ? Modality.ABSTRACT : Modality.FINAL;
-            this.modality = storageManager.createLazyValue(new Function0<Modality>() {
-                @Override
-                public Modality invoke() {
-                    return resolveModalityFromModifiers(classOrObject, defaultModality,
-                                                        c.getTrace().getBindingContext(),
-                                                        null,
-                                                        /* allowSealed = */ true);
-                }
-            });
+            this.modality = storageManager.createLazyValue(
+                    () -> resolveModalityFromModifiers(classOrObject, defaultModality, c.getTrace().getBindingContext(),
+                                                       null, /* allowSealed = */ true));
         }
 
         boolean isLocal = classOrObject != null && KtPsiUtil.isLocal(classOrObject);
@@ -227,76 +215,49 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             );
         }
 
-        this.companionObjectDescriptor = storageManager.createNullableLazyValue(new Function0<ClassDescriptorWithResolutionScopes>() {
-            @Override
-            public ClassDescriptorWithResolutionScopes invoke() {
-                return computeCompanionObjectDescriptor(getCompanionObjectIfAllowed());
-            }
-        });
-        this.extraCompanionObjectDescriptors = storageManager.createMemoizedFunction(new Function1<KtObjectDeclaration, ClassDescriptor>() {
-            @Override
-            public ClassDescriptor invoke(KtObjectDeclaration companionObject) {
-                return computeCompanionObjectDescriptor(companionObject);
-            }
-        });
-        this.forceResolveAllContents = storageManager.createRecursionTolerantNullableLazyValue(new Function0<Void>() {
-            @Override
-            public Void invoke() {
-                doForceResolveAllContents();
-                return null;
-            }
+        this.companionObjectDescriptor = storageManager.createNullableLazyValue(
+                () -> computeCompanionObjectDescriptor(getCompanionObjectIfAllowed())
+        );
+        this.extraCompanionObjectDescriptors = storageManager.createMemoizedFunction(this::computeCompanionObjectDescriptor);
+        this.forceResolveAllContents = storageManager.createRecursionTolerantNullableLazyValue(() -> {
+            doForceResolveAllContents();
+            return null;
         }, null);
 
-        this.resolutionScopesSupport = new ClassResolutionScopesSupport(this, storageManager, new Function0<LexicalScope>() {
-            @Override
-            public LexicalScope invoke() {
-                return getOuterScope();
+        this.resolutionScopesSupport = new ClassResolutionScopesSupport(this, storageManager, this::getOuterScope);
+
+        this.parameters = c.getStorageManager().createLazyValue(() -> {
+            KtClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
+            KtTypeParameterList typeParameterList = classInfo.getTypeParameterList();
+            if (typeParameterList == null) return Collections.emptyList();
+
+            if (classInfo.getClassKind() == ClassKind.ENUM_CLASS) {
+                c.getTrace().report(TYPE_PARAMETERS_IN_ENUM.on(typeParameterList));
             }
+            if (classInfo.getClassKind() == ClassKind.OBJECT) {
+                c.getTrace().report(TYPE_PARAMETERS_IN_OBJECT.on(typeParameterList));
+            }
+
+            List<KtTypeParameter> typeParameters = typeParameterList.getParameters();
+            if (typeParameters.isEmpty()) return Collections.emptyList();
+
+            List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
+
+            for (int i = 0; i < typeParameters.size(); i++) {
+                parameters.add(new LazyTypeParameterDescriptor(c, this, typeParameters.get(i), i));
+            }
+
+            return parameters;
         });
 
-        this.parameters = c.getStorageManager().createLazyValue(new Function0<List<TypeParameterDescriptor>>() {
-            @Override
-            public List<TypeParameterDescriptor> invoke() {
-                KtClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
-                KtTypeParameterList typeParameterList = classInfo.getTypeParameterList();
-                if (typeParameterList == null) return Collections.emptyList();
+        this.scopeForInitializerResolution = storageManager.createLazyValue(
+                () -> ClassResolutionScopesSupportKt.scopeForInitializerResolution(
+                        this, createInitializerScopeParent(), classLikeInfo.getPrimaryConstructorParameters()
+                )
+        );
 
-                if (classInfo.getClassKind() == ClassKind.ENUM_CLASS) {
-                    c.getTrace().report(TYPE_PARAMETERS_IN_ENUM.on(typeParameterList));
-                }
-                if (classInfo.getClassKind() == ClassKind.OBJECT) {
-                    c.getTrace().report(TYPE_PARAMETERS_IN_OBJECT.on(typeParameterList));
-                }
-
-                List<KtTypeParameter> typeParameters = typeParameterList.getParameters();
-                if (typeParameters.isEmpty()) return Collections.emptyList();
-
-                List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
-
-                for (int i = 0; i < typeParameters.size(); i++) {
-                    parameters.add(new LazyTypeParameterDescriptor(c, LazyClassDescriptor.this, typeParameters.get(i), i));
-                }
-
-                return parameters;
-            }
-        });
-
-        this.scopeForInitializerResolution = storageManager.createLazyValue(new Function0<LexicalScope>() {
-            @Override
-            public LexicalScope invoke() {
-                return ClassResolutionScopesSupportKt.scopeForInitializerResolution(LazyClassDescriptor.this,
-                                                                                    createInitializerScopeParent(),
-                                                                                    classLikeInfo.getPrimaryConstructorParameters());
-            }
-        });
-
-        this.sealedSubclasses = storageManager.createLazyValue(new Function0<Collection<ClassDescriptor>>() {
-            @Override
-            public Collection<ClassDescriptor> invoke() {
-                // TODO: only consider classes from the same file, not the whole package fragment
-                return DescriptorUtilsKt.computeSealedSubclasses(LazyClassDescriptor.this);
-            }
-        });
+        // TODO: only consider classes from the same file, not the whole package fragment
+        this.sealedSubclasses = storageManager.createLazyValue(() -> DescriptorUtilsKt.computeSealedSubclasses(this));
     }
 
     @NotNull
@@ -390,13 +351,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         //noinspection unchecked
         return (Collection) CollectionsKt.filter(
                 DescriptorUtils.getAllDescriptors(unsubstitutedMemberScope),
-                new Function1<DeclarationDescriptor, Boolean>() {
-                    @Override
-                    public Boolean invoke(DeclarationDescriptor descriptor) {
-                        return descriptor instanceof CallableMemberDescriptor
-                               && ((CallableMemberDescriptor) descriptor).getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
-                    }
-                }
+                descriptor -> descriptor instanceof CallableMemberDescriptor
+                              && ((CallableMemberDescriptor) descriptor).getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE
         );
     }
 
@@ -436,19 +392,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         return CollectionsKt.map(
                 CollectionsKt.filter(
                         declarationProvider.getOwnerInfo().getCompanionObjects(),
-                        new Function1<KtObjectDeclaration, Boolean>() {
-                            @Override
-                            public Boolean invoke(KtObjectDeclaration companionObject) {
-                                return companionObject != allowedCompanionObject;
-                            }
-                        }
+                        companionObject -> companionObject != allowedCompanionObject
                 ),
-                new Function1<KtObjectDeclaration, ClassDescriptor>() {
-                    @Override
-                    public ClassDescriptor invoke(KtObjectDeclaration companionObject) {
-                        return extraCompanionObjectDescriptors.invoke(companionObject);
-                    }
-                }
+                extraCompanionObjectDescriptors
         );
     }
 
@@ -623,12 +569,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     private class LazyClassTypeConstructor extends AbstractClassTypeConstructor {
-        private final NotNullLazyValue<List<TypeParameterDescriptor>> parameters = c.getStorageManager().createLazyValue(new Function0<List<TypeParameterDescriptor>>() {
-            @Override
-            public List<TypeParameterDescriptor> invoke() {
-                return TypeParameterUtilsKt.computeConstructorTypeParameters(LazyClassDescriptor.this);
-            }
-        });
+        private final NotNullLazyValue<List<TypeParameterDescriptor>> parameters = c.getStorageManager().createLazyValue(
+                () -> TypeParameterUtilsKt.computeConstructorTypeParameters(LazyClassDescriptor.this)
+        );
 
         public LazyClassTypeConstructor() {
             super(LazyClassDescriptor.this.c.getStorageManager());

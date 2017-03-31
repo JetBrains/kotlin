@@ -31,7 +31,6 @@ import com.intellij.util.containers.Stack;
 import kotlin.Pair;
 import kotlin.TuplesKt;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,30 +54,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CheckerTestUtil {
-    public static final Comparator<ActualDiagnostic> DIAGNOSTIC_COMPARATOR = new Comparator<ActualDiagnostic>() {
-        @Override
-        public int compare(@NotNull ActualDiagnostic o1, @NotNull ActualDiagnostic o2) {
-            List<TextRange> ranges1 = o1.diagnostic.getTextRanges();
-            List<TextRange> ranges2 = o2.diagnostic.getTextRanges();
-            int minNumberOfRanges = ranges1.size() < ranges2.size() ? ranges1.size() : ranges2.size();
-            for (int i = 0; i < minNumberOfRanges; i++) {
-                TextRange range1 = ranges1.get(i);
-                TextRange range2 = ranges2.get(i);
-                int startOffset1 = range1.getStartOffset();
-                int startOffset2 = range2.getStartOffset();
-                if (startOffset1 != startOffset2) {
-                    // Start early -- go first
-                    return startOffset1 - range2.getStartOffset();
-                }
-                int endOffset1 = range1.getEndOffset();
-                int endOffset2 = range2.getEndOffset();
-                if (endOffset1 != endOffset2) {
-                    // start at the same offset, the one who end later is the outer, i.e. goes first
-                    return endOffset2 - endOffset1;
-                }
+    public static final Comparator<ActualDiagnostic> DIAGNOSTIC_COMPARATOR = (o1, o2) -> {
+        List<TextRange> ranges1 = o1.diagnostic.getTextRanges();
+        List<TextRange> ranges2 = o2.diagnostic.getTextRanges();
+        int minNumberOfRanges = ranges1.size() < ranges2.size() ? ranges1.size() : ranges2.size();
+        for (int i = 0; i < minNumberOfRanges; i++) {
+            TextRange range1 = ranges1.get(i);
+            TextRange range2 = ranges2.get(i);
+            int startOffset1 = range1.getStartOffset();
+            int startOffset2 = range2.getStartOffset();
+            if (startOffset1 != startOffset2) {
+                // Start early -- go first
+                return startOffset1 - range2.getStartOffset();
             }
-            return ranges1.size() - ranges2.size();
+            int endOffset1 = range1.getEndOffset();
+            int endOffset2 = range2.getEndOffset();
+            if (endOffset1 != endOffset2) {
+                // start at the same offset, the one who end later is the outer, i.e. goes first
+                return endOffset2 - endOffset1;
+            }
         }
+        return ranges1.size() - ranges2.size();
     };
 
     private static final String IGNORE_DIAGNOSTIC_PARAMETER = "IGNORE";
@@ -104,12 +100,7 @@ public class CheckerTestUtil {
 
         List<Pair<MultiTargetPlatform, BindingContext>> sortedBindings = CollectionsKt.sortedWith(
                 implementingModulesBindings,
-                new Comparator<Pair<MultiTargetPlatform, BindingContext>>() {
-                    @Override
-                    public int compare(Pair<MultiTargetPlatform, BindingContext> o1, Pair<MultiTargetPlatform, BindingContext> o2) {
-                        return o1.getFirst().compareTo(o2.getFirst());
-                    }
-                }
+                (o1, o2) -> o1.getFirst().compareTo(o2.getFirst())
         );
 
         for (Pair<MultiTargetPlatform, BindingContext> binding : sortedBindings) {
@@ -299,12 +290,7 @@ public class CheckerTestUtil {
 
         for (TextDiagnostic expectedDiagnostic : expectedDiagnostics) {
             Map.Entry<ActualDiagnostic, TextDiagnostic> actualDiagnosticEntry = CollectionsKt.firstOrNull(
-                    actualDiagnostics.entrySet(), new Function1<Map.Entry<ActualDiagnostic, TextDiagnostic>, Boolean>() {
-                        @Override
-                        public Boolean invoke(Map.Entry<ActualDiagnostic, TextDiagnostic> entry) {
-                            return expectedDiagnostic.getDescription().equals(entry.getValue().getDescription());
-                        }
-                    }
+                    actualDiagnostics.entrySet(), entry -> expectedDiagnostic.getDescription().equals(entry.getValue().getDescription())
             );
 
             if (actualDiagnosticEntry != null) {
@@ -403,12 +389,7 @@ public class CheckerTestUtil {
     public static StringBuffer addDiagnosticMarkersToText(@NotNull PsiFile psiFile, @NotNull Collection<ActualDiagnostic> diagnostics) {
         return addDiagnosticMarkersToText(
                 psiFile, diagnostics, Collections.<ActualDiagnostic, TextDiagnostic>emptyMap(),
-                new Function<PsiFile, String>() {
-                    @Override
-                    public String fun(PsiFile file) {
-                        return file.getText();
-                    }
-                }
+                PsiElement::getText
         );
     }
 
@@ -623,12 +604,9 @@ public class CheckerTestUtil {
             diagnosticDescriptors.add(
                     new DiagnosticDescriptor(range.getStartOffset(), range.getEndOffset(), diagnosticsGroupedByRanges.get(range)));
         }
-        Collections.sort(diagnosticDescriptors, new Comparator<DiagnosticDescriptor>() {
-            @Override
-            public int compare(@NotNull DiagnosticDescriptor d1, @NotNull DiagnosticDescriptor d2) {
-                // Start early -- go first; start at the same offset, the one who end later is the outer, i.e. goes first
-                return (d1.start != d2.start) ? d1.start - d2.start : d2.end - d1.end;
-            }
+        Collections.sort(diagnosticDescriptors, (d1, d2) -> {
+            // Start early -- go first; start at the same offset, the one who end later is the outer, i.e. goes first
+            return (d1.start != d2.start) ? d1.start - d2.start : d2.end - d1.end;
         });
         return diagnosticDescriptors;
     }
@@ -746,12 +724,7 @@ public class CheckerTestUtil {
             if (renderer instanceof AbstractDiagnosticWithParametersRenderer) {
                 //noinspection unchecked
                 Object[] renderParameters = ((AbstractDiagnosticWithParametersRenderer) renderer).renderParameters(diagnostic);
-                List<String> parameters = ContainerUtil.map(renderParameters, new Function<Object, String>() {
-                    @Override
-                    public String fun(Object o) {
-                        return o != null ? o.toString() : "null";
-                    }
-                });
+                List<String> parameters = ContainerUtil.map(renderParameters, Object::toString);
                 return new TextDiagnostic(diagnosticName, actualDiagnostic.platform, parameters);
             }
             return new TextDiagnostic(diagnosticName, actualDiagnostic.platform, null);
@@ -817,12 +790,7 @@ public class CheckerTestUtil {
             result.append(name);
             if (parameters != null) {
                 result.append("(");
-                result.append(StringUtil.join(parameters, new Function<String, String>() {
-                    @Override
-                    public String fun(String s) {
-                        return escape(s);
-                    }
-                }, "; "));
+                result.append(StringUtil.join(parameters, TextDiagnostic::escape, "; "));
                 result.append(")");
             }
             return result.toString();

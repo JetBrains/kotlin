@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.generators.tests.generator;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -31,12 +30,8 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class SimpleTestClassModel implements TestClassModel {
-    private static final Comparator<TestEntityModel> BY_NAME = new Comparator<TestEntityModel>() {
-        @Override
-        public int compare(@NotNull TestEntityModel o1, @NotNull TestEntityModel o2) {
-            return o1.getName().compareTo(o2.getName());
-        }
-    };
+    private static final Comparator<TestEntityModel> BY_NAME = Comparator.comparing(TestEntityModel::getName);
+
     @NotNull
     private final File rootFile;
     private final boolean recursive;
@@ -123,12 +118,7 @@ public class SimpleTestClassModel implements TestClassModel {
     }
 
     private static boolean dirHasFilesInside(@NotNull File dir) {
-        return !FileUtil.processFilesRecursively(dir, new Processor<File>() {
-            @Override
-            public boolean process(File file) {
-                return file.isDirectory();
-            }
-        });
+        return !FileUtil.processFilesRecursively(dir, File::isDirectory);
     }
 
     private static boolean dirHasSubDirs(@NotNull File dir) {

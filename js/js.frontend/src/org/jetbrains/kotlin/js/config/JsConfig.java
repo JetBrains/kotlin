@@ -197,15 +197,12 @@ public class JsConfig {
         if (initialized) return;
 
         if (!getLibraries().isEmpty()) {
-            Function1<VirtualFile, Unit> action = new Function1<VirtualFile, Unit>() {
-                @Override
-                public Unit invoke(VirtualFile file) {
-                    String libraryPath = PathUtil.getLocalPath(file);
-                    assert libraryPath != null : "libraryPath for " + file + " should not be null";
-                    metadata.addAll(KotlinJavascriptMetadataUtils.loadMetadata(libraryPath));
+            Function1<VirtualFile, Unit> action = file -> {
+                String libraryPath = PathUtil.getLocalPath(file);
+                assert libraryPath != null : "libraryPath for " + file + " should not be null";
+                metadata.addAll(KotlinJavascriptMetadataUtils.loadMetadata(libraryPath));
 
-                    return Unit.INSTANCE;
-                }
+                return Unit.INSTANCE;
             };
 
             boolean hasErrors = checkLibFilesAndReportErrors(new Reporter() {

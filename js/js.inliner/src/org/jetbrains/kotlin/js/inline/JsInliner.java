@@ -58,15 +58,8 @@ public class JsInliner extends JsVisitorWithContextImpl {
     // these are needed for error reporting, when inliner detects cycle
     private final Stack<JsFunction> namedFunctionsStack = new Stack<JsFunction>();
     private final LinkedList<JsCallInfo> inlineCallInfos = new LinkedList<JsCallInfo>();
-    private final Function1<JsNode, Boolean> canBeExtractedByInliner = new Function1<JsNode, Boolean>() {
-        @Override
-        public Boolean invoke(JsNode node) {
-            if (!(node instanceof JsInvocation)) return false;
-
-            JsInvocation call = (JsInvocation) node;
-            return hasToBeInlined(call);
-        }
-    };
+    private final Function1<JsNode, Boolean> canBeExtractedByInliner =
+            node -> node instanceof JsInvocation && hasToBeInlined((JsInvocation) node);
 
     public static JsProgram process(@NotNull TranslationContext context) {
         JsProgram program = context.program();

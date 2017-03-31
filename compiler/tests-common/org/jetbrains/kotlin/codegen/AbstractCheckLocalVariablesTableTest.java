@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.google.common.io.Files;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
@@ -76,19 +74,9 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
         String classFileRegex = StringUtil.escapeToRegexp(split[0] + ".class").replace("\\*", ".+");
         String methodName = split[1];
 
-        OutputFile outputFile = ContainerUtil.find(outputFiles.asList(), new Condition<OutputFile>() {
-            @Override
-            public boolean value(OutputFile outputFile) {
-                return outputFile.getRelativePath().matches(classFileRegex);
-            }
-        });
+        OutputFile outputFile = ContainerUtil.find(outputFiles.asList(), file -> file.getRelativePath().matches(classFileRegex));
 
-        String pathsString = StringUtil.join(outputFiles.asList(), new Function<OutputFile, String>() {
-            @Override
-            public String fun(OutputFile file) {
-                return file.getRelativePath();
-            }
-        }, ", ");
+        String pathsString = StringUtil.join(outputFiles.asList(), OutputFile::getRelativePath, ", ");
         assertNotNull("Couldn't find class file for pattern " + classFileRegex + " in: " + pathsString, outputFile);
 
         ClassReader cr = new ClassReader(outputFile.asByteArray());

@@ -111,12 +111,7 @@ public class ExpressionTypingServices {
                 trace, scope, dataFlowInfo, expectedType, contextDependency, statementFilter
         );
         if (contextExpression != expression) {
-            context = context.replaceExpressionContextProvider(new Function1<KtExpression, KtExpression>() {
-                @Override
-                public KtExpression invoke(KtExpression arg) {
-                    return arg == expression ? contextExpression : null;
-                }
-            });
+            context = context.replaceExpressionContextProvider(arg -> arg == expression ? contextExpression : null);
         }
         return expressionTypingFacade.getTypeInfo(expression, context, isStatement);
     }

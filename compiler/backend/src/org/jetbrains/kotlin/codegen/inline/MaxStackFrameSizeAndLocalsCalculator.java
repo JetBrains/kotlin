@@ -46,7 +46,6 @@
 
 package org.jetbrains.kotlin.codegen.inline;
 
-import com.intellij.openapi.util.Factory;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.*;
@@ -430,12 +429,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     // ------------------------------------------------------------------------
 
     private LabelWrapper getLabelWrapper(Label label) {
-        return ContainerUtil.getOrCreate(labelWrappersMap, label, new Factory<LabelWrapper>() {
-            @Override
-            public LabelWrapper create() {
-                return new LabelWrapper(label);
-            }
-        });
+        return ContainerUtil.<Label, LabelWrapper>getOrCreate(labelWrappersMap, label, () -> new LabelWrapper(label));
     }
 
     private void increaseStackSize(int variation) {

@@ -107,12 +107,8 @@ public class InterceptionInstrumenter {
                 }
 
                 if (enterData.isEmpty() && normalReturnData.isEmpty() && exceptionData.isEmpty()) {
-                    dumpTasks.add(new DumpAction() {
-                        @Override
-                        public void dump(PrintStream out) {
-                            out.println("WARNING: No relevant methods found in " + field + " of type " + interceptorClass.getCanonicalName());
-                        }
-                    });
+                    dumpTasks.add(out -> out.println("WARNING: No relevant methods found in " + field +
+                                                     " of type " + interceptorClass.getCanonicalName()));
                 }
 
                 String nameFromAnnotation = annotation.methodName();
@@ -215,24 +211,21 @@ public class InterceptionInstrumenter {
     }
 
     private void addDumpTask(Object interceptor, Method method, MethodInstrumenter instrumenter) {
-        dumpTasks.add(new DumpAction() {
-            @Override
-            public void dump(PrintStream out) {
-                out.println("<<< " + instrumenter + ": " + interceptor.getClass().getName() + " says:");
-                try {
-                    if (method.getParameterTypes().length == 0) {
-                        method.invoke(interceptor);
-                    }
-                    else {
-                        method.invoke(interceptor, out);
-                    }
+        dumpTasks.add(out -> {
+            out.println("<<< " + instrumenter + ": " + interceptor.getClass().getName() + " says:");
+            try {
+                if (method.getParameterTypes().length == 0) {
+                    method.invoke(interceptor);
                 }
-                catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new IllegalStateException(e);
+                else {
+                    method.invoke(interceptor, out);
                 }
-                out.println(">>>");
-                out.println();
             }
+            catch (IllegalAccessException | InvocationTargetException e) {
+                throw new IllegalStateException(e);
+            }
+            out.println(">>>");
+            out.println();
         });
     }
 

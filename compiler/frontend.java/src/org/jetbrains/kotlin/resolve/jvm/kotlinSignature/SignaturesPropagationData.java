@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.kotlinSignature;
 
 import com.google.common.collect.Lists;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -130,20 +127,19 @@ public class SignaturesPropagationData {
 
         for (ValueParameterDescriptor originalParam : parameters) {
             int originalIndex = originalParam.getIndex();
-            List<TypeAndName> typesFromSuperMethods = ContainerUtil.map(superFunctions,
-                    new Function<FunctionDescriptor, TypeAndName>() {
-                        @Override
-                        public TypeAndName fun(FunctionDescriptor superFunction) {
-                            ReceiverParameterDescriptor receiver = superFunction.getExtensionReceiverParameter();
-                            int index = receiver != null ? originalIndex - 1 : originalIndex;
-                            if (index == -1) {
-                                assert receiver != null : "can't happen: index is -1, while function is not extension";
-                                return new TypeAndName(receiver.getType(), originalParam.getName());
-                            }
-                            ValueParameterDescriptor parameter = superFunction.getValueParameters().get(index);
-                            return new TypeAndName(parameter.getType(), parameter.getName());
+            List<TypeAndName> typesFromSuperMethods = CollectionsKt.map(
+                    superFunctions,
+                    superFunction -> {
+                        ReceiverParameterDescriptor receiver = superFunction.getExtensionReceiverParameter();
+                        int index = receiver != null ? originalIndex - 1 : originalIndex;
+                        if (index == -1) {
+                            assert receiver != null : "can't happen: index is -1, while function is not extension";
+                            return new TypeAndName(receiver.getType(), originalParam.getName());
                         }
-                    });
+                        ValueParameterDescriptor parameter = superFunction.getValueParameters().get(index);
+                        return new TypeAndName(parameter.getType(), parameter.getName());
+                    }
+            );
 
             VarargCheckResult varargCheckResult = checkVarargInSuperFunctions(originalParam);
 
@@ -180,12 +176,7 @@ public class SignaturesPropagationData {
             }
         }
 
-        boolean hasStableParameterNames = CollectionsKt.any(superFunctions, new Function1<FunctionDescriptor, Boolean>() {
-            @Override
-            public Boolean invoke(FunctionDescriptor descriptor) {
-                return descriptor.hasStableParameterNames();
-            }
-        });
+        boolean hasStableParameterNames = CollectionsKt.any(superFunctions, CallableDescriptor::hasStableParameterNames);
 
         return new ValueParameters(resultReceiverType, resultParameters, hasStableParameterNames);
     }
@@ -224,13 +215,10 @@ public class SignaturesPropagationData {
         }
 
         // sorting for diagnostic stability
-        Collections.sort(superFunctions, new Comparator<FunctionDescriptor>() {
-            @Override
-            public int compare(@NotNull FunctionDescriptor fun1, @NotNull FunctionDescriptor fun2) {
-                FqNameUnsafe fqName1 = getFqName(fun1.getContainingDeclaration());
-                FqNameUnsafe fqName2 = getFqName(fun2.getContainingDeclaration());
-                return fqName1.asString().compareTo(fqName2.asString());
-            }
+        Collections.sort(superFunctions, (fun1, fun2) -> {
+            FqNameUnsafe fqName1 = getFqName(fun1.getContainingDeclaration());
+            FqNameUnsafe fqName2 = getFqName(fun2.getContainingDeclaration());
+            return fqName1.asString().compareTo(fqName2.asString());
         });
         return superFunctions;
     }

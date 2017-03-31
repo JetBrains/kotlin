@@ -58,16 +58,12 @@ public abstract class KtStubElementType<StubT extends StubElement, PsiT extends 
         }
         //noinspection unchecked
         emptyArray = (PsiT[]) Array.newInstance(psiClass, 0);
-        arrayFactory = new ArrayFactory<PsiT>() {
-            @NotNull
-            @Override
-            public PsiT[] create(int count) {
-                if (count == 0) {
-                    return emptyArray;
-                }
-                //noinspection unchecked
-                return (PsiT[]) Array.newInstance(psiClass, count);
+        arrayFactory = count -> {
+            if (count == 0) {
+                return emptyArray;
             }
+            //noinspection unchecked
+            return (PsiT[]) Array.newInstance(psiClass, count);
         };
     }
 

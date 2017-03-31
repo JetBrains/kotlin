@@ -42,15 +42,10 @@ public final class SourceMapTest extends SingleFileTranslationTest {
     }
 
     public static Test suite() throws Exception {
-        return TranslatorTestCaseBuilder
-                .suiteForDirectory(TEST_DATA_DIR_PATH + "sourcemap/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
-                    @NotNull
-                    @Override
-                    public Test createTest(@NotNull String filename) {
-                        SourceMapTest examplesTest = new SourceMapTest(filename);
-                        examplesTest.setName(filename);
-                        return examplesTest;
-                    }
-                });
+        return TranslatorTestCaseBuilder.suiteForDirectory(TEST_DATA_DIR_PATH + "sourcemap/cases/", filename -> {
+            SourceMapTest examplesTest = new SourceMapTest(filename);
+            examplesTest.setName(filename);
+            return examplesTest;
+        });
     }
 }

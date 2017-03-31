@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.integration;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker;
@@ -58,12 +57,7 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
         List<String> fileNames = new ArrayList<String>(Arrays.asList(jsFiles));
         fileNames.add(JS_OUT_FILE);
 
-        List<String> filePaths = ContainerUtil.map(fileNames, new Function<String, String>() {
-            @Override
-            public String fun(String s) {
-                return getOutputFileByName(s).getAbsolutePath();
-            }
-        });
+        List<String> filePaths = CollectionsKt.map(fileNames, s -> getOutputFileByName(s).getAbsolutePath());
 
         RhinoUtils.runRhinoTest(filePaths, new RhinoFunctionResultChecker("out", "foo", "box", "OK", withModuleSystem));
     }

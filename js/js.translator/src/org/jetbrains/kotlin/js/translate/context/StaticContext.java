@@ -432,12 +432,9 @@ public final class StaticContext {
 
     @NotNull
     private JsName getNameForPackage(@NotNull FqName packageFqName) {
-        return ContainerUtil.getOrCreate(packageNames, packageFqName, new Factory<JsName>() {
-            @Override
-            public JsName create() {
-                String name = Namer.generatePackageName(packageFqName);
-                return rootPackageScope.declareName(name);
-            }
+        return ContainerUtil.getOrCreate(packageNames, packageFqName, (Factory<JsName>) () -> {
+            String name = Namer.generatePackageName(packageFqName);
+            return rootPackageScope.declareName(name);
         });
     }
 
@@ -499,42 +496,34 @@ public final class StaticContext {
 
     private final class InnerNameGenerator extends Generator<JsName> {
         public InnerNameGenerator() {
-            addRule(new Rule<JsName>() {
-                @Nullable
-                @Override
-                public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (descriptor instanceof FunctionDescriptor) {
-                        FunctionDescriptor initialDescriptor = ((FunctionDescriptor) descriptor).getInitialSignatureDescriptor();
-                        if (initialDescriptor != null) {
-                            return getInnerNameForDescriptor(initialDescriptor);
-                        }
+            addRule(descriptor -> {
+                if (descriptor instanceof FunctionDescriptor) {
+                    FunctionDescriptor initialDescriptor = ((FunctionDescriptor) descriptor).getInitialSignatureDescriptor();
+                    if (initialDescriptor != null) {
+                        return getInnerNameForDescriptor(initialDescriptor);
                     }
-                    if (descriptor instanceof ModuleDescriptor) {
-                        return getModuleInnerName(descriptor);
-                    }
-                    if (descriptor instanceof LocalVariableDescriptor || descriptor instanceof ParameterDescriptor) {
-                        return getNameForDescriptor(descriptor);
-                    }
-                    if (descriptor instanceof ConstructorDescriptor) {
-                        if (((ConstructorDescriptor) descriptor).isPrimary()) {
-                            return getInnerNameForDescriptor(((ConstructorDescriptor) descriptor).getConstructedClass());
-                        }
-                    }
-                    return localOrImportedName(descriptor, getSuggestedName(descriptor));
                 }
+                if (descriptor instanceof ModuleDescriptor) {
+                    return getModuleInnerName(descriptor);
+                }
+                if (descriptor instanceof LocalVariableDescriptor || descriptor instanceof ParameterDescriptor) {
+                    return getNameForDescriptor(descriptor);
+                }
+                if (descriptor instanceof ConstructorDescriptor) {
+                    if (((ConstructorDescriptor) descriptor).isPrimary()) {
+                        return getInnerNameForDescriptor(((ConstructorDescriptor) descriptor).getConstructedClass());
+                    }
+                }
+                return localOrImportedName(descriptor, getSuggestedName(descriptor));
             });
         }
     }
 
     private final class ObjectInstanceNameGenerator extends Generator<JsName> {
         public ObjectInstanceNameGenerator() {
-            addRule(new Rule<JsName>() {
-                @Nullable
-                @Override
-                public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    String suggested = getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_FUNCTION_SUFFIX;
-                    return localOrImportedName(descriptor, suggested);
-                }
+            addRule(descriptor -> {
+                String suggested = getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_FUNCTION_SUFFIX;
+                return localOrImportedName(descriptor, suggested);
             });
         }
     }
@@ -605,68 +594,46 @@ public final class StaticContext {
     private final class ScopeGenerator extends Generator<JsScope> {
 
         public ScopeGenerator() {
-            Rule<JsScope> generateNewScopesForClassesWithNoAncestors = new Rule<JsScope>() {
-                @Override
-                public JsScope apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!(descriptor instanceof ClassDescriptor)) {
-                        return null;
-                    }
-                    if (getSuperclass((ClassDescriptor) descriptor) == null) {
-                        JsFunction function = new JsFunction(new JsRootScope(program), new JsBlock(), descriptor.toString());
-                        scopeToFunction.put(function.getScope(), function);
-                        return function.getScope();
-                    }
+            Rule<JsScope> generateNewScopesForClassesWithNoAncestors = descriptor -> {
+                if (!(descriptor instanceof ClassDescriptor)) {
                     return null;
                 }
-            };
-            Rule<JsScope> generateInnerScopesForDerivedClasses = new Rule<JsScope>() {
-                @Override
-                public JsScope apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!(descriptor instanceof ClassDescriptor)) {
-                        return null;
-                    }
-                    ClassDescriptor superclass = getSuperclass((ClassDescriptor) descriptor);
-                    if (superclass == null) {
-                        return null;
-                    }
-                    return getScopeForDescriptor(superclass).innerObjectScope("Scope for class " + descriptor.getName());
+                if (getSuperclass((ClassDescriptor) descriptor) == null) {
+                    JsFunction function = new JsFunction(new JsRootScope(program), new JsBlock(), descriptor.toString());
+                    scopeToFunction.put(function.getScope(), function);
+                    return function.getScope();
                 }
+                return null;
             };
-            Rule<JsScope> generateNewScopesForPackageDescriptors = new Rule<JsScope>() {
-                @Override
-                public JsScope apply(@NotNull DeclarationDescriptor descriptor) {
-                    return rootFunction.getScope();
+            Rule<JsScope> generateInnerScopesForDerivedClasses = descriptor -> {
+                if (!(descriptor instanceof ClassDescriptor)) {
+                    return null;
                 }
+                ClassDescriptor superclass = getSuperclass((ClassDescriptor) descriptor);
+                if (superclass == null) {
+                    return null;
+                }
+                return getScopeForDescriptor(superclass).innerObjectScope("Scope for class " + descriptor.getName());
             };
+            Rule<JsScope> generateNewScopesForPackageDescriptors = descriptor -> rootFunction.getScope();
             //TODO: never get there
-            Rule<JsScope> generateInnerScopesForMembers = new Rule<JsScope>() {
-                @Override
-                public JsScope apply(@NotNull DeclarationDescriptor descriptor) {
-                    return rootFunction.getScope().innerObjectScope("Scope for member " + descriptor.getName());
+            Rule<JsScope> generateInnerScopesForMembers =
+                    descriptor -> rootFunction.getScope().innerObjectScope("Scope for member " + descriptor.getName());
+            Rule<JsScope> createFunctionObjectsForCallableDescriptors = descriptor -> {
+                if (!(descriptor instanceof CallableDescriptor)) {
+                    return null;
                 }
-            };
-            Rule<JsScope> createFunctionObjectsForCallableDescriptors = new Rule<JsScope>() {
-                @Override
-                public JsScope apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!(descriptor instanceof CallableDescriptor)) {
-                        return null;
-                    }
 
-                    JsFunction correspondingFunction = JsAstUtils.createFunctionWithEmptyBody(rootFunction.getScope());
-                    assert (!scopeToFunction.containsKey(correspondingFunction.getScope())) : "Scope to function value overridden for " + descriptor;
-                    scopeToFunction.put(correspondingFunction.getScope(), correspondingFunction);
-                    return correspondingFunction.getScope();
-                }
+                JsFunction correspondingFunction = JsAstUtils.createFunctionWithEmptyBody(rootFunction.getScope());
+                assert (!scopeToFunction.containsKey(correspondingFunction.getScope())) : "Scope to function value overridden for " + descriptor;
+                scopeToFunction.put(correspondingFunction.getScope(), correspondingFunction);
+                return correspondingFunction.getScope();
             };
-            Rule<JsScope> scopeForPackage = new Rule<JsScope>() {
-                @Nullable
-                @Override
-                public JsScope apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!(descriptor instanceof PackageFragmentDescriptor)) return null;
+            Rule<JsScope> scopeForPackage = descriptor -> {
+                if (!(descriptor instanceof PackageFragmentDescriptor)) return null;
 
-                    PackageFragmentDescriptor packageDescriptor = (PackageFragmentDescriptor) descriptor;
-                    return getScopeForPackage(packageDescriptor.getFqName());
-                }
+                PackageFragmentDescriptor packageDescriptor = (PackageFragmentDescriptor) descriptor;
+                return getScopeForPackage(packageDescriptor.getFqName());
             };
             addRule(scopeForPackage);
             addRule(createFunctionObjectsForCallableDescriptors);

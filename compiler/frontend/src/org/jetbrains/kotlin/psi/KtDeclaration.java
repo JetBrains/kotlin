@@ -17,20 +17,13 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.util.ArrayFactory;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
 
 public interface KtDeclaration extends KtExpression, KtModifierListOwner {
     KtDeclaration[] EMPTY_ARRAY = new KtDeclaration[0];
 
-    ArrayFactory<KtDeclaration> ARRAY_FACTORY = new ArrayFactory<KtDeclaration>() {
-        @NotNull
-        @Override
-        public KtDeclaration[] create(int count) {
-            return count == 0 ? EMPTY_ARRAY : new KtDeclaration[count];
-        }
-    };
+    ArrayFactory<KtDeclaration> ARRAY_FACTORY = count -> count == 0 ? EMPTY_ARRAY : new KtDeclaration[count];
 
     @Nullable
     KDoc getDocComment();

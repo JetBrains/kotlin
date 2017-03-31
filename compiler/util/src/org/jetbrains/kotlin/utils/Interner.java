@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.utils;
 
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,12 +60,7 @@ public final class Interner<T> {
 
     @NotNull
     public List<T> getAllInternedObjects() {
-        return CollectionsKt.sortedBy(interned.keySet(), new Function1<T, Integer>() {
-            @Override
-            public Integer invoke(T key) {
-                return interned.get(key);
-            }
-        });
+        return CollectionsKt.sortedBy(interned.keySet(), interned::get);
     }
 
     public boolean isEmpty() {

@@ -23,10 +23,7 @@ import java.io.File;
 import java.util.Collection;
 
 public interface Progress {
-    Progress DEAF = new Progress() {
-        @Override
-        public void reportOutput(@NotNull Collection<File> sourceFiles, @Nullable File outputFile) {
-        }
+    Progress DEAF = (sourceFiles, outputFile) -> {
     };
 
     /**

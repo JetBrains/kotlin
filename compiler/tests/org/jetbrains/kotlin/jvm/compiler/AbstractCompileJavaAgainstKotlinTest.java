@@ -17,13 +17,15 @@
 package org.jetbrains.kotlin.jvm.compiler;
 
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.renderer.*;
+import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
+import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
@@ -46,17 +48,14 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
     private static final RecursiveDescriptorComparator.Configuration CONFIGURATION =
             AbstractLoadJavaTest.COMPARATOR_CONFIGURATION.withRenderer(
                     DescriptorRenderer.Companion.withOptions(
-                            new Function1<DescriptorRendererOptions, Unit>() {
-                                @Override
-                                public Unit invoke(DescriptorRendererOptions options) {
-                                    options.setWithDefinedIn(false);
-                                    options.setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.NONE);
-                                    options.setVerbose(true);
-                                    options.setAnnotationArgumentsRenderingPolicy(AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY);
-                                    options.setExcludedAnnotationClasses(Collections.singleton(new FqName(Retention.class.getName())));
-                                    options.setModifiers(DescriptorRendererModifier.ALL);
-                                    return Unit.INSTANCE;
-                                }
+                            options -> {
+                                options.setWithDefinedIn(false);
+                                options.setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.NONE);
+                                options.setVerbose(true);
+                                options.setAnnotationArgumentsRenderingPolicy(AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY);
+                                options.setExcludedAnnotationClasses(Collections.singleton(new FqName(Retention.class.getName())));
+                                options.setModifiers(DescriptorRendererModifier.ALL);
+                                return Unit.INSTANCE;
                             }
                     )
             );

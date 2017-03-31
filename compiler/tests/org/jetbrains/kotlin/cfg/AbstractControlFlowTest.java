@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cfg;
 
-import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;
@@ -36,22 +35,19 @@ public abstract class AbstractControlFlowTest extends AbstractPseudocodeTest {
     ) {
         int nextInstructionsColumnWidth = countNextInstructionsColumnWidth(pseudocode.getInstructionsIncludingDeadCode());
 
-        dumpInstructions(pseudocode, out, new Function3<Instruction, Instruction, Instruction, String>() {
-            @Override
-            public String invoke(Instruction instruction, Instruction next, Instruction prev) {
-                StringBuilder result = new StringBuilder();
-                Collection<Instruction> nextInstructions = instruction.getNextInstructions();
+        dumpInstructions(pseudocode, out, (instruction, next, prev) -> {
+            StringBuilder result = new StringBuilder();
+            Collection<Instruction> nextInstructions = instruction.getNextInstructions();
 
-                if (!sameContents(next, nextInstructions)) {
-                    result.append("    NEXT:").append(
-                            String.format("%1$-" + nextInstructionsColumnWidth + "s", formatInstructionList(nextInstructions)));
-                }
-                Collection<Instruction> previousInstructions = instruction.getPreviousInstructions();
-                if (!sameContents(prev, previousInstructions)) {
-                    result.append("    PREV:").append(formatInstructionList(previousInstructions));
-                }
-                return result.toString();
+            if (!sameContents(next, nextInstructions)) {
+                result.append("    NEXT:").append(
+                        String.format("%1$-" + nextInstructionsColumnWidth + "s", formatInstructionList(nextInstructions)));
             }
+            Collection<Instruction> previousInstructions = instruction.getPreviousInstructions();
+            if (!sameContents(prev, previousInstructions)) {
+                result.append("    PREV:").append(formatInstructionList(previousInstructions));
+            }
+            return result.toString();
         });
     }
 

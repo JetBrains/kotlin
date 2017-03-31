@@ -24,13 +24,7 @@ import java.util.List;
 public interface KtTypeElement extends KtElement {
     KtTypeElement[] EMPTY_ARRAY = new KtTypeElement[0];
 
-    ArrayFactory<KtTypeElement> ARRAY_FACTORY = new ArrayFactory<KtTypeElement>() {
-        @NotNull
-        @Override
-        public KtTypeElement[] create(int count) {
-            return count == 0 ? EMPTY_ARRAY : new KtTypeElement[count];
-        }
-    };
+    ArrayFactory<KtTypeElement> ARRAY_FACTORY = count -> count == 0 ? EMPTY_ARRAY : new KtTypeElement[count];
 
     // may contain null
     @NotNull

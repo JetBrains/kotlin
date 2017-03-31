@@ -21,7 +21,6 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -501,14 +500,11 @@ public class AsmUtil {
     }
 
     public static StackValue genToString(StackValue receiver, Type receiverType) {
-        return StackValue.operation(JAVA_STRING_TYPE, new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                Type type = stringValueOfType(receiverType);
-                receiver.put(type, v);
-                v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
-                return null;
-            }
+        return StackValue.operation(JAVA_STRING_TYPE, v -> {
+            Type type = stringValueOfType(receiverType);
+            receiver.put(type, v);
+            v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
+            return null;
         });
     }
 
@@ -573,18 +569,15 @@ public class AsmUtil {
             return StackValue.cmp(opToken, leftType, left, right);
         }
 
-        return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                left.put(leftType, v);
-                right.put(rightType, v);
-                genAreEqualCall(v);
+        return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
+            left.put(leftType, v);
+            right.put(rightType, v);
+            genAreEqualCall(v);
 
-                if (opToken == KtTokens.EXCLEQ || opToken == KtTokens.EXCLEQEQEQ) {
-                    genInvertBoolean(v);
-                }
-                return Unit.INSTANCE;
+            if (opToken == KtTokens.EXCLEQ || opToken == KtTokens.EXCLEQEQEQ) {
+                genInvertBoolean(v);
             }
+            return Unit.INSTANCE;
         });
     }
 

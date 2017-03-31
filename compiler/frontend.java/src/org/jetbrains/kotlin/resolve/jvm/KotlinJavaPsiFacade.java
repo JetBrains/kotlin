@@ -39,7 +39,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBus;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
@@ -207,20 +206,14 @@ public class KotlinJavaPsiFacade {
         );
 
         List<PsiElementFinder> nonKotlinFinders = ArraysKt.filter(
-                getProject().getExtensions(PsiElementFinder.EP_NAME), new Function1<PsiElementFinder, Boolean>() {
-                    @Override
-                    public Boolean invoke(PsiElementFinder finder) {
-                        return (finder instanceof KotlinSafeClassFinder) ||
-                               !(finder instanceof NonClasspathClassFinder || finder instanceof KotlinFinderMarker || finder instanceof PsiElementFinderImpl);
-                    }
-                });
+                getProject().getExtensions(PsiElementFinder.EP_NAME),
+                finder -> (finder instanceof KotlinSafeClassFinder) ||
+                          !(finder instanceof NonClasspathClassFinder ||
+                            finder instanceof KotlinFinderMarker ||
+                            finder instanceof PsiElementFinderImpl)
+        );
 
-        elementFinders.addAll(CollectionsKt.map(nonKotlinFinders, new Function1<PsiElementFinder, KotlinPsiElementFinderWrapper>() {
-            @Override
-            public KotlinPsiElementFinderWrapper invoke(PsiElementFinder finder) {
-                return wrap(finder);
-            }
-        }));
+        elementFinders.addAll(CollectionsKt.map(nonKotlinFinders, KotlinJavaPsiFacade::wrap));
 
         return elementFinders.toArray(new KotlinPsiElementFinderWrapper[elementFinders.size()]);
     }

@@ -27,7 +27,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
-import com.intellij.util.Function;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.HashMap;
@@ -210,23 +209,20 @@ public abstract class KtUsefulTestCase extends TestCase {
     protected void runTest() throws Throwable {
         Throwable[] throwables = new Throwable[1];
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    KtUsefulTestCase.super.runTest();
-                }
-                catch (InvocationTargetException e) {
-                    e.fillInStackTrace();
-                    throwables[0] = e.getTargetException();
-                }
-                catch (IllegalAccessException e) {
-                    e.fillInStackTrace();
-                    throwables[0] = e;
-                }
-                catch (Throwable e) {
-                    throwables[0] = e;
-                }
+        Runnable runnable = () -> {
+            try {
+                super.runTest();
+            }
+            catch (InvocationTargetException e) {
+                e.fillInStackTrace();
+                throwables[0] = e.getTargetException();
+            }
+            catch (IllegalAccessException e) {
+                e.fillInStackTrace();
+                throwables[0] = e;
+            }
+            catch (Throwable e) {
+                throwables[0] = e;
             }
         };
 
@@ -352,12 +348,7 @@ public abstract class KtUsefulTestCase extends TestCase {
     }
 
     public static String toString(Collection<?> collection, String separator) {
-        List<String> list = ContainerUtil.map2List(collection, new Function<Object, String>() {
-            @Override
-            public String fun(Object o) {
-                return String.valueOf(o);
-            }
-        });
+        List<String> list = ContainerUtil.map2List(collection, String::valueOf);
         Collections.sort(list);
         StringBuilder builder = new StringBuilder();
         boolean flag = false;

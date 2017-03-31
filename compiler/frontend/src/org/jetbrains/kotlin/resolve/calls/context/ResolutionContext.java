@@ -70,12 +70,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     @NotNull
     public final Function1<KtExpression, KtExpression> expressionContextProvider;
 
-    public static final Function1<KtExpression, KtExpression> DEFAULT_EXPRESSION_CONTEXT_PROVIDER = new Function1<KtExpression, KtExpression>() {
-        @Override
-        public KtExpression invoke(KtExpression expression) {
-            return null;
-        }
-    };
+    public static final Function1<KtExpression, KtExpression> DEFAULT_EXPRESSION_CONTEXT_PROVIDER = expression -> null;
 
     protected ResolutionContext(
             @NotNull BindingTrace trace,

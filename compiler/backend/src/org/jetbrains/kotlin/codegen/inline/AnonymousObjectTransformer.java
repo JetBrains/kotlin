@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.inline;
 
 import com.intellij.util.ArrayUtil;
-import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.codegen.ClassBuilder;
@@ -350,15 +349,10 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
                         original.access, original.name, original.desc, original.signature,
                         ArrayUtil.toStringArray(original.exceptions)
                 ),
-                new Function0<MethodVisitor>() {
-                    @Override
-                    public MethodVisitor invoke() {
-                        return builder.newMethod(
-                                NO_ORIGIN, original.access, original.name, original.desc, original.signature,
-                                ArrayUtil.toStringArray(original.exceptions)
-                        );
-                    }
-                }
+                () -> builder.newMethod(
+                        NO_ORIGIN, original.access, original.name, original.desc, original.signature,
+                        ArrayUtil.toStringArray(original.exceptions)
+                )
         );
     }
 

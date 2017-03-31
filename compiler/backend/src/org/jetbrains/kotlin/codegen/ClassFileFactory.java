@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -130,12 +128,7 @@ public class ClassFileFactory implements OutputFileCollection {
 
     @NotNull
     public List<OutputFile> getCurrentOutput() {
-        return ContainerUtil.map(generators.keySet(), new Function<String, OutputFile>() {
-            @Override
-            public OutputFile fun(String relativeClassFilePath) {
-                return new OutputClassFile(relativeClassFilePath);
-            }
-        });
+        return CollectionsKt.map(generators.keySet(), OutputClassFile::new);
     }
 
     @Override
@@ -183,16 +176,13 @@ public class ClassFileFactory implements OutputFileCollection {
 
     private PackagePartRegistry buildNewPackagePartRegistry(@NotNull FqName packageFqName) {
         String packageFqNameAsString = packageFqName.asString();
-        return new PackagePartRegistry() {
-            @Override
-            public void addPart(@NotNull String partShortName, @Nullable String facadeShortName) {
-                PackageParts packageParts = partsGroupedByPackage.get(packageFqNameAsString);
-                if (packageParts == null) {
-                    packageParts = new PackageParts(packageFqNameAsString);
-                    partsGroupedByPackage.put(packageFqNameAsString, packageParts);
-                }
-                packageParts.addPart(partShortName, facadeShortName);
+        return (partShortName, facadeShortName) -> {
+            PackageParts packageParts = partsGroupedByPackage.get(packageFqNameAsString);
+            if (packageParts == null) {
+                packageParts = new PackageParts(packageFqNameAsString);
+                partsGroupedByPackage.put(packageFqNameAsString, packageParts);
             }
+            packageParts.addPart(partShortName, facadeShortName);
         };
     }
 

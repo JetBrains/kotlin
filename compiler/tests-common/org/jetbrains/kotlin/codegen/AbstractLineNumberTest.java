@@ -22,7 +22,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
@@ -115,12 +114,7 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
     }
 
     private static String getActualLineNumbersAsString(List<String> lines) {
-        return CollectionsKt.joinToString(lines, " ", "// ", "", -1, "...", new Function1<String, CharSequence>() {
-            @Override
-            public CharSequence invoke(String lineNumber) {
-                return lineNumber;
-            }
-        });
+        return CollectionsKt.joinToString(lines, " ", "// ", "", -1, "...", lineNumber -> lineNumber);
     }
 
     @NotNull

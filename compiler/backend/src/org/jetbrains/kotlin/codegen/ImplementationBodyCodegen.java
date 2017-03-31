@@ -21,8 +21,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -395,12 +393,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         KotlinBuiltIns builtIns = DescriptorUtilsKt.getBuiltIns(descriptor);
         if (!isSubclass(descriptor, builtIns.getCollection())) return;
 
-        if (CollectionsKt.any(DescriptorUtilsKt.getAllSuperclassesWithoutAny(descriptor), new Function1<ClassDescriptor, Boolean>() {
-            @Override
-            public Boolean invoke(ClassDescriptor classDescriptor) {
-                return !(classDescriptor instanceof JavaClassDescriptor) && isSubclass(classDescriptor, builtIns.getCollection());
-            }
-        })) return;
+        if (CollectionsKt.any(DescriptorUtilsKt.getAllSuperclassesWithoutAny(descriptor),
+                              classDescriptor -> !(classDescriptor instanceof JavaClassDescriptor) &&
+                                                 isSubclass(classDescriptor, builtIns.getCollection()))) {
+            return;
+        }
 
         Collection<SimpleFunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getContributedFunctions(
                 Name.identifier("toArray"), NoLookupLocation.FROM_BACKEND
@@ -735,15 +732,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             functionCodegen.generateDefaultIfNeeded(
                     context.intoFunction(function), function, OwnerKind.IMPLEMENTATION,
-                    new DefaultParameterValueLoader() {
-                        @Override
-                        public StackValue genValue(ValueParameterDescriptor valueParameter, ExpressionCodegen codegen) {
-                            assert ((ClassDescriptor) function.getContainingDeclaration()).isData()
-                                    : "Function container must have [data] modifier: " + function;
-                            PropertyDescriptor property = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter);
-                            assert property != null : "Copy function doesn't correspond to any property: " + function;
-                            return codegen.intermediateValueForProperty(property, false, null, StackValue.LOCAL_0);
-                        }
+                    (valueParameter, codegen) -> {
+                        assert ((ClassDescriptor) function.getContainingDeclaration()).isData()
+                                : "Function container must have [data] modifier: " + function;
+                        PropertyDescriptor property = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter);
+                        assert property != null : "Copy function doesn't correspond to any property: " + function;
+                        return codegen.intermediateValueForProperty(property, false, null, StackValue.LOCAL_0);
                     },
                     null
             );
@@ -785,14 +779,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateEnumValueOfMethod() {
         FunctionDescriptor valueOfFunction =
-                CollectionsKt.single(descriptor.getStaticScope().getContributedFunctions(ENUM_VALUE_OF, NoLookupLocation.FROM_BACKEND), new Function1<FunctionDescriptor, Boolean>() {
-                    @Override
-                    public Boolean invoke(FunctionDescriptor descriptor) {
-                        return DescriptorUtilsKt.isEnumValueOfMethod(descriptor);
-                    }
-                });
-        MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(myClass, valueOfFunction), ACC_PUBLIC | ACC_STATIC, ENUM_VALUE_OF.asString(),
-                                       "(Ljava/lang/String;)" + classAsmType.getDescriptor(), null, null);
+                CollectionsKt.single(descriptor.getStaticScope().getContributedFunctions(ENUM_VALUE_OF, NoLookupLocation.FROM_BACKEND),
+                                     DescriptorUtilsKt::isEnumValueOfMethod);
+        MethodVisitor mv =
+                v.newMethod(JvmDeclarationOriginKt.OtherOrigin(myClass, valueOfFunction), ACC_PUBLIC | ACC_STATIC, ENUM_VALUE_OF.asString(),
+                            "(Ljava/lang/String;)" + classAsmType.getDescriptor(), null, null);
         if (!state.getClassBuilderMode().generateBodies) return;
 
         mv.visitCode();
@@ -991,13 +982,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         if (JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
-            ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
-            generateInitializers(new Function0<ExpressionCodegen>() {
-                @Override
-                public ExpressionCodegen invoke() {
-                    return parentCodegen.createOrGetClInitCodegen();
-                }
-            });
+            generateInitializers(((ImplementationBodyCodegen) getParentCodegen())::createOrGetClInitCodegen);
         }
         else {
             generateInitializers(codegen);
@@ -1061,12 +1046,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateInitializers(@NotNull ExpressionCodegen codegen) {
-        generateInitializers(new Function0<ExpressionCodegen>() {
-            @Override
-            public ExpressionCodegen invoke() {
-                return codegen;
-            }
-        });
+        generateInitializers(() -> codegen);
     }
 
     private void generateClosureInitialization(@NotNull InstructionAdapter iv) {

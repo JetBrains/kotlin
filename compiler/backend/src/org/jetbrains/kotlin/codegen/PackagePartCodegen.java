@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.util.ArrayUtil;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedSimple;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
@@ -38,7 +36,6 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.ArrayList;
@@ -100,12 +97,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
         }
 
         if (state.getClassBuilderMode().generateBodies) {
-            generateInitializers(new Function0<ExpressionCodegen>() {
-                @Override
-                public ExpressionCodegen invoke() {
-                    return createOrGetClInitCodegen();
-                }
-            });
+            generateInitializers(this::createOrGetClInitCodegen);
         }
     }
 
@@ -131,12 +123,9 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
                 DescriptorSerializer.createTopLevel(new JvmSerializerExtension(v.getSerializationBindings(), state));
         ProtoBuf.Package packageProto = serializer.packagePartProto(element.getPackageFqName(), members).build();
 
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.FILE_FACADE, 0, new Function1<AnnotationVisitor, Unit>() {
-            @Override
-            public Unit invoke(AnnotationVisitor av) {
-                writeAnnotationData(av, serializer, packageProto);
-                return Unit.INSTANCE;
-            }
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.FILE_FACADE, 0, av -> {
+            writeAnnotationData(av, serializer, packageProto);
+            return Unit.INSTANCE;
         });
     }
 

@@ -28,7 +28,6 @@ import com.intellij.util.FileContentUtilCore;
 import com.intellij.util.IncorrectOperationException;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -258,19 +257,12 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
     public List<KtAnnotationEntry> getDanglingAnnotations() {
         KotlinFileStub stub = getStub();
         KtModifierList[] danglingModifierLists = stub == null
-                                                  ? findChildrenByClass(KtModifierList.class)
-                                                  : stub.getChildrenByType(
-                                                          KtStubElementTypes.MODIFIER_LIST,
-                                                          KtStubElementTypes.MODIFIER_LIST.getArrayFactory()
-                                                  );
-        return ArraysKt.flatMap(
-                danglingModifierLists,
-                new Function1<KtModifierList, Iterable<KtAnnotationEntry>>() {
-                    @Override
-                    public Iterable<KtAnnotationEntry> invoke(KtModifierList modifierList) {
-                        return modifierList.getAnnotationEntries();
-                    }
-                });
+                                                 ? findChildrenByClass(KtModifierList.class)
+                                                 : stub.getChildrenByType(
+                                                         KtStubElementTypes.MODIFIER_LIST,
+                                                         KtStubElementTypes.MODIFIER_LIST.getArrayFactory()
+                                                 );
+        return ArraysKt.flatMap(danglingModifierLists, KtModifierList::getAnnotationEntries);
     }
 
     @Override

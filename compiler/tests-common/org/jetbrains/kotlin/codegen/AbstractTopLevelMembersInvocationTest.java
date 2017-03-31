@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Processor;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
@@ -42,21 +41,13 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
         File root = new File(filename);
         List<String> sourceFiles = new ArrayList<String>(2);
 
-        FileUtil.processFilesRecursively(root, new Processor<File>() {
-            @Override
-            public boolean process(File file) {
-                if (file.getName().endsWith(".kt")) {
-                    sourceFiles.add(relativePath(file));
-                    return true;
-                }
+        FileUtil.processFilesRecursively(root, file -> {
+            if (file.getName().endsWith(".kt")) {
+                sourceFiles.add(relativePath(file));
                 return true;
             }
-        }, new Processor<File>() {
-            @Override
-            public boolean process(File file) {
-                return !LIBRARY.equals(file.getName());
-            }
-        });
+            return true;
+        }, file -> !LIBRARY.equals(file.getName()));
 
         File library = new File(root, LIBRARY);
         List<File> classPath = library.exists() ?

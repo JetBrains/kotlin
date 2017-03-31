@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -36,7 +35,8 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
-import org.jetbrains.kotlin.util.slicedMap.*;
+import org.jetbrains.kotlin.util.slicedMap.MutableSlicedMap;
+import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 
 import java.util.Collection;
 
@@ -233,15 +233,12 @@ public class BindingContextUtils {
             @NotNull BindingTrace trace, @Nullable TraceEntryFilter filter, boolean commitDiagnostics,
             @NotNull MutableSlicedMap map, MutableDiagnosticsWithSuppression diagnostics
     ) {
-        map.forEach(new Function3<WritableSlice, Object, Object, Void>() {
-            @Override
-            public Void invoke(WritableSlice slice, Object key, Object value) {
-                if (filter == null || filter.accept(slice, key)) {
-                    trace.record(slice, key, value);
-                }
-
-                return null;
+        map.forEach((slice, key, value) -> {
+            if (filter == null || filter.accept(slice, key)) {
+                trace.record(slice, key, value);
             }
+
+            return null;
         });
 
         if (!commitDiagnostics) return;

@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.asJava;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
+import kotlin.collections.ArraysKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.name.SpecialNames;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -237,15 +235,7 @@ public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase
         assertEquals(name, typeParameter.getName());
         assertEquals(index, typeParameter.getIndex());
         Set<String> expectedBounds = Sets.newHashSet(bounds);
-        Set<String> actualBounds = Sets.newHashSet(Collections2.transform(
-                Arrays.asList(typeParameter.getExtendsListTypes()),
-                new Function<PsiClassType, String>() {
-                    @Override
-                    public String apply(PsiClassType input) {
-                        return input.getCanonicalText();
-                    }
-                }
-        ));
+        Set<String> actualBounds = Sets.newHashSet(ArraysKt.map(typeParameter.getExtendsListTypes(), PsiType::getCanonicalText));
 
         assertEquals(expectedBounds, actualBounds);
     }

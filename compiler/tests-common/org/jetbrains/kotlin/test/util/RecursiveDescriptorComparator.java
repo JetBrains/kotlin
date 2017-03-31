@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.test.util;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -50,19 +49,16 @@ import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisit
 public class RecursiveDescriptorComparator {
 
     private static final DescriptorRenderer DEFAULT_RENDERER = DescriptorRenderer.Companion.withOptions(
-            new Function1<DescriptorRendererOptions, Unit>() {
-                @Override
-                public Unit invoke(DescriptorRendererOptions options) {
-                    options.setWithDefinedIn(false);
-                    options.setExcludedAnnotationClasses(Collections.singleton(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)));
-                    options.setOverrideRenderingPolicy(OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
-                    options.setIncludePropertyConstant(true);
-                    options.setClassifierNamePolicy(ClassifierNamePolicy.FULLY_QUALIFIED.INSTANCE);
-                    options.setVerbose(true);
-                    options.setAnnotationArgumentsRenderingPolicy(AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY);
-                    options.setModifiers(DescriptorRendererModifier.ALL);
-                    return Unit.INSTANCE;
-                }
+            options -> {
+                options.setWithDefinedIn(false);
+                options.setExcludedAnnotationClasses(Collections.singleton(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)));
+                options.setOverrideRenderingPolicy(OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
+                options.setIncludePropertyConstant(true);
+                options.setClassifierNamePolicy(ClassifierNamePolicy.FULLY_QUALIFIED.INSTANCE);
+                options.setVerbose(true);
+                options.setAnnotationArgumentsRenderingPolicy(AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY);
+                options.setModifiers(DescriptorRendererModifier.ALL);
+                return Unit.INSTANCE;
             }
     );
 

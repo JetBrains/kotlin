@@ -21,7 +21,6 @@ import com.intellij.util.ArrayUtil;
 import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
@@ -49,7 +48,6 @@ import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -241,12 +239,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         ProtoBuf.Function functionProto = serializer.functionProto(freeLambdaDescriptor).build();
 
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0, new Function1<AnnotationVisitor, Unit>() {
-            @Override
-            public Unit invoke(AnnotationVisitor av) {
-                writeAnnotationData(av, serializer, functionProto);
-                return Unit.INSTANCE;
-            }
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0, av -> {
+            writeAnnotationData(av, serializer, functionProto);
+            return Unit.INSTANCE;
         });
     }
 
@@ -284,22 +279,19 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     public StackValue putInstanceOnStack(@NotNull ExpressionCodegen codegen, @Nullable StackValue functionReferenceReceiver) {
         return StackValue.operation(
                 functionReferenceTarget != null ? K_FUNCTION : asmType,
-                new Function1<InstructionAdapter, Unit>() {
-                    @Override
-                    public Unit invoke(InstructionAdapter v) {
-                        if (isConst(closure)) {
-                            v.getstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
-                        }
-                        else {
-                            v.anew(asmType);
-                            v.dup();
-
-                            codegen.pushClosureOnStack(classDescriptor, true, codegen.defaultCallGenerator, functionReferenceReceiver);
-                            v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor(), false);
-                        }
-
-                        return Unit.INSTANCE;
+                v -> {
+                    if (isConst(closure)) {
+                        v.getstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
                     }
+                    else {
+                        v.anew(asmType);
+                        v.dup();
+
+                        codegen.pushClosureOnStack(classDescriptor, true, codegen.defaultCallGenerator, functionReferenceReceiver);
+                        v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor(), false);
+                    }
+
+                    return Unit.INSTANCE;
                 }
         );
     }

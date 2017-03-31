@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.IncorrectOperationException;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class KtExpressionImplStub<T extends StubElement<?>> extends KtElementImplStub<T> implements KtExpression {
@@ -41,12 +40,7 @@ public abstract class KtExpressionImplStub<T extends StubElement<?>> extends KtE
     @NotNull
     @Override
     public PsiElement replace(@NotNull PsiElement newElement) throws IncorrectOperationException {
-        return KtExpressionImpl.Companion.replaceExpression(this, newElement, new Function1<PsiElement, PsiElement>() {
-            @Override
-            public PsiElement invoke(PsiElement element) {
-                return rawReplace(element);
-            }
-        });
+        return KtExpressionImpl.Companion.replaceExpression(this, newElement, this::rawReplace);
     }
 
     @NotNull

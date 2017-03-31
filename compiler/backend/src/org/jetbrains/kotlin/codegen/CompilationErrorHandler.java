@@ -17,15 +17,11 @@
 package org.jetbrains.kotlin.codegen;
 
 public interface CompilationErrorHandler {
-
-    CompilationErrorHandler THROW_EXCEPTION = new CompilationErrorHandler() {
-        @Override
-        public void reportException(Throwable exception, String fileUrl) {
-            if (exception instanceof RuntimeException) {
-                throw (RuntimeException) exception;
-            }
-            throw new IllegalStateException(exception);
+    CompilationErrorHandler THROW_EXCEPTION = (exception, fileUrl) -> {
+        if (exception instanceof RuntimeException) {
+            throw (RuntimeException) exception;
         }
+        throw new IllegalStateException(exception);
     };
 
     void reportException(Throwable exception, String fileUrl);

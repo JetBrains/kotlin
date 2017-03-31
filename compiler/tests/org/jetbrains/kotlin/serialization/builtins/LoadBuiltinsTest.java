@@ -20,7 +20,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -33,7 +32,10 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.renderer.*;
+import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
+import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider;
@@ -46,7 +48,6 @@ import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -64,16 +65,13 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
         RecursiveDescriptorComparator.Configuration configuration =
                 RecursiveDescriptorComparator.RECURSIVE_ALL.includeMethodsOfKotlinAny(false).withRenderer(
                         DescriptorRenderer.Companion.withOptions(
-                                new Function1<DescriptorRendererOptions, Unit>() {
-                                    @Override
-                                    public Unit invoke(DescriptorRendererOptions options) {
-                                        options.setWithDefinedIn(false);
-                                        options.setOverrideRenderingPolicy(OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
-                                        options.setVerbose(true);
-                                        options.setAnnotationArgumentsRenderingPolicy(AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY);
-                                        options.setModifiers(DescriptorRendererModifier.ALL);
-                                        return Unit.INSTANCE;
-                                    }
+                                options -> {
+                                    options.setWithDefinedIn(false);
+                                    options.setOverrideRenderingPolicy(OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
+                                    options.setVerbose(true);
+                                    options.setAnnotationArgumentsRenderingPolicy(AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY);
+                                    options.setModifiers(DescriptorRendererModifier.ALL);
+                                    return Unit.INSTANCE;
                                 }
                         )
                 );
@@ -113,12 +111,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
                 Collections.singletonList(new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule)),
                 PlatformDependentDeclarationFilter.All.INSTANCE,
                 AdditionalClassPartsProvider.None.INSTANCE,
-                new Function1<String, InputStream>() {
-                    @Override
-                    public InputStream invoke(String path) {
-                        return ForTestCompileRuntime.runtimeJarClassLoader().getResourceAsStream(path);
-                    }
-                }
+                ForTestCompileRuntime.runtimeJarClassLoader()::getResourceAsStream
         );
 
         builtInsModule.initialize(packageFragmentProvider);

@@ -24,8 +24,6 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.extensions.ExtensionsArea;
 import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
-import com.intellij.openapi.util.Getter;
 import com.intellij.openapi.vfs.encoding.EncodingManager;
 import org.picocontainer.MutablePicoContainer;
 
@@ -46,14 +44,7 @@ public abstract class KtPlatformLiteFixture extends KtUsefulTestCase {
 
     public void initApplication() {
         MockApplicationEx instance = new MockApplicationEx(getTestRootDisposable());
-        ApplicationManager.setApplication(instance,
-                                          new Getter<FileTypeRegistry>() {
-                                              @Override
-                                              public FileTypeRegistry get() {
-                                                  return FileTypeManager.getInstance();
-                                              }
-                                          },
-                                          getTestRootDisposable());
+        ApplicationManager.setApplication(instance, FileTypeManager::getInstance, getTestRootDisposable());
         getApplication().registerService(EncodingManager.class, CoreEncodingProjectManager.class);
     }
 

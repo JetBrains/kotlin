@@ -185,22 +185,19 @@ public class CompileEnvironmentUtil {
                 continue;
             }
 
-            SequencesKt.forEach(FilesKt.walkTopDown(new File(sourceRootPath)), new Function1<File, Unit>() {
-                @Override
-                public Unit invoke(File file) {
-                    if (file.isFile()) {
-                        VirtualFile originalVirtualFile = localFileSystem.findFileByPath(file.getAbsolutePath());
-                        VirtualFile virtualFile = originalVirtualFile != null ? virtualFileCreator.create(originalVirtualFile) : null;
-                        if (virtualFile != null && !processedFiles.contains(virtualFile)) {
-                            processedFiles.add(virtualFile);
-                            PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-                            if (psiFile instanceof KtFile) {
-                                result.add((KtFile) psiFile);
-                            }
+            SequencesKt.forEach(FilesKt.walkTopDown(new File(sourceRootPath)), file -> {
+                if (file.isFile()) {
+                    VirtualFile originalVirtualFile = localFileSystem.findFileByPath(file.getAbsolutePath());
+                    VirtualFile virtualFile = originalVirtualFile != null ? virtualFileCreator.create(originalVirtualFile) : null;
+                    if (virtualFile != null && !processedFiles.contains(virtualFile)) {
+                        processedFiles.add(virtualFile);
+                        PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+                        if (psiFile instanceof KtFile) {
+                            result.add((KtFile) psiFile);
                         }
                     }
-                    return Unit.INSTANCE;
                 }
+                return Unit.INSTANCE;
             });
         }
 

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cfg;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
-import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
@@ -47,25 +46,22 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
         String usePrefix = "    USE:";
         int initializersColumnWidth = countDataColumnWidth(initPrefix, pseudocode.getInstructionsIncludingDeadCode(), variableInitializers);
 
-        dumpInstructions(pseudocode, out, new Function3<Instruction, Instruction, Instruction, String>() {
-            @Override
-            public String invoke(Instruction instruction, Instruction next, Instruction prev) {
-                StringBuilder result = new StringBuilder();
-                Edges<InitControlFlowInfo> initializersEdges = variableInitializers.get(instruction);
-                Edges<InitControlFlowInfo> previousInitializersEdges = variableInitializers.get(prev);
-                String initializersData = "";
-                if (initializersEdges != null && !initializersEdges.equals(previousInitializersEdges)) {
-                    initializersData = dumpEdgesData(initPrefix, initializersEdges);
-                }
-                result.append(String.format("%1$-" + initializersColumnWidth + "s", initializersData));
-
-                Edges<UseControlFlowInfo> useStatusEdges = useStatusData.get(instruction);
-                Edges<UseControlFlowInfo> nextUseStatusEdges = useStatusData.get(next);
-                if (useStatusEdges != null && !useStatusEdges.equals(nextUseStatusEdges)) {
-                    result.append(dumpEdgesData(usePrefix, useStatusEdges));
-                }
-                return result.toString();
+        dumpInstructions(pseudocode, out, (instruction, next, prev) -> {
+            StringBuilder result = new StringBuilder();
+            Edges<InitControlFlowInfo> initializersEdges = variableInitializers.get(instruction);
+            Edges<InitControlFlowInfo> previousInitializersEdges = variableInitializers.get(prev);
+            String initializersData = "";
+            if (initializersEdges != null && !initializersEdges.equals(previousInitializersEdges)) {
+                initializersData = dumpEdgesData(initPrefix, initializersEdges);
             }
+            result.append(String.format("%1$-" + initializersColumnWidth + "s", initializersData));
+
+            Edges<UseControlFlowInfo> useStatusEdges = useStatusData.get(instruction);
+            Edges<UseControlFlowInfo> nextUseStatusEdges = useStatusData.get(next);
+            if (useStatusEdges != null && !useStatusEdges.equals(nextUseStatusEdges)) {
+                result.append(dumpEdgesData(usePrefix, useStatusEdges));
+            }
+            return result.toString();
         });
     }
 

@@ -56,16 +56,13 @@ public class Preloader {
         Method mainMethod = mainClass.getMethod("main", String[].class);
 
         Runtime.getRuntime().addShutdownHook(
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (options.measure) {
-                            System.out.println();
-                            System.out.println("=== Preloader's measurements: ");
-                            System.out.format("Total time: %.3fs\n", (System.nanoTime() - startTime) / 1e9);
-                        }
-                        handler.done();
+                new Thread(() -> {
+                    if (options.measure) {
+                        System.out.println();
+                        System.out.println("=== Preloader's measurements: ");
+                        System.out.format("Total time: %.3fs\n", (System.nanoTime() - startTime) / 1e9);
                     }
+                    handler.done();
                 })
         );
 

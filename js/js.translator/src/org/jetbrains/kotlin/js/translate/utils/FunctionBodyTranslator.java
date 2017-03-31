@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.expression.LocalFunctionCollector;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
-import org.jetbrains.kotlin.js.translate.utils.mutator.Mutator;
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -134,26 +133,22 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
 
     @NotNull
     private JsNode lastExpressionReturned(@NotNull JsNode body) {
-        return mutateLastExpression(body, new Mutator() {
-            @Override
-            @NotNull
-            public JsNode mutate(@NotNull JsNode node) {
-                if (!(node instanceof JsExpression)) {
-                    return node;
-                }
-
-                assert declaration.getBodyExpression() != null;
-                assert descriptor.getReturnType() != null;
-                KotlinType bodyType = context().bindingContext().getType(declaration.getBodyExpression());
-                if (bodyType == null && KotlinBuiltIns.isCharOrNullableChar(descriptor.getReturnType()) ||
-                    bodyType != null && KotlinBuiltIns.isCharOrNullableChar(bodyType) && TranslationUtils.shouldBoxReturnValue(descriptor)) {
-                    node = JsAstUtils.charToBoxedChar((JsExpression) node);
-                }
-
-                JsReturn jsReturn = new JsReturn((JsExpression)node);
-                MetadataProperties.setReturnTarget(jsReturn, descriptor);
-                return jsReturn;
+        return mutateLastExpression(body, node -> {
+            if (!(node instanceof JsExpression)) {
+                return node;
             }
+
+            assert declaration.getBodyExpression() != null;
+            assert descriptor.getReturnType() != null;
+            KotlinType bodyType = context().bindingContext().getType(declaration.getBodyExpression());
+            if (bodyType == null && KotlinBuiltIns.isCharOrNullableChar(descriptor.getReturnType()) ||
+                bodyType != null && KotlinBuiltIns.isCharOrNullableChar(bodyType) && TranslationUtils.shouldBoxReturnValue(descriptor)) {
+                node = JsAstUtils.charToBoxedChar((JsExpression) node);
+            }
+
+            JsReturn jsReturn = new JsReturn((JsExpression)node);
+            MetadataProperties.setReturnTarget(jsReturn, descriptor);
+            return jsReturn;
         });
     }
 }

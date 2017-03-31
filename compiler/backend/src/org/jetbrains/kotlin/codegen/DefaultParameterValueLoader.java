@@ -22,19 +22,11 @@ import org.jetbrains.kotlin.psi.KtParameter;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 
 public interface DefaultParameterValueLoader {
-
     StackValue genValue(ValueParameterDescriptor descriptor, ExpressionCodegen codegen);
 
-    DefaultParameterValueLoader DEFAULT = new DefaultParameterValueLoader() {
-        @Override
-        public StackValue genValue(
-                ValueParameterDescriptor descriptor,
-                ExpressionCodegen codegen
-        ) {
-            KtParameter jetParameter = (KtParameter) descriptorToDeclaration(descriptor);
-            assert jetParameter != null;
-            return codegen.gen(jetParameter.getDefaultValue());
-        }
+    DefaultParameterValueLoader DEFAULT = (descriptor, codegen) -> {
+        KtParameter ktParameter = (KtParameter) descriptorToDeclaration(descriptor);
+        assert ktParameter != null;
+        return codegen.gen(ktParameter.getDefaultValue());
     };
 }
-

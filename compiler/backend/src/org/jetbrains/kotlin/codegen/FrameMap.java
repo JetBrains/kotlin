@@ -20,8 +20,8 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Trinity;
 import gnu.trove.TObjectIntHashMap;
 import gnu.trove.TObjectIntIterator;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -115,15 +115,7 @@ public class FrameMap {
             descriptors.add(Trinity.create(descriptor, varIndex, varSize));
         }
 
-        Collections.sort(descriptors, new Comparator<Trinity<DeclarationDescriptor, Integer, Integer>>() {
-            @Override
-            public int compare(
-                    Trinity<DeclarationDescriptor, Integer, Integer> left,
-                    Trinity<DeclarationDescriptor, Integer, Integer> right
-            ) {
-                return left.second - right.second;
-            }
-        });
+        Collections.sort(descriptors, Comparator.comparingInt(left -> left.second));
 
         sb.append("size=").append(myMaxIndex);
 

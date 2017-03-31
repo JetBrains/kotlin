@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types;
 
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -90,16 +89,16 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             KtDeclaration aClass = file.getDeclarations().get(0);
             assert aClass instanceof KtClass;
             AnalysisResult bindingContext = JvmResolveUtil.analyzeAndCheckForErrors(file, getEnvironment());
-            DeclarationDescriptor classDescriptor = bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
-            return new LexicalScopeImpl(ScopeUtilsKt.memberScopeAsImportingScope(libraryScope), root, false, null,
-                                        LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
-                                        new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
-                                            @Override
-                                            public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
-                                                handler.addClassifierDescriptor((ClassifierDescriptor) classDescriptor);
-                                                return Unit.INSTANCE;
-                                            }
-                                        });
+            DeclarationDescriptor classDescriptor =
+                    bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
+            return new LexicalScopeImpl(
+                    ScopeUtilsKt.memberScopeAsImportingScope(libraryScope), root, false, null,
+                    LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
+                    handler -> {
+                        handler.addClassifierDescriptor((ClassifierDescriptor) classDescriptor);
+                        return Unit.INSTANCE;
+                    }
+            );
         }
 
         private ClassDescriptorWithResolutionScopes createClassDescriptor(ClassKind kind, KtClass aClass) {

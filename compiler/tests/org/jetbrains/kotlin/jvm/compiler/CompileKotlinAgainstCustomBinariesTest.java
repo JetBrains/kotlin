@@ -20,7 +20,6 @@ import com.google.common.collect.Iterables;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Processor;
 import kotlin.Pair;
 import kotlin.collections.SetsKt;
 import kotlin.io.FilesKt;
@@ -152,12 +151,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
     @NotNull
     private static File copyJarFileWithoutEntry(@NotNull File jarPath, @NotNull String... entriesToDelete) {
-        return transformJar(jarPath, new Function2<String, byte[], byte[]>() {
-            @Override
-            public byte[] invoke(String s, byte[] bytes) {
-                return bytes;
-            }
-        }, entriesToDelete);
+        return transformJar(jarPath, (s, bytes) -> bytes, entriesToDelete);
     }
 
     @NotNull
@@ -292,21 +286,16 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
             @NotNull String... additionalOptions
     ) throws Exception {
         int[] version = new JvmMetadataVersion(42, 0, 0).toArray();
-        File library = transformJar(compileLibrary(libraryName), new Function2<String, byte[], byte[]>() {
-            @Override
-            public byte[] invoke(String name, byte[] bytes) {
-                return WrongBytecodeVersionTest.Companion.transformMetadataInClassFile(bytes, new Function2<String, Object, Object>() {
-                    @Override
-                    public Object invoke(String name, Object value) {
-                        if (additionalTransformation != null) {
-                            Object result = additionalTransformation.invoke(name, value);
-                            if (result != null) return result;
-                        }
-                        return JvmAnnotationNames.METADATA_VERSION_FIELD_NAME.equals(name) ? version : null;
+        File library = transformJar(
+                compileLibrary(libraryName),
+                (entryName, bytes) -> WrongBytecodeVersionTest.Companion.transformMetadataInClassFile(bytes, (fieldName, value) -> {
+                    if (additionalTransformation != null) {
+                        Object result = additionalTransformation.invoke(fieldName, value);
+                        if (result != null) return result;
                     }
-                });
-            }
-        });
+                    return JvmAnnotationNames.METADATA_VERSION_FIELD_NAME.equals(fieldName) ? version : null;
+                })
+        );
         Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, Arrays.asList(additionalOptions), library);
         KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
     }
@@ -509,20 +498,17 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     public void testWrongMetadataVersionBadMetadata() throws Exception {
         doTestKotlinLibraryWithWrongMetadataVersion(
                 "library",
-                new Function2<String, Object, Object>() {
-                    @Override
-                    public Object invoke(String name, Object value) {
-                        if (JvmAnnotationNames.METADATA_DATA_FIELD_NAME.equals(name)) {
-                            String[] strings = (String[]) value;
-                            for (int i = 0; i < strings.length; i++) {
-                                byte[] bytes = strings[i].getBytes();
-                                for (int j = 0; j < bytes.length; j++) bytes[j] ^= 42;
-                                strings[i] = new String(bytes);
-                            }
-                            return strings;
+                (name, value) -> {
+                    if (JvmAnnotationNames.METADATA_DATA_FIELD_NAME.equals(name)) {
+                        String[] strings = (String[]) value;
+                        for (int i = 0; i < strings.length; i++) {
+                            byte[] bytes = strings[i].getBytes();
+                            for (int j = 0; j < bytes.length; j++) bytes[j] ^= 42;
+                            strings[i] = new String(bytes);
                         }
-                        return null;
+                        return strings;
                     }
+                    return null;
                 }
         );
     }
@@ -530,14 +516,11 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     public void testWrongMetadataVersionBadMetadata2() throws Exception {
         doTestKotlinLibraryWithWrongMetadataVersion(
                 "library",
-                new Function2<String, Object, Object>() {
-                    @Override
-                    public Object invoke(String name, Object value) {
-                        if (JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME.equals(name)) {
-                            return ArrayUtil.EMPTY_STRING_ARRAY;
-                        }
-                        return null;
+                (name, value) -> {
+                    if (JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME.equals(name)) {
+                        return ArrayUtil.EMPTY_STRING_ARRAY;
                     }
+                    return null;
                 }
         );
     }
@@ -648,18 +631,15 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         File library2 = compileJava("library2");
 
         // Copy everything from library2 to library1
-        FileUtil.visitFiles(library2, new Processor<File>() {
-            @Override
-            public boolean process(File file) {
-                if (!file.isDirectory()) {
-                    File newFile = new File(library1, FilesKt.relativeTo(file, library2).getPath());
-                    if (!newFile.getParentFile().exists()) {
-                        assert newFile.getParentFile().mkdirs();
-                    }
-                    assert file.renameTo(newFile);
+        FileUtil.visitFiles(library2, file -> {
+            if (!file.isDirectory()) {
+                File newFile = new File(library1, FilesKt.relativeTo(file, library2).getPath());
+                if (!newFile.getParentFile().exists()) {
+                    assert newFile.getParentFile().mkdirs();
                 }
-                return true;
+                assert file.renameTo(newFile);
             }
+            return true;
         });
 
         Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, library1);
