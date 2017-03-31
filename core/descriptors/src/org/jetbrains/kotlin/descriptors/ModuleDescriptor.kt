@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.util.ModuleVisibilityHelper
 
 interface ModuleDescriptor : DeclarationDescriptor {
     override fun getContainingDeclaration(): DeclarationDescriptor? = null
@@ -29,6 +30,8 @@ interface ModuleDescriptor : DeclarationDescriptor {
     val sourceKind: SourceKind
 
     fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean
+
+    val moduleVisibilityHelper: ModuleVisibilityHelper
 
     override fun substitute(substitutor: TypeSubstitutor): ModuleDescriptor {
         return this
