@@ -33,6 +33,7 @@ abstract class KonanTest extends JavaExec {
     def launcherBc = new File("${dist.canonicalPath}/lib/launcher.bc").absolutePath
     def startKtBc = new File("${dist.canonicalPath}/lib/start.kt.bc").absolutePath
     def stdlibKtBc = new File("${dist.canonicalPath}/lib/stdlib.kt.bc").absolutePath
+    def konanc = new File("${dist.canonicalPath}/bin/konanc").absolutePath
     def mainC = 'main.c'
     def outputSourceSetName = "testOutputLocal"
     String outputDirectory = null
@@ -216,6 +217,37 @@ class TestFailedException extends RuntimeException {
 class RunKonanTest extends KonanTest {
     void compileTest(List<String> filesToCompile, String exe) {
         runCompiler(filesToCompile, exe, flags?:[])
+    }
+}
+
+// This is another way to run the compiler.
+// Don't use this task for regular testing as
+// project.exec + a shell script isolate the jvm
+// from IDEA. Use the RunKonanTest instead.
+@ParallelizableTask
+class RunDriverKonanTest extends KonanTest {
+    void compileTest(List<String> filesToCompile, String exe) {
+        runCompiler(filesToCompile, exe, flags?:[])
+    }
+
+    protected void runCompiler(List<String> filesToCompile, String output, List<String> moreArgs) {
+        def log = new ByteArrayOutputStream()
+        project.exec {
+            commandLine konanc
+            args = ["-output", output,
+                    "-ea",
+                    *filesToCompile,
+                    *moreArgs,
+                    *project.globalTestArgs]
+            if (project.testTarget) {
+                args "-target", project.testTarget
+            }
+            standardOutput = log
+            errorOutput = log
+        }
+        def logString = log.toString()
+        project.file("${output}.compilation.log").write(logString)
+        println(logString)
     }
 }
 
