@@ -98,7 +98,9 @@ class IndyProtocolGenerator(codegen: ExpressionCodegen, cacheType: ProtocolsBack
                 Type.getType(MethodType::class.java),
                 Type.getType(String::class.java),
                 Type.getType(MethodType::class.java),
+                Type.getType(Int::class.javaPrimitiveType),
                 Type.getType(Int::class.javaPrimitiveType))
+
         val bootstrap = Handle(H_INVOKESTATIC, callSite, "getBootstrap", bootstrapDescriptor, true)
 
         // Review type mapper
@@ -158,6 +160,7 @@ class ReflectionProtocolGenerator(codegen: ExpressionCodegen, cacheType: Protoco
                                        Type.getType(MethodType::class.java),
                                        Type.getType(String::class.java),
                                        Type.getType(MethodType::class.java),
+                                       Type.getType(Int::class.javaPrimitiveType),
                                        Type.getType(Int::class.javaPrimitiveType)), true)
 
         mv.visitInvokeDynamicInsn("apply", "()L$callSite;", bootstrap, methodName.asString(), Type.getType(method.getAsmMethod().descriptor), cacheType.ordinal, cacheSize)
