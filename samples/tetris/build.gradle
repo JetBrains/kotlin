@@ -21,7 +21,8 @@ apply plugin: 'konan'
 konanInterop {
     sdlMacbook {
         defFile 'sdl.def'
-        includeDirs '/Library/Frameworks/SDL2.framework/Headers', '/opt/local/include/SDL2', '/usr/local/include/SDL2'
+        includeDirs '/Library/Frameworks/SDL2.framework/Headers', '/opt/local/include/SDL2', '/usr/local/include/SDL2', "${System.getProperty("user.home")}/Library/Frameworks/SDL2.framework/Headers"
+
         target 'macbook'
     }
 
@@ -50,8 +51,8 @@ konanArtifacts {
     TetrisMacbook {
         inputFiles project.file('Tetris.kt')
         useInterop 'sdlMacbook'
-        //linkerOpts "-F /Library/Frameworks -framework SDL2 -L/opt/local/lib -lSDL2"
-        linkerOpts "-L/usr/local/lib -lSDL2"
+        //linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -framework SDL2 -L/usr/local/lib -lSDL2 -F /Library/Frameworks -framework SDL2 -L/opt/local/lib"
+        //linkerOpts "-L/opt/local/lib -L/usr/local/lib -lSDL2"
         target 'macbook'
     }
 
