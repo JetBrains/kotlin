@@ -68,7 +68,7 @@ class KotlinBundledScriptDependencies(override val javaHome: String?) : KotlinSc
         return with(PathUtil.getKotlinPathsForIdeaPlugin()) {
             listOf(
                     reflectPath,
-                    runtimePath,
+                    stdlibPath,
                     scriptRuntimePath
             )
         }

@@ -66,7 +66,7 @@ public class ConfigLibraryUtil {
     }
 
     public static void configureKotlinRuntime(Module module) {
-        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_JAVA_RUNTIME_LIB_NAME, PathUtil.getKotlinPathsForDistDirectory().getRuntimePath()),
+        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_JAVA_RUNTIME_LIB_NAME, PathUtil.getKotlinPathsForDistDirectory().getStdlibPath()),
                    module);
         addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_TEST_LIB_NAME, PathUtil.getKotlinPathsForDistDirectory().getKotlinTestPath()),
                    module);

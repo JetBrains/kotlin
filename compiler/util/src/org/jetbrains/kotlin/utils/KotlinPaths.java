@@ -27,8 +27,14 @@ public interface KotlinPaths {
     @NotNull
     File getLibPath();
 
+    /**
+     * @deprecated Use getStdlibPath() instead
+     */
     @NotNull
     File getRuntimePath();
+
+    @NotNull
+    File getStdlibPath();
 
     @NotNull
     File getReflectPath();

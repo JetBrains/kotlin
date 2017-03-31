@@ -48,7 +48,7 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
             val ideaPluginPaths = PathUtil.getKotlinPathsForIdeaPlugin()
 
             // Force refresh jar handlers
-            requestFullJarUpdate(ideaPluginPaths.runtimePath)
+            requestFullJarUpdate(ideaPluginPaths.stdlibPath)
             requestFullJarUpdate(ideaPluginPaths.reflectPath)
             requestFullJarUpdate(ideaPluginPaths.scriptRuntimePath)
             requestFullJarUpdate(ideaPluginPaths.runtimeSourcesPath)

@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.kapt3.test
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.text.StringUtil
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -160,7 +160,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             options: Map<String, String>,
             stubsOutputDir: File,
             incrementalDataOutputDir: File
-    ) : AbstractKapt3Extension(PathUtil.getJdkClassesRoots() + PathUtil.getKotlinPathsForIdeaPlugin().runtimePath,
+    ) : AbstractKapt3Extension(PathUtil.getJdkClassesRoots() + PathUtil.getKotlinPathsForIdeaPlugin().stdlibPath,
                                emptyList(), javaSourceRoots, outputDir, outputDir,
                                stubsOutputDir, incrementalDataOutputDir, options, "", true, System.currentTimeMillis(),
                                KaptLogger(true), correctErrorTypes = true

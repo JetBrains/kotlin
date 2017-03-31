@@ -69,7 +69,7 @@ class KotlinConsoleKeeper(val project: Project) {
         //paramList.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
 
         val kotlinPaths = PathUtil.getKotlinPathsForIdeaPlugin()
-        val replClassPath = listOf(kotlinPaths.compilerPath, kotlinPaths.reflectPath, kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath)
+        val replClassPath = listOf(kotlinPaths.compilerPath, kotlinPaths.reflectPath, kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
                 .map { it.absolutePath }
                 .joinToString(File.pathSeparator)
 

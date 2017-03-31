@@ -59,7 +59,7 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
         get() {
             val paths = PathUtil.getKotlinPathsForIdeaPlugin()
             return RuntimeLibraryFiles(
-                    assertFileExists(paths.runtimePath),
+                    assertFileExists(paths.stdlibPath),
                     assertFileExists(paths.reflectPath),
                     assertFileExists(paths.runtimeSourcesPath)
             )

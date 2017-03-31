@@ -49,7 +49,7 @@ open class KotlinJvmReplService(
 
     protected val configuration = CompilerConfiguration().apply {
         addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
-        addJvmClasspathRoots(PathUtil.getKotlinPathsForCompiler().let { listOf(it.runtimePath, it.reflectPath, it.scriptRuntimePath) })
+        addJvmClasspathRoots(PathUtil.getKotlinPathsForCompiler().let { listOf(it.stdlibPath, it.reflectPath, it.scriptRuntimePath) })
         addJvmClasspathRoots(templateClasspath)
         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
         languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE).apply {

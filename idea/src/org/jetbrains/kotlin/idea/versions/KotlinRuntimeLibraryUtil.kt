@@ -25,18 +25,19 @@ import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.JarFileSystem
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.PathUtil.getLocalFile
-import com.intellij.util.PathUtil.getLocalPath
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.ScalarIndexExtension
@@ -56,7 +57,6 @@ import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.io.IOException
 
 fun getLibraryRootsWithAbiIncompatibleKotlinClasses(module: Module): Collection<BinaryVersionedFile<JvmMetadataVersion>> {
     return getLibraryRootsWithAbiIncompatibleVersion(module, JvmMetadataVersion.INSTANCE, KotlinJvmMetadataVersionIndex)
@@ -91,25 +91,25 @@ fun updateLibraries(project: Project, libraries: Collection<Library>) {
 
     for (library in libraries) {
         if (isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
-            updateJar(project, getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR)
-            updateJar(project, getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR)
-            updateJar(project, getTestJar(library), LibraryJarDescriptor.TEST_JAR)
+            updateJar(project, library, getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR)
+            updateJar(project, library, getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR)
+            updateJar(project, library,getTestJar(library), LibraryJarDescriptor.TEST_JAR)
 
             if (kJvmConfigurator.changeOldSourcesPathIfNeeded(library, collector)) {
                 kJvmConfigurator.copySourcesToPathFromLibrary(library, collector)
             }
             else {
-                updateJar(project, getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR)
+                updateJar(project, library, getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR)
             }
         }
         else if (isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
-            updateJar(project, getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR)
+            updateJar(project, library, getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR)
 
             if (kJsConfigurator.changeOldSourcesPathIfNeeded(library, collector)) {
                 kJsConfigurator.copySourcesToPathFromLibrary(library, collector)
             }
             else {
-                updateJar(project, getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR)
+                updateJar(project, library, getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR)
             }
         }
     }
@@ -119,15 +119,17 @@ fun updateLibraries(project: Project, libraries: Collection<Library>) {
 
 private fun updateJar(
         project: Project,
+        library: Library,
         fileToReplace: VirtualFile?,
         libraryJarDescriptor: LibraryJarDescriptor) {
     if (fileToReplace == null && !libraryJarDescriptor.shouldExist) {
         return
     }
 
+    val oldUrl = fileToReplace?.url
     val paths = PathUtil.getKotlinPathsForIdeaPlugin()
     val jarPath: File = when (libraryJarDescriptor) {
-        LibraryJarDescriptor.RUNTIME_JAR -> paths.runtimePath
+        LibraryJarDescriptor.RUNTIME_JAR -> paths.stdlibPath
         LibraryJarDescriptor.REFLECT_JAR -> paths.reflectPath
         LibraryJarDescriptor.SCRIPT_RUNTIME_JAR -> paths.scriptRuntimePath
         LibraryJarDescriptor.TEST_JAR -> paths.kotlinTestPath
@@ -141,7 +143,21 @@ private fun updateJar(
         return
     }
 
-    replaceFile(jarPath, getLocalJar(fileToReplace)!!)
+    val jarFileToReplace = getLocalJar(fileToReplace)!!
+    val newVFile = replaceFile(jarPath, jarFileToReplace)
+    if (newVFile != null) {
+        val model = library.modifiableModel
+        try {
+            if (oldUrl != null) {
+                model.removeRoot(oldUrl, OrderRootType.CLASSES)
+            }
+            val newRoot = JarFileSystem.getInstance().getJarRootForLocalFile(newVFile)!!
+            model.addRoot(newRoot, OrderRootType.CLASSES)
+        }
+        finally {
+            model.commit()
+        }
+    }
 }
 
 fun findAllUsedLibraries(project: Project): MultiMap<Library, Module> {
@@ -163,7 +179,7 @@ fun findAllUsedLibraries(project: Project): MultiMap<Library, Module> {
 }
 
 private enum class LibraryJarDescriptor(val jarName: String, val shouldExist: Boolean) {
-    RUNTIME_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JAR, true),
+    RUNTIME_JAR(PathUtil.KOTLIN_JAVA_STDLIB_JAR, true),
     REFLECT_JAR(PathUtil.KOTLIN_JAVA_REFLECT_JAR, false),
     SCRIPT_RUNTIME_JAR(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, true),
     TEST_JAR(PathUtil.KOTLIN_TEST_JAR, false),
@@ -217,25 +233,25 @@ fun getLocalJar(kotlinRuntimeJar: VirtualFile?): VirtualFile? {
     return kotlinRuntimeJar
 }
 
-internal fun replaceFile(updatedFile: File, replacedJarFile: VirtualFile) {
-    try {
-        val replacedFile = getLocalFile(replacedJarFile)
+internal fun replaceFile(updatedFile: File, jarFileToReplace: VirtualFile): VirtualFile? {
+    val jarIoFileToReplace = File(jarFileToReplace.path)
 
-        val localPath = getLocalPath(replacedFile) ?:
-                        error("Should be called for replacing valid root file: $replacedJarFile")
+    if (FileUtil.filesEqual(updatedFile, jarIoFileToReplace)) {
+        return null
+    }
 
-        val libraryJarPath = File(localPath)
-
-        if (FileUtil.filesEqual(updatedFile, libraryJarPath)) {
-            return
+    FileUtil.copy(updatedFile, jarIoFileToReplace)
+    if (jarIoFileToReplace.name != updatedFile.name) {
+        val newFile = File(jarIoFileToReplace.parent, updatedFile.name)
+        if (!newFile.exists()) {
+            jarIoFileToReplace.renameTo(newFile)
+            return LocalFileSystem.getInstance().findFileByIoFile(newFile)!!.apply {
+                refresh(false, true)
+            }
         }
-
-        FileUtil.copy(updatedFile, libraryJarPath)
-        replacedFile.refresh(false, true)
     }
-    catch (e: IOException) {
-        throw AssertionError(e)
-    }
+    jarFileToReplace.refresh(false, true)
+    return null
 }
 
 data class BinaryVersionedFile<out T : BinaryVersion>(val file: VirtualFile, val version: T, val supportedVersion: T)

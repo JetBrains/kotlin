@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
-import org.junit.Ignore
 import java.io.*
 import java.lang.management.ManagementFactory
 import java.net.URLClassLoader
@@ -60,7 +59,7 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
     }
 
     val compilerClassPath = listOf(kotlinPaths.compilerPath)
-    val scriptRuntimeClassPath = listOf( kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath)
+    val scriptRuntimeClassPath = listOf( kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
     val sourceSectionsPluginJar = File(kotlinPaths.libPath, "source-sections-compiler-plugin.jar")
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
 

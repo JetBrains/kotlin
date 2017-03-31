@@ -106,7 +106,7 @@ public abstract class AbstractConfigureKotlinTest extends PlatformTestCase {
     }
 
     private static String getPathToExistentRuntimeJar() {
-        return PathUtil.getKotlinPathsForDistDirectory().getRuntimePath().getParent();
+        return PathUtil.getKotlinPathsForDistDirectory().getStdlibPath().getParent();
     }
 
     private static String getPathToExistentJsJar() {
