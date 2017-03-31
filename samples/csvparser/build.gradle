@@ -34,3 +34,43 @@ build {
         }
     }
 }
+
+void dumpCompilatioTask(Task task) {
+    println("Compilation task: ${task.name}")
+    println("outputDir          : ${task.outputDir}")
+    println("artifactPath       : ${task.artifactPath}")
+    println("inputFiles         : ${task.inputFiles}")
+    println("libraries          : ${task.libraries}")
+    println("nativeLibraries    : ${task.nativeLibraries}")
+    println("linkerOpts         : ${task.linkerOpts}")
+    println("noStdLib           : ${task.noStdLib}")
+    println("noLink             : ${task.noLink}")
+    println("noMain             : ${task.noMain}")
+    println("enableOptimization : ${task.enableOptimizatio}")
+    println("enableAssertions   : ${task.enableAssertions}")
+    println("target             : ${task.target}")
+    println("languageVersion    : ${task.languageVersion}")
+    println("apiVersion         : ${task.apiVersion}")
+}
+
+void dumpInteropTask(Task task) {
+    println("Stub generation task: ${task.name}")
+    println("stubsDir           : ${task.stubsDir}")
+    println("libsDir            : ${task.libsDir}")
+    println("defFile            : ${task.defFile}")
+    println("target             : ${task.target}")
+    println("pkg                : ${task.pkg}")
+    println("linker             : ${task.linker}")
+    println("compilerOpts       : ${task.compilerOpts}")
+    println("linkerOpts         : ${task.linkerOpts}")
+    println("headers            : ${task.headers}")
+    println("linkFiles          : ${task.linkFiles}")
+}
+
+task dumpParameters {
+    doLast {
+        dumpCompilatioTask(konanArtifacts['CsvParser'].compilationTask)
+        dumpInteropTask(konanInterop['stdio'].generateStubsTask)
+        dumpCompilatioTask(konanInterop['stdio'].compileStubsTask)
+    }
+}
