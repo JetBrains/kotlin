@@ -1,12 +1,13 @@
 buildscript {
-    ext.kotlin_version = '1.1.1'
     repositories {
         mavenCentral()
+        maven {
+            url  "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
+        }
     }
 
     dependencies {
-        classpath files('../gradle-plugin.jar')
-        classpath "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.1"
     }
 }
 
@@ -15,7 +16,7 @@ apply plugin: 'konan'
 konanInterop {
     libcurl {
         defFile 'libcurl.def'
-        includeDirs '/usr/include', '/opt/local/include', '/usr/local/opt/curl/include'
+        includeDirs '/usr/include', '/opt/local/include', '/usr/local/opt/curl/include', '.'
     }
 }
 

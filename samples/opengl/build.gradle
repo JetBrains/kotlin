@@ -1,12 +1,13 @@
 buildscript {
-    ext.kotlin_version = '1.1.1'
     repositories {
         mavenCentral()
+        maven {
+            url  "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
+        }
     }
 
     dependencies {
-        classpath files('../gradle-plugin.jar')
-        classpath "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.1"
     }
 }
 
@@ -20,7 +21,7 @@ konanInterop {
 
 
 konanArtifacts {
-    openGlTeapot {
+    OpenGlTeapot {
         inputFiles project.file("OpenGlTeapot.kt")
         useInterop 'opengl'
         def osName = System.getProperty("os.name")

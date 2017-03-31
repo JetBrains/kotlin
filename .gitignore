@@ -23,6 +23,7 @@ kotstd/kotstd.iml
 *.kt.exe
 *.log
 test.output
+*.kexe
 
 # Ignore Gradle GUI config
 gradle-app.setting

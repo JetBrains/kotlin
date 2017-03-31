@@ -1,12 +1,18 @@
+/**
+ * Use `./gradlew build<target platform>` to build the project.
+ * e.g. ./gradlew buildMacbook
+ */
+
 buildscript {
-    ext.kotlin_version = '1.1.1'
     repositories {
         mavenCentral()
+        maven {
+            url  "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
+        }
     }
 
     dependencies {
-        classpath files('../gradle-plugin.jar')
-        classpath "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.1"
     }
 }
 
@@ -41,7 +47,7 @@ konanInterop {
 }
 
 konanArtifacts {
-    tetrisMacbook {
+    TetrisMacbook {
         inputFiles project.file('Tetris.kt')
         useInterop 'sdlMacbook'
         //linkerOpts "-F /Library/Frameworks -framework SDL2 -L/opt/local/lib -lSDL2"
@@ -49,7 +55,7 @@ konanArtifacts {
         target 'macbook'
     }
 
-    tetrisLinux {
+    TetrisLinux {
         inputFiles project.file('Tetris.kt')
         useInterop 'sdlLinux'
 
@@ -57,7 +63,7 @@ konanArtifacts {
         target 'linux'
     }
 
-    tetrisIphone {
+    TetrisIphone {
 
         inputFiles project.file('Tetris.kt')
         useInterop 'sdlIphone'
@@ -69,7 +75,7 @@ konanArtifacts {
         target 'iphone'
     }
 
-    tetrisRaspberry {
+    TetrisRaspberry {
         inputFiles project.file('Tetris.kt')
         useInterop 'sdlRaspberry'
 
@@ -79,11 +85,10 @@ konanArtifacts {
 
 }
 
-tasks.matching { it.name.startsWith("compileKonan") }.forEach { task ->
-    task.doLast {
-        copy {
-            from task.artifactPath
-            into projectDir.canonicalPath
-        }
+tasks.matching { it.name.startsWith("compileKonan") }.asList().forEach { compileTask ->
+    task ("build${compileTask.name - "compileKonanTetris"}", type: Copy) {
+        dependsOn(compileTask)
+        from compileTask.artifactPath
+        destinationDir projectDir
     }
 }

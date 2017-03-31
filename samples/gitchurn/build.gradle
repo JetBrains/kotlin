@@ -1,12 +1,13 @@
 buildscript {
-    ext.kotlin_version = '1.1.1'
     repositories {
         mavenCentral()
+        maven {
+            url  "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
+        }
     }
 
     dependencies {
-        classpath files('../gradle-plugin.jar')
-        classpath "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.1"
     }
 }
 
@@ -21,7 +22,7 @@ konanInterop {
 }
 
 konanArtifacts {
-    gitchurn {
+    GitChurn {
         inputFiles project.fileTree('src')
         useInterop 'libgit2'
         linkerOpts "-L/opt/local/lib -L/usr/lib/x86_64-linux-gnu -L/usr/local/lib -lgit2"
@@ -32,7 +33,7 @@ konanArtifacts {
 build {
     doLast {
         copy {
-            from compileKonanGitchurn.artifactPath
+            from compileKonanGitChurn.artifactPath
             into projectDir.canonicalPath
         }
     }

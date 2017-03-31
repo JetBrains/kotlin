@@ -1,15 +1,24 @@
+/**
+ * One may use bintrayUser/bintrayKey project properties or BINTRAY_USER/BINTRAY_KEY environment variables to upload
+ * built plugin to bintray repository.
+ */
+
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
 
-apply plugin: "java"
-apply plugin: "kotlin"
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 // TODO: move this code to top level (the same for backend.native)
 // Copied from backend.native
@@ -55,20 +64,40 @@ jar {
     from (rootProject.findProject(':tools:helpers').sourceSets.main.output)
 }
 
-task dist(type: Copy) {
-    dependsOn(jar)
-    destinationDir project.file('dist')
-    from jar.outputs.files
-}
-
-task copy_to_samples(type: Copy) {
-    dependsOn(dist)
-    destinationDir rootProject.file('samples')
-    from dist.outputs.files
-}
-
-clean {
-    doFirst {
-        delete project.file('dist')
+publishing {
+    publications {
+        gradlePlugin(MavenPublication) {
+            artifact jar
+            groupId 'org.jetbrains.kotlin'
+            artifactId 'kotlin-native-gradle-plugin'
+            version '0.1'
+            pom.withXml { XmlProvider xml ->
+                def stdlibDep = xml.asNode().appendNode("dependencies").appendNode("dependency")
+                stdlibDep.appendNode("groupId", "org.jetbrains.kotlin")
+                stdlibDep.appendNode("artifactId", "kotlin-stdlib")
+                stdlibDep.appendNode("version", "$kotlin_version")
+            }
+        }
     }
+}
+
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayKey') ? project.property('bintrayKey') : System.getenv('BINTRAY_KEY')
+    pkg {
+        repo = 'kotlin-native-dependencies'
+        name = 'kotlin-native-gradle-plugin'
+        userOrg = 'jetbrains'
+        // TODO: Specify license and github path
+        //licenses = ['Apache-2.0']
+        //vcsUrl = 'https://github.com/...'
+        version {
+            name = '0.1'
+            desc = 'Kotlin Native Gradle plugin 0.1'
+        }
+        publish = true
+        override = true
+    }
+    publications = ['gradlePlugin']
 }
