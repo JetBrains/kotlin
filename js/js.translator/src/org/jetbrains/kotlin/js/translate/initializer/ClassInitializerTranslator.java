@@ -198,7 +198,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                 initFunction.getBody().getStatements().add(fixedInvocation.makeStmt());
             }
             else {
-                List<JsExpression> arguments = new ArrayList<JsExpression>();
+                List<JsExpression> arguments = new ArrayList<>();
 
                 ConstructorDescriptor superDescriptor = (ConstructorDescriptor) superCall.getResultingDescriptor();
                 if (superDescriptor instanceof TypeAliasConstructorDescriptor) {
@@ -319,7 +319,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
     @NotNull
     private List<JsExpression> getAdditionalArgumentsForEnumConstructor() {
-        List<JsExpression> additionalArguments = new ArrayList<JsExpression>();
+        List<JsExpression> additionalArguments = new ArrayList<>();
         additionalArguments.add(program().getStringLiteral(classDescriptor.getName().asString()));
         additionalArguments.add(program().getNumberLiteral(ordinal));
         return additionalArguments;
@@ -350,7 +350,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     @NotNull
     private List<JsParameter> translatePrimaryConstructorParameters() {
         List<KtParameter> parameterList = getPrimaryConstructorParameters(classDeclaration);
-        List<JsParameter> result = new ArrayList<JsParameter>();
+        List<JsParameter> result = new ArrayList<>();
         for (KtParameter jetParameter : parameterList) {
             result.add(translateParameter(jetParameter));
         }

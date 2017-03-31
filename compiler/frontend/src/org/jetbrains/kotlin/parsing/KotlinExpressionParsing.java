@@ -237,7 +237,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     public static final TokenSet ALL_OPERATIONS;
 
     static {
-        Set<IElementType> operations = new HashSet<IElementType>();
+        Set<IElementType> operations = new HashSet<>();
         Precedence[] values = Precedence.values();
         for (Precedence precedence : values) {
             operations.addAll(Arrays.asList(precedence.getOperations().getTypes()));
@@ -247,9 +247,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
     static {
         IElementType[] operations = OPERATIONS.getTypes();
-        Set<IElementType> opSet = new HashSet<IElementType>(Arrays.asList(operations));
+        Set<IElementType> opSet = new HashSet<>(Arrays.asList(operations));
         IElementType[] usedOperations = ALL_OPERATIONS.getTypes();
-        Set<IElementType> usedSet = new HashSet<IElementType>(Arrays.asList(usedOperations));
+        Set<IElementType> usedSet = new HashSet<>(Arrays.asList(usedOperations));
 
         if (opSet.size() > usedSet.size()) {
             opSet.removeAll(usedSet);

@@ -73,7 +73,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
     @NotNull
     @Override
     protected List<KotlinType> resolveUpperBounds() {
-        List<KotlinType> upperBounds = new ArrayList<KotlinType>(1);
+        List<KotlinType> upperBounds = new ArrayList<>(1);
 
         for (KtTypeReference typeReference : getAllUpperBounds()) {
             KotlinType resolvedType = resolveBoundType(typeReference);
@@ -99,7 +99,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
     }
 
     private Collection<KtTypeReference> getUpperBoundsFromWhereClause() {
-        Collection<KtTypeReference> result = new ArrayList<KtTypeReference>();
+        Collection<KtTypeReference> result = new ArrayList<>();
 
         KtClassOrObject classOrObject = KtStubbedPsiUtil.getPsiOrStubParent(typeParameter, KtClassOrObject.class, true);
         if (classOrObject instanceof KtClass) {

@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class RedundantBoxedValuesCollection implements Iterable<BoxedValueDescriptor> {
-    private final Set<BoxedValueDescriptor> safeToDeleteValues = new HashSet<BoxedValueDescriptor>();
+    private final Set<BoxedValueDescriptor> safeToDeleteValues = new HashSet<>();
 
     public void add(@NotNull BoxedValueDescriptor descriptor) {
         safeToDeleteValues.add(descriptor);

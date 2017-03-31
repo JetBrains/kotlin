@@ -59,7 +59,7 @@ public class ExpectedResolveDataUtil {
         Project project = environment.getProject();
         KotlinBuiltIns builtIns = DefaultBuiltIns.getInstance();
 
-        Map<String, DeclarationDescriptor> nameToDescriptor = new HashMap<String, DeclarationDescriptor>();
+        Map<String, DeclarationDescriptor> nameToDescriptor = new HashMap<>();
         nameToDescriptor.put("kotlin::Int.plus(Int)", standardFunction(builtIns.getInt(), "plus", project, builtIns.getIntType()));
         FunctionDescriptor descriptorForGet = standardFunction(builtIns.getArray(), "get", project, builtIns.getIntType());
         nameToDescriptor.put("kotlin::Array.get(Int)", descriptorForGet.getOriginal());
@@ -74,7 +74,7 @@ public class ExpectedResolveDataUtil {
     @NotNull
     public static Map<String, PsiElement> prepareDefaultNameToDeclaration(@NotNull KotlinCoreEnvironment environment) {
         Project project = environment.getProject();
-        Map<String, PsiElement> nameToDeclaration = new HashMap<String, PsiElement>();
+        Map<String, PsiElement> nameToDeclaration = new HashMap<>();
 
         PsiClass java_util_Collections = findClass("java.util.Collections", environment);
         nameToDeclaration.put("java::java.util.Collections.emptyList()", findMethod(java_util_Collections, "emptyList"));
@@ -154,7 +154,7 @@ public class ExpectedResolveDataUtil {
 
         TemporaryBindingTrace traceWithFakeArgumentInfo =
                 TemporaryBindingTrace.create(context.trace, "trace to store fake argument for", name);
-        List<KtExpression> fakeArguments = new ArrayList<KtExpression>(parameterTypes.length);
+        List<KtExpression> fakeArguments = new ArrayList<>(parameterTypes.length);
         for (KotlinType type : parameterTypes) {
             fakeArguments.add(ExpressionTypingUtils.createFakeExpressionOfType(
                     project, traceWithFakeArgumentInfo, "fakeArgument" + fakeArguments.size(), type

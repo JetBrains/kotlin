@@ -317,8 +317,8 @@ public class ArgumentTypeResolver {
         List<KtParameter> valueParameters = function.getValueParameters();
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
                 trace, "trace to resolve function literal parameter types");
-        List<KotlinType> parameterTypes = new ArrayList<KotlinType>(valueParameters.size());
-        List<Name> parameterNames = new ArrayList<Name>(valueParameters.size());
+        List<KotlinType> parameterTypes = new ArrayList<>(valueParameters.size());
+        List<Name> parameterNames = new ArrayList<>(valueParameters.size());
         for (KtParameter parameter : valueParameters) {
             parameterTypes.add(resolveTypeRefWithDefault(parameter.getTypeReference(), scope, temporaryTrace, DONT_CARE));
             Name name = parameter.getNameAsName();

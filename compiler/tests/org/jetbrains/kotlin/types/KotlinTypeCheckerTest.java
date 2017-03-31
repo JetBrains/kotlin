@@ -505,7 +505,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
     }
 
     private void assertIntersection(String expected, String... types) {
-        Set<KotlinType> typesToIntersect = new LinkedHashSet<KotlinType>();
+        Set<KotlinType> typesToIntersect = new LinkedHashSet<>();
         for (String type : types) {
             typesToIntersect.add(makeType(type));
         }
@@ -515,7 +515,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
     }
 
     private void assertCommonSupertype(String expected, String... types) {
-        Collection<KotlinType> subtypes = new ArrayList<KotlinType>();
+        Collection<KotlinType> subtypes = new ArrayList<>();
         for (String type : types) {
             subtypes.add(makeType(type));
         }

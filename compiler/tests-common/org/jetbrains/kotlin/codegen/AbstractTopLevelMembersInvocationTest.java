@@ -39,7 +39,7 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
     @Override
     public void doTest(@NotNull String filename) throws Exception {
         File root = new File(filename);
-        List<String> sourceFiles = new ArrayList<String>(2);
+        List<String> sourceFiles = new ArrayList<>(2);
 
         FileUtil.processFilesRecursively(root, file -> {
             if (file.getName().endsWith(".kt")) {

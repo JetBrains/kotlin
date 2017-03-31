@@ -174,7 +174,7 @@ public class RecursiveDescriptorComparator {
     @NotNull
     private MemberScope getPackageScopeInModule(@NotNull PackageViewDescriptor descriptor, @NotNull ModuleDescriptor module) {
         // See LazyPackageViewDescriptorImpl#memberScope
-        List<MemberScope> scopes = new ArrayList<MemberScope>();
+        List<MemberScope> scopes = new ArrayList<>();
         for (PackageFragmentDescriptor fragment : descriptor.getFragments()) {
             if (isFromModule(fragment, module)) {
                 scopes.add(fragment.getMemberScope());

@@ -142,7 +142,7 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
         private final boolean isFullJdkAndRuntime;
         private final boolean inheritMultifileParts;
 
-        public List<KtFile> files = new ArrayList<KtFile>();
+        public List<KtFile> files = new ArrayList<>();
         private KotlinCoreEnvironment environment;
 
         private FilesWriter(boolean isFullJdkAndRuntime, boolean inheritMultifileParts) {
@@ -175,7 +175,7 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
 
         public void writeFilesOnDisk() {
             writeFiles(files);
-            files = new ArrayList<KtFile>();
+            files = new ArrayList<>();
             environment = createEnvironment(isFullJdkAndRuntime);
         }
 

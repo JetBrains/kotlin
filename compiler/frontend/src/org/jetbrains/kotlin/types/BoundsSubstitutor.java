@@ -52,7 +52,7 @@ public class BoundsSubstitutor {
 
     @NotNull
     private static TypeSubstitutor createUpperBoundsSubstitutor(@NotNull List<TypeParameterDescriptor> typeParameters) {
-        Map<TypeConstructor, TypeProjection> mutableSubstitution = new HashMap<TypeConstructor, TypeProjection>();
+        Map<TypeConstructor, TypeProjection> mutableSubstitution = new HashMap<>();
         TypeSubstitutor substitutor = TypeSubstitutor.create(mutableSubstitution);
 
         // todo assert: no loops

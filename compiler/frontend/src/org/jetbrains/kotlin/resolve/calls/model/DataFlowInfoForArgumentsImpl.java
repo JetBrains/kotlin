@@ -44,7 +44,7 @@ public class DataFlowInfoForArgumentsImpl extends MutableDataFlowInfoForArgument
             ValueArgument argument = iterator.next();
             if (prev != null) {
                 if (nextArgument == null) {
-                    nextArgument = new HashMap<ValueArgument, ValueArgument>();
+                    nextArgument = new HashMap<>();
                 }
                 nextArgument.put(prev, argument);
             }
@@ -67,7 +67,7 @@ public class DataFlowInfoForArgumentsImpl extends MutableDataFlowInfoForArgument
         ValueArgument next = nextArgument == null ? null : nextArgument.get(valueArgument);
         if (next != null) {
             if (infoMap == null) {
-                infoMap = new HashMap<ValueArgument, DataFlowInfo>();
+                infoMap = new HashMap<>();
             }
             infoMap.put(next, dataFlowInfo);
             return;

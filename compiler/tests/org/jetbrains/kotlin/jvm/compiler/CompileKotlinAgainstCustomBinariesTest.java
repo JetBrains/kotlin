@@ -103,7 +103,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
             @NotNull CLICompiler<?> compiler, @NotNull String sourcePath, @NotNull File destination, List<String> additionalOptions, @NotNull File... extraClassPath
     ) {
         Pair<String, ExitCode> output = compileKotlin(compiler, sourcePath, destination, additionalOptions, extraClassPath);
-        Assert.assertEquals(normalizeOutput(new Pair<String, ExitCode>("", ExitCode.OK)), normalizeOutput(output));
+        Assert.assertEquals(normalizeOutput(new Pair<>("", ExitCode.OK)), normalizeOutput(output));
     }
 
     @NotNull
@@ -135,7 +135,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
     @NotNull
     private KotlinCoreEnvironment createEnvironment(@NotNull List<File> extraClassPath) {
-        List<File> extras = new ArrayList<File>();
+        List<File> extras = new ArrayList<>();
         extras.addAll(extraClassPath);
         extras.add(KotlinTestUtils.getAnnotationsJar());
 
@@ -233,7 +233,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
             @NotNull List<String> additionalOptions,
             @NotNull File... classpath
     ) {
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         File sourceFile = new File(getTestDataDirectory(), fileName);
         assert sourceFile.exists() : "Source file does not exist: " + sourceFile.getAbsolutePath();
         args.add(sourceFile.getPath());
@@ -553,7 +553,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
         compileKotlin("source.kt", tmpdir, tmpdir);
 
-        Ref<String> debugInfo = new Ref<String>();
+        Ref<String> debugInfo = new Ref<>();
         File resultFile = new File(tmpdir.getAbsolutePath(), "test/B.class");
         new ClassReader(FilesKt.readBytes(resultFile)).accept(new ClassVisitor(Opcodes.ASM5) {
             @Override

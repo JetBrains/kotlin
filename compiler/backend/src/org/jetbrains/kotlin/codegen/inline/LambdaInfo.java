@@ -128,7 +128,7 @@ public class LambdaInfo implements LabelOwner {
     public List<CapturedParamDesc> getCapturedVars() {
         //lazy initialization cause it would be calculated after object creation
         if (capturedVars == null) {
-            capturedVars = new ArrayList<CapturedParamDesc>();
+            capturedVars = new ArrayList<>();
 
             if (closure.getCaptureThis() != null) {
                 Type type = typeMapper.mapType(closure.getCaptureThis());

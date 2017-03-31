@@ -248,7 +248,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(fqName.parent());
         if (provider == null) return Collections.emptyList();
 
-        Collection<ClassifierDescriptor> result = new SmartList<ClassifierDescriptor>();
+        Collection<ClassifierDescriptor> result = new SmartList<>();
 
         result.addAll(ContainerUtil.mapNotNull(
                 provider.getClassOrObjectDeclarations(fqName.shortName()),

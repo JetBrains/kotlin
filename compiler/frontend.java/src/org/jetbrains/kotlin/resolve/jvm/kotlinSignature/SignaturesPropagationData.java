@@ -48,7 +48,7 @@ public class SignaturesPropagationData {
     ).iterator().next();
 
     private final ValueParameters modifiedValueParameters;
-    private final List<String> signatureErrors = new ArrayList<String>(0);
+    private final List<String> signatureErrors = new ArrayList<>(0);
     private final List<FunctionDescriptor> superFunctions;
 
     public SignaturesPropagationData(
@@ -120,7 +120,7 @@ public class SignaturesPropagationData {
 
     private ValueParameters modifyValueParametersAccordingToSuperMethods(@NotNull List<ValueParameterDescriptor> parameters) {
         KotlinType resultReceiverType = null;
-        List<ValueParameterDescriptor> resultParameters = new ArrayList<ValueParameterDescriptor>(parameters.size());
+        List<ValueParameterDescriptor> resultParameters = new ArrayList<>(parameters.size());
 
         boolean shouldBeExtension = checkIfShouldBeExtension();
 

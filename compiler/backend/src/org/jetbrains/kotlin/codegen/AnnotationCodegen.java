@@ -27,9 +27,11 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.AnnotationChecker;
 import org.jetbrains.kotlin.resolve.constants.*;
-import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.FlexibleType;
+import org.jetbrains.kotlin.types.FlexibleTypesKt;
+import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.lang.annotation.*;
@@ -87,7 +89,7 @@ public abstract class AnnotationCodegen {
             return;
         }
 
-        Set<String> annotationDescriptorsAlreadyPresent = new HashSet<String>();
+        Set<String> annotationDescriptorsAlreadyPresent = new HashSet<>();
 
         Annotations annotations = annotated.getAnnotations();
 
@@ -200,8 +202,7 @@ public abstract class AnnotationCodegen {
         generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotationClass);
     }
 
-    private static final Map<KotlinTarget, ElementType> annotationTargetMap =
-            new EnumMap<KotlinTarget, ElementType>(KotlinTarget.class);
+    private static final Map<KotlinTarget, ElementType> annotationTargetMap = new EnumMap<>(KotlinTarget.class);
 
     static {
         annotationTargetMap.put(KotlinTarget.CLASS, ElementType.TYPE);
@@ -418,8 +419,7 @@ public abstract class AnnotationCodegen {
         value.accept(argumentVisitor, null);
     }
 
-    private static final Map<KotlinRetention, RetentionPolicy> annotationRetentionMap =
-            new EnumMap<KotlinRetention, RetentionPolicy>(KotlinRetention.class);
+    private static final Map<KotlinRetention, RetentionPolicy> annotationRetentionMap = new EnumMap<>(KotlinRetention.class);
 
     static {
         annotationRetentionMap.put(KotlinRetention.SOURCE, RetentionPolicy.SOURCE);

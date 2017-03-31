@@ -197,7 +197,7 @@ public class KotlinJavaPsiFacade {
 
     @NotNull
     private KotlinPsiElementFinderWrapper[] calcFinders() {
-        List<KotlinPsiElementFinderWrapper> elementFinders = new ArrayList<KotlinPsiElementFinderWrapper>();
+        List<KotlinPsiElementFinderWrapper> elementFinders = new ArrayList<>();
         JavaFileManager javaFileManager = findJavaFileManager(project);
         elementFinders.add(
                 javaFileManager instanceof KotlinCliJavaFileManager
@@ -230,10 +230,10 @@ public class KotlinJavaPsiFacade {
     public PsiPackage findPackage(@NotNull String qualifiedName, GlobalSearchScope searchScope) {
         PackageCache cache = SoftReference.dereference(packageCache);
         if (cache == null) {
-            packageCache = new SoftReference<PackageCache>(cache = new PackageCache());
+            packageCache = new SoftReference<>(cache = new PackageCache());
         }
 
-        Pair<String, GlobalSearchScope> key = new Pair<String, GlobalSearchScope>(qualifiedName, searchScope);
+        Pair<String, GlobalSearchScope> key = new Pair<>(qualifiedName, searchScope);
         PsiPackage aPackage = cache.packageInScopeCache.get(key);
         if (aPackage != null) {
             return aPackage;

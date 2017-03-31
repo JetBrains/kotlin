@@ -82,7 +82,7 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
             innerContext.addStatementsToCurrentBlockFrom(argumentBlock);
         }
 
-        Map<KtExpression, JsExpression> aliases = new HashMap<KtExpression, JsExpression>();
+        Map<KtExpression, JsExpression> aliases = new HashMap<>();
         aliases.put(argumentPsi, argument);
         innerContext = innerContext.innerContextWithAliasesForExpressions(aliases);
 

@@ -32,7 +32,7 @@ import java.util.Map;
 
 public abstract class FieldOwnerContext<T extends DeclarationDescriptor> extends CodegenContext<T> {
     //default property name -> map<property descriptor -> bytecode name>
-    private final Map<String, Map<PropertyDescriptor, String>> fieldNames = new HashMap<String, Map<PropertyDescriptor, String>>();
+    private final Map<String, Map<PropertyDescriptor, String>> fieldNames = new HashMap<>();
 
     public FieldOwnerContext(
             @NotNull T contextDescriptor,
@@ -56,8 +56,7 @@ public abstract class FieldOwnerContext<T extends DeclarationDescriptor> extends
 
         String defaultPropertyName = KotlinTypeMapper.mapDefaultFieldName(descriptor, isDelegated);
 
-        Map<PropertyDescriptor, String> descriptor2Name =
-                fieldNames.computeIfAbsent(defaultPropertyName, unused -> new HashMap<PropertyDescriptor, String>());
+        Map<PropertyDescriptor, String> descriptor2Name = fieldNames.computeIfAbsent(defaultPropertyName, unused -> new HashMap<>());
 
         String actualName = descriptor2Name.get(descriptor);
         if (actualName != null) return actualName;

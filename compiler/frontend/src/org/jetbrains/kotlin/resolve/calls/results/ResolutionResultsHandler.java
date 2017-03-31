@@ -154,7 +154,7 @@ public class ResolutionResultsHandler {
                 if (severityLevel.contains(ARGUMENTS_MAPPING_ERROR)) {
                     @SuppressWarnings("unchecked")
                     OverloadingConflictResolver<MutableResolvedCall<D>> myResolver = (OverloadingConflictResolver) overloadingConflictResolver;
-                    return recordFailedInfo(tracing, trace, myResolver.filterOutEquivalentCalls(new LinkedHashSet<MutableResolvedCall<D>>(thisLevel)));
+                    return recordFailedInfo(tracing, trace, myResolver.filterOutEquivalentCalls(new LinkedHashSet<>(thisLevel)));
                 }
                 OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(
                         thisLevel, false, false, checkArgumentsMode, languageVersionSettings);
@@ -200,7 +200,7 @@ public class ResolutionResultsHandler {
 
         Set<MutableResolvedCall<D>> refinedCandidates = candidates;
         if (!languageVersionSettings.supportsFeature(LanguageFeature.RefinedSamAdaptersPriority)) {
-            Set<MutableResolvedCall<D>> nonSynthesized = new HashSet<MutableResolvedCall<D>>();
+            Set<MutableResolvedCall<D>> nonSynthesized = new HashSet<>();
             for (MutableResolvedCall<D> candidate : candidates) {
                 if (!TowerUtilsKt.isSynthesized(candidate.getCandidateDescriptor())) {
                     nonSynthesized.add(candidate);

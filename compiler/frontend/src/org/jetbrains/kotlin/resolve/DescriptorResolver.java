@@ -425,7 +425,7 @@ public class DescriptorResolver {
                containingDescriptor instanceof TypeAliasDescriptor
                 : "This method should be called for functions, properties, or type aliases, got " + containingDescriptor;
 
-        List<TypeParameterDescriptorImpl> result = new ArrayList<TypeParameterDescriptorImpl>();
+        List<TypeParameterDescriptorImpl> result = new ArrayList<>();
         for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
             KtTypeParameter typeParameter = typeParameters.get(i);
             result.add(resolveTypeParameterForDescriptor(containingDescriptor, scopeForAnnotationsResolve, typeParameter, i, trace));
@@ -558,8 +558,8 @@ public class DescriptorResolver {
     public static void checkUpperBoundTypes(@NotNull BindingTrace trace, @NotNull List<UpperBoundCheckRequest> requests) {
         if (requests.isEmpty()) return;
 
-        Set<Name> classBoundEncountered = new HashSet<Name>();
-        Set<Pair<Name, TypeConstructor>> allBounds = new HashSet<Pair<Name, TypeConstructor>>();
+        Set<Name> classBoundEncountered = new HashSet<>();
+        Set<Pair<Name, TypeConstructor>> allBounds = new HashSet<>();
 
         for (UpperBoundCheckRequest request : requests) {
             Name typeParameterName = request.typeParameterName;
@@ -567,7 +567,7 @@ public class DescriptorResolver {
             KtTypeReference upperBoundElement = request.upperBound;
 
             if (!upperBound.isError()) {
-                if (!allBounds.add(new Pair<Name, TypeConstructor>(typeParameterName, upperBound.getConstructor()))) {
+                if (!allBounds.add(new Pair<>(typeParameterName, upperBound.getConstructor()))) {
                     trace.report(REPEATED_BOUND.on(upperBoundElement));
                 }
                 else {

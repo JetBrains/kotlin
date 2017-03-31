@@ -40,7 +40,7 @@ public final class JvmSerializationBindings {
 
         @NotNull
         public static <K, V> SerializationMappingSlice<K, V> create() {
-            return new SerializationMappingSlice<K, V>();
+            return new SerializationMappingSlice<>();
         }
     }
 
@@ -51,7 +51,7 @@ public final class JvmSerializationBindings {
 
         @NotNull
         public static <K> SerializationMappingSetSlice<K> create() {
-            return new SerializationMappingSetSlice<K>();
+            return new SerializationMappingSetSlice<>();
         }
     }
 

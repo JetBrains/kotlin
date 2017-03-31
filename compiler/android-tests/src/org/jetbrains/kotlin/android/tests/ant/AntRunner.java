@@ -31,7 +31,7 @@ public class AntRunner {
     private final List<String> listOfAntCommands;
 
     public AntRunner(PathManager pathManager) {
-        listOfAntCommands = new ArrayList<String>();
+        listOfAntCommands = new ArrayList<>();
         String antCmdName = SystemInfo.isWindows ? "ant.bat" : "ant";
         listOfAntCommands.add(pathManager.getAntBinDirectory() + "/" + antCmdName);
         listOfAntCommands.add("-Dsdk.dir=" + pathManager.getAndroidSdkRoot());

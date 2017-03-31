@@ -261,7 +261,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             );
         }
 
-        Map<LanguageFeature, LanguageFeature.State> extraLanguageFeatures = new HashMap<LanguageFeature, LanguageFeature.State>(0);
+        Map<LanguageFeature, LanguageFeature.State> extraLanguageFeatures = new HashMap<>(0);
         if (arguments.multiPlatform) {
             extraLanguageFeatures.put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED);
         }

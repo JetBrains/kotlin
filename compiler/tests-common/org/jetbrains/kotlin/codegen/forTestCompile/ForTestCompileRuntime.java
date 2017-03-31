@@ -28,8 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ForTestCompileRuntime {
-    private static volatile SoftReference<ClassLoader> reflectJarClassLoader = new SoftReference<ClassLoader>(null);
-    private static volatile SoftReference<ClassLoader> runtimeJarClassLoader = new SoftReference<ClassLoader>(null);
+    private static volatile SoftReference<ClassLoader> reflectJarClassLoader = new SoftReference<>(null);
+    private static volatile SoftReference<ClassLoader> runtimeJarClassLoader = new SoftReference<>(null);
 
     @NotNull
     public static File runtimeJarForTests() {
@@ -81,7 +81,7 @@ public class ForTestCompileRuntime {
         ClassLoader loader = reflectJarClassLoader.get();
         if (loader == null) {
             loader = createClassLoader(runtimeJarForTests(), reflectJarForTests(), scriptRuntimeJarForTests(), kotlinTestJarForTests());
-            reflectJarClassLoader = new SoftReference<ClassLoader>(loader);
+            reflectJarClassLoader = new SoftReference<>(loader);
         }
         return loader;
     }
@@ -91,7 +91,7 @@ public class ForTestCompileRuntime {
         ClassLoader loader = runtimeJarClassLoader.get();
         if (loader == null) {
             loader = createClassLoader(runtimeJarForTests(), scriptRuntimeJarForTests());
-            runtimeJarClassLoader = new SoftReference<ClassLoader>(loader);
+            runtimeJarClassLoader = new SoftReference<>(loader);
         }
         return loader;
     }
@@ -99,7 +99,7 @@ public class ForTestCompileRuntime {
     @NotNull
     private static ClassLoader createClassLoader(@NotNull File... files) {
         try {
-            List<URL> urls = new ArrayList<URL>(2);
+            List<URL> urls = new ArrayList<>(2);
             for (File file : files) {
                 urls.add(file.toURI().toURL());
             }

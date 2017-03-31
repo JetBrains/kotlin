@@ -41,7 +41,7 @@ public abstract class MethodTransformer {
             @NotNull MethodNode node,
             @NotNull Interpreter<V> interpreter
     ) {
-        return runAnalyzer(new Analyzer<V>(interpreter), internalClassName, node);
+        return runAnalyzer(new Analyzer<>(interpreter), internalClassName, node);
     }
 
     public abstract void transform(@NotNull String internalClassName, @NotNull MethodNode methodNode);

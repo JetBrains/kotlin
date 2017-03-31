@@ -221,7 +221,7 @@ public final class WhenTranslator extends AbstractTranslator {
         assert expressionToMatch != null : "Range pattern is only available for 'when (C) { in ... }'  expressions: " +
                                            PsiUtilsKt.getTextWithLocation(condition);
 
-        Map<KtExpression, JsExpression> subjectAliases = new HashMap<KtExpression, JsExpression>();
+        Map<KtExpression, JsExpression> subjectAliases = new HashMap<>();
         subjectAliases.put(whenExpression.getSubjectExpression(), expressionToMatch);
         TranslationContext callContext = context.innerContextWithAliasesForExpressions(subjectAliases);
         boolean negated = condition.getOperationReference().getReferencedNameElementType() == KtTokens.NOT_IN;

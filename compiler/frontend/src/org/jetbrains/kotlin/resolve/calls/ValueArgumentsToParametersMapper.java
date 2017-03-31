@@ -73,7 +73,7 @@ public class ValueArgumentsToParametersMapper {
             @NotNull MutableResolvedCall<D> candidateCall
     ) {
         //return new ValueArgumentsToParametersMapper().process(call, tracing, candidateCall, unmappedArguments);
-        Processor<D> processor = new Processor<D>(call, candidateCall, tracing);
+        Processor<D> processor = new Processor<>(call, candidateCall, tracing);
         processor.process();
         return processor.status;
     }

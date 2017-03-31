@@ -206,7 +206,7 @@ public class CallMaker {
             arguments = Collections.emptyList();
         }
         else {
-            arguments = new ArrayList<ValueArgument>(argumentExpressions.size());
+            arguments = new ArrayList<>(argumentExpressions.size());
             for (KtExpression argumentExpression : argumentExpressions) {
                 arguments.add(makeValueArgument(argumentExpression, calleeExpression));
             }

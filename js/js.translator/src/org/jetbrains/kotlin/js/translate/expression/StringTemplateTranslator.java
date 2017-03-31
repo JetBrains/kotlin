@@ -93,7 +93,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
             }
 
             if (type == null || type.isMarkedNullable()) {
-                append(TopLevelFIF.TO_STRING.apply((JsExpression) null, new SmartList<JsExpression>(translatedExpression), context()));
+                append(TopLevelFIF.TO_STRING.apply((JsExpression) null, new SmartList<>(translatedExpression), context()));
             }
             else if (KotlinBuiltIns.isChar(type)) {
                 append(JsAstUtils.charToString(translatedExpression));

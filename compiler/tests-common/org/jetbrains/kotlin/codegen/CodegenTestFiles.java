@@ -87,7 +87,7 @@ public class CodegenTestFiles {
     }
 
     public static CodegenTestFiles create(Project project, String[] names, String testDataPath) {
-        List<KtFile> files = new ArrayList<KtFile>(names.length);
+        List<KtFile> files = new ArrayList<>(names.length);
         for (String name : names) {
             try {
                 String content = KotlinTestUtils.doLoadFile(testDataPath + "/codegen/", name);
@@ -103,7 +103,7 @@ public class CodegenTestFiles {
 
     @NotNull
     public static CodegenTestFiles create(@NotNull String fileName, @NotNull String contentWithDiagnosticMarkup, @NotNull Project project) {
-        String content = CheckerTestUtil.parseDiagnosedRanges(contentWithDiagnosticMarkup, new ArrayList<CheckerTestUtil.DiagnosedRange>());
+        String content = CheckerTestUtil.parseDiagnosedRanges(contentWithDiagnosticMarkup, new ArrayList<>());
         KtFile file = KotlinTestUtils.createFile(fileName, content, project);
         List<PsiErrorElement> ranges = AnalyzingUtils.getSyntaxErrorRanges(file);
         assert ranges.isEmpty() : "Syntax errors found in " + file + ": " + ranges;

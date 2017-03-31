@@ -137,7 +137,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         assertNotNull(outputFile);
         byte[] bytes = outputFile.asByteArray();
         ClassReader reader = new ClassReader(bytes);
-        List<InnerClassAttribute> result = new ArrayList<InnerClassAttribute>();
+        List<InnerClassAttribute> result = new ArrayList<>();
 
         reader.accept(new ClassVisitor(ASM5) {
             @Override

@@ -100,7 +100,7 @@ public class KotlinTestUtils {
     public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
     public static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
 
-    private static final List<File> filesToDelete = new ArrayList<File>();
+    private static final List<File> filesToDelete = new ArrayList<>();
 
     /**
      * Syntax:
@@ -486,7 +486,7 @@ public class KotlinTestUtils {
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
         List<ContentRoot> paths = environment.getConfiguration().get(JVMConfigurationKeys.CONTENT_ROOTS);
         if (paths == null) return;
-        List<KtFile> ktFiles = new ArrayList<KtFile>();
+        List<KtFile> ktFiles = new ArrayList<>();
         for (ContentRoot root : paths) {
             if (!(root instanceof KotlinSourceRoot)) continue;
 
@@ -718,7 +718,7 @@ public class KotlinTestUtils {
     }
 
     public static String getLastCommentedLines(@NotNull Document document) {
-        List<CharSequence> resultLines = new ArrayList<CharSequence>();
+        List<CharSequence> resultLines = new ArrayList<>();
         for (int i = document.getLineCount() - 1; i >= 0; i--) {
             int lineStart = document.getLineStartOffset(i);
             int lineEnd = document.getLineEndOffset(i);
@@ -796,7 +796,7 @@ public class KotlinTestUtils {
 
     private static boolean compileJavaFiles(@NotNull Collection<File> files, List<String> options, @Nullable File javaErrorFile) throws IOException {
         JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
-        DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
+        DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
         try (StandardJavaFileManager fileManager =
                      javaCompiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.forName("utf-8"))) {
             Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(files);

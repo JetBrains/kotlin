@@ -166,7 +166,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.isImpl = modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD);
 
         // Annotation entries are taken from both own annotations (if any) and object literal annotations (if any)
-        List<KtAnnotationEntry> annotationEntries = new ArrayList<KtAnnotationEntry>();
+        List<KtAnnotationEntry> annotationEntries = new ArrayList<>();
         if (classOrObject != null && classOrObject.getParent() instanceof KtObjectLiteralExpression) {
             // TODO: it would be better to have separate ObjectLiteralDescriptor without so much magic
             annotationEntries.addAll(KtPsiUtilKt.getAnnotationEntries((KtObjectLiteralExpression) classOrObject.getParent()));
@@ -241,7 +241,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             List<KtTypeParameter> typeParameters = typeParameterList.getParameters();
             if (typeParameters.isEmpty()) return Collections.emptyList();
 
-            List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
+            List<TypeParameterDescriptor> parameters = new ArrayList<>(typeParameters.size());
 
             for (int i = 0; i < typeParameters.size(); i++) {
                 parameters.add(new LazyTypeParameterDescriptor(c, this, typeParameters.get(i), i));

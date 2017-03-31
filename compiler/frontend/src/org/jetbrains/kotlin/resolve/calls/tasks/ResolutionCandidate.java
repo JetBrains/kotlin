@@ -45,15 +45,14 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
     public static <D extends CallableDescriptor> ResolutionCandidate<D> create(
             @NotNull Call call, @NotNull D descriptor
     ) {
-        return new ResolutionCandidate<D>(call, descriptor, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
+        return new ResolutionCandidate<>(call, descriptor, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
     }
 
     public static <D extends CallableDescriptor> ResolutionCandidate<D> create(
             @NotNull Call call, @NotNull D descriptor, @Nullable TypeSubstitutor knownTypeParametersResultingSubstitutor
     ) {
-        return new ResolutionCandidate<D>(call, descriptor,
-                                          null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-                                          knownTypeParametersResultingSubstitutor);
+        return new ResolutionCandidate<>(call, descriptor, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                                         knownTypeParametersResultingSubstitutor);
     }
 
     public static <D extends CallableDescriptor> ResolutionCandidate<D> create(
@@ -61,8 +60,7 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
             @NotNull ExplicitReceiverKind explicitReceiverKind,
             @Nullable TypeSubstitutor knownTypeParametersResultingSubstitutor
     ) {
-        return new ResolutionCandidate<D>(call, descriptor, dispatchReceiver, explicitReceiverKind,
-                                          knownTypeParametersResultingSubstitutor);
+        return new ResolutionCandidate<>(call, descriptor, dispatchReceiver, explicitReceiverKind, knownTypeParametersResultingSubstitutor);
     }
 
     public void setDispatchReceiver(@Nullable ReceiverValue dispatchReceiver) {

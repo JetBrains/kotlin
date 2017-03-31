@@ -273,7 +273,7 @@ public final class AnnotationsUtils {
 
         KtFile kotlinFile = getFile(descriptor);
         if (kotlinFile != null) {
-            List<AnnotationDescriptor> annotations = new ArrayList<AnnotationDescriptor>();
+            List<AnnotationDescriptor> annotations = new ArrayList<>();
             for (KtAnnotationEntry psiAnnotation : kotlinFile.getAnnotationEntries()) {
                 AnnotationDescriptor annotation = bindingContext.get(BindingContext.ANNOTATION, psiAnnotation);
                 if (annotation != null) {

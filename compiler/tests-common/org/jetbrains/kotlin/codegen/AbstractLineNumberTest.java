@@ -82,9 +82,7 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
             throw ExceptionUtilsKt.rethrow(e);
         }
 
-        return new Pair<KtFile, KotlinCoreEnvironment>(
-                KotlinTestUtils.createFile(file.getName(), text, environment.getProject()), environment
-        );
+        return new Pair<>(KotlinTestUtils.createFile(file.getName(), text, environment.getProject()), environment);
     }
 
     private void doTest(@NotNull String filename, boolean custom) {
@@ -206,8 +204,8 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
 
     @NotNull
     private static List<String> readAllLineNumbers(@NotNull ClassReader reader) {
-        List<String> result = new ArrayList<String>();
-        Set<String> visitedLabels = new HashSet<String>();
+        List<String> result = new ArrayList<>();
+        Set<String> visitedLabels = new HashSet<>();
 
         reader.accept(new ClassVisitor(Opcodes.ASM5) {
             @Override

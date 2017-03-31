@@ -45,7 +45,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
         TestJdkKind jdkKind = getJdkKind(files);
 
-        List<String> javacOptions = new ArrayList<String>(0);
+        List<String> javacOptions = new ArrayList<>(0);
         for (TestFile file : files) {
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
                 addRuntime = true;
@@ -79,7 +79,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
     @NotNull
     protected static List<String> findJavaSourcesInDirectory(@NotNull File directory) {
-        List<String> javaFilePaths = new ArrayList<String>(1);
+        List<String> javaFilePaths = new ArrayList<>(1);
 
         FileUtil.processFilesRecursively(directory, file -> {
             if (file.isFile() && FilesKt.getExtension(file).equals(JavaFileType.DEFAULT_EXTENSION)) {

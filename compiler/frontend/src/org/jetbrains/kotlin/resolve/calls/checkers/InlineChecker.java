@@ -49,7 +49,7 @@ import static org.jetbrains.kotlin.resolve.inline.InlineUtil.checkNonLocalReturn
 
 class InlineChecker implements CallChecker {
     private final FunctionDescriptor descriptor;
-    private final Set<CallableDescriptor> inlinableParameters = new LinkedHashSet<CallableDescriptor>();
+    private final Set<CallableDescriptor> inlinableParameters = new LinkedHashSet<>();
     private final EffectiveVisibility inlineFunEffectiveVisibility;
     private final boolean isEffectivelyPrivateApiFunction;
 

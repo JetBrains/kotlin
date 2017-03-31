@@ -378,7 +378,7 @@ public class PackageGenTest extends CodegenTestCase {
     public void testSubstituteJavaMethodTypeParameters() throws Exception {
         loadText("import java.util.*; fun foo(l: ArrayList<Int>) { l.add(10) }");
         Method main = generateFunction();
-        ArrayList<Integer> l = new ArrayList<Integer>();
+        ArrayList<Integer> l = new ArrayList<>();
         main.invoke(null, l);
         assertEquals(10, l.get(0).intValue());
     }
@@ -399,7 +399,7 @@ public class PackageGenTest extends CodegenTestCase {
     public void testJavaInterfaceMethod() throws Exception {
         loadText("import java.util.*; fun foo(l: ArrayList<String>) { l.add(\"foo\") }");
         Method main = generateFunction();
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         main.invoke(null, list);
         assertEquals("foo", list.get(0));
     }
@@ -407,7 +407,7 @@ public class PackageGenTest extends CodegenTestCase {
     public void testArrayAccessForArrayList() throws Exception {
         loadText("import java.util.*; fun foo(l: ArrayList<String>) { l[0] = \"Kotlin\" + l[0]; }");
         Method main = generateFunction();
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         list.add("Language");
         main.invoke(null, list);
         assertEquals("KotlinLanguage", list.get(0));

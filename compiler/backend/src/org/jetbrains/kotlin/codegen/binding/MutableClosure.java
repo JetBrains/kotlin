@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen.binding;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -140,23 +139,23 @@ public final class MutableClosure implements CalculatedClosure {
 
     private void recordField(String name, Type type) {
         if (recordedFields == null) {
-            recordedFields = new LinkedList<Pair<String, Type>>();
+            recordedFields = new LinkedList<>();
         }
-        recordedFields.add(new Pair<String, Type>(name, type));
+        recordedFields.add(new Pair<>(name, type));
     }
 
     public void captureVariable(EnclosedValueDescriptor value) {
         recordField(value.getFieldName(), value.getType());
 
         if (captureVariables == null) {
-            captureVariables = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
+            captureVariables = new LinkedHashMap<>();
         }
         captureVariables.put(value.getDescriptor(), value);
     }
 
     public void setCapturedParameterOffsetInConstructor(DeclarationDescriptor descriptor, int offset) {
         if (parameterOffsetInConstructor == null) {
-            parameterOffsetInConstructor = new LinkedHashMap<DeclarationDescriptor, Integer>();
+            parameterOffsetInConstructor = new LinkedHashMap<>();
         }
         parameterOffsetInConstructor.put(descriptor, offset);
     }

@@ -77,7 +77,7 @@ public class TranslationContext {
         return new TranslationContext(null, staticContext, rootDynamicContext, rootAliasingContext, null, null);
     }
 
-    private final Map<JsExpression, TemporaryConstVariable> expressionToTempConstVariableCache = new HashMap<JsExpression, TemporaryConstVariable>();
+    private final Map<JsExpression, TemporaryConstVariable> expressionToTempConstVariableCache = new HashMap<>();
 
     private TranslationContext(
             @Nullable TranslationContext parent,
@@ -602,7 +602,7 @@ public class TranslationContext {
     public void startDeclaration() {
         ClassDescriptor classDescriptor = this.classDescriptor;
         if (classDescriptor != null && !(classDescriptor.getContainingDeclaration() instanceof ClassOrPackageFragmentDescriptor)) {
-            staticContext.getDeferredCallSites().put(classDescriptor, new ArrayList<DeferredCallSite>());
+            staticContext.getDeferredCallSites().put(classDescriptor, new ArrayList<>());
         }
     }
 

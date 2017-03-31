@@ -28,7 +28,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
     private static final DiagnosticParameterRenderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA =
             (data, context) -> {
-                List<DeclarationDescriptor> renderedDescriptors = new ArrayList<DeclarationDescriptor>();
+                List<DeclarationDescriptor> renderedDescriptors = new ArrayList<>();
                 for (JvmDeclarationOrigin origin : data.getSignatureOrigins()) {
                     DeclarationDescriptor descriptor = origin.getDescriptor();
                     if (descriptor != null) {

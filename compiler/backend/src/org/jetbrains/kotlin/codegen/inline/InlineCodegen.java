@@ -88,7 +88,7 @@ public class InlineCodegen extends CallGenerator {
     private final boolean isSameModule;
 
     private final ParametersBuilder invocationParamBuilder = ParametersBuilder.newBuilder();
-    private final Map<Integer, LambdaInfo> expressionMap = new HashMap<Integer, LambdaInfo>();
+    private final Map<Integer, LambdaInfo> expressionMap = new HashMap<>();
 
     private final ReifiedTypeInliner reifiedTypeInliner;
 
@@ -819,7 +819,7 @@ public class InlineCodegen extends CallGenerator {
 
     @NotNull
     public static Set<String> getDeclarationLabels(@Nullable PsiElement lambdaOrFun, @NotNull DeclarationDescriptor descriptor) {
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
 
         if (lambdaOrFun != null) {
             Name label = LabelResolver.INSTANCE.getLabelNameIfAny(lambdaOrFun);
@@ -944,8 +944,7 @@ public class InlineCodegen extends CallGenerator {
     ) {
         if (!codegen.hasFinallyBlocks()) return;
 
-        Map<AbstractInsnNode, MethodInliner.PointForExternalFinallyBlocks> extensionPoints =
-                new HashMap<AbstractInsnNode, MethodInliner.PointForExternalFinallyBlocks>();
+        Map<AbstractInsnNode, MethodInliner.PointForExternalFinallyBlocks> extensionPoints = new HashMap<>();
         for (MethodInliner.PointForExternalFinallyBlocks insertPoint : insertPoints) {
             extensionPoints.put(insertPoint.beforeIns, insertPoint);
         }

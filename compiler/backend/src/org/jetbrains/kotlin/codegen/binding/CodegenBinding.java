@@ -181,7 +181,7 @@ public class CodegenBinding {
     ) {
         Collection<ClassDescriptor> innerClasses = bindingTrace.get(INNER_CLASSES, outer);
         if (innerClasses == null) {
-            innerClasses = new ArrayList<ClassDescriptor>(1);
+            innerClasses = new ArrayList<>(1);
             bindingTrace.record(INNER_CLASSES, outer, innerClasses);
         }
         innerClasses.add(inner);
@@ -192,14 +192,14 @@ public class CodegenBinding {
         // todo: we use Set and add given files but ignoring other scripts because something non-clear kept in binding
         // for scripts especially in case of REPL
 
-        Set<FqName> names = new HashSet<FqName>();
+        Set<FqName> names = new HashSet<>();
         for (KtFile file : files) {
             if (!file.isScript()) {
                 names.add(file.getPackageFqName());
             }
         }
 
-        Set<KtFile> answer = new HashSet<KtFile>();
+        Set<KtFile> answer = new HashSet<>();
         answer.addAll(files);
 
         for (FqName name : names) {
@@ -209,7 +209,7 @@ public class CodegenBinding {
             }
         }
 
-        List<KtFile> sortedAnswer = new ArrayList<KtFile>(answer);
+        List<KtFile> sortedAnswer = new ArrayList<>(answer);
 
         sortedAnswer.sort(Comparator.comparing((KtFile file) -> {
             VirtualFile virtualFile = file.getVirtualFile();
@@ -234,9 +234,9 @@ public class CodegenBinding {
         Collection<ClassDescriptor> innerClasses = bindingContext.get(INNER_CLASSES, outermostClass);
         if (innerClasses == null || innerClasses.isEmpty()) return Collections.emptySet();
 
-        Set<ClassDescriptor> allInnerClasses = new HashSet<ClassDescriptor>();
+        Set<ClassDescriptor> allInnerClasses = new HashSet<>();
 
-        Deque<ClassDescriptor> stack = new ArrayDeque<ClassDescriptor>(innerClasses);
+        Deque<ClassDescriptor> stack = new ArrayDeque<>(innerClasses);
         do {
             ClassDescriptor currentClass = stack.pop();
             if (allInnerClasses.add(currentClass)) {
@@ -247,7 +247,8 @@ public class CodegenBinding {
                     }
                 }
             }
-        } while (!stack.isEmpty());
+        }
+        while (!stack.isEmpty());
 
         return allInnerClasses;
     }

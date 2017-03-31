@@ -72,7 +72,7 @@ public class SimpleTestClassModel implements TestClassModel {
         this.testClassName = testClassName;
         this.targetBackend = targetBackend;
         this.checkFilenameStartsLowerCase = checkFilenameStartsLowerCase;
-        this.excludeDirs = excludeDirs.isEmpty() ? Collections.<String>emptySet() : new LinkedHashSet<String>(excludeDirs);
+        this.excludeDirs = excludeDirs.isEmpty() ? Collections.emptySet() : new LinkedHashSet<>(excludeDirs);
     }
 
     @NotNull
@@ -106,7 +106,7 @@ public class SimpleTestClassModel implements TestClassModel {
     private Set<String> excludesStripOneDirectory(@NotNull String directoryName) {
         if (excludeDirs.isEmpty()) return excludeDirs;
 
-        Set<String> result = new LinkedHashSet<String>();
+        Set<String> result = new LinkedHashSet<>();
         for (String excludeDir : excludeDirs) {
             int firstSlash = excludeDir.indexOf('/');
             if (firstSlash >= 0 && excludeDir.substring(0, firstSlash).equals(directoryName)) {

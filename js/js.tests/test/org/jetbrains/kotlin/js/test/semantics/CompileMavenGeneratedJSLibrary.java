@@ -94,7 +94,7 @@ public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
             String outputFile = getOutputFilePath(getTestName(false) + ".compiler.kt", version);
             System.out.println("Compiling with version: " + version + " to: " + outputFile);
 
-            List<String> args = new ArrayList<String>(Arrays.asList(
+            List<String> args = new ArrayList<>(Arrays.asList(
                     "-output", outputFile,
                     "-libraries", generatedJsDefinitionsDir,
                     "-verbose"

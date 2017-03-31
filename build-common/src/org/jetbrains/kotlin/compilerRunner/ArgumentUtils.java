@@ -33,7 +33,7 @@ public class ArgumentUtils {
     @NotNull
     public static List<String> convertArgumentsToStringList(@NotNull CommonCompilerArguments arguments)
             throws InstantiationException, IllegalAccessException {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         convertArgumentsToStringList(arguments, arguments.getClass().newInstance(), arguments.getClass(), result);
         result.addAll(arguments.freeArgs);
         return result;

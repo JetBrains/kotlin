@@ -99,7 +99,7 @@ public class PackageCodegenImpl implements PackageCodegen {
 
         boolean generatePackagePart = false;
 
-        List<KtClassOrObject> classOrObjects = new ArrayList<KtClassOrObject>();
+        List<KtClassOrObject> classOrObjects = new ArrayList<>();
 
         for (KtDeclaration declaration : file.getDeclarations()) {
             if (declaration.hasModifier(KtTokens.HEADER_KEYWORD)) continue;
@@ -135,7 +135,7 @@ public class PackageCodegenImpl implements PackageCodegen {
 
     @Nullable
     private PackageFragmentDescriptor getOnlyPackageFragment(@NotNull FqName expectedPackageFqName) {
-        SmartList<PackageFragmentDescriptor> fragments = new SmartList<PackageFragmentDescriptor>();
+        SmartList<PackageFragmentDescriptor> fragments = new SmartList<>();
         for (KtFile file : files) {
             PackageFragmentDescriptor fragment = state.getBindingContext().get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file);
             assert fragment != null : "package fragment is null for " + file + "\n" + file.getText();

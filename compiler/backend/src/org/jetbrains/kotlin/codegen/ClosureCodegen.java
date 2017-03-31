@@ -100,7 +100,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         this.strategy = strategy;
 
         if (samType == null) {
-            this.superInterfaceTypes = new ArrayList<KotlinType>();
+            this.superInterfaceTypes = new ArrayList<>();
 
             KotlinType superClassType = null;
             for (KotlinType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
@@ -252,7 +252,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     @NotNull
     private static FunctionDescriptor createFreeLambdaDescriptor(@NotNull FunctionDescriptor descriptor) {
         FunctionDescriptor.CopyBuilder<? extends FunctionDescriptor> builder = descriptor.newCopyBuilder();
-        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(0);
+        List<TypeParameterDescriptor> typeParameters = new ArrayList<>(0);
         builder.setTypeParameters(typeParameters);
 
         DeclarationDescriptor container = descriptor.getContainingDeclaration();

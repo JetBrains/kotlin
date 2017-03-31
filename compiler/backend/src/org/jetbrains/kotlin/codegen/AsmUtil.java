@@ -445,7 +445,7 @@ public class AsmUtil {
     }
 
     public static void genClosureFields(@NotNull CalculatedClosure closure, ClassBuilder v, KotlinTypeMapper typeMapper) {
-        List<Pair<String, Type>> allFields = new ArrayList<Pair<String, Type>>();
+        List<Pair<String, Type>> allFields = new ArrayList<>();
 
         ClassifierDescriptor captureThis = closure.getCaptureThis();
         if (captureThis != null) {

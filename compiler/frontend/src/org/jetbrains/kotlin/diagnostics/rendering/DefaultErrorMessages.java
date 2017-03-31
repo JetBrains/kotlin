@@ -53,7 +53,7 @@ public class DefaultErrorMessages {
     private static final MappedExtensionProvider<Extension, List<DiagnosticFactoryToRendererMap>> RENDERER_MAPS = MappedExtensionProvider.create(
             Extension.EP_NAME,
             extensions -> {
-                List<DiagnosticFactoryToRendererMap> result = new ArrayList<DiagnosticFactoryToRendererMap>(extensions.size() + 1);
+                List<DiagnosticFactoryToRendererMap> result = new ArrayList<>(extensions.size() + 1);
                 for (Extension extension : extensions) {
                     result.add(extension.getMap());
                 }

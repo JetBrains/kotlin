@@ -100,8 +100,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private final DelegationFieldsInfo delegationFieldsInfo;
 
-    private final List<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>> additionalTasks =
-            new ArrayList<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>>();
+    private final List<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>> additionalTasks = new ArrayList<>();
 
     public ImplementationBodyCodegen(
             @NotNull KtPureClassOrObject aClass,
@@ -255,7 +254,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private static final Map<FqName, String> KOTLIN_MARKER_INTERFACES = new HashMap<FqName, String>();
+    private static final Map<FqName, String> KOTLIN_MARKER_INTERFACES = new HashMap<>();
     static {
         KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.iterator, "kotlin/jvm/internal/markers/KMappedMarker");
         KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.iterable, "kotlin/jvm/internal/markers/KMappedMarker");
@@ -302,8 +301,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         sw.writeSuperclassEnd();
 
-        LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
-        Set<String> kotlinMarkerInterfaces = new LinkedHashSet<String>();
+        LinkedHashSet<String> superInterfaces = new LinkedHashSet<>();
+        Set<String> kotlinMarkerInterfaces = new LinkedHashSet<>();
 
         for (KotlinType supertype : descriptor.getTypeConstructor().getSupertypes()) {
             if (isJvmInterface(supertype.getConstructor().getDeclarationDescriptor())) {
@@ -330,7 +329,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         superInterfaces.addAll(kotlinMarkerInterfaces);
 
         return new JvmClassSignature(classAsmType.getInternalName(), superClassInfo.getType().getInternalName(),
-                                     new ArrayList<String>(superInterfaces), sw.makeJavaGenericSignature());
+                                     new ArrayList<>(superInterfaces), sw.makeJavaGenericSignature());
     }
 
     private void getSuperClass() {
@@ -1089,7 +1088,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 return StackValue.field(type, classAsmType, name, false, StackValue.none());
             }
         }
-        private final Map<KtDelegatedSuperTypeEntry, Field> fields = new HashMap<KtDelegatedSuperTypeEntry, Field>();
+        private final Map<KtDelegatedSuperTypeEntry, Field> fields = new HashMap<>();
 
         @NotNull
         public Field getInfo(KtDelegatedSuperTypeEntry specifier) {
@@ -1266,7 +1265,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateTraitMethods() {
         if (isAnnotationOrJvmInterfaceWithoutDefaults(descriptor, state)) return;
 
-        List<FunctionDescriptor> restrictedInheritance = new ArrayList<FunctionDescriptor>();
+        List<FunctionDescriptor> restrictedInheritance = new ArrayList<>();
         for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {
             FunctionDescriptor interfaceFun = entry.getKey();
             //skip java 8 default methods
@@ -1625,7 +1624,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     public void addCompanionObjectPropertyToCopy(@NotNull PropertyDescriptor descriptor, Object defaultValue) {
         if (companionObjectPropertiesToCopy == null) {
-            companionObjectPropertiesToCopy = new ArrayList<PropertyAndDefaultValue>();
+            companionObjectPropertiesToCopy = new ArrayList<>();
         }
         companionObjectPropertiesToCopy.add(new PropertyAndDefaultValue(descriptor, defaultValue));
     }

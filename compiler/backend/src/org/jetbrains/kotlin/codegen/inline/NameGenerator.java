@@ -29,7 +29,7 @@ public class NameGenerator {
     private int nextLambdaIndex = 1;
     private int nextWhenIndex = 1;
 
-    private final Map<String, NameGenerator> subGenerators = new HashMap<String, NameGenerator>();
+    private final Map<String, NameGenerator> subGenerators = new HashMap<>();
 
     public NameGenerator(String generatorClass) {
         this.generatorClass = generatorClass;

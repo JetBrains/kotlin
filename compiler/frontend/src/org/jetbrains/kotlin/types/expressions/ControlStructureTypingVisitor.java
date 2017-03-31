@@ -481,7 +481,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         KtExpression tryBlock = expression.getTryBlock();
         List<KtCatchClause> catchClauses = expression.getCatchClauses();
         KtFinallySection finallyBlock = expression.getFinallyBlock();
-        List<KotlinType> types = new ArrayList<KotlinType>();
+        List<KotlinType> types = new ArrayList<>();
         boolean nothingInAllCatchBranches = true;
         for (KtCatchClause catchClause : catchClauses) {
             KtParameter catchParameter = catchClause.getCatchParameter();

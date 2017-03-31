@@ -35,7 +35,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 
@@ -88,7 +91,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
 
             private final Map<ValueParameterDescriptor, ResolvedValueArgument> argumentMap;
             {
-                argumentMap = new LinkedHashMap<ValueParameterDescriptor, ResolvedValueArgument>(fakeArguments.size());
+                argumentMap = new LinkedHashMap<>(fakeArguments.size());
                 int index = 0;
                 List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
                 for (ValueArgument argument : fakeArguments) {
@@ -112,7 +115,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
             @NotNull
             @Override
             public List<ResolvedValueArgument> getValueArgumentsByIndex() {
-                return new ArrayList<ResolvedValueArgument>(argumentMap.values());
+                return new ArrayList<>(argumentMap.values());
             }
 
             @NotNull

@@ -47,7 +47,7 @@ public class CFGraphToDotFilePrinter {
 
         out.println("digraph " + FileUtil.getNameWithoutExtension(file) + " {");
         int[] count = new int[1];
-        Map<Instruction, String> nodeToName = new HashMap<Instruction, String>();
+        Map<Instruction, String> nodeToName = new HashMap<>();
         for (Pseudocode pseudocode : pseudocodes) {
             dumpNodes(pseudocode.getInstructionsIncludingDeadCode(), out, count, nodeToName, Sets
                     .newHashSet(pseudocode.getInstructions()));

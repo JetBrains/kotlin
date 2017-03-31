@@ -49,7 +49,7 @@ public class BothSignatureWriter extends JvmSignatureWriter {
         this.signatureVisitor = new CheckSignatureAdapter(mode.asmType, signatureWriter);
     }
 
-    private final Stack<SignatureVisitor> visitors = new Stack<SignatureVisitor>();
+    private final Stack<SignatureVisitor> visitors = new Stack<>();
 
     private void push(SignatureVisitor visitor) {
         visitors.push(visitor);

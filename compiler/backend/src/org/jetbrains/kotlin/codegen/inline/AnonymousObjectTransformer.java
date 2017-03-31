@@ -37,7 +37,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
     private final InliningContext inliningContext;
     private final Type oldObjectType;
     private final boolean isSameModule;
-    private final Map<String, List<String>> fieldNames = new HashMap<String, List<String>>();
+    private final Map<String, List<String>> fieldNames = new HashMap<>();
 
     private MethodNode constructor;
     private String sourceInfo;
@@ -58,9 +58,9 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
     @Override
     @NotNull
     public InlineResult doTransform(@NotNull FieldRemapper parentRemapper) {
-        List<InnerClassNode> innerClassNodes = new ArrayList<InnerClassNode>();
+        List<InnerClassNode> innerClassNodes = new ArrayList<>();
         ClassBuilder classBuilder = createRemappingClassBuilderViaFactory(inliningContext);
-        List<MethodNode> methodsToTransform = new ArrayList<MethodNode>();
+        List<MethodNode> methodsToTransform = new ArrayList<>();
 
         createClassReader().accept(new ClassVisitor(InlineCodegenUtil.API, classBuilder.getVisitor()) {
             @Override
@@ -139,7 +139,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
         List<CapturedParamInfo> additionalFakeParams =
                 extractParametersMappingAndPatchConstructor(constructor, allCapturedParamBuilder, constructorParamBuilder,
                                                             transformationInfo, parentRemapper);
-        List<DeferredMethodVisitor> deferringMethods = new ArrayList<DeferredMethodVisitor>();
+        List<DeferredMethodVisitor> deferringMethods = new ArrayList<>();
 
         generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, parentRemapper, additionalFakeParams);
 
@@ -243,7 +243,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
             @NotNull FieldRemapper parentRemapper,
             @NotNull List<CapturedParamInfo> constructorAdditionalFakeParams
     ) {
-        List<Type> descTypes = new ArrayList<Type>();
+        List<Type> descTypes = new ArrayList<>();
 
         Parameters constructorParams = constructorInlineBuilder.buildParameters();
         int[] capturedIndexes = new int[constructorParams.getParameters().size()];
@@ -364,10 +364,10 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
             @NotNull AnonymousObjectTransformationInfo transformationInfo,
             @NotNull FieldRemapper parentFieldRemapper
     ) {
-        Set<LambdaInfo> capturedLambdas = new LinkedHashSet<LambdaInfo>(); //captured var of inlined parameter
-        List<CapturedParamInfo> constructorAdditionalFakeParams = new ArrayList<CapturedParamInfo>();
+        Set<LambdaInfo> capturedLambdas = new LinkedHashSet<>(); //captured var of inlined parameter
+        List<CapturedParamInfo> constructorAdditionalFakeParams = new ArrayList<>();
         Map<Integer, LambdaInfo> indexToLambda = transformationInfo.getLambdasToInline();
-        Set<Integer> capturedParams = new HashSet<Integer>();
+        Set<Integer> capturedParams = new HashSet<>();
 
         //load captured parameters and patch instruction list (NB: there is also could be object fields)
         AbstractInsnNode cur = constructor.instructions.getFirst();
@@ -436,12 +436,12 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
 
         //For all inlined lambdas add their captured parameters
         //TODO: some of such parameters could be skipped - we should perform additional analysis
-        Map<String, LambdaInfo> capturedLambdasToInline = new HashMap<String, LambdaInfo>(); //captured var of inlined parameter
-        List<CapturedParamDesc> allRecapturedParameters = new ArrayList<CapturedParamDesc>();
+        Map<String, LambdaInfo> capturedLambdasToInline = new HashMap<>(); //captured var of inlined parameter
+        List<CapturedParamDesc> allRecapturedParameters = new ArrayList<>();
         boolean addCapturedNotAddOuter =
                 parentFieldRemapper.isRoot() ||
                 (parentFieldRemapper instanceof InlinedLambdaRemapper && parentFieldRemapper.getParent().isRoot());
-        Map<String, CapturedParamInfo> alreadyAdded = new HashMap<String, CapturedParamInfo>();
+        Map<String, CapturedParamInfo> alreadyAdded = new HashMap<>();
         for (LambdaInfo info : capturedLambdas) {
             if (addCapturedNotAddOuter) {
                 for (CapturedParamDesc desc : info.getCapturedVars()) {
@@ -524,7 +524,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
 
     @NotNull
     private String addUniqueField(@NotNull String name) {
-        List<String> existNames = fieldNames.computeIfAbsent(name, unused -> new LinkedList<String>());
+        List<String> existNames = fieldNames.computeIfAbsent(name, unused -> new LinkedList<>());
         String suffix = existNames.isEmpty() ? "" : "$" + existNames.size();
         String newName = name + suffix;
         existNames.add(newName);

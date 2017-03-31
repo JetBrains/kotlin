@@ -447,7 +447,7 @@ public class BodyResolver {
                 currentDescriptor = (ClassDescriptor) currentDescriptor.getContainingDeclaration();
                 if (DescriptorUtils.isSealedClass(currentDescriptor)) {
                     if (parentEnumOrSealed.isEmpty()) {
-                        parentEnumOrSealed = new HashSet<TypeConstructor>();
+                        parentEnumOrSealed = new HashSet<>();
                     }
                     parentEnumOrSealed.add(currentDescriptor.getTypeConstructor());
                 }
@@ -891,7 +891,7 @@ public class BodyResolver {
             return;
         }
         // +1 is a work around against new Queue(0).addLast(...) bug // stepan.koltsov@ 2011-11-21
-        Queue<DeferredType> queue = new Queue<DeferredType>(deferredTypes.size() + 1);
+        Queue<DeferredType> queue = new Queue<>(deferredTypes.size() + 1);
         trace.addHandler(DEFERRED_TYPE, (deferredTypeKeyDeferredTypeWritableSlice, key, value) -> queue.addLast(key.getData()));
         for (Box<DeferredType> deferredType : deferredTypes) {
             queue.addLast(deferredType.getData());

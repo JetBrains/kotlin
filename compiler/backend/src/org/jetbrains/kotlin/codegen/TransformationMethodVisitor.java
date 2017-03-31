@@ -45,7 +45,7 @@ public abstract class TransformationMethodVisitor extends MethodVisitor {
         super(Opcodes.ASM5);
         this.delegate = delegate;
         this.methodNode = new MethodNode(access, name, desc, signature, exceptions);
-        this.methodNode.localVariables = new ArrayList<LocalVariableNode>(5);
+        this.methodNode.localVariables = new ArrayList<>(5);
         this.mv = InlineCodegenUtil.wrapWithMaxLocalCalc(methodNode);
     }
 

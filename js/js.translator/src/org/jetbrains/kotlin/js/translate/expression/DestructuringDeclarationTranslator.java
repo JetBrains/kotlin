@@ -81,7 +81,7 @@ public class DestructuringDeclarationTranslator extends AbstractTranslator {
             context().getCurrentBlock().getStatements().add(JsAstUtils.newVar(multiObjectName, initializer));
         }
 
-        List<JsVars.JsVar> jsVars = new ArrayList<JsVars.JsVar>();
+        List<JsVars.JsVar> jsVars = new ArrayList<>();
         JsNameRef multiObjNameRef = multiObjectName.makeRef();
         for (KtDestructuringDeclarationEntry entry : multiDeclaration.getEntries()) {
             VariableDescriptor descriptor = BindingContextUtils.getNotNull(context().bindingContext(), BindingContext.VARIABLE, entry);

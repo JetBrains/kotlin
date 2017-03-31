@@ -29,7 +29,7 @@ public class JsSourceGenerationVisitor extends JsToStringGenerationVisitor imple
     @Nullable
     private final SourceMapBuilder sourceMapBuilder;
 
-    private final List<Object> pendingSources = new SmartList<Object>();
+    private final List<Object> pendingSources = new SmartList<>();
 
     public JsSourceGenerationVisitor(TextOutput out, @Nullable SourceMapBuilder sourceMapBuilder) {
         super(out);

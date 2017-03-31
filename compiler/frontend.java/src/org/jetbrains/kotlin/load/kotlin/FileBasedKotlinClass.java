@@ -69,7 +69,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
         public void add(@NotNull String name, @Nullable String outerName, @Nullable String innerName) {
             if (map == null) {
-                map = new HashMap<String, OuterAndInnerName>();
+                map = new HashMap<>();
             }
             map.put(name, new OuterAndInnerName(outerName, innerName));
         }
@@ -276,7 +276,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
             return ClassId.topLevel(new FqName(name.replace('/', '.')));
         }
 
-        List<String> classes = new ArrayList<String>(1);
+        List<String> classes = new ArrayList<>(1);
         boolean local = false;
         
         while (true) {

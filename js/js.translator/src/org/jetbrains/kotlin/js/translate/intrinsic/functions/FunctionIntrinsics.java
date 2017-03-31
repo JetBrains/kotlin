@@ -30,7 +30,7 @@ import java.util.Map;
 public final class FunctionIntrinsics {
 
     @NotNull
-    private final Map<FunctionDescriptor, FunctionIntrinsic> intrinsicCache = new THashMap<FunctionDescriptor, FunctionIntrinsic>();
+    private final Map<FunctionDescriptor, FunctionIntrinsic> intrinsicCache = new THashMap<>();
 
     @NotNull
     private final List<FunctionIntrinsicFactory> factories = Lists.newArrayList();

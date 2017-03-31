@@ -66,7 +66,7 @@ public class SwitchCodegenUtil {
             @NotNull BindingContext bindingContext,
             boolean shouldInlineConstVals
     ) {
-        List<ConstantValue<?>> result = new ArrayList<ConstantValue<?>>();
+        List<ConstantValue<?>> result = new ArrayList<>();
 
         for (KtWhenEntry entry : expression.getEntries()) {
             addConstantsFromEntry(result, entry, bindingContext, shouldInlineConstVals);
@@ -97,7 +97,7 @@ public class SwitchCodegenUtil {
             @NotNull BindingContext bindingContext,
             boolean shouldInlineConstVals
     ) {
-        List<ConstantValue<?>> result = new ArrayList<ConstantValue<?>>();
+        List<ConstantValue<?>> result = new ArrayList<>();
         addConstantsFromEntry(result, entry, bindingContext, shouldInlineConstVals);
         return result;
     }

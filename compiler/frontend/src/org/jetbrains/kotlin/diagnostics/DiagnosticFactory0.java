@@ -30,11 +30,11 @@ public class DiagnosticFactory0<E extends PsiElement> extends DiagnosticFactoryW
     }
 
     public static <T extends PsiElement> DiagnosticFactory0<T> create(Severity severity, PositioningStrategy<? super T> positioningStrategy) {
-        return new DiagnosticFactory0<T>(severity, positioningStrategy);
+        return new DiagnosticFactory0<>(severity, positioningStrategy);
     }
 
     @NotNull
     public SimpleDiagnostic<E> on(@NotNull E element) {
-        return new SimpleDiagnostic<E>(element, this, getSeverity());
+        return new SimpleDiagnostic<>(element, this, getSeverity());
     }
 }

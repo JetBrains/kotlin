@@ -43,8 +43,8 @@ abstract public class SwitchCodegen {
     protected final Type resultType;
     protected final InstructionAdapter v;
 
-    protected final NavigableMap<Integer, Label> transitionsTable = new TreeMap<Integer, Label>();
-    protected final List<Label> entryLabels = new ArrayList<Label>();
+    protected final NavigableMap<Integer, Label> transitionsTable = new TreeMap<>();
+    protected final List<Label> entryLabels = new ArrayList<>();
     protected Label elseLabel = new Label();
     protected Label endLabel = new Label();
     protected Label defaultLabel;

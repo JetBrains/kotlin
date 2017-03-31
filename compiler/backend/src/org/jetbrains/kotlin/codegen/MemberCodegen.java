@@ -92,7 +92,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     private final JvmFileClassesProvider fileClassesProvider;
     private final MemberCodegen<?> parentCodegen;
     private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
-    private final Collection<ClassDescriptor> innerClasses = new LinkedHashSet<ClassDescriptor>();
+    private final Collection<ClassDescriptor> innerClasses = new LinkedHashSet<>();
 
     private ExpressionCodegen clInit;
     private NameGenerator inlineNameGenerator;
@@ -579,7 +579,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     }
 
     protected void generatePropertyMetadataArrayFieldIfNeeded(@NotNull Type thisAsmType) {
-        List<KtProperty> delegatedProperties = new ArrayList<KtProperty>();
+        List<KtProperty> delegatedProperties = new ArrayList<>();
         for (KtDeclaration declaration : ((KtDeclarationContainer) element).getDeclarations()) {
             if (declaration instanceof KtProperty) {
                 KtProperty property = (KtProperty) declaration;

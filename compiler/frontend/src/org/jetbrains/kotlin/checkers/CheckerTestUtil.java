@@ -124,7 +124,7 @@ public class CheckerTestUtil {
             @Nullable List<DeclarationDescriptor> dynamicCallDescriptors,
             @Nullable String platform
     ) {
-        List<ActualDiagnostic> diagnostics = new ArrayList<ActualDiagnostic>();
+        List<ActualDiagnostic> diagnostics = new ArrayList<>();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics().all()) {
             if (PsiTreeUtil.isAncestor(root, diagnostic.getPsiElement(), false)) {
                 diagnostics.add(new ActualDiagnostic(diagnostic, platform));
@@ -148,7 +148,7 @@ public class CheckerTestUtil {
             @Nullable List<DeclarationDescriptor> dynamicCallDescriptors,
             @Nullable String platform
     ) {
-        List<ActualDiagnostic> debugAnnotations = new ArrayList<ActualDiagnostic>();
+        List<ActualDiagnostic> debugAnnotations = new ArrayList<>();
 
         DebugInfoUtil.markDebugAnnotations(root, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
             @Override
@@ -214,7 +214,7 @@ public class CheckerTestUtil {
             Collection<ActualDiagnostic> actual,
             DiagnosticDiffCallbacks callbacks
     ) {
-        Map<ActualDiagnostic, TextDiagnostic> diagnosticToExpectedDiagnostic = new HashMap<ActualDiagnostic, TextDiagnostic>();
+        Map<ActualDiagnostic, TextDiagnostic> diagnosticToExpectedDiagnostic = new HashMap<>();
 
         assertSameFile(actual);
 
@@ -358,7 +358,7 @@ public class CheckerTestUtil {
     public static String parseDiagnosedRanges(String text, List<DiagnosedRange> result) {
         Matcher matcher = RANGE_START_OR_END_PATTERN.matcher(text);
 
-        Stack<DiagnosedRange> opened = new Stack<DiagnosedRange>();
+        Stack<DiagnosedRange> opened = new Stack<>();
 
         int offsetCompensation = 0;
 
@@ -405,7 +405,7 @@ public class CheckerTestUtil {
         if (!diagnostics.isEmpty()) {
             List<DiagnosticDescriptor> diagnosticDescriptors = getSortedDiagnosticDescriptors(diagnostics);
 
-            Stack<DiagnosticDescriptor> opened = new Stack<DiagnosticDescriptor>();
+            Stack<DiagnosticDescriptor> opened = new Stack<>();
             ListIterator<DiagnosticDescriptor> iterator = diagnosticDescriptors.listIterator();
             DiagnosticDescriptor currentDescriptor = iterator.next();
 
@@ -623,7 +623,7 @@ public class CheckerTestUtil {
         }
 
         public Map<ActualDiagnostic, TextDiagnostic> getTextDiagnosticsMap() {
-            Map<ActualDiagnostic, TextDiagnostic> diagnosticMap = new HashMap<ActualDiagnostic, TextDiagnostic>();
+            Map<ActualDiagnostic, TextDiagnostic> diagnosticMap = new HashMap<>();
             for (ActualDiagnostic diagnostic : diagnostics) {
                 diagnosticMap.put(diagnostic, TextDiagnostic.asTextDiagnostic(diagnostic));
             }
@@ -700,7 +700,7 @@ public class CheckerTestUtil {
                 return new TextDiagnostic(name, platform, null);
             }
 
-            List<String> parsedParameters = new SmartList<String>();
+            List<String> parsedParameters = new SmartList<>();
             Matcher parametersMatcher = INDIVIDUAL_PARAMETER_PATTERN.matcher(parameters);
             while (parametersMatcher.find())
                 parsedParameters.add(unescape(parametersMatcher.group().trim()));

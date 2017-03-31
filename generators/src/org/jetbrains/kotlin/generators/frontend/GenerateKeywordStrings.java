@@ -53,7 +53,7 @@ public class GenerateKeywordStrings {
         p.println("public static final Set<String> KEYWORDS = new HashSet<String>(Arrays.asList(");
         p.pushIndent();
 
-        List<String> strings = new ArrayList<String>();
+        List<String> strings = new ArrayList<>();
         for (IElementType type : KtTokens.KEYWORDS.getTypes()) {
             assert type instanceof KtKeywordToken : "Not a keyword in KtTokens.KEYWORDS: " + type;
             KtKeywordToken keyword = (KtKeywordToken) type;

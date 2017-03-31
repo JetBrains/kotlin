@@ -218,7 +218,7 @@ public class BindingContextUtils {
                     .getSourceFromDescriptor(containingFunctionDescriptor) : null;
         }
 
-        return new Pair<FunctionDescriptor, PsiElement>(containingFunctionDescriptor, containingFunction);
+        return new Pair<>(containingFunctionDescriptor, containingFunction);
     }
 
     @Nullable

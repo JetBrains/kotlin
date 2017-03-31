@@ -153,7 +153,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
             @NotNull MethodNode node,
             @NotNull Frame<BasicValue>[] frames
     ) {
-        List<BasicValue> values = new ArrayList<BasicValue>();
+        List<BasicValue> values = new ArrayList<>();
         InsnList insnList = node.instructions;
         int from = insnList.indexOf(localVariableNode.start) + 1;
         int to = insnList.indexOf(localVariableNode.end) - 1;
@@ -192,7 +192,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
 
     @NotNull
     private static int[] buildVariablesRemapping(@NotNull RedundantBoxedValuesCollection values, @NotNull MethodNode node) {
-        Set<Integer> doubleSizedVars = new HashSet<Integer>();
+        Set<Integer> doubleSizedVars = new HashSet<>();
         for (BoxedValueDescriptor valueDescriptor : values) {
             if (valueDescriptor.isDoubleSize()) {
                 doubleSizedVars.addAll(valueDescriptor.getVariablesIndexes());

@@ -69,7 +69,7 @@ import static org.jetbrains.kotlin.cli.common.UtilsKt.checkKotlinPackageUsage;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
-    private static final Map<String, ModuleKind> moduleKindMap = new HashMap<String, ModuleKind>();
+    private static final Map<String, ModuleKind> moduleKindMap = new HashMap<>();
 
     static {
         moduleKindMap.put(K2JsArgumentConstants.MODULE_PLAIN, ModuleKind.PLAIN);
@@ -273,7 +273,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             configuration.put(JSConfigurationKeys.META_INFO, true);
         }
 
-        List<String> libraries = new SmartList<String>();
+        List<String> libraries = new SmartList<>();
         if (!arguments.noStdlib) {
             libraries.add(0, PathUtil.getKotlinPathsForCompiler().getJsStdLibJarPath().getAbsolutePath());
         }

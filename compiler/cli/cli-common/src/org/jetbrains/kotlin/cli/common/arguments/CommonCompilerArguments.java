@@ -95,9 +95,9 @@ public abstract class CommonCompilerArguments implements Serializable {
     @ValueDescription(PLUGIN_OPTION_FORMAT)
     public String[] pluginOptions;
 
-    public List<String> freeArgs = new SmartList<String>();
+    public List<String> freeArgs = new SmartList<>();
 
-    public List<String> unknownExtraFlags = new SmartList<String>();
+    public List<String> unknownExtraFlags = new SmartList<>();
 
     @NotNull
     public static CommonCompilerArguments createDefaultInstance() {

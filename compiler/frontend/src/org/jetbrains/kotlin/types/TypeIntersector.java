@@ -37,7 +37,7 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getB
 public class TypeIntersector {
 
     public static boolean isIntersectionEmpty(@NotNull KotlinType typeA, @NotNull KotlinType typeB) {
-        return intersectTypes(KotlinTypeChecker.DEFAULT, new LinkedHashSet<KotlinType>(Arrays.asList(typeA, typeB))) == null;
+        return intersectTypes(KotlinTypeChecker.DEFAULT, new LinkedHashSet<>(Arrays.asList(typeA, typeB))) == null;
     }
 
     @Nullable
@@ -52,7 +52,7 @@ public class TypeIntersector {
         //   made nullable is they all were nullable
         KotlinType nothingOrNullableNothing = null;
         boolean allNullable = true;
-        List<KotlinType> nullabilityStripped = new ArrayList<KotlinType>(types.size());
+        List<KotlinType> nullabilityStripped = new ArrayList<>(types.size());
         for (KotlinType type : types) {
             if (type.isError()) continue;
 
@@ -73,7 +73,7 @@ public class TypeIntersector {
         }
 
         // Now we remove types that have subtypes in the list
-        List<KotlinType> resultingTypes = new ArrayList<KotlinType>();
+        List<KotlinType> resultingTypes = new ArrayList<>();
         outer:
         for (KotlinType type : nullabilityStripped) {
             if (!TypeUtils.canHaveSubtypes(typeChecker, type)) {
@@ -172,7 +172,7 @@ public class TypeIntersector {
 
         private static boolean unify(KotlinType withParameters, KotlinType expected) {
             // T -> how T is used
-            Map<TypeParameterDescriptor, Variance> parameters = new HashMap<TypeParameterDescriptor, Variance>();
+            Map<TypeParameterDescriptor, Variance> parameters = new HashMap<>();
             Function1<TypeParameterUsage, Unit> processor = parameterUsage -> {
                 Variance howTheTypeIsUsedBefore = parameters.get(parameterUsage.typeParameterDescriptor);
                 if (howTheTypeIsUsedBefore == null) {

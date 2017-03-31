@@ -60,7 +60,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
 
         assert function.getValueParameters().size() == constructorParameters.size();
 
-        List<JsExpression> constructorArguments = new ArrayList<JsExpression>(constructorParameters.size());
+        List<JsExpression> constructorArguments = new ArrayList<>(constructorParameters.size());
 
         for (int i = 0; i < constructorParameters.size(); i++) {
             KtParameter constructorParam = constructorParameters.get(i);

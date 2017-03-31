@@ -18,13 +18,10 @@
 
 package org.jetbrains.kotlin.lexer;
 
-import java.util.*;
-import com.intellij.lexer.*;
-import com.intellij.psi.*;
+import com.intellij.lexer.FlexLexer;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.Stack;
-import org.jetbrains.kotlin.lexer.KotlinLexerException;
-import org.jetbrains.kotlin.lexer.KtTokens;
 
 
 /**
@@ -649,7 +646,7 @@ class _JetLexer implements FlexLexer {
         }
     }
 
-    private final Stack<State> states = new Stack<State>();
+    private final Stack<State> states = new Stack<>();
     private int lBraceCount;
 
     private int commentStart;

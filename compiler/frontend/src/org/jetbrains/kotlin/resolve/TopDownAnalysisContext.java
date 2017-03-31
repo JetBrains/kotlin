@@ -39,7 +39,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private final Map<KtClassOrObject, ClassDescriptorWithResolutionScopes> classes = Maps.newLinkedHashMap();
     private final Map<KtAnonymousInitializer, ClassDescriptorWithResolutionScopes> anonymousInitializers = Maps.newLinkedHashMap();
-    private final Set<KtFile> files = new LinkedHashSet<KtFile>();
+    private final Set<KtFile> files = new LinkedHashSet<>();
     private final Map<KtSecondaryConstructor, ClassConstructorDescriptor> secondaryConstructors = Maps.newLinkedHashMap();
 
     private final Map<KtNamedFunction, SimpleFunctionDescriptor> functions = Maps.newLinkedHashMap();

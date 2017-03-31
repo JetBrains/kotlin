@@ -130,7 +130,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private final TailRecursionCodegen tailRecursionCodegen;
     public final CallGenerator defaultCallGenerator = new CallGenerator.DefaultCallGenerator(this);
 
-    private final Stack<BlockStackElement> blockStackElements = new Stack<BlockStackElement>();
+    private final Stack<BlockStackElement> blockStackElements = new Stack<>();
 
     /*
      * When we create a temporary variable to hold some value not to compute it many times
@@ -189,7 +189,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     static class FinallyBlockStackElement extends BlockStackElement {
-        List<Label> gaps = new ArrayList<Label>();
+        List<Label> gaps = new ArrayList<>();
 
         final KtTryExpression expression;
 
@@ -571,7 +571,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             // We handle this case separately because otherwise such variable will be out of the frame map after the block ends
             List<KtExpression> doWhileStatements = ((KtBlockExpression) body).getStatements();
 
-            List<KtExpression> statements = new ArrayList<KtExpression>(doWhileStatements.size() + 1);
+            List<KtExpression> statements = new ArrayList<>(doWhileStatements.size() + 1);
             statements.addAll(doWhileStatements);
             statements.add(condition);
 
@@ -1444,7 +1444,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         if (!shouldInlineConstVals && !takeUpConstValsAsConst && compileTimeValue.getUsesVariableAsConstant()) {
-            Ref<Boolean> containsNonInlinedVals = new Ref<Boolean>(false);
+            Ref<Boolean> containsNonInlinedVals = new Ref<>(false);
             KtVisitor constantChecker = new KtVisitor() {
                 @Override
                 public Object visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression, Object data) {
@@ -1648,9 +1648,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                         .format("Incorrect number of mapped parameters vs arguments: %d < %d for %s",
                                 superMappedTypes.size(), params, classDescriptor);
 
-                List<ResolvedValueArgument> valueArguments = new ArrayList<ResolvedValueArgument>(params);
-                List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(params);
-                List<Type> mappedTypes = new ArrayList<Type>(params);
+                List<ResolvedValueArgument> valueArguments = new ArrayList<>(params);
+                List<ValueParameterDescriptor> valueParameters = new ArrayList<>(params);
+                List<Type> mappedTypes = new ArrayList<>(params);
                 for (ValueParameterDescriptor parameter : superValueParameters) {
                     ResolvedValueArgument argument = superCall.getValueArguments().get(parameter);
                     if (!(argument instanceof DefaultValueArgument)) {
@@ -2810,7 +2810,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         DefaultCallArgs defaultArgs =
                 argumentGenerator.generate(
                         valueArguments,
-                        new ArrayList<ResolvedValueArgument>(resolvedCall.getValueArguments().values()),
+                        new ArrayList<>(resolvedCall.getValueArguments().values()),
                         resolvedCall.getResultingDescriptor()
                 );
 
@@ -3041,9 +3041,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type);
         if (parameterDescriptor == null) return null;
 
-        return new Pair<TypeParameterDescriptor, ReificationArgument>(
-                parameterDescriptor,
-                new ReificationArgument(parameterDescriptor.getName().asString(), isNullable, arrayDepth));
+        return new Pair<>(parameterDescriptor, new ReificationArgument(parameterDescriptor.getName().asString(), isNullable, arrayDepth));
     }
 
     @NotNull
@@ -4542,9 +4540,9 @@ The "returned" value of try expression with no finally is either the last expres
             @NotNull Label blockEnd
     ) {
         List<Label> gapsInBlock =
-                finallyBlockStackElement != null ? new ArrayList<Label>(finallyBlockStackElement.gaps) : Collections.<Label>emptyList();
+                finallyBlockStackElement != null ? new ArrayList<>(finallyBlockStackElement.gaps) : Collections.emptyList();
         assert gapsInBlock.size() % 2 == 0;
-        List<Label> blockRegions = new ArrayList<Label>(gapsInBlock.size() + 2);
+        List<Label> blockRegions = new ArrayList<>(gapsInBlock.size() + 2);
         blockRegions.add(blockStart);
         blockRegions.addAll(gapsInBlock);
         blockRegions.add(blockEnd);
@@ -4809,7 +4807,7 @@ The "returned" value of try expression with no finally is either the last expres
     }
 
     public Stack<BlockStackElement> getBlockStackElements() {
-        return new Stack<BlockStackElement>(blockStackElements);
+        return new Stack<>(blockStackElements);
     }
 
     public void addBlockStackElementsForNonLocalReturns(@NotNull Stack<BlockStackElement> elements, int finallyDepth) {

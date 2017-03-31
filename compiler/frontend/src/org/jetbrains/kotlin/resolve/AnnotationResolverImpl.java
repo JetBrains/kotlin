@@ -79,7 +79,7 @@ public class AnnotationResolverImpl extends AnnotationResolver {
             boolean shouldResolveArguments
     ) {
         if (annotationEntryElements.isEmpty()) return Annotations.Companion.getEMPTY();
-        List<AnnotationWithTarget> result = new ArrayList<AnnotationWithTarget>(0);
+        List<AnnotationWithTarget> result = new ArrayList<>(0);
 
         for (KtAnnotationEntry entryElement : annotationEntryElements) {
             AnnotationDescriptor descriptor = trace.get(BindingContext.ANNOTATION, entryElement);

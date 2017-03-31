@@ -91,7 +91,7 @@ public class Preloader {
         List<File> instrumenters = Collections.emptyList();
         int estimate = DEFAULT_CLASS_NUMBER_ESTIMATE;
         String mainClass = null;
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
 
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -130,7 +130,7 @@ public class Preloader {
 
     private static List<File> parseClassPath(String classpath) {
         String[] paths = classpath.split(File.pathSeparator);
-        List<File> files = new ArrayList<File>(paths.length);
+        List<File> files = new ArrayList<>(paths.length);
         for (String path : paths) {
             File file = new File(path);
             if (!file.exists()) {

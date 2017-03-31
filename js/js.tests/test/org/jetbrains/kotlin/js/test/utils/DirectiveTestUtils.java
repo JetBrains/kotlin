@@ -36,7 +36,7 @@ public class DirectiveTestUtils {
     private static final DirectiveHandler FUNCTION_CONTAINS_NO_CALLS = new DirectiveHandler("CHECK_CONTAINS_NO_CALLS") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            Set<String> exceptNames = new HashSet<String>();
+            Set<String> exceptNames = new HashSet<>();
             String exceptNamesArg = arguments.findNamedArgument("except");
             if (exceptNamesArg != null) {
                 for (String exceptName : exceptNamesArg.split(";")) {
@@ -185,11 +185,11 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final DirectiveHandler COUNT_VARS = new CountNodesDirective<JsVars.JsVar>("CHECK_VARS_COUNT", JsVars.JsVar.class);
+    private static final DirectiveHandler COUNT_VARS = new CountNodesDirective<>("CHECK_VARS_COUNT", JsVars.JsVar.class);
 
-    private static final DirectiveHandler COUNT_BREAKS = new CountNodesDirective<JsBreak>("CHECK_BREAKS_COUNT", JsBreak.class);
+    private static final DirectiveHandler COUNT_BREAKS = new CountNodesDirective<>("CHECK_BREAKS_COUNT", JsBreak.class);
 
-    private static final DirectiveHandler COUNT_NULLS = new CountNodesDirective<JsNullLiteral>("CHECK_NULLS_COUNT", JsNullLiteral.class);
+    private static final DirectiveHandler COUNT_NULLS = new CountNodesDirective<>("CHECK_NULLS_COUNT", JsNullLiteral.class);
 
     private static final DirectiveHandler NOT_REFERENCED = new DirectiveHandler("CHECK_NOT_REFERENCED") {
         @Override
@@ -268,7 +268,7 @@ public class DirectiveTestUtils {
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
             String functionName = arguments.getNamedArgument("function");
 
-            Set<String> except = new HashSet<String>();
+            Set<String> except = new HashSet<>();
             String exceptString = arguments.findNamedArgument("except");
             if (exceptString != null) {
                 for (String exceptId : StringUtil.split(exceptString, ";")) {
@@ -421,8 +421,8 @@ public class DirectiveTestUtils {
      * Neither key, nor value should contain spaces.
      */
     private static class ArgumentsHelper {
-        private final List<String> positionalArguments = new ArrayList<String>();
-        private final Map<String, String> namedArguments = new HashMap<String, String>();
+        private final List<String> positionalArguments = new ArrayList<>();
+        private final Map<String, String> namedArguments = new HashMap<>();
         private final String entry;
 
         ArgumentsHelper(@NotNull String directiveEntry) {

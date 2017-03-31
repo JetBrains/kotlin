@@ -83,7 +83,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
             System.out.println(result);
             throw ExceptionUtilsKt.rethrow(e);
         }
-        return new Pair<ClassFileFactory, ClassFileFactory>(factoryA, factoryB);
+        return new Pair<>(factoryA, factoryB);
     }
 
     private void invokeBox(@NotNull String className) throws Exception {

@@ -54,7 +54,7 @@ public class ResolveSessionUtils {
     ) {
         if (fqName.isRoot()) return Collections.emptyList();
 
-        Collection<ClassDescriptor> result = new ArrayList<ClassDescriptor>(1);
+        Collection<ClassDescriptor> result = new ArrayList<>(1);
 
         FqName packageFqName = fqName.parent();
         while (true) {

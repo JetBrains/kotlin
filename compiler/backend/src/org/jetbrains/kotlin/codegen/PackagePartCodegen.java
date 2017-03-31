@@ -75,7 +75,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
     }
 
     private void generateAnnotationsForPartClass() {
-        List<AnnotationDescriptor> fileAnnotationDescriptors = new ArrayList<AnnotationDescriptor>();
+        List<AnnotationDescriptor> fileAnnotationDescriptors = new ArrayList<>();
         for (KtAnnotationEntry annotationEntry : element.getAnnotationEntries()) {
             AnnotationDescriptor annotationDescriptor = state.getBindingContext().get(BindingContext.ANNOTATION, annotationEntry);
             if (annotationDescriptor != null) {
@@ -103,7 +103,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
 
     @Override
     protected void generateKotlinMetadataAnnotation() {
-        List<DeclarationDescriptor> members = new ArrayList<DeclarationDescriptor>();
+        List<DeclarationDescriptor> members = new ArrayList<>();
         for (KtDeclaration declaration : element.getDeclarations()) {
             if (declaration instanceof KtNamedFunction) {
                 SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration);

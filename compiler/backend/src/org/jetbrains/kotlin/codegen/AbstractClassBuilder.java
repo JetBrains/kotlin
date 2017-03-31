@@ -37,7 +37,7 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
 
     private final JvmSerializationBindings serializationBindings = new JvmSerializationBindings();
 
-    private final List<FileMapping> fileMappings = new ArrayList<FileMapping>();
+    private final List<FileMapping> fileMappings = new ArrayList<>();
 
     private String sourceName;
 

@@ -36,7 +36,7 @@ import java.util.Map;
 
 public class MockPsiManager extends PsiManagerEx {
   private final Project myProject;
-  private final Map<VirtualFile,PsiDirectory> myDirectories = new THashMap<VirtualFile, PsiDirectory>();
+  private final Map<VirtualFile,PsiDirectory> myDirectories = new THashMap<>();
   private MockFileManager myMockFileManager;
   private PsiModificationTrackerImpl myPsiModificationTracker;
 

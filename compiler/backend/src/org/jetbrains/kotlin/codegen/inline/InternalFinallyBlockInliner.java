@@ -67,12 +67,12 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
     public static void processInlineFunFinallyBlocks(@NotNull MethodNode inlineFun, int lambdaTryCatchBlockNodes, int finallyParamOffset) {
         int index = 0;
-        List<TryCatchBlockNodeInfo> inlineFunTryBlockInfo = new ArrayList<TryCatchBlockNodeInfo>();
+        List<TryCatchBlockNodeInfo> inlineFunTryBlockInfo = new ArrayList<>();
         for (TryCatchBlockNode block : inlineFun.tryCatchBlocks) {
             inlineFunTryBlockInfo.add(new TryCatchBlockNodeInfo(block, index++ < lambdaTryCatchBlockNodes));
         }
 
-        List<LocalVarNodeWrapper> localVars = new ArrayList<LocalVarNodeWrapper>();
+        List<LocalVarNodeWrapper> localVars = new ArrayList<>();
         for (LocalVariableNode var : inlineFun.localVariables) {
             localVars.add(new LocalVarNodeWrapper(var));
         }
@@ -132,7 +132,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             }
 
             List<TryCatchBlockNodeInfo> currentCoveringNodesFromInnermost =
-                    sortTryCatchBlocks(new ArrayList<TryCatchBlockNodeInfo>(getTryBlocksMetaInfo().getCurrentIntervals()));
+                    sortTryCatchBlocks(new ArrayList<>(getTryBlocksMetaInfo().getCurrentIntervals()));
             checkCoveringBlocksInvariant(Lists.reverse(currentCoveringNodesFromInnermost));
 
             if (currentCoveringNodesFromInnermost.isEmpty() ||
@@ -285,7 +285,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
     @NotNull
     private static Set<LabelNode> rememberOriginalLabelNodes(@NotNull FinallyBlockInfo finallyInfo) {
-        Set<LabelNode> labelsInsideFinally = new HashSet<LabelNode>();
+        Set<LabelNode> labelsInsideFinally = new HashSet<>();
         for (AbstractInsnNode currentIns = finallyInfo.startIns; currentIns != finallyInfo.endInsExclusive; currentIns = currentIns.getNext()) {
             if (currentIns instanceof LabelNode) {
                 labelsInsideFinally.add((LabelNode) currentIns);
@@ -305,7 +305,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
         //copy tryCatchFinallies that totally in finally block
         List<TryBlockCluster<TryCatchBlockNodePosition>> clusters = TryBlockClusteringKt.doClustering(tryCatchBlockPresentInFinally);
-        Map<LabelNode, TryBlockCluster<TryCatchBlockNodePosition>> handler2Cluster = new HashMap<LabelNode, TryBlockCluster<TryCatchBlockNodePosition>>();
+        Map<LabelNode, TryBlockCluster<TryCatchBlockNodePosition>> handler2Cluster = new HashMap<>();
 
         IntervalMetaInfo<TryCatchBlockNodeInfo> tryBlocksMetaInfo = getTryBlocksMetaInfo();
         for (TryBlockCluster<TryCatchBlockNodePosition> cluster : clusters) {
@@ -418,7 +418,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             @NotNull TryCatchBlockNodeInfo tryCatchBlock,
             @ReadOnly @NotNull List<TryCatchBlockNodeInfo> tryCatchBlocks
     ) {
-        List<TryCatchBlockNodeInfo> sameDefaultHandler = new ArrayList<TryCatchBlockNodeInfo>();
+        List<TryCatchBlockNodeInfo> sameDefaultHandler = new ArrayList<>();
         LabelNode defaultHandler = null;
         boolean afterStartBlock = false;
         for (TryCatchBlockNodeInfo block : tryCatchBlocks) {
@@ -486,8 +486,8 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
     @NotNull
     private List<TryCatchBlockNodePosition> findTryCatchBlocksInlinedInFinally(@NotNull FinallyBlockInfo finallyInfo) {
-        List<TryCatchBlockNodePosition> result = new ArrayList<TryCatchBlockNodePosition>();
-        Map<TryCatchBlockNodeInfo, TryCatchBlockNodePosition> processedBlocks = new HashMap<TryCatchBlockNodeInfo, TryCatchBlockNodePosition>();
+        List<TryCatchBlockNodePosition> result = new ArrayList<>();
+        Map<TryCatchBlockNodeInfo, TryCatchBlockNodePosition> processedBlocks = new HashMap<>();
 
         for (AbstractInsnNode curInstr = finallyInfo.startIns; curInstr != finallyInfo.endInsExclusive; curInstr = curInstr.getNext()) {
             if (!(curInstr instanceof LabelNode)) continue;

@@ -59,7 +59,7 @@ public final class AccessTranslationUtils {
     ) {
         TranslationContext accessArrayContext;
         if (forceOrderOfEvaluation) {
-            Map<KtExpression, JsExpression> indexesMap = new LinkedHashMap<KtExpression, JsExpression>();
+            Map<KtExpression, JsExpression> indexesMap = new LinkedHashMap<>();
             for(KtExpression indexExpression : expression.getIndexExpressions()) {
                 JsExpression jsIndexExpression = context.cacheExpressionIfNeeded(
                         Translation.translateAsExpression(indexExpression, context));

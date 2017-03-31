@@ -50,7 +50,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             @NotNull KtDeclarationWithBody declarationWithBody,
             @NotNull TranslationContext functionBodyContext
     ) {
-        Map<DeclarationDescriptor, JsExpression> aliases = new HashMap<DeclarationDescriptor, JsExpression>();
+        Map<DeclarationDescriptor, JsExpression> aliases = new HashMap<>();
         LocalFunctionCollector functionCollector = new LocalFunctionCollector(functionBodyContext.bindingContext());
         declarationWithBody.acceptChildren(functionCollector, null);
 
@@ -74,7 +74,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             @NotNull TranslationContext functionBodyContext) {
         List<ValueParameterDescriptor> valueParameters = descriptor.getValueParameters();
 
-        List<JsStatement> result = new ArrayList<JsStatement>(valueParameters.size());
+        List<JsStatement> result = new ArrayList<>(valueParameters.size());
         for (ValueParameterDescriptor valueParameter : valueParameters) {
             if (!valueParameter.declaresDefaultValue()) continue;
 

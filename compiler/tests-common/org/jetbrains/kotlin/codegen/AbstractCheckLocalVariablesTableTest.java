@@ -134,7 +134,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
     @NotNull
     private static List<LocalVariable> readLocalVariable(ClassReader cr, String methodName) throws Exception {
         class Visitor extends ClassVisitor {
-            List<LocalVariable> readVariables = new ArrayList<LocalVariable>();
+            List<LocalVariable> readVariables = new ArrayList<>();
 
             public Visitor() {
                 super(Opcodes.ASM5);

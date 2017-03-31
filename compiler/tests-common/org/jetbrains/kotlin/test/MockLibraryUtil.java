@@ -44,7 +44,7 @@ import static org.junit.Assert.assertEquals;
 
 public class MockLibraryUtil {
 
-    private static SoftReference<ClassLoader> compilerClassLoader = new SoftReference<ClassLoader>(null);
+    private static SoftReference<ClassLoader> compilerClassLoader = new SoftReference<>(null);
 
     @NotNull
     public static File compileLibraryToJar(
@@ -105,7 +105,7 @@ public class MockLibraryUtil {
 
             List<File> javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), srcFile);
             if (!javaFiles.isEmpty()) {
-                List<String> classpath = new ArrayList<String>();
+                List<String> classpath = new ArrayList<>();
                 classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
                 classpath.add(KotlinTestUtils.getAnnotationsJar().getPath());
                 Collections.addAll(classpath, extraClasspath);
@@ -200,13 +200,13 @@ public class MockLibraryUtil {
             boolean allowKotlinPackage,
             @NotNull String... extraClasspath
     ) {
-        List<String> classpath = new ArrayList<String>();
+        List<String> classpath = new ArrayList<>();
         if (new File(sourcesPath).isDirectory()) {
             classpath.add(sourcesPath);
         }
         Collections.addAll(classpath, extraClasspath);
 
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         args.add(sourcesPath);
         args.add("-d");
         args.add(outDir.getAbsolutePath());
@@ -220,7 +220,7 @@ public class MockLibraryUtil {
     }
 
     private static void compileKotlin2JS(@NotNull String sourcesPath, @NotNull File outputFile) {
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
 
         args.add("-meta-info");
         args.add("-output");
@@ -250,7 +250,7 @@ public class MockLibraryUtil {
             ClassLoader classLoader = compilerClassLoader.get();
             if (classLoader == null) {
                 classLoader = createCompilerClassLoader();
-                compilerClassLoader = new SoftReference<ClassLoader>(classLoader);
+                compilerClassLoader = new SoftReference<>(classLoader);
             }
             return classLoader.loadClass(compilerClassName);
         }

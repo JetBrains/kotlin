@@ -33,7 +33,7 @@ public class TrackingSlicedMap extends SlicedMapImpl {
     }
 
     private <K, V> SliceWithStackTrace<K, V> wrapSlice(ReadOnlySlice<K, V> slice) {
-        SliceWithStackTrace<?, ?> translated = sliceTranslationMap.computeIfAbsent(slice, k -> new SliceWithStackTrace<K, V>(slice));
+        SliceWithStackTrace<?, ?> translated = sliceTranslationMap.computeIfAbsent(slice, k -> new SliceWithStackTrace<>(slice));
         //noinspection unchecked
         return (SliceWithStackTrace) translated;
     }
@@ -58,7 +58,7 @@ public class TrackingSlicedMap extends SlicedMapImpl {
 
     @Override
     public <K, V> void put(WritableSlice<K, V> slice, K key, V value) {
-        super.put(wrapSlice(slice), key, new TrackableValue<V>(value, trackWithStackTraces));
+        super.put(wrapSlice(slice), key, new TrackableValue<>(value, trackWithStackTraces));
     }
 
     private static class TrackableValue<V> {
@@ -125,7 +125,7 @@ public class TrackingSlicedMap extends SlicedMapImpl {
 
         @Override
         public TrackableValue<V> computeValue(SlicedMap map, K key, TrackableValue<V> value, boolean valueNotFound) {
-            return new TrackableValue<V>(delegate.computeValue(map, key, value == null ? null : value.value, valueNotFound), trackWithStackTraces);
+            return new TrackableValue<>(delegate.computeValue(map, key, value == null ? null : value.value, valueNotFound), trackWithStackTraces);
         }
 
         @Override

@@ -295,7 +295,7 @@ public class CallResolver {
         KotlinType expectedType = NO_EXPECTED_TYPE;
         if (calleeExpression instanceof KtLambdaExpression) {
             int parameterNumber = ((KtLambdaExpression) calleeExpression).getValueParameters().size();
-            List<KotlinType> parameterTypes = new ArrayList<KotlinType>(parameterNumber);
+            List<KotlinType> parameterTypes = new ArrayList<>(parameterNumber);
             for (int i = 0; i < parameterNumber; i++) {
                 parameterTypes.add(NO_EXPECTED_TYPE);
             }
@@ -452,8 +452,7 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context
     ) {
         if (!(superType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
-            return new Pair<Collection<ResolutionCandidate<ConstructorDescriptor>>, BasicCallResolutionContext>(
-                    Collections.<ResolutionCandidate<ConstructorDescriptor>>emptyList(), context);
+            return new Pair<>(Collections.<ResolutionCandidate<ConstructorDescriptor>>emptyList(), context);
         }
 
         // If any constructor has type parameter (currently it only can be true for ones from Java), try to infer arguments for them
@@ -470,7 +469,7 @@ public class CallResolver {
                         context.scope, context.call, superType, !anyConstructorHasDeclaredTypeParameters
                 );
 
-        return new Pair<Collection<ResolutionCandidate<ConstructorDescriptor>>, BasicCallResolutionContext>(candidates, context);
+        return new Pair<>(candidates, context);
     }
 
     private static boolean anyConstructorHasDeclaredTypeParameters(@Nullable ClassifierDescriptor classDescriptor) {
@@ -495,10 +494,9 @@ public class CallResolver {
 
             Set<ResolutionCandidate<FunctionDescriptor>> candidates = Collections.singleton(candidate);
 
-            ResolutionTask<FunctionDescriptor> resolutionTask =
-                    new ResolutionTask<FunctionDescriptor>(
-                            new NewResolutionOldInference.ResolutionKind.GivenCandidates<FunctionDescriptor>(), null, candidates
-                    );
+            ResolutionTask<FunctionDescriptor> resolutionTask = new ResolutionTask<>(
+                    new NewResolutionOldInference.ResolutionKind.GivenCandidates<>(), null, candidates
+            );
 
             return doResolveCallOrGetCachedResults(basicCallResolutionContext, resolutionTask, tracing);
         });

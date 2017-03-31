@@ -33,7 +33,7 @@ import java.util.Map;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
 /*package*/ abstract class AbstractKotlinParsing {
-    private static final Map<String, KtKeywordToken> SOFT_KEYWORD_TEXTS = new HashMap<String, KtKeywordToken>();
+    private static final Map<String, KtKeywordToken> SOFT_KEYWORD_TEXTS = new HashMap<>();
 
     static {
         for (IElementType type : KtTokens.SOFT_KEYWORDS.getTypes()) {
@@ -302,7 +302,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
     protected int matchTokenStreamPredicate(TokenStreamPattern pattern) {
         PsiBuilder.Marker currentPosition = mark();
-        Stack<IElementType> opens = new Stack<IElementType>();
+        Stack<IElementType> opens = new Stack<>();
         int openAngleBrackets = 0;
         int openBraces = 0;
         int openParentheses = 0;

@@ -100,7 +100,7 @@ public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
 
     @Override
     protected Map<String, Object> getRhinoTestVariables() throws Exception {
-        Map<String, Object> testVariables = new HashMap<String, Object>();
+        Map<String, Object> testVariables = new HashMap<>();
         testVariables.put(RhinoUtils.OPTIMIZATION_LEVEL_TEST_VARIABLE, RhinoUtils.OPTIMIZATION_OFF);
         testVariables.put("jsTestReporter", JS_UNIT_TEST_REPORTER);
         return testVariables;

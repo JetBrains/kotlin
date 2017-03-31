@@ -104,7 +104,7 @@ public final class StaticContext {
     private final Map<MemberDescriptor, List<DeclarationDescriptor>> classOrConstructorClosure = Maps.newHashMap();
 
     @NotNull
-    private final Map<ClassDescriptor, List<DeferredCallSite>> deferredCallSites = new HashMap<ClassDescriptor, List<DeferredCallSite>>();
+    private final Map<ClassDescriptor, List<DeferredCallSite>> deferredCallSites = new HashMap<>();
 
     @NotNull
     private final JsConfig config;
@@ -116,16 +116,16 @@ public final class StaticContext {
     private final NameSuggestion nameSuggestion = new NameSuggestion();
 
     @NotNull
-    private final Map<DeclarationDescriptor, JsName> nameCache = new HashMap<DeclarationDescriptor, JsName>();
+    private final Map<DeclarationDescriptor, JsName> nameCache = new HashMap<>();
 
     @NotNull
-    private final Map<PropertyDescriptor, JsName> backingFieldNameCache = new HashMap<PropertyDescriptor, JsName>();
+    private final Map<PropertyDescriptor, JsName> backingFieldNameCache = new HashMap<>();
 
     @NotNull
-    private final Map<DeclarationDescriptor, JsExpression> fqnCache = new HashMap<DeclarationDescriptor, JsExpression>();
+    private final Map<DeclarationDescriptor, JsExpression> fqnCache = new HashMap<>();
 
     @NotNull
-    private final Map<ImportedModuleKey, ImportedModule> importedModules = new LinkedHashMap<ImportedModuleKey, ImportedModule>();
+    private final Map<ImportedModuleKey, ImportedModule> importedModules = new LinkedHashMap<>();
 
     private Collection<ImportedModule> readOnlyImportedModules;
 
@@ -136,22 +136,22 @@ public final class StaticContext {
     private JsFunction rootFunction;
 
     @NotNull
-    private final List<JsStatement> declarationStatements = new ArrayList<JsStatement>();
+    private final List<JsStatement> declarationStatements = new ArrayList<>();
 
     @NotNull
-    private final List<JsStatement> topLevelStatements = new ArrayList<JsStatement>();
+    private final List<JsStatement> topLevelStatements = new ArrayList<>();
 
     @NotNull
-    private final List<JsStatement> importStatements = new ArrayList<JsStatement>();
+    private final List<JsStatement> importStatements = new ArrayList<>();
 
     @NotNull
     private final DeclarationExporter exporter = new DeclarationExporter(this);
 
     @NotNull
-    private final Set<ClassDescriptor> classes = new LinkedHashSet<ClassDescriptor>();
+    private final Set<ClassDescriptor> classes = new LinkedHashSet<>();
 
     @NotNull
-    private final Map<FqName, JsScope> packageScopes = new HashMap<FqName, JsScope>();
+    private final Map<FqName, JsScope> packageScopes = new HashMap<>();
 
     //TODO: too many parameters in constructor
     private StaticContext(
@@ -392,7 +392,7 @@ public final class StaticContext {
             scope = rootScope;
         }
 
-        List<JsName> names = new ArrayList<JsName>();
+        List<JsName> names = new ArrayList<>();
         if (suggested.getStable()) {
             for (String namePart : suggested.getNames()) {
                 JsName name = scope.declareName(namePart);
@@ -756,7 +756,7 @@ public final class StaticContext {
     }
 
     private void addClassPrototypes() {
-        Set<ClassDescriptor> visited = new HashSet<ClassDescriptor>();
+        Set<ClassDescriptor> visited = new HashSet<>();
         for (ClassDescriptor cls : classes) {
             addClassPrototypes(cls, visited);
         }

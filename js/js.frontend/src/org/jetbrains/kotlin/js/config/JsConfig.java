@@ -62,7 +62,7 @@ public class JsConfig {
     private final CompilerConfiguration configuration;
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
 
-    private final List<KotlinJavascriptMetadata> metadata = new SmartList<KotlinJavascriptMetadata>();
+    private final List<KotlinJavascriptMetadata> metadata = new SmartList<>();
 
     @Nullable
     private List<JsModuleDescriptor<ModuleDescriptorImpl>> moduleDescriptors = null;
@@ -118,7 +118,7 @@ public class JsConfig {
         VirtualFileSystem fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
         VirtualFileSystem jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL);
 
-        Set<String> modules = new HashSet<String>();
+        Set<String> modules = new HashSet<>();
 
         boolean skipMetadataVersionCheck =
                 getLanguageVersionSettings(configuration).isFlagEnabled(AnalysisFlags.getSkipMetadataVersionCheck());
@@ -175,8 +175,8 @@ public class JsConfig {
         init();
         if (moduleDescriptors != null) return moduleDescriptors;
 
-        moduleDescriptors = new SmartList<JsModuleDescriptor<ModuleDescriptorImpl>>();
-        List<ModuleDescriptorImpl> kotlinModuleDescriptors = new ArrayList<ModuleDescriptorImpl>();
+        moduleDescriptors = new SmartList<>();
+        List<ModuleDescriptorImpl> kotlinModuleDescriptors = new ArrayList<>();
         for (KotlinJavascriptMetadata metadataEntry : metadata) {
             JsModuleDescriptor<ModuleDescriptorImpl> descriptor = createModuleDescriptor(metadataEntry);
             moduleDescriptors.add(descriptor);

@@ -36,7 +36,7 @@ import java.util.*;
  * with IDEA package test runner.
  */
 public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortable {
-    private static final Set<Class> requestedRunners = new HashSet<Class>();
+    private static final Set<Class> requestedRunners = new HashSet<>();
 
     private JUnit38ClassRunner delegateRunner;
     private final Class<?> klass;
@@ -126,8 +126,8 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
     }
 
     private static Test createTreeTestSuite(Class root) {
-        Set<Class> classes = new LinkedHashSet<Class>(collectDeclaredClasses(root, true));
-        Map<Class, TestSuite> classSuites = new HashMap<Class, TestSuite>();
+        Set<Class> classes = new LinkedHashSet<>(collectDeclaredClasses(root, true));
+        Map<Class, TestSuite> classSuites = new HashMap<>();
 
         for (Class aClass : classes) {
             classSuites.put(aClass, hasTestMethods(aClass) ? new TestSuite(aClass) : new TestSuite(aClass.getCanonicalName()));
@@ -143,7 +143,7 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
     }
 
     private static Set<Class> unprocessedClasses(Collection<Class> classes) {
-        Set<Class> result = new LinkedHashSet<Class>();
+        Set<Class> result = new LinkedHashSet<>();
         for (Class aClass : classes) {
             if (!requestedRunners.contains(aClass)) {
                 result.add(aClass);
@@ -154,7 +154,7 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
     }
 
     private static List<Class> collectDeclaredClasses(Class klass, boolean withItself) {
-        List<Class> result = new ArrayList<Class>();
+        List<Class> result = new ArrayList<>();
         if (withItself) {
             result.add(klass);
         }

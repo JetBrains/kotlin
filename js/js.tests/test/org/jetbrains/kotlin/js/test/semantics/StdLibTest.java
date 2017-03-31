@@ -65,7 +65,7 @@ public final class StdLibTest extends SingleFileTranslationTest {
         Element foo = document.getElementById("foo");
         assertNotNull(foo);
 
-        Map<String, Object> answer = new HashMap<String, Object>();
+        Map<String, Object> answer = new HashMap<>();
         answer.put("document", document);
         answer.put("Node", new DummyNode());
         return answer;

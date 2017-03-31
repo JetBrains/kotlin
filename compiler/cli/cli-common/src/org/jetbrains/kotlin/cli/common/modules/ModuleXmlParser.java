@@ -75,7 +75,7 @@ public class ModuleXmlParser {
     }
 
     private final MessageCollector messageCollector;
-    private final List<Module> modules = new SmartList<Module>();
+    private final List<Module> modules = new SmartList<>();
     private DefaultHandler currentState;
 
     private ModuleXmlParser(@NotNull MessageCollector messageCollector) {

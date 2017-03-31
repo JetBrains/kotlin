@@ -55,8 +55,8 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     private static final String ORIGINAL_TEMP_DIR = FileUtil.getTempDirectory();
 
-    private static final Map<String, Long> TOTAL_SETUP_COST_MILLIS = new HashMap<String, Long>();
-    private static final Map<String, Long> TOTAL_TEARDOWN_COST_MILLIS = new HashMap<String, Long>();
+    private static final Map<String, Long> TOTAL_SETUP_COST_MILLIS = new HashMap<>();
+    private static final Map<String, Long> TOTAL_TEARDOWN_COST_MILLIS = new HashMap<>();
 
     private Application application;
 
@@ -73,7 +73,7 @@ public abstract class KtUsefulTestCase extends TestCase {
     };
 
     private static final String ourPathToKeep = null;
-    private final List<String> myPathsToKeep = new ArrayList<String>();
+    private final List<String> myPathsToKeep = new ArrayList<>();
 
     private String myTempDir;
 
@@ -180,7 +180,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         List<String> list;
         synchronized (DELETE_ON_EXIT_HOOK_CLASS) {
             if (DELETE_ON_EXIT_HOOK_DOT_FILES.isEmpty()) return;
-            list = new ArrayList<String>(DELETE_ON_EXIT_HOOK_DOT_FILES);
+            list = new ArrayList<>(DELETE_ON_EXIT_HOOK_DOT_FILES);
         }
         for (int i = list.size() - 1; i >= 0; i--) {
             String path = list.get(i);
@@ -310,7 +310,7 @@ public abstract class KtUsefulTestCase extends TestCase {
             String erroMsg,
             Iterable<? extends T> actual,
             Collection<? extends T> expected) {
-        ArrayList<T> list = new ArrayList<T>();
+        ArrayList<T> list = new ArrayList<>();
         for (T t : actual) {
             list.add(t);
         }
@@ -337,9 +337,9 @@ public abstract class KtUsefulTestCase extends TestCase {
     public static <T> void assertSameElements(String message, Collection<? extends T> collection, Collection<T> expected) {
         assertNotNull(collection);
         assertNotNull(expected);
-        if (collection.size() != expected.size() || !new HashSet<T>(expected).equals(new HashSet<T>(collection))) {
+        if (collection.size() != expected.size() || !new HashSet<>(expected).equals(new HashSet<T>(collection))) {
             Assert.assertEquals(message, toString(expected, "\n"), toString(collection, "\n"));
-            Assert.assertEquals(message, new HashSet<T>(expected), new HashSet<T>(collection));
+            Assert.assertEquals(message, new HashSet<>(expected), new HashSet<T>(collection));
         }
     }
 

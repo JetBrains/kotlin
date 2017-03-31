@@ -112,7 +112,7 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
     @NotNull
     @Override
     public AccessTranslator getCached() {
-        Map<KtExpression, JsExpression> aliases = new HashMap<KtExpression, JsExpression>();
+        Map<KtExpression, JsExpression> aliases = new HashMap<>();
 
         JsExpression arrayExpression = context().cacheExpressionIfNeeded(getArrayExpression());
         aliases.put(expression.getArrayExpression(), arrayExpression);

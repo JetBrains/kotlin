@@ -42,12 +42,12 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.getMappingFileName;
 public class ClassFileFactory implements OutputFileCollection {
     private final GenerationState state;
     private final ClassBuilderFactory builderFactory;
-    private final Map<String, OutAndSourceFileList> generators = new LinkedHashMap<String, OutAndSourceFileList>();
+    private final Map<String, OutAndSourceFileList> generators = new LinkedHashMap<>();
 
     private boolean isDone = false;
 
-    private final Set<File> packagePartSourceFiles = new HashSet<File>();
-    private final Map<String, PackageParts> partsGroupedByPackage = new LinkedHashMap<String, PackageParts>();
+    private final Set<File> packagePartSourceFiles = new HashSet<>();
+    private final Map<String, PackageParts> partsGroupedByPackage = new LinkedHashMap<>();
 
     public ClassFileFactory(@NotNull GenerationState state, @NotNull ClassBuilderFactory builderFactory) {
         this.state = state;
@@ -153,7 +153,7 @@ public class ClassFileFactory implements OutputFileCollection {
     @NotNull
     @TestOnly
     public Map<String, String> createTextForEachFile() {
-        Map<String, String> answer = new LinkedHashMap<String, String>();
+        Map<String, String> answer = new LinkedHashMap<>();
         for (OutputFile file : asList()) {
             answer.put(file.getRelativePath(), file.asText());
         }
@@ -188,7 +188,7 @@ public class ClassFileFactory implements OutputFileCollection {
 
     @NotNull
     private static List<File> toIoFilesIgnoringNonPhysical(@NotNull Collection<? extends PsiFile> psiFiles) {
-        List<File> result = new ArrayList<File>(psiFiles.size());
+        List<File> result = new ArrayList<>(psiFiles.size());
         for (PsiFile psiFile : psiFiles) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
             // We ignore non-physical files here, because this code is needed to tell the make what inputs affect which outputs

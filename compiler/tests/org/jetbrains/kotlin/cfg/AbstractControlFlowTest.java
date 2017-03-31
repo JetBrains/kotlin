@@ -97,7 +97,7 @@ public abstract class AbstractControlFlowTest extends AbstractPseudocodeTest {
         if (natural == null) {
             return actual.isEmpty();
         }
-        return Collections.singleton(natural).equals(new HashSet<Instruction>(actual));
+        return Collections.singleton(natural).equals(new HashSet<>(actual));
     }
 
     @Override

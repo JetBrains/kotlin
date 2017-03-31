@@ -55,7 +55,7 @@ public class ExpectedLoadErrorsUtil {
     }
 
     private static Map<SourceElement, List<String>> getExpectedLoadErrors(@NotNull PackageViewDescriptor packageFromJava) {
-        Map<SourceElement, List<String>> map = new HashMap<SourceElement, List<String>>();
+        Map<SourceElement, List<String>> map = new HashMap<>();
 
         packageFromJava.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
             @Override
@@ -107,7 +107,7 @@ public class ExpectedLoadErrorsUtil {
     }
 
     private static Map<SourceElement, List<String>> getActualLoadErrors(@NotNull BindingContext bindingContext) {
-        Map<SourceElement, List<String>> result = new HashMap<SourceElement, List<String>>();
+        Map<SourceElement, List<String>> result = new HashMap<>();
 
         Collection<DeclarationDescriptor> descriptors = bindingContext.getKeys(JvmBindingContextSlices.LOAD_FROM_JAVA_SIGNATURE_ERRORS);
         for (DeclarationDescriptor descriptor : descriptors) {

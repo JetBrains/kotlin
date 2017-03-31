@@ -174,7 +174,7 @@ public class ExpressionTypingUtils {
 
     @NotNull
     public static List<KotlinType> getValueParametersTypes(@NotNull List<ValueParameterDescriptor> valueParameters) {
-        List<KotlinType> parameterTypes = new ArrayList<KotlinType>(valueParameters.size());
+        List<KotlinType> parameterTypes = new ArrayList<>(valueParameters.size());
         for (ValueParameterDescriptor parameter : valueParameters) {
             parameterTypes.add(parameter.getType());
         }

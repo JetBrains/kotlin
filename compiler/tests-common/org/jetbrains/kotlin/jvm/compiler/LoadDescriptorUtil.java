@@ -72,10 +72,10 @@ public class LoadDescriptorUtil {
             @NotNull ConfigurationKind configurationKind,
             boolean isBinaryRoot
     ) {
-        List<File> javaBinaryRoots = new ArrayList<File>();
+        List<File> javaBinaryRoots = new ArrayList<>();
         javaBinaryRoots.add(KotlinTestUtils.getAnnotationsJar());
 
-        List<File> javaSourceRoots = new ArrayList<File>();
+        List<File> javaSourceRoots = new ArrayList<>();
         javaSourceRoots.add(new File("compiler/testData/loadJava/include"));
         if (isBinaryRoot) {
             javaBinaryRoots.add(javaRoot);

@@ -126,7 +126,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         }
 
         LexicalScope lexicalScope = context().bindingContext().get(BindingContextSlicesJsKt.LEXICAL_SCOPE_FOR_JS, resolvedCall);
-        Map<JsName, JsExpression> replacements = new HashMap<JsName, JsExpression>();
+        Map<JsName, JsExpression> replacements = new HashMap<>();
         if (lexicalScope != null) {
             Set<JsName> references = CollectUtilsKt.collectUsedNames(node);
             references.removeAll(CollectUtilsKt.collectDefinedNames(node));

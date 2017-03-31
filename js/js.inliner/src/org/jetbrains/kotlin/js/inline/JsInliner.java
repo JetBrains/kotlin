@@ -49,15 +49,15 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     private final Map<JsName, JsFunction> functions;
     private final Map<String, JsFunction> accessors;
-    private final Stack<JsInliningContext> inliningContexts = new Stack<JsInliningContext>();
+    private final Stack<JsInliningContext> inliningContexts = new Stack<>();
     private final Set<JsFunction> processedFunctions = CollectionUtilsKt.IdentitySet();
     private final Set<JsFunction> inProcessFunctions = CollectionUtilsKt.IdentitySet();
     private final FunctionReader functionReader;
     private final DiagnosticSink trace;
 
     // these are needed for error reporting, when inliner detects cycle
-    private final Stack<JsFunction> namedFunctionsStack = new Stack<JsFunction>();
-    private final LinkedList<JsCallInfo> inlineCallInfos = new LinkedList<JsCallInfo>();
+    private final Stack<JsFunction> namedFunctionsStack = new Stack<>();
+    private final LinkedList<JsCallInfo> inlineCallInfos = new LinkedList<>();
     private final Function1<JsNode, Boolean> canBeExtractedByInliner =
             node -> node instanceof JsInvocation && hasToBeInlined((JsInvocation) node);
 

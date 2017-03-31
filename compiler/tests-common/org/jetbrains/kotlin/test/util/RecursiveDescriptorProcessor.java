@@ -31,7 +31,7 @@ public class RecursiveDescriptorProcessor {
             D data,
             @NotNull DeclarationDescriptorVisitor<Boolean, D> visitor
     ) {
-        return descriptor.accept(new RecursiveVisitor<D>(visitor), data);
+        return descriptor.accept(new RecursiveVisitor<>(visitor), data);
     }
 
     private static class RecursiveVisitor<D> implements DeclarationDescriptorVisitor<Boolean, D> {

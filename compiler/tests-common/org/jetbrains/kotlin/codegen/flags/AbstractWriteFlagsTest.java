@@ -98,7 +98,7 @@ public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
 
     private static List<TestedObject> parseExpectedTestedObject(String testDescription) {
         String[] testObjectData = testDescription.substring(testDescription.indexOf("// TESTED_OBJECT_KIND")).split("\n\n");
-        List<TestedObject> objects = new ArrayList<TestedObject>();
+        List<TestedObject> objects = new ArrayList<>();
 
         for (String testData : testObjectData) {
             if (testData.isEmpty()) continue;

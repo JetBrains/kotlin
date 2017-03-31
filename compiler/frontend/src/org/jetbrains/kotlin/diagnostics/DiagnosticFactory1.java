@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 public class DiagnosticFactory1<E extends PsiElement, A> extends DiagnosticFactoryWithPsiElement<E, DiagnosticWithParameters1<E, A>> {
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A argument) {
-        return new DiagnosticWithParameters1<E, A>(element, argument, this, getSeverity());
+        return new DiagnosticWithParameters1<>(element, argument, this, getSeverity());
     }
 
     protected DiagnosticFactory1(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
@@ -30,7 +30,7 @@ public class DiagnosticFactory1<E extends PsiElement, A> extends DiagnosticFacto
     }
 
     public static <T extends PsiElement, A> DiagnosticFactory1<T, A> create(Severity severity, PositioningStrategy<? super T> positioningStrategy) {
-        return new DiagnosticFactory1<T, A>(severity, positioningStrategy);
+        return new DiagnosticFactory1<>(severity, positioningStrategy);
     }
 
     public static <T extends PsiElement, A> DiagnosticFactory1<T, A> create(Severity severity) {

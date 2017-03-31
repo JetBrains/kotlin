@@ -80,8 +80,8 @@ public class CommonSupertypes {
     private static KotlinType findCommonSupertype(@NotNull Collection<KotlinType> types, int recursionDepth, int maxDepth) {
         assert recursionDepth <= maxDepth : "Recursion depth exceeded: " + recursionDepth + " > " + maxDepth + " for types " + types;
         boolean hasFlexible = false;
-        List<SimpleType> upper = new ArrayList<SimpleType>(types.size());
-        List<SimpleType> lower = new ArrayList<SimpleType>(types.size());
+        List<SimpleType> upper = new ArrayList<>(types.size());
+        List<SimpleType> lower = new ArrayList<>(types.size());
         for (KotlinType type : types) {
             UnwrappedType unwrappedType = type.unwrap();
             if (unwrappedType instanceof FlexibleType) {
@@ -110,7 +110,7 @@ public class CommonSupertypes {
     @NotNull
     private static SimpleType commonSuperTypeForInflexible(@NotNull Collection<SimpleType> types, int recursionDepth, int maxDepth) {
         assert !types.isEmpty();
-        Collection<SimpleType> typeSet = new HashSet<SimpleType>(types);
+        Collection<SimpleType> typeSet = new HashSet<>(types);
 
         // If any of the types is nullable, the result must be nullable
         // This also removed Nothing and Nothing? because they are subtypes of everything else
@@ -142,7 +142,7 @@ public class CommonSupertypes {
         // constructor of the supertype -> all of its instantiations occurring as supertypes
         Map<TypeConstructor, Set<SimpleType>> commonSupertypes = computeCommonRawSupertypes(typeSet);
         while (commonSupertypes.size() > 1) {
-            Set<SimpleType> merge = new HashSet<SimpleType>();
+            Set<SimpleType> merge = new HashSet<>();
             for (Set<SimpleType> supertypes : commonSupertypes.values()) {
                 merge.addAll(supertypes);
             }
@@ -164,12 +164,12 @@ public class CommonSupertypes {
     private static Map<TypeConstructor, Set<SimpleType>> computeCommonRawSupertypes(@NotNull Collection<SimpleType> types) {
         assert !types.isEmpty();
 
-        Map<TypeConstructor, Set<SimpleType>> constructorToAllInstances = new HashMap<TypeConstructor, Set<SimpleType>>();
+        Map<TypeConstructor, Set<SimpleType>> constructorToAllInstances = new HashMap<>();
         Set<TypeConstructor> commonSuperclasses = null;
 
         List<TypeConstructor> order = null;
         for (SimpleType type : types) {
-            Set<TypeConstructor> visited = new HashSet<TypeConstructor>();
+            Set<TypeConstructor> visited = new HashSet<>();
             order = topologicallySortSuperclassesAndRecordAllInstances(type, constructorToAllInstances, visited);
 
             if (commonSuperclasses == null) {
@@ -181,8 +181,8 @@ public class CommonSupertypes {
         }
         assert order != null;
 
-        Set<TypeConstructor> notSource = new HashSet<TypeConstructor>();
-        Map<TypeConstructor, Set<SimpleType>> result = new HashMap<TypeConstructor, Set<SimpleType>>();
+        Set<TypeConstructor> notSource = new HashSet<>();
+        Map<TypeConstructor, Set<SimpleType>> result = new HashMap<>();
         for (TypeConstructor superConstructor : order) {
             if (!commonSuperclasses.contains(superConstructor)) {
                 continue;
@@ -210,9 +210,9 @@ public class CommonSupertypes {
         }
 
         List<TypeParameterDescriptor> parameters = constructor.getParameters();
-        List<TypeProjection> newProjections = new ArrayList<TypeProjection>(parameters.size());
+        List<TypeProjection> newProjections = new ArrayList<>(parameters.size());
         for (TypeParameterDescriptor parameterDescriptor : parameters) {
-            Set<TypeProjection> typeProjections = new HashSet<TypeProjection>();
+            Set<TypeProjection> typeProjections = new HashSet<>();
             for (KotlinType type : types) {
                 typeProjections.add(type.getArguments().get(parameterDescriptor.getIndex()));
             }
@@ -255,8 +255,8 @@ public class CommonSupertypes {
             return TypeUtils.makeStarProjection(parameterDescriptor);
         }
 
-        Set<KotlinType> ins = new HashSet<KotlinType>();
-        Set<KotlinType> outs = new HashSet<KotlinType>();
+        Set<KotlinType> ins = new HashSet<>();
+        Set<KotlinType> outs = new HashSet<>();
 
         Variance variance = parameterDescriptor.getVariance();
         switch (variance) {
@@ -335,7 +335,7 @@ public class CommonSupertypes {
                 current -> {
                     TypeSubstitutor substitutor = TypeSubstitutor.create(current);
                     Collection<KotlinType> supertypes = current.getConstructor().getSupertypes();
-                    List<SimpleType> result = new ArrayList<SimpleType>(supertypes.size());
+                    List<SimpleType> result = new ArrayList<>(supertypes.size());
                     for (KotlinType supertype : supertypes) {
                         if (visited.contains(supertype.getConstructor())) {
                             continue;
@@ -348,9 +348,8 @@ public class CommonSupertypes {
                 new DFS.NodeHandlerWithListResult<SimpleType, TypeConstructor>() {
                     @Override
                     public boolean beforeChildren(SimpleType current) {
-                        Set<SimpleType> instances = constructorToAllInstances.computeIfAbsent(
-                                current.getConstructor(), k -> new HashSet<SimpleType>()
-                        );
+                        Set<SimpleType> instances =
+                                constructorToAllInstances.computeIfAbsent(current.getConstructor(), k -> new HashSet<>());
                         instances.add(current);
 
                         return true;

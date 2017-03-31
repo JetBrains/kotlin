@@ -27,7 +27,7 @@ import java.util.Map;
 public final class Interner<T> {
     private final Interner<T> parent;
     private final int firstIndex;
-    private final Map<T, Integer> interned = new HashMap<T, Integer>();
+    private final Map<T, Integer> interned = new HashMap<>();
 
     public Interner(Interner<T> parent) {
         this.parent = parent;

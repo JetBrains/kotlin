@@ -140,7 +140,7 @@ public class MemoryBasedClassLoader extends ClassLoader {
         Enumeration<URL> fromParent = parent.getResources(name);
         if (!own.hasMoreElements()) return fromParent;
 
-        List<URL> result = new ArrayList<URL>();
+        List<URL> result = new ArrayList<>();
         while (own.hasMoreElements()) {
             result.add(own.nextElement());
         }
@@ -163,7 +163,7 @@ public class MemoryBasedClassLoader extends ClassLoader {
         else {
             assert resources instanceof ArrayList : "Resource map should contain ResourceData or ArrayList<ResourceData>: " + name;
             List<ResourceData> resourceDatas = (ArrayList<ResourceData>) resources;
-            List<URL> urls = new ArrayList<URL>(resourceDatas.size());
+            List<URL> urls = new ArrayList<>(resourceDatas.size());
             for (ResourceData data : resourceDatas) {
                 urls.add(data.getURL());
             }

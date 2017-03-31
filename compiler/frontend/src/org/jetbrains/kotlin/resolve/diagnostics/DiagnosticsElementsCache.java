@@ -49,7 +49,7 @@ public class DiagnosticsElementsCache {
     }
 
     private static MultiMap<PsiElement, Diagnostic> buildElementToDiagnosticCache(Diagnostics diagnostics, Function1<Diagnostic, Boolean> filter) {
-        MultiMap<PsiElement, Diagnostic> elementToDiagnostic = new ConcurrentMultiMap<PsiElement, Diagnostic>();
+        MultiMap<PsiElement, Diagnostic> elementToDiagnostic = new ConcurrentMultiMap<>();
         for (Diagnostic diagnostic : diagnostics) {
             if (filter.invoke(diagnostic)) {
                 elementToDiagnostic.putValue(diagnostic.getPsiElement(), diagnostic);

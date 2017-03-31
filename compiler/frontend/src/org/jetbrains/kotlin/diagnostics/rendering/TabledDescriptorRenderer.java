@@ -225,7 +225,7 @@ public class TabledDescriptorRenderer {
 
     @NotNull
     protected static RenderingContext computeRenderingContext(@NotNull TableRenderer table) {
-        ArrayList<Object> toRender = new ArrayList<Object>();
+        ArrayList<Object> toRender = new ArrayList<>();
         for (TableRow row : table.rows) {
             if (row instanceof DescriptorRow) {
                 toRender.add(((DescriptorRow) row).descriptor);

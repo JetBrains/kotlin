@@ -315,7 +315,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
 
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, hasNoInline(files));
 
-        List<String> librariesWithStdlib = new ArrayList<String>(JsConfig.JS_STDLIB);
+        List<String> librariesWithStdlib = new ArrayList<>(JsConfig.JS_STDLIB);
         if (libraries != null) {
             librariesWithStdlib.addAll(libraries);
         }

@@ -57,7 +57,7 @@ public class ClassPreloadingUtils {
     }
 
     private static URLClassLoader createFallbackClassLoader(Collection<File> files) throws IOException {
-        List<URL> urls = new ArrayList<URL>(files.size());
+        List<URL> urls = new ArrayList<>(files.size());
         for (File file : files) {
             urls.add(file.toURI().toURL());
         }
@@ -76,7 +76,7 @@ public class ClassPreloadingUtils {
             return extractManifestClasspath((ResourceData) manifest);
         }
         else if (manifest instanceof ArrayList) {
-            List<File> result = new ArrayList<File>();
+            List<File> result = new ArrayList<>();
             for (ResourceData data : (ArrayList<ResourceData>) manifest) {
                 result.addAll(extractManifestClasspath(data));
             }
@@ -93,7 +93,7 @@ public class ClassPreloadingUtils {
         String classpathSpaceSeparated = (String) manifest.getMainAttributes().get(Attributes.Name.CLASS_PATH);
         if (classpathSpaceSeparated == null) return Collections.emptyList();
 
-        Collection<File> classpath = new ArrayList<File>(1);
+        Collection<File> classpath = new ArrayList<>(1);
         for (String jar : classpathSpaceSeparated.split(" ")) {
             if (".".equals(jar)) continue;
 
@@ -117,7 +117,7 @@ public class ClassPreloadingUtils {
             ClassHandler handler
     ) throws IOException {
         // 0.75 is HashMap.DEFAULT_LOAD_FACTOR
-        Map<String, Object> resources = new HashMap<String, Object>((int) (classNumberEstimate / 0.75));
+        Map<String, Object> resources = new HashMap<>((int) (classNumberEstimate / 0.75));
 
         for (File jarFile : jarFiles) {
             if (handler != null) {
@@ -154,7 +154,7 @@ public class ClassPreloadingUtils {
                         resources.put(name, resourceData);
                     }
                     else if (previous instanceof ResourceData) {
-                        List<ResourceData> list = new ArrayList<ResourceData>();
+                        List<ResourceData> list = new ArrayList<>();
                         list.add((ResourceData) previous);
                         list.add(resourceData);
                         resources.put(name, list);

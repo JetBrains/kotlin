@@ -29,7 +29,7 @@ import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getLoadStore
 
 public class InlineAdapter extends InstructionAdapter {
     private final SourceMapper sourceMapper;
-    private final List<CatchBlock> blocks = new ArrayList<CatchBlock>();
+    private final List<CatchBlock> blocks = new ArrayList<>();
 
     private boolean isLambdaInlining = false;
     private int nextLocalIndex = 0;

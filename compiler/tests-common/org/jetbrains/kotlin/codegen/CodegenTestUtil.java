@@ -114,13 +114,13 @@ public class CodegenTestUtil {
     ) {
         try {
             File javaClassesTempDirectory = KotlinTestUtils.tmpDir("java-classes");
-            List<String> classpath = new ArrayList<String>();
+            List<String> classpath = new ArrayList<>();
             classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
             classpath.add(ForTestCompileRuntime.reflectJarForTests().getPath());
             classpath.add(KotlinTestUtils.getAnnotationsJar().getPath());
             classpath.addAll(additionalClasspath);
 
-            List<String> options = new ArrayList<String>(Arrays.asList(
+            List<String> options = new ArrayList<>(Arrays.asList(
                     "-classpath", StringsKt.join(classpath, File.pathSeparator),
                     "-d", javaClassesTempDirectory.getPath()
             ));

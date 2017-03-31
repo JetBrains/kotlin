@@ -72,7 +72,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull TracingStrategy tracing, @NotNull Call call,
             @NotNull CandidateResolveMode candidateResolveMode
     ) {
-        return new CallCandidateResolutionContext<D>(
+        return new CallCandidateResolutionContext<>(
                 candidateCall, tracing, trace, context.scope, call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
                 context.resolutionResultsCache, context.dataFlowInfoForArguments,
@@ -85,7 +85,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> createForCallBeingAnalyzed(
             @NotNull MutableResolvedCall<D> candidateCall, @NotNull BasicCallResolutionContext context, @NotNull TracingStrategy tracing
     ) {
-        return new CallCandidateResolutionContext<D>(
+        return new CallCandidateResolutionContext<>(
                 candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.resolutionResultsCache,
                 context.dataFlowInfoForArguments, context.statementFilter,
@@ -106,7 +106,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull CallPosition callPosition,
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider
     ) {
-        return new CallCandidateResolutionContext<D>(
+        return new CallCandidateResolutionContext<>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 resolutionResultsCache, dataFlowInfoForArguments, statementFilter,
                 candidateResolveMode, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition, expressionContextProvider);

@@ -35,7 +35,7 @@ public class SlicedMapImpl implements MutableSlicedMap {
         return new SlicedMapImpl();
     }
 
-    private final Map<Object, KeyFMap> map = new THashMap<Object, KeyFMap>(0);
+    private final Map<Object, KeyFMap> map = new THashMap<>(0);
     private Multimap<WritableSlice<?, ?>, Object> collectiveSliceKeys = null;
 
     @Override

@@ -29,7 +29,7 @@ public class CompilerConfigurationKey<T> {
 
     @NotNull
     public static <T> CompilerConfigurationKey<T> create(@NotNull @NonNls String name) {
-        return new CompilerConfigurationKey<T>(name);
+        return new CompilerConfigurationKey<>(name);
     }
 
     @Override

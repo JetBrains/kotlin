@@ -85,7 +85,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
             return PsiClass.EMPTY_ARRAY;
         }
 
-        List<PsiClass> answer = new SmartList<PsiClass>();
+        List<PsiClass> answer = new SmartList<>();
 
         FqName qualifiedName = new FqName(qualifiedNameString);
 
@@ -186,7 +186,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
     @NotNull
     @Override
     public PsiClass[] getClasses(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        List<PsiClass> answer = new SmartList<PsiClass>();
+        List<PsiClass> answer = new SmartList<>();
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
 
         answer.addAll(lightClassGenerationSupport.getFacadeClassesInPackage(packageFQN, scope));

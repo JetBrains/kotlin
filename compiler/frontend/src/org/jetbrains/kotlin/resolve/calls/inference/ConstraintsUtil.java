@@ -66,7 +66,7 @@ public class ConstraintsUtil {
                 context.put(typeVariable.getOriginalTypeParameter().getTypeConstructor(), typeProjection);
             }
         }
-        Collection<TypeSubstitutor> typeSubstitutors = new ArrayList<TypeSubstitutor>(substitutionContexts.size());
+        Collection<TypeSubstitutor> typeSubstitutors = new ArrayList<>(substitutionContexts.size());
         for (Map<TypeConstructor, TypeProjection> context : substitutionContexts) {
             typeSubstitutors.add(TypeSubstitutor.create(context));
         }

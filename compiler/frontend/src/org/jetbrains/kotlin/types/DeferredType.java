@@ -40,7 +40,7 @@ public class DeferredType extends WrappedType {
             @NotNull Function0<KotlinType> compute
     ) {
         DeferredType deferredType = new DeferredType(storageManager.createLazyValue(compute));
-        trace.record(DEFERRED_TYPE, new Box<DeferredType>(deferredType));
+        trace.record(DEFERRED_TYPE, new Box<>(deferredType));
         return deferredType;
     }
     
@@ -53,7 +53,7 @@ public class DeferredType extends WrappedType {
         //noinspection unchecked
         DeferredType deferredType =
                 new DeferredType(storageManager.createLazyValueWithPostCompute(compute, RECURSION_PREVENTER, t -> null));
-        trace.record(DEFERRED_TYPE, new Box<DeferredType>(deferredType));
+        trace.record(DEFERRED_TYPE, new Box<>(deferredType));
         return deferredType;
     }
 

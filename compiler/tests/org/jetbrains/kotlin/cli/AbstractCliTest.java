@@ -54,7 +54,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         try {
             System.setErr(new PrintStream(bytes));
             ExitCode exitCode = CLICompiler.doMainNoExit(compiler, ArrayUtil.toStringArray(args));
-            return new Pair<String, ExitCode>(bytes.toString("utf-8"), exitCode);
+            return new Pair<>(bytes.toString("utf-8"), exitCode);
         }
         catch (Exception e) {
             throw ExceptionUtilsKt.rethrow(e);
@@ -97,7 +97,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     private void doTestAdditionalChecks(@NotNull File testConfigFile) throws IOException {
-        List<String> diagnostics = new ArrayList<String>(0);
+        List<String> diagnostics = new ArrayList<>(0);
         String content = FilesKt.readText(testConfigFile, Charsets.UTF_8);
 
         List<String> existsList = InTextDirectivesUtils.findListWithPrefixes(content, "// EXISTS: ");

@@ -318,7 +318,7 @@ public class StorageManagerTest extends TestCase {
         CounterImpl counter = new CounterImpl();
         NotNullLazyValue<Collection<String>> v = m.createLazyValueWithPostCompute(
                 () -> {
-                    List<String> strings = new ArrayList<String>();
+                    List<String> strings = new ArrayList<>();
                     strings.add("first");
                     return strings;
                 },
@@ -339,7 +339,7 @@ public class StorageManagerTest extends TestCase {
         CounterImpl counter = new CounterImpl();
         NullableLazyValue<Collection<String>> v = m.createNullableLazyValueWithPostCompute(
                 () -> {
-                    ArrayList<String> strings = new ArrayList<String>();
+                    ArrayList<String> strings = new ArrayList<>();
                     strings.add("first");
                     return strings;
                 },

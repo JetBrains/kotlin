@@ -35,8 +35,7 @@ public class InliningContext {
     public final ReifiedTypeInliner reifiedTypeInliner;
     public final boolean isInliningLambda;
     public final boolean classRegeneration;
-    public final Map<String, AnonymousObjectTransformationInfo> internalNameToAnonymousObjectTransformationInfo =
-            new HashMap<String, AnonymousObjectTransformationInfo>();
+    public final Map<String, AnonymousObjectTransformationInfo> internalNameToAnonymousObjectTransformationInfo = new HashMap<>();
 
     private boolean isContinuation;
 
@@ -67,7 +66,7 @@ public class InliningContext {
 
     @NotNull
     public InliningContext subInlineLambda(@NotNull LambdaInfo lambdaInfo) {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(lambdaInfo.getLambdaClassType().getInternalName(), null); //mark lambda inlined
         return subInline(nameGenerator.subGenerator("lambda"), map, true);
     }

@@ -51,23 +51,23 @@ public class Slices {
     }
 
     public static <K, V> SliceBuilder<K, V> sliceBuilder() {
-        return new SliceBuilder<K, V>(ONLY_REWRITE_TO_EQUAL);
+        return new SliceBuilder<>(ONLY_REWRITE_TO_EQUAL);
     }
 
     public static <K, V> WritableSlice<K, V> createSimpleSlice() {
-        return new BasicWritableSlice<K, V>(ONLY_REWRITE_TO_EQUAL);
+        return new BasicWritableSlice<>(ONLY_REWRITE_TO_EQUAL);
     }
 
     public static <K, V> WritableSlice<K, V> createCollectiveSlice() {
-        return new BasicWritableSlice<K, V>(ONLY_REWRITE_TO_EQUAL, true);
+        return new BasicWritableSlice<>(ONLY_REWRITE_TO_EQUAL, true);
     }
 
     public static <K> WritableSlice<K, Boolean> createSimpleSetSlice() {
-        return new SetSlice<K>(RewritePolicy.DO_NOTHING);
+        return new SetSlice<>(RewritePolicy.DO_NOTHING);
     }
 
     public static <K> WritableSlice<K, Boolean> createCollectiveSetSlice() {
-        return new SetSlice<K>(RewritePolicy.DO_NOTHING, true);
+        return new SetSlice<>(RewritePolicy.DO_NOTHING, true);
     }
 
     public static class SliceBuilder<K, V> {
@@ -115,7 +115,7 @@ public class Slices {
                     }
                 };
             }
-            return new BasicWritableSlice<K, V>(rewritePolicy);
+            return new BasicWritableSlice<>(rewritePolicy);
         }
     }
 }

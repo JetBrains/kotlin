@@ -143,7 +143,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             @NotNull List<TestFile> testFilesWithConfigurationDirectives,
             @NotNull CompilerConfiguration configuration
     ) {
-        List<String> kotlinConfigurationFlags = new ArrayList<String>(0);
+        List<String> kotlinConfigurationFlags = new ArrayList<>(0);
         LanguageVersion explicitLanguageVersion = null;
         for (TestFile testFile : testFilesWithConfigurationDirectives) {
             kotlinConfigurationFlags.addAll(InTextDirectivesUtils.findListWithPrefixes(testFile.content, "// KOTLIN_CONFIGURATION_FLAGS:"));
@@ -288,10 +288,10 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     public static CodegenTestFiles loadMultiFiles(@NotNull List<TestFile> files, @NotNull Project project) {
         Collections.sort(files);
 
-        List<KtFile> ktFiles = new ArrayList<KtFile>(files.size());
+        List<KtFile> ktFiles = new ArrayList<>(files.size());
         for (TestFile file : files) {
             if (file.name.endsWith(".kt")) {
-                String content = CheckerTestUtil.parseDiagnosedRanges(file.content, new ArrayList<CheckerTestUtil.DiagnosedRange>(0));
+                String content = CheckerTestUtil.parseDiagnosedRanges(file.content, new ArrayList<>(0));
                 ktFiles.add(KotlinTestUtils.createFile(file.name, content, project));
             }
         }
@@ -436,7 +436,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         SimpleVerifier verifier = new SimpleVerifier();
         verifier.setClassLoader(loader);
-        Analyzer<BasicValue> analyzer = new Analyzer<BasicValue>(verifier);
+        Analyzer<BasicValue> analyzer = new Analyzer<>(verifier);
 
         boolean noErrors = true;
         for (MethodNode method : classNode.methods) {

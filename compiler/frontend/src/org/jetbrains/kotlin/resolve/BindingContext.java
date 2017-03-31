@@ -97,10 +97,10 @@ public interface BindingContext {
 
     WritableSlice<KtTypeReference, KotlinType> TYPE = Slices.createSimpleSlice();
     WritableSlice<KtTypeReference, KotlinType> ABBREVIATED_TYPE = Slices.createSimpleSlice();
-    WritableSlice<KtExpression, KotlinTypeInfo> EXPRESSION_TYPE_INFO = new BasicWritableSlice<KtExpression, KotlinTypeInfo>(DO_NOTHING);
-    WritableSlice<KtExpression, DataFlowInfo> DATA_FLOW_INFO_BEFORE = new BasicWritableSlice<KtExpression, DataFlowInfo>(DO_NOTHING);
-    WritableSlice<KtExpression, KotlinType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<KtExpression, KotlinType>(DO_NOTHING);
-    WritableSlice<KtFunction, KotlinType> EXPECTED_RETURN_TYPE = new BasicWritableSlice<KtFunction, KotlinType>(DO_NOTHING);
+    WritableSlice<KtExpression, KotlinTypeInfo> EXPRESSION_TYPE_INFO = new BasicWritableSlice<>(DO_NOTHING);
+    WritableSlice<KtExpression, DataFlowInfo> DATA_FLOW_INFO_BEFORE = new BasicWritableSlice<>(DO_NOTHING);
+    WritableSlice<KtExpression, KotlinType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<>(DO_NOTHING);
+    WritableSlice<KtFunction, KotlinType> EXPECTED_RETURN_TYPE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, DataFlowInfo> DATAFLOW_INFO_AFTER_CONDITION = Slices.createSimpleSlice();
     WritableSlice<VariableDescriptor, DataFlowValue> BOUND_INITIALIZER_VALUE = Slices.createSimpleSlice();
     WritableSlice<KtExpression, LeakingThisDescriptor> LEAKING_THIS = Slices.createSimpleSlice();
@@ -108,26 +108,24 @@ public interface BindingContext {
     /**
      * A qualifier corresponds to a receiver expression (if any). For 'A.B' qualifier is recorded for 'A'.
      */
-    WritableSlice<KtExpression, Qualifier> QUALIFIER = new BasicWritableSlice<KtExpression, Qualifier>(DO_NOTHING);
+    WritableSlice<KtExpression, Qualifier> QUALIFIER = new BasicWritableSlice<>(DO_NOTHING);
 
-    WritableSlice<KtExpression, DoubleColonLHS> DOUBLE_COLON_LHS = new BasicWritableSlice<KtExpression, DoubleColonLHS>(DO_NOTHING);
+    WritableSlice<KtExpression, DoubleColonLHS> DOUBLE_COLON_LHS = new BasicWritableSlice<>(DO_NOTHING);
 
-    WritableSlice<KtSuperExpression, KotlinType> THIS_TYPE_FOR_SUPER_EXPRESSION =
-            new BasicWritableSlice<KtSuperExpression, KotlinType>(DO_NOTHING);
+    WritableSlice<KtSuperExpression, KotlinType> THIS_TYPE_FOR_SUPER_EXPRESSION = new BasicWritableSlice<>(DO_NOTHING);
 
-    WritableSlice<KtReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET =
-            new BasicWritableSlice<KtReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
+    WritableSlice<KtReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET = new BasicWritableSlice<>(DO_NOTHING);
     // if 'A' really means 'A.Companion' then this slice stores class descriptor for A, REFERENCE_TARGET stores descriptor Companion in this case
     WritableSlice<KtReferenceExpression, ClassifierDescriptorWithTypeParameters> SHORT_REFERENCE_TO_COMPANION_OBJECT =
-            new BasicWritableSlice<KtReferenceExpression, ClassifierDescriptorWithTypeParameters>(DO_NOTHING);
+            new BasicWritableSlice<>(DO_NOTHING);
 
-    WritableSlice<Call, ResolvedCall<?>> RESOLVED_CALL = new BasicWritableSlice<Call, ResolvedCall<?>>(DO_NOTHING);
+    WritableSlice<Call, ResolvedCall<?>> RESOLVED_CALL = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<Call, TailRecursionKind> TAIL_RECURSION_CALL = Slices.createSimpleSlice();
-    WritableSlice<KtElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<KtElement, ConstraintSystemCompleter>(DO_NOTHING);
-    WritableSlice<KtElement, Call> CALL = new BasicWritableSlice<KtElement, Call>(DO_NOTHING);
+    WritableSlice<KtElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<>(DO_NOTHING);
+    WritableSlice<KtElement, Call> CALL = new BasicWritableSlice<>(DO_NOTHING);
 
     WritableSlice<KtExpression, Collection<? extends DeclarationDescriptor>> AMBIGUOUS_REFERENCE_TARGET =
-            new BasicWritableSlice<KtExpression, Collection<? extends DeclarationDescriptor>>(DO_NOTHING);
+            new BasicWritableSlice<>(DO_NOTHING);
 
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_ITERATOR_RESOLVED_CALL = Slices.createSimpleSlice();
 
@@ -151,9 +149,9 @@ public interface BindingContext {
 
     WritableSlice<KtCollectionLiteralExpression, ResolvedCall<FunctionDescriptor>> COLLECTION_LITERAL_CALL = Slices.createSimpleSlice();
 
-    WritableSlice<KtExpression, ExplicitSmartCasts> SMARTCAST = new BasicWritableSlice<KtExpression, ExplicitSmartCasts>(DO_NOTHING);
+    WritableSlice<KtExpression, ExplicitSmartCasts> SMARTCAST = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, Boolean> SMARTCAST_NULL = Slices.createSimpleSlice();
-    WritableSlice<KtExpression, ImplicitSmartCasts> IMPLICIT_RECEIVER_SMARTCAST = new BasicWritableSlice<KtExpression, ImplicitSmartCasts>(DO_NOTHING);
+    WritableSlice<KtExpression, ImplicitSmartCasts> IMPLICIT_RECEIVER_SMARTCAST = new BasicWritableSlice<>(DO_NOTHING);
 
     WritableSlice<KtWhenExpression, Boolean> EXHAUSTIVE_WHEN = Slices.createSimpleSlice();
     WritableSlice<KtWhenExpression, Boolean> IMPLICIT_EXHAUSTIVE_WHEN = Slices.createSimpleSlice();
@@ -173,8 +171,8 @@ public interface BindingContext {
     WritableSlice<KtElement, Boolean> USED_AS_RESULT_OF_LAMBDA = Slices.createSimpleSetSlice();
     WritableSlice<KtElement, Boolean> UNREACHABLE_CODE = Slices.createSimpleSetSlice();
 
-    WritableSlice<VariableDescriptor, CaptureKind> CAPTURED_IN_CLOSURE = new BasicWritableSlice<VariableDescriptor, CaptureKind>(DO_NOTHING);
-    WritableSlice<KtDeclaration, PreliminaryDeclarationVisitor> PRELIMINARY_VISITOR = new BasicWritableSlice<KtDeclaration, PreliminaryDeclarationVisitor>(DO_NOTHING);
+    WritableSlice<VariableDescriptor, CaptureKind> CAPTURED_IN_CLOSURE = new BasicWritableSlice<>(DO_NOTHING);
+    WritableSlice<KtDeclaration, PreliminaryDeclarationVisitor> PRELIMINARY_VISITOR = new BasicWritableSlice<>(DO_NOTHING);
 
     WritableSlice<Box<DeferredType>, Boolean> DEFERRED_TYPE = Slices.createCollectiveSetSlice();
 
@@ -255,8 +253,7 @@ public interface BindingContext {
     WritableSlice<ValueParameterDescriptor, FunctionDescriptor> DATA_CLASS_COMPONENT_FUNCTION = Slices.createSimpleSlice();
     WritableSlice<ClassDescriptor, FunctionDescriptor> DATA_CLASS_COPY_FUNCTION = Slices.createSimpleSlice();
 
-    WritableSlice<FqNameUnsafe, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR =
-            new BasicWritableSlice<FqNameUnsafe, ClassDescriptor>(DO_NOTHING, true);
+    WritableSlice<FqNameUnsafe, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<>(DO_NOTHING, true);
     WritableSlice<KtFile, PackageFragmentDescriptor> FILE_TO_PACKAGE_FRAGMENT = Slices.createSimpleSlice();
     WritableSlice<FqName, Collection<KtFile>> PACKAGE_TO_FILES = Slices.createSimpleSlice();
 

@@ -23,7 +23,7 @@ import java.util.*;
 
 public class CallCounter extends RecursiveJsVisitor {
 
-    private final List<JsNameRef> callsNameRefs = new ArrayList<JsNameRef>();
+    private final List<JsNameRef> callsNameRefs = new ArrayList<>();
 
     @NotNull
     private final Set<String> exceptFunctionNames;
@@ -40,7 +40,7 @@ public class CallCounter extends RecursiveJsVisitor {
 
     @NotNull
     public static CallCounter countCalls(@NotNull JsNode node, @NotNull Set<String> exceptFunctionNames) {
-        CallCounter visitor = new CallCounter(new HashSet<String>(exceptFunctionNames), Collections.<String>emptySet());
+        CallCounter visitor = new CallCounter(new HashSet<>(exceptFunctionNames), Collections.<String>emptySet());
         node.accept(visitor);
 
         return visitor;
@@ -48,7 +48,7 @@ public class CallCounter extends RecursiveJsVisitor {
 
     @NotNull
     public static CallCounter countCallsWithExcludedScopes(@NotNull JsNode node, @NotNull Set<String> exceptScopes) {
-        CallCounter visitor = new CallCounter(Collections.<String>emptySet(), new HashSet<String>(exceptScopes));
+        CallCounter visitor = new CallCounter(Collections.<String>emptySet(), new HashSet<>(exceptScopes));
         node.accept(visitor);
 
         return visitor;
@@ -65,7 +65,7 @@ public class CallCounter extends RecursiveJsVisitor {
 
     public int getQualifiedCallsCount(String... qualifiers) {
         int count = 0;
-        List<String> expectedQualifierChain = new ArrayList<String>();
+        List<String> expectedQualifierChain = new ArrayList<>();
         Collections.addAll(expectedQualifierChain, qualifiers);
 
         for (JsNameRef callNameRef : callsNameRefs) {

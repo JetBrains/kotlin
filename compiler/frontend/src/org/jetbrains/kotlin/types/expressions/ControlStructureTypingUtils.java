@@ -163,7 +163,7 @@ public class ControlStructureTypingUtils {
         KotlinType type = typeParameter.getDefaultType();
         KotlinType nullableType = TypeUtils.makeNullable(type);
 
-        List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(argumentNames.size());
+        List<ValueParameterDescriptor> valueParameters = new ArrayList<>(argumentNames.size());
         for (int i = 0; i < argumentNames.size(); i++) {
             KotlinType argumentType = isArgumentNullable.get(i) ? nullableType : type;
             ValueParameterDescriptorImpl valueParameter = new ValueParameterDescriptorImpl(

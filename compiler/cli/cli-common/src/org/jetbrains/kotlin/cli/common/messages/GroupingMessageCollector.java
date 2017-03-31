@@ -82,7 +82,7 @@ public class GroupingMessageCollector implements MessageCollector {
 
     @NotNull
     private Collection<String> sortedKeys() {
-        List<String> sortedKeys = new ArrayList<String>(groupedMessages.keySet());
+        List<String> sortedKeys = new ArrayList<>(groupedMessages.keySet());
         // ensure that messages with no location i.e. perf, incomplete hierarchy are always reported first
         sortedKeys.sort((o1, o2) -> {
             if (o1 == o2) return 0;

@@ -54,7 +54,7 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
     private void doJsAntTest(boolean withModuleSystem, String... jsFiles) throws Exception {
         doTest();
 
-        List<String> fileNames = new ArrayList<String>(Arrays.asList(jsFiles));
+        List<String> fileNames = new ArrayList<>(Arrays.asList(jsFiles));
         fileNames.add(JS_OUT_FILE);
 
         List<String> filePaths = CollectionsKt.map(fileNames, s -> getOutputFileByName(s).getAbsolutePath());

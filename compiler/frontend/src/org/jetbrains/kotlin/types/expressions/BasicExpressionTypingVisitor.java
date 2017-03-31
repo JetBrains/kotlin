@@ -251,7 +251,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             Matcher matcher = FP_LITERAL_PARTS.matcher(text);
-            parts = new ArrayList<String>();
+            parts = new ArrayList<>();
             if (matcher.matches()) {
                 for (int i = 0; i < matcher.groupCount(); i++) {
                     parts.add(matcher.group(i + 1));

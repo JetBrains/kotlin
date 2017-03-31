@@ -124,7 +124,7 @@ public class DataFlowAnalyzer {
             ExpressionTypingContext context
     ) {
         if (condition == null) return context.dataFlowInfo;
-        Ref<DataFlowInfo> result = new Ref<DataFlowInfo>(null);
+        Ref<DataFlowInfo> result = new Ref<>(null);
         condition.accept(new KtVisitorVoid() {
             @Override
             public void visitIsExpression(@NotNull KtIsExpression expression) {

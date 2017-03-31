@@ -56,7 +56,7 @@ public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDe
 
         setSuspend(descriptor.isSuspend());
         if (descriptor.getUserData(CoroutineCodegenUtilKt.INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) != null) {
-            userDataMap = new LinkedHashMap<UserDataKey<?>, Object>();
+            userDataMap = new LinkedHashMap<>();
             userDataMap.put(
                     CoroutineCodegenUtilKt.INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION,
                     descriptor.getUserData(CoroutineCodegenUtilKt.INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)

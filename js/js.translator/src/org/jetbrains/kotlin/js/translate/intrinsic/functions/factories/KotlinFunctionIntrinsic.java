@@ -48,7 +48,7 @@ public class KotlinFunctionIntrinsic extends FunctionIntrinsicWithReceiverComput
     ) {
         JsExpression function = JsAstUtils.pureFqn(functionName, Namer.kotlinObject());
         if (additionalArguments.length > 0) {
-            List<JsExpression> newArguments = new ArrayList<JsExpression>(arguments);
+            List<JsExpression> newArguments = new ArrayList<>(arguments);
             for (JsExpression e : additionalArguments) {
                 newArguments.add(e.deepCopy());
             }
