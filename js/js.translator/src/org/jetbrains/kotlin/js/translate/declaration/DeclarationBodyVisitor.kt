@@ -115,7 +115,7 @@ class DeclarationBodyVisitor(
                 val caller = JsFunction(context.getScopeForDescriptor(containingClass), JsBlock(), "")
                 val callerContext = context
                         .newDeclaration(descriptor)
-                        .translateAndAliasParameters(descriptor, caller.parameters, true)
+                        .translateAndAliasParameters(descriptor, caller.parameters)
                         .innerBlock(caller.body)
 
                 val callbackName = JsScope.declareTemporaryName("callback" + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)

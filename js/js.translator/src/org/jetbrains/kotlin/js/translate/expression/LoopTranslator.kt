@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.ArrayFIF
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.*
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopRange
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
@@ -116,8 +117,12 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
                     newVar(parameterName, itemValue)
                 }
                 else {
+                    val innerBlockContext = context.innerBlock(block)
+                    if (itemValue != null) {
+                        innerBlockContext.addStatementToCurrentBlock(JsAstUtils.newVar(parameterName, itemValue))
+                    }
                     DestructuringDeclarationTranslator.translate(
-                            destructuringParameter, parameterName, itemValue, context.innerBlock(block))
+                            destructuringParameter, JsAstUtils.pureFqn(parameterName, null), innerBlockContext)
                 }
             block.statements += currentVarInit
             block.statements += if (realBody is JsBlock) realBody.statements else listOfNotNull(realBody)

@@ -219,7 +219,7 @@ class ClassTranslator private constructor(
         context.addDeclarationStatement(constructorInitializer.makeStmt())
 
         context = context.contextWithScope(constructorInitializer)
-        context.translateAndAliasParameters(constructorDescriptor, constructorInitializer.parameters, false)
+        context.translateAndAliasParameters(constructorDescriptor, constructorInitializer.parameters)
                 .translateFunction(constructor, constructorInitializer)
 
         // Translate super/this call

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsParameter
 import org.jetbrains.kotlin.js.backend.ast.JsScope
+import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.functionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.hasDefaultValue
 import org.jetbrains.kotlin.js.translate.context.Namer
@@ -39,8 +40,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 
 fun TranslationContext.translateAndAliasParameters(
         descriptor: FunctionDescriptor,
-        targetList: MutableList<JsParameter>,
-        aliasValueParams: Boolean
+        targetList: MutableList<JsParameter>
 ): TranslationContext {
     val aliases = mutableMapOf<DeclarationDescriptor, JsExpression>()
 
@@ -64,7 +64,7 @@ fun TranslationContext.translateAndAliasParameters(
 
     for (valueParameter in descriptor.valueParameters) {
         val name = getNameForDescriptor(valueParameter)
-        val tmpName = if (aliasValueParams) JsScope.declareTemporaryName(name.ident) else name
+        val tmpName = JsScope.declareTemporaryName(name.ident).also { it.descriptor = valueParameter }
         aliases[valueParameter] = JsAstUtils.pureFqn(tmpName, null)
         targetList += JsParameter(tmpName).apply { hasDefaultValue = valueParameter.hasDefaultValue() }
     }

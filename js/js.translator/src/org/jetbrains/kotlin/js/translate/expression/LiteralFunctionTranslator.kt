@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.context.getNameForCapturedDescriptor
 import org.jetbrains.kotlin.js.translate.context.hasCapturedExceptContaining
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDescriptor
 import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.setDefaultValueForArguments
 import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateFunctionBody
@@ -47,7 +48,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         val functionContext = invokingContext
                 .newFunctionBodyWithUsageTracker(lambda, descriptor)
-                .translateAndAliasParameters(descriptor, lambda.parameters, false)
+                .translateAndAliasParameters(descriptor, lambda.parameters)
 
         descriptor.valueParameters.forEach {
             if (it is ValueParameterDescriptorImpl.WithDestructuringDeclaration) {
@@ -100,8 +101,8 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
                 (DescriptorToSourceUtils.descriptorToDeclaration(this) as? KtParameter)?.destructuringDeclaration
                 ?: error("Destructuring declaration for descriptor $this not found")
 
-        val jsParameter = JsParameter(context.getNameForDescriptor(this))
-        return DestructuringDeclarationTranslator.translate(destructuringDeclaration, jsParameter.name, null, context)
+        val parameterRef = ReferenceTranslator.translateAsValueReference(this, context)
+        return DestructuringDeclarationTranslator.translate(destructuringDeclaration, parameterRef, context)
     }
 }
 
