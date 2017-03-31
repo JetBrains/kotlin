@@ -132,18 +132,19 @@ object KotlinBuilderModuleScriptGenerator {
     fun getOutputDirSafe(target: ModuleBuildTarget): File =
             target.outputDir ?: throw ProjectBuildException("No output directory found for " + target)
 
-    private fun getAdditionalOutputDirsWhereInternalsAreVisible(target: ModuleBuildTarget): List<File> {
-        if (!target.isTests) return emptyList()
+    fun getProductionModulesWhichInternalsAreVisible(from: ModuleBuildTarget): List<JpsModule> {
+        if (!from.isTests) return emptyList()
 
-        val result = SmartList<File>()
-
-        result.addIfNotNull(JpsJavaExtensionService.getInstance().getOutputDirectory(target.module, false))
-
-        getRelatedProductionModule(target.module)?.let {
-            result.addIfNotNull(JpsJavaExtensionService.getInstance().getOutputDirectory(it, false))
-        }
+        val result = SmartList<JpsModule>(from.module)
+        result.addIfNotNull(getRelatedProductionModule(from.module))
 
         return result
+    }
+
+    fun getAdditionalOutputDirsWhereInternalsAreVisible(target: ModuleBuildTarget): List<File> {
+        return getProductionModulesWhichInternalsAreVisible(target).mapNotNullTo(SmartList<File>()) {
+            JpsJavaExtensionService.getInstance().getOutputDirectory(it, false)
+        }
     }
 
     private fun findClassPathRoots(target: ModuleBuildTarget): Collection<File> {

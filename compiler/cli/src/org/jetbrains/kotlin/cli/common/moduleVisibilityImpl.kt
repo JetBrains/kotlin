@@ -42,6 +42,8 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
         }
 
         val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(project)
+        if (!moduleVisibilityManager.helperEnabled) return true;
+
         moduleVisibilityManager.friendPaths.forEach {
             if (isContainedByCompiledPartOfOurModule(what, File(it))) return true
         }
@@ -85,7 +87,6 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
 class CliModuleVisibilityManagerImpl() : ModuleVisibilityManager, Disposable {
     override val chunk: MutableList<Module> = arrayListOf()
     override val friendPaths: MutableList <String> = arrayListOf()
-
     override fun addModule(module: Module) {
         chunk.add(module)
     }
@@ -93,6 +94,8 @@ class CliModuleVisibilityManagerImpl() : ModuleVisibilityManager, Disposable {
     override fun addFriendPath(path: String) {
         friendPaths.add(path)
     }
+
+    override var helperEnabled: Boolean = true
 
     override fun dispose() {
         chunk.clear()

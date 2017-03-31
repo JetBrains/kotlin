@@ -24,4 +24,5 @@ class IdeModuleVisibilityManagerImpl() : ModuleVisibilityManager {
     override val friendPaths: Collection<String> = emptyList()
     override fun addModule(module: Module) {}
     override fun addFriendPath(path: String) {}
+    override var helperEnabled: Boolean = true
 }

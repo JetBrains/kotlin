@@ -63,9 +63,13 @@ public class JsConfig {
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
 
     private final List<KotlinJavascriptMetadata> metadata = new SmartList<KotlinJavascriptMetadata>();
+    private final List<KotlinJavascriptMetadata> friends = new SmartList<KotlinJavascriptMetadata>();
 
     @Nullable
     private List<JsModuleDescriptor<ModuleDescriptorImpl>> moduleDescriptors = null;
+
+    @Nullable
+    private List<JsModuleDescriptor<ModuleDescriptorImpl>> friendModuleDescriptors = null;
 
     private boolean initialized = false;
 
@@ -99,6 +103,12 @@ public class JsConfig {
         return getConfiguration().getList(JSConfigurationKeys.LIBRARIES);
     }
 
+    @NotNull
+    public List<String> getFriends() {
+        return getConfiguration().getList(JSConfigurationKeys.FRIEND_PATHS);
+    }
+
+
     public static abstract class Reporter {
         public void error(@NotNull String message) { /*Do nothing*/ }
 
@@ -110,7 +120,10 @@ public class JsConfig {
     }
 
     private boolean checkLibFilesAndReportErrors(@NotNull JsConfig.Reporter report, @Nullable Function1<VirtualFile, Unit> action) {
-        List<String> libraries = getLibraries();
+        return checkLibFilesAndReportErrors(getLibraries(), report, action);
+    }
+
+    private boolean checkLibFilesAndReportErrors(List<String> libraries, @NotNull JsConfig.Reporter report, @Nullable Function1<VirtualFile, Unit> action) {
         if (libraries.isEmpty()) {
             return false;
         }
@@ -193,8 +206,26 @@ public class JsConfig {
         return moduleDescriptors;
     }
 
+    @NotNull
+    public List<JsModuleDescriptor<ModuleDescriptorImpl>> getFriendModuleDescriptors() {
+        init();
+        if (friendModuleDescriptors != null) return friendModuleDescriptors;
+
+        friendModuleDescriptors = new SmartList<JsModuleDescriptor<ModuleDescriptorImpl>>();
+        for (KotlinJavascriptMetadata metadataEntry : friends) {
+            JsModuleDescriptor<ModuleDescriptorImpl> descriptor = createModuleDescriptor(metadataEntry);
+            friendModuleDescriptors.add(descriptor);
+        }
+
+        friendModuleDescriptors = Collections.unmodifiableList(friendModuleDescriptors);
+
+        return friendModuleDescriptors;
+    }
+
     private void init() {
         if (initialized) return;
+
+        Map<String, List<KotlinJavascriptMetadata>> metaMap = new HashMap<>();
 
         if (!getLibraries().isEmpty()) {
             Function1<VirtualFile, Unit> action = new Function1<VirtualFile, Unit>() {
@@ -202,7 +233,9 @@ public class JsConfig {
                 public Unit invoke(VirtualFile file) {
                     String libraryPath = PathUtil.getLocalPath(file);
                     assert libraryPath != null : "libraryPath for " + file + " should not be null";
-                    metadata.addAll(KotlinJavascriptMetadataUtils.loadMetadata(libraryPath));
+                    List<KotlinJavascriptMetadata> metaList = KotlinJavascriptMetadataUtils.loadMetadata(libraryPath);
+                    metaMap.put(libraryPath, metaList);
+                    metadata.addAll(metaList);
 
                     return Unit.INSTANCE;
                 }
@@ -217,10 +250,37 @@ public class JsConfig {
             assert !hasErrors : "hasErrors should be false";
         }
 
+        if (!getFriends().isEmpty()) {
+            Function1<VirtualFile, Unit> action = new Function1<VirtualFile, Unit>() {
+                @Override
+                public Unit invoke(VirtualFile file) {
+                    String libraryPath = PathUtil.getLocalPath(file);
+                    assert libraryPath != null : "friendsPath for " + file + " should not be null";
+                    friends.addAll(metaMap.get(libraryPath));
+
+                    return Unit.INSTANCE;
+                }
+            };
+
+            boolean hasErrors = checkLibFilesAndReportErrors(getFriends(), new Reporter() {
+                @Override
+                public void error(@NotNull String message) {
+                    throw new IllegalStateException(message);
+                }
+            }, action);
+            assert !hasErrors : "hasErrors should be false";
+        }
+
         initialized = true;
     }
 
+    private IdentityHashMap<KotlinJavascriptMetadata, JsModuleDescriptor<ModuleDescriptorImpl>> factoryMap = new IdentityHashMap<>();
+
     private JsModuleDescriptor<ModuleDescriptorImpl> createModuleDescriptor(KotlinJavascriptMetadata metadata) {
+        if (factoryMap.containsKey(metadata)) {
+            return factoryMap.get(metadata);
+        }
+
         LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
         assert metadata.getVersion().isCompatible() ||
                languageVersionSettings.isFlagEnabled(AnalysisFlags.getSkipMetadataVersionCheck()) :
@@ -238,7 +298,9 @@ public class JsConfig {
         PackageFragmentProvider provider = rawDescriptor.getData();
         moduleDescriptor.initialize(provider != null ? provider : PackageFragmentProvider.Empty.INSTANCE);
 
-        return rawDescriptor.copy(moduleDescriptor);
+        JsModuleDescriptor<ModuleDescriptorImpl> result = rawDescriptor.copy(moduleDescriptor);
+        factoryMap.put(metadata, result);
+        return result;
     }
 
     private static void setDependencies(ModuleDescriptorImpl module, List<ModuleDescriptorImpl> modules) {

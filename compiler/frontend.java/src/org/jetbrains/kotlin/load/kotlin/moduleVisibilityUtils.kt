@@ -33,6 +33,8 @@ interface ModuleVisibilityManager {
     fun addModule(module: Module)
     fun addFriendPath(path: String)
 
+    var helperEnabled: Boolean // Whether ModuleVisibilityHelper should be used
+
     object SERVICE {
         @JvmStatic fun getInstance(project: Project): ModuleVisibilityManager =
                 ServiceManager.getService(project, ModuleVisibilityManager::class.java)

@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationResult;
+import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
@@ -112,6 +113,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         List<KtFile> sourcesFiles = environmentForJS.getSourceFiles();
 
         environmentForJS.getConfiguration().put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage);
+
+        ModuleVisibilityManager moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environmentForJS.getProject());
+        moduleVisibilityManager.setHelperEnabled(false);
 
         if (!checkKotlinPackageUsage(environmentForJS, sourcesFiles)) return ExitCode.COMPILATION_ERROR;
 
@@ -287,11 +291,17 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             ContainerUtil.addAll(libraries, ArraysKt.filterNot(arguments.libraries.split(File.pathSeparator), String::isEmpty));
         }
 
+        configuration.put(JSConfigurationKeys.LIBRARIES, libraries);
+
+
         if (arguments.typedArrays) {
             configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true);
         }
 
-        configuration.put(JSConfigurationKeys.LIBRARIES, libraries);
+        if (arguments.friendModules != null) {
+            List<String> friendPaths = ArraysKt.filterNot(arguments.friendModules.split(File.pathSeparator), String::isEmpty);
+            configuration.put(JSConfigurationKeys.FRIEND_PATHS, friendPaths);
+        }
 
         String moduleKindName = arguments.moduleKind;
         ModuleKind moduleKind = moduleKindName != null ? moduleKindMap.get(moduleKindName) : ModuleKind.PLAIN;

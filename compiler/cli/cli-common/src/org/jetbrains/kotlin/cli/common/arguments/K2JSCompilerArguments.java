@@ -75,6 +75,10 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "Xtypedarrays", description = "Translate primitive arrays to JS typed arrays")
     public boolean typedArrays;
 
+    @Argument(value = "friendModules", description = "Paths to friend modules")
+    @ValueDescription("<path>")
+    public String friendModules;
+
     @NotNull
     public static K2JSCompilerArguments createDefaultInstance() {
         K2JSCompilerArguments arguments = new K2JSCompilerArguments();

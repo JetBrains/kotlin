@@ -373,6 +373,11 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         makeAll().assertSuccessful()
     }
 
+    fun testKotlinJavaScriptInternalFromSpecialRelatedModule() {
+        initProject(JS_STDLIB)
+        makeAll().assertSuccessful()
+    }
+
     fun testKotlinJavaScriptProjectWithTests() {
         initProject(JS_STDLIB)
         makeAll().assertSuccessful()
