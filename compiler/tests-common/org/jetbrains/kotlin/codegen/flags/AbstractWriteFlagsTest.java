@@ -57,7 +57,7 @@ public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
     protected void doMultiFileTest(
             @NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir
     ) throws Exception {
-        compile(files, null, ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, Collections.<String>emptyList());
+        compile(files, null, ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, Collections.emptyList());
 
         String fileText = FileUtil.loadFile(wholeFile, true);
 

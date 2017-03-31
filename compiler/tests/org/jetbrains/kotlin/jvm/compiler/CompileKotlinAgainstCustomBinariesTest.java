@@ -90,7 +90,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
     @NotNull
     private File compileLibrary(@NotNull String sourcePath, @NotNull File... extraClassPath) {
-        return compileLibrary(sourcePath, Collections.<String>emptyList(), extraClassPath);
+        return compileLibrary(sourcePath, Collections.emptyList(), extraClassPath);
     }
 
     private File compileLibrary(@NotNull String sourcePath, List<String> additionalOptions, @NotNull File... extraClassPath) {
@@ -212,7 +212,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
             @NotNull File output,
             @NotNull File... classpath
     ) {
-        return compileKotlin(fileName, output, Collections.<String>emptyList(), classpath);
+        return compileKotlin(fileName, output, Collections.emptyList(), classpath);
     }
 
     @NotNull
@@ -301,7 +301,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     private void doTestKotlinLibraryWithWrongMetadataVersionJs(@NotNull String libraryName, @NotNull String... additionalOptions) {
-        compileLibrary(new K2JSCompiler(), libraryName, new File(tmpdir, "library.js"), Collections.<String>emptyList());
+        compileLibrary(new K2JSCompiler(), libraryName, new File(tmpdir, "library.js"), Collections.emptyList());
 
         File library = new File(tmpdir, "library.meta.js");
         FilesKt.writeText(library, FilesKt.readText(library, Charsets.UTF_8).replace(
@@ -327,7 +327,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
         try {
             System.setProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, "true");
-            compileLibrary(compiler, libraryName, destination, Collections.<String>emptyList());
+            compileLibrary(compiler, libraryName, destination, Collections.emptyList());
         }
         finally {
             System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY);

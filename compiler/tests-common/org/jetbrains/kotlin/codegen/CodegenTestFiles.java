@@ -79,7 +79,7 @@ public class CodegenTestFiles {
     @NotNull
     public static CodegenTestFiles create(@NotNull List<KtFile> ktFiles) {
         assert !ktFiles.isEmpty() : "List should have at least one file";
-        return new CodegenTestFiles(ktFiles, Collections.<Pair<String, String>>emptyList(), Collections.emptyList());
+        return new CodegenTestFiles(ktFiles, Collections.emptyList(), Collections.emptyList());
     }
 
     public static CodegenTestFiles create(Project project, String[] names) {

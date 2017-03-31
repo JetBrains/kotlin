@@ -66,8 +66,8 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     private File compileJava0(@NotNull String fileName) {
         return CodegenTestUtil.compileJava(
                 Collections.singletonList(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + fileName),
-                Collections.<String>emptyList(),
-                Collections.<String>emptyList()
+                Collections.emptyList(),
+                Collections.emptyList()
         );
     }
 

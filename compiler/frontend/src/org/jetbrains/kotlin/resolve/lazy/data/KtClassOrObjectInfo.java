@@ -88,7 +88,7 @@ public abstract class KtClassOrObjectInfo<E extends KtClassOrObject> implements 
     @Override
     public List<KtAnnotationEntry> getDanglingAnnotations() {
         KtClassBody body = element.getBody();
-        return body == null ? Collections.<KtAnnotationEntry>emptyList() : body.getDanglingAnnotations();
+        return body == null ? Collections.emptyList() : body.getDanglingAnnotations();
     }
 
     @NotNull

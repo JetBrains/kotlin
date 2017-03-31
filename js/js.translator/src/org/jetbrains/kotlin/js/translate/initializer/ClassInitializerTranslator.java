@@ -173,7 +173,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
     private void mayBeAddCallToSuperMethod(JsFunction initializer) {
         if (classDeclaration.hasModifier(KtTokens.ENUM_KEYWORD)) {
-            addCallToSuperMethod(Collections.<JsExpression>emptyList(), initializer);
+            addCallToSuperMethod(Collections.emptyList(), initializer);
         }
         else if (hasAncestorClass(bindingContext(), classDeclaration)) {
             ResolvedCall<FunctionDescriptor> superCall = getSuperCall(bindingContext(), classDeclaration);

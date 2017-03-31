@@ -304,9 +304,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 newOuterLoops.add(loopExpression);
                 return super.visitLoopExpression(loopExpression, newOuterLoops);
             }
-        }, expression instanceof KtLoopExpression
-           ? Lists.newArrayList((KtLoopExpression) expression)
-           : Lists.<KtLoopExpression>newArrayList());
+        }, expression instanceof KtLoopExpression ? Lists.newArrayList((KtLoopExpression) expression) : Lists.newArrayList());
 
         return result[0];
     }

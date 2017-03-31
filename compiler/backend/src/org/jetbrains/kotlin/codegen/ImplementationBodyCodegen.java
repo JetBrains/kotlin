@@ -1031,7 +1031,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         else if (constructor.hasBody() && !(constructor instanceof KtSecondaryConstructor && !((KtSecondaryConstructor) constructor).hasImplicitDelegationCall())) {
             KtBlockExpression bodyExpression = constructor.getBodyExpression();
-            List<KtExpression> statements = bodyExpression != null ? bodyExpression.getStatements() : Collections.<KtExpression>emptyList();
+            List<KtExpression> statements = bodyExpression != null ? bodyExpression.getStatements() : Collections.emptyList();
             if (!statements.isEmpty()) {
                 codegen.markStartLineNumber(statements.iterator().next());
             }

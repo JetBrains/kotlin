@@ -35,12 +35,12 @@ public class CallCounter extends RecursiveJsVisitor {
 
     @NotNull
     public static CallCounter countCalls(@NotNull JsNode node) {
-        return countCalls(node, Collections.<String>emptySet());
+        return countCalls(node, Collections.emptySet());
     }
 
     @NotNull
     public static CallCounter countCalls(@NotNull JsNode node, @NotNull Set<String> exceptFunctionNames) {
-        CallCounter visitor = new CallCounter(new HashSet<>(exceptFunctionNames), Collections.<String>emptySet());
+        CallCounter visitor = new CallCounter(new HashSet<>(exceptFunctionNames), Collections.emptySet());
         node.accept(visitor);
 
         return visitor;
@@ -48,7 +48,7 @@ public class CallCounter extends RecursiveJsVisitor {
 
     @NotNull
     public static CallCounter countCallsWithExcludedScopes(@NotNull JsNode node, @NotNull Set<String> exceptScopes) {
-        CallCounter visitor = new CallCounter(Collections.<String>emptySet(), new HashSet<>(exceptScopes));
+        CallCounter visitor = new CallCounter(Collections.emptySet(), new HashSet<>(exceptScopes));
         node.accept(visitor);
 
         return visitor;

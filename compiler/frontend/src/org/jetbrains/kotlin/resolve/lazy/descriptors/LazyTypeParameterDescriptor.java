@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors;
 
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker;
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -93,7 +92,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         return CollectionsKt.plus(
                 typeParameter.getExtendsBound() != null
                 ? Collections.singletonList(typeParameter.getExtendsBound())
-                : Collections.<KtTypeReference>emptyList(),
+                : Collections.emptyList(),
                 getUpperBoundsFromWhereClause()
         );
     }

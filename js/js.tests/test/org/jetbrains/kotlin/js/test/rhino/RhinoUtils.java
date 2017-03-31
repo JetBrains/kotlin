@@ -125,7 +125,7 @@ public final class RhinoUtils {
             @Nullable Map<String, Object> variables,
             @NotNull EcmaVersion ecmaVersion)
             throws Exception {
-        runRhinoTest(fileNames, checker, variables, ecmaVersion, Collections.<String>emptyList());
+        runRhinoTest(fileNames, checker, variables, ecmaVersion, Collections.emptyList());
     }
 
     public static void runRhinoTest(@NotNull List<String> fileNames,

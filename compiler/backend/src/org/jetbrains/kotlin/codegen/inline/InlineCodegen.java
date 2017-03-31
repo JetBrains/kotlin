@@ -590,7 +590,7 @@ public class InlineCodegen extends CallGenerator {
             strategy =
                     new SuspendFunctionGenerationStrategy(
                             state,
-                            CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(descriptor),
+                            CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(descriptor),
                             (KtFunction) expression
                     );
         }

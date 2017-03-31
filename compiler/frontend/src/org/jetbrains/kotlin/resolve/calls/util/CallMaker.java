@@ -233,7 +233,7 @@ public class CallMaker {
 
     @NotNull
     public static Call makeCall(@NotNull ReceiverValue baseAsReceiver, KtUnaryExpression expression) {
-        return makeCall(expression, baseAsReceiver, null, expression.getOperationReference(), Collections.<ValueArgument>emptyList());
+        return makeCall(expression, baseAsReceiver, null, expression.getOperationReference(), Collections.emptyList());
     }
 
     @NotNull
@@ -277,7 +277,7 @@ public class CallMaker {
 
     @NotNull
     public static Call makePropertyCall(@Nullable Receiver explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull KtSimpleNameExpression nameExpression) {
-        return makeCallWithExpressions(nameExpression, explicitReceiver, callOperationNode, nameExpression, Collections.<KtExpression>emptyList());
+        return makeCallWithExpressions(nameExpression, explicitReceiver, callOperationNode, nameExpression, Collections.emptyList());
     }
 
 
@@ -446,6 +446,6 @@ public class CallMaker {
 
     @NotNull
     public static Call makeCall(@NotNull KtElement callElement, @NotNull ReceiverValue explicitReceiver) {
-        return new CallImpl(callElement, explicitReceiver, null, null, Collections.<ValueArgument>emptyList());
+        return new CallImpl(callElement, explicitReceiver, null, null, Collections.emptyList());
     }
 }

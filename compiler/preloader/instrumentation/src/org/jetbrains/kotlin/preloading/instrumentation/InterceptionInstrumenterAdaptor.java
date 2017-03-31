@@ -20,11 +20,10 @@ import java.io.PrintStream;
 import java.util.Collections;
 
 public abstract class InterceptionInstrumenterAdaptor implements Instrumenter {
-
     private final InterceptionInstrumenter instrumenter;
 
     public InterceptionInstrumenterAdaptor() {
-        this.instrumenter = new InterceptionInstrumenter(Collections.<Class<?>>singletonList(getClass()));
+        this.instrumenter = new InterceptionInstrumenter(Collections.singletonList(getClass()));
     }
 
     @Override

@@ -437,7 +437,7 @@ public class KotlinTestUtils {
             @NotNull TestJdkKind jdkKind,
             @NotNull File... extraClasspath
     ) {
-        return newConfiguration(configurationKind, jdkKind, Arrays.asList(extraClasspath), Collections.<File>emptyList());
+        return newConfiguration(configurationKind, jdkKind, Arrays.asList(extraClasspath), Collections.emptyList());
     }
 
     @NotNull
@@ -636,7 +636,7 @@ public class KotlinTestUtils {
         }
 
         if (isDirectiveDefined(expectedText, "WITH_COROUTINES")) {
-            M supportModule = hasModules ? factory.createModule("support", Collections.<String>emptyList()) : null;
+            M supportModule = hasModules ? factory.createModule("support", Collections.emptyList()) : null;
             testFiles.add(factory.createFile(supportModule,
                                              "CoroutineUtil.kt",
                                              "import kotlin.coroutines.experimental.*\n" +

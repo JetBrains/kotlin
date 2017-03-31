@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 import java.util.Collections;
 
-
 public final class IntrinsicIncrementTranslator extends IncrementTranslator {
     @NotNull
     private final ResolvedCall<? extends FunctionDescriptor> resolvedCall;
@@ -44,6 +43,6 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
     protected JsExpression operationExpression(@NotNull TranslationContext context, @NotNull JsExpression receiver) {
         FunctionIntrinsic intrinsic = context.intrinsics().getFunctionIntrinsic(resolvedCall.getResultingDescriptor());
         CallInfo callInfo = CallInfoKt.getCallInfo(context, resolvedCall, receiver);
-        return intrinsic.apply(callInfo, Collections.<JsExpression>emptyList(), context);
+        return intrinsic.apply(callInfo, Collections.emptyList(), context);
     }
 }

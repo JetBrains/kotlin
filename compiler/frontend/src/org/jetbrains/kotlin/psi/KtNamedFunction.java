@@ -115,7 +115,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @NotNull
     public List<KtParameter> getValueParameters() {
         KtParameterList list = getValueParameterList();
-        return list != null ? list.getParameters() : Collections.<KtParameter>emptyList();
+        return list != null ? list.getParameters() : Collections.emptyList();
     }
 
     @Override

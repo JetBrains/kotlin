@@ -128,18 +128,18 @@ public class RecursiveDescriptorComparator {
                 if (!DescriptorUtils.getAllDescriptors(staticScope).isEmpty()) {
                     printer.println();
                     printer.println("// Static members");
-                    appendSubDescriptors(descriptor, module, staticScope, Collections.<DeclarationDescriptor>emptyList(), printer);
+                    appendSubDescriptors(descriptor, module, staticScope, Collections.emptyList(), printer);
                 }
             }
             else if (descriptor instanceof PackageFragmentDescriptor) {
                 appendSubDescriptors(descriptor, module,
                                      ((PackageFragmentDescriptor) descriptor).getMemberScope(),
-                                     Collections.<DeclarationDescriptor>emptyList(), printer);
+                                     Collections.emptyList(), printer);
             }
             else if (descriptor instanceof PackageViewDescriptor) {
                 appendSubDescriptors(descriptor, module,
                                      getPackageScopeInModule((PackageViewDescriptor) descriptor, module),
-                                     Collections.<DeclarationDescriptor>emptyList(), printer);
+                                     Collections.emptyList(), printer);
             }
 
             if (!topLevel) {

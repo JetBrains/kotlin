@@ -171,7 +171,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
             @NotNull
             @Override
             public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
-                return ContainerUtil.<PackageFragmentDescriptor>createMaybeSingletonList(getPackageFragment(fqName));
+                return ContainerUtil.createMaybeSingletonList(getPackageFragment(fqName));
             }
 
             @NotNull
@@ -339,7 +339,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         LazyPackageDescriptor rootPackage = getPackageFragment(FqName.ROOT);
         assert rootPackage != null : "Root package must be initialized";
 
-        return collectAllPackages(Lists.<LazyPackageDescriptor>newArrayList(), rootPackage);
+        return collectAllPackages(Lists.newArrayList(), rootPackage);
     }
 
     @NotNull

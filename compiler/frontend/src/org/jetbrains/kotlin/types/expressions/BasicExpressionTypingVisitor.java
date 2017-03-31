@@ -667,7 +667,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             KtExpression expression
     ) {
         BindingTrace trace = context.trace;
-        Call call = CallMaker.makeCall(expression, null, null, expression, Collections.<ValueArgument>emptyList());
+        Call call = CallMaker.makeCall(expression, null, null, expression, Collections.emptyList());
         ResolutionCandidate<ReceiverParameterDescriptor> resolutionCandidate =
                 ResolutionCandidate.create(
                         call, descriptor, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);

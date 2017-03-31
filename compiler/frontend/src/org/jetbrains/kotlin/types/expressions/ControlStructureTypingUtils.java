@@ -118,7 +118,7 @@ public class ControlStructureTypingUtils {
         TracingStrategy tracing = createTracingForSpecialConstruction(call, construct.getName(), context);
         TypeSubstitutor knownTypeParameterSubstitutor = createKnownTypeParameterSubstitutorForSpecialCall(construct, function, context.expectedType);
         ResolutionCandidate<FunctionDescriptor> resolutionCandidate =
-                ResolutionCandidate.<FunctionDescriptor>create(call, function, knownTypeParameterSubstitutor);
+                ResolutionCandidate.create(call, function, knownTypeParameterSubstitutor);
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithKnownCandidate(
                 call, tracing, context, resolutionCandidate, dataFlowInfoForArguments);
         assert results.isSingleResult() : "Not single result after resolving one known candidate";

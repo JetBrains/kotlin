@@ -387,10 +387,7 @@ public class CheckerTestUtil {
     }
 
     public static StringBuffer addDiagnosticMarkersToText(@NotNull PsiFile psiFile, @NotNull Collection<ActualDiagnostic> diagnostics) {
-        return addDiagnosticMarkersToText(
-                psiFile, diagnostics, Collections.<ActualDiagnostic, TextDiagnostic>emptyMap(),
-                PsiElement::getText
-        );
+        return addDiagnosticMarkersToText(psiFile, diagnostics, Collections.emptyMap(), PsiElement::getText);
     }
 
     public static StringBuffer addDiagnosticMarkersToText(

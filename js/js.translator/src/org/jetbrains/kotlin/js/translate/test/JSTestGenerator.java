@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.js.translate.test;
 
-import org.jetbrains.kotlin.js.backend.ast.JsExpression;
-import org.jetbrains.kotlin.js.backend.ast.JsNew;
-import org.jetbrains.kotlin.js.backend.ast.JsStringLiteral;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.JsNew;
+import org.jetbrains.kotlin.js.backend.ast.JsStringLiteral;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.JetTestFunctionDetector;
@@ -60,8 +60,8 @@ public final class JSTestGenerator {
             @NotNull ClassDescriptor classDescriptor, @NotNull JSTester tester) {
         JsExpression expression = ReferenceTranslator.translateAsValueReference(classDescriptor, context);
         JsNew testClass = new JsNew(expression);
-        JsExpression functionToTestCall = CallTranslator.INSTANCE.buildCall(context, functionDescriptor,
-                                                                             Collections.<JsExpression>emptyList(), testClass);
+        JsExpression functionToTestCall =
+                CallTranslator.INSTANCE.buildCall(context, functionDescriptor, Collections.emptyList(), testClass);
         JsStringLiteral testName = context.program().getStringLiteral(classDescriptor.getName() + "." + functionDescriptor.getName());
         tester.constructTestMethodInvocation(functionToTestCall, testName);
     }

@@ -85,7 +85,7 @@ public class OperatorConventions {
             ImmutableSet.of(KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ);
 
     public static final ImmutableSet<KtSingleValueToken> IN_OPERATIONS =
-            ImmutableSet.<KtSingleValueToken>of(KtTokens.IN_KEYWORD, KtTokens.NOT_IN);
+            ImmutableSet.of(KtTokens.IN_KEYWORD, KtTokens.NOT_IN);
 
     public static final ImmutableBiMap<KtSingleValueToken, Name> ASSIGNMENT_OPERATIONS = ImmutableBiMap.<KtSingleValueToken, Name>builder()
             .put(KtTokens.MULTEQ, TIMES_ASSIGN)

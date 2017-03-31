@@ -157,8 +157,8 @@ public class OuterClassGenTest extends CodegenTestCase {
     private void doTest(@NotNull String classFqName, @NotNull String javaClassName, @NotNull String testDataFile) throws Exception {
         File javaOut = CodegenTestUtil.compileJava(
                 Collections.singletonList(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + testDataFile + ".java"),
-                Collections.<String>emptyList(),
-                Collections.<String>emptyList()
+                Collections.emptyList(),
+                Collections.emptyList()
         );
 
         String javaClassPath = javaClassName.replace('.', File.separatorChar) + ".class";

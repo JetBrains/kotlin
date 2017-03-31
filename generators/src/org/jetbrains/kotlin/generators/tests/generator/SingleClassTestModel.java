@@ -88,17 +88,17 @@ public class SingleClassTestModel implements TestClassModel {
 
             ContainerUtil.sort(result, (o1, o2) -> StringUtil.compare(o1.getName(), o2.getName(), true));
 
-            methods = Lists.<MethodModel>newArrayList(result);
+            methods = Lists.newArrayList(result);
         }
 
         return methods;
     }
 
     @NotNull
-    protected Collection<TestMethodModel> getTestMethodsFromFile(File file) {
-        return Collections.<TestMethodModel>singletonList(new SimpleTestMethodModel(rootFile, file, doTestMethodName,
-                                                                                    filenamePattern, checkFilenameStartsLowerCase,
-                                                                                    targetBackend));
+    private Collection<TestMethodModel> getTestMethodsFromFile(File file) {
+        return Collections.singletonList(new SimpleTestMethodModel(
+                rootFile, file, doTestMethodName, filenamePattern, checkFilenameStartsLowerCase, targetBackend
+        ));
     }
 
     @Override

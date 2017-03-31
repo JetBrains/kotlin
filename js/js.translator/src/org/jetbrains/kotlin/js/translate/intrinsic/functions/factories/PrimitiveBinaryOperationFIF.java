@@ -314,7 +314,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         @NotNull
         @Override
         public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
-            return functionIntrinsic.doApply(left, TopLevelFIF.TO_STRING.apply(right, Collections.<JsExpression>emptyList(), context), context);
+            return functionIntrinsic.doApply(left, TopLevelFIF.TO_STRING.apply(right, Collections.emptyList(), context), context);
         }
     }
 }

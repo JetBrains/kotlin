@@ -270,7 +270,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE
         ) {
             {
-                initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
+                initialize(null, null, Collections.emptyList(), Collections.emptyList(),
                            null, Modality.FINAL, Visibilities.PRIVATE);
             }
 
@@ -665,13 +665,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         KtClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
         if (classOrObject == null) {
-            return Collections.<KotlinType>singleton(c.getModuleDescriptor().getBuiltIns().getAnyType());
+            return Collections.singleton(c.getModuleDescriptor().getBuiltIns().getAnyType());
         }
 
         List<KotlinType> allSupertypes =
-                c.getDescriptorResolver()
-                        .resolveSupertypes(getScopeForClassHeaderResolution(), this, classOrObject,
-                                           c.getTrace());
+                c.getDescriptorResolver().resolveSupertypes(getScopeForClassHeaderResolution(), this, classOrObject, c.getTrace());
 
         return new ArrayList<>(CollectionsKt.filter(allSupertypes, VALID_SUPERTYPE));
     }

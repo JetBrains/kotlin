@@ -60,7 +60,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
         List<ScriptDescriptor> earlierScripts = state.getReplSpecific().getEarlierScriptsForReplInterpreter();
         ScriptContext scriptContext = parentContext.intoScript(
                 scriptDescriptor,
-                earlierScripts == null ? Collections.<ScriptDescriptor>emptyList() : earlierScripts,
+                earlierScripts == null ? Collections.emptyList() : earlierScripts,
                 scriptDescriptor,
                 state.getTypeMapper()
         );

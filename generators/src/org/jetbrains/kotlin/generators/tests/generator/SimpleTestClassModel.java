@@ -139,9 +139,9 @@ public class SimpleTestClassModel implements TestClassModel {
     public Collection<MethodModel> getMethods() {
         if (testMethods == null) {
             if (!rootFile.isDirectory()) {
-                testMethods = Collections.<MethodModel>singletonList(new SimpleTestMethodModel(rootFile, rootFile, doTestMethodName,
-                                                                                                   filenamePattern, checkFilenameStartsLowerCase,
-                                                                                                   targetBackend));
+                testMethods = Collections.singletonList(new SimpleTestMethodModel(
+                        rootFile, rootFile, doTestMethodName, filenamePattern, checkFilenameStartsLowerCase, targetBackend
+                ));
             }
             else {
                 List<MethodModel> result = Lists.newArrayList();

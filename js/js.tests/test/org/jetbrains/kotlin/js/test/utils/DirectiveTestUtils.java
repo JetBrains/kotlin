@@ -335,7 +335,7 @@ public class DirectiveTestUtils {
 
     public static void checkFunctionNotCalled(@NotNull JsNode node, @NotNull String functionName, @Nullable String exceptFunction)
             throws Exception {
-        Set<String> excludedScopes = exceptFunction != null ? Collections.singleton(exceptFunction) : Collections.<String>emptySet();
+        Set<String> excludedScopes = exceptFunction != null ? Collections.singleton(exceptFunction) : Collections.emptySet();
 
         CallCounter counter = CallCounter.countCallsWithExcludedScopes(node, excludedScopes);
         int functionCalledCount = counter.getQualifiedCallsCount(functionName);

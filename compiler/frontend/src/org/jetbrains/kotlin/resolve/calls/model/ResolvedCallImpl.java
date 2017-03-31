@@ -127,23 +127,17 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
 
     @NotNull
     private static Map<ValueParameterDescriptor, ResolvedValueArgument> createValueArgumentsMap(CallableDescriptor descriptor) {
-        return descriptor.getValueParameters().isEmpty()
-               ? Collections.<ValueParameterDescriptor, ResolvedValueArgument>emptyMap()
-               : Maps.<ValueParameterDescriptor, ResolvedValueArgument>newLinkedHashMap();
+        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : Maps.newLinkedHashMap();
     }
 
     @NotNull
     private static Map<ValueArgument, ArgumentMatchImpl> createArgumentsToParameterMap(CallableDescriptor descriptor) {
-        return descriptor.getValueParameters().isEmpty()
-               ? Collections.<ValueArgument, ArgumentMatchImpl>emptyMap()
-               : Maps.<ValueArgument, ArgumentMatchImpl>newHashMap();
+        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : Maps.newHashMap();
     }
 
     @NotNull
     private static Map<TypeParameterDescriptor, KotlinType> createTypeArgumentsMap(CallableDescriptor descriptor) {
-        return descriptor.getTypeParameters().isEmpty()
-               ? Collections.<TypeParameterDescriptor, KotlinType>emptyMap()
-               : Maps.<TypeParameterDescriptor, KotlinType>newLinkedHashMap();
+        return descriptor.getTypeParameters().isEmpty() ? Collections.emptyMap() : Maps.newLinkedHashMap();
     }
 
     @Override

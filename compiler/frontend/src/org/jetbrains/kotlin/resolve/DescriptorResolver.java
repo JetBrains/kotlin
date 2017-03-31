@@ -125,8 +125,8 @@ public class DescriptorResolver {
             BindingTrace trace
     ) {
         List<KotlinType> supertypes = Lists.newArrayList();
-        List<KtSuperTypeListEntry> delegationSpecifiers = correspondingClassOrObject == null ? Collections.<KtSuperTypeListEntry>emptyList() :
-                                                          correspondingClassOrObject.getSuperTypeListEntries();
+        List<KtSuperTypeListEntry> delegationSpecifiers =
+                correspondingClassOrObject == null ? Collections.emptyList() : correspondingClassOrObject.getSuperTypeListEntries();
         Collection<KotlinType> declaredSupertypes = resolveSuperTypeListEntries(
                 scope,
                 delegationSpecifiers,
@@ -1151,8 +1151,9 @@ public class DescriptorResolver {
                 false
         );
         propertyWrapper.setDescriptor(propertyDescriptor);
-        propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),
-                                   getDispatchReceiverParameterIfNeeded(classDescriptor), (ReceiverParameterDescriptor) null);
+        propertyDescriptor.setType(
+                type, Collections.emptyList(), getDispatchReceiverParameterIfNeeded(classDescriptor), (ReceiverParameterDescriptor) null
+        );
 
         Annotations setterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER);
         Annotations getterAnnotations = new CompositeAnnotations(CollectionsKt.listOf(

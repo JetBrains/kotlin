@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
-import org.jetbrains.kotlin.types.TypeProjection;
 
 import java.io.File;
 import java.io.IOException;
@@ -173,7 +172,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
     @NotNull
     private static FunctionDescriptor getFunctionDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name functionName = Name.identifier(name);
-        MemberScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
+        MemberScope memberScope = classDescriptor.getMemberScope(Collections.emptyList());
         Collection<SimpleFunctionDescriptor> functions = memberScope.getContributedFunctions(functionName, NoLookupLocation.FROM_TEST);
         assert functions.size() == 1 : "Failed to find function " + functionName + " in class" + "." + classDescriptor.getName();
         return functions.iterator().next();
@@ -187,9 +186,8 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
         if (properties.isEmpty()) {
             for (DeclarationDescriptor descriptor : DescriptorUtils.getAllDescriptors(memberScope)) {
                 if (descriptor instanceof ClassDescriptor) {
-                    Collection<PropertyDescriptor> classProperties =
-                            ((ClassDescriptor) descriptor).getMemberScope(Collections.<TypeProjection>emptyList())
-                                    .getContributedVariables(propertyName, NoLookupLocation.FROM_TEST);
+                    Collection<PropertyDescriptor> classProperties = ((ClassDescriptor) descriptor).getMemberScope(Collections.emptyList())
+                            .getContributedVariables(propertyName, NoLookupLocation.FROM_TEST);
                     if (!classProperties.isEmpty()) {
                         properties = classProperties;
                         break;
@@ -209,7 +207,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
     @NotNull
     private static PropertyDescriptor getPropertyDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name propertyName = Name.identifier(name);
-        MemberScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
+        MemberScope memberScope = classDescriptor.getMemberScope(Collections.emptyList());
         Collection<PropertyDescriptor> properties = memberScope.getContributedVariables(propertyName, NoLookupLocation.FROM_TEST);
         assert properties.size() == 1 : "Failed to find property " + propertyName + " in class " + classDescriptor.getName();
         return properties.iterator().next();
@@ -227,7 +225,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
     @NotNull
     private static ClassDescriptor getInnerClassDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name propertyName = Name.identifier(name);
-        MemberScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
+        MemberScope memberScope = classDescriptor.getMemberScope(Collections.emptyList());
         ClassifierDescriptor innerClass = memberScope.getContributedClassifier(propertyName, NoLookupLocation.FROM_TEST);
         assert innerClass instanceof ClassDescriptor : "Failed to find inner class " +
                                                        propertyName +

@@ -61,7 +61,7 @@ public class InliningContext {
 
     @NotNull
     public InliningContext subInline(@NotNull NameGenerator generator) {
-        return subInline(generator, Collections.<String, String>emptyMap(), isInliningLambda);
+        return subInline(generator, Collections.emptyMap(), isInliningLambda);
     }
 
     @NotNull

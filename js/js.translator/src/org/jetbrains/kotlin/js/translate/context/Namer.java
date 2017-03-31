@@ -300,7 +300,7 @@ public final class Namer {
             @Nullable JsExpression argument,
             @NotNull TypeCheck metadata
     ) {
-        List<JsExpression> arguments = argument != null ? Collections.singletonList(argument) : Collections.<JsExpression>emptyList();
+        List<JsExpression> arguments = argument != null ? Collections.singletonList(argument) : Collections.emptyList();
         return invokeFunctionAndSetTypeCheckMetadata(functionName, arguments, metadata);
     }
 

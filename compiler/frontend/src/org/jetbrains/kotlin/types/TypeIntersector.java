@@ -136,7 +136,7 @@ public class TypeIntersector {
         return KotlinTypeFactory.simpleType(
                 Annotations.Companion.getEMPTY(),
                 constructor,
-                Collections.<TypeProjection>emptyList(),
+                Collections.emptyList(),
                 allNullable,
                 constructor.createScopeForKotlinType()
         );

@@ -35,7 +35,7 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> nameNotFound() {
         OverloadResolutionResultsImpl<D> results = new OverloadResolutionResultsImpl<>(
                 Code.NAME_NOT_FOUND, Collections.<MutableResolvedCall<D>>emptyList());
-        results.setAllCandidates(Collections.<ResolvedCall<D>>emptyList());
+        results.setAllCandidates(Collections.emptyList());
         return results;
     }
 

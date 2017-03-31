@@ -108,7 +108,7 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
     @NotNull
     public List<KtImportDirective> getImportDirectives() {
         KtImportList importList = getImportList();
-        return importList != null ? importList.getImports() : Collections.<KtImportDirective>emptyList();
+        return importList != null ? importList.getImports() : Collections.emptyList();
     }
 
     @Nullable

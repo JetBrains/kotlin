@@ -72,7 +72,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinPlaceHolderStub<KtFu
     @NotNull
     public List<KtParameter> getParameters() {
         KtParameterList list = getParameterList();
-        return list != null ? list.getParameters() : Collections.<KtParameter>emptyList();
+        return list != null ? list.getParameters() : Collections.emptyList();
     }
 
     @Nullable

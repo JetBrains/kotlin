@@ -106,7 +106,7 @@ public final class MutableClosure implements CalculatedClosure {
     @NotNull
     @Override
     public Map<DeclarationDescriptor, EnclosedValueDescriptor> getCaptureVariables() {
-        return captureVariables != null ? captureVariables : Collections.<DeclarationDescriptor, EnclosedValueDescriptor>emptyMap();
+        return captureVariables != null ? captureVariables : Collections.emptyMap();
     }
 
     public void setCaptureReceiverType(@NotNull KotlinType type) {
@@ -116,7 +116,7 @@ public final class MutableClosure implements CalculatedClosure {
     @NotNull
     @Override
     public List<Pair<String, Type>> getRecordedFields() {
-        return recordedFields != null ? recordedFields : Collections.<Pair<String, Type>>emptyList();
+        return recordedFields != null ? recordedFields : Collections.emptyList();
     }
 
     @Override

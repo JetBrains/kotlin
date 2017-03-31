@@ -89,7 +89,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             @NotNull ConfigurationKind configurationKind,
             @Nullable File... javaSourceRoots
     ) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind, Collections.<TestFile>emptyList(), javaSourceRoots);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind, Collections.emptyList(), javaSourceRoots);
     }
 
     @NotNull
