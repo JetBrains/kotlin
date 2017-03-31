@@ -111,6 +111,10 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "Xload-builtins-from-dependencies", description = "Load definitions of built-in declarations from module dependencies, instead of from the compiler")
     public boolean loadBuiltInsFromDependencies;
 
+    @Argument(value = "Xscript-resolver-environment", description = "Script resolver environment in key-value pairs (the value could be quoted and escaped)")
+    @ValueDescription("<key=value[,]>")
+    public String[] scriptResolverEnvironment;
+
     // Paths to output directories for friend modules.
     public String[] friendPaths;
 
