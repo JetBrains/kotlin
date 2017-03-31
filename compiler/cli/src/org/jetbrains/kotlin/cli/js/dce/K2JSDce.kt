@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.backend.ast
+@file:JvmName("K2JSDce")
+package org.jetbrains.kotlin.cli.js.dce
 
-data class JsLocation(
-        val file: String?,
-        val startLine: Int,
-        val startChar: Int
-)
+import org.jetbrains.kotlin.js.dce.DeadCodeElimination
+import org.jetbrains.kotlin.js.dce.InputFile
+import org.jetbrains.kotlin.js.dce.extractRoots
+import org.jetbrains.kotlin.js.dce.printTree
+
+fun main(args: Array<String>) {
+    val files = args.map { InputFile(it) }
+    val nodes = DeadCodeElimination.run(files, emptySet()) { println(it) }
+
+    println()
+    for (node in nodes.extractRoots()) {
+        printTree(node, { println(it) }, printNestedMembers = false, showLocations = true)
+    }
+}

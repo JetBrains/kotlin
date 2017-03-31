@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.backend.ast
+package org.jetbrains.kotlin.js.dce
 
-data class JsLocation(
-        val file: String?,
-        val startLine: Int,
-        val startChar: Int
-)
+class InputFile(val name: String, val outputName: String? = null, val moduleName: String? = null)

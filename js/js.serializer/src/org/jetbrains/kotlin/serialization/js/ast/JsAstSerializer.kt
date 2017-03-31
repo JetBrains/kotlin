@@ -564,9 +564,10 @@ class JsAstSerializer {
         var fileChanged = false
         if (location != null) {
             val lastFile = fileStack.peek()
-            fileChanged = lastFile != location.file
+            val newFile = location.file
+            fileChanged = lastFile != newFile && newFile != null
             if (fileChanged) {
-                fileConsumer(serialize(location.file))
+                fileConsumer(serialize(newFile!!))
                 fileStack.push(location.file)
             }
             val locationBuilder = Location.newBuilder()

@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.backend.ast
+package org.jetbrains.kotlin.js.dce
 
-data class JsLocation(
-        val file: String?,
-        val startLine: Int,
-        val startChar: Int
-)
+import org.jetbrains.kotlin.js.backend.ast.JsFunction
+import org.jetbrains.kotlin.js.backend.ast.JsInvocation
+import org.jetbrains.kotlin.js.backend.ast.JsNode
+import org.jetbrains.kotlin.js.dce.Context.Node
+
+interface AnalysisResult {
+    val nodeMap: Map<JsNode, Node>
+
+    val astNodesToEliminate: Set<JsNode>
+
+    val astNodesToSkip: Set<JsNode>
+
+    val functionsToEnter: Set<JsFunction>
+
+    val invocationsToSkip: Set<JsInvocation>
+}
