@@ -75,7 +75,11 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "Xtypedarrays", description = "Translate primitive arrays to JS typed arrays")
     public boolean typedArrays;
 
-    @Argument(value = "friendModules", description = "Paths to friend modules")
+    @GradleOption(DefaultValues.BooleanFalseDefault.class)
+    @Argument(value = "XfriendModulesDisabled", description = "Translate primitive arrays to JS typed arrays")
+    public boolean friendModulesDisabled;
+
+    @Argument(value = "XfriendModules", description = "Paths to friend modules")
     @ValueDescription("<path>")
     public String friendModules;
 

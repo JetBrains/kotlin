@@ -105,6 +105,7 @@ public class JsConfig {
 
     @NotNull
     public List<String> getFriends() {
+        if (getConfiguration().getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)) return Collections.emptyList();
         return getConfiguration().getList(JSConfigurationKeys.FRIEND_PATHS);
     }
 

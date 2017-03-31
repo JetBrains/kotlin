@@ -298,7 +298,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true);
         }
 
-        if (arguments.friendModules != null) {
+        configuration.put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, arguments.friendModulesDisabled);
+
+        if (!arguments.friendModulesDisabled && arguments.friendModules != null) {
             List<String> friendPaths = ArraysKt.filterNot(arguments.friendModules.split(File.pathSeparator), String::isEmpty);
             configuration.put(JSConfigurationKeys.FRIEND_PATHS, friendPaths);
         }

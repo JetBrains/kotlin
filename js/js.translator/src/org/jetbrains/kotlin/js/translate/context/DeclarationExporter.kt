@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.isInlineOnlyOrReifiable
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
@@ -140,7 +141,14 @@ internal class DeclarationExporter(val context: StaticContext) {
         }
         return name.makeRef()
     }
+
+    private fun EffectiveVisibility.publicOrInternal(): Boolean {
+        if (publicApi) return true
+        if (context.config.configuration.getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)) return false
+        return relation(EffectiveVisibility.Internal) == EffectiveVisibility.Permissiveness.SAME
+    }
+
+    private fun MemberDescriptor.shouldBeExported(force: Boolean) =
+            force || effectiveVisibility(checkPublishedApi = true).publicOrInternal() || AnnotationsUtils.getJsNameAnnotation(this) != null
 }
 
-private fun MemberDescriptor.shouldBeExported(force: Boolean) =
-        force || effectiveVisibility(checkPublishedApi = true).publicApi || AnnotationsUtils.getJsNameAnnotation(this) != null
