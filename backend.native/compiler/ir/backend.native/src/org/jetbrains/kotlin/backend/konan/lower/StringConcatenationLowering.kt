@@ -86,8 +86,8 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
         assert(!buildersStack.isEmpty())
 
+        expression.transformChildrenVoid(this)
         val blockBuilder = buildersStack.last()
-
         return blockBuilder.irLetSequence(
                 value = blockBuilder.irCall(constructor),
                 startOffset = expression.startOffset,
