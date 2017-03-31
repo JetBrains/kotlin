@@ -24,7 +24,7 @@ Build the dependencies and the compiler (see `README.md`).
 Prepare stubs for the system sockets library:
 
     cd samples/socket
-    ../../dist/bin/cinterop -def:sockets.def -o:sockets.kt.bc
+    ../../dist/bin/cinterop -def sockets.def -o sockets.kt.bc
 
 Compile the echo server:
 
@@ -57,7 +57,7 @@ Structurally it's a simple property file, looking like this:
 Then run `cinterop` tool with something like (note that for host libraries not included
 in sysroot search paths for headers may be needed):
 
-    cinterop -def:zlib.def -copt:-I/opt/local/include -o:zlib.kt.bc
+    cinterop -def zlib.def -copt -I/opt/local/include -o zlib.kt.bc
 
 This command will produce `zlib.kt.bc` compiled library and
 `zlib.kt.bc-build/kotlin` directory containing Kotlin source code for the library.

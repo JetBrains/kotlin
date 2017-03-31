@@ -34,7 +34,23 @@ fun main(args: Array<String>) {
             "os" to (System.getenv("TARGET_OS") ?: detectHost())
     )
 
-    processLib(konanHome, substitutions, args.asList())
+    processLib(konanHome, substitutions, parseArgs(args))
+}
+
+private fun parseArgs(args: Array<String>): Map<String, List<String>> {
+    val commandLine = mutableMapOf<String, MutableList<String>>()
+    for(index in 0..args.size-1 step 2) {
+        val key = args[index]
+        if (key[0] != '-') {
+            throw IllegalArgumentException("Expected a flag with initial dash: $key")
+        }
+        if (index+1 == args.size) {
+            throw IllegalArgumentException("Expected an value after $key")
+        }
+        val value = args[index+1]
+        commandLine[key] ?. add(value) ?: commandLine.put(key, mutableListOf(value))
+    }
+    return commandLine
 }
 
 private fun detectHost(): String {
@@ -53,6 +69,7 @@ private fun detectHost(): String {
 private fun defaultTarget() = detectHost()
 
 private val knownTargets = mapOf(
+    "host" to defaultTarget(),
     "linux" to "linux",
     "macbook" to "osx",
     "iphone" to "osx-ios",
@@ -80,24 +97,6 @@ private fun substitute(properties: Properties, substitutions: Map<String, String
         if (value != "") {
             properties.setProperty(key, properties.getProperty(key, "") + " " + value)
         }
-    }
-}
-
-private fun getArgPrefix(arg: String): String {
-    val index = arg.indexOf(':')
-    if (index == -1) {
-        return ""
-    } else {
-        return arg.substring(0, index)
-    }
-}
-
-private fun dropPrefix(arg: String): String {
-    val index = arg.indexOf(':')
-    if (index == -1) {
-        return ""
-    } else {
-        return arg.substring(index + 1)
     }
 }
 
@@ -257,23 +256,21 @@ private fun loadProperties(file: File?, substitutions: Map<String, String>): Pro
 
 private fun usage() {
     println("""
-Run interop tool with -def:<def_file_for_lib>.def
+Run interop tool with -def <def_file_for_lib>.def
 Following flags are supported:
-  -def:<file>.def specifies library definition file
-  -copt:<c compiler flags> specifies flags passed to clang
-  -lopt:<linker flags> specifies flags passed to linker
-  -verbose increases verbosity
-  -shims adds generation of shims tracing native library calls
-  -pkg:<fully qualified package name>
-  -h:<file>.h header files to parse
+  -def <file>.def specifies library definition file
+  -copt <c compiler flags> specifies flags passed to clang
+  -lopt <linker flags> specifies flags passed to linker
+  -verbose <boolean> increases verbosity
+  -shims <boolean> adds generation of shims tracing native library calls
+  -pkg <fully qualified package name> place the resulting definitions into the package
+  -h <file>.h header files to parse
 """)
 }
 
 private fun processLib(konanHome: String,
                        substitutions: Map<String, String>,
-                       commandArgs: List<String>) {
-
-    val args = commandArgs.groupBy ({ getArgPrefix(it) }, { dropPrefix(it) }) // TODO
+                       args: Map<String, List<String>>) {
 
     val userDir = System.getProperty("user.dir")
     val ktGenRoot = args["-generated"]?.single() ?: userDir

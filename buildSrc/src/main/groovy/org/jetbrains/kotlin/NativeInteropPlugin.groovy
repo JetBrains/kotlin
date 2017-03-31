@@ -206,42 +206,42 @@ class NamedNativeInteropConfig implements Named {
 
                 linkerOpts += linkFiles.files
 
-                args "-properties:" + project.findProject(":backend.native").file("konan.properties")
-                args "-generated:" + generatedSrcDir
-                args "-natives:" + nativeLibsDir
-                args "-flavor:" + this.flavor
+                args '-properties', project.findProject(":backend.native").file("konan.properties")
+                args '-generated', generatedSrcDir
+                args '-natives', nativeLibsDir
+                args '-flavor', this.flavor
                 // Uncomment to debug.
-                // args "-verbose:true"
+                // args '-verbose', 'true'
 
                 if (defFile != null) {
-                    args "-def:" + project.file(defFile)
+                    args '-def', project.file(defFile)
                 }
 
                 if (pkg != null) {
-                    args "-pkg:" + pkg
+                    args '-pkg', pkg
                 }
 
                 if (linker != null) {
-                    args "-linker:" + linker
+                    args '-linker', linker
                 }
 
                 if (target != null) {
-                    args "-target:" + target
+                    args '-target', target
                 }
 
                 // TODO: the interop plugin should probably be reworked to execute clang from build scripts directly
                 environment['PATH'] = project.files(project.clangPath).asPath +
                         File.pathSeparator + environment['PATH']
 
-                args compilerOpts.collect { "-copt:$it" }
-                args linkerOpts.collect { "-lopt:$it" }
+                args compilerOpts.collectMany { ['-copt', it] }
+                args linkerOpts.collectMany { ['-lopt', it] }
 
                 headers.each {
-                    args "-h:$it"
+                    args '-h', it
                 }
 
-                if (project.hasProperty("shims")) {
-                    args  "-shims:$project.ext.shims"
+                if (project.hasProperty('shims')) {
+                    args '-shims', project.ext.shims
                 }
 
             }

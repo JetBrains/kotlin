@@ -39,6 +39,6 @@ For some tests, use:
 To generate interoperability stubs create library definition file
 (take a look on `samples/tetris/tetris.sdl`) and run `cinterop` tool like this:
 
-    cinterop -def:lib.def
+    cinterop -def lib.def
 
 See provided samples and `INTEROP.md` for more details.
