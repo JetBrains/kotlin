@@ -79,12 +79,16 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val interpretCPointer = packageScope.getContributedFunctions("interpretCPointer").single()
 
+    val variableClass = packageScope.getContributedClassifier("CVariable") as ClassDescriptor
+
     val arrayGetByIntIndex = packageScope.getContributedFunctions("get").single {
-        KotlinBuiltIns.isInt(it.valueParameters.single().type) && it.isInline
+        KotlinBuiltIns.isInt(it.valueParameters.single().type) &&
+                it.typeParameters.single().upperBounds.single() == variableClass.defaultType
     }
 
     val arrayGetByLongIndex = packageScope.getContributedFunctions("get").single {
-        KotlinBuiltIns.isLong(it.valueParameters.single().type) && it.isInline
+        KotlinBuiltIns.isLong(it.valueParameters.single().type) &&
+                it.typeParameters.single().upperBounds.single() == variableClass.defaultType
     }
 
     val allocUninitializedArrayWithIntLength = packageScope.getContributedFunctions("allocArray").single {
@@ -100,8 +104,6 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
     }
 
     val typeOf = packageScope.getContributedFunctions("typeOf").single()
-
-    val variableClass = packageScope.getContributedClassifier("CVariable") as ClassDescriptor
 
     val variableTypeClass =
             variableClass.unsubstitutedInnerClassesScope.getContributedClassifier("Type") as ClassDescriptor

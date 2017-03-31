@@ -14,110 +14,168 @@
  * limitations under the License.
  */
 
+@file:Suppress("FINAL_UPPER_BOUND", "NOTHING_TO_INLINE")
+
 package kotlinx.cinterop
 
-@Suppress("FINAL_UPPER_BOUND")
-operator fun <T : Byte> CPointer<ByteVarOf<T>>.get(index: Int): T =
-        interpretPointed<ByteVarOf<T>>(this.rawValue + index * 1L).value
-
-@Suppress("FINAL_UPPER_BOUND")
-operator fun <T : Byte> CPointer<ByteVarOf<T>>.set(index: Int, value: T) {
-    interpretPointed<ByteVarOf<T>>(this.rawValue + index * 1L).value = value
-}
-
-@Suppress("FINAL_UPPER_BOUND")
 @JvmName("plus\$Byte")
-operator fun <T : ByteVar> CPointer<T>?.plus(index: Int): CPointer<T>? =
-        interpretCPointer(this.rawValue + index * 1L)
+inline operator fun <T : ByteVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+        interpretCPointer(this.rawValue + index * 1)
 
-@Suppress("FINAL_UPPER_BOUND")
-operator fun <T : Short> CPointer<ShortVarOf<T>>.get(index: Int): T =
-        interpretPointed<ShortVarOf<T>>(this.rawValue + index * 2L).value
+@JvmName("plus\$Byte")
+inline operator fun <T : ByteVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+        this + index.toLong()
 
-@Suppress("FINAL_UPPER_BOUND")
-operator fun <T : Short> CPointer<ShortVarOf<T>>.set(index: Int, value: T) {
-    interpretPointed<ShortVarOf<T>>(this.rawValue + index * 2L).value = value
+inline operator fun <T : Byte> CPointer<ByteVarOf<T>>.get(index: Int): T =
+        (this + index)!!.pointed.value
+
+inline operator fun <T : Byte> CPointer<ByteVarOf<T>>.set(index: Int, value: T) {
+    (this + index)!!.pointed.value = value
 }
 
-@Suppress("FINAL_UPPER_BOUND")
+inline operator fun <T : Byte> CPointer<ByteVarOf<T>>.get(index: Long): T =
+        (this + index)!!.pointed.value
+
+inline operator fun <T : Byte> CPointer<ByteVarOf<T>>.set(index: Long, value: T) {
+    (this + index)!!.pointed.value = value
+}
+
 @JvmName("plus\$Short")
-operator fun <T : ShortVar> CPointer<T>?.plus(index: Int): CPointer<T>? =
-        interpretCPointer(this.rawValue + index * 2L)
+inline operator fun <T : ShortVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+        interpretCPointer(this.rawValue + index * 2)
 
-@Suppress("FINAL_UPPER_BOUND")
-operator fun <T : Int> CPointer<IntVarOf<T>>.get(index: Int): T =
-        interpretPointed<IntVarOf<T>>(this.rawValue + index * 4L).value
+@JvmName("plus\$Short")
+inline operator fun <T : ShortVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+        this + index.toLong()
 
-@Suppress("FINAL_UPPER_BOUND")
-operator fun <T : Int> CPointer<IntVarOf<T>>.set(index: Int, value: T) {
-    interpretPointed<IntVarOf<T>>(this.rawValue + index * 4L).value = value
+inline operator fun <T : Short> CPointer<ShortVarOf<T>>.get(index: Int): T =
+        (this + index)!!.pointed.value
+
+inline operator fun <T : Short> CPointer<ShortVarOf<T>>.set(index: Int, value: T) {
+    (this + index)!!.pointed.value = value
 }
 
-@Suppress("FINAL_UPPER_BOUND")
+inline operator fun <T : Short> CPointer<ShortVarOf<T>>.get(index: Long): T =
+        (this + index)!!.pointed.value
+
+inline operator fun <T : Short> CPointer<ShortVarOf<T>>.set(index: Long, value: T) {
+    (this + index)!!.pointed.value = value
+}
+
 @JvmName("plus\$Int")
-operator fun <T : IntVar> CPointer<T>?.plus(index: Int): CPointer<T>? =
-        interpretCPointer(this.rawValue + index * 4L)
+inline operator fun <T : IntVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+        interpretCPointer(this.rawValue + index * 4)
 
-@Suppress("FINAL_UPPER_BOUND")
-operator fun <T : Long> CPointer<LongVarOf<T>>.get(index: Int): T =
-        interpretPointed<LongVarOf<T>>(this.rawValue + index * 8L).value
+@JvmName("plus\$Int")
+inline operator fun <T : IntVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+        this + index.toLong()
 
-@Suppress("FINAL_UPPER_BOUND")
-operator fun <T : Long> CPointer<LongVarOf<T>>.set(index: Int, value: T) {
-    interpretPointed<LongVarOf<T>>(this.rawValue + index * 8L).value = value
+inline operator fun <T : Int> CPointer<IntVarOf<T>>.get(index: Int): T =
+        (this + index)!!.pointed.value
+
+inline operator fun <T : Int> CPointer<IntVarOf<T>>.set(index: Int, value: T) {
+    (this + index)!!.pointed.value = value
 }
 
-@Suppress("FINAL_UPPER_BOUND")
+inline operator fun <T : Int> CPointer<IntVarOf<T>>.get(index: Long): T =
+        (this + index)!!.pointed.value
+
+inline operator fun <T : Int> CPointer<IntVarOf<T>>.set(index: Long, value: T) {
+    (this + index)!!.pointed.value = value
+}
+
 @JvmName("plus\$Long")
-operator fun <T : LongVar> CPointer<T>?.plus(index: Int): CPointer<T>? =
-        interpretCPointer(this.rawValue + index * 8L)
+inline operator fun <T : LongVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+        interpretCPointer(this.rawValue + index * 8)
 
-@Suppress("FINAL_UPPER_BOUND")
-operator fun <T : Float> CPointer<FloatVarOf<T>>.get(index: Int): T =
-        interpretPointed<FloatVarOf<T>>(this.rawValue + index * 4L).value
+@JvmName("plus\$Long")
+inline operator fun <T : LongVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+        this + index.toLong()
 
-@Suppress("FINAL_UPPER_BOUND")
-operator fun <T : Float> CPointer<FloatVarOf<T>>.set(index: Int, value: T) {
-    interpretPointed<FloatVarOf<T>>(this.rawValue + index * 4L).value = value
+inline operator fun <T : Long> CPointer<LongVarOf<T>>.get(index: Int): T =
+        (this + index)!!.pointed.value
+
+inline operator fun <T : Long> CPointer<LongVarOf<T>>.set(index: Int, value: T) {
+    (this + index)!!.pointed.value = value
 }
 
-@Suppress("FINAL_UPPER_BOUND")
+inline operator fun <T : Long> CPointer<LongVarOf<T>>.get(index: Long): T =
+        (this + index)!!.pointed.value
+
+inline operator fun <T : Long> CPointer<LongVarOf<T>>.set(index: Long, value: T) {
+    (this + index)!!.pointed.value = value
+}
+
 @JvmName("plus\$Float")
-operator fun <T : FloatVar> CPointer<T>?.plus(index: Int): CPointer<T>? =
-        interpretCPointer(this.rawValue + index * 4L)
+inline operator fun <T : FloatVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+        interpretCPointer(this.rawValue + index * 4)
 
-@Suppress("FINAL_UPPER_BOUND")
-operator fun <T : Double> CPointer<DoubleVarOf<T>>.get(index: Int): T =
-        interpretPointed<DoubleVarOf<T>>(this.rawValue + index * 8L).value
+@JvmName("plus\$Float")
+inline operator fun <T : FloatVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+        this + index.toLong()
 
-@Suppress("FINAL_UPPER_BOUND")
-operator fun <T : Double> CPointer<DoubleVarOf<T>>.set(index: Int, value: T) {
-    interpretPointed<DoubleVarOf<T>>(this.rawValue + index * 8L).value = value
+inline operator fun <T : Float> CPointer<FloatVarOf<T>>.get(index: Int): T =
+        (this + index)!!.pointed.value
+
+inline operator fun <T : Float> CPointer<FloatVarOf<T>>.set(index: Int, value: T) {
+    (this + index)!!.pointed.value = value
 }
 
-@Suppress("FINAL_UPPER_BOUND")
+inline operator fun <T : Float> CPointer<FloatVarOf<T>>.get(index: Long): T =
+        (this + index)!!.pointed.value
+
+inline operator fun <T : Float> CPointer<FloatVarOf<T>>.set(index: Long, value: T) {
+    (this + index)!!.pointed.value = value
+}
+
 @JvmName("plus\$Double")
-operator fun <T : DoubleVar> CPointer<T>?.plus(index: Int): CPointer<T>? =
-        interpretCPointer(this.rawValue + index * 8L)
+inline operator fun <T : DoubleVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+        interpretCPointer(this.rawValue + index * 8)
+
+@JvmName("plus\$Double")
+inline operator fun <T : DoubleVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+        this + index.toLong()
+
+inline operator fun <T : Double> CPointer<DoubleVarOf<T>>.get(index: Int): T =
+        (this + index)!!.pointed.value
+
+inline operator fun <T : Double> CPointer<DoubleVarOf<T>>.set(index: Int, value: T) {
+    (this + index)!!.pointed.value = value
+}
+
+inline operator fun <T : Double> CPointer<DoubleVarOf<T>>.get(index: Long): T =
+        (this + index)!!.pointed.value
+
+inline operator fun <T : Double> CPointer<DoubleVarOf<T>>.set(index: Long, value: T) {
+    (this + index)!!.pointed.value = value
+}
 
 /* Generated by:
 
 #!/bin/bash
 
 function gen {
-echo '@Suppress("FINAL_UPPER_BOUND")'
-echo "operator fun <T : $1> CPointer<${1}VarOf<T>>.get(index: Int): T ="
-echo "        interpretPointed<${1}VarOf<T>>(this.rawValue + index * ${2}L).value"
+echo "@JvmName(\"plus\\\$$1\")"
+echo "inline operator fun <T : ${1}VarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? ="
+echo "        interpretCPointer(this.rawValue + index * ${2})"
 echo
-echo '@Suppress("FINAL_UPPER_BOUND")'
-echo "operator fun <T : $1> CPointer<${1}VarOf<T>>.set(index: Int, value: T) {"
-echo "    interpretPointed<${1}VarOf<T>>(this.rawValue + index * ${2}L).value = value"
+echo "@JvmName(\"plus\\\$$1\")"
+echo "inline operator fun <T : ${1}VarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? ="
+echo "        this + index.toLong()"
+echo
+echo "inline operator fun <T : $1> CPointer<${1}VarOf<T>>.get(index: Int): T ="
+echo "        (this + index)!!.pointed.value"
+echo
+echo "inline operator fun <T : $1> CPointer<${1}VarOf<T>>.set(index: Int, value: T) {"
+echo "    (this + index)!!.pointed.value = value"
 echo '}'
 echo
-echo '@Suppress("FINAL_UPPER_BOUND")'
-echo "@JvmName(\"plus\\\$$1\")"
-echo "operator fun <T : ${1}Var> CPointer<T>?.plus(index: Int): CPointer<T>? ="
-echo "        interpretCPointer(this.rawValue + index * ${2}L)"
+echo "inline operator fun <T : $1> CPointer<${1}VarOf<T>>.get(index: Long): T ="
+echo "        (this + index)!!.pointed.value"
+echo
+echo "inline operator fun <T : $1> CPointer<${1}VarOf<T>>.set(index: Long, value: T) {"
+echo "    (this + index)!!.pointed.value = value"
+echo '}'
 echo
 }
 

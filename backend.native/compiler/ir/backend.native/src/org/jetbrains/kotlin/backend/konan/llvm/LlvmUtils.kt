@@ -172,7 +172,7 @@ internal fun RuntimeAware.isObjectType(type: LLVMTypeRef): Boolean {
  * Reads [size] bytes contained in this array.
  */
 internal fun CArrayPointer<ByteVar>.getBytes(size: Long) =
-        (0 .. size-1).map { this[it].value }.toByteArray()
+        (0 .. size-1).map { this[it] }.toByteArray()
 
 internal fun getFunctionType(ptrToFunction: LLVMValueRef): LLVMTypeRef {
     return getGlobalType(ptrToFunction)

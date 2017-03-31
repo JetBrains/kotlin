@@ -2,7 +2,7 @@ package kotlinx.cinterop
 
 import konan.internal.Intrinsic
 
-internal inline val pointerSize: Int
+inline val pointerSize: Int
     get() = getPointerSize()
 
 @Intrinsic external fun getPointerSize(): Int
@@ -64,8 +64,8 @@ object nativeMemUtils {
         return interpretPointed<NativeAllocated>(ptr)
     }
 
-    fun free(mem: NativePointed) {
-        free(mem.rawPtr)
+    fun free(mem: NativePtr) {
+        cfree(mem)
     }
 }
 
@@ -73,4 +73,4 @@ object nativeMemUtils {
 private external fun malloc(size: Long, align: Int): NativePtr
 
 @SymbolName("Kotlin_interop_free")
-private external fun free(ptr: NativePtr)
+private external fun cfree(ptr: NativePtr)

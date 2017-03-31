@@ -346,19 +346,33 @@ inline operator fun <reified T : CVariable> CPointer<T>.get(index: Long): T {
 
 inline operator fun <reified T : CVariable> CPointer<T>.get(index: Int): T = this.get(index.toLong())
 
-@Suppress("FINAL_UPPER_BOUND")
-operator fun <T : CPointer<*>> CPointer<CPointerVarOf<T>>.get(index: Int): T? =
-        interpretPointed<CPointerVarOf<T>>(this.rawValue + index * pointerSize.toLong()).value
+@Suppress("NOTHING_TO_INLINE")
+@JvmName("plus\$CPointer")
+inline operator fun <T : CPointerVarOf<*>> CPointer<T>?.plus(index: Long): CPointer<T>? =
+        interpretCPointer(this.rawValue + index * pointerSize)
 
-@Suppress("FINAL_UPPER_BOUND")
-operator fun <T : CPointer<*>> CPointer<CPointerVarOf<T>>.set(index: Int, value: T?) {
-    interpretPointed<CPointerVarOf<T>>(this.rawValue + index * pointerSize.toLong()).value = value
+@Suppress("NOTHING_TO_INLINE")
+@JvmName("plus\$CPointer")
+inline operator fun <T : CPointerVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
+        this + index.toLong()
+
+@Suppress("NOTHING_TO_INLINE")
+inline operator fun <T : CPointer<*>> CPointer<CPointerVarOf<T>>.get(index: Int): T? =
+        (this + index)!!.pointed.value
+
+@Suppress("NOTHING_TO_INLINE")
+inline operator fun <T : CPointer<*>> CPointer<CPointerVarOf<T>>.set(index: Int, value: T?) {
+    (this + index)!!.pointed.value = value
 }
 
-@Suppress("FINAL_UPPER_BOUND")
-@JvmName("plus\$CPointer")
-operator fun <T : CPointerVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T>? =
-        interpretCPointer(this.rawValue + index * pointerSize.toLong())
+@Suppress("NOTHING_TO_INLINE")
+inline operator fun <T : CPointer<*>> CPointer<CPointerVarOf<T>>.get(index: Long): T? =
+        (this + index)!!.pointed.value
+
+@Suppress("NOTHING_TO_INLINE")
+inline operator fun <T : CPointer<*>> CPointer<CPointerVarOf<T>>.set(index: Long, value: T?) {
+    (this + index)!!.pointed.value = value
+}
 
 typealias CArrayPointer<T> = CPointer<T>
 typealias CArrayPointerVar<T> = CPointerVar<T>

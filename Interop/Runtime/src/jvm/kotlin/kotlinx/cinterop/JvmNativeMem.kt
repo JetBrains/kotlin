@@ -33,7 +33,7 @@ private val dataModel: DataModel = when (System.getProperty("sun.arch.data.model
     else -> throw IllegalStateException()
 }
 
-internal val pointerSize: Int = dataModel.pointerSize.toInt()
+val pointerSize: Int = dataModel.pointerSize.toInt()
 
 object nativeMemUtils {
     fun getByte(mem: NativePointed) = unsafe.getByte(mem.address)
@@ -89,8 +89,8 @@ object nativeMemUtils {
         return interpretPointed<NativeAllocated>(address)
     }
 
-    fun free(mem: NativePointed) {
-        unsafe.freeMemory(mem.rawPtr)
+    fun free(mem: NativePtr) {
+        unsafe.freeMemory(mem)
     }
 
     private val unsafe = with(Unsafe::class.java.getDeclaredField("theUnsafe")) {

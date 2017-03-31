@@ -24,13 +24,16 @@ interface NativePlacement {
 }
 
 interface NativeFreeablePlacement : NativePlacement {
-    fun free(mem: NativePointed)
+    fun free(mem: NativePtr)
 }
+
+fun NativeFreeablePlacement.free(pointer: CPointer<*>) = this.free(pointer.rawValue)
+fun NativeFreeablePlacement.free(pointed: NativePointed) = this.free(pointed.rawPtr)
 
 object nativeHeap : NativeFreeablePlacement {
     override fun alloc(size: Long, align: Int) = nativeMemUtils.alloc(size, align)
 
-    override fun free(mem: NativePointed) = nativeMemUtils.free(mem)
+    override fun free(mem: NativePtr) = nativeMemUtils.free(mem)
 }
 
 // TODO: implement optimally

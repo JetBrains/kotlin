@@ -1019,7 +1019,10 @@ class StubGenerator(
 
     private fun FunctionType.requiresAdapterOnNative(): Boolean {
         assert (platform == KotlinPlatform.NATIVE)
-        return (parameterTypes + returnType).any { it.unwrapTypedefs() is RecordType }
+        return (parameterTypes + returnType).any {
+            val unwrappedType = it.unwrapTypedefs()
+            unwrappedType is RecordType || (unwrappedType is EnumType && unwrappedType.def.isStrictEnum)
+        }
     }
 
     private fun generateNativeFunctionType(type: FunctionType, name: String) {
