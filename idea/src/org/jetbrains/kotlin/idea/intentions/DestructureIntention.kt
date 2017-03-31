@@ -26,6 +26,7 @@ import com.intellij.util.Query
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
@@ -211,15 +212,13 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                                        else -> Name.identifier("it")
                                    } ?: return null
 
-                val descriptorToIndex = mutableMapOf<CallableDescriptor, Int>()
-                for (valueParameter in valueParameters) {
-                    val propertyDescriptor = context.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter) ?: continue
-                    descriptorToIndex[propertyDescriptor] = valueParameter.index
-                }
+                val constructorParameterNameMap = mutableMapOf<Name, ValueParameterDescriptor>()
+                valueParameters.forEach { constructorParameterNameMap[it.name] = it }
+
                 usageScopeElement.iterateOverDataClassPropertiesUsagesWithIndex(
                         context,
                         nameToSearch,
-                        descriptorToIndex,
+                        constructorParameterNameMap,
                         { index, usageData -> noBadUsages = usagesToRemove[index].add(usageData, index) && noBadUsages },
                         { noBadUsages = false }
                 )
@@ -268,7 +267,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
         private fun PsiElement.iterateOverDataClassPropertiesUsagesWithIndex(
                 context: BindingContext,
                 parameterName: Name,
-                descriptorToIndex: Map<CallableDescriptor, Int>,
+                constructorParameterNameMap: Map<Name, ValueParameterDescriptor>,
                 process: (Int, SingleUsageData) -> Unit,
                 cancel: () -> Unit
         ) {
@@ -279,14 +278,14 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                     if (applicableUsage != null) {
                         val usageDescriptor = applicableUsage.descriptor
                         if (usageDescriptor == null) {
-                            for (index in descriptorToIndex.values) {
-                                process(index, applicableUsage)
+                            for (parameter in constructorParameterNameMap.values) {
+                                process(parameter.index, applicableUsage)
                             }
                             return@anyDescendantOfType false
                         }
-                        val index = descriptorToIndex[usageDescriptor]
-                        if (index != null) {
-                            process(index, applicableUsage)
+                        val parameter = constructorParameterNameMap[usageDescriptor.name]
+                        if (parameter != null) {
+                            process(parameter.index, applicableUsage)
                             return@anyDescendantOfType false
                         }
                     }
