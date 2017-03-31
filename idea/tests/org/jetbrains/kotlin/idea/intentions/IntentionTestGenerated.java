@@ -7645,6 +7645,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mapIndexedExceptFirst.kt")
+        public void testMapIndexedExceptFirst() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/mapIndexedExceptFirst.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("mapIndexedLast.kt")
         public void testMapIndexedLast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/mapIndexedLast.kt");
@@ -7684,6 +7690,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("twoOfThree.kt")
+        public void testTwoOfThree() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/twoOfThree.kt");
             doTest(fileName);
         }
 

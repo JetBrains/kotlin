@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+
+data class My(val first: String, val second: Int, val third: Boolean)
+
+fun foo(list: List<My>) {
+    list.forEach { (_, second, third) ->
+        println(second)
+        println(third)
+    }
+}
