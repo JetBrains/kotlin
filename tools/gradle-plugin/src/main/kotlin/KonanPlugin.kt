@@ -53,7 +53,7 @@ class KonanPlugin: Plugin<ProjectInternal> {
     companion object {
         internal const val COMPILER_EXTENSION_NAME = "konanArtifacts"
         internal const val INTEROP_EXTENSION_NAME = "konanInterop"
-        internal const val KONAN_HOME_PROPERTY_NAME = "kotlin.native.home"
+        internal const val KONAN_HOME_PROPERTY_NAME = "konan.home"
         internal const val KONAN_DOWNLOAD_TASK_NAME = "downloadKonanCompiler"
 
         // TODO: Move in config.
