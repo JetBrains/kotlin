@@ -59,8 +59,8 @@ open class KonanInteropTask: DefaultTask() {
                 classpath = project.fileTree(INTEROP_CLASSPATH).apply { include("*.jar") }
                 jvmArgs(INTEROP_JVM_ARGS)
                 environment("LIBCLANG_DISABLE_CRASH_RECOVERY", "1")
-                environment("LD_LIBRARY_PATH", "${project.konanHome}/nativelib")
-                environment("DYLD_LIBRARY_PATH", "${project.konanHome}/nativelib")
+                environment("LD_LIBRARY_PATH", "${project.konanHome}/konan/nativelib")
+                environment("DYLD_LIBRARY_PATH", "${project.konanHome}/konan/nativelib")
 
                 args(buildArgs().apply { logger.info("Interop args: ${this.joinToString(separator = " ")}") })
             }
