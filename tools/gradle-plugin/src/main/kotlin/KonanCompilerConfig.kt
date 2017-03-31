@@ -12,7 +12,6 @@ import java.io.File
  *
  *      artifactName1 {
  *
- *          inputDir "path/to/files"
  *          inputFiles "files" "to" "be" "compiled"
  *
  *          outputDir "path/to/output/dir"

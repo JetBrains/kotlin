@@ -36,17 +36,18 @@ build {
 }
 
 void dumpCompilatioTask(Task task) {
+    println()
     println("Compilation task: ${task.name}")
     println("outputDir          : ${task.outputDir}")
     println("artifactPath       : ${task.artifactPath}")
-    println("inputFiles         : ${task.inputFiles}")
+    println("inputFiles         : ${task.inputFiles.files}")
     println("libraries          : ${task.libraries}")
     println("nativeLibraries    : ${task.nativeLibraries}")
     println("linkerOpts         : ${task.linkerOpts}")
     println("noStdLib           : ${task.noStdLib}")
     println("noLink             : ${task.noLink}")
     println("noMain             : ${task.noMain}")
-    println("enableOptimization : ${task.enableOptimizatio}")
+    println("enableOptimization : ${task.enableOptimization}")
     println("enableAssertions   : ${task.enableAssertions}")
     println("target             : ${task.target}")
     println("languageVersion    : ${task.languageVersion}")
@@ -54,6 +55,7 @@ void dumpCompilatioTask(Task task) {
 }
 
 void dumpInteropTask(Task task) {
+    println()
     println("Stub generation task: ${task.name}")
     println("stubsDir           : ${task.stubsDir}")
     println("libsDir            : ${task.libsDir}")
@@ -63,7 +65,7 @@ void dumpInteropTask(Task task) {
     println("linker             : ${task.linker}")
     println("compilerOpts       : ${task.compilerOpts}")
     println("linkerOpts         : ${task.linkerOpts}")
-    println("headers            : ${task.headers}")
+    println("headers            : ${task.headers.files}")
     println("linkFiles          : ${task.linkFiles}")
 }
 
