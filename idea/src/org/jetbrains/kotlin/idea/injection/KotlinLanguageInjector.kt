@@ -38,8 +38,13 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
+import kotlin.collections.ArrayList
 
 class KotlinLanguageInjector : LanguageInjector {
+    companion object {
+        private val STRING_LITERALS_REGEXP = "\"([^\"]*)\"".toRegex()
+    }
+
     val kotlinSupport: KotlinLanguageInjectionSupport? by lazy {
         ArrayList(InjectorUtils.getActiveInjectionSupports()).filterIsInstance(KotlinLanguageInjectionSupport::class.java).firstOrNull()
     }
@@ -58,9 +63,9 @@ class KotlinLanguageInjector : LanguageInjector {
 
     private fun findInjectionInfo(place: KtElement, originalHost: Boolean = true): InjectionInfo? {
         return injectWithExplicitCodeInstruction(place)
-                ?: injectWithCall(place)
-                ?: injectWithReceiver(place)
-                ?: injectWithVariableUsage(place, originalHost)
+               ?: injectWithCall(place)
+               ?: injectWithReceiver(place)
+               ?: injectWithVariableUsage(place, originalHost)
     }
 
     private fun injectWithExplicitCodeInstruction(host: KtElement): InjectionInfo? {
@@ -78,12 +83,21 @@ class KotlinLanguageInjector : LanguageInjector {
 
         if (isAnalyzeOff(qualifiedExpression.project)) return null
 
+        val kotlinInjections = Configuration.getInstance().getInjections(KOTLIN_SUPPORT_ID)
+
+        val calleeName = callee.text
+        val possibleNames = collectPossibleNames(kotlinInjections)
+
+        if (calleeName !in possibleNames) {
+            return null
+        }
+
         for (reference in callee.references) {
             ProgressManager.checkCanceled()
 
             val resolvedTo = reference.resolve()
             if (resolvedTo is KtFunction) {
-                val injectionInfo = findInjection(resolvedTo.receiverTypeReference, Configuration.getInstance().getInjections(KOTLIN_SUPPORT_ID))
+                val injectionInfo = findInjection(resolvedTo.receiverTypeReference, kotlinInjections)
                 if (injectionInfo != null) {
                     return injectionInfo
                 }
@@ -91,6 +105,21 @@ class KotlinLanguageInjector : LanguageInjector {
         }
 
         return null
+    }
+
+    private fun collectPossibleNames(injections: List<BaseInjection>): Set<String> {
+        val result = HashSet<String>()
+
+        for (injection in injections) {
+            val injectionPlaces = injection.injectionPlaces
+            for (place in injectionPlaces) {
+                val placeStr = place.toString()
+                val literals = STRING_LITERALS_REGEXP.findAll(placeStr).map { it.groupValues[1] }
+                result.addAll(literals)
+            }
+        }
+
+        return result
     }
 
     private fun injectWithVariableUsage(host: KtElement, originalHost: Boolean): InjectionInfo? {
