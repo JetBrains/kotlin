@@ -7645,6 +7645,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mapIndexedLast.kt")
+        public void testMapIndexedLast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/mapIndexedLast.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noIt.kt")
         public void testNoIt() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/noIt.kt");
