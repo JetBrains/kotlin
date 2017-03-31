@@ -33,14 +33,14 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getLambdaArgumentName
+import org.jetbrains.kotlin.psi.psiUtil.hasBody
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorResolver
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
 
 @Suppress("UNCHECKED_CAST")
 inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T {
@@ -246,12 +246,7 @@ fun KtDeclaration.implicitModality(): KtModifierKeywordToken {
         }
     }
     if (klass is KtClass && klass.isInterface() && !hasModifier(KtTokens.PRIVATE_KEYWORD)) {
-        val hasBody = when (this) {
-            is KtProperty -> DescriptorResolver.hasBody(this)
-            is KtFunction -> hasBody()
-            else -> false
-        }
-        return if (hasBody) KtTokens.OPEN_KEYWORD else KtTokens.ABSTRACT_KEYWORD
+        return if (hasBody()) KtTokens.OPEN_KEYWORD else KtTokens.ABSTRACT_KEYWORD
     }
     return KtTokens.FINAL_KEYWORD
 }

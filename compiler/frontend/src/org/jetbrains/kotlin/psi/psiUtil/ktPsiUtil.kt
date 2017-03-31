@@ -527,3 +527,9 @@ fun KtCallExpression.getOrCreateValueArgumentList(): KtValueArgumentList {
     return addAfter(KtPsiFactory(this).createCallArguments("()"),
                     typeArgumentList ?: calleeExpression) as KtValueArgumentList
 }
+
+fun KtDeclaration.hasBody() = when (this) {
+    is KtFunction -> hasBody()
+    is KtProperty -> hasBody()
+    else -> false
+}

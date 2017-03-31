@@ -298,4 +298,17 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         // Suppress Java check for out-of-block
         return false;
     }
+
+    public boolean hasBody() {
+        if (hasDelegateExpressionOrInitializer()) return true;
+        KtPropertyAccessor getter = getGetter();
+        if (getter != null && getter.hasBody()) {
+            return true;
+        }
+        KtPropertyAccessor setter = getSetter();
+        if (setter != null && setter.hasBody()) {
+            return true;
+        }
+        return false;
+    }
 }

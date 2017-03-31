@@ -788,10 +788,9 @@ public class DescriptorResolver {
         KtModifierList modifierList = property.getModifierList();
         boolean isVar = property.isVar();
 
-        boolean hasBody = hasBody(property);
         Visibility visibility = resolveVisibilityFromModifiers(property, getDefaultVisibility(property, containingDeclaration));
         Modality modality = containingDeclaration instanceof ClassDescriptor
-                            ? resolveMemberModalityFromModifiers(property, getDefaultModality(containingDeclaration, visibility, hasBody),
+                            ? resolveMemberModalityFromModifiers(property, getDefaultModality(containingDeclaration, visibility, property.hasBody()),
                                                                  trace.getBindingContext(), containingDeclaration)
                             : Modality.FINAL;
 
@@ -895,22 +894,6 @@ public class DescriptorResolver {
         trace.record(BindingContext.VARIABLE, property, propertyDescriptor);
         return propertyDescriptor;
     }
-
-    public static boolean hasBody(KtProperty property) {
-        boolean hasBody = property.hasDelegateExpressionOrInitializer();
-        if (!hasBody) {
-            KtPropertyAccessor getter = property.getGetter();
-            if (getter != null && getter.hasBody()) {
-                hasBody = true;
-            }
-            KtPropertyAccessor setter = property.getSetter();
-            if (!hasBody && setter != null && setter.hasBody()) {
-                hasBody = true;
-            }
-        }
-        return hasBody;
-    }
-
 
     @NotNull
     /*package*/ static KotlinType transformAnonymousTypeIfNeeded(
