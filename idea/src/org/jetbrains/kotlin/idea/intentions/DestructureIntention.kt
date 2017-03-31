@@ -68,8 +68,15 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                 excludedDeclarations = usagesToRemove.map { listOfNotNull(it.declarationToDrop) }.flatten()
         )
         val names = ArrayList<String>()
+        val underscoreSupported = element.languageVersionSettings.supportsFeature(LanguageFeature.SingleUnderscoreForParameterName)
         usagesToRemove.forEach { (descriptor, usagesToReplace, variableToDrop, name) ->
-            val suggestedName = name ?: KotlinNameSuggester.suggestNameByName(descriptor.name.asString(), validator)
+            val suggestedName =
+                    if (usagesToReplace.isEmpty() && variableToDrop == null && underscoreSupported) {
+                        "_"
+                    }
+                    else {
+                        name ?: KotlinNameSuggester.suggestNameByName(descriptor.name.asString(), validator)
+                    }
             variableToDrop?.delete()
             usagesToReplace.forEach {
                 it.replace(factory.createExpression(suggestedName))
