@@ -32,6 +32,12 @@ fun CodeBuilder.appendOperand(expression: Expression, operand: Expression, paren
     return this
 }
 
+fun Element.wrapToBlockIfRequired(): Element = when (this) {
+    is AssignmentExpression -> if (isMultiAssignment()) Block.of(this).assignNoPrototype() else this
+    else -> this
+}
+
+
 private fun Expression.precedence(): Int? {
     return when (this) {
         is QualifiedExpression, is MethodCallExpression, is ArrayAccessExpression, is PostfixExpression, is BangBangExpression, is StarExpression -> 0

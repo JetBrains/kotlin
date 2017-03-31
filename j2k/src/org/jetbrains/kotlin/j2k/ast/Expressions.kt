@@ -33,6 +33,8 @@ class ArrayAccessExpression(val expression: Expression, val index: Expression, v
 
 open class AssignmentExpression(val left: Expression, val right: Expression, val op: Operator) : Expression() {
 
+    fun isMultiAssignment() = right is AssignmentExpression
+
     fun appendAssignment(builder: CodeBuilder, left: Expression, right: Expression) {
         builder.appendOperand(this, left).append(" ").append(op).append(" ").appendOperand(this, right)
     }

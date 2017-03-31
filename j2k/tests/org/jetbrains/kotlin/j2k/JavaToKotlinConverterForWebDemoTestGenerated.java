@@ -1733,6 +1733,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/doWhileStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("whileWithAssignmentAsExpression.java")
+        public void testWhileWithAssignmentAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/doWhileStatement/whileWithAssignmentAsExpression.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("whileWithBlock.java")
         public void testWhileWithBlock() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/doWhileStatement/whileWithBlock.java");
@@ -2105,6 +2111,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("arrayIndicesReversed.java")
         public void testArrayIndicesReversed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/arrayIndicesReversed.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentAsExpressionInBody.java")
+        public void testAssignmentAsExpressionInBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/assignmentAsExpressionInBody.java");
             doTest(fileName);
         }
 
@@ -2697,6 +2709,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     public static class IfStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInIfStatement() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/ifStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("assignmentAsExpressionInIf.java")
+        public void testAssignmentAsExpressionInIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/assignmentAsExpressionInIf.java");
+            doTest(fileName);
         }
 
         @TestMetadata("elseIf.java")
@@ -5016,6 +5034,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     public static class WhileStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInWhileStatement() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/whileStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("whileWithAssignmentAsExpression.java")
+        public void testWhileWithAssignmentAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/whileStatement/whileWithAssignmentAsExpression.java");
+            doTest(fileName);
         }
 
         @TestMetadata("whileWithBlock.java")
