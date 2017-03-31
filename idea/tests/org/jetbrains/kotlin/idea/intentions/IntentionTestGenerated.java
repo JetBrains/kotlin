@@ -9170,6 +9170,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("NoKeyOrValue.kt")
+        public void testNoKeyOrValue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/NoKeyOrValue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("OnlyKeyUsed.kt")
         public void testOnlyKeyUsed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/OnlyKeyUsed.kt");

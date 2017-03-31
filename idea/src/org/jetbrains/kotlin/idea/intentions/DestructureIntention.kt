@@ -74,9 +74,14 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
         )
         val names = ArrayList<String>()
         val underscoreSupported = element.languageVersionSettings.supportsFeature(LanguageFeature.SingleUnderscoreForParameterName)
+        // For all unused we generate normal names, not underscores
+        val allUnused = usagesToRemove.all { (_, usagesToReplace, variableToDrop) ->
+            usagesToReplace.isEmpty() && variableToDrop == null
+        }
+
         usagesToRemove.forEach { (descriptor, usagesToReplace, variableToDrop, name) ->
             val suggestedName =
-                    if (usagesToReplace.isEmpty() && variableToDrop == null && underscoreSupported) {
+                    if (usagesToReplace.isEmpty() && variableToDrop == null && underscoreSupported && !allUnused) {
                         "_"
                     }
                     else {
@@ -233,7 +238,12 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
             if (!noBadUsages) return null
 
             val droppedLastUnused = usagesToRemove.dropLastWhile { it.usagesToReplace.isEmpty() && it.declarationToDrop == null }
-            return UsagesToRemove(droppedLastUnused, removeSelectorInLoopRange)
+            return if (droppedLastUnused.isEmpty()) {
+                UsagesToRemove(usagesToRemove, removeSelectorInLoopRange)
+            }
+            else {
+                UsagesToRemove(droppedLastUnused, removeSelectorInLoopRange)
+            }
         }
 
         private fun Query<PsiReference>.iterateOverMapEntryPropertiesUsages(
