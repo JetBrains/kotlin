@@ -184,10 +184,7 @@ public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
                 Field field = klass.getDeclaredField(flag);
                 expectedAccess |= field.getInt(klass);
             }
-            catch (NoSuchFieldException e) {
-                throw new IllegalArgumentException("Cannot find " + flag + " field in Opcodes class", e);
-            }
-            catch (IllegalAccessException e) {
+            catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new IllegalArgumentException("Cannot find " + flag + " field in Opcodes class", e);
             }
         }

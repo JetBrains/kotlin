@@ -142,11 +142,8 @@ public class StdlibTest extends KotlinTestWithEnvironment {
             return TestCase.class.isAssignableFrom(aClass) ? new TestSuite(aClass) :
                    TestRunnerUtil.isJUnit4TestClass(aClass) ? new JUnit4TestAdapter(aClass) : null;
         }
-        catch (NoSuchMethodException e) {
+        catch (NoSuchMethodException | ClassNotFoundException e) {
             // Ignore test classes we can't instantiate
-            return null;
-        }
-        catch (ClassNotFoundException e) {
             return null;
         }
     }

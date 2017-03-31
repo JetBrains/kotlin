@@ -99,14 +99,11 @@ public class ModuleXmlParser {
             });
             return new ModuleScriptData(modules);
         }
-        catch (ParserConfigurationException e) {
+        catch (ParserConfigurationException | IOException e) {
             MessageCollectorUtil.reportException(messageCollector, e);
         }
         catch (SAXException e) {
             messageCollector.report(ERROR, OutputMessageUtil.renderException(e), NO_LOCATION);
-        }
-        catch (IOException e) {
-            MessageCollectorUtil.reportException(messageCollector, e);
         }
         return ModuleScriptData.EMPTY;
     }

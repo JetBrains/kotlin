@@ -165,13 +165,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
             ourOutputRootField.set(null, LOCAL_CACHE_APP_DIR);
         }
-        catch (NoSuchFieldException e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-        catch (IllegalAccessException e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-        catch (IOException e) {
+        catch (NoSuchFieldException | IOException | IllegalAccessException e) {
             throw ExceptionUtilsKt.rethrow(e);
         }
     }

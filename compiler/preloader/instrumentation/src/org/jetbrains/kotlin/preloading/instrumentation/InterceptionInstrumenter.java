@@ -227,10 +227,7 @@ public class InterceptionInstrumenter {
                         method.invoke(interceptor, out);
                     }
                 }
-                catch (IllegalAccessException e) {
-                    throw new IllegalStateException(e);
-                }
-                catch (InvocationTargetException e) {
+                catch (IllegalAccessException | InvocationTargetException e) {
                     throw new IllegalStateException(e);
                 }
                 out.println(">>>");

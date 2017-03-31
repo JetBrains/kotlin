@@ -145,10 +145,7 @@ public class ConstraintsUtil {
                     sb.append("\n");
                 }
             }
-            catch (IllegalAccessException e) {
-                sb.append(e.getMessage());
-            }
-            catch (InvocationTargetException e) {
+            catch (IllegalAccessException | InvocationTargetException e) {
                 sb.append(e.getMessage());
             }
         }

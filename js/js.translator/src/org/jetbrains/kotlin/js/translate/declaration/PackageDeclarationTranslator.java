@@ -54,10 +54,7 @@ public final class PackageDeclarationTranslator extends AbstractTranslator {
             catch (TranslationRuntimeException e) {
                 throw e;
             }
-            catch (RuntimeException e) {
-                throw new TranslationRuntimeException(file, e);
-            }
-            catch (AssertionError e) {
+            catch (RuntimeException | AssertionError e) {
                 throw new TranslationRuntimeException(file, e);
             }
         }

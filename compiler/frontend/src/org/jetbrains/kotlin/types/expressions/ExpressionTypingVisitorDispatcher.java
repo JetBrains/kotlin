@@ -216,10 +216,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
                     }
                     return result;
                 }
-                catch (ProcessCanceledException e) {
-                    throw e;
-                }
-                catch (KotlinFrontEndException e) {
+                catch (ProcessCanceledException | KotlinFrontEndException e) {
                     throw e;
                 }
                 catch (Throwable e) {

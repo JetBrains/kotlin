@@ -313,10 +313,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             return genNotNullAssertions(state, stackValue, runtimeAssertionInfo);
         }
-        catch (ProcessCanceledException e) {
-            throw e;
-        }
-        catch (CompilationException e) {
+        catch (ProcessCanceledException | CompilationException e) {
             throw e;
         }
         catch (Throwable error) {

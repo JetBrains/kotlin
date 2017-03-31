@@ -193,10 +193,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             try {
                 functionCodegen.gen((KtNamedFunction) declaration);
             }
-            catch (ProcessCanceledException e) {
-                throw e;
-            }
-            catch (CompilationException e) {
+            catch (ProcessCanceledException | CompilationException e) {
                 throw e;
             }
             catch (Exception e) {
@@ -207,10 +204,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             try {
                 propertyCodegen.gen((KtProperty) declaration);
             }
-            catch (ProcessCanceledException e) {
-                throw e;
-            }
-            catch (CompilationException e) {
+            catch (ProcessCanceledException | CompilationException e) {
                 throw e;
             }
             catch (Exception e) {

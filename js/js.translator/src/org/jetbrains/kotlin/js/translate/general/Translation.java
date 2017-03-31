@@ -168,10 +168,7 @@ public final class Translation {
         catch (TranslationRuntimeException e) {
             throw e;
         }
-        catch (RuntimeException e) {
-            throw new TranslationRuntimeException(expression, e);
-        }
-        catch (AssertionError e) {
+        catch (RuntimeException | AssertionError e) {
             throw new TranslationRuntimeException(expression, e);
         }
     }

@@ -111,10 +111,7 @@ public class RunUtils {
             }
             close(handler.getProcessInput());
         }
-        catch (ExecutionException e) {
-            return new RunResult(false, getStackTrace(e));
-        }
-        catch (IOException e) {
+        catch (ExecutionException | IOException e) {
             return new RunResult(false, getStackTrace(e));
         }
 

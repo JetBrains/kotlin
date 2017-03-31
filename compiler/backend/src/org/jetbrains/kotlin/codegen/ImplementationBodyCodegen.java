@@ -381,10 +381,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 generateSecondaryConstructor(secondaryConstructor);
             }
         }
-        catch (CompilationException e) {
-            throw e;
-        }
-        catch (ProcessCanceledException e) {
+        catch (CompilationException | ProcessCanceledException e) {
             throw e;
         }
         catch (RuntimeException e) {

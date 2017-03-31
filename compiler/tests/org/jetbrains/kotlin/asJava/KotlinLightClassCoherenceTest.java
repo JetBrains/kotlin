@@ -87,20 +87,13 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
         }
 
         public void assertPropertyCoherent(KtLightClass lightClass, String methodName) {
-            Class<?> reflect = PsiClass.class;
             try {
-                Method method = reflect.getMethod(methodName);
+                Method method = PsiClass.class.getMethod(methodName);
                 Object lightResult = method.invoke(lightClass);
                 Object delegateResult = method.invoke(lightClass.getClsDelegate());
                 assertEquals("Result of method " + methodName + "() differs in light class and its delegate", delegateResult, lightResult);
             }
-            catch (NoSuchMethodException e) {
-                throw new AssertionError(e);
-            }
-            catch (InvocationTargetException e) {
-                throw new AssertionError(e);
-            }
-            catch (IllegalAccessException e) {
+            catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 throw new AssertionError(e);
             }
         }
