@@ -775,11 +775,14 @@ public class KtPsiUtil {
                     return (KtElement) parent;
                 }
             }
-            if (current instanceof KtBlockExpression || current instanceof KtParameter) {
+            if (current instanceof KtBlockExpression || current instanceof KtParameter || current instanceof KtValueArgument) {
                 return (KtElement) current;
             }
-            if (current instanceof KtValueArgument) {
-                return (KtElement) current;
+            if (current instanceof KtDelegatedSuperTypeEntry) {
+                PsiElement grandParent = current.getParent().getParent();
+                if (grandParent instanceof KtClassOrObject && !(grandParent.getParent() instanceof KtObjectLiteralExpression)) {
+                    return (KtElement) grandParent;
+                }
             }
 
             current = parent;
