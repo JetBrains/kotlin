@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.test
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
@@ -35,6 +36,8 @@ import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
+import org.jetbrains.kotlin.js.dce.DeadCodeElimination
+import org.jetbrains.kotlin.js.dce.InputFile
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationResult
@@ -53,6 +56,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactory
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.DFS
+import org.mozilla.javascript.Context
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
 import java.io.File
@@ -102,8 +106,9 @@ abstract class BasicBoxTest(
                 generateJavaScriptFile(file.parent, module, outputFileName, dependencies, friends, modules.size > 1,
                                        outputPrefixFile, outputPostfixFile, mainCallParameters)
 
-                if (!module.name.endsWith(OLD_MODULE_SUFFIX)) outputFileName else null
+                if (!module.name.endsWith(OLD_MODULE_SUFFIX)) Pair(outputFileName, module) else null
             }
+
             val mainModuleName = if (TEST_MODULE in modules) TEST_MODULE else DEFAULT_MODULE
             val mainModule = modules[mainModuleName]!!
 
@@ -140,7 +145,7 @@ abstract class BasicBoxTest(
                 additionalFiles += additionalJsFile
             }
 
-            val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles + globalCommonFiles + localCommonFiles +
+            val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map { it.first } + globalCommonFiles + localCommonFiles +
                              additionalCommonFiles
 
             if (generateNodeJsRunner && !SKIP_NODE_JS.matcher(fileContent).find()) {
@@ -152,7 +157,10 @@ abstract class BasicBoxTest(
 
             runGeneratedCode(allJsFiles, mainModuleName, testFactory.testPackage, TEST_FUNCTION, expectedResult, withModuleSystem)
 
-            performAdditionalChecks(generatedJsFiles, outputPrefixFile, outputPostfixFile)
+            performAdditionalChecks(generatedJsFiles.map { it.first }, outputPrefixFile, outputPostfixFile)
+
+            minifyAndRun(File(File(outputDir, "min"), file.nameWithoutExtension), allJsFiles, generatedJsFiles, expectedResult,
+                         mainModuleName, testFactory.testPackage, TEST_FUNCTION, withModuleSystem)
         }
     }
 
@@ -395,6 +403,59 @@ abstract class BasicBoxTest(
         }
 
         return JsConfig(project, configuration)
+    }
+
+    private fun minifyAndRun(
+            workDir: File, allJsFiles: List<String>, generatedJsFiles: List<Pair<String, TestModule>>,
+            expectedResult: String, testModuleName: String, testPackage: String?, testFunction: String, withModuleSystem: Boolean
+    ) {
+        val kotlinJsLib = DIST_DIR_JS_PATH + "kotlin.js"
+        val kotlinTestJsLib = DIST_DIR_JS_PATH + "kotlin-test.js"
+        val kotlinJsLibOutput = File(workDir, "kotlin.min.js").path
+        val kotlinTestJsLibOutput = File(workDir, "kotlin-test.min.js").path
+
+        val kotlinJsInputFile = InputFile(kotlinJsLib, kotlinJsLibOutput, "kotlin")
+        val kotlinTestJsInputFile = InputFile(kotlinTestJsLib, kotlinTestJsLibOutput, "kotlin-test")
+
+        val filesToMinify = generatedJsFiles.associate { (fileName, module) ->
+            val inputFileName = File(fileName).nameWithoutExtension
+            fileName to InputFile(fileName, File(workDir, inputFileName + ".min.js").absolutePath, module.name)
+        }
+
+        val testFunctionFqn = testModuleName + (if (testPackage.isNullOrEmpty()) "" else ".$testPackage") + ".$testFunction"
+        val additionalReachableNodes = setOf(
+                testFunctionFqn, "kotlin.kotlin.io.BufferedOutput", "kotlin.kotlin.io.output.flush",
+                "kotlin.kotlin.io.output.buffer"
+        )
+        val allFilesToMinify = filesToMinify.values + kotlinJsInputFile + kotlinTestJsInputFile
+        val reachableNodes = DeadCodeElimination.run(allFilesToMinify, additionalReachableNodes) {  }
+        if (reachableNodes.size > 1500) println("!!!")
+        println(reachableNodes.size.toString() + ": " + workDir.path)
+
+        val runList = mutableListOf<String>()
+        runList += kotlinJsLibOutput
+        runList += kotlinTestJsLibOutput
+
+        val context = Context.enter()
+        context.languageVersion = Context.VERSION_1_8
+        context.optimizationLevel = -1
+        val scope = context.initStandardObjects()
+
+        fun applyFile(fileToRun: String) {
+            val code = FileUtil.loadFile(File(fileToRun), CharsetToolkit.UTF8, true)
+            context.evaluateString(scope, code, fileToRun, 1, null)
+        }
+
+        applyFile(DIST_DIR_JS_PATH + RhinoUtils.RHINO_POLYFILLS_RELATIVE_PATH)
+        applyFile(kotlinJsLibOutput)
+        applyFile(kotlinTestJsLibOutput)
+        context.evaluateString(scope, "function ok() {}", "setup assertions", 0, null)
+        context.evaluateString(scope, RhinoUtils.SETUP_KOTLIN_OUTPUT, "setup kotlin output", 0, null)
+
+        allJsFiles.map { filesToMinify[it]?.outputName ?: it }.forEach(::applyFile)
+
+        val checker = RhinoFunctionResultChecker(testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
+        checker.runChecks(context, scope)
     }
 
     private inner class TestFileFactoryImpl : TestFileFactory<TestModule, TestFile>, Closeable {

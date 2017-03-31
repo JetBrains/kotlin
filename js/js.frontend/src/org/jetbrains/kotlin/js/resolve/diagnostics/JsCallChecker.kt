@@ -90,7 +90,7 @@ class JsCallChecker(
 
         try {
             val parserScope = JsFunctionScope(JsRootScope(JsProgram()), "<js fun>")
-            val statements = parse(code, errorReporter, parserScope)
+            val statements = parse(code, errorReporter, parserScope, reportOn.containingFile?.name ?: "<unknown file>")
 
             if (statements.isEmpty()) {
                 context.trace.report(ErrorsJs.JSCODE_NO_JAVASCRIPT_PRODUCED.on(argument))

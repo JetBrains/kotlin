@@ -24,5 +24,6 @@
     <orderEntry type="module" module-name="builtins-serializer" />
     <orderEntry type="module" module-name="frontend.script" />
     <orderEntry type="module" module-name="javac-wrapper" />
+    <orderEntry type="module" module-name="js.dce" />
   </component>
 </module>

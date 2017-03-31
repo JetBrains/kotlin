@@ -29,17 +29,19 @@ import java.util.*
 
 private val FAKE_SOURCE_INFO = SourceInfoImpl(null, 0, 0, 0, 0)
 
-fun parse(code: String, reporter: ErrorReporter, scope: JsScope): List<JsStatement> {
+fun parse(code: String, reporter: ErrorReporter, scope: JsScope, fileName: String): List<JsStatement> {
         val insideFunction = scope is JsFunctionScope
         val node = parse(code, 0, reporter, insideFunction, Parser::parse)
-        return node.toJsAst(scope, JsAstMapper::mapStatements)
+        return node.toJsAst(scope, fileName) {
+            mapStatements(it)
+        }
 }
 
-fun parseFunction(code: String, offset: Int, reporter: ErrorReporter, scope: JsScope): JsFunction =
+fun parseFunction(code: String, fileName: String, offset: Int, reporter: ErrorReporter, scope: JsScope): JsFunction =
         parse(code, offset, reporter, insideFunction = false) {
             addObserver(FunctionParsingObserver())
             primaryExpr(it)
-        }.toJsAst(scope, JsAstMapper::mapFunction)
+        }.toJsAst(scope, fileName, JsAstMapper::mapFunction)
 
 private class FunctionParsingObserver : Observer {
     var functionsStarted = 0
@@ -80,8 +82,8 @@ private fun parse(
 }
 
 inline
-private fun <T> Node.toJsAst(scope: JsScope, mapAction: JsAstMapper.(Node)->T): T =
-        JsAstMapper(scope).mapAction(this)
+private fun <T> Node.toJsAst(scope: JsScope, fileName: String, mapAction: JsAstMapper.(Node)->T): T =
+        JsAstMapper(scope, fileName).mapAction(this)
 
 private fun StringReader(string: String, offset: Int): Reader {
     val reader = StringReader(string)

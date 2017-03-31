@@ -175,6 +175,6 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         assert currentScope instanceof JsFunctionScope : "Usage of js outside of function is unexpected";
         JsScope temporaryRootScope = new JsRootScope(new JsProgram());
         JsScope scope = new DelegatingJsFunctionScopeWithTemporaryParent((JsFunctionScope) currentScope, temporaryRootScope);
-        return ParserUtilsKt.parse(jsCode, ThrowExceptionOnErrorReporter.INSTANCE, scope);
+        return ParserUtilsKt.parse(jsCode, ThrowExceptionOnErrorReporter.INSTANCE, scope, jsCodeExpression.getContainingKtFile().getName());
     }
 }

@@ -112,6 +112,7 @@
         <include name="js/js.inliner/src"/>
         <include name="js/js.parser/src"/>
         <include name="js/js.serializer/src"/>
+        <include name="js/js.dce/src"/>
         <include name="plugins/annotation-collector/src"/>
     </dirset>
 
@@ -152,6 +153,7 @@
         <include name="js.inliner/**"/>
         <include name="js.parser/**"/>
         <include name="js.serializer/**"/>
+        <include name="js.dce/**"/>
     </patternset>
 
     <path id="compilerSources.path">
@@ -265,6 +267,7 @@
             <fileset dir="js/js.inliner/src"/>
             <fileset dir="js/js.parser/src"/>
             <fileset dir="js/js.serializer/src"/>
+            <fileset dir="js/js.dce/src"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>
