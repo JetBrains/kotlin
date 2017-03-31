@@ -15,7 +15,7 @@ To build Tetris application for your host platform use
     
     ./build.sh
  
-You also may use gradle to build this sample: `../gradlew buildMacbook` or `../gradlew buildLinux`.
+You also may use gradle to build this sample: `../gradlew build`.
 Note that SDL2 must be installed on the host.
 
 For cross-compilation to iOS (on Mac host) use

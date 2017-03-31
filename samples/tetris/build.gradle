@@ -68,8 +68,8 @@ konanArtifacts {
         inputFiles project.file('Tetris.kt')
         useInterop 'sdlIphone'
 
-        linkerOpts '-framework SDL2 -framework AVFoundation -framework CoreGraphics -framework CoreMotion' +
-                   '-framework Foundation -framework GameController -framework AudioToolbox -framework OpenGLES' +
+        linkerOpts '-framework SDL2 -framework AVFoundation -framework CoreGraphics -framework CoreMotion ' +
+                   '-framework Foundation -framework GameController -framework AudioToolbox -framework OpenGLES ' +
                    '-framework QuartzCore -framework UIKit'
         noMain()
         target 'iphone'
@@ -85,10 +85,15 @@ konanArtifacts {
 
 }
 
-tasks.matching { it.name.startsWith("compileKonan") }.asList().forEach { compileTask ->
-    task ("build${compileTask.name - "compileKonanTetris"}", type: Copy) {
-        dependsOn(compileTask)
-        from compileTask.artifactPath
-        destinationDir projectDir
+build {
+    doLast {
+        getTaskDependencies().getDependencies().forEach() { task ->
+            if (task.name.startsWith("compileKonan")) {
+                copy {
+                    from task.artifactPath
+                    into projectDir.canonicalPath
+                }
+            }
+        }
     }
 }
