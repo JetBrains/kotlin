@@ -216,10 +216,10 @@ public class Visibilities {
 
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            DeclarationDescriptor fromOrModule = from instanceof PackageViewDescriptor ? ((PackageViewDescriptor) from).getModule() : from;
-            if (!DescriptorUtils.getContainingModule(fromOrModule).shouldSeeInternalsOf(DescriptorUtils.getContainingModule(what))) return false;
+            ModuleDescriptor fromModule = DescriptorUtils.getContainingModule(from);
+            if (!fromModule.shouldSeeInternalsOf(DescriptorUtils.getContainingModule(what))) return false;
 
-            return MODULE_VISIBILITY_HELPER.isInFriendModule(what, from);
+            return fromModule.getModuleVisibilityHelper().isInFriendModule(what, from);
         }
     };
 
@@ -416,13 +416,5 @@ public class Visibilities {
 
     public static boolean isPrivate(@NotNull Visibility visibility) {
         return visibility == PRIVATE || visibility == PRIVATE_TO_THIS;
-    }
-
-    @NotNull
-    private static final ModuleVisibilityHelper MODULE_VISIBILITY_HELPER;
-
-    static {
-        Iterator<ModuleVisibilityHelper> iterator = ServiceLoader.load(ModuleVisibilityHelper.class, ModuleVisibilityHelper.class.getClassLoader()).iterator();
-        MODULE_VISIBILITY_HELPER = iterator.hasNext() ? iterator.next() : ModuleVisibilityHelper.EMPTY.INSTANCE;
     }
 }

@@ -22,10 +22,11 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
-import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.util.ModuleVisibilityHelper
 import org.jetbrains.kotlin.utils.sure
 import java.lang.IllegalArgumentException
+import java.util.*
 
 class ModuleDescriptorImpl @JvmOverloads constructor(
         moduleName: Name,
@@ -34,7 +35,8 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         // May be null in compiler context, should be not-null in IDE context
         multiTargetPlatform: MultiTargetPlatform? = null,
         override val sourceKind: SourceKind = SourceKind.NONE,
-        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
+        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
+        override val moduleVisibilityHelper: ModuleVisibilityHelper = MODULE_VISIBILITY_HELPER
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
     init {
         if (!moduleName.isSpecial) {
@@ -121,6 +123,12 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> getCapability(capability: ModuleDescriptor.Capability<T>) = capabilities[capability] as? T
+
+    companion object {
+        val MODULE_VISIBILITY_HELPER = ServiceLoader.load(ModuleVisibilityHelper::class.java, ModuleVisibilityHelper::class.java.classLoader).iterator().let { iterator ->
+            if (iterator.hasNext()) iterator.next() else ModuleVisibilityHelper.EMPTY
+        }
+    }
 }
 
 interface ModuleDependencies {

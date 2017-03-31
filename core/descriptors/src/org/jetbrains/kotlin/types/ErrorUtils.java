@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.error.ErrorSimpleFunctionDescriptorImpl;
+import org.jetbrains.kotlin.util.ModuleVisibilityHelper;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.util.Collection;
@@ -50,6 +51,12 @@ public class ErrorUtils {
     private static final ModuleDescriptor ERROR_MODULE;
     static {
         ERROR_MODULE = new ModuleDescriptor() {
+            @NotNull
+            @Override
+            public ModuleVisibilityHelper getModuleVisibilityHelper() {
+                return ModuleVisibilityHelper.EMPTY.INSTANCE;
+            }
+
             @NotNull
             @Override
             public SourceKind getSourceKind() {
