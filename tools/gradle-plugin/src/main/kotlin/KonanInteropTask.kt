@@ -44,16 +44,12 @@ open class KonanInteropTask: DefaultTask() {
     @Optional @Input var linker: String? = null
         internal set
 
-    @Input var compilerOpts   = mutableListOf<String>()
-        internal set
-    @Input var linkerOpts     = mutableListOf<String>()
-        internal set
+    @Input val compilerOpts   = mutableListOf<String>()
+    @Input val linkerOpts     = mutableListOf<String>()
 
     // TODO: Check if we can use only one FileCollection instead of set.
-    @InputFiles var headers   = mutableSetOf<FileCollection>()
-        internal set
-    @InputFiles var linkFiles = mutableSetOf<FileCollection>()
-        internal set
+    @InputFiles val headers   = mutableSetOf<FileCollection>()
+    @InputFiles val linkFiles = mutableSetOf<FileCollection>()
 
     @TaskAction
     fun exec() {
@@ -66,7 +62,7 @@ open class KonanInteropTask: DefaultTask() {
                 environment("LD_LIBRARY_PATH", "${project.konanHome}/nativelib")
                 environment("DYLD_LIBRARY_PATH", "${project.konanHome}/nativelib")
 
-                args(buildArgs())
+                args(buildArgs().apply { logger.info("Interop args: ${this.joinToString(separator = " ")}") })
             }
         }
     }

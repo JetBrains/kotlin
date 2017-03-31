@@ -37,13 +37,10 @@ open class KonanCompileTask: DefaultTask() {
 
     // Other compilation parameters -------------------------------------------
 
-    @InputFiles var inputFiles      = mutableSetOf<FileCollection>()
-        internal set
+    @InputFiles val inputFiles      = mutableSetOf<FileCollection>()
 
-    @InputFiles var libraries       = mutableSetOf<FileCollection>()
-        internal set
-    @InputFiles var nativeLibraries = mutableSetOf<FileCollection>()
-        internal set
+    @InputFiles val libraries       = mutableSetOf<FileCollection>()
+    @InputFiles val nativeLibraries = mutableSetOf<FileCollection>()
 
     @Input var linkerOpts = mutableListOf<String>()
         internal set
@@ -134,7 +131,7 @@ open class KonanCompileTask: DefaultTask() {
                 main = COMPILER_MAIN
                 classpath = project.fileTree(COMPILER_CLASSPATH).apply { include("*.jar") }
                 jvmArgs(COMPILER_JVM_ARGS)
-                args(buildArgs())
+                args(buildArgs().apply { logger.info("Compiler args: ${this.joinToString(separator = " ")}") })
             }
         }
     }
