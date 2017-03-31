@@ -73,6 +73,7 @@ import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
+import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
@@ -143,6 +144,9 @@ class KotlinCoreEnvironment private constructor(
     private val sourceFiles = mutableListOf<KtFile>()
     private val rootsIndex: JvmDependenciesDynamicCompoundIndex
 
+    private val javaModuleFinder: CliJavaModuleFinder
+    private val javaModuleGraph: JavaModuleGraph
+
     val configuration: CompilerConfiguration = configuration.copy()
 
     init {
@@ -187,6 +191,9 @@ class KotlinCoreEnvironment private constructor(
                                 .distinctBy { it.absolutePath })
             }
         }
+
+        javaModuleFinder = CliJavaModuleFinder(VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL))
+        javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
         val initialRoots = convertClasspathRoots(configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS))
 
@@ -282,28 +289,22 @@ class KotlinCoreEnvironment private constructor(
             result.add(JavaRoot(virtualFile, rootType, prefixPackageFqName))
         }
 
-        val jrtFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL)
-        if (jrtFileSystem != null) {
-            addModularJdkRoots(jrtFileSystem, result)
-        }
+        addModularRoots(result)
 
         return result
     }
 
-    private fun addModularJdkRoots(fileSystem: VirtualFileSystem, result: MutableList<JavaRoot>) {
-        val graph = JavaModuleGraph { moduleName ->
-            fileSystem.findFileByPath("/modules/$moduleName/module-info.class")?.let((JavaModuleInfo)::read) ?: run {
-                report(ERROR, "Module $moduleName cannot be found in the Java runtime image")
-                JavaModuleInfo(moduleName, emptyList(), emptyList())
-            }
+    private fun addModularRoots(result: MutableList<JavaRoot>) {
+        val jrtFileSystem = javaModuleFinder.jrtFileSystem ?: return
+
+        val rootModules = computeRootModules(javaModuleFinder)
+        val allDependencies = javaModuleGraph.getAllDependencies(rootModules).also { modules ->
+            report(LOGGING, "Loading modules: $modules")
         }
 
-        val allReachableModules = graph.getAllReachable(listOf("java.base", "java.se")).also { modules ->
-            report(LOGGING, "Loading modules exported by java.se: $modules")
-        }
-
-        for (moduleName in allReachableModules) {
-            val root = fileSystem.findFileByPath("/modules/$moduleName")
+        for (moduleName in allDependencies) {
+            // TODO: support modules not only from Java runtime image, but from a separate module path
+            val root = jrtFileSystem.findFileByPath("/modules/$moduleName")
             if (root == null) {
                 report(ERROR, "Module $moduleName cannot be found in the module graph")
             }
@@ -311,6 +312,40 @@ class KotlinCoreEnvironment private constructor(
                 result.add(JavaRoot(root, JavaRoot.RootType.BINARY))
             }
         }
+    }
+
+    // See http://openjdk.java.net/jeps/261
+    private fun computeRootModules(finder: CliJavaModuleFinder): List<String> {
+        val result = arrayListOf<String>()
+
+        val systemModules = finder.computeAllSystemModules()
+        val javaSeExists = "java.se" in systemModules
+        if (javaSeExists) {
+            // The java.se module is a root, if it exists.
+            result.add("java.se")
+        }
+
+        fun JavaModuleInfo.exportsAtLeastOnePackageUnqualified(): Boolean = exports.any { it.toModules.isEmpty() }
+
+        if (!javaSeExists) {
+            // If it does not exist then every java.* module on the upgrade module path or among the system modules
+            // that exports at least one package, without qualification, is a root.
+            for ((name, module) in systemModules) {
+                if (name.startsWith("java.") && module.exportsAtLeastOnePackageUnqualified()) {
+                    result.add(name)
+                }
+            }
+        }
+
+        for ((name, module) in systemModules) {
+            // Every non-java.* module on the upgrade module path or among the system modules that exports at least one package,
+            // without qualification, is also a root.
+            if (!name.startsWith("java.") && module.exportsAtLeastOnePackageUnqualified()) {
+                result.add(name)
+            }
+        }
+
+        return result
     }
 
     private fun updateClasspathFromRootsIndex(index: JvmDependenciesIndex) {

@@ -18,22 +18,25 @@ package org.jetbrains.kotlin.resolve.jvm.modules
 
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-class JavaModuleGraph(getModuleInfo: (String) -> JavaModuleInfo) {
-    private val moduleInfo: (String) -> JavaModuleInfo = LockBasedStorageManager.NO_LOCKS.createMemoizedFunction(getModuleInfo)
+class JavaModuleGraph(finder: JavaModuleFinder) {
+    private val moduleInfo: (String) -> JavaModuleInfo? =
+            LockBasedStorageManager.NO_LOCKS.createMemoizedFunctionWithNullableValues(finder::findModule)
 
-    fun getAllReachable(rootModules: List<String>): List<String> {
-        val visited = linkedSetOf<String>()
+    fun getAllDependencies(moduleNames: List<String>): List<String> {
+        // Every module implicitly depends on java.base
+        val visited = linkedSetOf("java.base")
 
         fun dfs(module: String) {
             if (!visited.add(module)) return
-            for (dependency in moduleInfo(module).requires) {
+            val moduleInfo = moduleInfo(module) ?: return
+            for (dependency in moduleInfo.requires) {
                 if (dependency.isTransitive) {
                     dfs(dependency.moduleName)
                 }
             }
         }
 
-        rootModules.forEach(::dfs)
+        moduleNames.forEach(::dfs)
         return visited.toList()
     }
 }
