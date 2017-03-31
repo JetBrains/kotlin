@@ -112,6 +112,15 @@ class KonanPlugin: Plugin<ProjectInternal> {
         }
     }
 
+    private fun String.isSupported(): Boolean {
+        val os = CompilerDownloadTask.simpleOsName()
+        return when (os) {
+            "macos" -> this == "macbook" || this == "iphone"
+            "linux" -> this == "linux" || this == "raspberrypi"
+            else -> false
+        }
+    }
+
     // TODO: Create default config? what about test sources?
     override fun apply(project: ProjectInternal?) {
         if (project == null) { return }
@@ -122,8 +131,8 @@ class KonanPlugin: Plugin<ProjectInternal> {
             project.delete(project.konanBuildRoot)
         }
         getTask(project, "build").apply {
-            dependsOn(project.tasks.withType(KonanCompileTask::class.java))
-            dependsOn(project.tasks.withType(KonanInteropTask::class.java))
+            dependsOn(project.tasks.withType(KonanCompileTask::class.java).matching { it.target?.isSupported() ?: true })
+            dependsOn(project.tasks.withType(KonanInteropTask::class.java).matching { it.target?.isSupported() ?: true })
         }
     }
 

@@ -60,7 +60,8 @@ open class KonanInteropConfig(
     }
 
     fun target(value: String) = with(generateStubsTask) {
-        target = value
+        generateStubsTask.target = value
+        compileStubsTask.target = value
     }
 
     fun compilerOpts(vararg values: String) = with(generateStubsTask) {
