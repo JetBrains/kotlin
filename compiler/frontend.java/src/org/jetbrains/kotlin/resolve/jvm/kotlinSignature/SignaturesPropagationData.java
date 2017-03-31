@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -215,11 +214,8 @@ public class SignaturesPropagationData {
         }
 
         // sorting for diagnostic stability
-        Collections.sort(superFunctions, (fun1, fun2) -> {
-            FqNameUnsafe fqName1 = getFqName(fun1.getContainingDeclaration());
-            FqNameUnsafe fqName2 = getFqName(fun2.getContainingDeclaration());
-            return fqName1.asString().compareTo(fqName2.asString());
-        });
+        superFunctions.sort(Comparator.comparing(fun -> getFqName(fun.getContainingDeclaration()).asString()));
+
         return superFunctions;
     }
 

@@ -604,7 +604,7 @@ public class CheckerTestUtil {
             diagnosticDescriptors.add(
                     new DiagnosticDescriptor(range.getStartOffset(), range.getEndOffset(), diagnosticsGroupedByRanges.get(range)));
         }
-        Collections.sort(diagnosticDescriptors, (d1, d2) -> {
+        diagnosticDescriptors.sort((d1, d2) -> {
             // Start early -- go first; start at the same offset, the one who end later is the outer, i.e. goes first
             return (d1.start != d2.start) ? d1.start - d2.start : d2.end - d1.end;
         });

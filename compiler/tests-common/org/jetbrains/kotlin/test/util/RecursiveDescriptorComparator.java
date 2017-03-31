@@ -222,7 +222,7 @@ public class RecursiveDescriptorComparator {
         subDescriptors.addAll(DescriptorUtils.getAllDescriptors(memberScope));
         subDescriptors.addAll(extraSubDescriptors);
 
-        Collections.sort(subDescriptors, MemberComparator.INSTANCE);
+        subDescriptors.sort(MemberComparator.INSTANCE);
 
         for (DeclarationDescriptor subDescriptor : subDescriptors) {
             if (!shouldSkip(subDescriptor)) {

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
@@ -155,7 +154,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
 
             List<ActualDiagnostic> actualDiagnostics =
                     CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null, null);
-            Collections.sort(actualDiagnostics, CheckerTestUtil.DIAGNOSTIC_COMPARATOR);
+            actualDiagnostics.sort(CheckerTestUtil.DIAGNOSTIC_COMPARATOR);
 
             makeTestData(actualDiagnostics, diagnosedRanges);
 

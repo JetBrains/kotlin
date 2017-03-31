@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.diagnostics.rendering.*;
 import org.jetbrains.kotlin.resolve.MemberComparator;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
@@ -36,7 +35,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                         renderedDescriptors.add(descriptor);
                     }
                 }
-                Collections.sort(renderedDescriptors, MemberComparator.INSTANCE);
+                renderedDescriptors.sort(MemberComparator.INSTANCE);
                 RenderingContext.Impl renderingContext = new RenderingContext.Impl(renderedDescriptors);
 
                 StringBuilder sb = new StringBuilder();

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -115,7 +114,7 @@ public class FrameMap {
             descriptors.add(Trinity.create(descriptor, varIndex, varSize));
         }
 
-        Collections.sort(descriptors, Comparator.comparingInt(left -> left.second));
+        descriptors.sort(Comparator.comparingInt(left -> left.second));
 
         sb.append("size=").append(myMaxIndex);
 

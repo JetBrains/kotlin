@@ -160,7 +160,8 @@ public class DiagnosticUtils {
 
     @NotNull
     public static List<Diagnostic> sortedDiagnostics(@NotNull Collection<Diagnostic> diagnostics) {
-        Comparator<Diagnostic> diagnosticComparator = (d1, d2) -> {
+        List<Diagnostic> result = Lists.newArrayList(diagnostics);
+        result.sort((d1, d2) -> {
             String path1 = d1.getPsiFile().getViewProvider().getVirtualFile().getPath();
             String path2 = d2.getPsiFile().getViewProvider().getVirtualFile().getPath();
             if (!path1.equals(path2)) return path1.compareTo(path2);
@@ -173,9 +174,7 @@ public class DiagnosticUtils {
             }
 
             return d1.getFactory().getName().compareTo(d2.getFactory().getName());
-        };
-        List<Diagnostic> result = Lists.newArrayList(diagnostics);
-        Collections.sort(result, diagnosticComparator);
+        });
         return result;
     }
 

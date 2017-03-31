@@ -20,7 +20,10 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class GroupingMessageCollector implements MessageCollector {
 
@@ -81,7 +84,7 @@ public class GroupingMessageCollector implements MessageCollector {
     private Collection<String> sortedKeys() {
         List<String> sortedKeys = new ArrayList<String>(groupedMessages.keySet());
         // ensure that messages with no location i.e. perf, incomplete hierarchy are always reported first
-        Collections.sort(sortedKeys, (o1, o2) -> {
+        sortedKeys.sort((o1, o2) -> {
             if (o1 == o2) return 0;
             if (o1 == null) return -1;
             if (o2 == null) return 1;

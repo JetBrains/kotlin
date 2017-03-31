@@ -210,19 +210,12 @@ public class CodegenBinding {
         }
 
         List<KtFile> sortedAnswer = new ArrayList<KtFile>(answer);
-        Collections.sort(sortedAnswer, new Comparator<KtFile>() {
-            @NotNull
-            private String path(KtFile file) {
-                VirtualFile virtualFile = file.getVirtualFile();
-                assert virtualFile != null : "VirtualFile is null for JetFile: " + file.getName();
-                return virtualFile.getPath();
-            }
 
-            @Override
-            public int compare(@NotNull KtFile first, @NotNull KtFile second) {
-                return path(first).compareTo(path(second));
-            }
-        });
+        sortedAnswer.sort(Comparator.comparing((KtFile file) -> {
+            VirtualFile virtualFile = file.getVirtualFile();
+            assert virtualFile != null : "VirtualFile is null for JetFile: " + file.getName();
+            return virtualFile.getPath();
+        }));
 
         return sortedAnswer;
     }

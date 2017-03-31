@@ -96,7 +96,7 @@ public class SimpleTestClassModel implements TestClassModel {
                     }
                 }
             }
-            Collections.sort(children, BY_NAME);
+            children.sort(BY_NAME);
             innerTestClasses = children;
         }
         return innerTestClasses;
@@ -161,7 +161,7 @@ public class SimpleTestClassModel implements TestClassModel {
                         }
                     }
                 }
-                Collections.sort(result, BY_NAME);
+                result.sort(BY_NAME);
 
                 testMethods = result;
             }

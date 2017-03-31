@@ -123,7 +123,7 @@ public class ConstraintsUtil {
                 interestingMethods.add(method);
             }
         }
-        Collections.sort(interestingMethods, Comparator.comparing(Method::getName));
+        interestingMethods.sort(Comparator.comparing(Method::getName));
         for (Iterator<Method> iterator = interestingMethods.iterator(); iterator.hasNext(); ) {
             Method method = iterator.next();
             try {
