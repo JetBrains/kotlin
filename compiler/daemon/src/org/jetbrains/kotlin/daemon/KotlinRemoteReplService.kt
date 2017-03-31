@@ -98,8 +98,7 @@ open class KotlinJvmReplService(
     override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult {
         operationsTracer?.before("check")
         try {
-            return replCompiler?.check(state, codeLine)
-                   ?: ReplCheckResult.Error("Initialization error", CompilerMessageLocation.NO_LOCATION)
+            return replCompiler?.check(state, codeLine) ?: ReplCheckResult.Error("Initialization error")
         }
         finally {
             operationsTracer?.after("check")
@@ -109,8 +108,7 @@ open class KotlinJvmReplService(
     override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult {
         operationsTracer?.before("compile")
         try {
-            return replCompiler?.compile(state, codeLine)
-                   ?: ReplCompileResult.Error("Initialization error", CompilerMessageLocation.NO_LOCATION)
+            return replCompiler?.compile(state, codeLine) ?: ReplCompileResult.Error("Initialization error")
         }
         finally {
             operationsTracer?.after("compile")

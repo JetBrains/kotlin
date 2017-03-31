@@ -48,7 +48,7 @@ public class PrintingMessageCollector implements MessageCollector {
 
         hasErrors |= severity.isError();
 
-        errStream.println(messageRenderer.render(severity, message, location != null ? location : CompilerMessageLocation.NO_LOCATION));
+        errStream.println(messageRenderer.render(severity, message, location));
     }
 
     @Override

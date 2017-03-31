@@ -77,7 +77,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             Usage.print(errStream, createArguments(), false);
         }
         catch (Throwable t) {
-            errStream.println(messageRenderer.render(EXCEPTION, OutputMessageUtil.renderException(t), CompilerMessageLocation.NO_LOCATION));
+            errStream.println(messageRenderer.render(EXCEPTION, OutputMessageUtil.renderException(t), null));
         }
         return null;
     }

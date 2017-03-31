@@ -35,7 +35,7 @@ internal class CompileServicesFacadeMessageCollector(
     }
 
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
-        log.info("Message: " + MessageRenderer.WITHOUT_PATHS.render(severity, message, location ?: CompilerMessageLocation.NO_LOCATION))
+        log.info("Message: " + MessageRenderer.WITHOUT_PATHS.render(severity, message, location))
         when (severity) {
             CompilerMessageSeverity.OUTPUT -> {
                 servicesFacade.report(ReportCategory.OUTPUT_MESSAGE, ReportSeverity.ERROR, message)

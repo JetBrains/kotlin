@@ -62,9 +62,8 @@ sealed class ReplCheckResult : Serializable {
 
     class Incomplete : ReplCheckResult()
 
-    class Error(val message: String,
-                val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION) : ReplCheckResult() {
-        override fun toString(): String = "Error(message = \"$message\""
+    class Error(val message: String, val location: CompilerMessageLocation? = null) : ReplCheckResult() {
+        override fun toString(): String = "Error(message = \"$message\")"
     }
 
     companion object {
@@ -88,8 +87,7 @@ sealed class ReplCompileResult : Serializable {
 
     class Incomplete : ReplCompileResult()
 
-    class Error(val message: String,
-                val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION) : ReplCompileResult() {
+    class Error(val message: String, val location: CompilerMessageLocation? = null) : ReplCompileResult() {
         override fun toString(): String = "Error(message = \"$message\""
     }
 
@@ -125,8 +123,7 @@ sealed class ReplEvalResult : Serializable {
     sealed class Error(val message: String) : ReplEvalResult() {
         class Runtime(message: String, val cause: Exception? = null) : Error(message)
 
-        class CompileTime(message: String,
-                          val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION) : Error(message)
+        class CompileTime(message: String, val location: CompilerMessageLocation? = null) : Error(message)
 
         override fun toString(): String = "${this::class.simpleName}Error(message = \"$message\""
     }

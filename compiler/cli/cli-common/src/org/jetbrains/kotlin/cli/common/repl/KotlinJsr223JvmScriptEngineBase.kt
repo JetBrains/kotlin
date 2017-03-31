@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.common.repl
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import java.io.Reader
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.*
@@ -109,6 +108,5 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
 }
 
 private fun ReplCompileResult.Error.locationString() =
-        if (location == CompilerMessageLocation.NO_LOCATION) ""
+        if (location == null) ""
         else " at ${location.line}:${location.column}"
-

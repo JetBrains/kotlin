@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.common.messages;
 
-import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.utils.fileUtils.FileUtilsKt;
@@ -36,7 +35,7 @@ public interface MessageRenderer {
     };
 
     MessageRenderer PLAIN_FULL_PATHS = new PlainTextMessageRenderer() {
-        @Nullable
+        @NotNull
         @Override
         protected String getPath(@NotNull CompilerMessageLocation location) {
             return location.getPath();
@@ -44,20 +43,18 @@ public interface MessageRenderer {
     };
 
     MessageRenderer PLAIN_RELATIVE_PATHS = new PlainTextMessageRenderer() {
-        @NotNull
         private final File cwd = new File(".").getAbsoluteFile();
 
-        @Nullable
+        @NotNull
         @Override
         protected String getPath(@NotNull CompilerMessageLocation location) {
-            String path = location.getPath();
-            return path == null ? path : FileUtilsKt.descendantRelativeTo(new File(path), cwd).getPath();
+            return FileUtilsKt.descendantRelativeTo(new File(location.getPath()), cwd).getPath();
         }
     };
 
     String renderPreamble();
 
-    String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location);
+    String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location);
 
     String renderConclusion();
 }

@@ -57,16 +57,14 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
     }
 
     @Override
-    public String render(
-            @NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location
-    ) {
+    public String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location) {
         StringBuilder result = new StringBuilder();
 
-        int line = location.getLine();
-        int column = location.getColumn();
-        String lineContent = location.getLineContent();
+        int line = location != null ? location.getLine() : -1;
+        int column = location != null ? location.getColumn() : -1;
+        String lineContent = location != null ? location.getLineContent() : null;
 
-        String path = getPath(location);
+        String path = location != null ? getPath(location) : null;
         if (path != null) {
             result.append(path);
             result.append(":");
