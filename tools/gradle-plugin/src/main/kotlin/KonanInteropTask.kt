@@ -81,13 +81,17 @@ open class KonanInteropTask: DefaultTask() {
 
         addFileArgs("-h", headers)
 
-        addListArg("-copt", compilerOpts)
+        compilerOpts.forEach {
+            addArg("-copt", it)
+        }
 
         val linkerOpts = mutableListOf<String>().apply { addAll(linkerOpts) }
         linkFiles.forEach {
             linkerOpts.addAll(it.files.map { it.canonicalPath })
         }
-        addListArg("-lopt", linkerOpts)
+        linkerOpts.forEach {
+            addArg("-lopt", it)
+        }
     }
 
 }
