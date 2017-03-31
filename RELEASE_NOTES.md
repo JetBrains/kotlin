@@ -20,7 +20,7 @@ basic runtime shipped along with the translator, we only support a subset of all
 target platforms. Currently _Kotlin/Native_ is being shipped and tested with support for
 the following platforms:
 
- * Mac OS X 10.10 and later (x86-64)
+ * Mac OS X 10.11 and later (x86-64)
  * x86-64 Ubuntu Linux (14.04, 16.04 and later), other Linux flavours may work as well
  * Apple iOS (arm64), cross-compiled on MacOS X host (`-target iphone`)
  * Raspberry Pi, cross-compiled on Linux host (`-target raspberrypi`)

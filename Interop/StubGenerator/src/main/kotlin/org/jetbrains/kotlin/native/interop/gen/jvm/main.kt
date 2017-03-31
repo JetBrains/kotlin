@@ -203,7 +203,7 @@ private fun Properties.defaultCompilerOpts(target: String, dependencies: String)
                 "-isystem", isystem,
                 "-B$hostSysRoot/usr/bin",
                 "--sysroot=$sysRoot",
-                "-mmacosx-version-min=10.10")
+                "-mmacosx-version-min=10.11")
         "osx-ios" -> 
             return listOf(
                 "-arch", "arm64",
