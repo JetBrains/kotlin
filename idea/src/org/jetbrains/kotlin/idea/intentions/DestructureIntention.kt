@@ -48,9 +48,13 @@ import java.util.*
 class DestructureInspection : IntentionBasedInspection<KtDeclaration>(
         DestructureIntention::class,
         { element, _ ->
-            if (element is KtParameter) true
+            val usagesToRemove = DestructureIntention.collectUsagesToRemove(element)?.data
+            if (element is KtParameter) {
+                usagesToRemove != null &&
+                (usagesToRemove.any { it.declarationToDrop is KtDestructuringDeclaration } ||
+                 usagesToRemove.filter { it.usagesToReplace.isNotEmpty() }.size > usagesToRemove.size / 2)
+            }
             else {
-                val usagesToRemove = DestructureIntention.collectUsagesToRemove(element)?.data
                 usagesToRemove?.any { it.declarationToDrop is KtDestructuringDeclaration } ?: false
             }
         }
