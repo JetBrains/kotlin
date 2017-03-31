@@ -153,7 +153,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
 
         override fun getText(): String = text
 
-        override fun startInWriteAction() = true
+        override fun startInWriteAction() = intention.startInWriteAction()
 
         override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?) = isAvailable()
 
