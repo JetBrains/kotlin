@@ -71,7 +71,7 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
         }
 
         if (!isInfoShown) {
-            println("Downloading native dependencies (LLVM, sysroot etc). This is one-time action performing only for the first run of the compiler.")
+            println("Downloading native dependencies (LLVM, sysroot etc). This is a one-time action performed only on the first run of the compiler.")
             isInfoShown = true
         }
 
