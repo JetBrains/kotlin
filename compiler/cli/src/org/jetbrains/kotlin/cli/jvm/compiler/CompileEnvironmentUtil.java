@@ -54,7 +54,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.jar.*;
 
-import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class CompileEnvironmentUtil {
@@ -64,14 +63,14 @@ public class CompileEnvironmentUtil {
     public static ModuleScriptData loadModuleDescriptions(String moduleDefinitionFile, MessageCollector messageCollector) {
         File file = new File(moduleDefinitionFile);
         if (!file.exists()) {
-            messageCollector.report(ERROR, "Module definition file does not exist: " + moduleDefinitionFile, NO_LOCATION);
+            messageCollector.report(ERROR, "Module definition file does not exist: " + moduleDefinitionFile, null);
             return ModuleScriptData.EMPTY;
         }
         String extension = FileUtilRt.getExtension(moduleDefinitionFile);
         if ("xml".equalsIgnoreCase(extension)) {
             return ModuleXmlParser.parseModuleScript(moduleDefinitionFile, messageCollector);
         }
-        messageCollector.report(ERROR, "Unknown module definition type: " + moduleDefinitionFile, NO_LOCATION);
+        messageCollector.report(ERROR, "Unknown module definition type: " + moduleDefinitionFile, null);
         return ModuleScriptData.EMPTY;
     }
 

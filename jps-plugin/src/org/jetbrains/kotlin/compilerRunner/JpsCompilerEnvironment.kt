@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.preloading.ClassCondition
@@ -37,8 +36,8 @@ class JpsCompilerEnvironment(
 
     fun reportErrorsTo(messageCollector: MessageCollector) {
         if (!kotlinPaths.homePath.exists()) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Cannot find kotlinc home: " + kotlinPaths.homePath + ". Make sure plugin is properly installed, " +
-                                                                   "or specify " + PathUtil.JPS_KOTLIN_HOME_PROPERTY + " system property", CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(ERROR, "Cannot find kotlinc home: " + kotlinPaths.homePath + ". Make sure plugin is properly installed, " +
+                                           "or specify " + PathUtil.JPS_KOTLIN_HOME_PROPERTY + " system property")
         }
     }
 }

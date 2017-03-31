@@ -30,7 +30,6 @@ import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.util.Collections;
 
-import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class CompilerRunnerUtil {
@@ -63,7 +62,7 @@ public class CompilerRunnerUtil {
         messageCollector.report(
                 ERROR,
                 "Broken compiler at '" + libs.getAbsolutePath() + "'. Make sure plugin is properly installed",
-                NO_LOCATION
+                null
         );
 
         return null;

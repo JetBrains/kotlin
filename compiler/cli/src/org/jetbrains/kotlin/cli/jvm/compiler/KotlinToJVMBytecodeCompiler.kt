@@ -32,7 +32,11 @@ import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
-import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -88,8 +92,9 @@ object KotlinToJVMBytecodeCompiler {
         if (jarPath != null) {
             val includeRuntime = configuration.get(JVMConfigurationKeys.INCLUDE_RUNTIME, false)
             CompileEnvironmentUtil.writeToJar(jarPath, includeRuntime, mainClass, outputFiles)
-            messageCollector.report(CompilerMessageSeverity.OUTPUT,
-                                    OutputMessageUtil.formatOutputMessage(outputFiles.asList().flatMap { it.sourceFiles }.distinct(), jarPath), CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(
+                    OUTPUT, OutputMessageUtil.formatOutputMessage(outputFiles.asList().flatMap { it.sourceFiles }.distinct(), jarPath)
+            )
             return
         }
 
@@ -466,9 +471,7 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         if (runtimeVersions.toSet().size > 1) {
-            messageCollector.report(CompilerMessageSeverity.ERROR,
-                                    "Conflicting versions of Kotlin runtime on classpath: " + runtimes.joinToString { it.path },
-                                    CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(ERROR, "Conflicting versions of Kotlin runtime on classpath: " + runtimes.joinToString { it.path })
         }
     }
 }

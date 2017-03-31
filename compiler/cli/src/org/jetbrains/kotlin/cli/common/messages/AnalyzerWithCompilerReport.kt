@@ -23,6 +23,7 @@ import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.util.PsiFormatUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTrackerImpl
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
@@ -54,7 +55,7 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
                 assert(unresolved != null && !unresolved.isEmpty()) { "Incomplete hierarchy should be reported with names of unresolved superclasses: " + fqName }
                 message.append("    class ").append(fqName).append(", unresolved supertypes: ").append(unresolved!!.joinToString()).append("\n")
             }
-            messageCollector.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(ERROR, message.toString())
         }
     }
 
@@ -77,7 +78,7 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
                     message.append("    ").append(error).append("\n")
                 }
             }
-            messageCollector.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(ERROR, message.toString())
         }
     }
 
@@ -120,9 +121,9 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
     companion object {
 
         fun convertSeverity(severity: Severity): CompilerMessageSeverity = when (severity) {
-            Severity.INFO -> CompilerMessageSeverity.INFO
-            Severity.ERROR -> CompilerMessageSeverity.ERROR
-            Severity.WARNING -> CompilerMessageSeverity.WARNING
+            Severity.INFO -> INFO
+            Severity.ERROR -> ERROR
+            Severity.WARNING -> WARNING
             else -> throw IllegalStateException("Unknown severity: " + severity)
         }
 
@@ -160,10 +161,9 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
 
             if (hasIncompatibleClassErrors) {
                 messageCollector.report(
-                        CompilerMessageSeverity.ERROR,
+                        ERROR,
                         "Incompatible classes were found in dependencies. " +
-                        "Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors",
-                        CompilerMessageLocation.NO_LOCATION
+                        "Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors"
                 )
             }
 
@@ -205,10 +205,9 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
         }
 
         fun reportBytecodeVersionErrors(bindingContext: BindingContext, messageCollector: MessageCollector) {
-            val severity = if (System.getProperty("kotlin.jvm.disable.bytecode.version.error") == "true")
-                CompilerMessageSeverity.STRONG_WARNING
-            else
-                CompilerMessageSeverity.ERROR
+            val severity =
+                    if (System.getProperty("kotlin.jvm.disable.bytecode.version.error") == "true") STRONG_WARNING
+                    else ERROR
 
             val locations = bindingContext.getKeys(IncompatibleClassTrackerImpl.BYTECODE_VERSION_ERRORS)
             if (locations.isEmpty()) return

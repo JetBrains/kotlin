@@ -18,19 +18,14 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
-import org.jetbrains.kotlin.daemon.client.CompilationServices
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -90,7 +85,7 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
                     DaemonReportCategory.INFO -> CompilerMessageSeverity.INFO
                     DaemonReportCategory.EXCEPTION -> CompilerMessageSeverity.EXCEPTION
                 }
-                environment.messageCollector.report(severity, message.message, CompilerMessageLocation.NO_LOCATION)
+                environment.messageCollector.report(severity, message.message)
             }
         }
 
@@ -98,9 +93,7 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
             if (daemonOptions.reportPerf) {
                 fun Long.ms() = TimeUnit.NANOSECONDS.toMillis(this)
                 val counters = profiler.getTotalCounters()
-                messageCollector.report(CompilerMessageSeverity.INFO,
-                                        "PERF: $message ${counters.time.ms()} ms, thread ${counters.threadTime.ms()}",
-                                        CompilerMessageLocation.NO_LOCATION)
+                messageCollector.report(CompilerMessageSeverity.INFO, "PERF: $message ${counters.time.ms()} ms, thread ${counters.threadTime.ms()}")
             }
         }
 
@@ -122,7 +115,7 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
     }
 
     protected fun reportInternalCompilerError(messageCollector: MessageCollector): ExitCode {
-        messageCollector.report(ERROR, "Compiler terminated with internal error", CompilerMessageLocation.NO_LOCATION)
+        messageCollector.report(CompilerMessageSeverity.ERROR, "Compiler terminated with internal error")
         return ExitCode.INTERNAL_ERROR
     }
 

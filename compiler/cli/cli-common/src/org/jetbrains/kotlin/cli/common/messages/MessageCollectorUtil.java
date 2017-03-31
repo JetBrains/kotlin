@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class MessageCollectorUtil {
     public static void reportException(@NotNull MessageCollector messageCollector, @NotNull Throwable exception) {
-        messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(exception),
-                                CompilerMessageLocation.NO_LOCATION);
+        messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(exception), null);
     }
 }

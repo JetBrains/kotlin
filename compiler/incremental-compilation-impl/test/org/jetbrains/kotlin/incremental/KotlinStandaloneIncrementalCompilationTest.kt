@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.intellij.util.containers.HashMap
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import com.intellij.util.containers.HashMap
-import org.junit.Assert.assertEquals
 import org.jetbrains.kotlin.incremental.testingUtils.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -169,7 +169,7 @@ class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
     private class ErrorMessageCollector : MessageCollector {
         val errors = ArrayList<String>()
 
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
             if (severity.isError) {
                 errors.add(message)
             }
@@ -219,4 +219,3 @@ class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
         }
     }
 }
-

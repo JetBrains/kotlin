@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.kapt3.util
 
-import org.jetbrains.kotlin.cli.common.messages.*
-import java.io.ByteArrayOutputStream
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -31,7 +33,7 @@ class KaptLogger(
 
     fun info(message: String) {
         if (isVerbose) {
-            messageCollector.report(CompilerMessageSeverity.INFO, PREFIX + message, CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(CompilerMessageSeverity.INFO, PREFIX + message)
         }
     }
 
@@ -42,11 +44,11 @@ class KaptLogger(
     }
 
     fun warn(message: String) {
-        messageCollector.report(CompilerMessageSeverity.WARNING, PREFIX + message, CompilerMessageLocation.NO_LOCATION)
+        messageCollector.report(CompilerMessageSeverity.WARNING, PREFIX + message)
     }
 
     fun error(message: String) {
-        messageCollector.report(CompilerMessageSeverity.ERROR, PREFIX + message, CompilerMessageLocation.NO_LOCATION)
+        messageCollector.report(CompilerMessageSeverity.ERROR, PREFIX + message)
     }
 
     fun exception(e: Throwable) {
@@ -55,6 +57,6 @@ class KaptLogger(
             e.printStackTrace(PrintWriter(writer))
             writer.toString()
         }
-        messageCollector.report(CompilerMessageSeverity.EXCEPTION, PREFIX + "An exception occurred: " + stacktrace, CompilerMessageLocation.NO_LOCATION)
+        messageCollector.report(CompilerMessageSeverity.EXCEPTION, PREFIX + "An exception occurred: " + stacktrace)
     }
 }

@@ -35,7 +35,7 @@ class TestKotlinPluginRegistrar : ComponentRegistrar {
         val collector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)!!
         val option = configuration.get(TestPluginKeys.TestOption)!!
 
-        collector.report(CompilerMessageSeverity.INFO, "Plugin applied", CompilerMessageLocation.NO_LOCATION)
-        collector.report(CompilerMessageSeverity.INFO, "Option value: $option", CompilerMessageLocation.NO_LOCATION)
+        collector.report(CompilerMessageSeverity.INFO, "Plugin applied")
+        collector.report(CompilerMessageSeverity.INFO, "Option value: $option")
     }
 }

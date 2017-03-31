@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.kapt3.util
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -24,7 +23,7 @@ import java.io.Writer
 
 class MessageCollectorBackedWriter(val messageCollector: MessageCollector, val severity: CompilerMessageSeverity) : Writer() {
     override fun write(buffer: CharArray, offset: Int, length: Int) {
-        messageCollector.report(severity, String(buffer, offset, length), CompilerMessageLocation.NO_LOCATION)
+        messageCollector.report(severity, String(buffer, offset, length))
     }
 
     override fun flush() {

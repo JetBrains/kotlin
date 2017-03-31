@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -59,7 +60,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         else
             PathUtil.getKotlinPathsForCompiler()
 
-        messageCollector.report(CompilerMessageSeverity.LOGGING, "Using Kotlin home directory " + paths.homePath, CompilerMessageLocation.NO_LOCATION)
+        messageCollector.report(LOGGING, "Using Kotlin home directory ${paths.homePath}")
         PerformanceCounter.setTimeCounterEnabled(arguments.reportPerf)
 
         setupJdkClasspathRoots(arguments, configuration, messageCollector).let {
@@ -71,11 +72,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
         catch (e: PluginCliOptionProcessingException) {
             val message = e.message + "\n\n" + cliPluginUsageString(e.pluginId, e.options)
-            messageCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(ERROR, message)
             return INTERNAL_ERROR
         }
         catch (e: CliOptionProcessingException) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, e.message!!, CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(ERROR, e.message!!)
             return INTERNAL_ERROR
         }
         catch (t: Throwable) {
@@ -85,9 +86,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         if (arguments.script) {
             if (arguments.freeArgs.isEmpty()) {
-                messageCollector.report(
-                        CompilerMessageSeverity.ERROR, "Specify script source path to evaluate", CompilerMessageLocation.NO_LOCATION
-                )
+                messageCollector.report(ERROR, "Specify script source path to evaluate")
                 return COMPILATION_ERROR
             }
             configuration.addKotlinSourceRoot(arguments.freeArgs[0])
@@ -126,9 +125,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
             }
             else {
-                val errorMessage = "Unknown JVM target version: ${arguments.jvmTarget}\n" +
-                                   "Supported versions: ${JvmTarget.values().joinToString { it.description }}"
-                messageCollector.report(CompilerMessageSeverity.ERROR, errorMessage, CompilerMessageLocation.NO_LOCATION)
+                messageCollector.report(ERROR, "Unknown JVM target version: ${arguments.jvmTarget}\n" +
+                                               "Supported versions: ${JvmTarget.values().joinToString { it.description }}")
             }
         }
 
@@ -136,19 +134,18 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         putAdvancedOptions(configuration, arguments)
 
-        messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment", CompilerMessageLocation.NO_LOCATION)
+        messageCollector.report(LOGGING, "Configuring the compilation environment")
         try {
             val destination = arguments.destination
 
             if (arguments.module != null) {
-                val sanitizedCollector = FilteringMessageCollector(messageCollector, CompilerMessageSeverity.VERBOSE::contains)
+                val sanitizedCollector = FilteringMessageCollector(messageCollector, VERBOSE::contains)
                 val moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(arguments.module, sanitizedCollector)
 
                 if (destination != null) {
                     messageCollector.report(
-                            CompilerMessageSeverity.STRONG_WARNING,
-                            "The '-d' option with a directory destination is ignored because '-module' is specified",
-                            CompilerMessageLocation.NO_LOCATION
+                            STRONG_WARNING,
+                            "The '-d' option with a directory destination is ignored because '-module' is specified"
                     )
                 }
 
@@ -190,7 +187,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     if (arguments.version) {
                         return OK
                     }
-                    messageCollector.report(CompilerMessageSeverity.ERROR, "No source files", CompilerMessageLocation.NO_LOCATION)
+                    messageCollector.report(ERROR, "No source files")
                     return COMPILATION_ERROR
                 }
 
@@ -206,7 +203,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
         catch (e: CompilationException) {
             messageCollector.report(
-                    CompilerMessageSeverity.EXCEPTION,
+                    EXCEPTION,
                     OutputMessageUtil.renderException(e),
                     MessageUtil.psiElementToMessageLocation(e.element)
             )
@@ -285,8 +282,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         fun reportPerf(configuration: CompilerConfiguration, message: String) {
             if (!configuration.getBoolean(CLIConfigurationKeys.REPORT_PERF)) return
 
-            val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-            collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION)
+            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(INFO, "PERF: $message")
         }
 
         fun reportGCTime(configuration: CompilerConfiguration) {
@@ -342,14 +338,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             try {
                 if (!arguments.noJdk) {
                     if (arguments.jdkHome != null) {
-                        messageCollector.report(CompilerMessageSeverity.LOGGING,
-                                                "Using JDK home directory ${arguments.jdkHome}",
-                                                CompilerMessageLocation.NO_LOCATION)
+                        messageCollector.report(LOGGING, "Using JDK home directory ${arguments.jdkHome}")
                         val classesRoots = PathUtil.getJdkClassesRoots(File(arguments.jdkHome))
                         if (classesRoots.isEmpty()) {
-                            messageCollector.report(CompilerMessageSeverity.ERROR,
-                                                    "No class roots are found in the JDK path: ${arguments.jdkHome}",
-                                                    CompilerMessageLocation.NO_LOCATION)
+                            messageCollector.report(ERROR, "No class roots are found in the JDK path: ${arguments.jdkHome}")
                             return COMPILATION_ERROR
                         }
                         configuration.addJvmClasspathRoots(classesRoots)
@@ -360,9 +352,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 }
                 else {
                     if (arguments.jdkHome != null) {
-                        messageCollector.report(CompilerMessageSeverity.STRONG_WARNING,
-                                                "The '-jdk-home' option is ignored because '-no-jdk' is specified",
-                                                CompilerMessageLocation.NO_LOCATION)
+                        messageCollector.report(STRONG_WARNING, "The '-jdk-home' option is ignored because '-no-jdk' is specified")
                     }
                 }
             }
@@ -388,29 +378,23 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                         val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, null, null, scriptResolverEnv)
                         configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, def)
                         messageCollector.report(
-                                CompilerMessageSeverity.INFO,
-                                "Added script definition $template to configuration: files pattern = \"${def.scriptFilePattern}\", resolver = ${def.resolver?.javaClass?.name}",
-                                CompilerMessageLocation.NO_LOCATION
+                                INFO,
+                                "Added script definition $template to configuration: files pattern = \"${def.scriptFilePattern}\", " +
+                                "resolver = ${def.resolver?.javaClass?.name}"
                         )
                     }
                     catch (ex: ClassNotFoundException) {
-                        messageCollector.report(
-                                CompilerMessageSeverity.ERROR, "Cannot find script definition template class $template", CompilerMessageLocation.NO_LOCATION
-                        )
+                        messageCollector.report(ERROR, "Cannot find script definition template class $template")
                         hasErrors = true
                     }
                     catch (ex: Exception) {
-                        messageCollector.report(
-                                CompilerMessageSeverity.ERROR, "Error processing script definition template $template: ${ex.message}", CompilerMessageLocation.NO_LOCATION
-                        )
+                        messageCollector.report(ERROR, "Error processing script definition template $template: ${ex.message}")
                         hasErrors = true
                         break
                     }
                 }
                 if (hasErrors) {
-                    messageCollector.report(
-                            CompilerMessageSeverity.LOGGING, "(Classpath used for templates loading: $classpath)", CompilerMessageLocation.NO_LOCATION
-                    )
+                    messageCollector.report(LOGGING, "(Classpath used for templates loading: $classpath)")
                     return
                 }
             }
@@ -429,7 +413,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 for (envParam in arguments.scriptResolverEnvironment) {
                     val match = envParseRe.matchEntire(envParam)
                     if (match == null || match.groupValues.size < 4 || match.groupValues[1].isBlank()) {
-                        messageCollector.report(CompilerMessageSeverity.ERROR, "Unable to parse script-resolver-environment argument $envParam", CompilerMessageLocation.NO_LOCATION)
+                        messageCollector.report(ERROR, "Unable to parse script-resolver-environment argument $envParam")
                         return null
                     }
                     scriptResolverEnv.put(match.groupValues[1], match.groupValues.drop(2).firstOrNull { it.isNotEmpty() }?.let { unescapeRe.replace(it, "\$1") })

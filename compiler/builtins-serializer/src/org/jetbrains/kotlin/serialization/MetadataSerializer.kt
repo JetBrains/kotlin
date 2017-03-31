@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade
 import org.jetbrains.kotlin.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -58,7 +57,7 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
         val moduleName = Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>")
 
         val destDir = configuration.get(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY) ?: run {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify destination via -d", CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify destination via -d")
             return
         }
 

@@ -22,6 +22,7 @@ import kotlin.jvm.functions.Function1;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.compiler.CompilerMessage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
@@ -56,9 +57,8 @@ public class MavenPluginLogMessageCollector implements MessageCollector {
     }
 
     @Override
-    public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
-        String path = location.getPath();
-        String position = path == null ? "" : path + ": (" + (location.getLine() + ", " + location.getColumn()) + ") ";
+    public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location) {
+        String position = location == null ? "" : location.getPath() + ": (" + (location.getLine() + ", " + location.getColumn()) + ") ";
 
         String text = position + message;
 
@@ -81,6 +81,10 @@ public class MavenPluginLogMessageCollector implements MessageCollector {
                     public CompilerMessage invoke(Pair<CompilerMessageLocation, String> pair) {
                         CompilerMessageLocation location = pair.getFirst();
                         String message = pair.getSecond();
+                        if (location == null) {
+                            return new CompilerMessage(null, CompilerMessage.Kind.ERROR, 0, 0, 0, 0, message);
+                        }
+
                         String lineContent = location.getLineContent();
                         int lineContentLength = lineContent == null ? 0 : lineContent.length();
 

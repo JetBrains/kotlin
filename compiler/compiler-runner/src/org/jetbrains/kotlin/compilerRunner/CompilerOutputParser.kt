@@ -20,21 +20,17 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil.reportException
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.xml.sax.Attributes
 import org.xml.sax.InputSource
 import org.xml.sax.SAXException
 import org.xml.sax.helpers.DefaultHandler
-
-import javax.xml.parsers.SAXParser
-import javax.xml.parsers.SAXParserFactory
 import java.io.IOException
 import java.io.Reader
-
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.Companion.NO_LOCATION
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil.reportException
+import javax.xml.parsers.SAXParserFactory
 
 object CompilerOutputParser {
     fun parseCompilerMessagesFromReader(messageCollector: MessageCollector, reader: Reader, collector: OutputItemsCollector) {
@@ -77,7 +73,7 @@ object CompilerOutputParser {
 
             val message = stringBuilder.toString()
             reportException(messageCollector, IllegalStateException(message, e))
-            messageCollector.report(ERROR, message, NO_LOCATION)
+            messageCollector.report(ERROR, message)
         }
         finally {
             try {
@@ -86,7 +82,6 @@ object CompilerOutputParser {
             catch (e: IOException) {
                 reportException(messageCollector, e)
             }
-
         }
     }
 
@@ -115,7 +110,7 @@ object CompilerOutputParser {
                 // We're directly inside the root tag: <MESSAGES>
                 val message = String(ch!!, start, length)
                 if (!message.trim { it <= ' ' }.isEmpty()) {
-                    messageCollector.report(ERROR, "Unhandled compiler output: " + message, NO_LOCATION)
+                    messageCollector.report(ERROR, "Unhandled compiler output: $message")
                 }
             }
             else {
@@ -132,7 +127,7 @@ object CompilerOutputParser {
             val qNameLowerCase = qName.toLowerCase()
             var category: CompilerMessageSeverity? = CATEGORIES[qNameLowerCase]
             if (category == null) {
-                messageCollector.report(ERROR, "Unknown compiler message tag: " + qName, NO_LOCATION)
+                messageCollector.report(ERROR, "Unknown compiler message tag: $qName")
                 category = INFO
             }
             val text = message.toString()

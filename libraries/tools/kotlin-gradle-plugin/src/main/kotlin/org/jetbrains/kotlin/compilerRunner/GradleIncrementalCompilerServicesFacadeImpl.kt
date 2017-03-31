@@ -33,10 +33,10 @@ internal open class GradleCompilerServicesFacadeImpl(
 
         when (reportCategory) {
             ReportCategory.OUTPUT_MESSAGE -> {
-                compilerMessageCollector.report(CompilerMessageSeverity.OUTPUT, message!!, CompilerMessageLocation.NO_LOCATION)
+                compilerMessageCollector.report(CompilerMessageSeverity.OUTPUT, message!!)
             }
             ReportCategory.EXCEPTION -> {
-                compilerMessageCollector.report(CompilerMessageSeverity.EXCEPTION, message!!, CompilerMessageLocation.NO_LOCATION)
+                compilerMessageCollector.report(CompilerMessageSeverity.EXCEPTION, message!!)
             }
             ReportCategory.COMPILER_MESSAGE -> {
                 val compilerSeverity = when (ReportSeverity.fromCode(severity)) {
@@ -46,7 +46,7 @@ internal open class GradleCompilerServicesFacadeImpl(
                     ReportSeverity.DEBUG -> CompilerMessageSeverity.LOGGING
                     else -> throw IllegalStateException("Unexpected compiler message report severity $severity")
                 }
-                if (message != null && attachment is CompilerMessageLocation) {
+                if (message != null && attachment is CompilerMessageLocation?) {
                     compilerMessageCollector.report(compilerSeverity, message, attachment)
                 }
                 else {

@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.daemon
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompiler
@@ -63,22 +65,15 @@ open class KotlinJvmReplService(
         try {
             val cls = classloader.loadClass(templateClassName)
             val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, null, null, emptyMap())
-            messageCollector.report(
-                    CompilerMessageSeverity.INFO,
-                    "New script definition $templateClassName: files pattern = \"${def.scriptFilePattern}\", resolver = ${def.resolver?.javaClass?.name}",
-                    CompilerMessageLocation.NO_LOCATION
-            )
+            messageCollector.report(INFO, "New script definition $templateClassName: files pattern = \"${def.scriptFilePattern}\", " +
+                                          "resolver = ${def.resolver?.javaClass?.name}")
             return def
         }
         catch (ex: ClassNotFoundException) {
-            messageCollector.report(
-                    CompilerMessageSeverity.ERROR, "Cannot find script definition template class $templateClassName", CompilerMessageLocation.NO_LOCATION
-            )
+            messageCollector.report(ERROR, "Cannot find script definition template class $templateClassName")
         }
         catch (ex: Exception) {
-            messageCollector.report(
-                    CompilerMessageSeverity.ERROR, "Error processing script definition template $templateClassName: ${ex.message}", CompilerMessageLocation.NO_LOCATION
-            )
+            messageCollector.report(ERROR, "Error processing script definition template $templateClassName: ${ex.message}")
         }
         return null
     }
@@ -150,7 +145,7 @@ internal class KeepFirstErrorMessageCollector(compilerMessagesStream: PrintStrea
     internal var firstErrorMessage: String? = null
     internal var firstErrorLocation: CompilerMessageLocation? = null
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
         if (firstErrorMessage == null && severity.isError) {
             firstErrorMessage = message
             firstErrorLocation = location

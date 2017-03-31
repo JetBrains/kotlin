@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.kapt3
 import com.intellij.openapi.project.Project
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.CompilationErrorHandler
+import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -255,15 +255,12 @@ abstract class AbstractKapt3Extension(
             if (stubFileObject != null) {
                 val stubFile = File(stubsOutputDir, stubFileObject.name)
                 if (stubFile.exists()) {
-                    messageCollector.report(CompilerMessageSeverity.OUTPUT,
-                                            OutputMessageUtil.formatOutputMessage(sources, stubFile), CompilerMessageLocation.NO_LOCATION)
+                    messageCollector.report(CompilerMessageSeverity.OUTPUT, OutputMessageUtil.formatOutputMessage(sources, stubFile))
                 }
             }
 
-            messageCollector.report(CompilerMessageSeverity.OUTPUT,
-                                    OutputMessageUtil.formatOutputMessage(sources, output), CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(CompilerMessageSeverity.OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output))
         }
-
     }
 
     protected abstract fun loadProcessors(): List<Processor>

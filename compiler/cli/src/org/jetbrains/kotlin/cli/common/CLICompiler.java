@@ -42,6 +42,7 @@ import java.util.function.Predicate;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.*;
 import static org.jetbrains.kotlin.cli.common.environment.UtilKt.setIdeaIoUseFallback;
+import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
 
 public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
@@ -76,11 +77,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             Usage.print(errStream, createArguments(), false);
         }
         catch (Throwable t) {
-            errStream.println(messageRenderer.render(
-                    CompilerMessageSeverity.EXCEPTION,
-                    OutputMessageUtil.renderException(t),
-                    CompilerMessageLocation.NO_LOCATION)
-            );
+            errStream.println(messageRenderer.render(EXCEPTION, OutputMessageUtil.renderException(t), CompilerMessageLocation.NO_LOCATION));
         }
         return null;
     }
@@ -137,7 +134,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         printVersionIfNeeded(messageCollector, arguments);
 
         if (arguments.suppressWarnings) {
-            messageCollector = new FilteringMessageCollector(messageCollector, Predicate.isEqual(CompilerMessageSeverity.WARNING));
+            messageCollector = new FilteringMessageCollector(messageCollector, Predicate.isEqual(WARNING));
         }
 
         reportUnknownExtraFlags(messageCollector, arguments);
@@ -176,14 +173,13 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
                     exitCode = groupingCollector.hasErrors() ? COMPILATION_ERROR : code;
                 }
                 catch (CompilationCanceledException e) {
-                    messageCollector.report(CompilerMessageSeverity.INFO, "Compilation was canceled", CompilerMessageLocation.NO_LOCATION);
+                    messageCollector.report(INFO, "Compilation was canceled", null);
                     return ExitCode.OK;
                 }
                 catch (RuntimeException e) {
                     Throwable cause = e.getCause();
                     if (cause instanceof CompilationCanceledException) {
-                        messageCollector
-                                .report(CompilerMessageSeverity.INFO, "Compilation was canceled", CompilerMessageLocation.NO_LOCATION);
+                        messageCollector.report(INFO, "Compilation was canceled", null);
                         return ExitCode.OK;
                     }
                     else {
@@ -197,8 +193,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             return exitCode;
         }
         catch (Throwable t) {
-            groupingCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(t),
-                                     CompilerMessageLocation.NO_LOCATION);
+            MessageCollectorUtil.reportException(groupingCollector, t);
             return INTERNAL_ERROR;
         }
         finally {
@@ -243,19 +238,19 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
         if (apiVersion.compareTo(languageVersion) > 0) {
             configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
-                    CompilerMessageSeverity.ERROR,
+                    ERROR,
                     "-api-version (" + apiVersion.getVersionString() + ") cannot be greater than " +
                     "-language-version (" + languageVersion.getVersionString() + ")",
-                    CompilerMessageLocation.NO_LOCATION
+                    null
             );
         }
 
         if (!languageVersion.isStable()) {
             configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
-                    CompilerMessageSeverity.STRONG_WARNING,
+                    STRONG_WARNING,
                     "Language version " + languageVersion.getVersionString() + " is experimental, there are " +
                     "no backwards compatibility guarantees for new language and library features",
-                    CompilerMessageLocation.NO_LOCATION
+                    null
             );
         }
 
@@ -292,10 +287,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
         else {
             String message = "The -Xcoroutines can only have one value";
-            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
-                    CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION
-            );
-
+            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(ERROR, message, null);
             return null;
         }
     }
@@ -314,10 +306,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         List<String> versionStrings = ArraysKt.map(LanguageVersion.values(), LanguageVersion::getDescription);
         String message = "Unknown " + versionOf + " version: " + value + "\n" +
                          "Supported " + versionOf + " versions: " + StringsKt.join(versionStrings, ", ");
-        configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
-                CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION
-        );
-
+        configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(ERROR, message, null);
         return null;
     }
 
@@ -327,11 +316,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
     private void reportUnknownExtraFlags(@NotNull MessageCollector collector, @NotNull A arguments) {
         for (String flag : arguments.unknownExtraFlags) {
-            collector.report(
-                    CompilerMessageSeverity.STRONG_WARNING,
-                    "Flag is not supported by this version of the compiler: " + flag,
-                    CompilerMessageLocation.NO_LOCATION
-            );
+            collector.report(STRONG_WARNING, "Flag is not supported by this version of the compiler: " + flag, null);
         }
     }
 
@@ -345,9 +330,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     private void printVersionIfNeeded(@NotNull MessageCollector messageCollector, @NotNull A arguments) {
         if (!arguments.version) return;
 
-        messageCollector.report(CompilerMessageSeverity.INFO,
-                                "Kotlin Compiler version " + KotlinCompilerVersion.VERSION,
-                                CompilerMessageLocation.NO_LOCATION);
+        messageCollector.report(INFO, "Kotlin Compiler version " + KotlinCompilerVersion.VERSION, null);
     }
 
     /**

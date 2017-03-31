@@ -75,10 +75,10 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(depe
     private fun createMessageCollector() = object : GroupingMessageCollector(
             PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, /* verbose = */ false)
     ) {
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
             // Only report diagnostics without a particular location because there's plenty of errors in built-in sources
             // (functions without bodies, incorrect combination of modifiers, etc.)
-            if (location.path == null) {
+            if (location == null) {
                 super.report(severity, message, location)
             }
         }

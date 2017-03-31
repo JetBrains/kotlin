@@ -19,14 +19,11 @@ package org.jetbrains.kotlin.cli.common.messages;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GroupingMessageCollector implements MessageCollector {
-
     private final MessageCollector delegate;
 
     // File path (nullable) -> message
@@ -45,25 +42,19 @@ public class GroupingMessageCollector implements MessageCollector {
     public void report(
             @NotNull CompilerMessageSeverity severity,
             @NotNull String message,
-            @NotNull CompilerMessageLocation location
+            @Nullable CompilerMessageLocation location
     ) {
         if (CompilerMessageSeverity.VERBOSE.contains(severity)) {
             delegate.report(severity, message, location);
         }
         else {
-            groupedMessages.put(location.getPath(), new Message(severity, message, location));
+            groupedMessages.put(location != null ? location.getPath() : null, new Message(severity, message, location));
         }
     }
 
     @Override
     public boolean hasErrors() {
-        for (Map.Entry<String, Message> entry : groupedMessages.entries()) {
-            if (entry.getValue().severity.isError()) {
-                return true;
-            }
-        }
-
-        return false;
+        return groupedMessages.entries().stream().anyMatch(entry -> entry.getValue().severity.isError());
     }
 
     public void flush() {
@@ -82,14 +73,9 @@ public class GroupingMessageCollector implements MessageCollector {
 
     @NotNull
     private Collection<String> sortedKeys() {
-        List<String> sortedKeys = new ArrayList<>(groupedMessages.keySet());
         // ensure that messages with no location i.e. perf, incomplete hierarchy are always reported first
-        sortedKeys.sort((o1, o2) -> {
-            if (o1 == o2) return 0;
-            if (o1 == null) return -1;
-            if (o2 == null) return 1;
-            return o1.compareTo(o2);
-        });
+        List<String> sortedKeys = new ArrayList<>(groupedMessages.keySet());
+        sortedKeys.sort(Comparator.nullsFirst(Comparator.naturalOrder()));
         return sortedKeys;
     }
 
@@ -98,7 +84,7 @@ public class GroupingMessageCollector implements MessageCollector {
         private final String message;
         private final CompilerMessageLocation location;
 
-        private Message(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
+        private Message(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location) {
             this.severity = severity;
             this.message = message;
             this.location = location;
@@ -109,11 +95,11 @@ public class GroupingMessageCollector implements MessageCollector {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Message message1 = (Message) o;
+            Message other = (Message) o;
 
-            if (!location.equals(message1.location)) return false;
-            if (!message.equals(message1.message)) return false;
-            if (severity != message1.severity) return false;
+            if (!Objects.equals(location, other.location)) return false;
+            if (!message.equals(other.message)) return false;
+            if (severity != other.severity) return false;
 
             return true;
         }
@@ -122,8 +108,13 @@ public class GroupingMessageCollector implements MessageCollector {
         public int hashCode() {
             int result = severity.hashCode();
             result = 31 * result + message.hashCode();
-            result = 31 * result + location.hashCode();
+            result = 31 * result + (location != null ? location.hashCode() : 0);
             return result;
+        }
+
+        @Override
+        public String toString() {
+            return "[" + severity + "] " + message + (location != null ? " (at " + location + ")" : " (no location)");
         }
     }
 }

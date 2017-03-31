@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.js;
 
-import com.google.common.base.Joiner;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
@@ -35,8 +34,6 @@ import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
@@ -58,6 +55,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
+import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.File;
 import java.util.List;
@@ -66,7 +64,7 @@ import java.util.Map;
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
 import static org.jetbrains.kotlin.cli.common.UtilsKt.checkKotlinPackageUsage;
-import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
+import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     private static final Map<String, ModuleKind> moduleKindMap = new HashMap<>();
@@ -99,7 +97,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             if (arguments.version) {
                 return OK;
             }
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify at least one source file or directory", NO_LOCATION);
+            messageCollector.report(ERROR, "Specify at least one source file or directory", null);
             return COMPILATION_ERROR;
         }
 
@@ -115,7 +113,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         if (!checkKotlinPackageUsage(environmentForJS, sourcesFiles)) return ExitCode.COMPILATION_ERROR;
 
         if (arguments.outputFile == null) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify output file via -output", CompilerMessageLocation.NO_LOCATION);
+            messageCollector.report(ERROR, "Specify output file via -output", null);
             return ExitCode.COMPILATION_ERROR;
         }
 
@@ -124,7 +122,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
 
         if (sourcesFiles.isEmpty()) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "No source files", CompilerMessageLocation.NO_LOCATION);
+            messageCollector.report(ERROR, "No source files", null);
             return COMPILATION_ERROR;
         }
 
@@ -140,12 +138,12 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         if (config.checkLibFilesAndReportErrors(new JsConfig.Reporter() {
             @Override
             public void error(@NotNull String message) {
-                messageCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION);
+                messageCollector.report(ERROR, message, null);
             }
 
             @Override
             public void warning(@NotNull String message) {
-                messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, message, CompilerMessageLocation.NO_LOCATION);
+                messageCollector.report(STRONG_WARNING, message, null);
             }
         })) {
             return COMPILATION_ERROR;
@@ -166,9 +164,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         if (arguments.outputPrefix != null) {
             outputPrefixFile = new File(arguments.outputPrefix);
             if (!outputPrefixFile.exists()) {
-                messageCollector.report(CompilerMessageSeverity.ERROR,
-                                        "Output prefix file '" + arguments.outputPrefix + "' not found",
-                                        CompilerMessageLocation.NO_LOCATION);
+                messageCollector.report(ERROR, "Output prefix file '" + arguments.outputPrefix + "' not found", null);
                 return ExitCode.COMPILATION_ERROR;
             }
         }
@@ -177,9 +173,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         if (arguments.outputPostfix != null) {
             outputPostfixFile = new File(arguments.outputPostfix);
             if (!outputPostfixFile.exists()) {
-                messageCollector.report(CompilerMessageSeverity.ERROR,
-                                        "Output postfix file '" + arguments.outputPostfix + "' not found",
-                                        CompilerMessageLocation.NO_LOCATION);
+                messageCollector.report(ERROR, "Output postfix file '" + arguments.outputPostfix + "' not found", null);
                 return ExitCode.COMPILATION_ERROR;
             }
         }
@@ -206,9 +200,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         OutputFileCollection outputFiles = successResult.getOutputFiles(outputFile, outputPrefixFile, outputPostfixFile);
 
         if (outputFile.isDirectory()) {
-            messageCollector.report(CompilerMessageSeverity.ERROR,
-                                    "Cannot open output file '" + outputFile.getPath() + "': is a directory",
-                                    CompilerMessageLocation.NO_LOCATION);
+            messageCollector.report(ERROR, "Cannot open output file '" + outputFile.getPath() + "': is a directory", null);
             return ExitCode.COMPILATION_ERROR;
         }
 
@@ -232,8 +224,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             }
             return file.getName() + "(no virtual file)";
         });
-        messageCollector.report(CompilerMessageSeverity.LOGGING, "Compiling source files: " + Joiner.on(", ").join(fileNames),
-                                CompilerMessageLocation.NO_LOCATION);
+        messageCollector.report(LOGGING, "Compiling source files: " + StringsKt.join(fileNames, ", "), null);
     }
 
     private static AnalyzerWithCompilerReport analyzeAndReportErrors(
@@ -291,9 +282,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         String moduleKindName = arguments.moduleKind;
         ModuleKind moduleKind = moduleKindName != null ? moduleKindMap.get(moduleKindName) : ModuleKind.PLAIN;
         if (moduleKind == null) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Unknown module kind: " + moduleKindName + ". " +
-                                                                   "Valid values are: plain, amd, commonjs, umd",
-                                    CompilerMessageLocation.NO_LOCATION);
+            messageCollector.report(
+                    ERROR, "Unknown module kind: " + moduleKindName + ". Valid values are: plain, amd, commonjs, umd", null
+            );
         }
         configuration.put(JSConfigurationKeys.MODULE_KIND, moduleKind);
     }

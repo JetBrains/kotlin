@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.annotation.processing.impl
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import javax.annotation.processing.Messager
@@ -57,6 +56,6 @@ class KotlinMessager(private val messageCollector: MessageCollector) : Messager 
             }
             else -> CompilerMessageSeverity.LOGGING
         }
-        messageCollector.report(severity, msg.toString(), CompilerMessageLocation.NO_LOCATION)
+        messageCollector.report(severity, msg.toString())
     }
 }

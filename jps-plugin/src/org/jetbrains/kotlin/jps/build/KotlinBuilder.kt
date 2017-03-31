@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
@@ -194,12 +194,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
         catch (e: Throwable) {
             LOG.info("Caught exception: " + e)
-
-            messageCollector.report(
-                    CompilerMessageSeverity.EXCEPTION,
-                    OutputMessageUtil.renderException(e),
-                    CompilerMessageLocation.NO_LOCATION
-            )
+            MessageCollectorUtil.reportException(messageCollector, e)
             return ABORT
         }
     }
@@ -214,7 +209,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     ): ModuleLevelBuilder.ExitCode {
         // Workaround for Android Studio
         if (!JavaBuilder.IS_ENABLED[context, true] && !JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
-            messageCollector.report(INFO, "Kotlin JPS plugin is disabled", CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(INFO, "Kotlin JPS plugin is disabled")
             return NOTHING_DONE
         }
 
@@ -235,11 +230,11 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return NOTHING_DONE
         }
 
-        messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinCompilerVersion.VERSION, CompilerMessageLocation.NO_LOCATION)
+        messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinCompilerVersion.VERSION)
 
         val targetsWithoutOutputDir = targets.filter { it.outputDir == null }
         if (targetsWithoutOutputDir.isNotEmpty()) {
-            messageCollector.report(ERROR, "Output directory not specified for " + targetsWithoutOutputDir.joinToString(), CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(ERROR, "Output directory not specified for " + targetsWithoutOutputDir.joinToString())
             return ABORT
         }
 
@@ -448,11 +443,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             commonArguments.pluginClasspaths = concatenate(commonArguments.pluginClasspaths,
                                                            argumentProvider.getClasspath(representativeTarget, context))
 
-            messageCollector.report(
-                    INFO,
-                    "Plugin loaded: ${argumentProvider::class.java.simpleName}",
-                    CompilerMessageLocation.NO_LOCATION
-            )
+            messageCollector.report(INFO, "Plugin loaded: ${argumentProvider::class.java.simpleName}")
         }
 
         return compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile)
@@ -651,8 +642,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                     STRONG_WARNING,
                     "Circular dependencies are not supported. The following JS modules depend on each other: "
                     + chunk.modules.map { it.name }.joinToString(", ") + ". "
-                    + "Kotlin is not compiled for these modules",
-                    CompilerMessageLocation.NO_LOCATION
+                    + "Kotlin is not compiled for these modules"
             )
             return null
         }
@@ -702,8 +692,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                     STRONG_WARNING,
                     "Circular dependencies are only partially supported. The following modules depend on each other: "
                     + chunk.modules.map { it.name }.joinToString(", ") + ". "
-                    + "Kotlin will compile them, but some strange effect may happen",
-                    CompilerMessageLocation.NO_LOCATION
+                    + "Kotlin will compile them, but some strange effect may happen"
             )
         }
 
@@ -746,7 +735,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class MessageCollectorAdapter(private val context: CompileContext) : MessageCollector {
         private var hasErrors = false
 
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
             hasErrors = hasErrors or severity.isError
             var prefix = ""
             if (severity == EXCEPTION) {
@@ -755,10 +744,11 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             context.processMessage(CompilerMessage(
                     CompilerRunnerConstants.KOTLIN_COMPILER_NAME,
                     kind(severity),
-                    prefix + message + renderLocationIfNeeded(location),
-                    location.path,
+                    prefix + message,
+                    location?.path,
                     -1, -1, -1,
-                    location.line.toLong(), location.column.toLong()
+                    location?.line?.toLong() ?: -1,
+                    location?.column?.toLong() ?: -1
             ))
         }
 
@@ -767,16 +757,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         override fun hasErrors(): Boolean = hasErrors
-
-        private fun renderLocationIfNeeded(location: CompilerMessageLocation): String {
-            if (location == CompilerMessageLocation.NO_LOCATION) return ""
-
-            // Sometimes we report errors in JavaScript library stubs, i.e. files like core/javautil.kt
-            // IDEA can't find these files, and does not display paths in Messages View, so we add the position information
-            // to the error message itself:
-            val pathname = "" + location.path
-            return if (File(pathname).exists()) "" else " ($location)"
-        }
 
         private fun kind(severity: CompilerMessageSeverity): BuildMessage.Kind {
             return when (severity) {

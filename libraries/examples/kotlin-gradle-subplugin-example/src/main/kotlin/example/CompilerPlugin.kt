@@ -17,7 +17,6 @@
 package example
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -50,10 +49,9 @@ public class ExampleCommandLineProcessor : CommandLineProcessor {
 }
 
 public class ExampleComponentRegistrar : ComponentRegistrar {
-
     public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val exampleValue = configuration.get(ExampleConfigurationKeys.EXAMPLE_KEY)
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-        messageCollector.report(CompilerMessageSeverity.INFO, "Project component registration: $exampleValue", CompilerMessageLocation.NO_LOCATION)
+        messageCollector.report(CompilerMessageSeverity.INFO, "Project component registration: $exampleValue")
     }
 }

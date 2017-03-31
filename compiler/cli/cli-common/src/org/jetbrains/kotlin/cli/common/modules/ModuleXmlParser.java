@@ -35,7 +35,6 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.util.List;
 
-import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class ModuleXmlParser {
@@ -103,7 +102,7 @@ public class ModuleXmlParser {
             MessageCollectorUtil.reportException(messageCollector, e);
         }
         catch (SAXException e) {
-            messageCollector.report(ERROR, OutputMessageUtil.renderException(e), NO_LOCATION);
+            messageCollector.report(ERROR, OutputMessageUtil.renderException(e), null);
         }
         return ModuleScriptData.EMPTY;
     }

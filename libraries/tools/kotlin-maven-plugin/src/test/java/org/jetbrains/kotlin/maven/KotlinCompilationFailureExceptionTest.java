@@ -13,7 +13,7 @@ public class KotlinCompilationFailureExceptionTest {
     @Test
     public void testNoLocation() throws Exception {
         MavenPluginLogMessageCollector collector = new MavenPluginLogMessageCollector(new SilentLog());
-        collector.report(CompilerMessageSeverity.ERROR, "Something went wrong", CompilerMessageLocation.NO_LOCATION);
+        collector.report(CompilerMessageSeverity.ERROR, "Something went wrong", null);
 
         try {
             collector.throwKotlinCompilerException();

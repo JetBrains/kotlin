@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.daemon.common.*
-import java.io.Serializable
 import java.io.File
+import java.io.Serializable
 import java.rmi.server.UnicastRemoteObject
 
 
@@ -51,11 +51,11 @@ fun MessageCollector.reportFromDaemon(outputsCollector: ((File, List<File>) -> U
                 }
             }
             else {
-                report(CompilerMessageSeverity.OUTPUT, message!!, CompilerMessageLocation.NO_LOCATION)
+                report(CompilerMessageSeverity.OUTPUT, message!!)
             }
         }
         ReportCategory.EXCEPTION -> {
-            report(CompilerMessageSeverity.EXCEPTION, message.orEmpty(), CompilerMessageLocation.NO_LOCATION)
+            report(CompilerMessageSeverity.EXCEPTION, message.orEmpty())
         }
         ReportCategory.COMPILER_MESSAGE -> {
             val compilerSeverity = when (ReportSeverity.fromCode(severity)) {
@@ -65,7 +65,7 @@ fun MessageCollector.reportFromDaemon(outputsCollector: ((File, List<File>) -> U
                 ReportSeverity.DEBUG -> CompilerMessageSeverity.LOGGING
                 else -> throw IllegalStateException("Unexpected compiler message report severity $severity")
             }
-            if (message != null && attachment is CompilerMessageLocation) {
+            if (message != null && attachment is CompilerMessageLocation?) {
                 report(compilerSeverity, message, attachment)
             }
             else {
@@ -75,7 +75,7 @@ fun MessageCollector.reportFromDaemon(outputsCollector: ((File, List<File>) -> U
         ReportCategory.DAEMON_MESSAGE,
         ReportCategory.IC_MESSAGE -> {
             if (message != null) {
-                report(CompilerMessageSeverity.LOGGING, message, CompilerMessageLocation.NO_LOCATION)
+                report(CompilerMessageSeverity.LOGGING, message)
             }
             else {
                 reportUnexpected(category, severity, message, attachment)
@@ -95,8 +95,5 @@ private fun MessageCollector.reportUnexpected(category: Int, severity: Int, mess
         else -> CompilerMessageSeverity.LOGGING
     }
 
-    report(compilerMessageSeverity,
-           "Unexpected message: category=$category; severity=$severity; message='$message'; attachment=$attachment",
-           CompilerMessageLocation.NO_LOCATION)
+    report(compilerMessageSeverity, "Unexpected message: category=$category; severity=$severity; message='$message'; attachment=$attachment")
 }
-

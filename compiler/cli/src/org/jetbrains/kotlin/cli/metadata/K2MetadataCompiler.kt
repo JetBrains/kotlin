@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -64,11 +63,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         if (destination != null) {
             if (destination.endsWith(".jar")) {
                 // TODO: support .jar destination
-                collector.report(
-                        CompilerMessageSeverity.STRONG_WARNING,
-                        ".jar destination is not yet supported, results will be written to the directory with the given name",
-                        CompilerMessageLocation.NO_LOCATION
-                )
+                collector.report(STRONG_WARNING, ".jar destination is not yet supported, results will be written to the directory with the given name")
             }
             configuration.put(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY, File(destination))
         }
@@ -79,7 +74,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
             if (arguments.version) {
                 return ExitCode.OK
             }
-            collector.report(CompilerMessageSeverity.ERROR, "No source files", CompilerMessageLocation.NO_LOCATION)
+            collector.report(ERROR, "No source files")
             return ExitCode.COMPILATION_ERROR
         }
 
@@ -87,11 +82,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
             MetadataSerializer(true).serialize(environment)
         }
         catch (e: CompilationException) {
-            collector.report(
-                    CompilerMessageSeverity.EXCEPTION,
-                    OutputMessageUtil.renderException(e),
-                    MessageUtil.psiElementToMessageLocation(e.element)
-            )
+            collector.report(EXCEPTION, OutputMessageUtil.renderException(e), MessageUtil.psiElementToMessageLocation(e.element))
             return ExitCode.INTERNAL_ERROR
         }
 

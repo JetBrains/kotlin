@@ -30,9 +30,9 @@ import static com.intellij.openapi.util.io.FileUtil.toSystemDependentName;
 public class MessageUtil {
     private MessageUtil() {}
 
-    @NotNull
+    @Nullable
     public static CompilerMessageLocation psiElementToMessageLocation(@Nullable PsiElement element) {
-        if (element == null) return CompilerMessageLocation.NO_LOCATION;
+        if (element == null) return null;
         PsiFile file = element.getContainingFile();
         return psiFileToMessageLocation(file, "<no path>", DiagnosticUtils.getLineAndColumnInPsiFile(file, element.getTextRange()));
     }

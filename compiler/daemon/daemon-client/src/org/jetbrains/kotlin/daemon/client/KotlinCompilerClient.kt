@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.daemon.client
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.common.*
@@ -33,7 +32,6 @@ import java.rmi.UnmarshalException
 import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
-import kotlin.comparisons.compareByDescending
 import kotlin.concurrent.thread
 
 class CompilationServices(
@@ -343,17 +341,17 @@ object KotlinCompilerClient {
         messages?.add(DaemonReportMessage(category, "[$source] $message"))
         messageCollector?.let {
             when (category) {
-                DaemonReportCategory.DEBUG -> it.report(CompilerMessageSeverity.LOGGING, message, CompilerMessageLocation.NO_LOCATION)
-                DaemonReportCategory.INFO -> it.report(CompilerMessageSeverity.INFO, message, CompilerMessageLocation.NO_LOCATION)
-                DaemonReportCategory.EXCEPTION -> it.report(CompilerMessageSeverity.EXCEPTION, message, CompilerMessageLocation.NO_LOCATION)
+                DaemonReportCategory.DEBUG -> it.report(CompilerMessageSeverity.LOGGING, message)
+                DaemonReportCategory.INFO -> it.report(CompilerMessageSeverity.INFO, message)
+                DaemonReportCategory.EXCEPTION -> it.report(CompilerMessageSeverity.EXCEPTION, message)
             }
         }
         compilerServices?.let {
-                when (category) {
-                    DaemonReportCategory.DEBUG -> it.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.DEBUG, message, source)
-                    DaemonReportCategory.INFO -> it.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.INFO, message, source)
-                    DaemonReportCategory.EXCEPTION -> it.report(ReportCategory.EXCEPTION, ReportSeverity.ERROR, message, source)
-                }
+            when (category) {
+                DaemonReportCategory.DEBUG -> it.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.DEBUG, message, source)
+                DaemonReportCategory.INFO -> it.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.INFO, message, source)
+                DaemonReportCategory.EXCEPTION -> it.report(ReportCategory.EXCEPTION, ReportSeverity.ERROR, message, source)
+            }
         }
     }
 

@@ -80,18 +80,17 @@ class KotlinJsr223JvmScriptEngine4Idea(
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = replEvaluator.createState(lock)
 
     private class MyMessageCollector : MessageCollector {
+        private var hasErrors: Boolean = false
 
-        var _hasErrors: Boolean = false
-
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
             System.err.println(message) // TODO: proper location printing
-            if (!_hasErrors) {
-                _hasErrors = severity == CompilerMessageSeverity.EXCEPTION || severity == CompilerMessageSeverity.ERROR
+            if (!hasErrors) {
+                hasErrors = severity == CompilerMessageSeverity.EXCEPTION || severity == CompilerMessageSeverity.ERROR
             }
         }
 
         override fun clear() {}
 
-        override fun hasErrors(): Boolean = _hasErrors
+        override fun hasErrors(): Boolean = hasErrors
     }
 }
