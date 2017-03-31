@@ -39,12 +39,10 @@ import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
-import org.jetbrains.kotlin.idea.framework.getReflectJar
-import org.jetbrains.kotlin.idea.framework.getRuntimeJar
-import org.jetbrains.kotlin.idea.framework.getTestJar
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
+import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.idea.versions.findAllUsedLibraries
 import org.jetbrains.kotlin.name.FqName
@@ -55,13 +53,10 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 
-class AddReflectionQuickFix(element: KtElement) : AddKotlinLibQuickFix(element) {
+class AddReflectionQuickFix(element: KtElement) : AddKotlinLibQuickFix(element, LibraryJarDescriptor.REFLECT_JAR) {
     override fun getText() = KotlinBundle.message("add.reflection.to.classpath")
     override fun getFamilyName() = text
 
-    override fun libraryPath(): String = PathUtil.KOTLIN_JAVA_REFLECT_JAR
-    override fun getLibFile(): File = PathUtil.getKotlinPathsForIdeaPlugin().reflectPath
-    override fun hasLibJarInLibrary(library: Library): Boolean = getReflectJar(library) != null
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect",
                                                                                        AddKotlinLibQuickFix.getKotlinStdlibVersion(module))
 
@@ -70,13 +65,10 @@ class AddReflectionQuickFix(element: KtElement) : AddKotlinLibQuickFix(element) 
     }
 }
 
-class AddTestLibQuickFix(element: KtElement) : AddKotlinLibQuickFix(element) {
+class AddTestLibQuickFix(element: KtElement) : AddKotlinLibQuickFix(element, LibraryJarDescriptor.TEST_JAR) {
     override fun getText() = KotlinBundle.message("add.test.to.classpath")
     override fun getFamilyName() = text
 
-    override fun libraryPath(): String = PathUtil.KOTLIN_TEST_JAR
-    override fun getLibFile(): File = PathUtil.getKotlinPathsForIdeaPlugin().kotlinTestPath
-    override fun hasLibJarInLibrary(library: Library): Boolean = getTestJar(library) != null
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-test",
                                                                                        AddKotlinLibQuickFix.getKotlinStdlibVersion(module))
 
@@ -123,11 +115,12 @@ class AddTestLibQuickFix(element: KtElement) : AddKotlinLibQuickFix(element) {
     }
 }
 
-abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixAction<KtElement>(element) {
-    protected abstract fun libraryPath(): String
-    protected abstract fun getLibFile(): File
-    protected abstract fun hasLibJarInLibrary(library: Library): Boolean
+abstract class AddKotlinLibQuickFix(element: KtElement, val libraryJarDescriptor: LibraryJarDescriptor) : KotlinQuickFixAction<KtElement>(element) {
     protected abstract fun getLibraryDescriptor(module: Module): MavenExternalLibraryDescriptor
+
+    fun libraryPath(): String = libraryJarDescriptor.jarName
+    fun getLibFile(): File = libraryJarDescriptor.getPath(PathUtil.getKotlinPathsForIdeaPlugin())
+    fun hasLibJarInLibrary(library: Library): Boolean = libraryJarDescriptor.findExistingJar(library) != null
 
     class MavenExternalLibraryDescriptor(groupId: String, artifactId: String, version: String) :
             ExternalLibraryDescriptor(groupId, artifactId, version, version) {
@@ -162,7 +155,7 @@ abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixAction<K
         val collector = createConfigureKotlinNotificationCollector(project)
 
         for (library in findAllUsedLibraries(project).keySet()) {
-            val runtimeJar = getRuntimeJar(library) ?: continue
+            val runtimeJar = LibraryJarDescriptor.RUNTIME_JAR.findExistingJar(library) ?: continue
             if (hasLibJarInLibrary(library)) continue
 
             val model = library.modifiableModel

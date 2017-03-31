@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Contract
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils
+import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import java.io.File
 import java.util.*
 
@@ -455,6 +456,8 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         }
         return false
     }
+
+    abstract val libraryJarDescriptors: List<LibraryJarDescriptor>
 
     companion object {
         val DEFAULT_LIBRARY_DIR = "lib"

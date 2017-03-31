@@ -22,7 +22,7 @@ import com.intellij.openapi.module.impl.scopes.LibraryScope
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
-import org.jetbrains.kotlin.idea.framework.getRuntimeJar
+import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.idea.versions.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
@@ -65,8 +65,14 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
             )
         }
 
+    override val libraryJarDescriptors: List<LibraryJarDescriptor>
+        get() = listOf(LibraryJarDescriptor.RUNTIME_JAR,
+                       LibraryJarDescriptor.REFLECT_JAR,
+                       LibraryJarDescriptor.RUNTIME_SRC_JAR,
+                       LibraryJarDescriptor.TEST_JAR)
+
     override fun getOldSourceRootUrl(library: Library): String? {
-        val runtimeJarPath = getRuntimeJar(library)
+        val runtimeJarPath = LibraryJarDescriptor.RUNTIME_JAR.findExistingJar(library)
         return if (runtimeJarPath != null) runtimeJarPath.url + "src" else null
     }
 

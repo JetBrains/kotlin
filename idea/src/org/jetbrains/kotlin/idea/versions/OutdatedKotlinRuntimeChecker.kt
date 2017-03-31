@@ -30,7 +30,10 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.util.PathUtil.getLocalFile
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.framework.*
+import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
+import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
+import org.jetbrains.kotlin.idea.framework.getLibraryProperties
+import org.jetbrains.kotlin.idea.framework.isDetected
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import java.io.IOException
 import javax.swing.event.HyperlinkEvent
@@ -149,7 +152,7 @@ private fun suggestDeleteKotlinJsIfNeeded(project: Project, outdatedLibraries: C
     var addNotification = false
     for (library in outdatedLibraries) {
         if (isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
-            val jsStdlibJar = getJsStdLibJar(library)
+            val jsStdlibJar = LibraryJarDescriptor.JS_STDLIB_JAR.findExistingJar(library)
             assert(jsStdlibJar != null) { "jslibFile should not be null" }
 
             if (jsStdlibJar!!.findFileByRelativePath("kotlin.js") == null) {

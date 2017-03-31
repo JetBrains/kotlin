@@ -22,12 +22,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription;
-import org.jetbrains.kotlin.idea.framework.KotlinLibraryUtilKt;
+import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor;
 import org.jetbrains.kotlin.js.JavaScript;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.PathUtil;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     public static final String NAME = JavaScript.LOWER_NAME;
@@ -90,13 +93,20 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
         );
     }
 
+    @NotNull
+    @Override
+    public List<LibraryJarDescriptor> getLibraryJarDescriptors() {
+        return Arrays.asList(LibraryJarDescriptor.JS_STDLIB_JAR,
+                             LibraryJarDescriptor.JS_STDLIB_SRC_JAR);
+    }
+
     KotlinJsModuleConfigurator() {
     }
 
     @Nullable
     @Override
     protected String getOldSourceRootUrl(@NotNull Library library) {
-        VirtualFile jsStdLibJar = KotlinLibraryUtilKt.getJsStdLibJar(library);
+        VirtualFile jsStdLibJar = LibraryJarDescriptor.JS_STDLIB_JAR.findExistingJar(library);
         return jsStdLibJar != null ? jsStdLibJar.getUrl() : null;
     }
 }
