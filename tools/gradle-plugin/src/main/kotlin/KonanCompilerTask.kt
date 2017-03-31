@@ -63,37 +63,6 @@ open class KonanCompileTask: DefaultTask() {
     @Optional @Input var apiVersion      : String? = null
         internal set
 
-    // Useful extensions and functions ---------------------------------------
-
-    protected fun MutableList<String>.addArg(parameter: String, value: String) {
-        add(parameter)
-        add(value)
-    }
-
-    protected fun MutableList<String>.addArgIfNotNull(parameter: String, value: String?) {
-        if (value != null) {
-            addArg(parameter, value)
-        }
-    }
-
-    protected fun MutableList<String>.addKey(key: String, enabled: Boolean) {
-        if (enabled) {
-            add(key)
-        }
-    }
-
-    protected fun MutableList<String>.addFileArgs(parameter: String, values: FileCollection) {
-        values.files.forEach {
-            addArg(parameter, it.canonicalPath)
-        }
-    }
-
-    protected fun MutableList<String>.addFileArgs(parameter: String, values: Collection<FileCollection>) {
-        values.forEach {
-            addFileArgs(parameter, it)
-        }
-    }
-
     // Task action ------------------------------------------------------------
 
     protected fun buildArgs() = mutableListOf<String>().apply {
@@ -102,9 +71,7 @@ open class KonanCompileTask: DefaultTask() {
         addFileArgs("-library", libraries)
         addFileArgs("-nativelibrary", nativeLibraries)
 
-        linkerOpts.forEach {
-            addArg("-linkerArgs", it)
-        }
+        addListArg("-linkerArgs", linkerOpts)
 
         addArgIfNotNull("-target", target)
         addArgIfNotNull("-language-version", languageVersion)

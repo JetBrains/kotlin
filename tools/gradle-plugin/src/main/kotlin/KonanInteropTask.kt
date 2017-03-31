@@ -68,31 +68,26 @@ open class KonanInteropTask: DefaultTask() {
     }
 
     protected fun buildArgs() = mutableListOf<String>().apply {
-        add("-properties:${project.konanHome}/konan/konan.properties")
-        add("-flavor:native")
-        add("-generated:$stubsDir")
-        add("-natives:$libsDir")
+        addArg("-properties", "${project.konanHome}/konan/konan.properties")
+        addArg("-flavor", "native")
 
-        target?.let  { add("-target:$target") }
-        defFile?.let { add("-def:$it") }
-        pkg?.let     { add("-pkg:$it") }
-        linker?.let  { add("-linker:$it") }
+        addArg("-generated", stubsDir.canonicalPath)
+        addArg("-natives", libsDir.canonicalPath)
 
-        headers.forEach {
-            add("-h:$it")
-        }
+        addArgIfNotNull("-target", target)
+        addArgIfNotNull("-def", defFile?.canonicalPath)
+        addArgIfNotNull("-pkg", pkg)
+        addArgIfNotNull("-linker", linker)
 
-        compilerOpts.forEach {
-            add("-copt:$it")
-        }
+        addFileArgs("-h", headers)
+
+        addListArg("-copt", compilerOpts)
 
         val linkerOpts = mutableListOf<String>().apply { addAll(linkerOpts) }
         linkFiles.forEach {
             linkerOpts.addAll(it.files.map { it.canonicalPath })
         }
-        linkerOpts.forEach {
-            add("-lopt:$it")
-        }
+        addListArg("-lopt", linkerOpts)
     }
 
 }

@@ -4,6 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.AbstractNamedDomainObjectContainer
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
@@ -46,6 +47,43 @@ class KonanInteropContainer(val project: ProjectInternal): AbstractNamedDomainOb
 
     override fun doCreate(name: String): KonanInteropConfig =
             KonanInteropConfig(name, project)
+}
+
+// Useful extensions and functions ---------------------------------------
+
+internal fun MutableList<String>.addArg(parameter: String, value: String) {
+    add(parameter)
+    add(value)
+}
+
+internal fun MutableList<String>.addArgIfNotNull(parameter: String, value: String?) {
+    if (value != null) {
+        addArg(parameter, value)
+    }
+}
+
+internal fun MutableList<String>.addKey(key: String, enabled: Boolean) {
+    if (enabled) {
+        add(key)
+    }
+}
+
+internal fun MutableList<String>.addFileArgs(parameter: String, values: FileCollection) {
+    values.files.forEach {
+        addArg(parameter, it.canonicalPath)
+    }
+}
+
+internal fun MutableList<String>.addFileArgs(parameter: String, values: Collection<FileCollection>) {
+    values.forEach {
+        addFileArgs(parameter, it)
+    }
+}
+
+internal fun MutableList<String>.addListArg(parameter: String, values: List<String>) {
+    if (values.isNotEmpty()) {
+        addArg(parameter, values.joinToString(separator = " "))
+    }
 }
 
 class KonanPlugin: Plugin<ProjectInternal> {
