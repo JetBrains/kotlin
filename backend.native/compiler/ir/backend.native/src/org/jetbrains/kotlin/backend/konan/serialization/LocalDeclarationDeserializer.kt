@@ -72,7 +72,7 @@ class LocalDeclarationDeserializer(val rootFunction: FunctionDescriptor, val mod
                 return module.findClassAcrossModuleDependencies(nameResolver.getClassId(fqNameIndex))!!
             QualifiedName.Kind.PACKAGE ->
                 return module.getPackage(packageName)
-            else -> error("Unexpected descriptor kind.")
+            else -> TODO("Unexpected descriptor kind.")
         }
     }
 

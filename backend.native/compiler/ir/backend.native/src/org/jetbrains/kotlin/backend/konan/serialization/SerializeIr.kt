@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.getMemberScope
 import org.jetbrains.kotlin.backend.konan.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.ir.ir2stringWhole
+import org.jetbrains.kotlin.backend.konan.KonanIrDeserializationException
 import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
 import org.jetbrains.kotlin.backend.konan.llvm.base64Encode
 import org.jetbrains.kotlin.descriptors.*
@@ -313,7 +314,7 @@ internal class IrSerializer(val context: Context,
                 -> return KonanIr.IrTypeOperator.INSTANCEOF
             IrTypeOperator.NOT_INSTANCEOF
                 -> return KonanIr.IrTypeOperator.NOT_INSTANCEOF
-            else -> error("Unknown type operator")
+            else -> TODO("Unknown type operator")
         }
     }
 
@@ -689,7 +690,7 @@ internal class IrDeserializer(val context: Context,
                 IrUnaryPrimitiveImpl(start, end, null, descriptor)
             KonanIr.IrCall.Primitive.BINARY ->
                 IrBinaryPrimitiveImpl(start, end, null, descriptor)
-            else -> error("Unexpected primitive IrCall.")
+            else -> TODO("Unexpected primitive IrCall.")
         }
         deserializeMemberAccessCommon(call, proto.memberAccess)
         return call
@@ -802,7 +803,7 @@ internal class IrDeserializer(val context: Context,
                 -> return IrTypeOperator.INSTANCEOF
             KonanIr.IrTypeOperator.NOT_INSTANCEOF
                 -> return IrTypeOperator.NOT_INSTANCEOF
-            else -> error("Unknown type operator")
+            else -> TODO("Unknown type operator")
         }
     }
 
@@ -1037,7 +1038,7 @@ internal class IrDeserializer(val context: Context,
         val proto = (rootFunction as DeserializedSimpleFunctionDescriptor).proto
 
         if (!proto.hasExtension(KonanLinkData.inlineIrBody)) {
-            error("$rootFunction doesn't have ir serialized.")
+            throw KonanIrDeserializationException("$rootFunction doesn't have ir serialized.")
         }
 
         val inlineProto = proto.getExtension(KonanLinkData.inlineIrBody)

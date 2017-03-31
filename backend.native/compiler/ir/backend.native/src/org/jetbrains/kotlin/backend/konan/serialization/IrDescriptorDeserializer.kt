@@ -87,6 +87,7 @@ internal class IrDescriptorDeserializer(val context: Context,
         val text = proto.getDebugText()
         val typeProto = localDeserializer.typeTable[index]
         val type = localDeserializer.deserializeInlineType(typeProto)
+        if (type.isError) throw KonanIrDeserializationException("Could not deserialize KotlinType: $text $type")
         context.log("### deserialized Kotlin Type index=$index, text=$text:\t$type")
 
         return type
@@ -111,7 +112,7 @@ internal class IrDescriptorDeserializer(val context: Context,
             }
             // TODO
             //  proto.hasClazz() -> 
-            else -> error("Unexpected descriptor kind")
+            else -> TODO("Unexpected descriptor kind")
         }
     }
 
@@ -272,7 +273,7 @@ internal class IrDescriptorDeserializer(val context: Context,
                 newPropertyDescriptor.getter
             is PropertySetterDescriptor ->
                 newPropertyDescriptor.setter
-            else -> error("Unexpected accessor kind")
+            else -> TODO("Unexpected accessor kind")
         }
 
         descriptorIndex.put(proto.index, newDescriptor!!)
@@ -312,7 +313,7 @@ internal class IrDescriptorDeserializer(val context: Context,
             is ClassDescriptor -> parent.getUnsubstitutedMemberScope()
             is PackageFragmentDescriptor -> parent.getMemberScope()
             is PackageViewDescriptor -> parent.memberScope
-            else -> error("could not get a member scope")
+            else -> TODO("could not get a member scope")
         }
     }
 
@@ -450,7 +451,7 @@ internal class IrDescriptorDeserializer(val context: Context,
                 // class descriptors here?
                 //substituteClass(proto, originalDescriptor)
                 originalDescriptor
-            else -> error("unexpected type of public function")
+            else -> TODO("unexpected type of public function")
         }
     }
 
