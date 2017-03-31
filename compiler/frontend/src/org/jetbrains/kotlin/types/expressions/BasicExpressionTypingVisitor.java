@@ -943,7 +943,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     private static boolean isKnownToBeNotNull(KtExpression expression, KotlinType jetType, ExpressionTypingContext context) {
         DataFlowValue dataFlowValue = createDataFlowValue(expression, jetType, context);
-        return !context.dataFlowInfo.getStableNullability(dataFlowValue).canBeNull();
+        return context.dataFlowInfo.getStableNullability(dataFlowValue) == Nullability.NOT_NULL;
     }
 
     /**
@@ -1272,7 +1272,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         assert leftTypeInfo != null : "Left expression was not processed: " + expression;
         KotlinType leftType = leftTypeInfo.getType();
-        if (leftType != null && isKnownToBeNotNull(left, leftType, context)) {
+        if (leftType != null && (!TypeUtils.isNullableType(leftType) || isKnownToBeNotNull(left, leftType, context))) {
             context.trace.report(USELESS_ELVIS.on(expression, leftType));
         }
         else if (KtPsiUtil.isNullConstant(right) && leftType != null && !FlexibleTypesKt.isNullabilityFlexible(leftType)) {
