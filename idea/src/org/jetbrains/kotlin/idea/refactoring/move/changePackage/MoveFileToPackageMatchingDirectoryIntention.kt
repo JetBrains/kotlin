@@ -63,7 +63,9 @@ class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIndepende
             Messages.showMessageDialog(project, it, CommonBundle.getErrorTitle(), Messages.getErrorIcon())
             return
         }
-        val targetDirectory = targetDirFactory.getTargetDirectory(fileToMove) ?: return
+        val targetDirectory = runWriteAction {
+            targetDirFactory.getTargetDirectory(fileToMove)
+        } ?: return
 
         RefactoringMessageUtil.checkCanCreateFile(targetDirectory, file.name)?.let {
             Messages.showMessageDialog(project, it, CommonBundle.getErrorTitle(), Messages.getErrorIcon())
