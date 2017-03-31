@@ -18,17 +18,40 @@ package org.jetbrains.kotlin.config
 
 import org.jetbrains.kotlin.utils.DescriptionAware
 
-enum class ProtocolsBackend(override val description: String) : DescriptionAware {
-    REFLECTION("reflection"),
-    INDY("indy"),
-    ;
+class ProtocolsBackend(val backendType: BackendType, val cacheType: CacheType, val cacheSize: Int) {
+
+    enum class BackendType(override val description: String) : DescriptionAware {
+        REFLECTION("reflection"),
+        INDY("indy");
+
+        companion object {
+            @JvmField
+            val DEFAULT = INDY
+
+            @JvmStatic
+            fun fromString(backendType: String) = values().find { it.description == backendType }
+        }
+    }
+
+    enum class CacheType(override val description: String) : DescriptionAware {
+        ARRAY("array"),
+        HASHMAP("hashmap");
+
+        companion object {
+            @JvmField
+            val DEFAULT = ARRAY
+
+            @JvmStatic
+            fun fromString(cacheType: String) = values().find { it.description == cacheType }
+        }
+
+    }
 
     companion object {
         @JvmField
-        val DEFAULT = INDY
+        val DEFAULT_SIZE = 20
 
-        @JvmStatic
-        fun fromString(string: String) = values().find { it.description == string }
+        @JvmField
+        val DEFAULT = ProtocolsBackend(BackendType.INDY, CacheType.ARRAY, DEFAULT_SIZE)
     }
-
 }

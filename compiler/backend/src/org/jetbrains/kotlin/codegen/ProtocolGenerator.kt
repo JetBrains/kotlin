@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.config.ProtocolsBackend
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
@@ -32,10 +33,16 @@ import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
 import java.lang.reflect.Method
 
-abstract class ProtocolGenerator(protected val codegen: ExpressionCodegen) {
+abstract class ProtocolGenerator(protected val codegen: ExpressionCodegen, protected val cacheType: ProtocolsBackend.CacheType, protected val cacheSize: Int = 20)  {
     private var last = 0
 
-    protected val CACHE_SIZE = 20
+    companion object {
+        @JvmStatic
+        fun from(codegen: ExpressionCodegen, backend: ProtocolsBackend): ProtocolGenerator = when (backend.backendType) {
+            ProtocolsBackend.BackendType.REFLECTION -> ReflectionProtocolGenerator(codegen, backend.cacheType, backend.cacheSize)
+            ProtocolsBackend.BackendType.INDY -> IndyProtocolGenerator(codegen, backend.cacheType, backend.cacheSize)
+        }
+    }
 
     fun putInvokerAndGenerateIfNeeded(method: CallableMethod, call: ResolvedCall<*>) {
         val candidate = call.candidateDescriptor
@@ -55,7 +62,7 @@ abstract class ProtocolGenerator(protected val codegen: ExpressionCodegen) {
     protected abstract fun genProtocolCaller(method: CallableMethod, call: ResolvedCall<*>, name: String)
 }
 
-class IndyProtocolGenerator(codegen: ExpressionCodegen) : ProtocolGenerator(codegen) {
+class IndyProtocolGenerator(codegen: ExpressionCodegen, cacheType: ProtocolsBackend.CacheType, cacheSize: Int) : ProtocolGenerator(codegen, cacheType, cacheSize) {
 
     override fun invokeCaller(name: String) {
         val signature = Type.getMethodDescriptor(Type.getType(MethodHandle::class.java), OBJECT_TYPE)
@@ -96,7 +103,7 @@ class IndyProtocolGenerator(codegen: ExpressionCodegen) : ProtocolGenerator(code
 
         // Review type mapper
         val signature = codegen.typeMapper.mapAsmMethod(call.resultingDescriptor as FunctionDescriptor)
-        mv.visitInvokeDynamicInsn("apply", "()L$callSite;", bootstrap, methodName.asString(), Type.getType(signature.descriptor), CACHE_SIZE)
+        mv.visitInvokeDynamicInsn("apply", "()L$callSite;", bootstrap, methodName.asString(), Type.getType(signature.descriptor), cacheType.ordinal, cacheSize)
 
         mv.visitVarInsn(ALOAD, 0)
 
@@ -120,7 +127,7 @@ class IndyProtocolGenerator(codegen: ExpressionCodegen) : ProtocolGenerator(code
     }
 }
 
-class ReflectionProtocolGenerator(codegen: ExpressionCodegen) : ProtocolGenerator(codegen) {
+class ReflectionProtocolGenerator(codegen: ExpressionCodegen, cacheType: ProtocolsBackend.CacheType, cacheSize: Int) : ProtocolGenerator(codegen, cacheType, cacheSize) {
 
     override fun invokeMethod(method: Callable) {
         codegen.v.invokevirtual("java/lang/reflect/Method", "invoke", Type.getMethodDescriptor(OBJECT_TYPE, OBJECT_TYPE, Type.getType("[Ljava/lang/Object;")), false)
@@ -153,7 +160,7 @@ class ReflectionProtocolGenerator(codegen: ExpressionCodegen) : ProtocolGenerato
                                        Type.getType(MethodType::class.java),
                                        Type.getType(Int::class.javaPrimitiveType)), true)
 
-        mv.visitInvokeDynamicInsn("apply", "()L$callSite;", bootstrap, methodName.asString(), Type.getType(method.getAsmMethod().descriptor), CACHE_SIZE)
+        mv.visitInvokeDynamicInsn("apply", "()L$callSite;", bootstrap, methodName.asString(), Type.getType(method.getAsmMethod().descriptor), cacheType.ordinal, cacheSize)
 
         mv.visitVarInsn(ALOAD, 0)
         mv.visitMethodInsn(INVOKEVIRTUAL, callSite, "getReflectMethod",

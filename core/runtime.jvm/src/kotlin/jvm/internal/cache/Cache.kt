@@ -16,7 +16,21 @@
 
 package kotlin.jvm.internal.cache
 
+import java.lang.Exception
+
+enum class ProtocolCache {
+    ARRAY,
+    HASHMAP
+}
+
 interface Cache<in Key, Value> {
     operator fun get(key: Key): Value?
     operator fun set(key: Key, value: Value)
+
+    companion object {
+        inline fun <reified Key, reified Value> makeCache(type: Int, size: Int): Cache<Key, Value> = when (ProtocolCache.values()[type]) {
+            ProtocolCache.ARRAY -> SmallArrayCache(size)
+            ProtocolCache.HASHMAP -> throw Exception()
+        }
+    }
 }

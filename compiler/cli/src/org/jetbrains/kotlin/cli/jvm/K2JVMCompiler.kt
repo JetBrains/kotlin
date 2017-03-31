@@ -137,15 +137,29 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
 
-        if (arguments.protocolsBackend != null) {
-            val protocolsBackend = ProtocolsBackend.fromString(arguments.protocolsBackend)
-            if (protocolsBackend != null) {
-                configuration.put(JVMConfigurationKeys.PROTOCOLS_BACKEND, protocolsBackend)
-            } else {
-                messageCollector.report(CompilerMessageSeverity.ERROR, "Wrong type for protocols backend", CompilerMessageLocation.NO_LOCATION)
-            }
+        val protocolsBackendType = if (arguments.protocolsBackend == null) {
+            ProtocolsBackend.BackendType.DEFAULT
+        } else {
+            ProtocolsBackend.BackendType.fromString(arguments.protocolsBackend)
         }
 
+        val protocolsCacheType = if (arguments.protocolsCacheType == null) {
+            ProtocolsBackend.CacheType.DEFAULT
+        } else {
+            ProtocolsBackend.CacheType.fromString(arguments.protocolsCacheType)
+        }
+
+        val protocolsCacheSize = if (arguments.protocolsCacheSize == null) {
+            ProtocolsBackend.DEFAULT_SIZE
+        } else {
+            arguments.protocolsCacheSize.toIntOrNull()
+        }
+
+        protocolsBackendType ?: messageCollector.report(CompilerMessageSeverity.ERROR, "Wrong type for protocols backend", CompilerMessageLocation.NO_LOCATION)
+        protocolsCacheType ?: messageCollector.report(CompilerMessageSeverity.ERROR, "Wrong cache type for protocols", CompilerMessageLocation.NO_LOCATION)
+        protocolsCacheSize ?: messageCollector.report(CompilerMessageSeverity.ERROR, "Incorrect cache size for protocols", CompilerMessageLocation.NO_LOCATION)
+
+        configuration.put(JVMConfigurationKeys.PROTOCOLS_BACKEND, ProtocolsBackend(protocolsBackendType!!, protocolsCacheType!!, protocolsCacheSize!!))
         configuration.put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
         putAdvancedOptions(configuration, arguments)

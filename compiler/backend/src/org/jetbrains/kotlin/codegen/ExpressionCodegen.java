@@ -162,9 +162,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         this.parentCodegen = parentCodegen;
         this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
 
-        this.protocolGenerator = state.getProtocolsBackend().equals(ProtocolsBackend.REFLECTION)
-                                 ? new ReflectionProtocolGenerator(this)
-                                 : new IndyProtocolGenerator(this);
+        this.protocolGenerator = ProtocolGenerator.from(this, state.getProtocolsBackend());
     }
 
     @Nullable

@@ -150,6 +150,12 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
             description = "Java compiler arguments")
     public String[] javacArguments;
 
+    @Argument(value = "protocols-cache", description = "Protocols cache type")
+    public String protocolsCacheType;
+
+    @Argument(value = "protocols-cache-size", description = "Protocols cache size")
+    public String protocolsCacheSize;
+
     // Paths to output directories for friend modules.
     public String[] friendPaths;
 
