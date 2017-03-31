@@ -77,15 +77,11 @@ public class DxChecker {
 
     private static String generateExceptionMessage(Throwable e) {
         StringWriter writer = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(writer);
-        try {
+        try (PrintWriter printWriter = new PrintWriter(writer)) {
             e.printStackTrace(printWriter);
             String stackTrace = writer.toString();
             Matcher matcher = STACK_TRACE_PATTERN.matcher(stackTrace);
             return matcher.replaceAll("");
-        }
-        finally {
-            printWriter.close();
         }
     }
 }

@@ -170,10 +170,8 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
             File outputFile = new File(jarPath.getParentFile(), FileUtil.getNameWithoutExtension(jarPath) + "-after.jar");
             Set<String> toDelete = SetsKt.setOf(entriesToDelete);
 
-            @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-            JarFile jar = new JarFile(jarPath);
-            ZipOutputStream output = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
-            try {
+            try (JarFile jar = new JarFile(jarPath);
+                 ZipOutputStream output = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)))) {
                 for (Enumeration<JarEntry> enumeration = jar.entries(); enumeration.hasMoreElements(); ) {
                     JarEntry jarEntry = enumeration.nextElement();
                     String name = jarEntry.getName();
@@ -188,10 +186,6 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
                     output.write(newBytes);
                     output.closeEntry();
                 }
-            }
-            finally {
-                output.close();
-                jar.close();
             }
 
             return outputFile;

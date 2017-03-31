@@ -195,21 +195,18 @@ public class SDKDownloader {
         }
         try {
             byte[] buf = new byte[1024];
-            ZipInputStream zipinputstream;
-            ZipEntry zipentry;
-            zipinputstream = new ZipInputStream(new FileInputStream(pathToFile));
-
-            zipentry = zipinputstream.getNextEntry();
-            try {
-                while (zipentry != null) {
-                    String entryName = zipentry.getName();
+            ZipEntry zipEntry = null;
+            try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(pathToFile))) {
+                zipEntry = zipInputStream.getNextEntry();
+                while (zipEntry != null) {
+                    String entryName = zipEntry.getName();
                     int n;
                     File outputFile = new File(outputFolder + "/" + entryName);
 
-                    if (zipentry.isDirectory()) {
+                    if (zipEntry.isDirectory()) {
                         outputFile.mkdirs();
-                        zipinputstream.closeEntry();
-                        zipentry = zipinputstream.getNextEntry();
+                        zipInputStream.closeEntry();
+                        zipEntry = zipInputStream.getNextEntry();
                         continue;
                     }
                     else {
@@ -220,23 +217,19 @@ public class SDKDownloader {
                         outputFile.createNewFile();
                     }
 
-                    FileOutputStream fileoutputstream = new FileOutputStream(outputFile);
-                    try {
-                        while ((n = zipinputstream.read(buf, 0, 1024)) > -1) {
-                            fileoutputstream.write(buf, 0, n);
+                    try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
+                        while ((n = zipInputStream.read(buf, 0, 1024)) > -1) {
+                            fileOutputStream.write(buf, 0, n);
                         }
                     }
-                    finally {
-                        fileoutputstream.close();
-                    }
-                    zipinputstream.closeEntry();
-                    zipentry = zipinputstream.getNextEntry();
+                    zipInputStream.closeEntry();
+                    zipEntry = zipInputStream.getNextEntry();
                 }
-
-                zipinputstream.close();
             }
             catch (IOException e) {
-                System.err.println("Entry name: " + zipentry.getName());
+                if (zipEntry != null) {
+                    System.err.println("Entry name: " + zipEntry.getName());
+                }
                 e.printStackTrace();
             }
         }

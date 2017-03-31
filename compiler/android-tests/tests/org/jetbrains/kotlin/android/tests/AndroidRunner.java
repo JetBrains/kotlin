@@ -64,11 +64,8 @@ public class AndroidRunner extends TestSuite {
     private static void writeAndroidSkdToLocalProperties() throws IOException {
         System.out.println("Writing android sdk to local.properties: " + pathManager.getAndroidSdkRoot());
         File file = new File(pathManager.getTmpFolder() + "/local.properties");
-        FileWriter fw = new FileWriter(file);
-        try {
+        try (FileWriter fw = new FileWriter(file)) {
             fw.write("sdk.dir=" + pathManager.getAndroidSdkRoot());
-        } finally {
-            fw.close();
         }
     }
 }

@@ -812,8 +812,8 @@ public class KotlinTestUtils {
     private static boolean compileJavaFiles(@NotNull Collection<File> files, List<String> options, @Nullable File javaErrorFile) throws IOException {
         JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
         DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
-        StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.forName("utf-8"));
-        try {
+        try (StandardJavaFileManager fileManager =
+                     javaCompiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.forName("utf-8"))) {
             Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(files);
 
             JavaCompiler.CompilationTask task = javaCompiler.getTask(
@@ -832,8 +832,6 @@ public class KotlinTestUtils {
                 assertEqualsToFile(javaErrorFile, errorsToString(diagnosticCollector, false));
             }
             return success;
-        } finally {
-            fileManager.close();
         }
     }
 

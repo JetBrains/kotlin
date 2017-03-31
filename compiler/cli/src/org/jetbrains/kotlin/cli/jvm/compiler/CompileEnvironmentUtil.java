@@ -132,8 +132,7 @@ public class CompileEnvironmentUtil {
     }
 
     private static void copyJarImpl(JarOutputStream stream, File jarPath) throws IOException {
-        JarInputStream jis = new JarInputStream(new FileInputStream(jarPath));
-        try {
+        try (JarInputStream jis = new JarInputStream(new FileInputStream(jarPath))) {
             while (true) {
                 JarEntry e = jis.getNextJarEntry();
                 if (e == null) {
@@ -144,9 +143,6 @@ public class CompileEnvironmentUtil {
                     FileUtil.copy(jis, stream);
                 }
             }
-        }
-        finally {
-            jis.close();
         }
     }
 

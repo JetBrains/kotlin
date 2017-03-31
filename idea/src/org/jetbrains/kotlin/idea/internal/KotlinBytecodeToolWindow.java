@@ -391,13 +391,9 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
     private static String printStackTraceToString(Throwable e) {
         StringWriter out = new StringWriter(1024);
-        PrintWriter printWriter = new PrintWriter(out);
-        try {
+        try (PrintWriter printWriter = new PrintWriter(out)) {
             e.printStackTrace(printWriter);
             return out.toString().replace("\r", "");
-        }
-        finally {
-            printWriter.close();
         }
     }
 

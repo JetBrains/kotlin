@@ -24,6 +24,7 @@ import com.intellij.util.ArrayUtil;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Assert;
 
 import java.io.BufferedReader;
@@ -185,8 +186,7 @@ public final class InTextDirectivesUtils {
         List<String> result = new ArrayList<String>();
 
         try {
-            BufferedReader reader = new BufferedReader(new StringReader(fileText));
-            try {
+            try (BufferedReader reader = new BufferedReader(new StringReader(fileText))) {
                 String line;
 
                 while ((line = reader.readLine()) != null) {
@@ -198,11 +198,10 @@ public final class InTextDirectivesUtils {
                         }
                     }
                 }
-            } finally {
-                reader.close();
             }
-        } catch(IOException e) {
-            throw new AssertionError(e);
+        }
+        catch (IOException e) {
+            throw ExceptionUtilsKt.rethrow(e);
         }
 
         return result;
