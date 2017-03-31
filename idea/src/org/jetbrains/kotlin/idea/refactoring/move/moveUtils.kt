@@ -425,10 +425,20 @@ fun invokeMoveFilesOrDirectoriesRefactoring(
 
         try {
             val choice = if (elements.size > 1 || elements[0] is PsiDirectory) intArrayOf(-1) else null
-            val elementsToMove = elements.filterNot {
-                it is PsiFile
-                && runWriteAction { CopyFilesOrDirectoriesHandler.checkFileExist(selectedDir, choice, it, it.name, "Move") }
-            }
+            val elementsToMove = elements
+                    .filterNot {
+                        it is PsiFile
+                        && runWriteAction { CopyFilesOrDirectoriesHandler.checkFileExist(selectedDir, choice, it, it.name, "Move") }
+                    }
+                    .sortedWith( // process Kotlin files first so that light classes are updated before changing references in Java files
+                            Comparator { o1, o2 ->
+                                when {
+                                    o1 is KtElement && o2 !is KtElement -> -1
+                                    o1 !is KtElement && o2 is KtElement -> 1
+                                    else -> 0
+                                }
+                            }
+                    )
 
             elementsToMove.forEach {
                 MoveFilesOrDirectoriesUtil.checkMove(it, selectedDir!!)
