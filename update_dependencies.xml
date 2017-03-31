@@ -490,7 +490,11 @@
             <sequential unless:set="idea.already.downloaded">
                 <echo message="IDEA build id: ${execute.build.id}, previous build id: ${dependencies.info.prev.idea.build.id}"/>
 
-                <delete dir="${idea.dir}" unless:set="edition.matched"/>
+                <delete dir="${idea.dir}" unless:set="edition.matched">
+                    <exclude name="config-idea/**"/>
+                    <exclude name="system-idea/**"/>
+                </delete>
+
                 <download_and_update_idea idea.maven.version="@{idea.maven.version}" base.repository.url="@{base.url}"/>
 
                 <propertyfile file="${dependencies.info.file}">
