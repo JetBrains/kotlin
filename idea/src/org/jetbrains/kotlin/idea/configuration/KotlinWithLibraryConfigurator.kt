@@ -50,8 +50,6 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
 
     abstract val existingJarFiles: RuntimeLibraryFiles
 
-    protected abstract fun getOldSourceRootUrl(library: Library): String?
-
     override fun getStatus(module: Module): ConfigureKotlinStatus {
         if (!isApplicable(module)) {
             return ConfigureKotlinStatus.NON_APPLICABLE
@@ -422,39 +420,6 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
             showError("Couldn't find file: " + file.path)
         }
         return file
-    }
-
-    fun copySourcesToPathFromLibrary(library: Library, collector: NotificationMessageCollector) {
-        val dirToJarFromLibrary = getPathFromLibrary(library, OrderRootType.SOURCES) ?: error("Directory to file from library should be non null")
-
-        copyFileToDir(existingJarFiles.runtimeSourcesJar, dirToJarFromLibrary, collector)
-    }
-
-    fun changeOldSourcesPathIfNeeded(library: Library, collector: NotificationMessageCollector): Boolean {
-        if (!removeOldSourcesRootIfNeeded(library, collector)) {
-            return false
-        }
-
-        val parentDir = getPathFromLibrary(library, OrderRootType.CLASSES) ?: error("Parent dir for classes jar should exists for Kotlin library")
-
-        return addSourcesToLibraryIfNeeded(library, existingJarFiles.getRuntimeSourcesDestination(parentDir), collector)
-    }
-
-    protected fun removeOldSourcesRootIfNeeded(library: Library, collector: NotificationMessageCollector): Boolean {
-        val oldLibrarySourceRoot = getOldSourceRootUrl(library)
-
-        val librarySourceRoots = library.getUrls(OrderRootType.SOURCES)
-        for (sourceRoot in librarySourceRoots) {
-            if (sourceRoot == oldLibrarySourceRoot) {
-                val model = library.modifiableModel
-                model.removeRoot(oldLibrarySourceRoot!!, OrderRootType.SOURCES)
-                ApplicationManager.getApplication().runWriteAction { model.commit() }
-
-                collector.addMessage("Source root '" + oldLibrarySourceRoot + "' was removed for " + library.name + " library")
-                return true
-            }
-        }
-        return false
     }
 
     abstract val libraryJarDescriptors: List<LibraryJarDescriptor>

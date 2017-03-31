@@ -71,11 +71,6 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
                        LibraryJarDescriptor.RUNTIME_SRC_JAR,
                        LibraryJarDescriptor.TEST_JAR)
 
-    override fun getOldSourceRootUrl(library: Library): String? {
-        val runtimeJarPath = LibraryJarDescriptor.RUNTIME_JAR.findExistingJar(library)
-        return if (runtimeJarPath != null) runtimeJarPath.url + "src" else null
-    }
-
     override fun isKotlinLibrary(project: Project, library: Library): Boolean {
         if (super.isKotlinLibrary(project, library)) {
             return true
