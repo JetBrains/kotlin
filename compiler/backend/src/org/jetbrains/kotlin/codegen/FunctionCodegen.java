@@ -434,7 +434,7 @@ public class FunctionCodegen {
         mv.visitLabel(methodBegin);
 
         KotlinTypeMapper typeMapper = parentCodegen.typeMapper;
-        if (BuiltinSpecialBridgesUtil.shouldHaveTypeSafeBarrier(functionDescriptor, getSignatureMapper(typeMapper))) {
+        if (BuiltinSpecialBridgesUtil.shouldHaveTypeSafeBarrier(functionDescriptor, typeMapper::mapAsmMethod)) {
             generateTypeCheckBarrierIfNeeded(
                     new InstructionAdapter(mv), functionDescriptor, signature.getReturnType(), /* delegateParameterTypes = */null);
         }
@@ -759,11 +759,8 @@ public class FunctionCodegen {
 
         Set<Bridge<Method>> bridgesToGenerate;
         if (!isSpecial) {
-            bridgesToGenerate = ImplKt.generateBridgesForFunctionDescriptor(
-                    descriptor,
-                    getSignatureMapper(typeMapper),
-                    IS_PURE_INTERFACE_CHECKER
-            );
+            bridgesToGenerate =
+                    ImplKt.generateBridgesForFunctionDescriptor(descriptor, typeMapper::mapAsmMethod, IS_PURE_INTERFACE_CHECKER);
             if (!bridgesToGenerate.isEmpty()) {
                 PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
                 boolean isSpecialBridge =
@@ -776,9 +773,7 @@ public class FunctionCodegen {
         }
         else {
             Set<BridgeForBuiltinSpecial<Method>> specials = BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
-                    descriptor,
-                    getSignatureMapper(typeMapper),
-                    IS_PURE_INTERFACE_CHECKER
+                    descriptor, typeMapper::mapAsmMethod, IS_PURE_INTERFACE_CHECKER
             );
 
             if (!specials.isEmpty()) {
@@ -809,11 +804,6 @@ public class FunctionCodegen {
                 overridden -> !(overridden.getContainingDeclaration() instanceof JavaClassDescriptor) &&
                               isClass(overridden.getContainingDeclaration())
         );
-    }
-
-    @NotNull
-    private static Function1<FunctionDescriptor, Method> getSignatureMapper(@NotNull KotlinTypeMapper typeMapper) {
-        return typeMapper::mapAsmMethod;
     }
 
     public static boolean isMethodOfAny(@NotNull FunctionDescriptor descriptor) {
