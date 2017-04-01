@@ -48,8 +48,12 @@ fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityMap: Map<String,
 
 
 
-fun List<ClassBinarySignature>.filterOutNonPublic(): List<ClassBinarySignature> {
+fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: List<String> = emptyList()): List<ClassBinarySignature> {
+    val nonPublicPaths = nonPublicPackages.map { it.replace('.', '/') + '/' }
     val classByName = associateBy { it.name }
+
+    fun ClassBinarySignature.isInNonPublicPackage() =
+            nonPublicPaths.any { name.startsWith(it) }
 
     fun ClassBinarySignature.isPublicAndAccessible(): Boolean =
             isEffectivelyPublic &&
@@ -72,7 +76,7 @@ fun List<ClassBinarySignature>.filterOutNonPublic(): List<ClassBinarySignature> 
         return this.copy(memberSignatures = memberSignatures + inheritedStaticSignatures, supertypes = supertypes - superName)
     }
 
-    return filter { it.isPublicAndAccessible() }
+    return filter { !it.isInNonPublicPackage() && it.isPublicAndAccessible() }
             .map { it.flattenNonPublicBases() }
             .filterNot { it.isNotUsedWhenEmpty && it.memberSignatures.isEmpty()}
 }
