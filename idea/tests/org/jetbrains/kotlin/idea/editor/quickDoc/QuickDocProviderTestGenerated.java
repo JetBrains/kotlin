@@ -48,6 +48,12 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("AtImplicitLambdaParametEnd.kt")
+    public void testAtImplicitLambdaParametEnd() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/AtImplicitLambdaParametEnd.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AtImplicitLambdaParameter.kt")
     public void testAtImplicitLambdaParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/AtImplicitLambdaParameter.kt");
@@ -87,6 +93,18 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
     @TestMetadata("EscapeHtmlInsideCodeBlocks.kt")
     public void testEscapeHtmlInsideCodeBlocks() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/EscapeHtmlInsideCodeBlocks.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExtensionReceiver.kt")
+    public void testExtensionReceiver() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/ExtensionReceiver.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExtensionReceiverEnd.kt")
+    public void testExtensionReceiverEnd() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/ExtensionReceiverEnd.kt");
         doTest(fileName);
     }
 

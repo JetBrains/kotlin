@@ -24,6 +24,7 @@ import com.intellij.lang.java.JavaDocumentationProvider
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -151,6 +152,23 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         }
 
         private fun getText(element: PsiElement, originalElement: PsiElement?, quickNavigation: Boolean): String? {
+            if (element is PsiWhiteSpace) {
+                val itElement = findElementWithText(originalElement, "it")
+                val itReference = itElement?.getParentOfType<KtNameReferenceExpression>(false)
+                if (itReference != null) {
+                    return getText(itReference, originalElement, quickNavigation)
+                }
+            }
+
+            if (element is KtTypeReference) {
+                val declaration = element.parent
+                if (declaration is KtCallableDeclaration && declaration.receiverTypeReference == element) {
+                    val thisElement = findElementWithText(originalElement, "this")
+                    if (thisElement != null) {
+                        return getText(declaration, originalElement, quickNavigation)
+                    }
+                }
+            }
 
             if (element is KtClass && element.isEnum()) {
                 // When caret on special enum function (e.g SomeEnum.values<caret>())
@@ -300,6 +318,15 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             }
 
             return null
+        }
+
+        private fun findElementWithText(element: PsiElement?, text: String): PsiElement? {
+            return when {
+                element == null -> null
+                element.text == text -> element
+                element.prevLeaf()?.text == text -> element.prevLeaf()
+                else -> null
+            }
         }
     }
 }
