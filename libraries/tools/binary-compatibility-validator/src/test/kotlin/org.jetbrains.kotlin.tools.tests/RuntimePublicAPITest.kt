@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.tools.tests
 
 import org.jetbrains.kotlin.tools.*
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
@@ -42,16 +41,22 @@ class RuntimePublicAPITest {
         snapshotAPIAndCompare("../../stdlib/build/libs", "kotlin-stdlib", listOf("../stdlib-declarations.json", "../runtime-declarations.json"), listOf("kotlin.jvm.internal"))
     }
 
-/*
-    @Test fun kotlinReflect() {
-        // requires declaration mapping JSON from kotlin-reflect which isn't built by maven build
-        snapshotAPIAndCompare("../../tools/kotlin-reflect/target", "kotlin-reflect", "../../../../dist/declarations/reflect-declarations.json ")
+    @Test fun kotlinStdlibJre7() {
+        snapshotAPIAndCompare("../../stdlib/jre7/build/libs", "kotlin-stdlib-jre7", listOf("../stdlib-jre7-declarations.json"))
     }
-*/
 
-    private fun snapshotAPIAndCompare(basePath: String, jarPrefix: String, kotlinJvmMappingsPath: List<String>, publicPackages: List<String> = emptyList()) {
+    @Test fun kotlinStdlibJre8() {
+        snapshotAPIAndCompare("../../stdlib/jre8/build/libs", "kotlin-stdlib-jre8", listOf("../stdlib-jre8-declarations.json"))
+    }
+
+    @Test fun kotlinReflect() {
+        snapshotAPIAndCompare("../../tools/kotlin-reflect/build/libs", "kotlin-reflect(?!-[-a-z]+)", listOf("../reflect-declarations.json"), nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
+    }
+
+
+    private fun snapshotAPIAndCompare(basePath: String, jarPattern: String, kotlinJvmMappingsPath: List<String>, publicPackages: List<String> = emptyList(), nonPublicPackages: List<String> = emptyList()) {
         val base = File(basePath).absoluteFile.normalize()
-        val jarFile = getJarPath(base, jarPrefix)
+        val jarFile = getJarPath(base, jarPattern)
         val kotlinJvmMappingsFiles = kotlinJvmMappingsPath.map(base::resolve)
 
         println("Reading kotlin visibilities from $kotlinJvmMappingsFiles")
@@ -62,7 +67,7 @@ class RuntimePublicAPITest {
                         .reduce { m1, m2 -> m1 + m2 }
 
         println("Reading binary API from $jarFile")
-        val api = getBinaryAPI(JarFile(jarFile), visibilities).filterOutNonPublic()
+        val api = getBinaryAPI(JarFile(jarFile), visibilities).filterOutNonPublic(nonPublicPackages)
 
         val target = File("reference-public-api")
                 .resolve(testName.methodName.replaceCamelCaseWithDashedLowerCase() + ".txt")
@@ -70,14 +75,15 @@ class RuntimePublicAPITest {
         api.dumpAndCompareWith(target)
     }
 
-    private fun getJarPath(base: File, jarPrefix: String): File {
+    private fun getJarPath(base: File, jarPattern: String): File {
+        val regex = Regex("$jarPattern.+\\.jar")
         val files = (base.listFiles() ?: throw Exception("Cannot list files in $base"))
             .filter { it.name.let {
-                it.startsWith(jarPrefix) && it.endsWith(".jar")
+                    it matches regex
                     && !it.endsWith("-sources.jar")
                     && !it.endsWith("-javadoc.jar") }}
 
-        return files.singleOrNull() ?: throw Exception("No single file matching $jarPrefix in $base: $files")
+        return files.singleOrNull() ?: throw Exception("No single file matching $jarPattern in $base: $files")
     }
 
 }

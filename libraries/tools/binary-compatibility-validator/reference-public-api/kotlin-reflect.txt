@@ -1,0 +1,128 @@
+public class kotlin/reflect/IllegalCallableAccessException : java/lang/Exception {
+	public fun <init> (Ljava/lang/IllegalAccessException;)V
+}
+
+public final class kotlin/reflect/KClasses {
+	public static final fun getCompanionObject (Lkotlin/reflect/KClass;)Lkotlin/reflect/KClass;
+	public static final fun getCompanionObjectInstance (Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public static final fun getDeclaredFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getDeclaredMemberExtensionFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getDeclaredMemberExtensionProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getDeclaredMemberFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getDeclaredMemberProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getDefaultType (Lkotlin/reflect/KClass;)Lkotlin/reflect/KType;
+	public static final fun getFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getMemberExtensionFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getMemberExtensionProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getMemberFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getMemberProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getPrimaryConstructor (Lkotlin/reflect/KClass;)Lkotlin/reflect/KFunction;
+	public static final fun getStaticFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getStaticProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+}
+
+public class kotlin/reflect/KotlinReflectionInternalError : java/lang/Error {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class kotlin/reflect/NoSuchPropertyException : java/lang/Exception {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Exception;)V
+	public synthetic fun <init> (Ljava/lang/Exception;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class kotlin/reflect/full/IllegalCallableAccessException : kotlin/reflect/IllegalCallableAccessException {
+	public fun <init> (Ljava/lang/IllegalAccessException;)V
+}
+
+public final class kotlin/reflect/full/IllegalPropertyDelegateAccessException : java/lang/Exception {
+	public fun <init> (Ljava/lang/IllegalAccessException;)V
+}
+
+public final class kotlin/reflect/full/KCallables {
+	public static final fun findParameterByName (Lkotlin/reflect/KCallable;Ljava/lang/String;)Lkotlin/reflect/KParameter;
+	public static final fun getExtensionReceiverParameter (Lkotlin/reflect/KCallable;)Lkotlin/reflect/KParameter;
+	public static final fun getInstanceParameter (Lkotlin/reflect/KCallable;)Lkotlin/reflect/KParameter;
+	public static final fun getValueParameters (Lkotlin/reflect/KCallable;)Ljava/util/List;
+}
+
+public final class kotlin/reflect/full/KClasses {
+	public static final fun cast (Lkotlin/reflect/KClass;Ljava/lang/Object;)Ljava/lang/Object;
+	public static final fun createInstance (Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public static final fun getAllSuperclasses (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getAllSupertypes (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getCompanionObject (Lkotlin/reflect/KClass;)Lkotlin/reflect/KClass;
+	public static final fun getCompanionObjectInstance (Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public static final fun getDeclaredFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getDeclaredMemberExtensionFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getDeclaredMemberExtensionProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getDeclaredMemberFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getDeclaredMemberProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getDeclaredMembers (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getDefaultType (Lkotlin/reflect/KClass;)Lkotlin/reflect/KType;
+	public static final fun getFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getMemberExtensionFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getMemberExtensionProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getMemberFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getMemberProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getPrimaryConstructor (Lkotlin/reflect/KClass;)Lkotlin/reflect/KFunction;
+	public static final fun getStaticFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getStaticProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
+	public static final fun getSuperclasses (Lkotlin/reflect/KClass;)Ljava/util/List;
+	public static final fun isSubclassOf (Lkotlin/reflect/KClass;Lkotlin/reflect/KClass;)Z
+	public static final fun isSuperclassOf (Lkotlin/reflect/KClass;Lkotlin/reflect/KClass;)Z
+	public static final fun safeCast (Lkotlin/reflect/KClass;Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class kotlin/reflect/full/KClassifiers {
+	public static final fun createType (Lkotlin/reflect/KClassifier;Ljava/util/List;ZLjava/util/List;)Lkotlin/reflect/KType;
+	public static synthetic fun createType$default (Lkotlin/reflect/KClassifier;Ljava/util/List;ZLjava/util/List;ILjava/lang/Object;)Lkotlin/reflect/KType;
+	public static final fun getStarProjectedType (Lkotlin/reflect/KClassifier;)Lkotlin/reflect/KType;
+}
+
+public final class kotlin/reflect/full/KProperties {
+	public static final fun getExtensionDelegate (Lkotlin/reflect/KProperty1;)Ljava/lang/Object;
+	public static final fun getExtensionDelegate (Lkotlin/reflect/KProperty2;Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class kotlin/reflect/full/KTypes {
+	public static final fun isSubtypeOf (Lkotlin/reflect/KType;Lkotlin/reflect/KType;)Z
+	public static final fun isSupertypeOf (Lkotlin/reflect/KType;Lkotlin/reflect/KType;)Z
+	public static final fun withNullability (Lkotlin/reflect/KType;Z)Lkotlin/reflect/KType;
+}
+
+public final class kotlin/reflect/full/NoSuchPropertyException : kotlin/reflect/NoSuchPropertyException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Exception;)V
+	public synthetic fun <init> (Ljava/lang/Exception;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class kotlin/reflect/jvm/KCallablesJvm {
+	public static final fun isAccessible (Lkotlin/reflect/KCallable;)Z
+	public static final fun setAccessible (Lkotlin/reflect/KCallable;Z)V
+}
+
+public final class kotlin/reflect/jvm/KClassesJvm {
+	public static final fun getJvmName (Lkotlin/reflect/KClass;)Ljava/lang/String;
+}
+
+public final class kotlin/reflect/jvm/KTypesJvm {
+	public static final fun getJvmErasure (Lkotlin/reflect/KType;)Lkotlin/reflect/KClass;
+}
+
+public final class kotlin/reflect/jvm/ReflectJvmMapping {
+	public static final fun getJavaConstructor (Lkotlin/reflect/KFunction;)Ljava/lang/reflect/Constructor;
+	public static final fun getJavaField (Lkotlin/reflect/KProperty;)Ljava/lang/reflect/Field;
+	public static final fun getJavaGetter (Lkotlin/reflect/KProperty;)Ljava/lang/reflect/Method;
+	public static final fun getJavaMethod (Lkotlin/reflect/KFunction;)Ljava/lang/reflect/Method;
+	public static final fun getJavaSetter (Lkotlin/reflect/KMutableProperty;)Ljava/lang/reflect/Method;
+	public static final fun getJavaType (Lkotlin/reflect/KType;)Ljava/lang/reflect/Type;
+	public static final fun getKotlinFunction (Ljava/lang/reflect/Constructor;)Lkotlin/reflect/KFunction;
+	public static final fun getKotlinFunction (Ljava/lang/reflect/Method;)Lkotlin/reflect/KFunction;
+	public static final fun getKotlinProperty (Ljava/lang/reflect/Field;)Lkotlin/reflect/KProperty;
+}
+
+public final class kotlin/reflect/jvm/ReflectLambdaKt {
+	public static final fun reflect (Lkotlin/Function;)Lkotlin/reflect/KFunction;
+}
+
