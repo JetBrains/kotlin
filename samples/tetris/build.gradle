@@ -51,7 +51,7 @@ konanArtifacts {
     TetrisMacbook {
         inputFiles project.file('Tetris.kt')
         useInterop 'sdlMacbook'
-        //linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -framework SDL2 -L/usr/local/lib -lSDL2 -F /Library/Frameworks -framework SDL2 -L/opt/local/lib"
+        linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -framework SDL2 -L/usr/local/lib -lSDL2 -F /Library/Frameworks -framework SDL2 -L/opt/local/lib"
         //linkerOpts "-L/opt/local/lib -L/usr/local/lib -lSDL2"
         target 'macbook'
     }
