@@ -16,13 +16,11 @@
 
 package org.jetbrains.kotlin.js.patterns.typePredicates
 
-import com.google.common.base.Predicate
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import java.util.function.Predicate
 
-public interface TypePredicate : Predicate<KotlinType> {
-    override fun apply(type: KotlinType?): Boolean
-}
+interface TypePredicate : Predicate<KotlinType>
 
 private val KOTLIN = TypePredicateImpl("kotlin")
 val COMPARABLE: TypePredicate = KOTLIN.inner("Comparable")
@@ -40,8 +38,8 @@ private class TypePredicateImpl
 : TypePredicate {
     constructor(name: String) : this(listOf(name))
 
-    override fun apply(type: KotlinType?): Boolean {
-        var descriptor: DeclarationDescriptor? = type?.constructor?.declarationDescriptor ?: return false
+    override fun test(type: KotlinType): Boolean {
+        var descriptor: DeclarationDescriptor? = type.constructor.declarationDescriptor ?: return false
 
         for (i in nameParts.lastIndex downTo 0) {
             if (nameParts[i] != descriptor?.name?.asString()) return false

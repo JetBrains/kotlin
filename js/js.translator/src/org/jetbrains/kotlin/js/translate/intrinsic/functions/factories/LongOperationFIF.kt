@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories
 
-import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -86,15 +86,15 @@ object LongOperationFIF : FunctionIntrinsicFactory {
    override fun getIntrinsic(descriptor: FunctionDescriptor): FunctionIntrinsic? {
        val operationName = descriptor.name.asString()
        return when {
-           LONG_EQUALS_ANY.apply(descriptor) || LONG_BINARY_OPERATION_LONG.apply(descriptor) || LONG_BIT_SHIFTS.apply(descriptor) ->
+           LONG_EQUALS_ANY.test(descriptor) || LONG_BINARY_OPERATION_LONG.test(descriptor) || LONG_BIT_SHIFTS.test(descriptor) ->
                longBinaryIntrinsics[operationName]
-           INTEGER_BINARY_OPERATION_LONG.apply(descriptor) ->
+           INTEGER_BINARY_OPERATION_LONG.test(descriptor) ->
                wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], ::longFromInt, ID())
-           LONG_BINARY_OPERATION_INTEGER.apply(descriptor) ->
+           LONG_BINARY_OPERATION_INTEGER.test(descriptor) ->
                wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], ID(), ::longFromInt)
-           FLOATING_POINT_BINARY_OPERATION_LONG.apply(descriptor) ->
+           FLOATING_POINT_BINARY_OPERATION_LONG.test(descriptor) ->
                wrapIntrinsicIfPresent(floatBinaryIntrinsics[operationName], ID(), { invokeMethod(it, Namer.LONG_TO_NUMBER) })
-           LONG_BINARY_OPERATION_FLOATING_POINT.apply(descriptor) ->
+           LONG_BINARY_OPERATION_FLOATING_POINT.test(descriptor) ->
                wrapIntrinsicIfPresent(floatBinaryIntrinsics[operationName], { invokeMethod(it, Namer.LONG_TO_NUMBER) }, ID())
            else ->
                null

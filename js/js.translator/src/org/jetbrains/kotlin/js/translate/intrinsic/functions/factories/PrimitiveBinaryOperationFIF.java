@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +38,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
 
@@ -112,10 +111,8 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
 
     private static final DescriptorPredicate PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS =
             pattern(NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS, "compareTo");
-    private static final Predicate<FunctionDescriptor> INT_WITH_BIT_OPERATIONS = Predicates.or(
-            pattern("Int.or|and|xor|shl|shr|ushr"),
-            pattern("Short|Byte.or|and|xor")
-    );
+    private static final Predicate<FunctionDescriptor> INT_WITH_BIT_OPERATIONS = pattern("Int.or|and|xor|shl|shr|ushr")
+            .or(pattern("Short|Byte.or|and|xor"));
     private static final DescriptorPredicate BOOLEAN_OPERATIONS = pattern("Boolean.or|and|xor");
     private static final DescriptorPredicate STRING_PLUS = pattern("String.plus");
     private static final DescriptorPredicate INT_MULTIPLICATION = pattern("Int.times(Int)");
@@ -132,18 +129,17 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             .put("ushr", JsBinaryOperator.SHRU)
             .build();
 
-    private static final Predicate<FunctionDescriptor> PREDICATE = Predicates.or(PRIMITIVE_NUMBERS_BINARY_OPERATIONS, BOOLEAN_OPERATIONS,
-                                                                                 STRING_PLUS, INT_WITH_BIT_OPERATIONS,
-                                                                                 PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS);
+    private static final Predicate<FunctionDescriptor> PREDICATE = PRIMITIVE_NUMBERS_BINARY_OPERATIONS
+            .or(BOOLEAN_OPERATIONS).or(STRING_PLUS).or(INT_WITH_BIT_OPERATIONS).or(PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS);
 
     @Nullable
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
-        if (CHAR_RANGE_TO.apply(descriptor)) {
+        if (CHAR_RANGE_TO.test(descriptor)) {
             return new RangeToIntrinsic(descriptor);
         }
 
-        if (PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS.apply(descriptor)) {
+        if (PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS.test(descriptor)) {
             return PRIMITIVE_NUMBER_COMPARE_TO_INTRINSIC;
         }
 
@@ -152,38 +148,38 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             return BUILTINS_COMPARE_TO_INTRINSIC;
         }
 
-        if (!PREDICATE.apply(descriptor)) {
+        if (!PREDICATE.test(descriptor)) {
             return null;
         }
 
-        if (INT_MULTIPLICATION.apply(descriptor)) {
+        if (INT_MULTIPLICATION.test(descriptor)) {
             return INT_MULTIPLICATION_INTRINSIC;
         }
-        if (NUMBER_RANGE_TO.apply(descriptor)) {
+        if (NUMBER_RANGE_TO.test(descriptor)) {
             return new RangeToIntrinsic(descriptor);
         }
-        if (INT_WITH_BIT_OPERATIONS.apply(descriptor)) {
+        if (INT_WITH_BIT_OPERATIONS.test(descriptor)) {
             JsBinaryOperator op = BINARY_BITWISE_OPERATIONS.get(descriptor.getName().asString());
             if (op != null) {
                 return new OptimizedIntBinaryOperationInstrinsic(op);
             }
         }
         JsBinaryOperator operator = getOperator(descriptor);
-        if (INT_BINARY_OPERATIONS.apply(descriptor)) {
+        if (INT_BINARY_OPERATIONS.test(descriptor)) {
             return new AdditiveIntBinaryOperationInstrinsic(operator);
         }
-        if (SIMPLE_INT_MULTIPLICATION.apply(descriptor) || INT_DIVISION.apply(descriptor)) {
+        if (SIMPLE_INT_MULTIPLICATION.test(descriptor) || INT_DIVISION.test(descriptor)) {
             return new IntBinaryOperationFunctionIntrinsic(operator);
         }
         BinaryOperationIntrinsicBase result = new PrimitiveBinaryOperationFunctionIntrinsic(operator);
 
-        if (pattern("Char.plus|minus(Int)").apply(descriptor)) {
+        if (pattern("Char.plus|minus(Int)").test(descriptor)) {
             return new CharAndIntBinaryOperationFunctionIntrinsic(result);
         }
-        if (pattern("Char.minus(Char)").apply(descriptor)) {
+        if (pattern("Char.minus(Char)").test(descriptor)) {
             return new CharAndCharBinaryOperationFunctionIntrinsic(result);
         }
-        if (pattern("String.plus(Any)").apply(descriptor)) {
+        if (pattern("String.plus(Any)").test(descriptor)) {
             return new StringAndCharBinaryOperationFunctionIntrinsic(result);
         }
         return result;

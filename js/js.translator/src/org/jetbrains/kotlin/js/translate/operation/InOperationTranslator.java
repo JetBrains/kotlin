@@ -57,7 +57,7 @@ public class InOperationTranslator extends AbstractTranslator {
     @NotNull
     public JsExpression translate() {
         ResolvedCall<? extends FunctionDescriptor> call = CallUtilKt.getFunctionResolvedCallWithAssert(operation, bindingContext());
-        if (INT_SPECIALIZATION_TEST.apply(call.getResultingDescriptor())) {
+        if (INT_SPECIALIZATION_TEST.test(call.getResultingDescriptor())) {
             JsExpression candidate = translateInt();
             if (candidate != null) {
                 return candidate;
@@ -83,7 +83,7 @@ public class InOperationTranslator extends AbstractTranslator {
             return null;
         }
         FunctionDescriptor callDescriptor = (FunctionDescriptor) rightCall.getResultingDescriptor();
-        if (!INT_RANGE_TEST.apply(callDescriptor)) {
+        if (!INT_RANGE_TEST.test(callDescriptor)) {
             return null;
         }
         if (!(rightCall.getDispatchReceiver() instanceof ExpressionReceiver)) {

@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsNumberLiteral
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable
@@ -73,11 +73,11 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
         if (!KotlinBuiltIns.isBuiltIn(descriptor)) return null
 
         return when {
-            COMPARE_TO_CHAR.apply(descriptor) ->
+            COMPARE_TO_CHAR.test(descriptor) ->
                 CompareToCharIntrinsic
-            CHAR_COMPARE_TO.apply(descriptor) ->
+            CHAR_COMPARE_TO.test(descriptor) ->
                 CompareCharToPrimitiveIntrinsic
-            PRIMITIVE_COMPARE_TO.apply(descriptor) ->
+            PRIMITIVE_COMPARE_TO.test(descriptor) ->
                 CompareToIntrinsic
             else ->
                 CompareToFunctionIntrinsic

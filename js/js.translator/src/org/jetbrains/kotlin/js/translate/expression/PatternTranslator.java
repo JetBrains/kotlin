@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.js.backend.ast.JsConditional;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.backend.ast.JsInvocation;
 import org.jetbrains.kotlin.js.backend.ast.JsLiteral;
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.patterns.typePredicates.TypePredicatesKt;
 import org.jetbrains.kotlin.js.translate.context.Namer;
@@ -222,9 +221,9 @@ public final class PatternTranslator extends AbstractTranslator {
 
         }
 
-        if (TypePredicatesKt.getCHAR_SEQUENCE().apply(type)) return namer().isCharSequence();
+        if (TypePredicatesKt.getCHAR_SEQUENCE().test(type)) return namer().isCharSequence();
 
-        if (TypePredicatesKt.getCOMPARABLE().apply(type)) return namer().isComparable();
+        if (TypePredicatesKt.getCOMPARABLE().test(type)) return namer().isComparable();
 
         return null;
     }
@@ -233,27 +232,27 @@ public final class PatternTranslator extends AbstractTranslator {
     private JsExpression getIsTypeCheckCallableForPrimitiveBuiltin(@NotNull KotlinType type) {
         Name typeName = getNameIfStandardType(type);
 
-        if (NamePredicate.STRING.apply(typeName)) {
+        if (NamePredicate.STRING.test(typeName)) {
             return namer().isTypeOf(program().getStringLiteral("string"));
         }
 
-        if (NamePredicate.BOOLEAN.apply(typeName)) {
+        if (NamePredicate.BOOLEAN.test(typeName)) {
             return namer().isTypeOf(program().getStringLiteral("boolean"));
         }
 
-        if (NamePredicate.LONG.apply(typeName)) {
+        if (NamePredicate.LONG.test(typeName)) {
             return namer().isInstanceOf(Namer.kotlinLong());
         }
 
-        if (NamePredicate.NUMBER.apply(typeName)) {
+        if (NamePredicate.NUMBER.test(typeName)) {
             return namer().kotlin(Namer.IS_NUMBER);
         }
 
-        if (NamePredicate.CHAR.apply(typeName)) {
+        if (NamePredicate.CHAR.test(typeName)) {
             return namer().kotlin(Namer.IS_CHAR);
         }
 
-        if (NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS.apply(typeName)) {
+        if (NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS.test(typeName)) {
             return namer().isTypeOf(program().getStringLiteral("number"));
         }
 

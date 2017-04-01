@@ -16,22 +16,24 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories
 
-import com.google.common.base.Predicates
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.utils.identity
+import java.util.function.Predicate
 
 object NumberAndCharConversionFIF : CompositeFIF() {
-    val USE_AS_IS = Predicates.or(
-            pattern("Int.toInt|toFloat|toDouble"), pattern("Short.toShort|toInt|toFloat|toDouble"),
-            pattern("Byte.toByte|toShort|toInt|toFloat|toDouble"), pattern("Float|Double.toFloat|toDouble"),
-            pattern("Long.toLong"), pattern("Char.toChar")
-    )
+    val USE_AS_IS: Predicate<FunctionDescriptor> = pattern("Int.toInt|toFloat|toDouble")
+            .or(pattern("Short.toShort|toInt|toFloat|toDouble"))
+            .or(pattern("Byte.toByte|toShort|toInt|toFloat|toDouble"))
+            .or(pattern("Float|Double.toFloat|toDouble"))
+            .or(pattern("Long.toLong"))
+            .or(pattern("Char.toChar"))
 
-    private val convertOperations: Map<String, ConversionUnaryIntrinsic>  =
+    private val convertOperations: Map<String, ConversionUnaryIntrinsic> =
             mapOf(
                     "Float|Double.toInt" to ConversionUnaryIntrinsic(::toInt32),
                     "Int|Float|Double.toShort" to ConversionUnaryIntrinsic(::toShort),
@@ -71,7 +73,7 @@ object NumberAndCharConversionFIF : CompositeFIF() {
     }
 
     init {
-        add(USE_AS_IS!!, ConversionUnaryIntrinsic(identity()))
+        add(USE_AS_IS, ConversionUnaryIntrinsic(identity()))
         for((stringPattern, intrinsic) in convertOperations) {
             add(pattern(stringPattern), intrinsic)
         }

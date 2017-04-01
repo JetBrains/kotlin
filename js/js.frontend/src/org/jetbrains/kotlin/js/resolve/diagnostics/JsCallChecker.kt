@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
-import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
-import org.jetbrains.kotlin.js.backend.ast.JsProgram
-import org.jetbrains.kotlin.js.backend.ast.JsRootScope
 import com.google.gwt.dev.js.parserExceptions.AbortParsingException
 import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
@@ -29,6 +26,9 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
+import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
+import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.js.backend.ast.JsRootScope
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate
 import org.jetbrains.kotlin.js.patterns.PatternBuilder
@@ -57,7 +57,7 @@ class JsCallChecker(
 
         @JvmStatic fun <F : CallableDescriptor?> ResolvedCall<F>.isJsCall(): Boolean {
             val descriptor = resultingDescriptor
-            return descriptor is SimpleFunctionDescriptor && JS_PATTERN.apply(descriptor)
+            return descriptor is SimpleFunctionDescriptor && JS_PATTERN.test(descriptor)
         }
 
         @JvmStatic fun extractStringValue(compileTimeConstant: CompileTimeConstant<*>?): String? {

@@ -129,7 +129,7 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
             isEnumIntrinsicApplicable(descriptor, leftType, rightType) -> EnumEqualsIntrinsic
 
             KotlinBuiltIns.isBuiltIn(descriptor) ||
-            TopLevelFIF.EQUALS_IN_ANY.apply(descriptor) -> EqualsIntrinsic
+            TopLevelFIF.EQUALS_IN_ANY.test(descriptor) -> EqualsIntrinsic
 
             else -> null
         }

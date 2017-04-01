@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsNumberLiteral
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -75,13 +75,13 @@ object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
     override fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic? {
         if (KotlinBuiltIns.isBuiltIn(descriptor)) {
             return when {
-                FLOATING_POINT_COMPARE_TO_LONG_PATTERN.apply(descriptor) -> FLOATING_POINT_COMPARE_TO_LONG
-                LONG_COMPARE_TO_FLOATING_POINT_PATTERN.apply(descriptor) -> LONG_COMPARE_TO_FLOATING_POINT
-                INTEGER_COMPARE_TO_LONG_PATTERN.apply(descriptor) -> INTEGER_COMPARE_TO_LONG
-                CHAR_COMPARE_TO_LONG_PATTERN.apply(descriptor) -> CHAR_COMPARE_TO_LONG
-                LONG_COMPARE_TO_INTEGER_PATTERN.apply(descriptor) -> LONG_COMPARE_TO_INTEGER
-                LONG_COMPARE_TO_CHAR_PATTERN.apply(descriptor) -> LONG_COMPARE_TO_CHAR
-                LONG_COMPARE_TO_LONG_PATTERN.apply(descriptor) -> LONG_COMPARE_TO_LONG
+                FLOATING_POINT_COMPARE_TO_LONG_PATTERN.test(descriptor) -> FLOATING_POINT_COMPARE_TO_LONG
+                LONG_COMPARE_TO_FLOATING_POINT_PATTERN.test(descriptor) -> LONG_COMPARE_TO_FLOATING_POINT
+                INTEGER_COMPARE_TO_LONG_PATTERN.test(descriptor) -> INTEGER_COMPARE_TO_LONG
+                CHAR_COMPARE_TO_LONG_PATTERN.test(descriptor) -> CHAR_COMPARE_TO_LONG
+                LONG_COMPARE_TO_INTEGER_PATTERN.test(descriptor) -> LONG_COMPARE_TO_INTEGER
+                LONG_COMPARE_TO_CHAR_PATTERN.test(descriptor) -> LONG_COMPARE_TO_CHAR
+                LONG_COMPARE_TO_LONG_PATTERN.test(descriptor) -> LONG_COMPARE_TO_LONG
                 else -> null
             }
         }
