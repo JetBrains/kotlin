@@ -892,7 +892,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return baseTypeInfo;
         }
         DataFlowInfo dataFlowInfo = baseTypeInfo.getDataFlowInfo();
-        if (isKnownToBeNotNull(baseExpression, context) && !baseType.isError()) {
+        if (isKnownToBeNotNull(baseExpression, baseType, context) && (!baseType.isError() || ErrorUtils.isUninferredParameter(baseType))) {
             context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, TypeUtils.makeNotNullable(baseType)));
         }
         else {
@@ -935,14 +935,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return facade.getTypeInfo(baseExpression, context, isStatement);
     }
 
-    private static boolean isKnownToBeNotNull(KtExpression expression, ExpressionTypingContext context) {
-        KotlinType type = context.trace.getType(expression);
-        assert type != null : "This method is only supposed to be called when the type is not null";
-        return isKnownToBeNotNull(expression, type, context);
-    }
+    private static boolean isKnownToBeNotNull(
+            @NotNull KtExpression expression,
+            @Nullable KotlinType ktType,
+            @NotNull ExpressionTypingContext context
+    ) {
+        if (ktType == null) return false;
+        if (!TypeUtils.isNullableType(ktType)) return true;
 
-    private static boolean isKnownToBeNotNull(KtExpression expression, KotlinType jetType, ExpressionTypingContext context) {
-        DataFlowValue dataFlowValue = createDataFlowValue(expression, jetType, context);
+        DataFlowValue dataFlowValue = createDataFlowValue(expression, ktType, context);
         return context.dataFlowInfo.getStableNullability(dataFlowValue) == Nullability.NOT_NULL;
     }
 
@@ -1272,7 +1273,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         assert leftTypeInfo != null : "Left expression was not processed: " + expression;
         KotlinType leftType = leftTypeInfo.getType();
-        if (leftType != null && (!TypeUtils.isNullableType(leftType) || isKnownToBeNotNull(left, leftType, context))) {
+        if (isKnownToBeNotNull(left, leftType, context)) {
             context.trace.report(USELESS_ELVIS.on(expression, leftType));
         }
         else if (KtPsiUtil.isNullConstant(right) && leftType != null && !FlexibleTypesKt.isNullabilityFlexible(leftType)) {

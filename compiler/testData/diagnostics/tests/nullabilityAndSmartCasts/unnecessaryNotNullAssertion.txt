@@ -1,0 +1,7 @@
+package
+
+public fun </*0*/ T> dependOn(/*0*/ x: T): T
+public fun </*0*/ T> notNull(): T
+public fun </*0*/ T> nullable(): T?
+public fun takeNotNull(/*0*/ s: kotlin.String): kotlin.Unit
+public fun test(): kotlin.Unit
