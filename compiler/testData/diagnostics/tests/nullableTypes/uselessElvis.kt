@@ -35,6 +35,8 @@ fun test() {
         takeNotNull(dependOn(dependOn(x)) <!USELESS_ELVIS!>?: ""<!>)
         takeNotNull(dependOn(dependOn(x) <!USELESS_CAST!>as? String<!>) ?: "")
     }
+
+    takeNotNull(bar()!!)
 }
 
 inline fun <reified T : Any> reifiedNull(): T? = null
@@ -42,3 +44,5 @@ inline fun <reified T : Any> reifiedNull(): T? = null
 fun testFrom13648() {
     takeNotNull(reifiedNull() ?: "")
 }
+
+fun bar() = <!UNRESOLVED_REFERENCE!>unresolved<!>

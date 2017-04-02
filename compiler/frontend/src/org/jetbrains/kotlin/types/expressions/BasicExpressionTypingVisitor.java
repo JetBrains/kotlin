@@ -892,7 +892,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return baseTypeInfo;
         }
         DataFlowInfo dataFlowInfo = baseTypeInfo.getDataFlowInfo();
-        if (isKnownToBeNotNull(baseExpression, baseType, context) && (!baseType.isError() || ErrorUtils.isUninferredParameter(baseType))) {
+        if (isKnownToBeNotNull(baseExpression, baseType, context)) {
             context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, TypeUtils.makeNotNullable(baseType)));
         }
         else {
@@ -935,12 +935,16 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return facade.getTypeInfo(baseExpression, context, isStatement);
     }
 
+    // Returns `true` if warnings should be reported for left-hand side of elvis and not-null (!!) assertion
     private static boolean isKnownToBeNotNull(
             @NotNull KtExpression expression,
             @Nullable KotlinType ktType,
             @NotNull ExpressionTypingContext context
     ) {
         if (ktType == null) return false;
+
+        if (ktType.isError() && !ErrorUtils.isUninferredParameter(ktType)) return false;
+
         if (!TypeUtils.isNullableType(ktType)) return true;
 
         DataFlowValue dataFlowValue = createDataFlowValue(expression, ktType, context);
