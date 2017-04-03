@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
-import org.junit.Ignore
 import java.io.*
 import java.lang.management.ManagementFactory
 import java.net.URLClassLoader
@@ -109,6 +108,23 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
 
         sourceToFiltered.forEach { (source, expectedResult) ->
             val filteredVF = fileCreator.createPreprocessedFile(StandardFileSystems.local().findFileByPath(source.canonicalPath))
+            TestCase.assertNotNull("Cannot generate preprocessed file", filteredVF)
+            val expected = expectedResult.inputStream().trimmedLines(Charset.defaultCharset())
+            val actual = ByteArrayInputStream(filteredVF!!.contentsToByteArray()).trimmedLines(filteredVF.charset)
+            TestCase.assertEquals("Unexpected result on preprocessing file '${source.name}'", expected, actual)
+        }
+    }
+
+    fun testSourceSectionsFilterWithCRLF() {
+        val sourceToFiltered = getTestFiles(".filtered")
+
+        createEnvironment() // creates VirtualFileManager
+        val fileCreator = FilteredSectionsVirtualFileExtension(TEST_ALLOWED_SECTIONS.toSet())
+
+        sourceToFiltered.forEach { (source, expectedResult) ->
+            val sourceWithCRLF = createTempFile(source.name)
+            sourceWithCRLF.writeText(source.readText().replace("\r\n", "\n").replace("\n", "\r\n"))
+            val filteredVF = fileCreator.createPreprocessedFile(StandardFileSystems.local().findFileByPath(sourceWithCRLF.canonicalPath))
             TestCase.assertNotNull("Cannot generate preprocessed file", filteredVF)
             val expected = expectedResult.inputStream().trimmedLines(Charset.defaultCharset())
             val actual = ByteArrayInputStream(filteredVF!!.contentsToByteArray()).trimmedLines(filteredVF.charset)
