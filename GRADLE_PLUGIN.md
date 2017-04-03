@@ -32,12 +32,12 @@ details).
 
     konanArtifacts {
        foo {
-           inputFiles = fileTree('foo/src')
+           inputFiles fileTree('foo/src')
        }
 
        bar {
-           inputFiles = fileTree('bar/src')
-           target = iphone
+           inputFiles fileTree('bar/src')
+           target iphone
        }
     }
 

@@ -3,9 +3,12 @@
 PATH=../../dist/bin:../../bin:$PATH
 DIR=.
 
+# Uncomment flags if your paths differ from these ones.
 CFLAGS_macbook=-I/opt/local/include
+#CFLAGS_macbook=-I/usr/local/include
 CFLAGS_linux=-I/usr/include
 LINKER_ARGS_macbook="-L/opt/local/lib -lgit2"
+#LINKER_ARGS_macbook="-L/usr/local/lib -lgit2"
 LINKER_ARGS_linux="-L/usr/lib/x86_64-linux-gnu -lgit2"
 
 if [ x$TARGET == x ]; then
