@@ -46,7 +46,7 @@ public interface KotlinPaths {
     File getKotlinTestPath();
 
     @NotNull
-    File getRuntimeSourcesPath();
+    File getStdlibSourcesPath();
 
     @NotNull
     File getJsStdLibJarPath();

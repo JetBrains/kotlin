@@ -51,7 +51,7 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
             requestFullJarUpdate(ideaPluginPaths.stdlibPath)
             requestFullJarUpdate(ideaPluginPaths.reflectPath)
             requestFullJarUpdate(ideaPluginPaths.scriptRuntimePath)
-            requestFullJarUpdate(ideaPluginPaths.runtimeSourcesPath)
+            requestFullJarUpdate(ideaPluginPaths.stdlibSourcesPath)
 
             requestFullJarUpdate(ideaPluginPaths.jsStdLibJarPath)
             requestFullJarUpdate(ideaPluginPaths.jsStdLibSrcJarPath)
