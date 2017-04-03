@@ -9,5 +9,7 @@
         <classBuilderInterceptorExtension implementation="org.jetbrains.kotlin.annotation.AnnotationCollectorExtension"/>
 
         <analyzeCompleteHandlerExtension implementation="org.jetbrains.kotlin.resolve.jvm.AnalyzeCompleteHandlerExtension"/>
+
+        <moduleVisibilityManager implementation="org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl" />
     </extensions>
 </idea-plugin>

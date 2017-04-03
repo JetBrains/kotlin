@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -33,11 +34,30 @@ interface ModuleVisibilityManager {
     fun addModule(module: Module)
     fun addFriendPath(path: String)
 
-    var helperEnabled: Boolean // Whether ModuleVisibilityHelper should be used
+    val helperEnabled: Boolean // Whether ModuleVisibilityHelper should be used
 
     object SERVICE {
         @JvmStatic fun getInstance(project: Project): ModuleVisibilityManager =
                 ServiceManager.getService(project, ModuleVisibilityManager::class.java)
+
+    }
+
+    companion object {
+        val EP_NAME = ExtensionPointName.create<ModuleVisibilityManager>("org.jetbrains.kotlin.moduleVisibilityManager")
+    }
+
+    class Default: ModuleVisibilityManager {
+        override val chunk: Collection<Module> = emptySet()
+
+        override val friendPaths: Collection<String> = emptySet()
+
+        override fun addModule(module: Module) {
+        }
+
+        override fun addFriendPath(path: String) {
+        }
+
+        override val helperEnabled: Boolean = false
     }
 }
 
