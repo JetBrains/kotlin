@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.idea.facet
 
-import com.intellij.facet.ui.*
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.text.StringUtil
+import com.intellij.facet.ui.FacetEditorTab
+import com.intellij.facet.ui.FacetEditorValidator
+import com.intellij.facet.ui.FacetValidatorsManager
+import com.intellij.facet.ui.ValidationResult
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.table.JBTable
 import org.jetbrains.kotlin.compiler.plugin.CliOptionValue
@@ -88,37 +88,29 @@ class KotlinFacetCompilerPluginsTab(
             }
         }
 
-        override fun setValueAt(aValue: Any?, rowIndex: Int, columnIndex: Int) {
-            if (columnIndex == 1) {
-                val oldValue = pluginInfos[rowIndex].options
-                val newValue = StringUtil.splitByLines(aValue as? String ?: "").toList()
-                pluginInfos[rowIndex].options = newValue
-                isModified = oldValue != newValue
-            }
-        }
-
         override fun isCellEditable(rowIndex: Int, columnIndex: Int) = true
     }
 
     private class OptionRendererAndEditor : AbstractCellEditor(), TableCellEditor, TableCellRenderer {
-        private val textPane = JTextPane()
+        private val textPane = JTextPane().apply {
+            isEditable = false
+        }
 
-        private fun setupComponent(table: JTable, value: Any?) {
-            textPane.font = table.font
-            textPane.text = value as? String ?: ""
-            textPane.isEditable = false
+        private fun setupComponent(table: JTable, value: Any?): Component {
+            return textPane.apply {
+                font = table.font
+                text = value as? String ?: ""
+                background = table.background
+                foreground = table.foreground
+            }
         }
 
         override fun getTableCellRendererComponent(table: JTable, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
-            setupComponent(table, value)
-            textPane.background = if (isSelected) table.selectionBackground else table.background
-            textPane.foreground = if (isSelected) table.selectionForeground else table.foreground
-            return textPane
+            return setupComponent(table, value)
         }
 
         override fun getTableCellEditorComponent(table: JTable, value: Any?, isSelected: Boolean, row: Int, column: Int): Component {
-            setupComponent(table, value)
-            return textPane
+            return setupComponent(table, value)
         }
 
         override fun getCellEditorValue() = textPane.text!!
