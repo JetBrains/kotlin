@@ -27,7 +27,6 @@ import com.intellij.openapi.vfs.newvfs.NewVirtualFile
 import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.vfilefinder.*
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
 private val INSTALLED_KOTLIN_VERSION = "installed.kotlin.plugin.version"
@@ -45,16 +44,10 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
         val installedKotlinVersion = PropertiesComponent.getInstance()?.getValue(INSTALLED_KOTLIN_VERSION)
 
         if (installedKotlinVersion == null || KotlinPluginUtil.getPluginVersion() != installedKotlinVersion) {
-            val ideaPluginPaths = PathUtil.getKotlinPathsForIdeaPlugin()
-
             // Force refresh jar handlers
-            requestFullJarUpdate(ideaPluginPaths.stdlibPath)
-            requestFullJarUpdate(ideaPluginPaths.reflectPath)
-            requestFullJarUpdate(ideaPluginPaths.scriptRuntimePath)
-            requestFullJarUpdate(ideaPluginPaths.stdlibSourcesPath)
-
-            requestFullJarUpdate(ideaPluginPaths.jsStdLibJarPath)
-            requestFullJarUpdate(ideaPluginPaths.jsStdLibSrcJarPath)
+            for (libraryJarDescriptor in LibraryJarDescriptor.values()) {
+                requestFullJarUpdate(libraryJarDescriptor.getPathInPlugin())
+            }
 
             // Force update indices for files under config directory
             val fileBasedIndex = FileBasedIndex.getInstance()
