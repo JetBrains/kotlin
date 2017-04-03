@@ -1,23 +1,22 @@
-# Early Access Preview of Kotlin Native #
+# Early Access Preview of Kotlin/Native #
 
 ## Introduction ##
 
- _Kotlin/Native_, is a LLVM backend for the Kotlin compiler.
-It consists of a native code generation facility using the LLVM toolchain
+ Kotlin/Native is a LLVM backend for the Kotlin compiler. It consists of a machine code generation facility using the LLVM toolchain
 and a native runtime implementation.
 
  _Kotlin/Native_ is primarily designed to allow compilation for platforms where
-virtual machines are not desirable or possible (such as iOS, embedded targets),
-or where the developer needs to produce a reasonably-sized self-contained program
+virtual machines are not desirable or possible (such as iOS or embedded targets),
+or where the developer needs to produce a reasonably-sized self-contained binary
 that doesn't require an additional execution runtime.
 
 ## Supported platforms ##
 
- _Kotlin/Native_ compiler produces mostly portable (modulo pointer size and target
-triplet) LLVM bitcode, and as such can easily support any platform, as long as there's a LLVM
-codegenerator for the platform.
- However, as actual producing of the native code requires a platform linker and some
-basic runtime shipped with the translator, we only support a subset of all possible
+The _Kotlin/Native_ compiler produces mostly portable (modulo pointer size and target
+triplet) LLVM bitcode, and as such can easily support any platform, as long as there's an LLVM
+code generator for the platform.
+ However, as actualy producing native code requires a platform linker and some
+basic runtime shipped along with the translator, we only support a subset of all possible
 target platforms. Currently _Kotlin/Native_ is being shipped and tested with support for
 the following platforms:
 
@@ -37,13 +36,13 @@ To run _Kotlin/Native_ JDK8 or later for the host platform has to be installed.
 The language and library version supported by this EAP release mostly match Kotlin 1.1.
 However, there are certain limitations, see section [Known Limitations](#limitations).
 
- Currently _Kotlin/Native_ uses reference counting based memory management scheme with cycles
-garbage collection algorithm. Multiple threads could be used, but no objects shared 
+ Currently _Kotlin/Native_ uses reference counting based memory management scheme with a cycle
+collection algorithm. Multiple threads could be used, but no objects shared 
 between threads are allowed.
 
 _Kotlin/Native_ provides efficient interoperability with libraries written in C, and supports
 automatic generation of Kotlin bindings from a C header file.
-See samples coming with the distribution.
+See the samples coming with the distribution.
 
   ## Getting Started ##
 
@@ -82,6 +81,6 @@ Notice that property delegation (including lazy properties) *does* work.
 
 ### Microsoft Windows support ###
 
-   Due to significant difference in exception handling model on MS Windows and
+Due to significant differences in exception handling models on MS Windows and
 other LLVM targets, current _Kotlin/Native_ may not produce executables working on
 MS Windows. This situation could be improved in upcoming releases.
