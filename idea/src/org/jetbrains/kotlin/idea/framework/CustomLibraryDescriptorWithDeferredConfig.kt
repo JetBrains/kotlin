@@ -56,14 +56,10 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
         private val libraryKind: LibraryKind,
         private val suitableLibraryKinds: Set<LibraryKind>
 ) : CustomLibraryDescription() {
-    private val projectBaseDir: VirtualFile?
+    private val projectBaseDir: VirtualFile? = project?.baseDir
 
     var copyFileRequests: DeferredCopyFileRequests? = null
         private set
-
-    init {
-        this.projectBaseDir = project?.baseDir
-    }
 
     override fun getSuitableLibraryKinds(): Set<LibraryKind> {
         return suitableLibraryKinds
@@ -125,27 +121,25 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
         else
             FileUIUtils.createRelativePath(null, projectBaseDir, DEFAULT_LIB_DIR_NAME)
 
-        val files = configurator.existingJarFiles
+        val jarDescriptors = configurator.libraryJarDescriptors
 
-        val runtimeJar: File
-        var reflectJar: File?
-        var runtimeSrcJar: File
-
-        val stdJarInDefaultPath = files.getRuntimeDestination(defaultPathToJarFile)
+        val stdJarInDefaultPath = File(defaultPathToJarFile, jarDescriptors.first().jarName)
+        val libraryFiles = mutableListOf<File>()
+        val librarySourceFiles = mutableListOf<File>()
         if (projectBaseDir != null && stdJarInDefaultPath.exists()) {
-            runtimeJar = stdJarInDefaultPath
-
-            reflectJar = files.getReflectDestination(defaultPathToJarFile)
-            if (reflectJar != null && !reflectJar.exists()) {
-                reflectJar = files.reflectJar
-                assert(reflectJar != null) { "getReflectDestination != null, but getReflectJar == null" }
-                copyFileRequests!!.addCopyWithReplaceRequest(reflectJar!!, runtimeJar.parent)
-            }
-
-            runtimeSrcJar = files.getRuntimeSourcesDestination(defaultPathToJarFile)
-            if (!runtimeSrcJar.exists()) {
-                runtimeSrcJar = files.runtimeSourcesJar
-                copyFileRequests!!.addCopyWithReplaceRequest(runtimeSrcJar, runtimeJar.parent)
+            libraryFiles.add(stdJarInDefaultPath)
+            for (jarDescriptor in jarDescriptors) {
+                var destination = File(defaultPathToJarFile, jarDescriptor.jarName)
+                if (!destination.exists()) {
+                    copyFileRequests!!.addCopyWithReplaceRequest(jarDescriptor.getPathInPlugin(), defaultPathToJarFile)
+                    destination = jarDescriptor.getPathInPlugin()
+                }
+                if (jarDescriptor.orderRootType == OrderRootType.SOURCES) {
+                    librarySourceFiles.add(destination)
+                }
+                else {
+                    libraryFiles.add(destination)
+                }
             }
         }
         else {
@@ -156,17 +150,22 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
 
             val copyIntoPath = dialog.copyIntoPath
             if (copyIntoPath != null) {
-                for (file in files.getAllJars()) {
-                    copyFileRequests!!.addCopyWithReplaceRequest(file, copyIntoPath)
+                for (libraryJarDescriptor in configurator.libraryJarDescriptors) {
+                    copyFileRequests!!.addCopyWithReplaceRequest(libraryJarDescriptor.getPathInPlugin(), copyIntoPath)
                 }
             }
 
-            runtimeJar = files.runtimeJar
-            reflectJar = files.reflectJar
-            runtimeSrcJar = files.runtimeSourcesJar
+            for (jarDescriptor in jarDescriptors) {
+                if (jarDescriptor.orderRootType == OrderRootType.SOURCES) {
+                    librarySourceFiles.add(jarDescriptor.getPathInPlugin())
+                }
+                else {
+                    libraryFiles.add(jarDescriptor.getPathInPlugin())
+                }
+            }
         }
 
-        return createConfiguration(Arrays.asList<File>(runtimeJar, reflectJar), runtimeSrcJar)
+        return createConfiguration(libraryFiles, librarySourceFiles)
     }
 
     private val configurator: KotlinWithLibraryConfigurator
@@ -177,19 +176,25 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
 
     // Implements an API added in IDEA 16
     override fun createNewLibraryWithDefaultSettings(contextDirectory: VirtualFile?): NewLibraryConfiguration? {
-        val files = configurator.existingJarFiles
-        return createConfiguration(Arrays.asList<File>(files.runtimeJar, files.reflectJar), files.runtimeSourcesJar)
+        return createConfiguration(collectPathsInPlugin(OrderRootType.CLASSES),
+                                   collectPathsInPlugin(OrderRootType.SOURCES))
     }
 
-    protected fun createConfiguration(libraryFiles: List<File>, librarySrcFile: File): NewLibraryConfiguration {
+    private fun collectPathsInPlugin(rootType: OrderRootType): List<File> {
+        return configurator.libraryJarDescriptors
+                .filter { it.orderRootType == rootType }
+                .map { it.getPathInPlugin() }
+    }
+
+    protected fun createConfiguration(libraryFiles: List<File>, librarySourceFiles: List<File>): NewLibraryConfiguration {
         return object : NewLibraryConfiguration(libraryName, null, LibraryVersionProperties()) {
             override fun addRoots(editor: LibraryEditor) {
                 for (libraryFile in libraryFiles) {
-                    if (libraryFile != null) {
-                        editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES)
-                    }
+                    editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES)
                 }
-                editor.addRoot(VfsUtil.getUrlForLibraryRoot(librarySrcFile), OrderRootType.SOURCES)
+                for (librarySrcFile in librarySourceFiles) {
+                    editor.addRoot(VfsUtil.getUrlForLibraryRoot(librarySrcFile), OrderRootType.SOURCES)
+                }
             }
         }
     }
