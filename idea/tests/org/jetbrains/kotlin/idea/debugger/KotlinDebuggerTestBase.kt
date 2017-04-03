@@ -28,6 +28,7 @@ import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
+import com.intellij.debugger.impl.JvmSteppingCommandProvider
 import com.intellij.debugger.impl.PositionUtil
 import com.intellij.debugger.settings.DebuggerSettings
 import com.intellij.debugger.ui.breakpoints.Breakpoint
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.File
 import java.lang.AssertionError
 import javax.swing.SwingUtilities
@@ -71,13 +73,16 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     private var oldDisableKotlinInternalClasses = false
     private var oldRenderDelegatedProperties = false
 
+    @Volatile
     protected var _evaluationContext: EvaluationContextImpl? = null
     protected val evaluationContext get() = _evaluationContext!!
 
+    @Volatile
     protected var _debuggerContext: DebuggerContextImpl? = null
     protected val debuggerContext get() = _debuggerContext!!
 
-    protected var _commandProvider: KotlinSteppingCommandProvider? = KotlinSteppingCommandProvider()
+    @Volatile
+    protected var _commandProvider: KotlinSteppingCommandProvider? = null
     protected val commandProvider get() = _commandProvider!!
 
     override fun initApplication() {
@@ -156,6 +161,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     protected fun initContexts(suspendContext: SuspendContextImpl) {
         _evaluationContext = createEvaluationContext(suspendContext)
         _debuggerContext = createDebuggerContext(suspendContext)
+        _commandProvider = JvmSteppingCommandProvider.EP_NAME.extensions.firstIsInstance<KotlinSteppingCommandProvider>()
     }
 
     protected fun SuspendContextImpl.doStepInto(ignoreFilters: Boolean, smartStepFilter: MethodFilter?) {
