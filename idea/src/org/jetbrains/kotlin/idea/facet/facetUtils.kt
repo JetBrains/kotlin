@@ -178,6 +178,7 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: Lis
 
         val defaultCompilerArguments = compilerArguments::class.java.newInstance()
         parseArguments(defaultArguments.toTypedArray(), defaultCompilerArguments, true)
+        defaultCompilerArguments.convertPathsToSystemIndependent()
 
         val oldCoroutineSupport = CoroutineSupport.byCompilerArguments(compilerArguments)
         compilerArguments.coroutinesEnable = false
@@ -185,6 +186,8 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: Lis
         compilerArguments.coroutinesError = false
 
         parseArguments(argumentArray, compilerArguments, true)
+
+        compilerArguments.convertPathsToSystemIndependent()
 
         val restoreCoroutineSupport =
                 !compilerArguments.coroutinesEnable && !compilerArguments.coroutinesWarn && !compilerArguments.coroutinesError

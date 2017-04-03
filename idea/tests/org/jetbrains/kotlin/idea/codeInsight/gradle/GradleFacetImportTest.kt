@@ -624,7 +624,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
         with (facetSettings) {
             Assert.assertEquals(
-                    listOf("-jdk-home", "c:\\program files\\jdk1.8", "-Xmulti-platform"),
+                    listOf("-jdk-home", "c:/program files/jdk1.8", "-Xmulti-platform"),
                     compilerSettings!!.additionalArgumentsAsList
             )
         }

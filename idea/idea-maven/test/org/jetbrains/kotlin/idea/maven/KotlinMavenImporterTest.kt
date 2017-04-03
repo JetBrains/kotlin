@@ -653,7 +653,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertEquals(
-                    listOf("-jdk-home", "c:\\program files\\jdk1.8"),
+                    listOf("-jdk-home", "c:/program files/jdk1.8"),
                     compilerSettings!!.additionalArgumentsAsList
             )
         }
