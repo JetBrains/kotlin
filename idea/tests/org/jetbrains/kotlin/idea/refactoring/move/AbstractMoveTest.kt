@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.idea.refactoring.move.changePackage.KotlinChangePack
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.refactoring.rename.loadTestConfiguration
 import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
+import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
@@ -111,7 +112,7 @@ fun runMoveRefactoring(path: String, config: JsonObject, rootDir: VirtualFile, p
     val action = MoveAction.valueOf(config.getString("type"))
 
     val testDir = path.substring(0, path.lastIndexOf("/"))
-    val mainFilePath = config.getNullableString("mainFile")!!
+    val mainFilePath = config.getNullableString("mainFile") ?: config.getAsJsonArray("filesToMove").first().asString
 
     val conflictFile = File(testDir + "/conflicts.txt")
 
@@ -271,14 +272,16 @@ enum class MoveAction {
     MOVE_FILES_WITH_DECLARATIONS {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
             val project = mainFile.project
-
+            val psiFilesToMove = config.getAsJsonArray("filesToMove").map {
+                rootDir.findFileByRelativePath(it.asString)!!.toPsiFile(project) as KtFile
+            }
             val targetDirPath = config.getString("targetDirectory")
             val targetDir = rootDir.findFileByRelativePath(targetDirPath)!!.toPsiDirectory(project)!!
             MoveFilesWithDeclarationsProcessor(
                     project,
-                    listOf(mainFile as KtFile),
+                    psiFilesToMove,
                     targetDir,
-                    mainFile.name,
+                    psiFilesToMove.singleOrNull()?.name,
                     searchInComments = true,
                     searchInNonJavaFiles = true,
                     moveCallback = null

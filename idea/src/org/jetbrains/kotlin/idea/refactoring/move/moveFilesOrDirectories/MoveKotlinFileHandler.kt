@@ -40,12 +40,14 @@ import java.util.*
 class MoveKotlinFileHandler : MoveFileHandler() {
     internal class InternalUsagesWrapper(file: KtFile, val usages: List<UsageInfo>) : UsageInfo(file)
 
+    internal class FileInfo(file: KtFile) : UsageInfo(file)
+
     // This is special 'PsiElement' whose purpose is to wrap MoveKotlinTopLevelDeclarationsProcessor
-    // so that it can be kept in the transition map
+    // so that it can be kept in the usage info list
     private class MoveContext(
-            psiManager: PsiManager,
+            val file: PsiFile,
             val declarationMoveProcessor: MoveKotlinDeclarationsProcessor
-    ): LightElement(psiManager, KotlinLanguage.INSTANCE) {
+    ): LightElement(file.manager, KotlinLanguage.INSTANCE) {
         override fun toString() = ""
     }
 
@@ -117,7 +119,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
     ): List<UsageInfo> {
         if (psiFile !is KtFile) return emptyList()
 
-        val usages = ArrayList<UsageInfo>()
+        val usages = arrayListOf<UsageInfo>(FileInfo(psiFile))
         initMoveProcessor(psiFile, newParent)?.let {
             usages += it.findUsages()
             usages += it.getConflictsAsUsages()
@@ -127,7 +129,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
 
     override fun prepareMovedFile(file: PsiFile, moveDestination: PsiDirectory, oldToNewMap: MutableMap<PsiElement, PsiElement>) {
         val moveProcessor = initMoveProcessor(file, moveDestination) ?: return
-        val moveContext = MoveContext(file.manager, moveProcessor)
+        val moveContext = MoveContext(file, moveProcessor)
         oldToNewMap[moveContext] = moveContext
     }
 
@@ -139,7 +141,8 @@ class MoveKotlinFileHandler : MoveFileHandler() {
     }
 
     override fun retargetUsages(usageInfos: List<UsageInfo>?, oldToNewMap: Map<PsiElement, PsiElement>) {
-        val moveContext = oldToNewMap.keys.firstIsInstanceOrNull<MoveContext>() ?: return
+        val currentFile = (usageInfos?.firstOrNull() as? FileInfo)?.element
+        val moveContext = oldToNewMap.keys.firstOrNull { it is MoveContext && it.file == currentFile} as? MoveContext ?: return
         retargetUsages(usageInfos, moveContext.declarationMoveProcessor)
     }
 

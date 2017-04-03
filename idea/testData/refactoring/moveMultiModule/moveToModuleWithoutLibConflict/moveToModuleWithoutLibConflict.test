@@ -1,5 +1,5 @@
 {
-  "mainFile": "A/src/a/test.kt",
+  "filesToMove": ["A/src/a/test.kt"],
   "type": "MOVE_FILES_WITH_DECLARATIONS",
   "targetDirectory": "B/src/b",
   "withRuntime": "true",
