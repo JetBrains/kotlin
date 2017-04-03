@@ -1,8 +1,3 @@
-/**
- * Use `./gradlew build<target platform>` to build the project.
- * e.g. ./gradlew buildMacbook
- */
-
 buildscript {
     repositories {
         mavenCentral()
@@ -34,15 +29,13 @@ konanInterop {
 
     sdlIphone {
         defFile 'sdl.def'
-        includeDirs '../../dist/dependencies/target-sysroot-2-darwin-ios/System/Library/Frameworks/SDL2.framework/Headers'
-        includeDirs '../../dependencies/target-sysroot-2-darwin-ios/System/Library/Frameworks/SDL2.framework/Headers'
+        includeDirs "${project.property("konan.home")}/dependencies/target-sysroot-2-darwin-ios/System/Library/Frameworks/SDL2.framework/Headers"
         target 'iphone'
     }
 
     sdlRaspberry {
         defFile 'sdl.def'
-        includeDirs '../../dist/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2'
-        includeDirs '../../dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2'
+        includeDirs "${project.property("konan.home")}/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
         target 'raspberrypi'
     }
 }
@@ -51,7 +44,8 @@ konanArtifacts {
     TetrisMacbook {
         inputFiles project.file('Tetris.kt')
         useInterop 'sdlMacbook'
-        linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -framework SDL2 -L/usr/local/lib -lSDL2 -F /Library/Frameworks -framework SDL2 -L/opt/local/lib"
+        linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -F /Library/Frameworks -framework SDL2 -L/usr/local/lib -L/opt/local/lib -lSDL2"
+        // Use this line instead of the previous one if you've got a 'No SDL-framework' error.
         //linkerOpts "-L/opt/local/lib -L/usr/local/lib -lSDL2"
         target 'macbook'
     }
