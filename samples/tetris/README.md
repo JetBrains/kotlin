@@ -15,22 +15,16 @@ To build Tetris application for your host platform use
     
     ./build.sh
  
-You also may use gradle to build this sample: `../gradlew build`.
-Note that SDL2 must be installed on the host.
+You also may use gradle to build this sample: `../gradlew build`. This task builds the sample for all platforms
+supported by the host. Note that SDL2 must be installed on the host.
 
 For cross-compilation to iOS (on Mac host) use
 
 	TARGET=iphone ./build.sh
-or
-    
-    ../gradlew buildIphone
     
 For cross-compilation to Raspberry Pi (on Linux host) use
 
 	TARGET=raspberrypi ./build.sh
-or
-
-    ../gradlew buildRaspberry
 
 During build process compilation script creates interoperability bindings to SDL2, using SDL C headers,
 and then compiles an application with the produced bindings.
