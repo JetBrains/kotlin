@@ -6,5 +6,7 @@ fun foo(): Boolean {
         Local()
     }
 
+    fun Int.someLocalFun(text: String) = 42
+
     return bar() == Local()
 }

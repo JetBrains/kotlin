@@ -9,6 +9,9 @@ public final class LocalDeclarationsKt {
         var baz: <ErrorType> = fun () {
                 <init>()
         }
+        var someLocalFun: kotlin.jvm.functions.Function2<? super java.lang.Integer,? super java.lang.String,? extends java.lang.Integer> = fun (var text: java.lang.String) {
+            42
+        }
         return bar() == <init>()
     }
 }
