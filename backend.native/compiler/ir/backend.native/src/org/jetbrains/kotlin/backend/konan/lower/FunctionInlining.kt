@@ -211,7 +211,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     private fun inlineFunction(irCall: IrCall): IrExpression {
 
         val irDeclaration = getFunctionDeclaration(irCall)
-        if (irDeclaration == null) return irCall
+        assert (irDeclaration != null) { "Inliner failed to obtain function declaration" }
 
         val functionDeclaration = irDeclaration as IrFunction
         val typeArgsMap = (irCall as IrMemberAccessExpressionBase).typeArguments
