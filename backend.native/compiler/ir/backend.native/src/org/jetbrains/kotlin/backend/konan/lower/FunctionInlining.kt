@@ -288,7 +288,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         override fun visitGetValue(expression: IrGetValue): IrExpression {
             val newExpression = super.visitGetValue(expression) as IrGetValue
             val descriptor = newExpression.descriptor
-            val argument = substituteMap[descriptor]                                      // Find expression to replace this parameter.
+            val argument = substituteMap[descriptor]?.accept(InlineCopyIr(), null) as IrExpression?  // Find expression to replace this parameter.
             if (argument == null) return newExpression                                    // If there is no such expression - do nothing
 
             return argument
