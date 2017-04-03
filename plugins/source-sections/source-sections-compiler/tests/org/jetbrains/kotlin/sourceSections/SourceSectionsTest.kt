@@ -115,6 +115,23 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
         }
     }
 
+    fun testSourceSectionsFilterWithCRLF() {
+        val sourceToFiltered = getTestFiles(".filtered")
+
+        createEnvironment() // creates VirtualFileManager
+        val fileCreator = FilteredSectionsVirtualFileExtension(TEST_ALLOWED_SECTIONS.toSet())
+
+        sourceToFiltered.forEach { (source, expectedResult) ->
+            val sourceWithCRLF = createTempFile(source.name)
+            sourceWithCRLF.writeText(source.readText().replace("\r\n", "\n").replace("\n", "\r\n"))
+            val filteredVF = fileCreator.createPreprocessedFile(StandardFileSystems.local().findFileByPath(sourceWithCRLF.canonicalPath))
+            TestCase.assertNotNull("Cannot generate preprocessed file", filteredVF)
+            val expected = expectedResult.inputStream().trimmedLines(Charset.defaultCharset())
+            val actual = ByteArrayInputStream(filteredVF!!.contentsToByteArray()).trimmedLines(filteredVF.charset)
+            TestCase.assertEquals("Unexpected result on preprocessing file '${source.name}'", expected, actual)
+        }
+    }
+
     fun testSourceSectionsRun() {
         val sourceToOutput = getTestFiles(".out")
 
