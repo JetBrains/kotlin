@@ -1,7 +1,7 @@
 # Kotlin/Native Gradle plugin
 
 #### Overview
-You may use the Gradle plugin to build Kotlin/Native projects. To use it you need to include the following snippet in
+You may use the Gradle plugin to build _Kotlin/Native_ projects. To use it you need to include the following snippet in
 a build script (see projects in `samples` directory):
 
     buildscript {

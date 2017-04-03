@@ -459,9 +459,6 @@ class Game(width: Int, height: Int, val visualizer: GameFieldVisualizer, val use
     private val LOCK_DELAY = 1
 
     private fun mainLoop() {
-        var prevCmd: UserCommand? = null
-        var das = false
-        var dasTicks = 0
         var attemptsToLock = 0
         while (!gameOver) {
             sleep(1000 / 60) // Refresh rate - 60 frames per second.
@@ -635,7 +632,7 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
         fieldWidth = width * (CELL_SIZE + MARGIN) + MARGIN + BORDER_WIDTH * 2
         fieldHeight = height * (CELL_SIZE + MARGIN) + MARGIN + BORDER_WIDTH * 2
         var windowWidth = fieldWidth + INFO_SPACE_WIDTH
-        var windowHeight = 0
+        var windowHeight: Int
         if (platform == "iOS") {
             val gamePadHeight = (displayHeight * windowWidth - fieldHeight * displayWidth) / displayWidth
             windowHeight = fieldHeight + gamePadHeight
