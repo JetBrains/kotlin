@@ -106,8 +106,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     private fun needsEvaluation(expression: IrExpression): Boolean {
         if (expression is IrGetValue)          return false                                 // Parameter is already GetValue - nothing to evaluate.
         if (expression is IrConst<*>)          return false                                 // Parameter is constant - nothing to evaluate.
-        if (expression is IrCallableReference) return false                                 // Parameter is CallableReference - nothing to evaluate.
-        if (expression is IrBlock)             return false                                 // Parameter is Block - nothing to evaluate.
         if (isLambdaExpression(expression))    return false                                 // Parameter is lambda - will be inlined.
         return true
     }
