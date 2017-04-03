@@ -174,7 +174,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
                 newValueParameters,
                 oldDescriptor.returnType,
                 Modality.FINAL,
-                Visibilities.LOCAL
+                oldDescriptor.visibility
             )
             newDescriptor.overriddenDescriptors += oldDescriptor.overriddenDescriptors
             return newDescriptor
