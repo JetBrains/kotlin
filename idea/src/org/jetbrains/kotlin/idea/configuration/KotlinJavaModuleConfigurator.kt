@@ -18,12 +18,10 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.impl.scopes.LibraryScope
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
-import org.jetbrains.kotlin.idea.versions.getKotlinJvmRuntimeMarkerClass
+import org.jetbrains.kotlin.idea.versions.isKotlinJavaRuntime
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.PathUtil
@@ -71,14 +69,8 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
                        LibraryJarDescriptor.RUNTIME_SRC_JAR,
                        LibraryJarDescriptor.TEST_JAR)
 
-    override fun isKotlinLibrary(project: Project, library: Library): Boolean {
-        if (super.isKotlinLibrary(project, library)) {
-            return true
-        }
-
-        val scope = LibraryScope(project, library)
-        return getKotlinJvmRuntimeMarkerClass(project, scope) != null
-    }
+    override val libraryMatcher: (Library) -> Boolean
+        get() = ::isKotlinJavaRuntime
 
     companion object {
         val NAME = "java"

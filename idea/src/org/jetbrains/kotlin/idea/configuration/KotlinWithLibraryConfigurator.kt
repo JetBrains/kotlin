@@ -23,18 +23,18 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
-import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainer
-import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainerFactory
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.Ref
+import com.intellij.openapi.vfs.JarFileSystem
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.util.Processor
 import org.jetbrains.annotations.Contract
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
+import org.jetbrains.kotlin.idea.versions.findKotlinRuntimeLibrary
 import java.io.File
 import java.util.*
 
@@ -114,122 +114,60 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
     ) {
         val project = module.project
 
-        val files = existingJarFiles
-        val libraryState = getLibraryState(project)
-        val dirToCopyJar = getPathToCopyFileTo(project, OrderRootType.CLASSES, defaultPath, pathFromDialog)
-        val runtimeState = getJarState(project, files.getRuntimeDestination(dirToCopyJar), OrderRootType.CLASSES, pathFromDialog == null)
+        val library = getKotlinLibrary(module) ?: createNewLibrary(project, collector)
 
-        configureModuleWithLibraryClasses(module, libraryState, runtimeState, dirToCopyJar, collector)
+        for (descriptor in libraryJarDescriptors) {
+            val dirToCopyJar = getPathToCopyFileTo(project, descriptor.orderRootType, defaultPath, pathFromDialog)
+            val runtimeState = getJarState(project,
+                                           File(dirToCopyJar, descriptor.jarName),
+                                           descriptor.orderRootType, pathFromDialog == null)
 
-        val library = getKotlinLibrary(project) ?: return
-
-        val dirToCopySourcesJar = getPathToCopyFileTo(project, OrderRootType.SOURCES, defaultPath, pathFromDialog)
-        val sourcesState = getJarState(project, files.getRuntimeSourcesDestination(dirToCopySourcesJar), OrderRootType.SOURCES,
-                                       pathFromDialog == null)
-
-        configureModuleWithLibrarySources(library, sourcesState, dirToCopySourcesJar, collector)
-    }
-
-    fun configureModuleWithLibraryClasses(
-            module: Module,
-            libraryState: LibraryState,
-            jarState: FileState,
-            dirToCopyJarTo: String,
-            collector: NotificationMessageCollector
-    ) {
-        val project = module.project
-        val files = existingJarFiles
-        val runtimeJar = files.runtimeJar
-        val reflectJar = files.reflectJar
-
-        when (libraryState) {
-            KotlinWithLibraryConfigurator.LibraryState.LIBRARY -> when (jarState) {
-                KotlinWithLibraryConfigurator.FileState.EXISTS -> {
-                }
-                KotlinWithLibraryConfigurator.FileState.COPY -> {
-                    copyFileToDir(runtimeJar, dirToCopyJarTo, collector)
-                    if (reflectJar != null) {
-                        copyFileToDir(reflectJar, dirToCopyJarTo, collector)
-                    }
-                }
-                KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY -> {
-                    throw IllegalStateException(
-                            "Kotlin library exists, so path to copy should be hidden in configuration dialog and jar should be copied using path in library table")
-                }
-            }
-            KotlinWithLibraryConfigurator.LibraryState.NON_CONFIGURED_LIBRARY -> when (jarState) {
-                KotlinWithLibraryConfigurator.FileState.EXISTS -> {
-                    addJarsToExistingLibrary(
-                            project, files.getRuntimeDestination(dirToCopyJarTo), files.getReflectDestination(dirToCopyJarTo), collector
-                    )
-                }
-                KotlinWithLibraryConfigurator.FileState.COPY -> {
-                    val copiedRuntimeJar = copyFileToDir(runtimeJar, dirToCopyJarTo, collector)
-                    val copiedReflectJar = copyFileToDir(reflectJar, dirToCopyJarTo, collector)
-                    addJarsToExistingLibrary(project, copiedRuntimeJar!!, copiedReflectJar, collector)
-                }
-                KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY -> {
-                    addJarsToExistingLibrary(project, runtimeJar, reflectJar, collector)
-                }
-            }
-            KotlinWithLibraryConfigurator.LibraryState.NEW_LIBRARY -> when (jarState) {
-                KotlinWithLibraryConfigurator.FileState.EXISTS -> {
-                    addJarsToNewLibrary(
-                            project, files.getRuntimeDestination(dirToCopyJarTo), files.getReflectDestination(dirToCopyJarTo), collector
-                    )
-                }
-                KotlinWithLibraryConfigurator.FileState.COPY -> {
-                    val copiedRuntimeJar = copyFileToDir(runtimeJar, dirToCopyJarTo, collector)
-                    val copiedReflectJar = copyFileToDir(reflectJar, dirToCopyJarTo, collector)
-                    addJarsToNewLibrary(project, copiedRuntimeJar!!, copiedReflectJar, collector)
-                }
-                KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY -> {
-                    addJarsToNewLibrary(project, runtimeJar, reflectJar, collector)
-                }
-            }
+            configureLibraryJar(module, library, runtimeState, dirToCopyJar, descriptor, collector)
         }
-
-        addLibraryToModuleIfNeeded(module, collector)
     }
 
-    protected fun configureModuleWithLibrarySources(
+    fun configureLibraryJar(
+            module: Module,
             library: Library,
             jarState: FileState,
-            dirToCopyJarTo: String?,
+            dirToCopyJarTo: String,
+            libraryJarDescriptor: LibraryJarDescriptor,
             collector: NotificationMessageCollector
     ) {
-        val files = existingJarFiles
-        val runtimeSourcesJar = files.runtimeSourcesJar
-        when (jarState) {
-            KotlinWithLibraryConfigurator.FileState.EXISTS -> {
-                if (dirToCopyJarTo != null) {
-                    addSourcesToLibraryIfNeeded(library, files.getRuntimeSourcesDestination(dirToCopyJarTo), collector)
-                }
-            }
-            KotlinWithLibraryConfigurator.FileState.COPY -> {
-                assert(dirToCopyJarTo != null) { "Path to copy should be non-null" }
-                val file = copyFileToDir(runtimeSourcesJar, dirToCopyJarTo!!, collector)
-                addSourcesToLibraryIfNeeded(library, file!!, collector)
-            }
-            KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY -> {
-                addSourcesToLibraryIfNeeded(library, runtimeSourcesJar, collector)
-            }
+        val jarFile = if (jarState == KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY)
+            libraryJarDescriptor.getPathInPlugin()
+        else
+            File(dirToCopyJarTo, libraryJarDescriptor.jarName)
+
+        if (jarState == KotlinWithLibraryConfigurator.FileState.COPY) {
+            copyFileToDir(libraryJarDescriptor.getPathInPlugin(), dirToCopyJarTo, collector)
         }
+
+        val jarVFile = LocalFileSystem.getInstance().findFileByIoFile(jarFile)
+        if (jarVFile == null) {
+            collector.addMessage("Can't find library JAR file " + jarFile)
+            return
+        }
+        val jarRoot = JarFileSystem.getInstance().getJarRootForLocalFile(jarVFile)
+        if (jarRoot == null) {
+            collector.addMessage("Couldn't configure library; JAR file $jarVFile may be corrupted")
+            return
+        }
+
+        if (jarRoot !in library.getFiles(libraryJarDescriptor.orderRootType)) {
+            val model = library.modifiableModel
+            model.addRoot(jarRoot, libraryJarDescriptor.orderRootType)
+
+            ApplicationManager.getApplication().runWriteAction { model.commit() }
+            collector.addMessage("Added $jarFile to library configuration")
+        }
+
+        addLibraryToModuleIfNeeded(module, library, collector)
     }
 
     fun getKotlinLibrary(project: Project): Library? {
-        val librariesContainer = LibrariesContainerFactory.createContainer(project)
-        for (library in librariesContainer.getLibraries(LibrariesContainer.LibraryLevel.PROJECT)) {
-            if (isKotlinLibrary(project, library)) {
-                return library
-            }
-        }
-        for (library in librariesContainer.getLibraries(LibrariesContainer.LibraryLevel.GLOBAL)) {
-            if (isKotlinLibrary(project, library)) {
-                return library
-            }
-        }
-        return null
+        return LibraryTablesRegistrar.getInstance().getLibraryTable(project).libraries.firstOrNull(this::isKotlinLibrary) ?:
+               LibraryTablesRegistrar.getInstance().libraryTable.libraries.firstOrNull(this::isKotlinLibrary)
     }
 
     @Contract("!null, _, _ -> !null")
@@ -247,12 +185,10 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         return getPathFromLibrary(getKotlinLibrary(project), type)
     }
 
-    private fun addLibraryToModuleIfNeeded(module: Module, collector: NotificationMessageCollector) {
+    private fun addLibraryToModuleIfNeeded(module: Module, library: Library, collector: NotificationMessageCollector) {
         val expectedDependencyScope = getDependencyScope(module)
         val kotlinLibrary = getKotlinLibrary(module)
         if (kotlinLibrary == null) {
-            val library = getKotlinLibrary(module.project) ?: error("Kotlin project library should exists")
-
             ModuleRootModificationUtil.addDependency(module, library, expectedDependencyScope, false)
             collector.addMessage(library.name + " library was added to module " + module.name)
         }
@@ -271,44 +207,17 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         }
     }
 
-    private fun addJarsToExistingLibrary(project: Project, runtimeJar: File, reflectJar: File?, collector: NotificationMessageCollector) {
-        val library = getKotlinLibrary(project) ?: error("Kotlin library should present, instead createNewLibrary should be invoked")
-
-        val model = library.modifiableModel
-        model.addRoot(VfsUtil.getUrlForLibraryRoot(runtimeJar), OrderRootType.CLASSES)
-        if (reflectJar != null) {
-            model.addRoot(VfsUtil.getUrlForLibraryRoot(reflectJar), OrderRootType.CLASSES)
-        }
-
-        ApplicationManager.getApplication().runWriteAction { model.commit() }
-
-        collector.addMessage(library.name!! + " library was configured")
-    }
-
-    private fun addJarsToNewLibrary(
+    fun createNewLibrary(
             project: Project,
-            runtimeJar: File,
-            reflectJar: File?,
             collector: NotificationMessageCollector
-    ) {
+    ): Library {
         val table = LibraryTablesRegistrar.getInstance().getLibraryTable(project)
-        val library = Ref<Library>()
-        ApplicationManager.getApplication().runWriteAction {
-            library.set(table.createLibrary(libraryName))
-            val model = library.get().modifiableModel
-            model.addRoot(VfsUtil.getUrlForLibraryRoot(runtimeJar), OrderRootType.CLASSES)
-            if (reflectJar != null) {
-                model.addRoot(VfsUtil.getUrlForLibraryRoot(reflectJar), OrderRootType.CLASSES)
-            }
-            model.commit()
+        val library = runWriteAction {
+            table.createLibrary(libraryName)
         }
 
-        collector.addMessage(library.get().name!! + " library was created")
-    }
-
-    private fun isProjectLibraryWithoutPathsPresent(project: Project): Boolean {
-        val library = getKotlinLibrary(project)
-        return library != null && library.getUrls(OrderRootType.CLASSES).size == 0
+        collector.addMessage(library.name!! + " library was created")
+        return library!!
     }
 
     private fun isProjectLibraryPresent(project: Project): Boolean {
@@ -316,33 +225,13 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         return library != null && library.getUrls(OrderRootType.CLASSES).size > 0
     }
 
-    private fun getKotlinLibrary(module: Module): Library? {
-        val result = Ref.create<Library>(null)
-        OrderEnumerator.orderEntries(module).forEachLibrary(Processor<Library> { library ->
-            if (isKotlinLibrary(module.project, library)) {
-                result.set(library)
-                return@Processor false
-            }
-            true
-        })
-        return result.get()
+    protected abstract val libraryMatcher: (Library) -> Boolean
+
+    fun getKotlinLibrary(module: Module): Library? {
+        return findKotlinRuntimeLibrary(module, this::isKotlinLibrary)
     }
 
-    protected open fun isKotlinLibrary(project: Project, library: Library): Boolean {
-        if (libraryName == library.name) {
-            return true
-        }
-
-        val fileName = existingJarFiles.runtimeJar.name
-
-        for (root in library.getFiles(OrderRootType.CLASSES)) {
-            if (root.name == fileName) {
-                return true
-            }
-        }
-
-        return false
-    }
+    private fun isKotlinLibrary(library: Library) = library.name == libraryName || libraryMatcher(library)
 
     protected fun needToChooseJarPath(project: Project): Boolean {
         val defaultPath = getDefaultPathToJarFile(project)
@@ -361,22 +250,6 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         EXISTS,
         COPY,
         DO_NOT_COPY
-    }
-
-    enum class LibraryState {
-        LIBRARY,
-        NON_CONFIGURED_LIBRARY,
-        NEW_LIBRARY
-    }
-
-    fun getLibraryState(project: Project): LibraryState {
-        if (isProjectLibraryPresent(project)) {
-            return LibraryState.LIBRARY
-        }
-        else if (isProjectLibraryWithoutPathsPresent(project)) {
-            return LibraryState.NON_CONFIGURED_LIBRARY
-        }
-        return LibraryState.NEW_LIBRARY
     }
 
     protected fun getJarState(
@@ -415,13 +288,6 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         return defaultDir
     }
 
-    protected fun assertFileExists(file: File): File {
-        if (!file.exists()) {
-            showError("Couldn't find file: " + file.path)
-        }
-        return file
-    }
-
     abstract val libraryJarDescriptors: List<LibraryJarDescriptor>
 
     companion object {
@@ -447,26 +313,6 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
                 return null
             }
             return parentDir
-        }
-
-        protected fun addSourcesToLibraryIfNeeded(
-                library: Library,
-                file: File,
-                collector: NotificationMessageCollector
-        ): Boolean {
-            val librarySourceRoots = library.getUrls(OrderRootType.SOURCES)
-            val librarySourceRoot = VfsUtil.getUrlForLibraryRoot(file)
-            for (sourceRoot in librarySourceRoots) {
-                if (sourceRoot == librarySourceRoot) return false
-            }
-
-            val model = library.modifiableModel
-            model.addRoot(librarySourceRoot, OrderRootType.SOURCES)
-
-            ApplicationManager.getApplication().runWriteAction { model.commit() }
-
-            collector.addMessage("Source root '" + librarySourceRoot + "' was added to " + library.name + " library")
-            return true
         }
 
         private fun findLibraryOrderEntry(orderEntries: Array<OrderEntry>, library: Library): LibraryOrderEntry? {

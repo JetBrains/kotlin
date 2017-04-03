@@ -171,7 +171,7 @@ fun checkUpdateRuntime(project: Project, requiredVersion: ApiVersion): Boolean {
     }
     if (modulesWithOutdatedRuntime.isNotEmpty()) {
         if (!askUpdateRuntime(project, requiredVersion,
-                              modulesWithOutdatedRuntime.mapNotNull(::findKotlinRuntimeLibrary))) return false
+                              modulesWithOutdatedRuntime.mapNotNull { findKotlinRuntimeLibrary(it) })) return false
     }
     return true
 }

@@ -120,8 +120,7 @@ private fun updateJar(
     }
 
     val oldUrl = fileToReplace?.url
-    val paths = PathUtil.getKotlinPathsForIdeaPlugin()
-    val jarPath: File = libraryJarDescriptor.getPath(paths)
+    val jarPath: File = libraryJarDescriptor.getPathInPlugin()
 
     if (!jarPath.exists()) {
         showRuntimeJarNotFoundDialog(project, libraryJarDescriptor.jarName)
@@ -185,6 +184,8 @@ enum class LibraryJarDescriptor(val jarName: String,
         if (isExternalLibrary(library)) return null
         return LibraryUtils.getJarFile(Arrays.asList(*library.getFiles(orderRootType)), jarName)
     }
+
+    fun getPathInPlugin() = getPath(PathUtil.getKotlinPathsForIdeaPlugin())
 }
 
 fun bundledRuntimeVersion(): String {

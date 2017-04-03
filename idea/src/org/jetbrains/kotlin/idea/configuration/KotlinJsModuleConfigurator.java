@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.idea.configuration;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.libraries.Library;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription;
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor;
+import org.jetbrains.kotlin.idea.versions.OutdatedKotlinRuntimeCheckerKt;
 import org.jetbrains.kotlin.js.JavaScript;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
@@ -95,6 +98,12 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     public List<LibraryJarDescriptor> getLibraryJarDescriptors() {
         return Arrays.asList(LibraryJarDescriptor.JS_STDLIB_JAR,
                              LibraryJarDescriptor.JS_STDLIB_SRC_JAR);
+    }
+
+    @NotNull
+    @Override
+    protected Function1<Library, Boolean> getLibraryMatcher() {
+        return OutdatedKotlinRuntimeCheckerKt::isKotlinJsRuntime;
     }
 
     KotlinJsModuleConfigurator() {

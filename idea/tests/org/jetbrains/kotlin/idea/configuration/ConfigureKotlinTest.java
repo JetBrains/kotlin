@@ -34,37 +34,27 @@ import java.util.Collections;
 
 public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     public void testNewLibrary_copyJar() {
-        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY, KotlinWithLibraryConfigurator.LibraryState.NEW_LIBRARY);
+        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY);
     }
 
     public void testNewLibrary_doNotCopyJar() {
-        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, KotlinWithLibraryConfigurator.LibraryState.NEW_LIBRARY);
-    }
-
-    public void testLibrary_doNotCopyJar() {
-        try {
-            doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, KotlinWithLibraryConfigurator.LibraryState.LIBRARY);
-        }
-        catch (IllegalStateException e) {
-            return;
-        }
-        fail("Test should throw IllegalStateException");
+        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
     }
 
     public void testLibraryWithoutPaths_jarExists() {
-        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.EXISTS, KotlinWithLibraryConfigurator.LibraryState.NON_CONFIGURED_LIBRARY);
+        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
     }
 
     public void testNewLibrary_jarExists() {
-        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.EXISTS, KotlinWithLibraryConfigurator.LibraryState.NEW_LIBRARY);
+        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
     }
 
     public void testLibraryWithoutPaths_copyJar() {
-        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY, KotlinWithLibraryConfigurator.LibraryState.NON_CONFIGURED_LIBRARY);
+        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY);
     }
 
     public void testLibraryWithoutPaths_doNotCopyJar() {
-        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, KotlinWithLibraryConfigurator.LibraryState.NON_CONFIGURED_LIBRARY);
+        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -72,12 +62,12 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         Module[] modules = getModules();
         for (Module module : modules) {
             if (module.getName().equals("module1")) {
-                configure(module, KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, KotlinWithLibraryConfigurator.LibraryState.NEW_LIBRARY, JAVA_CONFIGURATOR);
+                configure(module, KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, JAVA_CONFIGURATOR);
                 assertConfigured(module, JAVA_CONFIGURATOR);
             }
             else if (module.getName().equals("module2")) {
                 assertNotConfigured(module, JAVA_CONFIGURATOR);
-                configure(module, KotlinWithLibraryConfigurator.FileState.EXISTS, KotlinWithLibraryConfigurator.LibraryState.LIBRARY, JAVA_CONFIGURATOR);
+                configure(module, KotlinWithLibraryConfigurator.FileState.EXISTS, JAVA_CONFIGURATOR);
                 assertConfigured(module, JAVA_CONFIGURATOR);
             }
         }
@@ -107,37 +97,27 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     }
 
     public void testNewLibrary_jarExists_js() {
-        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.EXISTS, KotlinWithLibraryConfigurator.LibraryState.NEW_LIBRARY);
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
     }
 
     public void testNewLibrary_copyJar_js() {
-        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.COPY, KotlinWithLibraryConfigurator.LibraryState.NEW_LIBRARY);
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.COPY);
     }
 
     public void testNewLibrary_doNotCopyJar_js() {
-        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, KotlinWithLibraryConfigurator.LibraryState.NEW_LIBRARY);
-    }
-
-    public void testJsLibrary_doNotCopyJar() {
-        try {
-            doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, KotlinWithLibraryConfigurator.LibraryState.LIBRARY);
-        }
-        catch (IllegalStateException e) {
-            return;
-        }
-        fail("Test should throw IllegalStateException");
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
     }
 
     public void testJsLibraryWithoutPaths_jarExists() {
-        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.EXISTS, KotlinWithLibraryConfigurator.LibraryState.NON_CONFIGURED_LIBRARY);
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
     }
 
     public void testJsLibraryWithoutPaths_copyJar() {
-        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.COPY, KotlinWithLibraryConfigurator.LibraryState.NON_CONFIGURED_LIBRARY);
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.COPY);
     }
 
     public void testJsLibraryWithoutPaths_doNotCopyJar() {
-        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, KotlinWithLibraryConfigurator.LibraryState.NON_CONFIGURED_LIBRARY);
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
     }
 
     public void testProjectWithoutFacetWithRuntime106WithoutLanguageLevel() {

@@ -26,14 +26,12 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.util.PathUtil.getLocalFile
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
-import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
-import org.jetbrains.kotlin.idea.framework.getLibraryProperties
-import org.jetbrains.kotlin.idea.framework.isDetected
+import org.jetbrains.kotlin.idea.framework.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import java.io.IOException
 import javax.swing.event.HyperlinkEvent
@@ -74,12 +72,20 @@ private fun getKotlinLibraryVersionProperties(library: Library) =
         getLibraryProperties(JavaRuntimePresentationProvider.getInstance(), library) ?:
         getLibraryProperties(JSLibraryStdPresentationProvider.getInstance(), library)
 
-fun findKotlinRuntimeLibrary(module: Module): Library? {
+fun findKotlinRuntimeLibrary(module: Module, predicate: (Library) -> Boolean = ::isKotlinRuntime): Library? {
     val orderEntries = ModuleRootManager.getInstance(module).orderEntries.filterIsInstance<LibraryOrderEntry>()
     return orderEntries.asSequence()
             .mapNotNull { it.library }
-            .firstOrNull { getKotlinLibraryVersionProperties(it) != null }
+            .firstOrNull(predicate)
 }
+
+fun isKotlinRuntime(library: Library) = isKotlinJavaRuntime(library) || isKotlinJsRuntime(library)
+
+fun isKotlinJavaRuntime(library: Library) =
+        JavaRuntimeDetectionUtil.getRuntimeJar(library.getFiles(OrderRootType.CLASSES).asList()) != null
+
+fun isKotlinJsRuntime(library: Library) =
+        JsLibraryStdDetectionUtil.getJsStdLibJar(library.getFiles(OrderRootType.CLASSES).asList()) != null
 
 fun collectModulesWithOutdatedRuntime(libraries: List<VersionedLibrary>): List<Module> =
     libraries.flatMap { it.usedInModules }

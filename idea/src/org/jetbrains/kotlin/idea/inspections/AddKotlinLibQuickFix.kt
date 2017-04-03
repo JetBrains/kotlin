@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 
@@ -119,7 +118,7 @@ abstract class AddKotlinLibQuickFix(element: KtElement, val libraryJarDescriptor
     protected abstract fun getLibraryDescriptor(module: Module): MavenExternalLibraryDescriptor
 
     fun libraryPath(): String = libraryJarDescriptor.jarName
-    fun getLibFile(): File = libraryJarDescriptor.getPath(PathUtil.getKotlinPathsForIdeaPlugin())
+    fun getLibFile(): File = libraryJarDescriptor.getPathInPlugin()
     fun hasLibJarInLibrary(library: Library): Boolean = libraryJarDescriptor.findExistingJar(library) != null
 
     class MavenExternalLibraryDescriptor(groupId: String, artifactId: String, version: String) :

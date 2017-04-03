@@ -20,10 +20,12 @@ import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.testFramework.PlatformTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -32,7 +34,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState;
-import static org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.LibraryState;
 
 public abstract class AbstractConfigureKotlinTest extends PlatformTestCase {
     private static final String BASE_PATH = "idea/testData/configuration/";
@@ -53,16 +54,22 @@ public abstract class AbstractConfigureKotlinTest extends PlatformTestCase {
     private static void configure(
             @NotNull List<Module> modules,
             @NotNull FileState runtimeState,
-            @NotNull LibraryState libraryState,
             @NotNull KotlinWithLibraryConfigurator configurator,
             @NotNull String jarFromDist,
             @NotNull String jarFromTemp
     ) {
         Project project = modules.iterator().next().getProject();
         NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
+
         for (Module module : modules) {
+            Library library = configurator.getKotlinLibrary(module);
+            if (library == null) {
+                library = configurator.createNewLibrary(project, collector);
+            }
             String pathToJar = getPathToJar(runtimeState, jarFromDist, jarFromTemp);
-            configurator.configureModuleWithLibraryClasses(module, libraryState, runtimeState, pathToJar, collector);
+            for (LibraryJarDescriptor descriptor : configurator.getLibraryJarDescriptors()) {
+                configurator.configureLibraryJar(module, library, runtimeState, pathToJar, descriptor, collector);
+            }
         }
         collector.showNotification();
     }
@@ -80,14 +87,14 @@ public abstract class AbstractConfigureKotlinTest extends PlatformTestCase {
         return jarFromDist;
     }
 
-    protected static void configure(@NotNull Module module, @NotNull FileState jarState, @NotNull LibraryState libraryState, @NotNull KotlinProjectConfigurator configurator) {
+    protected static void configure(@NotNull Module module, @NotNull FileState jarState, @NotNull KotlinProjectConfigurator configurator) {
         if (configurator instanceof KotlinJavaModuleConfigurator) {
-            configure(Collections.singletonList(module), jarState, libraryState,
+            configure(Collections.singletonList(module), jarState,
                       (KotlinWithLibraryConfigurator) configurator,
                       getPathToExistentRuntimeJar(), getPathToNonexistentRuntimeJar());
         }
         if (configurator instanceof KotlinJsModuleConfigurator) {
-            configure(Collections.singletonList(module), jarState, libraryState,
+            configure(Collections.singletonList(module), jarState,
                       (KotlinWithLibraryConfigurator) configurator,
                       getPathToExistentJsJar(), getPathToNonexistentJsJar());
         }
@@ -174,20 +181,19 @@ public abstract class AbstractConfigureKotlinTest extends PlatformTestCase {
         }
     }
 
-    protected void doTestOneJavaModule(@NotNull FileState jarState, @NotNull LibraryState libraryState) {
-        doTestOneModule(jarState, libraryState, JAVA_CONFIGURATOR);
+    protected void doTestOneJavaModule(@NotNull FileState jarState) {
+        doTestOneModule(jarState, JAVA_CONFIGURATOR);
     }
 
-    protected void doTestOneJsModule(@NotNull FileState jarState, @NotNull LibraryState libraryState) {
-        doTestOneModule(jarState, libraryState, JS_CONFIGURATOR);
+    protected void doTestOneJsModule(@NotNull FileState jarState) {
+        doTestOneModule(jarState, JS_CONFIGURATOR);
     }
 
-    private void doTestOneModule(@NotNull FileState jarState, @NotNull LibraryState libraryState, @NotNull KotlinWithLibraryConfigurator configurator) {
+    private void doTestOneModule(@NotNull FileState jarState, @NotNull KotlinWithLibraryConfigurator configurator) {
         Module module = getModule();
-        assertEquals("Library state loaded from project files should be " + libraryState, libraryState, configurator.getLibraryState(module.getProject()));
 
         assertNotConfigured(module, configurator);
-        configure(module, jarState, libraryState, configurator);
+        configure(module, jarState, configurator);
         assertProperlyConfigured(module, configurator);
     }
 
