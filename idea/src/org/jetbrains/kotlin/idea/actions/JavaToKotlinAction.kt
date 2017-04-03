@@ -106,9 +106,7 @@ class JavaToKotlinAction : AnAction() {
 
 
             if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                    {
-                        runReadAction(::convert)
-                    },
+                    ::convert,
                     title,
                     true,
                     project)) return emptyList()
