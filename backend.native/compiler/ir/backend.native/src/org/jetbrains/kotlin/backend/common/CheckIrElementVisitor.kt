@@ -25,9 +25,16 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 typealias ReportError = (element: IrElement, message: String) -> Unit
 
-class CheckIrElementVisitor(val builtIns: KotlinBuiltIns, val reportError: ReportError) : IrElementVisitorVoid {
+class CheckIrElementVisitor(val builtIns: KotlinBuiltIns, val reportError: ReportError, val ensureAllNodesAreDifferent: Boolean) : IrElementVisitorVoid {
+
+    val set = mutableSetOf<IrElement>()
 
     override fun visitElement(element: IrElement) {
+        if (ensureAllNodesAreDifferent) {
+            if (set.contains(element))
+                reportError(element, "Duplicate IR node")
+            set.add(element)
+        }
         // Nothing to do.
     }
 

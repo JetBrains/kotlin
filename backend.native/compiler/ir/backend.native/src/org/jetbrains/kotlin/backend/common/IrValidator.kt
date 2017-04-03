@@ -28,17 +28,17 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 fun validateIrFunction(context: BackendContext, irFunction: IrFunction) {
-    val visitor = IrValidator(context)
+    val visitor = IrValidator(context, false)
     irFunction.acceptVoid(visitor)
 }
 
 fun validateIrFile(context: BackendContext, irFile: IrFile) {
-    val visitor = IrValidator(context)
+    val visitor = IrValidator(context, false)
     irFile.acceptVoid(visitor)
 }
 
 fun validateIrModule(context: BackendContext, irModule: IrModuleFragment) {
-    val visitor = IrValidator(context)
+    val visitor = IrValidator(context, true) // TODO: consider taking the boolean from settings.
     irModule.acceptVoid(visitor)
 
     // TODO: investigate and re-enable
@@ -180,7 +180,7 @@ private class Declarations {
     }
 }
 
-private class IrValidator(val context: BackendContext) : IrElementVisitorVoid {
+private class IrValidator(val context: BackendContext, performHeavyValidations: Boolean) : IrElementVisitorVoid {
 
     val foundDeclarations = Declarations()
 
@@ -200,7 +200,7 @@ private class IrValidator(val context: BackendContext) : IrElementVisitorVoid {
                 currentFile, element)
     }
 
-    private val elementChecker = CheckIrElementVisitor(builtIns, this::error)
+    private val elementChecker = CheckIrElementVisitor(builtIns, this::error, performHeavyValidations)
 
     override fun visitElement(element: IrElement) {
         element.acceptVoid(elementChecker)
