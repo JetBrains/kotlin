@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.backend.konan.descriptors.EmptyDescriptorVisitorVoid
 import org.jetbrains.kotlin.backend.konan.descriptors.DeepVisitor
+import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.backend.konan.llvm.base64Encode
 import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
@@ -43,7 +44,7 @@ internal class DeserializerDriver(val context: Context) {
     val descriptorIndex = IrDeserializationDescriptorIndex(context.irBuiltIns) 
 
     internal fun deserializeInlineBody(descriptor: FunctionDescriptor): IrDeclaration? {
-        if (!descriptor.isInline()) return null
+        if (!descriptor.needsInlining) return null
 
         if (descriptor !is DeserializedSimpleFunctionDescriptor) {
             return null

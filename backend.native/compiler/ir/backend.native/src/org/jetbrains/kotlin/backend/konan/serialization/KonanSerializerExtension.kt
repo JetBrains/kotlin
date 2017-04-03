@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
+import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
@@ -107,8 +108,7 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
         val parentIndex = descriptor.parentFqNameIndex()
         proto.setExtension(KonanLinkData.functionParent, parentIndex)
   
-        if (descriptor.isInline()) {
-
+        if (descriptor.needsInlining) {
             val encodedIR: String = IrSerializer( context, 
                 inlineDescriptorTable, stringTable, util, descriptor)
                     .serializeInlineBody()

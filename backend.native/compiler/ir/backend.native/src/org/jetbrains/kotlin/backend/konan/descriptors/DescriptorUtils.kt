@@ -295,4 +295,9 @@ internal fun DeclarationDescriptor.getMemberScope(): MemberScope {
         return containingScope
 }
 
+// It is possible to declare "external inline fun",
+// but it doesn't have much sence for native, 
+// since externals don't have IR bodies.
+internal val FunctionDescriptor.needsInlining: Boolean 
+    get() = (this.isInline && !this.isExternal)
 

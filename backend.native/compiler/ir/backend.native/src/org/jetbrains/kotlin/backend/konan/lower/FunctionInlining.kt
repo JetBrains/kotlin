@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.DeepCopyIrTreeWithDescriptors
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
+import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
 import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -89,7 +90,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val irCall = super.visitCall(expression) as IrCall
 
         val functionDescriptor = irCall.descriptor as FunctionDescriptor
-        if (functionDescriptor.isInline)  return inlineFunction(irCall)                     // Return newly created IrInlineBody instead of IrCall.
+        if (functionDescriptor.needsInlining) return inlineFunction(irCall)                     // Return newly created IrInlineBody instead of IrCall.
 
         return irCall
     }
