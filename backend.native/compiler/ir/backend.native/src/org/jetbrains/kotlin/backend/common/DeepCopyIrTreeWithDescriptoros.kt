@@ -150,7 +150,8 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
 
         private fun copySimpleFunctionDescriptor(oldDescriptor: SimpleFunctionDescriptor) : FunctionDescriptor {
 
-            val memberOwner = targetFunction.descriptor
+            val oldContainingDeclaration = oldDescriptor.containingDeclaration
+            val memberOwner = descriptorSubstituteMap[oldContainingDeclaration] ?: targetFunction.descriptor
             val newDescriptor = SimpleFunctionDescriptorImpl.create(
                 memberOwner,
                 oldDescriptor.annotations,
@@ -164,7 +165,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
                     if (oldDispatchReceiverParameter == null) null
                     else descriptorSubstituteMap[oldDispatchReceiverParameter]
             val newTypeParameters = oldDescriptor.typeParameters
-            val newValueParameters = copyValueParameters(oldDescriptor.valueParameters, memberOwner)
+            val newValueParameters = copyValueParameters(oldDescriptor.valueParameters, newDescriptor)
 
             newDescriptor.initialize(
                 oldDescriptor.extensionReceiverParameter?.type,
