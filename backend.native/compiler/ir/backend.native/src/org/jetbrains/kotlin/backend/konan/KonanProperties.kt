@@ -23,21 +23,26 @@ public class KonanProperties(val propertyFile: String) {
 
     val properties = Properties()
 
+    fun String.suffix(suf: String?): String =
+        if (suf == null) this
+        else "${this}.${suf}"
+
     init {
         val file = File(propertyFile)
-        file.bufferedReader()?.use { reader ->
+        file.bufferedReader().use { reader ->
             properties.load(reader)
         }
     }
 
-    fun propertyString(key: String): String? = properties.getProperty(key)
-    fun propertyString(key: String, default: String) : String = properties.getProperty(key, default)
+    fun propertyString(key: String, suffix: String? = null): String?
+        = properties.getProperty(key.suffix(suffix))
 
-    fun propertyList(key: String): List<String> {
-        val value =  properties.getProperty(key)
+    fun propertyList(key: String, suffix: String? = null): List<String> {
+        val value =  properties.getProperty(key.suffix(suffix))
         return value?.split(' ') ?: listOf<String>()
     }
 
-    fun hasProperty(key: String): Boolean = properties.getProperty(key) != null
+    fun hasProperty(key: String, suffix: String? = null): Boolean
+        = properties.getProperty(key.suffix(suffix)) != null
 }
 

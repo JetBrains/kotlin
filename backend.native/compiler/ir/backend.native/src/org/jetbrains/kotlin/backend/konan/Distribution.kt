@@ -26,6 +26,8 @@ class Distribution(val config: CompilerConfiguration) {
         if (!targetManager.crossCompile) "host" 
         else targetManager.current.name.toLowerCase()
     val suffix = targetManager.currentSuffix()
+    val hostSuffix = TargetManager.host.suffix
+    init { if (!targetManager.crossCompile) assert(suffix == hostSuffix) }
 
     private fun findKonanHome(): String {
         val value = System.getProperty("konan.home", "dist")
@@ -49,10 +51,10 @@ class Distribution(val config: CompilerConfiguration) {
     val runtime = config.get(KonanConfigKeys.RUNTIME_FILE) 
         ?: "$lib/runtime.bc"
 
-    val llvmHome = "$dependenciesDir/${properties.propertyString("llvmHome.$suffix")}"
-    val sysRoot = "$dependenciesDir/${properties.propertyString("sysRoot.$suffix")}"
-    val libGcc = "$dependenciesDir/${properties.propertyString("libGcc.$suffix")}"
+    val llvmHome = "$dependenciesDir/${properties.propertyString("llvmHome.$hostSuffix")}"
+    val sysRoot = "$dependenciesDir/${properties.propertyString("sysRoot.$hostSuffix")}"
 
+    val libGcc = "$dependenciesDir/${properties.propertyString("libGcc.$suffix")}"
     val targetSysRoot = if (properties.hasProperty("targetSysRoot.$suffix")) {
             "$dependenciesDir/${properties.propertyString("targetSysRoot.$suffix")}"
         } else {

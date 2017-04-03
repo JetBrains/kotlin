@@ -178,12 +178,13 @@ private fun maybeExecuteHelper(dependenciesRoot: String, properties: Properties,
 
 private fun Properties.defaultCompilerOpts(target: String, dependencies: String): List<String> {
 
-    val hostSysRootDir = this.getOsSpecific("sysRoot", target)!!
+    val arch = this.getOsSpecific("arch", target)!!
+    val hostSysRootDir = this.getOsSpecific("sysRoot")!!
     val hostSysRoot = "$dependencies/$hostSysRootDir"
     val targetSysRootDir = this.getOsSpecific("targetSysRoot", target) ?: hostSysRootDir
     val targetSysRoot = "$dependencies/$targetSysRootDir"
     val sysRoot = targetSysRoot
-    val llvmHomeDir = this.getOsSpecific("llvmHome", target)!!
+    val llvmHomeDir = this.getOsSpecific("llvmHome")!!
     val llvmHome = "$dependencies/$llvmHomeDir"
     val llvmVersion = this.getProperty("llvmVersion")!!
 
@@ -197,44 +198,25 @@ private fun Properties.defaultCompilerOpts(target: String, dependencies: String)
     // We workaround the problem with -isystem flag below.
     val isystem = "$llvmHome/lib/clang/$llvmVersion/include"
 
-    when (target) {
-        "osx" -> 
+    when (detectHost()) {
+        "osx" -> {
+            val osVersionMinFlag = this.getOsSpecific("osVersionMinFlagClang", target)!!
+            val osVersionMinValue = this.getOsSpecific("osVersionMin", target)!!
+
             return listOf(
+                "-arch", arch,
                 "-isystem", isystem,
                 "-B$hostSysRoot/usr/bin",
                 "--sysroot=$sysRoot",
-                "-mmacosx-version-min=10.11")
-        "osx-ios" -> 
-            return listOf(
-                "-arch", "arm64",
-                "-isystem", isystem,
-                "-B$hostSysRoot/usr/bin",
-                "--sysroot=$sysRoot",
-                "-miphoneos-version-min=5.0.0")
-        "osx-ios-sim" -> 
-            return listOf(
-                "-arch", "x86_64",
-                "-isystem", isystem,
-                "-B$hostSysRoot/usr/bin",
-                "--sysroot=$sysRoot",
-                "-mios-simulator-version-min=5.0.0")
+                "$osVersionMinFlag=$osVersionMinValue")
+        }
         "linux" -> {
             val gccToolChainDir = this.getOsSpecific("gccToolChain", target)!!
             val gccToolChain= "$dependencies/$gccToolChainDir"
+            val quadruple = this.getOsSpecific("quadruple", target)!!
 
             return listOf(
-                "-isystem", isystem,
-                "--gcc-toolchain=$gccToolChain",
-                "-L$llvmHome/lib",
-                "-B$hostSysRoot/../bin",
-                "--sysroot=$sysRoot")
-        }
-        "linux-raspberrypi" -> {
-            val gccToolChainDir = this.getOsSpecific("gccToolChain", target)!!
-            val gccToolChain= "$dependencies/$gccToolChainDir"
-
-            return listOf(
-                "-target", "armv7-unknown-linux-gnueabihf",
+                "-target", quadruple,
                 "-isystem", isystem,
                 "--gcc-toolchain=$gccToolChain",
                 "-L$llvmHome/lib",
