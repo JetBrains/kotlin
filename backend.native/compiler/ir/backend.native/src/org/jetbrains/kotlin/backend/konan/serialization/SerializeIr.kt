@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.serialization.KonanIr
+import org.jetbrains.kotlin.serialization.KonanIr.IrConst.ValueCase.*
 import org.jetbrains.kotlin.serialization.KonanLinkData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -208,6 +209,7 @@ internal class IrSerializer(val context: Context,
             IrConstKind.Null        -> proto.setNull(true)
             IrConstKind.Boolean     -> proto.setBoolean(value.value as Boolean)
             IrConstKind.Byte        -> proto.setByte((value.value as Byte).toInt())
+            IrConstKind.Short       -> proto.setShort((value.value as Short).toInt())
             IrConstKind.Int         -> proto.setInt(value.value as Int)
             IrConstKind.Long        -> proto.setLong(value.value as Long)
             IrConstKind.String      -> proto.setString(value.value as String)
@@ -633,7 +635,7 @@ internal class IrDeserializer(val context: Context,
             proto.hasExpression()
                 -> deserializeExpression(proto.getExpression())
             else -> {
-                TODO("Statement deserialization not implemented}")
+                TODO("Statement deserialization not implemented")
             }
         }
 
@@ -866,24 +868,30 @@ internal class IrDeserializer(val context: Context,
         return irContinue
     }
 
-    fun deserializeConst(proto: KonanIr.IrConst, start: Int, end: Int, type: KotlinType): IrExpression {
-
-        when  {
-            proto.hasNull()     
-                -> return IrConstImpl.constNull(start, end, type)
-            proto.hasBoolean()  
-                -> return IrConstImpl.boolean(start, end, type, proto.getBoolean())
-            proto.hasInt()  
-                -> return IrConstImpl.int(start, end, type, proto.getInt())
-            proto.hasString()  
-                -> return IrConstImpl.string(start, end, type, proto.getString())
-            proto.hasDouble()
-                -> return IrConstImpl.double(start, end, type, proto.getDouble())
+    fun deserializeConst(proto: KonanIr.IrConst, start: Int, end: Int, type: KotlinType): IrExpression =
+        when(proto.valueCase) {
+            NULL
+                -> IrConstImpl.constNull(start, end, type)
+            BOOLEAN
+                -> IrConstImpl.boolean(start, end, type, proto.getBoolean())
+            BYTE
+                -> IrConstImpl.byte(start, end, type, proto.getByte().toByte())
+            SHORT
+                -> IrConstImpl.short(start, end, type, proto.getShort().toShort())
+            INT
+                -> IrConstImpl.int(start, end, type, proto.getInt())
+            LONG
+                -> IrConstImpl.long(start, end, type, proto.getLong())
+            STRING
+                -> IrConstImpl.string(start, end, type, proto.getString())
+            FLOAT
+                -> IrConstImpl.float(start, end, type, proto.getFloat())
+            DOUBLE
+                -> IrConstImpl.double(start, end, type, proto.getDouble())
             else -> {
                 TODO("Not all const types have been implemented")
             }
         }
-    }
 
     fun deserializeOperation(proto: KonanIr.IrOperation, start: Int, end: Int, type: KotlinType): IrExpression {
         when {
