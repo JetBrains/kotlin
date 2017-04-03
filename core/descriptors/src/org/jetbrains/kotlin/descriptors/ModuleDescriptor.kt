@@ -31,8 +31,6 @@ interface ModuleDescriptor : DeclarationDescriptor {
 
     fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean
 
-    val moduleVisibilityHelper: ModuleVisibilityHelper
-
     override fun substitute(substitutor: TypeSubstitutor): ModuleDescriptor {
         return this
     }

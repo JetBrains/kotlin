@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.util.ModuleVisibilityHelper
 
 interface GlobalContext {
     val storageManager: StorageManager
@@ -100,11 +99,9 @@ fun ContextForNewModule(
         projectContext: ProjectContext,
         moduleName: Name,
         builtIns: KotlinBuiltIns,
-        multiTargetPlatform: MultiTargetPlatform?,
-        moduleVisibilityHelper: ModuleVisibilityHelper = ModuleDescriptorImpl.MODULE_VISIBILITY_HELPER
+        multiTargetPlatform: MultiTargetPlatform?
 ): MutableModuleContext {
-    val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, builtIns, multiTargetPlatform,
-                                      moduleVisibilityHelper = moduleVisibilityHelper)
+    val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, builtIns, multiTargetPlatform)
     return MutableModuleContextImpl(module, projectContext)
 }
 

@@ -290,8 +290,7 @@ public class JsConfig {
                 "Expected JS metadata version " + JsMetadataVersion.INSTANCE + ", but actual metadata version is " + metadata.getVersion();
 
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(
-                Name.special("<" + metadata.getModuleName() + ">"), storageManager, JsPlatform.INSTANCE.getBuiltIns(),
-                null, SourceKind.NONE, Collections.emptyMap(), ModuleVisibilityHelper.EMPTY.INSTANCE
+                Name.special("<" + metadata.getModuleName() + ">"), storageManager, JsPlatform.INSTANCE.getBuiltIns()
         );
 
         JsModuleDescriptor<PackageFragmentProvider> rawDescriptor = KotlinJavascriptSerializationUtil.readModule(

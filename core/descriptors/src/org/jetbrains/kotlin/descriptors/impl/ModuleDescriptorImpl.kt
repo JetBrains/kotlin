@@ -35,8 +35,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         // May be null in compiler context, should be not-null in IDE context
         multiTargetPlatform: MultiTargetPlatform? = null,
         override val sourceKind: SourceKind = SourceKind.NONE,
-        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
-        override val moduleVisibilityHelper: ModuleVisibilityHelper = MODULE_VISIBILITY_HELPER
+        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
     init {
         if (!moduleName.isSpecial) {
