@@ -3,7 +3,7 @@
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <module name="android-tests" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-    <option name="ALTERNATIVE_JRE_PATH" value="1.6" />
+    <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
     <option name="PACKAGE_NAME" value="org.jetbrains.kotlin.android.tests" />
     <option name="MAIN_CLASS_NAME" value="org.jetbrains.kotlin.android.tests.AndroidRunner" />
     <option name="METHOD_NAME" value="" />
