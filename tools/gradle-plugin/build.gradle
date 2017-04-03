@@ -96,8 +96,8 @@ bintray {
             name = '0.1'
             desc = 'Kotlin Native Gradle plugin 0.1'
         }
-        publish = true
-        override = true
+        publish = true // project.hasProperty("publish")
+        override = project.hasProperty("override")
     }
     publications = ['gradlePlugin']
 }
