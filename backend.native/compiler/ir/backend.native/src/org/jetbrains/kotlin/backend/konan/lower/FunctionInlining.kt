@@ -187,6 +187,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     //-------------------------------------------------------------------------//
 
     private fun createInlineFunctionBody(functionDeclaration: IrFunction): IrInlineFunctionBody? {
+        functionDeclaration.transformChildrenVoid(this)                                     // Inline recursively.
 
         val originBlockBody = functionDeclaration.body
         if (originBlockBody == null) return null                                            // TODO workaround
