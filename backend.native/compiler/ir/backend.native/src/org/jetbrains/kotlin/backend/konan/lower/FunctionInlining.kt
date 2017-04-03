@@ -371,9 +371,11 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             val typeSubstitutor = createTypeSubstitutor()
             val typeArguments   = substituteTypeArguments(irCall, typeSubstitutor)
             val returnType = typeSubstitutor.substitute(irCall.type, Variance.INVARIANT) ?: irCall.type
+            val descriptor = irCall.descriptor.substitute(typeSubstitutor)!!
+            val superQualifier = irCall.superQualifier?.substitute(typeSubstitutor)
 
-            return IrCallImpl(irCall.startOffset, irCall.endOffset, returnType, irCall.descriptor,
-                typeArguments, irCall.origin, irCall.superQualifier).apply {
+            return IrCallImpl(irCall.startOffset, irCall.endOffset, returnType, descriptor,
+                typeArguments, irCall.origin, superQualifier).apply {
                     irCall.descriptor.valueParameters.forEach {
                         val valueArgument = irCall.getValueArgument(it)
                         putValueArgument(it.index, valueArgument)
