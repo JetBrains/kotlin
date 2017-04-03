@@ -48,8 +48,6 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
 
     protected abstract val libraryCaption: String
 
-    abstract val existingJarFiles: RuntimeLibraryFiles
-
     override fun getStatus(module: Module): ConfigureKotlinStatus {
         if (!isApplicable(module)) {
             return ConfigureKotlinStatus.NON_APPLICABLE
@@ -235,7 +233,7 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
 
     protected fun needToChooseJarPath(project: Project): Boolean {
         val defaultPath = getDefaultPathToJarFile(project)
-        return !isProjectLibraryPresent(project) && !existingJarFiles.getRuntimeDestination(defaultPath).exists()
+        return !isProjectLibraryPresent(project) && !File(defaultPath, libraryJarDescriptors.first().jarName).exists()
     }
 
     protected open fun getDefaultPathToJarFile(project: Project): String {

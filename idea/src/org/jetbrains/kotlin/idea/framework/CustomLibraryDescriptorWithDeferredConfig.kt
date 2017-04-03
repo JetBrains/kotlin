@@ -176,9 +176,12 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
 
     // Implements an API added in IDEA 16
     override fun createNewLibraryWithDefaultSettings(contextDirectory: VirtualFile?): NewLibraryConfiguration? {
-        return createConfiguration(collectPathsInPlugin(OrderRootType.CLASSES),
-                                   collectPathsInPlugin(OrderRootType.SOURCES))
+        return createConfigurationFromPluginPaths()
     }
+
+    fun createConfigurationFromPluginPaths() =
+            createConfiguration(collectPathsInPlugin(OrderRootType.CLASSES),
+                                collectPathsInPlugin(OrderRootType.SOURCES))
 
     private fun collectPathsInPlugin(rootType: OrderRootType): List<File> {
         return configurator.libraryJarDescriptors

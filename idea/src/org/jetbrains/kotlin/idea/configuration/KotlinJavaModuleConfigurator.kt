@@ -53,16 +53,6 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
     override val targetPlatform: TargetPlatform
         get() = JvmPlatform
 
-    override val existingJarFiles: RuntimeLibraryFiles
-        get() {
-            val paths = PathUtil.getKotlinPathsForIdeaPlugin()
-            return RuntimeLibraryFiles(
-                    assertFileExists(paths.stdlibPath),
-                    assertFileExists(paths.reflectPath),
-                    assertFileExists(paths.runtimeSourcesPath)
-            )
-        }
-
     override val libraryJarDescriptors: List<LibraryJarDescriptor>
         get() = listOf(LibraryJarDescriptor.RUNTIME_JAR,
                        LibraryJarDescriptor.REFLECT_JAR,
