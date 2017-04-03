@@ -32,7 +32,7 @@ In order to build Kotlin distribution you need to have:
 - JDK 1.6, 1.7 and 1.8
 - Setup environment variables as following:
 
-        JAVA_HOME="path to JDK 1.6"
+        JAVA_HOME="path to JDK 1.8"
         JDK_16="path to JDK 1.6"
         JDK_17="path to JDK 1.7"
         JDK_18="path to JDK 1.8"
