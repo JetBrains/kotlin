@@ -2902,6 +2902,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("IsForTypeWithComplexUpperBound.kt")
+            public void testIsForTypeWithComplexUpperBound() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/IsForTypeWithComplexUpperBound.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("IsRecursionSustainable.kt")
             public void testIsRecursionSustainable() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/IsRecursionSustainable.kt");
@@ -2911,6 +2917,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("IsTraits.kt")
             public void testIsTraits() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/IsTraits.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("IsWithCycleUpperBounds.kt")
+            public void testIsWithCycleUpperBounds() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/IsWithCycleUpperBounds.kt");
                 doTest(fileName);
             }
 

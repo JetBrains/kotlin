@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -182,8 +182,8 @@ public class TypeIntersector {
                                parameterUsage.howTheTypeParameterIsUsed.superpose(howTheTypeIsUsedBefore));
                 return Unit.INSTANCE;
             };
-            processAllTypeParameters(withParameters, Variance.INVARIANT, processor);
-            processAllTypeParameters(expected, Variance.INVARIANT, processor);
+            processAllTypeParameters(withParameters, Variance.INVARIANT, processor, parameters::containsKey);
+            processAllTypeParameters(expected, Variance.INVARIANT, processor, parameters::containsKey);
             ConstraintSystem.Builder constraintSystem = new ConstraintSystemBuilderImpl();
             TypeSubstitutor substitutor = constraintSystem.registerTypeVariables(CallHandle.NONE.INSTANCE, parameters.keySet(), false);
             constraintSystem.addSubtypeConstraint(withParameters, substitutor.substitute(expected, Variance.INVARIANT), SPECIAL.position());
@@ -191,14 +191,25 @@ public class TypeIntersector {
             return constraintSystem.build().getStatus().isSuccessful();
         }
 
-        private static void processAllTypeParameters(KotlinType type, Variance howThisTypeIsUsed, Function1<TypeParameterUsage, Unit> result) {
+        private static void processAllTypeParameters(
+                KotlinType type,
+                Variance howThisTypeIsUsed,
+                Function1<TypeParameterUsage, Unit> result,
+                Function1<TypeParameterDescriptor, Boolean> containsParameter
+        ) {
             ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof TypeParameterDescriptor) {
+                if (containsParameter.invoke((TypeParameterDescriptor) descriptor)) return;
+
                 result.invoke(new TypeParameterUsage((TypeParameterDescriptor) descriptor, howThisTypeIsUsed));
+
+                for (KotlinType superType : type.getConstructor().getSupertypes()) {
+                    processAllTypeParameters(superType, howThisTypeIsUsed, result, containsParameter);
+                }
             }
             for (TypeProjection projection : type.getArguments()) {
                 if (projection.isStarProjection()) continue;
-                processAllTypeParameters(projection.getType(), projection.getProjectionKind(), result);
+                processAllTypeParameters(projection.getType(), projection.getProjectionKind(), result, containsParameter);
             }
         }
     }
