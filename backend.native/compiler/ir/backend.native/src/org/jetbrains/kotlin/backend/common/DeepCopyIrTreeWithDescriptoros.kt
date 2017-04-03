@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.common.lower.SimpleMemberScope
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
@@ -88,10 +89,17 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
                 primaryConstructor = descriptorSubstituteMap[oldPrimaryConstructor] as ClassConstructorDescriptor
             }
 
+            val contributedDescriptors = oldDescriptor.unsubstitutedMemberScope
+                    .getContributedDescriptors()
+                    .map {
+                        if (it is CallableMemberDescriptor && it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
+                            it
+                        else descriptorSubstituteMap[it]!!
+                    }
             newDescriptor.initialize(
-                oldDescriptor.unsubstitutedMemberScope,
-                constructors,
-                primaryConstructor
+                    SimpleMemberScope(contributedDescriptors),
+                    constructors,
+                    primaryConstructor
             )
         }
 
@@ -163,6 +171,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
                 Modality.FINAL,
                 Visibilities.LOCAL
             )
+            newDescriptor.overriddenDescriptors += oldDescriptor.overriddenDescriptors
             return newDescriptor
         }
 
