@@ -320,15 +320,15 @@ KBoolean Kotlin_Char_isDefined(KChar ch) {
 }
 
 KBoolean Kotlin_Char_isLetter(KChar ch) {
-  return iswalpha(ch);
+  return iswalpha(ch) != 0;
 }
 
 KBoolean Kotlin_Char_isLetterOrDigit(KChar ch) {
-  return iswalnum(ch);
+  return iswalnum(ch) != 0;
 }
 
 KBoolean Kotlin_Char_isDigit(KChar ch) {
-  return iswdigit(ch);
+  return iswdigit(ch) != 0;
 }
 
 KBoolean Kotlin_Char_isIdentifierIgnorable(KChar ch) {
@@ -350,15 +350,15 @@ KBoolean Kotlin_Char_isLowSurrogate(KChar ch) {
 }
 
 KBoolean Kotlin_Char_isWhitespace(KChar ch) {
-  return iswspace(ch);
+  return iswspace(ch) != 0;
 }
 
 KBoolean Kotlin_Char_isLowerCase(KChar ch) {
-  return iswlower(ch);
+  return iswlower(ch) != 0;
 }
 
 KBoolean Kotlin_Char_isUpperCase(KChar ch) {
-  return iswupper(ch);
+  return iswupper(ch) != 0;
 }
 
 KChar Kotlin_Char_toLowerCase(KChar ch) {
