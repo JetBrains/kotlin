@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 //-----------------------------------------------------------------------------//
@@ -132,11 +133,17 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
         descriptor.valueParameters.forEach { parameter ->
             val argument = irCall.getValueArgument(parameter.index)
-            if (argument != null) {
-                result += ArgumentWithValue(parameter, argument)
-            } else {
-                val defaultArgument = declaration.getDefault(parameter)!!.expression
-                result += ArgumentWithValue(parameter, defaultArgument)
+            when {
+                argument != null -> result += ArgumentWithValue(parameter, argument)
+                parameter.hasDefaultValue() -> {
+                    val defaultArgument = declaration.getDefault(parameter)!!.expression
+                    result += ArgumentWithValue(parameter, defaultArgument)
+                }
+                parameter.varargElementType != null -> {
+                    val emptyArray = IrVarargImpl(irCall.startOffset, irCall.endOffset, parameter.type, parameter.varargElementType!!)
+                    result += ArgumentWithValue(parameter, emptyArray)
+                }
+                else -> throw Error("Incomplete expression: call to $descriptor has no argument at index ${parameter.index}")
             }
         }
 
