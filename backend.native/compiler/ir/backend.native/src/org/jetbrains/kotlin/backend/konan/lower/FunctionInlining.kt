@@ -85,9 +85,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     override fun visitCall(expression: IrCall): IrExpression {
 
-        val fqName = currentFile!!.packageFragmentDescriptor.fqName.asString()              // TODO to be removed after stdlib compilation
-        if(fqName.contains("kotlin")) return super.visitCall(expression)                    // TODO to be removed after stdlib compilation
-
         val irCall = super.visitCall(expression) as IrCall
 
         val functionDescriptor = irCall.descriptor as FunctionDescriptor
@@ -271,7 +268,8 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             val operandTypeDescriptor = newExpression.typeOperand.constructor.declarationDescriptor
             if (operandTypeDescriptor !is TypeParameterDescriptor) return newExpression        // It is not TypeParameter - do nothing
 
-            var typeNew         = typeArgsMap[operandTypeDescriptor]!!
+            var typeNew = typeArgsMap[operandTypeDescriptor]
+                    ?: return expression
             if (newExpression.typeOperand.isMarkedNullable)
                 typeNew = typeNew.makeNullable()
             val startOffset     = newExpression.startOffset

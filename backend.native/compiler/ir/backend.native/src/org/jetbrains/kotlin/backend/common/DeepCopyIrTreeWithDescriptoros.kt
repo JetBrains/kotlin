@@ -271,7 +271,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
             if (irCall !is IrCallImpl) return irCall                                        // TODO what other kinds of call can we meet?
 
             val oldDescriptor = irCall.descriptor
-            val newDescriptor = descriptorSubstituteMap.getOrDefault(oldDescriptor,
+            val newDescriptor = descriptorSubstituteMap.getOrDefault(oldDescriptor.original,
                 oldDescriptor) as FunctionDescriptor
 
             val oldSuperQualifier = irCall.superQualifier
