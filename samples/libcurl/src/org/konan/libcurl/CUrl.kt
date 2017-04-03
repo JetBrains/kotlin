@@ -4,11 +4,7 @@ import kotlinx.cinterop.*
 import libcurl.*
 
 class CUrl(val url: String)  {
-    val repositoryIndex = repository.run {
-        val index = size
-        add(this@CUrl)
-        index
-    }
+    val stablePtr = StableObjPtr.create(this)
 
     val curl = curl_easy_init();
 
@@ -16,7 +12,7 @@ class CUrl(val url: String)  {
         curl_easy_setopt(curl, CURLOPT_URL, url)
         val header: CPointer<header_callback> = staticCFunction(::header_callback)
         curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header)
-        curl_easy_setopt(curl, CURLOPT_HEADERDATA, interpretCPointer<CPointed>(nativeNullPtr + 1 + repositoryIndex.toLong()))
+        curl_easy_setopt(curl, CURLOPT_HEADERDATA, stablePtr.value)
     }
 
     val header = Event<String>()
@@ -30,13 +26,7 @@ class CUrl(val url: String)  {
 
     fun close() {
         curl_easy_cleanup(curl)
-        // Cannot remove urls from repository because it would change other indices
-        // We could potentially remove it and update all indices in tails
-        repository[repositoryIndex] = null
-    }
-
-    companion object {
-        val repository = ArrayList<CUrl?>()
+        stablePtr.dispose()
     }
 }
 
@@ -50,10 +40,8 @@ fun header_callback(buffer: CPointer<ByteVar>?, size: size_t, nitems: size_t, us
     if (buffer == null) return 0
     val header = buffer.toKString((size * nitems).toInt()).trim()
     if (userdata != null) {
-        val id = userdata.rawValue.toLong() - 1
-        val curl = CUrl.repository[id.toInt()]
-        if (curl != null)
-            curl.header(header)
+        val curl = StableObjPtr.fromValue(userdata).get() as CUrl
+        curl.header(header)
     }
     return size * nitems
 }
@@ -62,10 +50,8 @@ fun header_callback(buffer: CPointer<ByteVar>?, size: size_t, nitems: size_t, us
 fun write_callback(buffer: COpaquePointer?, size: size_t, nitems: size_t, userdata: COpaquePointer?): size_t {
     if (buffer == null) return 0
     if (userdata != null) {
-        val id = userdata.rawValue.toLong() - 1
-        val curl = CUrl.repository[id.toInt()]
-        if (curl != null)
-            curl.data(buffer.)
+        val curl = StableObjPtr.fromValue(userdata).get() as CUrl
+        curl.data(buffer.)
     }
     return size * nitems
 }
