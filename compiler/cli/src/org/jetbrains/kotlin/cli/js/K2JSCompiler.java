@@ -114,9 +114,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         environmentForJS.getConfiguration().put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage);
 
-        //ModuleVisibilityManager moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environmentForJS.getProject());
-        //moduleVisibilityManager.setHelperEnabled(false);
-
         if (!checkKotlinPackageUsage(environmentForJS, sourcesFiles)) return ExitCode.COMPILATION_ERROR;
 
         if (arguments.outputFile == null) {

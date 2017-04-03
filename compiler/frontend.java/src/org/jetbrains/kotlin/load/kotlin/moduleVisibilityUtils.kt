@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.kotlin
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.util.ModuleVisibilityHelper
 import java.io.File
 
 class ModuleVisibilityHelperImpl: ModuleVisibilityHelper {
-
     override fun isInFriendModule(what: DeclarationDescriptor, from: DeclarationDescriptor): Boolean {
         val fromSource = getSourceElement(from)
         // We should check accessibility of 'from' in current module (some set of source files, which are compiled together),
@@ -44,19 +44,51 @@ class ModuleVisibilityHelperImpl: ModuleVisibilityHelper {
         else {
             (from as? LazyPackageDescriptor)?.declarationProvider?.getPackageFiles()?.firstOrNull()?.project ?: return true
         }
+        return ModuleVisibilityManager.SERVICE.getInstance(project).isInFriendModule(what, from)
+    }
+}
 
-        val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(project)
-        if (!moduleVisibilityManager.helperEnabled) return true;
+interface ModuleVisibilityManager {
+    fun addModule(module: Module)
+    fun addFriendPath(path: String)
 
-        moduleVisibilityManager.friendPaths.forEach {
+    fun isInFriendModule(what: DeclarationDescriptor, from: DeclarationDescriptor): Boolean
+
+    object SERVICE {
+        private val EP_NAME = ExtensionPointName.create<ModuleVisibilityManager>("org.jetbrains.kotlin.moduleVisibilityManager")
+        @JvmStatic fun getInstance(project: Project): ModuleVisibilityManager = Extensions.getExtensions(EP_NAME/*, project*/)[0]
+//                ServiceManager.getService(project, ModuleVisibilityManager::class.java)
+    }
+
+    class Default: ModuleVisibilityManager {
+        override fun addModule(module: Module) {}
+
+        override fun addFriendPath(path: String) {}
+
+        override fun isInFriendModule(what: DeclarationDescriptor, from: DeclarationDescriptor): Boolean = true
+    }
+}
+
+class CliModuleVisibilityManagerImpl : ModuleVisibilityManager, Disposable {
+    val modules: MutableList<Module> = arrayListOf()
+    val friendPaths: MutableList <String> = arrayListOf()
+
+    override fun addModule(module: Module) {
+        modules.add(module)
+    }
+
+    override fun addFriendPath(path: String) {
+        friendPaths.add(path)
+    }
+
+    override fun isInFriendModule(what: DeclarationDescriptor, from: DeclarationDescriptor): Boolean {
+        friendPaths.forEach {
             if (isContainedByCompiledPartOfOurModule(what, File(it))) return true
         }
 
-        val modules = moduleVisibilityManager.chunk
-
         val whatSource = getSourceElement(what)
         if (whatSource is KotlinSourceElement) {
-            if (modules.size > 1 && fromSource is KotlinSourceElement) {
+            if (modules.size > 1 && getSourceElement(from) is KotlinSourceElement) {
                 return findModule(what, modules) === findModule(from, modules)
             }
 
@@ -70,69 +102,23 @@ class ModuleVisibilityHelperImpl: ModuleVisibilityHelper {
         return findModule(from, modules) === findModule(what, modules)
     }
 
-    private fun findModule(descriptor: DeclarationDescriptor, modules: Collection<Module>): Module? {
-        val sourceElement = getSourceElement(descriptor)
-        if (sourceElement is KotlinSourceElement) {
-            return modules.singleOrNull() ?: modules.firstOrNull { sourceElement.psi.containingKtFile.virtualFile.path in it.getSourceFiles() }
-        }
-        else {
-            return modules.firstOrNull { module ->
-                isContainedByCompiledPartOfOurModule(descriptor, File(module.getOutputDirectory())) ||
-                module.getFriendPaths().any { isContainedByCompiledPartOfOurModule(descriptor, File(it)) }
-            }
-        }
-    }
-
-}
-
-interface ModuleVisibilityManager {
-    val chunk: Collection<Module>
-    val friendPaths: Collection<String>
-    fun addModule(module: Module)
-    fun addFriendPath(path: String)
-
-    val helperEnabled: Boolean // Whether ModuleVisibilityHelper should be used
-
-    object SERVICE {
-        @JvmStatic fun getInstance(project: Project): ModuleVisibilityManager =
-                ServiceManager.getService(project, ModuleVisibilityManager::class.java)
-
-    }
-
-    companion object {
-        val EP_NAME = ExtensionPointName.create<ModuleVisibilityManager>("org.jetbrains.kotlin.moduleVisibilityManager")
-    }
-
-    class Default: ModuleVisibilityManager {
-        override val chunk: Collection<Module> = emptySet()
-
-        override val friendPaths: Collection<String> = emptySet()
-
-        override fun addModule(module: Module) {
-        }
-
-        override fun addFriendPath(path: String) {
-        }
-
-        override val helperEnabled: Boolean = false
-    }
-}
-
-class CliModuleVisibilityManagerImpl : ModuleVisibilityManager, Disposable {
-    override val chunk: MutableList<Module> = arrayListOf()
-    override val friendPaths: MutableList <String> = arrayListOf()
-    override fun addModule(module: Module) {
-        chunk.add(module)
-    }
-
-    override fun addFriendPath(path: String) {
-        friendPaths.add(path)
-    }
-
-    override val helperEnabled: Boolean = true
 
     override fun dispose() {
-        chunk.clear()
+        modules.clear()
+    }
+}
+
+
+private fun findModule(descriptor: DeclarationDescriptor, modules: Collection<Module>): Module? {
+    val sourceElement = getSourceElement(descriptor)
+    if (sourceElement is KotlinSourceElement) {
+        return modules.singleOrNull() ?: modules.firstOrNull { sourceElement.psi.containingKtFile.virtualFile.path in it.getSourceFiles() }
+    }
+    else {
+        return modules.firstOrNull { module ->
+            isContainedByCompiledPartOfOurModule(descriptor, File(module.getOutputDirectory())) ||
+            module.getFriendPaths().any { isContainedByCompiledPartOfOurModule(descriptor, File(it)) }
+        }
     }
 }
 

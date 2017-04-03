@@ -167,7 +167,6 @@ class KotlinCoreEnvironment private constructor(
         }
 
         project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
-        project.registerService(ModuleVisibilityManager::class.java, Extensions.getExtensions(ModuleVisibilityManager.EP_NAME)[0])
 //        project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl())
 
         registerProjectServicesForCLI(projectEnvironment)

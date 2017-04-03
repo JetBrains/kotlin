@@ -236,7 +236,7 @@
                     serviceImplementation="org.jetbrains.kotlin.idea.vfilefinder.IDEVirtualFileFinderFactory"/>
 
     <projectService serviceI1nterface="org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager"
-                    serviceImplementation="org.jetbrains.kotlin.idea.util.IdeModuleVisibilityManagerImpl"/>
+                    serviceImplementation="org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager$Default"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.LightClassGenerationSupport"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IDELightClassGenerationSupport"/>
