@@ -14,232 +14,188 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.framework;
+package org.jetbrains.kotlin.idea.framework
 
-import com.google.common.collect.Lists;
-import com.intellij.framework.library.LibraryVersionProperties;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryKind;
-import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
-import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
-import com.intellij.openapi.roots.ui.configuration.libraries.LibraryPresentationManager;
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.configuration.*;
-import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialog;
-import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils;
-import org.jetbrains.kotlin.idea.util.projectStructure.ProjectStructureUtilKt;
+import com.google.common.collect.Lists
+import com.intellij.framework.library.LibraryVersionProperties
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.roots.libraries.LibraryKind
+import com.intellij.openapi.roots.libraries.NewLibraryConfiguration
+import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
+import com.intellij.openapi.roots.ui.configuration.libraries.LibraryPresentationManager
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator
+import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
+import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
+import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialog
+import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils
+import org.jetbrains.kotlin.idea.util.projectStructure.findLibrary
+import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
+import org.jetbrains.kotlin.idea.util.projectStructure.replaceFileRoot
+import java.io.File
+import java.util.*
+import javax.swing.JComponent
 
-import javax.swing.*;
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+/**
+ * @param project null when project doesn't exist yet (called from project wizard)
+ */
+abstract class CustomLibraryDescriptorWithDeferredConfig
+(
+        project: Project?,
+        private val configuratorName: String,
+        private val libraryName: String,
+        private val dialogTitle: String,
+        private val modulesSeparatorCaption: String,
+        private val libraryKind: LibraryKind,
+        private val suitableLibraryKinds: Set<LibraryKind>
+) : CustomLibraryDescription() {
+    private val projectBaseDir: VirtualFile?
 
-public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLibraryDescription {
+    var copyFileRequests: DeferredCopyFileRequests? = null
+        private set
 
-    private static final String DEFAULT_LIB_DIR_NAME = "lib";
-
-    private final String configuratorName;
-    private final String libraryName;
-    private final String dialogTitle;
-    private final String modulesSeparatorCaption;
-    private final LibraryKind libraryKind;
-    private final Set<? extends LibraryKind> suitableLibraryKinds;
-    private final VirtualFile projectBaseDir;
-
-    private DeferredCopyFileRequests deferredCopyFileRequests;
-
-    /**
-     * @param project null when project doesn't exist yet (called from project wizard)
-     */
-    public CustomLibraryDescriptorWithDeferredConfig(
-            @Nullable Project project,
-            @NotNull String configuratorName,
-            @NotNull String libraryName,
-            @NotNull String dialogTitle,
-            @NotNull String modulesSeparatorCaption,
-            @NotNull LibraryKind libraryKind,
-            @NotNull Set<? extends LibraryKind> suitableLibraryKinds
-    ) {
-        this.projectBaseDir = project != null ? project.getBaseDir() : null;
-        this.configuratorName = configuratorName;
-        this.libraryName = libraryName;
-        this.dialogTitle = dialogTitle;
-        this.modulesSeparatorCaption = modulesSeparatorCaption;
-        this.libraryKind = libraryKind;
-        this.suitableLibraryKinds = suitableLibraryKinds;
+    init {
+        this.projectBaseDir = project?.baseDir
     }
 
-    @Nullable
-    public DeferredCopyFileRequests getCopyFileRequests() {
-        return deferredCopyFileRequests;
+    override fun getSuitableLibraryKinds(): Set<LibraryKind> {
+        return suitableLibraryKinds
     }
 
-    @NotNull
-    @Override
-    public Set<? extends LibraryKind> getSuitableLibraryKinds() {
-        return suitableLibraryKinds;
-    }
+    fun finishLibConfiguration(module: Module, rootModel: ModifiableRootModel) {
+        val deferredCopyFileRequests = copyFileRequests ?: return
 
-    public void finishLibConfiguration(@NotNull Module module, @NotNull ModifiableRootModel rootModel) {
-        DeferredCopyFileRequests deferredCopyFileRequests = getCopyFileRequests();
-        if (deferredCopyFileRequests == null) return;
+        val library = rootModel.orderEntries().findLibrary { library ->
+            val libraryPresentationManager = LibraryPresentationManager.getInstance()
+            val classFiles = Arrays.asList(*library.getFiles(OrderRootType.CLASSES))
 
-        Library library = ProjectStructureUtilKt.findLibrary(rootModel.orderEntries(), new Function1<Library, Boolean>() {
-            @Override
-            public Boolean invoke(@NotNull Library library) {
-                LibraryPresentationManager libraryPresentationManager = LibraryPresentationManager.getInstance();
-                List<VirtualFile> classFiles = Arrays.asList(library.getFiles(OrderRootType.CLASSES));
+            libraryPresentationManager.isLibraryOfKind(classFiles, libraryKind)
+        } ?: return
 
-                return libraryPresentationManager.isLibraryOfKind(classFiles, libraryKind);
-            }
-        });
-
-        if (library == null) {
-            return;
-        }
-
-        Library.ModifiableModel model = library.getModifiableModel();
+        val model = library.modifiableModel
         try {
-            deferredCopyFileRequests.performRequests(module.getProject(), ProjectStructureUtilKt.getModuleDir(module), model);
+            deferredCopyFileRequests.performRequests(module.project, module.getModuleDir(), model)
         }
         finally {
-            model.commit();
+            model.commit()
         }
     }
 
-    public static class DeferredCopyFileRequests {
-        private final List<CopyFileRequest> copyFilesRequests = Lists.newArrayList();
-        private final KotlinWithLibraryConfigurator configurator;
+    class DeferredCopyFileRequests(private val configurator: KotlinWithLibraryConfigurator) {
+        private val copyFilesRequests = Lists.newArrayList<CopyFileRequest>()
 
-        public DeferredCopyFileRequests(KotlinWithLibraryConfigurator configurator) {
-            this.configurator = configurator;
-        }
+        fun performRequests(project: Project, relativePath: String, model: Library.ModifiableModel) {
+            val collector = createConfigureKotlinNotificationCollector(project)
+            for (request in copyFilesRequests) {
+                val destinationPath = if (FileUtil.isAbsolute(request.toDir))
+                    request.toDir
+                else
+                    File(relativePath, request.toDir).path
 
-        public void performRequests(@NotNull Project project, @NotNull String relativePath, Library.ModifiableModel model) {
-            NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
-            for (CopyFileRequest request : copyFilesRequests) {
-                String destinationPath = FileUtil.isAbsolute(request.toDir) ?
-                                         request.toDir :
-                                         new File(relativePath, request.toDir).getPath();
+                val resultFile = configurator.copyFileToDir(request.file, destinationPath, collector)
 
-                File resultFile = configurator.copyFileToDir(request.file, destinationPath, collector);
-
-                if (request.replaceInLib) {
-                    ProjectStructureUtilKt.replaceFileRoot(model, request.file, resultFile);
+                if (request.replaceInLib && resultFile != null) {
+                    model.replaceFileRoot(request.file, resultFile)
                 }
             }
-            collector.showNotification();
+            collector.showNotification()
         }
 
-        public void addCopyWithReplaceRequest(@NotNull File file, @NotNull String copyIntoPath) {
-            copyFilesRequests.add(new CopyFileRequest(copyIntoPath, file, true));
+        fun addCopyWithReplaceRequest(file: File, copyIntoPath: String) {
+            copyFilesRequests.add(CopyFileRequest(copyIntoPath, file, true))
         }
 
-        public static class CopyFileRequest {
-            private final String toDir;
-            private final File file;
-            private final boolean replaceInLib;
-
-            public CopyFileRequest(String dir, File file, boolean replaceInLib) {
-                toDir = dir;
-                this.file = file;
-                this.replaceInLib = replaceInLib;
-            }
-        }
+        class CopyFileRequest(val toDir: String, val file: File, val replaceInLib: Boolean)
     }
 
-    @Nullable
-    @Override
-    public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
-        KotlinWithLibraryConfigurator configurator = getConfigurator();
+    override fun createNewLibrary(parentComponent: JComponent, contextDirectory: VirtualFile?): NewLibraryConfiguration? {
+        val configurator = configurator
 
-        deferredCopyFileRequests = new DeferredCopyFileRequests(configurator);
+        copyFileRequests = DeferredCopyFileRequests(configurator)
 
-        String defaultPathToJarFile = projectBaseDir == null ? DEFAULT_LIB_DIR_NAME
-                                                       : FileUIUtils.createRelativePath(null, projectBaseDir, DEFAULT_LIB_DIR_NAME);
+        val defaultPathToJarFile = if (projectBaseDir == null)
+            DEFAULT_LIB_DIR_NAME
+        else
+            FileUIUtils.createRelativePath(null, projectBaseDir, DEFAULT_LIB_DIR_NAME)
 
-        RuntimeLibraryFiles files = configurator.getExistingJarFiles();
+        val files = configurator.existingJarFiles
 
-        File runtimeJar;
-        File reflectJar;
-        File runtimeSrcJar;
+        val runtimeJar: File
+        var reflectJar: File?
+        var runtimeSrcJar: File
 
-        File stdJarInDefaultPath = files.getRuntimeDestination(defaultPathToJarFile);
+        val stdJarInDefaultPath = files.getRuntimeDestination(defaultPathToJarFile)
         if (projectBaseDir != null && stdJarInDefaultPath.exists()) {
-            runtimeJar = stdJarInDefaultPath;
+            runtimeJar = stdJarInDefaultPath
 
-            reflectJar = files.getReflectDestination(defaultPathToJarFile);
+            reflectJar = files.getReflectDestination(defaultPathToJarFile)
             if (reflectJar != null && !reflectJar.exists()) {
-                reflectJar = files.getReflectJar();
-                assert reflectJar != null : "getReflectDestination != null, but getReflectJar == null";
-                deferredCopyFileRequests.addCopyWithReplaceRequest(reflectJar, runtimeJar.getParent());
+                reflectJar = files.reflectJar
+                assert(reflectJar != null) { "getReflectDestination != null, but getReflectJar == null" }
+                copyFileRequests!!.addCopyWithReplaceRequest(reflectJar!!, runtimeJar.parent)
             }
 
-            runtimeSrcJar = files.getRuntimeSourcesDestination(defaultPathToJarFile);
+            runtimeSrcJar = files.getRuntimeSourcesDestination(defaultPathToJarFile)
             if (!runtimeSrcJar.exists()) {
-                runtimeSrcJar = files.getRuntimeSourcesJar();
-                deferredCopyFileRequests.addCopyWithReplaceRequest(runtimeSrcJar, runtimeJar.getParent());
+                runtimeSrcJar = files.runtimeSourcesJar
+                copyFileRequests!!.addCopyWithReplaceRequest(runtimeSrcJar, runtimeJar.parent)
             }
         }
         else {
-            CreateLibraryDialog dialog = new CreateLibraryDialog(defaultPathToJarFile, dialogTitle, modulesSeparatorCaption);
-            dialog.show();
+            val dialog = CreateLibraryDialog(defaultPathToJarFile, dialogTitle, modulesSeparatorCaption)
+            dialog.show()
 
-            if (!dialog.isOK()) return null;
+            if (!dialog.isOK) return null
 
-            String copyIntoPath = dialog.getCopyIntoPath();
+            val copyIntoPath = dialog.copyIntoPath
             if (copyIntoPath != null) {
-                for (File file : files.getAllJars()) {
-                    deferredCopyFileRequests.addCopyWithReplaceRequest(file, copyIntoPath);
+                for (file in files.getAllJars()) {
+                    copyFileRequests!!.addCopyWithReplaceRequest(file, copyIntoPath)
                 }
             }
 
-            runtimeJar = files.getRuntimeJar();
-            reflectJar = files.getReflectJar();
-            runtimeSrcJar = files.getRuntimeSourcesJar();
+            runtimeJar = files.runtimeJar
+            reflectJar = files.reflectJar
+            runtimeSrcJar = files.runtimeSourcesJar
         }
 
-        return createConfiguration(Arrays.asList(runtimeJar, reflectJar), runtimeSrcJar);
+        return createConfiguration(Arrays.asList<File>(runtimeJar, reflectJar), runtimeSrcJar)
     }
 
-    @NotNull
-    private KotlinWithLibraryConfigurator getConfigurator() {
-        KotlinWithLibraryConfigurator configurator =
-                (KotlinWithLibraryConfigurator) ConfigureKotlinInProjectUtilsKt.getConfiguratorByName(configuratorName);
-        assert configurator != null : "Configurator with name " + configuratorName + " should exists";
-        return configurator;
-    }
+    private val configurator: KotlinWithLibraryConfigurator
+        get() {
+            val configurator = getConfiguratorByName(configuratorName) as KotlinWithLibraryConfigurator? ?: error("Configurator with name $configuratorName should exists")
+            return configurator
+        }
 
     // Implements an API added in IDEA 16
-    @Nullable
-    public NewLibraryConfiguration createNewLibraryWithDefaultSettings(@Nullable VirtualFile contextDirectory) {
-        RuntimeLibraryFiles files = getConfigurator().getExistingJarFiles();
-        return createConfiguration(Arrays.asList(files.getRuntimeJar(), files.getReflectJar()), files.getRuntimeSourcesJar());
+    override fun createNewLibraryWithDefaultSettings(contextDirectory: VirtualFile?): NewLibraryConfiguration? {
+        val files = configurator.existingJarFiles
+        return createConfiguration(Arrays.asList<File>(files.runtimeJar, files.reflectJar), files.runtimeSourcesJar)
     }
 
-    @NotNull
-    protected NewLibraryConfiguration createConfiguration(@NotNull final List<File> libraryFiles, @NotNull final File librarySrcFile) {
-        return new NewLibraryConfiguration(libraryName, null, new LibraryVersionProperties()) {
-            @Override
-            public void addRoots(@NotNull LibraryEditor editor) {
-                for (File libraryFile : libraryFiles) {
+    protected fun createConfiguration(libraryFiles: List<File>, librarySrcFile: File): NewLibraryConfiguration {
+        return object : NewLibraryConfiguration(libraryName, null, LibraryVersionProperties()) {
+            override fun addRoots(editor: LibraryEditor) {
+                for (libraryFile in libraryFiles) {
                     if (libraryFile != null) {
-                        editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES);
+                        editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES)
                     }
                 }
-                editor.addRoot(VfsUtil.getUrlForLibraryRoot(librarySrcFile), OrderRootType.SOURCES);
+                editor.addRoot(VfsUtil.getUrlForLibraryRoot(librarySrcFile), OrderRootType.SOURCES)
             }
-        };
+        }
+    }
+
+    companion object {
+
+        private val DEFAULT_LIB_DIR_NAME = "lib"
     }
 }
