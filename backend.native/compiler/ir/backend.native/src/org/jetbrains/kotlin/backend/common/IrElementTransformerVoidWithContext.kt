@@ -31,11 +31,14 @@ abstract class IrElementTransformerVoidWithContext(): IrElementTransformerVoid()
     private fun <E> MutableList<E>.peek(): E? = if (size == 0) null else this[size - 1]
 
     private val functionsStack = mutableListOf<FunctionDescriptor>()
+    private val functionDeclarationsStack = mutableListOf<IrFunction>()
     private val classesStack = mutableListOf<ClassDescriptor>()
 
     override final fun visitFunction(declaration: IrFunction): IrStatement {
         functionsStack.push(declaration.descriptor)
+        functionDeclarationsStack.push(declaration)
         val result = visitFunctionNew(declaration)
+        functionDeclarationsStack.pop()
         functionsStack.pop()
         return result
     }
@@ -48,6 +51,7 @@ abstract class IrElementTransformerVoidWithContext(): IrElementTransformerVoid()
     }
 
     protected val currentFunction get() = functionsStack.peek()
+    protected val currentFunctionDeclaration get() = functionDeclarationsStack.peek()
     protected val currentClass get() = classesStack.peek()
 
     open fun visitFunctionNew(declaration: IrFunction) : IrStatement {
