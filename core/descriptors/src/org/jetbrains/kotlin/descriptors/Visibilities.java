@@ -39,16 +39,6 @@ public class Visibilities {
             return true;
         }
 
-        // Note that this method returns false if `from` declaration is `init` initializer
-        // because initializer does not have source element
-        private boolean inSameFile(@NotNull DeclarationDescriptor what, @NotNull DeclarationDescriptor from) {
-            SourceFile fromContainingFile = DescriptorUtils.getContainingSourceFile(from);
-            if (fromContainingFile != SourceFile.NO_SOURCE_FILE) {
-                return fromContainingFile.equals(DescriptorUtils.getContainingSourceFile(what));
-            }
-            return false;
-        }
-
         private boolean hasContainingSourceFile(@NotNull DeclarationDescriptor descriptor) {
             return DescriptorUtils.getContainingSourceFile(descriptor) != SourceFile.NO_SOURCE_FILE;
         }
@@ -316,6 +306,16 @@ public class Visibilities {
      */
     public static boolean isVisibleWithAnyReceiver(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
         return findInvisibleMember(IRRELEVANT_RECEIVER, what, from) == null;
+    }
+
+    // Note that this method returns false if `from` declaration is `init` initializer
+    // because initializer does not have source element
+    public static boolean inSameFile(@NotNull DeclarationDescriptor what, @NotNull DeclarationDescriptor from) {
+        SourceFile fromContainingFile = DescriptorUtils.getContainingSourceFile(from);
+        if (fromContainingFile != SourceFile.NO_SOURCE_FILE) {
+            return fromContainingFile.equals(DescriptorUtils.getContainingSourceFile(what));
+        }
+        return false;
     }
 
     @Nullable

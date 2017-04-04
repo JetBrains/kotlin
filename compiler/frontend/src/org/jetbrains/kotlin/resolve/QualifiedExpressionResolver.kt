@@ -643,7 +643,7 @@ internal fun isVisible(
 
     val visibility = descriptor.visibility
     if (position == QualifierPosition.IMPORT) {
-        if (Visibilities.isPrivate(visibility)) return false
+        if (Visibilities.isPrivate(visibility)) return Visibilities.inSameFile(descriptor, shouldBeVisibleFrom)
         if (!visibility.mustCheckInImports()) return true
     }
     return Visibilities.isVisibleIgnoringReceiver(descriptor, shouldBeVisibleFrom)

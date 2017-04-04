@@ -11651,6 +11651,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("privateMembersInImportList.kt")
+        public void testPrivateMembersInImportList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/package/privateMembersInImportList.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("privateTopLevelPropAndVarInInner.kt")
         public void testPrivateTopLevelPropAndVarInInner() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/package/privateTopLevelPropAndVarInInner.kt");

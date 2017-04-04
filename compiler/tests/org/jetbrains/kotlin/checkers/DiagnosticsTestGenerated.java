@@ -9487,6 +9487,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ImportPrivateMember.kt")
+            public void testImportPrivateMember() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportPrivateMember.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImportPrivateMemberFromOtherFile.kt")
+            public void testImportPrivateMemberFromOtherFile() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportPrivateMemberFromOtherFile.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImportPrivateMembersWithStar.kt")
+            public void testImportPrivateMembersWithStar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportPrivateMembersWithStar.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ImportProtectedClass.kt")
             public void testImportProtectedClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportProtectedClass.kt");
