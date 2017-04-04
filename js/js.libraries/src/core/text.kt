@@ -33,9 +33,17 @@ public class StringBuilder(content: String = "") : Appendable, CharSequence {
     override val length: Int
         get() = string.asDynamic().length
 
+    fun setLength(newLength : Int) {
+        string = string.substring(0, newLength)
+    }
+
     override fun get(index: Int): Char = string[index]
 
     override fun subSequence(start: Int, end: Int): CharSequence = string.substring(start, end)
+
+    fun substring(start: Int, end: Int) : String = string.substring(start, end)
+
+    fun substring(start: Int) : String = string.substring(start)
 
     override fun append(c: Char): StringBuilder {
         string += c
