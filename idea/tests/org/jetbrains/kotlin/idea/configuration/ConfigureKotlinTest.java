@@ -17,12 +17,15 @@
 package org.jetbrains.kotlin.idea.configuration;
 
 import com.intellij.framework.library.LibraryVersionProperties;
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.idea.facet.FacetUtilsKt;
+import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.kotlin.idea.framework.KotlinLibraryUtilKt;
 import org.jetbrains.kotlin.idea.project.PlatformKt;
@@ -210,5 +213,35 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, CoroutineSupport.byCompilerArguments(arguments));
         assertEquals("amd", arguments.moduleKind);
         assertEquals("-version -meta-info", settings.getCompilerSettings().additionalArguments);
+    }
+
+    private void configureFacetAndCheckJvm(JvmTarget jvmTarget) {
+        IdeModifiableModelsProviderImpl modelsProvider = new IdeModifiableModelsProviderImpl(getProject());
+        try {
+            KotlinFacet facet = FacetUtilsKt.getOrCreateFacet(getModule(), modelsProvider, false);
+            TargetPlatformKind.Jvm platformKind = TargetPlatformKind.Jvm.Companion.get(jvmTarget);
+            FacetUtilsKt.configureFacet(
+                    facet,
+                    "1.1",
+                    LanguageFeature.State.ENABLED,
+                    platformKind,
+                    modelsProvider
+            );
+            assertEquals(platformKind, facet.getConfiguration().getSettings().getTargetPlatformKind());
+            assertEquals(jvmTarget.getDescription(), ((K2JVMCompilerArguments) facet.getConfiguration().getSettings().getCompilerArguments()).jvmTarget);
+        }
+        finally {
+            modelsProvider.dispose();
+        }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public void testJvm8InProjectJvm6InModule() {
+        configureFacetAndCheckJvm(JvmTarget.JVM_1_6);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public void testJvm6InProjectJvm8InModule() {
+        configureFacetAndCheckJvm(JvmTarget.JVM_1_8);
     }
 }

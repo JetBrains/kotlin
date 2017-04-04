@@ -65,7 +65,7 @@ fun KotlinFacetSettings.initializeIfNeeded(
 
     if (compilerArguments == null) {
         val targetPlatformKind = platformKind ?: getDefaultTargetPlatform(module, rootModel)
-        compilerArguments = targetPlatformKind.createCompilerArguments().apply {
+        compilerArguments = targetPlatformKind.createCompilerArguments {
             targetPlatformKind.getPlatformCompilerArgumentsByProject(module.project)?.let { mergeBeans(it, this) }
             mergeBeans(commonArguments, this)
         }
