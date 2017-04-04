@@ -180,7 +180,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, typ
             val newContainingDeclaration = descriptorSubstituteMap[oldContainingDeclaration] ?: targetFunction.descriptor
 
             val newDescriptor = SimpleFunctionDescriptorImpl.create(
-                containingDeclaration,
+                newContainingDeclaration,
                 oldDescriptor.annotations,
                 generateName(oldDescriptor.name),
                 CallableMemberDescriptor.Kind.SYNTHESIZED,
@@ -201,8 +201,8 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, typ
                 newDispatchReceiverParameter as? ReceiverParameterDescriptor,
                 newTypeParameters,
                 newValueParameters,
-                oldDescriptor.returnType,
-                Modality.FINAL,
+                newReturnType,
+                oldDescriptor.modality,
                 oldDescriptor.visibility
             )
             newDescriptor.overriddenDescriptors += oldDescriptor.overriddenDescriptors
