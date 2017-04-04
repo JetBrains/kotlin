@@ -42,12 +42,12 @@ import java.util.*
 
 class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
     override fun insertImport(file: KtFile, fqName: FqName) {
-        ApplicationManager.getApplication().invokeAndWait {
+        ApplicationManager.getApplication().invokeAndWait({
             runWriteAction {
                 val descriptors = file.resolveImportReference(fqName)
                 descriptors.firstOrNull()?.let { ImportInsertHelper.getInstance(file.project).importDescriptor(file, it) }
             }
-        }
+        }, ModalityState.defaultModalityState())
     }
 
     private enum class RangeFilterResult {
