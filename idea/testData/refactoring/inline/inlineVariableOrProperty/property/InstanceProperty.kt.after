@@ -6,5 +6,6 @@ class Class {
 }
 
 fun f() {
+    Class()
     println(239)
 }

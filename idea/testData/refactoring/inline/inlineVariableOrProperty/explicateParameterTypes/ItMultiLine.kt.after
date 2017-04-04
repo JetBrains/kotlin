@@ -1,6 +1,6 @@
 fun foo() {
     val ff = {
-        (it: Int) ->
+        it: Int ->
         it
     }
 }

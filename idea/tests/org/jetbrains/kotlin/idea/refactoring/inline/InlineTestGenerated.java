@@ -982,6 +982,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("Library.kt")
+            public void testLibrary() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/Library.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("multiplePackages.kt")
             public void testMultiplePackages() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/multiplePackages.kt");

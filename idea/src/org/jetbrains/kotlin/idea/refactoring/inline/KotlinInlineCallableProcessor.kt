@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.lang.findUsages.DescriptiveNameUtil
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
@@ -31,25 +32,34 @@ import org.jetbrains.kotlin.idea.codeInliner.replaceUsages
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-class KotlinInlineFunctionProcessor(
+class KotlinInlineCallableProcessor(
         project: Project,
         private val replacementStrategy: CallableUsageReplacementStrategy,
-        private val function: KtNamedFunction,
+        private val declaration: KtCallableDeclaration,
         private val reference: KtSimpleNameReference?,
         private val inlineThisOnly: Boolean,
-        private val deleteAfter: Boolean
+        private val deleteAfter: Boolean,
+        private val assignments: Set<PsiElement> = emptySet()
 ) : BaseRefactoringProcessor(project) {
 
-    private val commandName = "Inlining function ${DescriptiveNameUtil.getDescriptiveName(function)}"
+    private val kind = when (declaration) {
+        is KtNamedFunction -> "function"
+        is KtProperty -> if (declaration.isLocal) "local variable" else "property"
+        else -> "declaration"
+    }
+
+    private val commandName = "Inlining $kind ${DescriptiveNameUtil.getDescriptiveName(declaration)}"
 
     override fun findUsages(): Array<UsageInfo> {
         if (inlineThisOnly && reference != null) return arrayOf(UsageInfo(reference))
         val usages = runReadAction {
             val searchScope = KotlinSourceFilterScope.projectSources(GlobalSearchScope.projectScope(myProject), myProject)
-            ReferencesSearch.search(function, searchScope)
+            ReferencesSearch.search(declaration, searchScope)
         }
         return usages.map(::UsageInfo).toTypedArray()
     }
@@ -58,20 +68,21 @@ class KotlinInlineFunctionProcessor(
         val simpleNameUsages = usages.mapNotNull { it.element as? KtSimpleNameExpression }
         replacementStrategy.replaceUsages(
                 simpleNameUsages,
-                function,
+                declaration,
                 myProject,
                 commandName,
                 {
                     if (deleteAfter) {
                         if (usages.size == simpleNameUsages.size) {
-                            function.delete()
+                            declaration.delete()
+                            assignments.forEach(PsiElement::delete)
                         }
                         else {
                             CommonRefactoringUtil.showErrorHint(
-                                    function.project,
+                                    declaration.project,
                                     null,
                                     "Cannot inline ${usages.size - simpleNameUsages.size}/${usages.size} usages",
-                                    "Inline Function",
+                                    "Inline $kind",
                                     null
                             )
                         }
@@ -90,9 +101,9 @@ class KotlinInlineFunctionProcessor(
             override fun getCodeReferencesText(usagesCount: Int, filesCount: Int) =
                     RefactoringBundle.message("invocations.to.be.inlined", UsageViewBundle.getReferencesString(usagesCount, filesCount))
 
-            override fun getElements() = arrayOf(function)
+            override fun getElements() = arrayOf(declaration)
 
-            override fun getProcessedElementsHeader() = "Function to inline"
+            override fun getProcessedElementsHeader() = "${kind.capitalize()} to inline"
         }
     }
 }

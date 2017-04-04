@@ -20,7 +20,6 @@ import com.intellij.openapi.help.HelpManager
 import com.intellij.openapi.project.Project
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.JavaRefactoringSettings
-import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.inline.InlineOptionsDialog
 import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
@@ -71,7 +70,7 @@ class KotlinInlineFunctionDialog(
 
     public override fun doAction() {
         invokeRefactoring(
-                KotlinInlineFunctionProcessor(project, replacementStrategy, function, reference,
+                KotlinInlineCallableProcessor(project, replacementStrategy, function, reference,
                                               inlineThisOnly = isInlineThisOnly || allowInlineThisOnly,
                                               deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration && !allowInlineThisOnly)
         )
