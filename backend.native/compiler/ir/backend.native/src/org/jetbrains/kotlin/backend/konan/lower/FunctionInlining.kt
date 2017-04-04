@@ -185,14 +185,13 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //-------------------------------------------------------------------------//
 
-    private fun createInlineFunctionBody(functionDeclaration: IrFunction): IrInlineFunctionBody? {
-        functionDeclaration.transformChildrenVoid(this)                                     // Inline recursively.
+    private fun createInlineFunctionBody(functionDeclaration: IrFunction, typeArgsMap: Map <TypeParameterDescriptor, KotlinType>?): IrInlineFunctionBody? {
+        functionDeclaration.transformChildrenVoid(this)     // TODO recursive inline is already processed in visitCall. Check
 
         val originBlockBody = functionDeclaration.body
         if (originBlockBody == null) return null                                            // TODO workaround
 
-        val typeSubstitutor = createTypeSubstitutor(typeArgsMap)
-        copyWithDescriptors = DeepCopyIrTreeWithDescriptors(currentFunction!!, typeSubstitutor, context)
+        copyWithDescriptors = DeepCopyIrTreeWithDescriptors(currentFunction!!, typeArgsMap, context)
         val functionName = functionDeclaration.descriptor.name.toString()
 
         val copyBlockBody = originBlockBody.accept(InlineCopyIr(), null) as IrBlockBody     // Create copy of original function body.
@@ -225,7 +224,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val lambdaInliner = LambdaInliner(parameterToArgument)
         inlineBody.transformChildrenVoid(lambdaInliner)
 
-        val transformer = ParametersTransformer(parameterToArgument, typeArgsMap, evaluationStatements)
+        val transformer = ParametersTransformer(parameterToArgument)
         inlineBody.transformChildrenVoid(transformer)                                       // Replace parameters with expression.
         inlineBody.statements.addAll(0, evaluationStatements)
 
@@ -234,53 +233,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //-------------------------------------------------------------------------//
 
-    private inner class ParametersTransformer(val substituteMap: MutableMap <ValueDescriptor, IrExpression>,
-                                      val typeArgsMap: Map <TypeParameterDescriptor, KotlinType>?,
-                                      val statements: MutableList<IrStatement>): IrElementTransformerVoid() {
+    private inner class ParametersTransformer(val substituteMap: MutableMap <ValueDescriptor, IrExpression>): IrElementTransformerVoid() {
 
         override fun visitElement(element: IrElement) = element.accept(this, null)
-
-        //---------------------------------------------------------------------//
-
-        fun getTypeOperatorReturnType(operator: IrTypeOperator, type: KotlinType) : KotlinType {
-            return when (operator) {
-                IrTypeOperator.CAST,
-                IrTypeOperator.IMPLICIT_CAST,
-                IrTypeOperator.IMPLICIT_NOTNULL,
-                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-                IrTypeOperator.IMPLICIT_INTEGER_COERCION    -> type
-                IrTypeOperator.SAFE_CAST                    -> type.makeNullable()
-                IrTypeOperator.INSTANCEOF,
-                IrTypeOperator.NOT_INSTANCEOF               -> context.builtIns.booleanType
-            }
-        }
-
-        //---------------------------------------------------------------------//
-
-        override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
-
-            val newExpression = super.visitTypeOperator(expression) as IrTypeOperatorCall
-            if (typeArgsMap == null) return newExpression
-
-            if (newExpression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {          // Nothing to do for IMPLICIT_COERCION_TO_UNIT
-                return newExpression
-            }
-
-            val operandTypeDescriptor = newExpression.typeOperand.constructor.declarationDescriptor
-            if (operandTypeDescriptor !is TypeParameterDescriptor) return newExpression        // It is not TypeParameter - do nothing
-
-            var typeNew = typeArgsMap[operandTypeDescriptor]
-                    ?: return expression
-            if (newExpression.typeOperand.isMarkedNullable)
-                typeNew = typeNew.makeNullable()
-            val startOffset     = newExpression.startOffset
-            val endOffset       = newExpression.endOffset
-            val operator        = newExpression.operator
-            val argument        = newExpression.argument
-            val type            = getTypeOperatorReturnType(operator, typeNew)
-
-            return IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeNew, argument)
-        }
 
         //---------------------------------------------------------------------//
 
@@ -292,59 +247,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             if (argument == null) return newExpression                                    // If there is no such expression - do nothing
 
             return argument
-        }
-
-        //---------------------------------------------------------------------//
-
-        private fun createTypeSubstitutor(): TypeSubstitutor {
-
-            val substitutionContext = typeArgsMap!!.entries.associate {
-                (typeParameter, typeArgument) ->
-                typeParameter.typeConstructor to TypeProjectionImpl(typeArgument)
-            }
-            return TypeSubstitutor.create(substitutionContext)
-        }
-
-        //---------------------------------------------------------------------//
-
-        private fun substituteTypeArguments(irCall: IrCall, typeSubstitutor: TypeSubstitutor): Map <TypeParameterDescriptor, KotlinType>? {
-
-            val oldTypeArguments = (irCall as IrMemberAccessExpressionBase).typeArguments
-            if (oldTypeArguments == null) return null
-
-            val newTypeArguments = oldTypeArguments.map {
-                val typeParameterDescriptor = it.key
-                val oldTypeArgument         = it.value
-                val newTypeArgument         = typeSubstitutor.substitute(oldTypeArgument, Variance.INVARIANT) ?: oldTypeArgument
-                typeParameterDescriptor to newTypeArgument
-            }.toMap()
-
-            return newTypeArguments
-        }
-
-        //---------------------------------------------------------------------//
-
-        override fun visitCall(expression: IrCall): IrExpression {
-
-            val irCall = super.visitCall(expression) as IrCall
-            if (irCall !is IrCallImpl) return irCall
-            if (typeArgsMap == null)   return irCall
-
-            val typeSubstitutor = createTypeSubstitutor()
-            val typeArguments   = substituteTypeArguments(irCall, typeSubstitutor)
-            val returnType = typeSubstitutor.substitute(irCall.type, Variance.INVARIANT) ?: irCall.type
-            val descriptor = irCall.descriptor.substitute(typeSubstitutor)!!
-            val superQualifier = irCall.superQualifier?.substitute(typeSubstitutor)
-
-            return IrCallImpl(irCall.startOffset, irCall.endOffset, returnType, descriptor,
-                typeArguments, irCall.origin, superQualifier).apply {
-                    irCall.descriptor.valueParameters.forEach {
-                        val valueArgument = irCall.getValueArgument(it)
-                        putValueArgument(it.index, valueArgument)
-                    }
-                    extensionReceiver = irCall.extensionReceiver
-                    dispatchReceiver  = irCall.dispatchReceiver
-                }
         }
     }
 
@@ -438,7 +340,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             val lambdaReturnType = copyLambdaFunction.descriptor.returnType!!
             val inlineBody       = IrInlineFunctionBody(0, 0, lambdaReturnType, lambdaFunction.descriptor, null, lambdaStatements)
 
-            val transformer = ParametersTransformer(parameterToArgument, null, lambdaStatements)
+            val transformer = ParametersTransformer(parameterToArgument)
             inlineBody.accept(transformer, null)                                            // Replace parameters with expression.
             inlineBody.statements.addAll(0, evaluationStatements)
 

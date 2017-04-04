@@ -43,12 +43,15 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
-internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val typeSubstitutor: TypeSubstitutor?, val context: Context) {
+internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, typeArgsMap: Map <TypeParameterDescriptor, KotlinType>?, val context: Context) {
 
     private val descriptorSubstituteMap: MutableMap<DeclarationDescriptor, DeclarationDescriptor> = mutableMapOf()
+    private var typeSubstitutor = createTypeSubstitutor(typeArgsMap)
     private var inlinedFunctionName = ""
     private var nameIndex = 0
 
@@ -425,6 +428,51 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
             return newDeclaration
         }
 
+        //---------------------------------------------------------------------//
+
+        fun getTypeOperatorReturnType(operator: IrTypeOperator, type: KotlinType) : KotlinType {
+            return when (operator) {
+                IrTypeOperator.CAST,
+                IrTypeOperator.IMPLICIT_CAST,
+                IrTypeOperator.IMPLICIT_NOTNULL,
+                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
+                IrTypeOperator.IMPLICIT_INTEGER_COERCION    -> type
+                IrTypeOperator.SAFE_CAST                    -> type.makeNullable()
+                IrTypeOperator.INSTANCEOF,
+                IrTypeOperator.NOT_INSTANCEOF               -> context.builtIns.booleanType
+            }
+        }
+
+        //---------------------------------------------------------------------//
+
+        override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+
+            val oldExpression = super.visitTypeOperator(expression) as IrTypeOperatorCall
+            if (typeArgsMap == null) return oldExpression
+
+            if (oldExpression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {          // Nothing to do for IMPLICIT_COERCION_TO_UNIT
+                return oldExpression
+            }
+
+            val typeOperand = oldExpression.typeOperand
+            val operandTypeDescriptor = typeOperand.constructor.declarationDescriptor
+            if (operandTypeDescriptor !is TypeParameterDescriptor) return oldExpression        // It is not TypeParameter - do nothing
+
+            var newType = typeArgsMap[operandTypeDescriptor] ?: return expression
+            if (typeOperand.isMarkedNullable) newType = newType.makeNullable()
+            val operator        = oldExpression.operator
+            val returnType      = getTypeOperatorReturnType(operator, newType)
+
+            return IrTypeOperatorCallImpl(
+                oldExpression.startOffset,
+                oldExpression.endOffset,
+                returnType,
+                oldExpression.operator,
+                newType,
+                oldExpression.argument
+            )
+        }
+
         //--- Copy declarations -----------------------------------------------//
 
         private fun copyIrFunctionImpl(oldDeclaration: IrFunction, newDescriptor: DeclarationDescriptor): IrFunction {
@@ -449,7 +497,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
     private fun substituteType(oldType: KotlinType?): KotlinType? {
         if (typeSubstitutor == null) return oldType
         if (oldType == null)         return oldType
-        return typeSubstitutor.substitute(oldType, Variance.INVARIANT) ?: oldType
+        return typeSubstitutor!!.substitute(oldType, Variance.INVARIANT) ?: oldType
     }
 
     //---------------------------------------------------------------------//
@@ -467,6 +515,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
         }
         return newTypeArguments
     }
+
     //---------------------------------------------------------------------//
 
     private fun copyValueParameters(oldValueParameters: List <ValueParameterDescriptor>, containingDeclaration: CallableDescriptor): List <ValueParameterDescriptor> {
@@ -488,5 +537,17 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
             descriptorSubstituteMap[oldDescriptor] = newDescriptor
             newDescriptor
         }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun createTypeSubstitutor(typeArgsMap: Map <TypeParameterDescriptor, KotlinType>?): TypeSubstitutor? {
+
+        if (typeArgsMap == null) return null
+        val substitutionContext = typeArgsMap.entries.associate {
+            (typeParameter, typeArgument) ->
+            typeParameter.typeConstructor to TypeProjectionImpl(typeArgument)
+        }
+        return TypeSubstitutor.create(substitutionContext)
     }
 }
