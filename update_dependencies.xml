@@ -6,8 +6,8 @@
     <property name="ideaVersion" value="171-SNAPSHOT"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
-    <property name="android.studio.version" value="2.4.0.2"/>
-    <property name="android.studio.build.number" value="171.3829324"/>
+    <property name="android.studio.version" value="2.4.0.3"/>
+    <property name="android.studio.build.number" value="171.3870562"/>
     <property name="android.studio.intellij-core.build.number" value="171.3780.107"/>
 
     <property name="kotlin.bootstrap.branch" value=""/>
@@ -800,16 +800,16 @@
             </and>
         </condition>
 
-        <local name="have.android.version"/>
-        <condition property="have.android.version">
+        <local name="have.android.studio.version"/>
+        <condition property="have.android.studio.version">
             <and>
-                <isset property="android.version"/>
-                <isset property="android.build.version"/>
+                <isset property="android.studio.version"/>
+                <isset property="android.studio.build.number"/>
             </and>
         </condition>
 
-        <sequential unless:set="have.android.version">
-            <loadresource property="android.version">
+        <sequential unless:set="have.android.studio.version">
+            <loadresource property="android.studio.version">
                 <url url="https://developer.android.com/studio/preview/index.html"/>
                 <filterchain>
                     <tokenfilter>
@@ -820,7 +820,7 @@
                     </tokenfilter>
                 </filterchain>
             </loadresource>
-            <loadresource property="android.build.version">
+            <loadresource property="android.studio.build.number">
                 <url url="https://developer.android.com/studio/preview/index.html"/>
                 <filterchain>
                     <tokenfilter>
@@ -833,11 +833,11 @@
             </loadresource>
         </sequential>
 
-        <echo message="Download android studio: ${android.version} ${android.build.version}"/>
+        <echo message="Download android studio: ${android.studio.version} ${android.studio.build.number}"/>
 
-        <property name="android.file.name" value="android-studio-ide-${android.build.version}-${android.os.tag}.zip"/>
+        <property name="android.file.name" value="android-studio-ide-${android.studio.build.number}-${android.os.tag}.zip"/>
         <property name="android.studio.url"
-                  value="http://dl.google.com/dl/android/studio/ide-zips/${android.version}/${android.file.name}"/>
+                  value="http://dl.google.com/dl/android/studio/ide-zips/${android.studio.version}/${android.file.name}"/>
         <property name="android.download.dir" value="${dependencies}/android-studio"/>
         <property name="android.destination.dir" value="ideaSDK"/>
 
