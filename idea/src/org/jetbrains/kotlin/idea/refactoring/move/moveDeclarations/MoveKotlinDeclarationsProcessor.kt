@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
 import com.intellij.ide.util.EditorHelper
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -29,6 +30,7 @@ import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveMultipleElementsViewDescriptor
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassHandler
 import com.intellij.refactoring.rename.RenameUtil
+import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.NonCodeUsageInfo
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.refactoring.util.TextOccurrencesUtil
@@ -47,9 +49,9 @@ import org.jetbrains.kotlin.idea.core.deleteSingle
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinClassHandler
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -80,6 +82,8 @@ interface Mover : (KtNamedDeclaration, KtElement) -> KtNamedDeclaration {
         override fun invoke(originalElement: KtNamedDeclaration, targetContainer: KtElement) = originalElement
     }
 }
+
+internal var KtSimpleNameExpression.internalUsageInfo: UsageInfo? by CopyableUserDataProperty(Key.create("INTERNAL_USAGE_INFO"))
 
 class MoveDeclarationsDescriptor(
         val elementsToMove: Collection<KtNamedDeclaration>,
@@ -121,12 +125,6 @@ class MoveKotlinDeclarationsProcessor(
     }
 
     fun getConflictsAsUsages(): List<UsageInfo> = conflicts.entrySet().map { ConflictUsageInfo(it.key, it.value) }
-
-    class UsageToProcessBeforeMoveWrapper private constructor (element: PsiElement, val originalUsage: UsageInfo): UsageInfo(element) {
-        companion object {
-            fun create(originalUsage: UsageInfo) = originalUsage.element?.let { UsageToProcessBeforeMoveWrapper(it, originalUsage) }
-        }
-    }
 
     public override fun findUsages(): Array<UsageInfo> {
         if (elementsToMove.isEmpty()) return UsageInfo.EMPTY_ARRAY
@@ -194,12 +192,8 @@ class MoveKotlinDeclarationsProcessor(
             conflictChecker.checkAllConflicts(externalUsages, internalUsages, conflicts)
             descriptor.delegate.collectConflicts(descriptor, internalUsages, conflicts)
 
+            usages += internalUsages
             usages += externalUsages
-
-            val (usagesToProcessLater, usagesToProcessEarly) = internalUsages.partition { it is UnqualifiableMoveRenameUsageInfo }
-            usages += usagesToProcessLater
-            usagesToProcessBeforeMove += usagesToProcessEarly
-            usages += usagesToProcessBeforeMove.mapNotNull { UsageToProcessBeforeMoveWrapper.create(it) }
         }
 
         descriptor.delegate.collectConflicts(descriptor, usagesToProcessBeforeMove, conflicts)
@@ -212,32 +206,25 @@ class MoveKotlinDeclarationsProcessor(
     }
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
-        fun moveDeclaration(declaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): KtNamedDeclaration? {
-            val file = declaration.containingFile as? KtFile
-            assert(file != null) { "${declaration::class.java}: ${declaration.text}" }
-
+        fun moveDeclaration(declaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): KtNamedDeclaration {
             val targetContainer = moveTarget.getOrCreateTargetPsi(declaration)
                                   ?: throw AssertionError("Couldn't create Kotlin file for: ${declaration::class.java}: ${declaration.text}")
-
             descriptor.delegate.preprocessDeclaration(descriptor, declaration)
-            val newElement = mover(declaration, targetContainer)
-
-            newElement.addToBeShortenedDescendantsToWaitingSet()
-
-            return newElement
+            return mover(declaration, targetContainer).apply {
+                addToBeShortenedDescendantsToWaitingSet()
+            }
         }
 
+        val usageList = usages.toList()
+        val (oldInternalUsages, externalUsages) = usageList.partition { (it as? InternableUsage)?.scope != null }
+        val newInternalUsages = ArrayList<UsageInfo>()
+
+        oldInternalUsages.forEach { (it.element as? KtSimpleNameExpression)?.internalUsageInfo = it }
+
+        val usagesToProcess = ArrayList(externalUsages)
+
         try {
-            val usageList = usages.toList()
-
-            val (usagesToProcessBeforeMoveWrappers, usagesToProcessAfterMove) =
-                    usageList.partition { it is UsageToProcessBeforeMoveWrapper }
-            val usagesToProcessBeforeMove = usagesToProcessBeforeMoveWrappers.map { (it as UsageToProcessBeforeMoveWrapper).originalUsage }
-
-            descriptor.delegate.preprocessUsages(project, descriptor, usagesToProcessBeforeMove)
-            descriptor.delegate.preprocessUsages(project, descriptor, usagesToProcessAfterMove)
-
-            postProcessMoveUsages(usagesToProcessBeforeMove, shorteningMode = ShorteningMode.DELAYED_SHORTENING_VIA_USER_DATA)
+            descriptor.delegate.preprocessUsages(project, descriptor, usageList)
 
             val oldToNewElementsMapping = THashMap<PsiElement, PsiElement>(
                     object: TObjectHashingStrategy<PsiElement> {
@@ -259,18 +246,17 @@ class MoveKotlinDeclarationsProcessor(
                         }
                     }
             )
+
+            val newDeclarations = ArrayList<KtNamedDeclaration>()
+
             for ((sourceFile, kotlinToLightElements) in kotlinToLightElementsBySourceFile) {
                 for ((oldDeclaration, oldLightElements) in kotlinToLightElements) {
                     val elementListener = transaction!!.getElementListener(oldDeclaration)
 
                     val newDeclaration = moveDeclaration(oldDeclaration, descriptor.moveTarget)
-                    if (newDeclaration == null) {
-                        for (oldElement in oldLightElements) {
-                            oldToNewElementsMapping[oldElement] = oldElement
-                        }
-                        continue
-                    }
+                    newDeclarations += newDeclaration
 
+                    oldToNewElementsMapping[oldDeclaration] = newDeclaration
                     oldToNewElementsMapping[sourceFile] = newDeclaration.containingKtFile
 
                     elementListener.elementMoved(newDeclaration)
@@ -288,11 +274,32 @@ class MoveKotlinDeclarationsProcessor(
                 }
             }
 
-            nonCodeUsages = postProcessMoveUsages(usagesToProcessAfterMove, oldToNewElementsMapping).toTypedArray()
+            newDeclarations.forEach { newDeclaration ->
+                newInternalUsages += newDeclaration.collectDescendantsOfType<KtSimpleNameExpression>().mapNotNull {
+                    val usageInfo = it.internalUsageInfo
+                    if (usageInfo?.element != null) return@mapNotNull usageInfo
+                    val referencedElement = (usageInfo as? MoveRenameUsageInfo)?.referencedElement ?: return@mapNotNull null
+                    val newReferencedElement = oldToNewElementsMapping[referencedElement] ?: referencedElement
+                    if (!newReferencedElement.isValid) return@mapNotNull null
+                    (usageInfo as? InternableUsage)?.refresh(it, newReferencedElement)
+                }
+            }
+
+            usagesToProcess += newInternalUsages
+
+            nonCodeUsages = postProcessMoveUsages(usagesToProcess, oldToNewElementsMapping).toTypedArray()
         }
         catch (e: IncorrectOperationException) {
             nonCodeUsages = null
             RefactoringUIUtil.processIncorrectOperation(myProject, e)
+        }
+        finally {
+            (newInternalUsages + oldInternalUsages).forEach {
+                val element = it.element as? KtSimpleNameExpression ?: return@forEach
+                if (element.isValid) {
+                    element.internalUsageInfo = null
+                }
+            }
         }
     }
 

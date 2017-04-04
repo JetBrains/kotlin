@@ -24,7 +24,6 @@ import com.intellij.util.IncorrectOperationException
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
-import org.jetbrains.kotlin.idea.codeInsight.shorten.isToBeShortened
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
@@ -38,7 +37,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementOrCallableRef
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -130,7 +132,6 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
     enum class ShorteningMode {
         NO_SHORTENING,
         DELAYED_SHORTENING,
-        DELAYED_SHORTENING_VIA_USER_DATA,
         FORCED_SHORTENING
     }
 
@@ -159,7 +160,6 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         if (needToShorten) {
             when (shorteningMode) {
                 ShorteningMode.FORCED_SHORTENING -> ShortenReferences.DEFAULT.process(newQualifiedElement)
-                ShorteningMode.DELAYED_SHORTENING_VIA_USER_DATA -> newQualifiedElement.isToBeShortened = true
                 else -> newQualifiedElement.addToShorteningWaitSet()
             }
         }

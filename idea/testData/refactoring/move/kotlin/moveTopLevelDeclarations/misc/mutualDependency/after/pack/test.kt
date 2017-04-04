@@ -1,0 +1,3 @@
+package pack
+
+class C
