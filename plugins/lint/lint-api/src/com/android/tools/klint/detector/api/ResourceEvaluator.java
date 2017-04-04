@@ -27,7 +27,7 @@ import static com.android.tools.klint.client.api.UastLintUtils.toAndroidReferenc
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.ide.common.resources.ResourceUrl;
+import com.android.resources.ResourceUrl;
 import com.android.resources.ResourceType;
 import com.android.tools.klint.client.api.AndroidReference;
 import com.android.tools.klint.client.api.JavaEvaluator;
@@ -641,7 +641,7 @@ public class ResourceEvaluator {
                                             .equals(((PsiReferenceExpression) reference.
                                                     getQualifier()).getReferenceName());
 
-                            return ResourceUrl.create(type, name, isFramework, false);
+                            return ResourceUrl.create(type, name, isFramework);
                         }
                     }
                 }
@@ -658,7 +658,7 @@ public class ResourceEvaluator {
                         String qualifiedName = rClass.getQualifiedName();
                         boolean isFramework = qualifiedName != null
                                 && qualifiedName.startsWith(ANDROID_PKG_PREFIX);
-                        return ResourceUrl.create(type, name, isFramework, false);
+                        return ResourceUrl.create(type, name, isFramework);
                     }
                 }
             }
@@ -678,7 +678,7 @@ public class ResourceEvaluator {
         ResourceType type = androidReference.getType();
         boolean isFramework = androidReference.getPackage().equals("android");
 
-        return ResourceUrl.create(type, name, isFramework, false);
+        return ResourceUrl.create(type, name, isFramework);
     }
 
     private static EnumSet<ResourceType> getAnyRes() {
