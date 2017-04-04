@@ -1,7 +1,7 @@
 # CSV parser
 
  This example shows how one could implement simple comma separated values reader and parser in Kotlin.
-A sample data [European Mammals Red List for 2009] (https://data.europa.eu/euodp/en/data/dataset?res_format=CSV)
+A sample data [European Mammals Red List for 2009](https://data.europa.eu/euodp/en/data/dataset?res_format=CSV)
 from EU is being used.
 
 To build use `./build.sh` script without arguments (or specify `TARGET` variable if cross-compiling).
