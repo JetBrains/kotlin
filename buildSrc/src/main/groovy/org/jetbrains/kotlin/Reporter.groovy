@@ -61,9 +61,9 @@ class Reporter extends DefaultTask {
 
         def report = "total: ${stats.total}\npassed: ${stats.passed}\nfailed: ${stats.failed}\nerror:${stats.error}\nskipped:${stats.skipped} ${epilog}"
         println(report)
-        def session = new SlackSessionFactory().createWebSocketSlackSession("xoxb-137371102001-DaYxLJEmbhOZQiR4XFRLZuHG")
+        def session = new SlackSessionFactory().createWebSocketSlackSession(buildPropeties.'konan-repoter-token')
         session.connect()
-        def channel = session.findChannelByName("kotlin-native-team")
+        def channel = session.findChannelByName(buildPropeties.'konan-channel-name')
         session.sendMessage(channel, "Hello, аборигены Котлина!\n текущий статус:\n${report}")
         session.disconnect()
     }
