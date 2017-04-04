@@ -49,7 +49,8 @@
         <extensionPoint name="analyzeCompleteHandlerExtension"
                         interface="org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension"
                         area="IDEA_PROJECT"/>
-        <extensionPoint name="moduleVisibilityManagerFactory"
-                        interface="org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManagerFactory"/>
+        <extensionPoint name="moduleVisibilityManager"
+                        interface="org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 </idea-plugin>

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.kotlin
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -54,39 +55,20 @@ interface ModuleVisibilityManager {
     fun isInFriendModule(what: DeclarationDescriptor, from: DeclarationDescriptor): Boolean
 
     object SERVICE {
-        @JvmStatic fun getInstance(project: Project): ModuleVisibilityManager =
-                ServiceManager.getService(project, ModuleVisibilityManager::class.java)
+        val EP_NAME = ExtensionPointName.create<ModuleVisibilityManager>("org.jetbrains.kotlin.moduleVisibilityManager")
+
+        @JvmStatic fun getInstance(project: Project): ModuleVisibilityManager = Extensions.getArea(project).getExtensionPoint(EP_NAME).extensions.single()
+    }
+
+    class Default: ModuleVisibilityManager {
+        override fun addModule(module: Module) {}
+
+        override fun addFriendPath(path: String) {}
+
+        override fun isInFriendModule(what: DeclarationDescriptor, from: DeclarationDescriptor): Boolean = true
     }
 }
 
-
-interface ModuleVisibilityManagerFactory {
-    fun create(): ModuleVisibilityManager
-
-    companion object {
-        val EP_NAME = ExtensionPointName.create<ModuleVisibilityManagerFactory>("org.jetbrains.kotlin.moduleVisibilityManagerFactory")
-    }
-
-
-    class Default: ModuleVisibilityManagerFactory {
-
-        override fun create() = DO_NOTHING_MODULE_VISIBILITY_MANAGER
-
-        companion object {
-            val DO_NOTHING_MODULE_VISIBILITY_MANAGER = object : ModuleVisibilityManager {
-                override fun addModule(module: Module) {}
-
-                override fun addFriendPath(path: String) {}
-
-                override fun isInFriendModule(what: DeclarationDescriptor, from: DeclarationDescriptor): Boolean = true
-            }
-        }
-    }
-
-    class Cli: ModuleVisibilityManagerFactory {
-        override fun create() = CliModuleVisibilityManagerImpl()
-    }
-}
 
 class CliModuleVisibilityManagerImpl : ModuleVisibilityManager, Disposable {
     val modules: MutableList<Module> = arrayListOf()

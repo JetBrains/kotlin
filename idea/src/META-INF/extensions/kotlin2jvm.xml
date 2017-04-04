@@ -10,6 +10,6 @@
 
       <!--  <analyzeCompleteHandlerExtension implementation="org.jetbrains.kotlin.resolve.jvm.AnalyzeCompleteHandlerExtension"/> -->
 
-        <moduleVisibilityManagerFactory implementation="org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManagerFactory$Cli" />
+        <moduleVisibilityManager implementation="org.jetbrains.kotlin.load.kotlin.CliModuleVisibilityManagerImpl" />
     </extensions>
 </idea-plugin>
