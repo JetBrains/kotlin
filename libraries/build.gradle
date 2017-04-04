@@ -93,16 +93,45 @@ static def manifestAttributes(Manifest manifest, Project project, String compone
     }
 }
 
+
+task preparePublication {
+    def properties = project.properties
+
+    Map<String, String> repositoryProviders = ['sonatype-nexus-staging' : 'sonatype', 'sonatype-nexus-snapshots' : 'sonatype']
+    project.ext.isRelease = !project.version.toString().contains('-SNAPSHOT')
+
+    String repo = properties['deploy-repo']
+    String repoProvider = repositoryProviders.get(repo, repo)
+    project.ext.isSonatypePublish = repoProvider == 'sonatype'
+    project.ext.isSonatypeRelease = isSonatypePublish && isRelease
+
+    project.ext['signing.keyId'] = project.properties['kotlin.key.name']
+    project.ext['signing.password'] = project.properties['kotlin.key.passphrase']
+
+    String sonatypeSnapshotsUrl = (isSonatypePublish && !isRelease) ? "https://oss.sonatype.org/content/repositories/snapshots/" : null
+
+    ext.repoUrl = properties["deployRepoUrl"] ?: sonatypeSnapshotsUrl ?: properties["deploy-url"] ?: "file://${rootProject.buildDir}/repo"
+    ext.username = properties["deployRepoUsername"] ?: properties["kotlin.${repoProvider}.user"]
+    ext.password = properties["deployRepoPassword"] ?: properties["kotlin.${repoProvider}.password"]
+
+    doLast {
+        println("Deployment respository url: $repoUrl")
+    }
+}
+
+if (isSonatypeRelease) {
+    println 'Applying configuration for sonatype release'
+    apply from: 'prepareSonatypeStaging.gradle'
+}
+
 static def configurePublishing(Project project) {
     project.configure(project) {
         apply plugin: 'maven'
         apply plugin: 'signing'
 
-        project.ext['signing.keyId'] = project.properties['kotlin.key.name']
-        project.ext['signing.password'] = project.properties['kotlin.key.passphrase']
 
         signing {
-            required { (project.properties["signingRequired"] ?: false) }
+            required { (project.properties["signingRequired"] ?: project.isSonatypeRelease) }
             sign configurations.archives
         }
 
@@ -117,13 +146,12 @@ static def configurePublishing(Project project) {
         }
 
         uploadArchives {
-            def properties = project.properties
-            Map<String, String> repositoryProviders = ['sonatype-nexus-staging' : 'sonatype', 'sonatype-nexus-snapshots' : 'sonatype']
-            String repo = properties['deploy-repo']
-            String repoProvider = repositoryProviders.get(repo, repo)
-            String repoUrl = properties["deployRepoUrl"] ?: properties["deploy-url"] ?: "file://${rootProject.buildDir}/repo"
-            String username = properties["deployRepoUsername"] ?: properties["kotlin.${repoProvider}.user"]
-            String password = properties["deployRepoPassword"] ?: properties["kotlin.${repoProvider}.password"]
+            def prepareTask = rootProject.preparePublication
+            dependsOn prepareTask
+
+            doFirst {
+                repositories.mavenDeployer.repository.url = prepareTask.repoUrl
+            }
 
             repositories {
                 mavenDeployer {
@@ -132,8 +160,8 @@ static def configurePublishing(Project project) {
                             signing.signPom(deployment)
                     }
 
-                    repository(url: repoUrl) {
-                        authentication(userName: username, password: password)
+                    repository(url: prepareTask.repoUrl) {
+                        authentication(userName: prepareTask.username, password: prepareTask.password)
                     }
                     pom.project {
                         name "${project.group}:${project.name}"
