@@ -174,7 +174,8 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
 
         private fun copySimpleFunctionDescriptor(oldDescriptor: SimpleFunctionDescriptor) : FunctionDescriptor {
 
-            val containingDeclaration = targetFunction.descriptor
+            val oldContainingDeclaration = oldDescriptor.containingDeclaration
+            val memberOwner = descriptorSubstituteMap[oldContainingDeclaration] ?: targetFunction.descriptor
             val newDescriptor = SimpleFunctionDescriptorImpl.create(
                 containingDeclaration,
                 oldDescriptor.annotations,
@@ -183,20 +184,20 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
                 oldDescriptor.source
             ).apply { isTailrec = oldDescriptor.isTailrec }
 
-            val newDispatchReceiverParameter = null                                         // TODO
-            val newTypeParameters     = oldDescriptor.typeParameters
-            val newValueParameters    = copyValueParameters(oldDescriptor.valueParameters, containingDeclaration)
-            val receiverParameterType = substituteType(oldDescriptor.extensionReceiverParameter?.type)
-            val returnType            = substituteType(oldDescriptor.returnType)
-            assert(newTypeParameters.isEmpty())
+            val oldDispatchReceiverParameter = oldDescriptor.dispatchReceiverParameter
+            val newDispatchReceiverParameter =
+                    if (oldDispatchReceiverParameter == null) null
+                    else descriptorSubstituteMap[oldDispatchReceiverParameter]
+            val newTypeParameters = oldDescriptor.typeParameters
+            val newValueParameters = copyValueParameters(oldDescriptor.valueParameters, newDescriptor)
 
             newDescriptor.initialize(
-                receiverParameterType,
-                newDispatchReceiverParameter,
+                oldDescriptor.extensionReceiverParameter?.type,
+                newDispatchReceiverParameter as? ReceiverParameterDescriptor,
                 newTypeParameters,
                 newValueParameters,
-                returnType,
-                oldDescriptor.modality,
+                oldDescriptor.returnType,
+                Modality.FINAL,
                 oldDescriptor.visibility
             )
             newDescriptor.overriddenDescriptors += oldDescriptor.overriddenDescriptors
@@ -298,8 +299,9 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
             val oldExpression = super.visitCall(expression) as IrCall
             if (oldExpression !is IrCallImpl) return oldExpression                                        // TODO what other kinds of call can we meet?
 
-            val oldDescriptor = oldExpression.descriptor
-            val newDescriptor = descriptorSubstituteMap.getOrDefault(oldDescriptor, oldDescriptor)
+            val oldDescriptor = irCall.descriptor
+            val newDescriptor = descriptorSubstituteMap.getOrDefault(oldDescriptor.original,
+                oldDescriptor) as FunctionDescriptor
 
             val oldSuperQualifier = oldExpression.superQualifier
             var newSuperQualifier: ClassDescriptor? = oldSuperQualifier
