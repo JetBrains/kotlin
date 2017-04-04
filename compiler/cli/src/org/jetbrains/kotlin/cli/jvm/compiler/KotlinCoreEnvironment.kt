@@ -108,12 +108,13 @@ import java.util.*
 class KotlinCoreEnvironment private constructor(
         parentDisposable: Disposable,
         applicationEnvironment: JavaCoreApplicationEnvironment,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
+        configFilePaths: List<String>
 ) {
 
     private val projectEnvironment: JavaCoreProjectEnvironment = object : KotlinCoreProjectEnvironment(parentDisposable, applicationEnvironment) {
         override fun preregisterServices() {
-            registerProjectExtensionPoints(Extensions.getArea(project))
+            registerProjectExtensionPoints(Extensions.getArea(project), configuration, configFilePaths)
         }
 
         override fun registerJavaPsiFacade() {
@@ -150,13 +151,13 @@ class KotlinCoreEnvironment private constructor(
     init {
         val project = projectEnvironment.project
 
-        ExpressionCodegenExtension.registerExtensionPoint(project)
-        SyntheticResolveExtension.registerExtensionPoint(project)
-        ClassBuilderInterceptorExtension.registerExtensionPoint(project)
-        AnalysisHandlerExtension.registerExtensionPoint(project)
-        PackageFragmentProviderExtension.registerExtensionPoint(project)
-        StorageComponentContainerContributor.registerExtensionPoint(project)
-        DeclarationAttributeAltererExtension.registerExtensionPoint(project)
+//        ExpressionCodegenExtension.registerExtensionPoint(project)
+//        SyntheticResolveExtension.registerExtensionPoint(project)
+//        ClassBuilderInterceptorExtension.registerExtensionPoint(project)
+//        AnalysisHandlerExtension.registerExtensionPoint(project)
+//        PackageFragmentProviderExtension.registerExtensionPoint(project)
+//        StorageComponentContainerContributor.registerExtensionPoint(project)
+//        DeclarationAttributeAltererExtension.registerExtensionPoint(project)
         PreprocessedVirtualFileFactoryExtension.registerExtensionPoint(project)
 
         for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
@@ -360,7 +361,7 @@ class KotlinCoreEnvironment private constructor(
                     }
                 })
             }
-            val environment = KotlinCoreEnvironment(parentDisposable, appEnv, configuration)
+            val environment = KotlinCoreEnvironment(parentDisposable, appEnv, configuration, configFilePaths)
 
             synchronized (APPLICATION_LOCK) {
                 ourProjectCount++
@@ -378,7 +379,7 @@ class KotlinCoreEnvironment private constructor(
                 parentDisposable: Disposable, configuration: CompilerConfiguration, extensionConfigs: List<String>
         ): KotlinCoreEnvironment {
             // Tests are supposed to create a single project and dispose it right after use
-            return KotlinCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable, configuration, extensionConfigs), configuration)
+            return KotlinCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable, configuration, extensionConfigs), configuration, extensionConfigs)
         }
 
         // used in the daemon for jar cache cleanup
@@ -441,7 +442,7 @@ class KotlinCoreEnvironment private constructor(
             CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), MetaLanguage.EP_NAME, MetaLanguage::class.java)
         }
 
-        private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
+        private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String, area: ExtensionsArea = Extensions.getRootArea()) {
             val locator = configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)
             var pluginRoot = if (locator == null) PathUtil.getPathUtilJar() else locator.compilerJar
 
@@ -455,7 +456,7 @@ class KotlinCoreEnvironment private constructor(
                 pluginRoot = File(srcDir, "idea/src")
             }
 
-            CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginRoot, configFilePath, Extensions.getRootArea())
+            CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginRoot, configFilePath, area)
         }
 
         private fun registerApplicationServicesForCLI(applicationEnvironment: JavaCoreApplicationEnvironment) {
@@ -476,9 +477,12 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        private fun registerProjectExtensionPoints(area: ExtensionsArea) {
+        private fun registerProjectExtensionPoints(area: ExtensionsArea, configuration: CompilerConfiguration, configFilePaths: List<String>) {
             CoreApplicationEnvironment.registerExtensionPoint(area, PsiTreeChangePreprocessor.EP_NAME, PsiTreeChangePreprocessor::class.java)
             CoreApplicationEnvironment.registerExtensionPoint(area, PsiElementFinder.EP_NAME, PsiElementFinder::class.java)
+            for (configPath in configFilePaths) {
+                registerApplicationExtensionPointsAndExtensionsFrom(configuration, configPath, area)
+            }
         }
 
         // made public for Upsource

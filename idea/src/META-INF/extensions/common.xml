@@ -43,6 +43,12 @@
                         interface="org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProvider"/>
         <extensionPoint name="platformGradleDetector"
                         interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinPlatformGradleDetector"/>
+        <extensionPoint name="declarationAttributeAltererExtension"
+                        interface="org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension"
+                        area="IDEA_PROJECT"/>
+        <extensionPoint name="analyzeCompleteHandlerExtension"
+                        interface="org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension"
+                        area="IDEA_PROJECT"/>
         <extensionPoint name="moduleVisibilityManagerFactory"
                         interface="org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManagerFactory"/>
     </extensionPoints>
