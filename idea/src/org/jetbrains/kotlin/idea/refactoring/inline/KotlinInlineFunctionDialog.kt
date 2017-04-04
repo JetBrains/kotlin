@@ -65,7 +65,7 @@ class KotlinInlineFunctionDialog(
             if (function.isWritable) "Inline all and remove the function"
             else "All invocations in project"
 
-    override fun getKeepTheDeclarationText(): String =
+    override fun getKeepTheDeclarationText(): String? =
             if (function.isWritable) "Inline all and keep the function"
             else super.getKeepTheDeclarationText()
 
