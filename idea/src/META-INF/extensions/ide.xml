@@ -23,6 +23,6 @@
                                  order="last"
                                  implementation="org.jetbrains.kotlin.idea.script.StandardKotlinScriptTemplateProvider"/>
 
-        <moduleVisibilityManager implementation="org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager$Default" />
+        <moduleVisibilityManagerFactory implementation="org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManagerFactory$Default" />
     </extensions>
 </idea-plugin>

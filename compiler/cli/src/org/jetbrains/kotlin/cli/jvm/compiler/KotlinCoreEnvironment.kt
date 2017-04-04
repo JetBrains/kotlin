@@ -87,10 +87,7 @@ import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
-import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
-import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
@@ -167,7 +164,8 @@ class KotlinCoreEnvironment private constructor(
         }
 
         project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
-//        project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl())
+        project.registerService(ModuleVisibilityManager::class.java,
+                                Extensions.getExtensions(ModuleVisibilityManagerFactory.EP_NAME)[0].create())
 
         registerProjectServicesForCLI(projectEnvironment)
         registerProjectServices(projectEnvironment)

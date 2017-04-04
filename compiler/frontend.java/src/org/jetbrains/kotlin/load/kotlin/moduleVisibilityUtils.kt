@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.load.kotlin
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -55,17 +54,37 @@ interface ModuleVisibilityManager {
     fun isInFriendModule(what: DeclarationDescriptor, from: DeclarationDescriptor): Boolean
 
     object SERVICE {
-        private val EP_NAME = ExtensionPointName.create<ModuleVisibilityManager>("org.jetbrains.kotlin.moduleVisibilityManager")
-        @JvmStatic fun getInstance(project: Project): ModuleVisibilityManager = Extensions.getExtensions(EP_NAME/*, project*/)[0]
-//                ServiceManager.getService(project, ModuleVisibilityManager::class.java)
+        @JvmStatic fun getInstance(project: Project): ModuleVisibilityManager =
+                ServiceManager.getService(project, ModuleVisibilityManager::class.java)
+    }
+}
+
+
+interface ModuleVisibilityManagerFactory {
+    fun create(): ModuleVisibilityManager
+
+    companion object {
+        val EP_NAME = ExtensionPointName.create<ModuleVisibilityManagerFactory>("org.jetbrains.kotlin.moduleVisibilityManagerFactory")
     }
 
-    class Default: ModuleVisibilityManager {
-        override fun addModule(module: Module) {}
 
-        override fun addFriendPath(path: String) {}
+    class Default: ModuleVisibilityManagerFactory {
 
-        override fun isInFriendModule(what: DeclarationDescriptor, from: DeclarationDescriptor): Boolean = true
+        override fun create() = DO_NOTHING_MODULE_VISIBILITY_MANAGER
+
+        companion object {
+            val DO_NOTHING_MODULE_VISIBILITY_MANAGER = object : ModuleVisibilityManager {
+                override fun addModule(module: Module) {}
+
+                override fun addFriendPath(path: String) {}
+
+                override fun isInFriendModule(what: DeclarationDescriptor, from: DeclarationDescriptor): Boolean = true
+            }
+        }
+    }
+
+    class Cli: ModuleVisibilityManagerFactory {
+        override fun create() = CliModuleVisibilityManagerImpl()
     }
 }
 

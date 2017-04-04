@@ -8,6 +8,6 @@
         <suppressStringProvider implementation="org.jetbrains.kotlin.js.analyze.SuppressUnusedParameterForJsNative"/>
         <suppressStringProvider implementation="org.jetbrains.kotlin.js.analyze.SuppressNoBodyErrorsForNativeDeclarations"/>
         <diagnosticSuppressor implementation="org.jetbrains.kotlin.js.analyze.SuppressUninitializedErrorsForNativeDeclarations"/>
-        <moduleVisibilityManager implementation="org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager$Default" />
+        <moduleVisibilityManagerFactory implementation="org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManagerFactory$Default" />
     </extensions>
 </idea-plugin>

@@ -43,7 +43,7 @@
                         interface="org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProvider"/>
         <extensionPoint name="platformGradleDetector"
                         interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinPlatformGradleDetector"/>
-        <extensionPoint name="moduleVisibilityManager"
-                        interface="org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager"/>
+        <extensionPoint name="moduleVisibilityManagerFactory"
+                        interface="org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManagerFactory"/>
     </extensionPoints>
 </idea-plugin>
