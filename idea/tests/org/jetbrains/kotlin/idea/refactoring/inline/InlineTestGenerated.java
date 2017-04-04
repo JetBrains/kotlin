@@ -142,6 +142,30 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("Lambda.kt")
+            public void testLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/Lambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Lambda1.kt")
+            public void testLambda1() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/Lambda1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Lambda2.kt")
+            public void testLambda2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/Lambda2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("LambdaGeneric.kt")
+            public void testLambdaGeneric() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/LambdaGeneric.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("MultipleInComposition.kt")
             public void testMultipleInComposition() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/MultipleInComposition.kt");

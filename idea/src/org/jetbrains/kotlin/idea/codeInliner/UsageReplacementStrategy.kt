@@ -27,9 +27,12 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.ui.GuiUtils
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.intentions.ConvertReferenceToLambdaIntention
+import org.jetbrains.kotlin.idea.intentions.SpecifyExplicitLambdaSignatureIntention
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
@@ -122,7 +125,7 @@ fun UsageReplacementStrategy.replaceUsages(
             val targetDeclaration = targetPsiElement as? KtNamedDeclaration
 
             val usagesChildrenFirst = usages.sortChildrenFirst()
-            for (usage in usagesChildrenFirst) {
+            usages@ for (usage in usagesChildrenFirst) {
                 try {
                     if (!usage.isValid) {
                         invalidUsagesFound = true
@@ -130,11 +133,35 @@ fun UsageReplacementStrategy.replaceUsages(
                     }
 
                     val usageParent = usage.parent
-                    if (usageParent is KtCallableReferenceExpression) {
-                        val grandParent = usageParent.parent
-                        ConvertReferenceToLambdaIntention().applyTo(usageParent, null)
-                        (grandParent as? KtElement)?.let { doRefactoringInside(it, targetDeclaration?.name, targetDeclaration?.descriptor) }
-                        continue
+                    when (usageParent) {
+                        is KtCallableReferenceExpression -> {
+                            val grandParent = usageParent.parent
+                            ConvertReferenceToLambdaIntention().applyTo(usageParent, null)
+                            (grandParent as? KtElement)?.let {
+                                doRefactoringInside(it, targetDeclaration?.name, targetDeclaration?.descriptor)
+                            }
+                            continue@usages
+                        }
+                        is KtCallElement -> {
+                            val lambdaArguments = usageParent.lambdaArguments
+                            if (lambdaArguments.isNotEmpty()) {
+                                val grandParent = usageParent.parent
+                                val specifySignature = SpecifyExplicitLambdaSignatureIntention()
+                                for (lambdaArgument in lambdaArguments) {
+                                    val lambdaExpression = lambdaArgument.getLambdaExpression()
+                                    val functionDescriptor =
+                                            lambdaExpression.functionLiteral.resolveToDescriptorIfAny() as? FunctionDescriptor ?: continue
+                                    if (functionDescriptor.valueParameters.isNotEmpty()) {
+                                        specifySignature.applyTo(lambdaExpression, null)
+                                    }
+                                }
+                                (grandParent as? KtElement)?.let {
+                                    doRefactoringInside(it, targetDeclaration?.name, targetDeclaration?.descriptor)
+                                }
+                                continue@usages
+                            }
+                        }
+
                     }
 
                     //TODO: keep the import if we don't know how to replace some of the usages
