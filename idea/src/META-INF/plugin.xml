@@ -1575,6 +1575,16 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ChopParameterListIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ChopArgumentListIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupName="Kotlin"

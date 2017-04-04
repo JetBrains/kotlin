@@ -3144,6 +3144,75 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/chop")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Chop extends AbstractIntentionTest {
+        public void testAllFilesPresentInChop() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/chop"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("idea/testData/intentions/chop/argumentList")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ArgumentList extends AbstractIntentionTest {
+            public void testAllFilesPresentInArgumentList() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/chop/argumentList"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("threeArgs.kt")
+            public void testThreeArgs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/chop/argumentList/threeArgs.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/intentions/chop/parameterList")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ParameterList extends AbstractIntentionTest {
+            public void testAllFilesPresentInParameterList() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/chop/parameterList"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("hasAllLineBreaks.kt")
+            public void testHasAllLineBreaks() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/chop/parameterList/hasAllLineBreaks.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hasSomeLineBreaks1.kt")
+            public void testHasSomeLineBreaks1() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/chop/parameterList/hasSomeLineBreaks1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hasSomeLineBreaks2.kt")
+            public void testHasSomeLineBreaks2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/chop/parameterList/hasSomeLineBreaks2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("oneParameter.kt")
+            public void testOneParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/chop/parameterList/oneParameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("threeParameters.kt")
+            public void testThreeParameters() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/chop/parameterList/threeParameters.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("twoParameters.kt")
+            public void testTwoParameters() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/chop/parameterList/twoParameters.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/conventionNameCalls")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
