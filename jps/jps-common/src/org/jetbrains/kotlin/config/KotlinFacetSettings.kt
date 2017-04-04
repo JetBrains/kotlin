@@ -132,14 +132,20 @@ class KotlinFacetSettings {
         }
 }
 
-fun TargetPlatformKind<*>.createCompilerArguments(): CommonCompilerArguments {
-    return when (this) {
-        is TargetPlatformKind.Jvm -> {
-            K2JVMCompilerArguments().apply { jvmTarget = this@createCompilerArguments.version.description }
-        }
+fun TargetPlatformKind<*>.createCompilerArguments(init: CommonCompilerArguments.() -> Unit = {}): CommonCompilerArguments {
+    val arguments = when (this) {
+        is TargetPlatformKind.Jvm -> K2JVMCompilerArguments()
         is TargetPlatformKind.JavaScript -> K2JSCompilerArguments()
         is TargetPlatformKind.Common -> K2MetadataCompilerArguments()
     }
+
+    arguments.init()
+
+    if (arguments is K2JVMCompilerArguments) {
+        arguments.jvmTarget = this@createCompilerArguments.version.description
+    }
+
+    return arguments
 }
 
 interface KotlinFacetSettingsProvider {
