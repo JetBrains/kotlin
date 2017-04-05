@@ -57,8 +57,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.script.getFileContents
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 internal class EnumSyntheticFunctionsBuilder(val context: Context) {
     fun buildValuesExpression(startOffset: Int, endOffset: Int,
@@ -237,7 +235,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
         private fun lowerEnumEntriesClasses() {
             irClass.declarations.transformFlat { declaration ->
                 if (declaration is IrEnumEntry) {
-                    declaration.singletonList() + lowerEnumEntryClass(declaration.correspondingClass).singletonOrEmptyList()
+                    listOfNotNull(declaration, lowerEnumEntryClass(declaration.correspondingClass))
                 } else null
             }
         }
@@ -256,7 +254,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
             val endOffset = irClass.endOffset
             val descriptor = irClass.descriptor
             val defaultClassDescriptor = ClassDescriptorImpl(descriptor, "DEFAULT".synthesizedName, Modality.FINAL,
-                    ClassKind.CLASS, descriptor.defaultType.singletonList(), SourceElement.NO_SOURCE, false)
+                    ClassKind.CLASS, listOf(descriptor.defaultType), SourceElement.NO_SOURCE, false)
             val defaultClass = IrClassImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, defaultClassDescriptor)
 
             val constructors = mutableSetOf<ClassConstructorDescriptor>()

@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.cli.bc;
 
-import com.sampullara.cli.Argument;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.ValueDescription;
+import org.jetbrains.kotlin.cli.common.parser.com.sampullara.cli.Argument;
 
 public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "output", alias = "o", description = "Output file path")

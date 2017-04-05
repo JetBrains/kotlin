@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 /**
  * This lowering pass lowers all [IrCallableReference]s to unbound ones.
@@ -75,7 +74,7 @@ private fun lowerCallableReferences(lower: CallableReferenceLowering,
     }
     val transformer = CallableReferencesUnbinder(lower, containingDeclaration)
     declaration.transformChildrenVoid(transformer)
-    return declaration.singletonList() + transformer.createdFunctions
+    return listOf(declaration) + transformer.createdFunctions
 }
 
 private object DECLARATION_ORIGIN_FUNCTION_FOR_CALLABLE_REFERENCE :

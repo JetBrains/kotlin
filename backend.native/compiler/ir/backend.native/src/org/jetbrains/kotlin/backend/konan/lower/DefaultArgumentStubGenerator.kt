@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class DefaultArgumentStubGenerator internal constructor(val context: Context): DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
@@ -75,7 +74,7 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
         val functionDescriptor = irFunction.descriptor
 
         if (!functionDescriptor.needsDefaultArgumentsLowering)
-            return irFunction.singletonList()
+            return listOf(irFunction)
 
         val bodies = functionDescriptor.valueParameters
                 .mapNotNull{irFunction.getDefault(it)}
@@ -187,7 +186,7 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
                               origin      = DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER,
                               body        = body))
         }
-        return irFunction.singletonList()
+        return listOf(irFunction)
     }
 
 

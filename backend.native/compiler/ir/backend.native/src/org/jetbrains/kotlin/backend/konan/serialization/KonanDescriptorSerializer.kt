@@ -72,7 +72,8 @@ class KonanDescriptorSerializer private constructor(
 
         val flags = Flags.getClassFlags(
                 hasAnnotations(classDescriptor), classDescriptor.visibility, classDescriptor.modality, classDescriptor.kind,
-                classDescriptor.isInner, classDescriptor.isCompanionObject, classDescriptor.isData, classDescriptor.isExternal
+                classDescriptor.isInner, classDescriptor.isCompanionObject, classDescriptor.isData, classDescriptor.isExternal,
+                classDescriptor.isHeader
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -195,7 +196,7 @@ class KonanDescriptorSerializer private constructor(
         val flags = Flags.getPropertyFlags(
                 hasAnnotations, descriptor.visibility, descriptor.modality, descriptor.kind, descriptor.isVar,
                 hasGetter, hasSetter, hasConstant, isConst, lateInit, descriptor.isExternal,
-                @Suppress("DEPRECATION") descriptor.isDelegated
+                @Suppress("DEPRECATION") descriptor.isDelegated, descriptor.isHeader
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -240,7 +241,8 @@ class KonanDescriptorSerializer private constructor(
 
         val flags = Flags.getFunctionFlags(
                 hasAnnotations(descriptor), descriptor.visibility, descriptor.modality, descriptor.kind, descriptor.isOperator,
-                descriptor.isInfix, descriptor.isInline, descriptor.isTailrec, descriptor.isExternal, descriptor.isSuspend
+                descriptor.isInfix, descriptor.isInline, descriptor.isTailrec, descriptor.isExternal, descriptor.isSuspend,
+                descriptor.isHeader
         )
         if (flags != builder.flags) {
             builder.flags = flags

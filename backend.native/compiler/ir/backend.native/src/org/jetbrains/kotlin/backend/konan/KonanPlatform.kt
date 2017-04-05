@@ -41,7 +41,7 @@ object KonanPlatform : TargetPlatform("Konan") {
     override val multiTargetPlatform = MultiTargetPlatform.Specific(platformName)
     override fun getDefaultImports(languageVersionSettings: LanguageVersionSettings): List<ImportPath> {
        return Default.getDefaultImports(languageVersionSettings) + listOf(
-                ImportPath("konan.*")
+                ImportPath.fromString("konan.*")
         )
     }
 

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
 import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
 import org.jetbrains.kotlin.backend.konan.llvm.base64Encode
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.descriptors.Modality.FINAL
@@ -126,7 +127,7 @@ internal fun deserializeModule(configuration: CompilerConfiguration,
     val moduleDescriptor = ModuleDescriptorImpl(
             Name.special(moduleName), storageManager, builtIns)
     builtIns.builtInsModule = moduleDescriptor
-    val deserializationConfiguration = CompilerDeserializationConfiguration(configuration)
+    val deserializationConfiguration = CompilerDeserializationConfiguration(configuration.languageVersionSettings)
 
     val libraryProto = KonanLinkData.Library
         .parseFrom(base64ToStream(library), 

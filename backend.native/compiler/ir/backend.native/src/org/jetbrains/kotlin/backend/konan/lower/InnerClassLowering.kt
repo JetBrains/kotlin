@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
@@ -71,7 +70,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
         private fun lowerConstructors() {
             irClass.declarations.transformFlat { irMember ->
                 if (irMember is IrConstructor)
-                    lowerConstructor(irMember).singletonList()
+                    listOf(lowerConstructor(irMember))
                 else
                     null
             }
