@@ -4,11 +4,11 @@ fun <T, S : T> test(x: T?, y: S, z: T) {
 
     y is T
     y is S
-    y is T<!USELESS_NULLABLE_CHECK!>?<!>
-    y is S<!USELESS_NULLABLE_CHECK!>?<!>
+    y is T?
+    y is S?
 
     z is T
-    z is T<!USELESS_NULLABLE_CHECK!>?<!>
+    z is T?
 
     <!UNCHECKED_CAST!>null as T<!>
     null <!USELESS_CAST!>as T?<!>

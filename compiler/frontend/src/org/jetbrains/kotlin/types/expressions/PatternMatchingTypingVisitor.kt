@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -433,7 +433,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             context.trace.report(IS_ENUM_ENTRY.on(typeReferenceAfterIs))
         }
 
-        if (!subjectType.isMarkedNullable && targetType.isMarkedNullable) {
+        if (!TypeUtils.isNullableType(subjectType) && targetType.isMarkedNullable) {
             val element = typeReferenceAfterIs.typeElement
             assert(element is KtNullableType) { "element must be instance of " + KtNullableType::class.java.name }
             context.trace.report(Errors.USELESS_NULLABLE_CHECK.on(element as KtNullableType))
