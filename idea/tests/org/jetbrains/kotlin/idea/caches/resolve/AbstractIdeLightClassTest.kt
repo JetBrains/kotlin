@@ -193,10 +193,8 @@ object LightClassLazinessChecker {
             tracker.allowLevel(EXACT)
         }
 
-        // collect method class results on light members that should not trigger exact context evaluation
-        val classInfo = classInfo(lightClass)
-        val fieldsToInfo = lightClass.fields.asList().keysToMap { fieldInfo(it) }
-        val methodsToInfo = lightClass.methods.asList().keysToMap { methodInfo(it) }
+        // collect api method call results on light members that should not trigger exact context evaluation
+        val lazinessInfo = LazinessInfo(lightClass)
 
         tracker.allowLevel(EXACT)
 
@@ -207,26 +205,40 @@ object LightClassLazinessChecker {
         // still running code above to catch possible exceptions
         if (lazinessMode == Mode.NoConsistency) return
 
-        // check collected data against delegates which should contain correct data
-        for ((field, lightFieldInfo) in fieldsToInfo) {
-            val delegate = (field as KtLightField).clsDelegate
-            assertEquals(fieldInfo(delegate), lightFieldInfo)
-        }
-        for ((method, lightMethodInfo) in methodsToInfo) {
-            val delegate = (method as KtLightMethod).clsDelegate
-            assertEquals(methodInfo(delegate), lightMethodInfo)
-        }
+        lazinessInfo.checkConsistency()
+    }
 
-        assertEquals(classInfo(lightClass.clsDelegate), classInfo)
+    private class LazinessInfo(val lightClass: KtLightClass) {
+        val classInfo = classInfo(lightClass)
+        val fieldsToInfo = lightClass.fields.asList().keysToMap { fieldInfo(it) }
+        val methodsToInfo = lightClass.methods.asList().keysToMap { methodInfo(it) }
+        val innerClasses = lightClass.innerClasses.map { LazinessInfo(it as KtLightClass) }
+
+        fun checkConsistency() {
+            // check collected data against delegates which should contain correct data
+            for ((field, lightFieldInfo) in fieldsToInfo) {
+                val delegate = (field as KtLightField).clsDelegate
+                assertEquals(fieldInfo(delegate), lightFieldInfo)
+            }
+            for ((method, lightMethodInfo) in methodsToInfo) {
+                val delegate = (method as KtLightMethod).clsDelegate
+                assertEquals(methodInfo(delegate), lightMethodInfo)
+            }
+
+            assertEquals(classInfo(lightClass.clsDelegate), classInfo)
+
+            innerClasses.forEach(LazinessInfo::checkConsistency)
+        }
     }
 
     private data class ClassInfo(
             val fieldNames: Collection<String>,
-            val methodNames: Collection<String>
+            val methodNames: Collection<String>,
+            val modifiers: List<String>
     )
 
     private fun classInfo(psiClass: PsiClass) = with(psiClass) {
-        ClassInfo(fields.names(), methods.names())
+        ClassInfo(fields.names(), methods.names(), PsiModifier.MODIFIERS.asList().filter { modifierList!!.hasModifierProperty(it) })
     }
 
     private data class FieldInfo(
