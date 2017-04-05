@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.daemon.client
 
-import net.rubygrapefruit.platform.Native
-import net.rubygrapefruit.platform.NativeException
-import net.rubygrapefruit.platform.ProcessLauncher
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -26,6 +23,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
+import java.io.IOException
 import java.io.OutputStream
 import java.io.PrintStream
 import java.net.SocketException
@@ -399,13 +397,17 @@ object KotlinCompilerClient {
         // assuming daemon process is deaf and (mostly) silent, so do not handle streams
         val daemon =
                 try {
-                    val nativeLauncher = Native.get(ProcessLauncher::class.java)
-                    nativeLauncher.start(processBuilder)
+                    launchWithNativePlatformLauncher(processBuilder)
                 }
-                catch (e: NativeException) {
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "Could not start daemon with native process launcher, falling back to ProcessBuilder#start")
-                    processBuilder.start()
+                catch (e: IOException) {
+                    reportingTargets.report(DaemonReportCategory.DEBUG, "Could not start daemon with native process launcher, falling back to ProcessBuilder#start (${e.cause})")
+                    null
                 }
+                catch (e: NoClassDefFoundError) {
+                    reportingTargets.report(DaemonReportCategory.DEBUG, "net.rubygrapefruit.platform library is not in the classpath, falling back to ProcessBuilder#start")
+                    null
+                }
+                ?: processBuilder.start()
 
         val isEchoRead = Semaphore(1)
         isEchoRead.acquire()
