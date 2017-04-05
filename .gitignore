@@ -45,3 +45,6 @@ proto/compiler/google/src/google/protobuf/compiler/kotlin/protoc
 
 # translator auto generated artifacts
 kotstd/ll
+
+#test teamcity property: commitable only with -f 
+backend.native/tests/teamcity-test.property
