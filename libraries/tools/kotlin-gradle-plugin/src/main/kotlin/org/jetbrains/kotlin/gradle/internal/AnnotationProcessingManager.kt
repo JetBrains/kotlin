@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle.internal
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -168,7 +169,7 @@ class AnnotationProcessingManager(
         generateAnnotationProcessorStubs(javaTask, annotationProcessorFqNames, wrappersDirectory)
 
         val processorPath = setOf(wrappersDirectory) + aptFiles
-        setProcessorPath(javaTask, (processorPath + javaTask.classpath).joinToString(File.pathSeparator))
+        setProcessorPath(javaTask, (processorPath + javaTask.classpath))
 
         if (aptOutputDir.exists()) {
             aptOutputDir.deleteRecursively()
@@ -265,11 +266,22 @@ class AnnotationProcessingManager(
         }
     }
 
-    private fun setProcessorPath(javaTask: JavaCompile, path: String) {
+    private fun setProcessorPath(javaTask: JavaCompile, path: Iterable<File>) {
         javaTask.addCompilerArgument("-processorpath") { prevValue ->
             if (prevValue != null)
                 javaTask.logger.warn("Processor path was modified by kapt. Previous value = $prevValue")
-            path
+            path.joinToString(File.pathSeparator)
+        }
+        // Android Gradle plugin ignores -processorpath: starting with 2.4.0-alpha3, it works with its own options
+        trySetProcessorPathForAndroid(javaTask, path)
+    }
+
+    private fun trySetProcessorPathForAndroid(javaTask: JavaCompile, path: Iterable<File>) {
+        val optionsClass = javaTask.options.javaClass
+        try {
+            val setPath = optionsClass.getMethod("setAnnotationProcessorPath", FileCollection::class.java)
+            setPath(javaTask.options, javaTask.project.files(path))
+        } catch (_: NoSuchMethodException) {
         }
     }
 
