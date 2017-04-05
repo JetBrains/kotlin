@@ -53,7 +53,6 @@ import com.sun.tools.javac.util.List as JavacList
 abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
     private companion object {
         val TEST_DATA_DIR = File("plugins/kapt3/testData/kotlinRunner")
-        val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
     }
 
     private lateinit var processors: List<Processor>
@@ -65,12 +64,6 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             options: Map<String, String> = emptyMap(),
             process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit
     ) = testAP(true, name, options, process, *supportedAnnotations)
-
-    protected fun testShouldNotRun(
-            name: String,
-            vararg supportedAnnotations: String,
-            options: Map<String, String> = emptyMap()
-    ) = testAP(false, name, options, { _, _, _ -> fail("Should not run") }, *supportedAnnotations)
 
     protected fun testAP(
             shouldRun: Boolean,
@@ -162,7 +155,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             incrementalDataOutputDir: File
     ) : AbstractKapt3Extension(PathUtil.getJdkClassesRoots() + PathUtil.getKotlinPathsForIdeaPlugin().runtimePath,
                                emptyList(), javaSourceRoots, outputDir, outputDir,
-                               stubsOutputDir, incrementalDataOutputDir, options, "", true, System.currentTimeMillis(),
+                               stubsOutputDir, incrementalDataOutputDir, options, emptyMap(), "", true, System.currentTimeMillis(),
                                KaptLogger(true), correctErrorTypes = true
     ) {
         internal var savedStubs: String? = null

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import javax.tools.JavaFileManager
 
@@ -35,7 +36,8 @@ class KaptContext(
         val bindingContext: BindingContext,
         val compiledClasses: List<ClassNode>,
         val origins: Map<Any, JvmDeclarationOrigin>,
-        processorOptions: Map<String, String>
+        processorOptions: Map<String, String>,
+        javacOptions: Map<String, String> = emptyMap()
 ) : AutoCloseable {
     val context = Context()
     val compiler: KaptJavaCompiler
@@ -60,6 +62,18 @@ class KaptContext(
         for ((key, value) in processorOptions) {
             val option = if (value.isEmpty()) "-A$key" else "-A$key=$value"
             options.put(option, option) // key == value: it's intentional
+        }
+
+        for ((key, value) in javacOptions) {
+            if (value.isNotEmpty()) {
+                options.put(key, value)
+            } else {
+                options.put(key, key)
+            }
+        }
+
+        if (logger.isVerbose) {
+            logger.info("Javac options: " + options.keySet().keysToMap { key -> options[key] ?: "" })
         }
     }
 
