@@ -1,0 +1,10 @@
+package test
+
+public fun foo(): kotlin.String!
+
+public/*package*/ open class TypeParameter {
+    public/*package*/ constructor TypeParameter()
+
+    // Static members
+    public open fun </*0*/ T : kotlin.Any!> method(/*0*/ T!): T!
+}

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.PluginCliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.cliPluginUsageString
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.javac.Javac
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
@@ -183,6 +184,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 val environment = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
                                   ?: return COMPILATION_ERROR
 
+                if (arguments.useJavac) {
+                    environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
+                    environment.registerJavac(outDir = File(destination),
+                                              messageCollector = messageCollector,
+                                              arguments = arguments.javacArguments)
+                }
+                else environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, false)
+
                 if (environment.getSourceFiles().isEmpty()) {
                     if (arguments.version) {
                         return OK
@@ -192,6 +201,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 }
 
                 KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment)
+
+                if (arguments.useJavac) {
+                    val success = Javac.getInstance(environment.project).use(Javac::compile)
+                    if (!success) return COMPILATION_ERROR
+                }
             }
 
             if (arguments.reportPerf) {

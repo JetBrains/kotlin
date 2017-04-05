@@ -19,6 +19,10 @@ package org.jetbrains.kotlin.frontend.java.di
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.JvmBuiltInsPackageFragmentProvider
+import org.jetbrains.kotlin.components.JavacClassFinder
+import org.jetbrains.kotlin.components.JavacJavaPropertyInitializerEvaluator
+import org.jetbrains.kotlin.components.JavacJavaResolverCache
+import org.jetbrains.kotlin.components.JavacSourceElementFactory
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -44,6 +48,37 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+
+private fun StorageComponentContainer.configureJavaTopDownAnalysisWithJavac(
+        moduleContentScope: GlobalSearchScope,
+        project: Project,
+        lookupTracker: LookupTracker
+) {
+    useInstance(moduleContentScope)
+    useInstance(lookupTracker)
+    useImpl<ResolveSession>()
+
+    useImpl<LazyTopDownAnalyzer>()
+    useImpl<JavaDescriptorResolver>()
+    useImpl<DeserializationComponentsForJava>()
+
+    useInstance(VirtualFileFinderFactory.getInstance(project).create(moduleContentScope))
+
+    useImpl<AnnotationResolverImpl>()
+
+    useImpl<JavacClassFinder>()
+    useImpl<SignaturePropagatorImpl>()
+    useImpl<JavacJavaResolverCache>()
+    useImpl<TraceBasedErrorReporter>()
+    useImpl<PsiBasedExternalAnnotationResolver>()
+    useImpl<JavacJavaPropertyInitializerEvaluator>()
+    useInstance(SamWithReceiverResolver())
+    useImpl<SamConversionResolverImpl>()
+    useImpl<JavacSourceElementFactory>()
+    useInstance(InternalFlexibleTypeTransformer)
+
+    useImpl<CompilerDeserializationConfiguration>()
+}
 
 private fun StorageComponentContainer.configureJavaTopDownAnalysis(
         moduleContentScope: GlobalSearchScope,
@@ -88,10 +123,14 @@ fun createContainerForLazyResolveWithJava(
         jvmTarget: JvmTarget,
         languageVersionSettings: LanguageVersionSettings,
         useBuiltInsProvider: Boolean,
-        useLazyResolve: Boolean
+        useLazyResolve: Boolean,
+        useJavac: Boolean
 ): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatform) {
     configureModule(moduleContext, JvmPlatform, jvmTarget, bindingTrace)
-    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker)
+    if (useJavac)
+        configureJavaTopDownAnalysisWithJavac(moduleContentScope, moduleContext.project, lookupTracker)
+    else
+        configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker)
 
     useInstance(packagePartProvider)
     useInstance(moduleClassResolver)
@@ -110,7 +149,10 @@ fun createContainerForLazyResolveWithJava(
         useImpl<LazyResolveToken>()
     }
 }.apply {
-    get<JavaClassFinderImpl>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
+    if (useJavac)
+        get<JavacClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
+    else
+        get<JavaClassFinderImpl>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
 }
 
 
@@ -123,11 +165,12 @@ fun createContainerForTopDownAnalyzerForJvm(
         packagePartProvider: PackagePartProvider,
         moduleClassResolver: ModuleClassResolver,
         jvmTarget: JvmTarget,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        useJavac: Boolean
 ): ComponentProvider = createContainerForLazyResolveWithJava(
         moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope, moduleClassResolver,
         CompilerEnvironment, lookupTracker, packagePartProvider, jvmTarget, languageVersionSettings,
-        useBuiltInsProvider = true, useLazyResolve = false
+        useBuiltInsProvider = true, useLazyResolve = false, useJavac = useJavac
 )
 
 

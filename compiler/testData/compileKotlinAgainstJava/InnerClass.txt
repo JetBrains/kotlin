@@ -1,0 +1,12 @@
+package test
+
+public fun useInnerClass(): kotlin.Unit
+
+public open class InnerClass {
+    public constructor InnerClass()
+
+    public/*package*/ open inner class Inner {
+        public/*package*/ constructor Inner()
+        public open fun doNothing(): kotlin.Unit
+    }
+}

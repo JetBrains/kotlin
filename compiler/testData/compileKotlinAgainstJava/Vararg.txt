@@ -1,0 +1,10 @@
+package test
+
+public fun useVarargs(): kotlin.Unit
+
+public open class Vararg {
+    public constructor Vararg()
+
+    // Static members
+    public open fun method(/*0*/ vararg kotlin.String! /*kotlin.Array<(out) kotlin.String!>!*/): kotlin.Unit
+}

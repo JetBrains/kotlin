@@ -35,7 +35,7 @@ public final annotation class AString : kotlin.Annotation {
     public final val value: kotlin.String
 }
 
-@test.AString(value = "Test") @test.AChar(value = \u0063 ('c')) @test.AInt(value = 10) @test.AByte(value = 11) @test.ALong(value = 12.toLong()) @test.ADouble(value = 1.2.toDouble()) @test.AFloat(value = 1.3.toFloat()) public open class AnnotationTrait {
+@test.AString(value = "Test") @test.AChar(value = \u0063 ('c')) @test.AInt(value = 10) @test.AByte(value = 11.toByte()) @test.ALong(value = 12.toLong()) @test.ADouble(value = 1.2.toDouble()) @test.AFloat(value = 1.3.toFloat()) public open class AnnotationTrait {
     public constructor AnnotationTrait()
 }
 

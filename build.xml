@@ -5,6 +5,12 @@
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
     <property name="shrink" value="true"/>
 
+    <!-- Set to false to disable compiler's javadoc generation. Speeds up the build -->
+    <property name="generate.javadoc" value="false"/>
+
+    <!-- Set to false to prevent jarjar and metadata stripping on kotlin-reflect.jar and reflection sources. Use to debug reflection -->
+    <property name="obfuscate.reflect" value="true"/>
+
     <property name="max.heap.size.for.forked.jvm" value="1024m"/>
 
     <property name="bootstrap.home" value="${basedir}/dependencies/bootstrap-compiler"/>
@@ -21,6 +27,9 @@
     <property name="protobuf.jar" value="${basedir}/dependencies/protobuf-2.6.1.jar"/>
     <property name="javax.inject.jar" value="${basedir}/lib/javax.inject.jar"/>
     <property name="gradle.logging.level" value=""/>
+
+    <property environment="env"/>
+    <property name="tools.jar" value="${env.JDK_18}/lib/tools.jar"/>
 
     <property name="java.target" value="1.8"/>
     <property name="java.target.1.6" value="1.6"/>
@@ -56,6 +65,7 @@
         <file file="${bootstrap.script.runtime}"/>
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
         <pathelement location="${protobuf.jar}"/>
+        <pathelement location="${tools.jar}"/>
 
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
         <fileset dir="${dependencies}" includes="jansi.jar"/>
@@ -85,6 +95,7 @@
         <include name="compiler/ir/ir.psi2ir/src"/>
         <include name="compiler/ir/ir.tree/src"/>
         <include name="compiler/builtins-serializer/src"/>
+        <include name="compiler/javac/src"/>
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
         <include name="compiler/conditional-preprocessor/src/"/>
@@ -140,6 +151,7 @@
         <include name="plugin-api/**"/>
         <include name="annotation-collector/**"/>
         <include name="builtins-serializer/**"/>
+        <include name="javac/**"/>
         <include name="js.ast/**"/>
         <include name="js.translator/**"/>
         <include name="js.frontend/**"/>
@@ -235,6 +247,7 @@
             <fileset dir="compiler/ir/ir.psi2ir/src"/>
             <fileset dir="compiler/ir/ir.tree/src"/>
             <fileset dir="compiler/builtins-serializer/src"/>
+            <fileset dir="compiler/javac/src"/>
             <fileset dir="compiler/cli/src"/>
             <fileset dir="compiler/cli/cli-common/src"/>
             <fileset dir="compiler/conditional-preprocessor/src"/>
@@ -375,6 +388,7 @@
                 <zipfileset src="${dependencies}/jline.jar"/>
                 <zipfileset src="${dependencies}/javaslang-2.0.6.jar"/>
                 <zipfileset src="${protobuf.jar}"/>
+                <zipfileset src="${tools.jar}"/>
 
                 <manifest>
                     <attribute name="Built-By" value="${manifest.impl.vendor}"/>

@@ -1,0 +1,13 @@
+package test
+
+public /*synthesized*/ fun InterfaceField(/*0*/ () -> kotlin.String!): test.InterfaceField
+public fun implementInterface(): test.InterfaceField
+public fun useField(): kotlin.String!
+public fun useFunc(): kotlin.String!
+
+public interface InterfaceField {
+    public abstract fun func(): kotlin.String!
+
+    // Static members
+    public const final val STRING: kotlin.String!
+}

@@ -47,7 +47,7 @@ abstract class VirtualFileFinder : KotlinClassFinder {
         return KotlinBinaryClassCache.getKotlinBinaryClass(file)
     }
 
-    private fun classFileName(jClass: JavaClass): String {
+    protected fun classFileName(jClass: JavaClass): String {
         val simpleName = jClass.name.asString()
         val outerClass = jClass.outerClass ?: return simpleName
         return classFileName(outerClass) + "$" + simpleName

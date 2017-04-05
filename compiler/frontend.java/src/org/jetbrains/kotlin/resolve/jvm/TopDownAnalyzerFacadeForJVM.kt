@@ -143,6 +143,8 @@ object TopDownAnalyzerFacadeForJVM {
                 }
                 else null
 
+        val useJavac = configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC)
+
         val dependencyModule = if (separateModules) {
             val dependenciesContext = ContextForNewModule(
                     moduleContext, Name.special("<dependencies of ${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"),
@@ -154,7 +156,7 @@ object TopDownAnalyzerFacadeForJVM {
 
             val dependenciesContainer = createContainerForTopDownAnalyzerForJvm(
                     dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, lookupTracker,
-                    packagePartProvider(dependencyScope), moduleClassResolver, jvmTarget, languageVersionSettings
+                    packagePartProvider(dependencyScope), moduleClassResolver, jvmTarget, languageVersionSettings, useJavac
             )
 
             StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(dependenciesContainer, null) }
@@ -181,7 +183,7 @@ object TopDownAnalyzerFacadeForJVM {
         // TODO: get rid of duplicate invocation of CodeAnalyzerInitializer#initialize, or refactor CliLightClassGenerationSupport
         val container = createContainerForTopDownAnalyzerForJvm(
                 moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, lookupTracker,
-                partProvider, moduleClassResolver, jvmTarget, languageVersionSettings
+                partProvider, moduleClassResolver, jvmTarget, languageVersionSettings, useJavac
         ).apply {
             initJvmBuiltInsForTopDownAnalysis()
             (partProvider as? IncrementalPackagePartProvider)?.deserializationConfiguration = get<DeserializationConfiguration>()

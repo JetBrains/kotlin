@@ -1,0 +1,10 @@
+package test
+
+public fun method(): kotlin.String!
+
+public/*package*/ open class Method {
+    public/*package*/ constructor Method()
+
+    // Static members
+    public open fun method(): kotlin.String!
+}

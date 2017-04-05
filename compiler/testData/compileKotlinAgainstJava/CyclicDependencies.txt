@@ -1,0 +1,19 @@
+package test
+
+public fun useJavaClass(): test.KotlinClass2!
+
+public open class CyclicDependencies {
+    public constructor CyclicDependencies()
+    public open fun useKotlinClass(): test.KotlinClass!
+    public open fun useKotlinClass2(/*0*/ test.KotlinClass!): test.KotlinClass2!
+}
+
+public final class KotlinClass {
+    public constructor KotlinClass()
+    public final fun getKotlinClass(): test.KotlinClass
+}
+
+public final class KotlinClass2 {
+    public constructor KotlinClass2()
+    public final val str: kotlin.String
+}

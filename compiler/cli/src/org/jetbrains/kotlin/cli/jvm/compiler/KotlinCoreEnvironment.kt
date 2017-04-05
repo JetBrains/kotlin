@@ -68,12 +68,10 @@ import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
-import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
@@ -89,6 +87,7 @@ import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.javac.Javac
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -217,6 +216,33 @@ class KotlinCoreEnvironment private constructor(
         val finderFactory = CliVirtualFileFinderFactory(rootsIndex)
         project.registerService(MetadataFinderFactory::class.java, finderFactory)
         project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
+    }
+
+    // Maybe there is another way to obtain all java files
+    private val VirtualFile.javaFiles: List<VirtualFile>
+        get() = children.filter { it.extension == "java" }
+                .toMutableList()
+                .apply {
+                    children
+                            .filter(VirtualFile::isDirectory)
+                            .forEach { dir -> addAll(dir.javaFiles) }
+                }
+
+    private val javaFiles
+        get() = configuration.kotlinSourceRoots
+                .mapNotNull(this::findLocalDirectory)
+                .flatMap { it.javaFiles }
+                .map { File(it.canonicalPath) }
+
+    fun registerJavac(files: List<File> = javaFiles,
+                      outDir: File? = null,
+                      messageCollector: MessageCollector? = null,
+                      arguments: Array<String>? = null) {
+        projectEnvironment.project.registerService(Javac::class.java, Javac(files,
+                                                                            configuration.jvmClasspathRoots,
+                                                                            outDir,
+                                                                            messageCollector,
+                                                                            arguments))
     }
 
     private val applicationEnvironment: CoreApplicationEnvironment
