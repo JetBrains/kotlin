@@ -98,9 +98,10 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     //---------------------------------------------------------------------//
 
     private fun isLambdaExpression(expression: IrExpression) : Boolean {
-        if (expression !is IrContainerExpressionBase)      return false
-        if (expression.origin != IrStatementOrigin.LAMBDA) return false
-        return true
+        if (expression !is IrContainerExpressionBase)                   return false
+        if (expression.origin == IrStatementOrigin.LAMBDA)              return true
+        if (expression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION)  return true
+        return false
     }
 
     //---------------------------------------------------------------------//
