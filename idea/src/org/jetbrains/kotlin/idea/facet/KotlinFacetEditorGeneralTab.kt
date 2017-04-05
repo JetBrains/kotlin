@@ -227,6 +227,8 @@ class KotlinFacetEditorGeneralTab(
     private val versionValidator = VersionValidator()
     private val coroutineValidator = ArgumentConsistencyValidator()
 
+    private var enableValidation = false
+
     init {
         libraryValidator = FrameworkLibraryValidatorWithDynamicDescription(
                 DelegatingLibrariesValidatorContext(editorContext),
@@ -254,8 +256,6 @@ class KotlinFacetEditorGeneralTab(
         editor.targetPlatformComboBox.validateOnChange()
 
         editor.updateCompilerConfigurable()
-
-        reset()
     }
 
     private fun JTextField.validateOnChange() {
@@ -276,8 +276,17 @@ class KotlinFacetEditorGeneralTab(
         addActionListener { doValidate() }
     }
 
+    private fun validateOnce(body: () -> Unit) {
+        enableValidation = false
+        body()
+        enableValidation = true
+        doValidate()
+    }
+
     private fun doValidate() {
-        validatorsManager.validate()
+        if (enableValidation) {
+            validatorsManager.validate()
+        }
     }
 
     override fun isModified(): Boolean {
@@ -287,29 +296,33 @@ class KotlinFacetEditorGeneralTab(
     }
 
     override fun reset() {
-        editor.useProjectSettingsCheckBox.isSelected = configuration.settings.useProjectSettings
-        editor.targetPlatformComboBox.selectedItem = configuration.settings.targetPlatformKind
-        editor.compilerConfigurable.reset()
-        editor.updateCompilerConfigurable()
+        validateOnce {
+            editor.useProjectSettingsCheckBox.isSelected = configuration.settings.useProjectSettings
+            editor.targetPlatformComboBox.selectedItem = configuration.settings.targetPlatformKind
+            editor.compilerConfigurable.reset()
+            editor.updateCompilerConfigurable()
+        }
     }
 
     override fun apply() {
-        editor.compilerConfigurable.apply()
-        with(configuration.settings) {
-            useProjectSettings = editor.useProjectSettingsCheckBox.isSelected
-            (editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?)?.let {
-                if (it != targetPlatformKind) {
-                    val newCompilerArguments = it.createCompilerArguments()
-                    val platformArguments = when (it) {
-                        is TargetPlatformKind.Jvm -> editor.compilerConfigurable.k2jvmCompilerArguments
-                        is TargetPlatformKind.JavaScript -> editor.compilerConfigurable.k2jsCompilerArguments
-                        else -> null
+        validateOnce {
+            editor.compilerConfigurable.apply()
+            with(configuration.settings) {
+                useProjectSettings = editor.useProjectSettingsCheckBox.isSelected
+                (editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?)?.let {
+                    if (it != targetPlatformKind) {
+                        val newCompilerArguments = it.createCompilerArguments()
+                        val platformArguments = when (it) {
+                            is TargetPlatformKind.Jvm -> editor.compilerConfigurable.k2jvmCompilerArguments
+                            is TargetPlatformKind.JavaScript -> editor.compilerConfigurable.k2jsCompilerArguments
+                            else -> null
+                        }
+                        if (platformArguments != null) {
+                            mergeBeans(platformArguments, newCompilerArguments)
+                        }
+                        copyInheritedFields(compilerArguments!!, newCompilerArguments)
+                        compilerArguments = newCompilerArguments
                     }
-                    if (platformArguments != null) {
-                        mergeBeans(platformArguments, newCompilerArguments)
-                    }
-                    copyInheritedFields(compilerArguments!!, newCompilerArguments)
-                    compilerArguments = newCompilerArguments
                 }
             }
         }
