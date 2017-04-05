@@ -1,1 +1,0 @@
-public final class JavaClass {}
