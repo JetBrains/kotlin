@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -244,12 +245,14 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, typ
 
         private fun copyClassDescriptor(oldDescriptor: ClassDescriptor): ClassDescriptorImpl {
 
+            val oldSuperClass = oldDescriptor.getSuperClassOrAny()
+            val newSuperClass = descriptorSubstituteMap.getOrDefault(oldSuperClass, oldSuperClass) as ClassDescriptor
             return ClassDescriptorImpl(
                 targetFunction.descriptor,
                 generateName(oldDescriptor.name),
                 oldDescriptor.modality,
                 oldDescriptor.kind,
-                listOf(context.builtIns.anyType),                                   // TODO get list of real supertypes
+                listOf(newSuperClass.defaultType),
                 oldDescriptor.source,
                 oldDescriptor.isExternal
             )
