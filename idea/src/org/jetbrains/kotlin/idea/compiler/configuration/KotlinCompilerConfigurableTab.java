@@ -461,11 +461,20 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         commonCompilerArguments.suppressWarnings = !reportWarningsCheckBox.isSelected();
         commonCompilerArguments.languageVersion = getSelectedLanguageVersion().getVersionString();
         commonCompilerArguments.apiVersion = getSelectedAPIVersion().getVersionString();
-        LanguageFeature.State coroutineSupport = (LanguageFeature.State) coroutineSupportComboBox.getSelectedItem();
-        commonCompilerArguments.coroutinesEnable = coroutineSupport == LanguageFeature.State.ENABLED;
-        commonCompilerArguments.coroutinesWarn = coroutineSupport == LanguageFeature.State.ENABLED_WITH_WARNING;
-        commonCompilerArguments.coroutinesError = coroutineSupport == LanguageFeature.State.ENABLED_WITH_ERROR ||
-                                                  coroutineSupport == LanguageFeature.State.DISABLED;
+
+        switch ((LanguageFeature.State) coroutineSupportComboBox.getSelectedItem()) {
+            case ENABLED:
+                commonCompilerArguments.coroutinesState = CommonCompilerArguments.ENABLE;
+                break;
+            case ENABLED_WITH_WARNING:
+                commonCompilerArguments.coroutinesState = CommonCompilerArguments.WARN;
+                break;
+            case ENABLED_WITH_ERROR:
+            case DISABLED:
+                commonCompilerArguments.coroutinesState = CommonCompilerArguments.ERROR;
+                break;
+        }
+
         compilerSettings.additionalArguments = additionalArgsOptionsField.getText();
         compilerSettings.scriptTemplates = scriptTemplatesField.getText();
         compilerSettings.scriptTemplatesClasspath = scriptTemplatesClasspathField.getText();

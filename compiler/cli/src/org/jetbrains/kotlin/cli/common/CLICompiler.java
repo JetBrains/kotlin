@@ -275,19 +275,17 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             @NotNull CompilerConfiguration configuration,
             @NotNull CommonCompilerArguments arguments
     ) {
-        if (arguments.coroutinesError && !arguments.coroutinesWarn && !arguments.coroutinesEnable) {
-            return LanguageFeature.State.ENABLED_WITH_ERROR;
-        }
-        else if (arguments.coroutinesEnable && !arguments.coroutinesWarn && !arguments.coroutinesError) {
-            return LanguageFeature.State.ENABLED;
-        }
-        else if (!arguments.coroutinesEnable && !arguments.coroutinesError) {
-            return null;
-        }
-        else {
-            String message = "The -Xcoroutines can only have one value";
-            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(ERROR, message, null);
-            return null;
+        switch (arguments.coroutinesState) {
+            case CommonCompilerArguments.ERROR:
+                return LanguageFeature.State.ENABLED_WITH_ERROR;
+            case CommonCompilerArguments.ENABLE:
+                return LanguageFeature.State.ENABLED;
+            case CommonCompilerArguments.WARN:
+                return null;
+            default:
+                String message = "Invalid value of -Xcoroutines (should be: enable, warn or error): " + arguments.coroutinesState;
+                configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(ERROR, message, null);
+                return null;
         }
     }
 

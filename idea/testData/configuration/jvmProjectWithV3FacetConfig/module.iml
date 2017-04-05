@@ -11,7 +11,7 @@
   </component>
   <component name="FacetManager">
     <facet type="kotlin-language" name="Kotlin">
-      <configuration version="2" platform="JVM 1.8" useProjectSettings="false">
+      <configuration version="3" platform="JVM 1.8" useProjectSettings="false">
         <compilerSettings>
             <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check" />
         </compilerSettings>
@@ -19,7 +19,7 @@
             <option name="jvmTarget" value="1.7" />
             <option name="languageVersion" value="1.1" />
             <option name="apiVersion" value="1.0" />
-            <option name="coroutinesEnable" value="true" />
+            <option name="coroutinesState" value="enable" />
         </compilerArguments>
       </configuration>
     </facet>

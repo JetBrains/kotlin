@@ -25,6 +25,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
@@ -43,7 +44,7 @@ class LanguageFeatureQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
         resetProjectSettings(LanguageVersion.KOTLIN_1_1)
         myFixture.configureByText("foo.kt", "suspend fun foo()")
 
-        assertFalse(KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.coroutinesEnable)
+        assertEquals(CommonCompilerArguments.WARN, KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.coroutinesState)
         assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, coroutineSupport)
         myFixture.launchAction(myFixture.findSingleIntention("Enable coroutine support in the project"))
         assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
@@ -54,7 +55,7 @@ class LanguageFeatureQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
         resetProjectSettings(LanguageVersion.KOTLIN_1_1)
         myFixture.configureByText("foo.kt", "suspend fun foo()")
 
-        assertFalse(KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.coroutinesEnable)
+        assertEquals(CommonCompilerArguments.WARN, KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.coroutinesState)
         assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, coroutineSupport)
         myFixture.launchAction(myFixture.findSingleIntention("Disable coroutine support in the project"))
         assertEquals(LanguageFeature.State.ENABLED_WITH_ERROR, coroutineSupport)
@@ -161,15 +162,13 @@ class LanguageFeatureQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
 
             ConfigLibraryUtil.addLibrary(editor, model)
         }
-        }
+    }
 
     private fun resetProjectSettings(version: LanguageVersion) {
         KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
             languageVersion = version.versionString
             apiVersion = version.versionString
-            coroutinesEnable = false
-            coroutinesWarn = true
-            coroutinesError = false
+            coroutinesState = CommonCompilerArguments.WARN
         }
     }
 

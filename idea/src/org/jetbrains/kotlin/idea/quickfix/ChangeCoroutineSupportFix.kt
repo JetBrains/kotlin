@@ -25,6 +25,7 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -95,10 +96,11 @@ sealed class ChangeCoroutineSupportFix(
             }
 
             KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
-                coroutinesEnable = coroutineSupport == LanguageFeature.State.ENABLED
-                coroutinesWarn = coroutineSupport == LanguageFeature.State.ENABLED_WITH_WARNING
-                coroutinesError = coroutineSupport == LanguageFeature.State.ENABLED_WITH_ERROR ||
-                                  coroutineSupport == LanguageFeature.State.DISABLED
+                coroutinesState = when (coroutineSupport) {
+                    LanguageFeature.State.ENABLED -> CommonCompilerArguments.ENABLE
+                    LanguageFeature.State.ENABLED_WITH_WARNING -> CommonCompilerArguments.WARN
+                    LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> CommonCompilerArguments.ERROR
+                }
             }
             ProjectRootManagerEx.getInstanceEx(project).makeRootsChange({}, false, true)
         }

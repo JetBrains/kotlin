@@ -91,14 +91,12 @@ public abstract class CommonCompilerArguments implements Serializable {
     @Argument(value = "-Xno-check-impl", description = "Do not check presence of 'impl' modifier in multi-platform projects")
     public boolean noCheckImpl;
 
-    @Argument(value = "-Xcoroutines=warn", description = "")
-    public boolean coroutinesWarn;
-
-    @Argument(value = "-Xcoroutines=error", description = "")
-    public boolean coroutinesError;
-
-    @Argument(value = "-Xcoroutines=enable", description = "")
-    public boolean coroutinesEnable;
+    @Argument(
+            value = "-Xcoroutines",
+            valueDescription = "{enable|warn|error}",
+            description = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier"
+    )
+    public String coroutinesState = WARN;
 
     public List<String> freeArgs = new SmartList<>();
 
@@ -109,17 +107,17 @@ public abstract class CommonCompilerArguments implements Serializable {
 
     @NotNull
     public static CommonCompilerArguments createDefaultInstance() {
-        DummyImpl arguments = new DummyImpl();
-        arguments.coroutinesEnable = false;
-        arguments.coroutinesWarn = true;
-        arguments.coroutinesError = false;
-        return arguments;
+        return new DummyImpl();
     }
 
     @NotNull
     public String executableScriptFileName() {
         return "kotlinc";
     }
+
+    public static final String WARN = "warn";
+    public static final String ERROR = "error";
+    public static final String ENABLE = "enable";
 
     // Used only for serialize and deserialize settings. Don't use in other places!
     public static final class DummyImpl extends CommonCompilerArguments {}

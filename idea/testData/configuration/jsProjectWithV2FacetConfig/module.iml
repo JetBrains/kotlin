@@ -17,8 +17,9 @@
         <compilerArguments>
             <option name="moduleKind" value="amd" />
             <option name="languageVersion" value="1.1" />
-                            <option name="apiVersion" value="1.0" />
-                            <option name="coroutinesWarn" value="true" />
+            <option name="apiVersion" value="1.0" />
+            <option name="coroutinesWarn" value="false" />
+            <option name="coroutinesError" value="true" />
         </compilerArguments>
       </configuration>
     </facet>

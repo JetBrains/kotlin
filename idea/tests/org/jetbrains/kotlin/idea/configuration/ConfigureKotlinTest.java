@@ -195,7 +195,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(TargetPlatformKind.Jvm.Companion.get(JvmTarget.JVM_1_8), settings.getTargetPlatformKind());
         assertEquals("1.1", arguments.languageVersion);
         assertEquals("1.0", arguments.apiVersion);
-        assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, CoroutineSupport.byCompilerArguments(arguments));
+        assertEquals(LanguageFeature.State.ENABLED, CoroutineSupport.byCompilerArguments(arguments));
         assertEquals("1.7", arguments.jvmTarget);
         assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.getCompilerSettings().additionalArguments);
     }
@@ -210,9 +210,24 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(TargetPlatformKind.JavaScript.INSTANCE, settings.getTargetPlatformKind());
         assertEquals("1.1", arguments.languageVersion);
         assertEquals("1.0", arguments.apiVersion);
-        assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, CoroutineSupport.byCompilerArguments(arguments));
+        assertEquals(LanguageFeature.State.ENABLED_WITH_ERROR, CoroutineSupport.byCompilerArguments(arguments));
         assertEquals("amd", arguments.moduleKind);
         assertEquals("-version -meta-info", settings.getCompilerSettings().additionalArguments);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public void testJvmProjectWithV3FacetConfig() {
+        KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
+        K2JVMCompilerArguments arguments = (K2JVMCompilerArguments) settings.getCompilerArguments();
+        assertEquals(false, settings.getUseProjectSettings());
+        assertEquals("1.1", settings.getLanguageLevel().getDescription());
+        assertEquals("1.0", settings.getApiLevel().getDescription());
+        assertEquals(TargetPlatformKind.Jvm.Companion.get(JvmTarget.JVM_1_8), settings.getTargetPlatformKind());
+        assertEquals("1.1", arguments.languageVersion);
+        assertEquals("1.0", arguments.apiVersion);
+        assertEquals(LanguageFeature.State.ENABLED, CoroutineSupport.byCompilerArguments(arguments));
+        assertEquals("1.7", arguments.jvmTarget);
+        assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.getCompilerSettings().additionalArguments);
     }
 
     private void configureFacetAndCheckJvm(JvmTarget jvmTarget) {

@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.build
 
 import junit.framework.TestCase
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
 
@@ -64,14 +62,14 @@ class JvmBuildMetaInfoTest : TestCase() {
     @Test
     fun testEquals() {
         val args1 = K2JVMCompilerArguments()
-        args1.coroutinesEnable = true
+        args1.coroutinesState = CommonCompilerArguments.ENABLE
         val info1 = JvmBuildMetaInfo(args1)
 
         val args2 = K2JVMCompilerArguments()
-        args2.coroutinesEnable = false
+        args2.coroutinesState = CommonCompilerArguments.WARN
         val info2 = JvmBuildMetaInfo(args2)
 
         assertNotEquals(info1, info2)
-        assertEquals(info1, info2.copy(coroutinesEnable = true))
+        assertEquals(info1, info2.copy(coroutinesEnable = true, coroutinesWarn = false))
     }
 }

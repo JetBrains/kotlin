@@ -198,54 +198,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
-    fun testFixCorruptedCoroutines() {
-        createProjectSubFile("build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
-            }
-
-            kotlin {
-                experimental {
-                    coroutines 'enable'
-                }
-            }
-        """)
-
-        importProject()
-
-        with (facetSettings) {
-            compilerArguments!!.coroutinesEnable = true
-            compilerArguments!!.coroutinesWarn = true
-            compilerArguments!!.coroutinesError = true
-
-            importProject()
-
-            Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
-            Assert.assertEquals(true, compilerArguments!!.coroutinesEnable)
-            Assert.assertEquals(false, compilerArguments!!.coroutinesWarn)
-            Assert.assertEquals(false, compilerArguments!!.coroutinesError)
-        }
-    }
-
-    @Test
     fun testCoroutineImportByProperties() {
         createProjectSubFile("gradle.properties", "kotlin.coroutines=enable")
         createProjectSubFile("build.gradle", """

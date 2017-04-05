@@ -29,20 +29,13 @@ class Usage {
     // The magic number 29 corresponds to the similar padding width in javac and scalac command line compilers
     private static final int OPTION_NAME_PADDING_WIDTH = 29;
 
-    private static final String coroutinesKeyDescription = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier";
-
     public static void print(@NotNull PrintStream target, @NotNull CommonCompilerArguments arguments, boolean extraHelp) {
         target.println("Usage: " + arguments.executableScriptFileName() + " <options> <source files>");
         target.println("where " + (extraHelp ? "advanced" : "possible") + " options include:");
-        boolean coroutinesUsagePrinted = false;
         for (Class<?> clazz = arguments.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
             for (Field field : clazz.getDeclaredFields()) {
                 String usage = fieldUsage(field, extraHelp);
                 if (usage != null) {
-                    if (usage.contains("Xcoroutines")) {
-                        if (coroutinesUsagePrinted) continue;
-                        coroutinesUsagePrinted = true;
-                    }
                     target.println(usage);
                 }
             }
@@ -59,14 +52,10 @@ class Usage {
         Argument argument = field.getAnnotation(Argument.class);
         if (argument == null) return null;
 
-        String argumentValue = argument.value();
-        // TODO: this is a dirty hack, provide better mechanism for keys that can have several values
-        boolean isXCoroutinesKey = argumentValue.contains("Xcoroutines");
-        String value = isXCoroutinesKey ? "-Xcoroutines={enable|warn|error}" : argumentValue;
         if (extraHelp != ParseCommandLineArgumentsKt.isAdvanced(argument)) return null;
 
         StringBuilder sb = new StringBuilder("  ");
-        sb.append(value);
+        sb.append(argument.value());
 
         if (!argument.shortName().isEmpty()) {
             sb.append(" (");
@@ -77,12 +66,6 @@ class Usage {
         if (!argument.valueDescription().isEmpty()) {
             sb.append(ParseCommandLineArgumentsKt.isAdvanced(argument) ? "=" : " ");
             sb.append(argument.valueDescription());
-        }
-
-        if (isXCoroutinesKey) {
-            sb.append(" ");
-            sb.append(coroutinesKeyDescription);
-            return sb.toString();
         }
 
         int width = OPTION_NAME_PADDING_WIDTH - 1;
