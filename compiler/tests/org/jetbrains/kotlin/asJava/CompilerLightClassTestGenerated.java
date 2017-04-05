@@ -42,6 +42,18 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         doTest(fileName);
     }
 
+    @TestMetadata("DataClassWithCustomImplementedMembers.kt")
+    public void testDataClassWithCustomImplementedMembers() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/DataClassWithCustomImplementedMembers.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DelegatedNested.kt")
+    public void testDelegatedNested() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/DelegatedNested.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Delegation.kt")
     public void testDelegation() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/Delegation.kt");
