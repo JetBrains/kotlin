@@ -26,6 +26,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.ShutDownTracker;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
@@ -1074,5 +1075,9 @@ public class KotlinTestUtils {
     public static boolean isAllFilesPresentTest(String testName) {
         //noinspection SpellCheckingInspection
         return testName.toLowerCase().startsWith("allfilespresentin");
+    }
+
+    public static String nameToCompare(@NotNull String name) {
+        return (SystemInfo.isFileSystemCaseSensitive ? name : name.toLowerCase()).replace('\\', '/');
     }
 }
