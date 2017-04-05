@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrContainerExpressionBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrMemberAccessExpressionBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -198,8 +197,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         copyWithDescriptors = DeepCopyIrTreeWithDescriptors(currentFunction!!, typeArgsMap, context)
         val functionName = functionDeclaration.descriptor.name.toString()
 
-        val copyBlockBody = originBlockBody.accept(InlineCopyIr(), null) as IrBlockBody     // Create copy of original function body.
-        copyWithDescriptors!!.copy(copyBlockBody, functionName)                             // TODO merge DeepCopyIrTreeWithDescriptors with InlineCopyIr
+        val copyBlockBody = copyWithDescriptors!!.copy(originBlockBody, functionName) as IrBlockBody  // Create copy of original function body.
 
         val originalDescriptor = functionDeclaration.descriptor.original
         val startOffset = functionDeclaration.startOffset
@@ -247,10 +245,11 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
             val newExpression = super.visitGetValue(expression) as IrGetValue
             val descriptor = newExpression.descriptor
-            val argument = substituteMap[descriptor]?.accept(InlineCopyIr(), null) as IrExpression?  // Find expression to replace this parameter.
+            val argument = substituteMap[descriptor]                                        // Find expression to replace this parameter.
             if (argument == null) return newExpression                                    // If there is no such expression - do nothing
 
-            return argument
+            val newArgument = copyWithDescriptors!!.copy(argument, "lambda")
+            return newArgument as IrExpression
         }
     }
 
@@ -336,9 +335,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             val parameterToArgument = evaluatedParameters.parameters
             val evaluationStatements = evaluatedParameters.statements
 
-            val copyLambdaFunction = lambdaFunction.accept(InlineCopyIr(),                  // Create copy of the function.
-                null) as IrFunction
-            copyWithDescriptors!!.copy(copyLambdaFunction, "lambda")                  // TODO merge DeepCopyIrTreeWithDescriptors with InlineCopyIr
+            val copyLambdaFunction = copyWithDescriptors!!.copy(lambdaFunction, "lambda") as IrFunction   // Create copy of the function.
 
             val lambdaStatements = (copyLambdaFunction.body as IrBlockBody).statements
             val lambdaReturnType = copyLambdaFunction.descriptor.returnType!!
@@ -359,25 +356,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
             if (!isLambdaCall(newExpression)) return newExpression                          // If call it is not lambda call - do nothing.
             return inlineLambda(newExpression)
-        }
-    }
-}
-
-//-----------------------------------------------------------------------------//
-
-class InlineCopyIr() : DeepCopyIrTree() {
-
-    override fun visitBlock(expression: IrBlock): IrBlock {
-        return if (expression is IrInlineFunctionBody) {
-            IrInlineFunctionBody(
-                expression.startOffset, expression.endOffset,
-                expression.type,
-                expression.descriptor,
-                mapStatementOrigin(expression.origin),
-                expression.statements.map { it.transform(this, null) }
-            )
-        } else {
-            super.visitBlock(expression)
         }
     }
 }
