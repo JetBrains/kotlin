@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope.Companion.sourceAndClassFiles
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -70,12 +71,10 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             )
         }
         else {
-            val hasDelegatedMembers = classOrObject.superTypeListEntries.any { it is KtDelegatedSuperTypeEntry }
-            val dummyContextProvider = { IDELightClassContexts.lightContextForClassOrObject(classOrObject) }
             LazyLightClassDataHolder.ForClass(
                     builder,
                     exactContextProvider = { IDELightClassContexts.contextForNonLocalClassOrObject(classOrObject) },
-                    dummyContextProvider = if (!hasDelegatedMembers) dummyContextProvider else null
+                    dummyContextProvider = { IDELightClassContexts.lightContextForClassOrObject(classOrObject) }
             )
         }
     }

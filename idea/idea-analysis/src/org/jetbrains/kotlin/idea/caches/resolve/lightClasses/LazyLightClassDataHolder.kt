@@ -38,12 +38,13 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
-typealias LightClassContextProvider = () -> LightClassConstructionContext
+typealias ExactLightClassContextProvider = () -> LightClassConstructionContext
+typealias DummyLightClassContextProvider = (() -> LightClassConstructionContext?)?
 
 sealed class LazyLightClassDataHolder(
         builder: LightClassBuilder,
-        exactContextProvider: LightClassContextProvider,
-        dummyContextProvider: LightClassContextProvider?
+        exactContextProvider: ExactLightClassContextProvider,
+        dummyContextProvider: DummyLightClassContextProvider
 ) : LightClassDataHolder {
 
     private val exactResultLazyValue = lazyPub { builder(exactContextProvider()) }
@@ -51,7 +52,7 @@ sealed class LazyLightClassDataHolder(
     private val exactResult: LightClassBuilderResult by exactResultLazyValue
 
     private val lazyInexactResult by lazyPub {
-        dummyContextProvider?.let { builder.invoke(it()) }
+        dummyContextProvider?.let { provider -> provider()?.let { context -> builder.invoke(context) } }
     }
 
     private val inexactResult: LightClassBuilderResult?
@@ -67,7 +68,7 @@ sealed class LazyLightClassDataHolder(
             }
 
     class ForClass(
-            builder: LightClassBuilder, exactContextProvider: LightClassContextProvider, dummyContextProvider: LightClassContextProvider?
+            builder: LightClassBuilder, exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
     ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForClass {
         override fun findDataForClassOrObject(classOrObject: KtClassOrObject): LightClassData =
                 LazyLightClassData(relyOnDummySupertypes = classOrObject.getSuperTypeList() == null) { lightClassBuilderResult ->
@@ -76,7 +77,7 @@ sealed class LazyLightClassDataHolder(
     }
 
     class ForFacade(
-            builder: LightClassBuilder, exactContextProvider: LightClassContextProvider, dummyContextProvider: LightClassContextProvider?
+            builder: LightClassBuilder, exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
     ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForFacade
 
     private inner class LazyLightClassData(
