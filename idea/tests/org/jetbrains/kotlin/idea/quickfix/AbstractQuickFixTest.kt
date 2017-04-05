@@ -17,65 +17,112 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.daemon.quickFix.ActionHint
+import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase
+import com.intellij.codeInsight.daemon.quickFix.QuickFixTestCase
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.SuppressableProblemGroup
+import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.CharsetToolkit
+import com.intellij.psi.stubs.StubUpdatingIndex
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.testFramework.InspectionTestUtil
+import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.ui.UIUtil
+import com.intellij.util.ArrayUtil
+import com.intellij.util.ObjectUtils.notNull
+import com.intellij.util.indexing.FileBasedIndex
 import junit.framework.TestCase
+import org.apache.commons.lang.SystemUtils
+import org.jetbrains.kotlin.idea.KotlinLightQuickFixTestCase
 import org.jetbrains.kotlin.idea.quickfix.utils.findInspectionFile
-import org.jetbrains.kotlin.idea.test.*
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.TestFixtureExtension
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.File
 import java.io.IOException
+import java.nio.charset.Charset
+import java.util.*
 
-abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractQuickFixTest : KotlinLightQuickFixTestCase() {
+    @Throws(Exception::class)
+    override fun setUp() {
+        super.setUp()
+        (StartupManager.getInstance(LightPlatformTestCase.getProject()) as StartupManagerImpl).runPostStartupActivities()
+    }
+
     @Throws(Exception::class)
     protected fun doTest(beforeFileName: String) {
-        enableInspections(beforeFileName)
+        try {
+            configureRuntimeIfNeeded(beforeFileName)
 
-        doKotlinQuickFixTest(beforeFileName)
-        checkForUnexpectedErrors()
-    }
+            enableInspections(beforeFileName)
 
-    override fun getProjectDescriptor(): LightProjectDescriptor {
-        if ("createfromusage" in testDataPath.toLowerCase()) {
-            return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+            doSingleTest(getTestName(false) + ".kt")
+            checkForUnexpectedErrors()
         }
-        return super.getProjectDescriptor()
+        finally {
+            unConfigureRuntimeIfNeeded(beforeFileName)
+        }
     }
 
-    override val captureExceptions: Boolean
-        get() = false
+    //region Severe hack - lot of code copied from LightQuickFixTestCase to workaround stupid format of test data with before/after prefixes
+    override fun doSingleTest(fileSuffix: String) {
+        doKotlinQuickFixTest(fileSuffix, createWrapper())
+    }
 
-    fun shouldBeAvailableAfterExecution(): Boolean {
-        return InTextDirectivesUtils.isDirectiveDefined(myFixture.file.text, "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION")
+    override fun shouldBeAvailableAfterExecution(): Boolean {
+        return InTextDirectivesUtils.isDirectiveDefined(myWrapper!!.file.text, "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION")
+    }
+
+    override fun configureLocalInspectionTools(): Array<LocalInspectionTool> {
+        if (KotlinTestUtils.isAllFilesPresentTest(getTestName(false))) return super.configureLocalInspectionTools()
+
+        val testRoot = KotlinTestUtils.getTestsRoot(this.javaClass)
+        val configFileText = File(testRoot, getTestName(true) + ".kt").readText(Charset.defaultCharset())
+        val toolsStrings = InTextDirectivesUtils.findListWithPrefixes(configFileText, "TOOL:")
+
+        if (toolsStrings.isEmpty()) return super.configureLocalInspectionTools()
+
+        return ArrayUtil.toObjectArray(toolsStrings.map { toolFqName ->
+            try {
+                val aClass = Class.forName(toolFqName)
+                return@map aClass.newInstance() as LocalInspectionTool
+            }
+            catch (e: Exception) {
+                throw IllegalArgumentException("Failed to create inspection for key '$toolFqName'", e)
+            }
+        }, LocalInspectionTool::class.java)
     }
 
     protected open fun configExtra(options: String) {
 
     }
 
-    private fun doKotlinQuickFixTest(beforeFileName: String) {
-        val testFile = File(beforeFileName)
-        CommandProcessor.getInstance().executeCommand(project, {
+    private fun doKotlinQuickFixTest(testName: String, quickFixTestCase: QuickFixTestCase) {
+        val relativePath = notNull(quickFixTestCase.basePath, "") + "/" + testName.decapitalize()
+        val testFullPath = quickFixTestCase.testDataPath.replace(File.separatorChar, '/') + relativePath
+        val testFile = File(testFullPath)
+        CommandProcessor.getInstance().executeCommand(quickFixTestCase.project, {
             var fileText = ""
             var expectedErrorMessage: String? = ""
             var fixtureClasses = emptyList<String>()
             try {
                 fileText = FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET)
-                TestCase.assertTrue("\"<caret>\" is missing in file \"${testFile.path}\"", fileText.contains("<caret>"))
+                TestCase.assertTrue("\"<caret>\" is missing in file \"$testName\"", fileText.contains("<caret>"))
 
                 fixtureClasses = InTextDirectivesUtils.findListWithPrefixes(fileText, "// FIXTURE_CLASS: ")
                 for (fixtureClass in fixtureClasses) {
@@ -84,13 +131,14 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
 
                 expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ")
                 val contents = StringUtil.convertLineSeparators(fileText)
-                myFixture.configureByText(testFile.canonicalFile.name, contents)
+                quickFixTestCase.configureFromFileText(testFile.name, contents)
+                quickFixTestCase.bringRealEditorBack()
 
                 checkForUnexpectedActions()
 
                 configExtra(fileText)
 
-                applyAction(contents, testFile.canonicalPath)
+                applyAction(contents, quickFixTestCase, testName, testFullPath)
 
                 UsefulTestCase.assertEmpty(expectedErrorMessage)
             }
@@ -103,76 +151,60 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
             catch (e: Throwable) {
                 if (expectedErrorMessage == null || expectedErrorMessage != e.message) {
                     e.printStackTrace()
-                    TestCase.fail(getTestName(true))
+                    TestCase.fail(testName)
                 }
             }
             finally {
                 for (fixtureClass in fixtureClasses) {
                     TestFixtureExtension.unloadFixture(fixtureClass)
                 }
-                ConfigLibraryUtil.unconfigureLibrariesByDirective(myFixture.module, fileText)
+                ConfigLibraryUtil.unconfigureLibrariesByDirective(LightPlatformTestCase.getModule(), fileText)
             }
         }, "", "")
     }
 
-    private fun applyAction(contents: String, testFullPath: String) {
-        val fileName = testFullPath.substringAfterLast(File.separatorChar, "")
-        val actionHint = ActionHint.parse(myFixture.file, contents.replace("\${file}", fileName, ignoreCase = true))
-        val intention = findActionWithText(actionHint.expectedText)
-        if (actionHint.shouldPresent()) {
-            if (intention == null) {
-                fail("Action with text '" + actionHint.expectedText + "' not found\nAvailable actions: " +
-                     myFixture.availableIntentions.joinToString(prefix = "[", postfix = "]") { it.text })
-            }
-            myFixture.launchAction(intention!!)
-            UIUtil.dispatchAllInvocationEvents()
-            UIUtil.dispatchAllInvocationEvents()
+    @Throws(Exception::class)
+    override fun doAction(actionHint: ActionHint, testFullPath: String, testName: String) {
+        LightQuickFixTestCase.doAction(actionHint, testFullPath, testName, myWrapper!!)
+    }
 
-            if (!shouldBeAvailableAfterExecution()) {
-                assertNull("Action '${actionHint.expectedText}' is still available after its invocation in test " + testFullPath,
-                            findActionWithText(actionHint.expectedText))
-            }
+    override fun checkResultByFile(message: String?, filePath: String, ignoreTrailingSpaces: Boolean) {
+        val file = File(filePath)
+        val afterFileName = file.name
+        assert(afterFileName.startsWith(LightQuickFixTestCase.AFTER_PREFIX))
+        val newAfterFileName = afterFileName.substring(LightQuickFixTestCase.AFTER_PREFIX.length).decapitalize() + ".after"
 
-            myFixture.checkResultByFile(File(testFullPath).name + ".after")
+        super.checkResultByFile(message, File(file.parent, newAfterFileName).path, ignoreTrailingSpaces)
+    }
+
+    @Throws(IOException::class)
+    private fun unConfigureRuntimeIfNeeded(beforeFileName: String) {
+        if (beforeFileName.endsWith("JsRuntime.kt")) {
+            ConfigLibraryUtil.unConfigureKotlinJsRuntimeAndSdk(LightPlatformTestCase.getModule(), projectJDK)
         }
-        else {
-            assertNull("Action with text ${actionHint.expectedText} is present, but should not", intention)
+        else if (isRuntimeNeeded(beforeFileName)) {
+            ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(LightPlatformTestCase.getModule(), projectJDK)
         }
     }
 
+    @Throws(IOException::class, ClassNotFoundException::class)
     private fun enableInspections(beforeFileName: String) {
-        val beforeFileText = FileUtil.loadFile(File(beforeFileName))
-        val toolsStrings = InTextDirectivesUtils.findListWithPrefixes(beforeFileText, "TOOL:")
-        if (toolsStrings.isNotEmpty()) {
-            val inspections =  toolsStrings.map { toolFqName ->
-                try {
-                    val aClass = Class.forName(toolFqName)
-                    return@map aClass.newInstance() as LocalInspectionTool
-                }
-                catch (e: Exception) {
-                    throw IllegalArgumentException("Failed to create inspection for key '$toolFqName'", e)
-                }
-            }
-            myFixture.enableInspections(*inspections.toTypedArray())
-            return
-        }
-
         val inspectionFile = findInspectionFile(File(beforeFileName).parentFile)
         if (inspectionFile != null) {
             val className = FileUtil.loadFile(inspectionFile).trim { it <= ' ' }
             val inspectionClass = Class.forName(className) as Class<InspectionProfileEntry>
             val tools = InspectionTestUtil.instantiateTools(
                     listOf<Class<out InspectionProfileEntry>>(inspectionClass))
-            myFixture.enableInspections(*tools.toTypedArray())
+            enableInspectionTools(tools[0])
         }
     }
 
     @Throws(ClassNotFoundException::class)
     private fun checkForUnexpectedActions() {
-        val text = myFixture.editor.document.text
-        val actionHint = ActionHint.parse(myFixture.file, text)
+        val text = LightPlatformCodeInsightTestCase.getEditor().getDocument().getText()
+        val actionHint = ActionHint.parse(LightPlatformCodeInsightTestCase.getFile(), text)
         if (!actionHint.shouldPresent()) {
-            val actions = myFixture.availableIntentions
+            val actions = availableActions
 
             val prefix = "class "
             if (actionHint.expectedText.startsWith(prefix)) {
@@ -197,22 +229,22 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
             }
             else {
                 // Action shouldn't be found. Check that other actions are expected and thus tested action isn't there under another name.
-                DirectiveBasedActionUtils.checkAvailableActionsAreExpected(myFixture.file, actions)
+                DirectiveBasedActionUtils.checkAvailableActionsAreExpected(LightPlatformCodeInsightTestCase.getFile(), actions)
             }
         }
     }
 
-    fun findActionWithText(text: String): IntentionAction? {
-        val intentions = myFixture.availableIntentions.filter { it.text == text }
-        if (intentions.isNotEmpty()) return intentions.first()
+    override fun findActionWithText(text: String): IntentionAction? {
+        val intention = super.findActionWithText(text)
+        if (intention != null) return intention
 
         // Support warning suppression
-        val caretOffset = myFixture.caretOffset
-        for (highlight in myFixture.doHighlighting()) {
+        val caretOffset = LightPlatformCodeInsightTestCase.myEditor.getCaretModel().getOffset()
+        for (highlight in doHighlighting()) {
             if (highlight.startOffset <= caretOffset && caretOffset <= highlight.endOffset) {
                 val group = highlight.problemGroup
                 if (group is SuppressableProblemGroup) {
-                    val at = myFixture.file.findElementAt(highlight.actualStartOffset)
+                    val at = LightPlatformCodeInsightTestCase.getFile().findElementAt(highlight.actualStartOffset)
                     val actions = group.getSuppressActions(at)
                     for (action in actions) {
                         if (action.text == text) {
@@ -225,20 +257,72 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
         return null
     }
 
-    fun checkForUnexpectedErrors() {
-        DirectiveBasedActionUtils.checkForUnexpectedErrors(myFixture.file as KtFile)
+    override fun checkResultByText(message: String?, fileText: String, ignoreTrailingSpaces: Boolean, filePath: String?) {
+        super.checkResultByText(message, fileText, ignoreTrailingSpaces, File(filePath!!).absolutePath)
+    }
+
+    override fun getBasePath(): String {
+        return KotlinTestUtils.getTestsRoot(javaClass)
     }
 
     override fun getTestDataPath(): String {
-        // Ensure full path is returned. Otherwise FileComparisonFailureException does not provide link to file diff
-        val testDataPath = super.getTestDataPath()
-        try {
-            return File(testDataPath).getCanonicalPath()
+        return "./"
+    }
+
+    override fun getProjectJDK(): Sdk {
+        return PluginTestCaseBase.mockJdk()
+    }
+
+    companion object {
+
+        private var myWrapper: QuickFixTestCase? = null
+
+        @Throws(Exception::class)
+        private fun applyAction(contents: String, quickFixTestCase: QuickFixTestCase, testName: String, testFullPath: String) {
+            val fileName = testFullPath.substringAfterLast("/", "")
+            val actionHint = ActionHint.parse(quickFixTestCase.file, contents.replace("\${file}", fileName))
+
+            quickFixTestCase.beforeActionStarted(testName, contents)
+
+            try {
+                myWrapper = quickFixTestCase
+                quickFixTestCase.doAction(actionHint, testFullPath, testName)
+            }
+            finally {
+                myWrapper = null
+                quickFixTestCase.afterActionCompleted(testName, contents)
+            }
         }
-        catch (e: IOException) {
-            e.printStackTrace()
-            return testDataPath
+        //endregion
+
+        @Throws(IOException::class)
+        private fun configureRuntimeIfNeeded(beforeFileName: String) {
+            if (beforeFileName.endsWith("JsRuntime.kt")) {
+                // Without the following line of code subsequent tests with js-runtime will be prone to failure due "outdated stub in index" error.
+                FileBasedIndex.getInstance().requestRebuild(StubUpdatingIndex.INDEX_ID)
+
+                ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk(LightPlatformTestCase.getModule(), fullJavaJDK)
+            }
+            else if (isRuntimeNeeded(beforeFileName)) {
+                ConfigLibraryUtil.configureKotlinRuntimeAndSdk(LightPlatformTestCase.getModule(), fullJavaJDK)
+            }
+            else if (beforeFileName.contains("Runtime") || beforeFileName.contains("JsRuntime")) {
+                Assert.fail("Runtime marker is used in test name, but not in test file end. " + "This can lead to false-positive absent of actions")
+            }
         }
 
+        @Throws(IOException::class)
+        private fun isRuntimeNeeded(beforeFileName: String): Boolean {
+            return beforeFileName.endsWith("Runtime.kt") ||
+                   beforeFileName.toLowerCase().contains("createfromusage") ||
+                   InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(File(beforeFileName)), "WITH_RUNTIME")
+        }
+
+        fun checkForUnexpectedErrors() {
+            DirectiveBasedActionUtils.checkForUnexpectedErrors(LightPlatformCodeInsightTestCase.getFile() as KtFile)
+        }
+
+        protected val fullJavaJDK: Sdk
+            get() = JavaSdk.getInstance().createJdk("JDK", SystemUtils.getJavaHome().absolutePath)
     }
 }
