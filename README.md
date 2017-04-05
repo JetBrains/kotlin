@@ -28,7 +28,7 @@ After that you should be able to compile your programs like that:
     export PATH=./dist/bin:$PATH
 	kotlinc hello.kt -o hello
 
-For an optimized compilation use -opt:
+For an optimized compilation use `-opt`:
 
 	kotlinc hello.kt -o hello -opt
 
@@ -41,4 +41,4 @@ To generate interoperability stubs create library definition file
 
     cinterop -def lib.def
 
-See provided samples and `INTEROP.md` for more details.
+See provided [samples](https://github.com/JetBrains/kotlin-native/tree/master/samples) and [`INTEROP.md`](https://github.com/JetBrains/kotlin-native/blob/master/INTEROP.md) for more details.
