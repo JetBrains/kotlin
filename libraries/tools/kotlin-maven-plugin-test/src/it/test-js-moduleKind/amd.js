@@ -1,5 +1,15 @@
 var amdModules = {};
+// Hard-code expected dependency order since we are unable to refer to modules by filename here.
+var moduleNames = ["kotlin", "test-js-moduleKind", "check"];
 function define(moduleName, dependencies, body) {
+    if (Array.isArray(moduleName)) {
+        body = dependencies;
+        dependencies = moduleName;
+        moduleName = moduleNames.shift();
+    }
+    else {
+        if (moduleName !== moduleNames.shift()) throw new Error("Unexpected dependency")
+    }
     var resolvedDependencies = [];
     var currentModule = {};
     amdModules[moduleName] = currentModule;
