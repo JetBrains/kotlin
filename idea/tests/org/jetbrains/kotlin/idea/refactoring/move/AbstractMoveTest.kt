@@ -140,13 +140,15 @@ fun runMoveRefactoring(path: String, config: JsonObject, rootDir: VirtualFile, p
     catch(e: ConflictsInTestsException) {
         KotlinTestUtils.assertEqualsToFile(conflictFile, e.messages.distinct().sorted().joinToString("\n"))
 
-        ConflictsInTestsException.setTestIgnore(true)
+        // TODO: hack it with reflection, only for as 2.2
+        //ConflictsInTestsException.setTestIgnore(true)
 
         // Run refactoring again with ConflictsInTestsException suppressed
         action.runRefactoring(rootDir, mainPsiFile, elementsAtCaret, config)
     }
     finally {
-        ConflictsInTestsException.setTestIgnore(false)
+        // TODO: hack it with reflection, only for as 2.2
+        //ConflictsInTestsException.setTestIgnore(false)
 
         EditorFactory.getInstance()!!.releaseEditor(editor)
     }
