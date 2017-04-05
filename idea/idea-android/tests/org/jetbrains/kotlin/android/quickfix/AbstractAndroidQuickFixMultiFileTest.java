@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.test.KotlinTestImportFilter;
 public abstract class AbstractAndroidQuickFixMultiFileTest extends AbstractQuickFixMultiFileTest {
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         addAndroidFacet();
         Extensions.getRootArea().getExtensionPoint(ImportFilter.EP_NAME).registerExtension(KotlinTestImportFilter.INSTANCE);
@@ -45,9 +45,15 @@ public abstract class AbstractAndroidQuickFixMultiFileTest extends AbstractQuick
     }
 
     @Override
-    protected void doTestWithExtraFile(@NotNull String beforeFileName) {
+    protected void doTestWithExtraFile(@NotNull String beforeFileName) throws Exception {
         addManifest();
         super.doTestWithExtraFile(beforeFileName);
+    }
+
+    @Override
+    protected void doTestWithoutExtraFile(String beforeFileName) throws Exception {
+        addManifest();
+        super.doTestWithoutExtraFile(beforeFileName);
     }
 
     private void addAndroidFacet() {
@@ -59,7 +65,7 @@ public abstract class AbstractAndroidQuickFixMultiFileTest extends AbstractQuick
         ApplicationManager.getApplication().runWriteAction(facetModel::commit);
     }
 
-    private void addManifest() {
-        myFixture.configureByFile("idea/testData/android/AndroidManifest.xml");
+    private void addManifest() throws Exception {
+        configureByFile("idea/testData/android/AndroidManifest.xml");
     }
 }
