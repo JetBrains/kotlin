@@ -1395,8 +1395,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                         <apiVersion>1.0</apiVersion>
                         <args>
                             <arg>-java-parameters</arg>
-                            <arg>-Xdump-declarations-to</arg>
-                            <arg>dumpDir</arg>
+                            <arg>-Xdump-declarations-to=dumpDir</arg>
                         </args>
                     </configuration>
                 </plugin>
@@ -1447,8 +1446,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                             <configuration>
                                 <jvmTarget>1.8</jvmTarget>
                                 <args>
-                                    <arg>-Xdump-declarations-to</arg>
-                                    <arg>dumpDir2</arg>
+                                    <arg>-Xdump-declarations-to=dumpDir2</arg>
                                 </args>
                             </configuration>
                         </plugin>
@@ -1574,7 +1572,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.0", apiLevel!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
-                    listOf("-jdk-home", "temp", "-Xdump-declarations-to", "dumpDir2"),
+                    listOf("-jdk-home", "temp", "-Xdump-declarations-to=dumpDir2"),
                     compilerSettings!!.additionalArgumentsAsList
             )
         }
@@ -1585,7 +1583,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.0", apiLevel!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
-                    listOf("-jdk-home", "temp2", "-java-parameters", "-Xdump-declarations-to", "dumpDir"),
+                    listOf("-jdk-home", "temp2", "-java-parameters", "-Xdump-declarations-to=dumpDir"),
                     compilerSettings!!.additionalArgumentsAsList
             )
         }

@@ -50,7 +50,7 @@ compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
-            "-Xdump-declarations-to", "${buildDir}/stdlib-jre8-declarations.json",
+            "-Xdump-declarations-to=${buildDir}/stdlib-jre8-declarations.json",
             "-module-name", project.name
     ]
 }

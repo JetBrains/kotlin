@@ -26,41 +26,56 @@ annotation class Argument(
 )
 
 val Argument.isAdvanced: Boolean
-    get() = value.startsWith("-X") && value.length > 2
+    get() = value.startsWith(ADVANCED_ARGUMENT_PREFIX) && value.length > ADVANCED_ARGUMENT_PREFIX.length
 
-fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>, result: A): List<String> {
-    data class ArgumentField(val field: Field, val argumentNames: List<String>)
+private val ADVANCED_ARGUMENT_PREFIX = "-X"
+
+fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>, result: A) {
+    data class ArgumentField(val field: Field, val argument: Argument)
 
     val fields = result::class.java.fields.mapNotNull { field ->
         val argument = field.getAnnotation(Argument::class.java)
-        if (argument != null)
-            ArgumentField(field, listOfNotNull(argument.value, argument.shortName.takeUnless(String::isEmpty)))
-        else null
+        if (argument != null) ArgumentField(field, argument) else null
     }
 
-    val freeArgs = mutableListOf<String>()
     var i = 0
     while (i < args.size) {
         val arg = args[i++]
-        val field = fields.firstOrNull { (_, names) -> arg in names }?.field
-        if (field == null) {
-            freeArgs.add(arg)
+        val argumentField = fields.firstOrNull { (_, argument) ->
+            argument.value == arg ||
+            argument.shortName.takeUnless(String::isEmpty) == arg ||
+            (argument.isAdvanced && arg.startsWith(argument.value + "="))
+        }
+
+        if (argumentField == null) {
+            if (arg.startsWith(ADVANCED_ARGUMENT_PREFIX)) {
+                result.unknownExtraFlags.add(arg)
+            }
+            else {
+                result.freeArgs.add(arg)
+            }
             continue
         }
 
-        val value: Any =
-                if (field.type == Boolean::class.java) true
-                else {
-                    if (i == args.size) {
-                        throw IllegalArgumentException("No value passed for argument $arg")
-                    }
-                    args[i++]
+        val (field, argument) = argumentField
+        val value: Any = when {
+            field.type == Boolean::class.java -> true
+            argument.isAdvanced && arg.startsWith(argument.value + "=") -> {
+                arg.substring(argument.value.length + 1)
+            }
+            else -> {
+                if (i == args.size) {
+                    throw IllegalArgumentException("No value passed for argument $arg")
                 }
+                if (argument.isAdvanced) {
+                    result.extraArgumentsPassedInObsoleteForm.add(arg)
+                }
+                args[i++]
+            }
+        }
 
         updateField(field, result, value)
     }
-
-    return freeArgs
 }
 
 private fun <A : CommonCompilerArguments> updateField(field: Field, result: A, value: Any) {

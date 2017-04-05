@@ -2,10 +2,10 @@ Usage: kotlinc-js <options> <source files>
 where advanced options include:
   -Xtypedarrays              Translate primitive arrays to JS typed arrays
   -Xno-inline                Disable method inlining
-  -Xrepeat <count>           Repeat compilation (for performance analysis)
+  -Xrepeat=<count>           Repeat compilation (for performance analysis)
   -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin'
-  -Xplugin <path>            Load plugins from the given classpath
+  -Xplugin=<path>            Load plugins from the given classpath
   -Xmulti-platform           Enable experimental language support for multi-platform projects
   -Xno-check-impl            Do not check presence of 'impl' modifier in multi-platform projects
   -Xcoroutines={enable|warn|error} Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier

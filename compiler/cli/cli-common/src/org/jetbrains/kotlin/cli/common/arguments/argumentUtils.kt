@@ -22,16 +22,15 @@ import java.util.*
 
 @JvmOverloads
 fun <A : CommonCompilerArguments> parseArguments(args: Array<String>, arguments: A, ignoreInvalidArguments: Boolean = false) {
-    val unparsedArgs = parseCommandLineArguments(args, arguments)
-    val (unknownExtraArgs, unknownArgs) = unparsedArgs.partition { it.startsWith("-X") }
-    arguments.unknownExtraFlags = unknownExtraArgs
-    arguments.freeArgs = if (ignoreInvalidArguments) unknownArgs.filterNot { it.startsWith("-") } else unknownArgs
+    parseCommandLineArguments(args, arguments)
 
-    if (!ignoreInvalidArguments) {
-        for (argument in unknownArgs) {
-            if (argument.startsWith("-")) {
-                throw IllegalArgumentException("Invalid argument: " + argument)
-            }
+    if (ignoreInvalidArguments) {
+        arguments.freeArgs.removeAll { it.startsWith("-") }
+    }
+
+    for (argument in arguments.freeArgs) {
+        if (argument.startsWith("-")) {
+            throw IllegalArgumentException("Invalid argument: " + argument)
         }
     }
 }

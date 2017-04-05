@@ -75,7 +75,7 @@ class Usage {
         }
 
         if (!argument.valueDescription().isEmpty()) {
-            sb.append(" ");
+            sb.append(ParseCommandLineArgumentsKt.isAdvanced(argument) ? "=" : " ");
             sb.append(argument.valueDescription());
         }
 

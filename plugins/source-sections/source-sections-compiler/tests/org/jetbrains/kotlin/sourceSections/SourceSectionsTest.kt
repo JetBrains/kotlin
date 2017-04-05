@@ -173,9 +173,8 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
         val sourceToOutput = getTestFiles(".out")
 
         sourceToOutput.forEach { (source, expectedOutput) ->
-
             val args = arrayOf(source.canonicalPath, "-d", tmpdir.canonicalPath,
-                               "-Xplugin", sourceSectionsPluginJar.canonicalPath,
+                               "-Xplugin=${sourceSectionsPluginJar.canonicalPath}",
                                "-P", TEST_ALLOWED_SECTIONS.joinToString(",") { "plugin:${SourceSectionsCommandLineProcessor.PLUGIN_ID}:${SourceSectionsCommandLineProcessor.SECTIONS_OPTION.name}=$it" })
             val (output, code) = captureOut {
                 CLICompiler.doMainNoExit(K2JVMCompiler(), args)
@@ -205,9 +204,8 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
             try {
 
                 sourceToOutput.forEach { (source, expectedOutput) ->
-
                     val args = arrayOf(source.canonicalPath, "-d", tmpdir.canonicalPath,
-                                       "-Xplugin", sourceSectionsPluginJar.canonicalPath,
+                                       "-Xplugin=${sourceSectionsPluginJar.canonicalPath}",
                                        "-P", TEST_ALLOWED_SECTIONS.joinToString(",") { "plugin:${SourceSectionsCommandLineProcessor.PLUGIN_ID}:${SourceSectionsCommandLineProcessor.SECTIONS_OPTION.name}=$it" })
 
                     messageCollector.clear()

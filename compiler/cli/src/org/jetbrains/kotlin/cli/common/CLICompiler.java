@@ -51,8 +51,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_RELATIVE_PATHS, args);
     }
 
-    // Used via reflection in CompilerRunnerUtil#invokeExecMethod and in Eclipse plugin (see KotlinCLICompiler)
-    @SuppressWarnings("UnusedDeclaration")
+    // Used in CompilerRunnerUtil#invokeExecMethod, in Eclipse plugin (KotlinCLICompiler) and in kotlin-gradle-plugin (GradleCompilerRunner)
     @NotNull
     public ExitCode execAndOutputXml(@NotNull PrintStream errStream, @NotNull Services services, @NotNull String... args) {
         return exec(errStream, services, MessageRenderer.XML, args);
@@ -82,7 +81,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         return null;
     }
 
-    @SuppressWarnings("WeakerAccess") // Used in maven (see KotlinCompileMojoBase.java)
+    // Used in kotlin-maven-plugin (KotlinCompileMojoBase) and in kotlin-gradle-plugin (KotlinJvmOptionsImpl, KotlinJsOptionsImpl)
     public void parseArguments(@NotNull String[] args, @NotNull A arguments) {
         ArgumentUtilsKt.parseArguments(args, arguments);
     }
@@ -128,7 +127,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
     }
 
-    @SuppressWarnings("WeakerAccess") // Used in maven (see KotlinCompileMojoBase.java)
+    // Used in kotlin-maven-plugin (KotlinCompileMojoBase)
     @NotNull
     public ExitCode exec(@NotNull MessageCollector messageCollector, @NotNull Services services, @NotNull A arguments) {
         printVersionIfNeeded(messageCollector, arguments);
@@ -137,7 +136,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             messageCollector = new FilteringMessageCollector(messageCollector, Predicate.isEqual(WARNING));
         }
 
-        reportUnknownExtraFlags(messageCollector, arguments);
+        reportUnknownAndObsoleteExtraFlags(messageCollector, arguments);
 
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
 
@@ -314,9 +313,13 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             @NotNull CompilerConfiguration configuration, @NotNull A arguments, @NotNull Services services
     );
 
-    private void reportUnknownExtraFlags(@NotNull MessageCollector collector, @NotNull A arguments) {
+    private void reportUnknownAndObsoleteExtraFlags(@NotNull MessageCollector collector, @NotNull A arguments) {
         for (String flag : arguments.unknownExtraFlags) {
             collector.report(STRONG_WARNING, "Flag is not supported by this version of the compiler: " + flag, null);
+        }
+        for (String argument : arguments.extraArgumentsPassedInObsoleteForm) {
+            collector.report(STRONG_WARNING, "Advanced option value is passed in an obsolete form. Please use the '=' character " +
+                                             "to specify the value: " + argument + "=...", null);
         }
     }
 

@@ -188,6 +188,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("extraArgumentPassedInObsoleteForm.args")
+        public void testExtraArgumentPassedInObsoleteForm() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/extraArgumentPassedInObsoleteForm.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("extraHelp.args")
         public void testExtraHelp() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/extraHelp.args");
