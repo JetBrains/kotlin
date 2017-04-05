@@ -2956,6 +2956,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("StableTypeForUselessCast.kt")
+            public void testStableTypeForUselessCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/StableTypeForUselessCast.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("WhenErasedDisallowFromAny.kt")
             public void testWhenErasedDisallowFromAny() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/WhenErasedDisallowFromAny.kt");

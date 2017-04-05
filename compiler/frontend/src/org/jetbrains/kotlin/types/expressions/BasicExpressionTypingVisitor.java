@@ -375,28 +375,32 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(CAST_NEVER_SUCCEEDS.on(expression.getOperationReference()));
             return;
         }
+
         KotlinTypeChecker typeChecker = KotlinTypeChecker.DEFAULT;
-        if (isExactTypeCast(actualType, targetType)) {
-            // cast to itself: String as String
+        if (castIsUseless(expression, context, targetType, actualType, typeChecker)) {
             context.trace.report(USELESS_CAST.on(expression));
             return;
         }
-        Collection<KotlinType> possibleTypes = components.dataFlowAnalyzer.getAllPossibleTypes(
-                expression.getLeft(), context.dataFlowInfo, actualType, context);
 
-        boolean checkExactType = shouldCheckForExactType(expression, context.expectedType);
-        for (KotlinType possibleType : possibleTypes) {
-            boolean castIsUseless = checkExactType
-                                    ? isExactTypeCast(possibleType, targetType)
-                                    : isUpcast(possibleType, targetType, typeChecker);
-            if (castIsUseless) {
-                context.trace.report(USELESS_CAST.on(expression));
-                return;
-            }
-        }
         if (CastDiagnosticsUtil.isCastErased(actualType, targetType, typeChecker)) {
             context.trace.report(UNCHECKED_CAST.on(expression, actualType, targetType));
         }
+    }
+
+    private static boolean castIsUseless(
+            @NotNull KtBinaryExpressionWithTypeRHS expression,
+            @NotNull ExpressionTypingContext context,
+            @NotNull KotlinType targetType,
+            @NotNull KotlinType actualType,
+            @NotNull KotlinTypeChecker typeChecker
+    ) {
+        Collection<KotlinType> possibleTypes = DataFlowAnalyzer.getAllPossibleTypes(expression.getLeft(), actualType, context);
+        KotlinType intersectedType = TypeIntersector.intersectTypes(typeChecker, possibleTypes);
+        if (intersectedType == null) return false;
+
+        return shouldCheckForExactType(expression, context.expectedType)
+               ? isExactTypeCast(intersectedType, targetType)
+               : isUpcast(intersectedType, targetType, typeChecker);
     }
 
     private static boolean shouldCheckForExactType(KtBinaryExpressionWithTypeRHS expression, KotlinType expectedType) {
@@ -414,7 +418,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private static boolean isUpcast(KotlinType candidateType, KotlinType targetType, KotlinTypeChecker typeChecker) {
-        if (KotlinBuiltIns.isNullableNothing(candidateType)) return false;
         if (!typeChecker.isSubtypeOf(candidateType, targetType)) return false;
 
         if (isFunctionType(candidateType) && isFunctionType(targetType)) {
