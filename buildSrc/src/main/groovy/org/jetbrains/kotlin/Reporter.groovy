@@ -49,21 +49,23 @@ class Reporter extends DefaultTask {
         stats.error   = obj.statistics.error
         stats.skipped = obj.statistics.skipped
 
-        def epilog = ""
         def teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")
-        if (teamcityConfig != null) {
-            def buildProperties = new Properties()
-            buildProperties.load(new FileInputStream(teamcityConfig))
-            def logUrl = buildLogUrlTab(buildProperties.'teamcity.build.id', buildProperties.'teamcity.buildType.id')
-            def testReportUrl = testReportUrl(buildProperties.'teamcity.build.id', buildProperties.'teamcity.buildType.id')
-            epilog = "\nlog url: $logUrl\ntest report url: $testReportUrl"
-        }
+        if (teamcityConfig == null)
+            throw new RuntimeException("Can't load teamcity config")
 
-        def report = "total: ${stats.total}\npassed: ${stats.passed}\nfailed: ${stats.failed}\nerror:${stats.error}\nskipped:${stats.skipped} ${epilog}"
+        def buildProperties = new Properties()
+        buildProperties.load(new FileInputStream(teamcityConfig))
+        def buildId = buildProperties.'teamcity.build.id'
+        def buildTypeId = buildProperties.'teamcity.buildType.id'
+        def logUrl = buildLogUrlTab(buildId, buildTypeId)
+        def testReportUrl = testReportUrl(buildId, buildTypeId)
+        def epilogue = "\nlog url: $logUrl\ntest report url: $testReportUrl"
+
+        def report = "total: ${stats.total}\npassed: ${stats.passed}\nfailed: ${stats.failed}\nerror:${stats.error}\nskipped:${stats.skipped} ${epilogue}"
         println(report)
-        def session = new SlackSessionFactory().createWebSocketSlackSession(buildPropeties.'konan-repoter-token')
+        def session = new SlackSessionFactory().createWebSocketSlackSession(buildProperties.'konan-reporter-token')
         session.connect()
-        def channel = session.findChannelByName(buildPropeties.'konan-channel-name')
+        def channel = session.findChannelByName(buildProperties.'konan-channel-name')
         session.sendMessage(channel, "Hello, аборигены Котлина!\n текущий статус:\n${report}")
         session.disconnect()
     }
