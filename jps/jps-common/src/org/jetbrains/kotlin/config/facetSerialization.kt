@@ -85,7 +85,7 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
     }
 }
 
-private fun readV2Config(element: Element): KotlinFacetSettings {
+private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
     return KotlinFacetSettings().apply {
         element.getAttributeValue("useProjectSettings")?.let { useProjectSettings = it.toBoolean() }
         val platformName = element.getAttributeValue("platform")
@@ -101,6 +101,25 @@ private fun readV2Config(element: Element): KotlinFacetSettings {
     }
 }
 
+private fun readV2Config(element: Element): KotlinFacetSettings {
+    return readV2AndLaterConfig(element).apply {
+        element.getChild("compilerArguments")?.children?.let { args ->
+            when {
+                args.any { arg -> arg.attributes[0].value == "coroutinesEnable" && arg.attributes[1].booleanValue } ->
+                    compilerArguments!!.coroutinesState = CommonCompilerArguments.ENABLE
+                args.any { arg -> arg.attributes[0].value == "coroutinesWarn" && arg.attributes[1].booleanValue } ->
+                    compilerArguments!!.coroutinesState = CommonCompilerArguments.WARN
+                args.any { arg -> arg.attributes[0].value == "coroutinesError" && arg.attributes[1].booleanValue } ->
+                    compilerArguments!!.coroutinesState = CommonCompilerArguments.ERROR
+            }
+        }
+    }
+}
+
+private fun readLatestConfig(element: Element): KotlinFacetSettings {
+    return readV2AndLaterConfig(element)
+}
+
 fun deserializeFacetSettings(element: Element): KotlinFacetSettings {
     val version =
             try {
@@ -112,6 +131,7 @@ fun deserializeFacetSettings(element: Element): KotlinFacetSettings {
     return when (version) {
         1 -> readV1Config(element)
         2 -> readV2Config(element)
+        KotlinFacetSettings.CURRENT_VERSION -> readLatestConfig(element)
         else -> KotlinFacetSettings() // Reset facet configuration if versions don't match
     }
 }
