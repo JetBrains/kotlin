@@ -48,8 +48,10 @@ class InterfaceImplBodyCodegen(
         get() = (v as InterfaceImplClassBuilder).isAnythingGenerated
 
     override fun generateDeclaration() {
+        val codegenFlags = ACC_PUBLIC or ACC_FINAL or ACC_SUPER
+        val flags = if (state.classBuilderMode == ClassBuilderMode.LIGHT_CLASSES) codegenFlags or ACC_STATIC else codegenFlags
         v.defineClass(
-                myClass.psiOrParent, state.classFileVersion, ACC_PUBLIC or ACC_FINAL or ACC_SUPER,
+                myClass.psiOrParent, state.classFileVersion, flags,
                 typeMapper.mapDefaultImpls(descriptor).internalName,
                 null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
         )
