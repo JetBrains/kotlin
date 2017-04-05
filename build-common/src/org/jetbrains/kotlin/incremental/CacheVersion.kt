@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import java.io.File
+import java.io.IOException
 
 private val NORMAL_VERSION = 8
 private val EXPERIMENTAL_VERSION = 4
@@ -40,8 +41,16 @@ class CacheVersion(
 ) {
     private val isEnabled by lazy(isEnabled)
 
-    private val actualVersion: Int
-        get() = versionFile.readText().toInt()
+    private val actualVersion: Int?
+        get() = try {
+            versionFile.readText().toInt()
+        }
+        catch (e: NumberFormatException) {
+            null
+        }
+        catch (e: IOException) {
+            null
+        }
 
     private val expectedVersion: Int
         get() {
