@@ -1,5 +1,4 @@
 // "Import" "true"
-// JS
 package some
 
 import jquery.jq
