@@ -68,10 +68,7 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
         val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
 
         val daemonReportMessages = ArrayList<DaemonReportMessage>()
-        val daemonReportingTargets = when {
-            log.isDebugEnabled ->  DaemonReportingTargets(messages = daemonReportMessages)
-            else ->  DaemonReportingTargets(messageCollector = environment.messageCollector)
-        }
+        val daemonReportingTargets = DaemonReportingTargets(messages = daemonReportMessages)
 
         val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
 
@@ -86,10 +83,15 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
                                                  sessionAliveFlagFile = sessionAliveFlagFile)
         }
 
-        for (msg in daemonReportMessages) {
-            environment.messageCollector.report(CompilerMessageSeverity.INFO,
-                                    (if (msg.category == DaemonReportCategory.EXCEPTION && connection == null) "Falling  back to compilation without daemon due to error: " else "") + msg.message,
-                                                CompilerMessageLocation.NO_LOCATION)
+        if (connection == null || log.isDebugEnabled) {
+            for (message in daemonReportMessages) {
+                val severity = when(message.category) {
+                    DaemonReportCategory.DEBUG -> CompilerMessageSeverity.INFO
+                    DaemonReportCategory.INFO -> CompilerMessageSeverity.INFO
+                    DaemonReportCategory.EXCEPTION -> CompilerMessageSeverity.EXCEPTION
+                }
+                environment.messageCollector.report(severity, message.message, CompilerMessageLocation.NO_LOCATION)
+            }
         }
 
         fun reportTotalAndThreadPerf(message: String, daemonOptions: DaemonOptions, messageCollector: MessageCollector, profiler: Profiler) {
