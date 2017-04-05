@@ -20,7 +20,7 @@ public class Some
 
 operator fun Some.plusAssign(i: Int) {}
 
-// FILE: other_second.kt
+// FILE: second.kt
 // Lexicography is before "some"
 package aaa
 
