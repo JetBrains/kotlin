@@ -124,7 +124,8 @@ class Kapt3IT : BaseGradleIT() {
             assertKaptSuccessful()
             assertContains("Options: {suffix=Customized, justColon=:, justEquals==, containsColon=a:b, " +
                     "containsEquals=a=b, startsWithColon=:a, startsWithEquals==a, endsWithColon=a:, " +
-                    "endsWithEquals=a:, withSpace=a b c}")
+                    "endsWithEquals=a:, withSpace=a b c,")
+            assertContains("-Xmaxerrs=500, -Xlint:all=-Xlint:all") // Javac options test
             assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertFileExists("build/classes/main/example/TestClassCustomized.class")

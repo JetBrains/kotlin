@@ -33,4 +33,9 @@ kapt {
         arg("endsWithEquals", "a:")
         arg("withSpace", "a b c") // key doesn't support spaces
     }
+
+    javacOptions {
+        option("-Xmaxerrs", 500)
+        option("-Xlint:all")
+    }
 }

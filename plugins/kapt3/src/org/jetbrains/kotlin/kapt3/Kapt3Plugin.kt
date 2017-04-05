@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.JAVAC_CLI_OPTIONS
 import org.jetbrains.kotlin.kapt3.diagnostic.DefaultErrorMessagesKapt3
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.psi.KtFile
@@ -66,6 +67,9 @@ object Kapt3ConfigurationKeys {
 
     val APT_OPTIONS: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("annotation processing options")
+
+    val JAVAC_CLI_OPTIONS: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey.create<String>("javac CLI options")
 
     val ANNOTATION_PROCESSORS: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("annotation processor qualified names")
@@ -107,6 +111,10 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
                 CliOption("apoptions", "options map", "Encoded annotation processor options",
                           required = false, allowMultipleOccurrences = false)
 
+        val JAVAC_CLI_OPTIONS_OPTION: CliOption =
+                CliOption("javacArguments", "javac CLI options map", "Encoded javac CLI options",
+                          required = false, allowMultipleOccurrences = false)
+
         val ANNOTATION_PROCESSORS_OPTION: CliOption =
                 CliOption("processors", "<fqname,[fqname2,...]>", "Annotation processor qualified names",
                           required = false, allowMultipleOccurrences = true)
@@ -127,7 +135,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<CliOption> =
-            listOf(SOURCE_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION,
+            listOf(SOURCE_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION, JAVAC_CLI_OPTIONS_OPTION,
                    CLASS_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION, STUBS_OUTPUT_DIR_OPTION, APT_ONLY_OPTION,
                    USE_LIGHT_ANALYSIS_OPTION, CORRECT_ERROR_TYPES_OPTION, ANNOTATION_PROCESSORS_OPTION)
 
@@ -136,6 +144,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> configuration.appendList(ANNOTATION_PROCESSOR_CLASSPATH, value)
             ANNOTATION_PROCESSORS_OPTION -> configuration.put(Kapt3ConfigurationKeys.ANNOTATION_PROCESSORS, value)
             APT_OPTIONS_OPTION -> configuration.put(Kapt3ConfigurationKeys.APT_OPTIONS, value)
+            JAVAC_CLI_OPTIONS_OPTION -> configuration.put(Kapt3ConfigurationKeys.JAVAC_CLI_OPTIONS, value)
             SOURCE_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.SOURCE_OUTPUT_DIR, value)
             CLASS_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.CLASS_OUTPUT_DIR, value)
             STUBS_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.STUBS_OUTPUT_DIR, value)
@@ -150,7 +159,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 }
 
 class Kapt3ComponentRegistrar : ComponentRegistrar {
-    fun decodeAnnotationProcessingOptions(options: String): Map<String, String> {
+    fun decodeOptions(options: String): Map<String, String> {
         val map = LinkedHashMap<String, String>()
 
         val decodedBytes = DatatypeConverter.parseBase64Binary(options)
@@ -199,7 +208,8 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             return
         }
 
-        val apOptions = configuration.get(APT_OPTIONS)?.let { decodeAnnotationProcessingOptions(it) } ?: emptyMap()
+        val apOptions = configuration.get(APT_OPTIONS)?.let { decodeOptions(it) } ?: emptyMap()
+        val javacCliOptions = configuration.get(JAVAC_CLI_OPTIONS)?.let { decodeOptions(it) } ?: emptyMap()
 
         sourcesOutputDir.mkdirs()
 
@@ -232,7 +242,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
 
         val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(
                 compileClasspath, apClasspath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir,
-                stubsOutputDir, incrementalDataOutputDir, apOptions, annotationProcessors,
+                stubsOutputDir, incrementalDataOutputDir, apOptions, javacCliOptions, annotationProcessors,
                 isAptOnly, useLightAnalysis, correctErrorTypes, System.currentTimeMillis(), logger)
         AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
     }

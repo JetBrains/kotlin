@@ -29,7 +29,6 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.preprocessor.mkdirsOrFail
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
@@ -193,14 +192,16 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 androidOptions +
                 mapOf("kapt.kotlin.generated" to kotlinSourcesOutputDir.absolutePath)
 
-        pluginOptions += SubpluginOption("apoptions", encodeAnnotationProcessingOptions(apOptions))
+        pluginOptions += SubpluginOption("apoptions", encodeOptions(apOptions))
+
+        pluginOptions += SubpluginOption("javacArguments", encodeOptions(kaptExtension.getJavacOptions()))
 
         addMiscOptions(pluginOptions)
 
         return pluginOptions
     }
 
-    fun encodeAnnotationProcessingOptions(options: Map<String, String>): String {
+    fun encodeOptions(options: Map<String, String>): String {
         val os = ByteArrayOutputStream()
         val oos = ObjectOutputStream(os)
 

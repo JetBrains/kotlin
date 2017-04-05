@@ -51,6 +51,7 @@ class ClasspathBasedKapt3Extension(
         stubsOutputDir: File,
         incrementalDataOutputDir: File?,
         options: Map<String, String>,
+        javacOptions: Map<String, String>,
         annotationProcessors: String,
         aptOnly: Boolean,
         val useLightAnalysis: Boolean,
@@ -58,7 +59,7 @@ class ClasspathBasedKapt3Extension(
         pluginInitializedTime: Long,
         logger: KaptLogger
 ) : AbstractKapt3Extension(compileClasspath, annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
-                           classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options, annotationProcessors,
+                           classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options, javacOptions, annotationProcessors,
                            aptOnly, pluginInitializedTime, logger, correctErrorTypes) {
     override val analyzePartially: Boolean
         get() = useLightAnalysis
@@ -103,6 +104,7 @@ abstract class AbstractKapt3Extension(
         val stubsOutputDir: File,
         val incrementalDataOutputDir: File?,
         val options: Map<String, String>,
+        val javacOptions: Map<String, String>,
         val annotationProcessors: String,
         val aptOnly: Boolean,
         val pluginInitializedTime: Long,
@@ -204,7 +206,7 @@ abstract class AbstractKapt3Extension(
         logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
         logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
 
-        return Pair(KaptContext(logger, bindingContext, compiledClasses, origins, options), generationState)
+        return Pair(KaptContext(logger, bindingContext, compiledClasses, origins, options, javacOptions), generationState)
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContext, generationState: GenerationState) {
