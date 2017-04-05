@@ -16,36 +16,61 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
+import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
-import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
+import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils.*
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.junit.Assert
+
 import java.io.File
 import java.io.IOException
 import java.lang.annotation.Retention
 
+import org.jetbrains.kotlin.test.KotlinTestUtils.*
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
+
 abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
 
     @Throws(IOException::class)
-    protected fun doTest(ktFilePath: String) {
+    protected fun doTestWithJavac(ktFilePath: String) {
+        doTest(ktFilePath, true)
+    }
+
+    @Throws(IOException::class)
+    protected fun doTestWithoutJavac(ktFilePath: String) {
+        doTest(ktFilePath, false)
+    }
+
+    @Throws(IOException::class)
+    protected fun doTest(ktFilePath: String, useJavac: Boolean) {
         Assert.assertTrue(ktFilePath.endsWith(".kt"))
         val ktFile = File(ktFilePath)
         val javaFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".java"))
+
         val javaErrorFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".javaerr.txt"))
 
         val out = File(tmpdir, "out")
-        val compiledSuccessfully = compileKotlinWithJava(listOf(javaFile), listOf(ktFile),
-                                                         out, testRootDisposable, javaErrorFile)
+
+        val compiledSuccessfully = if (useJavac) {
+            compileKotlinWithJava(listOf(javaFile),
+                                  listOf(ktFile),
+                                  out, testRootDisposable)
+        } else {
+            KotlinTestUtils.compileKotlinWithJava(listOf(javaFile),
+                                                  listOf(ktFile),
+                                                  out, testRootDisposable, javaErrorFile)
+        }
+
         if (!compiledSuccessfully) return
 
         val environment = KotlinCoreEnvironment.createForTests(
@@ -56,10 +81,33 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
 
         val analysisResult = JvmResolveUtil.analyze(environment)
         val packageView = analysisResult.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
-        assertFalse("Nothing found in package " + LoadDescriptorUtil.TEST_PACKAGE_FQNAME, packageView.isEmpty())
+        assertFalse("Nothing found in package ${LoadDescriptorUtil.TEST_PACKAGE_FQNAME}", packageView.isEmpty())
 
         val expectedFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".txt"))
         validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile)
+    }
+
+    @Throws(IOException::class)
+    fun compileKotlinWithJava(
+            javaFiles: List<File>,
+            ktFiles: List<File>,
+            outDir: File,
+            disposable: Disposable
+    ): Boolean {
+        val environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable)
+        environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
+        environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, outDir)
+        environment.configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+        environment.registerJavac(javaFiles, kotlinFiles = listOf(KotlinTestUtils.loadJetFile(environment.project, ktFiles.first())))
+        if (!ktFiles.isEmpty()) {
+            LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment)
+        }
+        else {
+            val mkdirs = outDir.mkdirs()
+            assert(mkdirs) { "Not created: $outDir" }
+        }
+
+        return JavacWrapper.getInstance(environment.project).use { it.compile() }
     }
 
     companion object {

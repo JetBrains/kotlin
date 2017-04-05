@@ -1,0 +1,28 @@
+package test
+
+public fun getInner(): test.SeveralInnerClasses.InnerFirst.InnerSecond!
+public fun getNested(): test.SeveralInnerClasses.NestedFirst.NestedSecond!
+
+public open class SeveralInnerClasses {
+    public constructor SeveralInnerClasses()
+
+    public open inner class InnerFirst {
+        public constructor InnerFirst()
+
+        public open inner class InnerSecond {
+            public constructor InnerSecond()
+        }
+    }
+
+    public open class NestedFirst {
+        public constructor NestedFirst()
+
+        public open class NestedSecond {
+            public constructor NestedSecond()
+        }
+    }
+
+    // Static members
+    public open fun getInner(): test.SeveralInnerClasses.InnerFirst.InnerSecond!
+    public open fun getNested(): test.SeveralInnerClasses.NestedFirst.NestedSecond!
+}

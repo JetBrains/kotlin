@@ -1,3 +1,3 @@
 package test
 
-fun lll(a: Int) = a
+fun lll(a: kotlin.Int) = a

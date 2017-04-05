@@ -345,7 +345,12 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCompileJavaAgainstKotlinTest> {
-            model("compileJavaAgainstKotlin")
+            model("compileJavaAgainstKotlin", testClassName = "WithoutJavac", testMethod = "doTestWithoutJavac")
+            model("compileJavaAgainstKotlin", testClassName = "WithJavac", testMethod = "doTestWithJavac")
+        }
+
+        testClass<AbstractCompileKotlinAgainstJavaTest> {
+            model("compileKotlinAgainstJava")
         }
 
         testClass<AbstractCompileKotlinAgainstKotlinTest> {

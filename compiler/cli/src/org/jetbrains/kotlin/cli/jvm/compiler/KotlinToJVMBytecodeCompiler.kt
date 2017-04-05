@@ -33,8 +33,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
@@ -52,6 +51,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
@@ -164,6 +164,22 @@ object KotlinToJVMBytecodeCompiler {
                 ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
                 writeOutput(state.configuration, state.factory, null)
             }
+
+            if (projectConfiguration.getBoolean(JVMConfigurationKeys.USE_JAVAC)) {
+                val singleModule = chunk.singleOrNull()
+                if (singleModule != null) {
+                    return JavacWrapper.getInstance(environment.project).use {
+                        it.compile(File(singleModule.getOutputDirectory()))
+                    }
+                }
+                else {
+                    projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).let {
+                        it.report(WARNING, "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). -Xuse-javac option couldn't be used to compile java files")
+                    }
+                    JavacWrapper.getInstance(environment.project).close()
+                }
+            }
+
             return true
         }
         finally {

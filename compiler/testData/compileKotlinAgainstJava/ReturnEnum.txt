@@ -1,0 +1,30 @@
+package test
+
+private fun getKind(): kotlin.Unit
+
+public/*package*/ final enum class Kind : kotlin.Enum<test.Kind!> {
+    enum entry FIRST
+
+    enum entry SECOND
+
+    enum entry THIRD
+
+    private constructor Kind()
+    public final /*fake_override*/ val name: kotlin.String
+    public final /*fake_override*/ val ordinal: kotlin.Int
+    protected final /*fake_override*/ fun clone(): kotlin.Any
+    public final /*fake_override*/ fun compareTo(/*0*/ test.Kind!): kotlin.Int
+    protected/*protected and package*/ final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.Kind!>!
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.Kind
+    public open fun valueOf(/*0*/ kotlin.String!): test.Kind!
+    public open fun values(): kotlin.Array<(out) test.Kind!>!
+    public final /*synthesized*/ fun values(): kotlin.Array<test.Kind>
+}
+
+public/*package*/ open class ReturnEnum {
+    public/*package*/ constructor ReturnEnum()
+    public/*package*/ open fun getKind(): test.Kind!
+}

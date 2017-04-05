@@ -1,0 +1,15 @@
+package test
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FILE}) public final annotation class AnnotationWithArguments : kotlin.Annotation {
+    public constructor AnnotationWithArguments(/*0*/ kotlin.String, /*1*/ kotlin.String = ...)
+    public final val arg: kotlin.String
+    public final val name: kotlin.String
+}
+
+@test.AnnotationWithArguments(name = "withDefault") public final class ClassWithDefault {
+    public constructor ClassWithDefault()
+}
+
+@test.AnnotationWithArguments(arg = "non", name = "withoutDefault") public final class ClassWithoutDefault {
+    public constructor ClassWithoutDefault()
+}

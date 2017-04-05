@@ -1,0 +1,10 @@
+package test
+
+public fun testWildcard(): kotlin.Unit
+
+public/*package*/ open class SimpleWildcard {
+    public/*package*/ constructor SimpleWildcard()
+
+    // Static members
+    public open fun simple(/*0*/ kotlin.collections.(Mutable)Collection<*>!): kotlin.Unit
+}

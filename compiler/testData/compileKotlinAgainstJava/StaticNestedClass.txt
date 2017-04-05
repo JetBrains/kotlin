@@ -1,0 +1,14 @@
+package test
+
+public fun answer(): kotlin.Int
+
+public open class StaticNestedClass {
+    public constructor StaticNestedClass()
+
+    public/*package*/ open class StaticNested {
+        public/*package*/ constructor StaticNested()
+
+        // Static members
+        public final var ULTIMATE_QUESTION: kotlin.Int
+    }
+}

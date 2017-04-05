@@ -1,0 +1,9 @@
+package test
+
+public fun func(): kotlin.Int
+public fun func2(): kotlin.Int
+
+public open class UseKtClass {
+    public constructor UseKtClass()
+    public open fun use(): kotlin.Int
+}

@@ -1,0 +1,24 @@
+package test
+
+public fun getProducer1(): test.ClassWithTypeParameter<test.Impl1>
+public fun getProducer2(): test.ClassWithTypeParameter<test.Impl2>
+public fun getProducer3(): test.ClassWithTypeParameter<test.Impl3>
+
+public open class ClassWithTypeParameter</*0*/ T : test.KotlinInterface!> {
+    public constructor ClassWithTypeParameter</*0*/ T : test.KotlinInterface!>(/*0*/ T!)
+}
+
+public final class Impl1 : test.KotlinInterface {
+    public constructor Impl1()
+}
+
+public final class Impl2 : test.KotlinInterface {
+    public constructor Impl2()
+}
+
+public final class Impl3 : test.KotlinInterface {
+    public constructor Impl3()
+}
+
+public interface KotlinInterface {
+}

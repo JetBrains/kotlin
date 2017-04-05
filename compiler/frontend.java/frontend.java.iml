@@ -11,5 +11,6 @@
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="descriptor.loader.java" exported="" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="javac-wrapper" />
   </component>
 </module>

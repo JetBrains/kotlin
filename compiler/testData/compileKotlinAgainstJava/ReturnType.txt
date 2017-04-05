@@ -1,0 +1,10 @@
+package test
+
+public fun getElement(): javax.lang.model.element.Element!
+
+public open class ReturnType {
+    public constructor ReturnType()
+
+    // Static members
+    public open fun getElement(): javax.lang.model.element.Element!
+}

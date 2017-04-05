@@ -25,6 +25,7 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.MetaLanguage
 import com.intellij.lang.java.JavaParserDefinition
@@ -70,10 +71,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
-import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
@@ -89,6 +87,7 @@ import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.javac.JavacWrapperRegistrar
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -219,6 +218,28 @@ class KotlinCoreEnvironment private constructor(
         project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
     }
 
+    private val VirtualFile.javaFiles: List<VirtualFile>
+        get() = mutableListOf<VirtualFile>().apply {
+            VfsUtilCore.processFilesRecursively(this@javaFiles) { file ->
+                if (file.fileType == JavaFileType.INSTANCE) {
+                    add(file)
+                }
+                true
+            }
+        }
+
+    private val allJavaFiles: List<File>
+        get() = configuration.javaSourceRoots
+                .mapNotNull(this::findLocalDirectory)
+                .flatMap { it.javaFiles }
+                .map { File(it.canonicalPath) }
+
+    fun registerJavac(javaFiles: List<File> = allJavaFiles,
+                      kotlinFiles: List<KtFile> = sourceFiles,
+                      arguments: Array<String>? = null): Boolean {
+        return JavacWrapperRegistrar.registerJavac(this, javaFiles, kotlinFiles, arguments)
+    }
+
     private val applicationEnvironment: CoreApplicationEnvironment
         get() = projectEnvironment.environment
 
@@ -326,6 +347,10 @@ class KotlinCoreEnvironment private constructor(
             else -> throw IllegalStateException("Unexpected root: $root")
         }
     }
+
+    fun findLocalFile(path: String) = applicationEnvironment.localFileSystem.findFileByPath(path)
+
+    fun findJarFile(path: String) = applicationEnvironment.jarFileSystem.findFileByPath(path)
 
     private fun findLocalDirectory(root: JvmContentRoot): VirtualFile? {
         val path = root.file
