@@ -110,7 +110,7 @@ class KtLightModifierList(
         name == PsiModifier.DEFAULT && isImplementationInInterface() -> true
         dummyDelegate != null -> {
             when {
-                name in visibilityModifiers && isOverride() ->
+                name in visibilityModifiers && isMethodOverride() ->
                     clsDelegate.hasModifierProperty(name)
                 else -> dummyDelegate.hasModifierProperty(name)
             }
@@ -118,7 +118,7 @@ class KtLightModifierList(
         else -> clsDelegate.hasModifierProperty(name)
     }
 
-    private fun isOverride() = owner.kotlinOrigin?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: false
+    private fun isMethodOverride() = owner is KtLightMethod && owner.kotlinOrigin?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: false
 
     private fun isImplementationInInterface()
             = owner.containingClass.isInterface && owner is KtLightMethod && owner.kotlinOrigin?.hasBody() ?: false

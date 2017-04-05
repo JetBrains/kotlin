@@ -194,7 +194,7 @@ object LightClassLazinessChecker {
         }
 
         // collect api method call results on light members that should not trigger exact context evaluation
-        val lazinessInfo = LazinessInfo(lightClass)
+        val lazinessInfo = LazinessInfo(lightClass, lazinessMode)
 
         tracker.allowLevel(EXACT)
 
@@ -202,19 +202,19 @@ object LightClassLazinessChecker {
 
         tracker.checkLevel(EXACT)
 
-        // still running code above to catch possible exceptions
-        if (lazinessMode == Mode.NoConsistency) return
-
         lazinessInfo.checkConsistency()
     }
 
-    private class LazinessInfo(val lightClass: KtLightClass) {
+    private class LazinessInfo(private val lightClass: KtLightClass, private val lazinessMode: Mode) {
         val classInfo = classInfo(lightClass)
         val fieldsToInfo = lightClass.fields.asList().keysToMap { fieldInfo(it) }
-        val methodsToInfo = lightClass.methods.asList().keysToMap { methodInfo(it) }
-        val innerClasses = lightClass.innerClasses.map { LazinessInfo(it as KtLightClass) }
+        val methodsToInfo = lightClass.methods.asList().keysToMap { methodInfo(it, lazinessMode) }
+        val innerClasses = lightClass.innerClasses.map { LazinessInfo(it as KtLightClass, lazinessMode) }
 
         fun checkConsistency() {
+            // still collecting data to trigger possible exceptions
+            if (lazinessMode == Mode.NoConsistency) return
+
             // check collected data against delegates which should contain correct data
             for ((field, lightFieldInfo) in fieldsToInfo) {
                 val delegate = (field as KtLightField).clsDelegate
@@ -222,7 +222,7 @@ object LightClassLazinessChecker {
             }
             for ((method, lightMethodInfo) in methodsToInfo) {
                 val delegate = (method as KtLightMethod).clsDelegate
-                assertEquals(methodInfo(delegate), lightMethodInfo)
+                assertEquals(methodInfo(delegate, lazinessMode), lightMethodInfo)
             }
 
             assertEquals(classInfo(lightClass.clsDelegate), classInfo)
@@ -260,22 +260,29 @@ object LightClassLazinessChecker {
             val isVarargs: Boolean
     )
 
-    private fun methodInfo(method: PsiMethod) = with(method) {
+    private fun methodInfo(method: PsiMethod, lazinessMode: Mode) = with(method) {
         MethodInfo(
-                name, relevantModifiers(),
+                name, relevantModifiers(lazinessMode),
                 isConstructor, method.parameterList.parametersCount, isVarArgs
         )
     }
 
-    private fun PsiMethod.relevantModifiers()
-            = when { containingClass!!.isInterface ->
-        PsiModifier.MODIFIERS.filter { it != PsiModifier.ABSTRACT && it != PsiModifier.DEFAULT }
+    private fun PsiMethod.relevantModifiers(lazinessMode: Mode) = when {
+        containingClass!!.isInterface -> PsiModifier.MODIFIERS.filter {
+            // we have custom strategy for interface members with implementation
+            it !in modifiersHackedForInterfaceMembersWithImplementation
+        }
         else -> PsiModifier.MODIFIERS.asList()
+    }.filter {
+        // cannot compute visibility for overrides without proper resolve, we check consistency if laziness is turned off
+        lazinessMode == Mode.NoLaziness || it !in visibilityModifiers
     }.filter { modifierList.hasModifierProperty(it) }
-
 
     private fun Array<out PsiMember>.names() = mapTo(LinkedHashSet()) { it.name!! }
 }
+
+private val modifiersHackedForInterfaceMembersWithImplementation = listOf(PsiModifier.ABSTRACT, PsiModifier.DEFAULT)
+private val visibilityModifiers = listOf(PsiModifier.PRIVATE, PsiModifier.PROTECTED, PsiModifier.PUBLIC)
 
 private fun String.removeLinesStartingWith(prefix: String): String {
     return lines().filterNot { it.trimStart().startsWith(prefix) }.joinToString(separator = "\n")
