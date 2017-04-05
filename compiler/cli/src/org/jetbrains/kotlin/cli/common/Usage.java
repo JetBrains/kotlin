@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.cli.common;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.cli.common.arguments.Argument;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
-import org.jetbrains.kotlin.cli.common.arguments.ValueDescription;
-import org.jetbrains.kotlin.cli.common.parser.com.sampullara.cli.Argument;
+import org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt;
 
 import java.io.PrintStream;
 import java.lang.reflect.Field;
@@ -59,29 +59,24 @@ class Usage {
         Argument argument = field.getAnnotation(Argument.class);
         if (argument == null) return null;
 
-        ValueDescription description = field.getAnnotation(ValueDescription.class);
-
         String argumentValue = argument.value();
         // TODO: this is a dirty hack, provide better mechanism for keys that can have several values
         boolean isXCoroutinesKey = argumentValue.contains("Xcoroutines");
-        String value = isXCoroutinesKey ? "Xcoroutines={enable|warn|error}" : argument.value();
-        boolean extraOption = value.startsWith("X") && value.length() > 1;
-        if (extraHelp != extraOption) return null;
-
-        String prefix = argument.prefix();
+        String value = isXCoroutinesKey ? "-Xcoroutines={enable|warn|error}" : argumentValue;
+        if (extraHelp != ParseCommandLineArgumentsKt.isAdvanced(argument)) return null;
 
         StringBuilder sb = new StringBuilder("  ");
-        sb.append(prefix);
         sb.append(value);
-        if (!argument.alias().isEmpty()) {
+
+        if (!argument.shortName().isEmpty()) {
             sb.append(" (");
-            sb.append(prefix);
-            sb.append(argument.alias());
+            sb.append(argument.shortName());
             sb.append(")");
         }
-        if (description != null) {
+
+        if (!argument.valueDescription().isEmpty()) {
             sb.append(" ");
-            sb.append(description.value());
+            sb.append(argument.valueDescription());
         }
 
         if (isXCoroutinesKey) {

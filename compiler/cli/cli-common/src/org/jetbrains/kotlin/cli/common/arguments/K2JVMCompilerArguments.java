@@ -17,102 +17,117 @@
 package org.jetbrains.kotlin.cli.common.arguments;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.common.parser.com.sampullara.cli.Argument;
 import org.jetbrains.kotlin.config.JvmTarget;
 
 public class K2JVMCompilerArguments extends CommonCompilerArguments {
     public static final long serialVersionUID = 0L;
 
-    @Argument(value = "d", description = "Destination for generated class files")
-    @ValueDescription("<directory|jar>")
+    @Argument(value = "-d", valueDescription = "<directory|jar>", description = "Destination for generated class files")
     public String destination;
 
-    @Argument(value = "classpath", alias = "cp", description = "Paths where to find user class files")
-    @ValueDescription("<path>")
+    @Argument(value = "-classpath", shortName = "-cp", valueDescription = "<path>", description = "Paths where to find user class files")
     public String classpath;
 
     @GradleOption(DefaultValues.BooleanFalseDefault.class)
-    @Argument(value = "include-runtime", description = "Include Kotlin runtime in to resulting .jar")
+    @Argument(value = "-include-runtime", description = "Include Kotlin runtime in to resulting .jar")
     public boolean includeRuntime;
 
     @GradleOption(DefaultValues.StringNullDefault.class)
-    @Argument(value = "jdk-home", description = "Path to JDK home directory to include into classpath, if differs from default JAVA_HOME")
-    @ValueDescription("<path>")
+    @Argument(
+            value = "-jdk-home",
+            valueDescription = "<path>",
+            description = "Path to JDK home directory to include into classpath, if differs from default JAVA_HOME"
+    )
     public String jdkHome;
 
     @GradleOption(DefaultValues.BooleanFalseDefault.class)
-    @Argument(value = "no-jdk", description = "Don't include Java runtime into classpath")
+    @Argument(value = "-no-jdk", description = "Don't include Java runtime into classpath")
     public boolean noJdk;
 
     @GradleOption(DefaultValues.BooleanTrueDefault.class)
-    @Argument(value = "no-stdlib", description = "Don't include Kotlin runtime into classpath")
+    @Argument(value = "-no-stdlib", description = "Don't include Kotlin runtime into classpath")
     public boolean noStdlib;
 
     @GradleOption(DefaultValues.BooleanTrueDefault.class)
-    @Argument(value = "no-reflect", description = "Don't include Kotlin reflection implementation into classpath")
+    @Argument(value = "-no-reflect", description = "Don't include Kotlin reflection implementation into classpath")
     public boolean noReflect;
 
-    @Argument(value = "module", description = "Path to the module file to compile")
-    @ValueDescription("<path>")
+    @Argument(value = "-module", valueDescription = "<path>", description = "Path to the module file to compile")
     public String module;
 
-    @Argument(value = "script", description = "Evaluate the script file")
+    @Argument(value = "-script", description = "Evaluate the script file")
     public boolean script;
 
-    @Argument(value = "script-templates", description = "Script definition template classes")
-    @ValueDescription("<fully qualified class name[,]>")
+    @Argument(
+            value = "-script-templates",
+            valueDescription = "<fully qualified class name[,]>",
+            description = "Script definition template classes"
+    )
     public String[] scriptTemplates;
 
-    @Argument(value = "kotlin-home", description = "Path to Kotlin compiler home directory, used for runtime libraries discovery")
-    @ValueDescription("<path>")
+    @Argument(
+            value = "-kotlin-home",
+            valueDescription = "<path>",
+            description = "Path to Kotlin compiler home directory, used for runtime libraries discovery"
+    )
     public String kotlinHome;
 
-    @Argument(value = "module-name", description = "Module name")
+    @Argument(value = "-module-name", description = "Module name")
     public String moduleName;
 
     @GradleOption(DefaultValues.JvmTargetVersions.class)
-    @Argument(value = "jvm-target", description = "Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6")
-    @ValueDescription("<version>")
+    @Argument(
+            value = "-jvm-target",
+            valueDescription = "<version>",
+            description = "Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6"
+    )
     public String jvmTarget;
 
     @GradleOption(DefaultValues.BooleanFalseDefault.class)
-    @Argument(value = "java-parameters", description = "Generate metadata for Java 1.8 reflection on method parameters")
+    @Argument(value = "-java-parameters", description = "Generate metadata for Java 1.8 reflection on method parameters")
     public boolean javaParameters;
 
     // Advanced options
-    @Argument(value = "Xno-call-assertions", description = "Don't generate not-null assertion after each invocation of method returning not-null")
+
+    @Argument(value = "-Xno-call-assertions", description = "Don't generate not-null assertion after each invocation of method returning not-null")
     public boolean noCallAssertions;
 
-    @Argument(value = "Xno-param-assertions", description = "Don't generate not-null assertions on parameters of methods accessible from Java")
+    @Argument(value = "-Xno-param-assertions", description = "Don't generate not-null assertions on parameters of methods accessible from Java")
     public boolean noParamAssertions;
 
-    @Argument(value = "Xno-optimize", description = "Disable optimizations")
+    @Argument(value = "-Xno-optimize", description = "Disable optimizations")
     public boolean noOptimize;
 
-    @Argument(value = "Xreport-perf", description = "Report detailed performance statistics")
+    @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics")
     public boolean reportPerf;
 
-    @Argument(value = "Xmultifile-parts-inherit", description = "Compile multifile classes as a hierarchy of parts and facade")
+    @Argument(value = "-Xmultifile-parts-inherit", description = "Compile multifile classes as a hierarchy of parts and facade")
     public boolean inheritMultifileParts;
 
-    @Argument(value = "Xskip-runtime-version-check", description = "Allow Kotlin runtime libraries of incompatible versions in the classpath")
+    @Argument(value = "-Xskip-runtime-version-check", description = "Allow Kotlin runtime libraries of incompatible versions in the classpath")
     public boolean skipRuntimeVersionCheck;
 
-    @Argument(value = "Xdump-declarations-to", description = "Path to JSON file to dump Java to Kotlin declaration mappings")
-    @ValueDescription("<path>")
+    @Argument(
+            value = "-Xdump-declarations-to",
+            valueDescription = "<path>",
+            description = "Path to JSON file to dump Java to Kotlin declaration mappings"
+    )
     public String declarationsOutputPath;
 
-    @Argument(value = "Xsingle-module", description = "Combine modules for source files and binary dependencies into a single module")
+    @Argument(value = "-Xsingle-module", description = "Combine modules for source files and binary dependencies into a single module")
     public boolean singleModule;
 
-    @Argument(value = "Xadd-compiler-builtins", description = "Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)")
+    @Argument(value = "-Xadd-compiler-builtins", description = "Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)")
     public boolean addCompilerBuiltIns;
 
-    @Argument(value = "Xload-builtins-from-dependencies", description = "Load definitions of built-in declarations from module dependencies, instead of from the compiler")
+    @Argument(value = "-Xload-builtins-from-dependencies", description = "Load definitions of built-in declarations from module dependencies, instead of from the compiler")
     public boolean loadBuiltInsFromDependencies;
 
-    @Argument(value = "Xscript-resolver-environment", description = "Script resolver environment in key-value pairs (the value could be quoted and escaped)")
-    @ValueDescription("<key=value[,]>")
+    @Argument(
+            value = "-Xscript-resolver-environment",
+            valueDescription = "<key=value[,]>",
+            description = "Script resolver environment in key-value pairs (the value could be quoted and escaped)"
+    )
     public String[] scriptResolverEnvironment;
 
     // Paths to output directories for friend modules.

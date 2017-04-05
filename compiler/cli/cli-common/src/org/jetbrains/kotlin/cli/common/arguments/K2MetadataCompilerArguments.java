@@ -16,16 +16,17 @@
 
 package org.jetbrains.kotlin.cli.common.arguments;
 
-import org.jetbrains.kotlin.cli.common.parser.com.sampullara.cli.Argument;
-
 public class K2MetadataCompilerArguments extends CommonCompilerArguments {
     public static final long serialVersionUID = 0L;
 
-    @Argument(value = "d", description = "Destination for generated .kotlin_metadata files")
-    @ValueDescription("<directory|jar>")
+    @Argument(value = "-d", valueDescription = "<directory|jar>", description = "Destination for generated .kotlin_metadata files")
     public String destination;
 
-    @Argument(value = "classpath", alias = "cp", description = "Paths where to find library .kotlin_metadata files")
-    @ValueDescription("<path>")
+    @Argument(
+            value = "-classpath",
+            shortName = "-cp",
+            valueDescription = "<path>",
+            description = "Paths where to find library .kotlin_metadata files"
+    )
     public String classpath;
 }
