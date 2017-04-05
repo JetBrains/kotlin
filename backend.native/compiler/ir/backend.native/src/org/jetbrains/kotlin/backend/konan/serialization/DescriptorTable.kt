@@ -24,6 +24,31 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName
+import org.jetbrains.kotlin.backend.konan.llvm.isExported
+import org.jetbrains.kotlin.backend.konan.llvm.typeInfoSymbolName
+import org.jetbrains.kotlin.backend.konan.llvm.symbolName
+import org.jetbrains.kotlin.backend.konan.llvm.localHash
+
+// TODO: We take Long hash .toInt() here. 
+// Make it long all the way down to the protobuf?
+internal fun DeclarationDescriptor.uniqId(): Int = when (this) {
+    is FunctionDescriptor -> {
+        this.symbolName.localHash.value.toInt()
+    }
+    is PropertyDescriptor -> {
+        this.symbolName.localHash.value.toInt()
+    }
+    is TypeParameterDescriptor -> {
+        this.symbolName.localHash.value.toInt()
+    }
+    is ValueParameterDescriptor -> {
+        this.symbolName.localHash.value.toInt()
+    }
+    is ClassDescriptor -> {
+        this.typeInfoSymbolName.localHash.value.toInt()
+    }
+    else -> error("Unexpected exported descriptor: $this") 
+}
 
 
 // TODO: we currently just assign each encountered
@@ -48,7 +73,11 @@ class DescriptorTable(val builtIns: IrBuiltIns) {
 
     fun indexByValue(value: DeclarationDescriptor): Int {
         val index = table.getOrPut(value) { 
-            currentIndex ++ 
+            if (!value.isExported()) {
+                currentIndex++
+            } else {
+                value.uniqId()
+            }
         }
         return index
     }
