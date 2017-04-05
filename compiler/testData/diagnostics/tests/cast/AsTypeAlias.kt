@@ -1,7 +1,7 @@
 typealias MyString = String
 
 val x: MyString = ""
-val y = x <!USELESS_CAST!>as Any<!>
+val y = x as Any
 
 interface Base
 class Derived : Base

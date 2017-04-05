@@ -445,6 +445,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (parent instanceof KtBinaryExpression || parent instanceof KtUnaryExpression) {
             return true;
         }
+        // Previously we've checked that there is no expected type, therefore cast in property has an effect on inference
+        if (parent instanceof KtProperty || parent instanceof KtPropertyAccessor) {
+            return true;
+        }
         return false;
     }
 

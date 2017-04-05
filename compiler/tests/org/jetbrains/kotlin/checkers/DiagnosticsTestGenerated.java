@@ -2686,6 +2686,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("AsInPropertyAndPropertyAccessor.kt")
+            public void testAsInPropertyAndPropertyAccessor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/AsInPropertyAndPropertyAccessor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("AsNothing.kt")
             public void testAsNothing() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/AsNothing.kt");

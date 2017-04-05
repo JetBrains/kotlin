@@ -1,0 +1,6 @@
+package
+
+public val c1: kotlin.Number
+public val c2: kotlin.Number
+public val d: kotlin.Number
+public fun test(): kotlin.Unit
