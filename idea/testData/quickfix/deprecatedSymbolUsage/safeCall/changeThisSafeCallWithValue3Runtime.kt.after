@@ -1,5 +1,4 @@
 // "Replace with 'c1.newFun(this, c2)'" "true"
-// WITH_RUNTIME
 
 class X {
     @Deprecated("", ReplaceWith("c1.newFun(this, c2)"))
