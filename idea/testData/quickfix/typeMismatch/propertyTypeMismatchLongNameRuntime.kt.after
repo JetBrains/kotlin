@@ -1,7 +1,6 @@
 import kotlin.properties.Delegates
 
 // "Change type of 'f' to '(Delegates) -> Unit'" "true"
-// WITH_RUNTIME
 
 fun foo() {
     var f: (Delegates) -> Unit = { x: kotlin.properties.Delegates ->  }
