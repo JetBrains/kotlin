@@ -92,11 +92,10 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
 
             val parameterInfoUIContext = MockParameterInfoUIContext(parameterOwner, updateContext.currentParameter)
 
-            for (item in mockCreateParameterInfoContext.itemsToShow) {
-                handler.updateUI(item, parameterInfoUIContext)
-            }
-            Assert.assertEquals(expectedResultText, parameterInfoUIContext.resultText)
-        }
+         mockCreateParameterInfoContext.itemsToShow?.forEach {
+            handler.updateUI(it, parameterInfoUIContext)}
+
+        Assert.assertEquals(expectedResultText, parameterInfoUIContext.resultText)}
         finally {
             if (isWithRuntime) {
                 ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myFixture.module, IdeaTestUtil.getMockJdk17())
