@@ -35,7 +35,7 @@ class ProtocolsBackend(val backendType: BackendType, val cacheType: CacheType, v
 
     enum class CacheType(override val description: String) : DescriptionAware {
         ARRAY("array"),
-        HASHMAP("hashmap");
+        LRU("lru");
 
         companion object {
             @JvmField

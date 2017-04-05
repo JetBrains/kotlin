@@ -16,19 +16,16 @@
 
 package kotlin.jvm.internal.cache
 
-enum class ProtocolCache {
-    ARRAY,
-    LRU
-}
+import java.util.*
 
-interface Cache<in Key, Value> {
-    operator fun get(key: Key): Value?
-    operator fun set(key: Key, value: Value)
+class LRUCache<Key, Value>(val maxSize: Int) : LinkedHashMap<Key, Value>(), Cache<Key, Value> {
 
-    companion object {
-        inline fun <reified Key, reified Value> makeCache(type: Int, size: Int): Cache<Key, Value> = when (ProtocolCache.values()[type]) {
-            ProtocolCache.ARRAY -> SmallArrayCache(size)
-            ProtocolCache.LRU -> LRUCache(size)
-        }
+    override fun set(key: Key, value: Value) {
+        put(key, value)
     }
+
+    override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Key, Value>?): Boolean {
+        return size > maxSize
+    }
+
 }

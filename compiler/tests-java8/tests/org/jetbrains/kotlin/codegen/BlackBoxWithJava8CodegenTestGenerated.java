@@ -608,6 +608,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             doTest(fileName);
         }
 
+        @TestMetadata("downcast.kt")
+        public void testDowncast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/downcast.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("expressionReceiver.kt")
         public void testExpressionReceiver() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/expressionReceiver.kt");
