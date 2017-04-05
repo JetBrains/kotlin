@@ -1,5 +1,4 @@
 // "Add 'kotlin.Any' as upper bound for E" "true"
-// WITH_RUNTIME
 import kotlin.reflect.KClass
 
 
