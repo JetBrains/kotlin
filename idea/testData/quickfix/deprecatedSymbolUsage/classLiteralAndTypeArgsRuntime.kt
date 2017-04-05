@@ -1,5 +1,4 @@
 // "Replace usages of 'myJavaClass(): Class<T>' in whole project" "true"
-// WITH_RUNTIME
 
 @Deprecated("", ReplaceWith("T::class.java"))
 inline fun <reified T: Any> myJavaClass(): Class<T> = T::class.java
