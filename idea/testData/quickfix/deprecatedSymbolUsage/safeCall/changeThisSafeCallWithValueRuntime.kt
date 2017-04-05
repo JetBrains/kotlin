@@ -1,5 +1,4 @@
 // "Replace with 's.newFun(this)'" "true"
-// WITH_RUNTIME
 
 class X {
     @Deprecated("", ReplaceWith("s.newFun(this)"))
