@@ -40,8 +40,8 @@ class KotlinChangePackageRefactoring(val file: KtFile) {
         val currentFqName = packageDirective.fqName
 
         val declarationProcessor = MoveKotlinDeclarationsProcessor(
-                project,
                 MoveDeclarationsDescriptor(
+                        project = project,
                         elementsToMove = file.declarations.filterIsInstance<KtNamedDeclaration>(),
                         moveTarget = object: KotlinDirectoryBasedMoveTarget {
                             override val targetContainerFqName = newFqName

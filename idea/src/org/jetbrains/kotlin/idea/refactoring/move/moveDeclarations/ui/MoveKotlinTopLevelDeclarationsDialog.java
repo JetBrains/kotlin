@@ -24,7 +24,6 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.JavaProjectRootsUtil;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Pair;
@@ -764,6 +763,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             }
 
             MoveDeclarationsDescriptor options = new MoveDeclarationsDescriptor(
+                    myProject,
                     elementsToMove,
                     target,
                     MoveDeclarationsDelegate.TopLevel.INSTANCE,
@@ -774,7 +774,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     moveCallback,
                     false
             );
-            invokeRefactoring(new MoveKotlinDeclarationsProcessor(myProject, options, Mover.Default.INSTANCE));
+            invokeRefactoring(new MoveKotlinDeclarationsProcessor(options, Mover.Default.INSTANCE));
         }
         catch (IncorrectOperationException e) {
             CommonRefactoringUtil.showErrorMessage(RefactoringBundle.message("error.title"), e.getMessage(), null, myProject);

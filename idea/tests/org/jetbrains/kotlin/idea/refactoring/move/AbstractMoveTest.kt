@@ -295,7 +295,7 @@ enum class MoveAction {
 
             val moveTarget = config.getNullableString("targetPackage")?.let { packageName ->
                 val targetSourceRootPath = config["targetSourceRoot"]?.asString
-                val packageWrapper = PackageWrapper(mainFile.getManager(), packageName)
+                val packageWrapper = PackageWrapper(mainFile.manager, packageName)
                 val moveDestination: MoveDestination = targetSourceRootPath?.let {
                     AutocreatingSingleSourceRootMoveDestination(packageWrapper, rootDir.findFileByRelativePath(it)!!)
                 } ?: MultipleRootsMoveDestination(packageWrapper)
@@ -313,8 +313,8 @@ enum class MoveAction {
                 KotlinMoveTargetForExistingElement(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as KtFile)
             }
 
-            val options = MoveDeclarationsDescriptor(elementsToMove, moveTarget, MoveDeclarationsDelegate.TopLevel)
-            MoveKotlinDeclarationsProcessor(mainFile.getProject(), options).run()
+            val descriptor = MoveDeclarationsDescriptor(project, elementsToMove, moveTarget, MoveDeclarationsDelegate.TopLevel)
+            MoveKotlinDeclarationsProcessor(descriptor).run()
         }
     },
 
@@ -357,8 +357,8 @@ enum class MoveAction {
                             createKotlinFile(fileName, targetDir, targetPackageFqName.asString())
                         }
                     }
-            val descriptor = MoveDeclarationsDescriptor(listOf(elementToMove), moveTarget, delegate)
-            MoveKotlinDeclarationsProcessor(project, descriptor).run()
+            val descriptor = MoveDeclarationsDescriptor(project, listOf(elementToMove), moveTarget, delegate)
+            MoveKotlinDeclarationsProcessor(descriptor).run()
         }
     };
 

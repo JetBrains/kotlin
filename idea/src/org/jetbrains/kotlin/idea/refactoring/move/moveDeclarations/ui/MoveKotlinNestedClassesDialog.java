@@ -253,9 +253,9 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
         KotlinMoveTarget target = new KotlinMoveTargetForExistingElement(targetClass);
         MoveDeclarationsDelegate.NestedClass delegate = new MoveDeclarationsDelegate.NestedClass();
         MoveDeclarationsDescriptor descriptor = new MoveDeclarationsDescriptor(
-                elementsToMove, target, delegate, false, false, false, false, moveCallback, openInEditorCheckBox.isSelected()
+                myProject, elementsToMove, target, delegate, false, false, false, false, moveCallback, openInEditorCheckBox.isSelected()
         );
-        invokeRefactoring(new MoveKotlinDeclarationsProcessor(myProject, descriptor, Mover.Default.INSTANCE));
+        invokeRefactoring(new MoveKotlinDeclarationsProcessor(descriptor, Mover.Default.INSTANCE));
     }
 
     @Override

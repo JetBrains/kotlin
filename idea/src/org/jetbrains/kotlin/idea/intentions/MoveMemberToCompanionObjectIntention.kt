@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.move.OuterInstanceReferenceUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.move.collectOuterInstanceReferences
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
-import org.jetbrains.kotlin.idea.refactoring.move.reportConflictIfAny
 import org.jetbrains.kotlin.idea.refactoring.move.traverseOuterInstanceReferences
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
@@ -262,11 +261,12 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
                     return Mover.Default(originalElement, targetContainer).apply { movedClass = this as KtClassOrObject }
                 }
             }
-            val moveDescriptor = MoveDeclarationsDescriptor(listOf(element),
+            val moveDescriptor = MoveDeclarationsDescriptor(project,
+                                                            listOf(element),
                                                             KotlinMoveTargetForCompanion(containingClass),
                                                             MoveDeclarationsDelegate.NestedClass(null, outerInstanceName),
                                                             moveCallback = MoveCallback { runTemplateForInstanceParam(movedClass!!, nameSuggestions, editor) })
-            MoveKotlinDeclarationsProcessor(project, moveDescriptor, mover).run()
+            MoveKotlinDeclarationsProcessor(moveDescriptor, mover).run()
             return
         }
 

@@ -86,6 +86,7 @@ interface Mover : (KtNamedDeclaration, KtElement) -> KtNamedDeclaration {
 internal var KtSimpleNameExpression.internalUsageInfo: UsageInfo? by CopyableUserDataProperty(Key.create("INTERNAL_USAGE_INFO"))
 
 class MoveDeclarationsDescriptor(
+        val project: Project,
         val elementsToMove: Collection<KtNamedDeclaration>,
         val moveTarget: KotlinMoveTarget,
         val delegate: MoveDeclarationsDelegate,
@@ -99,14 +100,34 @@ class MoveDeclarationsDescriptor(
 
 class ConflictUsageInfo(element: PsiElement, val messages: Collection<String>) : UsageInfo(element)
 
+private object ElementHashingStrategy : TObjectHashingStrategy<PsiElement> {
+    override fun equals(e1: PsiElement?, e2: PsiElement?): Boolean {
+        if (e1 === e2) return true
+        // Name should be enough to distinguish different light elements based on the same original declaration
+        if (e1 is KtLightElement<*, *> && e2 is KtLightElement<*, *>) {
+            return e1.kotlinOrigin == e2.kotlinOrigin && e1.name == e2.name
+        }
+        return e1 == e2
+    }
+
+    override fun computeHashCode(e: PsiElement?): Int {
+        return when (e) {
+            null -> 0
+            is KtLightElement<*, *> -> (e.kotlinOrigin?.hashCode() ?: 0) * 31 + (e.name?.hashCode() ?: 0)
+            else -> e.hashCode()
+        }
+    }
+}
+
 class MoveKotlinDeclarationsProcessor(
-        val project: Project,
         val descriptor: MoveDeclarationsDescriptor,
-        val mover: Mover = Mover.Default) : BaseRefactoringProcessor(project) {
+        val mover: Mover = Mover.Default) : BaseRefactoringProcessor(descriptor.project) {
     companion object {
         private val REFACTORING_NAME = "Move declarations"
         val REFACTORING_ID = "move.kotlin.declarations"
     }
+
+    val project get() = descriptor.project
 
     private var nonCodeUsages: Array<NonCodeUsageInfo>? = null
     private val elementsToMove = descriptor.elementsToMove.filter { e -> e.parent != descriptor.moveTarget.getTargetPsiIfExists(e) }
@@ -132,16 +153,16 @@ class MoveKotlinDeclarationsProcessor(
         val newContainerName = descriptor.moveTarget.targetContainerFqName?.asString() ?: ""
 
         fun collectUsages(kotlinToLightElements: Map<KtNamedDeclaration, List<PsiNamedElement>>, result: MutableCollection<UsageInfo>) {
-            kotlinToLightElements.values.flatMap { it }.flatMapTo(result) { lightElement ->
+            kotlinToLightElements.values.flatten().flatMapTo(result) { lightElement ->
                 val newFqName = StringUtil.getQualifiedName(newContainerName, lightElement.name)
 
                 val foundReferences = HashSet<PsiReference>()
-                val projectScope = lightElement.project.projectScope()
+                val projectScope = project.projectScope()
                 val results = ReferencesSearch
-                        .search(lightElement, projectScope, false)
+                        .search(lightElement, projectScope)
                         .mapNotNullTo(ArrayList()) { ref ->
-                            if (foundReferences.add(ref) && elementsToMove.all { !it.isAncestor(ref.element)}) {
-                                createMoveUsageInfoIfPossible(ref, lightElement, true, null)
+                            if (foundReferences.add(ref) && elementsToMove.none { it.isAncestor(ref.element)}) {
+                                createMoveUsageInfoIfPossible(ref, lightElement, true, false)
                             }
                             else null
                         }
@@ -166,7 +187,6 @@ class MoveKotlinDeclarationsProcessor(
             }
         }
 
-        val usagesToProcessBeforeMove = LinkedHashSet<UsageInfo>()
         val usages = ArrayList<UsageInfo>()
         val conflictChecker = MoveConflictChecker(project, elementsToMove, descriptor.moveTarget, elementsToMove.first())
         for ((sourceFile, kotlinToLightElements) in kotlinToLightElementsBySourceFile) {
@@ -196,8 +216,6 @@ class MoveKotlinDeclarationsProcessor(
             usages += externalUsages
         }
 
-        descriptor.delegate.collectConflicts(descriptor, usagesToProcessBeforeMove, conflicts)
-
         return UsageViewUtil.removeDuplicatedUsages(usages.toTypedArray())
     }
 
@@ -216,7 +234,7 @@ class MoveKotlinDeclarationsProcessor(
         }
 
         val usageList = usages.toList()
-        val (oldInternalUsages, externalUsages) = usageList.partition { (it as? InternableUsage)?.scope != null }
+        val (oldInternalUsages, externalUsages) = usageList.partition { it is KotlinMoveUsage && it.isInternal }
         val newInternalUsages = ArrayList<UsageInfo>()
 
         oldInternalUsages.forEach { (it.element as? KtSimpleNameExpression)?.internalUsageInfo = it }
@@ -224,28 +242,9 @@ class MoveKotlinDeclarationsProcessor(
         val usagesToProcess = ArrayList(externalUsages)
 
         try {
-            descriptor.delegate.preprocessUsages(project, descriptor, usageList)
+            descriptor.delegate.preprocessUsages(descriptor, usageList)
 
-            val oldToNewElementsMapping = THashMap<PsiElement, PsiElement>(
-                    object: TObjectHashingStrategy<PsiElement> {
-                        override fun equals(e1: PsiElement?, e2: PsiElement?): Boolean {
-                            if (e1 === e2) return true
-                            // Name should be enough to distinguish different light elements based on the same original declaration
-                            if (e1 is KtLightElement<*, *> && e2 is KtLightElement<*, *>) {
-                                return e1.kotlinOrigin == e2.kotlinOrigin && e1.name == e2.name
-                            }
-                            return e1 == e2
-                        }
-
-                        override fun computeHashCode(e: PsiElement?): Int {
-                            return when (e) {
-                                null -> 0
-                                is KtLightElement<*, *> -> (e.kotlinOrigin?.hashCode() ?: 0) * 31 + (e.name?.hashCode() ?: 0)
-                                else -> e.hashCode()
-                            }
-                        }
-                    }
-            )
+            val oldToNewElementsMapping = THashMap<PsiElement, PsiElement>(ElementHashingStrategy)
 
             val newDeclarations = ArrayList<KtNamedDeclaration>()
 
@@ -279,9 +278,9 @@ class MoveKotlinDeclarationsProcessor(
                     val usageInfo = it.internalUsageInfo
                     if (usageInfo?.element != null) return@mapNotNull usageInfo
                     val referencedElement = (usageInfo as? MoveRenameUsageInfo)?.referencedElement ?: return@mapNotNull null
-                    val newReferencedElement = oldToNewElementsMapping[referencedElement] ?: referencedElement
+                    val newReferencedElement = mapToNewOrThis(referencedElement, oldToNewElementsMapping)
                     if (!newReferencedElement.isValid) return@mapNotNull null
-                    (usageInfo as? InternableUsage)?.refresh(it, newReferencedElement)
+                    (usageInfo as? KotlinMoveUsage)?.refresh(it, newReferencedElement)
                 }
             }
 
@@ -295,10 +294,7 @@ class MoveKotlinDeclarationsProcessor(
         }
         finally {
             (newInternalUsages + oldInternalUsages).forEach {
-                val element = it.element as? KtSimpleNameExpression ?: return@forEach
-                if (element.isValid) {
-                    element.internalUsageInfo = null
-                }
+                (it.element as? KtSimpleNameExpression)?.internalUsageInfo = null
             }
         }
     }

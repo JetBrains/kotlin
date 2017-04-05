@@ -58,10 +58,11 @@ class MoveMemberOutOfCompanionObjectIntention : SelfTargetingRangeIntention<KtNa
         }
 
         if (element is KtClassOrObject) {
-            val moveDescriptor = MoveDeclarationsDescriptor(listOf(element),
+            val moveDescriptor = MoveDeclarationsDescriptor(project,
+                                                            listOf(element),
                                                             KotlinMoveTargetForExistingElement(targetClass),
                                                             MoveDeclarationsDelegate.NestedClass())
-            MoveKotlinDeclarationsProcessor(project, moveDescriptor).run()
+            MoveKotlinDeclarationsProcessor(moveDescriptor).run()
             deleteCompanionIfEmpty()
             return
         }

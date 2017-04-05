@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.move.moveInner.MoveInnerClassUsagesHandler
 import com.intellij.refactoring.util.MoveRenameUsageInfo
@@ -35,37 +34,30 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 sealed class MoveDeclarationsDelegate {
     abstract fun getContainerChangeInfo(originalDeclaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): ContainerChangeInfo
-    abstract fun findInternalUsages(descriptor: MoveDeclarationsDescriptor): List<UsageInfo>
-    abstract fun collectConflicts(
+
+    open fun findInternalUsages(descriptor: MoveDeclarationsDescriptor): List<UsageInfo> = emptyList()
+
+    open fun collectConflicts(
             descriptor: MoveDeclarationsDescriptor,
             internalUsages: MutableSet<UsageInfo>,
             conflicts: MultiMap<PsiElement, String>
-    )
-    abstract fun preprocessDeclaration(descriptor: MoveDeclarationsDescriptor, originalDeclaration: KtNamedDeclaration)
-    abstract fun preprocessUsages(project: Project, descriptor: MoveDeclarationsDescriptor, usages: List<UsageInfo>)
+    ) {
+
+    }
+
+    open fun preprocessDeclaration(descriptor: MoveDeclarationsDescriptor, originalDeclaration: KtNamedDeclaration) {
+
+    }
+
+    open fun preprocessUsages(descriptor: MoveDeclarationsDescriptor, usages: List<UsageInfo>) {
+
+    }
 
     object TopLevel : MoveDeclarationsDelegate() {
         override fun getContainerChangeInfo(originalDeclaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): ContainerChangeInfo {
-            return ContainerChangeInfo(ContainerInfo.Package(originalDeclaration.containingKtFile.packageFqName),
-                                       ContainerInfo.Package(moveTarget.targetContainerFqName!!))
-        }
-
-        override fun findInternalUsages(descriptor: MoveDeclarationsDescriptor): List<UsageInfo> = emptyList()
-
-        override fun collectConflicts(
-                descriptor: MoveDeclarationsDescriptor,
-                internalUsages: MutableSet<UsageInfo>,
-                conflicts: MultiMap<PsiElement, String>
-        ) {
-
-        }
-
-        override fun preprocessDeclaration(descriptor: MoveDeclarationsDescriptor, originalDeclaration: KtNamedDeclaration) {
-
-        }
-
-        override fun preprocessUsages(project: Project, descriptor: MoveDeclarationsDescriptor, usages: List<UsageInfo>) {
-
+            val sourcePackage = ContainerInfo.Package(originalDeclaration.containingKtFile.packageFqName)
+            val targetPackage = moveTarget.targetContainerFqName?.let { ContainerInfo.Package(it) } ?: ContainerInfo.UnknownPackage
+            return ContainerChangeInfo(sourcePackage, targetPackage)
         }
     }
 
@@ -76,10 +68,11 @@ sealed class MoveDeclarationsDelegate {
         override fun getContainerChangeInfo(originalDeclaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): ContainerChangeInfo {
             val originalInfo = ContainerInfo.Class(originalDeclaration.containingClassOrObject!!.fqName!!)
             val movingToClass = (moveTarget as? KotlinMoveTargetForExistingElement)?.targetElement is KtClassOrObject
-            val newInfo = if (movingToClass) {
-                ContainerInfo.Class(moveTarget.targetContainerFqName!!)
-            } else {
-                ContainerInfo.Package(moveTarget.targetContainerFqName!!)
+            val targetContainerFqName = moveTarget.targetContainerFqName
+            val newInfo = when {
+                targetContainerFqName == null -> ContainerInfo.UnknownPackage
+                movingToClass -> ContainerInfo.Class(targetContainerFqName)
+                else -> ContainerInfo.Package(targetContainerFqName)
             }
             return ContainerChangeInfo(originalInfo, newInfo)
         }
@@ -137,9 +130,9 @@ sealed class MoveDeclarationsDelegate {
             }
         }
 
-        override fun preprocessUsages(project: Project, descriptor: MoveDeclarationsDescriptor, usages: List<UsageInfo>) {
+        override fun preprocessUsages(descriptor: MoveDeclarationsDescriptor, usages: List<UsageInfo>) {
             if (outerInstanceParameterName == null) return
-            val psiFactory = KtPsiFactory(project)
+            val psiFactory = KtPsiFactory(descriptor.project)
             val newOuterInstanceRef = psiFactory.createExpression(outerInstanceParameterName)
             val classToMove = descriptor.elementsToMove.singleOrNull() as? KtClass
 

@@ -406,6 +406,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         String newClassName = getClassName();
         MoveDeclarationsDelegate delegate = new MoveDeclarationsDelegate.NestedClass(newClassName, outerInstanceParameterName);
         MoveDeclarationsDescriptor moveDescriptor = new MoveDeclarationsDescriptor(
+                project,
                 CollectionsKt.listOf(innerClass),
                 moveTarget,
                 delegate,
@@ -418,6 +419,6 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         );
         saveOpenInEditorOption();
 
-        invokeRefactoring(new MoveKotlinDeclarationsProcessor(project, moveDescriptor, Mover.Default.INSTANCE));
+        invokeRefactoring(new MoveKotlinDeclarationsProcessor(moveDescriptor, Mover.Default.INSTANCE));
     }
 }

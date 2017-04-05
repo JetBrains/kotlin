@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
 
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.roots.JavaProjectRootsUtil
-import com.intellij.psi.*
+import com.intellij.psi.PsiCompiledElement
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFileHandler
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
@@ -35,7 +38,6 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.*
 
 class MoveKotlinFileHandler : MoveFileHandler() {
     internal class InternalUsagesWrapper(file: KtFile, val usages: List<UsageInfo>) : UsageInfo(file)
@@ -88,8 +90,8 @@ class MoveKotlinFileHandler : MoveFileHandler() {
         }
 
         val declarationMoveProcessor = MoveKotlinDeclarationsProcessor(
-                project,
                 MoveDeclarationsDescriptor(
+                        project = project,
                         elementsToMove = psiFile.declarations.filterIsInstance<KtNamedDeclaration>(),
                         moveTarget = moveTarget,
                         delegate = MoveDeclarationsDelegate.TopLevel,

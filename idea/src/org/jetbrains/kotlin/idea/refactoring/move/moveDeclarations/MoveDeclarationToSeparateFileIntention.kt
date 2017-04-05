@@ -93,7 +93,8 @@ class MoveDeclarationToSeparateFileIntention :
         val moveTarget = KotlinMoveTargetForDeferredFile(packageName, directory, null) {
             createKotlinFile(targetFileName, directory, packageName.asString())
         }
-        val moveOptions = MoveDeclarationsDescriptor(
+        val descriptor = MoveDeclarationsDescriptor(
+                project = project,
                 elementsToMove = listOf(element),
                 moveTarget = moveTarget,
                 delegate = MoveDeclarationsDelegate.TopLevel,
@@ -107,7 +108,7 @@ class MoveDeclarationToSeparateFileIntention :
                 }
         )
 
-        val move = { MoveKotlinDeclarationsProcessor(project, moveOptions).run() }
+        val move = { MoveKotlinDeclarationsProcessor(descriptor).run() }
         val optimizeImports = { OptimizeImportsProcessor(project, file).run() }
 
         move.runRefactoringWithPostprocessing(project, MoveKotlinDeclarationsProcessor.REFACTORING_ID, optimizeImports)

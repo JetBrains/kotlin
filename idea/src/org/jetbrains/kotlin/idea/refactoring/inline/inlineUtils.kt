@@ -29,7 +29,7 @@ import com.intellij.refactoring.util.RefactoringMessageDialog
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerInfo
-import org.jetbrains.kotlin.idea.refactoring.move.lazilyProcessInternalReferencesToUpdateOnPackageNameChange
+import org.jetbrains.kotlin.idea.refactoring.move.processInternalReferencesToUpdateOnPackageNameChange
 import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -82,7 +82,7 @@ internal fun preProcessInternalUsages(element: KtElement, usages: List<KtElement
     for (targetPackage in targetPackages) {
         if (targetPackage == mainFile.packageFqName) continue
         val packageNameInfo = ContainerChangeInfo(ContainerInfo.Package(mainFile.packageFqName), ContainerInfo.Package(targetPackage))
-        element.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(packageNameInfo) { expr, factory ->
+        element.processInternalReferencesToUpdateOnPackageNameChange(packageNameInfo) { expr, factory ->
             val infos =
                     expr.internalUsageInfos
                     ?: LinkedHashMap<FqName, (KtSimpleNameExpression) -> UsageInfo?>().apply { expr.internalUsageInfos = this }
