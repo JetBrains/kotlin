@@ -1,0 +1,8 @@
+package
+
+public fun </*0*/ T> listOf(/*0*/ vararg elements: T /*kotlin.Array<out T>*/): kotlin.collections.List<T>
+public fun runWithoutReturn(/*0*/ r: () -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ T> testDependent(): kotlin.Unit
+public fun testReturn(): kotlin.Number
+public fun testRun(): kotlin.Unit
+public fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.collections.List<R>

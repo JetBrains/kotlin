@@ -315,7 +315,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KotlinType targetType = reconstructBareType(right, possiblyBareTarget, subjectType, context.trace, components.builtIns);
 
         if (subjectType != null) {
-            checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, subjectType);
+            checkBinaryWithTypeRHS(expression, context, targetType, subjectType);
             DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
             if (operationType == AS_KEYWORD) {
                 DataFlowValue value = createDataFlowValue(left, subjectType, context);
@@ -384,7 +384,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         Collection<KotlinType> possibleTypes = components.dataFlowAnalyzer.getAllPossibleTypes(
                 expression.getLeft(), context.dataFlowInfo, actualType, context);
 
-        boolean checkExactType = checkExactTypeForUselessCast(expression);
+        boolean checkExactType = shouldCheckForExactType(expression, context.expectedType);
         for (KotlinType possibleType : possibleTypes) {
             boolean castIsUseless = checkExactType
                                     ? isExactTypeCast(possibleType, targetType)
@@ -397,6 +397,16 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (CastDiagnosticsUtil.isCastErased(actualType, targetType, typeChecker)) {
             context.trace.report(UNCHECKED_CAST.on(expression, actualType, targetType));
         }
+    }
+
+    private static boolean shouldCheckForExactType(KtBinaryExpressionWithTypeRHS expression, KotlinType expectedType) {
+        if (TypeUtils.noExpectedType(expectedType)) {
+            return checkExactTypeForUselessCast(expression);
+        }
+
+        // If expected type is parameterized, then cast has an effect on inference, therefore it isn't a useless cast
+        // Otherwise, we are interested in situation like: `a: Any? = 1 as Int?`
+        return TypeUtils.isDontCarePlaceholder(expectedType);
     }
 
     private static boolean isExactTypeCast(KotlinType candidateType, KotlinType targetType) {

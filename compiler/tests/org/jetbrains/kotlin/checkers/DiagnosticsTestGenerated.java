@@ -2680,6 +2680,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("AsInBlockWithReturnType.kt")
+            public void testAsInBlockWithReturnType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/AsInBlockWithReturnType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("AsNothing.kt")
             public void testAsNothing() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/AsNothing.kt");
@@ -2923,6 +2929,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("IsWithCycleUpperBounds.kt")
             public void testIsWithCycleUpperBounds() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/IsWithCycleUpperBounds.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt15161.kt")
+            public void testKt15161() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/kt15161.kt");
                 doTest(fileName);
             }
 

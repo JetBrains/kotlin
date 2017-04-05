@@ -1,0 +1,9 @@
+package
+
+public final class Array</*0*/ E> {
+    public constructor Array</*0*/ E>(/*0*/ e: E)
+    public final val k: kotlin.Array<kotlin.Any?>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
