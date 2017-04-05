@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.j2k
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -41,12 +42,12 @@ import java.util.*
 
 class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
     override fun insertImport(file: KtFile, fqName: FqName) {
-        ApplicationManager.getApplication().invokeAndWait {
+        ApplicationManager.getApplication().invokeAndWait({
             runWriteAction {
                 val descriptors = file.resolveImportReference(fqName)
                 descriptors.firstOrNull()?.let { ImportInsertHelper.getInstance(file.project).importDescriptor(file, it) }
             }
-        }
+        }, ModalityState.defaultModalityState())
     }
 
     private enum class RangeFilterResult {
