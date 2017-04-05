@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.move
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.Comparing
@@ -359,9 +360,10 @@ private fun processReference(reference: PsiReference?, newElement: PsiElement, s
 /**
  * Perform usage postprocessing and return non-code usages
  */
-fun postProcessMoveUsages(usages: Collection<UsageInfo>,
-                          oldToNewElementsMapping: Map<PsiElement, PsiElement> = Collections.emptyMap(),
-                          shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING
+fun postProcessMoveUsages(
+        usages: Collection<UsageInfo>,
+        oldToNewElementsMapping: Map<PsiElement, PsiElement> = Collections.emptyMap(),
+        shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING
 ): List<NonCodeUsageInfo> {
         val sortedUsages = usages.sortedWith(
             Comparator<UsageInfo> { o1, o2 ->
@@ -383,9 +385,14 @@ fun postProcessMoveUsages(usages: Collection<UsageInfo>,
 
     val nonCodeUsages = ArrayList<NonCodeUsageInfo>()
 
-    usageLoop@ for (usage in sortedUsages) {
+    val progressStep = 1.0/sortedUsages.size
+    val progressIndicator = ProgressManager.getInstance().progressIndicator
+    progressIndicator?.text = "Updating usages..."
+    usageLoop@ for ((i, usage) in sortedUsages.withIndex()) {
+        progressIndicator?.fraction = (i + 1) * progressStep
         postProcessMoveUsage(usage, oldToNewElementsMapping, nonCodeUsages, shorteningMode)
     }
+    progressIndicator?.text = ""
 
     return nonCodeUsages
 }
