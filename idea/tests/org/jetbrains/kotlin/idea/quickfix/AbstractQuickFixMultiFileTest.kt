@@ -17,23 +17,23 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.CodeInsightSettings
-import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.quickFix.ActionHint
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.InspectionEP
+import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.codeInspection.LocalInspectionEP
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.CharsetToolkit
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiFile
+import com.intellij.testFramework.VfsTestUtil
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.ContainerUtil
@@ -47,10 +47,18 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import java.io.File
+import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
 
 abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTestCase() {
+
+    @Throws(Exception::class)
+    protected open fun doTestWithoutExtraFile(beforeFileName: String) {
+        doTest(beforeFileName, false)
+    }
+
+    @Throws(Exception::class)
     protected open fun doTestWithExtraFile(beforeFileName: String) {
         enableInspections(beforeFileName)
 
@@ -58,10 +66,11 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
             doMultiFileTest(beforeFileName)
         }
         else {
-            doTest(beforeFileName)
+            doTest(beforeFileName, true)
         }
     }
 
+    @Throws(IOException::class, ClassNotFoundException::class)
     private fun enableInspections(beforeFileName: String) {
         val inspectionFile = findInspectionFile(File(beforeFileName).parentFile)
         if (inspectionFile != null) {
@@ -76,10 +85,15 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
         ContainerUtil.addAll<InspectionEP, LocalInspectionEP, List<InspectionEP>>(eps, *Extensions.getExtensions(LocalInspectionEP.LOCAL_INSPECTION))
         ContainerUtil.addAll<InspectionEP, InspectionEP, List<InspectionEP>>(eps, *Extensions.getExtensions(InspectionEP.GLOBAL_INSPECTION))
 
-        val tool = eps.firstOrNull { it.implementationClass == klass.name }?.instantiateTool()
-                   ?: error("Could not find inspection tool for class: $klass")
+        var tool: InspectionProfileEntry? = null
+        for (ep in eps) {
+            if (klass.name == ep.implementationClass) {
+                tool = ep.instantiateTool()
+            }
+        }
+        assert(tool != null) { "Could not find inspection tool for class: " + klass }
 
-        myFixture.enableInspections(tool)
+        myFixture.enableInspections(tool!!)
     }
 
     override fun setUp() {
@@ -97,8 +111,11 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
      * *
      * @param beforeFile will be added last, as subFiles are dependencies of it
      */
-    private fun configureMultiFileTest(subFiles: List<TestFile>, beforeFile: TestFile): List<VirtualFile> {
-        val vFiles = subFiles.map(this::createTestFile).toMutableList()
+    protected fun configureMultiFileTest(subFiles: List<TestFile>, beforeFile: TestFile): List<VirtualFile> {
+        val vFiles = mutableListOf<VirtualFile>()
+        for (subFile in subFiles) {
+            vFiles.add(createTestFile(subFile))
+        }
         val beforeVFile = createTestFile(beforeFile)
         vFiles.add(beforeVFile)
         myFixture.configureFromExistingVirtualFile(beforeVFile)
@@ -111,13 +128,14 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
     private fun createTestFile(testFile: TestFile): VirtualFile {
         return runWriteAction {
             val vFile = myFixture.tempDirFixture.createFile(testFile.path)
-            vFile.charset = CharsetToolkit.UTF8_CHARSET
+            vFile.setCharset(CharsetToolkit.UTF8_CHARSET)
             VfsUtil.saveText(vFile, testFile.content)
             vFile
         }
     }
 
-    private fun doMultiFileTest(beforeFileName: String) {
+    @Throws(Exception::class)
+    protected fun doMultiFileTest(beforeFileName: String) {
         val multifileText = FileUtil.loadFile(File(beforeFileName), true)
 
         val subFiles = KotlinTestUtils.createTestFiles(
@@ -125,9 +143,11 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                 multifileText,
                 object : KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
                     override fun create(fileName: String, text: String, directives: Map<String, String>): TestFile {
+                        var text = text
                         if (text.startsWith("// FILE")) {
-                            // Drop the first line
-                            return TestFile(fileName, StringUtil.substringAfter(text, "\n")!!)
+                            val firstLineDropped = StringUtil.substringAfter(text, "\n")!!
+
+                            text = firstLineDropped
                         }
                         return TestFile(fileName, text)
                     }
@@ -156,7 +176,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                     DirectiveBasedActionUtils.checkForUnexpectedErrors(psiFile)
                 }
 
-                doAction(text, file, editor, actionShouldBeAvailable, getTestName(false), this::availableActions, myFixture::doHighlighting)
+                doAction(text, actionShouldBeAvailable, getTestName(false))
 
                 val actualText = file.text
                 val afterText = StringBuilder(actualText).insert(editor.caretModel.offset, "<caret>").toString()
@@ -191,20 +211,26 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
         }, "", "")
     }
 
-    private fun doTest(beforeFileName: String) {
+    @Throws(Exception::class)
+    private fun doTest(beforeFileName: String, withExtraFile: Boolean) {
         val mainFile = File(beforeFileName)
         val originalFileText = FileUtil.loadFile(mainFile, true)
 
-        val mainFileDir = mainFile.parentFile!!
+        if (withExtraFile) {
+            val mainFileDir = mainFile.parentFile!!
 
-        val mainFileName = mainFile.name
-        val extraFiles = mainFileDir.listFiles { _, name -> name.startsWith(extraFileNamePrefix(mainFileName)) && name != mainFileName }!!
+            val mainFileName = mainFile.name
+            val extraFiles = mainFileDir.listFiles { dir, name -> name.startsWith(extraFileNamePrefix(mainFileName)) && name != mainFileName }!!
 
-        val testFiles = ArrayList<String>()
-        testFiles.add(mainFile.name)
-        extraFiles.mapTo(testFiles) { file -> file.name }
+            val testFiles = ArrayList<String>()
+            testFiles.add(mainFile.name)
+            extraFiles.mapTo(testFiles) { file -> file.name }
 
-        myFixture.configureByFiles(*testFiles.toTypedArray())
+            myFixture.configureByFiles(*testFiles.toTypedArray())
+        }
+        else {
+            myFixture.configureByFile(beforeFileName)
+        }
 
         CommandProcessor.getInstance().executeCommand(project, {
             try {
@@ -219,7 +245,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                     DirectiveBasedActionUtils.checkForUnexpectedErrors(psiFile)
                 }
 
-                doAction(text, file, editor, actionShouldBeAvailable, beforeFileName, this::availableActions, myFixture::doHighlighting)
+                doAction(text, actionShouldBeAvailable, beforeFileName)
 
                 if (actionShouldBeAvailable) {
                     val afterFilePath = beforeFileName.replace(".before.Main.", ".after.")
@@ -230,11 +256,13 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                         KotlinTestUtils.assertEqualsToFile(File(afterFilePath), editor)
                     }
 
-                    for (file in myFixture.file.containingDirectory.files) {
+                    val mainFile = myFixture.file
+                    val mainFileName = mainFile.name
+                    for (file in mainFile.containingDirectory.files) {
                         val fileName = file.name
-                        if (fileName == myFixture.file.name || !fileName.startsWith(extraFileNamePrefix(myFixture.file.name))) continue
+                        if (fileName == mainFileName || !fileName.startsWith(extraFileNamePrefix(myFixture.file.name))) continue
 
-                        val extraFileFullPath = beforeFileName.replace(myFixture.file.name, fileName)
+                        val extraFileFullPath = beforeFileName.replace(mainFileName, fileName)
                         val afterFile = File(extraFileFullPath.replace(".before.", ".after."))
                         if (afterFile.exists()) {
                             KotlinTestUtils.assertEqualsToFile(afterFile, file.text)
@@ -258,6 +286,50 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
         }, "", "")
     }
 
+    @Throws(Exception::class)
+    fun doAction(text: String, actionShouldBeAvailable: Boolean, testFilePath: String) {
+        val pattern = if (text.startsWith("/"))
+            Pattern.compile(text.substring(1, text.length - 1))
+        else
+            Pattern.compile(StringUtil.escapeToRegexp(text))
+
+        val availableActions = availableActions
+        val action = findActionByPattern(pattern, availableActions)
+
+        if (action == null) {
+            if (actionShouldBeAvailable) {
+                val texts = getActionsTexts(availableActions)
+                val infos = myFixture.doHighlighting()
+                TestCase.fail("Action with text '" + text + "' is not available in test " + testFilePath + "\n" +
+                              "Available actions (" + texts.size + "): \n" +
+                              StringUtil.join(texts, "\n") +
+                              "\nActions:\n" +
+                              StringUtil.join(availableActions, "\n") +
+                              "\nInfos:\n" +
+                              StringUtil.join(infos, "\n"))
+            }
+            else {
+                DirectiveBasedActionUtils.checkAvailableActionsAreExpected(file, availableActions)
+            }
+        }
+        else {
+            if (!actionShouldBeAvailable) {
+                TestCase.fail("Action '$text' is available (but must not) in test $testFilePath")
+            }
+
+            CodeInsightTestFixtureImpl.invokeIntention(action, file, editor, action.text)
+
+            if (!shouldBeAvailableAfterExecution()) {
+                val afterAction = findActionByPattern(pattern, this.availableActions)
+
+                if (afterAction != null) {
+                    TestCase.fail("Action '$text' is still available after its invocation in test $testFilePath")
+                }
+            }
+        }
+    }
+
+
     private val availableActions: List<IntentionAction>
         get() {
             myFixture.doHighlighting()
@@ -267,70 +339,42 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
     class TestFile internal constructor(val path: String, val content: String)
 
     companion object {
-        private fun getActionsTexts(availableActions: List<IntentionAction>): List<String> =
-                availableActions.map(IntentionAction::getText)
 
-        private fun extraFileNamePrefix(mainFileName: String): String =
-                mainFileName.replace(".Main.kt", ".").replace(".Main.java", ".")
-
-        protected fun guessFileType(file: TestFile): FileType = when {
-            file.path.contains("." + KotlinFileType.EXTENSION) -> KotlinFileType.INSTANCE
-            file.path.contains("." + JavaFileType.DEFAULT_EXTENSION) -> JavaFileType.INSTANCE
-            else -> PlainTextFileType.INSTANCE
+        protected fun shouldBeAvailableAfterExecution(): Boolean {
+            return false
         }
 
-        private fun findActionByPattern(pattern: Pattern, availableActions: List<IntentionAction>): IntentionAction? =
-                availableActions.firstOrNull { pattern.matcher(it.text).matches() }
+        private fun getActionsTexts(availableActions: List<IntentionAction>): List<String> {
+            val texts = ArrayList<String>()
+            for (intentionAction in availableActions) {
+                texts.add(intentionAction.text)
+            }
+            return texts
+        }
 
-        fun doAction(
-                text: String,
-                file: PsiFile,
-                editor: Editor,
-                actionShouldBeAvailable: Boolean,
-                testFilePath: String,
-                getAvailableActions: () -> List<IntentionAction>,
-                doHighlighting: () -> List<HighlightInfo>,
-                shouldBeAvailableAfterExecution: Boolean = false
-        ) {
-            val pattern = if (text.startsWith("/"))
-                Pattern.compile(text.substring(1, text.length - 1))
-            else
-                Pattern.compile(StringUtil.escapeToRegexp(text))
+        private fun extraFileNamePrefix(mainFileName: String): String {
+            return mainFileName.replace(".Main.kt", ".").replace(".Main.java", ".")
+        }
 
-            val availableActions = getAvailableActions()
-            val action = findActionByPattern(pattern, availableActions)
-
-            if (action == null) {
-                if (actionShouldBeAvailable) {
-                    val texts = getActionsTexts(availableActions)
-                    val infos = doHighlighting()
-                    TestCase.fail("Action with text '" + text + "' is not available in test " + testFilePath + "\n" +
-                                  "Available actions (" + texts.size + "): \n" +
-                                  StringUtil.join(texts, "\n") +
-                                  "\nActions:\n" +
-                                  StringUtil.join(availableActions, "\n") +
-                                  "\nInfos:\n" +
-                                  StringUtil.join(infos, "\n"))
-                }
-                else {
-                    DirectiveBasedActionUtils.checkAvailableActionsAreExpected(file, availableActions)
-                }
+        protected fun guessFileType(file: TestFile): FileType {
+            if (file.path.contains("." + KotlinFileType.EXTENSION)) {
+                return KotlinFileType.INSTANCE
+            }
+            else if (file.path.contains("." + JavaFileType.DEFAULT_EXTENSION)) {
+                return JavaFileType.INSTANCE
             }
             else {
-                if (!actionShouldBeAvailable) {
-                    TestCase.fail("Action '$text' is available (but must not) in test $testFilePath")
-                }
+                return PlainTextFileType.INSTANCE
+            }
+        }
 
-                CodeInsightTestFixtureImpl.invokeIntention(action, file, editor, action.text)
-
-                if (!shouldBeAvailableAfterExecution) {
-                    val afterAction = findActionByPattern(pattern, getAvailableActions())
-
-                    if (afterAction != null) {
-                        TestCase.fail("Action '$text' is still available after its invocation in test $testFilePath")
-                    }
+        private fun findActionByPattern(pattern: Pattern, availableActions: List<IntentionAction>): IntentionAction? {
+            for (availableAction in availableActions) {
+                if (pattern.matcher(availableAction.text).matches()) {
+                    return availableAction
                 }
             }
+            return null
         }
     }
 }
