@@ -30,7 +30,6 @@ class KotlinModuleBuilder(
     override fun getName() = builderName
     override fun getPresentableName() = builderName
     override fun getDescription() = builderDescription
-    override fun getBigIcon() = KotlinIcons.KOTLIN_LOGO_24
     override fun getNodeIcon() = KotlinIcons.SMALL_LOGO
     override fun getGroupName() = KotlinTemplatesFactory.KOTLIN_GROUP_NAME
     override fun createWizardSteps(wizardContext: WizardContext, modulesProvider: ModulesProvider) = ModuleWizardStep.EMPTY_ARRAY
