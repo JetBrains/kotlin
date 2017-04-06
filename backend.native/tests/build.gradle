@@ -1585,12 +1585,10 @@ task inline23(type: RunKonanTest) {
 
 task deserialized_inline0(type: RunKonanTest) {
     source = "serialization/deserialized_inline0.kt"
-    flags = ["--enable", "deserializer"]
 }
 
 task deserialized_listof0(type: RunKonanTest) {
     source = "serialization/deserialized_listof0.kt"
-    flags = ["--enable", "deserializer"]
 }
 
 // Just check that the driver is able to produce runnable binaries.
@@ -1607,11 +1605,9 @@ task driver_opt(type: RunDriverKonanTest) {
 
 // Enable when deserialization for default arguments is fixed.
 task inline_defaultArgs_linkTest(type: LinkKonanTest) {
-    disabled = true
     goldValue = "122\n47\n"
     source = "codegen/inline/defaultArgs_linkTest_main.kt"
     lib = "codegen/inline/defaultArgs_linkTest_lib.kt"
-    flags = ["--enable", "deserializer", "--print_ir", "--verbose", "deserializer", "--verbose", "lower_inline"]
 }
 
 kotlinNativeInterop {

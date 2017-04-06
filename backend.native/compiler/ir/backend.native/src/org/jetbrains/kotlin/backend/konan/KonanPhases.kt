@@ -73,10 +73,6 @@ object KonanPhases {
     fun config(config: KonanConfig) {
         with (config.configuration) { with (KonanConfigKeys) { 
 
-            // We disable inline IR deserialization
-            // until we have enough test passes.
-            KonanPhase.DESERIALIZER.enabled = false
-
             // Don't serialize anything to a final executable.
             KonanPhase.SERIALIZER.enabled = getBoolean(NOLINK)
 
