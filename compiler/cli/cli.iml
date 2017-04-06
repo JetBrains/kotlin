@@ -23,6 +23,6 @@
     <orderEntry type="module" module-name="annotation-collector" />
     <orderEntry type="module" module-name="builtins-serializer" />
     <orderEntry type="module" module-name="frontend.script" />
-    <orderEntry type="module" module-name="javac" />
+    <orderEntry type="module" module-name="javac-wrapper" />
   </component>
 </module>

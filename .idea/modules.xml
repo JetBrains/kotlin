@@ -64,7 +64,7 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/ir/ir.tree/ir.tree.iml" filepath="$PROJECT_DIR$/compiler/ir/ir.tree/ir.tree.iml" group="compiler/ir" />
       <module fileurl="file://$PROJECT_DIR$/j2k/j2k.iml" filepath="$PROJECT_DIR$/j2k/j2k.iml" group="j2k" />
       <module fileurl="file://$PROJECT_DIR$/plugins/java-model-wrappers/java-model-wrappers.iml" filepath="$PROJECT_DIR$/plugins/java-model-wrappers/java-model-wrappers.iml" group="plugins" />
-      <module fileurl="file://$PROJECT_DIR$/compiler/javac/javac.iml" filepath="$PROJECT_DIR$/compiler/javac/javac.iml" group="compiler" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/javac-wrapper/javac-wrapper.iml" filepath="$PROJECT_DIR$/compiler/javac-wrapper/javac-wrapper.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/jps-plugin.iml" filepath="$PROJECT_DIR$/jps-plugin/jps-plugin.iml" group="ide/jps" />
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/jps-tests/jps-tests.iml" filepath="$PROJECT_DIR$/jps-plugin/jps-tests/jps-tests.iml" group="ide/jps" />
       <module fileurl="file://$PROJECT_DIR$/js/js.ast/js.ast.iml" filepath="$PROJECT_DIR$/js/js.ast/js.ast.iml" group="compiler/js" />

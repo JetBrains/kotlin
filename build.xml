@@ -95,7 +95,7 @@
         <include name="compiler/ir/ir.psi2ir/src"/>
         <include name="compiler/ir/ir.tree/src"/>
         <include name="compiler/builtins-serializer/src"/>
-        <include name="compiler/javac/src"/>
+        <include name="compiler/javac-wrapper/src"/>
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
         <include name="compiler/conditional-preprocessor/src/"/>
@@ -151,7 +151,7 @@
         <include name="plugin-api/**"/>
         <include name="annotation-collector/**"/>
         <include name="builtins-serializer/**"/>
-        <include name="javac/**"/>
+        <include name="javac-wrapper/**"/>
         <include name="js.ast/**"/>
         <include name="js.translator/**"/>
         <include name="js.frontend/**"/>
@@ -247,7 +247,7 @@
             <fileset dir="compiler/ir/ir.psi2ir/src"/>
             <fileset dir="compiler/ir/ir.tree/src"/>
             <fileset dir="compiler/builtins-serializer/src"/>
-            <fileset dir="compiler/javac/src"/>
+            <fileset dir="compiler/javac-wrapper/src"/>
             <fileset dir="compiler/cli/src"/>
             <fileset dir="compiler/cli/cli-common/src"/>
             <fileset dir="compiler/conditional-preprocessor/src"/>
