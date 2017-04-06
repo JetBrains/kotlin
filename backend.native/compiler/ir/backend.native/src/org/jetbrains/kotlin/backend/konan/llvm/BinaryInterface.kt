@@ -54,6 +54,9 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
     if (this.annotations.hasAnnotation(exportForCompilerAnnotation)){
         return true
     }
+    if (this.annotations.hasAnnotation(publishedApiAnnotation)){
+        return true
+    }
 
 
     if (this is ConstructorDescriptor && constructedClass.kind.isSingleton) {
@@ -81,6 +84,8 @@ private val symbolNameAnnotation = FqName("konan.SymbolName")
 private val exportForCppRuntimeAnnotation = FqName("konan.internal.ExportForCppRuntime")
 
 private val exportForCompilerAnnotation = FqName("konan.internal.ExportForCompiler")
+
+private val publishedApiAnnotation = FqName("kotlin.PublishedApi")
 
 private fun acyclicTypeMangler(visited: MutableSet<TypeParameterDescriptor>, type: KotlinType): String {
     val descriptor = TypeUtils.getTypeParameterDescriptorOrNull(type)
