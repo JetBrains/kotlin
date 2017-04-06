@@ -754,28 +754,6 @@
             <fileset dir="${basedir}/plugins/source-sections/source-sections-compiler/src" includes="META-INF/services/**"/>
         </jar>
     </target>
-
-    <target name="annotation-processing-under-jdk8">
-        <property environment="env"/>
-
-        <condition property="jdk18" value="${env.JDK_18}" else="${env.JAVA_HOME}">
-            <isset property="env.JDK_18" />
-        </condition>
-        <java classname="org.apache.tools.ant.launch.Launcher"
-              fork="true"
-              failonerror="true"
-              timeout="4000000"
-              taskname="startAnt"
-              jvm="${jdk18}/bin/java">
-            <env key="JAVA_HOME" value="${jdk18}"/>
-            <classpath>
-                <pathelement location="${ant.home}/lib/ant-launcher.jar"/>
-            </classpath>
-            <arg line="-f" />
-            <arg line="build.xml" />
-            <arg line="annotation-processing" />
-        </java>
-    </target>
     
     <target name="annotation-processing">
         <cleandir dir="${output}/classes/annotation-processing"/>
@@ -962,7 +940,7 @@
             depends="gradle-runtime,mock-runtime-for-test"/>
 
     <target name="other-artifacts"
-            depends="android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8,daemon-client,compiler-client-embeddable,kotlin-build-common-test" />
+            depends="android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing,daemon-client,compiler-client-embeddable,kotlin-build-common-test" />
 
     <target name="dist"
             depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler-fork,compiler-sources,ant-tools,runtime,other-artifacts"
