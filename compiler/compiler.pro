@@ -57,6 +57,7 @@ messages/**)
 -libraryjars '<bootstrap.runtime>'
 -libraryjars '<bootstrap.reflect>'
 -libraryjars '<bootstrap.script.runtime>'
+-libraryjars '<tools.jar>'
 
 -dontoptimize
 -dontobfuscate
@@ -199,3 +200,7 @@ messages/**)
 
 # for building kotlin-build-common-test
 -keep class org.jetbrains.kotlin.build.SerializationUtilsKt { *; }
+
+# for tools.jar
+-keep class com.sun.tools.javac.** { *; }
+-keep class com.sun.source.** { *; }
