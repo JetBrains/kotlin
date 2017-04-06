@@ -321,7 +321,7 @@ neither implicit integer casts nor C-style integer casts (e.g.
 `(size_t) intValue`), so to make writing portable code in such cases easier,
 the following methods are provided:
 
-*   `fun ${type1}.sizeExtend<${type2}>(): ${type2}`
+*   `fun ${type1}.signExtend<${type2}>(): ${type2}`
 *   `fun ${type1}.narrow<${type2}>(): ${type2}`
 
 where each of `type1` and `type2` must be an integral type.
