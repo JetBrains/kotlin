@@ -557,6 +557,53 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         )
     }
 
+    fun testIndentBeforeElseWithBlock() {
+        doCharTypeTest(
+                '\n',
+                """
+                |fun test(b: Boolean) {
+                |    if (b) {
+                |    }<caret>
+                |    else if (!b) {
+                |    }
+                |}
+                """,
+                """
+                |fun test(b: Boolean) {
+                |    if (b) {
+                |    }
+                |    <caret>
+                |    else if (!b) {
+                |    }
+                |}
+                """
+        )
+    }
+
+    fun testIndentBeforeElseWithoutBlock() {
+        doCharTypeTest(
+                '\n',
+                """
+                |fun test(b: Boolean) {
+                |    if (b)
+                |        foo()<caret>
+                |    else {
+                |    }
+                |}
+                """,
+                """
+                |fun test(b: Boolean) {
+                |    if (b)
+                |        foo()
+                |    <caret>
+                |    else {
+                |    }
+                |}
+                """
+        )
+    }
+
+
     fun testMoveThroughGT() {
         LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
         EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), '>')

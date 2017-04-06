@@ -157,6 +157,13 @@ abstract class KotlinCommonBlock(
             return ChildAttributes(Indent.getNoneIndent(), null)
         }
 
+        if (type == KtNodeTypes.IF) {
+            val elseBlock = mySubBlocks?.getOrNull(newChildIndex)
+            if (elseBlock is ASTBlock && elseBlock.node.elementType == KtTokens.ELSE_KEYWORD) {
+                return ChildAttributes.DELEGATE_TO_NEXT_CHILD
+            }
+        }
+
         return when (type) {
             in CODE_BLOCKS, KtNodeTypes.WHEN, KtNodeTypes.IF, KtNodeTypes.FOR, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE -> ChildAttributes(Indent.getNormalIndent(), null)
 
