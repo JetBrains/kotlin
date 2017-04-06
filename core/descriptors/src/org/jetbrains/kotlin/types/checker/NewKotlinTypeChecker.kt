@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SeveralSupertypesWithSameConstructorPolicy.*
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SupertypesPolicy
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -156,7 +157,13 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             return StrictEqualityTypeChecker.strictEqualTypes(subType.makeNullableAsSpecified(false), superType.makeNullableAsSpecified(false))
         }
 
-        if (superType is NewCapturedType && superType.lowerType != null && isSubtypeOf(subType, superType.lowerType)) return true
+        if (superType is NewCapturedType &&
+            superType.lowerType != null &&
+            allowSubtypeViaLowerTypeForCapturedType(subType, superType) &&
+            isSubtypeOf(subType, superType.lowerType))
+        {
+            return true
+        }
 
         (superType.constructor as? IntersectionTypeConstructor)?.let {
             assert(!superType.isMarkedNullable) { "Intersection type should not be marked nullable!: $superType" }
@@ -193,7 +200,16 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             1 -> return isSubtypeForSameConstructor(supertypesWithSameConstructor.first().arguments, superType)
 
             else -> { // at least 2 supertypes with same constructors. Such case is rare
-                if (supertypesWithSameConstructor.any { isSubtypeForSameConstructor(it.arguments, superType) }) return true
+                when (sameConstructorPolicy) {
+                    FORCE_NOT_SUBTYPE -> return false
+                    TAKE_FIRST_FOR_SUBTYPING -> return isSubtypeForSameConstructor(supertypesWithSameConstructor.first().arguments, superType)
+
+                    CHECK_ANY_OF_THEM,
+                    INTERSECT_ARGUMENTS_AND_CHECK_AGAIN ->
+                        if (supertypesWithSameConstructor.any { isSubtypeForSameConstructor(it.arguments, superType) }) return true
+                }
+
+                if (sameConstructorPolicy != INTERSECT_ARGUMENTS_AND_CHECK_AGAIN) return false
 
                 val newArguments = superConstructor.parameters.mapIndexed { index, _ ->
                     val allProjections = supertypesWithSameConstructor.map {
