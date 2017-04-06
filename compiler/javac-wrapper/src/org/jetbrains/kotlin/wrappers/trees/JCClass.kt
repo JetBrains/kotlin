@@ -72,12 +72,15 @@ class JCClass<out T : JCTree.JCClassDecl>(tree: T,
                 else -> null
             }
 
-            tree.extending?.mapToJavaClassifierType()?.let(this::add)
-            tree.implementing?.map { it.mapToJavaClassifierType() }?.filterNotNull()?.let(this::addAll)
-
-            if (find { it.canonicalText == CommonClassNames.JAVA_LANG_OBJECT } == null) {
-                javac.JAVA_LANG_OBJECT?.let { add(JavacClassifierType(it.element.asType(), javac)) }
+            tree.extending.let {
+                if (it == null && fqName.asString() != CommonClassNames.JAVA_LANG_OBJECT) {
+                    javac.JAVA_LANG_OBJECT?.let { add(JavacClassifierType(it.element.asType(), javac)) }
+                } else {
+                    it?.mapToJavaClassifierType()?.let(this::add)
+                }
             }
+
+            tree.implementing?.map { it.mapToJavaClassifierType() }?.filterNotNull()?.let(this::addAll)
         }
 
     override val innerClasses

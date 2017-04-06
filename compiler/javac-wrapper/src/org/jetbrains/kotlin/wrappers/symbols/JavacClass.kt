@@ -55,11 +55,13 @@ class JavacClass<T : TypeElement>(element: T,
 
     override val supertypes
         get() = element.interfaces.toMutableList().apply {
-            if (element.superclass !is NoType) add(element.superclass)
-
-            val hasObject = !none { it.toString() == CommonClassNames.JAVA_LANG_OBJECT }
-            if (!hasObject && element.toString() != CommonClassNames.JAVA_LANG_OBJECT) {
-                javac.JAVA_LANG_OBJECT?.let { add(it.element.asType()) }
+            if (element.superclass !is NoType) {
+                add(element.superclass)
+            } else {
+                val hasObject = any { it.toString() == CommonClassNames.JAVA_LANG_OBJECT }
+                if (!hasObject && element.toString() != CommonClassNames.JAVA_LANG_OBJECT) {
+                    javac.JAVA_LANG_OBJECT?.let { add(it.element.asType()) }
+                }
             }
         }.map { JavacClassifierType(it, javac) }
 
