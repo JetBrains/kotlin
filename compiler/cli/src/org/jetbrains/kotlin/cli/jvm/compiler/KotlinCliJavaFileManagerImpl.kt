@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.PsiPackageImpl
 import com.intellij.psi.search.GlobalSearchScope
+import gnu.trove.THashMap
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.name.ClassId
@@ -38,17 +39,23 @@ import kotlin.properties.Delegates
 class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJavaFileManager(myPsiManager), KotlinCliJavaFileManager {
     private val perfCounter = PerformanceCounter.create("Find Java class")
     private var index: JvmDependenciesIndex by Delegates.notNull()
-    private val allScope = GlobalSearchScope.allScope(myPsiManager.project)
+    private val topLevelClassesCache: MutableMap<FqName, VirtualFile?> = THashMap()
 
     fun initIndex(packagesCache: JvmDependenciesIndex) {
         this.index = packagesCache
     }
 
     override fun findClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? = perfCounter.time {
+        findVirtualFileForTopLevelClass(classId, searchScope)?.findPsiClassInVirtualFile(classId.relativeClassName.asString())
+    }
+
+    private fun findVirtualFileForTopLevelClass(classId: ClassId, searchScope: GlobalSearchScope): VirtualFile? {
         val relativeClassName = classId.relativeClassName.asString()
-        index.findClass(classId) { dir, type ->
-            findClassGivenPackage(allScope, dir, relativeClassName, type)
-        }?.takeIf { it.containingFile.virtualFile in searchScope }
+        return topLevelClassesCache.getOrPut(classId.packageFqName.child(classId.relativeClassName.pathSegments().first())) {
+            index.findClass(classId) { dir, type ->
+                findVirtualFileGivenPackage(dir, relativeClassName, type)
+            }
+        }?.takeIf { it in searchScope }
     }
 
     // this method is called from IDEA to resolve dependencies in Java code
@@ -89,7 +96,10 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         forEachClassId(qName) { classId ->
             val relativeClassName = classId.relativeClassName.asString()
             index.traverseDirectoriesInPackage(classId.packageFqName) { dir, rootType ->
-                val psiClass = findClassGivenPackage(scope, dir, relativeClassName, rootType)
+                val psiClass =
+                        findVirtualFileGivenPackage(dir, relativeClassName, rootType)
+                            ?.takeIf { it in scope }
+                            ?.findPsiClassInVirtualFile(relativeClassName)
                 if (psiClass != null) {
                     result.add(psiClass)
                 }
@@ -118,10 +128,11 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         return null
     }
 
-    private fun findClassGivenPackage(
-            scope: GlobalSearchScope, packageDir: VirtualFile,
-            classNameWithInnerClasses: String, rootType: JavaRoot.RootType
-    ): PsiClass? {
+    private fun findVirtualFileGivenPackage(
+            packageDir: VirtualFile,
+            classNameWithInnerClasses: String,
+            rootType: JavaRoot.RootType
+    ): VirtualFile? {
         val topLevelClassName = classNameWithInnerClasses.substringBefore('.')
 
         val vFile = when (rootType) {
@@ -133,11 +144,14 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             LOG.error("Invalid child of valid parent: ${vFile.path}; ${packageDir.isValid} path=${packageDir.path}")
             return null
         }
-        if (vFile !in scope) {
-            return null
-        }
 
-        val file = myPsiManager.findFile(vFile) as? PsiClassOwner ?: return null
+        return vFile
+    }
+
+    private fun VirtualFile.findPsiClassInVirtualFile(
+            classNameWithInnerClasses: String
+    ): PsiClass? {
+        val file = myPsiManager.findFile(this) as? PsiClassOwner ?: return null
         return findClassInPsiFile(classNameWithInnerClasses, file)
     }
 
