@@ -2,7 +2,9 @@ package org.jetbrains.kotlin.maven;
 
 import com.intellij.openapi.util.io.FileUtil;
 import kotlin.io.TextStreamsKt;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.*;
@@ -66,8 +68,19 @@ class MavenProject {
         cmd.add("mvn");
         cmd.add("-Dkotlin.compiler.incremental.log.level=info");
 
-        String kotlinVersion = getNotNullSystemProperty("kotlin.version");
-        cmd.add("-Dkotlin.version=" + kotlinVersion);
+        String kotlinVersionProperty = "kotlin.version";
+        cmd.add("-D" + kotlinVersionProperty + "=" + getNotNullSystemProperty(kotlinVersionProperty));
+
+        String mavenRepoLocalProperty = "maven.repo.local";
+        String localRepoPath = System.getProperty(mavenRepoLocalProperty);
+        try {
+            if (localRepoPath != null && !StringsKt.isBlank(localRepoPath) && new File(localRepoPath).isDirectory()) {
+                cmd.add("-D" + mavenRepoLocalProperty + "=" + localRepoPath);
+            }
+        }
+        catch (SecurityException e) {
+            e.printStackTrace();
+        }
 
         cmd.addAll(Arrays.asList(args));
 

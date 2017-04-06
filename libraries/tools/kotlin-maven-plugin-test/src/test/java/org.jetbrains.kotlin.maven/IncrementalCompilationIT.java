@@ -1,10 +1,9 @@
 package org.jetbrains.kotlin.maven;
 
 import org.junit.Test;
-
 import java.io.File;
 
-public class IncrementalCompilationIT {
+public class IncrementalCompilationIT extends MavenITBase {
     @Test
     public void testSimpleCompile() throws Exception {
         MavenProject project = new MavenProject("kotlinSimple");
