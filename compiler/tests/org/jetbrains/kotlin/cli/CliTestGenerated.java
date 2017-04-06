@@ -362,12 +362,6 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
-        @TestMetadata("version.args")
-        public void testVersion() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/version.args");
-            doJvmTest(fileName);
-        }
-
         @TestMetadata("warningJdkWithNoJdk.args")
         public void testWarningJdkWithNoJdk() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/warningJdkWithNoJdk.args");
@@ -512,12 +506,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("suppressAllWarningsJS.args")
         public void testSuppressAllWarningsJS() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/suppressAllWarningsJS.args");
-            doJsTest(fileName);
-        }
-
-        @TestMetadata("version.args")
-        public void testVersion() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/version.args");
             doJsTest(fileName);
         }
 

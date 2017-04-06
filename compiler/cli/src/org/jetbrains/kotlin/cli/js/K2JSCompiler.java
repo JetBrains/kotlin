@@ -298,4 +298,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return MainCallParameters.mainWithoutArguments();
         }
     }
+
+    @NotNull
+    @Override
+    public String executableScriptFileName() {
+        return "kotlinc-js";
+    }
 }

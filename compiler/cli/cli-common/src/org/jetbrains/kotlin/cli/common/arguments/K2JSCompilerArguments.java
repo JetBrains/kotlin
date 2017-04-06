@@ -88,10 +88,4 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
         arguments.moduleKind = K2JsArgumentConstants.MODULE_PLAIN;
         return arguments;
     }
-
-    @Override
-    @NotNull
-    public String executableScriptFileName() {
-        return "kotlinc-js";
-    }
 }

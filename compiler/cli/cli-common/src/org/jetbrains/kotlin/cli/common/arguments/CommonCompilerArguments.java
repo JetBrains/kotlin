@@ -119,11 +119,6 @@ public abstract class CommonCompilerArguments implements Serializable {
         return new DummyImpl();
     }
 
-    @NotNull
-    public String executableScriptFileName() {
-        return "kotlinc";
-    }
-
     public static final String WARN = "warn";
     public static final String ERROR = "error";
     public static final String ENABLE = "enable";

@@ -115,7 +115,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
 
         if (arguments.help || arguments.extraHelp) {
-            Usage.print(errStream, arguments);
+            Usage.print(errStream, this, arguments);
             return OK;
         }
 
@@ -350,10 +350,18 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     );
 
     private void printVersionIfNeeded(@NotNull MessageCollector messageCollector, @NotNull A arguments) {
-        if (!arguments.version) return;
-
-        messageCollector.report(INFO, "Kotlin Compiler version " + KotlinCompilerVersion.VERSION, null);
+        if (arguments.version) {
+            messageCollector.report(
+                    CompilerMessageSeverity.INFO,
+                    executableScriptFileName() + " " + KotlinCompilerVersion.VERSION +
+                    " (JRE " + System.getProperty("java.runtime.version") + ")",
+                    null
+            );
+        }
     }
+
+    @NotNull
+    public abstract String executableScriptFileName();
 
     /**
      * Useful main for derived command line tools

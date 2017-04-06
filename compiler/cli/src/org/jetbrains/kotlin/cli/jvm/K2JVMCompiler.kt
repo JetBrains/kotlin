@@ -252,16 +252,13 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
     }
 
-    /**
-     * Allow derived classes to add additional command line arguments
-     */
-    override fun createArguments(): K2JVMCompilerArguments {
-        val result = K2JVMCompilerArguments()
+    override fun createArguments(): K2JVMCompilerArguments = K2JVMCompilerArguments().apply {
         if (System.getenv("KOTLIN_REPORT_PERF") != null) {
-            result.reportPerf = true
+            reportPerf = true
         }
-        return result
     }
+
+    override fun executableScriptFileName(): String = "kotlinc-jvm"
 
     companion object {
         private var initStartNanos = System.nanoTime()

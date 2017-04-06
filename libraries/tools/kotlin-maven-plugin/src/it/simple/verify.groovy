@@ -35,7 +35,8 @@ State state = new File(basedir, "build.log").readLines().collect { it.replaceAll
                 replaceAll(/[0-9]+\s*ms/, "LLL ms").
                 trim().
                 replaceAll(/^\[[A-Z]+\]$/, "").
-                replaceAll(/version [0-9a-z-+\.]+/, "version @snapshot@")
+                replaceAll(/version [0-9a-z-+\.]+/, "version @snapshot@").
+                replaceAll(/\(JRE .+\)/, "(JRE <jre-version>)")
 
         if (filtered != "") {
             acc.lines << filtered

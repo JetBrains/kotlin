@@ -230,10 +230,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return NOTHING_DONE
         }
 
-        messageCollector.report(
-                INFO, "Kotlin version " + KotlinCompilerVersion.VERSION + " (JRE " + System.getProperty("java.runtime.version") + ")"
-        )
-
         val targetsWithoutOutputDir = targets.filter { it.outputDir == null }
         if (targetsWithoutOutputDir.isNotEmpty()) {
             messageCollector.report(ERROR, "Output directory not specified for " + targetsWithoutOutputDir.joinToString())
@@ -251,6 +247,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val commonArguments = compilerArgumentsForChunk(chunk).apply {
             reportOutputFiles = true
+            version = true // Always report the version to help diagnosing user issues if they submit the compiler output
         }
 
         val allCompiledFiles = getAllCompiledFilesContainer(context)

@@ -146,10 +146,4 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
         arguments.jvmTarget = JvmTarget.DEFAULT.getDescription();
         return arguments;
     }
-
-    @Override
-    @NotNull
-    public String executableScriptFileName() {
-        return "kotlinc-jvm";
-    }
 }

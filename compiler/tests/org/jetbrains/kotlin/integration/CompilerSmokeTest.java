@@ -85,5 +85,8 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
         assertEquals("compilation failed", 0, runCompiler("inlineOnly.compile", "-include-runtime", "inlineOnly.kt", "-d", jar));
         run("inlineOnly.run", "-cp", jar, "InlineOnly.InlineOnlyKt");
     }
-}
 
+    public void testPrintVersion() throws Exception {
+        runCompiler("test.compile", "-version");
+    }
+}

@@ -1,5 +1,5 @@
 /**
- * NOTE: if this script returns false, the build log with more information can be found at tools/kotlin-maven-plugin/target/it/plugins/build.log
+ * NOTE: if this script returns false, the build log with more information can be found at tools/kotlin-maven-plugin-test/target/it/plugins/build.log
  */
 
 import java.util.regex.Pattern
@@ -38,7 +38,8 @@ State state = buildLogFile.readLines().collect { it.replaceAll("\\u001b[^m]*m", 
                 replaceAll(/[0-9]+\s*ms/, "LLL ms").
                 trim().
                 replaceAll(/^\[[A-Z]+\]$/, "").
-                replace(kotlinVersion, "@snapshot@")
+                replace(kotlinVersion, "@snapshot@").
+                replaceAll(/\(JRE .+\)/, "(JRE <jre-version>)")
 
         if (filtered != "") {
             acc.lines << filtered

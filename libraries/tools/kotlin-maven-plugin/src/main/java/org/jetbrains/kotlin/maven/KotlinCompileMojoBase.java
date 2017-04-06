@@ -198,8 +198,8 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-
-        getLog().info("Kotlin Compiler version " + KotlinCompilerVersion.VERSION);
+        getLog().info("Kotlin version " + KotlinCompilerVersion.VERSION +
+                " (JRE " + System.getProperty("java.runtime.version") + ")");
 
         if (!hasKotlinFilesInSources()) {
             getLog().warn("No sources found skipping Kotlin compile");
