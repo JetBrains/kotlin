@@ -89,7 +89,7 @@ class PSICallResolver(
     ) : OverloadResolutionResults<D> {
         val kotlinCall = toKotlinCall(context, resolutionKind.kotlinCallKind, context.call, name, tracingStrategy)
         val scopeTower = ASTScopeTower(context)
-        val lambdaAnalyzer = LambdaAnalyzerImpl(expressionTypingServices, context.trace, typeApproximator)
+        val lambdaAnalyzer = LambdaAnalyzerImpl(expressionTypingServices, context.trace, typeApproximator, kotlinToResolvedCallTransformer)
 
         val callContext = createCallContext(scopeTower, lambdaAnalyzer)
         val factoryProviderForInvoke = FactoryProviderForInvoke(context, callContext, kotlinCall)
@@ -112,7 +112,7 @@ class PSICallResolver(
 
         val kotlinCall = toKotlinCall(context, KotlinCallKind.FUNCTION, context.call, GIVEN_CANDIDATES_NAME, tracingStrategy, dispatchReceiver)
         val scopeTower = ASTScopeTower(context)
-        val lambdaAnalyzer = LambdaAnalyzerImpl(expressionTypingServices, context.trace, typeApproximator)
+        val lambdaAnalyzer = LambdaAnalyzerImpl(expressionTypingServices, context.trace, typeApproximator, kotlinToResolvedCallTransformer)
         val callContext = createCallContext(scopeTower, lambdaAnalyzer)
 
         val givenCandidates = resolutionCandidates.map {

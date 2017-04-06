@@ -69,6 +69,7 @@ class KotlinCallCompleter(
             expectedType: UnwrappedType?,
             lambdaAnalyzer: LambdaAnalyzer
     ): ResolvedKotlinCall {
+        lambdaAnalyzer.bindStubResolvedCallForCandidate(candidate)
         val topLevelCall =
                 if (candidate is VariableAsFunctionKotlinResolutionCandidate) {
                     candidate.invokeCandidate
