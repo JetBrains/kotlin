@@ -112,8 +112,14 @@ class KotlinSetupEnvironmentNotificationProvider(
                 val configurators = getAbleToRunConfigurators(module).toList()
                 if (!configurators.isEmpty()) {
                     createComponentActionLabel("Configure") { label ->
-                        val configuratorsPopup = createConfiguratorsPopup(module.project, configurators)
-                        configuratorsPopup.showUnderneathOf(label)
+                        val singleConfigurator = configurators.singleOrNull()
+                        if (singleConfigurator != null) {
+                            singleConfigurator.configure(module.project, emptyList())
+                        }
+                        else {
+                            val configuratorsPopup = createConfiguratorsPopup(module.project, configurators)
+                            configuratorsPopup.showUnderneathOf(label)
+                        }
                     }
                 }
             }
