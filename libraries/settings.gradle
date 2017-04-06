@@ -28,10 +28,7 @@ include ':kotlin-reflect'
 //include ':kotlin-archetypes-parent:kotlin-archetype-jvm'
 //include ':kotlin-archetypes-parent:kotlin-archetype-js'
 //include ':kotlin-archetypes-parent'
-//include ':binary-compatibility-validator'
 //include ':idl2k'
-//include ':kotlin-js-tests'
-//include ':kotlin-js-tests-junit'
 //include ':kotlin-annotation-processing'
 //include ':kotlin-allopen'
 //include ':kotlin-maven-allopen'
@@ -42,7 +39,6 @@ include ':kotlin-reflect'
 //include ':kotlin-android-extensions'
 //include ':kotlin-maven-plugin-test'
 //include ':kotlin-script-util'
-//include ':kotlin-stdlib-samples'
 //include ':annotation-processor-example'
 //include ':kotlin-java-example'
 //include ':js-example'
@@ -80,10 +76,7 @@ project(':kotlin-reflect').projectDir = "$rootDir/tools/kotlin-reflect" as File
 //project(':kotlin-archetypes-parent:kotlin-archetype-jvm').projectDir = "$rootDir/tools/maven-archetypes/kotlin-archetype-jvm" as File
 //project(':kotlin-archetypes-parent:kotlin-archetype-js').projectDir = "$rootDir/tools/maven-archetypes/kotlin-archetype-js" as File
 //project(':kotlin-archetypes-parent').projectDir = "$rootDir/tools/maven-archetypes" as File
-//project(':binary-compatibility-validator').projectDir = "$rootDir/tools/binary-compatibility-validator" as File
 //project(':idl2k').projectDir = "$rootDir/tools/idl2k" as File
-//project(':kotlin-js-tests').projectDir = "$rootDir/tools/kotlin-js-tests" as File
-//project(':kotlin-js-tests-junit').projectDir = "$rootDir/tools/kotlin-js-tests-junit" as File
 //project(':kotlin-annotation-processing').projectDir = "$rootDir/tools/kotlin-annotation-processing" as File
 //project(':kotlin-allopen').projectDir = "$rootDir/tools/kotlin-allopen" as File
 //project(':kotlin-maven-allopen').projectDir = "$rootDir/tools/kotlin-maven-allopen" as File
