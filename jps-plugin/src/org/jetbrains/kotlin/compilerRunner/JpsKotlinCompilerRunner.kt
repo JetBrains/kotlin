@@ -21,7 +21,6 @@ import org.jetbrains.jps.api.GlobalOptions
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.additionalArgumentsAsList
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
@@ -104,7 +103,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             compilerArgs: CommonCompilerArguments,
             environment: JpsCompilerEnvironment
     ): ExitCode {
-        environment.messageCollector.report(CompilerMessageSeverity.INFO, "Using kotlin-home = " + environment.kotlinPaths.homePath)
+        log.debug("Using kotlin-home = " + environment.kotlinPaths.homePath)
 
         return if (isDaemonEnabled()) {
             val daemonExitCode = compileWithDaemon(compilerClassName, compilerArgs, environment)
