@@ -32,7 +32,11 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.File
 
-class StubProducerExtension(val stubsOutputDir: File, val messageCollector: MessageCollector) : AnalysisHandlerExtension {
+class StubProducerExtension(
+        private val stubsOutputDir: File,
+        private val messageCollector: MessageCollector,
+        private val reportOutputFiles: Boolean
+) : AnalysisHandlerExtension {
     override fun analysisCompleted(
             project: Project,
             module: ModuleDescriptor,
@@ -50,7 +54,7 @@ class StubProducerExtension(val stubsOutputDir: File, val messageCollector: Mess
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 
         if (!stubsOutputDir.exists()) stubsOutputDir.mkdirs()
-        generationState.factory.writeAll(stubsOutputDir, messageCollector)
+        generationState.factory.writeAll(stubsOutputDir, messageCollector, reportOutputFiles)
 
         generationState.destroy()
         return AnalysisResult.success(BindingContext.EMPTY, module, shouldGenerateCode = false)

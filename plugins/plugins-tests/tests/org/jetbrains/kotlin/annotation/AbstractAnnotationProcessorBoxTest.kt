@@ -62,7 +62,7 @@ abstract class AbstractAnnotationProcessorBoxTest : KotlinTestWithEnvironment() 
 
         if (supportStubs) {
             val stubsDir = KotlinTestUtils.tmpDir("class-stubs")
-            val stubProducerExtension = StubProducerExtension(stubsDir, MessageCollector.NONE)
+            val stubProducerExtension = StubProducerExtension(stubsDir, MessageCollector.NONE, false)
             AnalysisHandlerExtension.registerExtension(project, stubProducerExtension)
         }
 

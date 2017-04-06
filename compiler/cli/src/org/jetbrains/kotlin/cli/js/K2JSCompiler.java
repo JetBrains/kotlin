@@ -211,7 +211,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        OutputUtilsKt.writeAll(outputFiles, outputDir, messageCollector);
+        OutputUtilsKt.writeAll(outputFiles, outputDir, messageCollector,
+                               configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES));
 
         return OK;
     }

@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.scripts.captureOut
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.utils.keysToMap
 import org.junit.Assert
 import java.io.File
 import java.net.URLClassLoader
@@ -110,7 +109,8 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
     fun testHelloAppLocal() {
         val messageCollector = TestMessageCollector()
         val jar = tmpdir.absolutePath + File.separator + "hello.jar"
-        val (code, outputs) = compileLocally(messageCollector, "-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar)
+        val (code, outputs) = compileLocally(messageCollector, "-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath,
+                                             "-d", jar, "-Xreport-output-files")
         Assert.assertEquals(0, code)
         Assert.assertTrue(outputs.isNotEmpty())
         Assert.assertEquals(jar, outputs.first().outputFile?.absolutePath)
@@ -129,12 +129,13 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
             val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
                                                              inheritMemoryLimits = false, inheritAdditionalProperties = false)
-            val messageCollector = TestMessageCollector()
             val jar = tmpdir.absolutePath + File.separator + "hello.jar"
 
             try {
-                val (code, outputs) = compileOnDaemon(flagFile, compilerId, daemonJVMOptions, daemonOptions, messageCollector,
-                                                      "-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar)
+                val (code, outputs) = compileOnDaemon(
+                        flagFile, compilerId, daemonJVMOptions, daemonOptions, TestMessageCollector(), "-include-runtime",
+                        File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar, "-Xreport-output-files"
+                )
                 Assert.assertEquals(0, code)
                 Assert.assertTrue(outputs.isNotEmpty())
                 Assert.assertEquals(jar, outputs.first().outputFile?.absolutePath)
@@ -149,7 +150,8 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
     fun testSimpleScriptLocal() {
         val messageCollector = TestMessageCollector()
-        val (code, outputs) = compileLocally(messageCollector, File(getSimpleScriptBaseDir(), "script.kts").absolutePath, "-d", tmpdir.absolutePath)
+        val (code, outputs) = compileLocally(messageCollector, File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
+                                             "-d", tmpdir.absolutePath, "-Xreport-output-files")
         Assert.assertEquals(0, code)
         Assert.assertTrue(outputs.isNotEmpty())
         Assert.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
@@ -168,12 +170,11 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
             val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
                                                              inheritMemoryLimits = false, inheritAdditionalProperties = false)
-            val messageCollector = TestMessageCollector()
-            val jar = tmpdir.absolutePath + File.separator + "hello.jar"
-
             try {
-                val (code, outputs) = compileOnDaemon(flagFile, compilerId, daemonJVMOptions, daemonOptions, messageCollector,
-                                                      File(getSimpleScriptBaseDir(), "script.kts").absolutePath, "-d", tmpdir.absolutePath)
+                val (code, outputs) = compileOnDaemon(
+                        flagFile, compilerId, daemonJVMOptions, daemonOptions, TestMessageCollector(),
+                        File(getSimpleScriptBaseDir(), "script.kts").absolutePath, "-Xreport-output-files", "-d", tmpdir.absolutePath
+                )
                 Assert.assertEquals(0, code)
                 Assert.assertTrue(outputs.isNotEmpty())
                 Assert.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)

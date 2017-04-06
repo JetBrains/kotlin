@@ -25,6 +25,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val MODULE_NAME = CompilerConfigurationKey<String>("module name")
+
+    @JvmField
+    val REPORT_OUTPUT_FILES = CompilerConfigurationKey<Boolean>("report output files")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

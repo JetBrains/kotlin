@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
@@ -87,19 +88,21 @@ object KotlinToJVMBytecodeCompiler {
             outputFiles: OutputFileCollection,
             mainClass: FqName?
     ) {
+        val reportOutputFiles = configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
         val jarPath = configuration.get(JVMConfigurationKeys.OUTPUT_JAR)
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         if (jarPath != null) {
             val includeRuntime = configuration.get(JVMConfigurationKeys.INCLUDE_RUNTIME, false)
             CompileEnvironmentUtil.writeToJar(jarPath, includeRuntime, mainClass, outputFiles)
-            messageCollector.report(
-                    OUTPUT, OutputMessageUtil.formatOutputMessage(outputFiles.asList().flatMap { it.sourceFiles }.distinct(), jarPath)
-            )
+            if (reportOutputFiles) {
+                val message = OutputMessageUtil.formatOutputMessage(outputFiles.asList().flatMap { it.sourceFiles }.distinct(), jarPath)
+                messageCollector.report(OUTPUT, message)
+            }
             return
         }
 
         val outputDir = configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY) ?: File(".")
-        outputFiles.writeAll(outputDir, messageCollector)
+        outputFiles.writeAll(outputDir, messageCollector, reportOutputFiles)
     }
 
     private fun createOutputFilesFlushingCallbackIfPossible(configuration: CompilerConfiguration): GenerationStateEventCallback {

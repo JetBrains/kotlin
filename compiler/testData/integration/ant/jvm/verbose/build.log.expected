@@ -5,10 +5,6 @@ build:
   [kotlinc] Compiling [[TestData]/hello.kt] => [[Temp]/hello.jar]
   [kotlinc] logging: using Kotlin home directory [KotlinProjectHome]/dist/kotlinc
   [kotlinc] logging: configuring the compilation environment
-  [kotlinc] output: output:
-  [kotlinc] [Temp]/hello.jar
-  [kotlinc] Sources:
-  [kotlinc] [TestData]/hello.kt
 
 BUILD SUCCESSFUL
 Total time: [time]

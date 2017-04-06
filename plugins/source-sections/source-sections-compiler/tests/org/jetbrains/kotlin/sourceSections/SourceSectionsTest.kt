@@ -208,7 +208,8 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
                 sourceToOutput.forEach { (source, expectedOutput) ->
                     val args = arrayOf(source.canonicalPath, "-d", tmpdir.canonicalPath,
                                        "-Xplugin=${sourceSectionsPluginJar.canonicalPath}",
-                                       "-P", TEST_ALLOWED_SECTIONS.joinToString(",") { "plugin:${SourceSectionsCommandLineProcessor.PLUGIN_ID}:${SourceSectionsCommandLineProcessor.SECTIONS_OPTION.name}=$it" })
+                                       "-P", TEST_ALLOWED_SECTIONS.joinToString(",") { "plugin:${SourceSectionsCommandLineProcessor.PLUGIN_ID}:${SourceSectionsCommandLineProcessor.SECTIONS_OPTION.name}=$it" },
+                                       "-Xreport-output-files")
 
                     messageCollector.clear()
                     val outputs = arrayListOf<OutputMessageUtil.Output>()
