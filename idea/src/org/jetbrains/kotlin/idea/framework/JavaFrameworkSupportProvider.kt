@@ -25,7 +25,9 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.roots.ui.configuration.FacetsProvider
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
+import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import javax.swing.JComponent
 
 internal class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
@@ -68,4 +70,10 @@ internal class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider()
     }
 
     override fun isEnabledForModuleType(moduleType: ModuleType<*>): Boolean = moduleType is JavaModuleType
+
+    override fun canAddSupport(module: Module, facetsProvider: FacetsProvider): Boolean {
+        return super.canAddSupport(module, facetsProvider) &&
+               !KotlinPluginUtil.isMavenModule(module) &&
+               !KotlinPluginUtil.isGradleModule(module)
+    }
 }
