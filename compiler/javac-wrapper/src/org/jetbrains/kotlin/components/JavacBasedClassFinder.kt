@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import javax.annotation.PostConstruct
 import javax.inject.Inject
 
-class JavacClassFinder : JavaClassFinder {
+class JavacBasedClassFinder : JavaClassFinder {
 
     private lateinit var project: Project
     private lateinit var baseScope: GlobalSearchScope
@@ -55,7 +55,7 @@ class JavacClassFinder : JavaClassFinder {
         val base: GlobalSearchScope = myBaseScope
 
         //NOTE: expected by class finder to be not null
-        override fun getProject() = this@JavacClassFinder.project
+        override fun getProject() = this@JavacBasedClassFinder.project
 
         override fun toString() = "$myBaseScope"
     }

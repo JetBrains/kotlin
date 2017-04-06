@@ -16,13 +16,11 @@
 
 package org.jetbrains.kotlin.components
 
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.load.java.components.JavaPropertyInitializerEvaluator
-import org.jetbrains.kotlin.load.java.structure.JavaField
+import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
+import org.jetbrains.kotlin.load.java.structure.JavaElement
 
-class JavacJavaPropertyInitializerEvaluator : JavaPropertyInitializerEvaluator {
+class JavacBasedSourceElementFactory : JavaSourceElementFactory {
 
-    override fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor) = null
-    override fun isNotNullCompileTimeConstant(field: JavaField) = false
+    override fun source(javaElement: JavaElement) = JavacBasedSourceElement(javaElement)
 
 }

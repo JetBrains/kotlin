@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.jvm.compiler
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.javac.Javac
-import org.jetbrains.kotlin.components.JavacClassFinder
+import org.jetbrains.kotlin.components.JavacBasedClassFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
@@ -70,7 +70,7 @@ class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
         assertEquals("test/A.B.C", binaryClass?.classId?.toString())
     }
 
-    private fun createClassFinder(project: Project) = JavacClassFinder().apply {
+    private fun createClassFinder(project: Project) = JavacBasedClassFinder().apply {
         setProject(project)
         setScope(GlobalSearchScope.allScope(project))
 

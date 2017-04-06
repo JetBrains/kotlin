@@ -19,10 +19,9 @@ package org.jetbrains.kotlin.frontend.java.di
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.JvmBuiltInsPackageFragmentProvider
-import org.jetbrains.kotlin.components.JavacClassFinder
-import org.jetbrains.kotlin.components.JavacJavaPropertyInitializerEvaluator
-import org.jetbrains.kotlin.components.JavacJavaResolverCache
-import org.jetbrains.kotlin.components.JavacSourceElementFactory
+import org.jetbrains.kotlin.components.JavacBasedClassFinder
+import org.jetbrains.kotlin.components.JavacBasedJavaResolverCache
+import org.jetbrains.kotlin.components.JavacBasedSourceElementFactory
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -66,15 +65,15 @@ private fun StorageComponentContainer.configureJavaTopDownAnalysisWithJavac(
 
     useImpl<AnnotationResolverImpl>()
 
-    useImpl<JavacClassFinder>()
+    useImpl<JavacBasedClassFinder>()
     useImpl<SignaturePropagatorImpl>()
-    useImpl<JavacJavaResolverCache>()
+    useImpl<JavacBasedJavaResolverCache>()
     useImpl<TraceBasedErrorReporter>()
     useImpl<PsiBasedExternalAnnotationResolver>()
-    useImpl<JavacJavaPropertyInitializerEvaluator>()
+    useInstance(JavaPropertyInitializerEvaluator.DoNothing)
     useInstance(SamWithReceiverResolver())
     useImpl<SamConversionResolverImpl>()
-    useImpl<JavacSourceElementFactory>()
+    useImpl<JavacBasedSourceElementFactory>()
     useInstance(InternalFlexibleTypeTransformer)
 
     useImpl<CompilerDeserializationConfiguration>()
@@ -150,7 +149,7 @@ fun createContainerForLazyResolveWithJava(
     }
 }.apply {
     if (useJavac)
-        get<JavacClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
+        get<JavacBasedClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
     else
         get<JavaClassFinderImpl>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
 }

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import javax.inject.Inject
 
-class JavacJavaResolverCache : JavaResolverCache {
+class JavacBasedJavaResolverCache : JavaResolverCache {
 
     private lateinit var trace: BindingTrace
     private lateinit var resolveSession: ResolveSession
