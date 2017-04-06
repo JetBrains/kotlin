@@ -1,0 +1,2 @@
+warning: argument -module-name is passed multiple times. Only the last value will be used: bbb
+OK

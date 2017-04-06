@@ -1,0 +1,16 @@
+$TESTDATA_DIR$/simple.kt
+-cp
+$TESTDATA_DIR$
+-cp
+$TESTDATA_DIR$
+-java-parameters
+-java-parameters
+-Xno-inline
+-d
+$TEMP_DIR$
+-java-parameters
+-Xno-inline
+-module-name
+aaa
+-module-name
+bbb

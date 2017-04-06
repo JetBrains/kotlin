@@ -30,6 +30,7 @@ val Argument.isAdvanced: Boolean
 
 private val ADVANCED_ARGUMENT_PREFIX = "-X"
 
+// Parses arguments in the passed [result] object, or throws an [IllegalArgumentException] with the message to be displayed to the user
 fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>, result: A) {
     data class ArgumentField(val field: Field, val argument: Argument)
 
@@ -37,6 +38,8 @@ fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>,
         val argument = field.getAnnotation(Argument::class.java)
         if (argument != null) ArgumentField(field, argument) else null
     }
+
+    val visitedArgs = mutableSetOf<String>()
 
     var i = 0
     while (i < args.size) {
@@ -72,6 +75,10 @@ fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>,
                 }
                 args[i++]
             }
+        }
+
+        if (!field.type.isArray && !visitedArgs.add(argument.value) && value is String && field.get(result) != value) {
+            result.duplicateArguments.put(argument.value, value)
         }
 
         updateField(field, result, value)

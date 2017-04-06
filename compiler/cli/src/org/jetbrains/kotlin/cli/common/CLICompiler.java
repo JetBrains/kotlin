@@ -136,7 +136,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             messageCollector = new FilteringMessageCollector(messageCollector, Predicate.isEqual(WARNING));
         }
 
-        reportUnknownAndObsoleteExtraFlags(messageCollector, arguments);
+        reportArgumentParseProblems(messageCollector, arguments);
 
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
 
@@ -311,13 +311,17 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             @NotNull CompilerConfiguration configuration, @NotNull A arguments, @NotNull Services services
     );
 
-    private void reportUnknownAndObsoleteExtraFlags(@NotNull MessageCollector collector, @NotNull A arguments) {
+    private void reportArgumentParseProblems(@NotNull MessageCollector collector, @NotNull A arguments) {
         for (String flag : arguments.unknownExtraFlags) {
             collector.report(STRONG_WARNING, "Flag is not supported by this version of the compiler: " + flag, null);
         }
         for (String argument : arguments.extraArgumentsPassedInObsoleteForm) {
             collector.report(STRONG_WARNING, "Advanced option value is passed in an obsolete form. Please use the '=' character " +
                                              "to specify the value: " + argument + "=...", null);
+        }
+        for (Map.Entry<String, String> argument : arguments.duplicateArguments.entrySet()) {
+            collector.report(STRONG_WARNING, "Argument " + argument.getKey() + " is passed multiple times. " +
+                                             "Only the last value will be used: " + argument.getValue(), null);
         }
     }
 

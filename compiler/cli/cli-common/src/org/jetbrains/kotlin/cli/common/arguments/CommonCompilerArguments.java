@@ -20,7 +20,9 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class CommonCompilerArguments implements Serializable {
     public static final long serialVersionUID = 0L;
@@ -104,6 +106,10 @@ public abstract class CommonCompilerArguments implements Serializable {
 
     // Names of extra (-X...) arguments which have been passed in an obsolete form ("-Xaaa bbb", instead of "-Xaaa=bbb")
     public List<String> extraArgumentsPassedInObsoleteForm = new SmartList<>();
+
+    // Non-boolean arguments which have been passed multiple times, possibly with different values.
+    // The key in the map is the name of the argument, the value is the last passed value.
+    public Map<String, String> duplicateArguments = new LinkedHashMap<>();
 
     @NotNull
     public static CommonCompilerArguments createDefaultInstance() {

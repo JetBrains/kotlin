@@ -74,6 +74,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("argumentPassedMultipleTimes.args")
+        public void testArgumentPassedMultipleTimes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/argumentPassedMultipleTimes.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("classAndFileClassClash.args")
         public void testClassAndFileClassClash() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/classAndFileClassClash.args");
@@ -128,39 +134,21 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
-        @TestMetadata("coroutinesEnableWarnAndErrorClash.args")
-        public void testCoroutinesEnableWarnAndErrorClash() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesEnableWarnAndErrorClash.args");
-            doJvmTest(fileName);
-        }
-
         @TestMetadata("coroutinesError.args")
         public void testCoroutinesError() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesError.args");
             doJvmTest(fileName);
         }
 
-        @TestMetadata("coroutinesErrorAndEnableClash.args")
-        public void testCoroutinesErrorAndEnableClash() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesErrorAndEnableClash.args");
+        @TestMetadata("coroutinesErrorAndEnable.args")
+        public void testCoroutinesErrorAndEnable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesErrorAndEnable.args");
             doJvmTest(fileName);
         }
 
-        @TestMetadata("coroutinesWarnAndEnableClash.args")
-        public void testCoroutinesWarnAndEnableClash() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesWarnAndEnableClash.args");
-            doJvmTest(fileName);
-        }
-
-        @TestMetadata("coroutinesWarnAndErrorClash.args")
-        public void testCoroutinesWarnAndErrorClash() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesWarnAndErrorClash.args");
-            doJvmTest(fileName);
-        }
-
-        @TestMetadata("coroutinesWarninig.args")
-        public void testCoroutinesWarninig() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesWarninig.args");
+        @TestMetadata("coroutinesWarn.args")
+        public void testCoroutinesWarn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesWarn.args");
             doJvmTest(fileName);
         }
 
