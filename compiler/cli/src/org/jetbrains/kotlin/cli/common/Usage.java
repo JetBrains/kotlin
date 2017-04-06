@@ -29,19 +29,19 @@ class Usage {
     // The magic number 29 corresponds to the similar padding width in javac and scalac command line compilers
     private static final int OPTION_NAME_PADDING_WIDTH = 29;
 
-    public static void print(@NotNull PrintStream target, @NotNull CommonCompilerArguments arguments, boolean extraHelp) {
+    public static void print(@NotNull PrintStream target, @NotNull CommonCompilerArguments arguments) {
         target.println("Usage: " + arguments.executableScriptFileName() + " <options> <source files>");
-        target.println("where " + (extraHelp ? "advanced" : "possible") + " options include:");
+        target.println("where " + (arguments.extraHelp ? "advanced" : "possible") + " options include:");
         for (Class<?> clazz = arguments.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
             for (Field field : clazz.getDeclaredFields()) {
-                String usage = fieldUsage(field, extraHelp);
+                String usage = fieldUsage(field, arguments.extraHelp);
                 if (usage != null) {
                     target.println(usage);
                 }
             }
         }
 
-        if (extraHelp) {
+        if (arguments.extraHelp) {
             target.println();
             target.println("Advanced options are non-standard and may be changed or removed without any notice.");
         }

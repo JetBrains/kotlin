@@ -1,28 +1,3 @@
-Invalid argument: -wrong-argument
-Usage: kotlinc-jvm <options> <source files>
-where possible options include:
-  -d <directory|jar>         Destination for generated class files
-  -classpath (-cp) <path>    Paths where to find user class files
-  -include-runtime           Include Kotlin runtime in to resulting .jar
-  -jdk-home <path>           Path to JDK home directory to include into classpath, if differs from default JAVA_HOME
-  -no-jdk                    Don't include Java runtime into classpath
-  -no-stdlib                 Don't include Kotlin runtime into classpath
-  -no-reflect                Don't include Kotlin reflection implementation into classpath
-  -module <path>             Path to the module file to compile
-  -script                    Evaluate the script file
-  -script-templates <fully qualified class name[,]>
-                             Script definition template classes
-  -kotlin-home <path>        Path to Kotlin compiler home directory, used for runtime libraries discovery
-  -module-name               Module name
-  -jvm-target <version>      Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6
-  -java-parameters           Generate metadata for Java 1.8 reflection on method parameters
-  -language-version <version> Provide source compatibility with specified language version
-  -api-version <version>     Allow to use declarations only from the specified version of bundled libraries
-  -nowarn                    Generate no warnings
-  -verbose                   Enable verbose logging output
-  -version                   Display compiler version
-  -help (-h)                 Print a synopsis of standard options
-  -X                         Print a synopsis of advanced options
-  -P plugin:<pluginId>:<optionName>=<value>
-                             Pass an option to a plugin
-INTERNAL_ERROR
+error: invalid argument: -wrong-argument
+info: use -help for more information
+COMPILATION_ERROR

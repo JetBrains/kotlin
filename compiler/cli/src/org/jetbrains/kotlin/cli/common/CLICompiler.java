@@ -65,20 +65,19 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     }
 
     @Nullable
-    private A parseArguments(@NotNull PrintStream errStream, @NotNull MessageRenderer messageRenderer, @NotNull String[] args) {
+    private A parseArguments(@NotNull MessageCollector messageCollector, @NotNull String[] args) {
         try {
             A arguments = createArguments();
             parseArguments(args, arguments);
             return arguments;
         }
         catch (IllegalArgumentException e) {
-            errStream.println(e.getMessage());
-            Usage.print(errStream, createArguments(), false);
+            throw e;
         }
         catch (Throwable t) {
-            errStream.println(messageRenderer.render(EXCEPTION, OutputMessageUtil.renderException(t), null));
+            messageCollector.report(EXCEPTION, OutputMessageUtil.renderException(t), null);
+            return null;
         }
-        return null;
     }
 
     // Used in kotlin-maven-plugin (KotlinCompileMojoBase) and in kotlin-gradle-plugin (KotlinJvmOptionsImpl, KotlinJsOptionsImpl)
@@ -98,13 +97,20 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     ) {
         K2JVMCompiler.Companion.resetInitStartTime();
 
-        A arguments = parseArguments(errStream, messageRenderer, args);
-        if (arguments == null) {
-            return INTERNAL_ERROR;
+        MessageCollector parseArgumentsCollector = new PrintingMessageCollector(errStream, messageRenderer, false);
+        A arguments;
+        try {
+            arguments = parseArguments(parseArgumentsCollector, args);
+            if (arguments == null) return INTERNAL_ERROR;
+        }
+        catch (IllegalArgumentException e) {
+            parseArgumentsCollector.report(ERROR, e.getMessage(), null);
+            parseArgumentsCollector.report(INFO, "Use -help for more information", null);
+            return COMPILATION_ERROR;
         }
 
         if (arguments.help || arguments.extraHelp) {
-            Usage.print(errStream, createArguments(), arguments.extraHelp);
+            Usage.print(errStream, arguments);
             return OK;
         }
 
