@@ -45,19 +45,19 @@ class LazyResolveBasedCache(private val resolveSession: ResolveSession) : JavaRe
     }
 
     override fun recordMethod(method: JavaMethod, descriptor: SimpleFunctionDescriptor) {
-        BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, (method as JavaMethodImpl).psi, descriptor)
+        BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, (method as? JavaMethodImpl)?.psi ?: return, descriptor)
     }
 
     override fun recordConstructor(element: JavaElement, descriptor: ConstructorDescriptor) {
-        trace.record(CONSTRUCTOR, (element as JavaElementImpl<*>).psi, descriptor)
+        trace.record(CONSTRUCTOR, (element as? JavaElementImpl<*>)?.psi ?: return, descriptor)
     }
 
     override fun recordField(field: JavaField, descriptor: PropertyDescriptor) {
-        trace.record(VARIABLE, (field as JavaFieldImpl).psi, descriptor)
+        trace.record(VARIABLE, (field as? JavaFieldImpl)?.psi ?: return, descriptor)
     }
 
     override fun recordClass(javaClass: JavaClass, descriptor: ClassDescriptor) {
-        trace.record(CLASS, (javaClass as JavaClassImpl).psi, descriptor)
+        trace.record(CLASS, (javaClass as? JavaClassImpl)?.psi ?: return, descriptor)
     }
 
     private fun findInPackageFragments(fullFqName: FqName): ClassDescriptor? {

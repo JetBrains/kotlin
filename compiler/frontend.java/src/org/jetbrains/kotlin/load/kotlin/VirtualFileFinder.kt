@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.sure
 
@@ -33,7 +34,10 @@ abstract class VirtualFileFinder : KotlinClassFinder {
     }
 
     override fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass? {
-        var file = (javaClass as JavaClassImpl).psi.containingFile?.virtualFile ?: return null
+        var file =
+                (javaClass as? JavaClassImpl)?.psi?.containingFile?.virtualFile
+                ?: (javaClass as? BinaryJavaClass)?.virtualFile
+                ?: return null
         if (javaClass.outerClass != null) {
             // For nested classes we get a file of the containing class, to get the actual class file for A.B.C,
             // we take the file for A, take its parent directory, then in this directory we look for A$B$C.class
