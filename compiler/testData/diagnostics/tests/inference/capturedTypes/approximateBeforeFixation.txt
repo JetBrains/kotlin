@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ T> kotlin.Array<out T>.intersect(/*0*/ other: kotlin.collections.Iterable<T>): kotlin.Unit
+public fun </*0*/ Y> kotlin.collections.MutableCollection<in Y>.retainAll(/*0*/ elements: kotlin.collections.Iterable<Y>): kotlin.Unit
+public fun </*0*/ X> kotlin.Array<out X>.toMutableSet(): kotlin.collections.MutableSet<X>

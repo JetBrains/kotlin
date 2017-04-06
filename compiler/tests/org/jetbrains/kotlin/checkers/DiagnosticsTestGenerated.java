@@ -10212,6 +10212,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/capturedTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("approximateBeforeFixation.kt")
+                public void testApproximateBeforeFixation() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/approximateBeforeFixation.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("cannotCaptureInProjection.kt")
                 public void testCannotCaptureInProjection() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/cannotCaptureInProjection.kt");
