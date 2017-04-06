@@ -33,6 +33,9 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean, val allowe
         return a == b
     }
 
+    open fun allowSubtypeViaLowerTypeForCapturedType(subType: SimpleType, superType: NewCapturedType): Boolean = true
+    open val sameConstructorPolicy get() = SeveralSupertypesWithSameConstructorPolicy.INTERSECT_ARGUMENTS_AND_CHECK_AGAIN
+
     internal inline fun <T> runWithArgumentsSettings(subArgument: UnwrappedType, f: TypeCheckerContext.() -> T): T {
         if (argumentsDepth > 100) {
             error("Arguments depth is too high. Some related argument: $subArgument")
@@ -115,6 +118,13 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean, val allowe
             override fun transformType(type: KotlinType) =
                     substitutor.safeSubstitute(type.lowerIfFlexible(), Variance.INVARIANT).asSimpleType()
         }
+    }
+
+    enum class SeveralSupertypesWithSameConstructorPolicy {
+        TAKE_FIRST_FOR_SUBTYPING,
+        FORCE_NOT_SUBTYPE,
+        CHECK_ANY_OF_THEM,
+        INTERSECT_ARGUMENTS_AND_CHECK_AGAIN
     }
 
     val UnwrappedType.isAllowedTypeVariable: Boolean get() = allowedTypeVariable && constructor is NewTypeVariableConstructor
