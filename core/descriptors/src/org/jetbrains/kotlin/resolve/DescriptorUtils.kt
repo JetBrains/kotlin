@@ -406,3 +406,5 @@ fun DeclarationDescriptor.isAncestorOf(descriptor: DeclarationDescriptor, strict
         = DescriptorUtils.isAncestor(this, descriptor, strict)
 
 fun DeclarationDescriptor.isCompanionObject(): Boolean = DescriptorUtils.isCompanionObject(this)
+
+fun ClassDescriptor.isSubclassOf(superclass: ClassDescriptor): Boolean = DescriptorUtils.isSubclass(this, superclass)

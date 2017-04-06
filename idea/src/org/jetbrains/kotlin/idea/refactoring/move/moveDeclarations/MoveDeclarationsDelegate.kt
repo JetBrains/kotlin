@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 
 sealed class MoveDeclarationsDelegate {
     abstract fun getContainerChangeInfo(originalDeclaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): ContainerChangeInfo
@@ -82,6 +83,23 @@ sealed class MoveDeclarationsDelegate {
             return collectOuterInstanceReferences(classToMove)
         }
 
+        private fun isValidTargetForImplicitCompanionAsDispatchReceiver(
+                moveDescriptor: MoveDeclarationsDescriptor,
+                companionDescriptor: ClassDescriptor
+        ): Boolean {
+            val moveTarget = moveDescriptor.moveTarget
+            return when (moveTarget) {
+                is KotlinMoveTargetForCompanion -> true
+                is KotlinMoveTargetForExistingElement -> {
+                    val targetClass = moveTarget.targetElement as? KtClassOrObject ?: return false
+                    val targetClassDescriptor = targetClass.resolveToDescriptor() as ClassDescriptor
+                    val companionClassDescriptor = companionDescriptor.containingDeclaration as? ClassDescriptor ?: return false
+                    targetClassDescriptor.isSubclassOf(companionClassDescriptor)
+                }
+                else -> false
+            }
+        }
+
         override fun collectConflicts(
                 descriptor: MoveDeclarationsDescriptor,
                 internalUsages: MutableSet<UsageInfo>,
@@ -94,7 +112,7 @@ sealed class MoveDeclarationsDelegate {
 
                 val isConflict = when (usage) {
                     is ImplicitCompanionAsDispatchReceiverUsageInfo -> {
-                        if (descriptor.moveTarget !is KotlinMoveTargetForCompanion) {
+                        if (!isValidTargetForImplicitCompanionAsDispatchReceiver(descriptor, usage.companionDescriptor)) {
                             conflicts.putValue(element, "Implicit companion object will be inaccessible: ${element.text}")
                         }
                         true

@@ -129,7 +129,7 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
                     val dispatchReceiver = refExpr.getResolvedCall(bindingContext)?.dispatchReceiver
                     val implicitClass = (dispatchReceiver as? ImplicitClassReceiver)?.classDescriptor
                     if (implicitClass?.isCompanionObject ?: false) {
-                        return ::ImplicitCompanionAsDispatchReceiverUsageInfo
+                        return { ImplicitCompanionAsDispatchReceiverUsageInfo(it, implicitClass!!) }
                     }
                     if (dispatchReceiver != null || containingDescriptor.kind != ClassKind.OBJECT) return null
                 }
@@ -178,7 +178,10 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
     }
 }
 
-class ImplicitCompanionAsDispatchReceiverUsageInfo(callee: KtSimpleNameExpression) : UsageInfo(callee)
+class ImplicitCompanionAsDispatchReceiverUsageInfo(
+        callee: KtSimpleNameExpression,
+        val companionDescriptor: ClassDescriptor
+) : UsageInfo(callee)
 
 interface KotlinMoveUsage {
     val isInternal: Boolean

@@ -372,6 +372,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveNestedClass/nonInnerToSubclassWithCompanionAsImplicitDispatchReceiver/nonInnerToSubclassWithCompanionAsImplicitDispatchReceiver.test")
+    public void testKotlin_moveNestedClass_nonInnerToSubclassWithCompanionAsImplicitDispatchReceiver_NonInnerToSubclassWithCompanionAsImplicitDispatchReceiver() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/nonInnerToSubclassWithCompanionAsImplicitDispatchReceiver/nonInnerToSubclassWithCompanionAsImplicitDispatchReceiver.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveNestedClass/nonInnerToTopLevel/nonInnerToTopLevel.test")
     public void testKotlin_moveNestedClass_nonInnerToTopLevel_NonInnerToTopLevel() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/nonInnerToTopLevel/nonInnerToTopLevel.test");
