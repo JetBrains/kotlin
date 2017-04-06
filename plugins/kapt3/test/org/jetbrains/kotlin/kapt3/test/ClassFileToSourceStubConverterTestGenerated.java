@@ -126,6 +126,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("javaKeywordsInPackageNames.kt")
+    public void testJavaKeywordsInPackageNames() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/javaKeywordsInPackageNames.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("jvmOverloads.kt")
     public void testJvmOverloads() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/jvmOverloads.kt");

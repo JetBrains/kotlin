@@ -189,6 +189,7 @@ class ClassFileToSourceStubConverter(
      */
     private fun convertClass(clazz: ClassNode, packageFqName: String, isTopLevel: Boolean): JCClassDecl? {
         if (isSynthetic(clazz.access)) return null
+        if (checkIfShouldBeIgnored(Type.getObjectType(clazz.name))) return null
 
         val descriptor = kaptContext.origins[clazz]?.descriptor as? DeclarationDescriptor ?: return null
         val isNested = (descriptor as? ClassDescriptor)?.isNested ?: false
@@ -281,11 +282,6 @@ class ClassFileToSourceStubConverter(
             if (enumValuesData.any { it.innerClass == innerClass }) return@mapJList null
             if (innerClass.outerName != clazz.name) return@mapJList null
             val innerClassNode = kaptContext.compiledClasses.firstOrNull { it.name == innerClass.name } ?: return@mapJList null
-            if (checkIfInnerClassNameConflictsWithOuter(innerClassNode, clazz)) {
-                kaptContext.logger.warn(innerClassNode.name.replace('/', '.').replace('$', '.')
-                        + " will be ignored (name is clashing with the outer class name)")
-                return@mapJList null
-            }
             convertClass(innerClassNode, packageFqName, false)
         }
 
@@ -306,6 +302,11 @@ class ClassFileToSourceStubConverter(
         if (type.sort != Type.OBJECT) return false
 
         val internalName = type.internalName
+        // Ignore type names with Java keywords in it
+        if (internalName.split('/', '.').any { it in JAVA_KEYWORDS }) {
+            return true
+        }
+
         val clazz = kaptContext.compiledClasses.firstOrNull { it.name == internalName } ?: return false
         return checkIfInnerClassNameConflictsWithOuter(clazz)
     }
@@ -557,8 +558,7 @@ class ClassFileToSourceStubConverter(
             return name
         }
 
-        // In theory, this could lead to member/parameter name clashes, though it's supposed to be extremely rare.
-        if (name in JAVA_KEYWORDS) return '_' + name + '_'
+        if (name in JAVA_KEYWORDS) return null
 
         if (name.isEmpty()
             || !Character.isJavaIdentifierStart(name[0])

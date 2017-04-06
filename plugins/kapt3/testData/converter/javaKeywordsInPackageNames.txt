@@ -1,0 +1,19 @@
+package a.b.c;
+
+public final class A {
+
+    public A() {
+        super();
+    }
+}
+
+////////////////////
+
+package a.b.typealias.c;
+
+public final class E {
+
+    public E() {
+        super();
+    }
+}
