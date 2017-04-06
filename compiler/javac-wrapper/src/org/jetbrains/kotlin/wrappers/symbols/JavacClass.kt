@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.wrappers.symbols
 
 import com.intellij.psi.CommonClassNames
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -30,7 +30,7 @@ import javax.lang.model.type.NoType
 import javax.lang.model.type.TypeKind
 
 class JavacClass<T : TypeElement>(element: T,
-                                  javac: Javac) : JavacClassifier<TypeElement>(element, javac), JavaClass {
+                                  javac: JavacWrapper) : JavacClassifier<TypeElement>(element, javac), JavaClass {
 
     override val name
         get() = SpecialNames.safeIdentifier(element.simpleName.toString())

@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.VariableElement
 
 class JavacField<out T : VariableElement>(element: T,
-                                          javac: Javac) : JavacMember<T>(element, javac), JavaField {
+                                          javac: JavacWrapper) : JavacMember<T>(element, javac), JavaField {
 
     override val isEnumEntry
         get() = element.kind == ElementKind.ENUM_CONSTANT

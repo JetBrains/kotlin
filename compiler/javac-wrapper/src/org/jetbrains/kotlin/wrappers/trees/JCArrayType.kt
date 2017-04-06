@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.wrappers.trees
 
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 
 class JCArrayType<out T : JCTree.JCArrayTypeTree>(tree: T,
                                                   treePath: TreePath,
-                                                  javac: Javac) : JCType<T>(tree, treePath, javac), JavaArrayType {
+                                                  javac: JavacWrapper) : JCType<T>(tree, treePath, javac), JavaArrayType {
 
     override val componentType
         get() = create(tree.elemtype, treePath, javac)

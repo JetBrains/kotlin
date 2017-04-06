@@ -87,7 +87,7 @@ import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -238,11 +238,11 @@ class KotlinCoreEnvironment private constructor(
                       outDir: File? = null,
                       messageCollector: MessageCollector? = null,
                       arguments: Array<String>? = null) {
-        projectEnvironment.project.registerService(Javac::class.java, Javac(files,
-                                                                            configuration.jvmClasspathRoots,
-                                                                            outDir,
-                                                                            messageCollector,
-                                                                            arguments))
+        projectEnvironment.project.registerService(JavacWrapper::class.java, JavacWrapper(files,
+                                                                                          configuration.jvmClasspathRoots,
+                                                                                          outDir,
+                                                                                          messageCollector,
+                                                                                          arguments))
     }
 
     private val applicationEnvironment: CoreApplicationEnvironment

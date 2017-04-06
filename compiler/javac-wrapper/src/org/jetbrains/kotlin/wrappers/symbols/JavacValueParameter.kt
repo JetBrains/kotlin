@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.FqName
@@ -25,7 +25,7 @@ import javax.lang.model.element.VariableElement
 
 class JavacValueParameter<out T : VariableElement>(element: T, private val elementName : String,
                                                    override val isVararg : Boolean,
-                                                   javac: Javac) : JavacElement<T>(element, javac), JavaValueParameter {
+                                                   javac: JavacWrapper) : JavacElement<T>(element, javac), JavaValueParameter {
 
     override val annotations
         get() = element.annotationMirrors.map { JavacAnnotation(it, javac) }

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaMember
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -25,7 +25,7 @@ import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 
 abstract class JavacMember<out T : Element>(element: T,
-                                            javac: Javac) : JavacElement<T>(element, javac), JavaMember {
+                                            javac: JavacWrapper) : JavacElement<T>(element, javac), JavaMember {
 
     override val containingClass
         get() = JavacClass((element.enclosingElement as TypeElement), javac)
@@ -59,7 +59,7 @@ abstract class JavacMember<out T : Element>(element: T,
 
 }
 
-fun ExecutableElement.valueParameters(javac: Javac) = let {
+fun ExecutableElement.valueParameters(javac: JavacWrapper) = let {
     val parameterTypesCount = parameters.size
 
     parameters.mapIndexed { index, it ->

@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
 import org.jetbrains.kotlin.name.FqName
 import javax.lang.model.element.VariableElement
 
 class JavacReferenceAnnotationArgument(val element: VariableElement,
-                                       javac: Javac) : JavacAnnotationArgument(FqName(element.simpleName.toString()), javac),
+                                       javac: JavacWrapper) : JavacAnnotationArgument(FqName(element.simpleName.toString()), javac),
         JavaEnumValueAnnotationArgument {
 
     override fun resolve() = JavacField(element, javac)

@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.SpecialNames
 import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.TypeVariable
 
 class JavacTypeParameter<out T : TypeParameterElement>(element: T,
-                                                       javac: Javac) : JavacClassifier<T>(element, javac), JavaTypeParameter {
+                                                       javac: JavacWrapper) : JavacClassifier<T>(element, javac), JavaTypeParameter {
 
     override val name
         get() = SpecialNames.safeIdentifier(element.simpleName.toString())

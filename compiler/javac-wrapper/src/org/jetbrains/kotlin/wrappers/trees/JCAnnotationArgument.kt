@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.wrappers.trees
 
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.name.FqName
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 
 open class JCAnnotationArgument(val tree: JCTree.JCExpression,
                                 private val fqName: FqName,
-                                val javac: Javac) : JavaAnnotationArgument, JavaElement {
+                                val javac: JavacWrapper) : JavaAnnotationArgument, JavaElement {
 
     override val name = Name.identifier(fqName.shortName().asString())
 

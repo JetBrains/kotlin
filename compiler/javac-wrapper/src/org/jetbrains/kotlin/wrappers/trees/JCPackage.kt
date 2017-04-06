@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.wrappers.trees
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class JCPackage(val name: String, val javac: Javac) : JavaPackage {
+class JCPackage(val name: String, val javac: JavacWrapper) : JavaPackage {
 
     override val fqName
         get() = FqName(name)

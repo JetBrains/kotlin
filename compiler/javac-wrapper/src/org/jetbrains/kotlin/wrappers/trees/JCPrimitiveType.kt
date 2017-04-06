@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.wrappers.trees
 
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 class JCPrimitiveType<out T : JCTree.JCPrimitiveTypeTree>(tree: T,
                                                           treePath: TreePath,
-                                                          javac: Javac) : JCType<T>(tree, treePath, javac), JavaPrimitiveType {
+                                                          javac: JavacWrapper) : JCType<T>(tree, treePath, javac), JavaPrimitiveType {
 
     override val type
         get() = if ("void" == tree.toString()) null else JvmPrimitiveType.get(tree.toString()).primitiveType

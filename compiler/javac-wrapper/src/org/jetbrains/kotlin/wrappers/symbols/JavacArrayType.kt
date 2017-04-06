@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import javax.lang.model.type.ArrayType
 import javax.lang.model.type.TypeMirror
 
 class JavacArrayType<out T : TypeMirror>(typeMirror: T,
-                                         javac: Javac) : JavacType<T>(typeMirror, javac), JavaArrayType {
+                                         javac: JavacWrapper) : JavacType<T>(typeMirror, javac), JavaArrayType {
 
     override val componentType
         get() = create((typeMirror as ArrayType).componentType, javac)

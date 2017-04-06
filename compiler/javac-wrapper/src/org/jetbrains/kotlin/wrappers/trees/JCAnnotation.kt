@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.wrappers.trees
 
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.name.FqName
 
 class JCAnnotation(val annotation: JCTree.JCAnnotation,
                    val treePath: TreePath,
-                   val javac: Javac) : JavaElement, JavaAnnotation {
+                   val javac: JavacWrapper) : JavaElement, JavaAnnotation {
 
     override val arguments
         get() = annotation.arguments

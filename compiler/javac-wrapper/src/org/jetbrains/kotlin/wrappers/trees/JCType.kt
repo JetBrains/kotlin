@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.wrappers.trees
 
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
 import org.jetbrains.kotlin.load.java.structure.JavaType
@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.name.FqName
 
 abstract class JCType<out T : JCTree>(val tree: T,
                                       val treePath: TreePath,
-                                      val javac: Javac) : JavaType, JavaAnnotationOwner {
+                                      val javac: JavacWrapper) : JavaType, JavaAnnotationOwner {
 
     companion object {
-        fun <Type : JCTree> create(tree: Type, treePath: TreePath, javac: Javac) = when (tree) {
+        fun <Type : JCTree> create(tree: Type, treePath: TreePath, javac: JavacWrapper) = when (tree) {
             is JCTree.JCPrimitiveTypeTree -> JCPrimitiveType(tree, TreePath(treePath, tree), javac)
             is JCTree.JCArrayTypeTree -> JCArrayType(tree, TreePath(treePath, tree), javac)
             is JCTree.JCWildcard -> JCWildcardType(tree, TreePath(treePath, tree), javac)

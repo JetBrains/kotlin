@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.wrappers.trees
 
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -47,7 +47,7 @@ val JCTree.JCModifiers.visibility
         }
     }
 
-fun TreePath.resolve(javac: Javac): Pair<FqName, JavaClass?> {
+fun TreePath.resolve(javac: JavacWrapper): Pair<FqName, JavaClass?> {
     val name = leaf.toString().substringBefore("<").substringAfter("@")
     val compilationUnit = compilationUnit as JCTree.JCCompilationUnit
 
@@ -59,7 +59,7 @@ fun TreePath.resolve(javac: Javac): Pair<FqName, JavaClass?> {
 
 private fun resolveImport(name: String,
                           compilationUnit: JCTree.JCCompilationUnit,
-                          javac: Javac) = with(compilationUnit.imports) {
+                          javac: JavacWrapper) = with(compilationUnit.imports) {
     firstOrNull { it.qualifiedIdentifier.toString().endsWith(".$name") }
             ?.let {
                 it.qualifiedIdentifier.toString().let(::FqName)
@@ -77,7 +77,7 @@ private fun resolveImport(name: String,
 
 private fun TreePath.tryToResolve(name: String,
                                   compilationUnit: JCTree.JCCompilationUnit,
-                                  javac: Javac): Pair<FqName, JavaClass?> {
+                                  javac: JavacWrapper): Pair<FqName, JavaClass?> {
     val simpleName = name.substringAfterLast(".")
     val classes = javac.findClassesFromPackage(FqName("${compilationUnit.packageName}"))
             .filter { it.name.asString() == simpleName }

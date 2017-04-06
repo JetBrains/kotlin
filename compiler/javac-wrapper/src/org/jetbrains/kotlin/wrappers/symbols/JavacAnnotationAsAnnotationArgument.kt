@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationAsAnnotationArgument
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.AnnotationMirror
 
 class JavacAnnotationAsAnnotationArgument(val mirror: AnnotationMirror,
                                           override val name: Name,
-                                          val javac: Javac) : JavaAnnotationAsAnnotationArgument {
+                                          val javac: JavacWrapper) : JavaAnnotationAsAnnotationArgument {
 
     override fun getAnnotation() = JavacAnnotation(mirror, javac)
 

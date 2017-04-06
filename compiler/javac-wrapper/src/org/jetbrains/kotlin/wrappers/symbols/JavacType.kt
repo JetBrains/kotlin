@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
 import org.jetbrains.kotlin.load.java.structure.JavaType
@@ -25,10 +25,10 @@ import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 
 open class JavacType<out T : TypeMirror>(val typeMirror: T,
-                                         val javac: Javac) : JavaType, JavaAnnotationOwner {
+                                         val javac: JavacWrapper) : JavaType, JavaAnnotationOwner {
 
     companion object {
-        fun <TM : TypeMirror> create(t: TM, javac: Javac) = when {
+        fun <TM : TypeMirror> create(t: TM, javac: JavacWrapper) = when {
             t.kind.isPrimitive || t.toString() == "void" -> JavacPrimitiveType(t, javac)
             t.kind == TypeKind.DECLARED || t.kind == TypeKind.TYPEVAR -> JavacClassifierType(t, javac)
             t.kind == TypeKind.WILDCARD -> JavacWildcardType(t, javac)

@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.WildcardType
 
 class JavacWildcardType<out T : TypeMirror>(typeMirror: T,
-                                            javac: Javac) : JavacType<T>(typeMirror, javac), JavaWildcardType {
+                                            javac: JavacWrapper) : JavacType<T>(typeMirror, javac), JavaWildcardType {
 
     override val bound
         get() = typeMirror.let {

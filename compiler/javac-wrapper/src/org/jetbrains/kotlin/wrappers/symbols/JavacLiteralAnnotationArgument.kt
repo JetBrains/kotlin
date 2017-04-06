@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaLiteralAnnotationArgument
 import org.jetbrains.kotlin.name.Name
 
 class JavacLiteralAnnotationArgument(override val value : Any, override val name : Name,
-                                     val javac: Javac) : JavaLiteralAnnotationArgument
+                                     val javac: JavacWrapper) : JavaLiteralAnnotationArgument

@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
 import org.jetbrains.kotlin.load.java.structure.JavaArrayAnnotationArgument
 import org.jetbrains.kotlin.name.Name
 
 class JavacArrayAnnotationArgument(val args : List<JavaAnnotationArgument>, override val name : Name,
-                                   val javac: Javac) : JavaArrayAnnotationArgument {
+                                   val javac: JavacWrapper) : JavaArrayAnnotationArgument {
     override fun getElements() : List<JavaAnnotationArgument> = args
 }

@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaClassObjectAnnotationArgument
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.type.TypeMirror
 
 class JavacClassObjectAnnotationArgument(val type: TypeMirror, override val name : Name,
-                                         val javac: Javac) : JavaClassObjectAnnotationArgument {
+                                         val javac: JavacWrapper) : JavaClassObjectAnnotationArgument {
 
     override fun getReferencedType() = JavacType.create(type, javac)
 

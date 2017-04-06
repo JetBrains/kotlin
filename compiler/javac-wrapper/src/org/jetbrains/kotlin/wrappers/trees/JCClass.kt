@@ -22,7 +22,7 @@ import com.sun.source.util.TreePath
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeInfo
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.wrappers.symbols.JavacClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 class JCClass<out T : JCTree.JCClassDecl>(tree: T,
                                           treePath: TreePath,
-                                          javac: Javac) : JCClassifier<T>(tree, treePath, javac), JavaClass {
+                                          javac: JavacWrapper) : JCClassifier<T>(tree, treePath, javac), JavaClass {
 
     override val name
         get() = SpecialNames.safeIdentifier(tree.simpleName.toString())

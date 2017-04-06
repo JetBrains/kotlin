@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.wrappers.trees
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.code.BoundKind
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
 
 class JCWildcardType<out T : JCTree.JCWildcard>(tree: T,
                                                 treePath: TreePath,
-                                                javac: Javac) : JCType<T>(tree, treePath, javac), JavaWildcardType {
+                                                javac: JavacWrapper) : JCType<T>(tree, treePath, javac), JavaWildcardType {
 
     override val bound
         get() = tree.bound?.let { create(it, treePath, javac) }

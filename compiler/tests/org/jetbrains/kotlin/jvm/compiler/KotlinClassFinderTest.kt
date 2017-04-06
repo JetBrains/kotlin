@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.components.JavacBasedClassFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -76,7 +76,7 @@ class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
 
         val javacField = this::class.java.getDeclaredField("javac")
         javacField.isAccessible = true
-        javacField.set(this, Javac.getInstance(project))
+        javacField.set(this, JavacWrapper.getInstance(project))
 
         val javaSearchScopeField = this::class.java.getDeclaredField("javaSearchScope")
         javaSearchScopeField.isAccessible = true

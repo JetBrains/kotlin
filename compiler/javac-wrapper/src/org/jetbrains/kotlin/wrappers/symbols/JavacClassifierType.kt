@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.TypeParameterElement
@@ -26,7 +26,7 @@ import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVariable
 
 class JavacClassifierType<out T : TypeMirror>(typeMirror: T,
-                                              javac: Javac) : JavacType<T>(typeMirror, javac), JavaClassifierType {
+                                              javac: JavacWrapper) : JavacType<T>(typeMirror, javac), JavaClassifierType {
 
     override val classifier
         get() = when (typeMirror.kind) {

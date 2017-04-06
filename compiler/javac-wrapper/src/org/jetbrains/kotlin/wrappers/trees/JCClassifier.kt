@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.wrappers.trees
 
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier
 
 abstract class JCClassifier<out T : JCTree>(tree: T,
                                             treePath: TreePath,
-                                            javac: Javac) : JCElement<T>(tree, treePath, javac), JavaClassifier {
+                                            javac: JavacWrapper) : JCElement<T>(tree, treePath, javac), JavaClassifier {
 
     override val isDeprecatedInJavaDoc
         get() = false

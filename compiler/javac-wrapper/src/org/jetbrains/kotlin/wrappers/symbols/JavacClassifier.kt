@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier
 import org.jetbrains.kotlin.name.FqName
 import javax.lang.model.element.Element
 
 abstract class JavacClassifier<out T : Element>(element: T,
-                                                javac: Javac) : JavacElement<T>(element, javac), JavaClassifier, JavaAnnotationOwner {
+                                                javac: JavacWrapper) : JavacElement<T>(element, javac), JavaClassifier, JavaAnnotationOwner {
 
     override val annotations
         get() = element.annotationMirrors

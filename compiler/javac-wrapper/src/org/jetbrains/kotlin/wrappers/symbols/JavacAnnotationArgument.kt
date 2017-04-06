@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
 import org.jetbrains.kotlin.load.java.structure.JavaArrayAnnotationArgument
 import org.jetbrains.kotlin.load.java.structure.JavaElement
@@ -28,10 +28,10 @@ import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror
 
 open class JavacAnnotationArgument(private val fqName: FqName,
-                                   val javac: Javac) : JavaAnnotationArgument, JavaElement {
+                                   val javac: JavacWrapper) : JavaAnnotationArgument, JavaElement {
 
     companion object {
-        fun create(value: Any, name: Name, javac: Javac): JavaAnnotationArgument = when (value) {
+        fun create(value: Any, name: Name, javac: JavacWrapper): JavaAnnotationArgument = when (value) {
             is AnnotationMirror -> JavacAnnotationAsAnnotationArgument(value, name, javac)
             is VariableElement -> JavacReferenceAnnotationArgument(value, javac)
             is TypeMirror -> JavacClassObjectAnnotationArgument(value, name, javac)
@@ -40,7 +40,7 @@ open class JavacAnnotationArgument(private val fqName: FqName,
             else -> JavacLiteralAnnotationArgument(value, name, javac)
         }
 
-        private fun arrayAnnotationArguments(values: Collection<*>, name: Name, javac: Javac): JavaArrayAnnotationArgument = values
+        private fun arrayAnnotationArguments(values: Collection<*>, name: Name, javac: JavacWrapper): JavaArrayAnnotationArgument = values
                 .map { if (it is Collection<*>) arrayAnnotationArguments(it, name, javac) else create(it!!, name, javac) }
                 .let { JavacArrayAnnotationArgument(it, name, javac) }
 

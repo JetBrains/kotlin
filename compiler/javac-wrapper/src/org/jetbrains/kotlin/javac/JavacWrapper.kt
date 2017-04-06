@@ -60,14 +60,14 @@ import javax.tools.JavaFileManager
 import javax.tools.JavaFileObject
 import javax.tools.StandardLocation
 
-class Javac(javaFiles: Collection<File>,
-            classPathRoots: List<File>,
-            outDir: File?,
-            private val messageCollector: MessageCollector?,
-            arguments: Array<String>?) : Closeable {
+class JavacWrapper(javaFiles: Collection<File>,
+                   classPathRoots: List<File>,
+                   outDir: File?,
+                   private val messageCollector: MessageCollector?,
+                   arguments: Array<String>?) : Closeable {
 
     companion object {
-        fun getInstance(project: Project): Javac = ServiceManager.getService(project, Javac::class.java)
+        fun getInstance(project: Project): JavacWrapper = ServiceManager.getService(project, JavacWrapper::class.java)
     }
 
     val JAVA_LANG_OBJECT by lazy { findClassInSymbols(CommonClassNames.JAVA_LANG_OBJECT) }

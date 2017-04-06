@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
 import javax.lang.model.element.ExecutableElement
 
 class JavacMethod<out T : ExecutableElement>(element: T,
-                                             javac: Javac) : JavacMember<T>(element, javac), JavaMethod {
+                                             javac: JavacWrapper) : JavacMember<T>(element, javac), JavaMethod {
 
     override val typeParameters
         get() = element.typeParameters.map { JavacTypeParameter(it, javac) }

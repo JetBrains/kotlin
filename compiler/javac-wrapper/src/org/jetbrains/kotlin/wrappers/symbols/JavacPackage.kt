@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.PackageElement
 
-class JavacPackage(val element: PackageElement, val javac: Javac) : JavaPackage {
+class JavacPackage(val element: PackageElement, val javac: JavacWrapper) : JavaPackage {
 
     override val fqName
         get() = FqName(element.qualifiedName.toString())

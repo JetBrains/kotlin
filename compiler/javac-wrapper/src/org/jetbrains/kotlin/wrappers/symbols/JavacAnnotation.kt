@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.name.ClassId
@@ -27,7 +27,7 @@ import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 
 open class JavacAnnotation(val annotationMirror: AnnotationMirror,
-                           val javac: Javac) : JavaElement, JavaAnnotation {
+                           val javac: JavacWrapper) : JavaElement, JavaAnnotation {
 
     override val arguments
         get() = annotationMirror.elementValues

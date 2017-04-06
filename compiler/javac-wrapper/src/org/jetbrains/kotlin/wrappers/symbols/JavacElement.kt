@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import javax.lang.model.element.Element
 
 open class JavacElement<out T : Element>(val element: T,
-                                         val javac: Javac) : JavaElement {
+                                         val javac: JavacWrapper) : JavaElement {
 
     override fun equals(other: Any?) = (other as? JavacElement<*>)?.element == element
 

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.wrappers.trees
 
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.FqName
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 class JCTypeParameter<out T : JCTree.JCTypeParameter>(tree: T,
                                                       treePath: TreePath,
-                                                      javac: Javac) : JCClassifier<T>(tree, treePath, javac), JavaTypeParameter {
+                                                      javac: JavacWrapper) : JCClassifier<T>(tree, treePath, javac), JavaTypeParameter {
 
     override val name
         get() = SpecialNames.safeIdentifier(tree.name.toString())

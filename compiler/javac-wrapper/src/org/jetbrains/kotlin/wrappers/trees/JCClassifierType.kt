@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.wrappers.trees
 
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.structure.*
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.FqName
 
 abstract class ClassifierType<out T : JCTree>(tree: T,
                                               treePath: TreePath,
-                                              javac: Javac) : JCType<T>(tree, treePath, javac), JavaClassifierType {
+                                              javac: JavacWrapper) : JCType<T>(tree, treePath, javac), JavaClassifierType {
     override val classifier by lazy { getClassifier(treePath, javac) }
 
     override val canonicalText
@@ -50,7 +50,7 @@ abstract class ClassifierType<out T : JCTree>(tree: T,
 
 class JCClassifierType<out T : JCTree.JCExpression>(tree: T,
                                                     treePath: TreePath,
-                                                    javac: Javac) : ClassifierType<T>(tree, treePath, javac) {
+                                                    javac: JavacWrapper) : ClassifierType<T>(tree, treePath, javac) {
 
     override val typeArguments: List<JavaType>
         get() = emptyList()
@@ -62,7 +62,7 @@ class JCClassifierType<out T : JCTree.JCExpression>(tree: T,
 
 class JCClassifierTypeWithTypeArgument<out T : JCTree.JCTypeApply>(tree: T,
                                                                    treePath: TreePath,
-                                                                   javac: Javac) : ClassifierType<T>(tree, treePath, javac) {
+                                                                   javac: JavacWrapper) : ClassifierType<T>(tree, treePath, javac) {
 
     override val typeArguments
         get() = tree.arguments.map { create(it, treePath, javac) }
@@ -72,14 +72,14 @@ class JCClassifierTypeWithTypeArgument<out T : JCTree.JCTypeApply>(tree: T,
 
 }
 
-private fun getClassifier(treePath: TreePath, javac: Javac) = treePath.resolve(javac).let {
+private fun getClassifier(treePath: TreePath, javac: JavacWrapper) = treePath.resolve(javac).let {
     it.second
     ?: stubs[it.first]
     ?: typeParameter(treePath, javac)
     ?: createStubClassifier(it.first)
 }
 
-private fun typeParameter(treePath: TreePath, javac: Javac) = treePath
+private fun typeParameter(treePath: TreePath, javac: JavacWrapper) = treePath
         .filter { it is JCTree.JCClassDecl || it is JCTree.JCMethodDecl }
         .flatMap {
             when (it) {

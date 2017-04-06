@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.wrappers.trees
 
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaMember
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 abstract class JCMember<out T : JCTree>(tree: T,
                                         treePath: TreePath,
                                         override val containingClass: JavaClass,
-                                        javac: Javac) : JCElement<T>(tree, treePath, javac), JavaMember {
+                                        javac: JavacWrapper) : JCElement<T>(tree, treePath, javac), JavaMember {
 
     override val isDeprecatedInJavaDoc = false
 

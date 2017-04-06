@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.wrappers.symbols
 
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import javax.lang.model.type.TypeMirror
 
 class JavacPrimitiveType<out T : TypeMirror>(typeMirror: T,
-                                             javac: Javac) : JavacType<T>(typeMirror, javac), JavaPrimitiveType {
+                                             javac: JavacWrapper) : JavacType<T>(typeMirror, javac), JavaPrimitiveType {
 
     override val type
         get() = with(typeMirror.toString()) {

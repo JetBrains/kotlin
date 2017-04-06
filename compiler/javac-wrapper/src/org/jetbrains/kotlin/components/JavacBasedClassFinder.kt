@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.javac.Javac
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.name.ClassId
@@ -36,7 +36,7 @@ class JavacBasedClassFinder : JavaClassFinder {
     private lateinit var project: Project
     private lateinit var baseScope: GlobalSearchScope
     private lateinit var javaSearchScope: GlobalSearchScope
-    private lateinit var javac: Javac
+    private lateinit var javac: JavacWrapper
 
     @Inject
     fun setProject(project: Project) {
@@ -63,7 +63,7 @@ class JavacBasedClassFinder : JavaClassFinder {
     @PostConstruct
     fun initialize(trace: BindingTrace, codeAnalyzer: KotlinCodeAnalyzer) {
         javaSearchScope = FilterOutKotlinSourceFilesScope(baseScope)
-        javac = Javac.getInstance(project)
+        javac = JavacWrapper.getInstance(project)
         CodeAnalyzerInitializer.getInstance(project).initialize(trace, codeAnalyzer.moduleDescriptor, codeAnalyzer)
     }
 
