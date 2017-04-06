@@ -361,59 +361,21 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, typ
         }
     }
 
-    //-------------------------------------------------------------------------//
-
-    private fun substituteType(oldType: KotlinType?): KotlinType? {
-        if (typeSubstitutor == null) return oldType
-        if (oldType == null)         return oldType
-        return typeSubstitutor!!.substitute(oldType, Variance.INVARIANT) ?: oldType
-    }
-
-    //---------------------------------------------------------------------//
-
-    private fun copyValueParameters(oldValueParameters: List <ValueParameterDescriptor>, containingDeclaration: CallableDescriptor): List <ValueParameterDescriptor> {
-
-        return oldValueParameters.map { oldDescriptor ->
-            val newDescriptor = ValueParameterDescriptorImpl(
-                containingDeclaration,
-                oldDescriptor.original,
-                oldDescriptor.index,
-                oldDescriptor.annotations,
-                oldDescriptor.name,
-                substituteType(oldDescriptor.type)!!,
-                oldDescriptor.declaresDefaultValue(),
-                oldDescriptor.isCrossinline,
-                oldDescriptor.isNoinline,
-                substituteType(oldDescriptor.varargElementType),
-                oldDescriptor.source
-            )
-            descriptorSubstituteMap[oldDescriptor] = newDescriptor
-            newDescriptor
-        }
-    }
-
-    private fun createTypeSubstitutor(typeArgsMap: Map <TypeParameterDescriptor, KotlinType>?): TypeSubstitutor? {
-
-        if (typeArgsMap == null) return null
-        val substitutionContext = typeArgsMap.entries.associate {
-            (typeParameter, typeArgument) ->
-            typeParameter.typeConstructor to TypeProjectionImpl(typeArgument)
-        }
-        return TypeSubstitutor.create(substitutionContext)
-    }
-
 //-----------------------------------------------------------------------------//
 
     inner class InlineCopyIr() : DeepCopyIrTree() {
 
         override fun mapClassDeclaration            (descriptor: ClassDescriptor)                 = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ClassDescriptor
+        override fun mapTypeAliasDeclaration        (descriptor: TypeAliasDescriptor)             = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as TypeAliasDescriptor
         override fun mapFunctionDeclaration         (descriptor: FunctionDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as FunctionDescriptor
         override fun mapConstructorDeclaration      (descriptor: ClassConstructorDescriptor)      = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ClassConstructorDescriptor
         override fun mapPropertyDeclaration         (descriptor: PropertyDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as PropertyDescriptor
         override fun mapLocalPropertyDeclaration    (descriptor: VariableDescriptorWithAccessors) = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as VariableDescriptorWithAccessors
         override fun mapEnumEntryDeclaration        (descriptor: ClassDescriptor)                 = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ClassDescriptor
         override fun mapVariableDeclaration         (descriptor: VariableDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as VariableDescriptor
+        override fun mapCatchParameterDeclaration   (descriptor: VariableDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as VariableDescriptor
         override fun mapErrorDeclaration            (descriptor: DeclarationDescriptor)           = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as DeclarationDescriptor
+
         override fun mapClassReference              (descriptor: ClassDescriptor)                 = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ClassDescriptor
         override fun mapValueReference              (descriptor: ValueDescriptor)                 = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ValueDescriptor
         override fun mapVariableReference           (descriptor: VariableDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as VariableDescriptor
@@ -423,6 +385,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, typ
         override fun mapEnumConstructorCallee       (descriptor: ClassConstructorDescriptor)      = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ClassConstructorDescriptor
         override fun mapCallableReference           (descriptor: CallableDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as CallableDescriptor
         override fun mapClassifierReference         (descriptor: ClassifierDescriptor)            = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ClassifierDescriptor
+        override fun mapReturnTarget                (descriptor: CallableDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as CallableDescriptor
 
         //---------------------------------------------------------------------//
 
@@ -433,8 +396,41 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, typ
 
         //--- Visits ----------------------------------------------------------//
 
-        override fun visitCall(expression: IrCall): IrCall =
-            copyCall(expression).transformValueArguments(expression)
+        override fun visitCall(expression: IrCall): IrCall {
+
+            val oldExpression = super.visitCall(expression) as IrCall
+            if (oldExpression !is IrCallImpl) return oldExpression                                        // TODO what other kinds of call can we meet?
+
+            val oldDescriptor = oldExpression.descriptor
+            val newDescriptor = descriptorSubstituteMap.getOrDefault(oldDescriptor,
+                oldDescriptor) as FunctionDescriptor
+
+            val oldSuperQualifier = oldExpression.superQualifier
+            var newSuperQualifier: ClassDescriptor? = oldSuperQualifier
+            if (newSuperQualifier != null) {
+                newSuperQualifier = descriptorSubstituteMap.getOrDefault(newSuperQualifier,
+                    newSuperQualifier) as ClassDescriptor
+            }
+
+            val newExpression = IrCallImpl(
+                oldExpression.startOffset,
+                oldExpression.endOffset,
+                substituteType(oldExpression.type)!!,
+                newDescriptor,
+                substituteTypeArguments(oldExpression.typeArguments),
+                oldExpression.origin,
+                newSuperQualifier
+            ).apply {
+                oldExpression.descriptor.valueParameters.forEach {
+                    val valueArgument = oldExpression.getValueArgument(it)
+                    putValueArgument(it.index, valueArgument)
+                }
+                extensionReceiver = oldExpression.extensionReceiver
+                dispatchReceiver  = oldExpression.dispatchReceiver
+            }
+
+            return newExpression
+        }
 
         //---------------------------------------------------------------------//
 
@@ -457,27 +453,6 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, typ
             }
             return this
         }
-
-        //---------------------------------------------------------------------//
-
-        private fun copyCall(expression: IrCall) =
-            when (expression) {
-                is IrCallWithShallowCopy ->
-                    expression.shallowCopy(
-                        mapStatementOrigin(expression.origin),
-                        mapCallee(expression.descriptor),
-                        mapSuperQualifier(expression.superQualifier)
-                    )
-                else ->
-                    IrCallImpl(
-                        expression.startOffset, expression.endOffset,
-                        substituteType(expression.type)!!,
-                        mapCallee(expression.descriptor),
-                        expression.getTypeArgumentsMap(),
-                        mapStatementOrigin(expression.origin),
-                        mapSuperQualifier(expression.superQualifier)
-                    )
-            }
 
         //---------------------------------------------------------------------//
 
@@ -545,6 +520,65 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, typ
                 super.visitBlock(expression)
             }
         }
+    }
+
+    //---------------------------------------------------------------------//
+
+    private fun copyValueParameters(oldValueParameters: List <ValueParameterDescriptor>, containingDeclaration: CallableDescriptor): List <ValueParameterDescriptor> {
+
+        return oldValueParameters.map { oldDescriptor ->
+            val newDescriptor = ValueParameterDescriptorImpl(
+                containingDeclaration,
+                oldDescriptor.original,
+                oldDescriptor.index,
+                oldDescriptor.annotations,
+                oldDescriptor.name,
+                substituteType(oldDescriptor.type)!!,
+                oldDescriptor.declaresDefaultValue(),
+                oldDescriptor.isCrossinline,
+                oldDescriptor.isNoinline,
+                substituteType(oldDescriptor.varargElementType),
+                oldDescriptor.source
+            )
+            descriptorSubstituteMap[oldDescriptor] = newDescriptor
+            newDescriptor
+        }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun substituteType(oldType: KotlinType?): KotlinType? {
+        if (typeSubstitutor == null) return oldType
+        if (oldType == null)         return oldType
+        return typeSubstitutor!!.substitute(oldType, Variance.INVARIANT) ?: oldType
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun substituteTypeArguments(oldTypeArguments: Map <TypeParameterDescriptor, KotlinType>?): Map <TypeParameterDescriptor, KotlinType>? {
+
+        if (oldTypeArguments == null) return null
+        if (typeSubstitutor  == null) return oldTypeArguments
+
+        val newTypeArguments = oldTypeArguments.entries.associate {
+            val typeParameterDescriptor = it.key
+            val oldTypeArgument         = it.value
+            val newTypeArgument         = substituteType(oldTypeArgument)!!
+            typeParameterDescriptor to newTypeArgument
+        }
+        return newTypeArguments
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun createTypeSubstitutor(typeArgsMap: Map <TypeParameterDescriptor, KotlinType>?): TypeSubstitutor? {
+
+        if (typeArgsMap == null) return null
+        val substitutionContext = typeArgsMap.entries.associate {
+            (typeParameter, typeArgument) ->
+            typeParameter.typeConstructor to TypeProjectionImpl(typeArgument)
+        }
+        return TypeSubstitutor.create(substitutionContext)
     }
 }
 
