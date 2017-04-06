@@ -26,9 +26,10 @@ import javax.lang.model.element.Element
 abstract class JavacClassifier<out T : Element>(element: T,
                                                 javac: Javac) : JavacElement<T>(element, javac), JavaClassifier, JavaAnnotationOwner {
 
-    override val annotations: Collection<JavaAnnotation>
-            get() = element.annotationMirrors
-                    .map { JavacAnnotation(it, javac) }
+    override val annotations by lazy {
+        element.annotationMirrors
+                .map { JavacAnnotation(it, javac) }
+    }
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = element.annotationMirrors
             .filter { it.toString() == fqName.asString() }

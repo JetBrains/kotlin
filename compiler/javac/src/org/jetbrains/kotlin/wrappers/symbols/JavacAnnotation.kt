@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.wrappers.symbols
 
 import org.jetbrains.kotlin.javac.Javac
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -30,12 +29,14 @@ import javax.lang.model.element.TypeElement
 open class JavacAnnotation(val annotationMirror: AnnotationMirror,
                            val javac: Javac) : JavaElement, JavaAnnotation {
 
-    override val arguments: Collection<JavaAnnotationArgument>
-        get() = annotationMirror.elementValues
+    override val arguments by lazy {
+        annotationMirror.elementValues
                 .map { JavacAnnotationArgument.create(it.value.value, Name.identifier(it.key.simpleName.toString()), javac) }
+    }
 
-    override val classId: ClassId?
-        get() = (annotationMirror.annotationType.asElement() as? TypeElement)?.computeClassId()
+    override val classId by lazy {
+        (annotationMirror.annotationType.asElement() as? TypeElement)?.computeClassId()
+    }
 
     override fun resolve() = JavacClass(annotationMirror.annotationType.asElement() as TypeElement, javac)
 

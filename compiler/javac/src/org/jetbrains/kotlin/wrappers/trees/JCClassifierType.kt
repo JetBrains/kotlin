@@ -56,8 +56,9 @@ class JCClassifierType<out T : JCTree.JCExpression>(tree: T,
     override val typeArguments: List<JavaType>
         get() = emptyList()
 
-    override val isRaw: Boolean
-        get() = (classifier as? JavaClass)?.typeParameters?.isNotEmpty() ?: false
+    override val isRaw by lazy {
+        (classifier as? JavaClass)?.typeParameters?.isNotEmpty() ?: false
+    }
 
 }
 
@@ -65,11 +66,11 @@ class JCClassifierTypeWithTypeArgument<out T : JCTree.JCTypeApply>(tree: T,
                                                                    treePath: TreePath,
                                                                    javac: Javac) : ClassifierType<T>(tree, treePath, javac) {
 
-    override val typeArguments: List<JavaType>
-        get() = tree.arguments.map { create(it, treePath, javac) }
+    override val typeArguments by lazy {
+        tree.arguments.map { create(it, treePath, javac) }
+    }
 
-    override val isRaw: Boolean
-        get() = false
+    override val isRaw = false
 
 }
 

@@ -21,7 +21,6 @@ import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.Javac
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -37,11 +36,9 @@ class JCValueParameter<out T : JCTree.JCVariableDecl>(tree: T,
 
     override val isDeprecatedInJavaDoc = false
 
-    override val name
-        get() = Name.identifier(tree.name.toString())
+    override val name = Name.identifier(tree.name.toString())
 
-    override val type: JavaType
-        get() = JCType.create(tree.getType(), treePath, javac)
+    override val type by lazy { JCType.create(tree.getType(), treePath, javac) }
 
     override val isVararg: Boolean
         get() = tree.modifiers.flags and Flags.VARARGS != 0L

@@ -24,13 +24,14 @@ import javax.lang.model.type.WildcardType
 class JavacWildcardType<out T : TypeMirror>(typeMirror: T,
                                             javac: Javac) : JavacType<T>(typeMirror, javac), JavaWildcardType {
 
-    override val bound
-        get() = typeMirror.let {
+    override val bound by lazy {
+        typeMirror.let {
             val boundMirror = (it as WildcardType).extendsBound ?: it.superBound
 
             if (boundMirror != null) create(boundMirror, javac) else null
         }
+    }
 
-    override val isExtends
-        get() = (typeMirror as WildcardType).extendsBound != null
+    override val isExtends by lazy { (typeMirror as WildcardType).extendsBound != null }
+
 }

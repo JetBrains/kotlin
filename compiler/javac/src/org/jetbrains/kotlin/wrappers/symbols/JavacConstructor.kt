@@ -23,9 +23,12 @@ import javax.lang.model.element.ExecutableElement
 class JavacConstructor<out T : ExecutableElement>(element: T,
                                                   javac: Javac) : JavacMember<T>(element, javac), JavaConstructor {
 
-    override val typeParameters
-        get() = element.typeParameters.map { JavacTypeParameter(it, javac) }
+    override val typeParameters by lazy {
+        element.typeParameters.map { JavacTypeParameter(it, javac) }
+    }
 
-    override val valueParameters
-        get() = element.valueParameters(javac)
+    override val valueParameters by lazy {
+        element.valueParameters(javac)
+    }
+
 }

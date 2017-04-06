@@ -24,7 +24,6 @@ import javax.lang.model.type.TypeMirror
 class JavacArrayType<out T : TypeMirror>(typeMirror: T,
                                          javac: Javac) : JavacType<T>(typeMirror, javac), JavaArrayType {
 
-    override val componentType
-            get() = create((typeMirror as ArrayType).componentType, javac)
+    override val componentType by lazy { create((typeMirror as ArrayType).componentType, javac) }
 
 }

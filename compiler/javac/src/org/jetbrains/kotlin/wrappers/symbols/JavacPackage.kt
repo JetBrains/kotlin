@@ -24,11 +24,11 @@ import javax.lang.model.element.PackageElement
 
 class JavacPackage(val element: PackageElement, val javac: Javac) : JavaPackage {
 
-    override val fqName
-        get() = element.qualifiedName.let { FqName(it.toString()) }
+    override val fqName = FqName(element.qualifiedName.toString())
 
-    override val subPackages
-        get() = javac.findSubPackages(element.qualifiedName.toString().let(::FqName))
+    override val subPackages by lazy {
+        javac.findSubPackages(element.qualifiedName.toString().let(::FqName))
+    }
 
     override fun getClasses(nameFilter: (Name) -> Boolean) = javac.findClassesFromPackage(fqName)
             .filter { Name.isValidIdentifier(it.name.toString())

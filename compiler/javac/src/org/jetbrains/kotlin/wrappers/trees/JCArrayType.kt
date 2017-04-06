@@ -20,11 +20,11 @@ import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.Javac
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
-import org.jetbrains.kotlin.load.java.structure.JavaType
 
 class JCArrayType<out T : JCTree.JCArrayTypeTree>(tree: T,
                                                   treePath: TreePath,
                                                   javac: Javac) : JCType<T>(tree, treePath, javac), JavaArrayType {
-    override val componentType: JavaType
-        get() = create(tree.elemtype, treePath, javac)
+
+    override val componentType by lazy { create(tree.elemtype, treePath, javac) }
+
 }

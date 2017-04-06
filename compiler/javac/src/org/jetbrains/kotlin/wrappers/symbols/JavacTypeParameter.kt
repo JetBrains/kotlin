@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.wrappers.symbols
 
 import org.jetbrains.kotlin.javac.Javac
-import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.SpecialNames
 import javax.lang.model.element.TypeParameterElement
@@ -26,10 +25,10 @@ import javax.lang.model.type.TypeVariable
 class JavacTypeParameter<out T : TypeParameterElement>(element: T,
                                                        javac: Javac) : JavacClassifier<T>(element, javac), JavaTypeParameter {
 
-    override val name
-        get() = SpecialNames.safeIdentifier(element.simpleName.toString())
+    override val name = SpecialNames.safeIdentifier(element.simpleName.toString())
 
-    override val upperBounds: Collection<JavaClassifierType>
-        get() = listOf(JavacClassifierType((element.asType() as TypeVariable).upperBound, javac))
+    override val upperBounds by lazy {
+        listOf(JavacClassifierType((element.asType() as TypeVariable).upperBound, javac))
+    }
 
 }

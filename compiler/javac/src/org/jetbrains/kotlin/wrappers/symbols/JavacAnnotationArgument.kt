@@ -46,7 +46,6 @@ open class JavacAnnotationArgument(private val fqName: FqName,
 
     }
 
-    override val name
-        get() = Name.identifier(fqName.shortName().asString())
+    override val name = Name.identifier(fqName.shortName().asString())
 
 }

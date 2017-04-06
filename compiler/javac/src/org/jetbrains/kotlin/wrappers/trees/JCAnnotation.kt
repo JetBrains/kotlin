@@ -20,21 +20,19 @@ import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.Javac
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
 import org.jetbrains.kotlin.load.java.structure.JavaElement
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 class JCAnnotation(val annotation: JCTree.JCAnnotation,
                    val treePath: TreePath,
                    val javac: Javac) : JavaElement, JavaAnnotation {
 
-    override val arguments: Collection<JavaAnnotationArgument>
-        get() = annotation.arguments
+    override val arguments by lazy {
+        annotation.arguments
                 .map { JCAnnotationArgument(it, FqName(it.toString()), javac) }
+    }
 
-    override val classId: ClassId?
-        get() = resolve()?.computeClassId()
+    override val classId by lazy { resolve()?.computeClassId() }
 
     override fun resolve() = TreePath.getPath(treePath.compilationUnit, annotation.annotationType).resolve(javac).second
 

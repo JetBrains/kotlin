@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.wrappers.symbols
 
 import org.jetbrains.kotlin.javac.Javac
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaMember
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -28,23 +27,26 @@ import javax.lang.model.element.TypeElement
 
 abstract class JavacMember<out T : Element>(element: T,
                                             javac: Javac) : JavacElement<T>(element, javac), JavaMember {
-    override val containingClass: JavaClass
-        get() = JavacClass((element.enclosingElement as TypeElement), javac)
 
-    override val annotations: Collection<JavaAnnotation>
-        get() = element.annotationMirrors
+    override val containingClass by lazy {
+        JavacClass((element.enclosingElement as TypeElement), javac)
+    }
+
+    override val annotations by lazy {
+        element.annotationMirrors
                 .map { JavacAnnotation(it, javac) }
+    }
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = element.annotationMirrors
             .filter { it.toString() == fqName.asString() }
             .firstOrNull()
             ?.let { JavacAnnotation(it, javac) }
 
-    override val visibility
-        get() = element.getVisibility()
+    override val visibility by lazy {
+        element.getVisibility()
+    }
 
-    override val name
-        get() = Name.identifier(element.simpleName.toString())
+    override val name = Name.identifier(element.simpleName.toString())
 
     override val isDeprecatedInJavaDoc = false
 

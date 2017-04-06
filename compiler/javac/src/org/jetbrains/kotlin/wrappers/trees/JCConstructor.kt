@@ -28,8 +28,7 @@ class JCConstructor<out T : JCTree.JCMethodDecl>(tree: T,
                                                  containingClass: JavaClass,
                                                  javac: Javac) : JCMember<T>(tree, treePath, containingClass, javac), JavaConstructor {
 
-    override val name
-        get() = Name.identifier(tree.name.toString())
+    override val name = Name.identifier(tree.name.toString())
 
     override val isAbstract
         get() = tree.modifiers.isAbstract
@@ -40,14 +39,15 @@ class JCConstructor<out T : JCTree.JCMethodDecl>(tree: T,
     override val isFinal
         get() = tree.modifiers.isFinal
 
-    override val visibility
-        get() = tree.modifiers.visibility
+    override val visibility by lazy { tree.modifiers.visibility }
 
-    override val typeParameters
-        get() = tree.typeParameters.map { JCTypeParameter(it, TreePath(treePath, it), javac) }
+    override val typeParameters by lazy {
+        tree.typeParameters.map { JCTypeParameter(it, TreePath(treePath, it), javac) }
+    }
 
-    override val valueParameters
-        get() = tree.parameters
+    override val valueParameters by lazy {
+        tree.parameters
                 .map { JCValueParameter(it, TreePath(treePath, it), javac) }
+    }
 
 }

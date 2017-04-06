@@ -32,8 +32,7 @@ import javax.lang.model.type.TypeKind
 class JavacClass<T : TypeElement>(element: T,
                                   javac: Javac) : JavacClassifier<TypeElement>(element, javac), JavaClass {
 
-    override val name
-        get() = SpecialNames.safeIdentifier(element.simpleName.toString())
+    override val name by lazy { SpecialNames.safeIdentifier(element.simpleName.toString()) }
 
     override val isAbstract
         get() = element.isAbstract
@@ -44,17 +43,16 @@ class JavacClass<T : TypeElement>(element: T,
     override val isFinal
         get() = element.isFinal
 
-    override val visibility
-        get() = element.getVisibility()
+    override val visibility by lazy { element.getVisibility() }
 
-    override val typeParameters: List<JavaTypeParameter>
-        get() = element.typeParameters.map { JavacTypeParameter(it, javac) }
+    override val typeParameters by lazy {
+        element.typeParameters.map { JavacTypeParameter(it, javac) }
+    }
 
-    override val fqName
-        get() = FqName(element.qualifiedName.toString())
+    override val fqName = FqName(element.qualifiedName.toString())
 
-    override val supertypes
-        get() = element.interfaces.toMutableList().apply {
+    override val supertypes by lazy {
+        element.interfaces.toMutableList().apply {
             if (element.superclass !is NoType) add(element.superclass)
 
             val hasObject = !none { it.toString() == CommonClassNames.JAVA_LANG_OBJECT }
@@ -62,17 +60,20 @@ class JavacClass<T : TypeElement>(element: T,
                 javac.JAVA_LANG_OBJECT?.let { add(it.element.asType()) }
             }
         }.map { JavacClassifierType(it, javac) }
+    }
 
-    override val innerClasses
-        get() = element.enclosedElements
+    override val innerClasses by lazy {
+        element.enclosedElements
                 .filter { it.asType().kind == TypeKind.DECLARED }
                 .filterIsInstance(TypeElement::class.java)
                 .map { JavacClass(it, javac) }
+    }
 
-    override val outerClass: JavaClass?
-        get() = element.enclosingElement?.let {
+    override val outerClass by lazy {
+        element.enclosingElement?.let {
             if (it.asType().kind != TypeKind.DECLARED) null else JavacClass(it as TypeElement, javac)
         }
+    }
 
     override val isInterface
         get() = element.kind == ElementKind.INTERFACE
@@ -85,20 +86,23 @@ class JavacClass<T : TypeElement>(element: T,
 
     override val lightClassOriginKind = null
 
-    override val methods: Collection<JavaMethod>
-        get() = element.enclosedElements
+    override val methods by lazy {
+        element.enclosedElements
                 .filter { it.kind == ElementKind.METHOD }
                 .map { JavacMethod(it as ExecutableElement, javac) }
+    }
 
-    override val fields: Collection<JavaField>
-        get() = element.enclosedElements
+    override val fields by lazy {
+        element.enclosedElements
                 .filter { it.kind.isField }
                 .filter { Name.isValidIdentifier(it.simpleName.toString()) }
                 .map { JavacField(it as VariableElement, javac) }
+    }
 
-    override val constructors: Collection<JavaConstructor>
-        get() = element.enclosedElements
+    override val constructors by lazy {
+        element.enclosedElements
                 .filter { it.kind == ElementKind.CONSTRUCTOR }
                 .map { JavacConstructor(it as ExecutableElement, javac) }
+    }
 
 }

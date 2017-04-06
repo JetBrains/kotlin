@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.wrappers.symbols
 
 import org.jetbrains.kotlin.javac.Javac
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
-import org.jetbrains.kotlin.load.java.structure.JavaType
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.DeclaredType
@@ -29,22 +28,29 @@ import javax.lang.model.type.TypeVariable
 class JavacClassifierType<out T : TypeMirror>(typeMirror: T,
                                               javac: Javac) : JavacType<T>(typeMirror, javac), JavaClassifierType {
 
-    override val classifier = when (typeMirror.kind) {
-        TypeKind.DECLARED -> JavacClass((typeMirror as DeclaredType).asElement() as TypeElement, javac)
-        TypeKind.TYPEVAR -> JavacTypeParameter((typeMirror as TypeVariable).asElement() as TypeParameterElement, javac)
-        else -> null
+    override val classifier by lazy {
+        when (typeMirror.kind) {
+            TypeKind.DECLARED -> JavacClass((typeMirror as DeclaredType).asElement() as TypeElement, javac)
+            TypeKind.TYPEVAR -> JavacTypeParameter((typeMirror as TypeVariable).asElement() as TypeParameterElement, javac)
+            else -> null
+        }
     }
 
-    override val typeArguments: List<JavaType>
-        get() = if (typeMirror.kind == TypeKind.DECLARED) (typeMirror as DeclaredType).typeArguments.map { create(it, javac) } else emptyList()
+    override val typeArguments by lazy {
+        if (typeMirror.kind == TypeKind.DECLARED) {
+            (typeMirror as DeclaredType).typeArguments.map { create(it, javac) }
+        } else {
+            emptyList()
+        }
+    }
 
-    override val isRaw: Boolean
-        get() = when {
+    override val isRaw by lazy {
+        when {
             typeMirror !is DeclaredType -> false
             (typeMirror.asElement() as TypeElement).typeParameters.isEmpty() -> false
             else -> typeMirror.typeArguments.isEmpty()
         }
-
+    }
 
     override val canonicalText
         get() = typeMirror.toString()

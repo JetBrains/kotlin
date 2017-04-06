@@ -18,17 +18,17 @@ package org.jetbrains.kotlin.wrappers.symbols
 
 import org.jetbrains.kotlin.javac.Javac
 import org.jetbrains.kotlin.load.java.structure.JavaField
-import org.jetbrains.kotlin.load.java.structure.JavaType
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.VariableElement
 
 class JavacField<out T : VariableElement>(element: T,
                                           javac: Javac) : JavacMember<T>(element, javac), JavaField {
 
-    override val isEnumEntry: Boolean
+    override val isEnumEntry
         get() = element.kind == ElementKind.ENUM_CONSTANT
 
-    override val type: JavaType
-        get() = JavacType.create(element.asType(), javac)
+    override val type by lazy {
+        JavacType.create(element.asType(), javac)
+    }
 
 }

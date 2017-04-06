@@ -27,7 +27,6 @@ open class JCAnnotationArgument(val tree: JCTree.JCExpression,
                                 private val fqName: FqName,
                                 val javac: Javac) : JavaAnnotationArgument, JavaElement {
 
-    override val name
-        get() = Name.identifier(fqName.shortName().asString())
+    override val name = Name.identifier(fqName.shortName().asString())
 
 }

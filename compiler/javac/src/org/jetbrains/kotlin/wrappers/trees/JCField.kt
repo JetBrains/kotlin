@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.javac.Javac
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaField
-import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.name.Name
 
 class JCField<out T : JCTree.JCVariableDecl>(tree: T,
@@ -31,8 +30,7 @@ class JCField<out T : JCTree.JCVariableDecl>(tree: T,
                                              containingClass: JavaClass,
                                              javac: Javac) : JCMember<T>(tree, treePath, containingClass, javac), JavaField {
 
-    override val name
-        get() = Name.identifier(tree.name.toString())
+    override val name = Name.identifier(tree.name.toString())
 
     override val isAbstract
         get() = tree.modifiers.isAbstract
@@ -43,12 +41,13 @@ class JCField<out T : JCTree.JCVariableDecl>(tree: T,
     override val isFinal
         get() = if (containingClass.isInterface) true else tree.modifiers.isFinal
 
-    override val visibility
-        get() = if (containingClass.isInterface) Visibilities.PUBLIC else tree.modifiers.visibility
+    override val visibility by lazy {
+        if (containingClass.isInterface) Visibilities.PUBLIC else tree.modifiers.visibility
+    }
 
     override val isEnumEntry
         get() = tree.modifiers.flags and Flags.ENUM.toLong() != 0L
 
-    override val type: JavaType
-        get() = JCType.create(tree.getType(), treePath, javac)
+    override val type by lazy { JCType.create(tree.getType(), treePath, javac) }
+
 }

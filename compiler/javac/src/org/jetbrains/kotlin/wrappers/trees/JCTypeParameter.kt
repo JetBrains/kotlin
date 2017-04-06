@@ -20,7 +20,6 @@ import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.Javac
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
@@ -36,13 +35,14 @@ class JCTypeParameter<out T : JCTree.JCTypeParameter>(tree: T,
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
-    override val upperBounds: Collection<JavaClassifierType>
-        get() = tree.bounds.map {
-            when(it) {
+    override val upperBounds by lazy {
+        tree.bounds.map {
+            when (it) {
                 is JCTree.JCTypeApply -> JCClassifierTypeWithTypeArgument(it, TreePath(treePath, it), javac)
                 is JCTree.JCIdent -> JCClassifierType(it, TreePath(treePath, it), javac)
                 else -> null
             }
         }.filterNotNull()
+    }
 
 }

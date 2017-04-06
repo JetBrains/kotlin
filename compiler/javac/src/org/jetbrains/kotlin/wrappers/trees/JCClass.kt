@@ -34,8 +34,7 @@ class JCClass<out T : JCTree.JCClassDecl>(tree: T,
                                           treePath: TreePath,
                                           javac: Javac) : JCClassifier<T>(tree, treePath, javac), JavaClass {
 
-    override val name
-        get() = SpecialNames.safeIdentifier(tree.simpleName.toString())
+    override val name = SpecialNames.safeIdentifier(tree.simpleName.toString())
 
     override val annotations: Collection<JavaAnnotation>
         get() = emptyList()
@@ -51,11 +50,11 @@ class JCClass<out T : JCTree.JCClassDecl>(tree: T,
     override val isFinal
         get() = tree.modifiers.isFinal
 
-    override val visibility
-        get() = tree.modifiers.visibility
+    override val visibility by lazy { tree.modifiers.visibility }
 
-    override val typeParameters
-        get() = tree.typeParameters.map { JCTypeParameter(it, TreePath(treePath, it), javac) }
+    override val typeParameters by lazy {
+        tree.typeParameters.map { JCTypeParameter(it, TreePath(treePath, it), javac) }
+    }
 
     override val fqName = treePath.reversed()
             .joinToString(separator = ".") {
@@ -64,8 +63,8 @@ class JCClass<out T : JCTree.JCClassDecl>(tree: T,
             }
             .let(::FqName)
 
-    override val supertypes
-        get() = arrayListOf<JavaClassifierType>().apply {
+    override val supertypes by lazy {
+        arrayListOf<JavaClassifierType>().apply {
             fun JCTree.mapToJavaClassifierType() = when {
                 this is JCTree.JCExpression -> JCClassifierType(this, TreePath(treePath, this), javac)
                 this is JCTree.JCTypeApply -> JCClassifierTypeWithTypeArgument(this, TreePath(treePath, this), javac)
@@ -79,14 +78,17 @@ class JCClass<out T : JCTree.JCClassDecl>(tree: T,
                 javac.JAVA_LANG_OBJECT?.let { add(JavacClassifierType(it.element.asType(), javac)) }
             }
         }
+    }
 
-    override val innerClasses
-        get() = tree.members
+    override val innerClasses by lazy {
+        tree.members
                 .filterIsInstance(JCTree.JCClassDecl::class.java)
                 .map { JCClass(it, TreePath(treePath, it), javac) }
+    }
 
-    override val outerClass
-        get() = (treePath.parentPath.leaf as? JCTree.JCClassDecl)?.let { JCClass(it, treePath.parentPath, javac) }
+    override val outerClass by lazy {
+        (treePath.parentPath.leaf as? JCTree.JCClassDecl)?.let { JCClass(it, treePath.parentPath, javac) }
+    }
 
     override val isInterface by lazy { tree.modifiers.flags and Flags.INTERFACE.toLong() != 0L }
 
@@ -98,21 +100,25 @@ class JCClass<out T : JCTree.JCClassDecl>(tree: T,
 
     override val lightClassOriginKind = null
 
-    override val methods
-        get() = tree.members
+    override val methods by lazy {
+        tree.members
                 .filterIsInstance(JCTree.JCMethodDecl::class.java)
                 .filter { it.kind == Tree.Kind.METHOD }
                 .filter { it.name.toString() != "<init>" }
                 .map { JCMethod(it, TreePath(treePath, it), this, javac) }
+    }
 
-    override val fields
-        get() = tree.members
+    override val fields by lazy {
+        tree.members
                 .filterIsInstance(JCTree.JCVariableDecl::class.java)
                 .map { JCField(it, TreePath(treePath, it), this, javac) }
+    }
 
-    override val constructors
-        get() = tree.members
+    override val constructors by lazy {
+        tree.members
                 .filterIsInstance(JCTree.JCMethodDecl::class.java)
                 .filter { TreeInfo.isConstructor(it) }
                 .map { JCConstructor(it, TreePath(treePath, it), this, javac) }
+    }
+
 }
