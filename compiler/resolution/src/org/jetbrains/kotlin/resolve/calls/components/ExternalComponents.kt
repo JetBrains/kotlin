@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.LambdaKotlinCallArgument
 import org.jetbrains.kotlin.types.UnwrappedType
 
@@ -34,4 +35,8 @@ interface LambdaAnalyzer {
             parameters: List<UnwrappedType>,
             expectedReturnType: UnwrappedType? // null means, that return type is not proper i.e. it depends on some type variables
     ): List<KotlinCallArgument>
+
+    // todo this is hack for some client which try to read ResolvedCall from trace before all calls completed
+    fun bindStubResolvedCallForCandidate(candidate: KotlinResolutionCandidate)
+
 }

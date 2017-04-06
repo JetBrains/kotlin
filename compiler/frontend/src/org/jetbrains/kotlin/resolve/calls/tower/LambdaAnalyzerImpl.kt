@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.LambdaKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -41,7 +43,8 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 class LambdaAnalyzerImpl(
         val expressionTypingServices: ExpressionTypingServices,
         val trace: BindingTrace,
-        val typeApproximator: TypeApproximator
+        val typeApproximator: TypeApproximator,
+        val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer
 ): LambdaAnalyzer {
 
     override fun analyzeAndGetRelatedCalls(
@@ -86,5 +89,9 @@ class LambdaAnalyzerImpl(
         val simpleArgument = createSimplePSICallArgument(actualContext, CallMaker.makeExternalValueArgument(deparentesized), lastExpressionTypeInfo)
 
         return listOfNotNull(simpleArgument)
+    }
+
+    override fun bindStubResolvedCallForCandidate(candidate: KotlinResolutionCandidate) {
+        kotlinToResolvedCallTransformer.createStubResolvedCallAndWriteItToTrace<CallableDescriptor>(candidate, trace)
     }
 }

@@ -62,15 +62,46 @@ class KotlinToResolvedCallTransformer(
             trace: BindingTrace? // if trace is not null then all information will be reported to this trace
     ): ResolvedCall<D> {
         if (baseResolvedCall is ResolvedKotlinCall.CompletedResolvedKotlinCall) {
-            baseResolvedCall.allInnerCalls.forEach { transformAndReportCompletedCall<D>(it, context, trace) }
-            return transformAndReportCompletedCall(baseResolvedCall.completedCall, context, trace)
+            val allResolvedCalls = baseResolvedCall.allInnerCalls.mapTo(ArrayList<ResolvedCall<*>>()) { transformAndReportCompletedCall<CallableDescriptor>(it, context, trace) }
+            val result = transformAndReportCompletedCall<D>(baseResolvedCall.completedCall, context, trace)
+            allResolvedCalls.add(result)
+
+            if (trace != null) {
+                val callCheckerContext = CallCheckerContext(context.replaceBindingTrace(trace), languageFeatureSettings)
+                for (resolvedCall in allResolvedCalls) {
+                    runCallCheckers(resolvedCall, callCheckerContext)
+                }
+            }
+
+            return result
         }
 
         val onlyResolvedCall = (baseResolvedCall as ResolvedKotlinCall.OnlyResolvedKotlinCall)
         trace?.record(BindingContext.ONLY_RESOLVED_CALL, onlyResolvedCall.candidate.kotlinCall.psiKotlinCall.psiCall, onlyResolvedCall)
 
-        return StubOnlyResolvedCall(onlyResolvedCall.candidate.lastCall)
+        return createStubResolvedCallAndWriteItToTrace(onlyResolvedCall.candidate, trace)
     }
+
+    fun <D : CallableDescriptor> createStubResolvedCallAndWriteItToTrace(candidate: KotlinResolutionCandidate, trace: BindingTrace?): ResolvedCall<D> {
+        val result = when (candidate) {
+            is VariableAsFunctionKotlinResolutionCandidate -> {
+                val variableStub = StubOnlyResolvedCall<VariableDescriptor>(candidate.resolvedVariable)
+                val invokeStub = StubOnlyResolvedCall<FunctionDescriptor>(candidate.invokeCandidate)
+                StubOnlyVariableAsFunctionCall(variableStub, invokeStub) as ResolvedCall<D>
+            }
+            is SimpleKotlinResolutionCandidate -> {
+                StubOnlyResolvedCall<D>(candidate)
+            }
+        }
+        if (trace != null) {
+            val tracing = candidate.kotlinCall.psiKotlinCall.tracingStrategy
+
+            tracing.bindReference(trace, result)
+            tracing.bindResolvedCall(trace, result)
+        }
+        return result
+    }
+
 
     private fun <D : CallableDescriptor> transformAndReportCompletedCall(
             completedCall: CompletedKotlinCall,
@@ -97,12 +128,11 @@ class KotlinToResolvedCallTransformer(
                 (resolvedCall as ResolvedCall<D>)
             }
         }
-        runCallCheckers(resolvedCall, context)
 
         return resolvedCall
     }
 
-    private fun runCallCheckers(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
+    private fun runCallCheckers(resolvedCall: ResolvedCall<*>, callCheckerContext: CallCheckerContext) {
         val calleeExpression = if (resolvedCall is VariableAsFunctionResolvedCall)
             resolvedCall.variableCall.call.calleeExpression
         else
@@ -111,9 +141,12 @@ class KotlinToResolvedCallTransformer(
                 if (calleeExpression != null && !calleeExpression.isFakeElement) calleeExpression
                 else resolvedCall.call.callElement
 
-        val callCheckerContext = CallCheckerContext(context, languageFeatureSettings)
         for (callChecker in callCheckers) {
             callChecker.check(resolvedCall, reportOn, callCheckerContext)
+
+            if (resolvedCall is VariableAsFunctionResolvedCall) {
+                callChecker.check(resolvedCall.variableCall, reportOn, callCheckerContext)
+            }
         }
     }
 
@@ -349,3 +382,8 @@ class StubOnlyResolvedCall<D : CallableDescriptor>(val candidate: SimpleKotlinRe
         get() = candidate.argumentMappingByOriginal
     override val kotlinCall: KotlinCall get() = candidate.kotlinCall
 }
+
+class StubOnlyVariableAsFunctionCall(
+        override val variableCall: StubOnlyResolvedCall<VariableDescriptor>,
+        override val functionCall: StubOnlyResolvedCall<FunctionDescriptor>
+) : VariableAsFunctionResolvedCall, ResolvedCall<FunctionDescriptor> by functionCall
