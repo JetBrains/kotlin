@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.scripts.captureOut
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.utils.keysToMap
 import org.junit.Assert
 import java.io.File
 import java.net.URLClassLoader
@@ -97,10 +98,12 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         fun args(body: K2JVMCompilerArguments.() -> Unit): K2JVMCompilerArguments =
                 K2JVMCompilerArguments().apply(body)
 
+        val longStr = (1..100).joinToString { """\" $it aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \\""" }
+        val unescapeRe = """\\(["\\])""".toRegex()
         val messageCollector = TestMessageCollector()
-        Assert.assertEquals(hashMapOf("abc" to "def", "11" to "ab cd \\ \""),
+        Assert.assertEquals(hashMapOf("abc" to "def", "11" to "ab cd \\ \"", "long" to unescapeRe.replace(longStr, "\$1")),
                             K2JVMCompiler.createScriptResolverEnvironment(
-                                args { scriptResolverEnvironment = arrayOf("abc=def", """11="ab cd \\ \""""") },
+                                args { scriptResolverEnvironment = arrayOf("abc=def", """11="ab cd \\ \""""", "long=\"$longStr\"") },
                                 messageCollector))
     }
 
