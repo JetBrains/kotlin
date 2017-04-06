@@ -27,8 +27,7 @@ class JavacWildcardType<out T : TypeMirror>(typeMirror: T,
     override val bound
         get() = typeMirror.let {
             val boundMirror = (it as WildcardType).extendsBound ?: it.superBound
-
-            if (boundMirror != null) create(boundMirror, javac) else null
+            boundMirror?.let { create(it, javac) }
         }
 
     override val isExtends

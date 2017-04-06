@@ -24,8 +24,9 @@ import javax.lang.model.type.TypeMirror
 class JavacPrimitiveType<out T : TypeMirror>(typeMirror: T,
                                              javac: Javac) : JavacType<T>(typeMirror, javac), JavaPrimitiveType {
 
-    override val type by lazy {
-        if ("void" == typeMirror.toString()) null else JvmPrimitiveType.get(typeMirror.toString()).primitiveType
-    }
+    override val type
+        get() = with(typeMirror.toString()) {
+            if ("void" == this) null else JvmPrimitiveType.get(this).primitiveType
+        }
 
 }

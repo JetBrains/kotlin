@@ -65,6 +65,6 @@ fun ExecutableElement.valueParameters(javac: Javac) = let {
     parameters.mapIndexed { index, it ->
         val isLastParameter = index == parameterTypesCount - 1
         val parameterName = it.simpleName.toString()
-        JavacValueParameter(it, parameterName, if (isLastParameter) isVarArgs else false, javac)
+        JavacValueParameter(it, parameterName, isLastParameter && isVarArgs, javac)
     }
 }

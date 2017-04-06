@@ -37,10 +37,10 @@ class JCField<out T : JCTree.JCVariableDecl>(tree: T,
         get() = tree.modifiers.isAbstract
 
     override val isStatic
-        get() = if (containingClass.isInterface) true else tree.modifiers.isStatic
+        get() = containingClass.isInterface || tree.modifiers.isStatic
 
     override val isFinal
-        get() = if (containingClass.isInterface) true else tree.modifiers.isFinal
+        get() = containingClass.isInterface || tree.modifiers.isFinal
 
     override val visibility
         get() = if (containingClass.isInterface) Visibilities.PUBLIC else tree.modifiers.visibility

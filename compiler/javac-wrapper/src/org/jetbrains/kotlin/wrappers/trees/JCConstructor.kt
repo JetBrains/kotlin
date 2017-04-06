@@ -32,13 +32,13 @@ class JCConstructor<out T : JCTree.JCMethodDecl>(tree: T,
         get() = Name.identifier(tree.name.toString())
 
     override val isAbstract
-        get() = tree.modifiers.isAbstract
+        get() = false
 
     override val isStatic
-        get() = tree.modifiers.isStatic
+        get() = false
 
     override val isFinal
-        get() = tree.modifiers.isFinal
+        get() = true
 
     override val visibility
         get() = tree.modifiers.visibility
