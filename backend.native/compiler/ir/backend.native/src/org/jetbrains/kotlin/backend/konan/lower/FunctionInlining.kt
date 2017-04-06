@@ -297,12 +297,15 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
                 return@forEach
             }
 
-            val varName = currentScope!!.scope.scopeOwner.name.toString() + "_inline"
-            val newVar = currentScope!!.scope.createTemporaryVariable(argument, varName, false)  // Create new variable and init it with the parameter expression.
-            statements.add(newVar)                                                       // Add initialization of the new variable in statement list.
+            val currentScope = currentScope!!
+            val varName = currentScope.scope.scopeOwner.name.toString() + "_inline"
+            val newVar = currentScope.scope.createTemporaryVariable(argument, varName, false)  // Create new variable and init it with the parameter expression.
+            statements.add(newVar)                                                               // Add initialization of the new variable in statement list.
 
-            val getVal = IrGetValueImpl(0, 0, newVar.descriptor)                            // Create new IR element representing access the new variable.
-            parametersNew[parameter] = getVal                                               // Parameter will be replaced with the new variable.
+            val startOffset = currentScope.irElement.startOffset
+            val endOffset = currentScope.irElement.endOffset
+            val getVal = IrGetValueImpl(startOffset, endOffset, newVar.descriptor)               // Create new IR element representing access the new variable.
+            parametersNew[parameter] = getVal                                                    // Parameter will be replaced with the new variable.
         }
         return EvaluatedParameters(parametersNew, statements)
     }
