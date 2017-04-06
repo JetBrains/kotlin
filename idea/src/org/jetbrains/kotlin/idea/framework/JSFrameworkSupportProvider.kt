@@ -14,81 +14,58 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.framework;
+package org.jetbrains.kotlin.idea.framework
 
-import com.intellij.framework.FrameworkTypeEx;
-import com.intellij.framework.addSupport.FrameworkSupportInModuleConfigurable;
-import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider;
-import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel;
-import com.intellij.openapi.module.JavaModuleType;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.roots.ModifiableModelsProvider;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.framework.FrameworkTypeEx
+import com.intellij.framework.addSupport.FrameworkSupportInModuleConfigurable
+import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider
+import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel
+import com.intellij.openapi.module.JavaModuleType
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleType
+import com.intellij.openapi.roots.ModifiableModelsProvider
+import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
+import javax.swing.JComponent
 
-import javax.swing.*;
+class JSFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
+    override fun getFrameworkType(): FrameworkTypeEx = JSFrameworkType.getInstance()
 
-public class JSFrameworkSupportProvider extends FrameworkSupportInModuleProvider {
-    @NotNull
-    @Override
-    public FrameworkTypeEx getFrameworkType() {
-        return JSFrameworkType.getInstance();
-    }
+    override fun createConfigurable(model: FrameworkSupportModel): FrameworkSupportInModuleConfigurable {
+        return object : FrameworkSupportInModuleConfigurable() {
+            lateinit var description: JSLibraryStdDescription
 
-    @NotNull
-    @Override
-    public FrameworkSupportInModuleConfigurable createConfigurable(@NotNull final FrameworkSupportModel model) {
-        return new FrameworkSupportInModuleConfigurable() {
-            public JSLibraryStdDescription description;
-
-            @Nullable
-            @Override
-            public CustomLibraryDescription createLibraryDescription() {
-                description = new JSLibraryStdDescription(model.getProject());
-                return description;
+            override fun createLibraryDescription(): CustomLibraryDescription? {
+                description = JSLibraryStdDescription(model.project)
+                return description
             }
 
-            @Nullable
-            @Override
-            public JComponent createComponent() {
-                return null;
-            }
+            override fun createComponent(): JComponent? = null
 
-            @Override
-            public boolean isOnlyLibraryAdded() {
-                return true;
-            }
+            override fun isOnlyLibraryAdded(): Boolean = true
 
-            @Override
-            public void addSupport(
-                    @NotNull Module module,
-                    @NotNull ModifiableRootModel rootModel,
-                    @NotNull ModifiableModelsProvider modifiableModelsProvider) {
+            override fun addSupport(
+                    module: Module,
+                    rootModel: ModifiableRootModel,
+                    modifiableModelsProvider: ModifiableModelsProvider) {
                 FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
                         rootModel,
                         JavaRuntimeLibraryDescription.SUITABLE_LIBRARY_KINDS,
-                        JavaFrameworkType.getInstance());
+                        JavaFrameworkType.getInstance())
 
-                description.finishLibConfiguration(module, rootModel);
+                description.finishLibConfiguration(module, rootModel)
             }
 
-            @Override
-            public void onFrameworkSelectionChanged(boolean selected) {
+            override fun onFrameworkSelectionChanged(selected: Boolean) {
                 if (selected) {
-                    String providerId = JavaFrameworkType.getInstance().getId();
+                    val providerId = JavaFrameworkType.getInstance().id
                     if (model.isFrameworkSelected(providerId)) {
-                        model.setFrameworkComponentEnabled(providerId, false);
+                        model.setFrameworkComponentEnabled(providerId, false)
                     }
                 }
             }
-        };
+        }
     }
 
-    @Override
-    public boolean isEnabledForModuleType(@NotNull ModuleType moduleType) {
-        return moduleType instanceof JavaModuleType;
-    }
+    override fun isEnabledForModuleType(moduleType: ModuleType<*>): Boolean = moduleType is JavaModuleType
 }
