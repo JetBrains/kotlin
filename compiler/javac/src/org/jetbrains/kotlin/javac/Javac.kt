@@ -99,12 +99,11 @@ class Javac(javaFiles: Collection<File>,
             .flatMap { unit -> unit.typeDecls
                     .flatMap { JCClass(it as JCTree.JCClassDecl, trees.getPath(unit, it), this).withInnerClasses() }
             }
-            .map { it.fqName to it }
-            .toMap()
+            .associateBy(JavaClass::fqName)
 
     private val javaPackages = compilationUnits
-            .map { FqName(it.packageName.toString()) to JCPackage(it.packageName.toString(), this) }
-            .toMap()
+            .map { JCPackage(it.packageName.toString(), this) }
+            .associateBy(JCPackage::fqName)
 
     fun compile() = with(javac) {
         if (errorCount() > 0) return false
@@ -135,13 +134,14 @@ class Javac(javaFiles: Collection<File>,
     }
 
     fun findSubPackages(fqName: FqName) = symbols.packages
-                                                  .filter { (k, _) -> k.toString().startsWith("$fqName.") }
+                                                  .filterKeys { it.toString().startsWith("$fqName.") }
                                                   .map { JavacPackage(it.value, this) } +
                                           javaPackages
-                                                  .filter { it.key.isSubpackageOf(fqName) && it.key != fqName }
+                                                  .filterKeys { it.isSubpackageOf(fqName) && it != fqName }
                                                   .map { it.value }
 
-    fun findClassesFromPackage(fqName: FqName) = javaClasses.filter { it.key?.parentOrNull() == fqName }
+    fun findClassesFromPackage(fqName: FqName) = javaClasses
+                                                         .filterKeys { it?.parentOrNull() == fqName }
                                                          .flatMap { it.value.withInnerClasses() } +
                                                  elements.getPackageElement(fqName.asString())
                                                          ?.members()
@@ -195,7 +195,7 @@ private object AnyJavaSourceVirtualFile : VirtualFile() {
 
     override fun getLength() = 0L
 
-    override fun getFileSystem() = throw UnsupportedOperationException()
+    override fun getFileSystem() = throw UnsupportedOperationException("Should never be called")
 
     override fun getPath() = ""
 
@@ -205,19 +205,19 @@ private object AnyJavaSourceVirtualFile : VirtualFile() {
 
     override fun getName() = ""
 
-    override fun contentsToByteArray() = throw UnsupportedOperationException()
+    override fun contentsToByteArray() = throw UnsupportedOperationException("Should never be called")
 
     override fun isValid() = true
 
-    override fun getInputStream() = throw UnsupportedOperationException()
+    override fun getInputStream() = throw UnsupportedOperationException("Should never be called")
 
-    override fun getParent() = throw UnsupportedOperationException()
+    override fun getParent() = throw UnsupportedOperationException("Should never be called")
 
-    override fun getChildren(): Array<VirtualFile> = emptyArray()
+    override fun getChildren() = emptyArray<VirtualFile>()
 
     override fun isWritable() = false
 
-    override fun getOutputStream(requestor: Any?, newModificationStamp: Long, newTimeStamp: Long) = throw UnsupportedOperationException()
+    override fun getOutputStream(requestor: Any?, newModificationStamp: Long, newTimeStamp: Long) = throw UnsupportedOperationException("Should never be called")
 
     override fun getExtension() = "java"
 
