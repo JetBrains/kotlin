@@ -19,6 +19,8 @@ package kotlin.test
 
 import java.util.*
 
+// TODO: Drop in 1.2
+
 @Deprecated("This is an experimental part of the API. It may be changed or removed in newer releases.")
 class CollectionAssertionSession<E, C: Iterable<E>>(val collection: C)
 
@@ -93,60 +95,6 @@ fun <T, C: Set<T>> CollectionAssertionSession<T, C>.shouldBeSet(vararg other: T)
     }
 
     shouldBeSet(otherSet)
-}
-
-private operator fun <T> Iterable<T>.contains(e: T): Boolean {
-    if (this is Set<T>) {
-        return contains(e)
-    }
-    for (it in this) {
-        if (it == e) {
-            return true
-        }
-    }
-    return false
-}
-
-private fun <T> Iterable<T>.last(): T {
-    if (this is List<T>) {
-        if (this.isEmpty()) {
-            throw NoSuchElementException()
-        }
-
-        return this[size - 1]
-    }
-
-    val it = iterator()
-    var result: T = iterator().next()
-
-    while (it.hasNext()) {
-        result = it.next()
-    }
-
-    return result
-}
-
-private fun <T> Iterable<T>.elementAt(position: Int): T {
-    if (position < 0) {
-        throw IllegalArgumentException("position shouldn't be negative: $position")
-    }
-    if (this is List<T>) {
-        return this[position]
-    }
-
-    val iterator = iterator()
-    var idx = 0
-    do {
-        if (!iterator.hasNext()) {
-            throw IndexOutOfBoundsException("index $position is out of the collection bounds [0; $idx)")
-        }
-        val result = iterator.next()
-        if (idx == position) {
-            return result
-        }
-
-        idx++
-    } while (true)
 }
 
 private fun <T> Iterator<T>.remaining(): List<T> {

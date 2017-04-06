@@ -3,6 +3,7 @@ package kotlin.test
 import java.util.*
 import java.util.concurrent.atomic.*
 import java.util.concurrent.locks.*
+import kotlin.concurrent.withLock
 
 private val inited = AtomicBoolean()
 private val lock = ReentrantLock()
@@ -41,14 +42,5 @@ private fun initContributorsIfNeeded() {
                 initContributors()
             }
         }
-    }
-}
-
-private inline fun Lock.withLock(block: () -> Unit) {
-    lockInterruptibly()
-    try {
-        block()
-    } finally {
-        unlock()
     }
 }
