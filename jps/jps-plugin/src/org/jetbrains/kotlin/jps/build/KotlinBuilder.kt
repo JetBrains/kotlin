@@ -247,8 +247,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return ABORT
         }
 
-        val commonArguments = compilerArgumentsForChunk(chunk)
-        commonArguments.verbose = true // Make compiler report source to output files mapping
+        val commonArguments = compilerArgumentsForChunk(chunk).apply {
+            reportOutputFiles = true
+        }
 
         val allCompiledFiles = getAllCompiledFilesContainer(context)
         val filesToCompile = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder)
