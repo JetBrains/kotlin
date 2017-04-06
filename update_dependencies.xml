@@ -247,18 +247,6 @@
         <get-maven-library prefix="org/jetbrains/kotlinx" lib="kotlinx-coroutines-core" version="${kotlinx.coroutines.version}"
                            target.jar.name.base="kotlinx-coroutines-core" server="http://dl.bintray.com/kotlin/kotlinx/"/>
 
-        <!-- Closure Compiler -->
-        <!-- A download url taken from http://code.google.com/p/closure-compiler/wiki/BinaryDownloads -->
-        <get src="http://dl.google.com/closure-compiler/compiler-20160315.zip"
-             dest="${dependencies}/download/closure-compiler.zip" usetimestamp="true"/>
-
-        <delete file="${dependencies}/closure-compiler.jar" failonerror="false"/>
-        <unzip src="${dependencies}/download/closure-compiler.zip" dest="${dependencies}">
-            <patternset>
-                <include name="compiler.jar"/>
-            </patternset>
-            <mapper type="merge" to="closure-compiler.jar"/>
-        </unzip>
 
         <delete file="${dependencies}/android.jar" failonerror="false"/>
         <get src="http://dl-ssl.google.com/android/repository/android-19_r02.zip"
@@ -319,75 +307,15 @@
 
         <get-protobuf-and-rename-packages/>
 
-        <download-or-build-markdown-parser/>
+        <download_teamcity_artifact
+            teamcity.server.url="https://teamcity.jetbrains.com"
+            build.locator.request="${markdown.locator}"
+            artifact.path="markdown_jar/markdown.jar"
+            dest="${dependencies}/markdown.jar"
+            usetimestamp="true"
+            build.number.pattern="\d+\s-\sKotlin\s[\w-+\.]+"
+        />
     </target>
-
-    <macrodef name="download-or-build-markdown-parser">
-        <sequential>
-            <download_teamcity_artifact
-                teamcity.server.url="https://teamcity.jetbrains.com"
-                build.locator.request="${markdown.locator}"
-                artifact.path="markdown_jar/markdown.jar"
-                dest="${dependencies}/markdown.jar"
-                usetimestamp="true"
-                build.number.pattern="\d+\s-\sKotlin\s[\w-+\.]+"
-            />
-
-            <!-- When ABI version changes, the second build should compile markdown-parser manually instead of using the old version -->
-
-            <exec executable="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="false"
-                  resultproperty="markdown.abi.incompatible">
-                <arg value="-cp"/>
-                <arg value="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-compiler.jar"/>
-                <arg value="-script"/>
-                <arg value="${generators}/infrastructure/check-library-abi-version.kts"/>
-                <arg value="${dependencies}/markdown.jar"/>
-                <arg value="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"/>
-            </exec>
-
-            <local name="markdown.need.recompile" />
-            <condition property="markdown.need.recompile">
-                <not>
-                    <equals arg1="${markdown.abi.incompatible}" arg2="0"/>
-                </not>
-            </condition>
-
-            <sequential if:set="markdown.need.recompile">
-                <echo message="Recompiling intellij-markdown manually"/>
-                <length file="${dependencies}/markdown.jar" property="old.markdown.size"/>
-                <echo message="Size of the incompatible jar: ${old.markdown.size} bytes"/>
-                <local name="markdown.dir" />
-                <property name="markdown.dir" value="${dependencies}/intellij-markdown-forKotlin/" />
-
-                <get src="https://github.com/valich/intellij-markdown/archive/forKotlin.zip"
-                     dest="${dependencies}/download/markdown-sources.zip" usetimestamp="true"/>
-
-                <delete dir="${markdown.dir}" failonerror="false"/>
-                <unzip src="${dependencies}/download/markdown-sources.zip" dest="${dependencies}"/>
-                <exec executable="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="true">
-                    <arg value="${markdown.dir}/src"/>
-                    <arg value="-d"/>
-                    <arg value="${markdown.dir}/out"/>
-                </exec>
-
-                <javac srcdir="${markdown.dir}/src"
-                       destdir="${markdown.dir}/out" includeantruntime="false">
-                    <classpath>
-                        <path location="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"/>
-                    </classpath>
-                </javac>
-
-                <delete file="${dependencies}/markdown.jar" failonerror="false"/>
-                <jar jarfile="${dependencies}/markdown.jar">
-                    <fileset dir="${markdown.dir}/out" includes="**"/>
-                </jar>
-
-                <echo message="Compilation of intellij-markdown finished"/>
-                <length file="${dependencies}/markdown.jar" property="new.markdown.size"/>
-                <echo message="Size of the new jar: ${new.markdown.size} bytes"/>
-            </sequential>
-        </sequential>
-    </macrodef>
 
     <macrodef name="get-protobuf-and-rename-packages">
         <sequential>
@@ -448,14 +376,6 @@
                 source.jar="${dependencies}/download/protobuf-java-${protobuf.version}-sources.jar"
                 target.jar="${dependencies}/protobuf-${protobuf.version}-sources.jar"
             />
-
-            <!-- Build protobuf lite jar -->
-            <exec executable="${dependencies}/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="true">
-                <arg value="-script"/>
-                <arg value="${generators}/infrastructure/build-protobuf-lite.kts"/>
-                <arg value="${dependencies}/protobuf-${protobuf.version}.jar"/>
-                <arg value="${dependencies}/protobuf-${protobuf.version}-lite.jar"/>
-            </exec>
         </sequential>
     </macrodef>
 
