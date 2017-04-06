@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions.copyConcatenatedStringToClipboard
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -56,7 +56,7 @@ class ConcatenatedStringGenerator {
     }
 
     private fun KtExpression.convertToValueIfCompileTimeConstant(): String? {
-        val resolvedCall = getResolvedCall(analyzeFully()) ?: return null
+        val resolvedCall = getResolvedCall(analyze()) ?: return null
         val propertyDescriptor = resolvedCall.resultingDescriptor as? PropertyDescriptor ?: return null
         return propertyDescriptor.compileTimeInitializer?.value?.toString()
     }
