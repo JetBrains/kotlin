@@ -45,7 +45,7 @@ class KtClassInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtClassInitia
     val initKeyword: PsiElement
         get() = findChildByType(KtTokens.INIT_KEYWORD)!!
 
-    override val containingDeclaration: KtDeclaration
+    override val containingDeclaration: KtClassOrObject
         get() = getParentOfType<KtClassOrObject>(true).sure { "Should only be present in class or object" }
 }
 
@@ -53,7 +53,7 @@ class KtScriptInitializer(node: ASTNode) : KtDeclarationImpl(node), KtAnonymousI
     override val body: KtExpression?
         get() = findChildByClass(KtExpression::class.java)
 
-    override val containingDeclaration: KtDeclaration
+    override val containingDeclaration: KtScript
         get() = getParentOfType<KtScript>(true).sure { "Should only be present in script" }
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitScriptInitializer(this, data)
