@@ -93,6 +93,10 @@
                                             <name>kotlin.version</name>
                                             <value>${project.version}</value>
                                         </property>
+                                        <property>
+                                            <name>maven.repo.local</name>
+                                            <value>${maven.repo.local}</value>
+                                        </property>
                                     </systemProperties>
                                 </configuration>
                             </execution>
