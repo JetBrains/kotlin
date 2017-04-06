@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.checker.captureFromExpression
 
 interface SpecificityComparisonCallbacks {
     fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean
@@ -95,6 +96,9 @@ interface SimpleConstraintSystem {
     fun registerTypeVariables(typeParameters: Collection<TypeParameterDescriptor>): TypeSubstitutor
     fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType)
     fun hasContradiction(): Boolean
+
+    // todo hack for migration
+    val captureFromArgument get() = false
 }
 
 fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
@@ -125,7 +129,16 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
         }
         else {
             val substitutedGeneralType = typeSubstitutor.safeSubstitute(generalType, Variance.INVARIANT)
-            addSubtypeConstraint(specificType.unwrap(), substitutedGeneralType.unwrap())
+
+            /**
+             * Example:
+             * fun <X> Array<out X>.sort(): Unit {}
+             * fun <Y: Comparable<Y>> Array<out Y>.sort(): Unit {}
+             * Here, when we try solve this CS(Y is variables) then Array<out X> <: Array<out Y> and this system impossible to solve,
+             * so we capture types from receiver and value parameters.
+             */
+            val specificCapturedType = specificType.unwrap().let { if (captureFromArgument) captureFromExpression(it) ?: it else it }
+            addSubtypeConstraint(specificCapturedType, substitutedGeneralType.unwrap())
         }
     }
 

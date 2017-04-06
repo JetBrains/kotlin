@@ -18,15 +18,12 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallKind
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
-import org.jetbrains.kotlin.resolve.calls.model.ReceiverKotlinCallArgument
-import org.jetbrains.kotlin.resolve.calls.model.TypeArgument
+import org.jetbrains.kotlin.resolve.calls.inference.substitute
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -45,7 +42,13 @@ class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, resultT
 
             it.defaultType.constructor to variable.defaultType.asTypeProjection()
         }
-        return TypeConstructorSubstitution.createByConstructorsMap(substitutionMap).buildSubstitutor()
+        val substitutor = TypeConstructorSubstitution.createByConstructorsMap(substitutionMap).buildSubstitutor()
+        for (typeParameter in typeParameters) {
+            for (upperBound in typeParameter.upperBounds) {
+                addSubtypeConstraint(substitutor.substitute(typeParameter.defaultType), substitutor.substitute(upperBound.unwrap()))
+            }
+        }
+        return substitutor
     }
 
     override fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType) {
@@ -53,6 +56,7 @@ class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, resultT
     }
 
     override fun hasContradiction() = csBuilder.hasContradiction
+    override val captureFromArgument get() = true
 
     private object ThrowableKotlinCall : KotlinCall {
         override val callKind: KotlinCallKind get() = throw UnsupportedOperationException()
