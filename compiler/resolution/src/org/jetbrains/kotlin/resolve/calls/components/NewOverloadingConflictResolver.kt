@@ -38,8 +38,9 @@ class NewOverloadingConflictResolver(
         builtIns,
         specificityComparator,
         {
-            (it as? VariableAsFunctionKotlinResolutionCandidate)?.invokeCandidate?.descriptorWithFreshTypes ?:
-            (it as SimpleKotlinResolutionCandidate).descriptorWithFreshTypes
+            // todo investigate
+            (it as? VariableAsFunctionKotlinResolutionCandidate)?.invokeCandidate?.candidateDescriptor ?:
+            (it as SimpleKotlinResolutionCandidate).candidateDescriptor
         },
         { SimpleConstraintSystemImpl(constraintInjector, typeResolver) },
         Companion::createFlatSignature,
@@ -72,7 +73,6 @@ class NewOverloadingConflictResolver(
             return FlatSignature.create(candidate,
                                         originalDescriptor,
                                         numDefaults,
-                                        listOfNotNull(originalDescriptor.extensionReceiverParameter?.type) +
                                         simpleCandidate.kotlinCall.argumentsInParenthesis.map { valueArgumentToParameterType[it] } +
                                         listOfNotNull(simpleCandidate.kotlinCall.externalArgument?.let { valueArgumentToParameterType[it] })
             )
