@@ -41,6 +41,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project-root>../../..</project-root>
+        <local-repo>${user.dir}/build/repo</local-repo>
 
         <junit-version>4.11</junit-version>
         <pegdown.version>1.1.0</pegdown.version>
@@ -73,6 +74,13 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>local-gradle-build</id>
+            <url>file://${local-repo}</url>
+        </repository>
+    </repositories>
 
     <modules>
         <module>tools/kotlin-compiler</module>
