@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
@@ -127,7 +127,7 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
     }
 
     private fun KtNamedFunction.isRecursive(): Boolean {
-        val context = analyzeFullyAndGetResult().bindingContext
+        val context = analyzeFully()
         return bodyExpression?.includesCallOf(context[BindingContext.FUNCTION, this] ?: return false, context) ?: false
     }
 

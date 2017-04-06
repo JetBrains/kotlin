@@ -23,7 +23,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.project.builtIns
@@ -49,11 +49,10 @@ class ChangeFunctionLiteralReturnTypeFix(
     private val appropriateQuickFix = createAppropriateQuickFix(functionLiteralExpression, type)
 
     private fun createAppropriateQuickFix(functionLiteralExpression: KtLambdaExpression, type: KotlinType): IntentionAction? {
-        val analysisResult = functionLiteralExpression.containingKtFile.analyzeFullyAndGetResult()
-        val context = analysisResult.bindingContext
+        val context = functionLiteralExpression.containingKtFile.analyzeFully()
         val functionLiteralType = context.getType(functionLiteralExpression) ?: error("Type of function literal not available in binding context")
 
-        val builtIns = analysisResult.moduleDescriptor.builtIns
+        val builtIns = functionLiteralType.constructor.builtIns
         val functionClass = builtIns.getFunction(functionLiteralType.arguments.size - 1)
         val functionClassTypeParameters = LinkedList<KotlinType>()
         for (typeProjection in functionLiteralType.arguments) {

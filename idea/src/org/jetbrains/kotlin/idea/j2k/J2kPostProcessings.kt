@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
 import org.jetbrains.kotlin.idea.intentions.*
@@ -237,7 +237,7 @@ object J2KPostProcessingRegistrar {
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtBinaryExpressionWithTypeRHS) return null
 
-            val context = element.analyzeAndGetResult().bindingContext
+            val context = element.analyze()
             val leftType = context.getType(element.left) ?: return null
             val rightType = context.get(BindingContext.TYPE, element.right) ?: return null
 
@@ -262,7 +262,7 @@ object J2KPostProcessingRegistrar {
                 })
                 return null
 
-            val bindingContext = element.analyzeAndGetResult().bindingContext
+            val bindingContext = element.analyze()
             val rightType = element.right?.getType(bindingContext) ?: return null
 
             if (KotlinBuiltIns.isString(rightType)) {

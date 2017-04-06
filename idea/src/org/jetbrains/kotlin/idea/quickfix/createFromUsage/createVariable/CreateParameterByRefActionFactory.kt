@@ -51,9 +51,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
     }
 
     fun extractFixData(element: KtSimpleNameExpression): CreateParameterData<KtSimpleNameExpression>? {
-        val result = (element.containingFile as? KtFile)?.analyzeFullyAndGetResult() ?: return null
-        val context = result.bindingContext
-        val moduleDescriptor = result.moduleDescriptor
+        val (context, moduleDescriptor) = (element.containingFile as? KtFile)?.analyzeFullyAndGetResult() ?: return null
 
         val varExpected = element.getAssignmentByLHS() != null
 
