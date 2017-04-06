@@ -29,14 +29,12 @@ import javax.lang.model.element.TypeElement
 open class JavacAnnotation(val annotationMirror: AnnotationMirror,
                            val javac: Javac) : JavaElement, JavaAnnotation {
 
-    override val arguments by lazy {
-        annotationMirror.elementValues
+    override val arguments
+        get() = annotationMirror.elementValues
                 .map { JavacAnnotationArgument.create(it.value.value, Name.identifier(it.key.simpleName.toString()), javac) }
-    }
 
-    override val classId by lazy {
-        (annotationMirror.annotationType.asElement() as? TypeElement)?.computeClassId()
-    }
+    override val classId
+        get() = (annotationMirror.annotationType.asElement() as? TypeElement)?.computeClassId()
 
     override fun resolve() = JavacClass(annotationMirror.annotationType.asElement() as TypeElement, javac)
 

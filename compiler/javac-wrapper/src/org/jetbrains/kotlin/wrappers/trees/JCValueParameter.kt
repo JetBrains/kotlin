@@ -29,17 +29,20 @@ class JCValueParameter<out T : JCTree.JCVariableDecl>(tree: T,
                                                       treePath: TreePath,
                                                       javac: Javac) : JCElement<T>(tree, treePath, javac), JavaValueParameter {
 
-    override val annotations: Collection<JavaAnnotation>
-        get() = emptyList()
+    override val annotations
+        get() = emptyList<JavaAnnotation>()
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
-    override val isDeprecatedInJavaDoc = false
+    override val isDeprecatedInJavaDoc
+        get() = false
 
-    override val name = Name.identifier(tree.name.toString())
+    override val name
+        get() = Name.identifier(tree.name.toString())
 
-    override val type by lazy { JCType.create(tree.getType(), treePath, javac) }
+    override val type
+        get() = JCType.create(tree.getType(), treePath, javac)
 
-    override val isVararg: Boolean
+    override val isVararg
         get() = tree.modifiers.flags and Flags.VARARGS != 0L
 }

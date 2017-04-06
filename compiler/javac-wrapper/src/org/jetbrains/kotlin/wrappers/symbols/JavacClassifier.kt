@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.wrappers.symbols
 
 import org.jetbrains.kotlin.javac.Javac
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier
 import org.jetbrains.kotlin.name.FqName
@@ -26,16 +25,16 @@ import javax.lang.model.element.Element
 abstract class JavacClassifier<out T : Element>(element: T,
                                                 javac: Javac) : JavacElement<T>(element, javac), JavaClassifier, JavaAnnotationOwner {
 
-    override val annotations by lazy {
-        element.annotationMirrors
+    override val annotations
+        get() = element.annotationMirrors
                 .map { JavacAnnotation(it, javac) }
-    }
 
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? = element.annotationMirrors
+    override fun findAnnotation(fqName: FqName) = element.annotationMirrors
             .filter { it.toString() == fqName.asString() }
             .firstOrNull()
             ?.let { JavacAnnotation(it, javac) }
 
-    override val isDeprecatedInJavaDoc by lazy { javac.isDeprecated(element) }
+    override val isDeprecatedInJavaDoc
+        get() = javac.isDeprecated(element)
 
 }

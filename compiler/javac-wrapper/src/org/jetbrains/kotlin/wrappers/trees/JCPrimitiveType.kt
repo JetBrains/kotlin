@@ -26,8 +26,7 @@ class JCPrimitiveType<out T : JCTree.JCPrimitiveTypeTree>(tree: T,
                                                           treePath: TreePath,
                                                           javac: Javac) : JCType<T>(tree, treePath, javac), JavaPrimitiveType {
 
-    override val type by lazy {
-        if ("void" == tree.toString()) null else JvmPrimitiveType.get(tree.toString()).primitiveType
-    }
+    override val type
+        get() = if ("void" == tree.toString()) null else JvmPrimitiveType.get(tree.toString()).primitiveType
 
 }

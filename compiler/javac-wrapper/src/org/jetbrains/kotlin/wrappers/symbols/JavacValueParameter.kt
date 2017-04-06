@@ -23,23 +23,25 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.VariableElement
 
-class JavacValueParameter<out T : VariableElement>(element: T, elementName : String,
+class JavacValueParameter<out T : VariableElement>(element: T, private val elementName : String,
                                                    override val isVararg : Boolean,
                                                    javac: Javac) : JavacElement<T>(element, javac), JavaValueParameter {
 
-    override val annotations by lazy {
-        element.annotationMirrors.map { JavacAnnotation(it, javac) }
-    }
+    override val annotations
+        get() = element.annotationMirrors.map { JavacAnnotation(it, javac) }
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = element.annotationMirrors
             .filter { it.toString() == fqName.asString() }
             .firstOrNull()
             ?.let {JavacAnnotation(it, javac)}
 
-    override val isDeprecatedInJavaDoc by lazy { javac.isDeprecated(element) }
+    override val isDeprecatedInJavaDoc
+        get() =  javac.isDeprecated(element)
 
-    override val name = Name.identifier(elementName)
+    override val name
+        get() = Name.identifier(elementName)
 
-    override val type by lazy { JavacType.create(element.asType(), javac) }
+    override val type
+        get() = JavacType.create(element.asType(), javac)
 
 }

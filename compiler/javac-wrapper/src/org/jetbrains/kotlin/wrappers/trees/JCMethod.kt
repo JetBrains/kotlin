@@ -29,7 +29,8 @@ class JCMethod<out T : JCTree.JCMethodDecl>(tree: T,
                                             containingClass: JavaClass,
                                             javac: Javac) : JCMember<T>(tree, treePath, containingClass, javac), JavaMethod {
 
-    override val name = Name.identifier(tree.name.toString())
+    override val name
+        get() = Name.identifier(tree.name.toString())
 
     override val isAbstract
         get() = tree.modifiers.isAbstract
@@ -40,20 +41,18 @@ class JCMethod<out T : JCTree.JCMethodDecl>(tree: T,
     override val isFinal
         get() = tree.modifiers.isFinal
 
-    override val visibility by lazy {
-        if (containingClass.isInterface) Visibilities.PUBLIC else tree.modifiers.visibility
-    }
+    override val visibility
+        get() = if (containingClass.isInterface) Visibilities.PUBLIC else tree.modifiers.visibility
 
-    override val typeParameters by lazy {
-        tree.typeParameters.map { JCTypeParameter(it, TreePath(treePath, it), javac) }
-    }
+    override val typeParameters
+        get() = tree.typeParameters.map { JCTypeParameter(it, TreePath(treePath, it), javac) }
 
-    override val valueParameters by lazy {
-        tree.parameters
+    override val valueParameters
+        get() = tree.parameters
                 .map { JCValueParameter(it, TreePath(treePath, it), javac) }
-    }
 
-    override val returnType by lazy { JCType.create(tree.returnType, treePath, javac) }
+    override val returnType
+        get() = JCType.create(tree.returnType, treePath, javac)
 
     override val hasAnnotationParameterDefaultValue
         get() = tree.defaultValue != null

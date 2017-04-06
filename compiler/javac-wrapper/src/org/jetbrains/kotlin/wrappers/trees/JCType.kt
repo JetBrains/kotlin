@@ -39,9 +39,11 @@ abstract class JCType<out T : JCTree>(val tree: T,
         }
     }
 
-    override val annotations = emptyList<JavaAnnotation>()
+    override val annotations
+        get() = emptyList<JavaAnnotation>()
 
-    override val isDeprecatedInJavaDoc = false
+    override val isDeprecatedInJavaDoc
+        get() = false
 
     override fun findAnnotation(fqName: FqName) = null
 

@@ -25,6 +25,7 @@ abstract class JCClassifier<out T : JCTree>(tree: T,
                                             treePath: TreePath,
                                             javac: Javac) : JCElement<T>(tree, treePath, javac), JavaClassifier {
 
-    override val isDeprecatedInJavaDoc = false
+    override val isDeprecatedInJavaDoc
+        get() = false
 
 }

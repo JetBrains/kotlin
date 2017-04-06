@@ -27,8 +27,7 @@ class JavacField<out T : VariableElement>(element: T,
     override val isEnumEntry
         get() = element.kind == ElementKind.ENUM_CONSTANT
 
-    override val type by lazy {
-        JavacType.create(element.asType(), javac)
-    }
+    override val type
+        get() = JavacType.create(element.asType(), javac)
 
 }

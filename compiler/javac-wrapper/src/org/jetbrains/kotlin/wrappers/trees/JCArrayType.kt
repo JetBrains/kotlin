@@ -25,6 +25,7 @@ class JCArrayType<out T : JCTree.JCArrayTypeTree>(tree: T,
                                                   treePath: TreePath,
                                                   javac: Javac) : JCType<T>(tree, treePath, javac), JavaArrayType {
 
-    override val componentType by lazy { create(tree.elemtype, treePath, javac) }
+    override val componentType
+        get() = create(tree.elemtype, treePath, javac)
 
 }

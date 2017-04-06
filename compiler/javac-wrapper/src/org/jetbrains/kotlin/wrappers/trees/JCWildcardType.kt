@@ -26,7 +26,8 @@ class JCWildcardType<out T : JCTree.JCWildcard>(tree: T,
                                                 treePath: TreePath,
                                                 javac: Javac) : JCType<T>(tree, treePath, javac), JavaWildcardType {
 
-    override val bound by lazy { tree.bound?.let { create(it, treePath, javac) } }
+    override val bound
+        get() = tree.bound?.let { create(it, treePath, javac) }
 
     override val isExtends
         get() = tree.kind.kind == BoundKind.EXTENDS

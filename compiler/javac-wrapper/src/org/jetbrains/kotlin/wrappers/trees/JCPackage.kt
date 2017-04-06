@@ -23,9 +23,11 @@ import org.jetbrains.kotlin.name.Name
 
 class JCPackage(val name: String, val javac: Javac) : JavaPackage {
 
-    override val fqName = FqName(name)
+    override val fqName
+        get() = FqName(name)
 
-    override val subPackages by lazy { javac.findSubPackages(fqName) }
+    override val subPackages
+        get() = javac.findSubPackages(fqName)
 
     override fun getClasses(nameFilter: (Name) -> Boolean) = javac.findClassesFromPackage(fqName)
             .filter { Name.isValidIdentifier(it.fqName!!.shortName().asString()) && nameFilter(Name.identifier(it.fqName!!.shortName().asString())) }

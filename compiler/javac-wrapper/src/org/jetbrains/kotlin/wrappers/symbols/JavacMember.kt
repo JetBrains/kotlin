@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.wrappers.symbols
 
 import org.jetbrains.kotlin.javac.Javac
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaMember
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -28,27 +27,26 @@ import javax.lang.model.element.TypeElement
 abstract class JavacMember<out T : Element>(element: T,
                                             javac: Javac) : JavacElement<T>(element, javac), JavaMember {
 
-    override val containingClass by lazy {
-        JavacClass((element.enclosingElement as TypeElement), javac)
-    }
+    override val containingClass
+        get() = JavacClass((element.enclosingElement as TypeElement), javac)
 
-    override val annotations by lazy {
-        element.annotationMirrors
+    override val annotations
+        get() = element.annotationMirrors
                 .map { JavacAnnotation(it, javac) }
-    }
 
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? = element.annotationMirrors
+    override fun findAnnotation(fqName: FqName) = element.annotationMirrors
             .filter { it.toString() == fqName.asString() }
             .firstOrNull()
             ?.let { JavacAnnotation(it, javac) }
 
-    override val visibility by lazy {
-        element.getVisibility()
-    }
+    override val visibility
+        get() = element.getVisibility()
 
-    override val name = Name.identifier(element.simpleName.toString())
+    override val name
+        get() = Name.identifier(element.simpleName.toString())
 
-    override val isDeprecatedInJavaDoc by lazy { javac.isDeprecated(element) }
+    override val isDeprecatedInJavaDoc
+        get() = javac.isDeprecated(element)
 
     override val isAbstract
         get() = element.isAbstract

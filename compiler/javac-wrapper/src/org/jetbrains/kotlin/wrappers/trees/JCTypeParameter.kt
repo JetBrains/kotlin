@@ -28,21 +28,21 @@ class JCTypeParameter<out T : JCTree.JCTypeParameter>(tree: T,
                                                       treePath: TreePath,
                                                       javac: Javac) : JCClassifier<T>(tree, treePath, javac), JavaTypeParameter {
 
-    override val name = SpecialNames.safeIdentifier(tree.name.toString())
+    override val name
+        get() = SpecialNames.safeIdentifier(tree.name.toString())
 
     override val annotations: Collection<JavaAnnotation>
         get() = emptyList()
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
-    override val upperBounds by lazy {
-        tree.bounds.map {
+    override val upperBounds
+        get() = tree.bounds.map {
             when (it) {
                 is JCTree.JCTypeApply -> JCClassifierTypeWithTypeArgument(it, TreePath(treePath, it), javac)
                 is JCTree.JCIdent -> JCClassifierType(it, TreePath(treePath, it), javac)
                 else -> null
             }
         }.filterNotNull()
-    }
 
 }

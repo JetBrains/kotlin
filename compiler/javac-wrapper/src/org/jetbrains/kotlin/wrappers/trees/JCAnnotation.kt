@@ -27,12 +27,12 @@ class JCAnnotation(val annotation: JCTree.JCAnnotation,
                    val treePath: TreePath,
                    val javac: Javac) : JavaElement, JavaAnnotation {
 
-    override val arguments by lazy {
-        annotation.arguments
+    override val arguments
+        get() = annotation.arguments
                 .map { JCAnnotationArgument(it, FqName(it.toString()), javac) }
-    }
 
-    override val classId by lazy { resolve()?.computeClassId() }
+    override val classId
+        get() = resolve()?.computeClassId()
 
     override fun resolve() = TreePath.getPath(treePath.compilationUnit, annotation.annotationType).resolve(javac).second
 

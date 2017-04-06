@@ -35,8 +35,8 @@ abstract class ClassifierType<out T : JCTree>(tree: T,
     override val presentableText
         get() = canonicalText
 
-    private val typeParameter by lazy {
-        treePath.filter { it is JCTree.JCClassDecl || it is JCTree.JCMethodDecl }
+    private val typeParameter
+        get() = treePath.filter { it is JCTree.JCClassDecl || it is JCTree.JCMethodDecl }
                 .flatMap {
                     when (it) {
                         is JCTree.JCClassDecl -> it.typarams
@@ -45,7 +45,6 @@ abstract class ClassifierType<out T : JCTree>(tree: T,
                     }
                 }
                 .find { it.toString().substringBefore(" ") == treePath.leaf.toString() }
-    }
 
 }
 
@@ -56,9 +55,8 @@ class JCClassifierType<out T : JCTree.JCExpression>(tree: T,
     override val typeArguments: List<JavaType>
         get() = emptyList()
 
-    override val isRaw by lazy {
-        (classifier as? JavaClass)?.typeParameters?.isNotEmpty() ?: false
-    }
+    override val isRaw
+        get() = (classifier as? JavaClass)?.typeParameters?.isNotEmpty() ?: false
 
 }
 
@@ -66,11 +64,11 @@ class JCClassifierTypeWithTypeArgument<out T : JCTree.JCTypeApply>(tree: T,
                                                                    treePath: TreePath,
                                                                    javac: Javac) : ClassifierType<T>(tree, treePath, javac) {
 
-    override val typeArguments by lazy {
-        tree.arguments.map { create(it, treePath, javac) }
-    }
+    override val typeArguments
+        get() = tree.arguments.map { create(it, treePath, javac) }
 
-    override val isRaw = false
+    override val isRaw
+        get() = false
 
 }
 
@@ -91,9 +89,10 @@ private fun typeParameter(treePath: TreePath, javac: Javac) = treePath
             }
         }
         .find { it.toString().substringBefore(" ") == treePath.leaf.toString() }
-        ?.let { JCTypeParameter(it,
-                                javac.getTreePath(it, treePath.compilationUnit),
-                                javac)
+        ?.let {
+            JCTypeParameter(it,
+                            javac.getTreePath(it, treePath.compilationUnit),
+                            javac)
         }
 
 private val stubs = hashMapOf<FqName, JavaClass>()

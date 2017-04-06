@@ -28,29 +28,26 @@ import javax.lang.model.type.TypeVariable
 class JavacClassifierType<out T : TypeMirror>(typeMirror: T,
                                               javac: Javac) : JavacType<T>(typeMirror, javac), JavaClassifierType {
 
-    override val classifier by lazy {
-        when (typeMirror.kind) {
+    override val classifier
+        get() = when (typeMirror.kind) {
             TypeKind.DECLARED -> JavacClass((typeMirror as DeclaredType).asElement() as TypeElement, javac)
             TypeKind.TYPEVAR -> JavacTypeParameter((typeMirror as TypeVariable).asElement() as TypeParameterElement, javac)
             else -> null
         }
-    }
 
-    override val typeArguments by lazy {
-        if (typeMirror.kind == TypeKind.DECLARED) {
+    override val typeArguments
+        get() = if (typeMirror.kind == TypeKind.DECLARED) {
             (typeMirror as DeclaredType).typeArguments.map { create(it, javac) }
         } else {
             emptyList()
         }
-    }
 
-    override val isRaw by lazy {
-        when {
+    override val isRaw
+        get() = when {
             typeMirror !is DeclaredType -> false
             (typeMirror.asElement() as TypeElement).typeParameters.isEmpty() -> false
             else -> typeMirror.typeArguments.isEmpty()
         }
-    }
 
     override val canonicalText
         get() = typeMirror.toString()
