@@ -6,6 +6,19 @@ import java.io.File
 
 class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
     @Test
+    fun testKaptProcessorPath() {
+        val project = Project("kaptSimple", gradleVersion)
+
+        project.build("build") {
+            assertSuccessful()
+            assertContains()
+            assertContainsRegex("""-processorpath \S*.build.tmp.kapt.main.wrappers""".toRegex())
+            assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
+            assertClassFilesNotContain(File(project.projectDir, "build/classes"), "ExampleSourceAnnotation")
+        }
+    }
+
+    @Test
     fun testJavaIcCompatibility() {
         val version = gradleVersion.split(".").map(String::toInt)
         val expectIncrementalCompilation = version.let { (major, minor) -> major > 2 || major == 2 && minor >= 14 }

@@ -218,6 +218,11 @@ abstract class BaseGradleIT {
         return this
     }
 
+    fun CompiledProject.assertContainsRegex(expected: Regex): CompiledProject {
+        assertTrue(expected.containsMatchIn(output), "Output should contain pattern '$expected'")
+        return this
+    }
+
     fun CompiledProject.assertClassFilesNotContain(dir: File, vararg strings: String) {
         val classFiles = dir.walk().filter { it.isFile && it.extension.toLowerCase() == "class" }
 
