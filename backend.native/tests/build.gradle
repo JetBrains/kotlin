@@ -467,6 +467,21 @@ task enum_linkTest(type: LinkKonanTest) {
     lib = "codegen/enum/linkTest_lib.kt"
 }
 
+task mangling(type: LinkKonanTest) {
+    goldValue = 
+        "Int direct [1, 2, 3, 4]\n" +
+        "out Number direct [9, 10, 11, 12]\n" +
+        "star direct [5, 6, 7, 8]\n" +
+        "Int param [1, 2, 3, 4]\n" +
+        "out Number param [9, 10, 11, 12]\n" +
+        "star param [5, 6, 7, 8]\n" +
+        "no constructors {}\n" +
+        "single constructor some string\n" +
+        "two constructors 17\n"
+    source = "mangling/mangling.kt"
+    lib = "mangling/manglinglib.kt"
+}
+
 task innerClass_simple(type: RunKonanTest) {
     goldValue = "OK\n"
     source = "codegen/innerClass/simple.kt"
