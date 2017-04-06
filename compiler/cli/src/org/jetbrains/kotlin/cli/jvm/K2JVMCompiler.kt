@@ -423,7 +423,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             //   <key> - is a single word (\w+ pattern)
             //   <value> - optionally quoted string with allowed escaped chars (only double-quote and backslash chars are supported)
             // TODO: implement generic unescaping
-            val envParseRe = """(\w+)=(?:"((?:\\.|[^"])*)"|([^\s]*))""".toRegex()
+            val envParseRe = """(\w+)=(?:"([^"\\]*(\\.[^"\\]*)*)"|([^\s]*))""".toRegex()
             val unescapeRe = """\\(["\\])""".toRegex()
             if (arguments.scriptResolverEnvironment != null) {
                 for (envParam in arguments.scriptResolverEnvironment) {
