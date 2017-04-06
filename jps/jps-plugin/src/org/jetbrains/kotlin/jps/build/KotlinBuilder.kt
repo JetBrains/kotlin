@@ -230,7 +230,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return NOTHING_DONE
         }
 
-        messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinCompilerVersion.VERSION)
+        messageCollector.report(
+                INFO, "Kotlin version " + KotlinCompilerVersion.VERSION + " (JRE " + System.getProperty("java.runtime.version") + ")"
+        )
 
         val targetsWithoutOutputDir = targets.filter { it.outputDir == null }
         if (targetsWithoutOutputDir.isNotEmpty()) {
@@ -258,7 +260,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val start = System.nanoTime()
         val outputItemCollector = doCompileModuleChunk(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder,
-                                                       environment, filesToCompile, incrementalCaches, messageCollector, project)
+                                                       environment, filesToCompile, incrementalCaches, project)
 
         statisticsLogger.registerStatistic(chunk, System.nanoTime() - start)
 
@@ -416,7 +418,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             allCompiledFiles: MutableSet<File>, chunk: ModuleChunk, commonArguments: CommonCompilerArguments, context: CompileContext,
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>, environment: JpsCompilerEnvironment,
             filesToCompile: MultiMap<ModuleBuildTarget, File>, incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl<*>>,
-            messageCollector: MessageCollectorAdapter, project: JpsProject
+            project: JpsProject
     ): OutputItemsCollector? {
 
         if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
@@ -434,7 +436,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val representativeTarget = chunk.representativeTarget()
 
-        fun concatenate(strings: Array<String>?, cp: List<String>) = arrayOf(*(strings ?: emptyArray()), *cp.toTypedArray())
+        fun concatenate(strings: Array<String>?, cp: List<String>) = arrayOf(*strings.orEmpty(), *cp.toTypedArray())
 
         for (argumentProvider in ServiceLoader.load(KotlinJpsCompilerArgumentsProvider::class.java)) {
             // appending to pluginOptions
@@ -444,7 +446,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             commonArguments.pluginClasspaths = concatenate(commonArguments.pluginClasspaths,
                                                            argumentProvider.getClasspath(representativeTarget, context))
 
-            messageCollector.report(INFO, "Plugin loaded: ${argumentProvider::class.java.simpleName}")
+            LOG.debug("Plugin loaded: ${argumentProvider::class.java.simpleName}")
         }
 
         return compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile)
@@ -742,15 +744,22 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             if (severity == EXCEPTION) {
                 prefix = INTERNAL_ERROR_PREFIX
             }
-            context.processMessage(CompilerMessage(
-                    CompilerRunnerConstants.KOTLIN_COMPILER_NAME,
-                    kind(severity),
-                    prefix + message,
-                    location?.path,
-                    -1, -1, -1,
-                    location?.line?.toLong() ?: -1,
-                    location?.column?.toLong() ?: -1
-            ))
+            val kind = kind(severity)
+            if (kind != null) {
+                context.processMessage(CompilerMessage(
+                        CompilerRunnerConstants.KOTLIN_COMPILER_NAME,
+                        kind,
+                        prefix + message,
+                        location?.path,
+                        -1, -1, -1,
+                        location?.line?.toLong() ?: -1,
+                        location?.column?.toLong() ?: -1
+                ))
+            }
+            else {
+                val path = if (location != null) "${location.path}:${location.line}:${location.column}: " else ""
+                KotlinBuilder.LOG.debug(path + message)
+            }
         }
 
         override fun clear() {
@@ -759,12 +768,12 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         override fun hasErrors(): Boolean = hasErrors
 
-        private fun kind(severity: CompilerMessageSeverity): BuildMessage.Kind {
+        private fun kind(severity: CompilerMessageSeverity): BuildMessage.Kind? {
             return when (severity) {
                 INFO -> BuildMessage.Kind.INFO
                 ERROR, EXCEPTION -> BuildMessage.Kind.ERROR
                 WARNING, STRONG_WARNING -> BuildMessage.Kind.WARNING
-                LOGGING -> BuildMessage.Kind.PROGRESS
+                LOGGING -> null
                 else -> throw IllegalArgumentException("Unsupported severity: " + severity)
             }
         }
