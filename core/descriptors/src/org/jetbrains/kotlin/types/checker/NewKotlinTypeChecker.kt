@@ -391,6 +391,9 @@ object NullabilityChecker {
 
 }
 
+fun UnwrappedType.hasSupertypeWithGivenTypeConstructor(typeConstructor: TypeConstructor) =
+        TypeCheckerContext(false).anySupertype(lowerIfFlexible(), { it.constructor == typeConstructor }, { SupertypesPolicy.LowerIfFlexible })
+
 /**
  * ClassType means that type constructor for this type is type for real class or interface
  */

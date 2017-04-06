@@ -10236,6 +10236,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("captureFromTypeParameterUpperBound.kt")
+                public void testCaptureFromTypeParameterUpperBound() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/captureFromTypeParameterUpperBound.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("captureTypeOnlyOnTopLevel.kt")
                 public void testCaptureTypeOnlyOnTopLevel() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/captureTypeOnlyOnTopLevel.kt");
