@@ -29,13 +29,18 @@ import org.junit.Assert
 import java.io.File
 
 internal class KotlinOutputChecker(appPath: String, outputPath: String) : OutputChecker(appPath, outputPath) {
-    private val CONNECT_PREFIX = "Connected to the target VM"
-    private val DISCONNECT_PREFIX = "Disconnected from the target VM"
-    private val RUN_JAVA = "Run Java"
-
     companion object {
         @JvmStatic
         private val LOG = Logger.getInstance(KotlinOutputChecker::class.java)
+
+        private val CONNECT_PREFIX = "Connected to the target VM"
+        private val DISCONNECT_PREFIX = "Disconnected from the target VM"
+        private val RUN_JAVA = "Run Java"
+
+        //ERROR: JDWP Unable to get JNI 1.2 environment, jvm->GetEnv() return code = -2
+        private val JDI_BUG_OUTPUT_PATTERN_1 = Regex("ERROR\\:\\s+JDWP\\s+Unable\\s+to\\s+get\\s+JNI\\s+1\\.2\\s+environment,\\s+jvm-\\>GetEnv\\(\\)\\s+return\\s+code\\s+=\\s+-2")
+        //JDWP exit error AGENT_ERROR_NO_JNI_ENV(183):  [../../../src/share/back/util.c:820]
+        private val JDI_BUG_OUTPUT_PATTERN_2 = Regex("JDWP\\s+exit\\s+error\\s+AGENT_ERROR_NO_JNI_ENV.*\\]")
     }
 
     // Copied from the base OutputChecker.checkValid(). Need to intercept call to base preprocessBuffer() method
@@ -106,7 +111,7 @@ internal class KotlinOutputChecker(appPath: String, outputPath: String) : Output
         val disconnectedIndex = lines.indexOfFirst { it.startsWith(DISCONNECT_PREFIX) }
         lines[disconnectedIndex] = DISCONNECT_PREFIX
 
-        return lines.joinToString("\n")
+        return lines.filter { !(it.matches(JDI_BUG_OUTPUT_PATTERN_1) || it.matches(JDI_BUG_OUTPUT_PATTERN_2)) }.joinToString("\n")
     }
 
     private fun buildOutputString(): String {
