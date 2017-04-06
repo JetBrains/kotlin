@@ -533,3 +533,7 @@ fun KtDeclaration.hasBody() = when (this) {
     is KtProperty -> hasBody()
     else -> false
 }
+
+
+fun KtExpression.referenceExpression(): KtReferenceExpression? =
+        (if (this is KtCallExpression) calleeExpression else this) as? KtReferenceExpression

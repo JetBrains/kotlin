@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.refactoring.introduce.ExtractableSubstringInfo
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractableSubstringInfo
@@ -196,10 +195,10 @@ data class ExtractionData(
 
         val newReferences = body.collectDescendantsOfType<KtSimpleNameExpression> { it.resolveResult != null }
 
+        val context = body.analyze()
+
         val referencesInfo = ArrayList<ResolvedReferenceInfo>()
-        val refToContextMap = KotlinFileReferencesResolver.resolve(body)
         for (newRef in newReferences) {
-            val context = refToContextMap[newRef] ?: continue
             val originalResolveResult = newRef.resolveResult ?: continue
 
             val smartCast: KotlinType?

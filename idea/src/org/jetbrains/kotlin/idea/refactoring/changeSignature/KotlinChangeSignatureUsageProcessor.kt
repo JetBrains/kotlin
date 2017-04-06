@@ -43,10 +43,10 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*
+import org.jetbrains.kotlin.idea.refactoring.rename.noReceivers
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
@@ -701,9 +701,14 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             callable: PsiElement,
             newReceiverInfo: KotlinParameterInfo?) {
         if (newReceiverInfo != null && (callable is KtNamedFunction) && callable.bodyExpression != null) {
-            val noReceiverRefToContext = KotlinFileReferencesResolver.resolve(callable, true, true).filter {
-                val resolvedCall = it.key.getResolvedCall(it.value)
-                resolvedCall != null && resolvedCall.dispatchReceiver == null && resolvedCall.extensionReceiver == null
+            val originalContext = callable.analyzeFully()
+
+            val noReceiverRefs = ArrayList<KtSimpleNameExpression>()
+            callable.forEachDescendantOfType<KtSimpleNameExpression> {
+                val resolvedCall = it.getResolvedCall(originalContext) ?: return@forEachDescendantOfType
+                if (resolvedCall.noReceivers()) {
+                    noReceiverRefs += it
+                }
             }
 
             val psiFactory = KtPsiFactory(callable.project)
@@ -715,7 +720,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
             val originalOffset = callable.bodyExpression!!.textOffset
             val newBody = functionWithReceiver.bodyExpression ?: return
-            for ((originalRef, originalContext) in noReceiverRefToContext.entries) {
+            for (originalRef in noReceiverRefs) {
                 val newRef = newBody
                         .findElementAt(originalRef.textOffset - originalOffset)
                         ?.getNonStrictParentOfType<KtReferenceExpression>()
