@@ -148,14 +148,8 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
     }
 
     private fun approximateCapturedTypes(type: UnwrappedType, toSuper: Boolean): UnwrappedType =
-            if (toSuper) typeApproximator.approximateToSuperType(type, CapturedTypesApproximatorConfiguration) ?: type
-            else typeApproximator.approximateToSubType(type, CapturedTypesApproximatorConfiguration) ?: type
+            if (toSuper) typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.IncorporationConfiguration) ?: type
+            else typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.IncorporationConfiguration) ?: type
 
 
-    private object CapturedTypesApproximatorConfiguration : TypeApproximatorConfiguration.AllFlexibleSameValue() {
-        override val allFlexible get() = true
-        override val capturedType get() = { it: NewCapturedType -> it.captureStatus != CaptureStatus.FOR_INCORPORATION }
-        override val intersection get() = IntersectionStrategy.ALLOWED
-        override val typeVariable: (TypeVariableTypeConstructor) -> Boolean get() = { true }
-    }
 }
