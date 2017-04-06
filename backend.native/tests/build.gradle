@@ -107,24 +107,37 @@ task run() {
         dependsOn(tasks.withType(KonanTest).matching { !(it instanceof RunExternalTestGroup) && it.enabled })
 }
 
-
-task run_external () {
-    // TODO Consider test output directory cleaning before execution.
-    // TODO Consider using some logger instead of println
-    // Create tasks for external tests.
-    externalTestsDir.eachDirRecurse {
+Set<RunExternalTestGroup> createExternalTests(File testRoot, Closure taskConfiguration) {
+    def result = new HashSet<RunExternalTestGroup>()
+    testRoot.eachDirRecurse {
         // Skip build directory and directories without *.kt files.
-        if (it.name == "build" || it.listFiles().count {it.name.endsWith(".kt")} == 0) {
+        if (it.name == "build" || it.listFiles().count {it.name.endsWith(".kt") && it.isFile()} == 0) {
             return
         }
 
         def taskDirectory = project.relativePath(it)
         def taskName = taskDirectory.replaceAll("[-/]", '_')
 
-        task("$taskName", type: RunExternalTestGroup){
+        def task = (RunExternalTestGroup)project.task("$taskName", type: RunExternalTestGroup){
             groupDirectory = "$taskDirectory"
         }
+        taskConfiguration(task)
+        result.add(task)
     }
+    return result
+}
+
+task run_external () {
+    // TODO Consider test output directory cleaning before execution.
+    // TODO Consider using some logger instead of println
+    // Create tasks for external tests.
+
+    for (testDir in ["codegen", "compileKotlinAgainstKotlin"]) {
+        createExternalTests(new File(externalTestsDir, testDir)) {
+            it.goldValue = "OK"
+        }
+    }
+    createExternalTests(new File(externalTestsDir, "stdlib")) {}
 
     // Set up dependencies.
     def testTasks = tasks.withType(RunExternalTestGroup).matching { it.enabled }

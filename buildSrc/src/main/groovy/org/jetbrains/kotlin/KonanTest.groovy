@@ -179,7 +179,7 @@ abstract class KonanTest extends JavaExec {
         }
         println "execution :$exe"
 
-        def out = null
+        def out = new ByteArrayOutputStream()
         //TODO Add test timeout
         ExecResult execResult = project.execRemote {
             commandLine exe
@@ -189,13 +189,11 @@ abstract class KonanTest extends JavaExec {
             if (testData != null) {
                 standardInput = new ByteArrayInputStream(testData.bytes)
             }
-            if (goldValue != null) {
-                out = new ByteArrayOutputStream()
-                standardOutput = out
-            }
+            standardOutput = out
 
             ignoreExitValue = true
         }
+        println(out.toString())
 
         if (execResult.exitValue != expectedExitStatus) {
             throw new TestFailedException(
@@ -399,14 +397,11 @@ class RunExternalTestGroup extends RunKonanTest {
         text.append(
 """
 fun main(args : Array<String>) {
-  @Suppress("USELESS_ELVIS")
-  val result = box()?:"null"
-  println(result)
-  if (result != "OK") {
-    throw TestFailedException(result)
-  }
+    @Suppress("UNUSED_VARIABLE")
+    val result = box()
+    ${ (goldValue != null) ? "print(result)" : "" }
 }
-""")
+"""     )
         createFile(file, text.toString())
     }
 
