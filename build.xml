@@ -4,11 +4,6 @@
 
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
     <property name="shrink" value="true"/>
-    <!-- Set to false to disable compiler's javadoc generation. Speeds up the build -->
-    <property name="generate.javadoc" value="false"/>
-
-    <!-- Set to false to prevent jarjar and metadata stripping on kotlin-reflect.jar and reflection sources. Use to debug reflection -->
-    <property name="obfuscate.reflect" value="true"/>
 
     <property name="max.heap.size.for.forked.jvm" value="1024m"/>
 
@@ -19,13 +14,11 @@
     <property name="bootstrap.script.runtime" value="${bootstrap.compiler.home}/lib/kotlin-script-runtime.jar"/>
     <property name="bootstrap.kotlin.test" value="${bootstrap.compiler.home}/lib/kotlin-test.jar" />
 
-    <property name="intermediate-sources" value="out/src" />
     <property name="kotlin-home" value="${output}/kotlinc"/>
     <property name="build.number" value="snapshot"/>
     <property name="bootstrap.build.no.tests" value="false"/>
     <property name="idea.sdk" value="${basedir}/ideaSDK"/>
     <property name="protobuf.jar" value="${basedir}/dependencies/protobuf-2.6.1.jar"/>
-    <property name="protobuf-lite.jar" value="${basedir}/dependencies/protobuf-2.6.1-lite.jar"/>
     <property name="javax.inject.jar" value="${basedir}/lib/javax.inject.jar"/>
     <property name="gradle.logging.level" value=""/>
 
@@ -40,13 +33,6 @@
             </not>
         </or>
     </condition>
-
-    <include file="jslib_files.xml" />
-
-    <property name="compiled.builtins.js" value="builtins.js"/>
-    <property name="compiled.stdlib.js" value="stdlib.js"/>
-    <property name="compiled.stdlib.meta.js" value="kotlin.meta.js"/>
-    <property name="stdlib.js.dir" value="${basedir}/js/js.libraries/src/js"/>
 
     <!--
     The compiler produced on the first step of the build (Bootstrap No Tests) is only guaranteed to work against the OLD runtime
@@ -278,225 +264,7 @@
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
-
-        <sequential if:true="${generate.javadoc}">
-            <delete dir="${output}/kotlin-compiler-javadoc" failonerror="false"/>
-            <javadoc destdir="${output}/kotlin-compiler-javadoc"
-                     sourcepathref="compilerSources.path"
-                     classpathref="classpath"
-                     linksource="yes"
-                     windowtitle="${manifest.impl.title.kotlin.compiler}"/>
-            <jar jarfile="${output}/kotlin-compiler-javadoc.jar">
-                <fileset dir="${output}/kotlin-compiler-javadoc"/>
-                <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-
-                <manifest>
-                    <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
-                    <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                    <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler.javadoc}"/>
-                    <attribute name="Implementation-Version" value="${build.number}"/>
-                </manifest>
-            </jar>
-        </sequential>
-
-        <sequential unless:true="${generate.javadoc}">
-            <jar jarfile="${output}/kotlin-compiler-javadoc.jar">
-                <manifest>
-                    <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
-                    <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                    <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler.javadoc}"/>
-                    <attribute name="Implementation-Version" value="${build.number}"/>
-                </manifest>
-            </jar>
-        </sequential>
     </target>
-
-    <macrodef name="new-kotlin2js">
-        <attribute name="output"/>
-        <attribute name="additionalOptions" default=""/>
-        <element name="src"/>
-
-        <sequential>
-            <local name="src.line"/>
-
-            <path id="src.path">
-                <src/>
-            </path>
-
-            <pathconvert property="src.line" refid="src.path" pathsep=" "/>
-
-            <java classname="org.jetbrains.kotlin.preloading.Preloader" failonerror="true" fork="true"
-                  maxmemory="${max.heap.size.for.forked.jvm}">
-                <classpath>
-                    <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
-                </classpath>
-                <assertions>
-                    <enable/>
-                </assertions>
-                <arg value="-cp"/>
-                <arg value="${kotlin-home}/lib/kotlin-compiler.jar"/>
-                <arg value="org.jetbrains.kotlin.cli.js.K2JSCompiler"/>
-                <arg line="${src.line}"/>
-                <arg value="-output"/>
-                <arg value="@{output}"/>
-                <arg value="-no-stdlib"/>
-                <arg value="-version"/>
-                <arg line="@{additionalOptions}"/>
-                <arg line="-main noCall"/>
-                <arg line="-module-kind commonjs"/>
-                <arg value="-Xallow-kotlin-package"/>
-            </java>
-        </sequential>
-    </macrodef>
-
-    <target name="js-stdlib-merge">
-        <!-- value should be one of: whitespace, simple, advanced -->
-        <property name="compilationLevel" value="whitespace"/>
-        <!-- value should be one of: default, quiet, verbose -->
-        <property name="warningLevel" value="default"/>
-
-        <taskdef name="closure-compiler"
-                 classname="com.google.javascript.jscomp.ant.CompileTask"
-                 classpath="${dependencies}/closure-compiler.jar"/>
-
-        <closure-compiler
-            compilationLevel="${compilationLevel}"
-            prettyprint="true"
-            languagein="ECMASCRIPT5_STRICT"
-            warning="${warningLevel}"
-            output="${js.stdlib.output.dir}/kotlin.js"
-            outputWrapperFile="${stdlib.js.dir}/closure-wrapper.txt">
-
-            <path>
-                <fileset dir="${stdlib.js.dir}">
-                    <include name="**/*.js"/>
-                    <exclude name="externs.js"/>
-                </fileset>
-                <fileset dir="${js.stdlib.output.dir}">
-                    <include name="${compiled.builtins.js}"/>
-                    <include name="${compiled.stdlib.js}"/>
-                </fileset>
-            </path>
-
-            <externs dir="${stdlib.js.dir}">
-                <file name="externs.js"/>
-            </externs>
-        </closure-compiler>
-
-        <!--
-         Few hacks to compose one kotlin.js from several smaller files:
-           1. Wrapper function takes Kotlin and _, whereas they are already defined above (see closure-wrapper.txt), so delete these
-              parameters.
-           2. Since we deleted parameters, we can get rid or arguments passed to wrapper function.
-              They are module.exports and require("Kotlin"), accordingly to CommonJS spec.
-           3. We can omit return _, since it's already exported by the code in UMD wrapper.
-        -->
-        <replaceregexp file="${js.stdlib.output.dir}/kotlin.js"
-                       match="module.exports,\s*require\([^)]+\)"
-                       replace=""
-                       byline="true" encoding="UTF-8" />
-        <replaceregexp file="${js.stdlib.output.dir}/kotlin.js"
-                       match="function\s*\(_,\s*Kotlin\)"
-                       replace="function()"
-                       byline="true" encoding="UTF-8" />
-        <replaceregexp file="${js.stdlib.output.dir}/kotlin.js"
-                       match="return\s+_;"
-                       replace=""
-                       byline="true" encoding="UTF-8" />
-    </target>
-
-    <target name="js-stdlib-preprocess">
-        <kotlin-pp src="libraries/stdlib/src" output="${intermediate-sources}/stdlib/js" profile="JS" />
-    </target>
-
-    <target name="js-stdlib" depends="js-stdlib-preprocess">
-        <property environment="env"/>
-        <cleandir dir="${js.stdlib.output.dir}"/>
-
-        <!-- We don't want descriptors for built-ins to be serialized, so we compile these files separately. -->
-        <new-kotlin2js output="${js.stdlib.output.dir}/tmp-builtins/kotlin.js">
-            <src>
-                <union>
-                    <resources refid="kotlin.builtin.native.files"/>
-                </union>
-            </src>
-        </new-kotlin2js>
-
-        <new-kotlin2js output="${js.stdlib.output.dir}/tmp/kotlin.js" additionalOptions="-meta-info">
-            <src>
-                <union>
-                    <fileset refid="kotlin.builtin.files"/>
-                    <resources refid="js.lib.files"/>
-                </union>
-            </src>
-        </new-kotlin2js>
-
-        <move file="${js.stdlib.output.dir}/tmp-builtins/kotlin.js" tofile="${js.stdlib.output.dir}/${compiled.builtins.js}" />
-        <move file="${js.stdlib.output.dir}/tmp/kotlin.js" tofile="${js.stdlib.output.dir}/${compiled.stdlib.js}" />
-        <move file="${js.stdlib.output.dir}/tmp/kotlin" todir="${js.stdlib.output.dir}" />
-        <move file="${js.stdlib.output.dir}/tmp/${compiled.stdlib.meta.js}" tofile="${js.stdlib.output.dir}/${compiled.stdlib.meta.js}" />
-
-        <condition property="jdk17" value="${env.JDK_17}" else="${env.JAVA_HOME}">
-            <isset property="env.JDK_17" />
-        </condition>
-        <java classname="org.apache.tools.ant.launch.Launcher"
-              fork="true"
-              failonerror="true"
-              timeout="4000000"
-              taskname="startAnt"
-              jvm="${jdk17}/bin/java">
-            <env key="JAVA_HOME" value="${jdk17}"/>
-            <classpath>
-                <pathelement location="${ant.home}/lib/ant-launcher.jar"/>
-            </classpath>
-            <arg line="-f" />
-            <arg line="build.xml" />
-            <arg line="js-stdlib-merge" />
-        </java>
-
-        <jar jarfile="${kotlin-home}/lib/kotlin-stdlib-js.jar" duplicate="fail">
-            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-            <zipfileset dir="${js.stdlib.output.dir}" prefix="">
-                <include name="kotlin.js"/>
-                <include name="${compiled.stdlib.meta.js}"/>
-                <include name="kotlin/**"/>
-            </zipfileset>
-
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-                <attribute name="${manifest.impl.attribute.kotlin.version}" value="${manifest.impl.value.kotlin.version}"/>
-                <attribute name="${manifest.impl.attribute.kotlin.runtime.component}" value="${manifest.impl.value.kotlin.runtime.component.main}"/>
-
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.javascript.stdlib}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-                <attribute name="Specification-Title" value="${manifest.spec.title.kotlin.javascript.lib}"/>
-            </manifest>
-        </jar>
-        <copy file="${kotlin-home}/lib/kotlin-stdlib-js.jar" tofile="${kotlin-home}/lib/kotlin-jslib.jar" />
-    </target>
-
-    <target name="pack-js-stdlib-sources" depends="js-stdlib-preprocess">
-        <jar destfile="${kotlin-home}/lib/kotlin-stdlib-js-sources.jar" duplicate="fail">
-            <resources refid="js.lib.files" />
-            <fileset refid="kotlin.builtin.files" />
-
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-                <attribute name="${manifest.impl.attribute.kotlin.version}" value="${manifest.impl.value.kotlin.version}"/>
-                <attribute name="${manifest.impl.attribute.kotlin.runtime.component}" value="${manifest.impl.value.kotlin.runtime.component.main}"/>
-
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.jvm.runtime.sources}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-            </manifest>
-        </jar>
-        <copy file="${kotlin-home}/lib/kotlin-stdlib-js-sources.jar" tofile="${kotlin-home}/lib/kotlin-jslib-sources.jar" />
-    </target>
-
-    <target name="kotlin-js-stdlib" depends="js-stdlib,js-kotlin-test,pack-js-stdlib-sources"/>
 
     <target name="preloader">
         <cleandir dir="${output}/classes/preloader"/>
@@ -1135,157 +903,6 @@
         </sequential>
     </macrodef>
 
-    <macrodef name="kotlin-pp">
-        <attribute name="src"/>
-        <attribute name="output"/>
-        <attribute name="profile"/>
-
-        <sequential>
-            <java classname="org.jetbrains.kotlin.preloading.Preloader" failonerror="true" fork="true" maxmemory="${max.heap.size.for.forked.jvm}">
-                <classpath>
-                    <pathelement location="${bootstrap.compiler.home}/lib/kotlin-preloader.jar"/>
-                </classpath>
-                <assertions>
-                    <enable/>
-                </assertions>
-                <arg value="-cp"/>
-                <arg value="${bootstrap.compiler.home}/lib/kotlin-compiler.jar"/>
-                <arg value="org.jetbrains.kotlin.preprocessor.PreprocessorCLI"/>
-                <arg value="@{src}"/>
-                <arg value="@{output}"/>
-                <arg value="@{profile}"/>
-            </java>
-        </sequential>
-    </macrodef>
-
-    <target name="builtins">
-        <new-kotlinc output="${output}/classes/builtins" moduleName="kotlin-runtime">
-            <src>
-                <include name="core/builtins/src"/>
-                <include name="core/runtime.jvm/src"/>
-            </src>
-            <class-path>
-                <!-- TODO: serialize and compile built-ins in one step here instead -->
-                <pathelement path="${output}/builtins"/>
-            </class-path>
-        </new-kotlinc>
-    </target>
-
-    <target name="stdlib">
-        <new-kotlinc output="${output}/classes/stdlib" moduleName="kotlin-stdlib" additionalOptions="-Xmultifile-parts-inherit -Xdump-declarations-to ${output}/declarations/stdlib-declarations.json">
-            <src>
-                <include name="libraries/stdlib/src"/>
-            </src>
-            <class-path>
-                <pathelement path="${output}/classes/builtins"/>
-                <pathelement path="${output}/builtins"/>
-            </class-path>
-        </new-kotlinc>
-    </target>
-
-    <target name="kotlin-test">
-        <path id="kotlin-test-compile-classpath">
-            <pathelement location="${output}/builtins"/>
-            <pathelement location="${output}/classes/builtins"/>
-            <pathelement location="${output}/classes/stdlib"/>
-            <pathelement location="libraries/lib/junit-4.11.jar"/>
-        </path>
-
-        <java classname="org.jetbrains.kotlin.preloading.Preloader" failonerror="true" fork="true" maxmemory="${max.heap.size.for.forked.jvm}">
-            <classpath>
-                <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
-            </classpath>
-            <assertions>
-                <enable/>
-            </assertions>
-            <arg value="-cp"/>
-            <arg value="${kotlin-home}/lib/kotlin-compiler.jar"/>
-            <arg value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>
-            <arg value="-d"/>
-            <arg value="${output}/classes/kotlin-test"/>
-            <arg value="-version"/>
-            <arg value="-no-stdlib"/>
-            <arg value="-classpath"/>
-            <arg value="${toString:kotlin-test-compile-classpath}"/>
-            <arg value="-module-name"/>
-            <arg value="kotlin-test"/>
-            <arg value="-Xallow-kotlin-package"/>
-            <arg value="-Xmulti-platform"/>
-            <arg value="libraries/kotlin.test/common/src/main/kotlin"/>
-            <arg value="libraries/kotlin.test/jvm/src/main/kotlin"/>
-            <arg value="libraries/kotlin.test/junit/src/main/kotlin"/>
-        </java>
-
-        <pack-runtime-jar jar-name="kotlin-test.jar" implementation-title="${manifest.impl.title.kotlin.test}" runtime-component="Test">
-            <jar-content>
-                <fileset dir="${output}/classes/kotlin-test" includes="**/*" excludes="kotlin/internal/OnlyInputTypes*,kotlin/internal/InlineOnly*,kotlin/internal"/>
-            </jar-content>
-        </pack-runtime-jar>
-    </target>
-    
-    <target name="js-kotlin-test">
-        <java classname="org.jetbrains.kotlin.preloading.Preloader" failonerror="true" fork="true" maxmemory="${max.heap.size.for.forked.jvm}">
-            <classpath>
-                <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
-            </classpath>
-            <assertions>
-                <enable/>
-            </assertions>
-            <arg value="-cp"/>
-            <arg value="${kotlin-home}/lib/kotlin-compiler.jar"/>
-            <arg value="org.jetbrains.kotlin.cli.js.K2JSCompiler"/>
-            <arg value="-output"/>
-            <arg value="${output}/classes/kotlin-test-js/kotlin-test.js"/>
-            <arg value="-version"/>
-            <arg value="-meta-info"/>
-            <arg line="-main noCall"/>
-            <arg line="-module-kind umd"/>
-            <arg value="-Xmulti-platform"/>
-            <arg value="-Xallow-kotlin-package"/>
-            <arg value="libraries/kotlin.test/common/src/main/kotlin"/>
-            <arg value="libraries/kotlin.test/js/src/main/kotlin"/>
-        </java>
-        <pack-runtime-jar jar-name="kotlin-test-js.jar" implementation-title="${manifest.impl.title.kotlin.test}" runtime-component="TestJs">
-            <jar-content>
-                <fileset dir="${output}/classes/kotlin-test-js" includes="**/*" excludes="kotlin/internal/OnlyInputTypes*,kotlin/internal/InlineOnly*,kotlin/internal"/>
-            </jar-content>
-        </pack-runtime-jar>
-    </target>
-
-    <target name="core">
-        <new-kotlinc output="${output}/classes/core" moduleName="kotlin-core">
-            <src>
-                <include name="core/descriptor.loader.java/src"/>
-                <include name="core/descriptors/src"/>
-                <include name="core/descriptors.runtime/src"/>
-                <include name="core/deserialization/src"/>
-                <include name="core/util.runtime/src"/>
-            </src>
-            <class-path>
-                <pathelement path="${output}/classes/builtins"/>
-                <pathelement path="${output}/classes/stdlib"/>
-                <pathelement path="${protobuf-lite.jar}"/>
-                <pathelement path="${javax.inject.jar}"/>
-                <pathelement path="${output}/builtins"/>
-            </class-path>
-        </new-kotlinc>
-    </target>
-
-    <target name="reflection">
-        <new-kotlinc output="${output}/classes/reflection" moduleName="kotlin-reflection">
-            <src>
-                <include name="core/reflection.jvm/src"/>
-            </src>
-            <class-path>
-                <pathelement path="${output}/classes/builtins"/>
-                <pathelement path="${output}/classes/stdlib"/>
-                <pathelement path="${output}/classes/core"/>
-                <pathelement path="${protobuf-lite.jar}"/>
-                <pathelement path="${output}/builtins"/>
-            </class-path>
-        </new-kotlinc>
-    </target>
-
     <macrodef name="pack-runtime-jar">
         <attribute name="jar-dir" default="${kotlin-home}/lib"/>
         <attribute name="jar-name"/>
@@ -1312,138 +929,6 @@
             </jar>
         </sequential>
     </macrodef>
-
-    <target name="pack-runtime">
-        <pack-runtime-jar jar-name="kotlin-stdlib.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime}">
-            <jar-content>
-                <fileset dir="${output}/classes/builtins"/>
-                <fileset dir="${output}/classes/stdlib"/>
-                <zipfileset dir="${output}/builtins">
-                    <include name="kotlin/**"/>
-                    <!-- TODO: load metadata from @Metadata annotation in KotlinBuiltIns on JVM and restore this exclusion (also below in mock-runtime) -->
-                    <!-- exclude name="kotlin/reflect/**"/ -->
-                </zipfileset>
-            </jar-content>
-        </pack-runtime-jar>
-        <copy file="${kotlin-home}/lib/kotlin-stdlib.jar" tofile="${kotlin-home}/lib/kotlin-runtime.jar"/>
-
-        <pack-runtime-jar jar-dir="${output}" jar-name="kotlin-reflect-before-jarjar.jar" implementation-title="${manifest.impl.title.kotlin.jvm.reflect}">
-            <jar-content>
-                <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="META-INF/services/**"/>
-                <fileset dir="${output}/classes/reflection"/>
-                <fileset dir="${output}/classes/core"/>
-                <zipfileset src="${protobuf-lite.jar}"/>
-                <zipfileset src="${javax.inject.jar}"/>
-            </jar-content>
-        </pack-runtime-jar>
-
-        <jar destfile="${output}/kotlin-reflect-before-jarjar.jar" update="true">
-            <manifest>
-                <attribute name="Class-Path" value="kotlin-runtime.jar"/>
-            </manifest>
-        </jar>
-
-        <sequential if:true="${obfuscate.reflect}">
-            <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="dependencies/jarjar.jar"/>
-            <delete file="${output}/kotlin-reflect-after-jarjar.jar" failonerror="false"/>
-            <jarjar jarfile="${output}/kotlin-reflect-after-jarjar.jar" filesonly="true" filesetmanifest="merge">
-                <zipfileset src="${output}/kotlin-reflect-before-jarjar.jar"/>
-                <rule pattern="org.jetbrains.kotlin.**" result="kotlin.reflect.jvm.internal.impl.@1"/>
-                <rule pattern="javax.inject.**" result="kotlin.reflect.jvm.internal.impl.javax.inject.@1"/>
-            </jarjar>
-
-            <kotlinc src="${basedir}/generators/infrastructure/strip-kotlin-annotations.kts" output="">
-                <compilerarg value="-version"/>
-                <compilerarg value="-script"/>
-                <compilerarg value="kotlin/Metadata"/> <!-- Annotation to strip -->
-                <compilerarg value="kotlin/reflect/jvm/internal/impl/.*"/> <!-- Classes to strip from -->
-                <compilerarg value="${output}/kotlin-reflect-after-jarjar.jar"/>
-                <compilerarg value="${output}/kotlin-reflect-before-proguard.jar"/>
-                <classpath>
-                    <pathelement location="${idea.sdk}/lib/asm-all.jar"/>
-                </classpath>
-            </kotlinc>
-
-            <shrink configuration="${basedir}/core/reflection.jvm/reflection.pro"/>
-        </sequential>
-
-        <sequential unless:true="${obfuscate.reflect}">
-            <echo message="Obfuscation of kotlin-reflect is disabled"/>
-            <copy file="${output}/kotlin-reflect-before-jarjar.jar" tofile="${kotlin-home}/lib/kotlin-reflect.jar" overwrite="true"/>
-        </sequential>
-    </target>
-
-    <target name="pack-runtime-sources">
-        <delete dir="${output}/core.src" failonerror="false"/>
-
-        <local name="runtime.sources.base.dir"/>
-        <condition property="runtime.sources.base.dir"
-                   value="${output}/core.src/kotlin/reflect/jvm/internal/impl"
-                   else="${output}/core.src/org/jetbrains/kotlin">
-            <istrue value="${obfuscate.reflect}"/>
-        </condition>
-
-        <copy todir="${runtime.sources.base.dir}">
-            <fileset dir="core">
-                <include name="descriptor.loader.java/src/**"/>
-                <include name="descriptors/src/**"/>
-                <include name="descriptors.runtime/src/**"/>
-                <include name="deserialization/src/**"/>
-                <include name="util.runtime/src/**"/>
-            </fileset>
-            <cutdirsmapper dirs="5"/> <!-- module/src/org/jetbrains/kotlin -->
-        </copy>
-
-        <sequential if:true="${obfuscate.reflect}">
-            <!-- Rename packages in the sources of reflection impl (core) -->
-            <replaceregexp match="org\.jetbrains\.kotlin" replace="kotlin.reflect.jvm.internal.impl" flags="g">
-                <fileset dir="${output}/core.src"/>
-            </replaceregexp>
-        </sequential>
-
-        <pack-runtime-jar jar-name="kotlin-stdlib-sources.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime.sources}">
-            <jar-content>
-                <fileset dir="${basedir}/core/builtins/native" includes="**/*"/>
-                <fileset dir="${basedir}/core/builtins/src" includes="**/*"/>
-                <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
-                <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
-                <fileset dir="${basedir}/libraries/stdlib/src" includes="**/*"/>
-                <fileset dir="${output}/core.src" includes="**/*"/>
-            </jar-content>
-        </pack-runtime-jar>
-        <copy file="${kotlin-home}/lib/kotlin-stdlib-sources.jar" tofile="${kotlin-home}/lib/kotlin-runtime-sources.jar"/>
-
-
-        <pack-runtime-jar jar-dir="${output}" jar-name="kotlin-reflect-sources-for-maven.jar"
-                          implementation-title="${manifest.impl.title.kotlin.jvm.reflect.sources}">
-            <jar-content>
-                <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
-                <fileset dir="${output}/core.src" includes="**/*"/>
-            </jar-content>
-        </pack-runtime-jar>
-    </target>
-
-    <target name="script-runtime">
-        <new-kotlinc output="${output}/classes/script-runtime" moduleName="kotlin-script-runtime">
-            <src>
-                <include name="core/script.runtime/src"/>
-            </src>
-            <class-path>
-                <pathelement path="${output}/classes/builtins"/>
-                <pathelement path="${output}/builtins"/>
-            </class-path>
-        </new-kotlinc>
-        <pack-runtime-jar jar-name="kotlin-script-runtime.jar" implementation-title="${manifest.impl.title.kotlin.script.runtime}">
-            <jar-content>
-                <fileset dir="${output}/classes/script-runtime"/>
-            </jar-content>
-        </pack-runtime-jar>
-        <pack-runtime-jar jar-name="kotlin-script-runtime-sources.jar" implementation-title="${manifest.impl.title.kotlin.script.runtime.sources}">
-            <jar-content>
-                <fileset dir="${basedir}/core/script.runtime/src" includes="**/*"/>
-            </jar-content>
-        </pack-runtime-jar>
-    </target>
 
     <target name="gradle-runtime">
         <local name="deployVersion" />
@@ -1474,19 +959,22 @@
     </target>
 
     <target name="runtime"
-            depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources,script-runtime,mock-runtime-for-test"/>
+            depends="gradle-runtime,mock-runtime-for-test"/>
+
+    <target name="other-artifacts"
+            depends="android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8,daemon-client,compiler-client-embeddable,kotlin-build-common-test" />
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler-fork,compiler-sources,ant-tools,gradle-runtime,mock-runtime-for-test,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8,daemon-client,compiler-client-embeddable,kotlin-build-common-test"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler-fork,compiler-sources,ant-tools,runtime,other-artifacts"
             description="Builds redistributables from sources"/>
 
     <target name="dist-no-fork"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,gradle-runtime,mock-runtime-for-test,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8,daemon-client,compiler-client-embeddable,kotlin-build-common-test"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,runtime,other-artifacts"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,gradle-runtime,mock-runtime-for-test,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8"
-            description="Builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc"/>
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,runtime,other-artifacts"
+            description="Builds everything, but classes are reused from project out dir, doesn't run proguard"/>
 
     <target name="dist-quick-compiler-only"
             depends="init,prepare-dist,preloader,serialize-builtins,compiler-quick"
