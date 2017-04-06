@@ -25,7 +25,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootAdapter
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.startup.StartupManager
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinNotificationManager
 import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
+import org.jetbrains.kotlin.idea.configuration.isModuleConfigured
 import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIfNeeded
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 import org.jetbrains.kotlin.idea.versions.collectModulesWithOutdatedRuntime
@@ -49,6 +51,14 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
                             notificationPostponed = false
                             showConfigureKotlinNotificationIfNeeded(myProject,
                                                                     collectModulesWithOutdatedRuntime(findOutdatedKotlinLibraries(myProject)))
+                        }
+                    }
+                }
+
+                if (ConfigureKotlinNotificationManager.getVisibleNotifications(project).isNotEmpty()) {
+                    DumbService.getInstance(myProject).smartInvokeLater {
+                        if (getModulesWithKotlinFiles(project).all(::isModuleConfigured)) {
+                            ConfigureKotlinNotificationManager.expireOldNotifications(project)
                         }
                     }
                 }
