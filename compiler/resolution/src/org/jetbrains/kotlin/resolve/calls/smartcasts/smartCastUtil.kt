@@ -26,4 +26,5 @@ fun getReceiverValueWithSmartCast(
 
 private class SmartCastReceiverValue(private val type: KotlinType) : ReceiverValue {
     override fun getType() = type
+    override fun replaceType(newType: KotlinType) = SmartCastReceiverValue(newType)
 }

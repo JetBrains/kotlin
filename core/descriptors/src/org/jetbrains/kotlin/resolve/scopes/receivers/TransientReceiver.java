@@ -32,4 +32,10 @@ public class TransientReceiver extends AbstractReceiverValue {
     public String toString() {
         return "{Transient} : " + getType();
     }
+
+    @NotNull
+    @Override
+    public ReceiverValue replaceType(@NotNull KotlinType newType) {
+        return new TransientReceiver(newType);
+    }
 }

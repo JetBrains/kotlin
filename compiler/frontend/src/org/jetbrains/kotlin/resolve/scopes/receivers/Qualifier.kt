@@ -125,4 +125,6 @@ class ClassValueReceiver(val classQualifier: ClassifierQualifier, private val ty
 
     override val expression: KtExpression
         get() = classQualifier.expression
+
+    override fun replaceType(newType: KotlinType) = ClassValueReceiver(classQualifier, newType)
 }
