@@ -106,7 +106,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
 
                     if (implicitThisClass == classDescriptor) return expression
 
-                    val constructorDescriptor = currentFunction!! as? ConstructorDescriptor
+                    val constructorDescriptor = currentFunction!!.scope.scopeOwner as? ConstructorDescriptor
 
                     val startOffset = expression.startOffset
                     val endOffset = expression.endOffset

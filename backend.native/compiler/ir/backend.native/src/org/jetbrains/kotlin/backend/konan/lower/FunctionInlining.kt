@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.DeepCopyIrTreeWithDescriptors
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
@@ -43,11 +44,8 @@ import org.jetbrains.kotlin.types.KotlinType
 
 //-----------------------------------------------------------------------------//
 
-internal class FunctionInlining(val context: Context): IrElementTransformerVoid() {
+internal class FunctionInlining(val context: Context): IrElementTransformerVoidWithContext() {
 
-    private var currentFile        : IrFile?                        = null
-    private var currentFunction    : IrFunction?                    = null
-    private var currentScope       : Scope?                         = null
     private var copyWithDescriptors: DeepCopyIrTreeWithDescriptors? = null
     private val deserializer = DeserializerDriver(context)
 
@@ -58,28 +56,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     //-------------------------------------------------------------------------//
 
     override fun visitElement(element: IrElement) = element.accept(this, null)
-
-    //-------------------------------------------------------------------------//
-
-    override fun visitFile(declaration: IrFile): IrFile {
-        currentFile = declaration
-        return super.visitFile(declaration)
-    }
-
-    //-------------------------------------------------------------------------//
-
-    override fun visitProperty(declaration: IrProperty): IrStatement {
-        currentScope = Scope(declaration.descriptor)
-        return super.visitProperty(declaration)
-    }
-
-    //-------------------------------------------------------------------------//
-
-    override fun visitFunction(declaration: IrFunction): IrStatement {
-        currentFunction     = declaration
-        currentScope        = Scope(declaration.descriptor)
-        return super.visitFunction(declaration)
-    }
 
     //-------------------------------------------------------------------------//
 
@@ -94,12 +70,12 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     //-------------------------------------------------------------------------//
 
     private fun createInlineFunctionBody(functionDeclaration: IrFunction, typeArgsMap: Map <TypeParameterDescriptor, KotlinType>?): IrInlineFunctionBody? {
-        functionDeclaration.transformChildrenVoid(this)     // TODO recursive inline is already processed in visitCall. Check
+        functionDeclaration.transformChildrenVoid(this)     // Process recursive inline.
 
         val originBlockBody = functionDeclaration.body
         if (originBlockBody == null) return null                                            // TODO workaround
 
-        copyWithDescriptors = DeepCopyIrTreeWithDescriptors(currentFunction!!, typeArgsMap, context)
+        copyWithDescriptors = DeepCopyIrTreeWithDescriptors(currentScope!!, typeArgsMap, context)
         val functionName = functionDeclaration.descriptor.name.toString()
 
         val copyBlockBody = copyWithDescriptors!!.copy(originBlockBody, functionName) as IrBlockBody  // Create copy of original function body.
@@ -321,8 +297,8 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
                 return@forEach
             }
 
-            val varName = currentScope!!.scopeOwner.name.toString() + "_inline"
-            val newVar = currentScope!!.createTemporaryVariable(argument, varName, false)  // Create new variable and init it with the parameter expression.
+            val varName = currentScope!!.scope.scopeOwner.name.toString() + "_inline"
+            val newVar = currentScope!!.scope.createTemporaryVariable(argument, varName, false)  // Create new variable and init it with the parameter expression.
             statements.add(newVar)                                                       // Add initialization of the new variable in statement list.
 
             val getVal = IrGetValueImpl(0, 0, newVar.descriptor)                            // Create new IR element representing access the new variable.
