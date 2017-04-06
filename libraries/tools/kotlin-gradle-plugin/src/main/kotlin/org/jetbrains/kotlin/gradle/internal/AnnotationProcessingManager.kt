@@ -136,6 +136,7 @@ class AnnotationProcessingManager(
     val hackAnnotationDir = File(aptWorkingDir, "java_src")
 
     private var originalJavaCompilerArgs: List<String>? = null
+    private var originalProcessorPath: FileCollection? = null
 
     private companion object {
         val JAVA_FQNAME_PATTERN = "^([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*$".toRegex()
@@ -171,7 +172,7 @@ class AnnotationProcessingManager(
 
         generateAnnotationProcessorStubs(javaTask, annotationProcessorFqNames, wrappersDirectory)
 
-        setProcessorPath(javaTask, (kaptProcessorPath))
+        setProcessorPathInJavaTask()
 
         if (aptOutputDir.exists()) {
             aptOutputDir.deleteRecursively()
@@ -190,6 +191,7 @@ class AnnotationProcessingManager(
             project.logger.kotlinDebug("kapt: Java file stub was not found at $generatedFile")
         }
         javaTask.options.compilerArgs = originalJavaCompilerArgs
+        tryRevertProcessorPathProperty()
     }
 
     fun generateJavaHackFile() {
@@ -269,21 +271,45 @@ class AnnotationProcessingManager(
         }
     }
 
-    private fun setProcessorPath(javaTask: JavaCompile, path: Iterable<File>) {
-        javaTask.addCompilerArgument("-processorpath") { prevValue ->
-            if (prevValue != null)
-                javaTask.logger.warn("Processor path was modified by kapt. Previous value = $prevValue")
-            path.joinToString(File.pathSeparator)
+    private fun setProcessorPathInJavaTask() {
+        val path = kaptProcessorPath
+
+        // If processor path property is supported, set it, otherwise set compiler argument:
+        val couldSetProperty = tryAppendProcessorPathProperty(path)
+
+        if (!couldSetProperty) {
+            javaTask.addCompilerArgument("-processorpath") { prevValue ->
+                if (prevValue != null)
+                    javaTask.logger.warn("Processor path was modified by kapt. Previous value = $prevValue")
+                path.joinToString(prefix = prevValue?.let { it + File.pathSeparator }.orEmpty(),
+                                  separator = File.pathSeparator)
+            }
         }
-        // Android Gradle plugin ignores -processorpath: starting with 2.4.0-alpha3, it works with its own options
-        trySetProcessorPathForAndroid(javaTask, path)
     }
 
-    private fun trySetProcessorPathForAndroid(javaTask: JavaCompile, path: Iterable<File>) {
+    private fun tryAppendProcessorPathProperty(path: Iterable<File>): Boolean = try {
         val optionsClass = javaTask.options.javaClass
+        val getPath = optionsClass.getMethod("getAnnotationProcessorPath")
+        val setPath = optionsClass.getMethod("setAnnotationProcessorPath", FileCollection::class.java)
+
+        originalProcessorPath = getPath(javaTask.options) as? FileCollection
+
+        if (originalProcessorPath != null)
+            javaTask.logger.warn("Processor path was modified by kapt. Previous value = $originalProcessorPath")
+
+        val newPath = javaTask.project.files(path + (originalProcessorPath ?: emptyList<File>()))
+        setPath(javaTask.options, newPath)
+        true
+    } catch (_: NoSuchMethodException) {
+        false
+    }
+
+    private fun tryRevertProcessorPathProperty() {
         try {
+            val optionsClass = javaTask.options.javaClass
             val setPath = optionsClass.getMethod("setAnnotationProcessorPath", FileCollection::class.java)
-            setPath(javaTask.options, javaTask.project.files(path))
+
+            setPath(javaTask.options, originalProcessorPath)
         } catch (_: NoSuchMethodException) {
         }
     }
