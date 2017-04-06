@@ -43,7 +43,6 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
 
     private class MoveContext(
             val newParent: PsiDirectory,
-            val internalUsages: MoveKotlinFileHandler.InternalUsagesWrapper,
             val moveDeclarationsProcessor: MoveKotlinDeclarationsProcessor?
     )
 
@@ -52,11 +51,10 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
     private var fileToMoveContext: MutableMap<PsiFile, MoveContext>? = null
 
     private fun getOrCreateMoveContextMap(): MutableMap<PsiFile, MoveContext> {
-        return fileToMoveContext
-               ?: HashMap<PsiFile, MoveContext>().apply {
-                   fileToMoveContext = this
+        return fileToMoveContext ?: HashMap<PsiFile, MoveContext>().apply {
+            fileToMoveContext = this
             invokeOnceOnCommandFinish { fileToMoveContext = null }
-               }
+        }
     }
 
     override fun findUsages(
@@ -87,9 +85,7 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
 
         val moveDeclarationsProcessor = fileHandler.initMoveProcessor(file, moveDestination)
         val moveContextMap = getOrCreateMoveContextMap()
-        moveContextMap[file] = MoveContext(moveDestination,
-                                           fileHandler.findInternalUsages(file, moveDestination),
-                                           moveDeclarationsProcessor)
+        moveContextMap[file] = MoveContext(moveDestination, moveDeclarationsProcessor)
         if (moveDeclarationsProcessor != null) {
             moveDestination.getPackage()?.let { newPackage ->
                 file.packageDirective?.fqName = FqName(newPackage.qualifiedName).quoteIfNeeded()
@@ -105,7 +101,7 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
     override fun postProcessUsages(usages: Array<out UsageInfo>, newDirMapper: Function<PsiDirectory, PsiDirectory>) {
         val fileToMoveContext = fileToMoveContext ?: return
         try {
-            val usagesToProcessAfterMove = ArrayList<FileUsagesWrapper>()
+            val usagesToProcess = ArrayList<FileUsagesWrapper>()
             usages
                 .filterIsInstance<FileUsagesWrapper>()
                 .forEach body@ {
@@ -117,10 +113,9 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
                     val moveDeclarationsProcessor = moveContext.moveDeclarationsProcessor ?: return@body
                     val movedFile = moveContext.newParent.findFile(file.name) ?: return@body
 
-                    usagesToProcessAfterMove +=
-                            FileUsagesWrapper(movedFile, it.usages + moveContext.internalUsages, moveDeclarationsProcessor)
+                    usagesToProcess += FileUsagesWrapper(movedFile, it.usages, moveDeclarationsProcessor)
                 }
-            usagesToProcessAfterMove.forEach { fileHandler.retargetUsages(it.usages, it.moveDeclarationsProcessor!!) }
+            usagesToProcess.forEach { fileHandler.retargetUsages(it.usages, it.moveDeclarationsProcessor!!) }
         }
         finally {
             this.fileToMoveContext = null
