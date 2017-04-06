@@ -20,6 +20,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
+/**
+ * @deprecated use the -Xintellij-plugin-root command line argument instead
+ */
+// TODO: drop as soon as Eclipse plugin starts using the new API
+@Deprecated
 public interface CompilerJarLocator {
     @NotNull
     File getCompilerJar();

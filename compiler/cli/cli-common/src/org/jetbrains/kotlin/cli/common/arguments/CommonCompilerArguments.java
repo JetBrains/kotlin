@@ -94,6 +94,13 @@ public abstract class CommonCompilerArguments implements Serializable {
     public boolean noCheckImpl;
 
     @Argument(
+            value = "-Xintellij-plugin-root",
+            valueDescription = "<path>",
+            description = "Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found"
+    )
+    public String intellijPluginRoot;
+
+    @Argument(
             value = "-Xcoroutines",
             valueDescription = "{enable|warn|error}",
             description = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier"

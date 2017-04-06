@@ -435,8 +435,10 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
-            val locator = configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)
-            var pluginRoot = if (locator == null) PathUtil.getPathUtilJar() else locator.compilerJar
+            var pluginRoot =
+                    configuration.get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)?.let(::File)
+                    ?: configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)?.compilerJar
+                    ?: PathUtil.getPathUtilJar()
 
             val app = ApplicationManager.getApplication()
             val parentFile = pluginRoot.parentFile

@@ -212,7 +212,10 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         if (arguments.noInline) {
             configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
         }
-
+        if (arguments.intellijPluginRoot != null) {
+            configuration.put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot);
+        }
+        @SuppressWarnings("deprecation")
         CompilerJarLocator locator = services.get(CompilerJarLocator.class);
         if (locator != null) {
             configuration.put(CLIConfigurationKeys.COMPILER_JAR_LOCATOR, locator);
