@@ -52,11 +52,14 @@ fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescrip
     return facade.resolveImportReference(facade.moduleDescriptor, fqName)
 }
 
-//NOTE: the difference between analyze and analyzeFully is 'intentionally' unclear
-// in theory they do the same thing via different code
-// analyze - see ResolveSessionForBodies, ResolveElementCache
-// analyzeFully - see KotlinResolveCache, KotlinResolveDataProvider
-// In the future these two approaches should be unified
+
+// This and next function are used for 'normal' element analysis
+// Their exact semantics is a bit unclear and depends on 'bodyResolveMode'
+// They are expected to provide correct descriptors for the element
+// but not diagnostics, trace slices are provided only partially
+// Element body analysis, if any, is not guaranteed
+// For compiler-compatible analysis, analyzeFully is recommended
+// See ResolveSessionForBodies, ResolveElementCache
 @JvmOverloads fun KtElement.analyze(bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext {
     return getResolutionFacade().analyze(this, bodyResolveMode)
 }
@@ -70,6 +73,11 @@ fun KtElement.findModuleDescriptor(): ModuleDescriptor {
     return getResolutionFacade().moduleDescriptor
 }
 
+// This and next function are expected to produce the same result as compiler
+// for the given element and its children (including diagnostics, trace slices, descriptors, etc.)
+// Not recommended to call both of them without real need
+// See also KotlinResolveCache, KotlinResolveDataProvider
+// In the future should be unified with 'analyze`
 fun KtElement.analyzeFully(): BindingContext {
     return analyzeFullyAndGetResult().bindingContext
 }

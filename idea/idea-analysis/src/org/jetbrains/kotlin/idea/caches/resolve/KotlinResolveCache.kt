@@ -142,6 +142,8 @@ private object KotlinResolveDataProvider {
         }
         // Primary constructor should never be returned
         if (analyzableElement is KtPrimaryConstructor) return analyzableElement.getContainingClassOrObject()
+        // Class initializer should be replaced by containing class to provide full analysis
+        if (analyzableElement is KtClassInitializer) return analyzableElement.containingDeclaration
         return analyzableElement
                     // if none of the above worked, take the outermost declaration
                     ?: PsiTreeUtil.getTopmostParentOfType(element, KtDeclaration::class.java)
