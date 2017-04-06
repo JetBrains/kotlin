@@ -26,11 +26,14 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -54,15 +57,13 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, typ
 
         inlinedFunctionName = functionName
         descriptorSubstituteMap.clear()
-        irElement.acceptChildrenVoid(descriptorCollector)
-        val newElement = irElement.accept(InlineCopyIr(), null)
-        val newElement1 = newElement.accept(descriptorSubstitutor, null)
-        return newElement1
+        irElement.acceptChildrenVoid(DescriptorCollector())
+        return irElement.accept(InlineCopyIr(), null)
     }
 
     //-------------------------------------------------------------------------//
 
-    private val descriptorCollector = object : IrElementVisitorVoid {
+    inner class DescriptorCollector: IrElementVisitorVoid {
 
         override fun visitClass(declaration: IrClass) {
 
@@ -362,33 +363,6 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, typ
 
     //-------------------------------------------------------------------------//
 
-    val descriptorSubstitutor = object : IrElementTransformerVoid() {
-
-        override fun visitElement(element: IrElement): IrElement {
-            return super.visitElement(element)
-        }
-
-        //---------------------------------------------------------------------//
-
-        override fun visitClass(declaration: IrClass): IrStatement {
-            val oldDeclaration = super.visitClass(declaration) as IrClass
-            val newDescriptor = descriptorSubstituteMap[oldDeclaration.descriptor]
-            if (newDescriptor == null) return oldDeclaration
-
-            val newDeclaration = IrClassImpl(
-                oldDeclaration.startOffset,
-                oldDeclaration.endOffset,
-                oldDeclaration.origin,
-                newDescriptor as ClassDescriptor,
-                oldDeclaration.declarations
-            )
-
-            return newDeclaration
-        }
-    }
-
-    //-------------------------------------------------------------------------//
-
     private fun substituteType(oldType: KotlinType?): KotlinType? {
         if (typeSubstitutor == null) return oldType
         if (oldType == null)         return oldType
@@ -432,6 +406,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, typ
 
     inner class InlineCopyIr() : DeepCopyIrTree() {
 
+        override fun mapClassDeclaration            (descriptor: ClassDescriptor)                 = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ClassDescriptor
         override fun mapFunctionDeclaration         (descriptor: FunctionDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as FunctionDescriptor
         override fun mapConstructorDeclaration      (descriptor: ClassConstructorDescriptor)      = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ClassConstructorDescriptor
         override fun mapPropertyDeclaration         (descriptor: PropertyDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as PropertyDescriptor
@@ -456,7 +431,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, typ
             return descriptorSubstituteMap.getOrDefault(qualifier,  qualifier) as ClassDescriptor
         }
 
-        //---------------------------------------------------------------------//
+        //--- Visits ----------------------------------------------------------//
 
         override fun visitCall(expression: IrCall): IrCall =
             copyCall(expression).transformValueArguments(expression)

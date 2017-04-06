@@ -49,7 +49,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     private var currentFunction    : IrFunction?                    = null
     private var currentScope       : Scope?                         = null
     private var copyWithDescriptors: DeepCopyIrTreeWithDescriptors? = null
-
     private val deserializer = DeserializerDriver(context)
 
     //-------------------------------------------------------------------------//
@@ -85,105 +84,11 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     //-------------------------------------------------------------------------//
 
     override fun visitCall(expression: IrCall): IrExpression {
-
         val irCall = super.visitCall(expression) as IrCall
-
         val functionDescriptor = irCall.descriptor as FunctionDescriptor
         if (functionDescriptor.needsInlining) return inlineFunction(irCall)                     // Return newly created IrInlineBody instead of IrCall.
 
         return irCall
-    }
-
-    //---------------------------------------------------------------------//
-
-    private fun isLambdaExpression(expression: IrExpression) : Boolean {
-        if (expression !is IrContainerExpressionBase)                   return false
-        if (expression.origin == IrStatementOrigin.LAMBDA)              return true
-        if (expression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION)  return true
-        return false
-    }
-
-    //---------------------------------------------------------------------//
-
-    private fun needsEvaluation(expression: IrExpression): Boolean {
-        if (expression is IrGetValue)          return false                                 // Parameter is already GetValue - nothing to evaluate.
-        if (expression is IrConst<*>)          return false                                 // Parameter is constant - nothing to evaluate.
-        if (isLambdaExpression(expression))    return false                                 // Parameter is lambda - will be inlined.
-        return true
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private class ArgumentWithValue(val descriptor: ValueDescriptor, val value: IrExpression)
-
-    private fun getArguments(irCall: IrCall, declaration: IrFunction): MutableList<ArgumentWithValue> {
-        val result = mutableListOf<ArgumentWithValue>()
-        val descriptor = irCall.descriptor.original
-
-        irCall.dispatchReceiver?.let {
-            result += ArgumentWithValue(descriptor.dispatchReceiverParameter!!, it)
-        }
-
-        irCall.extensionReceiver?.let {
-            result += ArgumentWithValue(descriptor.extensionReceiverParameter!!, it)
-        }
-
-        descriptor.valueParameters.forEach { parameter ->
-            val argument = irCall.getValueArgument(parameter.index)
-            when {
-                argument != null -> result += ArgumentWithValue(parameter, argument)
-                parameter.hasDefaultValue() -> {
-                    val defaultArgument = declaration.getDefault(parameter)!!.expression
-                    result += ArgumentWithValue(parameter, defaultArgument)
-                }
-                parameter.varargElementType != null -> {
-                    val emptyArray = IrVarargImpl(irCall.startOffset, irCall.endOffset, parameter.type, parameter.varargElementType!!)
-                    result += ArgumentWithValue(parameter, emptyArray)
-                }
-                else -> throw Error("Incomplete expression: call to $descriptor has no argument at index ${parameter.index}")
-            }
-        }
-
-        return result
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private class EvaluatedParameters(val parameters: MutableMap<ValueDescriptor, IrExpression>, val statements: MutableList<IrStatement>)
-
-    private fun evaluateParameters(parametersOld: MutableList<ArgumentWithValue>): EvaluatedParameters {
-
-        val parametersNew = mutableMapOf<ValueDescriptor, IrExpression> ()
-        val statements = mutableListOf<IrStatement>()
-        parametersOld.forEach {
-            val parameter = it.descriptor.original as ValueDescriptor
-            val argument  = it.value
-
-            if (!needsEvaluation(argument)) {
-                parametersNew[parameter] = argument
-                return@forEach
-            }
-
-            val varName = currentScope!!.scopeOwner.name.toString() + "_inline"
-            val newVar = currentScope!!.createTemporaryVariable(argument, varName, false)  // Create new variable and init it with the parameter expression.
-            statements.add(newVar)                                                       // Add initialization of the new variable in statement list.
-
-            val getVal = IrGetValueImpl(0, 0, newVar.descriptor)                            // Create new IR element representing access the new variable.
-            parametersNew[parameter] = getVal                                               // Parameter will be replaced with the new variable.
-        }
-        return EvaluatedParameters(parametersNew, statements)
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun getFunctionDeclaration(irCall: IrCall): IrDeclaration? {
-
-        val functionDescriptor = irCall.descriptor as FunctionDescriptor
-        val originalDescriptor = functionDescriptor.original
-        val functionDeclaration =
-            (context.ir.originalModuleIndex.functions[originalDescriptor] ?:                // Function is declared in the current module.
-                deserializer.deserializeInlineBody(originalDescriptor))                     // Function is declared in another module.
-        return functionDeclaration
     }
 
     //-------------------------------------------------------------------------//
@@ -226,16 +131,49 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val lambdaInliner = LambdaInliner(parameterToArgument)
         inlineBody.transformChildrenVoid(lambdaInliner)
 
-        val transformer = ParametersTransformer(parameterToArgument)
+        val transformer = ParameterSubstitutor(parameterToArgument)
         inlineBody.transformChildrenVoid(transformer)                                       // Replace parameters with expression.
         inlineBody.statements.addAll(0, evaluationStatements)
 
         return inlineBody
     }
 
+    //---------------------------------------------------------------------//
+
+    private fun inlineLambda(irCall: IrCall, substituteMap: MutableMap <ValueDescriptor, IrExpression>): IrExpression {
+
+        val dispatchReceiver = irCall.dispatchReceiver as IrGetValue                    //
+        val lambdaArgument = substituteMap[dispatchReceiver.descriptor]                 // Find expression to replace this parameter.
+        if (lambdaArgument == null) return irCall                                       // It is not function parameter - nothing to substitute.
+
+        val dispatchDescriptor = dispatchReceiver.descriptor
+        if (dispatchDescriptor is ValueParameterDescriptor &&
+            dispatchDescriptor.isNoinline) return irCall
+
+        val lambdaFunction = getLambdaFunction(lambdaArgument)
+        if (lambdaFunction == null) return irCall                                       // TODO
+
+        val parametersOld = getArguments(irCall, lambdaFunction)
+        val evaluatedParameters = evaluateParameters(parametersOld)
+        val parameterToArgument = evaluatedParameters.parameters
+        val evaluationStatements = evaluatedParameters.statements
+
+        val copyLambdaFunction = copyWithDescriptors!!.copy(lambdaFunction, "lambda") as IrFunction   // Create copy of the function.
+
+        val lambdaStatements = (copyLambdaFunction.body as IrBlockBody).statements
+        val lambdaReturnType = copyLambdaFunction.descriptor.returnType!!
+        val inlineBody       = IrInlineFunctionBody(0, 0, lambdaReturnType, lambdaFunction.descriptor, null, lambdaStatements)
+
+        val transformer = ParameterSubstitutor(parameterToArgument)
+        inlineBody.accept(transformer, null)                                            // Replace parameters with expression.
+        inlineBody.statements.addAll(0, evaluationStatements)
+
+        return inlineBody                                                               // Replace call site with InlineFunctionBody.
+    }
+
     //-------------------------------------------------------------------------//
 
-    private inner class ParametersTransformer(val substituteMap: MutableMap <ValueDescriptor, IrExpression>): IrElementTransformerVoid() {
+    private inner class ParameterSubstitutor(val substituteMap: MutableMap <ValueDescriptor, IrExpression>): IrElementTransformerVoid() {
 
         override fun visitElement(element: IrElement) = element.accept(this, null)
 
@@ -261,102 +199,148 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
         //---------------------------------------------------------------------//
 
-        private fun isLambdaCall(irCall: IrCall) : Boolean {
-            if (!(irCall.descriptor as FunctionDescriptor).isFunctionInvoke) return false   // If it is lambda call.
-            if (irCall.dispatchReceiver !is IrGetValue)                      return false   // Do not process such dispatch receiver.
-            return true
-        }
-
-        //---------------------------------------------------------------------//
-
-        private fun getLambdaFunction(lambdaArgument: IrExpression): IrFunction? {
-            if (lambdaArgument !is IrBlock) return null
-
-            if (lambdaArgument.origin != IrStatementOrigin.ANONYMOUS_FUNCTION &&
-                lambdaArgument.origin != IrStatementOrigin.LAMBDA) {
-
-                return null
-            }
-
-            // TODO: the following checks must be asserts, however it is not sane until the bugs are fixed.
-
-            val statements = lambdaArgument.statements
-            if (statements.size != 2) return null
-
-            val irFunction = statements[0]
-            if (irFunction !is IrFunction) return null                                          // TODO
-
-            val irCallableReference = statements[1]
-            if (irCallableReference !is IrCallableReference ||
-                irCallableReference.descriptor.original != irFunction.descriptor ||
-                irCallableReference.getArguments().isNotEmpty()) {
-
-                return null
-            }
-
-            return irFunction
-        }
-
-        //---------------------------------------------------------------------//
-
-        private fun buildParameterToArgument(lambdaFunction: IrFunction, irCall: IrCall): MutableList<ArgumentWithValue> {
-            val descriptor = lambdaFunction.descriptor
-            val parameterToArgument = mutableListOf<ArgumentWithValue>()
-
-            irCall.extensionReceiver?.let {
-                parameterToArgument += ArgumentWithValue(descriptor.extensionReceiverParameter!!, it)
-            }
-
-            val parameters = descriptor.valueParameters                                     // Get lambda function parameters.
-            parameters.forEach {                                                            // Iterate parameters.
-                val argument  = irCall.getValueArgument(it.index)                           // Get corresponding argument.
-                parameterToArgument += ArgumentWithValue(it, argument!!)                    // Create (parameter -> argument) pair.
-            }
-            return parameterToArgument
-        }
-
-        //---------------------------------------------------------------------//
-
-        private fun inlineLambda(irCall: IrCall): IrExpression {
-
-            val dispatchReceiver = irCall.dispatchReceiver as IrGetValue                    //
-            val lambdaArgument = substituteMap[dispatchReceiver.descriptor]                 // Find expression to replace this parameter.
-            if (lambdaArgument == null) return super.visitCall(irCall)                      // It is not function parameter - nothing to substitute.
-
-            val dispatchDescriptor = dispatchReceiver.descriptor
-            if (dispatchDescriptor is ValueParameterDescriptor &&
-                dispatchDescriptor.isNoinline) return super.visitCall(irCall)
-
-            val lambdaFunction = getLambdaFunction(lambdaArgument)
-            if (lambdaFunction == null) return super.visitCall(irCall)                      // TODO
-
-            val parametersOld = buildParameterToArgument(lambdaFunction, irCall)
-            val evaluatedParameters = evaluateParameters(parametersOld)
-            val parameterToArgument = evaluatedParameters.parameters
-            val evaluationStatements = evaluatedParameters.statements
-
-            val copyLambdaFunction = copyWithDescriptors!!.copy(lambdaFunction, "lambda") as IrFunction   // Create copy of the function.
-
-            val lambdaStatements = (copyLambdaFunction.body as IrBlockBody).statements
-            val lambdaReturnType = copyLambdaFunction.descriptor.returnType!!
-            val inlineBody       = IrInlineFunctionBody(0, 0, lambdaReturnType, lambdaFunction.descriptor, null, lambdaStatements)
-
-            val transformer = ParametersTransformer(parameterToArgument)
-            inlineBody.accept(transformer, null)                                            // Replace parameters with expression.
-            inlineBody.statements.addAll(0, evaluationStatements)
-
-            return inlineBody                                                               // Replace call site with InlineFunctionBody.
-        }
-
-        //---------------------------------------------------------------------//
-
         override fun visitCall(expression: IrCall): IrExpression {
             val newExpression = super.visitCall(expression)
             if (newExpression !is IrCall) return newExpression
 
             if (!isLambdaCall(newExpression)) return newExpression                          // If call it is not lambda call - do nothing.
-            return inlineLambda(newExpression)
+            return inlineLambda(newExpression, substituteMap)
         }
+    }
+
+    //--- Helpers -------------------------------------------------------------//
+
+    private fun isLambdaCall(irCall: IrCall) : Boolean {
+        if (!(irCall.descriptor as FunctionDescriptor).isFunctionInvoke) return false   // If it is lambda call.
+        if (irCall.dispatchReceiver !is IrGetValue)                      return false   // Do not process such dispatch receiver.
+        return true
+    }
+
+    //---------------------------------------------------------------------//
+
+    private fun getLambdaFunction(lambdaArgument: IrExpression): IrFunction? {
+        if (lambdaArgument !is IrBlock) return null
+
+        if (lambdaArgument.origin != IrStatementOrigin.ANONYMOUS_FUNCTION &&
+            lambdaArgument.origin != IrStatementOrigin.LAMBDA) {
+
+            return null
+        }
+
+        // TODO: the following checks must be asserts, however it is not sane until the bugs are fixed.
+
+        val statements = lambdaArgument.statements
+        if (statements.size != 2) return null
+
+        val irFunction = statements[0]
+        if (irFunction !is IrFunction) return null                                          // TODO
+
+        val irCallableReference = statements[1]
+        if (irCallableReference !is IrCallableReference ||
+            irCallableReference.descriptor.original != irFunction.descriptor ||
+            irCallableReference.getArguments().isNotEmpty()) {
+
+            return null
+        }
+
+        return irFunction
+    }
+
+    //---------------------------------------------------------------------//
+
+    private fun isLambdaExpression(expression: IrExpression) : Boolean {
+        if (expression !is IrContainerExpressionBase)                   return false
+        if (expression.origin == IrStatementOrigin.LAMBDA)              return true
+        if (expression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION)  return true
+        return false
+    }
+
+    //---------------------------------------------------------------------//
+
+    private fun needsEvaluation(expression: IrExpression): Boolean {
+        if (expression is IrGetValue)          return false                                 // Parameter is already GetValue - nothing to evaluate.
+        if (expression is IrConst<*>)          return false                                 // Parameter is constant - nothing to evaluate.
+        if (isLambdaExpression(expression))    return false                                 // Parameter is lambda - will be inlined.
+        return true
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private class ArgumentWithValue(val descriptor: ValueDescriptor, val value: IrExpression)
+
+    //---------------------------------------------------------------------//
+
+    private fun getArguments(irCall: IrCall, declaration: IrFunction): MutableList<ArgumentWithValue> {
+
+        val result = mutableListOf<ArgumentWithValue>()
+        val descriptor = declaration.descriptor.original
+
+        if (irCall.dispatchReceiver != null && descriptor.dispatchReceiverParameter != null)
+            result += ArgumentWithValue(descriptor.dispatchReceiverParameter!!, irCall.dispatchReceiver!!)
+
+        if (irCall.extensionReceiver != null && descriptor.extensionReceiverParameter != null)
+            result += ArgumentWithValue(descriptor.extensionReceiverParameter!!, irCall.extensionReceiver!!)
+
+        descriptor.valueParameters.forEach { parameter ->
+            val argument = irCall.getValueArgument(parameter.index)
+            when {
+                argument != null -> {
+                    result += ArgumentWithValue(parameter, argument)
+                }
+
+                parameter.hasDefaultValue() -> {
+                    val defaultArgument = declaration.getDefault(parameter)!!.expression
+                    result += ArgumentWithValue(parameter, defaultArgument)
+                }
+
+                parameter.varargElementType != null -> {
+                    val emptyArray = IrVarargImpl(irCall.startOffset, irCall.endOffset, parameter.type, parameter.varargElementType!!)
+                    result += ArgumentWithValue(parameter, emptyArray)
+                }
+
+                else -> throw Error("Incomplete expression: call to $descriptor has no argument at index ${parameter.index}")
+            }
+        }
+        return result
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private class EvaluatedParameters(val parameters: MutableMap<ValueDescriptor, IrExpression>, val statements: MutableList<IrStatement>)
+
+    private fun evaluateParameters(parametersOld: MutableList<ArgumentWithValue>): EvaluatedParameters {
+
+        val parametersNew = mutableMapOf<ValueDescriptor, IrExpression> ()
+        val statements = mutableListOf<IrStatement>()
+        parametersOld.forEach {
+            val parameter = it.descriptor.original as ValueDescriptor
+            val argument  = it.value
+
+            if (!needsEvaluation(argument)) {
+                parametersNew[parameter] = argument
+                return@forEach
+            }
+
+            val varName = currentScope!!.scopeOwner.name.toString() + "_inline"
+            val newVar = currentScope!!.createTemporaryVariable(argument, varName, false)  // Create new variable and init it with the parameter expression.
+            statements.add(newVar)                                                       // Add initialization of the new variable in statement list.
+
+            val getVal = IrGetValueImpl(0, 0, newVar.descriptor)                            // Create new IR element representing access the new variable.
+            parametersNew[parameter] = getVal                                               // Parameter will be replaced with the new variable.
+        }
+        return EvaluatedParameters(parametersNew, statements)
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun getFunctionDeclaration(irCall: IrCall): IrDeclaration? {
+
+        val functionDescriptor = irCall.descriptor as FunctionDescriptor
+        val originalDescriptor = functionDescriptor.original
+        val functionDeclaration =
+            (context.ir.originalModuleIndex.functions[originalDescriptor] ?:                // Function is declared in the current module.
+                deserializer.deserializeInlineBody(originalDescriptor))                     // Function is declared in another module.
+        return functionDeclaration
     }
 }
 
