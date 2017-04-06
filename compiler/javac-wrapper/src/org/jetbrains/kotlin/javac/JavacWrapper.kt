@@ -109,6 +109,8 @@ class JavacWrapper(javaFiles: Collection<File>,
             .map { JCPackage(it.packageName.toString(), this) }
             .associateBy(JCPackage::fqName)
 
+    private val kotlinClassifiersCache = KotlinClassifiersCache()
+
     fun compile() = with(javac) {
         if (errorCount() > 0) return false
 
@@ -155,6 +157,8 @@ class JavacWrapper(javaFiles: Collection<File>,
                                                          .orEmpty()
 
     fun getTreePath(tree: JCTree, compilationUnit: CompilationUnitTree): TreePath = trees.getPath(compilationUnit, tree)
+
+    fun getKotlinClassifier(fqName: FqName) = kotlinClassifiersCache.getKotlinClassifier(fqName)
 
     fun isDeprecated(element: Element) = elements.isDeprecated(element)
 
