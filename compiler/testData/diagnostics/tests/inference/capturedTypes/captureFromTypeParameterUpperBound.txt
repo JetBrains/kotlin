@@ -1,0 +1,10 @@
+package
+
+public fun </*0*/ Y> bar(/*0*/ l: Inv<Y>): Y
+public fun </*0*/ Y : X, /*1*/ X : Inv<out kotlin.String>> foo(/*0*/ x: X, /*1*/ y: Y): kotlin.Unit
+
+public interface Inv</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -19,18 +19,21 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.checker.captureFromExpression
+import org.jetbrains.kotlin.types.checker.hasSupertypeWithGivenTypeConstructor
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
+import org.jetbrains.kotlin.types.lowerIfFlexible
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.types.typeUtil.supertypes
+import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.lang.UnsupportedOperationException
@@ -202,7 +205,7 @@ internal fun checkExpressionArgument(
         isReceiver: Boolean
 ): KotlinCallDiagnostic? {
     // todo run this approximation only once for call
-    val argumentType = expressionArgument.stableType
+    val argumentType = captureFromTypeParameterUpperBoundIfNeeded(expressionArgument.stableType, expectedType)
 
     fun unstableSmartCastOrSubtypeError(
             unstableType: UnwrappedType?, expectedType: UnwrappedType, position: ArgumentConstraintPosition
@@ -244,6 +247,38 @@ internal fun checkExpressionArgument(
     }
 
     return null
+}
+
+/**
+ * interface Inv<T>
+ * fun <Y> bar(l: Inv<Y>): Y = ...
+ *
+ * fun <X : Inv<out Int>> foo(x: X) {
+ *      val xr = bar(x)
+ * }
+ * Here we try to capture from upper bound from type parameter.
+ * We replace type of `x` to `Inv<out Int>`(we chose supertype which contains supertype with expectedTypeConstructor) and capture from this type.
+ * It is correct, because it is like this code:
+ * fun <X : Inv<out Int>> foo(x: X) {
+ *      val inv: Inv<out Int> = x
+ *      val xr = bar(inv)
+ * }
+ *
+ */
+private fun captureFromTypeParameterUpperBoundIfNeeded(argumentType: UnwrappedType, expectedType: UnwrappedType): UnwrappedType {
+    val expectedTypeConstructor = expectedType.upperIfFlexible().constructor
+
+    if (argumentType.lowerIfFlexible().constructor.declarationDescriptor is TypeParameterDescriptor) {
+        val chosenSupertype = argumentType.lowerIfFlexible().supertypes().singleOrNull {
+            it.constructor.declarationDescriptor is ClassifierDescriptorWithTypeParameters &&
+            it.unwrap().hasSupertypeWithGivenTypeConstructor(expectedTypeConstructor)
+        }
+        if (chosenSupertype != null) {
+            return captureFromExpression(chosenSupertype.unwrap()) ?: argumentType
+        }
+    }
+
+    return argumentType
 }
 
 // if expression is not stable and has smart casts, then we create this type
