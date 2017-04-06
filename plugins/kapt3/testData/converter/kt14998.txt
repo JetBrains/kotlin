@@ -4,9 +4,6 @@ public final class Outer {
     java.lang.String s, int i) {
     }
 
-    public abstract void _abstract_(@org.jetbrains.annotations.NotNull()
-    java.lang.String p0, int p1);
-
     public Outer() {
         super();
     }
