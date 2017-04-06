@@ -23,7 +23,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
-import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
@@ -93,12 +92,9 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
             copyLibraryIntoPath = dialog.copyIntoPath
         }
 
-        val finalModulesToConfigure = modulesToConfigure
-        val finalCopyLibraryIntoPath = copyLibraryIntoPath
-
         val collector = createConfigureKotlinNotificationCollector(project)
-        for (module in finalModulesToConfigure) {
-            configureModuleWithLibrary(module, defaultPathToJar, finalCopyLibraryIntoPath, collector)
+        for (module in modulesToConfigure) {
+            configureModuleWithLibrary(module, defaultPathToJar, copyLibraryIntoPath, collector)
         }
 
         collector.showNotification()
@@ -112,7 +108,9 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
     ) {
         val project = module.project
 
-        val library = getKotlinLibrary(module) ?: createNewLibrary(project, collector)
+        val library = getKotlinLibrary(module)
+                      ?: getKotlinLibrary(project)
+                      ?: createNewLibrary(project, collector)
 
         for (descriptor in libraryJarDescriptors) {
             val dirToCopyJar = getPathToCopyFileTo(project, descriptor.orderRootType, defaultPath, pathFromDialog)
@@ -238,10 +236,6 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
 
     protected open fun getDefaultPathToJarFile(project: Project): String {
         return FileUIUtils.createRelativePath(project, project.baseDir, DEFAULT_LIBRARY_DIR)
-    }
-
-    protected fun showError(message: String) {
-        Messages.showErrorDialog(message, messageForOverrideDialog)
     }
 
     enum class FileState {
