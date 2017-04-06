@@ -20,6 +20,8 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.util.PlatformUtils
+import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.js.resolve.JsPlatform
@@ -55,6 +57,13 @@ abstract class ConfigureKotlinInProjectAction : AnAction() {
 class ConfigureKotlinJsInProjectAction: ConfigureKotlinInProjectAction() {
     override fun getApplicableConfigurators(project: Project) = getAbleToRunConfigurators(project).filter {
         it.targetPlatform == JsPlatform
+    }
+
+    override fun update(e: AnActionEvent) {
+        val project = e.project
+        if (!PlatformUtils.isIntelliJ() && (project == null || project.allModules().all(KotlinPluginUtil::isAndroidGradleModule))) {
+            e.presentation.isEnabledAndVisible = false
+        }
     }
 }
 
