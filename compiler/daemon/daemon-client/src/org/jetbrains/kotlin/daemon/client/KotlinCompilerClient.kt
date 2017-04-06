@@ -145,6 +145,7 @@ object KotlinCompilerClient {
         compilerService.releaseCompileSession(sessionId)
     }
 
+    @Deprecated("Use other compile method", ReplaceWith("compile"))
     fun compile(compilerService: CompileService,
                 sessionId: Int,
                 targetPlatform: CompileService.TargetPlatform,
@@ -158,6 +159,7 @@ object KotlinCompilerClient {
     }
 
 
+    @Deprecated("Use non-deprecated compile method", ReplaceWith("compile"))
     fun incrementalCompile(compileService: CompileService,
                            sessionId: Int,
                            targetPlatform: CompileService.TargetPlatform,
@@ -308,6 +310,7 @@ object KotlinCompilerClient {
 
     // --- Implementation ---------------------------------------
 
+    @Synchronized
     private inline fun <R> connectLoop(reportingTargets: DaemonReportingTargets, body: () -> R?): R? {
         try {
             var attempts = 0
