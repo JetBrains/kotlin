@@ -91,7 +91,7 @@ class JavaTypeResolver(
 
         val allowFlexible = attr.allowFlexible && attr.howThisTypeIsUsed != SUPERTYPE
         val isRaw = javaType.isRaw
-        if (!javaType.isRaw && !allowFlexible) {
+        if (!isRaw && !allowFlexible) {
             return computeSimpleJavaClassifierType(javaType, attr) ?: errorType()
         }
 
