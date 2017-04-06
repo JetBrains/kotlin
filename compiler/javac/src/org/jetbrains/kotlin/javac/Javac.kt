@@ -34,6 +34,7 @@ import com.sun.tools.javac.file.JavacFileManager
 import com.sun.tools.javac.jvm.ClassReader
 import com.sun.tools.javac.main.JavaCompiler
 import com.sun.tools.javac.model.JavacElements
+import com.sun.tools.javac.model.JavacTypes
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Names
@@ -52,7 +53,9 @@ import org.jetbrains.kotlin.wrappers.trees.JCClass
 import org.jetbrains.kotlin.wrappers.trees.JCPackage
 import java.io.Closeable
 import java.io.File
+import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
+import javax.lang.model.type.TypeMirror
 import javax.tools.JavaFileManager
 import javax.tools.JavaFileObject
 import javax.tools.StandardLocation
@@ -92,6 +95,7 @@ class Javac(javaFiles: Collection<File>,
     private val symbols = Symtab.instance(context)
     private val trees = JavacTrees.instance(context)
     private val elements = JavacElements.instance(context)
+    private val types = JavacTypes.instance(context)
     private val fileObjects = fileManager.getJavaFileObjectsFromFiles(javaFiles).toJavacList()
     private val compilationUnits: JavacList<JCTree.JCCompilationUnit> = fileObjects.map(javac::parse).toJavacList()
 
@@ -151,6 +155,10 @@ class Javac(javaFiles: Collection<File>,
                                                          .orEmpty()
 
     fun getTreePath(tree: JCTree, compilationUnit: CompilationUnitTree): TreePath = trees.getPath(compilationUnit, tree)
+
+    fun isDeprecated(element: Element) = elements.isDeprecated(element)
+
+    fun isDeprecated(typeMirror: TypeMirror) = isDeprecated(types.asElement(typeMirror))
 
     private inline fun <reified T> Iterable<T>.toJavacList() = JavacList.from(this)
 

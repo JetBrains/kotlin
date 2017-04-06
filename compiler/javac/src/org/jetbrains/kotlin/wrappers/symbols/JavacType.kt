@@ -39,7 +39,7 @@ open class JavacType<out T : TypeMirror>(val typeMirror: T,
 
     override val annotations: Collection<JavaAnnotation> = emptyList()
 
-    override val isDeprecatedInJavaDoc = false
+    override val isDeprecatedInJavaDoc by lazy { javac.isDeprecated(typeMirror) }
 
     override fun findAnnotation(fqName: FqName) = null
 

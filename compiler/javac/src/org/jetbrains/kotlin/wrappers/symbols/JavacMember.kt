@@ -48,7 +48,7 @@ abstract class JavacMember<out T : Element>(element: T,
 
     override val name = Name.identifier(element.simpleName.toString())
 
-    override val isDeprecatedInJavaDoc = false
+    override val isDeprecatedInJavaDoc by lazy { javac.isDeprecated(element) }
 
     override val isAbstract
         get() = element.isAbstract

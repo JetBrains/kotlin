@@ -36,7 +36,7 @@ class JavacValueParameter<out T : VariableElement>(element: T, elementName : Str
             .firstOrNull()
             ?.let {JavacAnnotation(it, javac)}
 
-    override val isDeprecatedInJavaDoc = false
+    override val isDeprecatedInJavaDoc by lazy { javac.isDeprecated(element) }
 
     override val name = Name.identifier(elementName)
 

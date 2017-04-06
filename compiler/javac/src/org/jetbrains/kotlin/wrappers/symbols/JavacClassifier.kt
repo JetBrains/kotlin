@@ -36,6 +36,6 @@ abstract class JavacClassifier<out T : Element>(element: T,
             .firstOrNull()
             ?.let { JavacAnnotation(it, javac) }
 
-    override val isDeprecatedInJavaDoc = false
+    override val isDeprecatedInJavaDoc by lazy { javac.isDeprecated(element) }
 
 }
