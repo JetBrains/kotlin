@@ -42,8 +42,8 @@
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-htmlunit-driver</artifactId>
-            <version>${selenium.version}</version>
+            <artifactId>htmlunit-driver</artifactId>
+            <version>${htmlunit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -104,7 +104,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <jvm>${env.JDK_17}/bin/java</jvm>
+                    <jvm>${env.JDK_18}/bin/java</jvm>
                 </configuration>
             </plugin>
 
