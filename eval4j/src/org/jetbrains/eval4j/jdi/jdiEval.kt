@@ -204,14 +204,32 @@ class JDIEval(
     }
 
     private fun findMethod(methodDesc: MethodDescription, _class: ReferenceType = methodDesc.ownerType.asReferenceType()): Method {
+        val methodName = methodDesc.name
         val method = when (_class) {
             is ClassType ->
-                _class.concreteMethodByName(methodDesc.name, methodDesc.desc)
+                _class.concreteMethodByName(methodName, methodDesc.desc)
             else ->
-                _class.methodsByName(methodDesc.name, methodDesc.desc).firstOrNull()
+                _class.methodsByName(methodName, methodDesc.desc).firstOrNull()
         }
 
-        return method ?: throwBrokenCodeException(NoSuchMethodError("Method not found: $methodDesc"))
+        if (method != null) {
+            return method
+        }
+
+        if (methodName.contains('$')) {
+            // Module name can be different for internal functions during evaluation and compilation
+            val internalNamePrefix = methodName.substringBefore('$') + '$'
+            val internalMethods = _class.visibleMethods().filter {
+                it.name().startsWith(internalNamePrefix) && it.signature() == methodDesc.desc
+            }
+
+            if (!internalMethods.isEmpty()) {
+                return internalMethods.singleOrNull() ?:
+                       throwBrokenCodeException(IllegalArgumentException("Several internal methods found for $methodDesc"))
+            }
+        }
+
+        throwBrokenCodeException(NoSuchMethodError("Method not found: $methodDesc"))
     }
 
     override fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value {

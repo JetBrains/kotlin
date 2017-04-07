@@ -218,6 +218,18 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("internalFunctionEvaluate.kt")
+        public void testInternalFunctionEvaluate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/internalFunctionEvaluate.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
+        @TestMetadata("internalProperty.kt")
+        public void testInternalProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/internalProperty.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("kt12206BasePropertyWithoutBackingField.kt")
         public void testKt12206BasePropertyWithoutBackingField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt12206BasePropertyWithoutBackingField.kt");
