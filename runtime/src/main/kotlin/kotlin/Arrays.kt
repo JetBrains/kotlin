@@ -3206,3 +3206,163 @@ public inline fun CharArray.sumBy(selector: (Char) -> Int): Int {
     }
     return sum
 }
+
+/**
+ * Returns a [List] containing all elements.
+ */
+public fun ByteArray.toList(): List<Byte> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
+
+/**
+ * Returns a [List] containing all elements.
+ */
+public fun ShortArray.toList(): List<Short> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
+
+/**
+ * Returns a [List] containing all elements.
+ */
+public fun IntArray.toList(): List<Int> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
+
+/**
+ * Returns a [List] containing all elements.
+ */
+public fun LongArray.toList(): List<Long> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
+
+/**
+ * Returns a [List] containing all elements.
+ */
+public fun FloatArray.toList(): List<Float> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
+
+/**
+ * Returns a [List] containing all elements.
+ */
+public fun DoubleArray.toList(): List<Double> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
+
+/**
+ * Returns a [List] containing all elements.
+ */
+public fun BooleanArray.toList(): List<Boolean> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
+
+/**
+ * Returns a [List] containing all elements.
+ */
+public fun CharArray.toList(): List<Char> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun ByteArray.toMutableList(): MutableList<Byte> {
+    val list = ArrayList<Byte>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun ShortArray.toMutableList(): MutableList<Short> {
+    val list = ArrayList<Short>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun IntArray.toMutableList(): MutableList<Int> {
+    val list = ArrayList<Int>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun LongArray.toMutableList(): MutableList<Long> {
+    val list = ArrayList<Long>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun FloatArray.toMutableList(): MutableList<Float> {
+    val list = ArrayList<Float>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun DoubleArray.toMutableList(): MutableList<Double> {
+    val list = ArrayList<Double>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun BooleanArray.toMutableList(): MutableList<Boolean> {
+    val list = ArrayList<Boolean>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun CharArray.toMutableList(): MutableList<Char> {
+    val list = ArrayList<Char>(size)
+    for (item in this) list.add(item)
+    return list
+}
