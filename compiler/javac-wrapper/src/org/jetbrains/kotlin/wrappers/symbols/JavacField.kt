@@ -24,6 +24,9 @@ import javax.lang.model.element.VariableElement
 class JavacField<out T : VariableElement>(element: T,
                                           javac: JavacWrapper) : JavacMember<T>(element, javac), JavaField {
 
+    val value: Any?
+        get() = element.constantValue
+
     override val isEnumEntry
         get() = element.kind == ElementKind.ENUM_CONSTANT
 

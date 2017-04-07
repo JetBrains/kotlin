@@ -30,6 +30,9 @@ class JCField<out T : JCTree.JCVariableDecl>(tree: T,
                                              containingClass: JavaClass,
                                              javac: JavacWrapper) : JCMember<T>(tree, treePath, containingClass, javac), JavaField {
 
+    val value: JCTree.JCExpression?
+        get() = tree.init
+
     override val name
         get() = Name.identifier(tree.name.toString())
 
