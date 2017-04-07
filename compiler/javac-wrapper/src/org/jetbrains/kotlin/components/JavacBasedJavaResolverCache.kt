@@ -20,37 +20,14 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.load.java.components.JavaResolverCache
+import org.jetbrains.kotlin.load.java.components.AbstractJavaResolverCache
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.tail
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
-import javax.inject.Inject
 
-class JavacBasedJavaResolverCache : JavaResolverCache {
-
-    private lateinit var trace: BindingTrace
-    private lateinit var resolveSession: ResolveSession
-
-    @Inject
-    fun setTrace(trace: BindingTrace) {
-        this.trace = trace
-    }
-
-    @Inject
-    fun setResolveSession(resolveSession: ResolveSession) {
-        this.resolveSession = resolveSession
-    }
-
-    override fun getClassResolvedFromSource(fqName: FqName): ClassDescriptor? {
-        return trace[BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe()] ?: findInPackageFragments(fqName)
-    }
+class JavacBasedJavaResolverCache(resolveSession: ResolveSession) : AbstractJavaResolverCache(resolveSession) {
 
     override fun recordMethod(method: JavaMethod, descriptor: SimpleFunctionDescriptor) {}
 
@@ -59,21 +36,5 @@ class JavacBasedJavaResolverCache : JavaResolverCache {
     override fun recordField(field: JavaField, descriptor: PropertyDescriptor) {}
 
     override fun recordClass(javaClass: JavaClass, descriptor: ClassDescriptor) {}
-
-    private fun findInPackageFragments(fullFqName: FqName): ClassDescriptor? {
-        var fqName = if (fullFqName.isRoot) fullFqName else fullFqName.parent()
-
-        while (true) {
-            val packageDescriptor = resolveSession.getPackageFragment(fqName) ?: break
-
-            val result = ResolveSessionUtils.findClassByRelativePath(packageDescriptor.getMemberScope(), fullFqName.tail(fqName))
-            if (result != null) return result
-
-            if (fqName.isRoot) break
-            fqName = fqName.parent()
-        }
-
-        return null
-    }
 
 }

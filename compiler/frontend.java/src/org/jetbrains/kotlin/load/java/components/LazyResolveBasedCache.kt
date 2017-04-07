@@ -28,21 +28,11 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.tail
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 
-class LazyResolveBasedCache(private val resolveSession: ResolveSession) : JavaResolverCache {
-
-    private val trace: BindingTrace get() = resolveSession.trace
-
-    override fun getClassResolvedFromSource(fqName: FqName): ClassDescriptor? {
-        return trace.get(FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe()) ?: findInPackageFragments(fqName)
-    }
+class LazyResolveBasedCache(resolveSession: ResolveSession) : AbstractJavaResolverCache(resolveSession) {
 
     override fun recordMethod(method: JavaMethod, descriptor: SimpleFunctionDescriptor) {
         BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, (method as? JavaMethodImpl)?.psi ?: return, descriptor)
@@ -60,20 +50,4 @@ class LazyResolveBasedCache(private val resolveSession: ResolveSession) : JavaRe
         trace.record(CLASS, (javaClass as? JavaClassImpl)?.psi ?: return, descriptor)
     }
 
-    private fun findInPackageFragments(fullFqName: FqName): ClassDescriptor? {
-        var fqName = if (fullFqName.isRoot) fullFqName else fullFqName.parent()
-
-        while (true) {
-            val packageDescriptor = resolveSession.getPackageFragment(fqName)
-            if (packageDescriptor != null) {
-                val result = ResolveSessionUtils.findClassByRelativePath(packageDescriptor.getMemberScope(), fullFqName.tail(fqName))
-                if (result != null) return result
-            }
-
-            if (fqName.isRoot) break
-            fqName = fqName.parent()
-        }
-
-        return null
-    }
 }
