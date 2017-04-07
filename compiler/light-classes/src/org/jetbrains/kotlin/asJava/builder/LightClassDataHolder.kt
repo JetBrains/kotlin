@@ -23,7 +23,6 @@ import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil.findClass
-import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder.javaFileStub
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -110,7 +109,7 @@ fun PsiJavaFileStub.findDelegate(classOrObject: KtClassOrObject): PsiClass {
 fun PsiJavaFileStub.findDelegate(classFqName: FqName): PsiClass {
     return findClass(this) {
         classFqName.asString() == it.qualifiedName
-    } ?: throw IllegalStateException("Facade class $classFqName not found; classes in Java file stub: ${collectClassNames(javaFileStub)}")
+    } ?: throw IllegalStateException("Facade class $classFqName not found; classes in Java file stub: ${collectClassNames(this)}")
 }
 
 
