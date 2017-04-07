@@ -45,18 +45,18 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
-                                             typeArgsMap: Map <TypeParameterDescriptor, KotlinType>?,
                                              val context: Context) {
 
     private val descriptorSubstituteMap: MutableMap<DeclarationDescriptor, DeclarationDescriptor> = mutableMapOf()
-    private var typeSubstitutor = createTypeSubstitutor(typeArgsMap)
+    private var typeSubstitutor: TypeSubstitutor? = null
     private var inlinedFunctionName = ""
     private var nameIndex = 0
 
     //-------------------------------------------------------------------------//
 
-    fun copy(irElement: IrElement, functionName: String): IrElement {
+    fun copy(irElement: IrElement, typeArgsMap: Map <TypeParameterDescriptor, KotlinType>?, functionName: String): IrElement {
 
+        typeSubstitutor = createTypeSubstitutor(typeArgsMap)
         inlinedFunctionName = functionName
         descriptorSubstituteMap.clear()
         irElement.acceptChildrenVoid(DescriptorCollector())
@@ -451,7 +451,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
 
         override fun visitCall(expression: IrCall): IrCall {
 
-            val oldExpression = super.visitCall(expression) as IrCall
+            val oldExpression = super.visitCall(expression)
             if (oldExpression !is IrCallImpl) return oldExpression                                        // TODO what other kinds of call can we meet?
 
             return copyIrCallImpl(oldExpression)
