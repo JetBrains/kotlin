@@ -12505,6 +12505,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("localReturnInsideProperty.kt")
+        public void testLocalReturnInsideProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nonLocalReturns/localReturnInsideProperty.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("use.kt")
         public void testUse() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nonLocalReturns/use.kt");

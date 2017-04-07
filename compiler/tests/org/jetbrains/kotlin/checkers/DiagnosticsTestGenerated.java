@@ -4534,6 +4534,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localReturnInsidePropertyAccessor.kt")
+            public void testLocalReturnInsidePropertyAccessor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/localReturnInsidePropertyAccessor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("specialConstructsAndPlatformTypes.kt")
             public void testSpecialConstructsAndPlatformTypes() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/specialConstructsAndPlatformTypes.kt");

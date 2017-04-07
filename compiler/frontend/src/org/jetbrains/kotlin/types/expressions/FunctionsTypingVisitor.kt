@@ -268,8 +268,8 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val result = Lists.newArrayList<KtReturnExpression>()
         val bodyExpression = functionLiteral.bodyExpression
         bodyExpression?.accept(object : KtTreeVisitor<MutableList<KtReturnExpression>>() {
-            override fun visitReturnExpression(expression: KtReturnExpression, data: MutableList<KtReturnExpression>): Void? {
-                data.add(expression)
+            override fun visitReturnExpression(expression: KtReturnExpression, insideActualFunction: MutableList<KtReturnExpression>): Void? {
+                insideActualFunction.add(expression)
                 return null
             }
         }, result)
@@ -285,27 +285,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         if ((function !is KtNamedFunction || function.typeReference != null)
             && (function !is KtPropertyAccessor || function.returnTypeReference == null)) return
 
-        val bodyExpression = function.bodyExpression ?: return
-        val returns = ArrayList<KtReturnExpression>()
-
-        // data == false means, that we inside other function, so ours return should be with label
-        bodyExpression.accept(object : KtTreeVisitor<Boolean>() {
-            override fun visitReturnExpression(expression: KtReturnExpression, data: Boolean): Void? {
-                val label = expression.getTargetLabel()
-                if ((label != null && trace[BindingContext.LABEL_TARGET, label] == function)
-                    || (label == null && data)
-                ) {
-                    returns.add(expression)
-                }
-                return super.visitReturnExpression(expression, data)
-            }
-
-            override fun visitNamedFunction(function: KtNamedFunction, data: Boolean): Void? {
-                return super.visitNamedFunction(function, false)
-            }
-        }, true)
-
-        for (returnForCheck in returns) {
+        for (returnForCheck in collectReturns(function, trace)) {
             val expression = returnForCheck.returnedExpression
             if (expression == null) {
                 if (!actualReturnType.isUnit()) {
@@ -319,5 +299,35 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
                 trace.report(Errors.TYPE_MISMATCH.on(expression, expressionType, actualReturnType))
             }
         }
+    }
+
+    private fun collectReturns(function: KtDeclarationWithBody, trace: BindingTrace): List<KtReturnExpression> {
+        val bodyExpression = function.bodyExpression ?: return emptyList()
+        val returns = ArrayList<KtReturnExpression>()
+
+        bodyExpression.accept(object : KtTreeVisitor<Boolean>() {
+            override fun visitReturnExpression(expression: KtReturnExpression, insideActualFunction: Boolean): Void? {
+                val labelTarget = expression.getTargetLabel()?.let { trace[BindingContext.LABEL_TARGET, it] }
+                if (labelTarget == function || (labelTarget == null && insideActualFunction)) {
+                    returns.add(expression)
+                }
+
+                return super.visitReturnExpression(expression, insideActualFunction)
+            }
+
+            override fun visitNamedFunction(function: KtNamedFunction, data: Boolean): Void? {
+                return super.visitNamedFunction(function, false)
+            }
+
+            override fun visitPropertyAccessor(accessor: KtPropertyAccessor, data: Boolean): Void? {
+                return super.visitPropertyAccessor(accessor, false)
+            }
+
+            override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer, data: Boolean): Void? {
+                return super.visitAnonymousInitializer(initializer, false)
+            }
+        }, true)
+
+        return returns
     }
 }
