@@ -3859,6 +3859,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("kt17200.kt")
+            public void testKt17200() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization/kt17200.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("sharedSlotsWithCapturedVars.kt")
             public void testSharedSlotsWithCapturedVars() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization/sharedSlotsWithCapturedVars.kt");
