@@ -202,4 +202,10 @@ class CompileKotlinAgainstJavaTest : AbstractCompileJavaAgainstKotlinTest() {
         doTest(fileName)
     }
 
+    @TestMetadata("CheckNotNull.kt")
+    fun testNotNull() {
+        val fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/CheckNotNull.kt")
+        doTest(fileName)
+    }
+
 }

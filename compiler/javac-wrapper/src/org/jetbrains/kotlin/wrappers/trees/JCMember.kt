@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.wrappers.trees
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaMember
 import org.jetbrains.kotlin.name.FqName
@@ -32,7 +31,7 @@ abstract class JCMember<out T : JCTree>(tree: T,
     override val isDeprecatedInJavaDoc = false
 
     override val annotations
-        get() = emptyList<JavaAnnotation>()
+        get() = tree.annotations().map { JCAnnotation(it, treePath, javac) }
 
     override fun findAnnotation(fqName: FqName) = annotations.firstOrNull { it.classId?.asSingleFqName() == fqName }
 

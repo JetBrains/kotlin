@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.wrappers.trees
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
 import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.name.FqName
@@ -40,12 +39,12 @@ abstract class JCType<out T : JCTree>(val tree: T,
     }
 
     override val annotations
-        get() = emptyList<JavaAnnotation>()
+        get() = emptyList<JCAnnotation>()
 
     override val isDeprecatedInJavaDoc
         get() = false
 
-    override fun findAnnotation(fqName: FqName) = null
+    override fun findAnnotation(fqName: FqName) = annotations.find { it.classId?.asSingleFqName() == fqName }
 
     override fun equals(other: Any?) = (other as? JCType<*>)?.tree == tree
 

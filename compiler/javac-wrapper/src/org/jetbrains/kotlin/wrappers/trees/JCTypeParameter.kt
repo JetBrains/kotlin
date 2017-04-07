@@ -32,9 +32,9 @@ class JCTypeParameter<out T : JCTree.JCTypeParameter>(tree: T,
         get() = SpecialNames.safeIdentifier(tree.name.toString())
 
     override val annotations: Collection<JavaAnnotation>
-        get() = emptyList()
+        get() = tree.annotations().map { JCAnnotation(it, treePath, javac) }
 
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+    override fun findAnnotation(fqName: FqName) = annotations.firstOrNull { it.classId?.asSingleFqName() == fqName }
 
     override val upperBounds
         get() = tree.bounds.map {

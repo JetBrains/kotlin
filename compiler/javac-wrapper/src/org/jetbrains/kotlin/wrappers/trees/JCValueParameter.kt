@@ -20,7 +20,6 @@ import com.sun.source.util.TreePath
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -30,9 +29,9 @@ class JCValueParameter<out T : JCTree.JCVariableDecl>(tree: T,
                                                       javac: JavacWrapper) : JCElement<T>(tree, treePath, javac), JavaValueParameter {
 
     override val annotations
-        get() = emptyList<JavaAnnotation>()
+        get() = tree.annotations().map { JCAnnotation(it, treePath, javac) }
 
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+    override fun findAnnotation(fqName: FqName) = annotations.find { it.classId?.asSingleFqName() == fqName }
 
     override val isDeprecatedInJavaDoc
         get() = false

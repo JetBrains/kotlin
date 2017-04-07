@@ -47,6 +47,14 @@ val JCTree.JCModifiers.visibility
         }
     }
 
+fun JCTree.annotations() = when (this) {
+    is JCTree.JCMethodDecl -> mods?.annotations
+    is JCTree.JCClassDecl -> mods?.annotations
+    is JCTree.JCVariableDecl -> mods?.annotations
+    is JCTree.JCTypeParameter -> annotations
+    else -> null
+} ?: emptyList<JCTree.JCAnnotation>()
+
 fun TreePath.resolve(javac: JavacWrapper): Pair<FqName, JavaClass?> {
     val name = leaf.toString().substringBefore("<").substringAfter("@")
     val compilationUnit = compilationUnit as JCTree.JCCompilationUnit
