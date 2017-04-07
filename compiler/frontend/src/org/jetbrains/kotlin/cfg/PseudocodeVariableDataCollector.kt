@@ -17,20 +17,17 @@
 package org.jetbrains.kotlin.cfg
 
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.collectData
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.resolve.calls.tower.getFakeDescriptorForObject
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 class PseudocodeVariableDataCollector(
         private val bindingContext: BindingContext,
@@ -38,7 +35,7 @@ class PseudocodeVariableDataCollector(
 ) {
     val blockScopeVariableInfo = computeBlockScopeVariableInfo(pseudocode)
 
-    fun <I : ControlFlowInfo<*>> collectData(
+    fun <I : ControlFlowInfo<*, *>> collectData(
             traversalOrder: TraversalOrder,
             initialInfo: I,
             instructionDataMergeStrategy: (Instruction, Collection<I>) -> Edges<I>
@@ -51,7 +48,7 @@ class PseudocodeVariableDataCollector(
         )
     }
 
-    private fun <I : ControlFlowInfo<*>> filterOutVariablesOutOfScope(
+    private fun <I : ControlFlowInfo<*, *>> filterOutVariablesOutOfScope(
             from: Instruction,
             to: Instruction,
             info: I
@@ -63,7 +60,7 @@ class PseudocodeVariableDataCollector(
         // Variables declared in an inner (deeper) scope can't be accessed from an outer scope.
         // Thus they can be filtered out upon leaving the inner scope.
         @Suppress("UNCHECKED_CAST")
-        return info.copy().retainAll { variable ->
+        return info.retainAll { variable ->
             val blockScope = blockScopeVariableInfo.declaredIn[variable]
             // '-1' for variables declared outside this pseudocode
             val depth = blockScope?.depth ?: -1

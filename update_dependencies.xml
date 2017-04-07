@@ -236,6 +236,9 @@
         <!-- Rhino -->
         <get-maven-library prefix="org/mozilla" lib="rhino" version="1.7.6"/>
 
+        <!-- Javaslang -->
+        <get-maven-library prefix="io/javaslang" lib="javaslang" version="2.0.6"/>
+
         <!-- Uast -->
         <property name="uast.server" value="http://dl.bintray.com/kotlin/uast"/>
         <get-maven-library prefix="org/jetbrains/uast" lib="uast-common" version="${uast.version}" target.jar.name.base="uast-common" server="${uast.server}"/>

@@ -16,36 +16,56 @@
 
 package org.jetbrains.kotlin.cfg
 
+import javaslang.Tuple2
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import java.util.*
 
-open class ControlFlowInfo<D> internal constructor(protected val map: MutableMap<VariableDescriptor, D> = hashMapOf()) :
-        MutableMap<VariableDescriptor, D> by map {
-    open fun copy() = ControlFlowInfo(HashMap(map))
+typealias ImmutableMap<K, V> = javaslang.collection.Map<K, V>
+typealias ImmutableHashMap<K, V> = javaslang.collection.HashMap<K, V>
 
-    fun retainAll(predicate: (VariableDescriptor) -> Boolean): ControlFlowInfo<D> {
-        map.keys.retainAll(predicate)
-        return this
+abstract class ControlFlowInfo<S : ControlFlowInfo<S, D>, D>
+internal constructor(
+        protected val map: ImmutableMap<VariableDescriptor, D> = ImmutableHashMap.empty()
+) : ImmutableMap<VariableDescriptor, D> by map {
+    abstract protected fun copy(newMap: ImmutableMap<VariableDescriptor, D>): S
+
+    override fun put(key: VariableDescriptor, value: D): S = put(key, value, this[key].getOrElse(null as D?))
+
+    /**
+     * This overload exists just for sake of optimizations: in some cases we've just retrieved the old value,
+     * so we don't need to scan through the peristent hashmap again
+     */
+    fun put(key: VariableDescriptor, value: D, oldValue: D?): S {
+        @Suppress("UNCHECKED_CAST")
+        // Avoid a copy instance creation if new value is the same
+        if (value == oldValue) return this as S
+        return copy(map.put(key, value))
     }
 
-    override fun equals(other: Any?) = map == (other as? ControlFlowInfo<*>)?.map
+    fun retainAll(predicate: (VariableDescriptor) -> Boolean): S = copy(map.removeAll(map.keySet().filterNot(predicate)))
+
+    override fun equals(other: Any?) = map == (other as? ControlFlowInfo<*, *>)?.map
 
     override fun hashCode() = map.hashCode()
 
     override fun toString() = map.toString()
 }
 
-class InitControlFlowInfo(map: MutableMap<VariableDescriptor, VariableControlFlowState> = hashMapOf()) :
-        ControlFlowInfo<VariableControlFlowState>(map) {
-    override fun copy() = InitControlFlowInfo(HashMap(map))
+operator fun <T> Tuple2<T, *>.component1(): T = _1()
+operator fun <T> Tuple2<*, T>.component2(): T = _2()
+
+fun <K, V> ImmutableMap<K, V>.getOrNull(k: K): V? = this[k].getOrElse(null as V?)
+
+class InitControlFlowInfo(map: ImmutableMap<VariableDescriptor, VariableControlFlowState> = ImmutableHashMap.empty()) :
+        ControlFlowInfo<InitControlFlowInfo, VariableControlFlowState>(map) {
+    override fun copy(newMap: ImmutableMap<VariableDescriptor, VariableControlFlowState>) = InitControlFlowInfo(newMap)
 
     // this = output of EXHAUSTIVE_WHEN_ELSE instruction
     // merge = input of MergeInstruction
     // returns true if definite initialization in when happens here
     fun checkDefiniteInitializationInWhen(merge: InitControlFlowInfo): Boolean {
-        for ((key, value) in entries) {
+        for ((key, value) in iterator()) {
             if (value.initState == InitState.INITIALIZED_EXHAUSTIVELY &&
-                merge[key]?.initState == InitState.INITIALIZED) {
+                merge.getOrNull(key)?.initState == InitState.INITIALIZED) {
                 return true
             }
         }
@@ -53,9 +73,9 @@ class InitControlFlowInfo(map: MutableMap<VariableDescriptor, VariableControlFlo
     }
 }
 
-class UseControlFlowInfo(map: MutableMap<VariableDescriptor, VariableUseState> = hashMapOf()) :
-        ControlFlowInfo<VariableUseState>(map) {
-    override fun copy() = UseControlFlowInfo(HashMap(map))
+class UseControlFlowInfo(map: ImmutableMap<VariableDescriptor, VariableUseState> = ImmutableHashMap.empty()) :
+        ControlFlowInfo<UseControlFlowInfo, VariableUseState>(map) {
+    override fun copy(newMap: ImmutableMap<VariableDescriptor, VariableUseState>) = UseControlFlowInfo(newMap)
 }
 
 enum class InitState(private val s: String) {

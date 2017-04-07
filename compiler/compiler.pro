@@ -49,6 +49,8 @@ messages/**)
 -dontwarn org.apache.xerces.dom.**
 -dontwarn org.apache.xerces.util.**
 -dontwarn org.w3c.dom.ElementTraversal
+-dontwarn javaslang.match.annotation.Unapply
+-dontwarn javaslang.match.annotation.Patterns
 
 -libraryjars '<rtjar>'
 -libraryjars '<jssejar>'

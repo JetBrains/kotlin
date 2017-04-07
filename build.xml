@@ -60,6 +60,7 @@
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
         <fileset dir="${dependencies}" includes="jansi.jar"/>
         <fileset dir="${dependencies}" includes="jline.jar"/>
+        <fileset dir="${dependencies}" includes="javaslang-2.0.6.jar"/>
         <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
     </path>
 
@@ -369,6 +370,7 @@
                 <zipfileset src="${idea.sdk}/lib/oromatcher.jar"/>
                 <zipfileset src="${idea.sdk}/jps/jps-model.jar"/>
                 <zipfileset src="${dependencies}/jline.jar"/>
+                <zipfileset src="${dependencies}/javaslang-2.0.6.jar"/>
                 <zipfileset src="${protobuf.jar}"/>
 
                 <manifest>
@@ -728,7 +730,7 @@
             <fileset dir="${basedir}/plugins/source-sections/source-sections-compiler/src" includes="META-INF/services/**"/>
         </jar>
     </target>
-    
+
     <target name="annotation-processing">
         <cleandir dir="${output}/classes/annotation-processing"/>
 

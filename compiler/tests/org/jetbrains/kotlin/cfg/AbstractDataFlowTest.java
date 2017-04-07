@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cfg;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
+import javaslang.Tuple2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
@@ -79,21 +80,22 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
                 maxWidth = length;
             }
         }
+
         return maxWidth;
     }
 
     @NotNull
-    private static <S, I extends ControlFlowInfo<S>> String dumpEdgesData(String prefix, @NotNull Edges<I> edges) {
+    private static <S, I extends ControlFlowInfo<?, S>> String dumpEdgesData(String prefix, @NotNull Edges<I> edges) {
         return prefix +
                " in: " + renderVariableMap(edges.getIncoming()) +
                " out: " + renderVariableMap(edges.getOutgoing());
     }
 
-    private static <S> String renderVariableMap(Map<VariableDescriptor, S> map) {
+    private static <S> String renderVariableMap(javaslang.collection.Map<VariableDescriptor, S> map) {
         List<String> result = Lists.newArrayList();
-        for (Map.Entry<VariableDescriptor, S> entry : map.entrySet()) {
-            VariableDescriptor variable = entry.getKey();
-            S state = entry.getValue();
+        for (Tuple2<VariableDescriptor, S> entry : map) {
+            VariableDescriptor variable = entry._1;
+            S state = entry._2;
             result.add(variable.getName() + "=" + state);
         }
         Collections.sort(result);
