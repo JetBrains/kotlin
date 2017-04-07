@@ -1,0 +1,10 @@
+package
+
+public fun </*0*/ Y, /*1*/ Z, /*2*/ T : kotlin.collections.MutableMap<in Y, out Z>> associateByTo(/*0*/ destination: T): Inv3<Y, Z, T>
+public fun </*0*/ V, /*1*/ R, /*2*/ M : kotlin.collections.MutableMap<in R, out V>> mapKeysTo(/*0*/ destination: M): Inv3<R, V, M>
+
+public interface Inv3</*0*/ A, /*1*/ B, /*2*/ C> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -16,19 +16,17 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
-import org.jetbrains.kotlin.types.FlexibleType
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.CaptureStatus
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.contains
 import java.util.*
 
-class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator) {
+class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val typeApproximator: TypeApproximator) {
     private val ALLOWED_DEPTH_DELTA_FOR_INCORPORATION = 3
 
     interface Context {
@@ -119,24 +117,44 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator) {
         override fun addLowerConstraint(typeVariable: TypeConstructor, subType: UnwrappedType) =
                 addConstraint(typeVariable, subType, ConstraintKind.LOWER)
 
+        private fun isCapturedTypeFromSubtyping(type: UnwrappedType) =
+                when ((type as? NewCapturedType)?.captureStatus) {
+                    null, CaptureStatus.FROM_EXPRESSION -> false
+                    CaptureStatus.FOR_SUBTYPING -> true
+                    CaptureStatus.FOR_INCORPORATION ->
+                        error("Captured type for incorporation shouldn't escape from incorporation: $type\n" + renderBaseConstraint())
+                }
+
         private fun addConstraint(typeVariableConstructor: TypeConstructor, type: UnwrappedType, kind: ConstraintKind) {
             val typeVariable = c.allTypeVariables[typeVariableConstructor]
                                ?: error("Should by type variableConstructor: $typeVariableConstructor. ${c.allTypeVariables.values}")
 
-            if (type.contains {
-                val captureStatus = (it as? NewCapturedType)?.captureStatus
-                assert(captureStatus != CaptureStatus.FOR_INCORPORATION) {
-                    "Captured type for incorporation shouldn't escape from incorporation: $type\n" + renderBaseConstraint()
+            var targetType = type
+            if (type.contains(this::isCapturedTypeFromSubtyping)) {
+                // TypeVariable <: type -> if TypeVariable <: subType => TypeVariable <: type
+                if (kind == ConstraintKind.UPPER) {
+                    val subType = typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation)
+                    if (subType != null && !KotlinBuiltIns.isNothingOrNullableNothing(subType)) {
+                        targetType = subType
+                    }
                 }
-                captureStatus != null && captureStatus != CaptureStatus.FROM_EXPRESSION
-            }) {
-                c.addError(CapturedTypeFromSubtyping(typeVariable, type, position))
-                return
+
+                if (kind == ConstraintKind.LOWER) {
+                    val superType = typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation)
+                    if (superType != null && !KotlinBuiltIns.isAnyOrNullableAny(superType)) { // todo rethink error reporting for Any cases
+                        targetType = superType
+                    }
+                }
+
+                if (targetType === type) {
+                    c.addError(CapturedTypeFromSubtyping(typeVariable, type, position))
+                    return
+                }
             }
 
-            if (!c.isAllowedType(type)) return
+            if (!c.isAllowedType(targetType)) return
 
-            val newConstraint = Constraint(kind, type, position)
+            val newConstraint = Constraint(kind, targetType, position)
             possibleNewConstraints.add(typeVariable to newConstraint)
         }
 

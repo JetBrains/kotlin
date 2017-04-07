@@ -10242,6 +10242,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("captureFromSubtyping.kt")
+                public void testCaptureFromSubtyping() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/captureFromSubtyping.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("captureFromTypeParameterUpperBound.kt")
                 public void testCaptureFromTypeParameterUpperBound() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/captureFromTypeParameterUpperBound.kt");
