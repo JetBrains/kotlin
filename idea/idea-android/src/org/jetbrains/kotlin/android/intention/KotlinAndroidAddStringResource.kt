@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -59,6 +60,8 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
         private val PACKAGE_NOT_FOUND_ERROR = "package.not.found.error"
         private val RESOURCE_DIR_ERROR = "check.resource.dir.error"
     }
+
+    override fun startInWriteAction(): Boolean = false
 
     override fun isApplicableTo(element: KtLiteralStringTemplateEntry, caretOffset: Int): Boolean {
         if (AndroidFacet.getInstance(element.containingFile) == null) {
@@ -91,19 +94,20 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
 
         val parameters = getCreateXmlResourceParameters(facet.module, element, file.virtualFile) ?: return
 
-        if (!AndroidResourceUtil.createValueResource(project, parameters.resourceDirectory, parameters.name, ResourceType.STRING,
-                                                     parameters.fileName, parameters.directoryNames, parameters.value)) {
-            return
-        }
+        runWriteAction {
+            if (!AndroidResourceUtil.createValueResource(project, parameters.resourceDirectory, parameters.name, ResourceType.STRING,
+                                                         parameters.fileName, parameters.directoryNames, parameters.value)) {
+                return@runWriteAction
+            }
 
-        createResourceReference(facet.module, editor, file, element, manifestPackage, parameters.name, ResourceType.STRING)
-        PsiDocumentManager.getInstance(project).commitAllDocuments()
-        UndoUtil.markPsiFileForUndo(file)
+            createResourceReference(facet.module, editor, file, element, manifestPackage, parameters.name, ResourceType.STRING)
+            PsiDocumentManager.getInstance(project).commitAllDocuments()
+            UndoUtil.markPsiFileForUndo(file)
+        }
     }
 
     private fun getCreateXmlResourceParameters(module: Module, element: KtLiteralStringTemplateEntry,
                                                contextFile: VirtualFile): CreateXmlResourceParameters? {
-
         val stringValue = element.text
 
         val showDialog = !ApplicationManager.getApplication().isUnitTestMode
