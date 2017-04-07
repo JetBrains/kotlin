@@ -21,6 +21,7 @@ import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.usageView.UsageInfo
@@ -28,11 +29,10 @@ import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.usageView.UsageViewUtil
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.text.UniqueNameGenerator
-import org.jetbrains.kotlin.psi.KtFile
 
 class MoveFilesWithDeclarationsProcessor @JvmOverloads constructor (
         project: Project,
-        private val sourceFiles: List<KtFile>,
+        private val elementsToMove: List<PsiElement>,
         private val targetDirectory: PsiDirectory,
         private val targetFileName: String?,
         searchInComments: Boolean,
@@ -40,7 +40,7 @@ class MoveFilesWithDeclarationsProcessor @JvmOverloads constructor (
         moveCallback: MoveCallback?,
         prepareSuccessfulCallback: Runnable = EmptyRunnable.INSTANCE
 ) : MoveFilesOrDirectoriesProcessor(project,
-                                    sourceFiles.toTypedArray<PsiElement>(),
+                                    elementsToMove.toTypedArray<PsiElement>(),
                                     targetDirectory,
                                     true,
                                     searchInComments,
@@ -48,11 +48,11 @@ class MoveFilesWithDeclarationsProcessor @JvmOverloads constructor (
                                     moveCallback,
                                     prepareSuccessfulCallback) {
     override fun getCommandName(): String {
-        return if (targetFileName != null) "Move " + sourceFiles.single().name else "Move"
+        return if (targetFileName != null) "Move " + (elementsToMove.single() as PsiFile).name else "Move"
     }
 
     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor {
-        return MoveFilesWithDeclarationsViewDescriptor(sourceFiles.toTypedArray<PsiElement>(), targetDirectory)
+        return MoveFilesWithDeclarationsViewDescriptor(elementsToMove.toTypedArray<PsiElement>(), targetDirectory)
     }
 
     override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
@@ -75,7 +75,7 @@ class MoveFilesWithDeclarationsProcessor @JvmOverloads constructor (
     private fun renameFileTemporarily() {
         if (targetFileName == null || targetDirectory.findFile(targetFileName) == null) return
 
-        val sourceFile = sourceFiles.single()
+        val sourceFile = elementsToMove.single() as PsiFile
         val temporaryName = UniqueNameGenerator.generateUniqueName("temp", "", ".kt") {
             sourceFile.containingDirectory!!.findFile(it) == null
         }
@@ -93,7 +93,7 @@ class MoveFilesWithDeclarationsProcessor @JvmOverloads constructor (
         }
         finally {
             if (needTemporaryRename) {
-                sourceFiles.single().name = targetFileName!!
+                (elementsToMove.single() as PsiFile).name = targetFileName!!
             }
         }
     }
