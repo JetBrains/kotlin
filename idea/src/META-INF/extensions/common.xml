@@ -43,5 +43,8 @@
                         interface="org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProvider"/>
         <extensionPoint name="platformGradleDetector"
                         interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinPlatformGradleDetector"/>
+        <extensionPoint name="analyzeCompleteHandlerExtension"
+                        interface="org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 </idea-plugin>
