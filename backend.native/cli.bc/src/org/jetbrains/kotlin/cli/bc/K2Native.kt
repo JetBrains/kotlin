@@ -123,6 +123,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(OPTIMIZATION, arguments.optimization)
 
                 put(PRINT_IR, arguments.printIr)
+                put(PRINT_IR_WITH_DESCRIPTORS, arguments.printIrWithDescriptors)
                 put(PRINT_DESCRIPTORS, arguments.printDescriptors)
                 put(PRINT_LOCATIONS, arguments.printLocations)
                 put(PRINT_BITCODE, arguments.printBitCode)

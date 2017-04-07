@@ -142,6 +142,9 @@ internal class PhaseManager(val context: Context)  {
             if (shouldPrintIr()) {
                 printIr()
             }
+            if (shouldPrintIrWithDescriptors()) {
+                printIrWithDescriptors()
+            }
             if (shouldPrintLocations()) {
                 printLocations()
             }

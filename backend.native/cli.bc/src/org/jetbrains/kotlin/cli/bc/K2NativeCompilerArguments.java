@@ -73,6 +73,9 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "print_ir", prefix = "--", description = "Print IR")
     public boolean printIr;
 
+    @Argument(value = "print_ir_with_descriptors", prefix = "--", description = "Print IR with descriptors")
+    public boolean printIrWithDescriptors;
+
     @Argument(value = "print_descriptors", prefix = "--", description = "Print descriptor tree")
     public boolean printDescriptors;
 

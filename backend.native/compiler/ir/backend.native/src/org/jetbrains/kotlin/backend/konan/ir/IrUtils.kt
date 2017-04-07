@@ -17,16 +17,19 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
@@ -37,11 +40,14 @@ import java.io.StringWriter
 
 fun ir2string(ir: IrElement?): String = ir2stringWhole(ir).takeWhile { it != '\n' }
 
-fun ir2stringWhole(ir: IrElement?): String {
-  val strWriter = StringWriter()
+fun ir2stringWhole(ir: IrElement?, withDescriptors: Boolean = false): String {
+    val strWriter = StringWriter()
 
-  ir?.accept(DumpIrTreeVisitor(strWriter), "")
-  return strWriter.toString()
+    if (withDescriptors)
+        ir?.accept(DumpIrTreeWithDescriptorsVisitor(strWriter), "")
+    else
+        ir?.accept(DumpIrTreeVisitor(strWriter), "")
+    return strWriter.toString()
 }
 
 internal fun ClassDescriptor.createSimpleDelegatingConstructorDescriptor(superConstructorDescriptor: ClassConstructorDescriptor, isPrimary: Boolean = false)

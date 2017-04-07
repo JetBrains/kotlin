@@ -21,6 +21,7 @@ import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.jvm.descriptors.initialize
 import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.ir.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.konan.ir.Ir
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmDeclarations
@@ -300,6 +301,12 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         irModule!!.accept(DumpIrTreeVisitor(out), "")
     }
 
+    fun printIrWithDescriptors() {
+        if (irModule == null) return
+        separator("IR after: ${phase?.description}")
+        irModule!!.accept(DumpIrTreeWithDescriptorsVisitor(out), "")
+    }
+
     fun printLocations() {
         if (irModule == null) return
         separator("Locations after: ${phase?.description}")
@@ -381,6 +388,10 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     fun shouldPrintIr(): Boolean {
         return config.configuration.getBoolean(KonanConfigKeys.PRINT_IR) 
+    }
+
+    fun shouldPrintIrWithDescriptors(): Boolean {
+        return config.configuration.getBoolean(KonanConfigKeys.PRINT_IR_WITH_DESCRIPTORS)
     }
 
     fun shouldPrintBitCode(): Boolean {

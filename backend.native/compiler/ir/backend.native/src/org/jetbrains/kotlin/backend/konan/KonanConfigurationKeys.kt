@@ -66,7 +66,9 @@ class KonanConfigKeys {
 
         val PRINT_IR: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("print ir")
-        val PRINT_DESCRIPTORS: CompilerConfigurationKey<Boolean> 
+        val PRINT_IR_WITH_DESCRIPTORS: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("print ir with descriptors")
+        val PRINT_DESCRIPTORS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("print descriptors")
         val PRINT_BITCODE: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("print bitcode")
