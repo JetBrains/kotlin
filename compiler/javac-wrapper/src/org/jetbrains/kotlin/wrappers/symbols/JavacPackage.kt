@@ -28,7 +28,7 @@ class JavacPackage(val element: PackageElement, val javac: JavacWrapper) : JavaP
         get() = FqName(element.qualifiedName.toString())
 
     override val subPackages
-        get() = javac.findSubPackages(element.qualifiedName.toString().let(::FqName))
+        get() = javac.findSubPackages(FqName(element.qualifiedName.toString()))
 
     override fun getClasses(nameFilter: (Name) -> Boolean) = javac.findClassesFromPackage(fqName)
             .filter { Name.isValidIdentifier(it.name.toString())

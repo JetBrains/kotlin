@@ -21,7 +21,7 @@ import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
 
-abstract class ClassifierType<out T : JCTree>(tree: T,
+sealed class ClassifierType<out T : JCTree>(tree: T,
                                               treePath: TreePath,
                                               javac: JavacWrapper) : JCType<T>(tree, treePath, javac), JavaClassifierType {
     override val classifier by lazy { getClassifier(treePath, javac) }
@@ -38,7 +38,7 @@ abstract class ClassifierType<out T : JCTree>(tree: T,
                     when (it) {
                         is JCTree.JCClassDecl -> it.typarams
                         is JCTree.JCMethodDecl -> it.typarams
-                        else -> emptyList<JCTypeParameter<*>>()
+                        else -> throw UnsupportedOperationException("${it.kind} cannot have a type parameter")
                     }
                 }
                 .find { it.toString().substringBefore(" ") == treePath.leaf.toString() }
