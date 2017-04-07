@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
         return
     }
 
-    val port = atoi(args[0]).toShort()
+    val port = args[0].toShort()
 
     memScoped {
 

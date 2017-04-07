@@ -119,7 +119,7 @@ internal interface ContextUtils : RuntimeAware {
     val ClassDescriptor.typeInfoPtr: ConstPointer
         get() {
             return if (isExternal(this)) {
-                constPointer(externalGlobal(this.typeInfoSymbolName, runtime.typeInfoType))
+                constPointer(importGlobal(this.typeInfoSymbolName, runtime.typeInfoType))
             } else {
                 context.llvmDeclarations.forClass(this).typeInfo
             }

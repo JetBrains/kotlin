@@ -42,6 +42,7 @@ internal class StaticData(override val context: Context): ContextUtils {
                     throw IllegalArgumentException("Global '$name' already exists")
                 }
 
+                // Globals created with this API are *not* thread local.
                 val llvmGlobal = LLVMAddGlobal(module, type, name)!!
 
                 if (!isExported) {

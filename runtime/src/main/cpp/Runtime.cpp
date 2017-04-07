@@ -17,10 +17,17 @@
 #include <locale.h>
 #include <stdio.h>
 
+#include "Memory.h"
 #include "Runtime.h"
 
 struct RuntimeState {
   MemoryState* memoryState;
+};
+
+typedef void (*Initializer)();
+struct InitNode {
+    Initializer      init;
+    InitNode* next;
 };
 
 namespace {
@@ -42,7 +49,7 @@ void InitGlobalVariables() {
 extern "C" {
 #endif
 
-void AppendToInitializersTail(struct InitNode *next) {
+void AppendToInitializersTail(InitNode *next) {
   // TODO: use RuntimeState.
   if (initHeadNode == nullptr) {
     initHeadNode = next;

@@ -1287,7 +1287,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         assert (!descriptor.isUnit())
         return if (codegen.isExternal(descriptor)) {
             val llvmType = codegen.getLLVMType(descriptor.defaultType)
-            codegen.externalGlobal(descriptor.objectInstanceFieldSymbolName, llvmType)
+            codegen.importGlobal(descriptor.objectInstanceFieldSymbolName, llvmType,
+                    threadLocal = true)
         } else {
             context.llvmDeclarations.forSingleton(descriptor).instanceFieldRef
         }

@@ -1011,10 +1011,7 @@ class StubGenerator(
             return true
         }
 
-        return this.isDefined ||
-                this.isVararg ||
-                this.returnsRecord() ||
-                this.parameters.map { it.type }.any { it.unwrapTypedefs() is RecordType }
+        return true
     }
 
     private fun FunctionType.requiresAdapterOnNative(): Boolean {

@@ -87,7 +87,7 @@ struct MemoryState {
 namespace {
 
 // TODO: remove this global.
-MemoryState* memoryState = nullptr;
+__thread MemoryState* memoryState = nullptr;
 
 // TODO: use those allocators for STL containers as well.
 template <typename T>
@@ -263,8 +263,6 @@ ContainerHeader* AllocContainer(size_t size) {
   memoryState->allocCount++;
   return result;
 }
-
-
 
 void FreeContainer(ContainerHeader* header) {
   RuntimeAssert(!isPermanent(header), "this kind of container shalln't be freed");

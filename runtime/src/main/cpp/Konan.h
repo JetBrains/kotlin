@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-#ifndef RUNTIME_RUNTIME_H
-#define RUNTIME_RUNTIME_H
+#ifndef KOTLIN_KONAN_H
+#define KOTLIN_KONAN_H
 
-struct RuntimeState;
-struct InitNode;
+// To embed Kotlin/Native into a C/C++ application this API could be used.
+// Compile Kotlin/Native application as usual, but supply -nomain kotlinc
+// switch, and provide bitcode with real entry point code as -nativelibrary
+// command line argument.
+extern "C" int Konan_main(int argc, const char** argv);
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-RuntimeState* InitRuntime();
-void DeinitRuntime(RuntimeState* state);
-
-// Appends given node to an initializer list.
-void AppendToInitializersTail(struct InitNode*);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif // RUNTIME_RUNTIME_H
+#endif  // KOTLIN_KONAN_H

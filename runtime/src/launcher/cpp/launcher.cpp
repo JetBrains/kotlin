@@ -22,7 +22,7 @@
 
 //--- Setup args --------------------------------------------------------------//
 
-OBJ_GETTER(setupArgs, int argc, char** argv) {
+OBJ_GETTER(setupArgs, int argc, const char** argv) {
   // The count is one less, because we skip argv[0] which is the binary name.
   ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, argc - 1, OBJ_RESULT);
   ArrayHeader* array = result->array();
@@ -36,7 +36,7 @@ OBJ_GETTER(setupArgs, int argc, char** argv) {
 //--- main --------------------------------------------------------------------//
 extern "C" KInt Konan_start(const ObjHeader*);
 
-extern "C" int Konan_main(int argc, char** argv) {
+extern "C" int Konan_main(int argc, const char** argv) {
   RuntimeState* state = InitRuntime();
 
   if (state == nullptr) {

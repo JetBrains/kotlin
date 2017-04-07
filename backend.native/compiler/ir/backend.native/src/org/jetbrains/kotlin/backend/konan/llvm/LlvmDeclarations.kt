@@ -296,11 +296,8 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         } else {
             "kobjref:" + qualifyInternalName(descriptor)
         }
-        val instanceFieldRef = LLVMAddGlobal(
-                context.llvmModule,
-                getLLVMType(descriptor.defaultType),
-                symbolName
-        )!!
+        val instanceFieldRef = addGlobal(
+                symbolName, getLLVMType(descriptor.defaultType), threadLocal = true)
 
         return SingletonLlvmDeclarations(instanceFieldRef)
     }
@@ -326,7 +323,8 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             // Fields are module-private, so we use internal name:
             val name = "kvar:" + qualifyInternalName(descriptor)
 
-            val storage = LLVMAddGlobal(context.llvmModule, getLLVMType(descriptor.type), name)!!
+            val storage = addGlobal(
+                    name, getLLVMType(descriptor.type), threadLocal = true)
 
             this.staticFields[descriptor] = StaticFieldLlvmDeclarations(storage)
         }
