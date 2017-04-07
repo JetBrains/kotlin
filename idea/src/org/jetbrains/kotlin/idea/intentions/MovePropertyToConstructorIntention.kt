@@ -28,14 +28,16 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.LATEINIT_KEYWORD
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
@@ -57,6 +59,7 @@ class MovePropertyToConstructorIntention :
             && element.setter == null
             && !element.hasModifier(LATEINIT_KEYWORD)
             && element.getStrictParentOfType<KtClassOrObject>() is KtClass
+            && (element.initializer?.isValidInConstructor() ?: true)
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
         val parentClass = PsiTreeUtil.getParentOfType(element, KtClass::class.java) ?: return
@@ -94,13 +97,14 @@ class MovePropertyToConstructorIntention :
             }
         }
         else {
-            val type = (element.resolveToDescriptor(BodyResolveMode.PARTIAL) as? PropertyDescriptor)?.type ?: return
+            val typeText = element.typeReference?.text ?:
+                           (element.resolveToDescriptor(BodyResolveMode.PARTIAL) as? PropertyDescriptor)?.type?.render() ?: return
             val parameterText = buildString {
                 element.modifierList?.getModifiersText()?.let(this::append)
                 propertyAnnotationsText?.takeIf(String::isNotBlank)?.let { appendWithSpaceBefore(it) }
                 appendWithSpaceBefore(element.valOrVarKeyword.text)
                 element.name?.let { appendWithSpaceBefore(it) }
-                appendWithSpaceBefore(": ${type.fqNameSafeAsString()}")
+                appendWithSpaceBefore(": $typeText")
                 element.initializer?.text?.let { append(" = $it") }
             }
 
@@ -133,7 +137,7 @@ class MovePropertyToConstructorIntention :
             else
                 text
 
-    private fun KotlinType.fqNameSafeAsString() = constructor.declarationDescriptor?.fqNameSafe?.asString() ?: "<error type>"
+    private fun KotlinType.render() = IdeDescriptorRenderers.SOURCE_CODE.renderType(this)
 
     private fun KtModifierList.getModifiersText() = getModifiers().joinToString(separator = " ") { it.text }
 
@@ -141,4 +145,24 @@ class MovePropertyToConstructorIntention :
             node.getChildren(null).filter { it.elementType is KtModifierKeywordToken }.map { it.psi }
 
     private fun StringBuilder.appendWithSpaceBefore(str: String) = append(" " + str)
+
+    private fun KtExpression.isValidInConstructor(): Boolean {
+        val containingClass = getStrictParentOfType<KtClass>() ?: return false
+        var isValid = true
+        this.accept(object : KtVisitorVoid() {
+            override fun visitKtElement(element: KtElement) {
+                element.acceptChildren(this)
+            }
+
+            override fun visitReferenceExpression(expression: KtReferenceExpression) {
+                val context = expression.analyze(BodyResolveMode.PARTIAL)
+                val declarationDescriptor = expression.getResolvedCall(context)?.resultingDescriptor ?: return
+                if (declarationDescriptor.containingDeclaration == containingClass.descriptor) {
+                    isValid = false
+                }
+            }
+        })
+
+        return isValid
+    }
 }
