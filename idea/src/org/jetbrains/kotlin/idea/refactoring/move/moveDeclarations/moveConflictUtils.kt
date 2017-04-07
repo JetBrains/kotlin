@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMember
-import com.intellij.psi.PsiMethod
+import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.*
 import com.intellij.usageView.UsageInfo
@@ -40,7 +40,10 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.contains
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
@@ -60,11 +63,14 @@ class MoveConflictChecker(
         private val elementsToMove: Collection<KtElement>,
         private val moveTarget: KotlinMoveTarget,
         contextElement: KtElement,
-        private val doNotGoIn: Collection<KtElement> = emptyList()
+        private val doNotGoIn: Collection<KtElement> = emptyList(),
+        allElementsToMove: Collection<PsiElement>? = null
 ) {
     private val resolutionFacade = contextElement.getResolutionFacade()
 
     private val fakeFile = KtPsiFactory(project).createFile("")
+
+    private val allElementsToMove = allElementsToMove ?: elementsToMove
 
     private fun PackageFragmentDescriptor.withSource(sourceFile: KtFile): PackageFragmentDescriptor {
         return object : PackageFragmentDescriptor by this {
@@ -144,10 +150,49 @@ class MoveConflictChecker(
 
     private fun render(declaration: PsiElement) = RefactoringUIUtil.getDescription(declaration, false)
 
+    // Based on RefactoringConflictsUtil.analyzeModuleConflicts
+    fun analyzeModuleConflictsInUsages(project: Project,
+                                       usages: Collection<UsageInfo>,
+                                       sourceRoot: VirtualFile,
+                                       conflicts: MultiMap<PsiElement, String>) {
+        val targetModule = ModuleUtilCore.findModuleForFile(sourceRoot, project) ?: return
+
+        val isInTestSources = ModuleRootManager.getInstance(targetModule).fileIndex.isInTestSourceContent(sourceRoot)
+        NextUsage@ for (usage in usages) {
+            val element = usage.element ?: continue
+            if (PsiTreeUtil.getParentOfType(element, PsiImportStatement::class.java, false) != null) continue
+            if (isToBeMoved(element)) continue@NextUsage
+
+            val resolveScope = element.resolveScope
+            if (resolveScope.isSearchInModuleContent(targetModule, isInTestSources)) continue
+
+            val usageFile = element.containingFile
+            val usageVFile = usageFile.virtualFile ?: continue
+            val usageModule = ModuleUtilCore.findModuleForFile(usageVFile, project) ?: continue
+            val container = if (usageFile is PsiJavaFile) ConflictsUtil.getContainer(element) else usageFile
+            val scopeDescription = RefactoringUIUtil.getDescription(container, true)
+            val referencedElement = (if (usage is MoveRenameUsageInfo) usage.referencedElement else usage.element) ?: error(usage)
+            val message = if (usageModule == targetModule && isInTestSources) {
+                RefactoringBundle.message("0.referenced.in.1.will.not.be.accessible.from.production.of.module.2",
+                                          RefactoringUIUtil.getDescription(referencedElement, true),
+                                          scopeDescription,
+                                          CommonRefactoringUtil.htmlEmphasize(usageModule.name))
+            }
+            else {
+                RefactoringBundle.message("0.referenced.in.1.will.not.be.accessible.from.module.2",
+                                          RefactoringUIUtil.getDescription(referencedElement, true),
+                                          scopeDescription,
+                                          CommonRefactoringUtil.htmlEmphasize(usageModule.name))
+            }
+            conflicts.putValue(referencedElement, CommonRefactoringUtil.capitalize(message))
+        }
+    }
+
     fun checkModuleConflictsInUsages(externalUsages: MutableSet<UsageInfo>, conflicts: MultiMap<PsiElement, String>) {
         val newConflicts = MultiMap<PsiElement, String>()
         val sourceRoot = moveTarget.targetFile ?: return
-        RefactoringConflictsUtil.analyzeModuleConflicts(project, elementsToMove, externalUsages.toTypedArray(), sourceRoot, newConflicts)
+
+        analyzeModuleConflictsInUsages(project, externalUsages, sourceRoot, newConflicts)
         if (!newConflicts.isEmpty) {
             val referencedElementsToSkip = newConflicts.keySet().mapNotNullTo(HashSet()) { it.namedUnwrappedElement }
             externalUsages.removeIf {
@@ -228,7 +273,7 @@ class MoveConflictChecker(
 
                 val target = DescriptorToSourceUtilsIde.getAnyDeclaration(project, targetDescriptor) ?: return@forEachDescendantOfType
 
-                if (target.isInsideOf(elementsToMove)) return@forEachDescendantOfType
+                if (isToBeMoved(target)) return@forEachDescendantOfType
 
                 if (isInScope(target, targetDescriptor)) return@forEachDescendantOfType
                 if (target is KtTypeParameter) return@forEachDescendantOfType
@@ -256,7 +301,7 @@ class MoveConflictChecker(
             val element = usage.element
             if (element == null || usage !is MoveRenameUsageInfo || usage is NonCodeUsageInfo) continue
 
-            if (element.isInsideOf(elementsToMove)) continue
+            if (isToBeMoved(element)) continue
 
             val referencedElement = usage.referencedElement?.namedUnwrappedElement as? KtNamedDeclaration ?: continue
             val referencedDescriptor = resolutionFacade.resolveToDescriptor(referencedElement)
@@ -286,7 +331,7 @@ class MoveConflictChecker(
                 refExpr.references
                         .forEach { ref ->
                             val target = ref.resolve() ?: return@forEach
-                            if (target.isInsideOf(elementsToMove)) return@forEach
+                            if (isToBeMoved(target)) return@forEach
                             val targetDescriptor = when (target) {
                                                        is KtDeclaration -> target.resolveToDescriptor()
                                                        is PsiMember -> target.getJavaMemberDescriptor()
@@ -298,7 +343,7 @@ class MoveConflictChecker(
                                 val dispatchReceiver = resolvedCall.dispatchReceiver
                                 if (dispatchReceiver is ExpressionReceiver && dispatchReceiver.expression is KtSuperExpression) return@forEach
                                 val receiverClass = resolvedCall.dispatchReceiver?.type?.constructor?.declarationDescriptor?.source?.getPsi()
-                                if (receiverClass != null && receiverClass.isInsideOf(elementsToMove)) return@forEach
+                                if (receiverClass != null && isToBeMoved(receiverClass)) return@forEach
                             }
 
                             if (!targetDescriptor.isVisibleIn(targetContainer)) {
@@ -310,7 +355,7 @@ class MoveConflictChecker(
         }
     }
 
-    private fun isToBeMoved(element: PsiElement): Boolean = elementsToMove.any { it.isAncestor(element, false) }
+    private fun isToBeMoved(element: PsiElement): Boolean = allElementsToMove.any { it.isAncestor(element, false) }
 
     private fun checkInternalMemberUsages(conflicts: MultiMap<PsiElement, String>) {
         val sourceRoot = moveTarget.targetFile ?: return
