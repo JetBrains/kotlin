@@ -43,6 +43,28 @@ abstract class ClassifierType<out T : JCTree>(tree: T,
                 }
                 .find { it.toString().substringBefore(" ") == treePath.leaf.toString() }
 
+    private fun getClassifier(treePath: TreePath, javac: JavacWrapper) = treePath.resolve(javac).let {
+        it.second
+        ?: typeParameter(treePath, javac)
+        ?: javac.getKotlinClassifier(it.first)
+    }
+
+    private fun typeParameter(treePath: TreePath, javac: JavacWrapper) = treePath
+            .filter { it is JCTree.JCClassDecl || it is JCTree.JCMethodDecl }
+            .flatMap {
+                when (it) {
+                    is JCTree.JCClassDecl -> it.typarams
+                    is JCTree.JCMethodDecl -> it.typarams
+                    else -> emptyList<JCTree.JCTypeParameter>()
+                }
+            }
+            .find { it.toString().substringBefore(" ") == treePath.leaf.toString() }
+            ?.let {
+                JCTypeParameter(it,
+                                javac.getTreePath(it, treePath.compilationUnit),
+                                javac)
+            }
+
 }
 
 class JCClassifierType<out T : JCTree.JCExpression>(tree: T,
@@ -68,25 +90,3 @@ class JCClassifierTypeWithTypeArgument<out T : JCTree.JCTypeApply>(tree: T,
         get() = false
 
 }
-
-private fun getClassifier(treePath: TreePath, javac: JavacWrapper) = treePath.resolve(javac).let {
-    it.second
-    ?: typeParameter(treePath, javac)
-    ?: javac.getKotlinClassifier(it.first)
-}
-
-private fun typeParameter(treePath: TreePath, javac: JavacWrapper) = treePath
-        .filter { it is JCTree.JCClassDecl || it is JCTree.JCMethodDecl }
-        .flatMap {
-            when (it) {
-                is JCTree.JCClassDecl -> it.typarams
-                is JCTree.JCMethodDecl -> it.typarams
-                else -> emptyList<JCTree.JCTypeParameter>()
-            }
-        }
-        .find { it.toString().substringBefore(" ") == treePath.leaf.toString() }
-        ?.let {
-            JCTypeParameter(it,
-                            javac.getTreePath(it, treePath.compilationUnit),
-                            javac)
-        }

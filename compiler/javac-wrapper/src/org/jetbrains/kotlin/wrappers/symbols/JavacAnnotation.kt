@@ -19,11 +19,8 @@ package org.jetbrains.kotlin.wrappers.symbols
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaElement
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.AnnotationMirror
-import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 
 open class JavacAnnotation(val annotationMirror: AnnotationMirror,
@@ -37,14 +34,5 @@ open class JavacAnnotation(val annotationMirror: AnnotationMirror,
         get() = (annotationMirror.annotationType.asElement() as? TypeElement)?.computeClassId()
 
     override fun resolve() = JavacClass(annotationMirror.annotationType.asElement() as TypeElement, javac)
-
-    fun TypeElement.computeClassId(): ClassId? {
-        if (enclosingElement.kind != ElementKind.PACKAGE) {
-            val parentClassId = (enclosingElement as TypeElement).computeClassId() ?: return null
-            return parentClassId.createNestedClassId(Name.identifier(simpleName.toString()))
-        }
-
-        return ClassId.topLevel(FqName(qualifiedName.toString()))
-    }
 
 }

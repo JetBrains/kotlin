@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.wrappers.symbols
 
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.JavaVisibilities
-import javax.lang.model.element.Element
-import javax.lang.model.element.Modifier
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import javax.lang.model.element.*
 
 val Element.isAbstract
         get() = modifiers.contains(Modifier.ABSTRACT)
@@ -43,5 +46,24 @@ fun Element.getVisibility() = with(modifiers) {
             }
         }
         else -> JavaVisibilities.PACKAGE_VISIBILITY
+    }
+}
+
+fun TypeElement.computeClassId(): ClassId? {
+    if (enclosingElement.kind != ElementKind.PACKAGE) {
+        val parentClassId = (enclosingElement as TypeElement).computeClassId() ?: return null
+        return parentClassId.createNestedClassId(Name.identifier(simpleName.toString()))
+    }
+
+    return ClassId.topLevel(FqName(qualifiedName.toString()))
+}
+
+fun ExecutableElement.valueParameters(javac: JavacWrapper) = let {
+    val parameterTypesCount = parameters.size
+
+    parameters.mapIndexed { index, it ->
+        val isLastParameter = index == parameterTypesCount - 1
+        val parameterName = it.simpleName.toString()
+        JavacValueParameter(it, parameterName, isLastParameter && isVarArgs, javac)
     }
 }

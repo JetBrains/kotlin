@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaMember
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.Element
-import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 
 abstract class JavacMember<out T : Element>(element: T,
@@ -57,14 +56,4 @@ abstract class JavacMember<out T : Element>(element: T,
     override val isFinal
         get() = element.isFinal
 
-}
-
-fun ExecutableElement.valueParameters(javac: JavacWrapper) = let {
-    val parameterTypesCount = parameters.size
-
-    parameters.mapIndexed { index, it ->
-        val isLastParameter = index == parameterTypesCount - 1
-        val parameterName = it.simpleName.toString()
-        JavacValueParameter(it, parameterName, isLastParameter && isVarArgs, javac)
-    }
 }
