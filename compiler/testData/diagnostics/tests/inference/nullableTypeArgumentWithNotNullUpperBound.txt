@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ S : kotlin.Any> foo(/*0*/ x: kotlin.Array<out S?>, /*1*/ y: kotlin.Array<in S?>): kotlin.Unit
+public fun </*0*/ Y : kotlin.Any> inA(/*0*/ x: kotlin.Array<in Y?>): kotlin.Array<Y>
+public fun </*0*/ X : kotlin.Any> outA(/*0*/ x: kotlin.Array<out X?>): kotlin.Array<X>

@@ -58,7 +58,6 @@ class ResultTypeResolver(
                  *
                  * To fix this problem when we fix variable, we will approximate captured types before fixation.
                  *
-                 * todo: may be for TO_SUPER direction we should do the same
                  */
 
                 return typeApproximator.approximateToSuperType(commonSupertype, TypeApproximatorConfiguration.CapturedTypesApproximation) ?: commonSupertype
@@ -68,7 +67,9 @@ class ResultTypeResolver(
         // direction == TO_SUPER or there is no LOWER bounds
         val upperConstraints = variableWithConstraints.constraints.filter { it.kind == ConstraintKind.UPPER && c.isProperType(it.type) }
         if (upperConstraints.isNotEmpty()) {
-            return intersectTypes(upperConstraints.map { it.type })
+            val upperType = intersectTypes(upperConstraints.map { it.type })
+
+            return typeApproximator.approximateToSubType(upperType, TypeApproximatorConfiguration.CapturedTypesApproximation) ?: upperType
         }
 
         return null
