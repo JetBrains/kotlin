@@ -1,14 +1,17 @@
 ## The Kotlin Standard Library
 
-This module creates the [standard library for kotlin](http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/index.html).
+This module creates the [standard library for kotlin](http://kotlinlang.org/api/latest/jvm/stdlib/index.html).
 
 ### Notes for contributors
 
-We use some code generation to apply the various collection-like methods to various different types like arrays, strings, kotlin.Iterable and java.lang.Iterable etc.
+We use some code generation to generate the various utility extension function for the various collection-like types like arrays, strings, `Collection<T>`, `Sequence<T>`, `Map<K, V>` etc.
 
-To run the code generator from a kotlin checkout
+These sources are placed into `generated` folder and their names are prefixed with the underscore, for example `generated/_Collections.kt`
 
-    cd libraries/tools/kotlin-stdlib-gen
-    mvn compile exec:java
+To run the code generator from the `libraries` directory of a kotlin checkout, use the following command:
 
-This then runs the [GenerateStandardLib.kt](https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-stdlib-gen/src/generators/GenerateStandardLib.kt) script to create the source from the files for java.lang.Iterable<T> and java.util.Collection etc.
+    ./gradlew :tools:kotlin-stdlib-gen:run
+
+> Note: on Windows type `gradlew` without the leading `./`
+
+This then runs the script which generates a significant part of stdlib sources from the [templates](https://github.com/JetBrains/kotlin/tree/master/libraries/tools/kotlin-stdlib-gen/src/templates) authored with a special kotlin based DSL.

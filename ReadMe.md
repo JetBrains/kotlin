@@ -45,65 +45,49 @@ To build this project, first time you try to build you need to run this:
 
 which will setup the dependencies on
 
-* intellij-core: is a part of command line compiler and contains only necessary APIs.
-* idea-full: is a full blown IntelliJ IDEA Community Edition to be used in former plugin module.
+* `intellij-core` is a part of command line compiler and contains only necessary APIs.
+* `idea-full` is a full blown IntelliJ IDEA Community Edition to be used in the plugin module.
 
 Then, you need to run
 
     ant -f build.xml
 
-which will build the binaries of the compiler and put them into the 'dist' directory. You may need to increase the **heap size** for Ant using
+which will build the binaries of the compiler and put them into the `dist` directory. You may need to increase the **heap size** for Ant using
 [ANT_OPTS](https://web.liferay.com/community/wiki/-/wiki/Main/Ant+opts).
 
-**OPTIONAL:** Maven distribution is built separately, run
+**OPTIONAL:** Maven artifact distribution is built separately, go into `libraries` directory after building the compiler and run:
 
-    mvn package
+    ./gradlew build install
+    mvn install
 
-from 'libraries' directory after building the compiler. Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.
+> Note: on Windows type `gradlew` without the leading `./`
+
+Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.
 
 ## Working with the project in IntelliJ IDEA
 
 The [root kotlin project](https://github.com/JetBrains/kotlin) already has an IntelliJ IDEA project, you can just open it in IntelliJ IDEA.
 
-You may need to set the Project SDK (File -> Project Structure -> Project).
-You may also need to add `tools.jar` to your SDK: File -> Project Structure -> SDKs -> <Your JDK> -> Classpath,
+You may need to set the Project SDK (`File -> Project Structure -> Project`).
+You may also need to add `tools.jar` to your SDK: 
+    
+    File -> Project Structure -> SDKs -> <Your JDK> -> Classpath
+
 then choose the `tools.jar` in the JDK's `lib` directory.
 
 If you are not dealing with Android, you may need to disable the Android Plugin in order to compile the project.
 
+### <a name="installing-plugin"></a> Installing the latest Kotlin plugin
+
 Since Kotlin project contains code written in Kotlin itself, you will also need a Kotlin plugin to build the project in IntelliJ IDEA.
-To keep the plugin version in sync with the rest of the team and our [Continuous Integration server](https://teamcity.jetbrains.com/project.html?projectId=Kotlin&tab=projectOverview)
-you should install the according to the [instructions below](#plugin-for-contributors).
 
-If you want to have an IntelliJ IDEA installation without the Kotlin plugin which is separate to your default IntelliJ IDEA installation which has the Kotlin
-plugin [see this document](https://devnet.jetbrains.com/docs/DOC-181) which describes how to have multiple IntelliJ IDEA installations using different configurations and plugin directories.
-
-From this root project there are Run/Debug Configurations for running IDEA or the Compiler Tests for example; so if you want to try out the latest and greatest IDEA plugin
-
-* VCS -> Git -> Pull
-* Run IntelliJ IDEA
-* a child IntelliJ IDEA with the Kotlin plugin will then startup
-* you can now open the [kotlin libraries project](https://github.com/JetBrains/kotlin/tree/master/libraries) to then work with the various kotlin libraries etc.
-
-### <a name="pre-built-plugin"></a>Using a pre-built Kotlin IntelliJ IDEA plugin
-
-There are several options for getting Kotlin plugin. A stable version can be obtained as any other plugin for IntelliJ IDEA:
-
-    Preferences -> Plugins -> Install JetBrains plugin... -> Search with "Kotlin" string
-
-The most recent version of the plugin can be downloaded from the
-[IDEA Plugin and Tests CI build](https://teamcity.jetbrains.com/project.html?projectId=project67&tab=projectOverview). When downloading is
-finished you can install it with "Install plugin from disk...":
-
-    Preferences -> Plugins -> Install plugin from disk...
-
-You can now open any Kotlin based projects.
-
-<a name="plugin-for-contributors"></a>
-**Note for contributors**: If you are planning to contribute to Kotlin project you probably want to have locally the same version of plugin that build server is using for building.
+You probably want to have locally the same version of plugin that build server is using for building.
 As this version is constantly moving, the best way to always be updated is to let IntelliJ IDEA notify you when it is time to renew your plugin.
 
-Open
+To keep the plugin version in sync with the rest of the team and our [Continuous Integration server](https://teamcity.jetbrains.com/project.html?projectId=Kotlin&tab=projectOverview)
+you should setup IDEA to update the plugin directly from the build server.
+
+Open:
 
     Preferences -> Plugins -> Browse Repositories -> Manage Repositories...
 
@@ -113,10 +97,22 @@ and add the following URL to your repositories:
 
 Then update the list of plugins in "Browse Repositories", you'll see two versions of Kotlin there, install the one with the higher version number.
 
+If you want to keep an IntelliJ IDEA installation with that bleeding edge Kotlin plugin for working Kotlin project sources only separate to your default IntelliJ IDEA installation with the stable Kotlin
+plugin [see this document](https://intellij-support.jetbrains.com/hc/en-us/articles/207240985-Changing-IDE-default-directories-used-for-config-plugins-and-caches-storage), which describes how to have multiple IntelliJ IDEA installations using different configurations and plugin directories.
+
+### Compiling and running
+
+From this root project there are Run/Debug Configurations for running IDEA or the Compiler Tests for example; so if you want to try out the latest and greatest IDEA plugin
+
+* VCS -> Git -> Pull
+* Run IntelliJ IDEA
+* a child IntelliJ IDEA with the Kotlin plugin will then startup
+* you can now open the [kotlin libraries project](https://github.com/JetBrains/kotlin/tree/master/libraries) to then work with the various kotlin libraries etc.
+
 # Contributing
 
 We love contributions! There's [lots to do on Kotlin](https://youtrack.jetbrains.com/issues/KT) and on the
-[standard library](https://youtrack.jetbrains.com/issues/KT?q=Subtask+of%3A+KT-2554+%23Unresolved) so why not chat with us
+[standard library](https://youtrack.jetbrains.com/issues/KT?q=%23Kotlin%20%23Unresolved%20and%20(links:%20KT-2554,%20KT-4089%20or%20%23Libraries)) so why not chat with us
 about what you're interested in doing? Please join the #kontributors channel in [our Slack chat](http://kotlinslackin.herokuapp.com/)
 and let us know about your plans.
 
@@ -128,8 +124,8 @@ A nice gentle way to contribute would be to review the [standard library docs](h
 and find classes or functions which are not documented very well and submit a patch.
 
 In particular it'd be great if all functions included a nice example of how to use it such as for the
-[`hashMapOf()`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/hash-map-of.html) function.
-This is implemented using the [`@sample`](https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/collections/Maps.kt#L64)
+[`hashMapOf()`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/hash-map-of.html) function.
+This is implemented using the [`@sample`](https://github.com/JetBrains/kotlin/blob/1.1.0/libraries/stdlib/src/kotlin/collections/Maps.kt#L91)
 macro to include code from a test function. The benefits of this approach are twofold; First, the API's documentation is improved via beneficial examples that help new users and second, the code coverage is increased.
 
 Also the [JavaScript translation](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) could really use your help. See the [JavaScript contribution section](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) for more details.
@@ -139,8 +135,8 @@ Also the [JavaScript translation](https://github.com/JetBrains/kotlin/blob/maste
 
 The Kotlin compiler is written in Java and Kotlin (we gradually migrate more and more of it to pure Kotlin). So the easiest way to work on the compiler or IntelliJ IDEA plugin is
 
-* download a clean [IDEA 15 EAP build](https://confluence.jetbrains.com/display/IDEADEV/IDEA+15+EAP)
-* [install the Kotlin plugin](#pre-built-plugin)
+* download a recent [IntelliJ IDEA](https://www.jetbrains.com/idea/?fromMenu#chooseYourEdition), Community edition is enough
+* [install the Kotlin plugin](#installing-plugin)
 * open the [root kotlin project](https://github.com/JetBrains/kotlin) in IDEA (opening the kotlin directory)
 
 You can now run the various Run/Debug Configurations such as
@@ -152,16 +148,19 @@ You can now run the various Run/Debug Configurations such as
 
 ## If you want to work on the Kotlin libraries
 
-* download a clean [IDEA 15 EAP build](https://confluence.jetbrains.com/display/IDEADEV/IDEA+15+EAP)
-* [install the Kotlin plugin](#pre-built-plugin)
+* download a recent [IntelliJ IDEA](https://www.jetbrains.com/idea/?fromMenu#chooseYourEdition), Community edition is enough
+* [install the Kotlin plugin](#installing-plugin)
 * open the [kotlin libraries project](https://github.com/JetBrains/kotlin/tree/master/libraries)
 
 Then build via
 
     cd libraries
+    ./gradlew build install
     mvn install
+    
+> Note: on Windows type `gradlew` without the leading `./`
 
-Some of the code in the standard library is created by generating code from templates. See the [README](https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/ReadMe.md) in the stdlib section for how run the code generator. The existing templates can be used as examples for creating new ones.
+Some of the code in the standard library is created by generating code from templates. See the [README](libraries/stdlib/ReadMe.md) in the stdlib section for how run the code generator. The existing templates can be used as examples for creating new ones.
 
 ## Submitting patches
 

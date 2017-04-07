@@ -6,11 +6,13 @@ and ensure that the public binary API wasn't changed in a way that make this cha
 ## How to run
 
 Compile and run tests. `CasesPublicAPITest` verifies the tool itself, 
-and `RuntimePublicAPITest` dumps the public API of `kotlin-runtime` and `kotlin-stdlib` jars, 
-which must be built beforehand with maven. 
+and `RuntimePublicAPITest` dumps the public API of `kotlin-stdlib`, 
+`kotlin-stdlib-jre7/8` and `kotlin-reflect` jars, 
+which must be built beforehand with gradle. Use `clean assemble` tasks,
+since the incremental compilation currently doesn't produce all the required output.
 
 When substantial changes are made to the public API, it may be convenient to overwrite 
-the entire dump and compare changes later before commiting: pass `-Doverwrite.output=true` 
+the entire dump and compare changes later before committing: pass `-Doverwrite.output=true` 
 property to the test to do so. 
 
 Also you can use shared run configuration "Binary compatibility tests", which also 
