@@ -30,5 +30,6 @@
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="library" name="idea-full" level="project" />
     <orderEntry type="library" name="protobuf" level="project" />
+    <orderEntry type="library" name="javaslang" level="project" />
   </component>
 </module>
