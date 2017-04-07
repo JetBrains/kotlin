@@ -1044,7 +1044,7 @@ internal class IrDeserializer(val context: Context,
         val inlineProto = proto.getExtension(KonanLinkData.inlineIrBody)
         val base64 = inlineProto.encodedIr
         val byteArray = base64Decode(base64)
-        val irProto = KonanIr.IrDeclaration.parseFrom(byteArray)
+        val irProto = KonanIr.IrDeclaration.parseFrom(byteArray, KonanSerializerProtocol.extensionRegistry)
         return deserializeDeclaration(irProto)
     }
 }
