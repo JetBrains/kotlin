@@ -217,7 +217,7 @@ public class FileTreeWalk private constructor(
      * Sets a predicate [function], that is called on any entered directory before its files are visited
      * and before it is visited itself.
      *
-     * If the [function] returns `false` the directory is not entered, and neither it nor its files are not visited.
+     * If the [function] returns `false` the directory is not entered and neither it nor its files are visited.
      */
     public fun onEnter(function: (File) -> Boolean): FileTreeWalk {
         return FileTreeWalk(start, direction, onEnter = function, onLeave = onLeave, onFail = onFail, maxDepth = maxDepth)
