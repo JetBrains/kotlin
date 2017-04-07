@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.common;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.SystemInfo;
 import kotlin.collections.ArraysKt;
 import org.fusesource.jansi.AnsiConsole;
 import org.jetbrains.annotations.NotNull;
@@ -142,7 +141,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
 
         reportUnknownExtraFlags(messageCollector, arguments);
-        reportUnsupportedJavaVersion(messageCollector, arguments);
 
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
 
@@ -332,16 +330,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             collector.report(
                     CompilerMessageSeverity.STRONG_WARNING,
                     "Flag is not supported by this version of the compiler: " + flag,
-                    CompilerMessageLocation.NO_LOCATION
-            );
-        }
-    }
-
-    private void reportUnsupportedJavaVersion(MessageCollector collector, A arguments) {
-        if (!SystemInfo.isJavaVersionAtLeast("1.8") && !arguments.noJavaVersionWarning) {
-            collector.report(
-                    CompilerMessageSeverity.STRONG_WARNING,
-                    "Running the Kotlin compiler under Java 6 or 7 is unsupported and will no longer be possible in a future update.",
                     CompilerMessageLocation.NO_LOCATION
             );
         }

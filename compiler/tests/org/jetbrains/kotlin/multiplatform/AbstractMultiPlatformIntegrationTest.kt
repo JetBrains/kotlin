@@ -84,7 +84,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
     private fun CLICompiler<*>.compile(sources: List<File>, vararg additionalArguments: String): String = buildString {
         val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
                 this@compile,
-                sources.map(File::getAbsolutePath) + listOf("-Xmulti-platform", "-Xskip-java-check") + additionalArguments
+                sources.map(File::getAbsolutePath) + listOf("-Xmulti-platform") + additionalArguments
         )
         appendln("Exit code: $exitCode")
         appendln("Output:")

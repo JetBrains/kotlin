@@ -74,7 +74,6 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace("expected version is " + JvmMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("expected version is " + JsMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("\\", "/")
-                .replaceAll("^.+running the Kotlin compiler under Java 6 or 7 is unsupported and will no longer be possible in a future update\\.\n", "")
                 .replace(KotlinCompilerVersion.VERSION, "$VERSION$");
 
         return normalizedOutputWithoutExitCode + exitCode;
