@@ -26,7 +26,6 @@ import kotlin.TuplesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
@@ -395,13 +394,16 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull KotlinType actualType,
             @NotNull KotlinTypeChecker typeChecker
     ) {
+        // Here: x as? Type <=> x as Type?
+        KotlinType refinedTargetType = KtPsiUtil.isSafeCast(expression) ? TypeUtils.makeNullable(targetType) : targetType;
+
         Collection<KotlinType> possibleTypes = DataFlowAnalyzer.getAllPossibleTypes(expression.getLeft(), actualType, context);
         KotlinType intersectedType = TypeIntersector.intersectTypes(typeChecker, possibleTypes);
         if (intersectedType == null) return false;
 
         return shouldCheckForExactType(expression, context.expectedType)
-               ? isExactTypeCast(intersectedType, targetType)
-               : isUpcast(intersectedType, targetType, typeChecker);
+               ? isExactTypeCast(intersectedType, refinedTargetType)
+               : isUpcast(intersectedType, refinedTargetType, typeChecker);
     }
 
     private static boolean shouldCheckForExactType(KtBinaryExpressionWithTypeRHS expression, KotlinType expectedType) {

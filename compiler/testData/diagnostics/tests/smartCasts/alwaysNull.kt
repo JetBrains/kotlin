@@ -16,7 +16,7 @@ fun String?.gav() {}
 fun bar(s: String?) {
     if (s != null) return
     <!DEBUG_INFO_CONSTANT!>s<!>.gav()
-    <!DEBUG_INFO_CONSTANT!>s<!> as? String
+    <!DEBUG_INFO_CONSTANT!>s<!> <!USELESS_CAST!>as? String<!>
     <!DEBUG_INFO_CONSTANT!>s<!> <!USELESS_CAST!>as String?<!>
     <!ALWAYS_NULL!>s<!> as String
 }

@@ -1,0 +1,4 @@
+package
+
+public fun foo(/*0*/ x: kotlin.Number?): kotlin.Unit
+public fun test(/*0*/ x: kotlin.Int?): kotlin.Unit
