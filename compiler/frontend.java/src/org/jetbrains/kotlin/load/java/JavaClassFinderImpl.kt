@@ -14,97 +14,69 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java;
+package org.jetbrains.kotlin.load.java
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiPackage;
-import com.intellij.psi.search.DelegatingGlobalSearchScope;
-import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.load.java.structure.JavaClass;
-import org.jetbrains.kotlin.load.java.structure.JavaPackage;
-import org.jetbrains.kotlin.load.java.structure.impl.JavaPackageImpl;
-import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer;
-import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade;
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.DelegatingGlobalSearchScope
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.asJava.KtLightClassMarker
+import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.java.structure.impl.JavaPackageImpl
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
+import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
+import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import java.util.Set;
+import javax.annotation.PostConstruct
+import javax.inject.Inject
 
-public class JavaClassFinderImpl implements JavaClassFinder {
-    private Project project;
-    private GlobalSearchScope baseScope;
-    private GlobalSearchScope javaSearchScope;
-    private KotlinJavaPsiFacade javaFacade;
+class JavaClassFinderImpl : JavaClassFinder {
+
+    private lateinit var project: Project
+    private lateinit var baseScope: GlobalSearchScope
+    private lateinit var javaSearchScope: GlobalSearchScope
+    private lateinit var javaFacade: KotlinJavaPsiFacade
 
     @Inject
-    public void setProject(@NotNull Project project) {
-        this.project = project;
+    fun setProject(project: Project) {
+        this.project = project
     }
 
     @Inject
-    public void setScope(@NotNull GlobalSearchScope scope) {
-        this.baseScope = scope;
+    fun setScope(scope: GlobalSearchScope) {
+        this.baseScope = scope
     }
 
-    public class FilterOutKotlinSourceFilesScope extends DelegatingGlobalSearchScope {
-        public FilterOutKotlinSourceFilesScope(@NotNull GlobalSearchScope baseScope) {
-            super(baseScope);
-        }
+    inner class FilterOutKotlinSourceFilesScope(baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
 
-        @Override
-        public boolean contains(@NotNull VirtualFile file) {
-            return myBaseScope.contains(file) && (file.isDirectory() || file.getFileType() != KotlinFileType.INSTANCE);
-        }
+        override fun contains(file: VirtualFile) = myBaseScope.contains(file) && (file.isDirectory || file.fileType !== KotlinFileType.INSTANCE)
 
-        @NotNull
-        public GlobalSearchScope getBase() {
-            return myBaseScope;
-        }
+        val base: GlobalSearchScope = myBaseScope
 
         //NOTE: expected by class finder to be not null
-        @NotNull
-        @Override
-        public Project getProject() {
-            return project;
-        }
+        override fun getProject() = this@JavaClassFinderImpl.project
 
-        @Override
-        public String toString() {
-            return "JCFI: " + myBaseScope;
-        }
+        override fun toString() = "JCFI: $myBaseScope"
+
     }
 
     @PostConstruct
-    public void initialize(@NotNull BindingTrace trace, @NotNull KotlinCodeAnalyzer codeAnalyzer) {
-        javaSearchScope = new FilterOutKotlinSourceFilesScope(baseScope);
-        javaFacade = KotlinJavaPsiFacade.getInstance(project);
-        CodeAnalyzerInitializer.Companion.getInstance(project).initialize(trace, codeAnalyzer.getModuleDescriptor(), codeAnalyzer);
+    fun initialize(trace: BindingTrace, codeAnalyzer: KotlinCodeAnalyzer) {
+        javaSearchScope = FilterOutKotlinSourceFilesScope(baseScope)
+        javaFacade = KotlinJavaPsiFacade.getInstance(project)
+        CodeAnalyzerInitializer.getInstance(project).initialize(trace, codeAnalyzer.moduleDescriptor, codeAnalyzer)
     }
 
-    @Nullable
-    @Override
-    public JavaClass findClass(@NotNull ClassId classId) {
-        return javaFacade.findClass(classId, javaSearchScope);
-    }
 
-    @Nullable
-    @Override
-    public JavaPackage findPackage(@NotNull FqName fqName) {
-        PsiPackage psiPackage = javaFacade.findPackage(fqName.asString(), javaSearchScope);
-        return psiPackage == null ? null : new JavaPackageImpl(psiPackage, javaSearchScope);
-    }
+    override fun findClass(classId: ClassId) = javaFacade.findClass(classId, javaSearchScope)
 
-    @Nullable
-    @Override
-    public Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName) {
-        return javaFacade.knownClassNamesInPackage(packageFqName);
-    }
+    override fun findPackage(fqName: FqName) = javaFacade.findPackage(fqName.asString(), javaSearchScope)?.let { JavaPackageImpl(it, javaSearchScope) }
+
+    override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? = javaFacade.knownClassNamesInPackage(packageFqName)
+
 }
