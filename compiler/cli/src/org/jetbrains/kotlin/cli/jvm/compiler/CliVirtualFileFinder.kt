@@ -21,17 +21,40 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
-import org.jetbrains.kotlin.components.JavacVirtualFileFinder
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
+import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.kotlin.wrappers.trees.computeClassId
 import java.io.InputStream
 
 class CliVirtualFileFinder(
         private val index: JvmDependenciesIndex,
         private val scope: GlobalSearchScope
-) : JavacVirtualFileFinder() {
+) : VirtualFileFinder() {
+
+    override fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass? {
+        if (javaClass !is JavaClassImpl) {
+            return javaClass.computeClassId()?.let(this::findKotlinClass) ?: return null
+        }
+
+        var file = javaClass.psi.containingFile?.virtualFile ?: return null
+
+        if (javaClass.outerClass != null) {
+            // For nested classes we get a file of the containing class, to get the actual class file for A.B.C,
+            // we take the file for A, take its parent directory, then in this directory we look for A$B$C.class
+            file = file.parent!!.findChild(classFileName(javaClass) + ".class").sure { "Virtual file not found for $javaClass" }
+        }
+
+        return KotlinBinaryClassCache.getKotlinBinaryClass(file)
+    }
+
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
             findBinaryClass(classId, classId.relativeClassName.asString().replace('.', '$') + ".class")
 
@@ -56,6 +79,12 @@ class CliVirtualFileFinder(
         val classId = ClassId(packageFqName, Name.special("<builtins-metadata>"))
 
         return findBinaryClass(classId, BuiltInSerializerProtocol.getBuiltInsFileName(packageFqName))?.inputStream
+    }
+
+    private fun classFileName(jClass: JavaClass): String {
+        val simpleName = jClass.name.asString()
+        val outerClass = jClass.outerClass ?: return simpleName
+        return classFileName(outerClass) + "$" + simpleName
     }
 
     private fun findBinaryClass(classId: ClassId, fileName: String): VirtualFile? =
