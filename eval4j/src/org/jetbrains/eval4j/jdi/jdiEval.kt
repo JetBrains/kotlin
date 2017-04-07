@@ -24,9 +24,9 @@ import java.lang.reflect.AccessibleObject
 import com.sun.jdi.Type as jdi_Type
 import com.sun.jdi.Value as jdi_Value
 
-val CLASS = Type.getType(Class::class.java)
-val OBJECT = Type.getType(Any::class.java)
-val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
+private val CLASS = Type.getType(Class::class.java)
+private val OBJECT = Type.getType(Any::class.java)
+private val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
 
 class JDIEval(
         private val vm: VirtualMachine,
@@ -39,7 +39,7 @@ class JDIEval(
             Type.BOOLEAN_TYPE.className to vm.mirrorOf(true).type(),
             Type.BYTE_TYPE.className to vm.mirrorOf(1.toByte()).type(),
             Type.SHORT_TYPE.className to vm.mirrorOf(1.toShort()).type(),
-            Type.INT_TYPE.className to vm.mirrorOf(1.toInt()).type(),
+            Type.INT_TYPE.className to vm.mirrorOf(1).type(),
             Type.CHAR_TYPE.className to vm.mirrorOf('1').type(),
             Type.LONG_TYPE.className to vm.mirrorOf(1L).type(),
             Type.FLOAT_TYPE.className to vm.mirrorOf(1.0f).type(),
@@ -205,16 +205,13 @@ class JDIEval(
 
     private fun findMethod(methodDesc: MethodDescription, _class: ReferenceType = methodDesc.ownerType.asReferenceType()): Method {
         val method = when (_class) {
-            is ClassType -> {
-                val m = _class.concreteMethodByName(methodDesc.name, methodDesc.desc)
-                if (m == null) listOf() else listOf(m)
-            }
-            else -> _class.methodsByName(methodDesc.name, methodDesc.desc)
+            is ClassType ->
+                _class.concreteMethodByName(methodDesc.name, methodDesc.desc)
+            else ->
+                _class.methodsByName(methodDesc.name, methodDesc.desc).firstOrNull()
         }
-        if (method.isEmpty()) {
-            throwBrokenCodeException(NoSuchMethodError("Method not found: $methodDesc"))
-        }
-        return method[0]
+
+        return method ?: throwBrokenCodeException(NoSuchMethodError("Method not found: $methodDesc"))
     }
 
     override fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value {
@@ -404,6 +401,7 @@ class JDIEval(
     }
 }
 
+@Suppress("unused")
 private sealed class JdiOperationResult<T> {
     class Fail<T>(val cause: Exception): JdiOperationResult<T>()
     class OK<T>(val value: T): JdiOperationResult<T>()
