@@ -1,10 +1,4 @@
--injars '<output>/kotlin-reflect-before-proguard.jar'
--outjars '<kotlin-home>/lib/kotlin-reflect.jar'
-
 -dontnote **
-
--libraryjars '<rtjar>'
--libraryjars '<kotlin-home>/lib/kotlin-runtime.jar'
 
 -target 1.6
 -dontoptimize

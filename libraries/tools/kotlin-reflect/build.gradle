@@ -128,7 +128,7 @@ task proguard(type: proguard.gradle.ProGuardTask) {
     libraryjars configurations.proguardDeps.files
     libraryjars rtJar
 
-    configuration "${core}/reflection.jvm/reflection.gradle.pro"
+    configuration "${core}/reflection.jvm/reflection.pro"
 }
 
 
