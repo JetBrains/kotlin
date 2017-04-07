@@ -28,13 +28,12 @@ class JCValueParameter<out T : JCTree.JCVariableDecl>(tree: T,
                                                       treePath: TreePath,
                                                       javac: JavacWrapper) : JCElement<T>(tree, treePath, javac), JavaValueParameter {
 
-    override val annotations
-        get() = tree.annotations().map { JCAnnotation(it, treePath, javac) }
+    override val annotations by lazy { tree.annotations().map { JCAnnotation(it, treePath, javac) } }
 
     override fun findAnnotation(fqName: FqName) = annotations.find { it.classId?.asSingleFqName() == fqName }
 
     override val isDeprecatedInJavaDoc
-        get() = false
+        get() = findAnnotation(FqName("java.lang.Deprecated")) != null
 
     override val name
         get() = Name.identifier(tree.name.toString())

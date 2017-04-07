@@ -28,10 +28,10 @@ abstract class JCMember<out T : JCTree>(tree: T,
                                         override val containingClass: JavaClass,
                                         javac: JavacWrapper) : JCElement<T>(tree, treePath, javac), JavaMember {
 
-    override val isDeprecatedInJavaDoc = false
+    override val isDeprecatedInJavaDoc
+        get() = findAnnotation(FqName("java.lang.Deprecated")) != null
 
-    override val annotations
-        get() = tree.annotations().map { JCAnnotation(it, treePath, javac) }
+    override val annotations by lazy { tree.annotations().map { JCAnnotation(it, treePath, javac) } }
 
     override fun findAnnotation(fqName: FqName) = annotations.firstOrNull { it.classId?.asSingleFqName() == fqName }
 

@@ -24,7 +24,6 @@ import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeInfo
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.wrappers.symbols.JavacClassifierType
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.name.FqName
@@ -32,15 +31,17 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 class JCClass<out T : JCTree.JCClassDecl>(tree: T,
                                           treePath: TreePath,
-                                          javac: JavacWrapper) : JCClassifier<T>(tree, treePath, javac), JavaClass {
+                                          javac: JavacWrapper) : JCElement<T>(tree, treePath, javac), JavaClass {
 
     override val name
         get() = SpecialNames.safeIdentifier(tree.simpleName.toString())
 
-    override val annotations: Collection<JavaAnnotation>
-        get() = tree.annotations().map { JCAnnotation(it, treePath, javac) }
+    override val annotations by lazy { tree.annotations().map { JCAnnotation(it, treePath, javac) } }
 
     override fun findAnnotation(fqName: FqName) = annotations.find { it.classId?.asSingleFqName() == fqName }
+
+    override val isDeprecatedInJavaDoc
+        get() = findAnnotation(FqName("java.lang.Deprecated")) != null
 
     override val isAbstract
         get() = tree.modifiers.isAbstract
