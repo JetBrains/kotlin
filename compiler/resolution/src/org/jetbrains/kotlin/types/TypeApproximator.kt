@@ -19,12 +19,8 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.resolve.calls.components.CommonSupertypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration.IntersectionStrategy.*
-import org.jetbrains.kotlin.types.checker.CaptureStatus.FOR_INCORPORATION
-import org.jetbrains.kotlin.types.checker.CaptureStatus.FROM_EXPRESSION
-import org.jetbrains.kotlin.types.checker.NewCapturedType
-import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
-import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.intersectTypes
+import org.jetbrains.kotlin.types.checker.*
+import org.jetbrains.kotlin.types.checker.CaptureStatus.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isNothing
@@ -64,24 +60,18 @@ open class TypeApproximatorConfiguration {
         override val allFlexible get() = true
     }
 
-    object IncorporationConfiguration : TypeApproximatorConfiguration.AllFlexibleSameValue() {
+    abstract class AbstractCapturedTypesApproximation(val approximatedCapturedStatus: CaptureStatus): TypeApproximatorConfiguration.AllFlexibleSameValue() {
         override val allFlexible get() = true
 
-        // i.e. will be approximated only FOR_INCORPORATION captured types
-        override val capturedType get() = { it: NewCapturedType -> it.captureStatus != FOR_INCORPORATION }
+        // i.e. will be approximated only approximatedCapturedStatus captured types
+        override val capturedType get() = { it: NewCapturedType -> it.captureStatus != approximatedCapturedStatus }
         override val intersection get() = IntersectionStrategy.ALLOWED
         override val typeVariable: (TypeVariableTypeConstructor) -> Boolean get() = { true }
     }
 
-    object CapturedTypesApproximation : TypeApproximatorConfiguration.AllFlexibleSameValue() {
-        override val allFlexible get() = true
-
-        // i.e. will be approximated only FROM_EXPRESSION captured types
-        override val capturedType get() = { it: NewCapturedType -> it.captureStatus != FROM_EXPRESSION }
-        override val intersection get() = IntersectionStrategy.ALLOWED
-        override val typeVariable: (TypeVariableTypeConstructor) -> Boolean get() = { true }
-    }
-
+    object IncorporationConfiguration : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FOR_INCORPORATION)
+    object SubtypeCapturedTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FOR_SUBTYPING)
+    object CapturedTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FROM_EXPRESSION)
 }
 
 class TypeApproximator(private val commonSupertypeCalculator: CommonSupertypeCalculator) {

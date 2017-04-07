@@ -122,7 +122,7 @@ enum class CaptureStatus {
 class NewCapturedType(
         val captureStatus: CaptureStatus,
         override val constructor: NewCapturedTypeConstructor,
-        val lowerType: UnwrappedType?,
+        val lowerType: UnwrappedType?, // todo check lower type for nullable captured types
         override val annotations: Annotations = Annotations.EMPTY,
         override val isMarkedNullable: Boolean = false
 ): SimpleType() {
