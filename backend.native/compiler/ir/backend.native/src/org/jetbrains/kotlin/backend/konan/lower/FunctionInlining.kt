@@ -62,7 +62,13 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         val functionDescriptor = irCall.descriptor as FunctionDescriptor
         if (functionDescriptor.needsInlining) {
             copyWithDescriptors = DeepCopyIrTreeWithDescriptors(currentScope!!, context)
-            return inlineFunction(irCall)                                                   // Return newly created IrInlineBody instead of IrCall.
+            val functionDeclaration = getFunctionDeclaration(irCall)
+            if (functionDeclaration == null) return irCall
+
+            functionDeclaration.transformChildrenVoid(this)                                            // Process recursive inline.
+
+
+            return inlineFunction(irCall, functionDeclaration)                                                   // Return newly created IrInlineBody instead of IrCall.
         }
 
         return irCall
@@ -70,25 +76,16 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
     //-------------------------------------------------------------------------//
 
-    private fun inlineFunction(irCall: IrCall): IrExpression {
+    private fun inlineFunction(irCall: IrCall, functionDeclaration: IrFunction): IrExpression {
 
-        val functionDeclaration = getFunctionDeclaration(irCall)
-        if (functionDeclaration == null) return irCall
 
-        functionDeclaration.transformChildrenVoid(this)                                            // Process recursive inline.
-
-        val parametersOld        = getArguments(irCall, functionDeclaration)                       // Create map call_site_argument -> inline_function_parameter.
-        val evaluatedParameters  = evaluateParameters(parametersOld)
+        val evaluatedParameters  = evaluateParameters(irCall, functionDeclaration)
         val parameterToArgument  = evaluatedParameters.parameters
         val evaluationStatements = evaluatedParameters.statements
 
-        val functionName = functionDeclaration.descriptor.name.toString()
-        val typeArgsMap  = (irCall as IrMemberAccessExpressionBase).typeArguments
-        val copyFunction = copyWithDescriptors!!.copy(functionDeclaration, typeArgsMap, functionName) as IrFunction  // Create copy of original function body.
-
-        val statements   = (copyFunction.body as IrBlockBody).statements
-        val returnType   = copyFunction.descriptor.returnType!!
-        val inlineFunctionBody = IrInlineFunctionBody(
+        val statements   = (functionDeclaration.body as IrBlockBody).statements
+        val returnType   = functionDeclaration.descriptor.returnType!!
+        val inlineFunctionBody1 = IrInlineFunctionBody(
             startOffset = functionDeclaration.startOffset,
             endOffset   = functionDeclaration.endOffset,
             type        = returnType,
@@ -97,50 +94,39 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
             statements  = statements
         )
 
-        val lambdaInliner = LambdaInliner(parameterToArgument)
-        inlineFunctionBody.transformChildrenVoid(lambdaInliner)
+        val functionName = functionDeclaration.descriptor.name.toString()
+        val typeArgsMap  = (irCall as IrMemberAccessExpressionBase).typeArguments
+        val inlineFunctionBody = copyWithDescriptors!!.copy(inlineFunctionBody1, typeArgsMap, functionName) as IrInlineFunctionBody  // Create copy of original function body.
 
         val transformer = ParameterSubstitutor(parameterToArgument)
-        inlineFunctionBody.transformChildrenVoid(transformer)                                       // Replace parameters with expression.
+        inlineFunctionBody.transformChildrenVoid(transformer)                                   // Replace parameters with expression.
         inlineFunctionBody.statements.addAll(0, evaluationStatements)
 
-        return inlineFunctionBody
+        return inlineFunctionBody                                                               // Replace call site with InlineFunctionBody.
     }
 
     //---------------------------------------------------------------------//
 
-    private fun inlineLambda(irCall: IrCall, substituteMap: MutableMap <ValueDescriptor, IrExpression>): IrExpression {
+    private fun inlineLambda(irCall: IrCall, functionDeclaration: IrFunction): IrExpression {
 
-        val dispatchReceiver = irCall.dispatchReceiver as IrGetValue                    //
-        val lambdaArgument = substituteMap[dispatchReceiver.descriptor]                 // Find expression to replace this parameter.
-        if (lambdaArgument == null) return irCall                                       // It is not function parameter - nothing to substitute.
-
-        val dispatchDescriptor = dispatchReceiver.descriptor
-        if (dispatchDescriptor is ValueParameterDescriptor &&
-            dispatchDescriptor.isNoinline) return irCall
-
-        val functionDeclaration = getLambdaFunction(lambdaArgument)
-        if (functionDeclaration == null) return irCall                                       // TODO
-
-        val parametersOld        = getArguments(irCall, functionDeclaration)
-        val evaluatedParameters  = evaluateParameters(parametersOld)
+        val evaluatedParameters  = evaluateParameters(irCall, functionDeclaration)
         val parameterToArgument  = evaluatedParameters.parameters
         val evaluationStatements = evaluatedParameters.statements
 
-        val functionName = functionDeclaration.descriptor.name.toString()
-        val typeArgsMap  = (irCall as IrMemberAccessExpressionBase).typeArguments
-        val copyFunction = copyWithDescriptors!!.copy(functionDeclaration, typeArgsMap, functionName) as IrFunction   // Create copy of the function.
-
-        val statements   = (copyFunction.body as IrBlockBody).statements
-        val returnType   = copyFunction.descriptor.returnType!!
-        val inlineFunctionBody = IrInlineFunctionBody(
+        val statements   = (functionDeclaration.body as IrBlockBody).statements
+        val returnType   = functionDeclaration.descriptor.returnType!!
+        val inlineFunctionBody1 = IrInlineFunctionBody(
             startOffset = functionDeclaration.startOffset,
             endOffset   = functionDeclaration.endOffset,
             type        = returnType,
-            descriptor  = functionDeclaration.descriptor,
+            descriptor  = functionDeclaration.descriptor.original,
             origin      = null,
             statements  = statements
         )
+
+        val functionName = functionDeclaration.descriptor.name.toString()
+        val typeArgsMap  = (irCall as IrMemberAccessExpressionBase).typeArguments
+        val inlineFunctionBody = copyWithDescriptors!!.copy(inlineFunctionBody1, typeArgsMap, functionName) as IrInlineFunctionBody  // Create copy of original function body.
 
         val transformer = ParameterSubstitutor(parameterToArgument)
         inlineFunctionBody.transformChildrenVoid(transformer)                                   // Replace parameters with expression.
@@ -167,22 +153,25 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
             val newArgument = copyWithDescriptors!!.copy(argument, null, "lambda")
             return newArgument as IrExpression
         }
-    }
 
-    //-------------------------------------------------------------------------//
-
-    private inner class LambdaInliner(val substituteMap: MutableMap <ValueDescriptor, IrExpression>): IrElementTransformerVoid() {
-
-        override fun visitElement(element: IrElement) = element.accept(this, null)
-
-        //---------------------------------------------------------------------//
+       //---------------------------------------------------------------------//
 
         override fun visitCall(expression: IrCall): IrExpression {
-            val newExpression = super.visitCall(expression)
-            if (newExpression !is IrCall) return newExpression
+            if (!isLambdaCall(expression)) return super.visitCall(expression)
 
-            if (!isLambdaCall(newExpression)) return newExpression                          // If call it is not lambda call - do nothing.
-            return inlineLambda(newExpression, substituteMap)
+            val dispatchReceiver = expression.dispatchReceiver as IrGetValue                    //
+            val lambdaArgument = substituteMap[dispatchReceiver.descriptor]    // TODO original?             // Find expression to replace this parameter.
+            if (lambdaArgument == null) return super.visitCall(expression)                                       // It is not function parameter - nothing to substitute.
+
+            val dispatchDescriptor = dispatchReceiver.descriptor
+            if (dispatchDescriptor is ValueParameterDescriptor &&
+                dispatchDescriptor.isNoinline) return super.visitCall(expression)
+
+            val functionDeclaration = getLambdaFunction(lambdaArgument)
+            if (functionDeclaration == null) return return super.visitCall(expression)                                       // TODO
+
+            val newExpression = inlineLambda(expression, functionDeclaration)
+            return newExpression.transform(this, null)
         }
     }
 
@@ -286,8 +275,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
     private class EvaluatedParameters(val parameters: MutableMap<ValueDescriptor, IrExpression>, val statements: MutableList<IrStatement>)
 
-    private fun evaluateParameters(parametersOld: MutableList<ArgumentWithValue>): EvaluatedParameters {
+    private fun evaluateParameters(irCall: IrCall, functionDeclaration: IrFunction): EvaluatedParameters {
 
+        val parametersOld = getArguments(irCall, functionDeclaration)                       // Create map call_site_argument -> inline_function_parameter.
         val parametersNew = mutableMapOf<ValueDescriptor, IrExpression> ()
         val statements = mutableListOf<IrStatement>()
         parametersOld.forEach {
