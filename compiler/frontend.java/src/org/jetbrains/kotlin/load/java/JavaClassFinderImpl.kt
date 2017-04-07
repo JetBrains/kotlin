@@ -16,64 +16,24 @@
 
 package org.jetbrains.kotlin.load.java
 
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.search.DelegatingGlobalSearchScope
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.asJava.KtLightClassMarker
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPackageImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 
-import javax.annotation.PostConstruct
-import javax.inject.Inject
+class JavaClassFinderImpl : AbstractJavaClassFinder() {
 
-class JavaClassFinderImpl : JavaClassFinder {
-
-    private lateinit var project: Project
-    private lateinit var baseScope: GlobalSearchScope
-    private lateinit var javaSearchScope: GlobalSearchScope
     private lateinit var javaFacade: KotlinJavaPsiFacade
 
-    @Inject
-    fun setProject(project: Project) {
-        this.project = project
-    }
-
-    @Inject
-    fun setScope(scope: GlobalSearchScope) {
-        this.baseScope = scope
-    }
-
-    inner class FilterOutKotlinSourceFilesScope(baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
-
-        override fun contains(file: VirtualFile) = myBaseScope.contains(file) && (file.isDirectory || file.fileType !== KotlinFileType.INSTANCE)
-
-        val base: GlobalSearchScope = myBaseScope
-
-        //NOTE: expected by class finder to be not null
-        override fun getProject() = this@JavaClassFinderImpl.project
-
-        override fun toString() = "JCFI: $myBaseScope"
-
-    }
-
-    @PostConstruct
-    fun initialize(trace: BindingTrace, codeAnalyzer: KotlinCodeAnalyzer) {
-        javaSearchScope = FilterOutKotlinSourceFilesScope(baseScope)
+    override fun initialize(trace: BindingTrace, codeAnalyzer: KotlinCodeAnalyzer) {
         javaFacade = KotlinJavaPsiFacade.getInstance(project)
-        CodeAnalyzerInitializer.getInstance(project).initialize(trace, codeAnalyzer.moduleDescriptor, codeAnalyzer)
+        super.initialize(trace, codeAnalyzer)
     }
 
-
-    override fun findClass(classId: ClassId) = javaFacade.findClass(classId, javaSearchScope)
+    override fun findClass(classId: ClassId): JavaClass? = javaFacade.findClass(classId, javaSearchScope)
 
     override fun findPackage(fqName: FqName) = javaFacade.findPackage(fqName.asString(), javaSearchScope)?.let { JavaPackageImpl(it, javaSearchScope) }
 
