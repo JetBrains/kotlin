@@ -30,19 +30,16 @@
                 <version>1.7</version>
                 <executions>
                     <execution>
-                        <id>attach-artifacts</id>
-                        <phase>compile</phase>
+                        <id>add-sources</id>
+                        <phase>prepare-package</phase>
                         <goals>
-                            <goal>attach-artifact</goal>
+                            <goal>add-source</goal>
                         </goals>
                         <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <file>${kotlin-dist}/kotlin-daemon-client-sources.jar</file>
-                                    <type>jar</type>
-                                    <classifier>sources</classifier>
-                                </artifact>
-                            </artifacts>
+                            <sources>
+                                <source>${basedir}/../../../compiler/daemon/daemon-common/src</source>
+                                <source>${basedir}/../../../compiler/daemon/daemon-client/src</source>
+                            </sources>
                         </configuration>
                     </execution>
 
