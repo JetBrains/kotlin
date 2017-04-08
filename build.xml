@@ -781,20 +781,6 @@
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
-
-        <jar jarfile="${output}/kotlin-daemon-client-sources.jar">
-            <fileset dir="compiler/daemon/daemon-common/src"/>
-            <fileset dir="compiler/daemon/daemon-client/src"/>
-            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.daemon.client.sources}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-            </manifest>
-        </jar>
     </target>
 
     <target name="compiler-client-embeddable">
@@ -829,20 +815,6 @@
                 <attribute name="Class-Path" value="kotlin-stdlib.jar"/>
             </manifest>
         </jarjar>
-
-        <jar jarfile="${output}/kotlin-compiler-client-embeddable-sources.jar">
-            <fileset dir="compiler/cli/cli-common/src"/>
-            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-            <zipfileset src="${output}/kotlin-daemon-client-sources.jar"/>
-
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler.client.embeddable.sources}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-            </manifest>
-        </jar>
     </target>
 
     <target name="android-extensions-compiler">
