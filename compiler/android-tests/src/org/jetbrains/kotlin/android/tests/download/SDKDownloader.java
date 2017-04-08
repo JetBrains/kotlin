@@ -54,7 +54,7 @@ public class SDKDownloader {
         platformToolsZipPath = pathManager.getRootForDownload() + "/platform-tools.zip";
         skdToolsZipPath = pathManager.getRootForDownload() + "/tools.zip";
         buildToolsZipPath = pathManager.getRootForDownload() + "/build-tools.zip";
-        gradleZipPath = pathManager.getRootForDownload() + "/gradle.zip";
+        gradleZipPath = pathManager.getRootForDownload() + "/gradle" + GRADLE_VERSION + ".zip";
     }
 
     public void downloadPlatform() {

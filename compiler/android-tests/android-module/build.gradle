@@ -64,10 +64,25 @@ android {
 
     dexOptions {
         dexInProcess false
-        javaMaxHeapSize "700m"
+        javaMaxHeapSize "300m"
         //default is 4 and Total Memory = maxProcessCount * javaMaxHeapSize
-        maxProcessCount 2
+        maxProcessCount 1
+        additionalParameters "--debug"
     }
+}
+
+task jarTestFolders() {
+    println "Jar folders..."
+    new File("${projectDir}/libs/").listFiles().each { File file ->
+        if (file.isDirectory()) {
+            println "Jar '${file.name}' folder..."
+            ant.jar(basedir: "libs/${file.name}/", destfile: "libs/" +  file.name  + ".jar")
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.dependsOn jarTestFolders
 }
 
 dependencies {

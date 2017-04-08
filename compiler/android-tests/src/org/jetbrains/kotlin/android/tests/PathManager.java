@@ -52,8 +52,8 @@ public class PathManager {
         return getAndroidSdkRoot() + "/build-tools";
     }
 
-    public String getOutputForCompiledFiles() {
-        return tmpFolder + "/libs/codegen-test-output";
+    public String getOutputForCompiledFiles(int index) {
+        return tmpFolder + "/libs/libtest" + index;
     }
 
     public String getLibsFolderInAndroidTestedModuleTmpFolder() {
@@ -82,10 +82,6 @@ public class PathManager {
 
     public String getRootForDownload() {
         return getDependenciesRoot() + "/download";
-    }
-
-    public String getAntBinDirectory() {
-        return rootFolder + "/dependencies/ant-1.8/bin";
     }
 
     public String getAndroidModuleRoot() {

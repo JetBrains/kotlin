@@ -46,7 +46,9 @@ public class GradleRunner {
 
     public void build() {
         System.out.println("Building gradle project...");
-        RunResult result = RunUtils.execute(generateCommandLine("build"));
+        GeneralCommandLine build = generateCommandLine("build");
+        build.addParameter("--stacktrace");
+        RunResult result = RunUtils.execute(build);
         OutputUtils.checkResult(result);
     }
 

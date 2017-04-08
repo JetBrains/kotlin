@@ -20,7 +20,6 @@ import com.intellij.util.PlatformUtils;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.android.tests.ant.AntRunner;
 import org.jetbrains.kotlin.android.tests.download.SDKDownloader;
 import org.jetbrains.kotlin.android.tests.emulator.Emulator;
 import org.jetbrains.kotlin.android.tests.gradle.GradleRunner;
@@ -83,8 +82,6 @@ public class CodegenTestsOnAndroidRunner {
         downloader.unzipAll();
         PermissionManager.setPermissions(pathManager);
 
-        AntRunner antRunner = new AntRunner(pathManager);
-        antRunner.packLibraries();
         Emulator emulator = new Emulator(pathManager, Emulator.ARM);
         GradleRunner gradleRunner = new GradleRunner(pathManager);
         gradleRunner.clean();

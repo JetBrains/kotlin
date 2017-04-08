@@ -55,6 +55,7 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
     private static final String generatorName = "CodegenTestsOnAndroidGenerator";
 
     private static int MODULE_INDEX = 1;
+    private int WRITED_FILES_COUNT = 0;
 
     private final List<String> generatedTestNames = Lists.newArrayList();
 
@@ -191,10 +192,15 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
         private void writeFiles(List<KtFile> filesToCompile) {
             if (filesToCompile.isEmpty()) return;
 
+            //1000 files per folder, each folder would be jared by build.gradle script
+            // We can't create one big jar with all test cause dex has problem with memory on teamcity
+            WRITED_FILES_COUNT += filesToCompile.size();
+            File outputDir = new File(pathManager.getOutputForCompiledFiles(WRITED_FILES_COUNT / 1000));
+
             System.out.println("Generating " + filesToCompile.size() + " files" +
                                (inheritMultifileParts
                                 ? " (JVM.INHERIT_MULTIFILE_PARTS)"
-                                : isFullJdkAndRuntime ? " (full jdk and runtime)" : "") + "...");
+                                : isFullJdkAndRuntime ? " (full jdk and runtime)" : "") + " into " + outputDir.getName() + "...");
             OutputFileCollection outputFiles;
             try {
                 outputFiles = GenerationUtils.compileFiles(filesToCompile, environment).getFactory();
@@ -203,7 +209,6 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
                 throw new RuntimeException(e);
             }
 
-            File outputDir = new File(pathManager.getOutputForCompiledFiles());
             if (!outputDir.exists()) {
                 outputDir.mkdirs();
             }
