@@ -9,7 +9,7 @@
 
     <property name="bootstrap.home" value="${basedir}/dependencies/bootstrap-compiler"/>
     <property name="bootstrap.compiler.home" value="${bootstrap.home}/Kotlin/kotlinc"/>
-    <property name="bootstrap.runtime" value="${bootstrap.compiler.home}/lib/kotlin-runtime.jar"/>
+    <property name="bootstrap.runtime" value="${bootstrap.compiler.home}/lib/kotlin-stdlib.jar"/>
     <property name="bootstrap.reflect" value="${bootstrap.compiler.home}/lib/kotlin-reflect.jar"/>
     <property name="bootstrap.script.runtime" value="${bootstrap.compiler.home}/lib/kotlin-script-runtime.jar"/>
     <property name="bootstrap.kotlin.test" value="${bootstrap.compiler.home}/lib/kotlin-test.jar" />
@@ -36,16 +36,16 @@
 
     <!--
     The compiler produced on the first step of the build (Bootstrap No Tests) is only guaranteed to work against the OLD runtime
-    located in dependencies/bootstrap-compiler/.../kotlin-runtime.jar, because the newly built compiler is just a Kotlin application,
+    located in dependencies/bootstrap-compiler/.../kotlin-stdlib.jar, because the newly built compiler is just a Kotlin application,
     compiled by the old compiler with the old runtime in classpath. If you advance the ABI version, the newly built compiler will NOT work
     against the runtime it will produce on its own because they have different ABI versions.
-    So on the first step of bootstrap we copy that runtime to kotlin-runtime-internal-bootstrap.jar (see 'prepare-dist' target) and change
+    So on the first step of bootstrap we copy that runtime to kotlin-stdlib-internal-bootstrap.jar (see 'prepare-dist' target) and change
     the compiler classpath accordingly. On the second step this is believed to be not required, because there are
     little to no differences between the new and the newest runtime.
     -->
     <condition property="compiler.manifest.class.path"
-               value="kotlin-runtime-internal-bootstrap.jar kotlin-reflect-internal-bootstrap.jar kotlin-script-runtime-internal-bootstrap.jar"
-               else="kotlin-runtime.jar kotlin-reflect.jar kotlin-script-runtime.jar">
+               value="kotlin-stdlib-internal-bootstrap.jar kotlin-reflect-internal-bootstrap.jar kotlin-script-runtime-internal-bootstrap.jar"
+               else="kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar">
         <istrue value="${bootstrap.or.local.build}"/>
     </condition>
 
@@ -187,18 +187,18 @@
         <chmod dir="${kotlin-home}/bin" excludes="**/*.bat" perm="755"/>
 
         <sequential if:true="${bootstrap.or.local.build}">
-            <copy file="${bootstrap.runtime}" tofile="${kotlin-home}/lib/kotlin-runtime-internal-bootstrap.jar"/>
+            <copy file="${bootstrap.runtime}" tofile="${kotlin-home}/lib/kotlin-stdlib-internal-bootstrap.jar"/>
             <copy file="${bootstrap.reflect}" tofile="${kotlin-home}/lib/kotlin-reflect-internal-bootstrap.jar"/>
             <copy file="${bootstrap.script.runtime}" tofile="${kotlin-home}/lib/kotlin-script-runtime-internal-bootstrap.jar"/>
             <copy file="${bootstrap.kotlin.test}" tofile="${kotlin-home}/lib/kotlin-test-internal-bootstrap.jar" failonerror="false"/>
             <jar destfile="${kotlin-home}/lib/kotlin-reflect-internal-bootstrap.jar" update="true">
                 <manifest>
-                    <attribute name="Class-Path" value="kotlin-runtime-internal-bootstrap.jar"/>
+                    <attribute name="Class-Path" value="kotlin-stdlib-internal-bootstrap.jar"/>
                 </manifest>
             </jar>
             <jar destfile="${kotlin-home}/lib/kotlin-test-internal-bootstrap.jar" update="true">
                 <manifest>
-                    <attribute name="Class-Path" value="kotlin-runtime-internal-bootstrap.jar"/>
+                    <attribute name="Class-Path" value="kotlin-stdlib-internal-bootstrap.jar"/>
                 </manifest>
             </jar>
         </sequential>
@@ -293,7 +293,7 @@
         </kotlinc>
 
         <local name="runtime.jar"/>
-        <condition property="runtime.jar" value="kotlin-runtime-internal-bootstrap.jar" else="kotlin-runtime.jar">
+        <condition property="runtime.jar" value="kotlin-stdlib-internal-bootstrap.jar" else="kotlin-stdlib.jar">
             <istrue value="${bootstrap.or.local.build}"/>
         </condition>
 
