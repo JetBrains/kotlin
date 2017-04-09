@@ -4,6 +4,7 @@
 // ACTION: Convert to block body
 // ACTION: Move to companion object
 // ACTION: Specify return type explicitly
+// ACTION: Make open
 
 interface Inter {
     fun something(): String
