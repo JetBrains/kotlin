@@ -821,8 +821,9 @@ class StubGenerator(
                 } else {
                     "nativeNullPtr"
                 }
+                val fixedArguments = paramNames.joinToString(", ") { it.asSimpleName() }
                 out("callWithVarargs(${func.kotlinExternalName}(), $resultPtr, $returnTypeKind, " +
-                        "arrayOf(${paramNames.joinToString()}), variadicArguments, memScope)")
+                        "arrayOf($fixedArguments), variadicArguments, memScope)")
 
                 if (!func.returnsVoid()) {
                     out("resultVar.value")
