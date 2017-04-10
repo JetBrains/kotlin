@@ -49,6 +49,7 @@ import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.psi.FileContextProvider
 import com.intellij.psi.PsiElementFinder
+import com.intellij.psi.PsiManager
 import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.augment.TypeAnnotationModifier
 import com.intellij.psi.compiled.ClassFileDecompilers
@@ -191,7 +192,7 @@ class KotlinCoreEnvironment private constructor(
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
-        classpathRootsResolver = ClasspathRootsResolver(messageCollector, this::contentRootToVirtualFile)
+        classpathRootsResolver = ClasspathRootsResolver(PsiManager.getInstance(project), messageCollector, this::contentRootToVirtualFile)
 
         initialRoots = classpathRootsResolver.convertClasspathRoots(configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS))
 

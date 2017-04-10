@@ -17,5 +17,5 @@
 package org.jetbrains.kotlin.resolve.jvm.modules
 
 interface JavaModuleFinder {
-    fun findModule(name: String): JavaModuleInfo?
+    fun findModule(name: String): JavaModule?
 }

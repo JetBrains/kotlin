@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.resolve.jvm.modules
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiJavaModule
+import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.compactIfPossible
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -39,6 +41,18 @@ class JavaModuleInfo(
             "Module $moduleName (${requires.size} requires, ${exports.size} exports)"
 
     companion object {
+        fun create(psiJavaModule: PsiJavaModule): JavaModuleInfo {
+            return JavaModuleInfo(
+                    psiJavaModule.name,
+                    psiJavaModule.requires.map { statement ->
+                        JavaModuleInfo.Requires(statement.moduleName!!, statement.hasModifierProperty(PsiModifier.TRANSITIVE))
+                    },
+                    psiJavaModule.exports.map { statement ->
+                        JavaModuleInfo.Exports(FqName(statement.packageName!!), statement.moduleNames)
+                    }
+            )
+        }
+
         fun read(file: VirtualFile): JavaModuleInfo? {
             val contents = try { file.contentsToByteArray() } catch (e: IOException) { return null }
 

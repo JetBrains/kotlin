@@ -19,9 +19,13 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiJavaModule
+import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
@@ -30,10 +34,12 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.config.ContentRoot
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 
 internal class ClasspathRootsResolver(
+        private val psiManager: PsiManager,
         private val messageCollector: MessageCollector?,
         private val contentRootToVirtualFile: (JvmContentRoot) -> VirtualFile?
 ) {
@@ -43,18 +49,26 @@ internal class ClasspathRootsResolver(
     fun convertClasspathRoots(contentRoots: Iterable<ContentRoot>): List<JavaRoot> {
         val result = mutableListOf<JavaRoot>()
 
+        val modules = ArrayList<JavaModule>()
+
         for (contentRoot in contentRoots) {
             if (contentRoot !is JvmContentRoot) continue
             val root = contentRootToVirtualFile(contentRoot) ?: continue
 
             when (contentRoot) {
                 is JavaSourceRoot -> {
-                    result += JavaRoot(root, JavaRoot.RootType.SOURCE, contentRoot.packagePrefix?.let { prefix ->
-                        if (isValidJavaFqName(prefix)) FqName(prefix)
-                        else null.also {
-                            report(STRONG_WARNING, "Invalid package prefix name is ignored: $prefix")
-                        }
-                    })
+                    val modularRoot = modularSourceRoot(root)
+                    if (modularRoot != null) {
+                        modules += modularRoot
+                    }
+                    else {
+                        result += JavaRoot(root, JavaRoot.RootType.SOURCE, contentRoot.packagePrefix?.let { prefix ->
+                            if (isValidJavaFqName(prefix)) FqName(prefix)
+                            else null.also {
+                                report(STRONG_WARNING, "Invalid package prefix name is ignored: $prefix")
+                            }
+                        })
+                    }
                 }
                 is JvmClasspathRoot -> {
                     result += JavaRoot(root, JavaRoot.RootType.BINARY)
@@ -63,43 +77,78 @@ internal class ClasspathRootsResolver(
             }
         }
 
-        addModularRoots(result)
+        addModularRoots(modules, result)
 
         return result
     }
 
-    private fun addModularRoots(result: MutableList<JavaRoot>) {
-        val jrtFileSystem = javaModuleFinder.jrtFileSystem ?: return
+    private fun modularSourceRoot(root: VirtualFile): JavaModule.Explicit? {
+        val moduleInfoFile =
+                when {
+                    root.isDirectory -> root.findChild(PsiJavaModule.MODULE_INFO_FILE)
+                    root.name == PsiJavaModule.MODULE_INFO_FILE -> root
+                    else -> null
+                } ?: return null
 
-        val rootModules = computeRootModules()
-        val allDependencies = javaModuleGraph.getAllDependencies(rootModules).also { modules ->
-            report(LOGGING, "Loading modules: $modules")
+        val psiFile = psiManager.findFile(moduleInfoFile) ?: return null
+        val psiJavaModule = psiFile.children.singleOrNull { it is PsiJavaModule } as? PsiJavaModule ?: return null
+        return JavaModule.Explicit(JavaModuleInfo.create(psiJavaModule), root, moduleInfoFile, isBinary = false)
+    }
+
+    private fun addModularRoots(modules: List<JavaModule>, result: MutableList<JavaRoot>) {
+        val sourceModules = modules.filterIsInstance<JavaModule.Explicit>().filterNot(JavaModule::isBinary)
+        if (sourceModules.size > 1) {
+            for (module in sourceModules) {
+                report(ERROR, "Too many source module declarations found", module.moduleInfoFile)
+            }
+            return
+        }
+
+        for (module in modules) {
+            // TODO: report a diagnostic if a module with this name was already added
+            javaModuleFinder.addUserModule(module)
+        }
+
+        if (javaModuleFinder.allObservableModules.none()) return
+
+        val rootModules =
+                if (sourceModules.isNotEmpty()) {
+                    // TODO: support an option similar to --add-modules
+                    listOf(sourceModules.single().name)
+                }
+                else computeDefaultRootModules() // TODO: + everything from module path
+
+        // TODO: if at least one automatic module is added, add all automatic modules as per java.lang.module javadoc
+        val allDependencies = javaModuleGraph.getAllDependencies(rootModules).also { loadedModules ->
+            report(LOGGING, "Loading modules: $loadedModules")
         }
 
         for (moduleName in allDependencies) {
-            // TODO: support modules not only from Java runtime image, but from a separate module path
-            val root = jrtFileSystem.findFileByPath("/modules/$moduleName")
-            if (root == null) {
+            val module = javaModuleFinder.findModule(moduleName)
+            if (module == null) {
                 report(ERROR, "Module $moduleName cannot be found in the module graph")
             }
             else {
-                result.add(JavaRoot(root, JavaRoot.RootType.BINARY))
+                result.add(JavaRoot(
+                        module.moduleRoot,
+                        if (module.isBinary) JavaRoot.RootType.BINARY else JavaRoot.RootType.SOURCE
+                ))
             }
         }
     }
 
     // See http://openjdk.java.net/jeps/261
-    private fun computeRootModules(): List<String> {
+    private fun computeDefaultRootModules(): List<String> {
         val result = arrayListOf<String>()
 
-        val systemModules = javaModuleFinder.computeAllSystemModules()
+        val systemModules = javaModuleFinder.systemModules.associateBy(JavaModule::name)
         val javaSeExists = "java.se" in systemModules
         if (javaSeExists) {
             // The java.se module is a root, if it exists.
             result.add("java.se")
         }
 
-        fun JavaModuleInfo.exportsAtLeastOnePackageUnqualified(): Boolean = exports.any { it.toModules.isEmpty() }
+        fun JavaModule.Explicit.exportsAtLeastOnePackageUnqualified(): Boolean = moduleInfo.exports.any { it.toModules.isEmpty() }
 
         if (!javaSeExists) {
             // If it does not exist then every java.* module on the upgrade module path or among the system modules
@@ -122,10 +171,13 @@ internal class ClasspathRootsResolver(
         return result
     }
 
-    private fun report(severity: CompilerMessageSeverity, message: String) {
+    private fun report(severity: CompilerMessageSeverity, message: String, file: VirtualFile? = null) {
         if (messageCollector == null) {
-            throw IllegalStateException("$severity: $message (no MessageCollector configured)")
+            throw IllegalStateException("${if (file != null) file.path + ":" else ""}$severity: $message (no MessageCollector configured)")
         }
-        messageCollector.report(severity, message)
+        messageCollector.report(
+                severity, message,
+                if (file == null) null else CompilerMessageLocation.create(MessageUtil.virtualFileToPath(file))
+        )
     }
 }
