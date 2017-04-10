@@ -14,75 +14,104 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jvm.compiler;
+package org.jetbrains.kotlin.jvm.compiler
 
-import kotlin.Unit;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
-import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy;
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
-import org.jetbrains.kotlin.test.TestJdkKind;
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
-import org.junit.Assert;
+import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.renderer.*
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.test.TestJdkKind
+import org.junit.Assert
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.annotation.Retention;
-import java.util.Collections;
+import java.io.File
+import java.io.IOException
+import java.lang.annotation.Retention
 
-import static org.jetbrains.kotlin.test.KotlinTestUtils.*;
-import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile;
+import org.jetbrains.kotlin.test.KotlinTestUtils.*
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
 
-@SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors", "JUnitTestCaseWithNoTests"})
-public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithTmpdir {
-    // Do not render parameter names because there are test cases where classes inherit from JDK collections,
-    // and some versions of JDK have debug information in the class files (including parameter names), and some don't
-    private static final RecursiveDescriptorComparator.Configuration CONFIGURATION =
-            AbstractLoadJavaTest.COMPARATOR_CONFIGURATION.withRenderer(
-                    DescriptorRenderer.Companion.withOptions(
-                            options -> {
-                                options.setWithDefinedIn(false);
-                                options.setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.NONE);
-                                options.setVerbose(true);
-                                options.setAnnotationArgumentsRenderingPolicy(AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY);
-                                options.setExcludedAnnotationClasses(Collections.singleton(new FqName(Retention.class.getName())));
-                                options.setModifiers(DescriptorRendererModifier.ALL);
-                                return Unit.INSTANCE;
-                            }
-                    )
-            );
+abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
 
-    protected void doTest(String ktFilePath) throws IOException {
-        Assert.assertTrue(ktFilePath.endsWith(".kt"));
-        File ktFile = new File(ktFilePath);
-        File javaFile = new File(ktFilePath.replaceFirst("\\.kt$", ".java"));
-        File javaErrorFile = new File(ktFilePath.replaceFirst("\\.kt$", ".javaerr.txt"));
+    @Throws(IOException::class)
+    protected fun doTest(ktFilePath: String) {
+        Assert.assertTrue(ktFilePath.endsWith(".kt"))
+        val ktFile = File(ktFilePath)
+        val javaFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".java"))
 
-        File out = new File(tmpdir, "out");
-        boolean compiledSuccessfully =
-                compileKotlinWithJava(Collections.singletonList(javaFile), Collections.singletonList(ktFile),
-                                      out, getTestRootDisposable(), javaErrorFile);
-        if (!compiledSuccessfully) return;
+        val javaErrorFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".javaerr.txt"))
 
-        KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
-                getTestRootDisposable(),
+        val useJavac = true
+
+        val out = File(tmpdir, "out")
+        val compiledSuccessfully = compileKotlinWithJava(listOf(javaFile),
+                                                         listOf(ktFile),
+                                                         out, testRootDisposable, javaErrorFile,
+                                                         useJavac)
+        if (!compiledSuccessfully) return
+
+        val environment = KotlinCoreEnvironment.createForTests(
+                testRootDisposable,
                 newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, getAnnotationsJar(), out),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
-        );
+        )
 
-        AnalysisResult analysisResult = JvmResolveUtil.analyze(environment);
-        PackageViewDescriptor packageView = analysisResult.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
-        assertFalse("Nothing found in package " + LoadDescriptorUtil.TEST_PACKAGE_FQNAME, packageView.isEmpty());
+        environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, useJavac)
+        environment.registerJavac(emptyList<File>(), out)
 
-        File expectedFile = new File(ktFilePath.replaceFirst("\\.kt$", ".txt"));
-        validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile);
+        val analysisResult = JvmResolveUtil.analyze(environment)
+        val packageView = analysisResult.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
+        assertFalse("Nothing found in package ${LoadDescriptorUtil.TEST_PACKAGE_FQNAME}", packageView.isEmpty())
+
+        val expectedFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".txt"))
+        validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile)
+    }
+
+    @Throws(IOException::class)
+    fun compileKotlinWithJava(
+            javaFiles: List<File>,
+            ktFiles: List<File>,
+            outDir: File,
+            disposable: Disposable,
+            javaErrorFile: File?,
+            useJavac: Boolean
+    ): Boolean {
+        if (!useJavac) {
+            return KotlinTestUtils.compileKotlinWithJava(javaFiles, ktFiles, outDir, disposable, javaErrorFile)
+        }
+
+        val environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable)
+        environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, useJavac)
+        environment.registerJavac(javaFiles, outDir)
+        if (!ktFiles.isEmpty()) {
+            LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment)
+        }
+        else {
+            val mkdirs = outDir.mkdirs()
+            assert(mkdirs) { "Not created: $outDir" }
+        }
+
+        return JavacWrapper.getInstance(environment.project).use(JavacWrapper::compile)
+    }
+
+    companion object {
+        // Do not render parameter names because there are test cases where classes inherit from JDK collections,
+        // and some versions of JDK have debug information in the class files (including parameter names), and some don't
+        private val CONFIGURATION = AbstractLoadJavaTest.COMPARATOR_CONFIGURATION.withRenderer(
+                DescriptorRenderer.withOptions {
+                    withDefinedIn = false
+                    parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
+                    verbose = true
+                    annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
+                    excludedAnnotationClasses = setOf(FqName(Retention::class.java.name))
+                    modifiers = DescriptorRendererModifier.ALL
+                }
+        )
     }
 }
