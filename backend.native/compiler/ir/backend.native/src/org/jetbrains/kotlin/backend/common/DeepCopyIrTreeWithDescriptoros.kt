@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -53,9 +52,9 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
 
     //-------------------------------------------------------------------------//
 
-    fun copy(irElement: IrElement, typeArgumentsMap: Map <TypeParameterDescriptor, KotlinType>?): IrElement {
+    fun copy(irElement: IrElement, typeSubstitutor: TypeSubstitutor?): IrElement {
 
-        typeSubstitutor = createTypeSubstitutor(typeArgumentsMap)
+        this.typeSubstitutor = typeSubstitutor
         descriptorSubstituteMap.clear()
         irElement.acceptChildrenVoid(DescriptorCollector())
         // Transform calls to object that might be returned from inline function call.
@@ -594,18 +593,6 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
             typeParameterDescriptor to newTypeArgument
         }
         return newTypeArguments
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun createTypeSubstitutor(typeArgumentsMap: Map <TypeParameterDescriptor, KotlinType>?): TypeSubstitutor? {
-
-        if (typeArgumentsMap == null) return null
-        val substitutionContext = typeArgumentsMap.entries.associate {
-            (typeParameter, typeArgument) ->
-            typeParameter.typeConstructor to TypeProjectionImpl(typeArgument)
-        }
-        return TypeSubstitutor.create(substitutionContext)
     }
 }
 

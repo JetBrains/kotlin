@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.DeepCopyIrTreeWithDescriptors
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
@@ -39,6 +40,8 @@ import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
 
 //-----------------------------------------------------------------------------//
 
@@ -61,12 +64,16 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         val irCall = super.visitCall(expression) as IrCall
         val functionDescriptor = irCall.descriptor as FunctionDescriptor
         if (functionDescriptor.needsInlining) {
-            copyIrElement = DeepCopyIrTreeWithDescriptors(currentScope!!, context)
             val functionDeclaration = getFunctionDeclaration(irCall)
-            if (functionDeclaration == null) return irCall
+            if (functionDeclaration == null) {
+                val message = "Failed to obtain inline function declaration"
+                context.reportWarning(message, currentFile, irCall)
+                return irCall
+            }
 
-            functionDeclaration.transformChildrenVoid(this)                                            // Process recursive inline.
-            return inlineFunction(irCall, functionDeclaration)                                                   // Return newly created IrInlineBody instead of IrCall.
+            copyIrElement = DeepCopyIrTreeWithDescriptors(currentScope!!, context)          // Create DeepCopy for current scope.
+            functionDeclaration.transformChildrenVoid(this)                                 // Process recursive inline.
+            return inlineFunction(irCall, functionDeclaration)                              // Return newly created IrInlineBody instead of IrCall.
         }
 
         return irCall
@@ -75,19 +82,17 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
     //-------------------------------------------------------------------------//
 
     private fun inlineFunction(irCall: IrCall, functionDeclaration: IrFunction): IrExpression {
+        val parameterEvaluationResult = evaluateParameters(irCall, functionDeclaration)     // Evaluate expressions passed as arguments.
+        val parameterSubstituteMap    = parameterEvaluationResult.parameterSubstituteMap    // As a result we get parameter -> argument map
+        val evaluationStatements      = parameterEvaluationResult.evaluationStatements      // And list of evaluation statements
 
-        val evaluatedParameters  = evaluateParameters(irCall, functionDeclaration)
-        val parameterSubstituteMap = evaluatedParameters.parameters
-        val evaluationStatements = evaluatedParameters.statements
-
-        val typeArgumentsMap = (irCall as IrMemberAccessExpressionBase).typeArguments
-        val copyFunctionDeclaration = copyIrElement!!.copy(                                  // Create copy of original function.
-            functionDeclaration,
-            typeArgumentsMap
+        val copyFunctionDeclaration = copyIrElement!!.copy(                                 // Create copy of original function.
+            irElement       = functionDeclaration,                                          // Descriptors will be copied too.
+            typeSubstitutor = createTypeSubstitutor(irCall)                                 // Type parameters will be substituted with type arguments.
         ) as IrFunction
 
-        val statements   = (copyFunctionDeclaration.body as IrBlockBody).statements
-        val returnType   = copyFunctionDeclaration.descriptor.returnType!!
+        val statements = (copyFunctionDeclaration.body as IrBlockBody).statements
+        val returnType = copyFunctionDeclaration.descriptor.returnType!!
         val inlineFunctionBody = IrInlineFunctionBody(
             startOffset = copyFunctionDeclaration.startOffset,
             endOffset   = copyFunctionDeclaration.endOffset,
@@ -98,10 +103,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         )
 
         val transformer = ParameterSubstitutor(parameterSubstituteMap)
-        inlineFunctionBody.transformChildrenVoid(transformer)                                   // Replace parameters with expression.
-        inlineFunctionBody.statements.addAll(0, evaluationStatements)
-
-        return inlineFunctionBody                                                               // Replace call site with InlineFunctionBody.
+        inlineFunctionBody.transformChildrenVoid(transformer)                               // Replace value parameters with arguments.
+        inlineFunctionBody.statements.addAll(0, evaluationStatements)                       // Insert evaluation statements.
+        return inlineFunctionBody                                                           // Replace call site with InlineFunctionBody.
     }
 
     //-------------------------------------------------------------------------//
@@ -212,6 +216,19 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
     //-------------------------------------------------------------------------//
 
+    private fun createTypeSubstitutor(irCall: IrCall): TypeSubstitutor? {
+
+        val typeArgumentsMap = (irCall as IrMemberAccessExpressionBase).typeArguments
+        if (typeArgumentsMap == null) return null
+        val substitutionContext = typeArgumentsMap.entries.associate {
+            (typeParameter, typeArgument) ->
+            typeParameter.typeConstructor to TypeProjectionImpl(typeArgument)
+        }
+        return TypeSubstitutor.create(substitutionContext)
+    }
+
+    //-------------------------------------------------------------------------//
+
     private class ParameterWithArgument(
         val parameterDescriptor: ValueDescriptor,
         val argument           : IrExpression
@@ -219,9 +236,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
     //-------------------------------------------------------------------------//
 
-    private class EvaluatedParameters(
-        val parameters: MutableMap<ValueDescriptor, IrExpression>,
-        val statements: MutableList<IrStatement>
+    private class ParameterEvaluationResult(
+        val parameterSubstituteMap: MutableMap<ValueDescriptor, IrExpression>,
+        val evaluationStatements  : MutableList<IrStatement>
     )
 
     //---------------------------------------------------------------------//
@@ -262,7 +279,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateParameters(irCall: IrCall, functionDeclaration: IrFunction): EvaluatedParameters {
+    private fun evaluateParameters(irCall: IrCall, functionDeclaration: IrFunction): ParameterEvaluationResult {
 
         val parametersOld = buildParameterToArgumentMap(irCall, functionDeclaration)                       // Create map call_site_argument -> inline_function_parameter.
         val parametersNew = mutableMapOf<ValueDescriptor, IrExpression> ()
@@ -286,7 +303,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
             val getVal = IrGetValueImpl(startOffset, endOffset, newVar.descriptor)               // Create new IR element representing access the new variable.
             parametersNew[parameterDescriptor] = getVal                                                    // Parameter will be replaced with the new variable.
         }
-        return EvaluatedParameters(parametersNew, statements)
+        return ParameterEvaluationResult(parametersNew, statements)
     }
 }
 
