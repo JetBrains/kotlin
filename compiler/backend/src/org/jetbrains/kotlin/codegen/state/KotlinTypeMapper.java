@@ -269,7 +269,7 @@ public class KotlinTypeMapper {
             return implClassId;
         }
 
-        @Nullable
+        @NotNull
         private static ContainingClassesInfo forPackageMember(
                 @NotNull FqName packageFqName,
                 @NotNull String facadeClassName,
@@ -549,7 +549,7 @@ public class KotlinTypeMapper {
         signatureVisitor.writeClassEnd();
     }
 
-    @Nullable
+    @NotNull
     private static String getJvmShortName(@NotNull ClassDescriptor klass) {
         ClassId classId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(DescriptorUtils.getFqName(klass));
         if (classId != null) {
@@ -989,7 +989,7 @@ public class KotlinTypeMapper {
 
     @NotNull
     public Method mapAsmMethod(@NotNull FunctionDescriptor descriptor) {
-        return mapSignature(descriptor, true).getAsmMethod();
+        return mapSignature(descriptor).getAsmMethod();
     }
 
     @NotNull
@@ -998,8 +998,8 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    private JvmMethodGenericSignature mapSignature(@NotNull FunctionDescriptor f, boolean skipGenericSignature) {
-        return mapSignature(f, OwnerKind.IMPLEMENTATION, skipGenericSignature);
+    private JvmMethodGenericSignature mapSignature(@NotNull FunctionDescriptor f) {
+        return mapSignature(f, OwnerKind.IMPLEMENTATION, true);
     }
 
     @NotNull
