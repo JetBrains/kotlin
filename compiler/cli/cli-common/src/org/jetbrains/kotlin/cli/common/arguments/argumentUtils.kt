@@ -24,14 +24,9 @@ import java.util.*
 fun <A : CommonCompilerArguments> parseArguments(args: Array<String>, arguments: A, ignoreInvalidArguments: Boolean = false) {
     parseCommandLineArguments(args, arguments)
 
-    if (ignoreInvalidArguments) {
-        arguments.freeArgs.removeAll { it.startsWith("-") }
-    }
-
-    for (argument in arguments.freeArgs) {
-        if (argument.startsWith("-")) {
-            throw IllegalArgumentException("Invalid argument: " + argument)
-        }
+    val invalidArgument = arguments.unknownArgs.firstOrNull()?.takeUnless { ignoreInvalidArguments }
+    if (invalidArgument != null) {
+        throw IllegalArgumentException("Invalid argument: $invalidArgument")
     }
 }
 

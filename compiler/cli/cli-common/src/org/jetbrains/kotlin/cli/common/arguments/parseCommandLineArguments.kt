@@ -30,6 +30,7 @@ val Argument.isAdvanced: Boolean
     get() = value.startsWith(ADVANCED_ARGUMENT_PREFIX) && value.length > ADVANCED_ARGUMENT_PREFIX.length
 
 private val ADVANCED_ARGUMENT_PREFIX = "-X"
+private val FREE_ARGS_DELIMITER = "--"
 
 // Parses arguments in the passed [result] object, or throws an [IllegalArgumentException] with the message to be displayed to the user
 fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>, result: A) {
@@ -41,10 +42,21 @@ fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>,
     }
 
     val visitedArgs = mutableSetOf<String>()
+    var freeArgsStarted = false
 
     var i = 0
     while (i < args.size) {
         val arg = args[i++]
+
+        if (freeArgsStarted) {
+            result.freeArgs.add(arg)
+            continue
+        }
+        if (arg == FREE_ARGS_DELIMITER) {
+            freeArgsStarted = true
+            continue
+        }
+
         val argumentField = fields.firstOrNull { (_, argument) ->
             argument.value == arg ||
             argument.shortName.takeUnless(String::isEmpty) == arg ||
@@ -52,11 +64,10 @@ fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>,
         }
 
         if (argumentField == null) {
-            if (arg.startsWith(ADVANCED_ARGUMENT_PREFIX)) {
-                result.unknownExtraFlags.add(arg)
-            }
-            else {
-                result.freeArgs.add(arg)
+            when {
+                arg.startsWith(ADVANCED_ARGUMENT_PREFIX) -> result.unknownExtraFlags.add(arg)
+                arg.startsWith("-") -> result.unknownArgs.add(arg)
+                else -> result.freeArgs.add(arg)
             }
             continue
         }

@@ -109,6 +109,8 @@ public abstract class CommonCompilerArguments implements Serializable {
 
     public List<String> freeArgs = new SmartList<>();
 
+    public List<String> unknownArgs = new SmartList<>();
+
     public List<String> unknownExtraFlags = new SmartList<>();
 
     // Names of extra (-X...) arguments which have been passed in an obsolete form ("-Xaaa bbb", instead of "-Xaaa=bbb")
