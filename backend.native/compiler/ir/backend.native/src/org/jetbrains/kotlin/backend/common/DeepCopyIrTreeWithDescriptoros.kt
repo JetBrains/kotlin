@@ -49,15 +49,13 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
 
     private val descriptorSubstituteMap: MutableMap<DeclarationDescriptor, DeclarationDescriptor> = mutableMapOf()
     private var typeSubstitutor: TypeSubstitutor? = null
-    private var inlinedFunctionName = ""
     private var nameIndex = 0
 
     //-------------------------------------------------------------------------//
 
-    fun copy(irElement: IrElement, typeArgsMap: Map <TypeParameterDescriptor, KotlinType>?, functionName: String): IrElement {
+    fun copy(irElement: IrElement, typeArgumentsMap: Map <TypeParameterDescriptor, KotlinType>?): IrElement {
 
-        typeSubstitutor = createTypeSubstitutor(typeArgsMap)
-        inlinedFunctionName = functionName
+        typeSubstitutor = createTypeSubstitutor(typeArgumentsMap)
         descriptorSubstituteMap.clear()
         irElement.acceptChildrenVoid(DescriptorCollector())
         // Transform calls to object that might be returned from inline function call.
@@ -220,7 +218,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
             val oldDescriptor = declaration.descriptor
             val newDescriptor = IrTemporaryVariableDescriptorImpl(
                 containingDeclaration = targetScope.scope.scopeOwner,
-                name                  = generateName(oldDescriptor.name),
+                name                  = generateCopyName(oldDescriptor.name),
                 outType               = substituteType(oldDescriptor.type)!!,
                 isMutable             = oldDescriptor.isVar)
             descriptorSubstituteMap[oldDescriptor] = newDescriptor
@@ -230,12 +228,11 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
 
         //--- Copy descriptors ------------------------------------------------//
 
-        private fun generateName(name: Name): Name {
+        private fun generateCopyName(name: Name): Name {
 
-            val containingName  = targetScope.scope.scopeOwner.name.toString()              // Name of inline target (function we inline in)
             val declarationName = name.toString()                                           // Name of declaration
             val indexStr        = (nameIndex++).toString()                                  // Unique for inline target index
-            return Name.identifier(containingName + "_" + inlinedFunctionName + "_" + declarationName + "_" + indexStr)
+            return Name.identifier(declarationName + "_" + indexStr)
         }
 
         //---------------------------------------------------------------------//
@@ -258,7 +255,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
             return SimpleFunctionDescriptorImpl.create(
                 /* containingDeclaration = */ newContainingDeclaration,
                 /* annotations           = */ oldDescriptor.annotations,
-                /* name                  = */ generateName(oldDescriptor.name),
+                /* name                  = */ generateCopyName(oldDescriptor.name),
                 /* kind                  = */ oldDescriptor.kind,
                 /* source                = */ oldDescriptor.source
             ).apply {
@@ -401,7 +398,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
             val newName = if (DescriptorUtils.isAnonymousObject(oldDescriptor))      // Anonymous objects are identified by their name.
                 oldDescriptor.name                                                   // We need to preserve it for LocalDeclarationsLowering.
             else
-                generateName(oldDescriptor.name)
+                generateCopyName(oldDescriptor.name)
             return ClassDescriptorImpl(
                 /* containingDeclaration = */ newContainingDeclaration,
                 /* name                  = */ newName,
@@ -601,10 +598,10 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
 
     //-------------------------------------------------------------------------//
 
-    private fun createTypeSubstitutor(typeArgsMap: Map <TypeParameterDescriptor, KotlinType>?): TypeSubstitutor? {
+    private fun createTypeSubstitutor(typeArgumentsMap: Map <TypeParameterDescriptor, KotlinType>?): TypeSubstitutor? {
 
-        if (typeArgsMap == null) return null
-        val substitutionContext = typeArgsMap.entries.associate {
+        if (typeArgumentsMap == null) return null
+        val substitutionContext = typeArgumentsMap.entries.associate {
             (typeParameter, typeArgument) ->
             typeParameter.typeConstructor to TypeProjectionImpl(typeArgument)
         }
