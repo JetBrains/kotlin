@@ -245,6 +245,23 @@ In all cases the C string is supposed to be encoded as UTF-8.
 When C function takes or returns a struct `T` by value, the corresponding
 argument type or return type is represented as `CValue<T>`.
 
+`CValue<T>` is an opaque type, so structure fields cannot be accessed with
+appropriate Kotlin properties. It could be acceptable, if API uses structures
+as handles, but if field access is required, there are following conversion
+methods available:
+
+*   `fun T.readValue(): CValue<T>`. Converts (the lvalue) `T` to `CValue<T>`.
+    So to construct the `CValue<T>`, `T` can be allocated, filled and then
+    converted to `CValue<T>`.
+
+*   `CValue<T>.useContents(block: T.() -> R): R`. Temporarily places the
+    `CValue<T>` to the memory, and then runs the passed lambda with this placed
+    value `T` as receiver. So to read a single field, the following code can be
+    used:
+    ```
+    val fieldValue = structValue.useContents { field }
+    ```
+
 ### Callbacks ###
 
 To convert Kotlin function to pointer to C function,
