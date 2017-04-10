@@ -1651,7 +1651,7 @@ task interop0(type: RunInteropKonanTest) {
 }
 
 task interop1(type: RunInteropKonanTest) {
-    goldValue = "257\n"
+    goldValue = "257\n-1\n-2\n"
     source = "interop/basics/1.kt"
     interop = 'cstdlib'
 }
