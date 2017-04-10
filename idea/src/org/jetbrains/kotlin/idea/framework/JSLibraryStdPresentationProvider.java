@@ -38,7 +38,7 @@ public class JSLibraryStdPresentationProvider extends LibraryPresentationProvide
 
     @Nullable
     @Override
-    public Icon getIcon(@Nullable LibraryProperties properties) {
+    public Icon getIcon(@Nullable LibraryVersionProperties properties) {
         return KotlinIcons.SMALL_LOGO;
     }
 
