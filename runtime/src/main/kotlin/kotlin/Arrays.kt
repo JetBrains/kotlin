@@ -31,6 +31,16 @@ public final class ByteArray {
     // Constructors are handled with compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public inline constructor(size: Int, init: (Int) -> Byte): this(size) {
+        for (i in 0..size) {
+            this[i] = init(i)
+        }
+    }
+
     public val size: Int
         get() = getArrayLength()
 
@@ -70,6 +80,16 @@ private class ByteIteratorImpl(val collection: ByteArray) : ByteIterator() {
 public final class CharArray {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
+
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public inline constructor(size: Int, init: (Int) -> Char): this(size) {
+        for (i in 0..size) {
+            this[i] = init(i)
+        }
+    }
 
     public val size: Int
         get() = getArrayLength()
@@ -113,6 +133,16 @@ public final class ShortArray {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public inline constructor(size: Int, init: (Int) -> Short): this(size) {
+        for (i in 0..size) {
+            this[i] = init(i)
+        }
+    }
+
     public val size: Int
         get() = getArrayLength()
 
@@ -151,6 +181,16 @@ private class ShortIteratorImpl(val collection: ShortArray) : ShortIterator() {
 public final class IntArray {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
+
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public inline constructor(size: Int, init: (Int) -> Int): this(size) {
+        for (i in 0..size) {
+            this[i] = init(i)
+        }
+    }
 
     public val size: Int
         get() = getArrayLength()
@@ -191,6 +231,16 @@ public final class LongArray {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public inline constructor(size: Int, init: (Int) -> Long): this(size) {
+        for (i in 0..size) {
+            this[i] = init(i)
+        }
+    }
+
     public val size: Int
         get() = getArrayLength()
 
@@ -230,6 +280,16 @@ public final class FloatArray {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public inline constructor(size: Int, init: (Int) -> Float): this(size) {
+        for (i in 0..size) {
+            this[i] = init(i)
+        }
+    }
+
     public val size: Int
         get() = getArrayLength()
 
@@ -265,6 +325,16 @@ public final class DoubleArray {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public inline constructor(size: Int, init: (Int) -> Double): this(size) {
+        for (i in 0..size) {
+            this[i] = init(i)
+        }
+    }
+
     public val size: Int
         get() = getArrayLength()
 
@@ -299,6 +369,16 @@ private class DoubleIteratorImpl(val collection: DoubleArray) : DoubleIterator()
 public final class BooleanArray {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
+
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public inline constructor(size: Int, init: (Int) -> Boolean): this(size) {
+        for (i in 0..size) {
+            this[i] = init(i)
+        }
+    }
 
     public val size: Int
         get() = getArrayLength()
