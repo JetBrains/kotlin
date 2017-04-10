@@ -42,7 +42,7 @@ import java.util.zip.ZipFile
 
 internal fun Project.initKapt(
         kotlinTask: KotlinCompile,
-        javaTask: AbstractCompile,
+        javaTask: JavaCompile,
         kaptManager: AnnotationProcessingManager,
         variantName: String,
         kotlinOptions: KotlinJvmOptionsImpl?,
@@ -91,16 +91,13 @@ internal fun Project.initKapt(
         kaptManager.generateJavaHackFile()
     }
 
-    var originalJavaCompilerArgs: List<String>? = null
     javaTask.doFirst {
-        originalJavaCompilerArgs = (javaTask as JavaCompile).options.compilerArgs
         kaptManager.setupKapt()
         kaptManager.generateJavaHackFile()
         kotlinAfterJavaTask?.source(kaptManager.generatedKotlinSourceDir)
     }
 
     javaTask.doLast {
-        (javaTask as JavaCompile).options.compilerArgs = originalJavaCompilerArgs
         kaptManager.afterJavaCompile()
     }
 
@@ -138,6 +135,8 @@ class AnnotationProcessingManager(
     val wrappersDirectory = File(aptWorkingDir, "wrappers")
     val hackAnnotationDir = File(aptWorkingDir, "java_src")
 
+    private var originalJavaCompilerArgs: List<String>? = null
+
     private companion object {
         val JAVA_FQNAME_PATTERN = "^([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*$".toRegex()
         val GEN_ANNOTATION = "__gen/annotation"
@@ -157,7 +156,11 @@ class AnnotationProcessingManager(
             return kotlinGeneratedDir
         }
 
+    val kaptProcessorPath get() = javaTask.classpath + setOf(wrappersDirectory) + aptFiles
+
     fun setupKapt() {
+        originalJavaCompilerArgs = javaTask.options.compilerArgs
+
         if (aptFiles.isEmpty()) return
 
         if (project.plugins.findPlugin(ANDROID_APT_PLUGIN_ID) != null) {
@@ -168,8 +171,7 @@ class AnnotationProcessingManager(
 
         generateAnnotationProcessorStubs(javaTask, annotationProcessorFqNames, wrappersDirectory)
 
-        val processorPath = setOf(wrappersDirectory) + aptFiles
-        setProcessorPath(javaTask, (processorPath + javaTask.classpath))
+        setProcessorPath(javaTask, (kaptProcessorPath))
 
         if (aptOutputDir.exists()) {
             aptOutputDir.deleteRecursively()
@@ -187,6 +189,7 @@ class AnnotationProcessingManager(
         } else {
             project.logger.kotlinDebug("kapt: Java file stub was not found at $generatedFile")
         }
+        javaTask.options.compilerArgs = originalJavaCompilerArgs
     }
 
     fun generateJavaHackFile() {
