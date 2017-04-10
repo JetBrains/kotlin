@@ -17,20 +17,24 @@
 package org.jetbrains.kotlin.idea.debugger.filter
 
 import com.intellij.debugger.engine.SyntheticTypeComponentProvider
-import com.sun.jdi.AbsentInformationException
-import com.sun.jdi.ClassType
-import com.sun.jdi.Method
-import com.sun.jdi.TypeComponent
+import com.sun.jdi.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.org.objectweb.asm.Opcodes
+import kotlin.jvm.internal.FunctionReference
+import kotlin.jvm.internal.PropertyReference
 
 class KotlinSyntheticTypeComponentProvider: SyntheticTypeComponentProvider {
     override fun isSynthetic(typeComponent: TypeComponent?): Boolean {
         if (typeComponent !is Method) return false
 
-        val typeName = typeComponent.declaringType().name()
+        val containingType = typeComponent.declaringType()
+        val typeName = containingType.name()
         if (!FqNameUnsafe.isValid(typeName)) return false
+
+        if (containingType.isCallableReferenceSyntheticClass()) {
+            return true
+        }
 
         try {
             if (typeComponent.isDelegateToDefaultInterfaceImpl()) return true
@@ -49,6 +53,21 @@ class KotlinSyntheticTypeComponentProvider: SyntheticTypeComponentProvider {
         catch(e: UnsupportedOperationException) {
             return false
         }
+    }
+
+    private tailrec fun ReferenceType?.isCallableReferenceSyntheticClass(): Boolean {
+        if (this !is ClassType) return false
+        val superClass = this.superclass() ?: return false
+        val superClassName = superClass.name()
+        if (superClassName == PropertyReference::class.java.name || superClassName == FunctionReference::class.java.name) {
+            return true
+        }
+
+        // The direct supertype may be PropertyReference0 or something
+        return if (superClassName.startsWith("kotlin.jvm.internal."))
+            superClass.isCallableReferenceSyntheticClass()
+        else
+            false
     }
 
     private fun Method.isDelegateToDefaultInterfaceImpl(): Boolean {
