@@ -2803,6 +2803,195 @@ public inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: 
     return sb.toString()
 }
 
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
+    if (this === other) {
+        return true
+    }
+    if (size != other.size) {
+        return false
+    }
+    for (i in indices) {
+        if (this[i] != other[i]) {
+            return false
+        }
+    }
+    return true;
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
+    if (this === other) {
+        return true
+    }
+    if (size != other.size) {
+        return false
+    }
+    for (i in indices) {
+        if (this[i] != other[i]) {
+            return false
+        }
+    }
+    return true;
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
+    if (this === other) {
+        return true
+    }
+    if (size != other.size) {
+        return false
+    }
+    for (i in indices) {
+        if (this[i] != other[i]) {
+            return false
+        }
+    }
+    return true;
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline infix fun IntArray.contentEquals(other: IntArray): Boolean {
+    if (this === other) {
+        return true
+    }
+    if (size != other.size) {
+        return false
+    }
+    for (i in indices) {
+        if (this[i] != other[i]) {
+            return false
+        }
+    }
+    return true;
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline infix fun LongArray.contentEquals(other: LongArray): Boolean {
+    if (this === other) {
+        return true
+    }
+    if (size != other.size) {
+        return false
+    }
+    for (i in indices) {
+        if (this[i] != other[i]) {
+            return false
+        }
+    }
+    return true;
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
+    if (this === other) {
+        return true
+    }
+    if (size != other.size) {
+        return false
+    }
+    for (i in indices) {
+        if (this[i] != other[i]) {
+            return false
+        }
+    }
+    return true;
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
+    if (this === other) {
+        return true
+    }
+    if (size != other.size) {
+        return false
+    }
+    for (i in indices) {
+        if (this[i] != other[i]) {
+            return false
+        }
+    }
+    return true;
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
+    if (this === other) {
+        return true
+    }
+    if (size != other.size) {
+        return false
+    }
+    for (i in indices) {
+        if (this[i] != other[i]) {
+            return false
+        }
+    }
+    return true;
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline infix fun CharArray.contentEquals(other: CharArray): Boolean {
+    if (this === other) {
+        return true
+    }
+    if (size != other.size) {
+        return false
+    }
+    for (i in indices) {
+        if (this[i] != other[i]) {
+            return false
+        }
+    }
+    return true;
+}
+
 // From Library.kt.
 /**
  * Returns an array of objects of the given type with the given [size], initialized with null values.
