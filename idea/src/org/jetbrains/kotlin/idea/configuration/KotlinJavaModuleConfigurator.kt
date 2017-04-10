@@ -18,13 +18,15 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.JavaSdkVersion
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.idea.versions.isKotlinJavaRuntime
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.utils.PathUtil
 
 open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibraryConfigurator() {
 
@@ -53,11 +55,21 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
     override val targetPlatform: TargetPlatform
         get() = JvmPlatform
 
-    override val libraryJarDescriptors: List<LibraryJarDescriptor>
-        get() = listOf(LibraryJarDescriptor.RUNTIME_JAR,
-                       LibraryJarDescriptor.REFLECT_JAR,
-                       LibraryJarDescriptor.RUNTIME_SRC_JAR,
-                       LibraryJarDescriptor.TEST_JAR)
+    override fun getLibraryJarDescriptors(sdk: Sdk?): List<LibraryJarDescriptor> {
+        var result = listOf(LibraryJarDescriptor.RUNTIME_JAR,
+                      LibraryJarDescriptor.REFLECT_JAR,
+                      LibraryJarDescriptor.RUNTIME_SRC_JAR,
+                      LibraryJarDescriptor.TEST_JAR)
+        val sdkVersion = sdk?.let { JavaSdk.getInstance().getVersion(it) } ?: return result
+        if (sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_7)) {
+            result += listOf(LibraryJarDescriptor.RUNTIME_JRE7_JAR, LibraryJarDescriptor.RUNTIME_JRE7_SOURCES_JAR)
+        }
+        if (sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
+            result += listOf(LibraryJarDescriptor.RUNTIME_JRE8_JAR, LibraryJarDescriptor.RUNTIME_JRE8_SOURCES_JAR)
+        }
+
+        return result
+    }
 
     override val libraryMatcher: (Library) -> Boolean
         get() = ::isKotlinJavaRuntime

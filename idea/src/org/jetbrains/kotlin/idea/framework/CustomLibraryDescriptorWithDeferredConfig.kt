@@ -32,6 +32,9 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator
+import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState.COPY
+import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY
+import org.jetbrains.kotlin.idea.configuration.NotificationMessageCollector
 import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
 import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialog
@@ -40,7 +43,6 @@ import org.jetbrains.kotlin.idea.util.projectStructure.findLibrary
 import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
 import org.jetbrains.kotlin.idea.util.projectStructure.replaceFileRoot
 import java.io.File
-import java.util.*
 import javax.swing.JComponent
 
 /**
@@ -48,7 +50,7 @@ import javax.swing.JComponent
  */
 abstract class CustomLibraryDescriptorWithDeferredConfig
 (
-        project: Project?,
+        val project: Project?,
         private val configuratorName: String,
         private val libraryName: String,
         private val dialogTitle: String,
@@ -66,18 +68,32 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
     }
 
     fun finishLibConfiguration(module: Module, rootModel: ModifiableRootModel) {
-        val deferredCopyFileRequests = copyFileRequests ?: return
-
         val library = rootModel.orderEntries().findLibrary { library ->
             val libraryPresentationManager = LibraryPresentationManager.getInstance()
-            val classFiles = Arrays.asList(*library.getFiles(OrderRootType.CLASSES))
+            val classFiles = library.getFiles(OrderRootType.CLASSES).toList()
 
             libraryPresentationManager.isLibraryOfKind(classFiles, libraryKind)
         } ?: return
 
         val model = library.modifiableModel
+        val copyToPath = KotlinWithLibraryConfigurator.getPathFromLibrary(library, OrderRootType.CLASSES)
         try {
-            deferredCopyFileRequests.performRequests(module.project, module.getModuleDir(), model)
+            val collector = createConfigureKotlinNotificationCollector(module.project)
+            copyFileRequests?.performRequests(module.getModuleDir(), model, collector)
+
+            if (copyToPath != null) {
+                val jarState = if (copyFileRequests == null) DO_NOT_COPY else COPY
+
+                // Now that we know the SDK which is going to be set for the module, we can add jre 7/8 if required
+                val descriptorsWithSdk = configurator.getLibraryJarDescriptors(rootModel.sdk)
+                for (jarDescriptor in descriptorsWithSdk) {
+                    if (model.getFiles(jarDescriptor.orderRootType).any { it.name == jarDescriptor.jarName })
+                        continue
+
+                    configurator.configureLibraryJar(model, jarState, copyToPath, jarDescriptor, collector)
+                }
+            }
+            collector.showNotification()
         }
         finally {
             model.commit()
@@ -87,8 +103,7 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
     class DeferredCopyFileRequests(private val configurator: KotlinWithLibraryConfigurator) {
         private val copyFilesRequests = Lists.newArrayList<CopyFileRequest>()
 
-        fun performRequests(project: Project, relativePath: String, model: Library.ModifiableModel) {
-            val collector = createConfigureKotlinNotificationCollector(project)
+        fun performRequests(relativePath: String, model: Library.ModifiableModel, collector: NotificationMessageCollector) {
             for (request in copyFilesRequests) {
                 val destinationPath = if (FileUtil.isAbsolute(request.toDir))
                     request.toDir
@@ -101,7 +116,6 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
                     model.replaceFileRoot(request.file, resultFile)
                 }
             }
-            collector.showNotification()
         }
 
         fun addCopyWithReplaceRequest(file: File, copyIntoPath: String) {
@@ -121,7 +135,7 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
         else
             FileUIUtils.createRelativePath(null, projectBaseDir, DEFAULT_LIB_DIR_NAME)
 
-        val jarDescriptors = configurator.libraryJarDescriptors
+        val jarDescriptors = configurator.getLibraryJarDescriptors(null)
 
         val stdJarInDefaultPath = File(defaultPathToJarFile, jarDescriptors.first().jarName)
         val libraryFiles = mutableListOf<File>()
@@ -150,7 +164,7 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
 
             val copyIntoPath = dialog.copyIntoPath
             if (copyIntoPath != null) {
-                for (libraryJarDescriptor in configurator.libraryJarDescriptors) {
+                for (libraryJarDescriptor in configurator.getLibraryJarDescriptors(null)) {
                     copyFileRequests!!.addCopyWithReplaceRequest(libraryJarDescriptor.getPathInPlugin(), copyIntoPath)
                 }
             }
@@ -184,7 +198,7 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
                                 collectPathsInPlugin(OrderRootType.SOURCES))
 
     private fun collectPathsInPlugin(rootType: OrderRootType): List<File> {
-        return configurator.libraryJarDescriptors
+        return configurator.getLibraryJarDescriptors(null)
                 .filter { it.orderRootType == rootType }
                 .map { it.getPathInPlugin() }
     }

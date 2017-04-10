@@ -20,6 +20,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
@@ -112,19 +113,24 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
                       ?: getKotlinLibrary(project)
                       ?: createNewLibrary(project, collector)
 
-        for (descriptor in libraryJarDescriptors) {
+        val sdk = ModuleRootManager.getInstance(module).sdk
+        val model = library.modifiableModel
+
+        for (descriptor in getLibraryJarDescriptors(sdk)) {
             val dirToCopyJar = getPathToCopyFileTo(project, descriptor.orderRootType, defaultPath, pathFromDialog)
             val runtimeState = getJarState(project,
                                            File(dirToCopyJar, descriptor.jarName),
                                            descriptor.orderRootType, pathFromDialog == null)
 
-            configureLibraryJar(module, library, runtimeState, dirToCopyJar, descriptor, collector)
+            configureLibraryJar(model, runtimeState, dirToCopyJar, descriptor, collector)
         }
+        ApplicationManager.getApplication().runWriteAction { model.commit() }
+
+        addLibraryToModuleIfNeeded(module, library, collector)
     }
 
     fun configureLibraryJar(
-            module: Module,
-            library: Library,
+            library: Library.ModifiableModel,
             jarState: FileState,
             dirToCopyJarTo: String,
             libraryJarDescriptor: LibraryJarDescriptor,
@@ -151,14 +157,10 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         }
 
         if (jarRoot !in library.getFiles(libraryJarDescriptor.orderRootType)) {
-            val model = library.modifiableModel
-            model.addRoot(jarRoot, libraryJarDescriptor.orderRootType)
+            library.addRoot(jarRoot, libraryJarDescriptor.orderRootType)
 
-            ApplicationManager.getApplication().runWriteAction { model.commit() }
             collector.addMessage("Added $jarFile to library configuration")
         }
-
-        addLibraryToModuleIfNeeded(module, library, collector)
     }
 
     fun getKotlinLibrary(project: Project): Library? {
@@ -181,7 +183,7 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         return getPathFromLibrary(getKotlinLibrary(project), type)
     }
 
-    private fun addLibraryToModuleIfNeeded(module: Module, library: Library, collector: NotificationMessageCollector) {
+    fun addLibraryToModuleIfNeeded(module: Module, library: Library, collector: NotificationMessageCollector) {
         val expectedDependencyScope = getDependencyScope(module)
         val kotlinLibrary = getKotlinLibrary(module)
         if (kotlinLibrary == null) {
@@ -231,7 +233,8 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
 
     protected fun needToChooseJarPath(project: Project): Boolean {
         val defaultPath = getDefaultPathToJarFile(project)
-        return !isProjectLibraryPresent(project) && !File(defaultPath, libraryJarDescriptors.first().jarName).exists()
+        return !isProjectLibraryPresent(project) &&
+               !File(defaultPath, getLibraryJarDescriptors(null).first().jarName).exists()
     }
 
     protected open fun getDefaultPathToJarFile(project: Project): String {
@@ -280,7 +283,7 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         return defaultDir
     }
 
-    abstract val libraryJarDescriptors: List<LibraryJarDescriptor>
+    abstract fun getLibraryJarDescriptors(sdk: Sdk?): List<LibraryJarDescriptor>
 
     companion object {
         val DEFAULT_LIBRARY_DIR = "lib"
@@ -291,7 +294,7 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
                    !KotlinPluginUtil.isGradleModule(module)
         }
 
-        protected fun getPathFromLibrary(library: Library?, type: OrderRootType): String? {
+        fun getPathFromLibrary(library: Library?, type: OrderRootType): String? {
             if (library == null) return null
 
             val libraryFiles = library.getUrls(type)

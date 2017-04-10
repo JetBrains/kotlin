@@ -35,6 +35,10 @@ public class PathUtil {
     public static final String NOARG_PLUGIN_JAR_NAME = "noarg-compiler-plugin.jar";
     public static final String JS_LIB_SRC_JAR_NAME = "kotlin-stdlib-js-sources.jar";
     public static final String KOTLIN_JAVA_RUNTIME_JAR = "kotlin-runtime.jar";
+    public static final String KOTLIN_JAVA_RUNTIME_JRE7_JAR = "kotlin-stdlib-jre7.jar";
+    public static final String KOTLIN_JAVA_RUNTIME_JRE8_JAR = "kotlin-stdlib-jre8.jar";
+    public static final String KOTLIN_JAVA_RUNTIME_JRE7_SRC_JAR = "kotlin-stdlib-jre7-sources.jar";
+    public static final String KOTLIN_JAVA_RUNTIME_JRE8_SRC_JAR = "kotlin-stdlib-jre8-sources.jar";
     public static final String KOTLIN_JAVA_STDLIB_JAR = "kotlin-stdlib.jar";
     public static final String KOTLIN_JAVA_REFLECT_JAR = "kotlin-reflect.jar";
     public static final String KOTLIN_JAVA_SCRIPT_RUNTIME_JAR = "kotlin-script-runtime.jar";

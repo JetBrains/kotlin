@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.idea.configuration;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -67,9 +70,13 @@ public abstract class AbstractConfigureKotlinTest extends PlatformTestCase {
                 library = configurator.createNewLibrary(project, collector);
             }
             String pathToJar = getPathToJar(runtimeState, jarFromDist, jarFromTemp);
-            for (LibraryJarDescriptor descriptor : configurator.getLibraryJarDescriptors()) {
-                configurator.configureLibraryJar(module, library, runtimeState, pathToJar, descriptor, collector);
+            Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
+            Library.ModifiableModel model = library.getModifiableModel();
+            for (LibraryJarDescriptor descriptor : configurator.getLibraryJarDescriptors(sdk)) {
+                configurator.configureLibraryJar(model, runtimeState, pathToJar, descriptor, collector);
             }
+            ApplicationManager.getApplication().runWriteAction(model::commit);
+            configurator.addLibraryToModuleIfNeeded(module, library, collector);
         }
         collector.showNotification();
     }

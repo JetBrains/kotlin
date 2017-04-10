@@ -24,10 +24,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.LibraryOrderEntry
-import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
@@ -96,12 +93,14 @@ fun updateLibraries(project: Project, libraries: Collection<Library>) {
                           error("Configurator with given name doesn't exists: " + KotlinJsModuleConfigurator.NAME)
 
     val collector = createConfigureKotlinNotificationCollector(project)
+    val sdk = ProjectRootManager.getInstance(project).projectSdk
+    // TODO use module SDK
 
     for (library in libraries) {
         val libraryJarDescriptors = if (isDetected(JavaRuntimePresentationProvider.getInstance(), library))
-            kJvmConfigurator.libraryJarDescriptors
+            kJvmConfigurator.getLibraryJarDescriptors(sdk)
         else
-            kJsConfigurator.libraryJarDescriptors
+            kJsConfigurator.getLibraryJarDescriptors(sdk)
 
         for (libraryJarDescriptor in libraryJarDescriptors) {
             updateJar(project, library, libraryJarDescriptor)
@@ -167,7 +166,7 @@ fun findAllUsedLibraries(project: Project): MultiMap<Library, Module> {
 enum class LibraryJarDescriptor(val jarName: String,
                                 val orderRootType: OrderRootType,
                                 val shouldExist: Boolean,
-                                val getPath: (KotlinPaths) -> File) {
+                                val getPath: (KotlinPaths) -> File = { paths -> File(paths.libPath, jarName) }) {
     RUNTIME_JAR(PathUtil.KOTLIN_JAVA_STDLIB_JAR, OrderRootType.CLASSES, true, KotlinPaths::getStdlibPath) {
         override fun findExistingJar(library: Library): VirtualFile? {
             if (isExternalLibrary(library)) return null
@@ -178,6 +177,10 @@ enum class LibraryJarDescriptor(val jarName: String,
     REFLECT_JAR(PathUtil.KOTLIN_JAVA_REFLECT_JAR, OrderRootType.CLASSES, false, KotlinPaths::getReflectPath),
     SCRIPT_RUNTIME_JAR(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, OrderRootType.CLASSES, true, KotlinPaths::getScriptRuntimePath),
     TEST_JAR(PathUtil.KOTLIN_TEST_JAR, OrderRootType.CLASSES, false, KotlinPaths::getKotlinTestPath),
+    RUNTIME_JRE7_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_JAR, OrderRootType.CLASSES, false),
+    RUNTIME_JRE8_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_JAR, OrderRootType.CLASSES, false),
+    RUNTIME_JRE7_SOURCES_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_SRC_JAR, OrderRootType.SOURCES, false),
+    RUNTIME_JRE8_SOURCES_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_SRC_JAR, OrderRootType.SOURCES, false),
 
     RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR, OrderRootType.SOURCES, false, KotlinPaths::getStdlibSourcesPath) {
         override fun findExistingJar(library: Library): VirtualFile? {
