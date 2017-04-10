@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <locale.h>
 #include <stdio.h>
 
 #include "Memory.h"
@@ -61,10 +60,6 @@ void AppendToInitializersTail(InitNode *next) {
 
 // TODO: properly use RuntimeState.
 RuntimeState* InitRuntime() {
-   // Set Unicode locale, otherwise towlower() and friends do not work properly.
-  if (setlocale(LC_CTYPE, "en_US.UTF-8") == nullptr) {
-    fprintf(stderr, "Cannot set locale, string ops may suffer\n");
-  }
   RuntimeState* result = new RuntimeState();
   result->memoryState = InitMemory();
   // Keep global variables in state as well.
