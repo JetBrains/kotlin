@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.test
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
