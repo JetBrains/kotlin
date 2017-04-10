@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCatch
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -170,6 +171,11 @@ class ClosureAnnotator   {
         override fun visitVariable(declaration: IrVariable) {
             closuresStack.peek()?.declareVariable(declaration.descriptor)
             super.visitVariable(declaration)
+        }
+
+        override fun visitCatch(aCatch: IrCatch) {
+            closuresStack.peek()?.declareVariable(aCatch.parameter)
+            super.visitCatch(aCatch)
         }
 
         // Process delegating constructor calls, enum constructor calls, calls and callable references.

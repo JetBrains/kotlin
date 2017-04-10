@@ -568,6 +568,11 @@ task localClass_localFunctionInLocalClass(type: RunKonanTest) {
     source = "codegen/localClass/localFunctionInLocalClass.kt"
 }
 
+task localClass_tryCatch(type: RunKonanTest) {
+    goldValue = ""
+    source = "codegen/localClass/tryCatch.kt"
+}
+
 task function_localFunction(type : RunKonanTest) {
     goldValue = "OK\n"
     source = "codegen/function/localFunction.kt"
