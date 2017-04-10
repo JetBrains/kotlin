@@ -11,9 +11,9 @@ buildscript {
     }
 }
 
-ext.JDK_16 = System.getenv("JDK_16")
-ext.JDK_17 = System.getenv("JDK_17")
-ext.JDK_18 = System.getenv("JDK_18")
+ext.JDK_16 = jdkPath("1.6")
+ext.JDK_17 = jdkPath("1.7")
+ext.JDK_18 = jdkPath("1.8")
 ext.distDir = project.file("${rootDir}/../dist")
 ext.distLibDir = project.file("${rootDir}/../dist/kotlinc/lib")
 ext.bootstrapCompilerFile = project.file("$distDir/kotlin-compiler-for-maven.jar")
@@ -52,6 +52,13 @@ task clean {
     doLast {
         delete "${buildDir}/repo"
     }
+}
+
+String jdkPath(String version) {
+    String varName = "JDK_${version.replace('.', '')}"
+    String path = System.getenv(varName)
+    if (path == null) throw new GradleException("Please set environment variable $varName to point to JDK $version installation")
+    return path
 }
 
 static def configureJvmProject(Project project) {
