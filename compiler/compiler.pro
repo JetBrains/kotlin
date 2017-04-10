@@ -15,6 +15,7 @@
 !org/apache/log4j/net/SMTP*,
 !org/apache/log4j/or/jms/MessageRenderer*,
 !org/jdom/xpath/Jaxen*,
+!org/jline/builtins/ssh/**,
 !org/mozilla/javascript/xml/impl/xmlbeans/**,
 !net/sf/cglib/**,
 !META-INF/maven**,
@@ -51,6 +52,7 @@ messages/**)
 -dontwarn org.w3c.dom.ElementTraversal
 -dontwarn javaslang.match.annotation.Unapply
 -dontwarn javaslang.match.annotation.Patterns
+-dontwarn org.jline.builtins.Nano$Buffer
 
 -libraryjars '<rtjar>'
 -libraryjars '<jssejar>'
