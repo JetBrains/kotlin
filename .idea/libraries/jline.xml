@@ -4,11 +4,11 @@
       <root url="file://$PROJECT_DIR$/annotations" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dependencies/jline.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/jline3.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/dependencies/jline-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/jline3-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

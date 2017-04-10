@@ -113,8 +113,8 @@
                                     <shadedPattern>${kotlin.relocated.package}.org.picocontainer</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>jline</pattern>
-                                    <shadedPattern>${kotlin.relocated.package}.jline</shadedPattern>
+                                    <pattern>org.jline</pattern>
+                                    <shadedPattern>${kotlin.relocated.package}.org.jline</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>gnu</pattern>
