@@ -507,9 +507,11 @@
         </sequential>
     </macrodef>
 
-    <target name="compiler-for-maven">
+    <target name="pack-compiler-for-maven">
         <pack-compiler-for-maven/>
     </target>
+
+    <target name="compiler-quick-for-maven" depends="compiler-quick,pack-compiler-for-maven"/>
 
     <target name="kotlin-build-common-test">
         <cleandir dir="${output}/classes/kotlin-build-common-test"/>
@@ -880,33 +882,45 @@
         </sequential>
     </macrodef>
 
-    <target name="gradle-runtime">
-        <local name="deployVersion" />
-        <condition property="deployVersion" value="" else="-PdeployVersion=${build.number}">
-            <equals arg1="${build.number}" arg2="snapshot" />
-        </condition>
+    <macrodef name="run-gradle-build">
+        <attribute name="tasks" />
+        <sequential>
+            <local name="deployVersion" />
+            <condition property="deployVersion" value="" else="-PdeployVersion=${build.number}">
+                <equals arg1="${build.number}" arg2="snapshot" />
+            </condition>
 
-        <java classname="org.gradle.wrapper.GradleWrapperMain"
-              fork="true"
-              dir="${basedir}/libraries"
-              failonerror="true"
-              timeout="4000000"
-              maxmemory="400m"
-              taskname="gradle-runtime">
-            <classpath>
-                <pathelement location="${basedir}/libraries/gradle/wrapper/gradle-wrapper.jar"/>
-            </classpath>
-            <arg line="clean" />
-            <arg line="dist" />
-            <arg line="publish" />
-            <arg line="--no-daemon -Dkotlin.daemon.jvm.options=-Xmx700m -Dkotlin.daemon.verbose=true" />
-            <arg line="${deployVersion}" />
-            <arg line="${gradle.logging.level}" />
-        </java>
+            <java classname="org.gradle.wrapper.GradleWrapperMain"
+                  fork="true"
+                  dir="${basedir}/libraries"
+                  failonerror="true"
+                  timeout="4000000"
+                  maxmemory="400m"
+                  taskname="gradle">
+                <classpath>
+                    <pathelement location="${basedir}/libraries/gradle/wrapper/gradle-wrapper.jar"/>
+                </classpath>
+                <arg line="@{tasks}" />
+                <arg line="--no-daemon -Dkotlin.daemon.jvm.options=-Xmx700m -Dkotlin.daemon.verbose=true" />
+                <arg line="${deployVersion}" />
+                <arg line="${gradle.logging.level}" />
+            </java>
+        </sequential>
+    </macrodef>
+
+    <target name="gradle-runtime">
+        <run-gradle-build tasks="clean dist publish" />
 
         <!-- legacy artifact, required for migration on teamcity -->
         <jar destfile="${output}/kotlin-reflect-sources-for-maven.jar" />
     </target>
+
+    <target name="stdlib-js">
+        <run-gradle-build tasks=":kotlin-stdlib-js:dist :kotlin-test:kotlin-test-js:dist --rerun-tasks" />
+    </target>
+
+    <target name="compiler-quick-and-stdlib-js"
+            depends="compiler-quick-for-maven,stdlib-js"/>
 
     <target name="runtime"
             depends="gradle-runtime,mock-runtime-for-test"/>
@@ -923,7 +937,7 @@
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,runtime,other-artifacts"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick-for-maven,ant-tools,runtime,other-artifacts"
             description="Builds everything, but classes are reused from project out dir, doesn't run proguard"/>
 
     <target name="dist-quick-compiler-only"

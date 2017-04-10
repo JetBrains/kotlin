@@ -42,9 +42,12 @@ artifacts {
     archives javadocJar
 }
 
+task distJs(type: Copy) {
+    from(compileKotlin2Js.kotlinOptions.outputFile)
+    into "$distDir/js"
+}
+
 dist {
+    dependsOn distJs
     from (jar, sourcesJar)
-    from(compileKotlin2Js.kotlinOptions.outputFile) {
-        into '../../js'
-    }
 }

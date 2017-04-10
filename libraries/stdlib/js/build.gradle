@@ -227,17 +227,19 @@ artifacts {
     archives javadocJar
 }
 
+task distJs(type: Copy) {
+    from(compileJs)
+    into "$distDir/js"
+}
 
 dist {
+    dependsOn distJs
     [mergedJar, sourcesJar].forEach {
         from(it)
         // legacy
         from(it) {
             rename("kotlin-stdlib-js", 'kotlin-jslib')
         }
-    }
-    from(compileJs) {
-        into '../../js'
     }
 }
 
