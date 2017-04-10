@@ -1804,6 +1804,164 @@ public inline fun <T, R> Array<out T>.map(transform: (T) -> R): List<R> {
     return mapTo(ArrayList<R>(size), transform)
 }
 
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun Array<out Byte>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun Array<out Short>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun Array<out Int>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun Array<out Long>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun Array<out Float>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun Array<out Double>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun ByteArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun ShortArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun IntArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun LongArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun FloatArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun DoubleArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) Double.NaN else sum / count
+}
+
+
 /**
  * Returns the sum of all elements in the array.
  */
