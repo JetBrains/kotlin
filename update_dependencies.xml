@@ -937,9 +937,15 @@
 
         <echo message="Download android studio: ${android.version} ${android.build.version}"/>
 
-        <property name="android.file.name" value="android-studio-ide-${android.build.version}-${android.os.tag}.zip"/>
+        <!--<property name="android.file.name" value="android-studio-ide-${android.build.version}-${android.os.tag}.zip"/>-->
+        <!--<property name="android.studio.url"-->
+                  <!--value="http://dl.google.com/dl/android/studio/ide-zips/${android.version}/${android.file.name}"/>-->
+
+        <!-- FIXME: Remove hardcoded url when google restores deleted android studio distribs  -->
+        <property name="android.file.name" value="android-studio-ide-145.3360264-mac.zip"/>
         <property name="android.studio.url"
-                  value="http://dl.google.com/dl/android/studio/ide-zips/${android.version}/${android.file.name}"/>
+                  value="https://kotlin.bintray.com/android-studio-22-for-rr-temp/android-studio-ide-145.3360264-mac.zip"/>
+
         <property name="android.download.dir" value="${dependencies}/android-studio"/>
         <property name="android.destination.dir" value="ideaSDK"/>
 
@@ -953,7 +959,7 @@
         </delete>
 
         <unzip src="${android.download.dir}/${android.file.name}" dest="${android.destination.dir}">
-            <cutdirsmapper dirs="${strip.dirs.count}"/>
+            <cutdirsmapper dirs="2"/>
         </unzip>
 
         <!-- Workaround start: ProductivityFeaturesRegistry.xml is inside both idea.jar and resources.jar -->
@@ -975,21 +981,21 @@
             <matches pattern=".+linux\.zip" string="${android.file.name}"/>
         </condition>
 
-        <exec executable="chmod" if:set="android.studio.mac">
-            <arg value="a+x"/>
-            <arg path="${android.destination.dir}/bin/fsnotifier"/>
-            <arg path="${android.destination.dir}/bin/inspect.sh"/>
-            <arg path="${android.destination.dir}/bin/printenv.py"/>
-            <arg path="${android.destination.dir}/bin/restarter"/>
-        </exec>
+        <!--<exec executable="chmod" if:set="android.studio.mac">-->
+            <!--<arg value="a+x"/>-->
+            <!--<arg path="${android.destination.dir}/bin/fsnotifier"/>-->
+            <!--<arg path="${android.destination.dir}/bin/inspect.sh"/>-->
+            <!--<arg path="${android.destination.dir}/bin/printenv.py"/>-->
+            <!--<arg path="${android.destination.dir}/bin/restarter"/>-->
+        <!--</exec>-->
 
-        <exec executable="chmod" if:set="android.studio.linux">
-            <arg value="a+x"/>
-            <arg path="${android.destination.dir}/bin/fsnotifier"/>
-            <arg path="${android.destination.dir}/bin/fsnotifier64"/>
-            <arg path="${android.destination.dir}/bin/inspect.sh"/>
-            <arg path="${android.destination.dir}/bin/studio.sh"/>
-        </exec>
+        <!--<exec executable="chmod" if:set="android.studio.linux">-->
+            <!--<arg value="a+x"/>-->
+            <!--<arg path="${android.destination.dir}/bin/fsnotifier"/>-->
+            <!--<arg path="${android.destination.dir}/bin/fsnotifier64"/>-->
+            <!--<arg path="${android.destination.dir}/bin/inspect.sh"/>-->
+            <!--<arg path="${android.destination.dir}/bin/studio.sh"/>-->
+        <!--</exec>-->
 
         <!--
         This one needs to be deleted because otherwise it gets onto the classpath
