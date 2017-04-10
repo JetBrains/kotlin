@@ -35,7 +35,8 @@ public final class ByteArray {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public inline constructor(size: Int, init: (Int) -> Byte): this(size) {
+    // TODO: What about inline constructors?
+    public constructor(size: Int, init: (Int) -> Byte): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -85,7 +86,7 @@ public final class CharArray {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public inline constructor(size: Int, init: (Int) -> Char): this(size) {
+    public constructor(size: Int, init: (Int) -> Char): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -137,7 +138,7 @@ public final class ShortArray {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public inline constructor(size: Int, init: (Int) -> Short): this(size) {
+    public constructor(size: Int, init: (Int) -> Short): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -186,7 +187,7 @@ public final class IntArray {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public inline constructor(size: Int, init: (Int) -> Int): this(size) {
+    public constructor(size: Int, init: (Int) -> Int): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -235,7 +236,7 @@ public final class LongArray {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public inline constructor(size: Int, init: (Int) -> Long): this(size) {
+    public constructor(size: Int, init: (Int) -> Long): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -284,7 +285,7 @@ public final class FloatArray {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public inline constructor(size: Int, init: (Int) -> Float): this(size) {
+    public constructor(size: Int, init: (Int) -> Float): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -329,7 +330,7 @@ public final class DoubleArray {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public inline constructor(size: Int, init: (Int) -> Double): this(size) {
+    public constructor(size: Int, init: (Int) -> Double): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -374,7 +375,7 @@ public final class BooleanArray {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public inline constructor(size: Int, init: (Int) -> Boolean): this(size) {
+    public constructor(size: Int, init: (Int) -> Boolean): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -2878,7 +2879,7 @@ public fun <T> Array<out T>.contentDeepHashCode(): Int {
  * is rendered as `"[...]"` to prevent recursion.
  */
 @SinceKotlin("1.1")
-public inline fun <T> Array<out T>.contentDeepToString(): String {
+public fun <T> Array<out T>.contentDeepToString(): String {
     var bufLen = 20 * size
     if (size != 0 && bufLen <= 0)
         bufLen = Int.MAX_VALUE
