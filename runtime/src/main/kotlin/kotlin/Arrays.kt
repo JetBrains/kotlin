@@ -36,7 +36,7 @@ public final class ByteArray {
      * [init] function. The [init] function returns an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Byte): this(size) {
-        for (i in 0..size) {
+        for (i in 0..size - 1) {
             this[i] = init(i)
         }
     }
@@ -86,7 +86,7 @@ public final class CharArray {
      * [init] function. The [init] function returns an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Char): this(size) {
-        for (i in 0..size) {
+        for (i in 0..size - 1) {
             this[i] = init(i)
         }
     }
@@ -138,7 +138,7 @@ public final class ShortArray {
      * [init] function. The [init] function returns an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Short): this(size) {
-        for (i in 0..size) {
+        for (i in 0..size - 1) {
             this[i] = init(i)
         }
     }
@@ -187,7 +187,7 @@ public final class IntArray {
      * [init] function. The [init] function returns an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Int): this(size) {
-        for (i in 0..size) {
+        for (i in 0..size - 1) {
             this[i] = init(i)
         }
     }
@@ -236,7 +236,7 @@ public final class LongArray {
      * [init] function. The [init] function returns an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Long): this(size) {
-        for (i in 0..size) {
+        for (i in 0..size - 1) {
             this[i] = init(i)
         }
     }
@@ -285,7 +285,7 @@ public final class FloatArray {
      * [init] function. The [init] function returns an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Float): this(size) {
-        for (i in 0..size) {
+        for (i in 0..size - 1) {
             this[i] = init(i)
         }
     }
@@ -330,7 +330,7 @@ public final class DoubleArray {
      * [init] function. The [init] function returns an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Double): this(size) {
-        for (i in 0..size) {
+        for (i in 0..size - 1) {
             this[i] = init(i)
         }
     }
@@ -375,7 +375,7 @@ public final class BooleanArray {
      * [init] function. The [init] function returns an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Boolean): this(size) {
-        for (i in 0..size) {
+        for (i in 0..size - 1) {
             this[i] = init(i)
         }
     }
