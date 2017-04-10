@@ -39,7 +39,7 @@ class GradleFacetImportTest_3_3 : GradleImportingTestCase() {
                     jcenter()
                 }
                 dependencies {
-                    classpath "com.android.tools.build:gradle:2.3.0-rc1"
+                    classpath "com.android.tools.build:gradle:2.3.0"
                 }
             }
 
@@ -119,7 +119,7 @@ class GradleFacetImportTest_3_3 : GradleImportingTestCase() {
                     jcenter()
                 }
                 dependencies {
-                    classpath "com.android.tools.build:gradle:2.3.0-rc1"
+                    classpath "com.android.tools.build:gradle:2.3.0"
                     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
                 }
             }
