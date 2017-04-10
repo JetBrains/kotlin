@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,290 +14,226 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.types.expressions;
+package org.jetbrains.kotlin.types.expressions
 
-import com.google.common.collect.Sets;
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
-import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
+import com.google.common.collect.Sets
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.diagnostics.Errors.LABEL_NAME_CLASH
+import org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.checkReservedYield
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingContext.LABEL_TARGET
+import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.scopes.utils.getDeclarationsByLabel
 
-import java.util.Collection;
-import java.util.Set;
-
-import static org.jetbrains.kotlin.diagnostics.Errors.LABEL_NAME_CLASH;
-import static org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE;
-import static org.jetbrains.kotlin.resolve.BindingContext.LABEL_TARGET;
-import static org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET;
-
-public class LabelResolver {
-    
-    public static LabelResolver INSTANCE = new LabelResolver();
-
-    private LabelResolver() {}
-
-    @NotNull
-    private Set<KtElement> getElementsByLabelName(@NotNull Name labelName, @NotNull KtSimpleNameExpression labelExpression) {
-        Set<KtElement> elements = Sets.newLinkedHashSet();
-        PsiElement parent = labelExpression.getParent();
+object LabelResolver {
+    private fun getElementsByLabelName(labelName: Name, labelExpression: KtSimpleNameExpression): Set<KtElement> {
+        val elements = Sets.newLinkedHashSet<KtElement>()
+        var parent: PsiElement? = labelExpression.parent
         while (parent != null) {
-            Name name = getLabelNameIfAny(parent);
-            if (name != null && name.equals(labelName)) {
-                elements.add(getExpressionUnderLabel((KtExpression) parent));
+            val name = getLabelNameIfAny(parent)
+            if (name != null && name == labelName) {
+                elements.add(getExpressionUnderLabel(parent as KtExpression))
             }
-            parent = parent.getParent();
+            parent = parent.parent
         }
-        return elements;
+        return elements
     }
 
-    @Nullable
-    public Name getLabelNameIfAny(@NotNull PsiElement element) {
-        if (element instanceof KtLabeledExpression) {
-            return ((KtLabeledExpression) element).getLabelNameAsName();
+    fun getLabelNameIfAny(element: PsiElement): Name? {
+        return when (element) {
+            is KtLabeledExpression -> element.getLabelNameAsName()
+            is KtFunctionLiteral -> getLabelNameIfAny(element.parent)
+            is KtLambdaExpression -> getLabelForFunctionalExpression(element)
+            is KtNamedFunction -> element.nameAsName ?: getLabelForFunctionalExpression(element)
+            else -> null
         }
-
-        if (element instanceof KtFunctionLiteral) {
-            return getLabelNameIfAny(element.getParent());
-        }
-
-        if (element instanceof KtLambdaExpression) {
-            return getLabelForFunctionalExpression((KtExpression) element);
-        }
-
-        if (element instanceof KtNamedFunction) {
-            Name name = ((KtNamedFunction) element).getNameAsName();
-            if (name != null) return name;
-            return getLabelForFunctionalExpression((KtExpression) element);
-        }
-
-        return null;
     }
 
-    private Name getLabelForFunctionalExpression(@NotNull KtExpression element) {
-        if (element.getParent() instanceof KtLabeledExpression) {
-            return getLabelNameIfAny(element.getParent());
-        }
-        return getCallerName(element);
+    private fun getLabelForFunctionalExpression(element: KtExpression): Name? {
+        val parent = element.parent
+        return if (parent is KtLabeledExpression) getLabelNameIfAny(parent) else getCallerName(element)
     }
 
-    @NotNull
-    private KtExpression getExpressionUnderLabel(@NotNull KtExpression labeledExpression) {
-        KtExpression expression = KtPsiUtil.safeDeparenthesize(labeledExpression);
-        if (expression instanceof KtLambdaExpression) {
-            return ((KtLambdaExpression) expression).getFunctionLiteral();
-        }
-        return expression;
+    private fun getExpressionUnderLabel(labeledExpression: KtExpression): KtExpression {
+        val expression = KtPsiUtil.safeDeparenthesize(labeledExpression)
+        return if (expression is KtLambdaExpression) expression.functionLiteral else expression
     }
 
-    @Nullable
-    private Name getCallerName(@NotNull KtExpression expression) {
-        KtCallExpression callExpression = getContainingCallExpression(expression);
-        if (callExpression == null) return null;
+    private fun getCallerName(expression: KtExpression): Name? {
+        val callExpression = getContainingCallExpression(expression) ?: return null
+        val calleeExpression = callExpression.calleeExpression as? KtSimpleNameExpression
+        return calleeExpression?.getReferencedNameAsName()
 
-        KtExpression calleeExpression = callExpression.getCalleeExpression();
-        if (calleeExpression instanceof KtSimpleNameExpression) {
-            KtSimpleNameExpression nameExpression = (KtSimpleNameExpression) calleeExpression;
-            return nameExpression.getReferencedNameAsName();
-        }
-
-        return null;
     }
 
-    @Nullable
-    private KtCallExpression getContainingCallExpression(@NotNull KtExpression expression) {
-        PsiElement parent = expression.getParent();
-        if (parent instanceof KtLambdaArgument) {
+    private fun getContainingCallExpression(expression: KtExpression): KtCallExpression? {
+        val parent = expression.parent
+        if (parent is KtLambdaArgument) {
             // f {}
-            PsiElement call = parent.getParent();
-            if (call instanceof KtCallExpression) {
-                return (KtCallExpression) call;
+            val call = parent.parent
+            if (call is KtCallExpression) {
+                return call
             }
         }
 
-        if (parent instanceof KtValueArgument) {
+        if (parent is KtValueArgument) {
             // f ({}) or f(p = {}) or f (fun () {})
-            KtValueArgument argument = (KtValueArgument) parent;
-            PsiElement argList = argument.getParent();
-            if (argList == null) return null;
-            PsiElement call = argList.getParent();
-            if (call instanceof KtCallExpression) {
-                return (KtCallExpression) call;
+            val argList = parent.parent ?: return null
+            val call = argList.parent
+            if (call is KtCallExpression) {
+                return call
             }
         }
-        return null;
+        return null
     }
 
-    @Nullable
-    public KtElement resolveControlLabel(
-            @NotNull KtExpressionWithLabel expression,
-            @NotNull ResolutionContext context
-    ) {
-        KtSimpleNameExpression labelElement = expression.getTargetLabel();
-        KtPsiUtilKt.checkReservedYield(labelElement, context.trace);
+    fun resolveControlLabel(expression: KtExpressionWithLabel, context: ResolutionContext<*>): KtElement? {
+        val labelElement = expression.getTargetLabel()
+        checkReservedYield(labelElement, context.trace)
 
-        Name labelName = expression.getLabelNameAsName();
-        if (labelElement == null || labelName == null) return null;
+        val labelName = expression.getLabelNameAsName()
+        if (labelElement == null || labelName == null) return null
 
-        Collection<DeclarationDescriptor> declarationsByLabel = ScopeUtilsKt.getDeclarationsByLabel(context.scope, labelName);
-        int size = declarationsByLabel.size();
+        val declarationsByLabel = context.scope.getDeclarationsByLabel(labelName)
+        val size = declarationsByLabel.size
 
         if (size > 1) {
-            BindingContextUtils.reportAmbiguousLabel(context.trace, labelElement, declarationsByLabel);
-            return null;
+            BindingContextUtils.reportAmbiguousLabel(context.trace, labelElement, declarationsByLabel)
+            return null
         }
         if (size == 0) {
-            KtElement element = resolveNamedLabel(labelName, labelElement, context.trace);
+            val element = resolveNamedLabel(labelName, labelElement, context.trace)
             if (element == null) {
-                context.trace.report(UNRESOLVED_REFERENCE.on(labelElement, labelElement));
+                context.trace.report(UNRESOLVED_REFERENCE.on(labelElement, labelElement))
             }
-            return element;
+            return element
         }
-        DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
-        KtElement element;
-        if (declarationDescriptor instanceof FunctionDescriptor || declarationDescriptor instanceof ClassDescriptor) {
-            element = (KtElement) DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor);
+
+        val declarationDescriptor = declarationsByLabel.iterator().next()
+        if (declarationDescriptor is FunctionDescriptor || declarationDescriptor is ClassDescriptor) {
+            val element = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor)
+            if (element is KtElement) {
+                context.trace.record(LABEL_TARGET, labelElement, element)
+                return element
+            }
         }
         else {
-            throw new UnsupportedOperationException(declarationDescriptor.getClass().toString()); // TODO
-        }
-        context.trace.record(LABEL_TARGET, labelElement, element);
-        return element;
-    }
-
-    private KtElement resolveNamedLabel(
-            @NotNull Name labelName, 
-            @NotNull KtSimpleNameExpression labelExpression,
-            @NotNull BindingTrace trace
-    ) {
-        Set<KtElement> list = getElementsByLabelName(labelName, labelExpression);
-        if (list.isEmpty()) return null;
-
-        if (list.size() > 1) {
-            trace.report(LABEL_NAME_CLASH.on(labelExpression));
+            throw UnsupportedOperationException(declarationDescriptor.javaClass.toString()) // TODO
         }
 
-        KtElement result = list.iterator().next();
-        trace.record(LABEL_TARGET, labelExpression, result);
-        return result;
+        return null
     }
-    
-    @NotNull
-    public LabeledReceiverResolutionResult resolveThisOrSuperLabel(
-            @NotNull KtInstanceExpressionWithLabel expression,
-            @NotNull ResolutionContext context,
-            @NotNull Name labelName
-    ) {
-        KtReferenceExpression referenceExpression = expression.getInstanceReference();
-        KtSimpleNameExpression targetLabel = expression.getTargetLabel();
-        assert targetLabel != null : expression;
 
-        Collection<DeclarationDescriptor> declarationsByLabel = ScopeUtilsKt.getDeclarationsByLabel(context.scope, labelName);
-        int size = declarationsByLabel.size();
+    private fun resolveNamedLabel(
+            labelName: Name,
+            labelExpression: KtSimpleNameExpression,
+            trace: BindingTrace
+    ): KtElement? {
+        val list = getElementsByLabelName(labelName, labelExpression)
+        if (list.isEmpty()) return null
+
+        if (list.size > 1) {
+            trace.report(LABEL_NAME_CLASH.on(labelExpression))
+        }
+
+        return list.single().also { trace.record(LABEL_TARGET, labelExpression, it) }
+    }
+
+    fun resolveThisOrSuperLabel(
+            expression: KtInstanceExpressionWithLabel,
+            context: ResolutionContext<*>,
+            labelName: Name
+    ): LabeledReceiverResolutionResult {
+        val referenceExpression = expression.instanceReference
+        val targetLabel = expression.getTargetLabel() ?: error(expression)
+
+        val declarationsByLabel = context.scope.getDeclarationsByLabel(labelName)
+        val size = declarationsByLabel.size
         if (size == 1) {
-            DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
-            ReceiverParameterDescriptor thisReceiver;
-            if (declarationDescriptor instanceof ClassDescriptor) {
-                ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                thisReceiver = classDescriptor.getThisAsReceiverParameter();
+            val declarationDescriptor = declarationsByLabel.single()
+            val thisReceiver = when (declarationDescriptor) {
+                is ClassDescriptor -> declarationDescriptor.thisAsReceiverParameter
+                is FunctionDescriptor -> declarationDescriptor.extensionReceiverParameter
+                is PropertyDescriptor -> declarationDescriptor.extensionReceiverParameter
+                else -> throw UnsupportedOperationException("Unsupported descriptor: " + declarationDescriptor) // TODO
             }
-            else if (declarationDescriptor instanceof FunctionDescriptor) {
-                FunctionDescriptor functionDescriptor = (FunctionDescriptor) declarationDescriptor;
-                thisReceiver = functionDescriptor.getExtensionReceiverParameter();
-            }
-            else if (declarationDescriptor instanceof PropertyDescriptor) {
-                PropertyDescriptor propertyDescriptor = (PropertyDescriptor) declarationDescriptor;
-                thisReceiver = propertyDescriptor.getExtensionReceiverParameter();
-            }
-            else {
-                throw new UnsupportedOperationException("Unsupported descriptor: " + declarationDescriptor); // TODO
-            }
-            PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor);
-            assert element != null : "No PSI element for descriptor: " + declarationDescriptor;
-            context.trace.record(LABEL_TARGET, targetLabel, element);
-            context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor);
 
-            if (declarationDescriptor instanceof ClassDescriptor) {
-                ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                if (!DescriptorResolver.checkHasOuterClassInstance(context.scope, context.trace, targetLabel, classDescriptor)) {
-                    return LabeledReceiverResolutionResult.labelResolutionFailed();
+            val element = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor) ?: error("No PSI element for descriptor: " + declarationDescriptor)
+            context.trace.record(LABEL_TARGET, targetLabel, element)
+            context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor)
+
+            if (declarationDescriptor is ClassDescriptor) {
+                if (!DescriptorResolver.checkHasOuterClassInstance(context.scope, context.trace, targetLabel, declarationDescriptor)) {
+                    return LabeledReceiverResolutionResult.labelResolutionFailed()
                 }
             }
 
-            return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver);
+            return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver)
         }
         else if (size == 0) {
-            KtElement element = resolveNamedLabel(labelName, targetLabel, context.trace);
-            if (element instanceof KtFunctionLiteral) {
-                DeclarationDescriptor declarationDescriptor =
-                        context.trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-                if (declarationDescriptor instanceof FunctionDescriptor) {
-                    ReceiverParameterDescriptor thisReceiver = ((FunctionDescriptor) declarationDescriptor).getExtensionReceiverParameter();
+            val element = resolveNamedLabel(labelName, targetLabel, context.trace)
+            if (element is KtFunctionLiteral) {
+                val declarationDescriptor = context.trace.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
+                if (declarationDescriptor is FunctionDescriptor) {
+                    val thisReceiver = declarationDescriptor.extensionReceiverParameter
                     if (thisReceiver != null) {
-                        context.trace.record(LABEL_TARGET, targetLabel, element);
-                        context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor);
+                        context.trace.record(LABEL_TARGET, targetLabel, element)
+                        context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor)
                     }
-                    return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver);
+                    return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver)
                 }
                 else {
-                    context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel, targetLabel));
+                    context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel, targetLabel))
                 }
             }
             else {
-                context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel, targetLabel));
+                context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel, targetLabel))
             }
         }
         else {
-            BindingContextUtils.reportAmbiguousLabel(context.trace, targetLabel, declarationsByLabel);
+            BindingContextUtils.reportAmbiguousLabel(context.trace, targetLabel, declarationsByLabel)
         }
-        return LabeledReceiverResolutionResult.labelResolutionFailed();
+        return LabeledReceiverResolutionResult.labelResolutionFailed()
     }
 
-    public static final class LabeledReceiverResolutionResult {
-        public static LabeledReceiverResolutionResult labelResolutionSuccess(@Nullable ReceiverParameterDescriptor receiverParameterDescriptor) {
-            if (receiverParameterDescriptor == null) {
-                return new LabeledReceiverResolutionResult(Code.NO_THIS, null);
-            }
-            return new LabeledReceiverResolutionResult(Code.SUCCESS, receiverParameterDescriptor);
-        }
-
-        public static LabeledReceiverResolutionResult labelResolutionFailed() {
-            return new LabeledReceiverResolutionResult(Code.LABEL_RESOLUTION_ERROR, null);
-        }
-
-        public enum Code {
+    class LabeledReceiverResolutionResult private constructor(
+            val code: LabeledReceiverResolutionResult.Code,
+            private val receiverParameterDescriptor: ReceiverParameterDescriptor?
+    ) {
+        enum class Code {
             LABEL_RESOLUTION_ERROR,
             NO_THIS,
             SUCCESS
         }
 
-        private final Code code;
-        private final ReceiverParameterDescriptor receiverParameterDescriptor;
-
-        private LabeledReceiverResolutionResult(
-                Code code,
-                ReceiverParameterDescriptor receiverParameterDescriptor
-        ) {
-            this.code = code;
-            this.receiverParameterDescriptor = receiverParameterDescriptor;
+        fun success(): Boolean {
+            return code == Code.SUCCESS
         }
 
-        public Code getCode() {
-            return code;
+        fun getReceiverParameterDescriptor(): ReceiverParameterDescriptor? {
+            assert(success()) { "Don't try to obtain the receiver when resolution failed with " + code }
+            return receiverParameterDescriptor
         }
 
-        public boolean success() {
-            return code == Code.SUCCESS;
-        }
+        companion object {
+            fun labelResolutionSuccess(receiverParameterDescriptor: ReceiverParameterDescriptor?): LabeledReceiverResolutionResult {
+                if (receiverParameterDescriptor == null) {
+                    return LabeledReceiverResolutionResult(Code.NO_THIS, null)
+                }
+                return LabeledReceiverResolutionResult(Code.SUCCESS, receiverParameterDescriptor)
+            }
 
-        public ReceiverParameterDescriptor getReceiverParameterDescriptor() {
-            assert success() : "Don't try to obtain the receiver when resolution failed with " + code;
-            return receiverParameterDescriptor;
+            fun labelResolutionFailed(): LabeledReceiverResolutionResult {
+                return LabeledReceiverResolutionResult(Code.LABEL_RESOLUTION_ERROR, null)
+            }
         }
     }
 }

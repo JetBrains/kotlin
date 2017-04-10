@@ -654,7 +654,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 ReceiverParameterDescriptor receiverParameterDescriptor = resolutionResult.getReceiverParameterDescriptor();
                 recordThisOrSuperCallInTraceAndCallExtension(context, receiverParameterDescriptor, expression);
                 if (onlyClassReceivers && !isDeclaredInClass(receiverParameterDescriptor)) {
-                    return LabelResolver.LabeledReceiverResolutionResult.labelResolutionSuccess(null);
+                    return LabelResolver.LabeledReceiverResolutionResult.Companion.labelResolutionSuccess(null);
                 }
             }
             return resolutionResult;
@@ -677,7 +677,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.record(REFERENCE_TARGET, expression.getInstanceReference(), result.getContainingDeclaration());
                 recordThisOrSuperCallInTraceAndCallExtension(context, result, expression);
             }
-            return LabelResolver.LabeledReceiverResolutionResult.labelResolutionSuccess(result);
+            return LabelResolver.LabeledReceiverResolutionResult.Companion.labelResolutionSuccess(result);
         }
     }
 
