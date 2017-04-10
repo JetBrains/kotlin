@@ -344,19 +344,13 @@ private fun processLib(konanHome: String,
     val gen = StubGenerator(nativeIndex, configuration, libName, generateShims, verbose, flavor)
 
     outKtFile.parentFile.mkdirs()
-    outKtFile.bufferedWriter().use { out ->
-        gen.withOutput({ out.appendln(it) }) {
-            gen.generateKotlinFile()
-        }
-    }
 
     File(nativeLibsDir).mkdirs()
-
     val outCFile = File("$nativeLibsDir/$libName.c") // TODO: select the better location.
 
-    outCFile.bufferedWriter().use { out ->
-        gen.withOutput({ out.appendln(it) }) {
-            gen.generateCFile(headerFiles, entryPoint)
+    outKtFile.bufferedWriter().use { ktFile ->
+        outCFile.bufferedWriter().use { cFile ->
+            gen.generateFiles(ktFile = ktFile, cFile = cFile, entryPoint = entryPoint)
         }
     }
 

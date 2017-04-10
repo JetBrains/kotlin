@@ -24,6 +24,8 @@ enum class KotlinPlatform {
     NATIVE
 }
 
+private class StubsFragment(val kotlinStubLines: List<String>, val nativeStubLines: List<String> = emptyList())
+
 // TODO: mostly rename 'jni' to 'c'.
 
 class StubGenerator(
@@ -42,6 +44,12 @@ class StubGenerator(
 
     val pkgName: String
         get() = configuration.pkgName
+
+    private val jvmFileClassName = if (pkgName.isEmpty()) {
+        libName
+    } else {
+        pkgName.substringAfterLast('.')
+    }
 
     val excludedFunctions: Set<String>
         get() = configuration.excludedFunctions
@@ -173,12 +181,19 @@ class StubGenerator(
         }
     }
 
-    private fun <R> transaction(action: () -> R): R {
-        val lines = mutableListOf<String>()
-        val res = withOutput({ lines.add(it) }, action)
-        // if action is completed successfully:
-        lines.forEach(out)
-        return res
+    fun generateLinesBy(action: () -> Unit): List<String> {
+        val result = mutableListOf<String>()
+        withOutput({ result.add(it) }, action)
+        return result
+    }
+
+    fun <R> withOutput(appendable: Appendable, action: () -> R): R {
+        return withOutput({ appendable.appendln(it) }, action)
+    }
+
+    private fun generateKotlinFragmentBy(block: () -> Unit): StubsFragment {
+        val lines = generateLinesBy(block)
+        return StubsFragment(kotlinStubLines = lines)
     }
 
     private fun <R> indent(action: () -> R): R {
@@ -737,6 +752,22 @@ class StubGenerator(
         }
     }
 
+    private fun generateStubsForFunction(func: FunctionDecl): StubsFragment {
+        val kotlinStubLines = generateLinesBy {
+            generateKotlinBindingMethod(func)
+            if (func.requiresKotlinAdapter()) {
+                out("")
+                generateKotlinExternalMethod(func)
+            }
+        }
+
+        val nativeStubLines = generateLinesBy {
+            generateCJniFunction(func)
+        }
+
+        return StubsFragment(kotlinStubLines, nativeStubLines)
+    }
+
     private fun FunctionDecl.generateAsFfiVarargs(): Boolean = (platform == KotlinPlatform.NATIVE && this.isVararg &&
             // Neither takes nor returns structs by value:
             !this.returnsRecord() && this.parameters.all { it.type.unwrapTypedefs() !is RecordType })
@@ -862,10 +893,7 @@ class StubGenerator(
                 arguments.add("alloc<${retValMirror.pointedTypeName}>().rawPtr")
             }
 
-            val callee = when (platform) {
-                KotlinPlatform.JVM -> "externals.${func.name.asSimpleName()}"
-                KotlinPlatform.NATIVE -> func.kotlinExternalName
-            }
+            val callee = func.kotlinExternalName
             out("val res = $callee(" + arguments.joinToString(", ") + ")")
 
             val result = retValBinding.conv("res")
@@ -1144,7 +1172,6 @@ class StubGenerator(
 
     private val FunctionDecl.kotlinExternalName: String
         get() {
-            require(platform == KotlinPlatform.NATIVE)
             require(this.requiresKotlinAdapter())
             return "kni_$name"
         }
@@ -1188,22 +1215,79 @@ class StubGenerator(
             "${name.asSimpleName()}: " + paramBindings[i].kotlinJniBridgeType
         }.joinToString(", ")
 
-        when (platform) {
-            KotlinPlatform.JVM -> {
-                out("external fun ${func.name.asSimpleName()}($args): ${retValBinding.kotlinJniBridgeType}")
-            }
-            KotlinPlatform.NATIVE -> {
-                out(func.symbolNameAnnotation)
-                out("private external fun ${func.kotlinExternalName}($args): ${retValBinding.kotlinJniBridgeType}")
-            }
-            else -> TODO(platform.toString())
+        if (platform == KotlinPlatform.NATIVE) {
+            out(func.symbolNameAnnotation)
         }
+        out("private external fun ${func.kotlinExternalName}($args): ${retValBinding.kotlinJniBridgeType}")
+    }
+
+    private fun generateStubs(): List<StubsFragment> {
+        val stubs = mutableListOf<StubsFragment>()
+
+        functionsToBind.forEach {
+            try {
+                stubs.add(generateStubsForFunction(it))
+            } catch (e: Throwable) {
+                log("Warning: cannot generate stubs for function ${it.name}")
+            }
+        }
+
+        nativeIndex.macroConstants.forEach {
+            try {
+                stubs.add(
+                        generateKotlinFragmentBy { generateConstant(it) }
+                )
+            } catch (e: Throwable) {
+                log("Warning: cannot generate stubs for constant ${it.name}")
+            }
+        }
+
+        nativeIndex.structs.forEach { s ->
+            try {
+                stubs.add(
+                    generateKotlinFragmentBy { generateStruct(s) }
+                )
+            } catch (e: Throwable) {
+                log("Warning: cannot generate definition for struct ${s.kotlinName}")
+            }
+        }
+
+        nativeIndex.enums.forEach {
+            try {
+                stubs.add(
+                        generateKotlinFragmentBy { generateEnum(it) }
+                )
+            } catch (e: Throwable) {
+                log("Warning: cannot generate definition for enum ${it.spelling}")
+            }
+        }
+
+        nativeIndex.typedefs.forEach { t ->
+            try {
+                stubs.add(
+                        generateKotlinFragmentBy { generateTypedef(t) }
+                )
+            } catch (e: Throwable) {
+                log("Warning: cannot generate typedef ${t.name}")
+            }
+        }
+
+        usedFunctionTypes.entries.forEach {
+            stubs.add(
+                    generateKotlinFragmentBy { generateFunctionType(it.key, it.value) }
+            )
+        }
+
+        return stubs
     }
 
     /**
      * Produces to [out] the contents of file with Kotlin bindings.
      */
-    fun generateKotlinFile() {
+    private fun generateKotlinFile(stubs: List<StubsFragment>) {
+        if (platform == KotlinPlatform.JVM) {
+            out("@file:JvmName(${jvmFileClassName.quoteAsKotlinLiteral()})")
+        }
         out("@file:Suppress(\"UNUSED_EXPRESSION\", \"UNUSED_VARIABLE\")")
         if (pkgName != "") {
             out("package $pkgName")
@@ -1215,83 +1299,13 @@ class StubGenerator(
         out("import kotlinx.cinterop.*")
         out("")
 
-        functionsToBind.forEach {
-            try {
-                transaction {
-                    generateKotlinBindingMethod(it)
-                    out("")
-                }
-            } catch (e: Throwable) {
-                log("Warning: cannot generate binding definition for function ${it.name}")
-            }
-        }
-
-        nativeIndex.macroConstants.forEach {
-            generateConstant(it)
-        }
-        out("")
-
-        nativeIndex.structs.forEach { s ->
-            try {
-                transaction {
-                    generateStruct(s)
-                    out("")
-                }
-            } catch (e: Throwable) {
-                log("Warning: cannot generate definition for struct ${s.kotlinName}")
-            }
-        }
-
-        nativeIndex.enums.forEach { e ->
-            generateEnum(e)
+        stubs.forEach {
+            it.kotlinStubLines.forEach { out(it) }
             out("")
         }
 
-        nativeIndex.typedefs.forEach { t ->
-            try {
-                transaction {
-                    generateTypedef(t)
-                    out("")
-                }
-            } catch (e: Throwable) {
-                log("Warning: cannot generate typedef ${t.name}")
-            }
-        }
-
-        usedFunctionTypes.entries.forEach {
-            generateFunctionType(it.key, it.value)
-            out("")
-        }
-
-        generateKotlinExternals()
-    }
-
-    private fun generateKotlinExternals() = when (platform) {
-        KotlinPlatform.JVM -> block("object externals") {
-            out("init { System.loadLibrary(\"$libName\") }")
-            functionsToBind.forEach {
-                try {
-                    transaction {
-                        generateKotlinExternalMethod(it)
-                        out("")
-                    }
-                } catch (e: Throwable) {
-                    log("Warning: cannot generate external definition for function ${it.name}")
-                }
-            }
-        }
-
-        KotlinPlatform.NATIVE -> functionsToBind.forEach {
-            try {
-                transaction {
-                    if (it.requiresKotlinAdapter()) {
-                        generateKotlinExternalMethod(it)
-                        out("")
-                    }
-                }
-            } catch (e: Throwable) {
-                log("Warning: cannot generate external definition for function ${it.name}")
-            }
+        if (platform == KotlinPlatform.JVM) {
+            out("private val loadLibrary = System.loadLibrary(\"$libName\")")
         }
     }
 
@@ -1331,27 +1345,30 @@ class StubGenerator(
         else -> throw NotImplementedError(kotlinJniBridgeType)
     }
 
+    private val libraryForCStubs = configuration.library.copy(
+            includes = mutableListOf<String>().apply {
+                add("stdint.h")
+                if (platform == KotlinPlatform.JVM) {
+                    add("jni.h")
+                }
+                addAll(configuration.library.includes)
+            }
+    )
+
     /**
      * Produces to [out] the contents of C source file to be compiled into JNI lib used for Kotlin bindings impl.
      */
-    fun generateCFile(headerFiles: List<String>, entryPoint: String?) {
-        out("#include <stdint.h>")
-        if (platform == KotlinPlatform.JVM) {
-            out("#include <jni.h>")
-        }
-        headerFiles.forEach {
-            out("#include <$it>")
+    private fun generateCFile(stubs: List<StubsFragment>, entryPoint: String?) {
+        libraryForCStubs.preambleLines.forEach {
+            out(it)
         }
         out("")
 
-        functionsToBind.forEach { func ->
-            try {
-                if (func.requiresCAdapter()) {
-                    generateCJniFunction(func)
-                }
-            } catch (e: Throwable) {
-                log("Warning: cannot generate C JNI function definition ${func.name}")
+        stubs.forEach {
+            it.nativeStubLines.forEach {
+                out(it)
             }
+            out("")
         }
 
         if (entryPoint != null) {
@@ -1399,13 +1416,18 @@ class StubGenerator(
                     ""
                 }
 
-                val funcFullName = if (pkgName.isEmpty()) {
-                    "externals.${func.name}"
-                } else {
-                    "$pkgName.externals.${func.name}"
+                val funcFullName = buildString {
+                    if (pkgName.isNotEmpty()) {
+                        append(pkgName)
+                        append('.')
+                    }
+                    append(jvmFileClassName)
+                    append('.')
+                    append(func.kotlinExternalName)
                 }
+
                 val functionName = "Java_" + funcFullName.replace("_", "_1").replace('.', '_').replace("$", "_00024")
-                "JNIEXPORT $cReturnType JNICALL $functionName (JNIEnv *jniEnv, jobject externalsObj$joinedParameters)"
+                "JNIEXPORT $cReturnType JNICALL $functionName (JNIEnv *jniEnv, jclass jclss$joinedParameters)"
             }
             KotlinPlatform.NATIVE -> {
                 val joinedParameters = parameters.joinToString(", ")
@@ -1440,6 +1462,18 @@ class StubGenerator(
             } else {
                 out("return ($cReturnType) ($callExpr);")
             }
+        }
+    }
+
+    fun generateFiles(ktFile: Appendable, cFile: Appendable, entryPoint: String?) {
+        val stubs = generateStubs()
+
+        withOutput(cFile) {
+            generateCFile(stubs, entryPoint)
+        }
+
+        withOutput(ktFile) {
+            generateKotlinFile(stubs)
         }
     }
 }

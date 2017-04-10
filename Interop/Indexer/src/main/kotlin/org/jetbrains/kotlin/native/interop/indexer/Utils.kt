@@ -143,7 +143,7 @@ internal fun List<String>.toNativeStringArray(placement: NativePlacement): CArra
     }
 }
 
-internal val NativeLibrary.preambleLines: List<String>
+val NativeLibrary.preambleLines: List<String>
     get() = this.includes.map { "#include <$it>" }
 
 internal fun Appendable.appendPreamble(library: NativeLibrary) = this.apply {
