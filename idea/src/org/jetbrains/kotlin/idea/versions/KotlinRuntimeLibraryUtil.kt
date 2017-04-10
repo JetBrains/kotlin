@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.versions
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleUtil
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import org.jetbrains.kotlin.idea.framework.isDetected
 import org.jetbrains.kotlin.idea.framework.isExternalLibrary
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
@@ -131,15 +133,17 @@ private fun updateJar(
     val newVFile = replaceFile(jarPath, jarFileToReplace)
     if (newVFile != null) {
         val model = library.modifiableModel
-        try {
-            if (oldUrl != null) {
-                model.removeRoot(oldUrl, OrderRootType.CLASSES)
+        runWriteAction {
+            try {
+                if (oldUrl != null) {
+                    model.removeRoot(oldUrl, libraryJarDescriptor.orderRootType)
+                }
+                val newRoot = JarFileSystem.getInstance().getJarRootForLocalFile(newVFile)!!
+                model.addRoot(newRoot, libraryJarDescriptor.orderRootType)
             }
-            val newRoot = JarFileSystem.getInstance().getJarRootForLocalFile(newVFile)!!
-            model.addRoot(newRoot, OrderRootType.CLASSES)
-        }
-        finally {
-            model.commit()
+            finally {
+                model.commit()
+            }
         }
     }
 }
@@ -154,8 +158,6 @@ fun findAllUsedLibraries(project: Project): MultiMap<Library, Module> {
             val library = entry.library ?: continue
 
             libraries.putValue(library, module)
-
-            // TODO: search js libraries as well
         }
     }
 
@@ -176,7 +178,14 @@ enum class LibraryJarDescriptor(val jarName: String,
     REFLECT_JAR(PathUtil.KOTLIN_JAVA_REFLECT_JAR, OrderRootType.CLASSES, false, KotlinPaths::getReflectPath),
     SCRIPT_RUNTIME_JAR(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, OrderRootType.CLASSES, true, KotlinPaths::getScriptRuntimePath),
     TEST_JAR(PathUtil.KOTLIN_TEST_JAR, OrderRootType.CLASSES, false, KotlinPaths::getKotlinTestPath),
-    RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR, OrderRootType.SOURCES, false, KotlinPaths::getStdlibSourcesPath),
+
+    RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR, OrderRootType.SOURCES, false, KotlinPaths::getStdlibSourcesPath) {
+        override fun findExistingJar(library: Library): VirtualFile? {
+            return super.findExistingJar(library) ?:
+                   LibraryUtils.getJarFile(library.getFiles(orderRootType).toList(), PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR_OLD)
+        }
+    },
+
     JS_STDLIB_JAR(PathUtil.JS_LIB_JAR_NAME, OrderRootType.CLASSES, true, KotlinPaths::getJsStdLibJarPath),
     JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, OrderRootType.SOURCES, false, KotlinPaths::getJsStdLibSrcJarPath);
 
@@ -244,10 +253,17 @@ internal fun replaceFile(updatedFile: File, jarFileToReplace: VirtualFile): Virt
     if (jarIoFileToReplace.name != updatedFile.name) {
         val newFile = File(jarIoFileToReplace.parent, updatedFile.name)
         if (!newFile.exists()) {
-            jarIoFileToReplace.renameTo(newFile)
-            return LocalFileSystem.getInstance().findFileByIoFile(newFile)!!.apply {
-                refresh(false, true)
+            if (!jarIoFileToReplace.renameTo(newFile)) {
+                LOG.info("Failed to rename ${jarIoFileToReplace.path} to ${newFile.path}")
+                return null
             }
+            val newVFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(newFile)
+            if (newVFile == null) {
+                LOG.info("Failed to find ${newFile.path} in VFS")
+                return null
+            }
+            newVFile.refresh(false, true)
+            return newVFile
         }
     }
     jarFileToReplace.refresh(false, true)
@@ -334,3 +350,4 @@ val MAVEN_STDLIB_ID_JRE8 = "kotlin-stdlib-jre8"
 val MAVEN_JS_STDLIB_ID = "kotlin-stdlib-js"
 val MAVEN_OLD_JS_STDLIB_ID = "kotlin-js-library"
 val MAVEN_COMMON_STDLIB_ID = "kotlin-stdlib-common" // TODO: KotlinCommonMavenConfigurator
+val LOG = Logger.getInstance("org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt")
