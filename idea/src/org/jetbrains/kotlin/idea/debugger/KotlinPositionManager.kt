@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import java.util.*
 import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
 
 class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager, PositionManagerEx() {
@@ -140,7 +139,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val methodName = location.method().name()
         return when {
             JvmAbi.isGetterName(methodName) -> {
-                val parameterForGetter = contextElement.primaryConstructor?.valueParameters?.firstOrNull() {
+                val parameterForGetter = contextElement.primaryConstructor?.valueParameters?.firstOrNull {
                     it.hasValOrVar() && it.name != null && JvmAbi.getterName(it.name!!) == methodName
                 } ?: return null
                 parameterForGetter
@@ -163,7 +162,9 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val elementAt = file.findElementAt(start) ?: return null
         val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(elementAt)
 
-        val currentLocationClassName = JvmClassName.byFqNameWithoutInnerClasses(FqName(currentLocationFqName)).internalName
+        val currentLocationClassName = JvmClassName.byFqNameWithoutInnerClasses(FqName(currentLocationFqName))
+                .internalName.replace('/', '.')
+
         for (literal in literalsOrFunctions) {
             if (InlineUtil.isInlinedArgument(literal, typeMapper.bindingContext, true)) {
                 if (isInsideInlineArgument(literal, location, myDebugProcess as DebugProcessImpl)) {
@@ -172,7 +173,10 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 continue
             }
 
-            val internalClassNames = DebuggerClassNameProvider(myDebugProcess, scopes).classNamesForPosition(literal.firstChild, true)
+            val internalClassNames = DebuggerClassNameProvider(myDebugProcess, scopes, alwaysReturnLambdaParentClass = false)
+                    .getOuterClassNamesForElement(literal.firstChild)
+                    .classNames
+
             if (internalClassNames.any { it == currentLocationClassName }) {
                 return literal
             }
@@ -223,32 +227,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     override fun getAllClasses(sourcePosition: SourcePosition): List<ReferenceType> {
         val psiFile = sourcePosition.file
         if (psiFile is KtFile) {
-            val result = ArrayList<ReferenceType>()
-
-            if (!ProjectRootsUtil.isInProjectOrLibSource(psiFile)) return result
-
-            val names = DebuggerClassNameProvider(myDebugProcess, scopes).classNamesForPosition(sourcePosition, true)
-            for (name in names) {
-                result.addAll(myDebugProcess.virtualMachineProxy.classesByName(name))
-            }
-
-            val allClasses = runReadAction { myDebugProcess.getAllClassesAtLine(sourcePosition) }
-            // TEMP START
-            if (result.isNotEmpty()) {
-                val r1 = result.toSet().toList().sorted()
-                val r2 = allClasses.toSet().toList().sorted()
-                for ((i, r11) in r1.withIndex()) {
-                    if (i >= r2.size) {
-                        println("MIS: $r11")
-                    }
-                    else if (r11 != r2[i]) {
-                        println("OLD: $r11")
-                        println("NEW: ${r2[i]}")
-                    }
-                }
-            }
-            // TEMP END
-            return allClasses
+            if (!ProjectRootsUtil.isInProjectOrLibSource(psiFile)) return emptyList()
+            return DebuggerClassNameProvider(myDebugProcess, scopes).getClassesForPosition(sourcePosition)
         }
 
         if (psiFile is ClsFileImpl) {
@@ -263,8 +243,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         throw NoDataException.INSTANCE
     }
 
-    fun originalClassNameForPosition(sourcePosition: SourcePosition): String? {
-        return DebuggerClassNameProvider(myDebugProcess, scopes).classNamesForPosition(sourcePosition, false).firstOrNull()
+    fun originalClassNameForPosition(position: SourcePosition): List<String> {
+        return DebuggerClassNameProvider(myDebugProcess, scopes).getOuterClassNamesForPosition(position)
     }
 
     override fun locationsOfLine(type: ReferenceType, position: SourcePosition): List<Location> {
@@ -307,9 +287,9 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             throw NoDataException.INSTANCE
         }
 
-        return DebuggerClassNameProvider(myDebugProcess, scopes).classNamesForPosition(position, true).mapNotNull {
-            className ->
-            myDebugProcess.requestsManager.createClassPrepareRequest(requestor, className.replace('/', '.'))
+        val classNames = DebuggerClassNameProvider(myDebugProcess, scopes).getOuterClassNamesForPosition(position)
+        return classNames.mapNotNull { name ->
+            myDebugProcess.requestsManager.createClassPrepareRequest(requestor, name + "*")
         }
     }
 
