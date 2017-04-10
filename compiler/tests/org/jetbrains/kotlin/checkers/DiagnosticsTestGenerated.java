@@ -12610,6 +12610,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/labels"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("automaticLabelFromInfixOperator.kt")
+            public void testAutomaticLabelFromInfixOperator() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/labels/automaticLabelFromInfixOperator.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt1703.kt")
             public void testKt1703() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/labels/kt1703.kt");

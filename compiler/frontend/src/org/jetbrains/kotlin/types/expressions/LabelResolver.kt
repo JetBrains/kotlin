@@ -59,7 +59,11 @@ object LabelResolver {
 
     private fun getLabelForFunctionalExpression(element: KtExpression): Name? {
         val parent = element.parent
-        return if (parent is KtLabeledExpression) getLabelNameIfAny(parent) else getCallerName(element)
+        return when (parent) {
+            is KtLabeledExpression -> getLabelNameIfAny(parent)
+            is KtBinaryExpression -> parent.operationReference.getReferencedNameAsName()
+            else -> getCallerName(element)
+        }
     }
 
     private fun getExpressionUnderLabel(labeledExpression: KtExpression): KtExpression {

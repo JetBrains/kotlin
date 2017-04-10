@@ -1,0 +1,5 @@
+package
+
+public fun myMap(/*0*/ x: kotlin.collections.List<kotlin.Int>): kotlin.Int
+public fun test(/*0*/ x: kotlin.collections.List<kotlin.Int>): kotlin.Int
+public infix fun kotlin.collections.List<kotlin.Int>.myMap(/*0*/ x: () -> kotlin.Unit): kotlin.Unit
