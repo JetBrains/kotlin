@@ -3,7 +3,7 @@
     <log_file path="$PROJECT_DIR$/ideaSDK/system-idea/log/idea.log" checked="true" skipped="true" show_all="false" alias="idea.log" />
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <option name="MAIN_CLASS_NAME" value="com.intellij.idea.Main" />
-    <option name="VM_PARAMETERS" value="-Xmx1250m -XX:ReservedCodeCacheSize=128m -XX:+HeapDumpOnOutOfMemoryError -ea -Didea.is.internal=true -Didea.debug.mode=true -Didea.system.path=../system-idea -Didea.config.path=../config-idea -Dapple.laf.useScreenMenuBar=true -Dapple.awt.graphics.UseQuartz=true -Dsun.io.useCanonCaches=false -Dplugin.path=$PROJECT_DIR$/out/artifacts/Kotlin -Dkotlin.internal.mode.enabled=true -Didea.additional.classpath=../idea-kotlin-runtime/kotlin-runtime.jar,../idea-kotlin-runtime/kotlin-reflect.jar" />
+    <option name="VM_PARAMETERS" value="-Xmx1250m -XX:ReservedCodeCacheSize=128m -XX:+HeapDumpOnOutOfMemoryError -ea -Didea.is.internal=true -Didea.debug.mode=true -Didea.system.path=../system-idea -Didea.config.path=../config-idea -Dapple.laf.useScreenMenuBar=true -Dapple.awt.graphics.UseQuartz=true -Dsun.io.useCanonCaches=false -Dplugin.path=$PROJECT_DIR$/out/artifacts/Kotlin -Dkotlin.internal.mode.enabled=true -Didea.additional.classpath=../idea-kotlin-runtime/kotlin-runtime.jar,../idea-kotlin-runtime/kotlin-reflect.jar -Didea.platform.prefix=AndroidStudio" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/ideaSDK/bin" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
