@@ -17,17 +17,6 @@
 package org.jetbrains.kotlin.cli.jvm.repl.messages
 
 class ReplConsoleWriter : ReplWriter {
-    init {
-        Runtime.getRuntime().addShutdownHook(object : Thread("Kotlin REPL shutdown hook") {
-            override fun run() {
-                // Print an empty line to make the command prompt start from the beginning of the line after REPL exits.
-                // This is essentially a workaround of a jline2 bug.
-                // TODO: remove this as soon as we update to jline3
-                println()
-            }
-        })
-    }
-
     override fun printlnWelcomeMessage(x: String) = println(x)
     override fun printlnHelpMessage(x: String) = println(x)
     override fun outputCompileError(x: String) = println(x)
