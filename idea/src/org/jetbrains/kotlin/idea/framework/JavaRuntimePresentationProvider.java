@@ -32,7 +32,7 @@ public class JavaRuntimePresentationProvider extends LibraryPresentationProvider
     }
 
     protected JavaRuntimePresentationProvider() {
-        super(JavaRuntimeLibraryDescription.KOTLIN_JAVA_RUNTIME_KIND);
+        super(JavaRuntimeLibraryDescription.Companion.getKOTLIN_JAVA_RUNTIME_KIND());
     }
 
     @Nullable

@@ -14,29 +14,31 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.framework;
+package org.jetbrains.kotlin.idea.framework
 
-import com.google.common.collect.Sets;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.libraries.LibraryKind;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.libraries.LibraryKind
+import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 
-import java.util.Set;
+/**
+ * @param project null when project doesn't exist yet (called from project wizard)
+ */
+class JavaRuntimeLibraryDescription(project: Project?) :
+        CustomLibraryDescriptorWithDeferredConfig(project,
+                                                  KotlinJavaModuleConfigurator.NAME,
+                                                  LIBRARY_NAME,
+                                                  DIALOG_TITLE,
+                                                  LIBRARY_CAPTION,
+                                                  KOTLIN_JAVA_RUNTIME_KIND,
+                                                  SUITABLE_LIBRARY_KINDS) {
 
-public class JavaRuntimeLibraryDescription extends CustomLibraryDescriptorWithDeferredConfig {
-    public static final LibraryKind KOTLIN_JAVA_RUNTIME_KIND = LibraryKind.create("kotlin-java-runtime");
-    public static final String LIBRARY_NAME = "KotlinJavaRuntime";
+    companion object {
+        val KOTLIN_JAVA_RUNTIME_KIND = LibraryKind.create("kotlin-java-runtime")
+        val LIBRARY_NAME = "KotlinJavaRuntime"
 
-    public static final String JAVA_RUNTIME_LIBRARY_CREATION = "Java Runtime Library Creation";
-    public static final String DIALOG_TITLE = "Create Kotlin Java Runtime Library";
-    public static final String LIBRARY_CAPTION = "Kotlin Java Runtime Library";
-    public static final Set<LibraryKind> SUITABLE_LIBRARY_KINDS = Sets.newHashSet(KOTLIN_JAVA_RUNTIME_KIND);
-
-    /**
-     * @param project null when project doesn't exist yet (called from project wizard)
-     */
-    public JavaRuntimeLibraryDescription(@Nullable Project project) {
-        super(project, KotlinJavaModuleConfigurator.Companion.getNAME(), LIBRARY_NAME, DIALOG_TITLE, LIBRARY_CAPTION, KOTLIN_JAVA_RUNTIME_KIND, SUITABLE_LIBRARY_KINDS);
+        val JAVA_RUNTIME_LIBRARY_CREATION = "Java Runtime Library Creation"
+        val DIALOG_TITLE = "Create Kotlin Java Runtime Library"
+        val LIBRARY_CAPTION = "Kotlin Java Runtime Library"
+        val SUITABLE_LIBRARY_KINDS: Set<LibraryKind> = setOf(KOTLIN_JAVA_RUNTIME_KIND)
     }
 }
