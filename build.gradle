@@ -33,15 +33,15 @@ allprojects {
     loadCommandLineProperties()
     loadLocalProperties()
     setupCompilationFlags()
-    setupClang()
+    setupClang(project)
 }
 
-void setupClang() {
+void setupClang(Project project) {
 
-    convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
+    project.convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
 
-    plugins.withType(NativeComponentPlugin) {
-        model {
+    project.plugins.withType(NativeComponentPlugin) {
+        project.model {
             toolChains {
                 clang(Clang) {
                     clangPath.each {
