@@ -66,6 +66,12 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
         doTest(fileName);
     }
 
+    @TestMetadata("ConstructorPrimary.kt")
+    public void testConstructorPrimary() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ConstructorPrimary.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Do.kt")
     public void testDo() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Do.kt");
@@ -111,6 +117,12 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
     @TestMetadata("IfLParenth.kt")
     public void testIfLParenth() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/IfLParenth.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfParansOnNextLine.kt")
+    public void testIfParansOnNextLine() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/IfParansOnNextLine.kt");
         doTest(fileName);
     }
 

@@ -1,0 +1,6 @@
+fun other(a: Any) {
+    if (<caret>)
+    (a as Int).let { println(a + 12) }
+}
+
+// ELEMENT: if
