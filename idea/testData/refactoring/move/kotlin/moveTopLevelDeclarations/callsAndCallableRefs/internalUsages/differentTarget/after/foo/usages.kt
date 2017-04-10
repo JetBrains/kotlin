@@ -1,4 +1,7 @@
 package foo
 
-class X
+class X {
+    class XX
+}
+class XConstr(n: Int)
 
