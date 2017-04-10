@@ -936,12 +936,8 @@
             depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,runtime,other-artifacts"
             description="Builds redistributables from sources"/>
 
-    <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick-for-maven,ant-tools,runtime,other-artifacts"
-            description="Builds everything, but classes are reused from project out dir, doesn't run proguard"/>
-
     <target name="dist-quick-compiler-only"
-            depends="init,prepare-dist,preloader,serialize-builtins,compiler-quick"
+            depends="init,prepare-dist,preloader,serialize-builtins,compiler-quick-for-maven"
             description="Builds compiler jar from project out dir"/>
 
     <target name="zip-compiler">
