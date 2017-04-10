@@ -2,5 +2,5 @@
 package a
 
 fun foo() {
-    ""   // a/ABC
+    ""   // a.ABC
 }

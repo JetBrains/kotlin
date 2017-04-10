@@ -1,2 +1,4 @@
-class A { fun f() {} } // A
-class B { fun g() {} } // B
+package test
+
+class A { fun f() {} } // test.A
+class B { fun g() {} } // test.B

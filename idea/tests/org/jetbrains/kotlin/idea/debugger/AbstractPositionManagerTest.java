@@ -64,6 +64,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsightFixtureTestCase {
     // Breakpoint is given as a line comment on a specific line, containing the regexp to match the name of the class where that line
@@ -204,13 +205,7 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
     }
 
     private static Map<String, ReferenceType> getReferenceMap(OutputFileCollection outputFiles) {
-        Map<String, ReferenceType> referencesByName = Maps.newHashMap();
-        for (OutputFile outputFile : outputFiles.asList()) {
-            String classFileName = outputFile.getRelativePath();
-            String name = classFileName.substring(0, classFileName.lastIndexOf('.'));
-            referencesByName.put(name, new MockReferenceType(name));
-        }
-        return referencesByName;
+        return new SmartMockReferenceTypeContext(outputFiles).getReferenceTypesByName();
     }
 
     private DebugProcessEvents createDebugProcess(final Map<String, ReferenceType> referencesByName) {
@@ -238,13 +233,16 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
         SourcePosition position = SourcePosition.createFromLine(breakpoint.file, breakpoint.lineNumber);
         List<ReferenceType> classes = positionManager.getAllClasses(position);
         assertNotNull(classes);
-        assertEquals(1, classes.size());
-        ReferenceType type = classes.get(0);
-        assertTrue("Type name " + type.name() + " doesn't match " + breakpoint.classNameRegexp + " for line " + (breakpoint.lineNumber + 1),
-                   type.name().matches(breakpoint.classNameRegexp));
+        assertFalse("Classes not found for line " + (breakpoint.lineNumber + 1) + ", expected " + breakpoint.classNameRegexp,
+                    classes.isEmpty());
 
-        // JDI names are of form "package.Class$InnerClass"
-        ReferenceType typeWithFqName = new MockReferenceType(type.name().replace('/', '.'));
+        if (classes.stream().noneMatch(clazz -> clazz.name().matches(breakpoint.classNameRegexp))) {
+            throw new AssertionError("Breakpoint class '" + breakpoint.classNameRegexp +
+                                     "' from line " + (breakpoint.lineNumber + 1) + " was not found in the PositionManager classes names: " +
+                                     classes.stream().map(ReferenceType::name).collect(Collectors.joining(",")));
+        }
+
+        ReferenceType typeWithFqName = classes.get(0);
         Location location = new MockLocation(typeWithFqName, breakpoint.file.getName(), breakpoint.lineNumber + 1);
 
         SourcePosition actualPosition = positionManager.getSourcePosition(location);
