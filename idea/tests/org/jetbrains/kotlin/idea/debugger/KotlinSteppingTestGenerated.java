@@ -1070,6 +1070,18 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doCustomTest(fileName);
         }
 
+        @TestMetadata("inlineProperties.kt")
+        public void testInlineProperties() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/inlineProperties.kt");
+            doCustomTest(fileName);
+        }
+
+        @TestMetadata("inlinePropertyAccessors.kt")
+        public void testInlinePropertyAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/inlinePropertyAccessors.kt");
+            doCustomTest(fileName);
+        }
+
         @TestMetadata("kt15823.kt")
         public void testKt15823() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/kt15823.kt");

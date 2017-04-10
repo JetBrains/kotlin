@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.Companio
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.Companion.Cached
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.Companion.NonCached
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -137,38 +138,52 @@ class DebuggerClassNameProvider(
                                 Cached(listOf(name, name + JvmAbi.DEFAULT_IMPLS_SUFFIX))
                             else
                                 ComputedClassNames.EMPTY
-                        } else {
+                        }
+                        else {
                             getNameForNonLocalClass(it)?.let { ComputedClassNames.Cached(it) } ?: ComputedClassNames.EMPTY
                         }
                     }
                 }
             }
             is KtProperty -> {
-                // inline top level property!
-                if (runReadAction { element.isTopLevel }) {
-                    return getOuterClassNamesForElement(element.relevantParentInReadAction)
-                }
-
-                val enclosingElementForLocal = runReadAction { KtPsiUtil.getEnclosingElementForLocalDeclaration(element) }
-                if (enclosingElementForLocal != null) {
-                    return getOuterClassNamesForElement(enclosingElementForLocal)
-                }
-
-                // Handle non-local property
-                val containingClassOrFile = runReadAction {
-                    PsiTreeUtil.getParentOfType(element, KtFile::class.java, KtClassOrObject::class.java)
-                }
-
-                if (containingClassOrFile is KtObjectDeclaration && runReadAction { containingClassOrFile.isCompanion() }) {
-                    // Properties from the companion object can be placed in the companion object's containing class
-                    return (getOuterClassNamesForElement(containingClassOrFile.relevantParentInReadAction) +
-                            getOuterClassNamesForElement(containingClassOrFile)).distinct()
-                }
-
-                if (containingClassOrFile != null)
-                    getOuterClassNamesForElement(containingClassOrFile)
-                else
+                val nonInlineClasses = if (runReadAction { element.isTopLevel }) {
+                    // Top level property
                     getOuterClassNamesForElement(element.relevantParentInReadAction)
+                }
+                else {
+                    val enclosingElementForLocal = runReadAction { KtPsiUtil.getEnclosingElementForLocalDeclaration(element) }
+                    if (enclosingElementForLocal != null) {
+                        // Local class
+                        getOuterClassNamesForElement(enclosingElementForLocal)
+                    }
+                    else {
+                        val containingClassOrFile = runReadAction {
+                            PsiTreeUtil.getParentOfType(element, KtFile::class.java, KtClassOrObject::class.java)
+                        }
+
+                        if (containingClassOrFile is KtObjectDeclaration && containingClassOrFile.isCompanionInReadAction) {
+                            // Properties from the companion object can be placed in the companion object's containing class
+                            (getOuterClassNamesForElement(containingClassOrFile.relevantParentInReadAction) +
+                                    getOuterClassNamesForElement(containingClassOrFile)).distinct()
+                        }
+                        else if (containingClassOrFile != null) {
+                            getOuterClassNamesForElement(containingClassOrFile)
+                        }
+                        else {
+                            getOuterClassNamesForElement(element.relevantParentInReadAction)
+                        }
+                    }
+                }
+
+                if (findInlineUseSites && (
+                        element.isInlineInReadAction ||
+                        runReadAction { element.accessors.any { it.hasModifier(KtTokens.INLINE_KEYWORD) } })
+                ) {
+                    nonInlineClasses + inlineUsagesSearcher.findInlinedCalls(element) { this.getOuterClassNamesForElement(it) }
+                }
+                else {
+                    return NonCached(nonInlineClasses.classNames)
+                }
             }
             is KtNamedFunction -> {
                 val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(element)
@@ -180,25 +195,23 @@ class DebuggerClassNameProvider(
                 if (runReadAction { element.name == null || element.isLocal } || isFunctionWithSuspendStateMachine(descriptor, typeMapper.bindingContext)) {
                     nonInlineClasses = classNamesOfContainingDeclaration + ComputedClassNames.Cached(
                             asmTypeForAnonymousClass(typeMapper.bindingContext, element).internalName.toJdiName())
-                } else {
+                }
+                else {
                     nonInlineClasses = classNamesOfContainingDeclaration
                 }
 
-                if (!findInlineUseSites) {
+                if (!findInlineUseSites || !element.isInlineInReadAction) {
                     return NonCached(nonInlineClasses.classNames)
                 }
 
-                val inlineCallSiteClasses = inlineUsagesSearcher.findInlinedCalls(
-                        element,
-                        KotlinDebuggerCaches.getOrCreateTypeMapper(element).bindingContext
-                ) { this.getOuterClassNamesForElement(it) }
+                val inlineCallSiteClasses = inlineUsagesSearcher.findInlinedCalls(element) { this.getOuterClassNamesForElement(it) }
 
                 nonInlineClasses + inlineCallSiteClasses
             }
             is KtAnonymousInitializer -> {
                 val initializerOwner = runReadAction { element.containingDeclaration }
 
-                if (initializerOwner is KtObjectDeclaration && runReadAction { initializerOwner.isCompanion() }) {
+                if (initializerOwner is KtObjectDeclaration && initializerOwner.isCompanionInReadAction) {
                     return getOuterClassNamesForElement(runReadAction { initializerOwner.containingClassOrObject })
                 }
 
@@ -236,6 +249,12 @@ class DebuggerClassNameProvider(
     private fun isFunctionWithSuspendStateMachine(descriptor: DeclarationDescriptor?, bindingContext: BindingContext): Boolean {
         return descriptor is SimpleFunctionDescriptor && descriptor.isSuspend && descriptor.containsNonTailSuspensionCalls(bindingContext)
     }
+
+    private val KtDeclaration.isInlineInReadAction: Boolean
+        get() = runReadAction { hasModifier(KtTokens.INLINE_KEYWORD) }
+
+    private val KtObjectDeclaration.isCompanionInReadAction: Boolean
+        get() = runReadAction { isCompanion() }
 
     private val PsiElement.relevantParentInReadAction
         get() = runReadAction { getRelevantElement(this.parent) }

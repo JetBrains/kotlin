@@ -25,6 +25,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.xdebugger.impl.XDebugSessionImpl
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -32,19 +34,24 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.idea.debugger.DebuggerClassNameProvider.Companion.getRelevantElement
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames
 
 class InlineCallableUsagesSearcher(val myDebugProcess: DebugProcess, val scopes: List<GlobalSearchScope>) {
-    fun findInlinedCalls(function: KtNamedFunction, context: BindingContext, transformer: (PsiElement) -> ComputedClassNames): ComputedClassNames {
-        if (!InlineUtil.isInline(context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function))) {
+    fun findInlinedCalls(
+            declaration: KtDeclaration,
+            bindingContext: BindingContext = KotlinDebuggerCaches.getOrCreateTypeMapper(declaration).bindingContext,
+            transformer: (PsiElement) -> ComputedClassNames
+    ): ComputedClassNames {
+        if (!checkIfInline(declaration, bindingContext)) {
             return ComputedClassNames.EMPTY
         }
         else {
             val searchResult = hashSetOf<PsiElement>()
-            val functionName = runReadAction { function.name }
+            val declarationName = runReadAction { declaration.name }
 
             val task = Runnable {
-                ReferencesSearch.search(function, getScopeForInlineFunctionUsages(function)).forEach {
+                ReferencesSearch.search(declaration, getScopeForInlineDeclarationUsages(declaration)).forEach {
                     if (!runReadAction { it.isImportUsage() }) {
                         val usage = (it.element as? KtElement)?.let(::getRelevantElement)
                         if (usage != null) {
@@ -61,7 +68,7 @@ class InlineCallableUsagesSearcher(val myDebugProcess: DebugProcess, val scopes:
                         {
                             isSuccess = ProgressManager.getInstance().runProcessWithProgressSynchronously(
                                     task,
-                                    "Compute class names for function $functionName",
+                                    "Compute class names for declaration $declarationName",
                                     true,
                                     myDebugProcess.project)
                         }, ModalityState.NON_MODAL)
@@ -73,7 +80,8 @@ class InlineCallableUsagesSearcher(val myDebugProcess: DebugProcess, val scopes:
 
             if (!isSuccess) {
                 XDebugSessionImpl.NOTIFICATION_GROUP.createNotification(
-                        "Debugger can skip some executions of $functionName method, because the computation of class names was interrupted", MessageType.WARNING
+                        "Debugger can skip some executions of $declarationName because the computation of class names was interrupted",
+                        MessageType.WARNING
                 ).notify(myDebugProcess.project)
             }
 
@@ -82,8 +90,17 @@ class InlineCallableUsagesSearcher(val myDebugProcess: DebugProcess, val scopes:
         }
     }
 
-    private fun getScopeForInlineFunctionUsages(inlineFunction: KtNamedFunction): GlobalSearchScope {
-        val virtualFile = runReadAction { inlineFunction.containingFile.virtualFile }
+    private fun checkIfInline(declaration: KtDeclaration, bindingContext: BindingContext): Boolean {
+        val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration) ?: return false
+        return when (descriptor) {
+            is FunctionDescriptor -> InlineUtil.isInline(descriptor)
+            is PropertyDescriptor -> InlineUtil.hasInlineAccessors(descriptor)
+            else -> false
+        }
+    }
+
+    private fun getScopeForInlineDeclarationUsages(inlineDeclaration: KtDeclaration): GlobalSearchScope {
+        val virtualFile = runReadAction { inlineDeclaration.containingFile.virtualFile }
         if (virtualFile != null && ProjectRootsUtil.isLibraryFile(myDebugProcess.project, virtualFile)) {
             return GlobalSearchScope.union(scopes.toTypedArray())
         }
