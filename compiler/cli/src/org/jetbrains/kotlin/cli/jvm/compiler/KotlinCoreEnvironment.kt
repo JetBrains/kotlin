@@ -106,7 +106,6 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.util.*
 
 class KotlinCoreEnvironment private constructor(
         parentDisposable: Disposable,
@@ -141,7 +140,7 @@ class KotlinCoreEnvironment private constructor(
             super.registerJavaPsiFacade()
         }
     }
-    private val sourceFiles = ArrayList<KtFile>()
+    private val sourceFiles = mutableListOf<KtFile>()
     private val rootsIndex: JvmDependenciesDynamicCompoundIndex
 
     val configuration: CompilerConfiguration = configuration.copy()
@@ -172,11 +171,11 @@ class KotlinCoreEnvironment private constructor(
         registerProjectServicesForCLI(projectEnvironment)
         registerProjectServices(projectEnvironment)
 
-        sourceFiles.addAll(CompileEnvironmentUtil.getKtFiles(project, getSourceRootsCheckingForDuplicates(), this.configuration, {
+        sourceFiles += CompileEnvironmentUtil.getKtFiles(project, getSourceRootsCheckingForDuplicates(), this.configuration, {
             message ->
             report(ERROR, message)
-        }))
-        sourceFiles.sortedWith(Comparator<KtFile> { o1, o2 -> o1.virtualFile.path.compareTo(o2.virtualFile.path, ignoreCase = true) })
+        })
+        sourceFiles.sortBy { it.virtualFile.path }
 
         KotlinScriptDefinitionProvider.getInstance(project).let { scriptDefinitionProvider ->
             scriptDefinitionProvider.setScriptDefinitions(
