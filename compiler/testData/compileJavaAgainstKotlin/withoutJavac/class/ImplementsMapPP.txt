@@ -1,0 +1,21 @@
+package test
+
+public/*package*/ open class ImplementsMapPP {
+    public/*package*/ constructor ImplementsMapPP()
+}
+
+public abstract class Mine</*0*/ P1, /*1*/ P2> : java.util.Map<P2, P1> {
+    public constructor Mine</*0*/ P1, /*1*/ P2>()
+    public abstract /*fake_override*/ fun clear(): kotlin.Unit
+    public abstract /*fake_override*/ fun containsKey(/*0*/ kotlin.Any!): kotlin.Boolean
+    public abstract /*fake_override*/ fun containsValue(/*0*/ kotlin.Any!): kotlin.Boolean
+    public abstract /*fake_override*/ fun entrySet(): kotlin.collections.(Mutable)Set<kotlin.collections.(Mutable)Map.(Mutable)Entry<P2!, P1!>!>!
+    public abstract /*fake_override*/ fun get(/*0*/ kotlin.Any!): P1!
+    public abstract /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public abstract /*fake_override*/ fun keySet(): kotlin.collections.(Mutable)Set<P2!>!
+    public abstract /*fake_override*/ fun put(/*0*/ P2!, /*1*/ P1!): P1!
+    public abstract /*fake_override*/ fun putAll(/*0*/ (kotlin.collections.MutableMap<out P2!, out P1!>..kotlin.collections.Map<out P2!, P1!>?)): kotlin.Unit
+    public abstract /*fake_override*/ fun remove(/*0*/ kotlin.Any!): P1!
+    public abstract /*fake_override*/ fun size(): kotlin.Int
+    public abstract /*fake_override*/ fun values(): kotlin.collections.(Mutable)Collection<P1!>!
+}

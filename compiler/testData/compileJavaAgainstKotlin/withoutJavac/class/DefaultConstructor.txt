@@ -1,0 +1,11 @@
+package test
+
+public final class A {
+    public constructor A(/*0*/ kotlin.Int = ...)
+    public final val a: kotlin.Int
+}
+
+public/*package*/ open class Simple {
+    public/*package*/ constructor Simple()
+    public/*package*/ open fun foo(): kotlin.Unit
+}

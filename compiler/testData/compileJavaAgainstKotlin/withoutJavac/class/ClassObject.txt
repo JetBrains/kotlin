@@ -1,0 +1,33 @@
+package test
+
+public/*package*/ open class ClassObject {
+    public/*package*/ constructor ClassObject()
+    public/*package*/ open fun accessToClassObject(): kotlin.Unit
+    public/*package*/ open fun accessToInnerClass(): kotlin.Unit
+    public/*package*/ open fun accessToPackageObject(): kotlin.Unit
+}
+
+public object PackageInner {
+    private constructor PackageInner()
+    public final val value: kotlin.Int
+    public final fun foo(): kotlin.Unit
+}
+
+public final class WithClassObject {
+    public constructor WithClassObject()
+
+    public companion object Companion {
+        private constructor Companion()
+        public final val value: kotlin.Int
+        public final val valueWithGetter: kotlin.Int
+        public final var variable: kotlin.Int
+        public final var variableWithAccessors: kotlin.Int
+        public final fun foo(): kotlin.Unit
+    }
+
+    public final class MyInner {
+        public constructor MyInner()
+        public final val value: kotlin.Int
+        public final fun foo(): kotlin.Unit
+    }
+}

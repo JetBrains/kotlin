@@ -1,0 +1,20 @@
+package test
+
+public/*package*/ open class InnerClassConstructors {
+    public/*package*/ constructor InnerClassConstructors()
+
+    // Static members
+    public open fun main(/*0*/ kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
+}
+
+public final class Outer {
+    public constructor Outer()
+
+    public final inner class InnerGeneric {
+        public constructor InnerGeneric(/*0*/ kotlin.collections.List<kotlin.String>)
+    }
+
+    public final inner class InnerPrimitive {
+        public constructor InnerPrimitive(/*0*/ kotlin.Int)
+    }
+}

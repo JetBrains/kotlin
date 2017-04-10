@@ -16,11 +16,8 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
@@ -47,13 +44,10 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
 
         val javaErrorFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".javaerr.txt"))
 
-        val useJavac = true
-
         val out = File(tmpdir, "out")
-        val compiledSuccessfully = compileKotlinWithJava(listOf(javaFile),
-                                                         listOf(ktFile),
-                                                         out, testRootDisposable, javaErrorFile,
-                                                         useJavac)
+        val compiledSuccessfully = KotlinTestUtils.compileKotlinWithJava(listOf(javaFile),
+                                                                         listOf(ktFile),
+                                                                         out, testRootDisposable, javaErrorFile)
         if (!compiledSuccessfully) return
 
         val environment = KotlinCoreEnvironment.createForTests(
@@ -61,9 +55,6 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
                 newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, getAnnotationsJar(), out),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
-
-        environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, useJavac)
-        environment.registerJavac(emptyList<File>(), out)
 
         val analysisResult = JvmResolveUtil.analyze(environment)
         val packageView = analysisResult.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
@@ -73,33 +64,6 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
         validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile)
     }
 
-    @Throws(IOException::class)
-    fun compileKotlinWithJava(
-            javaFiles: List<File>,
-            ktFiles: List<File>,
-            outDir: File,
-            disposable: Disposable,
-            javaErrorFile: File?,
-            useJavac: Boolean
-    ): Boolean {
-        if (!useJavac) {
-            return KotlinTestUtils.compileKotlinWithJava(javaFiles, ktFiles, outDir, disposable, javaErrorFile)
-        }
-
-        val environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable)
-        environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, useJavac)
-        environment.registerJavac(javaFiles, outDir)
-        if (!ktFiles.isEmpty()) {
-            LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment)
-        }
-        else {
-            val mkdirs = outDir.mkdirs()
-            assert(mkdirs) { "Not created: $outDir" }
-        }
-
-        return JavacWrapper.getInstance(environment.project).use(JavacWrapper::compile)
-    }
-    
     companion object {
         // Do not render parameter names because there are test cases where classes inherit from JDK collections,
         // and some versions of JDK have debug information in the class files (including parameter names), and some don't

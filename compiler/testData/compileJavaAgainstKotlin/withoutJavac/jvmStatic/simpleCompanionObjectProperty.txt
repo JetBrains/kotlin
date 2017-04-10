@@ -1,0 +1,20 @@
+package test
+
+public fun main(/*0*/ kotlin.Array<kotlin.String>): kotlin.Unit
+
+public final class A {
+    public constructor A()
+
+    public companion object Companion {
+        private constructor Companion()
+        @kotlin.jvm.JvmStatic public final val b: kotlin.String
+        public final var test.A.c: kotlin.String
+    }
+}
+
+public/*package*/ open class Test {
+    public/*package*/ constructor Test()
+
+    // Static members
+    public open fun main(/*0*/ kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
+}

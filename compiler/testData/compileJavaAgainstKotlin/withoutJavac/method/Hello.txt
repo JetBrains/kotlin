@@ -1,0 +1,10 @@
+package test
+
+public fun f(): kotlin.String
+
+public/*package*/ open class Hello {
+    public/*package*/ constructor Hello()
+
+    // Static members
+    public open fun xx(): kotlin.Unit
+}

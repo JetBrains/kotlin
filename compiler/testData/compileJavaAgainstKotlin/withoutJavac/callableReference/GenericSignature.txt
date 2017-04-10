@@ -1,0 +1,16 @@
+package test
+
+public/*package*/ open class Bar : test.Foo {
+    public/*package*/ constructor Bar()
+    public open fun request(): kotlin.reflect.KFunction<test.Request!>
+}
+
+public open class Foo {
+    public constructor Foo()
+    public open fun request(): kotlin.reflect.KFunction1<@kotlin.ParameterName(name = "id") kotlin.Long, test.Request>
+}
+
+public final class Request {
+    public constructor Request(/*0*/ kotlin.Long)
+    public final val id: kotlin.Long
+}

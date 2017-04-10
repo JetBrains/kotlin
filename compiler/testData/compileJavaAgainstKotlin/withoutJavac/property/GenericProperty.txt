@@ -1,0 +1,8 @@
+package test
+
+public val </*0*/ K, /*1*/ V> kotlin.collections.Map<K, V>.test: kotlin.collections.Map<V, K>
+
+public/*package*/ open class GenericProperty {
+    public/*package*/ constructor GenericProperty()
+    public/*package*/ open fun foo(): kotlin.Unit
+}

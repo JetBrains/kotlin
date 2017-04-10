@@ -1,0 +1,25 @@
+package test
+
+public interface A</*0*/ T> {
+    public abstract fun foo(): T
+}
+
+public interface B : test.A<kotlin.Int> {
+    public abstract /*fake_override*/ fun foo(): kotlin.Int
+}
+
+public abstract class C : test.B {
+    public constructor C()
+    public abstract /*fake_override*/ fun foo(): kotlin.Int
+}
+
+public open class D : test.C {
+    public constructor D()
+    public open fun foo(): kotlin.Int
+}
+
+public/*package*/ open class ExtendsD : test.D {
+    public/*package*/ constructor ExtendsD()
+    public open /*fake_override*/ fun foo(): kotlin.Int
+    public/*package*/ open fun test(): kotlin.Unit
+}

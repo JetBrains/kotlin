@@ -1,0 +1,13 @@
+package test
+
+public open class AccessorGenericSignature {
+    public constructor AccessorGenericSignature()
+    private final val b: test.BadClass!
+}
+
+public final class BadClass {
+    public constructor BadClass()
+    private final fun </*0*/ D> bar(/*0*/ kotlin.collections.List<D>): kotlin.Unit
+    private final fun </*0*/ E : kotlin.Number, /*1*/ F : kotlin.collections.MutableList<E>> baz(/*0*/ kotlin.collections.List<F>): kotlin.Unit
+    public final fun foo(): kotlin.Unit
+}

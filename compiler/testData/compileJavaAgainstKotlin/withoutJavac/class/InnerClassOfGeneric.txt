@@ -1,0 +1,20 @@
+package test
+
+public/*package*/ open class InnerClassOfGeneric {
+    public/*package*/ constructor InnerClassOfGeneric()
+
+    // Static members
+    public open fun main(/*0*/ kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
+}
+
+public final class Outer</*0*/ T> {
+    public constructor Outer</*0*/ T>()
+
+    public final inner class Inner /*captured type parameters: /*0*/ T*/ {
+        public constructor Inner(/*0*/ kotlin.collections.List<T>)
+    }
+
+    public final inner class InnerSimple /*captured type parameters: /*0*/ T*/ {
+        public constructor InnerSimple()
+    }
+}

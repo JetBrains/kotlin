@@ -1,0 +1,10 @@
+package test
+
+public fun </*0*/ K> fff(/*0*/ kotlin.collections.Map<K, kotlin.String>): kotlin.collections.Map<K, kotlin.String>
+
+public/*package*/ open class MapOfKString {
+    public/*package*/ constructor MapOfKString()
+
+    // Static members
+    public open fun gfgdgfg(): kotlin.Unit
+}

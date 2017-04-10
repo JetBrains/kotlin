@@ -1,0 +1,9 @@
+package test
+
+public final class Impossible</*0*/ P> {
+    public constructor Impossible</*0*/ P>()
+}
+
+public/*package*/ open class Simple {
+    public/*package*/ constructor Simple()
+}

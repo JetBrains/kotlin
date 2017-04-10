@@ -1,0 +1,33 @@
+package test
+
+public interface Base</*0*/ T> {
+    public open fun one(/*0*/ T): kotlin.Unit
+}
+
+public final class Derived : test.Base<kotlin.String> {
+    public constructor Derived()
+    public open /*fake_override*/ fun one(/*0*/ kotlin.String): kotlin.Unit
+}
+
+public final class E1 : kotlin.Exception /* = java.lang.Exception */ {
+    public constructor E1()
+    public open /*fake_override*/ val cause: kotlin.Throwable?
+    public open /*fake_override*/ val message: kotlin.String?
+    public final /*fake_override*/ fun addSuppressed(/*0*/ kotlin.Throwable!): kotlin.Unit
+    public open /*fake_override*/ fun fillInStackTrace(): kotlin.Throwable!
+    public open /*fake_override*/ fun getLocalizedMessage(): kotlin.String!
+    public open /*fake_override*/ fun getStackTrace(): kotlin.Array<(out) java.lang.StackTraceElement!>!
+    public final /*fake_override*/ fun getSuppressed(): kotlin.Array<(out) kotlin.Throwable!>!
+    public open /*fake_override*/ fun initCause(/*0*/ kotlin.Throwable!): kotlin.Throwable!
+    public open /*fake_override*/ fun printStackTrace(): kotlin.Unit
+    public open /*fake_override*/ fun printStackTrace(/*0*/ java.io.PrintStream!): kotlin.Unit
+    public open /*fake_override*/ fun printStackTrace(/*0*/ java.io.PrintWriter!): kotlin.Unit
+    public open /*fake_override*/ fun setStackTrace(/*0*/ kotlin.Array<(out) java.lang.StackTraceElement!>!): kotlin.Unit
+}
+
+public/*package*/ open class JavaClass {
+    public/*package*/ constructor JavaClass()
+
+    // Static members
+    public open fun main(/*0*/ kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
+}

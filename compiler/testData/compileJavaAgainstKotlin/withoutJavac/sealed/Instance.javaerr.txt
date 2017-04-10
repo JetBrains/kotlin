@@ -1,0 +1,1 @@
+Instance.java:6:16:compiler.err.abstract.cant.be.instantiated

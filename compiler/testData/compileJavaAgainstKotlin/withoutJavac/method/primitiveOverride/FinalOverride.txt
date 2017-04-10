@@ -1,0 +1,16 @@
+package test
+
+public interface A</*0*/ T> {
+    public abstract fun foo(): T
+}
+
+public open class B : test.A<kotlin.Int> {
+    public constructor B()
+    public final fun foo(): kotlin.Int
+}
+
+public/*package*/ open class Test : test.B {
+    public/*package*/ constructor Test()
+    public final /*fake_override*/ fun foo(): kotlin.Int
+    public/*package*/ open fun test(): kotlin.Unit
+}
