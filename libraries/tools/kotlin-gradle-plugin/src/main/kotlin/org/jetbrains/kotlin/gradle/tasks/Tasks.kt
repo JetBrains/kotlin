@@ -196,9 +196,11 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         super.setupCompilerArgs(args, defaultsOnly)
         args.apply { fillDefaultValues() }
 
-        handleKaptProperties()
         args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
-        args.pluginOptions = pluginOptions.arguments.toTypedArray()
+
+        val kaptPluginOptions = getKaptPluginOptions()
+        args.pluginOptions = (pluginOptions.arguments + kaptPluginOptions.arguments).toTypedArray()
+
         args.moduleName = moduleName
         args.addCompilerBuiltIns = true
 
@@ -284,23 +286,24 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         throwGradleExceptionIfError(exitCode)
     }
 
-    private fun handleKaptProperties() {
-        kaptOptions.annotationsFile?.let { kaptAnnotationsFile ->
-            if (incremental) {
-                kaptAnnotationsFileUpdater = AnnotationFileUpdaterImpl(kaptAnnotationsFile)
+    private fun getKaptPluginOptions() =
+            CompilerPluginOptions().apply {
+                kaptOptions.annotationsFile?.let { kaptAnnotationsFile ->
+                    if (incremental) {
+                        kaptAnnotationsFileUpdater = AnnotationFileUpdaterImpl(kaptAnnotationsFile)
+                    }
+
+                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "output", kaptAnnotationsFile.canonicalPath)
+                }
+
+                if (kaptOptions.generateStubs) {
+                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "stubs", destinationDir.canonicalPath)
+                }
+
+                if (kaptOptions.supportInheritedAnnotations) {
+                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "inherited", true.toString())
+                }
             }
-
-            pluginOptions.addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "output", kaptAnnotationsFile.canonicalPath)
-        }
-
-        if (kaptOptions.generateStubs) {
-            pluginOptions.addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "stubs", destinationDir.canonicalPath)
-        }
-
-        if (kaptOptions.supportInheritedAnnotations) {
-            pluginOptions.addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "inherited", true.toString())
-        }
-    }
 
     // override setSource to track source directory sets and files (for generated android folders)
     override fun setSource(sources: Any?) {
