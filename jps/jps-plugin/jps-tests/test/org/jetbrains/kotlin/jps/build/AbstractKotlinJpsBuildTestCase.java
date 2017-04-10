@@ -32,7 +32,6 @@ import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.util.JpsPathUtil;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.jps.BothJdkClasspathPatcherKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -41,10 +40,6 @@ import java.util.Collection;
 
 public abstract class AbstractKotlinJpsBuildTestCase extends BaseKotlinJpsBuildTestCase {
     public static final String TEST_DATA_PATH = "jps-plugin/testData/";
-
-    static {
-        BothJdkClasspathPatcherKt.disableJava6FileManager();
-    }
 
     protected File workDir;
 

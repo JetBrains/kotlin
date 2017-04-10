@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.testingUtils.*
-import org.jetbrains.kotlin.jps.disableJava6FileManager
 import org.jetbrains.kotlin.jps.incremental.JpsLookupStorageProvider
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
@@ -64,10 +63,6 @@ abstract class AbstractIncrementalJpsTest(
         private val allowNoBuildLogFileInTestData: Boolean = false
 ) : BaseKotlinJpsBuildTestCase() {
     companion object {
-        init {
-            disableJava6FileManager()
-        }
-
         private val COMPILATION_FAILED = "COMPILATION FAILED"
 
         // change to "/tmp" or anything when default is too long (for easier debugging)
