@@ -206,8 +206,14 @@ public class Visibilities {
 
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            DeclarationDescriptor fromOrModule = from instanceof PackageViewDescriptor ? ((PackageViewDescriptor) from).getModule() : from;
-            if (!DescriptorUtils.getContainingModule(fromOrModule).shouldSeeInternalsOf(DescriptorUtils.getContainingModule(what))) return false;
+            ModuleDescriptor whatModule = DescriptorUtils.getContainingModule(what);
+            ModuleDescriptor fromModule = DescriptorUtils.getContainingModule(from);
+
+            // Can't invert this condition because CLI compiler analyzes sources as like all in the one module
+            // and for modules with circular dependency (chunk) JPS provides sources of all modules,
+            // so we can't be sure that references to an internal member are correct.
+            if (!fromModule.shouldSeeInternalsOf(whatModule)) return false;
+
 
             return MODULE_VISIBILITY_HELPER.isInFriendModule(what, from);
         }
