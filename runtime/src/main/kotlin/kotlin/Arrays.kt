@@ -2804,6 +2804,125 @@ public inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: 
 }
 
 /**
+ * Returns `true` if the two specified arrays are *deeply* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ *
+ * If two corresponding elements are nested arrays, they are also compared deeply.
+ * If any of arrays contains itself on any nesting level the behavior is undefined.
+ */
+@SinceKotlin("1.1")
+public infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean {
+    if (this === other)
+        return true
+    if (other == null)
+        return false
+
+    if (size != other.size)
+        return false
+
+    for (i in indices) {
+        val e1 = this[i]
+        val e2 = other[i]
+
+        if (e1 === e2)
+            continue
+        if (e1 == null)
+            return false
+
+        // Figure out whether the two elements are equal
+        val eq = when {
+            e1 is Array<*> && e2 is Array<*>         -> e1 contentDeepEquals e2
+            e1 is ByteArray && e2 is ByteArray       -> e1 contentEquals e2
+            e1 is ShortArray && e2 is ShortArray     -> e1 contentEquals e2
+            e1 is IntArray && e2 is IntArray         -> e1 contentEquals e2
+            e1 is LongArray && e2 is LongArray       -> e1 contentEquals e2
+            e1 is CharArray && e2 is CharArray       -> e1 contentEquals e2
+            e1 is FloatArray && e2 is FloatArray     -> e1 contentEquals e2
+            e1 is DoubleArray && e2 is DoubleArray   -> e1 contentEquals e2
+            e1 is BooleanArray && e2 is BooleanArray -> e1 contentEquals e2
+            else -> e1 == e2
+        }
+        if (!eq)
+            return false
+
+    }
+    return true
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ * Nested arrays are treated as lists too.
+ *
+ * If any of arrays contains itself on any nesting level the behavior is undefined.
+ */
+@SinceKotlin("1.1")
+public fun <T> Array<out T>.contentDeepHashCode(): Int {
+    var result = 1
+    for (element in this) {
+        var elementHash = 0
+        if (element is Array<*>)
+            elementHash = element.contentDeepHashCode()
+        else
+            element?.let { elementHash = element.hashCode() }
+
+        result = 31 * result + elementHash
+    }
+    return result
+}
+
+/**
+ * Returns a string representation of the contents of this array as if it is a [List].
+ * Nested arrays are treated as lists too.
+ *
+ * If any of arrays contains itself on any nesting level that reference
+ * is rendered as `"[...]"` to prevent recursion.
+ */
+@SinceKotlin("1.1")
+public inline fun <T> Array<out T>.contentDeepToString(): String {
+    var bufLen = 20 * size
+    if (size != 0 && bufLen <= 0)
+        bufLen = Int.MAX_VALUE
+    val buf = StringBuilder(bufLen)
+    contentDeepToString(buf, mutableSetOf())
+    return buf.toString()
+}
+
+/**
+ * Internal recursive function to build a string for [contentDeepToString].
+ */
+private fun <T> Array<out T>.contentDeepToString(buf: StringBuilder, dejaVu: MutableSet<Array<Any>?>) {
+    if (size == 0) {
+        buf.append("[]")
+        return
+    }
+
+    val iMax = size - 1
+    @Suppress("UNCHECKED_CAST")
+    dejaVu.add(this as Array<Any>) // TODO: Is the cast correct?
+    buf.append('[')
+    var i = 0
+    while (true) {
+        val element = this[i]
+        if (element is Array<*>) {
+            @Suppress("UNCHECKED_CAST")
+            if (dejaVu.contains(element as Array<Any>)) {
+                buf.append("[...]")
+            } else {
+                element.contentDeepToString(buf, dejaVu)
+            }
+        } else {
+            buf.append(element.toString())
+        }
+        if (i == iMax)
+            break
+        buf.append(", ")
+        i++
+    }
+    buf.append(']')
+    dejaVu.remove(this)
+}
+
+/**
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  */
