@@ -78,6 +78,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("DefaultModifier.kt")
+    public void testDefaultModifier() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/DefaultModifier.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Enum.kt")
     public void testEnum() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/Enum.kt");
