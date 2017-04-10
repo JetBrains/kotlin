@@ -19,6 +19,8 @@ package org.jetbrains.eval4j.jdi
 import com.sun.jdi.*
 import org.jetbrains.eval4j.*
 import org.jetbrains.eval4j.Value
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.canBeMangledInternalName
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.internalNameWithoutModuleSuffix
 import org.jetbrains.org.objectweb.asm.Type
 import java.lang.reflect.AccessibleObject
 import com.sun.jdi.Type as jdi_Type
@@ -216,11 +218,12 @@ class JDIEval(
             return method
         }
 
-        if (methodName.contains('$')) {
-            // Module name can be different for internal functions during evaluation and compilation
-            val internalNamePrefix = methodName.substringBefore('$') + '$'
+        // Module name can be different for internal functions during evaluation and compilation
+        val internalNameWithoutSuffix = internalNameWithoutModuleSuffix(methodName)
+        if (internalNameWithoutSuffix != null) {
             val internalMethods = _class.visibleMethods().filter {
-                it.name().startsWith(internalNamePrefix) && it.signature() == methodDesc.desc
+                val name = it.name()
+                name.startsWith(internalNameWithoutSuffix) && canBeMangledInternalName(name) && it.signature() == methodDesc.desc
             }
 
             if (!internalMethods.isEmpty()) {

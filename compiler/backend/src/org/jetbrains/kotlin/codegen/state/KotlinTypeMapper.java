@@ -959,7 +959,7 @@ public class KotlinTypeMapper {
         if (!(descriptor instanceof ConstructorDescriptor) &&
             descriptor.getVisibility() == Visibilities.INTERNAL &&
             !DescriptorUtilsKt.isPublishedApi(descriptor)) {
-            return name + "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName);
+            return InternalNameMapper.mangleInternalName(name, moduleName);
         }
 
         return name;
@@ -1509,5 +1509,25 @@ public class KotlinTypeMapper {
             return recordedType.getInternalName();
         }
         return TypeSignatureMappingKt.computeInternalName(classDescriptor, typeMappingConfiguration);
+    }
+
+    public static class InternalNameMapper {
+        public static String mangleInternalName(@NotNull String name, @NotNull String moduleName) {
+            return name + "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName);
+        }
+
+        public static boolean canBeMangledInternalName(@NotNull String name) {
+            return name.indexOf('$') != -1;
+        }
+
+        @Nullable
+        public static String internalNameWithoutModuleSuffix(@NotNull String name) {
+            int indexOfDollar = name.indexOf('$');
+            if (indexOfDollar == -1) {
+                return null;
+            }
+
+            return name.substring(0, indexOfDollar) + '$';
+        }
     }
 }
