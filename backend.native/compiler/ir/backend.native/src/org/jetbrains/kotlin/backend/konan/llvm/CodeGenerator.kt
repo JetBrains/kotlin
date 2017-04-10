@@ -223,14 +223,14 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     }
     fun storeAnyLocal(value: LLVMValueRef, ptr: LLVMValueRef) {
         if (isObjectRef(value)) {
-            updateLocalRef(value, ptr)
+            updateRef(value, ptr)
         } else {
             LLVMBuildStore(builder, value, ptr)
         }
     }
     fun storeAnyGlobal(value: LLVMValueRef, ptr: LLVMValueRef) {
         if (isObjectRef(value)) {
-            updateGlobalRef(value, ptr)
+            updateRef(value, ptr)
         } else {
             LLVMBuildStore(builder, value, ptr)
         }
@@ -245,13 +245,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     }
 
     // Only use ignoreOld, when sure that memory is freshly inited and have no value.
-    fun updateLocalRef(value: LLVMValueRef, address: LLVMValueRef, ignoreOld: Boolean = false) {
-        call(if (ignoreOld) context.llvm.setLocalRefFunction else context.llvm.updateLocalRefFunction,
-                listOf(address, value))
-    }
-
-    fun updateGlobalRef(value: LLVMValueRef, address: LLVMValueRef, ignoreOld: Boolean = false) {
-        call(if (ignoreOld) context.llvm.setGlobalRefFunction else context.llvm.updateGlobalRefFunction,
+    fun updateRef(value: LLVMValueRef, address: LLVMValueRef, ignoreOld: Boolean = false) {
+        call(if (ignoreOld) context.llvm.setRefFunction else context.llvm.updateRefFunction,
                 listOf(address, value))
     }
 

@@ -25,8 +25,8 @@
 typedef enum {
   // Container is normal thread local container.
   CONTAINER_TAG_NORMAL = 0,
-   // Container shall be atomically refcounted.
-  CONTAINER_TAG_SHARED = 1,
+  // Container shall be atomically refcounted, currently disabled.
+  // CONTAINER_TAG_SHARED = 1,
   // Those container tags shall not be refcounted.
   // Permanent object, cannot refer to non-permanent objects, so no need to cleanup those.
   CONTAINER_TAG_PERMANENT = 2,
@@ -142,9 +142,6 @@ inline void AddRef(ContainerHeader* header) {
     case CONTAINER_TAG_NORMAL:
       header->refCount_ += CONTAINER_TAG_INCREMENT;
       break;
-    case CONTAINER_TAG_SHARED:
-      __sync_fetch_and_add(&header->refCount_, CONTAINER_TAG_INCREMENT);
-      break;
     default:
       RuntimeAssert(false, "unknown container type");
       break;
@@ -163,26 +160,6 @@ inline bool Release(ContainerHeader* header) {
         return true;
     case CONTAINER_TAG_NORMAL:
       if ((header->refCount_ -= CONTAINER_TAG_INCREMENT) == CONTAINER_TAG_NORMAL) {
-        FreeContainer(header);
-        return true;
-      }
-      break;
-    // Note that shared containers have potentially subtle race, if object holds a
-    // reference to another object, stored in shorter living container. In this
-    // case there's unlikely, but possible case, where one mutator takes reference,
-    // from the field, but not yet AddRef'ed it, while another mutator updates
-    // field with another value, and thus Release's same field.
-    // If those two updates happens concurrently - it may lead to dereference of stale
-    // pointer.
-    // It seems not a very big issue as:
-    //  - if objects stored in the same container, race will never happen
-    //  - if concurrent field access is under lock, race will never happen
-    //  - container likely groups multiple objects, so object release will lead to
-    //    container release only in relatively few cases, which will decrease race
-    //    probability even further.
-    case CONTAINER_TAG_SHARED:
-      if (__sync_sub_and_fetch(
-              &header->refCount_, CONTAINER_TAG_INCREMENT) == CONTAINER_TAG_SHARED) {
         FreeContainer(header);
         return true;
       }
@@ -364,18 +341,14 @@ OBJ_GETTER(InitInstance, ObjHeader** location, const TypeInfo* type_info,
 //    in intermediate frames when throwing
 //
 
-// Sets locally visible location.
-void SetLocalRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
-// Sets potentially globally visible location.
-void SetGlobalRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
-// Update locally visible location.
-void UpdateLocalRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
-// Update potentially globally visible location.
-void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
-// Update reference in return slot.
+// Sets location.
+void SetRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+// Updates location.
+void UpdateRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+// Updates reference in return slot.
 void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) RUNTIME_NOTHROW;
 // Optimization: release all references in range.
-void ReleaseLocalRefs(ObjHeader** start, int count) RUNTIME_NOTHROW;
+void ReleaseRefs(ObjHeader** start, int count) RUNTIME_NOTHROW;
 // Called on frame leave, if it has object slots.
 void LeaveFrame(ObjHeader** start, int count) RUNTIME_NOTHROW;
 // Collect garbage, which cannot be found by reference counting (cycles).
@@ -391,10 +364,10 @@ class ObjHolder {
    ObjHolder() : obj_(nullptr) {}
 
    explicit ObjHolder(const ObjHeader* obj) {
-     ::SetLocalRef(&obj_, obj);
+     ::SetRef(&obj_, obj);
    }
    ~ObjHolder() {
-     ::UpdateLocalRef(&obj_, nullptr);
+     ::UpdateRef(&obj_, nullptr);
    }
 
    ObjHeader* obj() { return obj_; }

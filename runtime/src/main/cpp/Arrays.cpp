@@ -57,7 +57,7 @@ void Kotlin_Array_set(KRef thiz, KInt index, KConstRef value) {
   if (static_cast<uint32_t>(index) >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
-  UpdateGlobalRef(ArrayAddressOfElementAt(array, index), value);
+  UpdateRef(ArrayAddressOfElementAt(array, index), value);
 }
 
 KInt Kotlin_Array_getArrayLength(KConstRef thiz) {
@@ -71,7 +71,7 @@ void Kotlin_Array_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KRef value) 
     ThrowArrayIndexOutOfBoundsException();
   }
   for (KInt index = fromIndex; index < toIndex; ++index) {
-    UpdateGlobalRef(ArrayAddressOfElementAt(array, index), value);
+    UpdateRef(ArrayAddressOfElementAt(array, index), value);
   }
 }
 
@@ -86,12 +86,12 @@ void Kotlin_Array_copyImpl(KConstRef thiz, KInt fromIndex,
   }
   if (fromIndex >= toIndex) {
     for (int index = 0; index < count; index++) {
-      UpdateGlobalRef(ArrayAddressOfElementAt(destinationArray, toIndex + index),
+      UpdateRef(ArrayAddressOfElementAt(destinationArray, toIndex + index),
                       *ArrayAddressOfElementAt(array, fromIndex + index));
     }
   } else {
     for (int index = count - 1; index >= 0; index--) {
-      UpdateGlobalRef(ArrayAddressOfElementAt(destinationArray, toIndex + index),
+      UpdateRef(ArrayAddressOfElementAt(destinationArray, toIndex + index),
                       *ArrayAddressOfElementAt(array, fromIndex + index));
     }
   }

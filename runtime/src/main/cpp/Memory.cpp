@@ -27,8 +27,6 @@
 #include "Memory.h"
 #include "Natives.h"
 
-// Define to 1 to use in the multithreaded environment.
-#define CONCURRENT 0
 // If garbage collection algorithm for cyclic garbage to be used.
 #define USE_GC 1
 // Define to 1 to print all memory operations.
@@ -283,16 +281,15 @@ void FreeContainer(ContainerHeader* header) {
   for (int index = 0; index < header->objectCount_; index++) {
     const TypeInfo* typeInfo = obj->type_info();
 
-    // We use *local* versions as no other threads could see dead objects.
     for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
       ObjHeader** location = reinterpret_cast<ObjHeader**>(
           reinterpret_cast<uintptr_t>(obj + 1) + typeInfo->objOffsets_[index]);
-      UpdateLocalRef(location, nullptr);
+      UpdateRef(location, nullptr);
     }
     // Object arrays are *special*.
     if (typeInfo == theArrayTypeInfo) {
       ArrayHeader* array = obj->array();
-      ReleaseLocalRefs(ArrayAddressOfElementAt(array, 0), array->count_);
+      ReleaseRefs(ArrayAddressOfElementAt(array, 0), array->count_);
     }
     obj = reinterpret_cast<ObjHeader*>(
       reinterpret_cast<uintptr_t>(obj) + objectSize(obj));
@@ -300,10 +297,6 @@ void FreeContainer(ContainerHeader* header) {
 
   // And release underlying memory.
   if (isFreeable(header)) {
-    // TODO: atomic decrement in concurrent case.
-#if CONCURRENT
-    #error "Atomic update of allocCount"
-#endif
     memoryState->allocCount--;
     freeMemory(header);
   }
@@ -487,9 +480,6 @@ MemoryState* InitMemory() {
   memoryState->containers = new ContainerHeaderSet();
 #endif
 #if USE_GC
-#if CONCURRENT
-  #error "Concurrent GC is not yet implemented"
-#endif
   memoryState->toFree = new ContainerHeaderSet();
   memoryState->gcInProgress = false;
   memoryState->gcThreshold = kGcThreshold;
@@ -503,7 +493,7 @@ void DeinitMemory(MemoryState* memoryState) {
   // Free all global objects, to ensure no memory leaks happens.
   for (auto location: *memoryState->globalObjects) {
     fprintf(stderr, "Release global in *%p: %p\n", location, *location);
-    UpdateGlobalRef(location, nullptr);
+    UpdateRef(location, nullptr);
   }
   delete memoryState->globalObjects;
   memoryState->globalObjects = nullptr;
@@ -556,14 +546,7 @@ OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, uint32_t elements) {
 
 OBJ_GETTER(InitInstance,
     ObjHeader** location, const TypeInfo* type_info, void (*ctor)(ObjHeader*)) {
-  ObjHeader* sentinel = reinterpret_cast<ObjHeader*>(1);
-  ObjHeader* value;
-  // Wait until other initializers.
-  // TODO: check CONCURRENT!
-  while ((value = __sync_val_compare_and_swap(
-             location, nullptr, sentinel)) == sentinel) {
-    // TODO: consider yielding.
-  }
+  ObjHeader* value = *location;
 
   if (value != nullptr) {
     // OK'ish, inited by someone else.
@@ -571,44 +554,28 @@ OBJ_GETTER(InitInstance,
   }
 
   ObjHeader* object = AllocInstance(type_info, OBJ_RESULT);
-  UpdateGlobalRef(location, object);
+  UpdateRef(location, object);
   try {
     ctor(object);
-#if CONCURRENT
-    // TODO: locking or smth lock-free in MT case?
-#endif
 #if TRACE_MEMORY
     memoryState->globalObjects->push_back(location);
 #endif
     return object;
   } catch (...) {
-    UpdateLocalRef(OBJ_RESULT, nullptr);
-    UpdateGlobalRef(location, nullptr);
+    UpdateRef(OBJ_RESULT, nullptr);
+    UpdateRef(location, nullptr);
     throw;
   }
 }
 
-void SetLocalRef(ObjHeader** location, const ObjHeader* object) {
+void SetRef(ObjHeader** location, const ObjHeader* object) {
 #if TRACE_MEMORY
-  fprintf(stderr, "SetLocalRef *%p: %p\n", location, object);
+  fprintf(stderr, "SetRef *%p: %p\n", location, object);
 #endif
   *const_cast<const ObjHeader**>(location) = object;
   if (object != nullptr) {
     AddRef(object);
   }
-}
-
-void SetGlobalRef(ObjHeader** location, const ObjHeader* object) {
-#if TRACE_MEMORY
-  fprintf(stderr, "SetGlobalRef *%p: %p\n", location, object);
-#endif
-  *const_cast<const ObjHeader**>(location) = object;
-   if (object != nullptr) {
-      AddRef(object);
-   }
-#if CONCURRENT
-   // TODO: memory fence here.
-#endif
 }
 
 void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
@@ -628,11 +595,11 @@ void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
   }
 }
 
-void UpdateLocalRef(ObjHeader** location, const ObjHeader* object) {
+void UpdateRef(ObjHeader** location, const ObjHeader* object) {
   RuntimeAssert(!isArenaSlot(location), "must not be a slot");
   ObjHeader* old = *location;
 #if TRACE_MEMORY
-  fprintf(stderr, "UpdateLocalRef *%p: %p -> %p\n", location, old, object);
+  fprintf(stderr, "UpdateRef *%p: %p -> %p\n", location, old, object);
 #endif
   if (old != object) {
     if (object != nullptr) {
@@ -645,39 +612,11 @@ void UpdateLocalRef(ObjHeader** location, const ObjHeader* object) {
   }
 }
 
-void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object) {
-  RuntimeAssert(!isArenaSlot(location), "Must not be an arena");
-#if CONCURRENT
-  ObjHeader* old = *location;
-#if TRACE_MEMORY
-  fprintf(stderr, "UpdateGlobalRef *%p: %p -> %p\n", location, old, object);
-#endif
-  if (old != object) {
-    if (object != nullptr) {
-      AddRef(object);
-    }
-    bool written = __sync_bool_compare_and_swap(
-        location, old, const_cast<ObjHeader*>(object));
-    if (written) {
-      if (old > reinterpret_cast<ObjHeader*>(1)) {
-        ReleaseRef(old);
-      }
-    } else {
-      if (object != nullptr) {
-        ReleaseRef(object);
-      }
-    }
-  }
-#else
-  UpdateLocalRef(location, object);
-#endif
-}
-
 void LeaveFrame(ObjHeader** start, int count) {
 #if TRACE_MEMORY
     fprintf(stderr, "LeaveFrame %p .. %p\n", start, start + count);
 #endif
-  ReleaseLocalRefs(start + 1, count - 1);
+  ReleaseRefs(start + 1, count - 1);
   if (*start != nullptr) {
     auto arena = initedArena(start);
 #if TRACE_MEMORY
@@ -688,9 +627,9 @@ void LeaveFrame(ObjHeader** start, int count) {
   }
 }
 
-void ReleaseLocalRefs(ObjHeader** start, int count) {
+void ReleaseRefs(ObjHeader** start, int count) {
 #if TRACE_MEMORY
-  fprintf(stderr, "ReleaseLocalRefs %p .. %p\n", start, start + count);
+  fprintf(stderr, "ReleaseRefs %p .. %p\n", start, start + count);
 #endif
   ObjHeader** current = start;
   while (count-- > 0) {
@@ -702,36 +641,6 @@ void ReleaseLocalRefs(ObjHeader** start, int count) {
     }
     current++;
   }
-}
-
-void ReleaseGlobalRefs(ObjHeader** start, int count) {
-#if TRACE_MEMORY
-  fprintf(stderr, "ReleaseGlobalRefs %p .. %p\n", start, start + count);
-#endif
-#if CONCURRENT
-  ObjHeader** current = start;
-  while (count-- > 0) {
-    ObjHeader* object = *current;
-    if (object != nullptr) {
-      bool written = __sync_bool_compare_and_swap(
-          current, object, nullptr);
-      if (written)
-        ReleaseRef(object);
-    }
-    current++;
-  }
-#else
-  ObjHeader** current = start;
-  while (count-- > 0) {
-    ObjHeader* object = *current;
-    if (object != nullptr) {
-      ReleaseRef(object);
-      // Usually required.
-      *current = nullptr;
-    }
-    current++;
-  }
-#endif
 }
 
 #if USE_GC

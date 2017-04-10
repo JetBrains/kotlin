@@ -642,9 +642,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val bbCurrent = codegen.currentBlock
         val bbInit    = codegen.basicBlock("label_init")
         val bbExit    = codegen.basicBlock("label_continue")
-        val onePtr    = codegen.intToPtr(kImmInt64One, codegen.kObjHeaderPtr)
         val objectVal = codegen.loadSlot(objectPtr, false)
-        val condition = codegen.ucmpGt(objectVal, onePtr)
+        val condition = codegen.icmpNe(objectVal, codegen.kNullObjHeaderPtr)
         codegen.condBr(condition, bbExit, bbInit)
 
         codegen.positionAtEnd(bbInit)
