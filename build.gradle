@@ -83,10 +83,11 @@ void setupCompilationFlags() {
             ["host":
                 ["--sysroot=$hostSysrootDir", "-mmacosx-version-min=$minMacOsVersion"], 
              "iphone":
-                ["-stdlib=libc++", "-arch", "arm64", "-isysroot", "$iphoneSysrootDir"],
+                ["-stdlib=libc++", "-arch", "arm64", "-isysroot", "$iphoneSysrootDir",
+                 "-miphoneos-version-min=8.0.0"]
 // TODO: re-enable after simulator sysroot is available in the dependencies
 //             "iphone_sim":
-//                ["-stdlib=libc++", "-isysroot", "$iphoneSimSysrootDir"],
+//                ["-stdlib=libc++", "-isysroot", "$iphoneSimSysrootDir", "-miphoneos-version-min=8.0.0"],
             ]
      }
      ext.targetList = ext.targetArgs.keySet() as List
