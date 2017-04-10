@@ -103,6 +103,14 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
         it.valueParameters.size == 0
     }
 
+    val readValue = packageScope.getContributedFunctions("readValue").single {
+        it.valueParameters.size == 0
+    }
+
+    val readValueBySizeAndAlign = packageScope.getContributedFunctions("readValue").single {
+        it.valueParameters.size == 2
+    }
+
     val typeOf = packageScope.getContributedFunctions("typeOf").single()
 
     val variableTypeClass =

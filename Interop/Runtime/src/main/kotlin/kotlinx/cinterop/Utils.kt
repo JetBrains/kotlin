@@ -203,9 +203,9 @@ fun <T : CVariable> CPointed.readValues(size: Int, align: Int): CValues<T> {
 inline fun <reified T : CVariable> T.readValues(count: Int): CValues<T> =
         this.readValues<T>(size = count * sizeOf<T>().toInt(), align = alignOf<T>())
 
-fun <T : CVariable> CPointed.readValue(size: Int, align: Int): CValue<T> {
-    val bytes = ByteArray(size)
-    nativeMemUtils.getByteArray(this, bytes, size)
+fun <T : CVariable> CPointed.readValue(size: Long, align: Int): CValue<T> {
+    val bytes = ByteArray(size.toInt())
+    nativeMemUtils.getByteArray(this, bytes, size.toInt())
     return object : CValue<T>() {
         override fun getPointer(placement: NativePlacement): CPointer<T> = placement.placeBytes(bytes, align)
         override val size get() = bytes.size
@@ -214,7 +214,7 @@ fun <T : CVariable> CPointed.readValue(size: Int, align: Int): CValue<T> {
 
 // Note: can't be declared as property due to possible clash with a struct field.
 // TODO: find better name.
-inline fun <reified T : CStructVar> T.readValue(): CValue<T> = this.readValue(sizeOf<T>().toInt(), alignOf<T>())
+inline fun <reified T : CStructVar> T.readValue(): CValue<T> = this.readValue(sizeOf<T>(), alignOf<T>())
 
 // TODO: optimize
 fun <T : CVariable> CValues<T>.getBytes(): ByteArray = memScoped {

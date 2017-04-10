@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.ir.builders
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -23,6 +25,8 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
 
 inline fun IrBuilderWithScope.irLetSequence(
         value: IrExpression,
@@ -50,3 +54,17 @@ fun IrBuilderWithScope.irTrue() = IrConstImpl.boolean(startOffset, endOffset, co
 
 fun IrBuilderWithScope.irGet(value: ValueDescriptor) =
         IrGetValueImpl(startOffset, endOffset, value)
+
+fun IrBuilderWithScope.irCall(
+        callee: CallableDescriptor,
+        typeArguments: Map<TypeParameterDescriptor, KotlinType>
+): IrCallImpl {
+    val substitutionContext = typeArguments.map { (typeParameter, typeArgument) ->
+        typeParameter.typeConstructor to TypeProjectionImpl(typeArgument)
+    }.toMap()
+
+    val substitutor = TypeSubstitutor.create(substitutionContext)
+    val substitutedCallee = callee.substitute(substitutor)!!
+
+    return IrCallImpl(this.startOffset, this.endOffset, substitutedCallee, typeArguments)
+}

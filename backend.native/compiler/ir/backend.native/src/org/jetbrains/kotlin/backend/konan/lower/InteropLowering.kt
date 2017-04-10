@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallableReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
@@ -179,6 +180,21 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
         return alloc(placement, size, align)
     }
 
+    private fun IrBuilderWithScope.readValue(receiver: IrExpression, typeArgument: KotlinType): IrCallImpl? {
+        val size = sizeOf(typeArgument) ?: return null
+        val align = alignOf(typeArgument) ?: return null
+
+        val callee = interop.readValueBySizeAndAlign
+        val typeParameter = callee.typeParameters.single()
+        val typeArguments = mapOf(typeParameter to typeArgument)
+
+        return irCall(callee, typeArguments).apply {
+            extensionReceiver = receiver
+            putValueArgument(0, size)
+            putValueArgument(1, align)
+        }
+    }
+
     override fun visitCall(expression: IrCall): IrExpression {
 
         expression.transformChildrenVoid(this)
@@ -250,6 +266,13 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                 } else {
                     expression
                 }
+            }
+
+            interop.readValue -> {
+                val typeArgument = expression.getSingleTypeArgument()
+                val receiver = expression.extensionReceiver!!
+
+                builder.readValue(receiver, typeArgument) ?: expression
             }
 
             interop.staticCFunction -> {
