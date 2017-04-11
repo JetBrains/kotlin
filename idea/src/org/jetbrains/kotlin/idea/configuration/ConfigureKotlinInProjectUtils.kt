@@ -35,13 +35,14 @@ import org.jetbrains.kotlin.idea.versions.hasKotlinJsKjsmFile
 import org.jetbrains.kotlin.idea.vfilefinder.IDEVirtualFileFinder
 import org.jetbrains.kotlin.utils.ifEmpty
 
-data class RepositoryDescription(val id: String, val name: String, val url: String, val isSnapshot: Boolean)
+data class RepositoryDescription(val id: String, val name: String, val url: String, val bintrayUrl: String?, val isSnapshot: Boolean)
 
 @JvmField
 val SNAPSHOT_REPOSITORY = RepositoryDescription(
         "sonatype.oss.snapshots",
         "Sonatype OSS Snapshot Repository",
         "http://oss.sonatype.org/content/repositories/snapshots",
+        null,
         isSnapshot = true)
 
 @JvmField
@@ -49,6 +50,7 @@ val EAP_REPOSITORY = RepositoryDescription(
         "bintray.kotlin.eap",
         "Bintray Kotlin EAP Repository",
         "http://dl.bintray.com/kotlin/kotlin-eap",
+        "https://bintray.com/kotlin/kotlin-eap/kotlin/",
         isSnapshot = false)
 
 @JvmField
@@ -56,7 +58,17 @@ val EAP_11_REPOSITORY = RepositoryDescription(
         "bintray.kotlin.eap",
         "Bintray Kotlin 1.1 EAP Repository",
         "http://dl.bintray.com/kotlin/kotlin-eap-1.1",
+        "https://bintray.com/kotlin/kotlin-eap-1.1/kotlin/",
         isSnapshot = false)
+
+fun RepositoryDescription.toRepositorySnippet() = "maven {\nurl '$url'\n}"
+
+fun getRepositoryForVersion(version: String): RepositoryDescription? = when {
+    isSnapshot(version) -> SNAPSHOT_REPOSITORY
+    useEap11Repository(version) -> EAP_11_REPOSITORY
+    isEap(version) -> EAP_REPOSITORY
+    else -> null
+}
 
 fun isModuleConfigured(module: Module): Boolean {
     return allConfigurators().any {

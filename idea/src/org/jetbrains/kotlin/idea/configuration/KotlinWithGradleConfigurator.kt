@@ -218,10 +218,6 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
         val CLASSPATH = "classpath \"$GROUP_ID:$GRADLE_PLUGIN_ID:\$kotlin_version\""
 
-        val SNAPSHOT_REPOSITORY_SNIPPET = "maven {\nurl '" + SNAPSHOT_REPOSITORY.url + "'\n}"
-        val EAP_REPOSITORY_SNIPPET = "maven {\nurl '" + EAP_REPOSITORY.url + "'\n}"
-        val EAP_11_REPOSITORY_SNIPPET = "maven {\nurl '" + EAP_11_REPOSITORY.url + "'\n}"
-
         private val MAVEN_CENTRAL = "mavenCentral()\n"
         private val JCENTER = "jcenter()\n"
 
@@ -515,10 +511,9 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         }
 
         private fun addRepository(repositoriesBlock: GrClosableBlock, version: String): Boolean {
+            val repository = getRepositoryForVersion(version)
             val snippet = when {
-                isSnapshot(version) -> SNAPSHOT_REPOSITORY_SNIPPET
-                useEap11Repository(version) -> EAP_11_REPOSITORY_SNIPPET
-                isEap(version) -> EAP_REPOSITORY_SNIPPET
+                repository != null -> repository.toRepositorySnippet()
                 !isRepositoryConfigured(repositoriesBlock) -> MAVEN_CENTRAL
                 else -> return false
             }

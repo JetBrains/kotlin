@@ -43,25 +43,13 @@ abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
                             modifiableModelsProvider: ModifiableModelsProvider,
                             buildScriptData: BuildScriptDataBuilder) {
         var kotlinVersion = bundledRuntimeVersion()
-
-        val additionalRepository: String? = when {
-            kotlinVersion == "@snapshot@" -> {
-                kotlinVersion = "1.1-SNAPSHOT"
-                KotlinWithGradleConfigurator.SNAPSHOT_REPOSITORY_SNIPPET
-            }
-            useEap11Repository(kotlinVersion) -> {
-                KotlinWithGradleConfigurator.EAP_11_REPOSITORY_SNIPPET
-            }
-            isEap(kotlinVersion) -> {
-                KotlinWithGradleConfigurator.EAP_REPOSITORY_SNIPPET
-            }
-            else -> {
-                null
-            }
+        val additionalRepository = getRepositoryForVersion(kotlinVersion)
+        if (isSnapshot(bundledRuntimeVersion())) {
+            kotlinVersion = "1.1-SNAPSHOT"
         }
 
         if (additionalRepository != null) {
-            val oneLineRepository = additionalRepository.replace('\n', ' ')
+            val oneLineRepository = additionalRepository.toRepositorySnippet().replace('\n', ' ')
             buildScriptData.addBuildscriptRepositoriesDefinition(oneLineRepository)
 
             buildScriptData.addRepositoriesDefinition("mavenCentral()")
