@@ -306,7 +306,7 @@ private fun processLib(konanHome: String,
     val headerFiles = config.getSpaceSeparated("headers") + additionalHeaders
     val compilerOpts = 
         config.getSpaceSeparated("compilerOpts") +
-        defaultOpts + additionalCompilerOpts 
+        defaultOpts + additionalCompilerOpts
     val compiler = "clang"
     val language = Language.C
     val excludeSystemLibs = config.getProperty("excludeSystemLibs")?.toBoolean() ?: false
@@ -360,11 +360,7 @@ private fun processLib(konanHome: String,
 
         val outOFile = createTempFile(suffix = ".o")
 
-        val javaHome = System.getProperty("java.home")
-        val compilerArgsForJniIncludes = listOf("", "linux", "darwin").map { "-I$javaHome/../include/$it" }.toTypedArray()
-
-        val compilerCmd = arrayOf("$llvmInstallPath/bin/$compiler", *compilerOpts.toTypedArray(),
-                *compilerArgsForJniIncludes,
+        val compilerCmd = arrayOf("$llvmInstallPath/bin/$compiler", *gen.libraryForCStubs.compilerArgs.toTypedArray(),
                 "-c", outCFile.path, "-o", outOFile.path)
 
         runCmd(compilerCmd, workDir, verbose)
@@ -380,7 +376,7 @@ private fun processLib(konanHome: String,
     } else if (flavor == KotlinPlatform.NATIVE) {
         val outBcName = libName + ".bc"
         val outLib = nativeLibsDir + "/" + outBcName
-        val compilerCmd = arrayOf("$llvmInstallPath/bin/$compiler", *compilerOpts.toTypedArray(),
+        val compilerCmd = arrayOf("$llvmInstallPath/bin/$compiler", *gen.libraryForCStubs.compilerArgs.toTypedArray(),
                 "-emit-llvm", "-c", outCFile.path, "-o", outLib)
 
         runCmd(compilerCmd, workDir, verbose)

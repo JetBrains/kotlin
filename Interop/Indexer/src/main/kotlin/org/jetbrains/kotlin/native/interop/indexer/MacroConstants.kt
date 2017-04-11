@@ -85,7 +85,7 @@ private fun expandMacroAsConstant(
 
     reparseWithCodeSnippet(library, translationUnit, sourceFile, name)
 
-    if (getCompileErrors(translationUnit).firstOrNull() == null) {
+    if (!translationUnit.hasCompileErrors()) {
         return processCodeSnippet(translationUnit, name, typeConverter)
     } else {
         return null

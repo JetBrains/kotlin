@@ -768,6 +768,27 @@ class StubGenerator(
         return StubsFragment(kotlinStubLines, nativeStubLines)
     }
 
+    private fun generateStubsForFunctions(functions: List<FunctionDecl>): List<StubsFragment> {
+        val stubs = functions.mapNotNull {
+            try {
+                generateStubsForFunction(it)
+            } catch (e: Throwable) {
+                log("Warning: cannot generate stubs for function ${it.name}")
+                null
+            }
+        }
+
+        return stubs.map { it.nativeStubLines }
+                .mapFragmentIsCompilable(libraryForCStubs)
+                .mapIndexedNotNull { index, stubIsCompilable ->
+                    if (stubIsCompilable) {
+                        stubs[index]
+                    } else {
+                        null
+                    }
+                }
+    }
+
     private fun FunctionDecl.generateAsFfiVarargs(): Boolean = (platform == KotlinPlatform.NATIVE && this.isVararg &&
             // Neither takes nor returns structs by value:
             !this.returnsRecord() && this.parameters.all { it.type.unwrapTypedefs() !is RecordType })
@@ -1224,13 +1245,7 @@ class StubGenerator(
     private fun generateStubs(): List<StubsFragment> {
         val stubs = mutableListOf<StubsFragment>()
 
-        functionsToBind.forEach {
-            try {
-                stubs.add(generateStubsForFunction(it))
-            } catch (e: Throwable) {
-                log("Warning: cannot generate stubs for function ${it.name}")
-            }
-        }
+        stubs.addAll(generateStubsForFunctions(functionsToBind))
 
         nativeIndex.macroConstants.forEach {
             try {
@@ -1345,13 +1360,21 @@ class StubGenerator(
         else -> throw NotImplementedError(kotlinJniBridgeType)
     }
 
-    private val libraryForCStubs = configuration.library.copy(
+    val libraryForCStubs = configuration.library.copy(
             includes = mutableListOf<String>().apply {
                 add("stdint.h")
                 if (platform == KotlinPlatform.JVM) {
                     add("jni.h")
                 }
                 addAll(configuration.library.includes)
+            },
+
+            compilerArgs = configuration.library.compilerArgs + when (platform) {
+                KotlinPlatform.JVM -> listOf("", "linux", "darwin").map {
+                    val javaHome = System.getProperty("java.home")
+                    "-I$javaHome/../include/$it"
+                }
+                KotlinPlatform.NATIVE -> emptyList()
             }
     )
 

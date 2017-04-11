@@ -93,21 +93,39 @@ internal fun parseTranslationUnit(
 internal fun NativeLibrary.parse(index: CXIndex, options: Int = 0): CXTranslationUnit =
         parseTranslationUnit(index, this.createTempSource(), this.compilerArgs, options)
 
-internal fun getCompileErrors(translationUnit: CXTranslationUnit): Sequence<String> {
-    val numDiagnostics = clang_getNumDiagnostics(translationUnit)
-    return (0 .. numDiagnostics - 1).asSequence()
-            .map { index -> clang_getDiagnostic(translationUnit, index)!! }
-            .filter {
-                val severity = clang_getDiagnosticSeverity(it)
-                severity == CXDiagnosticSeverity.CXDiagnostic_Error ||
-                        severity == CXDiagnosticSeverity.CXDiagnostic_Fatal
-            }.map {
-                clang_formatDiagnostic(it, clang_defaultDiagnosticDisplayOptions()).convertAndDispose()
+internal data class Diagnostic(val severity: CXDiagnosticSeverity, val format: String,
+                               val location: CValue<CXSourceLocation>)
+
+internal fun CXTranslationUnit.getDiagnostics(): Sequence<Diagnostic> {
+    val numDiagnostics = clang_getNumDiagnostics(this)
+    return (0 until numDiagnostics).asSequence()
+            .map { index ->
+                val diagnostic = clang_getDiagnostic(this, index)
+                try {
+                    val severity = clang_getDiagnosticSeverity(diagnostic)
+
+                    val format = clang_formatDiagnostic(diagnostic, clang_defaultDiagnosticDisplayOptions())
+                            .convertAndDispose()
+
+                    val location = clang_getDiagnosticLocation(diagnostic)
+
+                    Diagnostic(severity, format, location)
+                } finally {
+                    clang_disposeDiagnostic(diagnostic)
+                }
             }
 }
 
+internal fun CXTranslationUnit.getCompileErrors(): Sequence<String> =
+        getDiagnostics().filter { it.isError() }.map { it.format }
+
+private fun Diagnostic.isError() = (severity == CXDiagnosticSeverity.CXDiagnostic_Error) ||
+        (severity == CXDiagnosticSeverity.CXDiagnostic_Fatal)
+
+internal fun CXTranslationUnit.hasCompileErrors() = (this.getCompileErrors().firstOrNull() != null)
+
 internal fun CXTranslationUnit.ensureNoCompileErrors(): CXTranslationUnit {
-    val firstError = getCompileErrors(this).firstOrNull() ?: return this
+    val firstError = this.getCompileErrors().firstOrNull() ?: return this
     throw Error(firstError)
 }
 
@@ -202,4 +220,76 @@ internal fun NativeLibrary.includesDeclaration(cursor: CValue<CXCursor>): Boolea
     } else {
         true
     }
+}
+
+private fun CXTranslationUnit.getErrorLineNumbers(): Sequence<Int> =
+        getDiagnostics().filter {
+            it.isError()
+        }.map {
+            memScoped {
+                val lineNumberVar = alloc<IntVar>()
+                clang_getFileLocation(it.location, null, lineNumberVar.ptr, null, null)
+                lineNumberVar.value
+            }
+        }
+
+/**
+ * For each list of lines, checks if the code fragment composed from these lines is compilable against given library.
+ */
+fun List<List<String>>.mapFragmentIsCompilable(originalLibrary: NativeLibrary): List<Boolean> {
+    val library = originalLibrary
+            .copy(compilerArgs = originalLibrary.compilerArgs + "-ferror-limit=0")
+            .precompileHeaders()
+
+    val indicesOfNonCompilable = mutableSetOf<Int>()
+
+    val fragmentsToCheck = this.withIndex().toMutableList()
+
+    val index = clang_createIndex(excludeDeclarationsFromPCH = 1, displayDiagnostics = 0)!!
+    try {
+        val sourceFile = library.createTempSource()
+        val translationUnit = parseTranslationUnit(index, sourceFile, library.compilerArgs, options = 0)
+                .ensureNoCompileErrors()
+
+        try {
+            while (fragmentsToCheck.isNotEmpty()) {
+                // Combine all fragments to be checked in a single file:
+                sourceFile.bufferedWriter().use { writer ->
+                    writer.appendPreamble(library)
+                    fragmentsToCheck.forEach {
+                        it.value.forEach {
+                            assert(!it.contains('\n'))
+                            writer.appendln(it)
+                        }
+                    }
+                }
+
+                clang_reparseTranslationUnit(translationUnit, 0, null, 0)
+                val errorLineNumbers = translationUnit.getErrorLineNumbers().toSet()
+
+                // Retain only those fragments that contain compilation error locations:
+                var lastLineNumber = library.preambleLines.size
+                fragmentsToCheck.retainAll {
+                    val firstLineNumber = lastLineNumber + 1
+                    lastLineNumber += it.value.size
+                    (firstLineNumber .. lastLineNumber).any { it in errorLineNumbers }
+                }
+
+                if (fragmentsToCheck.isNotEmpty()) {
+                    // The first fragment is now known to be non-compilable.
+                    val firstFragment = fragmentsToCheck.removeAt(0)
+                    indicesOfNonCompilable.add(firstFragment.index)
+                }
+
+                // The remaining fragments was potentially influenced by the first one,
+                // and thus require to be checked again.
+            }
+        } finally {
+            clang_disposeTranslationUnit(translationUnit)
+        }
+    } finally {
+        clang_disposeIndex(index)
+    }
+
+    return this.indices.map { it !in indicesOfNonCompilable }
 }
