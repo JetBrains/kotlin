@@ -25,7 +25,6 @@ import com.intellij.lang.properties.psi.PropertiesFile
 import com.intellij.lang.properties.psi.Property
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.extensions.Extensions
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.*
@@ -41,17 +40,12 @@ import com.intellij.usages.impl.rules.UsageTypeProvider
 import com.intellij.usages.rules.UsageFilteringRule
 import com.intellij.usages.rules.UsageGroupingRule
 import com.intellij.util.CommonProcessors
-import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions
-import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
-import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
-import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.TestFixtureExtension
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -59,161 +53,6 @@ import java.io.File
 import java.util.*
 
 abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() {
-
-    protected enum class OptionsParser {
-        CLASS {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return KotlinClassFindUsagesOptions(project).apply {
-                    isUsages = false
-                    isSearchForTextOccurrences = false
-                    searchConstructorUsages = false
-                    for (s in InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
-                        if (parseCommonOptions(this, s)) continue
-
-                        when (s) {
-                            "constructorUsages" -> searchConstructorUsages = true
-                            "derivedInterfaces" -> isDerivedInterfaces = true
-                            "derivedClasses" -> isDerivedClasses = true
-                            "functionUsages" -> isMethodsUsages = true
-                            "propertyUsages" -> isFieldsUsages = true
-                            else -> fail("Invalid option: " + s)
-                        }
-                    }
-                }
-            }
-        },
-        FUNCTION {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return KotlinFunctionFindUsagesOptions(project).apply {
-                    isUsages = false
-                    for (s in InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
-                        if (parseCommonOptions(this, s)) continue
-
-                        when (s) {
-                            "overrides" -> {
-                                isOverridingMethods = true
-                                isImplementingMethods = true
-                            }
-                            "overloadUsages" -> {
-                                isIncludeOverloadUsages = true
-                                isUsages = true
-                            }
-                            else -> fail("Invalid option: " + s)
-                        }
-                    }
-                }
-            }
-        },
-        PROPERTY {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return KotlinPropertyFindUsagesOptions(project).apply {
-                    isUsages = false
-                    for (s in InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
-                        if (parseCommonOptions(this, s)) continue
-
-                        when (s) {
-                            "overrides" -> searchOverrides = true
-                            "skipRead" -> isReadAccess = false
-                            "skipWrite" -> isWriteAccess = false
-                            else -> fail("Invalid option: " + s)
-                        }
-                    }
-                }
-            }
-        },
-        JAVA_CLASS {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return KotlinClassFindUsagesOptions(project).apply {
-                    isUsages = false
-                    searchConstructorUsages = false
-                    for (s in InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
-                        if (parseCommonOptions(this, s)) continue
-
-                        when (s) {
-                            "derivedInterfaces" -> isDerivedInterfaces = true
-                            "derivedClasses" -> isDerivedClasses = true
-                            "implementingClasses" -> isImplementingClasses = true
-                            "methodUsages" -> isMethodsUsages = true
-                            "fieldUsages" -> isFieldsUsages = true
-                            else -> fail("Invalid option: " + s)
-                        }
-                    }
-                }
-            }
-        },
-        JAVA_METHOD {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return JavaMethodFindUsagesOptions(project).apply {
-                    isUsages = false
-                    for (s in InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
-                        if (parseCommonOptions(this, s)) continue
-
-                        when (s) {
-                            "overrides" -> {
-                                isOverridingMethods = true
-                                isImplementingMethods = true
-                            }
-                            else -> fail("Invalid option: " + s)
-                        }
-                    }
-                }
-            }
-        },
-        JAVA_FIELD {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return JavaVariableFindUsagesOptions(project)
-            }
-        },
-        JAVA_PACKAGE {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return JavaPackageFindUsagesOptions(project)
-            }
-        },
-        DEFAULT {
-            override fun parse(text: String, project: Project): FindUsagesOptions {
-                return FindUsagesOptions(project)
-            }
-        };
-
-        abstract fun parse(text: String, project: Project): FindUsagesOptions
-
-        companion object {
-
-            protected fun parseCommonOptions(options: JavaFindUsagesOptions, s: String): Boolean {
-                when (s) {
-                    "usages" -> {
-                        options.isUsages = true
-                        return true
-                    }
-                    "skipImports" -> {
-                        options.isSkipImportStatements = true
-                        return true
-                    }
-                    "textOccurrences" -> {
-                        options.isSearchForTextOccurrences = true
-                        return true
-                    }
-                    else -> return false
-                }
-
-            }
-
-            fun getParserByPsiElementClass(klass: Class<out PsiElement>): OptionsParser? {
-                return when (klass) {
-                    KtNamedFunction::class.java -> FUNCTION
-                    KtProperty::class.java, KtParameter::class.java -> PROPERTY
-                    KtClass::class.java -> CLASS
-                    PsiMethod::class.java -> JAVA_METHOD
-                    PsiClass::class.java -> JAVA_CLASS
-                    PsiField::class.java -> JAVA_FIELD
-                    PsiPackage::class.java -> JAVA_PACKAGE
-                    KtTypeParameter::class.java -> DEFAULT
-                    else -> null
-                }
-
-            }
-        }
-    }
 
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
