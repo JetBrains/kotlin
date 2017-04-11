@@ -40,12 +40,11 @@ class JavacBasedClassFinder : AbstractJavaClassFinder() {
 
     override fun findPackage(fqName: FqName) = javac.findPackage(fqName, javaSearchScope)
 
-    override fun knownClassNamesInPackage(packageFqName: FqName) = javac.findClassesFromPackage(packageFqName)
-            .mapNotNull {
+    override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> = javac.findClassesFromPackage(packageFqName)
+            .mapNotNullTo(hashSetOf()) {
                 it.fqName?.let {
                     if (it.isRoot) it.asString() else it.shortName().asString()
                 }
             }
-            .toSet()
 
 }

@@ -39,7 +39,7 @@ class CliVirtualFileFinder(
 
     override fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass? {
         if (javaClass !is JavaClassImpl) {
-            return javaClass.computeClassId()?.let(this::findKotlinClass) ?: return null
+            return javaClass.computeClassId()?.let(this::findKotlinClass)
         }
 
         return super.findKotlinClass(javaClass)

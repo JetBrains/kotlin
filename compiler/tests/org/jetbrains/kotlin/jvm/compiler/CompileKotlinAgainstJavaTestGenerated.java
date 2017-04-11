@@ -114,6 +114,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("InterfaceMemberClass.kt")
+    public void testInterfaceMemberClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/InterfaceMemberClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ListImpl.kt")
     public void testListImpl() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/ListImpl.kt");

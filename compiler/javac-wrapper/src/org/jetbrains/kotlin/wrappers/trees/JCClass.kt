@@ -22,6 +22,7 @@ import com.sun.source.util.TreePath
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeInfo
+import org.jetbrains.kotlin.descriptors.Visibilities.PUBLIC
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.wrappers.symbols.JavacClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -47,13 +48,13 @@ class JCClass<out T : JCTree.JCClassDecl>(tree: T,
         get() = tree.modifiers.isAbstract
 
     override val isStatic
-        get() = tree.modifiers.isStatic
+        get() = outerClass?.isInterface ?: tree.modifiers.isStatic
 
     override val isFinal
         get() = tree.modifiers.isFinal
 
     override val visibility
-        get() = tree.modifiers.visibility
+        get() = if (outerClass?.isInterface ?: false) PUBLIC else tree.modifiers.visibility
 
     override val typeParameters
         get() = tree.typeParameters.map { JCTypeParameter(it, TreePath(treePath, it), javac) }
