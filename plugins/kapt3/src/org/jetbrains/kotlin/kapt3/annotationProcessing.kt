@@ -30,7 +30,7 @@ import javax.annotation.processing.Processor
 import javax.tools.JavaFileManager
 import com.sun.tools.javac.util.List as JavacList
 
-fun KaptContext.doAnnotationProcessing(
+fun KaptContext<*>.doAnnotationProcessing(
         javaSourceFiles: List<File>,
         processors: List<Processor>,
         compileClasspath: List<File>,

@@ -83,6 +83,7 @@ class JavaKaptContextTest {
                     bindingContext = BindingContext.EMPTY,
                     compiledClasses = emptyList(),
                     origins = emptyMap(),
+                    generationState = null,
                     processorOptions = emptyMap()
         ).doAnnotationProcessing(
                 listOf(javaSourceFile),

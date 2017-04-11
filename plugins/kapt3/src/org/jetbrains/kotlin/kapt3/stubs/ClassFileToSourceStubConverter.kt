@@ -23,6 +23,7 @@ import com.sun.tools.javac.parser.Tokens
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.kapt3.*
@@ -45,8 +46,7 @@ import javax.tools.JavaFileManager
 import com.sun.tools.javac.util.List as JavacList
 
 class ClassFileToSourceStubConverter(
-        val kaptContext: KaptContext,
-        val typeMapper: KotlinTypeMapper,
+        val kaptContext: KaptContext<GenerationState>,
         val generateNonExistentClass: Boolean,
         val correctErrorTypes: Boolean
 ) {
@@ -463,7 +463,7 @@ class ClassFileToSourceStubConverter(
 
             val superClassConstructorCall = if (superClassConstructor != null) {
                 val args = mapJList(superClassConstructor.valueParameters) { param ->
-                    convertLiteralExpression(getDefaultValue(typeMapper.mapType(param.type)))
+                    convertLiteralExpression(getDefaultValue(kaptContext.generationState.typeMapper.mapType(param.type)))
                 }
                 val call = treeMaker.Apply(JavacList.nil(), treeMaker.SimpleName("super"), args)
                 JavacList.of<JCStatement>(treeMaker.Exec(call))
@@ -584,6 +584,8 @@ class ClassFileToSourceStubConverter(
 
     private fun getMostSuitableSuperTypeForAnonymousType(typeDescriptor: ClassDescriptor): JCExpression {
         val superClass = typeDescriptor.getSuperClassNotAny()
+        val typeMapper = kaptContext.generationState.typeMapper
+
         if (superClass != null) {
             return treeMaker.Type(typeMapper.mapType(superClass))
         } else {
