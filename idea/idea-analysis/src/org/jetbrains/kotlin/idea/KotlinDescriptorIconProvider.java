@@ -84,16 +84,15 @@ public final class KotlinDescriptorIconProvider {
         if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
             if (functionDescriptor.getExtensionReceiverParameter() != null) {
-                return KotlinIcons.EXTENSION_FUNCTION;
+                return Modality.ABSTRACT == functionDescriptor.getModality()
+                       ? KotlinIcons.ABSTRACT_EXTENSION_FUNCTION
+                       : KotlinIcons.EXTENSION_FUNCTION;
             }
 
             if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-                if (Modality.ABSTRACT == functionDescriptor.getModality()) {
-                    return PlatformIcons.ABSTRACT_METHOD_ICON;
-                }
-                else {
-                    return PlatformIcons.METHOD_ICON;
-                }
+                return Modality.ABSTRACT == functionDescriptor.getModality()
+                       ? PlatformIcons.ABSTRACT_METHOD_ICON
+                       : PlatformIcons.METHOD_ICON;
             }
             else {
                 return KotlinIcons.FUNCTION;

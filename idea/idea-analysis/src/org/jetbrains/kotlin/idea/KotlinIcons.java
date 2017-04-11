@@ -36,6 +36,7 @@ public interface KotlinIcons {
     Icon ANNOTATION = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/annotationKotlin.png");
     Icon FUNCTION = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/function.png");
     Icon EXTENSION_FUNCTION = PlatformIcons.FUNCTION_ICON;
+    Icon ABSTRACT_EXTENSION_FUNCTION = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/abstract_extension_function.png");
     Icon LAMBDA = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/lambda.png");
     Icon VAR = PlatformIcons.VARIABLE_ICON;
     Icon VAL = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/value.png");

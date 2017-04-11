@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import javax.swing.Icon
 
 class KotlinIconProvider : IconProvider(), DumbAware {
-
     override fun getIcon(psiElement: PsiElement, flags: Int): Icon? {
         if (psiElement is KtFile) {
             val mainClass = getMainClass(psiElement)
@@ -92,10 +91,12 @@ class KotlinIconProvider : IconProvider(), DumbAware {
             }
             is KtLightClassForSourceDeclaration -> navigationElement.getBaseIcon()
             is KtNamedFunction -> when {
-                receiverTypeReference != null -> KotlinIcons.EXTENSION_FUNCTION
+                receiverTypeReference != null ->
+                    if (KtPsiUtil.isAbstract(this)) KotlinIcons.ABSTRACT_EXTENSION_FUNCTION else KotlinIcons.EXTENSION_FUNCTION
                 getStrictParentOfType<KtNamedDeclaration>() is KtClass ->
                     if (KtPsiUtil.isAbstract(this)) PlatformIcons.ABSTRACT_METHOD_ICON else PlatformIcons.METHOD_ICON
-                else -> KotlinIcons.FUNCTION
+                else ->
+                    KotlinIcons.FUNCTION
             }
             is KtFunctionLiteral -> KotlinIcons.LAMBDA
             is KtClass -> when {
