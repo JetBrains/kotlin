@@ -81,11 +81,11 @@ internal class ExpressionReplacementPerformer(
         }
 
         val replaced = if (codeToInline.mainExpression != null) {
-            elementToBeReplaced.replace(codeToInline.mainExpression!!)
+            elementToBeReplaced.replaced(codeToInline.mainExpression!!)
         }
         else {
             // NB: Unit is never used as expression
-            val stub = elementToBeReplaced.replace(psiFactory.createExpression("0")) as KtExpression
+            val stub = elementToBeReplaced.replaced(psiFactory.createExpression("0"))
             val bindingContext = stub.analyze()
             val canDropElementToBeReplaced = !stub.isUsedAsExpression(bindingContext)
             if (canDropElementToBeReplaced) {
