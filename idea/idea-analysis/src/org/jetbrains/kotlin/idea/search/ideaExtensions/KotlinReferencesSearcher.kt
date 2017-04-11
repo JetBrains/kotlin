@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.effectiveSearchScope
 import org.jetbrains.kotlin.idea.search.unionSafe
-import org.jetbrains.kotlin.idea.search.usagesSearch.OperatorReferenceSearcher
+import org.jetbrains.kotlin.idea.search.usagesSearch.operators.OperatorReferenceSearcher
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope

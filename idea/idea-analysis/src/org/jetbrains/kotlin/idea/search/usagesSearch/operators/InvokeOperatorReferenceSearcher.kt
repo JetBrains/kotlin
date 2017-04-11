@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,37 +14,36 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.search.usagesSearch
+package org.jetbrains.kotlin.idea.search.usagesSearch.operators
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.Processor
-import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
+import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
-class PropertyDelegationOperatorReferenceSearcher(
+class InvokeOperatorReferenceSearcher(
         targetFunction: PsiElement,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
         optimizer: SearchRequestCollector,
         options: KotlinReferencesSearchOptions
-) : OperatorReferenceSearcher<KtPropertyDelegate>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf("by")) {
+) : OperatorReferenceSearcher<KtCallExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = emptyList()) {
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {
-        (expression.parent as? KtPropertyDelegate)?.let { processReferenceElement(it) }
+        val callExpression = expression.parent as? KtCallExpression ?: return
+        processReferenceElement(callExpression)
     }
 
-    override fun isReferenceToCheck(ref: PsiReference): Boolean {
-        return ref is KtPropertyDelegationMethodsReference
-    }
+    override fun isReferenceToCheck(ref: PsiReference) = ref is KtInvokeFunctionReference
 
     override fun extractReference(element: KtElement): PsiReference? {
-        return (element as? KtPropertyDelegate)?.references?.firstIsInstance<KtPropertyDelegationMethodsReference>()
+        return (element as? KtCallExpression)?.references?.firstIsInstance<KtInvokeFunctionReference>()
     }
 }

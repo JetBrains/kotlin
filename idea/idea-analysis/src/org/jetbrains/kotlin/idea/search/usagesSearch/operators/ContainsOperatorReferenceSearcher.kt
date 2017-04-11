@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.search.usagesSearch
+package org.jetbrains.kotlin.idea.search.usagesSearch.operators
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
@@ -23,37 +23,44 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
-import org.jetbrains.kotlin.lexer.KtSingleValueToken
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtUnaryExpression
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
-class UnaryOperatorReferenceSearcher(
+class ContainsOperatorReferenceSearcher(
         targetFunction: PsiElement,
-        private val operationToken: KtSingleValueToken,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
         optimizer: SearchRequestCollector,
         options: KotlinReferencesSearchOptions
-) : OperatorReferenceSearcher<KtUnaryExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf(operationToken.value)) {
+) : OperatorReferenceSearcher<KtOperationReferenceExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf("in")) {
+
+    private val OPERATION_TOKENS = setOf(KtTokens.IN_KEYWORD, KtTokens.NOT_IN)
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {
-        val unaryExpression = expression.parent as? KtUnaryExpression ?: return
-        if (unaryExpression.operationToken != operationToken) return
-        processReferenceElement(unaryExpression)
+        val parent = expression.parent
+        when (parent) {
+            is KtBinaryExpression -> {
+                if (parent.operationToken in OPERATION_TOKENS && expression == parent.right) {
+                    processReferenceElement(parent.operationReference)
+                }
+            }
+
+            is KtWhenConditionInRange -> {
+                processReferenceElement(parent.operationReference)
+            }
+        }
     }
 
     override fun isReferenceToCheck(ref: PsiReference): Boolean {
         if (ref !is KtSimpleNameReference) return false
-        val element = ref.element
-        if (element.parent !is KtUnaryExpression) return false
-        return element.getReferencedNameElementType() == operationToken
+        val element = ref.element as? KtOperationReferenceExpression ?: return false
+        return element.getReferencedNameElementType() in OPERATION_TOKENS
     }
 
     override fun extractReference(element: KtElement): PsiReference? {
-        val unaryExpression = element as? KtUnaryExpression ?: return null
-        if (unaryExpression.operationToken != operationToken) return null
-        return unaryExpression.operationReference.references.firstIsInstance<KtSimpleNameReference>()
+        val referenceExpression = element as? KtOperationReferenceExpression ?: return null
+        if (referenceExpression.getReferencedNameElementType() !in OPERATION_TOKENS) return null
+        return referenceExpression.references.firstIsInstance<KtSimpleNameReference>()
     }
 }
