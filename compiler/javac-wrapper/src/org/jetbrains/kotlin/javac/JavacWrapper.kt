@@ -39,7 +39,6 @@ import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Names
 import com.sun.tools.javac.util.Options
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -120,8 +119,7 @@ class JavacWrapper(javaFiles: Collection<File>,
 
         fileManager.setClassPathForCompilation()
         messageCollector?.report(CompilerMessageSeverity.INFO,
-                                 "Compiling Java sources",
-                                 CompilerMessageLocation.NO_LOCATION)
+                                 "Compiling Java sources")
         compile(fileObjects)
         errorCount() == 0
     }

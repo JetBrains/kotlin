@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.javac
 
 import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Log
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -53,7 +52,7 @@ private class MessageCollectorAdapter(private val messageCollector: MessageColle
 
     override fun write(buffer: CharArray, offset: Int, length: Int) {
         if (length > 1) {
-            messageCollector.report(severity, String(buffer, offset, length), CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(severity, String(buffer, offset, length))
         }
     }
 
