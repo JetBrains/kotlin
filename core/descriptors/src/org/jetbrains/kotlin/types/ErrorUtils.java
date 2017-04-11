@@ -46,16 +46,10 @@ import static kotlin.collections.CollectionsKt.emptyList;
 import static kotlin.collections.CollectionsKt.joinToString;
 
 public class ErrorUtils {
-
     private static final ModuleDescriptor ERROR_MODULE;
+
     static {
         ERROR_MODULE = new ModuleDescriptor() {
-            @NotNull
-            @Override
-            public SourceKind getSourceKind() {
-                return SourceKind.NONE;
-            }
-
             @Nullable
             @Override
             public <T> T getCapability(@NotNull Capability<T> capability) {

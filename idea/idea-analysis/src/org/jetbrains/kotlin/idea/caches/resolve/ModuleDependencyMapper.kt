@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
-import org.jetbrains.kotlin.descriptors.SourceKind
 import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
@@ -87,15 +86,7 @@ fun createModuleResolverProvider(
                 modulePlatforms = { moduleInfo ->
                     val module = (moduleInfo as? ModuleSourceInfo)?.module
                     module?.let { TargetPlatformDetector.getPlatform(module).multiTargetPlatform }
-                },
-                moduleSources = { moduleInfo ->
-                    when (moduleInfo) {
-                        is ModuleProductionSourceInfo -> SourceKind.PRODUCTION
-                        is ModuleTestSourceInfo -> SourceKind.TEST
-                        else -> SourceKind.NONE
-                    }
                 }
-
         )
     }
 

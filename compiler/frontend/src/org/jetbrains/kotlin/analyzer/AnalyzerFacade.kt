@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.LazyModuleDependencies
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
@@ -164,17 +167,14 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
             packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { _, _ -> PackagePartProvider.Empty },
             firstDependency: M? = null,
-            modulePlatforms: (M) -> MultiTargetPlatform?,
-            moduleSources: (M) -> SourceKind = { SourceKind.NONE }
+            modulePlatforms: (M) -> MultiTargetPlatform?
     ): ResolverForProject<M> {
         val storageManager = projectContext.storageManager
         fun createResolverForProject(): ResolverForProjectImpl<M> {
             val descriptorByModule = HashMap<M, ModuleDescriptorImpl>()
-            modules.forEach {
-                module ->
+            modules.forEach { module ->
                 descriptorByModule[module] =
-                        ModuleDescriptorImpl(module.name, storageManager, builtIns(module),
-                                             modulePlatforms(module), moduleSources(module), module.capabilities)
+                        ModuleDescriptorImpl(module.name, storageManager, builtIns(module), modulePlatforms(module), module.capabilities)
             }
             return ResolverForProjectImpl(debugName, descriptorByModule, delegateResolver)
         }

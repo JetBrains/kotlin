@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.psi.NavigatablePsiElement
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleProductionSourceInfo
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -26,9 +29,21 @@ import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 
-fun ModuleDescriptor.commonModuleOrNull() = allDependencyModules.filter {
-    it.getMultiTargetPlatform() == MultiTargetPlatform.Common && it.sourceKind == sourceKind
-}.firstOrNull()
+fun ModuleDescriptor.commonModuleOrNull(): ModuleDescriptor? {
+    val sourceKind = sourceKind
+    return allDependencyModules.firstOrNull { dependency ->
+        dependency.getMultiTargetPlatform() == MultiTargetPlatform.Common && dependency.sourceKind == sourceKind
+    }
+}
+
+private val ModuleDescriptor.sourceKind: SourceKind
+    get() = when (getCapability(ModuleInfo.Capability)) {
+        is ModuleProductionSourceInfo -> SourceKind.PRODUCTION
+        is ModuleTestSourceInfo -> SourceKind.TEST
+        else -> SourceKind.NONE
+    }
+
+private enum class SourceKind { NONE, PRODUCTION, TEST }
 
 fun ModuleDescriptor.hasDeclarationOf(descriptor: MemberDescriptor) = declarationOf(descriptor) != null
 
