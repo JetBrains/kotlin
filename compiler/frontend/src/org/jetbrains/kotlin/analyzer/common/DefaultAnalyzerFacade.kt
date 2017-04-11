@@ -72,7 +72,7 @@ object DefaultAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
         val project = files.firstOrNull()?.project ?: throw AssertionError("No files to analyze")
         val resolver = setupResolverForProject(
                 "sources for metadata serializer",
-                ProjectContext(project), listOf(moduleInfo),
+                ProjectContext(project), listOf(moduleInfo), { DefaultAnalyzerFacade },
                 { ModuleContent(files, GlobalSearchScope.allScope(project)) },
                 object : PlatformAnalysisParameters {},
                 packagePartProviderFactory = packagePartProviderFactory,

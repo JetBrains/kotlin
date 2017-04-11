@@ -157,66 +157,71 @@ interface ModuleInfo {
 }
 
 abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
-    fun <M : ModuleInfo> setupResolverForProject(
-            debugName: String,
-            projectContext: ProjectContext,
-            modules: Collection<M>,
-            modulesContent: (M) -> ModuleContent,
-            platformParameters: P,
-            targetEnvironment: TargetEnvironment = CompilerEnvironment,
-            builtIns: (M) -> KotlinBuiltIns = { DefaultBuiltIns.Instance },
-            delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
-            packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { _, _ -> PackagePartProvider.Empty },
-            firstDependency: M? = null,
-            modulePlatforms: (M) -> MultiTargetPlatform?
-    ): ResolverForProject<M> {
-        val storageManager = projectContext.storageManager
+    companion object {
+        fun <P : PlatformAnalysisParameters, M : ModuleInfo> setupResolverForProject(
+                debugName: String,
+                projectContext: ProjectContext,
+                modules: Collection<M>,
+                analyzerFacade: (M) -> AnalyzerFacade<P>,
+                modulesContent: (M) -> ModuleContent,
+                platformParameters: P,
+                targetEnvironment: TargetEnvironment = CompilerEnvironment,
+                builtIns: (M) -> KotlinBuiltIns = { DefaultBuiltIns.Instance },
+                delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
+                packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { _, _ -> PackagePartProvider.Empty },
+                firstDependency: M? = null,
+                modulePlatforms: (M) -> MultiTargetPlatform?
+        ): ResolverForProject<M> {
+            val storageManager = projectContext.storageManager
 
-        val resolverForProject = ResolverForProjectImpl(debugName, modules.keysToMap { module ->
-            ModuleDescriptorImpl(module.name, storageManager, builtIns(module), modulePlatforms(module), module.capabilities)
-        }, delegateResolver)
+            val resolverForProject = ResolverForProjectImpl(debugName, modules.keysToMap { module ->
+                ModuleDescriptorImpl(module.name, storageManager, builtIns(module), modulePlatforms(module), module.capabilities)
+            }, delegateResolver)
 
-        for (module in modules) {
-            resolverForProject.descriptorForModule(module).setDependencies(LazyModuleDependencies(
-                    storageManager,
-                    computeDependencies = {
-                        val orderedDependencies = listOfNotNull(firstDependency) + module.dependencies()
-                        val dependenciesDescriptors = orderedDependencies.mapTo(ArrayList<ModuleDescriptorImpl>()) { dependencyInfo ->
-                            resolverForProject.descriptorForModule(dependencyInfo as M)
+            for (module in modules) {
+                resolverForProject.descriptorForModule(module).setDependencies(LazyModuleDependencies(
+                        storageManager,
+                        computeDependencies = {
+                            val orderedDependencies = listOfNotNull(firstDependency) + module.dependencies()
+                            val dependenciesDescriptors = orderedDependencies.mapTo(ArrayList<ModuleDescriptorImpl>()) { dependencyInfo ->
+                                resolverForProject.descriptorForModule(dependencyInfo as M)
+                            }
+                            module.dependencyOnBuiltIns().adjustDependencies(
+                                    resolverForProject.descriptorForModule(module).builtIns.builtInsModule, dependenciesDescriptors)
+                            dependenciesDescriptors
+                        },
+                        computeModulesWhoseInternalsAreVisible = {
+                            module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) {
+                                resolverForProject.descriptorForModule(it as M)
+                            }
+                        },
+                        computeImplementingModules = {
+                            if (modulePlatforms(module) != MultiTargetPlatform.Common) emptySet()
+                            else modules
+                                    .filter { modulePlatforms(it) != MultiTargetPlatform.Common && module in it.dependencies() }
+                                    .mapTo(mutableSetOf(), resolverForProject::descriptorForModule)
                         }
-                        module.dependencyOnBuiltIns().adjustDependencies(
-                                resolverForProject.descriptorForModule(module).builtIns.builtInsModule, dependenciesDescriptors)
-                        dependenciesDescriptors
-                    },
-                    computeModulesWhoseInternalsAreVisible = {
-                        module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) { resolverForProject.descriptorForModule(it as M) }
-                    },
-                    computeImplementingModules = {
-                        if (modulePlatforms(module) != MultiTargetPlatform.Common) emptySet()
-                        else modules
-                                .filter { modulePlatforms(it) != MultiTargetPlatform.Common && module in it.dependencies() }
-                                .mapTo(mutableSetOf(), resolverForProject::descriptorForModule)
-                    }
-            )
-            )
-        }
-
-        for (module in modules) {
-            val descriptor = resolverForProject.descriptorForModule(module)
-            val computeResolverForModule = storageManager.createLazyValue {
-                val content = modulesContent(module)
-                createResolverForModule(
-                        module, descriptor, projectContext.withModule(descriptor), modulesContent(module),
-                        platformParameters, targetEnvironment, resolverForProject,
-                        packagePartProviderFactory(module, content)
+                )
                 )
             }
 
-            descriptor.initialize(DelegatingPackageFragmentProvider { computeResolverForModule().packageFragmentProvider })
-            resolverForProject.resolverByModuleDescriptor[descriptor] = computeResolverForModule
-        }
+            for (module in modules) {
+                val descriptor = resolverForProject.descriptorForModule(module)
+                val computeResolverForModule = storageManager.createLazyValue {
+                    val content = modulesContent(module)
+                    analyzerFacade(module).createResolverForModule(
+                            module, descriptor, projectContext.withModule(descriptor), modulesContent(module),
+                            platformParameters, targetEnvironment, resolverForProject,
+                            packagePartProviderFactory(module, content)
+                    )
+                }
 
-        return resolverForProject
+                descriptor.initialize(DelegatingPackageFragmentProvider { computeResolverForModule().packageFragmentProvider })
+                resolverForProject.resolverByModuleDescriptor[descriptor] = computeResolverForModule
+            }
+
+            return resolverForProject
+        }
     }
 
     protected abstract fun <M : ModuleInfo> createResolverForModule(

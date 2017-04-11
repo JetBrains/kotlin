@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.caches.resolve
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.resolve.TargetPlatform
 
 interface LibraryModuleInfo : ModuleInfo {
-    fun isJsLibrary(): Boolean
+    val libraryPlatform: TargetPlatform
+
     fun getLibraryRoots(): Collection<String>
 }

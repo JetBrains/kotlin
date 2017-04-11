@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.caches.JarUserDataManager;
 import org.jetbrains.kotlin.idea.debugger.filter.DebuggerFiltersUtilKt;
+import org.jetbrains.kotlin.idea.framework.CommonLibraryDetectionUtil;
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -59,6 +60,7 @@ public class PluginStartupComponent implements ApplicationComponent {
         }
 
         JarUserDataManager.INSTANCE.register(KotlinJavaScriptLibraryDetectionUtil.HasKotlinJSMetadataInJar.INSTANCE);
+        JarUserDataManager.INSTANCE.register(CommonLibraryDetectionUtil.HasCommonKotlinMetadataInJar.INSTANCE);
 
         DebuggerFiltersUtilKt.addKotlinStdlibDebugFilterIfNeeded();
 

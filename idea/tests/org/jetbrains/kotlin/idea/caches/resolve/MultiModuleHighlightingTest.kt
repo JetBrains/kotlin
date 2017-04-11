@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.roots.DependencyScope
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
 
@@ -64,9 +65,12 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     class MultiPlatform : AbstractMultiModuleHighlightingTest() {
         override val testPath get() = super.testPath + "multiplatform/"
 
-        private fun doTest(vararg platforms: TargetPlatformKind<*>) {
+        private fun doTest(vararg platforms: TargetPlatformKind<*>, withStdlibCommon: Boolean = false) {
             val commonModule = module("common")
             commonModule.createFacet(TargetPlatformKind.Common)
+            if (withStdlibCommon) {
+                commonModule.addLibrary(ForTestCompileRuntime.stdlibCommonForTests())
+            }
 
             for (platform in platforms) {
                 val path = when (platform) {
@@ -105,6 +109,10 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
         fun testSuppressHeaderWithoutImpl() {
             doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        }
+
+        fun testCatchHeaderExceptionInPlatformModule() {
+            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], withStdlibCommon = true)
         }
     }
 }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.jvm.compiler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analyzer.AnalyzerFacade
 import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForProject
@@ -65,9 +66,9 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val modules = setupModules(environment, moduleDirs)
         val projectContext = ProjectContext(environment.project)
         val builtIns = JvmBuiltIns(projectContext.storageManager)
-        val resolverForProject = JvmAnalyzerFacade.setupResolverForProject(
+        val resolverForProject = AnalyzerFacade.setupResolverForProject(
                 "test",
-                projectContext, modules,
+                projectContext, modules, { JvmAnalyzerFacade },
                 { module -> ModuleContent(module.kotlinFiles, module.javaFilesScope) },
                 JvmPlatformParameters {
                     javaClass ->

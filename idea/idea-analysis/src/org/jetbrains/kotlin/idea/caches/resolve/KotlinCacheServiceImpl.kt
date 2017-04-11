@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.container.getService
+import org.jetbrains.kotlin.container.tryGetService
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -164,7 +165,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     }
 
     fun <T : Any> tryGetProjectService(platform: TargetPlatform, ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T? {
-        return globalFacade(platform, ideaModuleInfo.sdk).tryGetResolverForModuleInfo(ideaModuleInfo)?.componentProvider?.getService(serviceClass)
+        return globalFacade(platform, ideaModuleInfo.sdk).tryGetResolverForModuleInfo(ideaModuleInfo)?.componentProvider?.tryGetService(serviceClass)
     }
 
     private fun globalFacade(platform: TargetPlatform, sdk: Sdk?) =

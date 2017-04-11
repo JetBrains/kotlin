@@ -23,10 +23,12 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
+import org.jetbrains.kotlin.analyzer.AnalyzerFacade
 import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
@@ -78,15 +80,13 @@ fun createModuleResolverProvider(
             psiClass.getNullableModuleInfo()
         }
 
-        return AnalyzerFacadeProvider.getAnalyzerFacade(platform).setupResolverForProject(
-                debugName, globalContext.withProject(project), modulesToCreateResolversFor, modulesContent,
-                jvmPlatformParameters, IdeaEnvironment, builtInsProvider,
+        return AnalyzerFacade.setupResolverForProject(
+                debugName, globalContext.withProject(project), modulesToCreateResolversFor,
+                { module -> AnalyzerFacadeProvider.getAnalyzerFacade(module.getTargetPlatform() ?: platform) },
+                modulesContent, jvmPlatformParameters, IdeaEnvironment, builtInsProvider,
                 delegateResolver, { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
                 sdk?.let { SdkInfo(project, it) },
-                modulePlatforms = { moduleInfo ->
-                    val module = (moduleInfo as? ModuleSourceInfo)?.module
-                    module?.let { TargetPlatformDetector.getPlatform(module).multiTargetPlatform }
-                }
+                modulePlatforms = { module -> module.getTargetPlatform()?.multiTargetPlatform }
         )
     }
 
@@ -104,6 +104,13 @@ fun createModuleResolverProvider(
             dependencies + listOf(globalContext.exceptionTracker)
     )
 }
+
+private fun ModuleInfo.getTargetPlatform(): TargetPlatform? =
+        when (this) {
+            is ModuleSourceInfo -> TargetPlatformDetector.getPlatform(module)
+            is LibraryModuleInfo -> libraryPlatform
+            else -> null
+        }
 
 fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
     val ideaModules = ModuleManager.getInstance(project).modules.toList()

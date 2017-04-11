@@ -61,6 +61,11 @@ public class ForTestCompileRuntime {
         return assertExists(new File("dist/kotlinc/lib/kotlin-runtime-sources.jar"));
     }
 
+    @NotNull
+    public static File stdlibCommonForTests() {
+        return assertExists(new File("dist/common/kotlin-stdlib-common.jar"));
+    }
+
     // TODO: Do not use these classes, remove them after stdlib tests are merged in the same build as the compiler
     @NotNull
     @Deprecated

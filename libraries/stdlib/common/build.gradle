@@ -44,3 +44,12 @@ artifacts {
     archives sourcesJar
     archives javadocJar
 }
+
+// TODO: call the "dist" task instead, once we need to publish kotlin-stdlib-common.jar with the compiler distribution
+task distCommon(type: Copy) {
+    from(jar)
+    into "$distDir/common"
+    rename "-${java.util.regex.Pattern.quote(version)}", ''
+}
+
+dist.dependsOn distCommon

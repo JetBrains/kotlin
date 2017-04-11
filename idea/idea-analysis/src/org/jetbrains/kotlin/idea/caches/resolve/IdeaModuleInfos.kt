@@ -32,11 +32,15 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.framework.CommonLibraryDetectionUtil
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.GlobalSearchScopeWithModuleSources
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import java.util.*
 
 interface IdeaModuleInfo : ModuleInfo {
@@ -200,7 +204,12 @@ class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo, 
         return result.toList()
     }
 
-    override fun isJsLibrary(): Boolean = KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(library)
+    override val libraryPlatform: TargetPlatform
+        get() = when {
+            KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(library) -> JsPlatform
+            CommonLibraryDetectionUtil.isCommonLibrary(library) -> TargetPlatform.Default
+            else -> JvmPlatform
+        }
 
     override val sourcesModuleInfo: SourceForBinaryModuleInfo
         get() = LibrarySourceInfo(project, library)

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analyzer.AnalyzerFacade
 import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.container.get
@@ -35,9 +36,9 @@ fun createResolveSessionForFiles(
 ): ResolveSession {
     val projectContext = ProjectContext(project)
     val testModule = TestModule(addBuiltIns)
-    val resolverForProject = JvmAnalyzerFacade.setupResolverForProject(
+    val resolverForProject = AnalyzerFacade.setupResolverForProject(
             "test",
-            projectContext, listOf(testModule),
+            projectContext, listOf(testModule), { JvmAnalyzerFacade },
             { ModuleContent(syntheticFiles, GlobalSearchScope.allScope(project)) },
             JvmPlatformParameters { testModule },
             modulePlatforms = { MultiTargetPlatform.Specific("JVM") }
