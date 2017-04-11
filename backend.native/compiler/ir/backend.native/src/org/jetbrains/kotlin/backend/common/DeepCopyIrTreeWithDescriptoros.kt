@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.lower.SimpleMemberScope
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.*
@@ -73,33 +72,6 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
                 return copyIrCallImpl(oldExpression)
             return oldExpression
         }
-    }
-
-    private fun copyIrCallImpl(oldExpression: IrCallImpl): IrCallImpl {
-        val oldDescriptor = oldExpression.descriptor
-        val newDescriptor = descriptorSubstituteMap.getOrDefault(oldDescriptor.original,
-                oldDescriptor) as FunctionDescriptor
-
-        val newSuperQualifier = oldExpression.superQualifier?.let { (descriptorSubstituteMap[it] ?: it) as ClassDescriptor }
-
-        val newExpression = IrCallImpl(
-            startOffset    = oldExpression.startOffset,
-            endOffset      = oldExpression.endOffset,
-            type           = substituteType(oldExpression.type)!!,
-            descriptor     = newDescriptor,
-            typeArguments  = substituteTypeArguments(oldExpression.typeArguments),
-            origin         = oldExpression.origin,
-            superQualifier = newSuperQualifier
-        ).apply {
-            oldExpression.descriptor.valueParameters.forEach {
-                val valueArgument = oldExpression.getValueArgument(it)
-                putValueArgument(it.index, valueArgument)
-            }
-            extensionReceiver = oldExpression.extensionReceiver
-            dispatchReceiver  = oldExpression.dispatchReceiver
-        }
-
-        return newExpression
     }
 
     //-------------------------------------------------------------------------//
@@ -191,10 +163,8 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
 
         override fun visitCall(expression: IrCall) {
 
-            val descriptor = expression.descriptor as FunctionDescriptor
-            if (descriptor.isFunctionInvoke) {
-                val oldDescriptor = descriptor as SimpleFunctionDescriptor
-                // Containing declaration for value parameter is not that important - other lowerings should not rely on it.
+            val oldDescriptor = expression.descriptor as FunctionDescriptor
+            if (oldDescriptor is SimpleFunctionDescriptor) {
                 val containingDeclaration = (targetScope.scope.scopeOwner as? CallableDescriptor) ?: oldDescriptor
                 val newReturnType = substituteType(oldDescriptor.returnType)!!
                 val newValueParameters = copyValueParameters(oldDescriptor.valueParameters, containingDeclaration)
@@ -569,6 +539,35 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
             descriptorSubstituteMap[oldDescriptor] = newDescriptor
             newDescriptor
         }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun copyIrCallImpl(oldExpression: IrCallImpl): IrCallImpl {
+        val oldDescriptor = oldExpression.descriptor
+        val newDescriptor = descriptorSubstituteMap.getOrDefault(oldDescriptor.original,
+            oldDescriptor) as FunctionDescriptor
+
+        val newSuperQualifier = oldExpression.superQualifier?.let { (descriptorSubstituteMap[it] ?: it) as ClassDescriptor }
+
+        val newExpression = IrCallImpl(
+            startOffset    = oldExpression.startOffset,
+            endOffset      = oldExpression.endOffset,
+            type           = substituteType(oldExpression.type)!!,
+            descriptor     = newDescriptor,
+            typeArguments  = substituteTypeArguments(oldExpression.typeArguments),
+            origin         = oldExpression.origin,
+            superQualifier = newSuperQualifier
+        ).apply {
+            oldExpression.descriptor.valueParameters.forEach {
+                val valueArgument = oldExpression.getValueArgument(it)
+                putValueArgument(it.index, valueArgument)
+            }
+            extensionReceiver = oldExpression.extensionReceiver
+            dispatchReceiver  = oldExpression.dispatchReceiver
+        }
+
+        return newExpression
     }
 
     //-------------------------------------------------------------------------//
