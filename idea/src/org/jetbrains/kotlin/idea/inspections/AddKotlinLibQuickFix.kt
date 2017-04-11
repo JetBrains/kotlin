@@ -19,14 +19,11 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.openapi.roots.JavaProjectModelModificationService
-import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainerFactory
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -36,7 +33,6 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
-import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
@@ -49,10 +45,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 
-class AddReflectionQuickFix(element: KtElement) : AddKotlinLibQuickFix(element, LibraryJarDescriptor.REFLECT_JAR) {
+class AddReflectionQuickFix(element: KtElement)
+        : AddKotlinLibQuickFix(element, listOf(LibraryJarDescriptor.REFLECT_JAR,
+                                               LibraryJarDescriptor.REFLECT_SRC_JAR)) {
     override fun getText() = KotlinBundle.message("add.reflection.to.classpath")
     override fun getFamilyName() = text
 
@@ -64,7 +61,9 @@ class AddReflectionQuickFix(element: KtElement) : AddKotlinLibQuickFix(element, 
     }
 }
 
-class AddTestLibQuickFix(element: KtElement) : AddKotlinLibQuickFix(element, LibraryJarDescriptor.TEST_JAR) {
+class AddTestLibQuickFix(element: KtElement)
+        : AddKotlinLibQuickFix(element, listOf(LibraryJarDescriptor.TEST_JAR,
+                                               LibraryJarDescriptor.TEST_SRC_JAR)) {
     override fun getText() = KotlinBundle.message("add.test.to.classpath")
     override fun getFamilyName() = text
 
@@ -114,12 +113,9 @@ class AddTestLibQuickFix(element: KtElement) : AddKotlinLibQuickFix(element, Lib
     }
 }
 
-abstract class AddKotlinLibQuickFix(element: KtElement, val libraryJarDescriptor: LibraryJarDescriptor) : KotlinQuickFixAction<KtElement>(element) {
+abstract class AddKotlinLibQuickFix(element: KtElement,
+                                    val libraryJarDescriptors: List<LibraryJarDescriptor>) : KotlinQuickFixAction<KtElement>(element) {
     protected abstract fun getLibraryDescriptor(module: Module): MavenExternalLibraryDescriptor
-
-    fun libraryPath(): String = libraryJarDescriptor.jarName
-    fun getLibFile(): File = libraryJarDescriptor.getPathInPlugin()
-    fun hasLibJarInLibrary(library: Library): Boolean = libraryJarDescriptor.findExistingJar(library) != null
 
     class MavenExternalLibraryDescriptor(groupId: String, artifactId: String, version: String) :
             ExternalLibraryDescriptor(groupId, artifactId, version, version) {
@@ -145,29 +141,30 @@ abstract class AddKotlinLibQuickFix(element: KtElement, val libraryJarDescriptor
             }
         }
 
-        val libFile = getLibFile()
-        if (!libFile.exists()) return
-
-        val configurator = Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME)
-                                   .firstIsInstanceOrNull<KotlinJavaModuleConfigurator>() ?: return
+        val configurator = KotlinJavaModuleConfigurator.instance
 
         val collector = createConfigureKotlinNotificationCollector(project)
 
         for (library in findAllUsedLibraries(project).keySet()) {
             val runtimeJar = LibraryJarDescriptor.RUNTIME_JAR.findExistingJar(library) ?: continue
-            if (hasLibJarInLibrary(library)) continue
 
             val model = library.modifiableModel
-
             val libFilesDir = VfsUtilCore.virtualToIoFile(runtimeJar).parent
 
-            val libIoFile = File(libFilesDir, libraryPath())
-            if (libIoFile.exists()) {
-                model.addRoot(VfsUtil.getUrlForLibraryRoot(libIoFile), OrderRootType.CLASSES)
-            }
-            else {
-                val copied = configurator.copyFileToDir(libFile, libFilesDir, collector)!!
-                model.addRoot(VfsUtil.getUrlForLibraryRoot(copied), OrderRootType.CLASSES)
+            for (libraryJarDescriptor in libraryJarDescriptors) {
+                if (libraryJarDescriptor.findExistingJar(library) != null) continue
+
+                val libFile = libraryJarDescriptor.getPathInPlugin()
+                if (!libFile.exists()) continue
+
+                val libIoFile = File(libFilesDir, libraryJarDescriptor.jarName)
+                if (libIoFile.exists()) {
+                    model.addRoot(VfsUtil.getUrlForLibraryRoot(libIoFile), libraryJarDescriptor.orderRootType)
+                }
+                else {
+                    val copied = configurator.copyFileToDir(libFile, libFilesDir, collector)!!
+                    model.addRoot(VfsUtil.getUrlForLibraryRoot(copied), libraryJarDescriptor.orderRootType)
+                }
             }
 
             model.commit()

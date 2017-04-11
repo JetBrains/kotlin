@@ -188,6 +188,8 @@ enum class LibraryJarDescriptor(val jarName: String,
                    LibraryUtils.getJarFile(library.getFiles(orderRootType).toList(), PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR_OLD)
         }
     },
+    REFLECT_SRC_JAR(PathUtil.KOTLIN_REFLECT_SRC_JAR, OrderRootType.SOURCES, false),
+    TEST_SRC_JAR(PathUtil.KOTLIN_TEST_SRC_JAR, OrderRootType.SOURCES, false),
 
     JS_STDLIB_JAR(PathUtil.JS_LIB_JAR_NAME, OrderRootType.CLASSES, true, KotlinPaths::getJsStdLibJarPath),
     JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, OrderRootType.SOURCES, false, KotlinPaths::getJsStdLibSrcJarPath);

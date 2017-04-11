@@ -46,6 +46,8 @@ public class PathUtil {
     public static final String KOTLIN_TEST_JS_JAR = "kotlin-test-js.jar";
     public static final String KOTLIN_JAVA_STDLIB_SRC_JAR = "kotlin-stdlib-sources.jar";
     public static final String KOTLIN_JAVA_STDLIB_SRC_JAR_OLD = "kotlin-runtime-sources.jar";
+    public static final String KOTLIN_REFLECT_SRC_JAR = "kotlin-reflect-sources.jar";
+    public static final String KOTLIN_TEST_SRC_JAR = "kotlin-test-sources.jar";
     public static final String KOTLIN_COMPILER_JAR = "kotlin-compiler.jar";
 
     public static final Pattern KOTLIN_RUNTIME_JAR_PATTERN = Pattern.compile("kotlin-(stdlib|runtime)(-\\d[\\d.]+(-.+)?)?\\.jar");
