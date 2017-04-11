@@ -121,6 +121,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     put(TARGET, arguments.target)
                 put(LIST_TARGETS, arguments.listTargets)
                 put(OPTIMIZATION, arguments.optimization)
+                put(DEBUG, arguments.debug)
 
                 put(PRINT_IR, arguments.printIr)
                 put(PRINT_IR_WITH_DESCRIPTORS, arguments.printIrWithDescriptors)

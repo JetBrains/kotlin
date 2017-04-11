@@ -53,6 +53,9 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "-target", valueDescription = "<target>", description = "Set hardware target")
     public String target;
 
+    @Argument(value = "-g", description = "Enable emitting debug information")
+    public boolean debug;
+
     @Argument(value = "-enable_assertions", shortName = "-ea", description = "Enable runtime assertions in generated code")
     public boolean enableAssertions;
 

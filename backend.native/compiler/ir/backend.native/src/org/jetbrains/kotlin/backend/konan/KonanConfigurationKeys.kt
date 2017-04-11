@@ -37,6 +37,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("current abi version")
         val OPTIMIZATION: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("optimized compilation")
+        val DEBUG: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("compilation with debug information")
         val NOSTDLIB: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("don't link with stdlib")
         val NOLINK: CompilerConfigurationKey<Boolean> 
