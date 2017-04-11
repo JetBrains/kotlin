@@ -169,7 +169,7 @@ public class CompileEnvironmentUtil {
                 String message = "Source file or directory not found: " + sourceRootPath;
 
                 File moduleFilePath = configuration.get(JVMConfigurationKeys.MODULE_XML_FILE);
-                if (moduleFilePath != null) {
+                if (moduleFilePath != null && Logger.isInitialized()) {
                     String moduleFileContent = FileUtil.loadFile(moduleFilePath);
                     LOG.warn(message +
                               "\n\nmodule file path: " + moduleFilePath +
