@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.load.java.structure.*
 sealed class ClassifierType<out T : JCTree>(tree: T,
                                               treePath: TreePath,
                                               javac: JavacWrapper) : JCType<T>(tree, treePath, javac), JavaClassifierType {
-    override val classifier by lazy { getClassifier(treePath, javac) }
+
+    override val classifier by lazy { treePath.resolve(javac) }
 
     override val canonicalText
         get() = (classifier as? JavaClass)?.fqName?.asString() ?: treePath.leaf.toString()
@@ -42,28 +43,6 @@ sealed class ClassifierType<out T : JCTree>(tree: T,
                     }
                 }
                 .find { it.toString().substringBefore(" ") == treePath.leaf.toString() }
-
-    private fun getClassifier(treePath: TreePath, javac: JavacWrapper) = treePath.resolve(javac).let {
-        it.second
-        ?: typeParameter(treePath, javac)
-        ?: javac.getKotlinClassifier(it.first)
-    }
-
-    private fun typeParameter(treePath: TreePath, javac: JavacWrapper) = treePath
-            .filter { it is JCTree.JCClassDecl || it is JCTree.JCMethodDecl }
-            .flatMap {
-                when (it) {
-                    is JCTree.JCClassDecl -> it.typarams
-                    is JCTree.JCMethodDecl -> it.typarams
-                    else -> emptyList<JCTree.JCTypeParameter>()
-                }
-            }
-            .find { it.toString().substringBefore(" ") == treePath.leaf.toString() }
-            ?.let {
-                JCTypeParameter(it,
-                                javac.getTreePath(it, treePath.compilationUnit),
-                                javac)
-            }
 
 }
 

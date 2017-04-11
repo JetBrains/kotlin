@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaClassifier
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import javax.lang.model.element.Modifier
@@ -55,14 +56,11 @@ fun JCTree.annotations() = when (this) {
     else -> null
 } ?: emptyList<JCTree.JCAnnotation>()
 
-fun TreePath.resolve(javac: JavacWrapper): Pair<FqName, JavaClass?> {
+fun TreePath.resolve(javac: JavacWrapper): JavaClassifier? {
     val name = leaf.toString().substringBefore("<").substringAfter("@")
     val compilationUnit = compilationUnit as JCTree.JCCompilationUnit
 
-    return resolveImport(name, compilationUnit, javac)
-           ?: javac.findClass(FqName("java.lang.$name"))?.let { return it.fqName!! to it }
-           ?: javac.findClass(FqName(name))?.let { return it.fqName!! to it }
-           ?: tryToResolve(name, compilationUnit, javac)
+    return resolveImport(name, compilationUnit, javac) ?: tryToResolve(name, compilationUnit, javac)
 }
 
 private fun resolveImport(name: String,
@@ -72,7 +70,7 @@ private fun resolveImport(name: String,
             ?.let {
                 it.qualifiedIdentifier.toString()
                         .let(::FqName)
-                        .let { it to javac.findClass(it) }
+                        .let { javac.findClass(it) ?: javac.getKotlinClassifier(it) }
             }
     ?: filter { it.qualifiedIdentifier.toString().endsWith("*") }
             .map {
@@ -80,28 +78,44 @@ private fun resolveImport(name: String,
                                 .let(::FqName))
             }
             .firstOrNull()
-            ?.let { it.fqName!! to it }
 }
 
 private fun TreePath.tryToResolve(name: String,
-                                  compilationUnit: JCTree.JCCompilationUnit,
-                                  javac: JavacWrapper): Pair<FqName, JavaClass?> {
-    val simpleName = name.substringAfterLast(".")
-    val classes = javac.findClassesFromPackage(FqName("${compilationUnit.packageName}"))
-            .filter { it.name.asString() == simpleName }
+                          compilationUnit: JCTree.JCCompilationUnit,
+                          javac: JavacWrapper): JavaClassifier? {
+    // try to find an inner class
+    (parentPath.find { it is JCTree.JCClassDecl } as? JCTree.JCClassDecl)?.let { outerClass ->
+        javac.findClass(FqName("${compilationUnit.packageName}.${outerClass.name}.$name"))
+                ?.let { return it }
+    }
 
-    val outerClass = parentPath.find { it is JCTree.JCClassDecl } as? JCTree.JCClassDecl
-                     ?: return FqName("${compilationUnit.packageName}.$name") to null
+    // try to find a package class
+    javac.findClass(FqName("${compilationUnit.packageName}.$name"))?.let { return it }
+    // try to find a class from java.lang package
+    javac.findClass(FqName("java.lang.$name"))?.let { return it }
+    // try to find a class with fqName = name
+    javac.findClass(FqName(name))?.let { return it }
 
-    classes.find {
-        it.fqName!!.asString().contains(simpleName)
-        && it.fqName!!.asString().contains(outerClass.name.toString())
-    }?.let { return it.fqName!! to it }
+    // try to find a type parameter
+    typeParameter(javac)?.let { return it }
 
-    classes.find { it.outerClass == null }?.let { return it.fqName!! to it }
-
-    return FqName("${compilationUnit.packageName}.$name") to null
+    return javac.getKotlinClassifier(FqName("${compilationUnit.packageName}.$name"))
 }
+
+private fun TreePath.typeParameter(javac: JavacWrapper) = filter { it is JCTree.JCClassDecl || it is JCTree.JCMethodDecl }
+        .flatMap {
+            when (it) {
+                is JCTree.JCClassDecl -> it.typarams
+                is JCTree.JCMethodDecl -> it.typarams
+                else -> emptyList<JCTree.JCTypeParameter>()
+            }
+        }
+        .find { it.toString().substringBefore(" ") == leaf.toString() }
+        ?.let {
+            JCTypeParameter(it,
+                            javac.getTreePath(it, compilationUnit),
+                            javac)
+        }
 
 fun JavaClass.computeClassId(): ClassId? {
     val outer = outerClass

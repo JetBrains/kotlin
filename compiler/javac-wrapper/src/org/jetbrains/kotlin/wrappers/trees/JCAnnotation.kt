@@ -20,6 +20,7 @@ import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.name.FqName
 
@@ -34,6 +35,6 @@ class JCAnnotation(val annotation: JCTree.JCAnnotation,
     override val classId
         get() = resolve()?.computeClassId()
 
-    override fun resolve() = TreePath.getPath(treePath.compilationUnit, annotation.annotationType).resolve(javac).second
+    override fun resolve() = TreePath.getPath(treePath.compilationUnit, annotation.annotationType).resolve(javac) as? JavaClass
 
 }
