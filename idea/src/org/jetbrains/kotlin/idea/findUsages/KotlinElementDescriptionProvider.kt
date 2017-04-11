@@ -29,23 +29,72 @@ import com.intellij.usageView.UsageViewShortNameLocation
 import com.intellij.usageView.UsageViewTypeLocation
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameJavaSyntheticPropertyHandler
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinPropertyProcessor
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class KotlinElementDescriptionProvider : ElementDescriptionProvider {
-    companion object {
-        val REFACTORING_RENDERER = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.withOptions {
-            withoutReturnType = true
-            renderConstructorKeyword = false
-        }
+    private tailrec fun KtNamedDeclaration.parentForFqName(): KtNamedDeclaration? {
+        val parent = getStrictParentOfType<KtNamedDeclaration>() ?: return null
+        if (parent is KtProperty && parent.isLocal) return parent.parentForFqName()
+        return parent
+    }
+
+    private fun KtNamedDeclaration.fqName(): FqNameUnsafe {
+        val internalSegments = generateSequence(this) { it.parentForFqName() }
+                .filterIsInstance<KtNamedDeclaration>()
+                .map { it.name ?: "<no name provided>" }
+                .toList()
+                .asReversed()
+        val packageSegments = containingKtFile.packageFqName.pathSegments()
+        return FqNameUnsafe((packageSegments + internalSegments).joinToString("."))
+    }
+
+    private fun KtTypeReference.renderShort(): String {
+        return accept(
+                object : KtVisitor<String, Unit>() {
+                    private val visitor get() = this
+
+                    override fun visitTypeReference(typeReference: KtTypeReference, data: Unit): String {
+                        val typeText = typeReference.typeElement?.accept(this, data) ?: "???"
+                        return if (typeReference.hasParentheses()) "($typeText)" else typeText
+                    }
+
+                    override fun visitDynamicType(type: KtDynamicType, data: Unit) = type.text
+
+                    override fun visitFunctionType(type: KtFunctionType, data: Unit): String {
+                        return buildString {
+                            type.receiverTypeReference?.let { append(it.accept(visitor, data)).append('.') }
+                            type.parameters.joinTo(this, prefix = "(", postfix = ")") { it.accept(visitor, data) }
+                            append(" -> ")
+                            append(type.returnTypeReference?.accept(visitor, data) ?: "???")
+                        }
+                    }
+
+                    override fun visitNullableType(nullableType: KtNullableType, data: Unit): String {
+                        val innerTypeText = nullableType.innerType?.accept(this, data) ?: return "???"
+                        return "$innerTypeText?"
+                    }
+
+                    override fun visitSelfType(type: KtSelfType, data: Unit) = type.text
+
+                    override fun visitUserType(type: KtUserType, data: Unit): String {
+                        return buildString {
+                            append(type.referencedName ?: "???")
+
+                            val arguments = type.typeArgumentsAsTypes
+                            if (arguments.isNotEmpty()) {
+                                arguments.joinTo(this, prefix = "<", postfix = ">") { it.accept(visitor, data) }
+                            }
+                        }
+                    }
+                },
+                Unit
+        )
     }
 
     override fun getElementDescription(element: PsiElement, location: ElementDescriptionLocation): String? {
@@ -85,26 +134,32 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             is UsageViewShortNameLocation, is UsageViewLongNameLocation -> namedElement.name
             is RefactoringDescriptionLocation -> {
                 val kind = elementKind() ?: return null
-                val descriptor = (namedElement as KtDeclaration).descriptor ?: return null
+                if (namedElement !is KtNamedDeclaration) return null
                 val renderFqName = location.includeParent() &&
                                    namedElement !is KtTypeParameter &&
                                    namedElement !is KtParameter &&
                                    namedElement !is KtConstructor<*>
-                val desc = when (descriptor) {
-                    is FunctionDescriptor -> {
-                        val baseText = REFACTORING_RENDERER.render(descriptor)
-                        val parentFqName = if (renderFqName) descriptor.containingDeclaration.fqNameSafe else null
+                val desc = when (namedElement) {
+                    is KtFunction -> {
+                        val baseText = buildString {
+                            append(namedElement.name ?: "")
+                            namedElement.valueParameters.joinTo(this, prefix = "(", postfix = ")") {
+                                (if (it.isVarArg) "vararg " else "") + (it.typeReference?.renderShort() ?: "")
+                            }
+                            namedElement.receiverTypeReference?.let { append(" on ").append(it.renderShort()) }
+                        }
+                        val parentFqName = if (renderFqName) namedElement.fqName().parent() else null
                         if (parentFqName?.isRoot ?: true) baseText else "${parentFqName!!.asString()}.$baseText"
                     }
-                    else -> if (renderFqName) DescriptorUtils.getFqName(descriptor).asString() else descriptor.name.asString()
+                    else -> (if (renderFqName) namedElement.fqName().asString() else namedElement.name) ?: ""
                 }
 
                 "$kind ${CommonRefactoringUtil.htmlEmphasize(desc)}"
             }
             is HighlightUsagesDescriptionLocation -> {
                 val kind = elementKind() ?: return null
-                val descriptor = (namedElement as KtDeclaration).descriptor ?: return null
-                "$kind ${descriptor.name.asString()}"
+                if (namedElement !is KtNamedDeclaration) return null
+                "$kind ${namedElement.name}"
             }
             else -> null
         }

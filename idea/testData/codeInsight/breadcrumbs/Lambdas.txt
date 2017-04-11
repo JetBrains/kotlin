@@ -11,11 +11,11 @@ Crumbs:
   Something().apply{…}
 Tooltips:
   function <b><code>foo()</code></b>
-  lambda <b><code>foo.&lt;anonymous&gt;() on StringBuilder /* = StringBuilder */</code></b>
-  lambda <b><code>foo.&lt;anonymous&gt;.&lt;anonymous&gt;() on ???</code></b>
+  lambda <b><code>foo.&lt;anonymous&gt;()</code></b>
+  lambda <b><code>foo.&lt;anonymous&gt;.&lt;anonymous&gt;()</code></b>
   lambda <b><code>foo.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;()</code></b>
   lambda <b><code>foo.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;()</code></b>
-  lambda <b><code>foo.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;(???)</code></b>
+  lambda <b><code>foo.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;()</code></b>
   lambda <b><code>foo.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;()</code></b>
   lambda <b><code>foo.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;(Int)</code></b>
   lambda <b><code>foo.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;.&lt;anonymous&gt;()</code></b>
