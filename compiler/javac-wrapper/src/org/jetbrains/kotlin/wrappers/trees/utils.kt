@@ -68,19 +68,19 @@ fun TreePath.resolve(javac: JavacWrapper): Pair<FqName, JavaClass?> {
 private fun resolveImport(name: String,
                           compilationUnit: JCTree.JCCompilationUnit,
                           javac: JavacWrapper) = with(compilationUnit.imports) {
-    firstOrNull { it.qualifiedIdentifier.toString().endsWith(".$name") }
+    find { it.qualifiedIdentifier.toString().endsWith(".$name") }
             ?.let {
-                it.qualifiedIdentifier.toString().let(::FqName)
+                it.qualifiedIdentifier.toString()
+                        .let(::FqName)
                         .let { it to javac.findClass(it) }
             }
     ?: filter { it.qualifiedIdentifier.toString().endsWith("*") }
             .map {
-                javac.findClassesFromPackage(it.qualifiedIdentifier.toString()
-                                                     .substringBeforeLast(".").let(::FqName))
-                        .find { it.name.identifier == name }
-                        ?.let { it.fqName!! to it }
+                javac.findClass("${it.qualifiedIdentifier.toString().substringBefore("*")}$name"
+                                .let(::FqName))
             }
             .firstOrNull()
+            ?.let { it.fqName!! to it }
 }
 
 private fun TreePath.tryToResolve(name: String,
