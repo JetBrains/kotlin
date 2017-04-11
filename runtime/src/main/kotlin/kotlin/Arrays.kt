@@ -2787,6 +2787,175 @@ public inline fun <T> Array<out T>.contentToString(): String {
 }
 
 /**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+public fun ByteArray.contentToString(): String {
+    if (size == 0)
+        return "[]"
+    val iMax = size - 1
+
+    val b = StringBuilder()
+    b.append('[')
+    var i = 0
+    while (true) {
+        b.append(this[i])
+        if (i == iMax)
+            return b.append(']').toString()
+        b.append(", ")
+        i++
+    }
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+public fun ShortArray.contentToString(): String {
+    if (size == 0)
+        return "[]"
+    val iMax = size - 1
+
+    val b = StringBuilder()
+    b.append('[')
+    var i = 0
+    while (true) {
+        b.append(this[i])
+        if (i == iMax)
+            return b.append(']').toString()
+        b.append(", ")
+        i++
+    }
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+public fun IntArray.contentToString(): String {
+    if (size == 0)
+        return "[]"
+    val iMax = size - 1
+
+    val b = StringBuilder()
+    b.append('[')
+    var i = 0
+    while (true) {
+        b.append(this[i])
+        if (i == iMax)
+            return b.append(']').toString()
+        b.append(", ")
+        i++
+    }
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+public fun LongArray.contentToString(): String {
+    if (size == 0)
+        return "[]"
+    val iMax = size - 1
+
+    val b = StringBuilder()
+    b.append('[')
+    var i = 0
+    while (true) {
+        b.append(this[i])
+        if (i == iMax)
+            return b.append(']').toString()
+        b.append(", ")
+        i++
+    }
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+public fun FloatArray.contentToString(): String {
+    if (size == 0)
+        return "[]"
+    val iMax = size - 1
+
+    val b = StringBuilder()
+    b.append('[')
+    var i = 0
+    while (true) {
+        b.append(this[i])
+        if (i == iMax)
+            return b.append(']').toString()
+        b.append(", ")
+        i++
+    }
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+public fun DoubleArray.contentToString(): String {
+    if (size == 0)
+        return "[]"
+    val iMax = size - 1
+
+    val b = StringBuilder()
+    b.append('[')
+    var i = 0
+    while (true) {
+        b.append(this[i])
+        if (i == iMax)
+            return b.append(']').toString()
+        b.append(", ")
+        i++
+    }
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+public fun BooleanArray.contentToString(): String {
+    if (size == 0)
+        return "[]"
+    val iMax = size - 1
+
+    val b = StringBuilder()
+    b.append('[')
+    var i = 0
+    while (true) {
+        b.append(this[i])
+        if (i == iMax)
+            return b.append(']').toString()
+        b.append(", ")
+        i++
+    }
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+public fun CharArray.contentToString(): String {
+    if (size == 0)
+        return "[]"
+    val iMax = size - 1
+
+    val b = StringBuilder()
+    b.append('[')
+    var i = 0
+    while (true) {
+        b.append(this[i])
+        if (i == iMax)
+            return b.append(']').toString()
+        b.append(", ")
+        i++
+    }
+}
+
+
+/**
  * Returns a string representation of the contents of the subarray of the specified array as if it is [List].
  */
 @SinceKotlin("1.1")
@@ -2891,7 +3060,7 @@ public fun <T> Array<out T>.contentDeepToString(): String {
 /**
  * Internal recursive function to build a string for [contentDeepToString].
  */
-private fun <T> Array<out T>.contentDeepToString(buf: StringBuilder, dejaVu: MutableSet<Array<Any>?>) {
+private fun <T> Array<out T>.contentDeepToString(buf: StringBuilder, dejaVu: MutableSet<Array<Any?>>) {
     if (size == 0) {
         buf.append("[]")
         return
@@ -2899,20 +3068,29 @@ private fun <T> Array<out T>.contentDeepToString(buf: StringBuilder, dejaVu: Mut
 
     val iMax = size - 1
     @Suppress("UNCHECKED_CAST")
-    dejaVu.add(this as Array<Any>) // TODO: Is the cast correct?
+    dejaVu.add(this as Array<Any?>) // TODO: Is the cast correct?
     buf.append('[')
     var i = 0
     while (true) {
         val element = this[i]
-        if (element is Array<*>) {
-            @Suppress("UNCHECKED_CAST")
-            if (dejaVu.contains(element as Array<Any>)) {
-                buf.append("[...]")
-            } else {
-                element.contentDeepToString(buf, dejaVu)
+        when {
+            element is Array<*> -> {
+                @Suppress("UNCHECKED_CAST")
+                if (dejaVu.contains(element as Array<Any?>)) {
+                    buf.append("[...]")
+                } else {
+                    element.contentDeepToString(buf, dejaVu)
+                }
             }
-        } else {
-            buf.append(element.toString())
+            element is ByteArray    -> buf.append(element.contentToString())
+            element is ShortArray   -> buf.append(element.contentToString())
+            element is IntArray     -> buf.append(element.contentToString())
+            element is LongArray    -> buf.append(element.contentToString())
+            element is CharArray    -> buf.append(element.contentToString())
+            element is FloatArray   -> buf.append(element.contentToString())
+            element is DoubleArray  -> buf.append(element.contentToString())
+            element is BooleanArray -> buf.append(element.contentToString())
+            else -> buf.append(element.toString())
         }
         if (i == iMax)
             break
@@ -2929,7 +3107,7 @@ private fun <T> Array<out T>.contentDeepToString(buf: StringBuilder, dejaVu: Mut
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
+public infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
     if (this === other) {
         return true
     }
@@ -2950,7 +3128,7 @@ public inline infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boo
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
+public infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
     if (this === other) {
         return true
     }
@@ -2971,7 +3149,7 @@ public inline infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
+public infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
     if (this === other) {
         return true
     }
@@ -2992,7 +3170,7 @@ public inline infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline infix fun IntArray.contentEquals(other: IntArray): Boolean {
+public infix fun IntArray.contentEquals(other: IntArray): Boolean {
     if (this === other) {
         return true
     }
@@ -3013,7 +3191,7 @@ public inline infix fun IntArray.contentEquals(other: IntArray): Boolean {
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline infix fun LongArray.contentEquals(other: LongArray): Boolean {
+public infix fun LongArray.contentEquals(other: LongArray): Boolean {
     if (this === other) {
         return true
     }
@@ -3034,7 +3212,7 @@ public inline infix fun LongArray.contentEquals(other: LongArray): Boolean {
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
+public infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
     if (this === other) {
         return true
     }
@@ -3055,7 +3233,7 @@ public inline infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
+public infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
     if (this === other) {
         return true
     }
@@ -3076,7 +3254,7 @@ public inline infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
+public infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
     if (this === other) {
         return true
     }
@@ -3097,7 +3275,7 @@ public inline infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline infix fun CharArray.contentEquals(other: CharArray): Boolean {
+public infix fun CharArray.contentEquals(other: CharArray): Boolean {
     if (this === other) {
         return true
     }
