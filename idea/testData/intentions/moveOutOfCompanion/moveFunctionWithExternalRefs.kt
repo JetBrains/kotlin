@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// SHOULD_FAIL_WITH: Class instance required: foo, Class instance required: foo, Class instance required: foo, Class instance required: foo
+// SHOULD_FAIL_WITH: 'foo' in class B will require class instance, 'foo' in function test() will require class instance, 'foo' in function test() will require class instance, 'foo' in lambda &lt;anonymous&gt;() on A.Companion will require class instance
 class A {
     companion object {
         class B {

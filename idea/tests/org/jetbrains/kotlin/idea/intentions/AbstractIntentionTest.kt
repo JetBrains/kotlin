@@ -169,7 +169,7 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
             TestCase.assertEquals("Expected test to fail.", "", shouldFailString)
         }
         catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
-            TestCase.assertEquals("Failure message mismatch.", shouldFailString, StringUtil.join(e.messages, ", "))
+            TestCase.assertEquals("Failure message mismatch.", shouldFailString, StringUtil.join(e.messages.sorted(), ", "))
         }
         catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
             TestCase.assertEquals("Failure message mismatch.", shouldFailString, e.message?.replace('\n', ' '))
