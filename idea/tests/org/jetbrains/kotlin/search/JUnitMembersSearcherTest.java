@@ -20,7 +20,6 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.searches.AnnotatedMembersSearch;
-import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor;
@@ -52,12 +51,7 @@ public class JUnitMembersSearcherTest extends AbstractSearcherTest {
     }
 
     private void doJUnit3test() throws IOException {
-        myFixture.configureByFile(getFileName());
-        List<String> directives = InTextDirectivesUtils.findListWithPrefixes(FileUtil.loadFile(new File(getPathToFile()), true), "// CLASS: ");
-        assertFalse("Specify CLASS directive in test file", directives.isEmpty());
-        String superClassName = directives.get(0);
-        PsiClass psiClass = getPsiClass(superClassName);
-        checkResult(ClassInheritorsSearch.search(psiClass, getProjectScope(), false));
+        checkClassWithDirectives();
     }
 
     private void doJUnit4test() throws IOException {

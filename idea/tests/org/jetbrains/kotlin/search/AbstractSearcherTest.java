@@ -22,6 +22,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.Query;
@@ -90,6 +91,16 @@ public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCa
         Collections.sort(expected);
 
         assertOrderedEquals(actualModified, expected);
+    }
+
+    protected void checkClassWithDirectives() throws IOException {
+        myFixture.configureByFile(getFileName());
+        List<String> directives = InTextDirectivesUtils.findListWithPrefixes(
+                FileUtil.loadFile(new File(getPathToFile()), true), "// CLASS: ");
+        assertFalse("Specify CLASS directive in test file", directives.isEmpty());
+        String superClassName = directives.get(0);
+        PsiClass psiClass = getPsiClass(superClassName);
+        checkResult(ClassInheritorsSearch.search(psiClass, getProjectScope(), false));
     }
 
     private static String stringRepresentation(Object member) {

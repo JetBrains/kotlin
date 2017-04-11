@@ -16,15 +16,10 @@
 
 package org.jetbrains.kotlin.search;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class ClassInheritorsSearchTest extends AbstractSearcherTest {
 
@@ -37,17 +32,11 @@ public class ClassInheritorsSearchTest extends AbstractSearcherTest {
     }
 
     private void doTest() throws IOException {
-        myFixture.configureByFile(getFileName());
-        List<String> directives = InTextDirectivesUtils.findListWithPrefixes(FileUtil.loadFile(new File(getPathToFile()), true), "// CLASS: ");
-        assertFalse("Specify CLASS directive in test file", directives.isEmpty());
-        String superClassName = directives.get(0);
-        PsiClass psiClass = getPsiClass(superClassName);
-        checkResult(ClassInheritorsSearch.search(psiClass, getProjectScope(), false));
+        checkClassWithDirectives();
     }
 
     @Override
     protected String getTestDataPath() {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/search/inheritance").getPath() + File.separator;
     }
-
 }
