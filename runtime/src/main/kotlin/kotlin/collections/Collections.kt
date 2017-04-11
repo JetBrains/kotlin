@@ -290,12 +290,12 @@ public fun CharArray.asList(): List<Char> {
 }
 
 
-fun <E> Array<E>.toSet(): Set<E> {
-    val result = HashSet<E>(this.size)
-    for (e in this) {
-        result.add(e)
+@FixmeVariance
+public fun <T, C : MutableCollection</*in */T>> Iterable<T>.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
     }
-    return result
+    return destination
 }
 
 @Fixme

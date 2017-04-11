@@ -31,17 +31,126 @@ internal fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-fun <E> Array<E>.copyOfUninitializedElements(newSize: Int): Array<E> {
-    val result = arrayOfUninitializedElements<E>(newSize)
-    this.copyRangeTo(result, 0, if (newSize > this.size) this.size else newSize, 0)
+fun <E> Array<E>.copyOfUninitializedElements(newSize: Int): Array<E>     = copyOfUninitializedElements(0, newSize)
+fun ByteArray.copyOfUninitializedElements(newSize: Int): ByteArray       = copyOfUninitializedElements(0, newSize)
+fun ShortArray.copyOfUninitializedElements(newSize: Int): ShortArray     = copyOfUninitializedElements(0, newSize)
+fun IntArray.copyOfUninitializedElements(newSize: Int): IntArray         = copyOfUninitializedElements(0, newSize)
+fun LongArray.copyOfUninitializedElements(newSize: Int): LongArray       = copyOfUninitializedElements(0, newSize)
+fun CharArray.copyOfUninitializedElements(newSize: Int): CharArray       = copyOfUninitializedElements(0, newSize)
+fun FloatArray.copyOfUninitializedElements(newSize: Int): FloatArray     = copyOfUninitializedElements(0, newSize)
+fun DoubleArray.copyOfUninitializedElements(newSize: Int): DoubleArray   = copyOfUninitializedElements(0, newSize)
+fun BooleanArray.copyOfUninitializedElements(newSize: Int): BooleanArray = copyOfUninitializedElements(0, newSize)
+
+/**
+ * Returns a new array which is a copy of the original array with new elements filled with null values.
+ */
+fun <E> Array<E>.copyOfNulls(newSize: Int): Array<E?>  = copyOfNulls(0, newSize)
+fun <E> Array<E>.copyOfNulls(fromIndex: Int, toIndex: Int): Array<E?> {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = arrayOfNulls<E>(newSize)
+    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
     return result
 }
 
-fun IntArray.copyOfUninitializedElements(newSize: Int): IntArray {
-    val result = IntArray(newSize)
-    this.copyRangeTo(result, 0, if (newSize > this.size) this.size else newSize, 0)
+/**
+ * Returns new array which is a copy of the original array's range between [fromIndex] (inclusive)
+ * and [toIndex] (exclusive) with new elements filled with **lateinit** _uninitialized_ values.
+ * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
+ * either throwing exception or returning some kind of implementation-specific default value.
+ */
+fun <E> Array<E>.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): Array<E> {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = arrayOfUninitializedElements<E>(newSize)
+    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
     return result
 }
+
+fun ByteArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): ByteArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = ByteArray(newSize)
+    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
+    return result
+}
+
+fun ShortArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): ShortArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = ShortArray(newSize)
+    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
+    return result
+}
+
+fun IntArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): IntArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = IntArray(newSize)
+    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
+    return result
+}
+
+fun LongArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): LongArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = LongArray(newSize)
+    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
+    return result
+}
+
+fun CharArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): CharArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = CharArray(newSize)
+    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
+    return result
+}
+
+fun FloatArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): FloatArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = FloatArray(newSize)
+    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
+    return result
+}
+
+fun DoubleArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): DoubleArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = DoubleArray(newSize)
+    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
+    return result
+}
+
+fun BooleanArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int): BooleanArray {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = BooleanArray(newSize)
+    copyRangeTo(result, fromIndex, if (toIndex > size) size else toIndex, 0)
+    return result
+}
+
 
 /**
  * Resets an array element at a specified index to some implementation-specific _uninitialized_ value.
@@ -113,7 +222,7 @@ external private fun copyImpl(array: BooleanArray, fromIndex: Int,
  * Copies a range of array elements at a specified [fromIndex] (inclusive) to [toIndex] (exclusive) range of indices
  * to another [destination] array starting at [destinationIndex].
  */
-fun <E> Array<E>.copyRangeTo(destination: Array<E>, fromIndex: Int, toIndex: Int, destinationIndex: Int = 0) {
+fun <E> Array<out E>.copyRangeTo(destination: Array<in E>, fromIndex: Int, toIndex: Int, destinationIndex: Int = 0) {
     copyImpl(@Suppress("UNCHECKED_CAST") (this as Array<Any>), fromIndex,
              @Suppress("UNCHECKED_CAST") (destination as Array<Any>),
              destinationIndex, toIndex - fromIndex)

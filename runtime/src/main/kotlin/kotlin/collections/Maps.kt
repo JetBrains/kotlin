@@ -104,6 +104,7 @@ public fun <K, V> hashMapOf(vararg pairs: Pair<K, V>): HashMap<K, V>
  * to the Collection constructor for HashSet, (c.size()/.75f) + 1, but provides further optimisations for very small or
  * very large sizes, allows support non-collection classes, and provides consistency for all map based class construction.
  */
+@PublishedApi
 internal fun mapCapacity(expectedSize: Int): Int {
     if (expectedSize < 3) {
         return expectedSize + 1
