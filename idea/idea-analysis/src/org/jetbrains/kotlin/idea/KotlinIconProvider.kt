@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDeco
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isAbstract
 import javax.swing.Icon
 
 class KotlinIconProvider : IconProvider(), DumbAware {
@@ -104,7 +105,7 @@ class KotlinIconProvider : IconProvider(), DumbAware {
                 isEnum() -> KotlinIcons.ENUM
                 isAnnotation() -> KotlinIcons.ANNOTATION
                 this is KtEnumEntry && getPrimaryConstructorParameterList() == null -> KotlinIcons.ENUM
-                else -> KotlinIcons.CLASS
+                else -> if (isAbstract()) KotlinIcons.ABSTRACT_CLASS else KotlinIcons.CLASS
             }
             is KtObjectDeclaration -> KotlinIcons.OBJECT
             is KtParameter -> {

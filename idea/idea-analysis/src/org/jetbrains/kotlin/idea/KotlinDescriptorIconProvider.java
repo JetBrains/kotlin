@@ -99,7 +99,8 @@ public final class KotlinDescriptorIconProvider {
             }
         }
         if (descriptor instanceof ClassDescriptor) {
-            switch (((ClassDescriptor) descriptor).getKind()) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+            switch (classDescriptor.getKind()) {
                 case INTERFACE:
                     return KotlinIcons.INTERFACE;
                 case ENUM_CLASS:
@@ -111,7 +112,9 @@ public final class KotlinDescriptorIconProvider {
                 case OBJECT:
                     return KotlinIcons.OBJECT;
                 case CLASS:
-                    return KotlinIcons.CLASS;
+                    return Modality.ABSTRACT == classDescriptor.getModality() ?
+                           KotlinIcons.ABSTRACT_CLASS :
+                           KotlinIcons.CLASS;
                 default:
                     LOG.warn("No icon for descriptor: " + descriptor);
                     return null;
