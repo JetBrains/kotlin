@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator;
+import org.jetbrains.kotlin.idea.core.PackageUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.move.MoveUtilsKt;
@@ -108,6 +109,16 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         openInEditorPanel.add(initOpenInEditorCb(), BorderLayout.EAST);
     }
 
+    @Nullable
+    private static FqName getTargetPackageFqName(PsiElement targetContainer) {
+        if (targetContainer instanceof PsiDirectory) {
+            PsiPackage targetPackage = PackageUtilsKt.getPackage((PsiDirectory) targetContainer);
+            return targetPackage != null ? new FqName(targetPackage.getQualifiedName()) : null;
+        }
+        if (targetContainer instanceof KtFile) return ((KtFile) targetContainer).getPackageFqName();
+        return null;
+    }
+
     private void createUIComponents() {
         parameterField = new NameSuggestionsField(project);
         packageNameField = new PackageNameReferenceEditorCombo("", project, RECENTS_KEY,
@@ -152,9 +163,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
 
     @Nullable
     private FqName getTargetPackageFqName() {
-        if (targetContainer instanceof PsiDirectory) return innerClass.getContainingKtFile().getPackageFqName();
-        if (targetContainer instanceof KtFile) return ((KtFile) targetContainer).getPackageFqName();
-        return null;
+        return getTargetPackageFqName(targetContainer);
     }
 
     @NotNull
@@ -371,7 +380,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         if (target instanceof PsiDirectory) {
             final PsiDirectory targetDir = (PsiDirectory) target;
 
-            final FqName targetPackageFqName = getTargetPackageFqName();
+            final FqName targetPackageFqName = getTargetPackageFqName(target);
             if (targetPackageFqName == null) return;
 
             String innerClassName = innerClass.getName();
