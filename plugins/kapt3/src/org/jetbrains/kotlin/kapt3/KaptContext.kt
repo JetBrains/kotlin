@@ -21,6 +21,7 @@ import com.sun.tools.javac.jvm.ClassReader
 import com.sun.tools.javac.main.JavaCompiler
 import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Options
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaCompiler
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaLog
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
@@ -31,11 +32,12 @@ import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import javax.tools.JavaFileManager
 
-class KaptContext(
+class KaptContext<out GState : GenerationState?>(
         val logger: KaptLogger,
         val bindingContext: BindingContext,
         val compiledClasses: List<ClassNode>,
         val origins: Map<Any, JvmDeclarationOrigin>,
+        val generationState: GState,
         processorOptions: Map<String, String>,
         javacOptions: Map<String, String> = emptyMap()
 ) : AutoCloseable {
@@ -80,5 +82,6 @@ class KaptContext(
     override fun close() {
         compiler.close()
         fileManager.close()
+        generationState?.destroy()
     }
 }

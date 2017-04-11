@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.kapt3.AbstractKapt3Extension
+import org.jetbrains.kotlin.kapt3.AptMode
+import org.jetbrains.kotlin.kapt3.AptMode.STUBS_AND_APT
 import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
+import org.jetbrains.kotlin.kapt3.KaptContext
 import org.jetbrains.kotlin.kapt3.diagnostic.DefaultErrorMessagesKapt3
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
@@ -152,7 +155,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             incrementalDataOutputDir: File
     ) : AbstractKapt3Extension(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.getKotlinPathsForIdeaPlugin().stdlibPath,
                                emptyList(), javaSourceRoots, outputDir, outputDir,
-                               stubsOutputDir, incrementalDataOutputDir, options, emptyMap(), "", true, System.currentTimeMillis(),
+                               stubsOutputDir, incrementalDataOutputDir, options, emptyMap(), "", STUBS_AND_APT, System.currentTimeMillis(),
                                KaptLogger(true), correctErrorTypes = true
     ) {
         internal var savedStubs: String? = null
@@ -174,7 +177,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
         }
 
         override fun saveIncrementalData(
-                generationState: GenerationState,
+                kaptContext: KaptContext<GenerationState>,
                 messageCollector: MessageCollector,
                 converter: ClassFileToSourceStubConverter
         ) {
@@ -184,7 +187,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
 
             this.savedBindings = converter.bindings
 
-            super.saveIncrementalData(generationState, messageCollector, converter)
+            super.saveIncrementalData(kaptContext, messageCollector, converter)
         }
     }
 }
