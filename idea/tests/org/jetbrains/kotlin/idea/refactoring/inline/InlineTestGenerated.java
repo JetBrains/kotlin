@@ -136,6 +136,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("FunctionalType.kt")
+            public void testFunctionalType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/FunctionalType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("MultipleInComposition.kt")
             public void testMultipleInComposition() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/MultipleInComposition.kt");

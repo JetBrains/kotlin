@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -46,30 +45,36 @@ class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<KtLambdaE
     }
 
     override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
-        val psiFactory = KtPsiFactory(element)
         val functionLiteral = element.functionLiteral
         val functionDescriptor = element.analyze(BodyResolveMode.PARTIAL)[BindingContext.FUNCTION, functionLiteral]!!
 
         val parameterString = functionDescriptor.valueParameters
                 .map { "${it.name}: ${IdeDescriptorRenderers.SOURCE_CODE.renderType(it.type)}" }
                 .joinToString(", ")
+        applyWithParameters(element, parameterString)
+    }
 
-        val newParameterList = psiFactory.createLambdaParameterListIfAny(parameterString)
-        val oldParameterList = functionLiteral.valueParameterList
-        if (oldParameterList != null && newParameterList != null) {
-            oldParameterList.replace(newParameterList)
-        }
-        else {
-            val openBraceElement = functionLiteral.lBrace
-            val nextSibling = openBraceElement.nextSibling
-            val addNewline = nextSibling is PsiWhiteSpace && nextSibling.text?.contains("\n") ?: false
-            val (whitespace, arrow) = psiFactory.createWhitespaceAndArrow()
-            functionLiteral.addRangeAfter(whitespace, arrow, openBraceElement)
-            newParameterList?.let { functionLiteral.addAfter(it, openBraceElement) }
-            if (addNewline) {
-                functionLiteral.addAfter(psiFactory.createNewLine(), openBraceElement)
+    companion object {
+        fun applyWithParameters(element: KtLambdaExpression, parameterString: String) {
+            val psiFactory = KtPsiFactory(element)
+            val functionLiteral = element.functionLiteral
+            val newParameterList = psiFactory.createLambdaParameterListIfAny(parameterString)
+            val oldParameterList = functionLiteral.valueParameterList
+            if (oldParameterList != null && newParameterList != null) {
+                oldParameterList.replace(newParameterList)
             }
+            else {
+                val openBraceElement = functionLiteral.lBrace
+                val nextSibling = openBraceElement.nextSibling
+                val addNewline = nextSibling is PsiWhiteSpace && nextSibling.text?.contains("\n") ?: false
+                val (whitespace, arrow) = psiFactory.createWhitespaceAndArrow()
+                functionLiteral.addRangeAfter(whitespace, arrow, openBraceElement)
+                newParameterList?.let { functionLiteral.addAfter(it, openBraceElement) }
+                if (addNewline) {
+                    functionLiteral.addAfter(psiFactory.createNewLine(), openBraceElement)
+                }
+            }
+            ShortenReferences.DEFAULT.process(element.valueParameters)
         }
-        ShortenReferences.DEFAULT.process(element.valueParameters)
     }
 }
