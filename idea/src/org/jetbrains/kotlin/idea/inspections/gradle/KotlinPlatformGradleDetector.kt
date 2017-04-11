@@ -39,7 +39,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 
 interface KotlinPlatformGradleDetector {
     companion object {
-        val EP_NAME: ExtensionPointName<KotlinPlatformGradleDetector> = ExtensionPointName.create("org.jetbrains.kotlin.platformGradleDetector")!!
+        val EP_NAME: ExtensionPointName<KotlinPlatformGradleDetector> = ExtensionPointName.create("org.jetbrains.kotlin.platformGradleDetector")
     }
 
     fun getResolvedKotlinStdlibVersionByModuleData(moduleData: DataNode<*>, libraryIds: List<String>): String?

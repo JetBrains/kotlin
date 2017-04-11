@@ -22,11 +22,11 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 
 open class ProjectExtensionDescriptor<T>(name: String, private val extensionClass: Class<T>) {
-    val extensionPointName: ExtensionPointName<T> = ExtensionPointName.create(name)!!
+    val extensionPointName: ExtensionPointName<T> = ExtensionPointName.create(name)
 
     fun registerExtensionPoint(project: Project) {
         Extensions.getArea(project).registerExtensionPoint(
-                extensionPointName.name!!,
+                extensionPointName.name,
                 extensionClass.name,
                 ExtensionPoint.Kind.INTERFACE
         )
@@ -38,7 +38,7 @@ open class ProjectExtensionDescriptor<T>(name: String, private val extensionClas
 
     fun getInstances(project: Project): List<T> {
         val projectArea = Extensions.getArea(project)
-        if (!projectArea.hasExtensionPoint(extensionPointName.name!!)) return listOf()
+        if (!projectArea.hasExtensionPoint(extensionPointName.name)) return listOf()
 
         return projectArea.getExtensionPoint(extensionPointName).extensions.toList()
     }

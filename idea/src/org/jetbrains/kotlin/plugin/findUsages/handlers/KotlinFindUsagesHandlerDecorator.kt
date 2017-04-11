@@ -22,7 +22,7 @@ import com.intellij.find.findUsages.FindUsagesHandler
 
 interface KotlinFindUsagesHandlerDecorator {
     companion object {
-        val EP_NAME: ExtensionPointName<KotlinFindUsagesHandlerDecorator> = ExtensionPointName.create("org.jetbrains.kotlin.findUsagesHandlerDecorator")!!
+        val EP_NAME: ExtensionPointName<KotlinFindUsagesHandlerDecorator> = ExtensionPointName.create("org.jetbrains.kotlin.findUsagesHandlerDecorator")
     }
 
     fun decorateHandler(element: PsiElement, forHighlightUsages: Boolean, delegate: FindUsagesHandler): FindUsagesHandler

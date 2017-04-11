@@ -23,7 +23,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 
 interface KotlinFacetConfigurationExtension {
     companion object {
-        val EP_NAME: ExtensionPointName<KotlinFacetConfigurationExtension> = ExtensionPointName.create("org.jetbrains.kotlin.facetConfigurationExtension")!!
+        val EP_NAME: ExtensionPointName<KotlinFacetConfigurationExtension> = ExtensionPointName.create("org.jetbrains.kotlin.facetConfigurationExtension")
     }
 
     fun createEditorTabs(editorContext: FacetEditorContext, validatorsManager: FacetValidatorsManager): List<FacetEditorTab>
