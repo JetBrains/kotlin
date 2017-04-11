@@ -28,7 +28,8 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
     private val innerFunction = function.getInnerFunction()
     private val functionWithBody = innerFunction ?: function
     private val body = functionWithBody.body
-    private val localVariables = (function.collectLocalVariables() + functionWithBody.collectLocalVariables()).toMutableSet()
+    private val localVariables = (function.collectLocalVariables() + functionWithBody.collectLocalVariables() -
+                                  functionWithBody.parameters.last().name).toMutableSet()
     private val className = function.scope.parent.declareFreshName("Coroutine\$${name ?: "anonymous"}")
 
     fun transform(): List<JsStatement> {
@@ -61,29 +62,20 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
         if (context.metadata.hasReceiver) {
             constructor.parameters += JsParameter(context.receiverFieldName)
         }
-        constructor.parameters += function.parameters.map { JsParameter(it.name) }
-        if (innerFunction != null) {
-            constructor.parameters += innerFunction.parameters.map { JsParameter(it.name) }
-        }
-
-        val lastParameter = function.parameters.lastOrNull()?.name
+        val parameters = function.parameters + innerFunction?.parameters.orEmpty()
+        constructor.parameters += parameters.map { JsParameter(it.name) }
+        val lastParameter = parameters.lastOrNull()?.name
 
         val controllerName = if (context.metadata.hasController) {
-            function.scope.declareFreshName("controller").apply { constructor.parameters += JsParameter(this) }
+            function.scope.declareFreshName("controller").apply {
+                constructor.parameters.add(constructor.parameters.lastIndex, JsParameter(this))
+            }
         }
         else {
             null
         }
 
-        val interceptorRef = if (context.metadata.isLambda) {
-            val interceptorName = function.scope.declareFreshName("interceptor")
-            constructor.parameters += JsParameter(interceptorName)
-            interceptorName.makeRef()
-        }
-        else {
-            lastParameter!!.makeRef()
-        }
-
+        val interceptorRef = lastParameter!!.makeRef()
         val parameterNames = (function.parameters.map { it.name } + innerFunction?.parameters?.map { it.name }.orEmpty()).toSet()
 
         constructor.body.statements.run {
@@ -156,20 +148,14 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
         if (context.metadata.hasReceiver) {
             instantiation.arguments += JsLiteral.THIS
         }
-        instantiation.arguments += function.parameters.map { it.name.makeRef() }
-        if (innerFunction != null) {
-            instantiation.arguments += innerFunction.parameters.map { it.name.makeRef() }
-        }
+        val parameters = function.parameters + innerFunction?.parameters.orEmpty()
+        instantiation.arguments += parameters.dropLast(1).map { it.name.makeRef() }
 
         if (function.coroutineMetadata!!.hasController) {
             instantiation.arguments += JsLiteral.THIS
         }
 
-        if (context.metadata.isLambda) {
-            val interceptorParamName = functionWithBody.scope.declareFreshName("interceptor")
-            functionWithBody.parameters += JsParameter(interceptorParamName)
-            instantiation.arguments += interceptorParamName.makeRef()
-        }
+        instantiation.arguments += parameters.last().name.makeRef()
 
         val suspendedName = functionWithBody.scope.declareFreshName("suspended")
         functionWithBody.parameters += JsParameter(suspendedName)

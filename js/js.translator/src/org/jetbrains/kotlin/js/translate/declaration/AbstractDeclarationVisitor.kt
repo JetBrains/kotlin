@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
 import org.jetbrains.kotlin.js.translate.expression.translateFunction
 import org.jetbrains.kotlin.js.translate.expression.wrapWithInlineMetadata
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor
-import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
@@ -99,17 +98,11 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
             context: TranslationContext
     ): JsExpression {
         val function = context.getFunctionObject(descriptor)
-        var innerContext = context.newDeclaration(descriptor).translateAndAliasParameters(descriptor, function.parameters)
+        val innerContext = context.newDeclaration(descriptor).translateAndAliasParameters(descriptor, function.parameters)
 
         if (descriptor.isSuspend) {
             if (descriptor.requiresStateMachineTransformation(context)) {
                 function.fillCoroutineMetadata(context, descriptor, hasController = false, isLambda = false)
-                innerContext = innerContext.innerContextWithAliased(descriptor, JsAstUtils.stateMachineReceiver())
-            }
-            else {
-                val continuationRef = ReferenceTranslator.translateAsValueReference(
-                        innerContext.continuationParameterDescriptor!!, innerContext)
-                innerContext = innerContext.innerContextWithAliased(descriptor, continuationRef)
             }
         }
 

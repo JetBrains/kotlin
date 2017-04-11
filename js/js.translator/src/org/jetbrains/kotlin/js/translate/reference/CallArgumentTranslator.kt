@@ -155,7 +155,7 @@ class CallArgumentTranslator private constructor(
         val callableDescriptor = resolvedCall.resultingDescriptor
         if (callableDescriptor is FunctionDescriptor && callableDescriptor.isSuspend) {
             val facadeName = context().getNameForDescriptor(TranslationUtils.getCoroutineProperty(context(), "facade"))
-            result.add(JsAstUtils.pureFqn(facadeName, TranslationUtils.translateContinuationArgument(context(), resolvedCall)))
+            result.add(JsAstUtils.pureFqn(facadeName, TranslationUtils.translateContinuationArgument(context())))
         }
 
         removeLastUndefinedArguments(result)

@@ -137,7 +137,7 @@ private fun translateFunctionCall(
     if (resolvedCall.resultingDescriptor.isSuspend) {
         if (context.isInStateMachine) {
             context.currentBlock.statements += JsAstUtils.asSyntheticStatement(callExpression.apply { isSuspend = true })
-            val coroutineRef = TranslationUtils.translateContinuationArgument(context, resolvedCall)
+            val coroutineRef = TranslationUtils.translateContinuationArgument(context)
             return context.defineTemporary(JsNameRef("\$\$coroutineResult\$\$", coroutineRef).apply {
                 sideEffects = SideEffectKind.DEPENDS_ON_STATE
                 coroutineResult = true

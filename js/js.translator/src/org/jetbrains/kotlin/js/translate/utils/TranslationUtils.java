@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.backend.ast.*;
-import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.serialization.deserialization.FindClassInModuleKt;
@@ -81,7 +79,7 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static String getAccessorFunctionName(@NotNull FunctionDescriptor descriptor) {
+    private static String getAccessorFunctionName(@NotNull FunctionDescriptor descriptor) {
         boolean isGetter = descriptor instanceof PropertyGetterDescriptor || descriptor instanceof LocalVariableAccessorDescriptor.Getter;
         return isGetter ? "get" : "set";
     }
@@ -228,12 +226,6 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsExpression translateRightExpression(@NotNull TranslationContext context,
-            @NotNull KtBinaryExpression expression) {
-        return translateRightExpression(context, expression, context.dynamicContext().jsBlock());
-    }
-
-    @NotNull
     public static JsExpression translateRightExpression(
             @NotNull TranslationContext context,
             @NotNull KtBinaryExpression expression,
@@ -350,19 +342,13 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsExpression translateContinuationArgument(@NotNull TranslationContext context, @NotNull ResolvedCall<?> resolvedCall) {
-        CallableDescriptor continuationDescriptor =
-                context.bindingContext().get(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.getCall());
-
-        if (continuationDescriptor == null) {
-            continuationDescriptor = getEnclosingContinuationParameter(context);
-        }
-
+    public static JsExpression translateContinuationArgument(@NotNull TranslationContext context) {
+        CallableDescriptor continuationDescriptor = getEnclosingContinuationParameter(context);
         return ReferenceTranslator.translateAsValueReference(continuationDescriptor, context);
     }
 
     @NotNull
-    public static VariableDescriptor getEnclosingContinuationParameter(@NotNull TranslationContext context) {
+    private static VariableDescriptor getEnclosingContinuationParameter(@NotNull TranslationContext context) {
         VariableDescriptor result = context.getContinuationParameterDescriptor();
         if (result == null) {
             assert context.getParent() != null;
@@ -392,13 +378,6 @@ public final class TranslationUtils {
     public static FunctionDescriptor getCoroutineDoResumeFunction(@NotNull TranslationContext context) {
         return getCoroutineBaseClass(context).getUnsubstitutedMemberScope()
                 .getContributedFunctions(Name.identifier("doResume"), NoLookupLocation.FROM_DESERIALIZATION)
-                .iterator().next();
-    }
-
-    @NotNull
-    public static FunctionDescriptor getCoroutineResumeFunction(@NotNull TranslationContext context) {
-        return getCoroutineBaseClass(context).getUnsubstitutedMemberScope()
-                .getContributedFunctions(Name.identifier("resume"), NoLookupLocation.FROM_DESERIALIZATION)
                 .iterator().next();
     }
 

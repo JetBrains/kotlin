@@ -45,14 +45,8 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         val lambda = invokingContext.getFunctionObject(descriptor)
 
-        val aliases = mutableMapOf<DeclarationDescriptor, JsExpression>()
-        if (descriptor.isCoroutineLambda) {
-            aliases.put(descriptor, JsAstUtils.stateMachineReceiver())
-        }
-
         val functionContext = invokingContext
                 .newFunctionBodyWithUsageTracker(lambda, descriptor)
-                .innerContextWithDescriptorsAliased(aliases)
                 .translateAndAliasParameters(descriptor, lambda.parameters)
 
         descriptor.valueParameters.forEach {
@@ -76,8 +70,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
             }
             lambdaCreator.name.staticRef = lambdaCreator
             lambdaCreator.fillCoroutineMetadata(invokingContext, descriptor)
-            return lambdaCreator.withCapturedParameters(descriptor, descriptor.wrapContextForCoroutineIfNecessary(functionContext),
-                                                        invokingContext)
+            return lambdaCreator.withCapturedParameters(descriptor, functionContext, invokingContext)
         }
 
         lambda.name = invokingContext.getInnerNameForDescriptor(descriptor)
@@ -109,15 +102,6 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         val jsParameter = JsParameter(context.getNameForDescriptor(this))
         return DestructuringDeclarationTranslator.translate(destructuringDeclaration, jsParameter.name, null, context)
-    }
-}
-
-private fun CallableMemberDescriptor.wrapContextForCoroutineIfNecessary(context: TranslationContext): TranslationContext {
-    return if (isCoroutineLambda) {
-        context.innerContextWithDescriptorsAliased(mapOf(this to JsAstUtils.stateMachineReceiver()))
-    }
-    else {
-        context
     }
 }
 

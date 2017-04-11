@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
@@ -109,7 +108,7 @@ public class TranslationContext {
         }
         if (declarationDescriptor instanceof FunctionDescriptor) {
             FunctionDescriptor function = (FunctionDescriptor) declarationDescriptor;
-            if (function.isSuspend() && !(function instanceof AnonymousFunctionDescriptor)) {
+            if (function.isSuspend()) {
                 ClassDescriptor continuationDescriptor =
                         DescriptorUtilKt.findContinuationClassDescriptor(getCurrentModule(), NoLookupLocation.FROM_BACKEND);
 

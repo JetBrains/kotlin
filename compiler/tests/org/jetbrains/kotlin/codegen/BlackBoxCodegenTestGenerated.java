@@ -5114,6 +5114,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("recursiveSuspend.kt")
+        public void testRecursiveSuspend() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/recursiveSuspend.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("returnByLabel.kt")
         public void testReturnByLabel() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/returnByLabel.kt");

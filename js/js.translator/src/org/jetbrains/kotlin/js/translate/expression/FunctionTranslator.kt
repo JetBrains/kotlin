@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator.shouldBeInlined
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateFunctionBody
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.requiresStateMachineTransformation
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
@@ -66,6 +68,12 @@ fun TranslationContext.translateAndAliasParameters(
     if (continuationDescriptor != null) {
         val jsParameter = JsParameter(getNameForDescriptor(continuationDescriptor))
         targetList += jsParameter
+        aliases[continuationDescriptor] = if (!descriptor.requiresStateMachineTransformation(this)) {
+            JsAstUtils.pureFqn(jsParameter.name, null)
+        }
+        else {
+            JsAstUtils.stateMachineReceiver()
+        }
     }
 
     return this.innerContextWithDescriptorsAliased(aliases)
