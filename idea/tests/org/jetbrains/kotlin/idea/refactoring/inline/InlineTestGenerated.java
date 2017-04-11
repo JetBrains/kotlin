@@ -679,6 +679,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("CallCorrected.kt")
+            public void testCallCorrected() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/addParenthesis/CallCorrected.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("CallDontAdd.kt")
             public void testCallDontAdd() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/addParenthesis/CallDontAdd.kt");
@@ -748,6 +754,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("IfIntoPrefix.kt")
             public void testIfIntoPrefix() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/addParenthesis/IfIntoPrefix.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("IndexedCorrected.kt")
+            public void testIndexedCorrected() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/addParenthesis/IndexedCorrected.kt");
                 doTest(fileName);
             }
 
