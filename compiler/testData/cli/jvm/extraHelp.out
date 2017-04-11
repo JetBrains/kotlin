@@ -14,6 +14,8 @@ where advanced options include:
                              Load definitions of built-in declarations from module dependencies, instead of from the compiler
   -Xscript-resolver-environment=<key=value[,]>
                              Script resolver environment in key-value pairs (the value could be quoted and escaped)
+  -Xuse-javac                Use Javac analysis
+  -Xjavac-arguments <option[,]> Java compiler arguments
   -Xno-inline                Disable method inlining
   -Xrepeat=<count>           Repeat compilation (for performance analysis)
   -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
