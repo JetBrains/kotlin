@@ -42,6 +42,8 @@ import com.sun.tools.javac.util.Options
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import com.sun.tools.javac.util.List as JavacList
 import org.jetbrains.kotlin.wrappers.symbols.JavacClass
 import org.jetbrains.kotlin.wrappers.symbols.JavacPackage
@@ -64,7 +66,7 @@ import javax.tools.StandardLocation
 class JavacWrapper(javaFiles: Collection<File>,
                    kotlinFiles: Collection<KtFile>,
                    classPathRoots: List<File>,
-                   outDir: File?,
+                   configuration: CompilerConfiguration,
                    private val messageCollector: MessageCollector?,
                    arguments: Array<String>?) : Closeable {
 
@@ -88,7 +90,7 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     init {
         fileManager.setLocation(StandardLocation.CLASS_PATH, classPathRoots)
-        outDir?.let {
+        configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY]?.let {
             it.mkdirs()
             fileManager.setLocation(StandardLocation.CLASS_OUTPUT, listOf(it))
         }

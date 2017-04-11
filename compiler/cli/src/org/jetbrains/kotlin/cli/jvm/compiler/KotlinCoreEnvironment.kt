@@ -236,13 +236,12 @@ class KotlinCoreEnvironment private constructor(
 
     fun registerJavac(files: List<File> = javaFiles,
                       kotlinFiles: List<KtFile> = sourceFiles,
-                      outDir: File? = null,
                       messageCollector: MessageCollector? = null,
                       arguments: Array<String>? = null) {
         projectEnvironment.project.registerService(JavacWrapper::class.java, JavacWrapper(files,
                                                                                           kotlinFiles,
                                                                                           configuration.jvmClasspathRoots,
-                                                                                          outDir,
+                                                                                          configuration,
                                                                                           messageCollector,
                                                                                           arguments))
     }
