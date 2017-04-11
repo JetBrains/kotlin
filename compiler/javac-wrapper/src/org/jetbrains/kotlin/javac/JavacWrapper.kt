@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.wrappers.trees.JCClass
 import org.jetbrains.kotlin.wrappers.trees.JCPackage
 import java.io.Closeable
@@ -61,6 +62,7 @@ import javax.tools.JavaFileObject
 import javax.tools.StandardLocation
 
 class JavacWrapper(javaFiles: Collection<File>,
+                   kotlinFiles: Collection<KtFile>,
                    classPathRoots: List<File>,
                    outDir: File?,
                    private val messageCollector: MessageCollector?,
@@ -109,7 +111,7 @@ class JavacWrapper(javaFiles: Collection<File>,
             .map { JCPackage(it.packageName.toString(), this) }
             .associateBy(JCPackage::fqName)
 
-    private val kotlinClassifiersCache = KotlinClassifiersCache()
+    private val kotlinClassifiersCache = KotlinClassifiersCache(kotlinFiles)
 
     fun compile() = with(javac) {
         if (errorCount() > 0) return false

@@ -54,6 +54,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("CheckKotlinStub.kt")
+    public void testCheckKotlinStub() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/CheckKotlinStub.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("CheckNotNull.kt")
     public void testCheckNotNull() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/CheckNotNull.kt");

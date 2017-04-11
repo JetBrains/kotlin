@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
@@ -57,7 +58,7 @@ abstract class AbstractJavacBasedCompileKotlinAndJava : TestCaseWithTmpdir() {
         )
 
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
-        environment.registerJavac(emptyList<File>(), out)
+        environment.registerJavac(emptyList<File>(), outDir = out)
 
         val analysisResult = JvmResolveUtil.analyze(environment)
         val packageView = analysisResult.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
@@ -76,7 +77,7 @@ abstract class AbstractJavacBasedCompileKotlinAndJava : TestCaseWithTmpdir() {
     ): Boolean {
         val environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable)
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
-        environment.registerJavac(javaFiles, outDir)
+        environment.registerJavac(javaFiles, outDir = outDir, kotlinFiles = listOf(KotlinTestUtils.loadJetFile(environment.project, ktFiles.first())))
         if (!ktFiles.isEmpty()) {
             LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment)
         }

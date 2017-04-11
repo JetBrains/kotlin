@@ -18,75 +18,87 @@ package org.jetbrains.kotlin.javac
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 
-class KotlinClassifiersCache {
+class KotlinClassifiersCache(sourceFiles: Collection<KtFile>) {
+
+    private val kotlinClasses: List<FqName> = sourceFiles.flatMap {
+        it.collectDescendantsOfType<KtClassOrObject>().mapNotNull { it.fqName } + it.javaFileFacadeFqName
+    }
 
     private val classifiers = hashMapOf<FqName, JavaClass>()
 
     fun getKotlinClassifier(fqName: FqName) = classifiers[fqName] ?: createClassifier(fqName)
 
-    private fun createClassifier(fqName: FqName) = object : JavaClass {
-        override val isAbstract: Boolean
-            get() = false
+    private fun createClassifier(fqName: FqName): JavaClass? {
+        if (!kotlinClasses.contains(fqName)) return null
 
-        override val isStatic: Boolean
-            get() = false
+        return object : JavaClass {
+            override val isAbstract: Boolean
+                get() = false
 
-        override val isFinal: Boolean
-            get() = false
+            override val isStatic: Boolean
+                get() = false
 
-        override val visibility: Visibility
-            get() = Visibilities.PUBLIC
+            override val isFinal: Boolean
+                get() = false
 
-        override val typeParameters: List<JavaTypeParameter>
-            get() = emptyList()
+            override val visibility: Visibility
+                get() = Visibilities.PUBLIC
 
-        override val fqName
-            get() = fqName
+            override val typeParameters: List<JavaTypeParameter>
+                get() = emptyList()
 
-        override val supertypes: Collection<JavaClassifierType>
-            get() = emptyList()
+            override val fqName
+                get() = fqName
 
-        override val innerClasses: Collection<JavaClass>
-            get() = emptyList()
+            override val supertypes: Collection<JavaClassifierType>
+                get() = emptyList()
 
-        override val outerClass: JavaClass?
-            get() = null
+            override val innerClasses: Collection<JavaClass>
+                get() = emptyList()
 
-        override val isInterface: Boolean
-            get() = false
+            override val outerClass: JavaClass?
+                get() = null
 
-        override val isAnnotationType: Boolean
-            get() = false
+            override val isInterface: Boolean
+                get() = false
 
-        override val isEnum: Boolean
-            get() = false
+            override val isAnnotationType: Boolean
+                get() = false
 
-        override val lightClassOriginKind
-            get() = LightClassOriginKind.SOURCE
+            override val isEnum: Boolean
+                get() = false
 
-        override val methods: Collection<JavaMethod>
-            get() = emptyList()
+            override val lightClassOriginKind
+                get() = LightClassOriginKind.SOURCE
 
-        override val fields: Collection<JavaField>
-            get() = emptyList()
+            override val methods: Collection<JavaMethod>
+                get() = emptyList()
 
-        override val constructors: Collection<JavaConstructor>
-            get() = emptyList()
+            override val fields: Collection<JavaField>
+                get() = emptyList()
 
-        override val name
-            get() = fqName.shortNameOrSpecial()
+            override val constructors: Collection<JavaConstructor>
+                get() = emptyList()
 
-        override val annotations
-            get() = emptyList<JavaAnnotation>()
+            override val name
+                get() = fqName.shortNameOrSpecial()
 
-        override val isDeprecatedInJavaDoc: Boolean
-            get() = false
+            override val annotations
+                get() = emptyList<JavaAnnotation>()
 
-        override fun findAnnotation(fqName: FqName) = null
+            override val isDeprecatedInJavaDoc: Boolean
+                get() = false
 
-    }.apply { classifiers[fqName] = this }
+            override fun findAnnotation(fqName: FqName) = null
+
+        }.apply { classifiers[fqName] = this }
+    }
 
 }

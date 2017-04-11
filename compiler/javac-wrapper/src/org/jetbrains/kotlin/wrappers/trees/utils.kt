@@ -74,8 +74,8 @@ private fun resolveImport(name: String,
             }
     ?: filter { it.qualifiedIdentifier.toString().endsWith("*") }
             .map {
-                javac.findClass("${it.qualifiedIdentifier.toString().substringBefore("*")}$name"
-                                .let(::FqName))
+                val fqName = "${it.qualifiedIdentifier.toString().substringBefore("*")}$name".let(::FqName)
+                javac.findClass(fqName) ?: javac.getKotlinClassifier(fqName)
             }
             .firstOrNull()
 }
@@ -91,6 +91,8 @@ private fun TreePath.tryToResolve(name: String,
 
     // try to find a package class
     javac.findClass(FqName("${compilationUnit.packageName}.$name"))?.let { return it }
+    //try to find a Kotlin class
+    javac.getKotlinClassifier(FqName("${compilationUnit.packageName}.$name"))?.let { return it }
     // try to find a class from java.lang package
     javac.findClass(FqName("java.lang.$name"))?.let { return it }
     // try to find a class with fqName = name
@@ -99,7 +101,7 @@ private fun TreePath.tryToResolve(name: String,
     // try to find a type parameter
     typeParameter(javac)?.let { return it }
 
-    return javac.getKotlinClassifier(FqName("${compilationUnit.packageName}.$name"))
+    return javac.getKotlinClassifier(FqName(name))
 }
 
 private fun TreePath.typeParameter(javac: JavacWrapper) = filter { it is JCTree.JCClassDecl || it is JCTree.JCMethodDecl }
