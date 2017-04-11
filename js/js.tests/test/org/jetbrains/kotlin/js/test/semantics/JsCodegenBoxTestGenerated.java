@@ -12616,6 +12616,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("anonymousObjectReturnsFromTopLevelFun.kt")
+        public void testAnonymousObjectReturnsFromTopLevelFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/anonymousObjectReturnsFromTopLevelFun.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("classCallsProtectedInheritedByCompanion.kt")
         public void testClassCallsProtectedInheritedByCompanion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/classCallsProtectedInheritedByCompanion.kt");

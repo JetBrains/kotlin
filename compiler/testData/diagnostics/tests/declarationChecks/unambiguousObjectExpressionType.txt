@@ -1,13 +1,13 @@
 package
 
 internal val packageInternalProperty: MyClass
-private val packagePrivateProperty: MyClass
+private val packagePrivateProperty: packagePrivateProperty.<no name provided>
 protected val packageProtectedProperty: MyClass
 public val packagePublic2Property: MyClass
 public val packagePublicProperty: MyClass
 public fun fooPackage(): kotlin.Unit
 internal fun internalFunction(): MyClass
-private fun privateFunction(): MyClass
+private fun privateFunction(): privateFunction.<no name provided>
 protected fun protectedFunction(): MyClass
 public fun public2Function(): MyClass
 public fun publicFunction(): MyClass

@@ -907,8 +907,7 @@ public class DescriptorResolver {
             return type;
         }
 
-        boolean definedInClass = DescriptorUtils.getParentOfType(descriptor, ClassDescriptor.class) != null;
-        if (!definedInClass || !Visibilities.isPrivate(descriptor.getVisibility())) {
+        if (!Visibilities.isPrivate(descriptor.getVisibility())) {
             if (type.getConstructor().getSupertypes().size() == 1) {
                 return type.getConstructor().getSupertypes().iterator().next();
             }

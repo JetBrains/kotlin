@@ -17098,6 +17098,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("anonymousObjectFromTopLevelMember.kt")
+            public void testAnonymousObjectFromTopLevelMember() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/anonymousObjectFromTopLevelMember.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("capturedTypesInLambdaParameter.kt")
             public void testCapturedTypesInLambdaParameter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/capturedTypesInLambdaParameter.kt");
