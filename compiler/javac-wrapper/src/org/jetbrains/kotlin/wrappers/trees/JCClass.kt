@@ -69,8 +69,8 @@ class JCClass<out T : JCTree.JCClassDecl>(tree: T,
     override val supertypes
         get() = arrayListOf<JavaClassifierType>().apply {
             fun JCTree.mapToJavaClassifierType() = when {
-                this is JCTree.JCExpression -> JCClassifierType(this, TreePath(treePath, this), javac)
                 this is JCTree.JCTypeApply -> JCClassifierTypeWithTypeArgument(this, TreePath(treePath, this), javac)
+                this is JCTree.JCExpression -> JCClassifierType(this, TreePath(treePath, this), javac)
                 else -> null
             }
 

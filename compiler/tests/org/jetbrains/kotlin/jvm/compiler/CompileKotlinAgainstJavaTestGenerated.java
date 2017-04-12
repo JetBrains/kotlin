@@ -126,6 +126,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("MapExample.kt")
+    public void testMapExample() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/MapExample.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Method.kt")
     public void testMethod() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/Method.kt");
