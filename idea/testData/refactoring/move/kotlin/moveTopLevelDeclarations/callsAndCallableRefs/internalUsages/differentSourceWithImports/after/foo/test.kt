@@ -32,12 +32,6 @@ fun test() {
     J::javaClassMember
     J::javaClassStaticMember
     ::topLevel
-    ::Y
-    ::YConstr
-    Y::YY
-    ::J
-    ::JConstr
-    J::JJ
 
     with(A()) {
         classMember()
