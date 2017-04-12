@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("FoldInitializerAndIfToElvis")
+
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.DeepCopyIrTreeWithDescriptors
@@ -166,7 +168,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
             if (functionArgument == null)     return super.visitCall(expression)            // It is not call of argument lambda - nothing to substitute.
             if (functionArgument !is IrBlock) return super.visitCall(expression)
 
-            val dispatchDescriptor = dispatchReceiver.descriptor                            // Check if this functional parameter has "noinline" tag
+            val dispatchDescriptor = dispatchReceiver.descriptor                            // Check if this functional parameter has "noInline" tag
             if (dispatchDescriptor is ValueParameterDescriptor &&
                 dispatchDescriptor.isNoinline) return super.visitCall(expression)
 
@@ -287,7 +289,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
                     )
                 }
 
-                parameterDescriptor.varargElementType != null -> {                          //
+                parameterDescriptor.varargElementType != null -> {
                     val emptyArray = IrVarargImpl(
                         startOffset       = irCall.startOffset,
                         endOffset         = irCall.endOffset,
@@ -328,18 +330,17 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
                 return@forEach
             }
 
-            val currentScope = currentScope!!
-            val varName = currentScope.scope.scopeOwner.name.toString() + "_inline"
-            val newVar = currentScope.scope.createTemporaryVariable(                        // Create new variable and init it with the parameter expression.
-                irExpression = argumentExpression,
-                nameHint     = varName,
+            val newExpression = copyIrElement.copy(argumentExpression, null) as IrExpression
+            val newVariable = currentScope.scope.createTemporaryVariable(                   // Create new variable and init it with the parameter expression.
+                irExpression = newExpression,
+                nameHint     = functionDeclaration.descriptor.name.toString(),
                 isMutable    = false)
 
-            evaluationStatements.add(newVar)                                                // Add initialization of the new variable in statement list.
+            evaluationStatements.add(newVariable)                                           // Add initialization of the new variable in statement list.
             val getVal = IrGetValueImpl(                                                    // Create new expression, representing access the new variable.
                 startOffset = currentScope.irElement.startOffset,
                 endOffset   = currentScope.irElement.endOffset,
-                descriptor  = newVar.descriptor
+                descriptor  = newVariable.descriptor
             )
             parameterToArgumentNew[parameterDescriptor] = getVal                            // Parameter will be replaced with the new variable.
         }
