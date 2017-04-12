@@ -68,7 +68,10 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
         copyIrElement = DeepCopyIrTreeWithDescriptors(currentScope!!, context)              // Create DeepCopy for current scope.
         functionDeclaration.transformChildrenVoid(this)                                     // Process recursive inline.
-        return inlineFunction(irCall, functionDeclaration)                                  // Return newly created IrInlineBody instead of IrCall.
+        val inlineFunctionBody = inlineFunction(irCall, functionDeclaration)                // Return newly created IrInlineBody instead of IrCall.
+        currentScope!!.irElement.transformChildrenVoid(                                     // Transform calls to object that might be returned from inline function call.
+            copyIrElement!!.descriptorSubstitutorForExternalScope)
+        return inlineFunctionBody
     }
 
     //-------------------------------------------------------------------------//

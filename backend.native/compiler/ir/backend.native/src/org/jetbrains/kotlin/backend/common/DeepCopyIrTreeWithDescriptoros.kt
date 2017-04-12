@@ -54,10 +54,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
     fun copy(irElement: IrElement, typeSubstitutor: TypeSubstitutor?): IrElement {
 
         this.typeSubstitutor = typeSubstitutor
-        descriptorSubstituteMap.clear()
         irElement.acceptChildrenVoid(DescriptorCollector())
-        // Transform calls to object that might be returned from inline function call.
-        targetScope.irElement.transformChildrenVoid(descriptorSubstitutorForExternalScope)
         return irElement.accept(InlineCopyIr(), null)
     }
 
