@@ -26,7 +26,7 @@ import org.junit.Test
 // todo: test client file creation/deletion
 // todo: test daemon start (does not start every build)
 // todo: test daemon shutdown when gradle daemon dies
-class KotlinDaemonAdvaced : BaseGradleIT() {
+class KotlinDaemonIT : BaseGradleIT() {
     companion object {
         private const val GRADLE_VERSION = "2.10"
     }
