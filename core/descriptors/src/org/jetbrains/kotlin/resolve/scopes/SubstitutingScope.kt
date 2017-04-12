@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.Substitutable
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
@@ -41,12 +42,15 @@ class SubstitutingScope(private val workerScope: MemberScope, givenSubstitutor: 
             substitutedDescriptors = HashMap<DeclarationDescriptor, DeclarationDescriptor>()
         }
 
-        val substituted = substitutedDescriptors!!.getOrPut(descriptor, {
-            descriptor.substitute(substitutor).sure {
-                "We expect that no conflict should happen while substitution is guaranteed to generate invariant projection, " +
-                "but $descriptor substitution fails"
+        val substituted = substitutedDescriptors!!.getOrPut(descriptor) {
+            when (descriptor) {
+                is Substitutable<*> -> descriptor.substitute(substitutor).sure {
+                    "We expect that no conflict should happen while substitution is guaranteed to generate invariant projection, " +
+                    "but $descriptor substitution fails"
+                }
+                else -> error("Unknown descriptor in scope: $descriptor")
             }
-        })
+        }
 
         @Suppress("UNCHECKED_CAST")
         return substituted as D

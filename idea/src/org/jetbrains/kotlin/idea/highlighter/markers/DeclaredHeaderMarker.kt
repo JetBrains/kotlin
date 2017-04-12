@@ -47,7 +47,7 @@ private enum class SourceKind { NONE, PRODUCTION, TEST }
 
 fun ModuleDescriptor.hasDeclarationOf(descriptor: MemberDescriptor) = declarationOf(descriptor) != null
 
-private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor) =
+private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor): DeclarationDescriptor? =
         with (HeaderImplDeclarationChecker(this)) {
             when (descriptor) {
                 is CallableMemberDescriptor ->

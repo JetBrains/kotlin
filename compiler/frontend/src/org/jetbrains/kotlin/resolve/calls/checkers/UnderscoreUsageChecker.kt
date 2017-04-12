@@ -31,7 +31,7 @@ object UnderscoreUsageChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (resolvedCall is VariableAsFunctionResolvedCall) return
         val descriptor = resolvedCall.resultingDescriptor
-        val namedDescriptor = if (descriptor is ConstructorDescriptor) descriptor.containingDeclaration else descriptor
+        val namedDescriptor: DeclarationDescriptor = (descriptor as? ConstructorDescriptor)?.containingDeclaration ?: descriptor
         if (!namedDescriptor.name.asString().isUnderscoreOnlyName()) return
         checkCallElement(resolvedCall.call.callElement, context)
     }

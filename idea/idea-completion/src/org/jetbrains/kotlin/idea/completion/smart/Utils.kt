@@ -208,11 +208,12 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 private fun <T : DeclarationDescriptor?> T.substituteFixed(substitutor: TypeSubstitutor): T {
-    if (this is LocalVariableDescriptor || this is ValueParameterDescriptor || this is TypeParameterDescriptor) { // TODO: it's not implemented for them
+    if (this is LocalVariableDescriptor || this is ValueParameterDescriptor || this !is Substitutable<*>) {
         return this
     }
-    return this?.substitute(substitutor) as T
+    return this.substitute(substitutor) as T
 }
 
 private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () -> Collection<LookupElement>, matchedInfos: Collection<ExpectedInfo>) {

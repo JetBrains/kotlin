@@ -104,11 +104,12 @@ private fun findCandidateDeclarationsInIndex(
         return KotlinFullClassNameIndex.getInstance().get(containingClass.fqNameSafe.asString(), project, scope)
     }
 
-    val topLevelDeclaration = DescriptorUtils.getParentOfType(referencedDescriptor, PropertyDescriptor::class.java, false)
-                              ?: DescriptorUtils.getParentOfType(referencedDescriptor, TypeAliasConstructorDescriptor::class.java, false)?.typeAliasDescriptor
-                              ?: DescriptorUtils.getParentOfType(referencedDescriptor, FunctionDescriptor::class.java, false)
-                              ?: DescriptorUtils.getParentOfType(referencedDescriptor, TypeAliasDescriptor::class.java, false)
-                              ?: return emptyList()
+    val topLevelDeclaration =
+            DescriptorUtils.getParentOfType(referencedDescriptor, PropertyDescriptor::class.java, false) as DeclarationDescriptor?
+            ?: DescriptorUtils.getParentOfType(referencedDescriptor, TypeAliasConstructorDescriptor::class.java, false)?.typeAliasDescriptor
+            ?: DescriptorUtils.getParentOfType(referencedDescriptor, FunctionDescriptor::class.java, false)
+            ?: DescriptorUtils.getParentOfType(referencedDescriptor, TypeAliasDescriptor::class.java, false)
+            ?: return emptyList()
 
     // filter out synthetic descriptors
     if (!DescriptorUtils.isTopLevelDeclaration(topLevelDeclaration)) return emptyList()

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.TypeSubstitutor
 
 interface ModuleDescriptor : DeclarationDescriptor {
     override fun getContainingDeclaration(): DeclarationDescriptor? = null
@@ -27,10 +26,6 @@ interface ModuleDescriptor : DeclarationDescriptor {
     val builtIns: KotlinBuiltIns
 
     fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean
-
-    override fun substitute(substitutor: TypeSubstitutor): ModuleDescriptor {
-        return this
-    }
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
         return visitor.visitModuleDeclaration(this, data)

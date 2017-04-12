@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.TypeSubstitutor
 
 interface IrBuiltinsPackageFragmentDescriptor : PackageFragmentDescriptor
 
@@ -40,7 +39,6 @@ class IrBuiltinsPackageFragmentDescriptorImpl(
     override fun getOriginal(): DeclarationDescriptorWithSource = this
     override fun getSource(): SourceElement = SourceElement.NO_SOURCE
     override val annotations: Annotations = Annotations.EMPTY
-    override fun substitute(substitutor: TypeSubstitutor): DeclarationDescriptor = throw UnsupportedOperationException()
 
     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
         return visitor.visitPackageFragmentDescriptor(this, data)
@@ -50,5 +48,3 @@ class IrBuiltinsPackageFragmentDescriptorImpl(
         visitor.visitPackageFragmentDescriptor(this, null)
     }
 }
-
-

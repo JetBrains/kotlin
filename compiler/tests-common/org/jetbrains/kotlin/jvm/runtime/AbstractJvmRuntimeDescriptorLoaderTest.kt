@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactoryNoModules
 import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuration
-import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
@@ -221,7 +220,6 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
 
         override fun getContainingDeclaration() = null
         override fun getOriginal() = throw UnsupportedOperationException()
-        override fun substitute(substitutor: TypeSubstitutor) = throw UnsupportedOperationException()
         override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) = throw UnsupportedOperationException()
         override fun getName() = throw UnsupportedOperationException()
         override val annotations: Annotations

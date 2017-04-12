@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.script.getScriptExternalDependencies
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.Printer
 
 data class FileScopes(val lexicalScope: LexicalScope, val importingScope: ImportingScope, val importResolver: ImportResolver)
@@ -236,7 +235,6 @@ class FileScopeFactory(
 
         override fun getOriginal() = this
         override val annotations: Annotations get() = Annotations.EMPTY
-        override fun substitute(substitutor: TypeSubstitutor) = this
 
         override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
             throw UnsupportedOperationException()

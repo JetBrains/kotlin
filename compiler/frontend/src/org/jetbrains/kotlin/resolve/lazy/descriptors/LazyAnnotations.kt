@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.TypeSubstitutor
 
 abstract class LazyAnnotationsContext(
         val annotationResolver: AnnotationResolver,
@@ -172,7 +171,6 @@ class LazyAnnotationDescriptor(
         override fun getName() = Name.special("< file descriptor for annotation resolution >")
 
         private fun error(): Nothing = error("This method should not be called")
-        override fun substitute(substitutor: TypeSubstitutor): DeclarationDescriptor? = error()
         override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R = error()
         override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) = error()
 

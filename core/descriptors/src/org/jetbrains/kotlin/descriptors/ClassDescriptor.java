@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeSubstitution;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collection;
 import java.util.List;
@@ -58,10 +57,6 @@ public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters,
     @NotNull
     @Override
     SimpleType getDefaultType();
-
-    @NotNull
-    @Override
-    ClassDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
     /**
      * @return nested object declared as 'companion' if one is present.

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 public class RootContext extends CodegenContext<RootContext.FakeDescriptor> {
     private final GenerationState state;
@@ -53,11 +52,6 @@ public class RootContext extends CodegenContext<RootContext.FakeDescriptor> {
 
         @Override
         public DeclarationDescriptor getContainingDeclaration() {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public DeclarationDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
             throw new IllegalStateException();
         }
 

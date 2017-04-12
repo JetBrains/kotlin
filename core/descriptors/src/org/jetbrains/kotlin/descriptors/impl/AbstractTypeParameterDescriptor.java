@@ -134,13 +134,6 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
         return (TypeParameterDescriptor) super.getOriginal();
     }
 
-    @NotNull
-    @Override
-    @Deprecated
-    public TypeParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
-        throw new UnsupportedOperationException("Don't call substitute() on type parameters");
-    }
-
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitTypeParameterDescriptor(this, data);

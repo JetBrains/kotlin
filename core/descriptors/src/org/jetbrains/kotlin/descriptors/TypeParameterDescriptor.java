@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
 
 import java.util.List;
@@ -36,11 +35,6 @@ public interface TypeParameterDescriptor extends ClassifierDescriptor {
     @NotNull
     @Override
     TypeConstructor getTypeConstructor();
-
-    @NotNull
-    @Override
-    @Deprecated // Use the static method DescriptorSubstitutor.substituteTypeParameters()
-    TypeParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
     @NotNull
     @Override

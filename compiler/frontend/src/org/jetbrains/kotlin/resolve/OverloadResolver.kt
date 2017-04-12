@@ -91,7 +91,7 @@ class OverloadResolver(
 
         collectModulePackageMembersWithSameName(
                 packageMembersByName,
-                c.functions.values + c.declaredClasses.values + c.typeAliases.values,
+                (c.functions.values as Collection<DeclarationDescriptor>) + c.declaredClasses.values + c.typeAliases.values,
                 overloadFilter
         ) {
             scope, name ->

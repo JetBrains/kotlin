@@ -32,7 +32,7 @@ import java.awt.event.MouseEvent
 fun ModuleDescriptor.hasImplementationsOf(descriptor: MemberDescriptor) =
         implementationsOf(descriptor).isNotEmpty()
 
-private fun ModuleDescriptor.implementationsOf(descriptor: MemberDescriptor) =
+private fun ModuleDescriptor.implementationsOf(descriptor: MemberDescriptor): List<DeclarationDescriptor> =
         with (HeaderImplDeclarationChecker(this)) {
             when (descriptor) {
                 is CallableMemberDescriptor -> descriptor.findNamesakesFromTheSameModule().filter { it.isImpl }

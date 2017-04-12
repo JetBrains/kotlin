@@ -99,13 +99,6 @@ public class ErrorUtils {
 
             @Override
             public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
-
-            }
-
-            @NotNull
-            @Override
-            public ModuleDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
-                return this;
             }
 
             @Override
