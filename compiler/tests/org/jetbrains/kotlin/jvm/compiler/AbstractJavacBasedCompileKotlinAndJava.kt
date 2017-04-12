@@ -88,7 +88,7 @@ abstract class AbstractJavacBasedCompileKotlinAndJava : TestCaseWithTmpdir() {
             assert(mkdirs) { "Not created: $outDir" }
         }
 
-        return JavacWrapper.getInstance(environment.project).use(JavacWrapper::compile)
+        return JavacWrapper.getInstance(environment.project).use { it.compile() }
     }
 
     companion object {

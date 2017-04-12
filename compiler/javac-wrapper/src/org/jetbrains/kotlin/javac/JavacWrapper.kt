@@ -65,7 +65,7 @@ import javax.tools.StandardLocation
 class JavacWrapper(javaFiles: Collection<File>,
                    kotlinFiles: Collection<KtFile>,
                    classPathRoots: List<File>,
-                   configuration: CompilerConfiguration,
+                   private val configuration: CompilerConfiguration,
                    private val messageCollector: MessageCollector?,
                    arguments: Array<String>?) : Closeable {
 
@@ -89,10 +89,6 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     init {
         fileManager.setLocation(StandardLocation.CLASS_PATH, classPathRoots)
-        configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY]?.let {
-            it.mkdirs()
-            fileManager.setLocation(StandardLocation.CLASS_OUTPUT, listOf(it))
-        }
     }
 
     private val symbols = Symtab.instance(context)
@@ -114,10 +110,10 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     private val kotlinClassifiersCache = KotlinClassifiersCache(kotlinFiles)
 
-    fun compile() = with(javac) {
+    fun compile(outDir: File? = null) = with(javac) {
         if (errorCount() > 0) return false
 
-        fileManager.setClassPathForCompilation()
+        fileManager.setClassPathForCompilation(outDir)
         messageCollector?.report(CompilerMessageSeverity.INFO,
                                  "Compiling Java sources")
         compile(fileObjects)
@@ -172,9 +168,11 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     private fun findPackageInSymbols(fqName: String) = elements.getPackageElement(fqName)?.let { JavacPackage(it, this) }
 
-    private fun JavacFileManager.setClassPathForCompilation() = apply {
-        setLocation(StandardLocation.CLASS_PATH,
-                    getLocation(StandardLocation.CLASS_PATH) + getLocation(StandardLocation.CLASS_OUTPUT))
+    private fun JavacFileManager.setClassPathForCompilation(outDir: File?) = apply {
+        (outDir ?: configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY])?.let {
+            it.mkdirs()
+            fileManager.setLocation(StandardLocation.CLASS_OUTPUT, listOf(it))
+        }
 
         val reader = ClassReader.instance(context)
         val names = Names.instance(context)

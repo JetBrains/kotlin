@@ -162,10 +162,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 registerJavacIfNeeded(environment, arguments, messageCollector)
 
                 KotlinToJVMBytecodeCompiler.compileModules(environment, directory)
-
-                compileJavaFilesIfNeeded(environment, arguments).let {
-                    if (!it) return COMPILATION_ERROR
-                }
             }
             else if (arguments.script) {
                 val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size)
@@ -239,7 +235,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     private fun compileJavaFilesIfNeeded(environment: KotlinCoreEnvironment,
                                          arguments: K2JVMCompilerArguments): Boolean  {
         if (arguments.useJavac) {
-            return JavacWrapper.getInstance(environment.project).use(JavacWrapper::compile)
+            return JavacWrapper.getInstance(environment.project).use { it.compile() }
         }
         return true
     }

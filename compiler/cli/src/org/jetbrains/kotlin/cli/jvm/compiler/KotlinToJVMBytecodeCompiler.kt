@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
@@ -164,6 +165,14 @@ object KotlinToJVMBytecodeCompiler {
                 ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
                 writeOutput(state.configuration, state.factory, null)
             }
+
+            if (chunk.size == 1) {
+                val javacWrapper = JavacWrapper.getInstance(environment.project)
+                if (projectConfiguration[JVMConfigurationKeys.USE_JAVAC]!!) {
+                    return javacWrapper.use { it.compile(File(chunk.first().getOutputDirectory())) }
+                } else javacWrapper.close()
+            }
+
             return true
         }
         finally {
