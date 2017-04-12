@@ -114,7 +114,7 @@ class Preprocessor(val logger: Logger = SystemOutLogger) {
             if (targetFile.exists() && targetFile.isDirectory)
                 targetFile.deleteRecursively()
 
-            // if no modifications � copy
+            // if no modifications — copy
             if (result is FileProcessingResult.Copy) {
                 FileUtil.copy(sourceFile, targetFile)
             } else if (result is FileProcessingResult.Modify) {
@@ -122,6 +122,7 @@ class Preprocessor(val logger: Logger = SystemOutLogger) {
                 if (targetFile.exists() && targetFile.isTextEqualTo(resultText))
                     continue
                 logger.info("Rewriting modified $targetFile")
+                targetFile.parentFile!!.mkdirsOrFail()
                 targetFile.writeText(resultText)
             }
         }
