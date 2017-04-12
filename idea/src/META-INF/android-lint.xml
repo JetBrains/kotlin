@@ -118,8 +118,4 @@
 
         <codeInspection.InspectionExtension implementation="org.jetbrains.android.inspections.klint.AndroidInspectionExtensionsFactory"/>
     </extensions>
-
-    <extensions defaultExtensionNs="org.jetbrains.uast">
-        <uastLanguagePlugin implementation="org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin"/>
-    </extensions>
 </idea-plugin>
