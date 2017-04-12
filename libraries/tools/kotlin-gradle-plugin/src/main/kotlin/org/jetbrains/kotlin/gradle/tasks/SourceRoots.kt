@@ -79,6 +79,8 @@ internal class FilteringSourceRootsContainer(val filter: (File) -> Boolean = { t
             when (source) {
                 is SourceDirectorySet -> filteredDirs += source.srcDirs.filter { filter(it) }
                 is File -> if (filter(source)) filteredDirs.add(source)
+                is Collection<*> -> source.forEach { filteredDirs += add(it) }
+                is Array<*> -> source.forEach { filteredDirs += add(it) }
             }
         }
 

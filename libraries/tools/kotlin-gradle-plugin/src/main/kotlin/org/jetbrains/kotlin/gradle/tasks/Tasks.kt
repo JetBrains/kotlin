@@ -122,7 +122,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     }
 
     @TaskAction
-    fun execute(inputs: IncrementalTaskInputs): Unit {
+    open fun execute(inputs: IncrementalTaskInputs): Unit {
         val sourceRoots = getSourceRoots()
         val allKotlinSources = sourceRoots.kotlinSourceFiles
 
@@ -162,7 +162,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     private val kotlinOptionsImpl = KotlinJvmOptionsImpl()
     override val kotlinOptions: KotlinJvmOptions
             get() = kotlinOptionsImpl
-    internal val sourceRootsContainer = FilteringSourceRootsContainer()
+    internal open val sourceRootsContainer = FilteringSourceRootsContainer()
 
     internal val taskBuildDirectory: File
         get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() }

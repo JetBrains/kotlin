@@ -43,13 +43,10 @@ open class KaptTask : AbstractCompile() {
 
     @TaskAction
     override fun compile() {
-        /** Delete everything inside the [destinationDir] */
+        /** Delete everything inside the [destinationDir] (sources output dir) */
         destinationDir.clearDirectory()
 
         classesDir.clearDirectory()
-
-        // Kapt3 doesn't support incremental compilation so we should delete the existing stubs
-        stubsDir.clearDirectory()
 
         val sourceRoots = SourceRoots.ForJvm.create(getSource(), rawSourceRoots)
 
