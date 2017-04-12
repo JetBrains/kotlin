@@ -5,6 +5,7 @@ import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.daemon.client.reportFromDaemon
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.incremental.toDirtyData
 import org.jetbrains.kotlin.daemon.incremental.toSimpleDirtyData
@@ -29,30 +30,7 @@ internal open class GradleCompilerServicesFacadeImpl(
     protected val log: Logger = project.logger
 
     override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
-        val reportCategory = ReportCategory.fromCode(category)
-
-        when (reportCategory) {
-            ReportCategory.OUTPUT_MESSAGE -> {
-                compilerMessageCollector.report(CompilerMessageSeverity.OUTPUT, message!!)
-            }
-            ReportCategory.EXCEPTION -> {
-                compilerMessageCollector.report(CompilerMessageSeverity.EXCEPTION, message!!)
-            }
-            ReportCategory.COMPILER_MESSAGE -> {
-                val compilerSeverity = when (ReportSeverity.fromCode(severity)) {
-                    ReportSeverity.ERROR -> CompilerMessageSeverity.ERROR
-                    ReportSeverity.WARNING -> CompilerMessageSeverity.WARNING
-                    ReportSeverity.INFO -> CompilerMessageSeverity.INFO
-                    ReportSeverity.DEBUG -> CompilerMessageSeverity.LOGGING
-                    else -> throw IllegalStateException("Unexpected compiler message report severity $severity")
-                }
-                if (message != null && attachment is CompilerMessageLocation?) {
-                    compilerMessageCollector.report(compilerSeverity, message, attachment)
-                }
-                else {
-                    reportUnexpectedMessage(category, severity, message, attachment)
-                }
-            }
+        when (ReportCategory.fromCode(category)) {
             ReportCategory.IC_MESSAGE -> {
                 log.kotlinDebug { "[IC] $message" }
             }
@@ -60,14 +38,14 @@ internal open class GradleCompilerServicesFacadeImpl(
                 log.kotlinDebug { "[DAEMON] $message" }
             }
             else -> {
-                reportUnexpectedMessage(category, severity, message, attachment)
+                compilerMessageCollector.reportFromDaemon(
+                        outputsCollector = null,
+                        category = category,
+                        severity = severity,
+                        message = message,
+                        attachment = attachment)
             }
         }
-    }
-
-    protected fun reportUnexpectedMessage(category: Int, severity: Int, message: String?, attachment: Serializable?) {
-        // todo add assert to tests
-        log.kotlinWarn("Received unexpected message from compiler daemon: category=$category, severity=$severity, message='$message', attachment=$attachment")
     }
 }
 

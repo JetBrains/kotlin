@@ -65,8 +65,8 @@ fun MessageCollector.reportFromDaemon(outputsCollector: ((File, List<File>) -> U
                 ReportSeverity.DEBUG -> CompilerMessageSeverity.LOGGING
                 else -> throw IllegalStateException("Unexpected compiler message report severity $severity")
             }
-            if (message != null && attachment is CompilerMessageLocation?) {
-                report(compilerSeverity, message, attachment)
+            if (message != null) {
+                report(compilerSeverity, message, attachment as? CompilerMessageLocation)
             }
             else {
                 reportUnexpected(category, severity, message, attachment)
