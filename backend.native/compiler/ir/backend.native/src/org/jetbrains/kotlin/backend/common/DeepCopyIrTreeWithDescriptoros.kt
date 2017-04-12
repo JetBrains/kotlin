@@ -125,6 +125,9 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
             if (oldDescriptor !is PropertyAccessorDescriptor) {                             // Property accessors are copied along with their property.
                 val newDescriptor = copyFunctionDescriptor(oldDescriptor)
                 descriptorSubstituteMap[oldDescriptor] = newDescriptor
+                oldDescriptor.extensionReceiverParameter?.let{
+                    descriptorSubstituteMap[it] = newDescriptor.extensionReceiverParameter!!
+                }
             }
             super.visitFunction(declaration)
         }
@@ -243,6 +246,10 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
             oldDescriptor.setter?.let {
                 descriptorSubstituteMap[it] = newDescriptor.setter!!
             }
+            oldDescriptor.extensionReceiverParameter?.let{
+                descriptorSubstituteMap[it] = newDescriptor.extensionReceiverParameter!!
+            }
+
         }
 
         //---------------------------------------------------------------------//
