@@ -214,7 +214,7 @@ class LocalFunctionsLowering(val context: BackendContext): DeclarationContainerL
 
             return if (oldCallee.typeParameters.isEmpty())
                 null
-            else oldCallee.typeParameters.associateBy(
+            else oldCallee.original.typeParameters.associateBy(
                     { newCallee.typeParameters[it.index] },
                     { oldExpression.getTypeArgument(it)!! }
             )
