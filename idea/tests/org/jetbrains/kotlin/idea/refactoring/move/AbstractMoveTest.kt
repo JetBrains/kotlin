@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.refactoring.move
 import com.google.gson.JsonObject
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
@@ -35,7 +37,6 @@ import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.refactoring.move.changePackage.KotlinChangePackageRefactoring
-import org.jetbrains.kotlin.idea.refactoring.move.moveClassesOrPackages.KotlinAwareDelegatingMoveDestination
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.projectScope
@@ -91,30 +92,13 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
     MOVE_PACKAGES {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
             val project = mainFile.project
-            val sourcePackageName = config.getString("sourcePackage")
-            val targetPackageName = config.getString("targetPackage")
-
-            val sourcePackage = JavaPsiFacade.getInstance(project).findPackage(sourcePackageName)!!
-            val targetPackage = JavaPsiFacade.getInstance(project).findPackage(targetPackageName)
-            val targetDirectory = targetPackage?.directories?.first()
-
-            val targetPackageWrapper = PackageWrapper(mainFile.manager, targetPackageName)
-            val moveDestination = if (targetDirectory != null) {
-                val targetSourceRoot = ProjectRootManager.getInstance(project).fileIndex.getSourceRootForFile(targetDirectory.virtualFile)!!
-                KotlinAwareDelegatingMoveDestination(
-                        AutocreatingSingleSourceRootMoveDestination(targetPackageWrapper, targetSourceRoot),
-                        targetPackage,
-                        targetDirectory
-                )
-            }
-            else {
-                MultipleRootsMoveDestination(targetPackageWrapper)
-            }
+            val sourcePackage = config.getString("sourcePackage")
+            val targetPackage = config.getString("targetPackage")
 
             MoveClassesOrPackagesProcessor(
                     project,
-                    arrayOf(sourcePackage),
-                    moveDestination,
+                    arrayOf(JavaPsiFacade.getInstance(project).findPackage(sourcePackage)!!),
+                    MultipleRootsMoveDestination(PackageWrapper(mainFile.manager, targetPackage)),
                     /* searchInComments = */ false,
                     /* searchInNonJavaFiles = */ true,
                     /* moveCallback = */ null
