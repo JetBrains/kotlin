@@ -16,10 +16,7 @@
 
 package org.jetbrains.uast.kotlin
 
-import com.intellij.psi.PsiAnonymousClass
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
+import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
@@ -42,6 +39,8 @@ class KotlinUClass private constructor(
     override fun getOriginalElement(): PsiElement? {
         return super.getOriginalElement()
     }
+
+    override fun getContainingFile(): PsiFile? = ktClass?.containingFile ?: psi.containingFile
 
     override val annotations: List<UAnnotation>
         get() = ktClass?.annotationEntries?.map { KotlinUAnnotation(it, this) } ?: emptyList()

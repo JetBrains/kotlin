@@ -58,6 +58,8 @@ class KotlinUVariable(
     override val annotations by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
     override val typeReference by lz { getLanguagePlugin().convertOpt<UTypeReferenceExpression>(psi.typeElement, this) }
 
+    override fun getContainingFile(): PsiFile? = (psi as? KtLightElement<*, *>)?.kotlinOrigin?.containingFile ?: psi.containingFile
+
     override fun getInitializer(): PsiExpression? {
         return super<AbstractKotlinUVariable>.getInitializer()
     }

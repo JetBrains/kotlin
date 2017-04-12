@@ -16,10 +16,7 @@
 
 package org.jetbrains.uast.kotlin.declarations
 
-import com.intellij.psi.PsiCodeBlock
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiNameIdentifierOwner
+import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.isGetter
@@ -43,6 +40,8 @@ open class KotlinUMethod(
     }
 
     private val kotlinOrigin = (psi.originalElement as KtLightElement<*, *>).kotlinOrigin
+
+    override fun getContainingFile(): PsiFile? = kotlinOrigin?.containingFile ?: psi.containingFile
 
     override val annotations by lz {
         (kotlinOrigin as? KtDeclaration)?.annotationEntries?.map { KotlinUAnnotation(it, this) } ?: emptyList()
