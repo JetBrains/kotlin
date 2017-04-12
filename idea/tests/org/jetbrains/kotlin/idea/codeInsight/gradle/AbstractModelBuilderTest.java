@@ -20,7 +20,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.testFramework.IdeaTestUtil;
-import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.codehaus.groovy.runtime.typehandling.ShortTypeHandling;
@@ -32,8 +31,6 @@ import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.gradle.model.BuildScriptClasspathModel;
-import org.jetbrains.plugins.gradle.model.ClasspathEntryModel;
 import org.jetbrains.plugins.gradle.model.ExternalProject;
 import org.jetbrains.plugins.gradle.model.ProjectImportAction;
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper;
@@ -56,7 +53,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeThat;
 
@@ -64,7 +60,7 @@ import static org.junit.Assume.assumeThat;
 @RunWith(value = Parameterized.class)
 public abstract class AbstractModelBuilderTest {
 
-  public static final Object[][] SUPPORTED_GRADLE_VERSIONS = { {"2.9"} };
+  public static final Object[][] SUPPORTED_GRADLE_VERSIONS = { {"3.5"} };
 
   private static final Pattern TEST_METHOD_NAME_PATTERN = Pattern.compile("(.*)\\[(\\d*: with Gradle-.*)\\]");
 
