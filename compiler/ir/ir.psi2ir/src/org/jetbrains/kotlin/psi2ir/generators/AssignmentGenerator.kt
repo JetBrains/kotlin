@@ -189,15 +189,21 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
     ): PropertyLValueBase {
         val superQualifierSymbol = superQualifier?.let { context.symbolTable.referenceClass(it) }
 
-        val getterSymbol = descriptor.getter?.let { context.symbolTable.referenceFunction(it) }
-        val setterSymbol = descriptor.setter?.let { context.symbolTable.referenceFunction(it) }
+        val getterDescriptor = descriptor.getter
+        val getterSymbol = getterDescriptor?.let { context.symbolTable.referenceFunction(it.original) }
+
+        val setterDescriptor = descriptor.setter
+        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceFunction(it.original) }
+
         return if (getterSymbol != null || setterSymbol != null) {
             AccessorPropertyLValue(
                     scope,
                     ktExpression.startOffset, ktExpression.endOffset, origin,
                     descriptor.type,
                     getterSymbol,
+                    getterDescriptor,
                     setterSymbol,
+                    setterDescriptor,
                     typeArguments,
                     propertyReceiver,
                     superQualifierSymbol

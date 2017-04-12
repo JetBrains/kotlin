@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrCallWithShallowCopy
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -63,7 +64,7 @@ class IrCallImpl(
             typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
             origin: IrStatementOrigin? = null,
             superQualifierSymbol: IrClassSymbol? = null
-    ) : this(startOffset, endOffset, symbol.descriptor.returnType!!, symbol, descriptor, typeArguments, origin, superQualifierSymbol)
+    ) : this(startOffset, endOffset, descriptor.returnType!!, symbol, descriptor, typeArguments, origin, superQualifierSymbol)
 
     constructor(startOffset: Int, endOffset: Int, symbol: IrFunctionSymbol) :
             this(startOffset, endOffset, symbol, symbol.descriptor)

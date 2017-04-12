@@ -135,10 +135,11 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
 
             val getterDescriptor = descriptor.getter
             if (getterDescriptor != null) {
-                val getterSymbol = context.symbolTable.referenceFunction(getterDescriptor)
+                val getterSymbol = context.symbolTable.referenceFunction(getterDescriptor.original)
                 IrGetterCallImpl(
                         startOffset, endOffset,
                         getterSymbol,
+                        getterDescriptor,
                         getTypeArguments(call.original),
                         dispatchReceiverValue?.load(),
                         extensionReceiverValue?.load(),

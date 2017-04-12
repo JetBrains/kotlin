@@ -135,7 +135,7 @@ fun IrBuilderWithScope.irNotEquals(arg1: IrExpression, arg2: IrExpression) =
                                   arg1, arg2))
 
 fun IrBuilderWithScope.irGet(receiver: IrExpression, getterSymbol: IrFunctionSymbol): IrCall =
-        IrGetterCallImpl(startOffset, endOffset, getterSymbol, null, receiver, null, IrStatementOrigin.GET_PROPERTY)
+        IrGetterCallImpl(startOffset, endOffset, getterSymbol, getterSymbol.descriptor, null, receiver, null, IrStatementOrigin.GET_PROPERTY)
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: KotlinType): IrCall =
         IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor, null)

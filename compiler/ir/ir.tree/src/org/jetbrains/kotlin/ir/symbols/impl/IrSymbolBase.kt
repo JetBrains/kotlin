@@ -24,6 +24,18 @@ abstract class IrSymbolBase<out D : DeclarationDescriptor>(override val descript
 
 abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolOwner>(descriptor: D) :
         IrBindableSymbol<D, B>, IrSymbolBase<D>(descriptor) {
+    init {
+        assert(isOriginalDescriptor(descriptor)) {
+            "Substituted descriptor $descriptor for ${descriptor.original}"
+        }
+    }
+
+    private fun isOriginalDescriptor(descriptor: DeclarationDescriptor): Boolean =
+            if (descriptor is ValueParameterDescriptor)
+                isOriginalDescriptor(descriptor.containingDeclaration)
+            else
+                descriptor == descriptor.original
+
     private var _owner: B? = null
     override val owner: B
         get() = _owner ?: throw IllegalStateException("Symbol for $descriptor is unbound")

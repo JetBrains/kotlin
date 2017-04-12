@@ -647,6 +647,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("genericPropertyCall.kt")
+        public void testGenericPropertyCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/genericPropertyCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("identity.kt")
         public void testIdentity() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/identity.kt");

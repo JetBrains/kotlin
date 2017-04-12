@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -112,7 +113,9 @@ class AccessorPropertyLValue(
         origin: IrStatementOrigin?,
         type: KotlinType,
         val getter: IrFunctionSymbol?,
+        val getterDescriptor: FunctionDescriptor?,
         val setter: IrFunctionSymbol?,
+        val setterDescriptor: FunctionDescriptor?,
         val typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         callReceiver: CallReceiver,
         superQualifier: IrClassSymbol?
@@ -121,7 +124,7 @@ class AccessorPropertyLValue(
             callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
                 IrGetterCallImpl(
                             startOffset, endOffset,
-                            getter!!,
+                            getter!!, getterDescriptor!!,
                             typeArguments,
                             dispatchReceiverValue?.load(),
                             extensionReceiverValue?.load(),
@@ -134,7 +137,7 @@ class AccessorPropertyLValue(
             callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
                 IrSetterCallImpl(
                         startOffset, endOffset,
-                        setter!!,
+                        setter!!, setterDescriptor!!,
                         typeArguments,
                         dispatchReceiverValue?.load(),
                         extensionReceiverValue?.load(),
@@ -147,7 +150,7 @@ class AccessorPropertyLValue(
     override fun withReceiver(dispatchReceiver: VariableLValue?, extensionReceiver: VariableLValue?): PropertyLValueBase =
             AccessorPropertyLValue(
                     scope, startOffset, endOffset, origin,
-                    type, getter, setter,
+                    type, getter, getterDescriptor, setter, setterDescriptor,
                     typeArguments,
                     SimpleCallReceiver(dispatchReceiver, extensionReceiver),
                     superQualifier
