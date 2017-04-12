@@ -98,6 +98,26 @@ public fun <T : Any> listOfNotNull(element: T?): List<T> =
 public fun <T : Any> listOfNotNull(vararg elements: T?): List<T> = elements.filterNotNull()
 
 /**
+ * Creates a new read-only list with the specified [size], where each element is calculated by calling the specified
+ * [init] function. The [init] function returns a list element given its index.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <T> List(size: Int, init: (index: Int) -> T): List<T> = MutableList(size, init)
+
+/**
+ * Creates a new mutable list with the specified [size], where each element is calculated by calling the specified
+ * [init] function. The [init] function returns a list element given its index.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <T> MutableList(size: Int, init: (index: Int) -> T): MutableList<T> {
+    val list = ArrayList<T>(size)
+    repeat(size) { index -> list.add(init(index)) }
+    return list
+}
+
+/**
  * Returns an [IntRange] of the valid indices for this collection.
  */
 public val Collection<*>.indices: IntRange
