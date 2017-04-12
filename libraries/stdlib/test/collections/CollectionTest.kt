@@ -295,7 +295,7 @@ class CollectionTest {
         }
 
         assertFailsWith<UnsupportedOperationException> {
-            arrayListOf<Int>().reduceIndexed { index, a, b -> a + b }
+            arrayListOf<Int>().reduceIndexed { index, a, b -> index + a + b }
         }
     }
 
@@ -315,7 +315,7 @@ class CollectionTest {
         }
 
         assertFailsWith<UnsupportedOperationException> {
-            arrayListOf<Int>().reduceRightIndexed { index, a, b -> a + b }
+            arrayListOf<Int>().reduceRightIndexed { index, a, b -> index + a + b }
         }
     }
 
@@ -626,6 +626,7 @@ class CollectionTest {
 
         // lists throw an exception if out of range
         assertFails {
+            @Suppress("UNUSED_VARIABLE")
             val outOfBounds = list[2]
         }
 

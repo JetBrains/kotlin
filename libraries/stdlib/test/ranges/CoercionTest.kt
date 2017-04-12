@@ -5,17 +5,6 @@ import kotlin.test.*
 
 class CoercionTest {
 
-    fun usage() {
-        val n = 1
-        // infix usage
-        val n1 = n.coerceAtLeast(2)
-        // function usage
-        val n2 = n.coerceAtLeast(2)
-
-        // infix with range
-        val n3 = n.coerceIn(2..5)
-    }
-
     @Test
     fun coercionsInt() {
         expect(5) { 5.coerceAtLeast(1) }

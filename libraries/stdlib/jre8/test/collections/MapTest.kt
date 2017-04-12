@@ -89,27 +89,27 @@ class MapTest {
         val map = mutableMapOf(2 to "x")
         assertEquals("2x", map.computeIfPresent(2) { k, v -> k.toString() + v })
         assertEquals(null, map.computeIfPresent(3) { k, v -> k.toString() + v })
-        assertEquals(null, map.computeIfPresent(2) { k, v -> null })
+        assertEquals(null, map.computeIfPresent(2) { _, _ -> null })
         assertFalse(2 in map)
 
         val map2 = mutableMapOf<Int, String?>(2 to "x")
         assertEquals("2x", map2.computeIfPresent(2) { k, v -> k.toString() + v })
         assertEquals(null, map2.computeIfPresent(3) { k, v -> k.toString() + v })
-        assertEquals(null, map2.computeIfPresent(2) { k, v -> null })
+        assertEquals(null, map2.computeIfPresent(2) { _, _ -> null })
         assertFalse(2 in map2)
     }
 
     @Test fun compute() {
         val map = mutableMapOf(2 to "x")
         assertEquals("2x", map.compute(2) { k, v -> k.toString() + v })
-        assertEquals(null, map.compute(2) { k, v -> null })
+        assertEquals(null, map.compute(2) { _, _ -> null })
         assertFalse { 2 in map }
         assertEquals("1null", map.compute(1) { k, v -> k.toString() + v })
     }
 
     @Test fun merge() {
         val map = mutableMapOf(2 to "x")
-        assertEquals("y", map.merge(3, "y") { old, new -> null })
+        assertEquals("y", map.merge(3, "y") { _, _ -> null })
         assertEquals(null, map.merge(3, "z") { old, new ->
             assertEquals("y", old)
             assertEquals("z", new)
@@ -122,7 +122,7 @@ class MapTest {
         // new value must be V&Any
         assertEquals("e", map2.merge(1, "e") { old, new -> (old.length + new.length).toString() ?: null })
         assertEquals("3", map2.merge(1, "fg") { old, new -> (old.length + new.length).toString() ?: null })
-        assertEquals(null, map2.merge(1, "3") { old, new -> null })
+        assertEquals(null, map2.merge(1, "3") { _, _ -> null })
         assertFalse(1 in map)
     }
 }

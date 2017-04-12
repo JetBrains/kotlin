@@ -17,6 +17,7 @@
 package test.text
 
 import kotlin.test.*
+import test.*
 import org.junit.Test
 
 
@@ -761,8 +762,8 @@ class StringTest {
         assertTrue(data === newData)
 
         // static types test
-        val s: String = "x".onEach {  }
-        val sb: StringBuilder = result.onEach {  }
+        assertStaticTypeIs<String>("x".onEach {  })
+        assertStaticTypeIs<StringBuilder>(result.onEach {  })
     }
 
 
@@ -913,7 +914,7 @@ class StringTest {
         }
 
         assertFailsWith<UnsupportedOperationException> {
-            arg1("").reduceIndexed { index, a, b -> '\n' }
+            arg1("").reduceIndexed { _, _, _ -> '\n' }
         }
     }
 
@@ -931,7 +932,7 @@ class StringTest {
         }
 
         assertFailsWith<UnsupportedOperationException> {
-            arg1("").reduceRightIndexed { index, a, b -> '\n' }
+            arg1("").reduceRightIndexed { _, _, _ -> '\n' }
         }
     }
 
@@ -940,7 +941,7 @@ class StringTest {
         assertEquals('a', arg1("bacfd").reduce { v, c -> if (v > c) c else v })
 
         assertFailsWith<UnsupportedOperationException> {
-            arg1("").reduce { a, b -> '\n' }
+            arg1("").reduce { _, _ -> '\n' }
         }
     }
 
@@ -949,7 +950,7 @@ class StringTest {
         assertEquals('a', arg1("bacfd").reduceRight { c, v -> if (v > c) c else v })
 
         assertFailsWith<UnsupportedOperationException> {
-            arg1("").reduceRight { a, b -> '\n' }
+            arg1("").reduceRight { _, _ -> '\n' }
         }
     }
 
@@ -1067,7 +1068,7 @@ class StringTest {
     }
 
     @Test fun testReplaceAllClosureEmpty() = withOneCharSequenceArg("") { s ->
-        val result = s.replace("\\d+".toRegex()) { mr ->
+        val result = s.replace("\\d+".toRegex()) { _ ->
             "x"
         }
         assertEquals("", result)

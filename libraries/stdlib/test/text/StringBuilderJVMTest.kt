@@ -10,6 +10,7 @@ class StringBuilderJVMTest() {
         val s = buildString(123) {
             assertEquals(123, capacity())
         }
+        assertEquals("", s)
     }
 
     @Test fun getAndSetChar() {

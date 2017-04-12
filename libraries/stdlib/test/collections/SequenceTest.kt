@@ -39,7 +39,7 @@ public class SequenceTest {
     }
 
     @Test fun filterIndexed() {
-        assertEquals(listOf(1, 2, 5, 13, 34), fibonacci().filterIndexed { index, value -> index % 2 == 1 }.take(5).toList())
+        assertEquals(listOf(1, 2, 5, 13, 34), fibonacci().filterIndexed { index, _ -> index % 2 == 1 }.take(5).toList())
     }
 
     @Test fun filterNullable() {

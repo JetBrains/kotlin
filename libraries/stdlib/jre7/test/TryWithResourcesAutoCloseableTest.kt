@@ -55,8 +55,8 @@ class TryWithResourcesAutoCloseableTest {
 
     @Test fun opFailsCloseFailsTwice() {
         val e = assertFails {
-            Resource(faultyClose = true).use { res1 ->
-                Resource(faultyClose = true).use { res2 ->
+            Resource(faultyClose = true).use { _ ->
+                Resource(faultyClose = true).use { _ ->
                     error("op fail")
                 }
             }

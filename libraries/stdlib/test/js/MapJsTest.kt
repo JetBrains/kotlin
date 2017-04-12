@@ -11,6 +11,7 @@ class ComplexMapJsTest : MapJsTest() {
         HashMap<K, Int>()
         HashMap<K, Int>(3)
         HashMap<K, Int>(3, 0.5f)
+        @Suppress("UNCHECKED_CAST")
         val map = HashMap<K, Int>(createTestMap() as HashMap<K, Int>)
 
         assertEquals(KEYS.toNormalizedList(), map.keys.toNormalizedList() as List<Any>)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package kotlin.test
+package test
 
+import kotlin.test.assertEquals
+
+@JvmVersion
 public fun assertTypeEquals(expected: Any?, actual: Any?) {
-    assertEquals(expected?.let { it::class.js }, actual?.let { it::class.js })
+    assertEquals(expected?.javaClass, actual?.javaClass)
 }
-
-internal inline fun String.removeLeadingPlusOnJava6(): String = this
-internal fun doubleTotalOrderEquals(a: Double?, b: Double?) = a == b || (a != a && b != b)

@@ -23,6 +23,7 @@ import org.junit.Test
 class TODOTest {
     private class PartiallyImplementedClass {
         public val prop: String get() = TODO()
+        @Suppress("UNREACHABLE_CODE", "CAST_NEVER_SUCCEEDS")
         fun method1() = TODO() as String
         public fun method2(): Int = TODO()
 

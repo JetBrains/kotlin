@@ -17,6 +17,7 @@
 package test.collections
 
 import org.junit.Test
+import test.*
 import kotlin.test.*
 
 fun <T> iterableOf(vararg items: T): Iterable<T> = Iterable { items.iterator() }
@@ -200,7 +201,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         assertTrue(data === newData)
 
         // static types test
-        val list: ArrayList<Int> = arrayListOf(1, 2, 3).onEach {  }
+        assertStaticTypeIs<ArrayList<Int>>(arrayListOf(1, 2, 3).onEach {  })
     }
 
     @Test

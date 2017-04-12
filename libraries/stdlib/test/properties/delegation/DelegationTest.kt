@@ -27,6 +27,7 @@ class ObservablePropertyTest {
 
     var b: Int by Delegates.observable(1, { property, old, new ->
         assertEquals("b", property.name)
+        if (!result) assertEquals(1, old)
         result = true
         assertEquals(new, b, "New value has already been set")
     })

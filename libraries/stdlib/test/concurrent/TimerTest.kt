@@ -16,7 +16,7 @@ class TimerTest {
 
         val task = timer.scheduleAtFixedRate(1000, 100) {
             val current = counter.incrementAndGet()
-            // println("Timer fired at $current")
+            if (false) println("Timer fired at $current")
         }
         Thread.sleep(1500)
         task.cancel()

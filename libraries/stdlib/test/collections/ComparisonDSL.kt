@@ -1,5 +1,6 @@
 package test.collections
 
+import test.*
 import kotlin.test.*
 
 public fun <T> compare(expected: T, actual: T, block:CompareContext<T>.() -> Unit) {

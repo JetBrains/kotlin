@@ -61,6 +61,7 @@ public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
     protected List<String> additionalKotlinFiles() {
         List<String> result = StdLibTestBase.removeAdHocAssertions(super.additionalKotlinFiles());
         result.add(JS_TESTS_KT);
+        result.add("libraries/stdlib/test/testUtils.kt");
         return result;
     }
 

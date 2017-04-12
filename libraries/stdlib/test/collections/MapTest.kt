@@ -1,12 +1,10 @@
 package test.collections
 
 import kotlin.test.*
+import test.*
 import org.junit.Test
 
 class MapTest {
-
-    // just a static type check
-    fun <T> assertStaticTypeIs(value: T) {}
 
     @Test fun getOrElse() {
         val data = mapOf<String, Int>()
@@ -109,7 +107,9 @@ class MapTest {
         assertTrue(map === newMap)
 
         // static types test
-        val m: HashMap<String, String> = hashMapOf("a" to "b").onEach {  }
+        assertStaticTypeIs<HashMap<String, String>>(
+                hashMapOf("a" to "b").onEach {  }
+        )
     }
 
     @Test fun stream() {

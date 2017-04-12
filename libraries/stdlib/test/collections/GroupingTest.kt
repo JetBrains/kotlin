@@ -54,7 +54,7 @@ class GroupingTest {
 
         val elements = listOf("foo", "bar", "flea", "zoo", "biscuit")
         val result = elements.groupingBy { it.first() }
-                .fold({ k, e -> Collector<Char, String>(k)}, { k, acc, e -> acc.accumulateIfEven(e) })
+                .fold({ k, _ -> Collector<Char, String>(k)}, { _, acc, e -> acc.accumulateIfEven(e) })
 
         val ordered = result.values.sortedBy { it.key }.map { it.toPair() }
         assertEquals(listOf('b' to emptyList(), 'f' to listOf("flea"), 'z' to emptyList()), ordered)
@@ -62,8 +62,8 @@ class GroupingTest {
         val moreElements = listOf("fire", "zero")
         val result2 = moreElements.groupingBy { it.first() }
                 .foldTo(HashMap(result),
-                        { k, e -> error("should not be called for $k") },
-                        { k, acc, e -> acc.accumulateIfEven(e) })
+                        { k, _ -> error("should not be called for $k") },
+                        { _, acc, e -> acc.accumulateIfEven(e) })
 
         val ordered2 = result2.values.sortedBy { it.key }.map { it.toPair() }
         assertEquals(listOf('b' to emptyList(), 'f' to listOf("flea", "fire"), 'z' to listOf("zero")), ordered2)
@@ -75,12 +75,12 @@ class GroupingTest {
         val elements = listOf("foo", "bar", "flea", "zoo", "biscuit")
         fun Char.isVowel() = this in "aeiou"
         fun String.countVowels() = count(Char::isVowel)
-        val maxVowels = elements.groupingBy { it.first() }.reduce { k, a, b -> maxOfBy(a, b, String::countVowels) }
+        val maxVowels = elements.groupingBy { it.first() }.reduce { _, a, b -> maxOfBy(a, b, String::countVowels) }
 
         assertEquals(mapOf('f' to "foo", 'b' to "biscuit", 'z' to "zoo"), maxVowels)
 
         val elements2 = listOf("bar", "z", "fork")
-        val concats = elements2.groupingBy { it.first() }.reduceTo(HashMap(maxVowels)) { k, acc, e -> acc + e }
+        val concats = elements2.groupingBy { it.first() }.reduceTo(HashMap(maxVowels)) { _, acc, e -> acc + e }
 
         assertEquals(mapOf('f' to "foofork", 'b' to "biscuitbar", 'z' to "zooz"), concats)
     }

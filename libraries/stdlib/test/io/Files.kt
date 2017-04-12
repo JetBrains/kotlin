@@ -141,6 +141,7 @@ class FilesTest {
             assertEquals("", file.toRelativeString(file), "file should have empty path relative to itself: $file")
 
         for (file in files) {
+            @Suppress("NAME_SHADOWING")
             for (base in bases) {
                 val rootedFile = root.resolve(file)
                 val rootedBase = root.resolve(base)
@@ -158,7 +159,9 @@ class FilesTest {
 
         fun assertFailsRelativeTo(file: File, base: File) {
             val e = assertFailsWith<IllegalArgumentException>("file: $file, base: $base") { file.relativeTo(base) }
-//            println(e.message)
+            val message = assertNotNull(e.message)
+            assert(file.toString() in message)
+            assert(base.toString() in message)
         }
 
         val allFiles = listOf(absolute, relative) + if (isBackslashSeparator) listOf(networkShare1, networkShare2) else emptyList()
@@ -220,7 +223,7 @@ class FilesTest {
 
         if (isBackslashSeparator) {
             val diskRooted = File("""C:\foo\bar""")
-            assertTrue(rooted.isRooted)
+            assertTrue(diskRooted.isRooted)
 //            assertEquals("""C:\""", diskRooted.rootName)
 
             val networkRooted = File("""\\network\share\""")
@@ -516,7 +519,7 @@ class FilesTest {
 
             var conflicts = 0
             src.copyRecursively(dst) {
-                file: File, e: IOException ->
+                _: File, e: IOException ->
                 if (e is FileAlreadyExistsException) {
                     conflicts++
                     OnErrorAction.SKIP
@@ -531,7 +534,7 @@ class FilesTest {
                     dst.deleteRecursively()
                     var caught = false
                     assertTrue(src.copyRecursively(dst) {
-                        file: File, e: IOException ->
+                        _: File, e: IOException ->
                         if (e is AccessDeniedException) {
                             caught = true
                             OnErrorAction.SKIP
@@ -552,10 +555,7 @@ class FilesTest {
                 src.copyRecursively(dst)
             }
 
-            assertFalse(src.copyRecursively(dst) {
-                file: File, e: IOException ->
-                OnErrorAction.TERMINATE
-            })
+            assertFalse(src.copyRecursively(dst) { _, _ -> OnErrorAction.TERMINATE })
         } finally {
             src.deleteRecursively()
             dst.deleteRecursively()

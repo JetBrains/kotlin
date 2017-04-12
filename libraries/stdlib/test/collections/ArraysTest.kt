@@ -760,7 +760,7 @@ class ArraysTest {
         expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceIndexed { index, a, b -> if (index != 2) (a - b).toShort() else a.toShort() } }
 
         assertFailsWith<UnsupportedOperationException> {
-            intArrayOf().reduceIndexed { index, a, b -> a + b }
+            intArrayOf().reduceIndexed { index, a, b -> index + a + b }
         }
     }
 
@@ -776,7 +776,7 @@ class ArraysTest {
         expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceRightIndexed { index, a, b -> if (index != 1) (a - b).toShort() else a.toShort() } }
 
         assertFailsWith<UnsupportedOperationException> {
-            intArrayOf().reduceRightIndexed { index, a, b -> a + b }
+            intArrayOf().reduceRightIndexed { index, a, b -> index + a + b }
         }
     }
 
@@ -1056,6 +1056,7 @@ class ArraysTest {
         val arr1: Array<Array<Int>> = arrayOf(arrayOf(1, 2, 3), arrayOf(4, 5, 6))
         val arr2: Array<out Array<Int>> = arr1
         val arr3: Array<out Array<out Int>> = arr1
+        @Suppress("UNCHECKED_CAST")
         val arr4: Array<Array<out Int>> = arr1 as Array<Array<out Int>>
 
         val expected = listOf(1, 2, 3, 4, 5, 6)

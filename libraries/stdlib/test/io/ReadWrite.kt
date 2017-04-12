@@ -143,7 +143,7 @@ class ReadWriteTest {
     }
 
     @Test fun testPlatformNullUse() {
-        fun <T> platformNull() = java.util.Collections.singleton(null as T).first()
+        fun <T> platformNull() = @Suppress("UNCHECKED_CAST") java.util.Collections.singleton(null as T).first()
         val resource = platformNull<java.io.Closeable>()
         val result = resource.use {
             "ok"

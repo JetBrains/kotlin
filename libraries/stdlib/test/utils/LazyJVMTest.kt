@@ -47,6 +47,7 @@ class LazyJVMTest {
         accessThreads.forEach { it.join() }
 
         assertEquals(2, counter.get())
+        @Suppress("NAME_SHADOWING")
         for ((counter, initialized) in runs) {
             assertEquals(initialized, counter == 2, "Expected uninitialized on first, initialized on second call: initialized=$initialized, counter=$counter")
         }
@@ -71,7 +72,8 @@ class LazyJVMTest {
 
         assertEquals(2, counter.get())
         assertEquals(2, lazy.value)
-        for ((counter, initialized) in runs) {
+        @Suppress("NAME_SHADOWING")
+        for ((_, initialized) in runs) {
             assertFalse(initialized, "Expected uninitialized on first and second run")
         }
     }

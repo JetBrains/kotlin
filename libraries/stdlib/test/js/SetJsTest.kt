@@ -12,6 +12,7 @@ class ComplexSetJsTest : SetJsTest() {
         HashSet<T>(3)
         HashSet<T>(3, 0.5f)
 
+        @Suppress("UNCHECKED_CAST")
         val set = HashSet<T>(data as HashSet<T>)
 
         assertEquals(data, set)

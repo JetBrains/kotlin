@@ -341,4 +341,39 @@ public class RangeTest {
 
         assertFalse(range.isEmpty())
     }
+
+    private fun assertFailsWithIllegalArgument(f: () -> Unit) = assertFailsWith<IllegalArgumentException> { f() }
+
+    @Test fun illegalProgressionCreation() {
+        // create Progression explicitly with increment = 0
+        assertFailsWithIllegalArgument { IntProgression.fromClosedRange(0, 5, 0) }
+        assertFailsWithIllegalArgument { LongProgression.fromClosedRange(0, 5, 0) }
+        assertFailsWithIllegalArgument { CharProgression.fromClosedRange('a', 'z', 0) }
+
+
+        assertFailsWithIllegalArgument { 0..5 step 0 }
+        assertFailsWithIllegalArgument { 0.toByte()..5.toByte() step 0 }
+        assertFailsWithIllegalArgument { 0.toShort()..5.toShort() step 0  }
+        assertFailsWithIllegalArgument { 0L..5L step 0L }
+        assertFailsWithIllegalArgument { 'a'..'z' step 0 }
+
+        assertFailsWithIllegalArgument { 0 downTo -5 step 0 }
+        assertFailsWithIllegalArgument { 0.toByte() downTo -5.toByte() step 0 }
+        assertFailsWithIllegalArgument { 0.toShort() downTo -5.toShort() step 0  }
+        assertFailsWithIllegalArgument { 0L downTo -5L step 0L }
+        assertFailsWithIllegalArgument { 'z' downTo 'a' step 0 }
+
+        assertFailsWithIllegalArgument { 0..5 step -2 }
+        assertFailsWithIllegalArgument { 0.toByte()..5.toByte() step -2 }
+        assertFailsWithIllegalArgument { 0.toShort()..5.toShort() step -2  }
+        assertFailsWithIllegalArgument { 0L..5L step -2L }
+        assertFailsWithIllegalArgument { 'a'..'z' step -2 }
+
+
+        assertFailsWithIllegalArgument { 0 downTo -5 step -2 }
+        assertFailsWithIllegalArgument { 0.toByte() downTo -5.toByte() step -2 }
+        assertFailsWithIllegalArgument { 0.toShort() downTo -5.toShort() step -2  }
+        assertFailsWithIllegalArgument { 0L downTo -5L step -2L }
+        assertFailsWithIllegalArgument { 'z' downTo 'a' step -2 }
+    }
 }

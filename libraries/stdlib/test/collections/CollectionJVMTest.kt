@@ -215,8 +215,3 @@ class CollectionJVMTest {
         assertEquals(expected, actual)
     }
 }
-
-
-public fun assertTypeEquals(expected: Any?, actual: Any?) {
-    assertEquals(expected?.javaClass, actual?.javaClass)
-}
