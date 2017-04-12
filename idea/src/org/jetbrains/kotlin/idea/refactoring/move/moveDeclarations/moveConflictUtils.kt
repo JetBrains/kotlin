@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
-import org.jetbrains.kotlin.idea.refactoring.move.KotlinMoveUsage
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
@@ -435,34 +434,5 @@ class MoveConflictChecker(
         checkVisibilityInUsages(externalUsages, conflicts)
         checkVisibilityInDeclarations(conflicts)
         checkInternalMemberUsages(conflicts)
-    }
-}
-
-fun analyzeConflictsInFile(
-        file: KtFile,
-        usages: Collection<UsageInfo>,
-        moveTarget: KotlinMoveTarget,
-        allElementsToMove: Collection<PsiElement>,
-        conflicts: MultiMap<PsiElement, String>,
-        onUsageUpdate: (List<UsageInfo>) -> Unit
-) {
-    val elementsToMove = file.declarations
-    if (elementsToMove.isEmpty()) return
-
-    val (internalUsages, externalUsages) = usages.partition { it is KotlinMoveUsage && it.isInternal }
-    val internalUsageSet = internalUsages.toMutableSet()
-    val externalUsageSet = externalUsages.toMutableSet()
-
-    val conflictChecker = MoveConflictChecker(
-            file.project,
-            elementsToMove,
-            moveTarget,
-            elementsToMove.first(),
-            allElementsToMove = allElementsToMove
-    )
-    conflictChecker.checkAllConflicts(externalUsageSet, internalUsageSet, conflicts)
-
-    if (externalUsageSet.size != externalUsages.size || internalUsageSet.size != internalUsages.size) {
-        onUsageUpdate((externalUsageSet + internalUsageSet).toList())
     }
 }
