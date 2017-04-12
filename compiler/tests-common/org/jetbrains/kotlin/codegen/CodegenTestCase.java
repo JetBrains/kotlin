@@ -78,12 +78,15 @@ import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 
 public abstract class CodegenTestCase extends KtUsefulTestCase {
     private static final String DEFAULT_TEST_FILE_NAME = "a_test";
+    public static final String DEFAULT_JVM_TARGET_FOR_TEST = "kotlin.test.default.jvm.target";
 
     protected KotlinCoreEnvironment myEnvironment;
     protected CodegenTestFiles myFiles;
     protected ClassFileFactory classFileFactory;
     protected GeneratedClassLoader initializedClassLoader;
+
     protected ConfigurationKind configurationKind = ConfigurationKind.JDK_ONLY;
+    public final String defaultJvmTarget = System.getProperty(DEFAULT_JVM_TARGET_FOR_TEST);
 
     protected final void createEnvironmentWithMockJdkAndIdeaAnnotations(
             @NotNull ConfigurationKind configurationKind,
@@ -125,7 +128,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     @NotNull
-    protected static CompilerConfiguration createConfiguration(
+    protected CompilerConfiguration createConfiguration(
             @NotNull ConfigurationKind kind,
             @NotNull TestJdkKind jdkKind,
             @NotNull List<File> classpath,
@@ -135,6 +138,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(kind, jdkKind, classpath, javaSource);
 
         updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration);
+        updateConfiguration(configuration);
+        setCustomDefaultJvmTarget(configuration);
 
         return configuration;
     }
@@ -495,6 +500,15 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     }
 
+    protected void setCustomDefaultJvmTarget(CompilerConfiguration configuration) {
+        JvmTarget target = configuration.get(JVMConfigurationKeys.JVM_TARGET);
+        if (target == null && defaultJvmTarget != null) {
+            JvmTarget value = JvmTarget.fromString(defaultJvmTarget);
+            assert value != null : "Can't construct JvmTarget for " + defaultJvmTarget;
+            configuration.put(JVMConfigurationKeys.JVM_TARGET, value);
+        }
+    }
+
     protected void compile(
             @NotNull List<TestFile> files,
             @Nullable File javaSourceDir,
@@ -508,7 +522,6 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
                 ArraysKt.filterNotNull(new File[] {javaSourceDir}),
                 files
         );
-        updateConfiguration(configuration);
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES

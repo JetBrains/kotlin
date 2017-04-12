@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.codegen.ir;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 
 public abstract class AbstractIrBlackBoxCodegenTest extends AbstractBlackBoxCodegenTest {
     @Override
-    protected void updateConfiguration(CompilerConfiguration configuration) {
+    protected void updateConfiguration(@NotNull CompilerConfiguration configuration) {
         configuration.put(JVMConfigurationKeys.IR, true);
     }
 }
