@@ -386,9 +386,6 @@
         implementation="org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsHandler"
         order="first,before kotlin.moveFilesOrDirectories"/>
     <moveFileHandler implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinFileHandler" />
-    <moveFileHandler
-        implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.FqNameFixingMoveJavaFileHandler"
-        order="before java" />
     <refactoring.moveDirectoryWithClassesHelper
         implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.KotlinMoveDirectoryWithClassesHelper"
         order="first" />

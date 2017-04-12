@@ -264,12 +264,6 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
-    @TestMetadata("kotlin/moveFile/moveFileAndDirWithJavaFileReferringToPackageFragementWithUnmatchedDir/moveFileAndDirWithJavaFileReferringToPackageFragementWithUnmatchedDir.test")
-    public void testKotlin_moveFile_moveFileAndDirWithJavaFileReferringToPackageFragementWithUnmatchedDir_MoveFileAndDirWithJavaFileReferringToPackageFragementWithUnmatchedDir() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveFile/moveFileAndDirWithJavaFileReferringToPackageFragementWithUnmatchedDir/moveFileAndDirWithJavaFileReferringToPackageFragementWithUnmatchedDir.test");
-        doTest(fileName);
-    }
-
     @TestMetadata("kotlin/moveFile/moveFileToFile/moveFileToFile.test")
     public void testKotlin_moveFile_moveFileToFile_MoveFileToFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveFile/moveFileToFile/moveFileToFile.test");

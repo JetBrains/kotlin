@@ -122,19 +122,16 @@ class MoveKotlinFileHandler : MoveFileHandler() {
     }
 
     override fun prepareMovedFile(file: PsiFile, moveDestination: PsiDirectory, oldToNewMap: MutableMap<PsiElement, PsiElement>) {
-        if (file !is KtFile) return
         val moveProcessor = initMoveProcessor(file, moveDestination) ?: return
         val moveContext = MoveContext(file, moveProcessor)
         oldToNewMap[moveContext] = moveContext
-        val packageNameInfo = file.getPackageNameInfo(moveDestination, true) ?: return
-        val newFqName = packageNameInfo.newContainer.fqName
-        if (newFqName != null) {
-            file.packageDirective?.fqName = newFqName.quoteIfNeeded()
-        }
     }
 
     override fun updateMovedFile(file: PsiFile) {
-
+        if (file !is KtFile) return
+        val newDirectory = file.parent ?: return
+        val packageNameInfo = file.getPackageNameInfo(newDirectory, true) ?: return
+        file.packageDirective?.fqName = packageNameInfo.newContainer.fqName!!.quoteIfNeeded()
     }
 
     override fun retargetUsages(usageInfos: List<UsageInfo>?, oldToNewMap: Map<PsiElement, PsiElement>) {

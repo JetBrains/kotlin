@@ -1,5 +1,0 @@
-{
-  "filesToMove": ["test/FooUsage.kt", "test/pack"],
-  "type": "MOVE_FILES_WITH_DECLARATIONS",
-  "targetDirectory": "test2"
-}
