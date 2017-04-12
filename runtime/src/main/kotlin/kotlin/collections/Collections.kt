@@ -952,8 +952,6 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(d
 /**
  * Returns a list containing all elements that are instances of specified type parameter R.
  */
-/*
-@FixmeReified
 public inline fun <reified R> Iterable<*>.filterIsInstance(): List<@kotlin.internal.NoInfer R> {
     return filterIsInstanceTo(ArrayList<R>())
 }
@@ -965,7 +963,7 @@ public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsI
     for (element in this) if (element is R) destination.add(element)
     return destination
 }
-*/
+
 
 /**
  * Returns a list containing all elements not matching the given [predicate].

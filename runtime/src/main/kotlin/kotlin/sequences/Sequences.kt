@@ -941,22 +941,18 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterIndexedTo(d
 /**
  * Returns a sequence containing all elements that are instances of specified type parameter R.
  */
-@FixmeReified
 public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<@kotlin.internal.NoInfer R> {
-    //@Suppress("UNCHECKED_CAST")
-    //return filter { it is R } as Sequence<R>
-    TODO()
+    @Suppress("UNCHECKED_CAST")
+    return filter { it is R } as Sequence<R>
 }
 
 /**
  * Appends all elements that are instances of specified type parameter R to the given [destination].
  */
-@FixmeReified
 @Suppress("UNUSED_PARAMETER")
 public inline fun <reified R, C : MutableCollection<in R>> Sequence<*>.filterIsInstanceTo(destination: C): C {
-    //for (element in this) if (element is R) destination.add(element)
-    //return destination
-    TODO()
+    for (element in this) if (element is R) destination.add(element)
+    return destination
 }
 
 /**
