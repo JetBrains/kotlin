@@ -124,6 +124,24 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("explicitTypeArgument.kt")
+            public void testExplicitTypeArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/explicitTypeArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("explicitTypeArgumentComplex.kt")
+            public void testExplicitTypeArgumentComplex() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/explicitTypeArgumentComplex.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("explicitTypeArgumentNotNeeded.kt")
+            public void testExplicitTypeArgumentNotNeeded() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/explicitTypeArgumentNotNeeded.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("FromUsage.kt")
             public void testFromUsage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/FromUsage.kt");

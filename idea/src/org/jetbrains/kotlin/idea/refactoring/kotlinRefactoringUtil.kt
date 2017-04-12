@@ -778,8 +778,10 @@ fun dropOverrideKeywordIfNecessary(element: KtNamedDeclaration) {
     }
 }
 
-fun getQualifiedTypeArgumentList(initializer: KtExpression): KtTypeArgumentList? {
-    val context = initializer.analyze(BodyResolveMode.PARTIAL)
+fun getQualifiedTypeArgumentList(
+        initializer: KtExpression,
+        context: BindingContext = initializer.analyze(BodyResolveMode.PARTIAL)
+): KtTypeArgumentList? {
     val call = initializer.getResolvedCall(context) ?: return null
     val typeArgumentMap = call.typeArguments
     val typeArguments = call.candidateDescriptor.typeParameters.mapNotNull { typeArgumentMap[it] }
