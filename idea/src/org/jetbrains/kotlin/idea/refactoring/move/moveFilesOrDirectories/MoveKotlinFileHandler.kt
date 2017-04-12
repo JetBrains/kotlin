@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
 
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.roots.JavaProjectRootsUtil
-import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
@@ -39,9 +38,6 @@ import org.jetbrains.kotlin.idea.refactoring.move.updatePackageDirective
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.UserDataProperty
-
-internal var KtFile.allElementsToMove: List<PsiElement>? by UserDataProperty(Key.create("SCOPE_TO_MOVE"))
 
 class MoveKotlinFileHandler : MoveFileHandler() {
     internal class FileInfo(file: KtFile) : UsageInfo(file)
@@ -97,8 +93,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
                         elementsToMove = psiFile.declarations.filterIsInstance<KtNamedDeclaration>(),
                         moveTarget = moveTarget,
                         delegate = MoveDeclarationsDelegate.TopLevel,
-                        scanEntireFile = true,
-                        allElementsToMove = psiFile.allElementsToMove
+                        scanEntireFile = true
                 ),
                 Mover.Idle
         )

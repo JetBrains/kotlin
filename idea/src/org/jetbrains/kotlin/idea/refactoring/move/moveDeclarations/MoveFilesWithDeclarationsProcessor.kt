@@ -27,11 +27,9 @@ import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
+import com.intellij.usageView.UsageViewUtil
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.text.UniqueNameGenerator
-import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.allElementsToMove
-import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.shouldFixFqName
-import org.jetbrains.kotlin.psi.KtFile
 
 class MoveFilesWithDeclarationsProcessor @JvmOverloads constructor (
         project: Project,
@@ -58,23 +56,14 @@ class MoveFilesWithDeclarationsProcessor @JvmOverloads constructor (
         return MoveFilesWithDeclarationsViewDescriptor(elementsToMove.toTypedArray<PsiElement>(), targetDirectory)
     }
 
-    override fun findUsages(): Array<UsageInfo> {
-        try {
-            markScopeToMove(elementsToMove)
-            return super.findUsages()
-        }
-        finally {
-            markScopeToMove(null)
-        }
-    }
-
     override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
         val usages = refUsages.get()
 
         val (conflictUsages, usagesToProcess) = usages.partition { it is ConflictUsageInfo }
 
+        val distinctConflictUsages = UsageViewUtil.removeDuplicatedUsages(conflictUsages.toTypedArray())
         val conflicts = MultiMap<PsiElement, String>()
-        for (conflictUsage in conflictUsages) {
+        for (conflictUsage in distinctConflictUsages) {
             conflicts.putValues(conflictUsage.element, (conflictUsage as ConflictUsageInfo).messages)
         }
 
@@ -94,23 +83,15 @@ class MoveFilesWithDeclarationsProcessor @JvmOverloads constructor (
         sourceFile.name = temporaryName
     }
 
-    private fun markPsiFiles(mark: PsiFile.() -> Unit) {
-        fun PsiElement.doMark(mark: PsiFile.() -> Unit) {
+    private fun markShouldFixFqName(value: Boolean) {
+        fun PsiElement.doMark(value: Boolean) {
             when (this) {
-                is PsiFile -> mark()
-                is PsiDirectory -> children.forEach { it.doMark(mark) }
+                is PsiJavaFile -> shouldFixFqName = value
+                is PsiDirectory -> children.forEach { it.doMark(value) }
             }
         }
 
-        elementsToMove.forEach { it.doMark(mark) }
-    }
-
-    private fun markShouldFixFqName(value: Boolean) {
-        markPsiFiles { (this as? PsiJavaFile)?.shouldFixFqName = value }
-    }
-
-    private fun markScopeToMove(allElementsToMove: List<PsiElement>?) {
-        markPsiFiles { (this as? KtFile)?.allElementsToMove = allElementsToMove }
+        elementsToMove.forEach { it.doMark(value) }
     }
 
     override fun performRefactoring(usages: Array<UsageInfo>) {

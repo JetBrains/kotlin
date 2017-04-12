@@ -78,12 +78,6 @@ public class MultiModuleMoveTestGenerated extends AbstractMultiModuleMoveTest {
         doTest(fileName);
     }
 
-    @TestMetadata("moveMultipleFilesToUnrelatedModuleConflict/moveMultipleFilesToUnrelatedModuleConflict.test")
-    public void testMoveMultipleFilesToUnrelatedModuleConflict_MoveMultipleFilesToUnrelatedModuleConflict() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/moveMultiModule/moveMultipleFilesToUnrelatedModuleConflict/moveMultipleFilesToUnrelatedModuleConflict.test");
-        doTest(fileName);
-    }
-
     @TestMetadata("moveToModuleWithoutLibConflict/moveToModuleWithoutLibConflict.test")
     public void testMoveToModuleWithoutLibConflict_MoveToModuleWithoutLibConflict() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/moveMultiModule/moveToModuleWithoutLibConflict/moveToModuleWithoutLibConflict.test");
