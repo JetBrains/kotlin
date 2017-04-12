@@ -43,7 +43,19 @@ class KotlinChangePackageRefactoring(val file: KtFile) {
                 MoveDeclarationsDescriptor(
                         project = project,
                         elementsToMove = file.declarations.filterIsInstance<KtNamedDeclaration>(),
-                        moveTarget = KotlinDirectoryMoveTarget(newFqName, file.containingDirectory!!),
+                        moveTarget = object: KotlinDirectoryBasedMoveTarget {
+                            override val targetContainerFqName = newFqName
+
+                            override val directory: PsiDirectory = file.containingDirectory!!
+
+                            override val targetFile: VirtualFile? = directory.virtualFile
+
+                            override fun getOrCreateTargetPsi(originalPsi: PsiElement) = originalPsi.containingFile as? KtFile
+
+                            override fun getTargetPsiIfExists(originalPsi: PsiElement) = null
+
+                            override fun verify(file: PsiFile) = null
+                        },
                         delegate = MoveDeclarationsDelegate.TopLevel,
                         scanEntireFile = true
                 ),

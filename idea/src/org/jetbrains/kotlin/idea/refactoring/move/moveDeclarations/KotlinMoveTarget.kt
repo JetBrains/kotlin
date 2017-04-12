@@ -98,16 +98,3 @@ class KotlinMoveTargetForDeferredFile(
     // No additional verification is needed
     override fun verify(file: PsiFile): String? = null
 }
-
-class KotlinDirectoryMoveTarget(
-        override val targetContainerFqName: FqName,
-        override val directory: PsiDirectory
-) : KotlinDirectoryBasedMoveTarget {
-    override val targetFile: VirtualFile? = directory.virtualFile
-
-    override fun getOrCreateTargetPsi(originalPsi: PsiElement) = originalPsi.containingFile as? KtFile
-
-    override fun getTargetPsiIfExists(originalPsi: PsiElement) = null
-
-    override fun verify(file: PsiFile) = null
-}
