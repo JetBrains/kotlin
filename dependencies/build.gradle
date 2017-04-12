@@ -37,16 +37,13 @@ abstract class NativeDep extends DefaultTask {
     }
 
     protected final String host = getCurrentHostTarget();
+    String baseUrl = "https://jetbrains.bintray.com/kotlin-native-dependencies"
 
     @Input
     abstract String getFileName()
 
     protected String getUrl() {
         return "$baseUrl/$fileName"
-    }
-
-    protected String getBaseUrl() {
-        return "https://jetbrains.bintray.com/kotlin-native-dependencies"
     }
 
     protected File getBaseOutDir() {
