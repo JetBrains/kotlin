@@ -1,5 +1,6 @@
 Class InternalContent uses function internalFun() which will be inaccessible after move
 Class packA1.InternalContent, referenced in file InternalSource.kt, will not be accessible from module A
+Class packA1.InternalContent, referenced in file InternalSource.kt, will not be accessible from module A
 Class packA2.InternalContentUser, referenced in function packA1.InternalContent.useInternal(), will not be accessible in module B
 Function packA2.InternalContentUser.internalFun(), referenced in function packA1.InternalContent.useInternal(), will not be accessible in module B
 Function useInternal(InternalContent) uses internal function internalFun() which will be inaccessible after move

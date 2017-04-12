@@ -1,3 +1,4 @@
 Class test2.J, referenced in property test2.pack.Bar.j, will not be accessible in module A
 Class test2.J, referenced in property test2.pack.Foo.j, will not be accessible in module A
 Class test2.pack.Foo, referenced in field J.foo, will not be accessible from module B
+Class test2.pack.Foo, referenced in field J.foo, will not be accessible from module B
