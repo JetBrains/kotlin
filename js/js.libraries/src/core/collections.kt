@@ -58,6 +58,7 @@ internal fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Ar
 }
 
 @library("arrayToString")
+@Suppress("UNUSED_PARAMETER")
 internal fun arrayToString(array: Array<*>): String = definedExternally
 
 /**

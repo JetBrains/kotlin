@@ -94,6 +94,7 @@ private var output = run {
     if (isNode) NodeJsOutput(js("process.stdout")) else BufferedOutputToConsoleLog()
 }
 
+@kotlin.internal.InlineOnly
 private inline fun String(value: Any?): String = js("String")(value)
 
 /** Prints a newline to the standard output stream. */

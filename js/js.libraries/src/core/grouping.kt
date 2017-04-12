@@ -22,7 +22,7 @@ package kotlin.collections
  */
 @SinceKotlin("1.1")
 public fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int> =
-        fold(0) { acc, e -> acc + 1 }
+        fold(0) { acc, _ -> acc + 1 }
 
 /**
 /**

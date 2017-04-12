@@ -73,9 +73,11 @@ public external fun js(code: String): dynamic
  * Function corresponding to JavaScript's `typeof` operator
  */
 @kotlin.internal.InlineOnly
+@Suppress("UNUSED_PARAMETER")
 public inline fun jsTypeOf(a: Any?): String = js("typeof a")
 
 @kotlin.internal.InlineOnly
+@Suppress("UNUSED_PARAMETER")
 internal inline fun deleteProperty(obj: Any, property: Any) {
     js("delete obj[property]")
 }

@@ -26,7 +26,7 @@ public inline fun String.substring(startIndex: Int, endIndex: Int): String = asD
 public inline fun String.concat(str: String): String = asDynamic().concat(str)
 
 @kotlin.internal.InlineOnly
-public inline fun String.match(regex: String): Array<String> = asDynamic().match(regex)
+public inline fun String.match(regex: String): Array<String>? = asDynamic().match(regex)
 
 //native public fun String.trim(): String
 //TODO: String.replace to implement effective trimLeading and trimTrailing

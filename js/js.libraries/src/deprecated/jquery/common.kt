@@ -1,3 +1,4 @@
+@file: Suppress("DEPRECATION")
 package jquery
 
 import org.w3c.dom.Element

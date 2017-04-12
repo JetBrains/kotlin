@@ -1,3 +1,4 @@
+@file: Suppress("DEPRECATION")
 package jquery.ui
 
 

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_PARAMETER", "NOTHING_TO_INLINE")
+
 package kotlin
 
 /**

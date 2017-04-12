@@ -29,8 +29,8 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
 
     val facade: Continuation<Any?> = context[ContinuationInterceptor]?.interceptContinuation(this) ?: this
 
-    override fun resume(data: Any?) {
-        result = data
+    override fun resume(value: Any?) {
+        result = value
         doResumeWrapper()
     }
 

@@ -44,6 +44,7 @@ fun booleanArray(size: Int, init: dynamic): Array<Boolean> {
 }
 
 @JsName("charArray")
+@Suppress("UNUSED_PARAMETER")
 fun charArray(size: Int, init: dynamic): Array<Char> {
     val result = js("new Uint16Array(size)")
     result.`$type$` = "CharArray"

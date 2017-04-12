@@ -29,7 +29,7 @@ public open class ArrayList<E> internal constructor(private var array: Array<Any
      * Creates an empty [ArrayList].
      * @param capacity initial capacity (ignored)
      */
-    public constructor(capacity: Int = 0) : this(emptyArray()) {}
+    public constructor(@Suppress("UNUSED_PARAMETER") capacity: Int = 0) : this(emptyArray()) {}
     /**
      * Creates an [ArrayList] filled from the [elements] collection.
      */
@@ -38,7 +38,7 @@ public open class ArrayList<E> internal constructor(private var array: Array<Any
     /** Does nothing in this ArrayList implementation. */
     public fun trimToSize() {}
     /** Does nothing in this ArrayList implementation. */
-    public fun ensureCapacity(minCapacity: Int) {}
+    public fun ensureCapacity(@Suppress("UNUSED_PARAMETER") minCapacity: Int) {}
 
     override val size: Int get() = array.size
     override fun get(index: Int): E = array[rangeCheck(index)] as E

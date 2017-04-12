@@ -174,6 +174,7 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
     }
 
     internal constructor(backingMap: HashMap<K, Any>) : super() {
+        @Suppress("UNCHECKED_CAST") // expected to work due to erasure
         map = backingMap as HashMap<K, ChainEntry<K, V>>
     }
 

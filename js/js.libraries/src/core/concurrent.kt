@@ -36,4 +36,4 @@ public annotation class Volatile
 public annotation class Synchronized
 
 @kotlin.internal.InlineOnly
-public inline fun <R> synchronized(lock: Any, crossinline block: () -> R): R = block()
+public inline fun <R> synchronized(@Suppress("UNUSED_PARAMETER") lock: Any, crossinline block: () -> R): R = block()

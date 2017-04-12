@@ -46,7 +46,7 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
     override operator fun get(key: K): V? {
         if (key !is String) return null
         val value = backingMap[key]
-        return if (value !== undefined) value as V else null
+        return if (value !== undefined) value.unsafeCast<V>() else null
     }
 
 
@@ -62,7 +62,7 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
         }
         else {
 //            valueMod++
-            return oldValue as V
+            return oldValue.unsafeCast<V>()
         }
     }
 
@@ -73,7 +73,7 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
             deleteProperty(backingMap, key)
             size--
 //            structureChanged(host)
-            return value as V
+            return value.unsafeCast<V>()
         }
         else {
 //            valueMod++
@@ -110,9 +110,9 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
 
     private fun newMapEntry(key: K): MutableEntry<K, V> = object : MutableEntry<K, V> {
         override val key: K get() = key
-        override val value: V get() = this@InternalStringMap[key] as V
+        override val value: V get() = this@InternalStringMap[key].unsafeCast<V>()
 
-        override fun setValue(newValue: V): V = this@InternalStringMap.put(key, newValue) as V
+        override fun setValue(newValue: V): V = this@InternalStringMap.put(key, newValue).unsafeCast<V>()
 
         override fun hashCode(): Int = AbstractMap.entryHashCode(this)
         override fun toString(): String = AbstractMap.entryToString(this)

@@ -173,6 +173,7 @@ internal inline fun <T> concat(args: Array<T>): T {
  */
 @PublishedApi
 @JsName("arrayConcat")
+@Suppress("UNUSED_PARAMETER")
 internal fun <T> arrayConcat(a: T, b: T): T {
     return concat(js("arguments"))
 }
@@ -186,6 +187,7 @@ internal fun <T> arrayConcat(a: T, b: T): T {
  */
 @PublishedApi
 @JsName("primitiveArrayConcat")
+@Suppress("UNUSED_PARAMETER")
 internal fun <T> primitiveArrayConcat(a: T, b: T): T {
     val args: Array<T> = js("arguments")
     if (a is Array<*> && a.asDynamic().`$type$` === undefined) {
