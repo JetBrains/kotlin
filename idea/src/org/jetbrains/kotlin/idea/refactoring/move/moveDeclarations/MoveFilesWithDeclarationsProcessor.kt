@@ -22,7 +22,6 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiJavaFile
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.usageView.UsageInfo
@@ -83,17 +82,6 @@ class MoveFilesWithDeclarationsProcessor @JvmOverloads constructor (
         sourceFile.name = temporaryName
     }
 
-    private fun markShouldFixFqName(value: Boolean) {
-        fun PsiElement.doMark(value: Boolean) {
-            when (this) {
-                is PsiJavaFile -> shouldFixFqName = value
-                is PsiDirectory -> children.forEach { it.doMark(value) }
-            }
-        }
-
-        elementsToMove.forEach { it.doMark(value) }
-    }
-
     override fun performRefactoring(usages: Array<UsageInfo>) {
         val needTemporaryRename = targetFileName != null && targetDirectory.findFile(targetFileName) != null
         if (needTemporaryRename) {
@@ -101,11 +89,9 @@ class MoveFilesWithDeclarationsProcessor @JvmOverloads constructor (
         }
 
         try {
-            markShouldFixFqName(true)
             super.performRefactoring(usages)
         }
         finally {
-            markShouldFixFqName(false)
             if (needTemporaryRename) {
                 (elementsToMove.single() as PsiFile).name = targetFileName!!
             }

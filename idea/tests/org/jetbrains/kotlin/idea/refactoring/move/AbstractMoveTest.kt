@@ -280,17 +280,16 @@ enum class MoveAction {
     MOVE_FILES_WITH_DECLARATIONS {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
             val project = mainFile.project
-            val elementsToMove = config.getAsJsonArray("filesToMove").map {
-                val virtualFile = rootDir.findFileByRelativePath(it.asString)!!
-                if (virtualFile.isDirectory) virtualFile.toPsiDirectory(project)!! else virtualFile.toPsiFile(project)!!
+            val psiFilesToMove = config.getAsJsonArray("filesToMove").map {
+                rootDir.findFileByRelativePath(it.asString)!!.toPsiFile(project) as KtFile
             }
             val targetDirPath = config.getString("targetDirectory")
             val targetDir = rootDir.findFileByRelativePath(targetDirPath)!!.toPsiDirectory(project)!!
             MoveFilesWithDeclarationsProcessor(
                     project,
-                    elementsToMove,
+                    psiFilesToMove,
                     targetDir,
-                    (elementsToMove.singleOrNull() as? KtFile)?.name,
+                    psiFilesToMove.singleOrNull()?.name,
                     searchInComments = true,
                     searchInNonJavaFiles = true,
                     moveCallback = null
