@@ -24,17 +24,21 @@ private object EmptyMap : Map<Any?, Nothing>, Serializable {
 }
 
 /**
- * Returns an empty read-only map of specified type. The returned map is serializable (JVM).
+ * Returns an empty read-only map of specified type.
+ *
+ * The returned map is serializable (JVM).
  * @sample samples.collections.Maps.Instantiation.emptyReadOnlyMap
  */
 public fun <K, V> emptyMap(): Map<K, V> = @Suppress("UNCHECKED_CAST") (EmptyMap as Map<K, V>)
 
 /**
  * Returns a new read-only map with the specified contents, given as a list of pairs
- * where the first value is the key and the second is the value. If multiple pairs have
- * the same key, the resulting map will contain the value from the last of those pairs.
+ * where the first value is the key and the second is the value.
+ *
+ * If multiple pairs have the same key, the resulting map will contain the value from the last of those pairs.
  *
  * Entries of the map are iterated in the order they were specified.
+ *
  * The returned map is serializable (JVM).
  *
  * @sample samples.collections.Maps.Instantiation.mapFromPairs
@@ -42,7 +46,9 @@ public fun <K, V> emptyMap(): Map<K, V> = @Suppress("UNCHECKED_CAST") (EmptyMap 
 public fun <K, V> mapOf(vararg pairs: Pair<K, V>): Map<K, V> = if (pairs.size > 0) linkedMapOf(*pairs) else emptyMap()
 
 /**
- * Returns an empty read-only map. The returned map is serializable (JVM).
+ * Returns an empty read-only map.
+ *
+ * The returned map is serializable (JVM).
  * @sample samples.collections.Maps.Instantiation.emptyReadOnlyMap
  */
 @kotlin.internal.InlineOnly
@@ -50,7 +56,10 @@ public inline fun <K, V> mapOf(): Map<K, V> = emptyMap()
 
 /**
  * Returns an immutable map, mapping only the specified key to the
- * specified value.  The returned map is serializable.
+ * specified value.
+ *
+ * The returned map is serializable.
+ *
  * @sample samples.collections.Maps.Instantiation.mapFromPairs
  */
 @JvmVersion
@@ -68,9 +77,12 @@ public inline fun <K, V> mutableMapOf(): MutableMap<K, V> = LinkedHashMap()
 
 /**
  * Returns a new [MutableMap] with the specified contents, given as a list of pairs
- * where the first component is the key and the second is the value. If multiple pairs have
- * the same key, the resulting map will contain the value from the last of those pairs.
+ * where the first component is the key and the second is the value.
+ *
+ * If multiple pairs have the same key, the resulting map will contain the value from the last of those pairs.
+ *
  * Entries of the map are iterated in the order they were specified.
+ *
  * @sample samples.collections.Maps.Instantiation.mutableMapFromPairs
  * @sample samples.collections.Maps.Instantiation.emptyMutableMap
  */
@@ -102,8 +114,10 @@ public inline fun <K, V> linkedMapOf(): LinkedHashMap<K, V> = LinkedHashMap<K, V
 
 /**
  * Returns a new [LinkedHashMap] with the specified contents, given as a list of pairs
- * where the first component is the key and the second is the value. If multiple pairs have
- * the same key, the resulting map will contain the value from the last of those pairs.
+ * where the first component is the key and the second is the value.
+ *
+ * If multiple pairs have the same key, the resulting map will contain the value from the last of those pairs.
+ *
  * Entries of the map are iterated in the order they were specified.
  *
  * @sample samples.collections.Maps.Instantiation.linkedMapFromPairs
@@ -140,8 +154,9 @@ public inline fun <K, V> Map<out K, V>.isNotEmpty(): Boolean = !isEmpty()
 public inline fun <K, V> Map<K, V>?.orEmpty() : Map<K, V> = this ?: emptyMap()
 
 /**
- * Checks if the map contains the given key. This method allows to use the `x in map` syntax for checking
- * whether an object is contained in the map.
+ * Checks if the map contains the given key.
+ *
+ * This method allows to use the `x in map` syntax for checking whether an object is contained in the map.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.contains(key: K) : Boolean = containsKey(key)
@@ -206,6 +221,7 @@ public inline operator fun <K, V> Map.Entry<K, V>.component1(): K = key
 
 /**
  * Returns the value component of the map entry.
+ *
  * This method allows to use destructuring declarations when working with maps, for example:
  * ```
  * for ((key, value) in map) {
