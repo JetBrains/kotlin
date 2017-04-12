@@ -31,7 +31,10 @@ import com.intellij.openapi.util.Pass;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.refactoring.*;
+import com.intellij.refactoring.JavaRefactoringSettings;
+import com.intellij.refactoring.MoveDestination;
+import com.intellij.refactoring.PackageWrapper;
+import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.classMembers.AbstractMemberInfoModel;
 import com.intellij.refactoring.classMembers.MemberInfoChange;
 import com.intellij.refactoring.classMembers.MemberInfoChangeListener;
@@ -735,23 +738,15 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                             MoveUtilsKt.setUpdatePackageDirective(sourceFile, cbUpdatePackageDirective.isSelected());
                         }
 
-                        BaseRefactoringProcessor processor;
-                        processor = sourceFiles.size() == 1 && targetFileName != null
-                                    ? new MoveToKotlinFileProcessor(myProject,
-                                                                    CollectionsKt.single(sourceFiles),
-                                                                    targetDirectory,
-                                                                    targetFileName,
-                                                                    isSearchInComments(),
-                                                                    isSearchInNonJavaFiles(),
-                                                                    moveCallback)
-                                    : new KotlinAwareMoveFilesOrDirectoriesProcessor(myProject,
-                                                                                     sourceFiles,
-                                                                                     targetDirectory,
-                                                                                     isSearchInComments(),
-                                                                                     isSearchInNonJavaFiles(),
-                                                                                     moveCallback);
-
-                        invokeRefactoring(processor);
+                        invokeRefactoring(
+                                new MoveFilesWithDeclarationsProcessor(myProject,
+                                                                       sourceFiles,
+                                                                       targetDirectory,
+                                                                       targetFileName,
+                                                                       isSearchInComments(),
+                                                                       isSearchInNonJavaFiles(),
+                                                                       moveCallback)
+                        );
 
                         return;
                     }
