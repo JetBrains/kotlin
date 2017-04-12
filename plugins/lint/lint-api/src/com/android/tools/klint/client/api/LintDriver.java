@@ -431,8 +431,6 @@ public class LintDriver {
             return;
         }
 
-        registerCustomDetectors(projects);
-
         if (mScope == null) {
             mScope = Scope.infer(projects);
         }
