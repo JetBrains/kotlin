@@ -29,9 +29,10 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.invokeOnceOnCommandFinish
+import org.jetbrains.kotlin.idea.refactoring.move.KotlinMoveUsage
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinDirectoryMoveTarget
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveConflictChecker
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessor
-import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.analyzeConflictsInFile
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.FqName
@@ -87,8 +88,23 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
 
             project.runSynchronouslyWithProgress("Analyzing conflicts in ${usageInfo.psiFile.name}", false) {
                 runReadAction {
-                    analyzeConflictsInFile(usageInfo.psiFile, usageInfo.usages, moveTarget, files, conflicts) {
-                        infos[index] = usageInfo.copy(usages = it)
+                    val elementsToMove = usageInfo.psiFile.declarations
+                    if (elementsToMove.isEmpty()) continue
+
+                    val (internalUsages, externalUsages) = usageInfo.usages.partition { it is KotlinMoveUsage && it.isInternal }
+                    val internalUsageSet = internalUsages.toMutableSet()
+                    val externalUsageSet = externalUsages.toMutableSet()
+
+                    val conflictChecker = MoveConflictChecker(
+                            project,
+                            elementsToMove,
+                            moveTarget,
+                            elementsToMove.first(),
+                            allElementsToMove = files
+                    )
+                    conflictChecker.checkAllConflicts(externalUsageSet, internalUsageSet, conflicts)
+                    if (externalUsageSet.size != externalUsages.size || internalUsageSet.size != internalUsages.size) {
+                        infos[index] = usageInfo.copy(usages = (externalUsageSet + internalUsageSet).toList())
                     }
                 }
             }
