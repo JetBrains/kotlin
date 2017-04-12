@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.compilerRunner.COULD_NOT_CONNECT_TO_DAEMON_MESSAGE
-import org.jetbrains.kotlin.compilerRunner.CREATED_SESSION_FILE_PREFIX
-import org.jetbrains.kotlin.compilerRunner.DELETED_SESSION_FILE_PREFIX
-import org.jetbrains.kotlin.compilerRunner.EXISTING_SESSION_FILE_PREFIX
+import org.jetbrains.kotlin.compilerRunner.*
 import org.junit.Assert
 import org.junit.Test
+import java.io.File
 
 // todo: test client file creation/deletion
 // todo: test daemon start (does not start every build)
@@ -75,6 +73,21 @@ class KotlinDaemonIT : BaseGradleIT() {
 
             val deletedSessions = output.findAllStringsPrefixed(DELETED_SESSION_FILE_PREFIX)
             Assert.assertArrayEquals("Sessions should not be deleted (incremental build)", deletedSessions, emptyArray())
+        }
+    }
+
+    @Test
+    fun testClientFileIsDeletedOnExit() {
+        val project = Project("kotlinProject", GRADLE_VERSION)
+        val options = defaultBuildOptions().copy(withDaemon = false)
+
+        project.build("assemble", options = options) {
+            val regex = Regex("(?m)($CREATED_CLIENT_FILE_PREFIX|$EXISTING_CLIENT_FILE_PREFIX)(.+)$")
+            val clientFiles = regex.findAll(output).toList().map { File(it.groupValues[2]) }
+            assert(clientFiles.isNotEmpty()) { "No client files in log" }
+            clientFiles.forEach { clientFile ->
+                assert(!clientFile.exists()) { "Client file $clientFile is expected to be deleted!" }
+            }
         }
     }
 }
