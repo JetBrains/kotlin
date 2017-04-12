@@ -30,7 +30,7 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectori
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.refactoring.isInJavaSourceRoot
-import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinAwareMoveFilesOrDirectoriesProcessor
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveFilesWithDeclarationsProcessor
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -78,10 +78,11 @@ fun invokeMoveFilesOrDirectoriesRefactoring(
 
             if (elementsToMove.isNotEmpty()) {
                 @Suppress("UNCHECKED_CAST")
-                val processor = KotlinAwareMoveFilesOrDirectoriesProcessor(
+                val processor = MoveFilesWithDeclarationsProcessor(
                         project,
                         elementsToMove as List<KtFile>,
                         selectedDir,
+                        null,
                         false,
                         false,
                         moveCallback,
