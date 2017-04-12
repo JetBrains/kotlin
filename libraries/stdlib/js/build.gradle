@@ -10,6 +10,7 @@ configurePublishing(project)
 
 
 def builtinsSrcDir = "${buildDir}/builtin-sources"
+def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
 def commonSrcDir = "${buildDir}/common-sources"
 def commonTestSrcDir = "${buildDir}/common-test-sources"
 def builtinsDir = "${rootDir}/../core/builtins"
@@ -22,15 +23,9 @@ def jsTestOutputFile = "${buildDir}/classes/test/kotlin-stdlib-js_test.js"
 def kotlinTestJsOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/main/kotlin-test.js"
 
 sourceSets {
-    builtinsFiles {
-        kotlin {
-            srcDir "${builtinsDir}/native/kotlin/"
-            include "Comparable.kt"
-        }
-    }
     builtins {
         kotlin {
-            source builtinsFiles.kotlin
+            srcDir builtinsSrcDir2
             srcDir "${jsSrcDir}/builtins"
         }
     }
@@ -58,6 +53,16 @@ dependencies {
 
 createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
 createPreprocessorTask(project, "Test", "${projectDir}/../test", commonTestSrcDir)
+
+task prepareComparableSource(type: Copy) {
+    doFirst {
+        delete builtinsSrcDir2
+    }
+    from("${builtinsDir}/native/kotlin") {
+        include "Comparable.kt"
+    }
+    into builtinsSrcDir2
+}
 
 task prepareBuiltinsSources(type: Copy) {
     doFirst {
@@ -99,6 +104,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile) {
 }
 
 compileBuiltinsKotlin2Js {
+    dependsOn prepareComparableSource
     kotlinOptions {
         metaInfo = false
         outputFile = "${buildDir}/classes/builtins/kotlin.js"
