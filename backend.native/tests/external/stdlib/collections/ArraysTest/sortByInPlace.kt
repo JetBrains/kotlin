@@ -1,49 +1,39 @@
 import kotlin.test.*
 
-fun <T> assertArrayNotSameButEquals(expected: Array<out T>, actual: Array<out T>, message: String = "") {
-    assertTrue(expected !== actual && expected contentEquals actual, message)
+fun <T: Comparable<T>> assertSorted(array: Array<out T>, message: String = "") = assertSorted(array, message, { it })
+
+inline fun <T, R : Comparable<R>> assertSorted(array: Array<out T>, message: String = "", crossinline selector: (T) -> R) {
+    if (array.isEmpty() || array.size == 1) {
+        return
+    }
+    var prev = selector(array[0])
+    for (i in 1..array.lastIndex) {
+        val cur = selector(array[i])
+        assertTrue(prev.compareTo(cur) <= 0, message)
+        prev = cur
+    }
 }
 
-fun assertArrayNotSameButEquals(expected: IntArray, actual: IntArray, message: String = "") {
-    assertTrue(expected !== actual && expected contentEquals actual, message)
-}
-
-fun assertArrayNotSameButEquals(expected: LongArray, actual: LongArray, message: String = "") {
-    assertTrue(expected !== actual && expected contentEquals actual, message)
-}
-
-fun assertArrayNotSameButEquals(expected: ShortArray, actual: ShortArray, message: String = "") {
-    assertTrue(expected !== actual && expected contentEquals actual, message)
-}
-
-fun assertArrayNotSameButEquals(expected: ByteArray, actual: ByteArray, message: String = "") {
-    assertTrue(expected !== actual && expected contentEquals actual, message)
-}
-
-fun assertArrayNotSameButEquals(expected: DoubleArray, actual: DoubleArray, message: String = "") {
-    assertTrue(expected !== actual && expected contentEquals actual, message)
-}
-
-fun assertArrayNotSameButEquals(expected: FloatArray, actual: FloatArray, message: String = "") {
-    assertTrue(expected !== actual && expected contentEquals actual, message)
-}
-
-fun assertArrayNotSameButEquals(expected: CharArray, actual: CharArray, message: String = "") {
-    assertTrue(expected !== actual && expected contentEquals actual, message)
-}
-
-fun assertArrayNotSameButEquals(expected: BooleanArray, actual: BooleanArray, message: String = "") {
-    assertTrue(expected !== actual && expected contentEquals actual, message)
+inline fun <T, R : Comparable<R>> assertSortedDescending(array: Array<out T>, message: String = "", crossinline selector: (T) -> R) {
+    if (array.isEmpty() || array.size == 1) {
+        return
+    }
+    var prev = selector(array[0])
+    for (i in 1..array.lastIndex) {
+        val cur = selector(array[i])
+        assertTrue(prev.compareTo(cur) >= 0, message)
+        prev = cur
+    }
 }
 
 fun box() {
     val data = arrayOf("aa" to 20, "ab" to 3, "aa" to 3)
     data.sortBy { it.second }
-    assertArrayNotSameButEquals(arrayOf("ab" to 3, "aa" to 3, "aa" to 20), data)
+    assertSorted(data) { it.second }
 
     data.sortBy { it.first }
-    assertArrayNotSameButEquals(arrayOf("aa" to 3, "aa" to 20, "ab" to 3), data)
+    assertSorted(data) { it.first }
 
     data.sortByDescending { (it.first + it.second).length }
-    assertArrayNotSameButEquals(arrayOf("aa" to 20, "aa" to 3, "ab" to 3), data)
+    assertSortedDescending(data) { (it.first + it.second).length }
 }

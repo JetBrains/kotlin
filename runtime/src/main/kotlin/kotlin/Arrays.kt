@@ -15,7 +15,7 @@
  */
 
 // TODO: Add SortedSed class and implement toSortedSet extensions
-// TODO: Add sort and binary search for primitive arrays
+// TODO: Add fill and binary search methods for primitive arrays (with tests)
 
 package kotlin
 
@@ -10559,9 +10559,7 @@ public inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray
  * Sorts the array in-place according to the order specified by the given [comparator].
  */
 public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
-    if (size > 1) {
-        sortArrayWith(this, 0, size - 1, comparator)
-    }
+    if (size > 1) sortArrayWith(this, 0, size, comparator)
 }
 
 /**

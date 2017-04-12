@@ -332,17 +332,28 @@ private fun quickSort(
 }
 
 // Interfaces   =============================================================================
+/**
+ * Sorts the subarray specified by [fromIndex] (inclusive) and [toIndex] (exclusive) parameters
+ * using the qsort algorithm with the given [comparator].
+ */
 internal fun <T> sortArrayWith(
-        array: Array<out T>, fromIndex: Int, toIndex: Int, comparator: Comparator<T>) {
+        array: Array<out T>, fromIndex: Int = 0, toIndex: Int = array.size, comparator: Comparator<T>) {
     @Suppress("UNCHECKED_CAST")
-    quickSort(array as Array<T>, fromIndex, toIndex, comparator)
+    quickSort(array as Array<T>, fromIndex, toIndex - 1, comparator)
 }
 
+/**
+ * Sorts a subarray of [Comparable] elements specified by [fromIndex] (inclusive) and
+ * [toIndex] (exclusive) parameters using the qsort algorithm.
+ */
 internal fun <T> sortArrayComparable(array: Array<out T>) {
     @Suppress("UNCHECKED_CAST")
     quickSort(array as Array<T>, 0, array.size - 1)
 }
 
+/**
+ * Sorts the given array using qsort algorithm.
+ */
 internal fun sortArray(array: ByteArray)    = quickSort(array, 0, array.size - 1)
 internal fun sortArray(array: ShortArray)   = quickSort(array, 0, array.size - 1)
 internal fun sortArray(array: IntArray)     = quickSort(array, 0, array.size - 1)
