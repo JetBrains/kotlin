@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -125,12 +124,16 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
             }
         }
 
+        //---------------------------------------------------------------------//
+
         override fun visitPropertyNew(declaration: IrProperty) {
 
             copyPropertyOrField(declaration.descriptor)
 
             super.visitPropertyNew(declaration)
         }
+
+        //---------------------------------------------------------------------//
 
         override fun visitFieldNew(declaration: IrField) {
 
@@ -267,7 +270,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
 
                 initialize(
                     /* receiverParameterType        = */ receiverParameterType,
-                    /* dispatchReceiverParameter    = */ null, //  For constructor there is no explicit dispatch receiver.
+                    /* dispatchReceiverParameter    = */ null,                              //  For constructor there is no explicit dispatch receiver.
                     /* typeParameters               = */ newTypeParameters,
                     /* unsubstitutedValueParameters = */ newValueParameters,
                     /* unsubstitutedReturnType      = */ returnType,
@@ -276,7 +279,6 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
                 )
             }
         }
-
 
         //---------------------------------------------------------------------//
 
@@ -413,7 +415,6 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
         //--- Visits ----------------------------------------------------------//
 
         override fun visitCall(expression: IrCall): IrCall {
-
             val oldExpression = super.visitCall(expression)
             if (oldExpression !is IrCallImpl) return oldExpression                                        // TODO what other kinds of call can we meet?
 
@@ -473,7 +474,6 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
         //---------------------------------------------------------------------//
 
         override fun visitTypeOperator(expression: IrTypeOperatorCall): IrTypeOperatorCall {
-
             val typeOperand = substituteType(expression.typeOperand)!!
             val returnType = getTypeOperatorReturnType(expression.operator, typeOperand)
             return IrTypeOperatorCallImpl(
@@ -515,7 +515,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
         }
     }
 
-    //---------------------------------------------------------------------//
+    //-------------------------------------------------------------------------//
 
     private fun copyValueParameters(oldValueParameters: List <ValueParameterDescriptor>, containingDeclaration: CallableDescriptor): List <ValueParameterDescriptor> {
 
@@ -541,6 +541,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetScope: ScopeWithIr,
     //-------------------------------------------------------------------------//
 
     private fun copyIrCallImpl(oldExpression: IrCallImpl): IrCallImpl {
+
         val oldDescriptor = oldExpression.descriptor
         val newDescriptor = descriptorSubstituteMap.getOrDefault(oldDescriptor.original,
             oldDescriptor) as FunctionDescriptor

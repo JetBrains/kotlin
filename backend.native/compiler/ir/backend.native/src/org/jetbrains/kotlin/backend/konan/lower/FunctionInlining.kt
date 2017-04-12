@@ -61,7 +61,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
         val functionDeclaration = getFunctionDeclaration(irCall)                            // Get declaration of the function to be inlined.
         if (functionDeclaration == null) {                                                  // We failed to get the declaration.
-            val message = "Failed to obtain inline function declaration"
+            val message = "Inliner failed to obtain inline function declaration"
             context.reportWarning(message, currentFile, irCall)                             // Report warning.
             return irCall
         }
@@ -122,7 +122,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
             ) as IrExpression
         }
 
-       //---------------------------------------------------------------------//
+        //---------------------------------------------------------------------//
 
         override fun visitCall(expression: IrCall): IrExpression {
             if (!isLambdaCall(expression)) return super.visitCall(expression)               // If it is not lambda call - return.
@@ -156,7 +156,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         return true                                                                         // It is lambda call.
     }
 
-    //---------------------------------------------------------------------//
+    //-------------------------------------------------------------------------//
 
     private fun isLambdaExpression(expression: IrExpression) : Boolean {
         if (expression !is IrBlock)                                     return false        // Lambda mast be represented with IrBlock.
@@ -171,14 +171,14 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         return true                                                                         // The expression represents lambda.
     }
 
-    //---------------------------------------------------------------------//
+    //-------------------------------------------------------------------------//
 
     private fun getLambdaFunction(lambdaArgument: IrBlock): IrFunction {
         val statements = lambdaArgument.statements
         return statements[0] as IrFunction
     }
 
-    //---------------------------------------------------------------------//
+    //-------------------------------------------------------------------------//
 
     private fun argumentNeedsEvaluation(expression: IrExpression): Boolean {
         if (expression is IrGetValue)          return false                                 // Parameter is already GetValue - nothing to evaluate.
@@ -224,7 +224,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         val evaluationStatements  : MutableList<IrStatement>
     )
 
-    //---------------------------------------------------------------------//
+    //-------------------------------------------------------------------------//
 
     private fun buildParameterToArgument(irCall     : IrCall,                               // Call site.
                                          irFunction: IrFunction                             // Function to be called.
