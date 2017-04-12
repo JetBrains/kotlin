@@ -177,7 +177,7 @@ abstract class KonanTest extends JavaExec {
             println "to be executed manually: $exe"
             return
         }
-        println "execution :$exe"
+        println "execution: $exe"
 
         def out = new ByteArrayOutputStream()
         //TODO Add test timeout
@@ -464,7 +464,7 @@ fun main(args : Array<String>) {
             // Create separate output directory for each test in the group.
             outputDirectory = outputRootDirectory + "/${it.name}"
             project.file(outputDirectory).mkdirs()
-            println("TEST: $it.name ($statistics.total/${ktFiles.size()}, passed: $statistics.passed, skipped: $statistics.skipped)")
+            println("TEST: $it.name (done: $statistics.total/${ktFiles.size()}, passed: $statistics.passed, skipped: $statistics.skipped)")
             def testCase = testSuite.createTestCase(it.name)
             testCase.start()
             if (isEnabledForNativeBackend(source)) {
