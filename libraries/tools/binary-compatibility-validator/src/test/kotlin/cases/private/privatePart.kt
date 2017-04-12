@@ -10,6 +10,7 @@ private const val privateConst: Int = 4
 
 // fun
 
+@Suppress("UNUSED_PARAMETER")
 private fun privateFun(a: Any?) = privateConst
 
 // access
