@@ -159,7 +159,7 @@ class DeepCopyIrTree(private val symbolsRemapper: DeepCopySymbolsRemapper) : IrE
                     symbolsRemapper.getDeclaredEnumEntry(declaration.symbol)
             ).apply {
                 correspondingClass = declaration.correspondingClass?.transform()
-                initializerExpression = declaration.initializerExpression.transform()
+                initializerExpression = declaration.initializerExpression?.transform()
             }
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrAnonymousInitializer =
@@ -317,6 +317,7 @@ class DeepCopyIrTree(private val symbolsRemapper: DeepCopySymbolsRemapper) : IrE
                             expression.startOffset, expression.endOffset,
                             expression.type,
                             symbolsRemapper.getReferencedFunction(expression.symbol),
+                            expression.descriptor, // TODO substitute referenced descriptor
                             expression.getTypeArgumentsMap(),
                             mapStatementOrigin(expression.origin),
                             symbolsRemapper.getReferencedClassOrNull(expression.superQualifierSymbol)

@@ -32,7 +32,7 @@ abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolO
         if (_owner == null)
             _owner = owner
         else
-            throw IllegalStateException("Symbol for $descriptor is already bound")
+            throw IllegalStateException("${javaClass.simpleName} for $descriptor is already bound")
     }
 
     override val isBound: Boolean

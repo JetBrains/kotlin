@@ -90,8 +90,10 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
     ) =
             @Suppress("DEPRECATION")
             if (descriptor is LocalVariableDescriptor && descriptor.isDelegated) {
-                val getter = context.symbolTable.referenceFunction(descriptor.getter!!)
-                IrCallImpl(startOffset, endOffset, descriptor.type, getter, typeArguments, origin ?: IrStatementOrigin.GET_LOCAL_PROPERTY)
+                val getterDescriptor = descriptor.getter!!
+                val getterSymbol = context.symbolTable.referenceFunction(getterDescriptor.original)
+                IrCallImpl(startOffset, endOffset, descriptor.type, getterSymbol, getterDescriptor,
+                           typeArguments, origin ?: IrStatementOrigin.GET_LOCAL_PROPERTY)
             }
             else
                 IrGetValueImpl(startOffset, endOffset, context.symbolTable.referenceValue(descriptor), origin)
@@ -100,7 +102,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
             call.callReceiver.call { dispatchReceiver, extensionReceiver ->
                 val descriptor = call.descriptor as? ClassConstructorDescriptor
                                  ?: throw AssertionError("Class constructor expected: ${call.descriptor}")
-                val constructorSymbol = context.symbolTable.referenceConstructor(descriptor)
+                val constructorSymbol = context.symbolTable.referenceConstructor(descriptor.original)
                 val irCall = IrDelegatingConstructorCallImpl(startOffset, endOffset, constructorSymbol, getTypeArguments(call.original))
                 irCall.dispatchReceiver = dispatchReceiver?.load()
                 irCall.extensionReceiver = extensionReceiver?.load()
@@ -158,20 +160,21 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
     }
 
     private fun generateFunctionCall(
-            descriptor: FunctionDescriptor,
+            functionDescriptor: FunctionDescriptor,
             startOffset: Int,
             endOffset: Int,
             origin: IrStatementOrigin?,
             call: CallBuilder
     ): IrExpression =
             call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-                val returnType = descriptor.returnType!!
-                val functionSymbol = context.symbolTable.referenceFunction(descriptor)
+                val returnType = functionDescriptor.returnType!!
+                val functionSymbol = context.symbolTable.referenceFunction(functionDescriptor.original)
                 val superQualifierSymbol = call.superQualifier?.let { context.symbolTable.referenceClass(it) }
                 val irCall = IrCallImpl(
                         startOffset, endOffset,
                         returnType,
                         functionSymbol,
+                        functionDescriptor,
                         getTypeArguments(call.original),
                         origin,
                         superQualifierSymbol

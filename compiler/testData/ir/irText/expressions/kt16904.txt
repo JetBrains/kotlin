@@ -90,6 +90,7 @@ FILE /kt16904.kt
           receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
           value: CONST Int type=kotlin.Int value='42'
     PROPERTY FAKE_OVERRIDE public final override var field: kotlin.Int
+      FIELD FAKE_OVERRIDE public final override var field: kotlin.Int
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

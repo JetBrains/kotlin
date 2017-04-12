@@ -7,10 +7,6 @@ FILE /delegatedMembers.kt
     PROPERTY public abstract val bar: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-bar>(): kotlin.Int
         $this: VALUE_PARAMETER <receiver: IBase>
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
-            GET_FIELD 'bar: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: IBase>' type=IBase<T> origin=null
     FUN public abstract fun <X> qux(t: T, x: X): kotlin.Unit
       TYPE_PARAMETER <X>
       $this: VALUE_PARAMETER <receiver: IBase>

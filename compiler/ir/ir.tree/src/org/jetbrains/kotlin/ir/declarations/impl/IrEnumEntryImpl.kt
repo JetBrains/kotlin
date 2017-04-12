@@ -46,19 +46,19 @@ class IrEnumEntryImpl(
 
     override val descriptor: ClassDescriptor get() = symbol.descriptor
     override var correspondingClass: IrClass? = null
-    override lateinit var initializerExpression: IrExpression
+    override var initializerExpression: IrExpression? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitEnumEntry(this, data)
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        initializerExpression.accept(visitor, data)
+        initializerExpression?.accept(visitor, data)
         correspondingClass?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        initializerExpression = initializerExpression.transform(transformer, data)
+        initializerExpression = initializerExpression?.transform(transformer, data)
         correspondingClass = correspondingClass?.transform(transformer, data) as? IrClass
     }
 }

@@ -51,11 +51,7 @@ class IrDeclarationStubBuilder(val defaultOrigin: IrDeclarationOrigin) {
     private fun <T : IrTypeParametersContainer>
     T.buildTypeParameterStubs(typeParameterDescriptors: List<TypeParameterDescriptor>, origin: IrDeclarationOrigin): T =
             apply {
-                typeParameterDescriptors.forEach { typeParameterDescriptor ->
-                    typeParameters.add(
-                            buildTypeParameterStub(IrTypeParameterSymbolImpl(typeParameterDescriptor), origin)
-                    )
-                }
+                typeParameterDescriptors.mapTo(typeParameters) { buildTypeParameterStub(IrTypeParameterSymbolImpl(it), origin) }
             }
 
     private fun <T : IrFunction>
@@ -66,11 +62,7 @@ class IrDeclarationStubBuilder(val defaultOrigin: IrDeclarationOrigin) {
                     addIfNotNull(functionDescriptor.extensionReceiverParameter)
                     addAll(functionDescriptor.valueParameters)
                 }
-                valueParameterDescriptors.forEach { valueParameterDescriptor ->
-                    valueParameters.add(
-                            buildValueParameterStub(IrValueParameterSymbolImpl(valueParameterDescriptor), origin)
-                    )
-                }
+                valueParameterDescriptors.mapTo(valueParameters) { buildValueParameterStub(IrValueParameterSymbolImpl(it), origin) }
             }
 
     private val DeclarationDescriptorWithSource.startOffset

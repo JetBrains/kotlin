@@ -32,6 +32,7 @@ class IrCallImpl(
         endOffset: Int,
         type: KotlinType,
         override val symbol: IrFunctionSymbol,
+        override val descriptor: FunctionDescriptor,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         override val origin: IrStatementOrigin? = null,
         override val superQualifierSymbol: IrClassSymbol? = null
@@ -42,14 +43,15 @@ class IrCallImpl(
     constructor(
             startOffset: Int,
             endOffset: Int,
-            calleeDescriptor: CallableMemberDescriptor,
+            calleeDescriptor: FunctionDescriptor,
             typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
             origin: IrStatementOrigin? = null,
             superQualifierDescriptor: ClassDescriptor? = null
     ) : this(
             startOffset, endOffset,
             calleeDescriptor.returnType!!,
-            createFunctionSymbol(calleeDescriptor),
+            createFunctionSymbol(calleeDescriptor.original),
+            calleeDescriptor,
             typeArguments, origin,
             createClassSymbolOrNull(superQualifierDescriptor)
     )
@@ -57,12 +59,16 @@ class IrCallImpl(
     constructor(
             startOffset: Int, endOffset: Int,
             symbol: IrFunctionSymbol,
+            descriptor: FunctionDescriptor,
             typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
             origin: IrStatementOrigin? = null,
             superQualifierSymbol: IrClassSymbol? = null
-    ) : this(startOffset, endOffset, symbol.descriptor.returnType!!, symbol, typeArguments, origin, superQualifierSymbol)
+    ) : this(startOffset, endOffset, symbol.descriptor.returnType!!, symbol, descriptor, typeArguments, origin, superQualifierSymbol)
 
-    override val descriptor: FunctionDescriptor = symbol.descriptor
+    constructor(startOffset: Int, endOffset: Int, symbol: IrFunctionSymbol) :
+            this(startOffset, endOffset, symbol, symbol.descriptor)
+
+
     override val superQualifier: ClassDescriptor? = superQualifierSymbol?.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

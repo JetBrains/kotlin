@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 interface IrModuleFragment : IrElement {
     val descriptor: ModuleDescriptor
     val irBuiltins: IrBuiltIns
-    val files: List<IrFile>
+    val files: MutableList<IrFile>
+    val externalPackageFragments: MutableList<IrExternalPackageFragment>
+    val dependencyModules: MutableList<IrModuleFragment>
 
     override val startOffset: Int get() = UNDEFINED_OFFSET
     override val endOffset: Int get() = UNDEFINED_OFFSET

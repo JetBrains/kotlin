@@ -138,7 +138,7 @@ fun IrBuilderWithScope.irGet(receiver: IrExpression, getterSymbol: IrFunctionSym
         IrGetterCallImpl(startOffset, endOffset, getterSymbol, null, receiver, null, IrStatementOrigin.GET_PROPERTY)
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: KotlinType): IrCall =
-        IrCallImpl(startOffset, endOffset, type, callee, null)
+        IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor, null)
 
 fun IrBuilderWithScope.irCallOp(callee: IrFunctionSymbol, dispatchReceiver: IrExpression, argument: IrExpression): IrCall =
         irCall(callee, callee.descriptor.returnType!!).apply {

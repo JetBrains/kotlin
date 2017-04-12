@@ -20,10 +20,7 @@ import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.deepCopy
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
@@ -38,8 +35,23 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
     override fun doTest(wholeFile: File, testFiles: List<TestFile>) {
         val dir = wholeFile.parentFile
         val ignoreErrors = shouldIgnoreErrors(wholeFile)
-        for ((testFile, irFile) in generateIrFilesAsSingleModule(testFiles, ignoreErrors)) {
+        val irModule = generateIrModule(ignoreErrors)
+
+        val ktFiles = testFiles.filter { it.name.endsWith(".kt") }
+        for ((testFile, irFile) in ktFiles.zip(irModule.files)) {
             doTestIrFileAgainstExpectations(dir, testFile, irFile)
+        }
+
+        if (shouldDumpDependencies(wholeFile)) {
+            doTestIrModuleDependencies(wholeFile, irModule)
+        }
+    }
+
+    private fun doTestIrModuleDependencies(wholeFile: File, irModule: IrModuleFragment) {
+        irModule.dependencyModules.forEach { irDependencyModule ->
+            val actual = irDependencyModule.dump()
+            val expectedFileName = wholeFile.absolutePath.replace(".kt", "__${irDependencyModule.descriptor.name.asString()}.txt")
+            KotlinTestUtils.assertEqualsToFile(File(expectedFileName), actual)
         }
     }
 
@@ -165,6 +177,11 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
     companion object {
         private val EXPECTED_OCCURRENCES_PATTERN = Regex("""^\s*//\s*(\d+)\s*(.*)$""")
         private val IR_FILE_TXT_PATTERN = Regex("""// IR_FILE: (.*)$""")
+
+        private val DUMP_DEPENDENCIES_PATTERN = Regex("""// !DUMP_DEPENDENCIES""")
+
+        internal fun shouldDumpDependencies(wholeFile: File): Boolean =
+                DUMP_DEPENDENCIES_PATTERN.containsMatchIn(wholeFile.readText())
 
         internal fun parseExpectations(dir: File, testFile: TestFile): Expectations {
             val regexps = ArrayList<RegexpInText>()

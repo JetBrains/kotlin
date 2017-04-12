@@ -187,7 +187,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
             enumEntriesByField[fieldPropertyDescriptor] = enumEntry.descriptor
             enumEntryFields.add(fieldPropertyDescriptor)
 
-            val enumEntryInitializer = enumEntry.initializerExpression
+            val enumEntryInitializer = enumEntry.initializerExpression!!
             return IrFieldImpl(
                     enumEntry.startOffset, enumEntry.endOffset, JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_ENTRY,
                     fieldPropertyDescriptor,

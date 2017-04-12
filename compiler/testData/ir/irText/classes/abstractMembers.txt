@@ -1,0 +1,36 @@
+FILE /abstractMembers.kt
+  CLASS CLASS AbstractClass
+    $new: VALUE_PARAMETER <receiver: AbstractClass>
+    CONSTRUCTOR public constructor AbstractClass()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='AbstractClass'
+    FUN public abstract fun abstractFun(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: AbstractClass>
+    PROPERTY public abstract val abstractVal: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-abstractVal>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: AbstractClass>
+    PROPERTY public abstract var abstractVar: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-abstractVar>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: AbstractClass>
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <set-abstractVar>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: AbstractClass>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+  CLASS INTERFACE Interface
+    FUN public abstract fun abstractFun(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: Interface>
+    PROPERTY public abstract val abstractVal: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-abstractVal>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: Interface>
+    PROPERTY public abstract var abstractVar: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-abstractVar>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: Interface>
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <set-abstractVar>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: Interface>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

@@ -25,20 +25,26 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 class ModuleGenerator(override val context: GeneratorContext) : Generator {
     fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
-            IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns,
-                                 generateFiles(ktFiles))
+            generateModuleFragmentWithoutDependencies(ktFiles).also { irModule ->
+                generateUnboundSymbolsAsDependencies(irModule)
+            }
 
-    fun generateFiles(ktFiles: Collection<KtFile>): List<IrFile> {
+    fun generateModuleFragmentWithoutDependencies(ktFiles: Collection<KtFile>): IrModuleFragment =
+            IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
+                irModule.files.addAll(generateFiles(ktFiles))
+            }
+
+    private fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment) {
+        ModuleDependenciesGenerator(context).generateUnboundSymbolsAsDependencies(irModule)
+    }
+
+    private fun generateFiles(ktFiles: Collection<KtFile>): List<IrFile> {
         val irDeclarationGenerator = DeclarationGenerator(context)
 
         return ktFiles.map { ktFile ->
             generateSingleFile(irDeclarationGenerator, ktFile)
         }
     }
-
-    fun generateSingleFileFragment(ktFile: KtFile) =
-            IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns,
-                                 listOf(generateSingleFile(DeclarationGenerator(context), ktFile)))
 
     private fun generateSingleFile(irDeclarationGenerator: DeclarationGenerator, ktFile: KtFile): IrFileImpl {
         val irFile = createEmptyIrFile(ktFile)
@@ -54,7 +60,7 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
         return irFile
     }
 
-    fun createEmptyIrFile(ktFile: KtFile): IrFileImpl {
+    private fun createEmptyIrFile(ktFile: KtFile): IrFileImpl {
         val fileEntry = context.sourceManager.getOrCreateFileEntry(ktFile)
         val packageFragmentDescriptor = getOrFail(BindingContext.FILE_TO_PACKAGE_FRAGMENT, ktFile)
         val irFile = IrFileImpl(fileEntry, packageFragmentDescriptor)

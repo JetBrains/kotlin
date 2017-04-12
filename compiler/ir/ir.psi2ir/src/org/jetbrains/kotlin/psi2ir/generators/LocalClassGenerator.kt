@@ -49,7 +49,9 @@ class LocalClassGenerator(statementGenerator: StatementGenerator): StatementGene
                 IrCallImpl(
                         ktObjectLiteral.startOffset, ktObjectLiteral.endOffset, objectLiteralType,
                         context.symbolTable.referenceConstructor(objectConstructor),
-                        null, IrStatementOrigin.OBJECT_LITERAL
+                        objectConstructor,
+                        null,
+                        IrStatementOrigin.OBJECT_LITERAL
                 )
         )
 

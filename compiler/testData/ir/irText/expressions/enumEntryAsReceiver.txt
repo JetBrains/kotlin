@@ -53,10 +53,6 @@ FILE /enumEntryAsReceiver.kt
     PROPERTY public abstract val value: () -> kotlin.String
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-value>(): () -> kotlin.String
         $this: VALUE_PARAMETER <receiver: X>
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-value>(): () -> String'
-            GET_FIELD 'value: () -> String' type=() -> kotlin.String origin=null
-              receiver: GET_VAR '<receiver: X>' type=X origin=null
     FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
     FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
     FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<X!>!

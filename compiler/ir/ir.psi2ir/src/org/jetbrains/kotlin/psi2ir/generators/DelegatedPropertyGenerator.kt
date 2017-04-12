@@ -113,18 +113,18 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
             kPropertyType: KotlinType,
             ktDelegate: KtPropertyDelegate
     ): IrField {
-        val irActualDelegateInitializer = generateInitializerBodyForPropertyDelegate(
-                propertyDescriptor, kPropertyType, ktDelegate,
-                context.symbolTable.referenceField(propertyDescriptor)
-        )
-
-        val delegateType = irActualDelegateInitializer.expression.type
+        val delegateType = getDelegatedPropertyDelegateType(propertyDescriptor, ktDelegate)
         val delegateDescriptor = createPropertyDelegateDescriptor(propertyDescriptor, delegateType, kPropertyType)
 
         return context.symbolTable.declareField(
                 ktDelegate.startOffset, ktDelegate.endOffset, IrDeclarationOrigin.DELEGATE,
-                delegateDescriptor, irActualDelegateInitializer
-        )
+                delegateDescriptor
+        ).also { irDelegate ->
+            irDelegate.initializer = generateInitializerBodyForPropertyDelegate(
+                    propertyDescriptor, kPropertyType, ktDelegate,
+                    irDelegate.symbol
+            )
+        }
     }
 
     private fun generateInitializerBodyForPropertyDelegate(
@@ -257,7 +257,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
             kPropertyType: KotlinType,
             scopeOwner: IrSymbol
     ): IrVariable {
-        val delegateType = getLocalDelegatedPropertyDelegateType(variableDescriptor, ktDelegate)
+        val delegateType = getDelegatedPropertyDelegateType(variableDescriptor, ktDelegate)
         val delegateDescriptor = createLocalPropertyDelegatedDescriptor(variableDescriptor, delegateType, kPropertyType)
 
         return context.symbolTable.declareVariable(
@@ -272,11 +272,11 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         }
     }
 
-    private fun getLocalDelegatedPropertyDelegateType(
-            variableDescriptor: VariableDescriptorWithAccessors,
+    private fun getDelegatedPropertyDelegateType(
+            delegatedPropertyDescriptor: VariableDescriptorWithAccessors,
             ktDelegate: KtPropertyDelegate
     ): KotlinType {
-        val provideDelegateResolvedCall = get(BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, variableDescriptor)
+        val provideDelegateResolvedCall = get(BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, delegatedPropertyDescriptor)
         return if (provideDelegateResolvedCall != null)
             provideDelegateResolvedCall.resultingDescriptor.returnType!!
         else

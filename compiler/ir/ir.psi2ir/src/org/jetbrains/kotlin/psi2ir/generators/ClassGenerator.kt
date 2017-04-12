@@ -210,7 +210,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         val endOffset = irDelegate.endOffset
         val irBlockBody = IrBlockBodyImpl(startOffset, endOffset)
         val returnType = overridden.returnType!!
-        val irCall = IrCallImpl(startOffset, endOffset, returnType, context.symbolTable.referenceFunction(overridden), null)
+        val irCall = IrCallImpl(startOffset, endOffset, returnType, context.symbolTable.referenceFunction(overridden.original), overridden, null)
         irCall.dispatchReceiver =
                 IrGetFieldImpl(
                         startOffset, endOffset, irDelegate.symbol,

@@ -24,6 +24,7 @@ FILE /Derived.kt
           receiver: GET_VAR '<receiver: Derived>' type=Derived origin=null
           value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
     PROPERTY FAKE_OVERRIDE public final override var value: kotlin.Int
+      FIELD FAKE_OVERRIDE public final override var value: kotlin.Int
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

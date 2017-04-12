@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import com.sun.org.apache.xpath.internal.operations.Mod
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -114,11 +115,14 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             }
 
     private fun generateDefaultAccessorBody(ktProperty: KtElement, accessor: PropertyAccessorDescriptor, irAccessor: IrSimpleFunction) =
-            when (accessor) {
-                is PropertyGetterDescriptor -> generateDefaultGetterBody(ktProperty, accessor, irAccessor)
-                is PropertySetterDescriptor -> generateDefaultSetterBody(ktProperty, accessor, irAccessor)
-                else -> throw AssertionError("Should be getter or setter: $accessor")
-            }
+            if (accessor.modality == Modality.ABSTRACT)
+                null
+            else
+                when (accessor) {
+                    is PropertyGetterDescriptor -> generateDefaultGetterBody(ktProperty, accessor, irAccessor)
+                    is PropertySetterDescriptor -> generateDefaultSetterBody(ktProperty, accessor, irAccessor)
+                    else -> throw AssertionError("Should be getter or setter: $accessor")
+                }
 
     private fun generateDefaultGetterBody(ktProperty: KtElement, getter: PropertyGetterDescriptor, irAccessor: IrSimpleFunction): IrBlockBody {
         val property = getter.correspondingProperty

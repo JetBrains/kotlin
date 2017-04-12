@@ -66,6 +66,7 @@ class SymbolTable {
             val s = get(d)
             if (s == null) {
                 val new = createSymbol().also { markAsUnbound(it) }
+                set(d, new)
                 return new
             }
             return s
@@ -173,6 +174,9 @@ class SymbolTable {
     fun declareFile(fileEntry: SourceManager.FileEntry, packageFragmentDescriptor: PackageFragmentDescriptor): IrFile =
             IrFileImpl(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor))
 
+    fun declareExternalPackageFragment(packageFragmentDescriptor: PackageFragmentDescriptor): IrExternalPackageFragment =
+            IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(packageFragmentDescriptor))
+
     fun declareAnonymousInitializer(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor): IrAnonymousInitializer =
             IrAnonymousInitializerImpl(
                     startOffset, endOffset, origin,
@@ -185,7 +189,6 @@ class SymbolTable {
                     { IrClassSymbolImpl(descriptor) },
                     { IrClassImpl(startOffset, endOffset, origin, it) }
             )
-
 
     fun referenceClass(descriptor: ClassDescriptor) =
             classSymbolTable.referenced(descriptor) { IrClassSymbolImpl(descriptor) }

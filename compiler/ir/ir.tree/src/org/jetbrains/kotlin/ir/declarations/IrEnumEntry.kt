@@ -26,6 +26,6 @@ interface IrEnumEntry : IrSymbolDeclaration<IrEnumEntrySymbol> {
     override val descriptor: ClassDescriptor
 
     var correspondingClass: IrClass?
-    var initializerExpression: IrExpression
+    var initializerExpression: IrExpression?
 }
 

@@ -31,10 +31,10 @@ class DelegatedLocalPropertyLValue(
         val origin: IrStatementOrigin? = null
 ) : LValue, AssignmentReceiver {
     override fun load(): IrExpression =
-            IrCallImpl(startOffset, endOffset, type, getterSymbol!!, null, origin)
+            IrCallImpl(startOffset, endOffset, type, getterSymbol!!, getterSymbol.descriptor, null, origin)
 
     override fun store(irExpression: IrExpression): IrExpression =
-            IrCallImpl(startOffset, endOffset, type, setterSymbol!!, null, origin).apply {
+            IrCallImpl(startOffset, endOffset, type, setterSymbol!!, setterSymbol.descriptor, null, origin).apply {
                 putValueArgument(0, irExpression)
             }
 

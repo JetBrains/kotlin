@@ -54,6 +54,13 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         element.dumpLabeledSubTree(data)
     }
 
+    override fun visitModuleFragment(declaration: IrModuleFragment, data: String) {
+        declaration.dumpLabeledElementWith(data) {
+            declaration.files.dumpElements()
+            declaration.externalPackageFragments.dumpElements()
+        }
+    }
+
     override fun visitFile(declaration: IrFile, data: String) {
         declaration.dumpLabeledElementWith(data) {
             if (declaration.fileAnnotations.isNotEmpty()) {
@@ -117,7 +124,7 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: String) {
         declaration.dumpLabeledElementWith(data) {
-            declaration.initializerExpression.accept(this, "init")
+            declaration.initializerExpression?.accept(this, "init")
             declaration.correspondingClass?.accept(this, "class")
         }
     }

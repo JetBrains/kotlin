@@ -40,6 +40,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Classes extends AbstractIrTextTestCase {
+        @TestMetadata("abstractMembers.kt")
+        public void testAbstractMembers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/abstractMembers.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInClasses() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/classes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
@@ -1007,6 +1013,21 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("object.kt")
         public void testObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/singletons/object.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/stubs")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Stubs extends AbstractIrTextTestCase {
+        public void testAllFilesPresentInStubs() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/stubs"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stubs/simple.kt");
             doTest(fileName);
         }
     }

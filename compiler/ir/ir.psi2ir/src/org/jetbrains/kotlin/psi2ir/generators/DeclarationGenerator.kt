@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrErrorDeclarationImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -114,7 +115,12 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                     IrDeclarationOrigin.FAKE_OVERRIDE,
                     false,
                     propertyDescriptor,
-                    null,
+                    if (propertyDescriptor.getter == null)
+                        context.symbolTable.declareField(
+                                ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined, IrDeclarationOrigin.FAKE_OVERRIDE,
+                                propertyDescriptor
+                        )
+                    else null,
                     propertyDescriptor.getter?.let { generateFakeOverrideFunction(it, ktElement) },
                     propertyDescriptor.setter?.let { generateFakeOverrideFunction(it, ktElement) }
             )

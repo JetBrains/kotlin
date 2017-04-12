@@ -139,7 +139,7 @@ class SyntheticAccessorLowering(val state: GenerationState) : FileLoweringPass, 
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
                     accessorDescriptor, body
             )
-            val calleeDescriptor = accessor.calleeDescriptor
+            val calleeDescriptor = accessor.calleeDescriptor as FunctionDescriptor
             val returnExpr = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, calleeDescriptor)
             copyAllArgsToValueParams(returnExpr, accessorDescriptor)
             body.statements.add(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, accessor, returnExpr))

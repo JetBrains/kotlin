@@ -19,6 +19,7 @@ FILE /Derived.kt
                 value: TYPE_OP type=kotlin.String! origin=IMPLICIT_CAST typeOperand=kotlin.String!
                   GET_VAR 'value-parameter v: Any' type=kotlin.Any origin=null
     PROPERTY FAKE_OVERRIDE public final override var value: kotlin.String!
+      FIELD FAKE_OVERRIDE public final override var value: kotlin.String!
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

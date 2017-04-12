@@ -39,48 +39,24 @@ FILE /delegatedImplementation.kt
     PROPERTY public abstract val x: kotlin.String
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-x>(): kotlin.String
         $this: VALUE_PARAMETER <receiver: IOther>
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-x>(): String'
-            GET_FIELD 'x: String' type=kotlin.String origin=null
-              receiver: GET_VAR '<receiver: IOther>' type=IOther origin=null
     PROPERTY public abstract var y: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-y>(): kotlin.Int
         $this: VALUE_PARAMETER <receiver: IOther>
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-y>(): Int'
-            GET_FIELD 'y: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: IOther>' type=IOther origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <set-y>(<set-?>: kotlin.Int): kotlin.Unit
         $this: VALUE_PARAMETER <receiver: IOther>
         VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
-        BLOCK_BODY
-          SET_FIELD 'y: Int' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<receiver: IOther>' type=IOther origin=null
-            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     PROPERTY public abstract val kotlin.Byte.z1: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun kotlin.Byte.<get-z1>(): kotlin.Int
         $this: VALUE_PARAMETER <receiver: IOther>
         $receiver: VALUE_PARAMETER <receiver: z1: Int on Byte>
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-z1>() on Byte: Int'
-            GET_FIELD 'z1: Int on Byte' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: IOther>' type=IOther origin=null
     PROPERTY public abstract var kotlin.Byte.z2: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun kotlin.Byte.<get-z2>(): kotlin.Int
         $this: VALUE_PARAMETER <receiver: IOther>
         $receiver: VALUE_PARAMETER <receiver: z2: Int on Byte>
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-z2>() on Byte: Int'
-            GET_FIELD 'z2: Int on Byte' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: IOther>' type=IOther origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun kotlin.Byte.<set-z2>(<set-?>: kotlin.Int): kotlin.Unit
         $this: VALUE_PARAMETER <receiver: IOther>
         $receiver: VALUE_PARAMETER <receiver: z2: Int on Byte>
         VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
-        BLOCK_BODY
-          SET_FIELD 'z2: Int on Byte' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<receiver: IOther>' type=IOther origin=null
-            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

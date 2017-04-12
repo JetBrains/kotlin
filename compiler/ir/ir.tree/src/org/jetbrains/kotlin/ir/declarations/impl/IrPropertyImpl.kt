@@ -31,6 +31,11 @@ class IrPropertyImpl(
         override val descriptor: PropertyDescriptor
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrProperty {
     constructor(
+            startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin,
+            descriptor: PropertyDescriptor
+    ) : this(startOffset, endOffset, origin, descriptor.isDelegated, descriptor)
+
+    constructor(
             startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, isDelegated: Boolean, descriptor: PropertyDescriptor,
             backingField: IrField?
     ) : this(startOffset, endOffset, origin, isDelegated, descriptor) {
