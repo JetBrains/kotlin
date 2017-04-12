@@ -21,19 +21,19 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.FixationOrderCalculator
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
+import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
-import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -45,8 +45,8 @@ class KotlinCallCompleter(
     interface Context {
         val innerCalls: List<ResolvedKotlinCall.OnlyResolvedKotlinCall>
         val hasContradiction: Boolean
-        fun buildCurrentSubstitutor(): TypeSubstitutor
-        fun buildResultingSubstitutor(): TypeSubstitutor
+        fun buildCurrentSubstitutor(): NewTypeSubstitutor
+        fun buildResultingSubstitutor(): NewTypeSubstitutor
         val lambdaArguments: List<ResolvedLambdaArgument>
 
         // type can be proper if it not contains not fixed type variables
@@ -100,7 +100,7 @@ class KotlinCallCompleter(
         return ResolvedKotlinCall.CompletedResolvedKotlinCall(completedCall, competedCalls)
     }
 
-    private fun KotlinResolutionCandidate.toCompletedCall(substitutor: TypeSubstitutor): CompletedKotlinCall {
+    private fun KotlinResolutionCandidate.toCompletedCall(substitutor: NewTypeSubstitutor): CompletedKotlinCall {
         if (this is VariableAsFunctionKotlinResolutionCandidate) {
             val variable = resolvedVariable.toCompletedCall(substitutor)
             val invoke = invokeCandidate.toCompletedCall(substitutor)
@@ -110,10 +110,10 @@ class KotlinCallCompleter(
         return (this as SimpleKotlinResolutionCandidate).toCompletedCall(substitutor)
     }
 
-    private fun SimpleKotlinResolutionCandidate.toCompletedCall(substitutor: TypeSubstitutor): CompletedKotlinCall.Simple {
+    private fun SimpleKotlinResolutionCandidate.toCompletedCall(substitutor: NewTypeSubstitutor): CompletedKotlinCall.Simple {
         val resultingDescriptor = if (descriptorWithFreshTypes.typeParameters.isNotEmpty()) descriptorWithFreshTypes.substitute(substitutor)!! else descriptorWithFreshTypes
 
-        val typeArguments = descriptorWithFreshTypes.typeParameters.map { substitutor.safeSubstitute(it.defaultType, Variance.INVARIANT).unwrap() }
+        val typeArguments = descriptorWithFreshTypes.typeParameters.map { substitutor.safeSubstitute(it.defaultType) }
 
         val status = computeStatus(this, resultingDescriptor)
         return CompletedKotlinCall.Simple(kotlinCall, candidateDescriptor, resultingDescriptor, status, explicitReceiverKind,
@@ -226,7 +226,7 @@ class KotlinCallCompleter(
 
     private fun analyzeLambda(c: Context, lambdaAnalyzer: LambdaAnalyzer, topLevelCallContext: KotlinCallContext, topLevelCall: KotlinCall, lambda: ResolvedLambdaArgument) {
         val currentSubstitutor = c.buildCurrentSubstitutor()
-        fun substitute(type: UnwrappedType) = currentSubstitutor.safeSubstitute(type, Variance.INVARIANT).unwrap()
+        fun substitute(type: UnwrappedType) = currentSubstitutor.safeSubstitute(type)
 
         val receiver = lambda.receiver?.let(::substitute)
         val parameters = lambda.parameters.map(::substitute)

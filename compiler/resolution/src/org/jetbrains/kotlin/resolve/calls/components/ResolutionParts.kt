@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMa
 import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
+import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
@@ -164,7 +165,7 @@ internal object CreteDescriptorWithFreshTypeVariables : ResolutionPart {
          */
         val toFixedTypeParameters = csBuilder.simplify()
         // todo optimize -- composite substitutions before run safeSubstitute
-        descriptorWithFreshTypes = candidateDescriptor.safeSubstitute(toFreshVariables).safeSubstitute(toFixedTypeParameters)
+        descriptorWithFreshTypes = candidateDescriptor.substitute(toFreshVariables)!!.substitute(toFixedTypeParameters)!!
 
         return emptyList()
     }

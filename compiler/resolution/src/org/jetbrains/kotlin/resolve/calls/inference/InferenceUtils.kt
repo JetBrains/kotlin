@@ -17,17 +17,15 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.types.TypeConstructorSubstitution
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.*
 
-fun ConstraintStorage.buildCurrentSubstitutor() = TypeConstructorSubstitution.createByConstructorsMap(fixedTypeVariables.entries.associate {
-    it.key to it.value.asTypeProjection()
-}).buildSubstitutor()
+fun ConstraintStorage.buildCurrentSubstitutor() = NewTypeSubstitutorByConstructorMap(fixedTypeVariables.entries.associate {
+    it.key to it.value
+})
 
 val CallableDescriptor.returnTypeOrNothing: UnwrappedType
     get() {
@@ -37,4 +35,12 @@ val CallableDescriptor.returnTypeOrNothing: UnwrappedType
     }
 
 fun TypeSubstitutor.substitute(type: UnwrappedType): UnwrappedType = safeSubstitute(type, Variance.INVARIANT).unwrap()
+
+fun CallableDescriptor.substitute(substitutor: NewTypeSubstitutor): CallableDescriptor? {
+    val wrappedSubstitution = object : TypeSubstitution() {
+        override fun get(key: KotlinType): TypeProjection? = null
+        override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) = substitutor.safeSubstitute(topLevelType.unwrap())
+    }
+    return substitute(TypeSubstitutor.create(wrappedSubstitution))
+}
 
