@@ -304,11 +304,11 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             val log = project.logger
             if (clientIsAliveFlagFile == null || !clientIsAliveFlagFile!!.exists()) {
                 val projectName = project.rootProject.name.normalizeForFlagFile()
-                clientIsAliveFlagFile =  FileUtil.createTempFile("kotlin-compiler-in-$projectName-", ".alive")
-                log.kotlinDebug { CREATED_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.relativeToRoot(project) }
+                clientIsAliveFlagFile =  FileUtil.createTempFile("kotlin-compiler-in-$projectName-", ".alive", /*deleteOnExit =*/ true)
+                log.kotlinDebug { CREATED_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.canonicalPath }
             }
             else {
-                log.kotlinDebug { EXISTING_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.relativeToRoot(project) }
+                log.kotlinDebug { EXISTING_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.canonicalPath }
             }
 
             return clientIsAliveFlagFile!!
@@ -329,7 +329,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             val log = project.logger
             if (sessionFlagFile == null || !sessionFlagFile!!.exists()) {
                 val sessionFilesDir = sessionsDir(project).apply { mkdirs() }
-                sessionFlagFile = FileUtil.createTempFile(sessionFilesDir, "kotlin-compiler-", ".salive")
+                sessionFlagFile = FileUtil.createTempFile(sessionFilesDir, "kotlin-compiler-", ".salive", /*deleteOnExit =*/ true)
                 log.kotlinDebug { CREATED_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeToRoot(project) }
             }
             else {
