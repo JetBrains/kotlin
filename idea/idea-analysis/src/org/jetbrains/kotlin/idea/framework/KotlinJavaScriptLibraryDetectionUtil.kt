@@ -43,7 +43,7 @@ object KotlinJavaScriptLibraryDetectionUtil {
                 return hasMetadata
             }
 
-            if (!VfsUtilCore.processFilesRecursively(root, { isJsFileWithMetadata(root) })) {
+            if (!VfsUtilCore.processFilesRecursively(root) { !isJsFileWithMetadata(it) }) {
                 return true
             }
         }
