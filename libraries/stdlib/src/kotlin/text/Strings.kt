@@ -308,6 +308,7 @@ public fun CharSequence.subSequence(range: IntRange): CharSequence = subSequence
  * Replace parameter names with the same as those of [CharSequence.subSequence].
  */
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning
 @Deprecated("Use parameters named startIndex and endIndex.", ReplaceWith("subSequence(startIndex = start, endIndex = end)"))
 public inline fun String.subSequence(start: Int, end: Int): CharSequence = subSequence(start, end)
 

@@ -97,6 +97,7 @@ public inline fun <T, K, R> Grouping<T, K>.fold(
         initialValueSelector: (key: K, element: T) -> R,
         operation: (key: K, accumulator: R, element: T) -> R
 ): Map<K, R> =
+        @Suppress("UNCHECKED_CAST")
         aggregate { key, acc, e, first -> operation(key, if (first) initialValueSelector(key, e) else acc as R, e) }
 
 /**
@@ -126,6 +127,7 @@ public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
         initialValueSelector: (key: K, element: T) -> R,
         operation: (key: K, accumulator: R, element: T) -> R
 ): M =
+        @Suppress("UNCHECKED_CAST")
         aggregateTo(destination) { key, acc, e, first -> operation(key, if (first) initialValueSelector(key, e) else acc as R, e) }
 
 
@@ -145,6 +147,7 @@ public inline fun <T, K, R> Grouping<T, K>.fold(
         initialValue: R,
         operation: (accumulator: R, element: T) -> R
 ): Map<K, R> =
+        @Suppress("UNCHECKED_CAST")
         aggregate { _, acc, e, first -> operation(if (first) initialValue else acc as R, e) }
 
 /**
@@ -168,6 +171,7 @@ public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
         initialValue: R,
         operation: (accumulator: R, element: T) -> R
 ): M =
+        @Suppress("UNCHECKED_CAST")
         aggregateTo(destination) { _, acc, e, first -> operation(if (first) initialValue else acc as R, e) }
 
 
@@ -190,6 +194,7 @@ public inline fun <S, T : S, K> Grouping<T, K>.reduce(
         operation: (key: K, accumulator: S, element: T) -> S
 ): Map<K, S> =
         aggregate { key, acc, e, first ->
+            @Suppress("UNCHECKED_CAST")
             if (first) e else operation(key, acc as S, e)
         }
 
@@ -216,6 +221,7 @@ public inline fun <S, T : S, K, M : MutableMap<in K, S>> Grouping<T, K>.reduceTo
         operation: (key: K, accumulator: S, element: T) -> S
 ): M =
         aggregateTo(destination) { key, acc, e, first ->
+            @Suppress("UNCHECKED_CAST")
             if (first) e else operation(key, acc as S, e)
         }
 
@@ -283,6 +289,7 @@ public inline fun <T, K, M : MutableMap<in K, Int>> Grouping<T, K>.eachSumOfTo(d
 @JvmVersion
 @PublishedApi
 @kotlin.internal.InlineOnly
+@Suppress("UNCHECKED_CAST") // tricks with erased generics go here, do not repeat at reified platforms
 internal inline fun <K, V, R> MutableMap<K, V>.mapValuesInPlace(f: (Map.Entry<K, V>) -> R): MutableMap<K, R> {
     entries.forEach {
         (it as MutableMap.MutableEntry<K, R>).setValue(f(it))

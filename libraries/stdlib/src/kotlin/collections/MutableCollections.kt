@@ -48,11 +48,13 @@ public inline fun <T> MutableList<T>.remove(index: Int): T = removeAt(index)
 @Deprecated("Use sortWith(comparator) instead.", ReplaceWith("this.sortWith(comparator)"), level = DeprecationLevel.ERROR)
 @JvmVersion
 @kotlin.internal.InlineOnly
+@Suppress("UNUSED_PARAMETER")
 public inline fun <T> MutableList<T>.sort(comparator: Comparator<in T>): Unit = throw NotImplementedError()
 
 @Deprecated("Use sortWith(Comparator(comparison)) instead.", ReplaceWith("this.sortWith(Comparator(comparison))"), level = DeprecationLevel.ERROR)
 @JvmVersion
 @kotlin.internal.InlineOnly
+@Suppress("UNUSED_PARAMETER")
 public inline fun <T> MutableList<T>.sort(comparison: (T, T) -> Int): Unit = throw NotImplementedError()
 
 /**

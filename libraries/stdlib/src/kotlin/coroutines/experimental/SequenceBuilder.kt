@@ -138,6 +138,7 @@ private class SequenceBuilderIterator<T> : SequenceBuilder<T>(), Iterator<T>, Co
             }
             State_Ready -> {
                 state = State_NotReady
+                @Suppress("UNCHECKED_CAST") 
                 val result = nextValue as T
                 nextValue = null
                 return result

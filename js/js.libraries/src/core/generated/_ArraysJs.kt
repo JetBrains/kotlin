@@ -2158,6 +2158,7 @@ public inline fun <T> Array<out T>.single(predicate: (T) -> Boolean): T {
         }
     }
     if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return single as T
 }
 
@@ -2175,6 +2176,7 @@ public inline fun ByteArray.single(predicate: (Byte) -> Boolean): Byte {
         }
     }
     if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return single as Byte
 }
 
@@ -2192,6 +2194,7 @@ public inline fun ShortArray.single(predicate: (Short) -> Boolean): Short {
         }
     }
     if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return single as Short
 }
 
@@ -2209,6 +2212,7 @@ public inline fun IntArray.single(predicate: (Int) -> Boolean): Int {
         }
     }
     if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return single as Int
 }
 
@@ -2226,6 +2230,7 @@ public inline fun LongArray.single(predicate: (Long) -> Boolean): Long {
         }
     }
     if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return single as Long
 }
 
@@ -2243,6 +2248,7 @@ public inline fun FloatArray.single(predicate: (Float) -> Boolean): Float {
         }
     }
     if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return single as Float
 }
 
@@ -2260,6 +2266,7 @@ public inline fun DoubleArray.single(predicate: (Double) -> Boolean): Double {
         }
     }
     if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return single as Double
 }
 
@@ -2277,6 +2284,7 @@ public inline fun BooleanArray.single(predicate: (Boolean) -> Boolean): Boolean 
         }
     }
     if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return single as Boolean
 }
 
@@ -2294,6 +2302,7 @@ public inline fun CharArray.single(predicate: (Char) -> Boolean): Char {
         }
     }
     if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return single as Char
 }
 

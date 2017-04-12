@@ -240,7 +240,7 @@ private class TerminateException(file: File) : FileSystemException(file) {}
 public fun File.copyRecursively(target: File,
                                 overwrite: Boolean = false,
                                 onError: (File, IOException) -> OnErrorAction =
-                                { file, exception -> throw exception }
+                                         { _, exception -> throw exception }
 ): Boolean {
     if (!exists()) {
         return onError(this, NoSuchFileException(file = this, reason = "The source file doesn't exist.")) !=

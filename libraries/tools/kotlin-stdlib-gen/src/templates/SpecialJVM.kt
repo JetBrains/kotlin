@@ -426,7 +426,10 @@ object CommonArrays {
         returns("Unit")
         inline(Platform.JVM, Inline.Only)
         body(Platform.JVM) {
-            "(this as Array<Any?>).sort()"
+            """
+            @Suppress("UNCHECKED_CAST")
+            (this as Array<Any?>).sort()
+            """
         }
         body(Platform.JS) {
             """

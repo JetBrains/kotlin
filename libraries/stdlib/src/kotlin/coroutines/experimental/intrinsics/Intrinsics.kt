@@ -41,7 +41,9 @@ import kotlin.coroutines.experimental.processBareContinuationResume
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline suspend fun <T> suspendCoroutineOrReturn(crossinline block: (Continuation<T>) -> Any?): T = null!!
+@Suppress("UNUSED_PARAMETER")
+public inline suspend fun <T> suspendCoroutineOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
+        throw NotImplementedError("Implementation is intrinsic")
 
 /**
  * This value is used as a return value of [suspendCoroutineOrReturn] `block` argument to state that
@@ -69,6 +71,7 @@ public fun <T> (suspend () -> T).createCoroutineUnchecked(
 ): Continuation<Unit> =
         if (this !is kotlin.coroutines.experimental.jvm.internal.CoroutineImpl)
             buildContinuationByInvokeCall(completion) {
+                @Suppress("UNCHECKED_CAST")
                 (this as Function1<Continuation<T>, Any?>).invoke(completion)
             }
         else
@@ -92,6 +95,7 @@ public fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
 ): Continuation<Unit> =
         if (this !is kotlin.coroutines.experimental.jvm.internal.CoroutineImpl)
             buildContinuationByInvokeCall(completion) {
+                @Suppress("UNCHECKED_CAST")
                 (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
             }
         else

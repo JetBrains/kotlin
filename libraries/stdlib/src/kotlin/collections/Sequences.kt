@@ -123,6 +123,7 @@ internal class FilteringSequence<T>(private val sequence: Sequence<T>,
             val result = nextItem
             nextItem = null
             nextState = -1
+            @Suppress("UNCHECKED_CAST")
             return result as T
         }
 
@@ -380,6 +381,7 @@ internal class TakeWhileSequence<T>
                 calcNext() // will change nextState
             if (nextState == 0)
                 throw NoSuchElementException()
+            @Suppress("UNCHECKED_CAST")
             val result = nextItem as T
 
             // Clean next to avoid keeping reference on yielded instance
@@ -466,6 +468,7 @@ internal class DropWhileSequence<T>
                 drop()
 
             if (dropState == 1) {
+                @Suppress("UNCHECKED_CAST")
                 val result = nextItem as T
                 nextItem = null
                 dropState = 0

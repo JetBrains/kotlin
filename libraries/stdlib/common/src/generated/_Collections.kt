@@ -148,6 +148,7 @@ public header fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.indexOf(elemen
 /**
  * Returns first index of [element], or -1 if the list does not contain element.
  */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
 public header fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int
 
 /**
@@ -202,6 +203,7 @@ public header fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(el
 /**
  * Returns last index of [element], or -1 if the list does not contain element.
  */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
 public header fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): Int
 
 /**

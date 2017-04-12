@@ -11,18 +11,21 @@ import kotlin.internal.*
 /**
  * Prints the stack trace of this throwable to the standard output.
  */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // to be used when no member available
 @kotlin.internal.InlineOnly
 public inline fun Throwable.printStackTrace(): Unit = (this as java.lang.Throwable).printStackTrace()
 
 /**
  * Prints the stack trace of this throwable to the specified [writer].
  */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // to be used when no member available
 @kotlin.internal.InlineOnly
 public inline fun Throwable.printStackTrace(writer: PrintWriter): Unit = (this as java.lang.Throwable).printStackTrace(writer)
 
 /**
  * Prints the stack trace of this throwable to the specified [stream].
  */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // to be used when no member available
 @kotlin.internal.InlineOnly
 public inline fun Throwable.printStackTrace(stream: PrintStream): Unit = (this as java.lang.Throwable).printStackTrace(stream)
 

@@ -189,6 +189,7 @@ public inline fun CharSequence.single(predicate: (Char) -> Boolean): Char {
         }
     }
     if (!found) throw NoSuchElementException("Char sequence contains no character matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return single as Char
 }
 
