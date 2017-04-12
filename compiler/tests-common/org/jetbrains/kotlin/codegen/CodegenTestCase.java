@@ -516,7 +516,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         loadMultiFiles(files);
 
-        classFileFactory = GenerationUtils.compileFiles(myFiles.getPsiFiles(), myEnvironment).getFactory();
+        generateClassesInFile();
 
         if (javaSourceDir != null) {
             // If there are Java files, they should be compiled against the class files produced by Kotlin, so we dump them to the disk
