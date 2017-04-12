@@ -138,7 +138,7 @@ fun runMoveRefactoring(path: String, config: JsonObject, rootDir: VirtualFile, p
         assert(!conflictFile.exists())
     }
     catch(e: ConflictsInTestsException) {
-        KotlinTestUtils.assertEqualsToFile(conflictFile, e.messages.distinct().sorted().joinToString("\n"))
+        KotlinTestUtils.assertEqualsToFile(conflictFile, e.messages.sorted().joinToString("\n"))
 
         ConflictsInTestsException.setTestIgnore(true)
 
