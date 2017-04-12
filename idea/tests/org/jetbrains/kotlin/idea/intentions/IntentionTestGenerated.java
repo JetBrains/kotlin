@@ -14407,6 +14407,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/specifyExplicitLambdaSignature"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("anonymous.kt")
+        public void testAnonymous() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/anonymous.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("coercionToUnit.kt")
         public void testCoercionToUnit() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/coercionToUnit.kt");
@@ -14416,6 +14422,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("delegate.kt")
         public void testDelegate() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/delegate.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("destructuring.kt")
+        public void testDestructuring() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/destructuring.kt");
             doTest(fileName);
         }
 
