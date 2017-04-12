@@ -1501,6 +1501,20 @@ public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Iterable<T>.gr
 }
 
 /**
+ * Creates a [Grouping] source from a collection to be used later with one of group-and-fold operations
+ * using the specified [keySelector] function to extract a key from each element.
+ *
+ * @sample samples.collections.Collections.Transformations.groupingByEachCount
+ */
+@SinceKotlin("1.1")
+public inline fun <T, K> Iterable<T>.groupingBy(crossinline keySelector: (T) -> K): Grouping<T, K> {
+    return object : Grouping<T, K> {
+        override fun sourceIterator(): Iterator<T> = this@groupingBy.iterator()
+        override fun keyOf(element: T): K = keySelector(element)
+    }
+}
+
+/**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original collection.
  */
@@ -1786,6 +1800,44 @@ public inline fun <T> Iterable<T>.forEachIndexed(action: (Int, T) -> Unit): Unit
 
 /**
  * Returns the largest element or `null` if there are no elements.
+ *
+ * If any of elements is `NaN` returns `NaN`.
+ */
+@SinceKotlin("1.1")
+public fun Iterable<Double>.max(): Double? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    if (max.isNaN()) return max
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (e.isNaN()) return e
+        if (max < e) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ *
+ * If any of elements is `NaN` returns `NaN`.
+ */
+@SinceKotlin("1.1")
+public fun Iterable<Float>.max(): Float? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    if (max.isNaN()) return max
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (e.isNaN()) return e
+        if (max < e) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
  */
 public fun <T : Comparable<T>> Iterable<T>.max(): T? {
     val iterator = iterator()
@@ -1829,6 +1881,44 @@ public fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T? {
         if (comparator.compare(max, e) < 0) max = e
     }
     return max
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ *
+ * If any of elements is `NaN` returns `NaN`.
+ */
+@SinceKotlin("1.1")
+public fun Iterable<Double>.min(): Double? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    if (min.isNaN()) return min
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (e.isNaN()) return e
+        if (min > e) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ *
+ * If any of elements is `NaN` returns `NaN`.
+ */
+@SinceKotlin("1.1")
+public fun Iterable<Float>.min(): Float? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    if (min.isNaN()) return min
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (e.isNaN()) return e
+        if (min > e) min = e
+    }
+    return min
 }
 
 /**
