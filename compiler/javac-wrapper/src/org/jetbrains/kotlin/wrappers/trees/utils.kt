@@ -80,12 +80,25 @@ private fun resolveImport(name: String,
             .firstOrNull()
 }
 
+private fun JavaClass.tryToResolveInner(name: String, javac: JavacWrapper): JavaClass? {
+    javac.findClass(FqName("${fqName!!.asString()}.$name"))?.let { return it }
+
+    supertypes
+            .mapNotNull { it.classifier as? JavaClass }
+            .forEach { it.tryToResolveInner(name, javac)?.let { return it } }
+
+    return null
+}
+
 private fun TreePath.tryToResolve(name: String,
                           compilationUnit: JCTree.JCCompilationUnit,
                           javac: JavacWrapper): JavaClassifier? {
     // try to find an inner class
-    (parentPath.find { it is JCTree.JCClassDecl } as? JCTree.JCClassDecl)?.let { outerClass ->
-        javac.findClass(FqName("${compilationUnit.packageName}.${outerClass.name}.$name"))
+    (parentPath.find { it is JCTree.JCClassDecl
+                       && it.extending != leaf
+                       && !it.implementing.contains(leaf) } as? JCTree.JCClassDecl)?.let { outerClass ->
+        javac.findClass(FqName("${compilationUnit.packageName}.${outerClass.name}"))
+                ?.tryToResolveInner(name, javac)
                 ?.let { return it }
     }
 
