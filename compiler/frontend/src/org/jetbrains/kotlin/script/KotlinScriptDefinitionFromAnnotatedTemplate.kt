@@ -38,8 +38,7 @@ import kotlin.script.dependencies.BasicScriptDependenciesResolver
 import kotlin.script.dependencies.KotlinScriptExternalDependencies
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
-import kotlin.script.extensions.SamWithReceiverAnnotations
-import kotlin.script.templates.*
+import kotlin.script.templates.AcceptedAnnotations
 
 open class KotlinScriptDefinitionFromAnnotatedTemplate(
         template: KClass<out Any>,
@@ -49,11 +48,15 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 ) : KotlinScriptDefinition(template) {
 
     val scriptFilePattern by lazy {
-        providedScriptFilePattern ?: template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()?.scriptFilePattern ?: DEFAULT_SCRIPT_FILE_PATTERN
+        providedScriptFilePattern
+        ?: template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>()?.scriptFilePattern
+        ?: template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>()?.scriptFilePattern
+        ?: DEFAULT_SCRIPT_FILE_PATTERN
     }
 
     val resolver: ScriptDependenciesResolver? by lazy {
-        val defAnn by lazy { template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>() }
+        val defAnn by lazy { template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>() }
+        val legacyDefAnn by lazy { template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>() }
         when {
             providedResolver != null -> providedResolver
             // TODO: logScriptDefMessage missing or invalid constructor
@@ -67,12 +70,27 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
                     log.warn("[kts] Script def error ${ex.message}")
                     null
                 }
+            legacyDefAnn != null ->
+                try {
+                    log.warn("[kts] Deprecated annotations on the script template are used, please update the provider")
+                    legacyDefAnn.resolver.primaryConstructor?.call()?.let {
+                        LegacyScriptDependenciesResolverWrapper(it)
+                    }
+                    ?: null.apply {
+                        log.warn("[kts] No default constructor found for ${legacyDefAnn.resolver.qualifiedName}")
+                    }
+                }
+                catch (ex: ClassCastException) {
+                    log.warn("[kts] Script def error ${ex.message}")
+                    null
+                }
             else -> BasicScriptDependenciesResolver()
         }
     }
 
     val samWithReceiverAnnotations: List<String>? by lazy {
-        template.annotations.firstIsInstanceOrNull<SamWithReceiverAnnotations>()?.annotations?.toList()
+        template.annotations.firstIsInstanceOrNull<kotlin.script.extensions.SamWithReceiverAnnotations>()?.annotations?.toList()
+        ?: template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.SamWithReceiverAnnotations>()?.annotations?.toList()
     }
 
     private val acceptedAnnotations: List<KClass<out Annotation>> by lazy {
