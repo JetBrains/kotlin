@@ -31,15 +31,16 @@ import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
-import org.jetbrains.kotlin.idea.refactoring.move.ContainerChangeInfo
-import org.jetbrains.kotlin.idea.refactoring.move.ContainerInfo
+import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
-import org.jetbrains.kotlin.idea.refactoring.move.updatePackageDirective
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class MoveKotlinFileHandler : MoveFileHandler() {
+    internal class InternalUsagesWrapper(file: KtFile, val usages: List<UsageInfo>) : UsageInfo(file)
+
     internal class FileInfo(file: KtFile) : UsageInfo(file)
 
     // This is special 'PsiElement' whose purpose is to wrap MoveKotlinTopLevelDeclarationsProcessor
@@ -103,6 +104,12 @@ class MoveKotlinFileHandler : MoveFileHandler() {
     override fun canProcessElement(element: PsiFile?): Boolean {
         if (element is PsiCompiledElement || element !is KtFile) return false
         return !JavaProjectRootsUtil.isOutsideJavaSourceRoot(element)
+    }
+
+    internal fun findInternalUsages(file: KtFile, newParent: PsiDirectory): InternalUsagesWrapper {
+        val packageNameInfo = file.getPackageNameInfo(newParent, false)
+        val usages = packageNameInfo?.let { file.getInternalReferencesToUpdateOnPackageNameChange(it) } ?: emptyList()
+        return InternalUsagesWrapper(file, usages)
     }
 
     override fun findUsages(
