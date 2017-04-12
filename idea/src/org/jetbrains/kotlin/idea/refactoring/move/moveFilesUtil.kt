@@ -26,12 +26,14 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandler
+import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveFilesWithDeclarationsProcessor
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtElement
@@ -49,7 +51,7 @@ fun invokeMoveFilesOrDirectoriesRefactoring(
     }
 
     project.executeCommand(MoveHandler.REFACTORING_NAME) {
-        val selectedDir = (if (moveDialog != null) moveDialog.targetDirectory else initialTargetDirectory) ?: return@executeCommand
+        val selectedDir = if (moveDialog != null) moveDialog.targetDirectory else initialTargetDirectory
         val updatePackageDirective = (moveDialog as? KotlinAwareMoveFilesOrDirectoriesDialog)?.updatePackageDirective
 
         try {
@@ -70,24 +72,40 @@ fun invokeMoveFilesOrDirectoriesRefactoring(
                     )
 
             elementsToMove.forEach {
-                MoveFilesOrDirectoriesUtil.checkMove(it, selectedDir)
+                MoveFilesOrDirectoriesUtil.checkMove(it, selectedDir!!)
                 if (it is KtFile && it.isInJavaSourceRoot()) {
                     it.updatePackageDirective = updatePackageDirective
                 }
             }
 
+            val enableSearchReferences = elements.any { ProjectRootsUtil.isInProjectSource(it) }
+
             if (elementsToMove.isNotEmpty()) {
                 @Suppress("UNCHECKED_CAST")
-                val processor = MoveFilesWithDeclarationsProcessor(
-                        project,
-                        elementsToMove as List<KtFile>,
-                        selectedDir,
-                        null,
-                        false,
-                        false,
-                        moveCallback,
-                        Runnable(::closeDialog)
-                )
+                val processor = if (elementsToMove.all { it is KtFile } && selectedDir != null) {
+                    MoveFilesWithDeclarationsProcessor(
+                            project,
+                            elementsToMove as List<KtFile>,
+                            selectedDir,
+                            null,
+                            false,
+                            false,
+                            moveCallback,
+                            Runnable(::closeDialog)
+                    )
+                }
+                else {
+                    MoveFilesOrDirectoriesProcessor(
+                            project,
+                            elementsToMove.toTypedArray(),
+                            selectedDir,
+                            enableSearchReferences,
+                            false,
+                            false,
+                            moveCallback,
+                            Runnable(::closeDialog)
+                    )
+                }
                 processor.run()
             }
             else {
