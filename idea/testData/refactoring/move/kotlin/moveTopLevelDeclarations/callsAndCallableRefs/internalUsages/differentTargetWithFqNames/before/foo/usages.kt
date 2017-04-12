@@ -2,10 +2,7 @@ package foo
 
 import foo.O.objectExtensionMember2
 
-class X {
-    class XX
-}
-class XConstr(n: Int)
+class X
 
 fun <caret>test() {
     foo.A().classMember()
@@ -37,12 +34,6 @@ fun <caret>test() {
     foo.J::javaClassMember
     foo.J::javaClassStaticMember
     ::topLevel
-    ::X
-    ::XConstr
-    X::XX
-    ::J
-    ::JConstr
-    J::JJ
 
     with(foo.A()) {
         classMember()

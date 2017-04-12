@@ -2,11 +2,8 @@ package bar
 
 import foo.A
 import foo.J
-import foo.JConstr
 import foo.O
 import foo.O.objectExtensionMember2
-import foo.X
-import foo.XConstr
 import foo.classExtension
 import foo.companionExtension
 import foo.objectExtension
@@ -42,12 +39,6 @@ fun test() {
     J::javaClassMember
     J::javaClassStaticMember
     ::topLevel
-    ::X
-    ::XConstr
-    X::XX
-    ::J
-    ::JConstr
-    J::JJ
 
     with(A()) {
         classMember()
