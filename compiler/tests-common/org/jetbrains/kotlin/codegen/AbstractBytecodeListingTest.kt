@@ -75,7 +75,8 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
             val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
             setupEnvironment(environment)
 
-            return CodegenTestUtil.generateFiles(environment, loadMultiFiles(files, environment.project), classBuilderFactory)
+            val testFiles = loadMultiFiles(files, environment.project)
+            return GenerationUtils.compileFiles(testFiles.psiFiles, environment, classBuilderFactory).factory
         }
     }
 }

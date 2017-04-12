@@ -23,7 +23,7 @@ import com.sun.tools.javac.util.Log
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.codegen.CodegenTestCase
-import org.jetbrains.kotlin.codegen.CodegenTestUtil
+import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
 import org.jetbrains.kotlin.kapt3.KaptContext
@@ -58,15 +58,15 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
 
         val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
         val classBuilderFactory = Kapt3BuilderFactory()
-        val factory = CodegenTestUtil.generateFiles(myEnvironment, myFiles, classBuilderFactory)
-        val typeMapper = factory.generationState.typeMapper
+        val state = GenerationUtils.compileFiles(myFiles.psiFiles, myEnvironment, classBuilderFactory)
 
         val logger = KaptLogger(isVerbose = true, messageCollector = messageCollector)
-        val kaptContext = KaptContext(logger, factory.generationState.bindingContext, classBuilderFactory.compiledClasses,
+        val kaptContext = KaptContext(logger, state.bindingContext, classBuilderFactory.compiledClasses,
                                       classBuilderFactory.origins, processorOptions = emptyMap())
         try {
-            check(kaptContext, typeMapper, txtFile, wholeFile)
-        } finally {
+            check(kaptContext, state.typeMapper, txtFile, wholeFile)
+        }
+        finally {
             kaptContext.close()
         }
     }

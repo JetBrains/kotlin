@@ -40,23 +40,35 @@ object GenerationUtils {
             compileFiles(listOf(ktFile), environment).factory
 
     @JvmStatic
-    fun compileFiles(files: List<KtFile>, environment: KotlinCoreEnvironment): GenerationState =
-            compileFiles(files, environment.configuration) { scope -> JvmPackagePartProvider(environment, scope) }
+    @JvmOverloads
+    fun compileFiles(
+            files: List<KtFile>,
+            environment: KotlinCoreEnvironment,
+            classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST
+    ): GenerationState =
+            compileFiles(files, environment.configuration, classBuilderFactory) { scope ->
+                JvmPackagePartProvider(environment, scope)
+            }
+
+
 
     @JvmStatic
     fun compileFiles(
             files: List<KtFile>,
             configuration: CompilerConfiguration,
+            classBuilderFactory: ClassBuilderFactory,
             packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
     ): GenerationState {
         val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(files.first().project, files, configuration, packagePartProvider)
         analysisResult.throwIfError()
 
         val state = GenerationState(
-                files.first().project, ClassBuilderFactories.TEST, analysisResult.moduleDescriptor, analysisResult.bindingContext,
+                files.first().project, classBuilderFactory, analysisResult.moduleDescriptor, analysisResult.bindingContext,
                 files, configuration
         )
-        KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
+        if (analysisResult.shouldGenerateCode) {
+            KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
+        }
 
         // For JVM-specific errors
         AnalyzingUtils.throwExceptionOnErrors(state.collectedExtraJvmDiagnostics)

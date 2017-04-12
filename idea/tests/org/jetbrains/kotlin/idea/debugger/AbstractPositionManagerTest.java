@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.debugger;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.intellij.debugger.NoDataException;
 import com.intellij.debugger.PositionManager;
 import com.intellij.debugger.SourcePosition;
@@ -39,8 +38,8 @@ import kotlin.jvm.functions.Function1;
 import kotlin.sequences.SequencesKt;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -147,16 +146,8 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
         // TODO: delete this once IDEVirtualFileFinder supports loading .kotlin_builtins files
         configuration.put(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES, true);
 
-        GenerationState state = GenerationUtils.compileFiles(
-                files,
-                configuration,
-                new Function1<GlobalSearchScope, PackagePartProvider>() {
-                    @Override
-                    public PackagePartProvider invoke(GlobalSearchScope scope) {
-                        return PackagePartProvider.Empty.INSTANCE;
-                    }
-                }
-        );
+        GenerationState state =
+                GenerationUtils.compileFiles(files, configuration, ClassBuilderFactories.TEST, scope -> PackagePartProvider.Empty.INSTANCE);
 
         Map<String, ReferenceType> referencesByName = getReferenceMap(state.getFactory());
 
