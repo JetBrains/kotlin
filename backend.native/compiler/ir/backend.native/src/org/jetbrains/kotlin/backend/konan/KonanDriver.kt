@@ -92,7 +92,7 @@ public fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEn
         markBackingFields(context)
         val serializer = KonanSerializationUtil(context)
         context.serializedLinkData = 
-            serializer.serializeModule(context.moduleDescriptor!!)
+            serializer.serializeModule(context.moduleDescriptor)
         DeserializerDriver(context).dumpAllInlineBodies()
     }
     phaser.phase(KonanPhase.BACKEND) {

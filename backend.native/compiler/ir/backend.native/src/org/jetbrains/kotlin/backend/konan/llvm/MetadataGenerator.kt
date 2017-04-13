@@ -31,7 +31,6 @@ fun loadMetadata(configuration: CompilerConfiguration, file: File): ModuleDescri
 
     val reader = MetadataReader(file)
 
-    var metadataAsString: String? = null
     var moduleName: String? = null
     val currentAbiVersion = configuration.get(KonanConfigKeys.ABI_VERSION)
 
@@ -57,7 +56,7 @@ fun loadMetadata(configuration: CompilerConfiguration, file: File): ModuleDescri
     val tableOfContentsAsString = reader.string(dataNode)
 
     val moduleDescriptor = 
-        deserializeModule(configuration, {it->loadPackageFragment(reader, it)}, tableOfContentsAsString!!, moduleName!!)
+        deserializeModule(configuration, {it->loadPackageFragment(reader, it)}, tableOfContentsAsString, moduleName)
 
     return moduleDescriptor
 }

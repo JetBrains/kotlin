@@ -33,7 +33,7 @@ open class DeepVisitor<D>(val worker: DeclarationDescriptorVisitor<Boolean, D>) 
     open fun visitChildren(descriptor: DeclarationDescriptor?, data: D): Boolean {
         if (descriptor == null) return true
 
-        return descriptor!!.accept(this, data)
+        return descriptor.accept(this, data)
     }
 
     fun applyWorker(descriptor: DeclarationDescriptor, data: D): Boolean {

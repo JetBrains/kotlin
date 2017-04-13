@@ -414,7 +414,7 @@ internal class IrDescriptorDeserializer(val context: Context,
         // Special case: for invoke we need to re-synthesize 
         // the invoke() descriptor.
         val invoke = functions.singleOrNull {
-            (it as FunctionDescriptor).isFunctionInvoke ?: false
+            (it as FunctionDescriptor).isFunctionInvoke
         }
 
         if (invoke != null) 

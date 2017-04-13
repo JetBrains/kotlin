@@ -772,7 +772,7 @@ internal class IrDeserializer(val context: Context,
         val arguments = mutableListOf<IrExpression>()
 
         argumentProtos.forEach {
-            arguments.add(deserializeExpression(it) as IrExpression)
+            arguments.add(deserializeExpression(it))
         }
         return IrStringConcatenationImpl(start, end, type, arguments)
     }
@@ -974,7 +974,7 @@ internal class IrDeserializer(val context: Context,
 
         val body = deserializeStatement(proto.getBody())
         val function = IrFunctionImpl(start, end, origin, 
-            descriptor as FunctionDescriptor, body as IrBody)
+            descriptor, body as IrBody)
 
         proto.defaultArgumentList.forEach {
             val expr = deserializeExpression(it.value)
@@ -1068,7 +1068,7 @@ internal class IrDeserializer(val context: Context,
     }
 
     fun decodeDeclaration(): IrDeclaration {
-        val proto = (rootFunction as DeserializedSimpleFunctionDescriptor).proto
+        val proto = rootFunction.proto
 
         if (!proto.hasExtension(KonanLinkData.inlineIrBody)) {
             throw KonanIrDeserializationException("$rootFunction doesn't have ir serialized.")

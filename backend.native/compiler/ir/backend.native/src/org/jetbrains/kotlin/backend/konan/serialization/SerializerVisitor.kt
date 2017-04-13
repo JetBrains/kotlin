@@ -67,7 +67,7 @@ internal class DeserializerDriver(val context: Context) {
     internal fun dumpAllInlineBodies() {
         if (! context.phase!!.verbose) return
         context.log("Now deserializing all inlines for debugging purpose.")
-        context.moduleDescriptor!!.accept(
+        context.moduleDescriptor.accept(
             InlineBodiesPrinterVisitor(InlineBodyPrinter()), Unit)
     }
 
