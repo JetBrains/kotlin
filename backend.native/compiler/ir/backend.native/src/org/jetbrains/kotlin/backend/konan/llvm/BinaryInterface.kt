@@ -168,7 +168,8 @@ internal val PropertyDescriptor.symbolName: String
         val containingDeclarationPart = containingDeclaration.fqNameSafe.let {
             if (it.isRoot) "" else "$it."
         }
-        return "kprop:$containingDeclarationPart$name"
+        val extensionReceiverPart = this.extensionReceiverParameter?.let { "${it.type}." } ?: ""
+        return "kprop:$containingDeclarationPart$extensionReceiverPart$name"
 
     }
 
