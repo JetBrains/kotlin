@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,6 +104,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFact
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
+import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProviderImpl
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
@@ -481,7 +482,7 @@ class KotlinCoreEnvironment private constructor(
             with (projectEnvironment.project) {
                 val kotlinScriptDefinitionProvider = KotlinScriptDefinitionProvider()
                 registerService(KotlinScriptDefinitionProvider::class.java, kotlinScriptDefinitionProvider)
-                registerService(KotlinScriptExternalImportsProvider::class.java, KotlinScriptExternalImportsProvider(projectEnvironment.project, kotlinScriptDefinitionProvider))
+                registerService(KotlinScriptExternalImportsProvider::class.java, KotlinScriptExternalImportsProviderImpl(projectEnvironment.project, kotlinScriptDefinitionProvider))
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
                 registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(this))
             }

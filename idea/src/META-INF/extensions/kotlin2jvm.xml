@@ -9,5 +9,7 @@
         <classBuilderInterceptorExtension implementation="org.jetbrains.kotlin.annotation.AnnotationCollectorExtension"/>
 
         <analyzeCompleteHandlerExtension implementation="org.jetbrains.kotlin.resolve.jvm.AnalyzeCompleteHandlerExtension"/>
+
+        <scriptHelper implementation="org.jetbrains.kotlin.script.ScriptHelperImpl"/>
     </extensions>
 </idea-plugin>

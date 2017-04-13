@@ -71,6 +71,7 @@
       <root url="file://$PROJECT_DIR$/../out/production/noarg-cli" />
       <root url="file://$PROJECT_DIR$/../out/production/sam-with-receiver-cli" />
       <root url="file://$PROJECT_DIR$/../out/production/sam-with-receiver-ide" />
+      <root url="file://$PROJECT_DIR$/../out/production/frontend.script" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
@@ -104,6 +105,7 @@
       <root url="file://$PROJECT_DIR$/../idea/idea-live-templates/src" />
       <root url="file://$PROJECT_DIR$/../idea/idea-test-framework/src" />
       <root url="file://$PROJECT_DIR$/../idea/formatter/src" />
+      <root url="file://$PROJECT_DIR$/../compiler/frontend.script/src" />
     </SOURCES>
   </library>
 </component>

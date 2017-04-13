@@ -40,5 +40,6 @@
     <orderEntry type="module" module-name="sam-with-receiver-cli" scope="TEST" />
     <orderEntry type="module" module-name="allopen-cli" scope="TEST" />
     <orderEntry type="module" module-name="noarg-cli" scope="TEST" />
+    <orderEntry type="module" module-name="frontend.script" />
   </component>
 </module>

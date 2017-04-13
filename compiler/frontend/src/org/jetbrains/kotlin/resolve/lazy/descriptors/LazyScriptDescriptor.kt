@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.script.ScriptHelper
 import org.jetbrains.kotlin.script.ScriptPriorities
-import org.jetbrains.kotlin.script.getKotlinTypeByFqName
 import org.jetbrains.kotlin.script.getScriptDefinition
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.ifEmpty
@@ -80,5 +80,5 @@ class LazyScriptDescriptor(
 
     override fun getUnsubstitutedPrimaryConstructor() = super.getUnsubstitutedPrimaryConstructor()!!
 
-    override fun computeSupertypes() = listOf(getKotlinTypeByFqName(this, scriptDefinition.template.qualifiedName!!)).ifEmpty { listOf(builtIns.anyType) }
+    override fun computeSupertypes() = listOf(ScriptHelper.getInstance()!!.getKotlinType(this, scriptDefinition.template)).ifEmpty { listOf(builtIns.anyType) }
 }

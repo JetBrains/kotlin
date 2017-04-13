@@ -96,6 +96,7 @@
         <include name="compiler/plugin-api/src"/>
         <include name="compiler/daemon/src"/>
         <include name="compiler/daemon/daemon-common/src"/>
+        <include name="compiler/frontend.script/src"/>
         <include name="build-common/src"/>
         <include name="compiler/incremental-compilation-impl/src"/>
         <include name="compiler/serialization/src"/>
@@ -130,6 +131,7 @@
         <include name="conditional-preprocessor/**"/>
         <include name="daemon/**"/>
         <include name="daemon-common/**"/>
+        <include name="frontend.script/**"/>
         <include name="build-common/**"/>
         <include name="incremental-compilation-impl/**"/>
         <include name="util/**"/>
@@ -245,6 +247,7 @@
             <fileset dir="compiler/resolution/src"/>
             <fileset dir="compiler/frontend.java/src"/>
             <fileset dir="compiler/light-classes/src"/>
+            <fileset dir="compiler/frontend.script/src"/>
             <fileset dir="compiler/plugin-api/src"/>
             <fileset dir="plugins/annotation-collector/src"/>
             <fileset dir="compiler/serialization/src"/>

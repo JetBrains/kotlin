@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
-import org.jetbrains.kotlin.script.getScriptParameters
+import org.jetbrains.kotlin.script.ScriptHelper
 
 class LazyScriptClassMemberScope(
         resolveSession: ResolveSession,
@@ -49,7 +49,7 @@ class LazyScriptClassMemberScope(
     }
 
     private fun createScriptParameters(constructor: ClassConstructorDescriptorImpl): List<ValueParameterDescriptor> {
-        return scriptDescriptor.scriptDefinition.getScriptParameters(scriptDescriptor).mapIndexed { index, (name, type) ->
+        return ScriptHelper.getInstance()!!.getScriptParameters(scriptDescriptor.scriptDefinition, scriptDescriptor).mapIndexed { index, (name, type) ->
             ValueParameterDescriptorImpl(
                     constructor, null, index, Annotations.EMPTY, name, type,
                     /* declaresDefaultValue = */ false,
