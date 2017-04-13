@@ -1,4 +1,4 @@
-[propertyUsages.1.kt] Usage in string constants 16 @PropertyKey(resourceBundle = "idea.testData.findUsages.propertyFiles.propertyUsages.0") val s1 = "foo.bar"
+[propertyUsages.1.kt] Usage in string constants 16 @PropertyKey(resourceBundle = "propertyUsages.0") val s1 = "foo.bar"
 [propertyUsages.1.kt] Usage in string constants 18 message("foo.bar")
 [propertyUsages.1.kt] Usage in string constants 21 "test" infixMessage "foo.bar"
 [propertyUsages.1.kt] Usage in string constants 23 "foo.bar" infixMessage2 "test"
@@ -6,5 +6,5 @@
 [propertyUsages.1.kt] Usage in string constants 26 -"foo.bar"
 [propertyUsages.1.kt] Usage in string constants 27 1["foo.bar"]
 [propertyUsages.1.kt] Usage in string constants 28 "foo.bar"["test"]
-[propertyUsages.2.java] Usage in string constants 3 @PropertyKey(resourceBundle = "idea.testData.findUsages.propertyFiles.propertyUsages.0") String s1 = "foo.bar"
+[propertyUsages.2.java] Usage in string constants 3 @PropertyKey(resourceBundle = "propertyUsages.0") String s1 = "foo.bar"
 [propertyUsages.2.java] Usage in string constants 5 PropertyUsages_1Kt.message("foo.bar");

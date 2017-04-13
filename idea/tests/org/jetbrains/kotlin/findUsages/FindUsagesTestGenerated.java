@@ -1639,6 +1639,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("JavaWithGroovyInvoke.0.java")
+            public void testJavaWithGroovyInvoke() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/JavaWithGroovyInvoke.0.java");
+                doTest(fileName);
+            }
+
             @TestMetadata("MismatchedAccessor.0.java")
             public void testMismatchedAccessor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/MismatchedAccessor.0.java");

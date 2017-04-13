@@ -64,11 +64,6 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
 
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-    public override fun setUp() {
-        super.setUp()
-        myFixture.testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/findUsages"
-    }
-
     // used in Spring tests (outside main project!)
     protected open fun extraConfig(path: String) {
     }
@@ -110,17 +105,13 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
                 if (!name.startsWith(prefix) || name == mainFileName) return@listFiles false
 
                 val ext = FileUtilRt.getExtension(name)
-                ext == "kt"
-                || ext == "java"
-                || ext == "xml"
-                || ext == "properties"
-                || ext == "txt" && !name.endsWith(".results.txt")
+                ext in SUPPORTED_EXTENSIONS && !name.endsWith(".results.txt")
             }
 
             for (file in extraFiles) {
-                myFixture.configureByFile(rootPath + file.name)
+                myFixture.configureByFile(file.name)
             }
-            myFixture.configureByFile(path)
+            myFixture.configureByFile(mainFileName)
 
             val caretElement = if (InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF"))
                 TargetElementUtilBase.findTargetElement(myFixture.editor,
@@ -169,6 +160,10 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
                 ExpressionsOfTypeProcessor.testLog = logList
             }
 
+            if (InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// PLAIN_WHEN_NEEDED")) {
+                ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.PLAIN_WHEN_NEEDED
+            }
+
             findUsages(caretElement, options, highlightingMode)
         }
         finally {
@@ -176,6 +171,8 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
             if (logList.size > 0) {
                 log = logList.sorted().joinToString("\n")
             }
+
+            ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART
         }
 
         val filteringRules = instantiateClasses<UsageFilteringRule>(mainFileText, "// FILTERING_RULES: ")
@@ -274,6 +271,7 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
     }
 
     companion object {
+        val SUPPORTED_EXTENSIONS = setOf("kt", "java", "xml", "properties", "txt", "groovy")
 
         val USAGE_VIEW_PRESENTATION = UsageViewPresentation()
 
