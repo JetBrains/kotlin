@@ -483,7 +483,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             builder.append("@SinceKotlin(\"$since\")\n")
         }
 
-        annotations[platform, f]?.let { builder.append(it).append('\n') }
+        annotations[platform, f]?.let { builder.append(it.trimIndent()).append('\n') }
 
         if (inline[platform, f] == Inline.Only) {
             builder.append("@kotlin.internal.InlineOnly").append('\n')

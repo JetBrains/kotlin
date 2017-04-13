@@ -5168,6 +5168,7 @@ public fun CharArray.sortedWith(comparator: Comparator<in Char>): List<Char> {
  */
 @SinceKotlin("1.1")
 @library("arrayDeepEquals")
+@Suppress("UNUSED_PARAMETER")
 public infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean {
     definedExternally
 }
@@ -5203,6 +5204,7 @@ public fun <T> Array<out T>.contentDeepToString(): String {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
+@Suppress("UNUSED_PARAMETER")
 public infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
     definedExternally
 }
@@ -5213,6 +5215,7 @@ public infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
+@Suppress("UNUSED_PARAMETER")
 public infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
     definedExternally
 }
@@ -5223,6 +5226,7 @@ public infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
+@Suppress("UNUSED_PARAMETER")
 public infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
     definedExternally
 }
@@ -5233,6 +5237,7 @@ public infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
+@Suppress("UNUSED_PARAMETER")
 public infix fun IntArray.contentEquals(other: IntArray): Boolean {
     definedExternally
 }
@@ -5243,6 +5248,7 @@ public infix fun IntArray.contentEquals(other: IntArray): Boolean {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
+@Suppress("UNUSED_PARAMETER")
 public infix fun LongArray.contentEquals(other: LongArray): Boolean {
     definedExternally
 }
@@ -5253,6 +5259,7 @@ public infix fun LongArray.contentEquals(other: LongArray): Boolean {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
+@Suppress("UNUSED_PARAMETER")
 public infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
     definedExternally
 }
@@ -5263,6 +5270,7 @@ public infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
+@Suppress("UNUSED_PARAMETER")
 public infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
     definedExternally
 }
@@ -5273,6 +5281,7 @@ public infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
+@Suppress("UNUSED_PARAMETER")
 public infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
     definedExternally
 }
@@ -5283,6 +5292,7 @@ public infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
+@Suppress("UNUSED_PARAMETER")
 public infix fun CharArray.contentEquals(other: CharArray): Boolean {
     definedExternally
 }
@@ -12926,6 +12936,7 @@ public fun <T> Array<out T>.asList(): List<T> {
 /**
  * Returns a [List] that wraps the original array.
  */
+@kotlin.internal.InlineOnly
 public inline fun ByteArray.asList(): List<Byte> {
     return this.unsafeCast<Array<Byte>>().asList()
 }
@@ -12933,6 +12944,7 @@ public inline fun ByteArray.asList(): List<Byte> {
 /**
  * Returns a [List] that wraps the original array.
  */
+@kotlin.internal.InlineOnly
 public inline fun ShortArray.asList(): List<Short> {
     return this.unsafeCast<Array<Short>>().asList()
 }
@@ -12940,6 +12952,7 @@ public inline fun ShortArray.asList(): List<Short> {
 /**
  * Returns a [List] that wraps the original array.
  */
+@kotlin.internal.InlineOnly
 public inline fun IntArray.asList(): List<Int> {
     return this.unsafeCast<Array<Int>>().asList()
 }
@@ -12947,6 +12960,7 @@ public inline fun IntArray.asList(): List<Int> {
 /**
  * Returns a [List] that wraps the original array.
  */
+@kotlin.internal.InlineOnly
 public inline fun LongArray.asList(): List<Long> {
     return this.unsafeCast<Array<Long>>().asList()
 }
@@ -12954,6 +12968,7 @@ public inline fun LongArray.asList(): List<Long> {
 /**
  * Returns a [List] that wraps the original array.
  */
+@kotlin.internal.InlineOnly
 public inline fun FloatArray.asList(): List<Float> {
     return this.unsafeCast<Array<Float>>().asList()
 }
@@ -12961,6 +12976,7 @@ public inline fun FloatArray.asList(): List<Float> {
 /**
  * Returns a [List] that wraps the original array.
  */
+@kotlin.internal.InlineOnly
 public inline fun DoubleArray.asList(): List<Double> {
     return this.unsafeCast<Array<Double>>().asList()
 }
@@ -12968,6 +12984,7 @@ public inline fun DoubleArray.asList(): List<Double> {
 /**
  * Returns a [List] that wraps the original array.
  */
+@kotlin.internal.InlineOnly
 public inline fun BooleanArray.asList(): List<Boolean> {
     return this.unsafeCast<Array<Boolean>>().asList()
 }
@@ -13533,6 +13550,7 @@ public fun CharArray.toTypedArray(): Array<Char> {
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.sort(noinline comparison: (a: T, b: T) -> Int): Unit {
     asDynamic().sort(comparison)
 }
@@ -13540,6 +13558,7 @@ public inline fun <T> Array<out T>.sort(noinline comparison: (a: T, b: T) -> Int
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@kotlin.internal.InlineOnly
 public inline fun ByteArray.sort(noinline comparison: (a: Byte, b: Byte) -> Int): Unit {
     asDynamic().sort(comparison)
 }
@@ -13547,6 +13566,7 @@ public inline fun ByteArray.sort(noinline comparison: (a: Byte, b: Byte) -> Int)
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@kotlin.internal.InlineOnly
 public inline fun ShortArray.sort(noinline comparison: (a: Short, b: Short) -> Int): Unit {
     asDynamic().sort(comparison)
 }
@@ -13554,6 +13574,7 @@ public inline fun ShortArray.sort(noinline comparison: (a: Short, b: Short) -> I
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@kotlin.internal.InlineOnly
 public inline fun IntArray.sort(noinline comparison: (a: Int, b: Int) -> Int): Unit {
     asDynamic().sort(comparison)
 }
@@ -13561,6 +13582,7 @@ public inline fun IntArray.sort(noinline comparison: (a: Int, b: Int) -> Int): U
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@kotlin.internal.InlineOnly
 public inline fun LongArray.sort(noinline comparison: (a: Long, b: Long) -> Int): Unit {
     asDynamic().sort(comparison)
 }
@@ -13568,6 +13590,7 @@ public inline fun LongArray.sort(noinline comparison: (a: Long, b: Long) -> Int)
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@kotlin.internal.InlineOnly
 public inline fun FloatArray.sort(noinline comparison: (a: Float, b: Float) -> Int): Unit {
     asDynamic().sort(comparison)
 }
@@ -13575,6 +13598,7 @@ public inline fun FloatArray.sort(noinline comparison: (a: Float, b: Float) -> I
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@kotlin.internal.InlineOnly
 public inline fun DoubleArray.sort(noinline comparison: (a: Double, b: Double) -> Int): Unit {
     asDynamic().sort(comparison)
 }
@@ -13582,6 +13606,7 @@ public inline fun DoubleArray.sort(noinline comparison: (a: Double, b: Double) -
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
+@kotlin.internal.InlineOnly
 public inline fun CharArray.sort(noinline comparison: (a: Char, b: Char) -> Int): Unit {
     asDynamic().sort(comparison)
 }

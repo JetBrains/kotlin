@@ -2,7 +2,9 @@ package kotlin.text
 
 import kotlin.js.RegExp
 
+@kotlin.internal.InlineOnly
 internal inline fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int = nativeIndexOf(ch.toString(), fromIndex)
+@kotlin.internal.InlineOnly
 internal inline fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = nativeLastIndexOf(ch.toString(), fromIndex)
 
 /**
@@ -37,7 +39,7 @@ public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean
 
 
 
-public inline fun String.matches(regex: String): Boolean {
+public fun String.matches(regex: String): Boolean {
     val result = this.match(regex)
     return result != null && result.size != 0
 }
@@ -62,7 +64,7 @@ public fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, othe
  *
  * @includeFunctionBody ../../test/StringTest.kt capitalize
  */
-public inline fun String.capitalize(): String {
+public fun String.capitalize(): String {
     return if (isNotEmpty()) substring(0, 1).toUpperCase() + substring(1) else this
 }
 
@@ -71,7 +73,7 @@ public inline fun String.capitalize(): String {
  *
  * @includeFunctionBody ../../test/StringTest.kt decapitalize
  */
-public inline fun String.decapitalize(): String {
+public fun String.decapitalize(): String {
     return if (isNotEmpty()) substring(0, 1).toLowerCase() + substring(1) else this
 }
 

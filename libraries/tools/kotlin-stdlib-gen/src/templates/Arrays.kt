@@ -58,7 +58,10 @@ fun arrays(): List<GenericFunction> {
         returns("Boolean")
         body(Platform.JVM) { "return java.util.Arrays.equals(this, other)" }
 
-        annotations(Platform.JS, """@library("arrayEquals")""")
+        annotations(Platform.JS, """
+            @library("arrayEquals")
+            @Suppress("UNUSED_PARAMETER")
+        """)
         body(Platform.JS) { "definedExternally" }
 
     }
@@ -79,7 +82,10 @@ fun arrays(): List<GenericFunction> {
         }
         returns("Boolean")
         body(Platform.JVM) { "return java.util.Arrays.deepEquals(this, other)" }
-        annotations(Platform.JS, """@library("arrayDeepEquals")""")
+        annotations(Platform.JS, """
+            @library("arrayDeepEquals")
+            @Suppress("UNUSED_PARAMETER")
+        """)
         body(Platform.JS) { "definedExternally" }
     }
 

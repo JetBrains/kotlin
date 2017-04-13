@@ -155,6 +155,7 @@ internal class BoxedChar(val c: Char) : Comparable<Char> {
     }
 }
 
+@kotlin.internal.InlineOnly
 internal inline fun <T> concat(args: Array<T>): T {
     val typed = js("Array")(args.size)
     for (i in 0..args.size - 1) {
@@ -221,6 +222,7 @@ internal fun charArrayOf() = withType("CharArray", js("new Uint16Array([].slice.
 internal fun longArrayOf() = withType("LongArray", js("[].slice.call(arguments)"))
 
 @JsName("withType")
+@kotlin.internal.InlineOnly
 internal inline fun withType(type: String, array: dynamic): dynamic {
     array.`$type$` = type
     return array

@@ -497,7 +497,7 @@ object CommonArrays {
                         body(Platform.JS) { objectLiteralImpl }
                     }
                     else {
-                        inline(Platform.JS, Inline.Yes, ArraysOfPrimitives)
+                        inline(Platform.JS, Inline.Only, ArraysOfPrimitives)
                         body(Platform.JS) { "return this.unsafeCast<Array<T>>().asList()" }
                     }
                 }

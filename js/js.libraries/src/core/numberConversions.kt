@@ -80,6 +80,7 @@ public fun String.toDouble(): Double = (+(this.asDynamic())).unsafeCast<Double>(
  * Parses the string as a [Float] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
+@kotlin.internal.InlineOnly
 public inline fun String.toFloat(): Float = toDouble().unsafeCast<Float>()
 
 /**
@@ -94,6 +95,7 @@ public fun String.toDoubleOrNull(): Double? = (+(this.asDynamic())).unsafeCast<D
  * Parses the string as a [Float] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
+@kotlin.internal.InlineOnly
 public inline fun String.toFloatOrNull(): Float? = toDoubleOrNull().unsafeCast<Float?>()
 
 

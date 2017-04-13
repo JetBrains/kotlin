@@ -17,5 +17,6 @@
 package kotlin.ranges
 
 @SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
 public inline operator fun Float.rangeTo(that: Float): ClosedFloatingPointRange<Float> =
         this.toDouble().rangeTo(that.toDouble()).unsafeCast<ClosedFloatingPointRange<Float>>()
