@@ -175,6 +175,13 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     protected String apiVersion;
 
     /**
+     * possible values are: enable, error, warn
+     */
+    @Parameter(property = "kotlin.compiler.experimental.coroutines", required = false, readonly = false)
+    @Nullable
+    protected String experimentalCoroutines;
+
+    /**
      * Additional command line arguments for Kotlin compiler.
      */
     @Parameter
@@ -446,6 +453,10 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         arguments.languageVersion = languageVersion;
         arguments.apiVersion = apiVersion;
         arguments.multiPlatform = multiPlatform;
+
+        if (experimentalCoroutines != null) {
+            compiler.parseArguments(new String[] { "-Xcoroutines=" + experimentalCoroutines }, arguments);
+        }
 
         configureSpecificCompilerArguments(arguments);
 

@@ -19,6 +19,8 @@
       <param name="defaultSourceDirs/sourceDir" refProvider="org.jetbrains.idea.maven.plugins.api.common.MavenCommonParamReferenceProviders$DirPath"/>
       <param name="defaultSourceDirs/dir" refProvider="org.jetbrains.idea.maven.plugins.api.common.MavenCommonParamReferenceProviders$DirPath"/>
 
+      <param name="experimentalCoroutines" values="enable,warn,error"/>
+
       <param name="script" language="kotlin" />
     </pluginDescriptor>
   </extensions>
