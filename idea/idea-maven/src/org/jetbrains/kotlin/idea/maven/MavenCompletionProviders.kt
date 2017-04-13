@@ -21,13 +21,14 @@ import org.jetbrains.idea.maven.plugins.api.MavenFixedValueReferenceProvider
 import org.jetbrains.kotlin.cli.common.arguments.DefaultValues
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 
 class LanguageVersionsProvider : MavenFixedValueReferenceProvider(
-        LanguageVersion.values().map { it.versionString }.toTypedArray()
+        LanguageVersion.values().filter { it.isStable || KotlinInternalMode.enabled }.map { it.versionString }.toTypedArray()
 )
 
 class ApiVersionsProvider : MavenFixedValueReferenceProvider(
-        LanguageVersion.values().map { it.versionString }.toTypedArray()
+        LanguageVersion.values().filter { it.isStable || KotlinInternalMode.enabled }.map { it.versionString }.toTypedArray()
 )
 
 class JvmTargetsProvider : MavenFixedValueReferenceProvider(
