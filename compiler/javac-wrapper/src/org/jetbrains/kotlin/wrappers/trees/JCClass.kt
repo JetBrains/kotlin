@@ -48,7 +48,7 @@ class JCClass<out T : JCTree.JCClassDecl>(tree: T,
         get() = tree.modifiers.isAbstract
 
     override val isStatic
-        get() = outerClass?.isInterface ?: tree.modifiers.isStatic
+        get() = if (outerClass?.isInterface ?: false) true else tree.modifiers.isStatic
 
     override val isFinal
         get() = tree.modifiers.isFinal
