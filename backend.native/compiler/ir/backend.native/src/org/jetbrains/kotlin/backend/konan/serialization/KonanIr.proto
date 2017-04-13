@@ -23,16 +23,16 @@ message KotlinDescriptor {
     // TODO: Use the string table?
     optional string name = 1;
     required Kind kind = 2;
-    required int32 index = 3;
-    required int32 original_index = 4;
+    required UniqId uniq_id = 3;
+    required UniqId original_uniq_id = 4;
     // index in fq name table
     required int32 class_or_package = 5;
     // Descriptor kind specific fields.
     optional KotlinType type = 6;
     repeated KotlinDescriptor value_parameter = 7;
     repeated KotlinDescriptor type_parameter = 8;
-    optional int32 dispatch_receiver_index = 9;
-    optional int32 extension_receiver_index = 10;
+    optional UniqId dispatch_receiver_uniq_id = 9;
+    optional UniqId extension_receiver_uniq_id = 10;
     optional KotlinType extension_receiver_type = 11;
     optional LocalDeclaration ir_local_declaration = 12;
 }

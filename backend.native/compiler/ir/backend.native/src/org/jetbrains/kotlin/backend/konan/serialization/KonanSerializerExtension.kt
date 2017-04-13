@@ -62,10 +62,6 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
     }
 
     override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.ValueParameter.Builder) {
-
-        val index = inlineDescriptorTable.indexByValue(descriptor)
-        proto.setExtension(KonanLinkData.valueParameterIndex, index)
-
         super.serializeValueParameter(descriptor, proto)
     }
 
@@ -87,7 +83,7 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
 
     override fun serializeConstructor(descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder) {
 
-        proto.setExtension(KonanLinkData.constructorIndex, 
+        proto.setConstructorIndex(
             inlineDescriptorTable.indexByValue(descriptor))
         val parentIndex = descriptor.parentFqNameIndex()
         proto.setExtension(KonanLinkData.constructorParent, parentIndex)
@@ -97,13 +93,14 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
 
     override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
 
-        proto.setExtension(KonanLinkData.classIndex, inlineDescriptorTable.indexByValue(descriptor))
+        proto.setClassIndex(
+            inlineDescriptorTable.indexByValue(descriptor))
         super.serializeClass(descriptor, proto)
     }
 
     override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
 
-        proto.setExtension(KonanLinkData.functionIndex, 
+        proto.setFunctionIndex(
             inlineDescriptorTable.indexByValue(descriptor))
         val parentIndex = descriptor.parentFqNameIndex()
         proto.setExtension(KonanLinkData.functionParent, parentIndex)
@@ -137,10 +134,12 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
         val variable = originalVariables[descriptor]
         if (variable != null) {
             proto.setExtension(KonanLinkData.usedAsVariable, true)
-            proto.setExtension(KonanLinkData.propertyIndex, inlineDescriptorTable.indexByValue(variable))
+            proto.setPropertyIndex(
+                inlineDescriptorTable.indexByValue(variable))
 
         } else {
-            proto.setExtension(KonanLinkData.propertyIndex, inlineDescriptorTable.indexByValue(descriptor))
+            proto.setPropertyIndex(
+                inlineDescriptorTable.indexByValue(descriptor))
         }
 
         super.serializeProperty(descriptor, proto)

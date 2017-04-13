@@ -39,6 +39,55 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
+fun newUniqId(index: Long): KonanLinkData.UniqId =
+   KonanLinkData.UniqId.newBuilder().setIndex(index).build() 
+
+val ProtoBuf.Function.functionIndex: Long
+    get() = this.getExtension(KonanLinkData.functionIndex).index
+
+val ProtoBuf.Constructor.constructorIndex: Long
+    get() = this.getExtension(KonanLinkData.constructorIndex).index
+
+val ProtoBuf.Property.propertyIndex: Long
+    get() = this.getExtension(KonanLinkData.propertyIndex).index
+
+
+fun ProtoBuf.Function.Builder.setFunctionIndex(index: Long)
+    = this.setExtension(KonanLinkData.functionIndex, newUniqId(index))
+
+fun ProtoBuf.Constructor.Builder.setConstructorIndex(index: Long)
+    = this.setExtension(KonanLinkData.constructorIndex, newUniqId(index))
+
+fun ProtoBuf.Property.Builder.setPropertyIndex(index: Long)
+    = this.setExtension(KonanLinkData.propertyIndex, newUniqId(index))
+
+fun ProtoBuf.Class.Builder.setClassIndex(index: Long)
+    = this.setExtension(KonanLinkData.classIndex, newUniqId(index))
+
+
+val KonanIr.KotlinDescriptor.index: Long
+    get() = this.uniqId.index
+
+fun KonanIr.KotlinDescriptor.Builder.setIndex(index: Long)
+    = this.setUniqId(newUniqId(index))
+
+val KonanIr.KotlinDescriptor.originalIndex: Long
+    get() = this.originalUniqId.index
+
+fun KonanIr.KotlinDescriptor.Builder.setOriginalIndex(index: Long) 
+    = this.setOriginalUniqId(newUniqId(index))
+
+val KonanIr.KotlinDescriptor.dispatchReceiverIndex: Long
+    get() = this.dispatchReceiverUniqId.index
+
+fun KonanIr.KotlinDescriptor.Builder.setDispatchReceiverIndex(index: Long) 
+    = this.setDispatchReceiverUniqId(newUniqId(index))
+
+val KonanIr.KotlinDescriptor.extensionReceiverIndex: Long
+    get() = this.extensionReceiverUniqId.index
+
+fun KonanIr.KotlinDescriptor.Builder.setExtensionReceiverIndex(index: Long) 
+    = this.setExtensionReceiverUniqId(newUniqId(index))
 
 internal fun printType(proto: ProtoBuf.Type) {
     println("debug text: " + proto.getExtension(KonanLinkData.typeText))
@@ -92,12 +141,11 @@ internal class IrDescriptorDeserializer(val context: Context,
 
         return type
     }
-
     fun deserializeLocalDeclaration(proto: KonanLinkData.Descriptor): DeclarationDescriptor {
         when {
             proto.hasFunction() -> {
                 val functionProto = proto.function
-                val index = functionProto.getExtension(KonanLinkData.functionIndex) 
+                val index = functionProto.functionIndex
                 val descriptor = localDeserializer.deserializeFunction(functionProto)
                 descriptorIndex.put(index, descriptor)
                 return descriptor
@@ -105,7 +153,7 @@ internal class IrDescriptorDeserializer(val context: Context,
 
             proto.hasProperty() -> {
                 val propertyProto = proto.property
-                val index = propertyProto.getExtension(KonanLinkData.propertyIndex) 
+                val index = propertyProto.propertyIndex
                 val descriptor = localDeserializer.deserializeProperty(propertyProto)
                 descriptorIndex.put(index, descriptor)
                 return descriptor
@@ -204,20 +252,18 @@ internal class IrDescriptorDeserializer(val context: Context,
 
         val dispatchReceiver = functionDescriptor.dispatchReceiverParameter
         if (dispatchReceiver != null) {
-            assert(proto.hasDispatchReceiverIndex())
+            assert(proto.hasDispatchReceiverUniqId())
             val dispatchReceiverIndex = proto.dispatchReceiverIndex
             descriptorIndex.put(dispatchReceiverIndex, dispatchReceiver)
         }
 
-
         val extensionReceiver = functionDescriptor.extensionReceiverParameter
         if (extensionReceiver != null) {
-            assert(proto.hasExtensionReceiverIndex())
+            assert(proto.hasExtensionReceiverUniqId())
             val extensionReceiverIndex = proto.extensionReceiverIndex
             descriptorIndex.put(extensionReceiverIndex, extensionReceiver)
         }
     }
-
 
     fun substituteFunction(proto: KonanIr.KotlinDescriptor, 
         originalDescriptor: FunctionDescriptor): FunctionDescriptor {
@@ -292,14 +338,14 @@ internal class IrDescriptorDeserializer(val context: Context,
 
         val dispatchReceiver = newPropertyDescriptor.dispatchReceiverParameter
         if (dispatchReceiver != null) {
-            assert(proto.hasDispatchReceiverIndex())
+            assert(proto.hasDispatchReceiverUniqId())
             val dispatchReceiverIndex = proto.dispatchReceiverIndex
             descriptorIndex.put(dispatchReceiverIndex, dispatchReceiver)
         }
 
         val extensionReceiver = newPropertyDescriptor.extensionReceiverParameter
         if (extensionReceiver != null) {
-            assert(proto.hasExtensionReceiverIndex())
+            assert(proto.hasExtensionReceiverUniqId())
             val extensionReceiverIndex = proto.extensionReceiverIndex
             descriptorIndex.put(extensionReceiverIndex, extensionReceiver)
         }
@@ -362,8 +408,7 @@ internal class IrDescriptorDeserializer(val context: Context,
         val originalIndex = descriptorProto.originalIndex
         val match = functions.singleOrNull() {
             val proto = (it as DeserializedSimpleFunctionDescriptor).proto
-            println("${proto.getExtension(KonanLinkData.functionIndex)} =? ${originalIndex}")
-            proto.getExtension(KonanLinkData.functionIndex) == originalIndex
+            proto.functionIndex == originalIndex
         } as? DeserializedSimpleFunctionDescriptor
         if (match != null) return match
 
@@ -388,7 +433,7 @@ internal class IrDescriptorDeserializer(val context: Context,
         val originalIndex = descriptorProto.originalIndex
         return constructors.single {
             val proto = (it as DeserializedClassConstructorDescriptor).proto
-            proto.getExtension(KonanLinkData.constructorIndex) == originalIndex
+            proto.constructorIndex == originalIndex
         } as DeserializedClassConstructorDescriptor
     }
 
@@ -406,7 +451,7 @@ internal class IrDescriptorDeserializer(val context: Context,
         val originalIndex = proto.originalIndex
         return functions.single {
             val property = (it as PropertyAccessorDescriptor).correspondingProperty as DeserializedPropertyDescriptor
-            property.proto.getExtension(KonanLinkData.propertyIndex) == originalIndex
+            property.proto.propertyIndex == originalIndex
         } as PropertyAccessorDescriptor
     }
 

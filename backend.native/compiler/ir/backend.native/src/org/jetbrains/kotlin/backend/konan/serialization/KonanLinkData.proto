@@ -15,31 +15,35 @@ option optimize_for = LITE_RUNTIME;
 
 // Konan extensions to the "descriptors" protobuf.
 
+message UniqId {
+    required int64 index = 1;
+}
+
 extend Package {
     optional int32 package_fq_name = 171;
 }
 
 extend Class {
     repeated Annotation class_annotation = 170;
-    optional int32 class_index = 171;
+    optional UniqId class_index = 171;
 }
 
 extend Constructor {
     repeated Annotation constructor_annotation = 170;
-    optional int32 constructor_index = 171;
+    optional UniqId constructor_index = 171;
     optional int32 constructor_parent = 172;
 }
 
 extend Function {
     repeated Annotation function_annotation = 170;
-    optional int32 function_index = 171;
+    optional UniqId function_index = 171;
     optional int32 function_parent = 172;
     optional InlineIrBody inline_ir_body = 174;
 }
 
 extend Property {
     repeated Annotation property_annotation = 170;
-    optional int32 property_index = 171;
+    optional UniqId property_index = 171;
     optional int32 property_parent = 172;
     optional bool used_as_variable = 173;
     optional Annotation.Argument.Value compile_time_value = 174;
@@ -47,24 +51,21 @@ extend Property {
 
 extend EnumEntry {
     repeated Annotation enum_entry_annotation = 170;
-    optional int32 enum_entry_index = 171;
+    optional UniqId enum_entry_index = 171;
 }
 
 extend ValueParameter {
     repeated Annotation parameter_annotation = 170;
-    optional int32 value_parameter_index = 171;
 }
 
 extend Type {
     repeated Annotation type_annotation = 170;
-    optional int32 type_index = 171;
+    optional UniqId type_index = 171;
     optional string type_text = 172; // TODO: remove me
 }
 
 extend TypeParameter {
     repeated Annotation type_parameter_annotation = 170;
-    //optional int32 type_parameter_index = 171;
-    //optional int32 type_parameter_parent = 172;
 }
 
 message InlineIrBody {

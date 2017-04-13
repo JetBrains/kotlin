@@ -173,22 +173,6 @@ internal val PropertyDescriptor.symbolName: String
 
     }
 
-internal val TypeParameterDescriptor.symbolName: String
-    get() {
-        val containingDeclarationPart = containingDeclaration.fqNameSafe.let {
-            if (it.isRoot) "" else "$it."
-        }
-        return "ktypeparam:$containingDeclarationPart$name"
-    }
-
-internal val ValueParameterDescriptor.symbolName: String
-    get() {
-        val containingDeclarationPart = containingDeclaration.fqNameSafe.let {
-            if (it.isRoot) "" else "$it."
-        }
-        return "kvalueparam:$containingDeclarationPart$name"
-    }
-
 private fun getStringValue(annotation: AnnotationDescriptor): String? {
     annotation.allValueArguments.values.ifNotEmpty {
         val stringValue = this.single() as StringValue
