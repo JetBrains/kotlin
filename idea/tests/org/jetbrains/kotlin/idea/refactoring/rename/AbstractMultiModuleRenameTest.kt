@@ -20,6 +20,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
+import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -39,9 +40,15 @@ abstract class AbstractMultiModuleRenameTest : KotlinMultiFileTestCase() {
 
         doTestCommittingDocuments { rootDir, _ ->
             val mainFile = rootDir.findFileByRelativePath(file)!!
-            val psiFile = PsiManager.getInstance(project).findFile(mainFile)
+            val psiFile = PsiManager.getInstance(project).findFile(mainFile)!!
 
-            runRenameProcessor(project, newName, psiFile, renameParamsObject, true, true)
+            val renameType = renameParamsObject.getString("type")
+
+            when (RenameType.valueOf(renameType)) {
+                RenameType.FILE -> runRenameProcessor(project, newName, psiFile, renameParamsObject, true, true)
+                RenameType.MARKED_ELEMENT -> doRenameMarkedElement(renameParamsObject, psiFile)
+                else -> TestCase.fail("Unexpected rename type: $renameType")
+            }
         }
     }
 

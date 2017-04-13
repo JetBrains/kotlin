@@ -23,6 +23,7 @@ import com.intellij.lang.properties.psi.PropertiesFile
 import com.intellij.lang.properties.psi.Property
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
@@ -66,7 +67,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.File
 
-private enum class RenameType {
+enum class RenameType {
     JAVA_CLASS,
     JAVA_METHOD,
     KOTLIN_CLASS,
@@ -174,40 +175,12 @@ abstract class AbstractRenameTest : KotlinLightCodeInsightFixtureTestCase() {
 
     private fun renameMarkedElement(renameParamsObject: JsonObject, context: TestContext) {
         val mainFilePath = renameParamsObject.getString("mainFile")
-        val newName = renameParamsObject.getString("newName")
 
         doTestCommittingDocuments(context) { rootDir ->
             configExtra(rootDir, renameParamsObject)
-
             val psiFile = myFixture.configureFromTempProjectFile(mainFilePath)
 
-            val doc = PsiDocumentManager.getInstance(project).getDocument(psiFile)!!
-            val marker = doc.extractMarkerOffset(project, "/*rename*/")
-            assert(marker != -1)
-
-            val isByRef = renameParamsObject["byRef"]?.asBoolean ?: false
-            val isInjected = renameParamsObject["injected"]?.asBoolean ?: false
-            var currentEditor = myFixture.editor
-            var currentFile: PsiFile = psiFile
-            if (isByRef || isInjected) {
-                currentEditor.caretModel.moveToOffset(marker)
-                if (isInjected) {
-                    currentFile = InjectedLanguageUtil.findInjectedPsiNoCommit(psiFile, marker)!!
-                    currentEditor = InjectedLanguageUtil.getInjectedEditorForInjectedFile(myFixture.editor, currentFile)
-                }
-            }
-            val toRename = if (isByRef) {
-                TargetElementUtil.findTargetElement(currentEditor, TargetElementUtil.getInstance().allAccepted)!!
-            }
-            else {
-                currentFile.findElementAt(marker)!!.getNonStrictParentOfType<PsiNamedElement>()!!
-            }
-
-            val substitution = RenamePsiElementProcessor.forElement(toRename).substituteElementToRename(toRename, null)
-
-            val searchInComments = renameParamsObject["searchInComments"]?.asBoolean ?: true
-            val searchInTextOccurrences = renameParamsObject["searchInTextOccurrences"]?.asBoolean ?: true
-            runRenameProcessor(context.project, newName, substitution, renameParamsObject, searchInComments, searchInTextOccurrences)
+            doRenameMarkedElement(renameParamsObject, psiFile)
         }
     }
 
@@ -445,3 +418,50 @@ fun runRenameProcessor(
     processor.run()
 }
 
+fun doRenameMarkedElement(renameParamsObject: JsonObject, psiFile: PsiFile) {
+    val project = psiFile.project
+    val newName = renameParamsObject.getString("newName")
+
+    val doc = PsiDocumentManager.getInstance(project).getDocument(psiFile)!!
+    val marker = doc.extractMarkerOffset(project, "/*rename*/")
+    assert(marker != -1)
+
+    val editorFactory = EditorFactory.getInstance()
+    var editor = editorFactory.getEditors(doc).firstOrNull()
+    var shouldReleaseEditor = false
+    if (editor == null) {
+        editor = editorFactory.createEditor(doc)
+        shouldReleaseEditor = true
+    }
+
+    try {
+        val isByRef = renameParamsObject["byRef"]?.asBoolean ?: false
+        val isInjected = renameParamsObject["injected"]?.asBoolean ?: false
+        var currentEditor = editor!!
+        var currentFile: PsiFile = psiFile
+        if (isByRef || isInjected) {
+            currentEditor.caretModel.moveToOffset(marker)
+            if (isInjected) {
+                currentFile = InjectedLanguageUtil.findInjectedPsiNoCommit(psiFile, marker)!!
+                currentEditor = InjectedLanguageUtil.getInjectedEditorForInjectedFile(editor, currentFile)
+            }
+        }
+        val toRename = if (isByRef) {
+            TargetElementUtil.findTargetElement(currentEditor, TargetElementUtil.getInstance().allAccepted)!!
+        }
+        else {
+            currentFile.findElementAt(marker)!!.getNonStrictParentOfType<PsiNamedElement>()!!
+        }
+
+        val substitution = RenamePsiElementProcessor.forElement(toRename).substituteElementToRename(toRename, null)
+
+        val searchInComments = renameParamsObject["searchInComments"]?.asBoolean ?: true
+        val searchInTextOccurrences = renameParamsObject["searchInTextOccurrences"]?.asBoolean ?: true
+        runRenameProcessor(project, newName, substitution, renameParamsObject, searchInComments, searchInTextOccurrences)
+    }
+    finally {
+        if (shouldReleaseEditor) {
+            editorFactory.releaseEditor(editor!!)
+        }
+    }
+}
