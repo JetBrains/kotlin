@@ -226,6 +226,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("StringTemplate.kt")
+            public void testStringTemplate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/StringTemplate.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("WithReference.kt")
             public void testWithReference() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/WithReference.kt");

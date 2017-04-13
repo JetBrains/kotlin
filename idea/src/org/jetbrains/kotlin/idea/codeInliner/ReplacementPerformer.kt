@@ -17,13 +17,12 @@
 package org.jetbrains.kotlin.idea.codeInliner
 
 import com.intellij.openapi.util.Key
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
-import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import java.util.*
 
@@ -66,6 +65,36 @@ internal class ExpressionReplacementPerformer(
         expressionToBeReplaced: KtExpression
 ) : ReplacementPerformer<KtExpression>(codeToInline, expressionToBeReplaced) {
 
+    fun KtExpression.replacedWithStringTemplate(templateExpression: KtStringTemplateExpression): KtExpression? {
+        val parent = this.parent
+
+        return if (parent is KtStringTemplateEntryWithExpression
+                   // Do not mix raw and non-raw templates
+                   && parent.parent.firstChild.text == templateExpression.firstChild.text) {
+
+            val entriesToAdd = templateExpression.entries
+            val grandParentTemplateExpression = parent.parent as KtStringTemplateExpression
+            val result = if (entriesToAdd.isNotEmpty()) {
+                grandParentTemplateExpression.addRangeBefore(entriesToAdd.first(), entriesToAdd.last(), parent)
+                val lastNewEntry = parent.prevSibling
+                val nextElement = parent.nextSibling
+                if (lastNewEntry is KtSimpleNameStringTemplateEntry &&
+                    lastNewEntry.expression != null &&
+                    !canPlaceAfterSimpleNameEntry(nextElement)) {
+                    lastNewEntry.replace(KtPsiFactory(this).createBlockStringTemplateEntry(lastNewEntry.expression!!))
+                }
+                grandParentTemplateExpression
+            }
+            else null
+
+            parent.delete()
+            result
+        }
+        else {
+            replaced(templateExpression)
+        }
+    }
+
     override fun doIt(postProcessing: (PsiChildRange) -> PsiChildRange): KtExpression? {
         val insertedStatements = ArrayList<KtExpression>()
         for (statement in codeToInline.statementsBefore) {
@@ -79,20 +108,22 @@ internal class ExpressionReplacementPerformer(
             insertedStatements.add(inserted)
         }
 
-        val replaced = if (codeToInline.mainExpression != null) {
-            elementToBeReplaced.replaced(codeToInline.mainExpression!!)
-        }
-        else {
-            // NB: Unit is never used as expression
-            val stub = elementToBeReplaced.replaced(psiFactory.createExpression("0"))
-            val bindingContext = stub.analyze()
-            val canDropElementToBeReplaced = !stub.isUsedAsExpression(bindingContext)
-            if (canDropElementToBeReplaced) {
-                stub.delete()
-                null
-            }
-            else {
-                stub.replace(psiFactory.createExpression("Unit"))
+        val mainExpression = codeToInline.mainExpression
+        val replaced: PsiElement? = when (mainExpression) {
+            is KtStringTemplateExpression -> elementToBeReplaced.replacedWithStringTemplate(mainExpression)
+            is KtExpression -> elementToBeReplaced.replaced(mainExpression)
+            else -> {
+                // NB: Unit is never used as expression
+                val stub = elementToBeReplaced.replaced(psiFactory.createExpression("0"))
+                val bindingContext = stub.analyze()
+                val canDropElementToBeReplaced = !stub.isUsedAsExpression(bindingContext)
+                if (canDropElementToBeReplaced) {
+                    stub.delete()
+                    null
+                }
+                else {
+                    stub.replace(psiFactory.createExpression("Unit"))
+                }
             }
         }
 
