@@ -17,15 +17,15 @@
 package org.jetbrains.kotlin.idea.test
 
 import com.intellij.ide.highlighter.ModuleFileType
-import com.intellij.openapi.module.StdModuleTypes
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.refactoring.MultiFileTestCase
 import com.intellij.testFramework.PsiTestUtil
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.io.File
 
 abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
     protected var isMultiModule = false
@@ -37,14 +37,14 @@ abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
 
     override fun prepareProject(rootDir: VirtualFile) {
         if (isMultiModule) {
+            val model = ModuleManager.getInstance(project).modifiableModel
+
             VfsUtilCore.visitChildrenRecursively(
                     rootDir,
                     object : VirtualFileVisitor<Any>() {
                         override fun visitFile(file: VirtualFile): Boolean {
                             if (!file.isDirectory && file.name.endsWith(ModuleFileType.DOT_DEFAULT_EXTENSION)) {
-                                val module = createModule(File(file.path), StdModuleTypes.JAVA)
-                                val contentRoot = file.parent.findChild("src")!!
-                                PsiTestUtil.addSourceContentToRoots(module, contentRoot)
+                                model.loadModule(file.path)
                                 return false
                             }
 
@@ -52,6 +52,8 @@ abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
                         }
                     }
             )
+
+            runWriteAction { model.commit() }
         }
         else {
             PsiTestUtil.addSourceContentToRoots(myModule, rootDir)
