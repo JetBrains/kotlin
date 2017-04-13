@@ -70,7 +70,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     private boolean sourceMap;
 
     /**
-     * Main invocation behaviour. Possible values are <b>CALL</b> and <b>NO_CALL</b>.
+     * Main invocation behaviour. Possible values are <b>call</b> and <b>noCall</b>.
      */
     @Parameter
     private String main;
