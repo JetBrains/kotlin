@@ -56,11 +56,13 @@ class HashSet<K> internal constructor(
     }
 
     override fun removeAll(elements: Collection<K>): Boolean {
-        val it = elements.iterator()
+        val it = iterator()
         var updated = false
         while (it.hasNext()) {
-            if (remove(it.next()))
+            if (elements.contains(it.next())) {
+                it.remove()
                 updated = true
+            }
         }
         return updated
     }

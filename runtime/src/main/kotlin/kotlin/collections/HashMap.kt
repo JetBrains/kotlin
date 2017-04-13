@@ -422,11 +422,13 @@ class HashMap<K, V> private constructor(
 
     internal fun removeAllEntries(elements: Collection<Map.Entry<K, V>>): Boolean {
         if (elements.isEmpty()) return false
-        val it = elements.iterator()
+        val it = entriesIterator()
         var updated = false
         while (it.hasNext()) {
-            if (removeEntry(it.next()))
+            if (elements.contains(it.next())) {
+                it.remove()
                 updated = true
+            }
         }
         return updated
     }
@@ -460,11 +462,13 @@ class HashMap<K, V> private constructor(
     }
 
     internal fun removeAllValues(elements: Collection<V>): Boolean {
-        val it = elements.iterator()
+        val it = valuesIterator()
         var updated = false
         while (it.hasNext()) {
-            if (removeValue(it.next()))
+            if (elements.contains(it.next())) {
+                it.remove()
                 updated = true
+            }
         }
         return updated
     }

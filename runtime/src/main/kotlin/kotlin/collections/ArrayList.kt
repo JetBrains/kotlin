@@ -132,9 +132,12 @@ class ArrayList<E> private constructor(
 
     override fun removeAll(elements: Collection<E>): Boolean {
         var changed = false
-        val it = elements.iterator()
+        val it = iterator()
         while (it.hasNext()) {
-            if (remove(it.next())) changed = true
+            if (elements.contains(it.next())) {
+                it.remove()
+                changed = true
+            }
         }
         return changed
     }
