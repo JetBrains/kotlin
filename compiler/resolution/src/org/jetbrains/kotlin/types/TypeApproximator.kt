@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.resolve.calls.components.CommonSupertypeCalculator
+import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration.IntersectionStrategy.*
 import org.jetbrains.kotlin.types.checker.*
@@ -58,6 +59,7 @@ open class TypeApproximatorConfiguration {
 
     object PublicDeclaration : AllFlexibleSameValue() {
         override val allFlexible get() = true
+        override val errorType get() = true
     }
 
     abstract class AbstractCapturedTypesApproximation(val approximatedCapturedStatus: CaptureStatus): TypeApproximatorConfiguration.AllFlexibleSameValue() {
@@ -78,6 +80,12 @@ class TypeApproximator(private val commonSupertypeCalculator: CommonSupertypeCal
     private val referenceApproximateToSuperType = this::approximateToSuperType
     private val referenceApproximateToSubType = this::approximateToSubType
 
+    fun approximateDeclarationType(baseType: KotlinType, local: Boolean): UnwrappedType {
+        if (!USE_NEW_INFERENCE) return baseType.unwrap()
+
+        val configuration = if (local) TypeApproximatorConfiguration.LocalDeclaration else TypeApproximatorConfiguration.PublicDeclaration
+        return approximateToSuperType(baseType.unwrap(), configuration) ?: baseType.unwrap()
+    }
 
     // null means that this input type is the result, i.e. input type not contains not-allowed kind of types
     // type <: resultType
