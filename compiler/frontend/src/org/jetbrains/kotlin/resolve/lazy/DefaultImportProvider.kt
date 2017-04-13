@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature.DefaultImportOfPackageKotlinComparisons
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
@@ -37,8 +38,9 @@ class DefaultImportProvider(
         private val targetPlatform: TargetPlatform,
         private val languageVersionSettings: LanguageVersionSettings
 ) {
-    val defaultImports: List<ImportPath>
-            by storageManager.createLazyValue { targetPlatform.getDefaultImports(languageVersionSettings) }
+    val defaultImports: List<ImportPath> by storageManager.createLazyValue {
+        targetPlatform.getDefaultImports(languageVersionSettings.supportsFeature(DefaultImportOfPackageKotlinComparisons))
+    }
 
     val excludedImports: List<FqName> by storageManager.createLazyValue {
         val packagesWithAliases = listOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.TEXT_PACKAGE_FQ_NAME)

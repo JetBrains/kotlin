@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.composeContainer
 import org.jetbrains.kotlin.container.useInstance
@@ -29,6 +27,7 @@ import org.jetbrains.kotlin.resolve.checkers.*
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 import java.util.*
 
@@ -36,27 +35,32 @@ abstract class TargetPlatform(val platformName: String) {
     override fun toString() = platformName
 
     abstract val platformConfigurator: PlatformConfigurator
-    abstract fun getDefaultImports(languageVersionSettings: LanguageVersionSettings): List<ImportPath>
+    abstract fun getDefaultImports(includeKotlinComparisons: Boolean): List<ImportPath>
     open val excludedImports: List<FqName> get() = emptyList()
 
     abstract val multiTargetPlatform: MultiTargetPlatform
 
     object Default : TargetPlatform("Default") {
-        override fun getDefaultImports(languageVersionSettings: LanguageVersionSettings): List<ImportPath> = ArrayList<ImportPath>().apply {
-            listOf(
-                    "kotlin.*",
-                    "kotlin.annotation.*",
-                    "kotlin.collections.*",
-                    "kotlin.ranges.*",
-                    "kotlin.sequences.*",
-                    "kotlin.text.*",
-                    "kotlin.io.*"
-            ).forEach { add(ImportPath.fromString(it)) }
+        private val defaultImports = LockBasedStorageManager().createMemoizedFunction<Boolean, List<ImportPath>> {
+            includeKotlinComparisons ->
+            ArrayList<ImportPath>().apply {
+                listOf(
+                        "kotlin.*",
+                        "kotlin.annotation.*",
+                        "kotlin.collections.*",
+                        "kotlin.ranges.*",
+                        "kotlin.sequences.*",
+                        "kotlin.text.*",
+                        "kotlin.io.*"
+                ).forEach { add(ImportPath.fromString(it)) }
 
-            if (languageVersionSettings.supportsFeature(LanguageFeature.DefaultImportOfPackageKotlinComparisons)) {
-                add(ImportPath.fromString("kotlin.comparisons.*"))
+                if (includeKotlinComparisons) {
+                    add(ImportPath.fromString("kotlin.comparisons.*"))
+                }
             }
         }
+
+        override fun getDefaultImports(includeKotlinComparisons: Boolean): List<ImportPath> = defaultImports(includeKotlinComparisons)
 
         override val platformConfigurator =
                 object : PlatformConfigurator(
