@@ -150,8 +150,10 @@ internal fun createSimplePSICallArgument(
     val preparedType = prepareArgumentTypeRegardingCaptureTypes(baseType) ?: baseType
 
     val receiverToCast = context.transformToReceiverWithSmartCastInfo(
-            ExpressionReceiver.create(ktExpression, preparedType, context.trace.bindingContext)
-    )
+            ExpressionReceiver.create(ktExpression, baseType, context.trace.bindingContext)
+    ).let {
+        ReceiverValueWithSmartCastInfo(it.receiverValue.replaceType(preparedType), it.possibleTypes, it.isStable)
+    }
 
     return if (onlyResolvedCall == null) {
         ExpressionKotlinCallArgumentImpl(valueArgument, context.dataFlowInfo, typeInfo.dataFlowInfo, receiverToCast)
