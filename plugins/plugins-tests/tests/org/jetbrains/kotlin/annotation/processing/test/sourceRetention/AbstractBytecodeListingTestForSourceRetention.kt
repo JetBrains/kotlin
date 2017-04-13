@@ -27,4 +27,8 @@ abstract class AbstractBytecodeListingTestForSourceRetention : AbstractBytecodeL
         else
             ClassBuilderFactories.TEST
     }
+
+    override fun verifyWithDex(): Boolean {
+        return false
+    }
 }

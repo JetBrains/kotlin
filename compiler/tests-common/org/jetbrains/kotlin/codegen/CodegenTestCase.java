@@ -401,7 +401,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             try {
                 classFileFactory = generateFiles(myEnvironment, myFiles, getClassBuilderFactory());
 
-                if (DxChecker.RUN_DX_CHECKER) {
+                if (verifyWithDex() && DxChecker.RUN_DX_CHECKER) {
                     DxChecker.check(classFileFactory);
                 }
             }
@@ -425,6 +425,10 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             }
         }
         return classFileFactory;
+    }
+
+    protected boolean verifyWithDex() {
+        return true;
     }
 
     private static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader) {

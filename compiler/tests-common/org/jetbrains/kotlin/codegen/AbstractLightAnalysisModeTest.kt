@@ -52,6 +52,10 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         assertEquals(fullTxt, liteTxt)
     }
 
+    override fun verifyWithDex(): Boolean {
+        return false
+    }
+
     private fun compileWithLightAnalysis(wholeFile: File, files: List<CodegenTestCase.TestFile>, javaFilesDir: File?): String {
         val boxTestsDir = File("compiler/testData/codegen/box")
         val relativePath = wholeFile.toRelativeString(boxTestsDir)

@@ -42,4 +42,8 @@ abstract class AbstractKapt3BuilderModeBytecodeShapeTest : CodegenTestCase() {
     override fun getClassBuilderFactory(): ClassBuilderFactory {
         return TEST_LIGHT_ANALYSIS
     }
+
+    override fun verifyWithDex(): Boolean {
+        return false
+    }
 }
