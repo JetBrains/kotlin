@@ -27,7 +27,6 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.Query;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.TestUtilsKt;
@@ -65,18 +64,13 @@ public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCa
 
         List<String> classFqnFilters = InTextDirectivesUtils.findListWithPrefixes(text, "// IGNORE_CLASSES: ");
 
-        List<String> actualModified = new ArrayList<String>();
+        List<String> actualModified = new ArrayList<>();
         for (Object member : actual) {
             if (member instanceof PsiClass) {
-                final String qualifiedName = ((PsiClass) member).getQualifiedName();
+                String qualifiedName = ((PsiClass) member).getQualifiedName();
                 assert qualifiedName != null;
 
-                boolean filterOut = CollectionsKt.any(classFqnFilters, new Function1<String, Boolean>() {
-                    @Override
-                    public Boolean invoke(String s) {
-                        return qualifiedName.startsWith(s);
-                    }
-                });
+                boolean filterOut = CollectionsKt.any(classFqnFilters, qualifiedName::startsWith);
 
                 if (filterOut) {
                     continue;
