@@ -27,7 +27,7 @@ internal object EmptyIterator : ListIterator<Nothing> {
     override fun previous(): Nothing = throw NoSuchElementException()
 }
 
-internal object EmptyList : List<Nothing>/*, RandomAccess */ {
+internal object EmptyList : List<Nothing>, RandomAccess {
 
     override fun equals(other: Any?): Boolean = other is List<*> && other.isEmpty()
     override fun hashCode(): Int = 1
@@ -187,7 +187,7 @@ public interface MutableIterable<out T> : Iterable<T> {
 }
 
 public fun <T> Array<out T>.asList(): List<T> {
-    return object : AbstractList<T>() {
+    return object : AbstractList<T>(), RandomAccess {
         override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(element: T): Boolean = this@asList.contains(element)
