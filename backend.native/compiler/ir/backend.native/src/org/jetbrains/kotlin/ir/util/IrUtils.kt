@@ -84,7 +84,7 @@ internal fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrC
 fun IrCall.usesDefaultArguments(): Boolean =
         this.descriptor.valueParameters.any { this.getValueArgument(it) == null }
 
-fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessageLocation {
+fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessageLocation? {
     val sourceRangeInfo = containingFile.fileEntry.getSourceRangeInfo(this.startOffset, this.endOffset)
     return CompilerMessageLocation.create(
             path = sourceRangeInfo.filePath,
