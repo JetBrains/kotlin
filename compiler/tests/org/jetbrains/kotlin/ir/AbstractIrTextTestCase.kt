@@ -21,9 +21,15 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
+import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.deepCopy
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -70,13 +76,13 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         for (irTreeFileLabel in expectations.irTreeFileLabels) {
             val actualTrees = irFile.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber)
             KotlinTestUtils.assertEqualsToFile(irTreeFileLabel.expectedTextFile, actualTrees)
-            verify(irFile, irFileDump)
+            verify(irFile)
 
             // Check that deep copy produces an equivalent result
             val irFileCopy = irFile.deepCopy()
             val copiedTrees = irFileCopy.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber)
             TestCase.assertEquals("IR dump mismatch after deep copy", actualTrees, copiedTrees)
-            verify(irFileCopy, irFileCopy.dump())
+            verify(irFileCopy)
         }
 
         try {
@@ -88,10 +94,8 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         }
     }
 
-    private fun verify(irFile: IrFile, dump: String) {
-        val irVerifier = IrVerifier()
-        irVerifier.verify(irFile)
-        TestCase.assertFalse(irVerifier.errorsAsMessage + "\n\n\n" + dump, irVerifier.hasErrors)
+    private fun verify(irFile: IrFile) {
+        IrVerifier().verifyWithAssert(irFile)
     }
 
     private class IrVerifier : IrElementVisitorVoid {
@@ -105,15 +109,28 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             errors.add(message)
         }
 
-        fun verify(irFile: IrFile) {
+        fun verifyWithAssert(irFile: IrFile) {
             irFile.acceptChildrenVoid(this)
+            TestCase.assertFalse(errorsAsMessage + "\n\n\n" + irFile.dump(), hasErrors)
         }
 
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
 
+        override fun visitDeclaration(declaration: IrDeclaration) {
+            if (declaration is IrSymbolOwner) {
+                declaration.symbol.checkBinding("decl", declaration)
+
+                if (declaration.symbol.owner != declaration) {
+                    error("Symbol is not bound to declaration: ${declaration.render()}")
+                }
+            }
+        }
+
         override fun visitFunction(declaration: IrFunction) {
+            visitDeclaration(declaration)
+
             val functionDescriptor = declaration.descriptor
 
             checkTypeParameters(functionDescriptor, declaration, functionDescriptor.typeParameters)
@@ -146,7 +163,35 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             }
         }
 
+        override fun visitDeclarationReference(expression: IrDeclarationReference) {
+            expression.symbol.checkBinding("ref", expression)
+        }
+
+        override fun visitFunctionReference(expression: IrFunctionReference) {
+            expression.symbol.checkBinding("ref", expression)
+        }
+
+        override fun visitPropertyReference(expression: IrPropertyReference) {
+            expression.field?.checkBinding("field", expression)
+            expression.getter?.checkBinding("getter", expression)
+            expression.setter?.checkBinding("setter", expression)
+        }
+
+        override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) {
+            expression.delegate.checkBinding("delegate", expression)
+            expression.getter.checkBinding("getter", expression)
+            expression.setter?.checkBinding("setter", expression)
+        }
+
+        private fun IrSymbol.checkBinding(kind: String, owner: IrElement) {
+            if (!isBound) {
+                error("$kind ${javaClass.simpleName} ${descriptor} is unbound: ${owner.render()}")
+            }
+        }
+
         override fun visitClass(declaration: IrClass) {
+            visitDeclaration(declaration)
+
             checkTypeParameters(declaration.descriptor, declaration, declaration.descriptor.declaredTypeParameters)
         }
 
