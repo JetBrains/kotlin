@@ -21,14 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.codegen.CodegenTestCase;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findListWithPrefixes;
@@ -57,7 +54,7 @@ public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
     protected void doMultiFileTest(
             @NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir
     ) throws Exception {
-        compile(files, null, ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, Collections.emptyList());
+        compile(files, null);
 
         String fileText = FileUtil.loadFile(wholeFile, true);
 

@@ -399,7 +399,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     protected ClassFileFactory generateClassesInFile() {
         if (classFileFactory == null) {
             try {
-                classFileFactory = generateFiles(myEnvironment, myFiles);
+                classFileFactory = generateFiles(myEnvironment, myFiles, getClassBuilderFactory());
 
                 if (DxChecker.RUN_DX_CHECKER) {
                     DxChecker.check(classFileFactory);
@@ -496,7 +496,15 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         }
     }
 
-    protected void updateConfiguration(CompilerConfiguration configuration) {
+    protected void updateConfiguration(@NotNull CompilerConfiguration configuration) {
+
+    }
+
+    protected ClassBuilderFactory getClassBuilderFactory(){
+        return ClassBuilderFactories.TEST;
+    }
+
+    protected void setupEnvironment(@NotNull KotlinCoreEnvironment environment) {
 
     }
 
@@ -511,13 +519,14 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     protected void compile(
             @NotNull List<TestFile> files,
-            @Nullable File javaSourceDir,
-            @NotNull ConfigurationKind configurationKind,
-            @NotNull TestJdkKind jdkKind,
-            @NotNull List<String> javacOptions
+            @Nullable File javaSourceDir
     ) {
+        configurationKind = extractConfigurationKind(files);
+
+        List<String> javacOptions = extractJavacOptions(files);
+
         CompilerConfiguration configuration = createConfiguration(
-                configurationKind, jdkKind,
+                configurationKind, getJdkKind(files),
                 Collections.singletonList(getAnnotationsJar()),
                 ArraysKt.filterNotNull(new File[] {javaSourceDir}),
                 files
@@ -526,6 +535,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
+        setupEnvironment(myEnvironment);
 
         loadMultiFiles(files);
 
@@ -549,6 +559,32 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             // Add javac output to classpath so that the created class loader can find generated Java classes
             JvmContentRootsKt.addJvmClasspathRoot(configuration, output);
         }
+    }
+
+    protected ConfigurationKind extractConfigurationKind(@NotNull List<TestFile> files) {
+        boolean addRuntime = false;
+        boolean addReflect = false;
+        for (TestFile file : files) {
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
+                addRuntime = true;
+            }
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
+                addReflect = true;
+            }
+        }
+
+        return addReflect ? ConfigurationKind.ALL :
+               addRuntime ? ConfigurationKind.NO_KOTLIN_REFLECT :
+               ConfigurationKind.JDK_ONLY;
+    }
+
+    @NotNull
+    protected List<String> extractJavacOptions(@NotNull List<TestFile> files) {
+        List<String> javacOptions = new ArrayList<>(0);
+        for (TestFile file : files) {
+            javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"));
+        }
+        return javacOptions;
     }
 
     public static class TestFile implements Comparable<TestFile> {

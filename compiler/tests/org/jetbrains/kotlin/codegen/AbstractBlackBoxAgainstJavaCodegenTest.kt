@@ -16,33 +16,26 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 
 abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenTest() {
-    override fun compileAndRun(
-            files: List<CodegenTestCase.TestFile>,
-            javaSourceDir: File?,
-            jdkKind: TestJdkKind,
-            javacOptions: List<String>
-    ) {
-        val javaOutputDir = javaSourceDir?.let { directory ->
-            CodegenTestUtil.compileJava(findJavaSourcesInDirectory(directory), emptyList(), javacOptions)
+    private lateinit var javaOutputDir: File
+    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?) {
+        javaOutputDir = javaFilesDir!!.let { directory ->
+            CodegenTestUtil.compileJava(findJavaSourcesInDirectory(directory), emptyList(), extractJavacOptions(files))
         }
 
-        val configuration = createConfiguration(
-                ConfigurationKind.ALL, jdkKind,
-                /* classpath = */ listOf(KotlinTestUtils.getAnnotationsJar(), javaOutputDir),
-                /* javaSource = */ emptyList(),
-                files)
+        super.doMultiFileTest(wholeFile, files, null)
+    }
 
-        myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+    override fun updateConfiguration(configuration: CompilerConfiguration) {
+        configuration.addJvmClasspathRoots(listOf(javaOutputDir!!))
+    }
 
-        loadMultiFiles(files)
-        blackBox()
+    override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {
+        return ConfigurationKind.ALL
     }
 }

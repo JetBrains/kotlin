@@ -16,21 +16,18 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping.*
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping.MAPPINGS_CLASS_NAME_POSTFIX
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar
 import org.jetbrains.org.objectweb.asm.Opcodes.*
-
 import java.io.File
-import java.util.ArrayList
 
 abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
     private companion object {
@@ -40,35 +37,13 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<CodegenTestCase.TestFile>, javaFilesDir: File?) {
-        val jdkKind = CodegenTestCase.getJdkKind(files)
-
-        val javacOptions = ArrayList<String>(0)
-        var addRuntime = false
-        var addReflect = false
-
         for (file in files) {
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
-                addRuntime = true
-            }
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
-                addReflect = true
-            }
-
             if (file.content.contains("// IGNORE_LIGHT_ANALYSIS")) {
                 return
             }
-
-            javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"))
         }
 
-        configurationKind = if (addReflect)
-            ConfigurationKind.ALL
-        else if (addRuntime)
-            ConfigurationKind.NO_KOTLIN_REFLECT
-        else
-            ConfigurationKind.JDK_ONLY
-
-        val fullTxt = compileWithFullAnalysis(files, javaFilesDir, jdkKind, javacOptions)
+        val fullTxt = compileWithFullAnalysis(files, javaFilesDir)
                 .replace("final enum class", "enum class")
 
         val liteTxt = compileWithLightAnalysis(wholeFile, files, javaFilesDir)
@@ -83,21 +58,23 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         // Fail if this test is not under codegen/box
         assert(!relativePath.startsWith(".."))
 
-        val classFileFactory = AbstractBytecodeListingTest.compileClasses(
-                testRootDisposable, files, javaFilesDir, TEST_LIGHT_ANALYSIS,
-                setupEnvironment = { env -> AnalysisHandlerExtension.registerExtension(env.project, PartialAnalysisHandlerExtension()) }
+        val configuration = createConfiguration(
+                configurationKind, getJdkKind(files), listOf(getAnnotationsJar()), javaFilesDir?.let(::listOf).orEmpty(), files
         )
+        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        AnalysisHandlerExtension.registerExtension(environment.project, PartialAnalysisHandlerExtension())
+
+        val testFiles = loadMultiFiles(files, environment.project)
+        val classFileFactory = GenerationUtils.compileFiles(testFiles.psiFiles, environment, TEST_LIGHT_ANALYSIS).factory
 
         return BytecodeListingTextCollectingVisitor.getText(classFileFactory, ListAnalysisFilter(), replaceHash = false)
     }
 
     protected fun compileWithFullAnalysis(
-            files: List<CodegenTestCase.TestFile>,
-            javaSourceDir: File?,
-            jdkKind: TestJdkKind,
-            javacOptions: List<String>
+            files: List<TestFile>,
+            javaSourceDir: File?
     ): String {
-        compile(files, javaSourceDir, configurationKind, jdkKind, javacOptions)
+        compile(files, javaSourceDir)
         classFileFactory.getClassFiles()
 
         val classInternalNames = classFileFactory.generationState.bindingContext

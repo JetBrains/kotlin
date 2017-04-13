@@ -27,9 +27,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.psi.KtProperty;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -38,44 +35,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
-    private boolean addRuntime = false;
-    private boolean addReflect = false;
 
     @Override
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
-        TestJdkKind jdkKind = getJdkKind(files);
-
-        List<String> javacOptions = new ArrayList<>(0);
-        for (TestFile file : files) {
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
-                addRuntime = true;
-            }
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
-                addReflect = true;
-            }
-
-            javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"));
-        }
-
-        configurationKind =
-                addReflect ? ConfigurationKind.ALL :
-                addRuntime ? ConfigurationKind.NO_KOTLIN_REFLECT :
-                ConfigurationKind.JDK_ONLY;
-
-        compileAndRun(files, javaFilesDir, jdkKind, javacOptions);
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    protected void compileAndRun(
-            @NotNull List<TestFile> files,
-            @Nullable File javaSourceDir,
-            @NotNull TestJdkKind jdkKind,
-            @NotNull List<String> javacOptions
-    ) {
-        compile(files, javaSourceDir, configurationKind, jdkKind, javacOptions);
-
+        compile(files, javaFilesDir);
         blackBox();
     }
+
 
     @NotNull
     protected static List<String> findJavaSourcesInDirectory(@NotNull File directory) {

@@ -16,68 +16,17 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.io.File
 
 abstract class AbstractBytecodeListingTest : CodegenTestCase() {
-    protected open val classBuilderFactory: ClassBuilderFactory
-        get() = ClassBuilderFactories.TEST
-
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
         val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
-        doTest(testRootDisposable, files, javaFilesDir, txtFile, classBuilderFactory, this::setupEnvironment)
-    }
-
-    protected open fun setupEnvironment(environment: KotlinCoreEnvironment) {}
-
-    companion object {
-        @JvmStatic
-        fun doTest(
-                disposable: Disposable,
-                files: List<TestFile>,
-                javaFilesDir: File?,
-                txtFile: File,
-                classBuilderFactory: ClassBuilderFactory,
-                setupEnvironment: (KotlinCoreEnvironment) -> Unit = {}
-        ) {
-            val classFileFactory = compileClasses(disposable, files, javaFilesDir, classBuilderFactory, setupEnvironment)
-            val actualTxt = BytecodeListingTextCollectingVisitor.getText(classFileFactory)
-            KotlinTestUtils.assertEqualsToFile(txtFile, actualTxt)
-        }
-
-        fun compileClasses(
-                disposable: Disposable,
-                files: List<TestFile>,
-                javaFilesDir: File?,
-                classBuilderFactory: ClassBuilderFactory,
-                setupEnvironment: (KotlinCoreEnvironment) -> Unit = {}
-        ): ClassFileFactory {
-            val addRuntime = files.any { InTextDirectivesUtils.isDirectiveDefined(it.content, "WITH_RUNTIME") }
-            val addReflect = files.any { InTextDirectivesUtils.isDirectiveDefined(it.content, "WITH_REFLECT") }
-
-            val configurationKind = when {
-                addReflect -> ConfigurationKind.ALL
-                addRuntime -> ConfigurationKind.NO_KOTLIN_REFLECT
-                else -> ConfigurationKind.JDK_ONLY
-            }
-
-            val configuration = createConfiguration(
-                    configurationKind, getJdkKind(files), listOf(getAnnotationsJar()), javaFilesDir?.let(::listOf).orEmpty(), files
-            )
-            val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-            setupEnvironment(environment)
-
-            val testFiles = loadMultiFiles(files, environment.project)
-            return GenerationUtils.compileFiles(testFiles.psiFiles, environment, classBuilderFactory).factory
-        }
+        compile(files, javaFilesDir)
+        val actualTxt = BytecodeListingTextCollectingVisitor.getText(classFileFactory)
+        KotlinTestUtils.assertEqualsToFile(txtFile, actualTxt)
     }
 }
 

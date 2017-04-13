@@ -21,11 +21,10 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 
 abstract class AbstractBytecodeListingTestForSourceRetention : AbstractBytecodeListingTest() {
-    override val classBuilderFactory: ClassBuilderFactory
-        get() {
-            return if (getTestName(true).contains("withSource", ignoreCase = true))
-                ClassBuilderFactories.TEST_WITH_SOURCE_RETENTION_ANNOTATIONS
-            else
-                ClassBuilderFactories.TEST
-        }
+    override fun getClassBuilderFactory(): ClassBuilderFactory {
+        return if (getTestName(true).contains("withSource", ignoreCase = true))
+            ClassBuilderFactories.TEST_WITH_SOURCE_RETENTION_ANNOTATIONS
+        else
+            ClassBuilderFactories.TEST
+    }
 }
