@@ -29,6 +29,9 @@
 
 // If garbage collection algorithm for cyclic garbage to be used.
 #define USE_GC 1
+// Optmize management of cyclic garbage (increases memory footprint).
+// Not recommended for low-end embedded targets.
+#define OPTIMIZE_GC 1
 // Define to 1 to print all memory operations.
 #define TRACE_MEMORY 0
 // Trace garbage collection phases.
@@ -49,8 +52,8 @@ constexpr container_size_t kObjectAlignment = 8;
 
 #if USE_GC
 // Collection threshold default (collect after having so many elements in the
-// release candidates set).
-constexpr size_t kGcThreshold = 10000;
+// release candidates set). Better be a prime number.
+constexpr size_t kGcThreshold = 9341;
 #endif
 
 #if TRACE_MEMORY || USE_GC
@@ -79,12 +82,18 @@ struct MemoryState {
   size_t gcThreshold;
   // If collection is in progress.
   bool gcInProgress;
+#if OPTIMIZE_GC
+  // Cache backed by toFree set.
+  ContainerHeader** toFreeCache;
+  // Current number of elements in the cache.
+  uint32_t cacheSize;
+#endif
 #endif
 };
 
 namespace {
 
-// TODO: remove this global.
+// TODO: can we pass this variable as an explicit argument?
 __thread MemoryState* memoryState = nullptr;
 
 // TODO: use those allocators for STL containers as well.
@@ -119,6 +128,91 @@ inline ObjHeader** asArenaSlot(ObjHeader** slot) {
 }
 
 #if USE_GC
+
+inline uint32_t hashOf(ContainerHeader* container) {
+  uintptr_t value = reinterpret_cast<uintptr_t>(container);
+  return static_cast<uint32_t>(value >> 3) ^ static_cast<uint32_t>(value >> 32);
+}
+
+inline uint32_t freeableSize(MemoryState* state) {
+#if OPTIMIZE_GC
+  return state->cacheSize + state->toFree->size();
+#else
+  return state->toFree->size();
+#endif
+}
+
+inline void addFreeable(MemoryState* state, ContainerHeader* container) {
+  if (memoryState->toFree == nullptr || !isFreeable(container))
+    return;
+#if OPTIMIZE_GC
+  auto hash = hashOf(container) % state->gcThreshold;
+  auto value = state->toFreeCache[hash];
+  if (value == container) {
+    return;
+  }
+  if (value == nullptr) {
+    memoryState->cacheSize++;
+    state->toFreeCache[hash] = container;
+    return;
+  }
+  state->toFree->insert(container);
+  if (value != (ContainerHeader*)0x1) {
+    memoryState->cacheSize--;
+    state->toFree->insert(value);
+    state->toFreeCache[hash] = (ContainerHeader*)0x1;
+  }
+#else
+  state->toFree->insert(container);
+#endif
+  if (state->gcSuspendCount == 0 &&
+      freeableSize(memoryState) > state->gcThreshold) {
+    GarbageCollect();
+  }
+}
+
+inline void removeFreeable(MemoryState* state, ContainerHeader* container) {
+  if (state->toFree == nullptr || !isFreeable(container))
+    return;
+#if OPTIMIZE_GC
+  auto hash = hashOf(container) % state->gcThreshold;
+  auto value = state->toFreeCache[hash];
+  if (value == container) {
+    state->cacheSize--;
+    state->toFreeCache[hash] = nullptr;
+    return;
+  }
+#endif
+  state->toFree->erase(container);
+}
+
+// Must only be called in context of GC.
+inline void flushFreeableCache(MemoryState* state) {
+#if OPTIMIZE_GC
+  for (auto i = 0; i < state->gcThreshold; i++) {
+    if ((uintptr_t)state->toFreeCache[i] > 0x1) {
+      state->toFree->insert(state->toFreeCache[i]);
+    }
+  }
+  // Mass-clear cache.
+  memset(state->toFreeCache, 0,
+         sizeof(ContainerHeader*) * state->gcThreshold);
+  state->cacheSize = 0;
+#endif
+}
+
+inline void initThreshold(MemoryState* state, uint32_t gcThreshold) {
+#if OPTIMIZE_GC
+  if (state->toFreeCache != nullptr) {
+    GarbageCollect();
+    freeMemory(state->toFreeCache);
+  }
+  state->toFreeCache = allocMemory<ContainerHeader*>(
+      sizeof(ContainerHeader*) * gcThreshold);
+  state->cacheSize = 0;
+#endif
+  state->gcThreshold = gcThreshold;
+}
 
 // Must be vector or map 'container -> number', to keep reference counters correct.
 ContainerHeaderList collectMutableReferred(ContainerHeader* header) {
@@ -272,8 +366,7 @@ void FreeContainer(ContainerHeader* header) {
 #endif
 
 #if USE_GC
-  if (memoryState->toFree && isFreeable(header))
-    memoryState->toFree->erase(header);
+  removeFreeable(memoryState, header);
 #endif
   // Now let's clean all object's fields in this container.
   ObjHeader* obj = reinterpret_cast<ObjHeader*>(header + 1);
@@ -310,8 +403,7 @@ void FreeContainerNoRef(ContainerHeader* header) {
   memoryState->containers->erase(header);
 #endif
 #if USE_GC
-  if (memoryState->toFree)
-    memoryState->toFree->erase(header);
+  removeFreeable(memoryState, header);
 #endif
   memoryState->allocCount--;
   freeMemory(header);
@@ -433,7 +525,7 @@ inline void AddRef(const ObjHeader* object) {
 #if USE_GC
   // TODO: one could remove from toFree set here, as now container is reachable
   // from the rootset, so cannot be cycle collection candidate.
-  // memoryState->toFree->erase(object->container());
+  // removeFreeable(memoryState, object->container());
 #endif
 }
 
@@ -449,12 +541,7 @@ inline void ReleaseRef(const ObjHeader* object) {
 #if TRACE_MEMORY
   fprintf(stderr, "%p is release candidate\n", object->container());
 #endif
-  if (memoryState->toFree != nullptr) {
-    memoryState->toFree->insert(object->container());
-    if (memoryState->gcSuspendCount == 0 &&
-        memoryState->toFree->size() > memoryState->gcThreshold)
-      GarbageCollect();
-  }
+  addFreeable(memoryState, object->container());
 #else // !USE_GC
   Release(object->container());
 #endif // USE_GC
@@ -472,7 +559,7 @@ MemoryState* InitMemory() {
                 offsetof(ObjHeader  , container_offset_negative_),
                 "Layout mismatch");
   RuntimeAssert(memoryState == nullptr, "memory state must be clear");
-  memoryState = new MemoryState();
+  memoryState = allocMemory<MemoryState>(sizeof(MemoryState));
   // TODO: initialize heap here.
   memoryState->allocCount = 0;
 #if TRACE_MEMORY
@@ -482,7 +569,7 @@ MemoryState* InitMemory() {
 #if USE_GC
   memoryState->toFree = new ContainerHeaderSet();
   memoryState->gcInProgress = false;
-  memoryState->gcThreshold = kGcThreshold;
+  initThreshold(memoryState, kGcThreshold);
   memoryState->gcSuspendCount = 0;
 #endif
   return memoryState;
@@ -514,7 +601,7 @@ void DeinitMemory(MemoryState* memoryState) {
 #endif
   }
 
-  delete memoryState;
+  freeMemory(memoryState);
   ::memoryState = nullptr;
 }
 
@@ -645,30 +732,35 @@ void ReleaseRefs(ObjHeader** start, int count) {
 
 #if USE_GC
 void GarbageCollect() {
-  RuntimeAssert(memoryState->toFree != nullptr, "GC must not be stopped");
-  RuntimeAssert(!memoryState->gcInProgress, "Recursive GC is disallowed");
-  memoryState->gcInProgress = true;
+  MemoryState* state = memoryState;
+  RuntimeAssert(state->toFree != nullptr, "GC must not be stopped");
+  RuntimeAssert(!state->gcInProgress, "Recursive GC is disallowed");
+
+  // Flush cache.
+  flushFreeableCache(state);
+
+  state->gcInProgress = true;
   // Traverse inner pointers in the closure of release candidates, and
   // temporary decrement refs on them. Set CONTAINER_TAG_SEEN while traversing.
 #if TRACE_GC_PHASES
-  dumpReachable("P0", memoryState->toFree);
+  dumpReachable("P0", state->toFree);
 #endif
-  for (auto container : *memoryState->toFree) {
+  for (auto container : *state->toFree) {
     phase1(container);
   }
 #if TRACE_GC_PHASES
-  dumpReachable("P1", memoryState->toFree);
+  dumpReachable("P1", state->toFree);
 #endif
 
   // Collect rootset from containers with non-zero reference counter. Those must
   // be referenced from outside of newly released object graph.
   // Clear CONTAINER_TAG_SEEN while traversing.
   ContainerHeaderSet rootset;
-  for (auto container : *memoryState->toFree) {
+  for (auto container : *state->toFree) {
     phase2(container, &rootset);
   }
 #if TRACE_GC_PHASES
-  dumpReachable("P2", memoryState->toFree);
+  dumpReachable("P2", state->toFree);
 #endif
 
   // Increment references for all elements reachable from the rootset.
@@ -680,28 +772,28 @@ void GarbageCollect() {
     phase3(container);
   }
 #if TRACE_GC_PHASES
-  dumpReachable("P3", memoryState->toFree);
+  dumpReachable("P3", state->toFree);
 #endif
 
   // Traverse all elements, and collect those not having CONTAINER_TAG_SEEN and zero RC.
   // Clear CONTAINER_TAG_SEEN while traversing on live elements, set in on dead elements.
   ContainerHeaderSet toRemove;
-  for (auto container : *memoryState->toFree) {
+  for (auto container : *state->toFree) {
     phase4(container, &toRemove);
   }
 #if TRACE_GC_PHASES
-  dumpReachable("P4", memoryState->toFree);
+  dumpReachable("P4", state->toFree);
 #endif
 
   // Clear cycle candidates list.
-  memoryState->toFree->clear();
+  state->toFree->clear();
 
   for (auto header : toRemove) {
     RuntimeAssert((header->refCount_ & CONTAINER_TAG_SEEN) != 0, "Must be not seen");
     FreeContainerNoRef(header);
   }
 
-  memoryState->gcInProgress = false;
+  state->gcInProgress = false;
 }
 
 #endif // USE_GC
@@ -720,10 +812,11 @@ void Kotlin_konan_internal_GC_suspend(KRef) {
 
 void Kotlin_konan_internal_GC_resume(KRef) {
 #if USE_GC
-  if (memoryState->gcSuspendCount > 0) {
-    memoryState->gcSuspendCount--;
-    if (memoryState->toFree != nullptr &&
-        memoryState->toFree->size() >= memoryState->gcThreshold) {
+  MemoryState* state = memoryState;
+  if (state->gcSuspendCount > 0) {
+    state->gcSuspendCount--;
+    if (state->toFree != nullptr &&
+        freeableSize(state) >= state->gcThreshold) {
       GarbageCollect();
     }
   }
@@ -751,7 +844,7 @@ void Kotlin_konan_internal_GC_start(KRef) {
 void Kotlin_konan_internal_GC_setThreshold(KRef, KInt value) {
 #if USE_GC
   if (value > 0) {
-    memoryState->gcThreshold = value;
+    initThreshold(memoryState, value);
   }
 #endif
 }
