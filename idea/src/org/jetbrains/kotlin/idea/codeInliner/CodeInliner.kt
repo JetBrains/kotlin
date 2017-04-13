@@ -305,6 +305,7 @@ class CodeInliner<TCallElement : KtElement>(
             is KtBinaryExpression -> if (sideEffectOnly) left.shouldKeepValue(usageCount) || right.shouldKeepValue(usageCount) else true
             is KtIfExpression -> if (sideEffectOnly) condition.shouldKeepValue(usageCount) || then.shouldKeepValue(usageCount) || `else`.shouldKeepValue(usageCount) else true
             is KtBinaryExpressionWithTypeRHS -> true
+            null -> false
             else -> true
         }
     }

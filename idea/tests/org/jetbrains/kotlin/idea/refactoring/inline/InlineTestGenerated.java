@@ -118,6 +118,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("DoNotKeepString.kt")
+            public void testDoNotKeepString() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/DoNotKeepString.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ExplicitReturnType.kt")
             public void testExplicitReturnType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/ExplicitReturnType.kt");
