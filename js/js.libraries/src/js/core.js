@@ -27,7 +27,7 @@ Kotlin.equals = function (obj1, obj2) {
         return obj2 !== obj2;
     }
 
-    if (typeof obj1 == "object" && typeof obj1.equals === "function") {
+    if (typeof obj1 === "object" && typeof obj1.equals === "function") {
         return obj1.equals(obj2);
     }
 
@@ -38,22 +38,56 @@ Kotlin.hashCode = function (obj) {
     if (obj == null) {
         return 0;
     }
-    if ("function" == typeof obj.hashCode) {
+    if ("function" === typeof obj.hashCode) {
         return obj.hashCode();
     }
     var objType = typeof obj;
-    if ("object" == objType || "function" == objType) {
+    if ("object" === objType || "function" === objType) {
         return getObjectHashCode(obj);
-    } else if ("number" == objType) {
-        // TODO: a more elaborate code is needed for floating point values.
-        return obj | 0;
-    } if ("boolean" == objType) {
+    }
+    else if ("number" === objType) {
+        return numberHashCode(obj);
+    }
+    if ("boolean" === objType) {
         return Number(obj)
     }
 
     var str = String(obj);
     return getStringHashCode(str);
 };
+
+var numberHashCode;
+
+if (typeof ArrayBuffer === "function") {
+    var bufferForNumberConversion = new ArrayBuffer(8);
+    var arrayForDoubleConversion = new Float64Array(bufferForNumberConversion);
+    var arrayForIntegerConversion = new Int32Array(bufferForNumberConversion);
+
+    // Detect endiannes of ArrayBuffer
+    var lowerIntegerIndex = 0;
+    var upperIntegerIndex = 1;
+    (function() {
+        arrayForDoubleConversion[0] = 1.2;
+        if (arrayForIntegerConversion[0] !== 0x3FF33333) {
+            lowerIntegerIndex = 1;
+            upperIntegerIndex = 0;
+        }
+    })();
+    numberHashCode = function(obj) {
+        if ((obj | 0) === obj) {
+            return obj | 0;
+        }
+        else {
+            arrayForDoubleConversion[0] = obj;
+            return (arrayForIntegerConversion[lowerIntegerIndex] * 31 | 0) + arrayForIntegerConversion[upperIntegerIndex] | 0;
+        }
+    }
+}
+else {
+    numberHashCode = function(obj) {
+        return obj | 0;
+    }
+}
 
 Kotlin.toString = function (o) {
     if (o == null) {
