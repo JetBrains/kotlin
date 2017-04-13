@@ -141,17 +141,16 @@ public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
     }
 
     private static TestClassVisitor getClassVisitor(String visitorKind, String testedObjectName, boolean allowSynthetic) {
-        if (visitorKind.equals("class")) {
-            return new ClassFlagsVisitor();
-        }
-        else if (visitorKind.equals("function")) {
-            return new FunctionFlagsVisitor(testedObjectName, allowSynthetic);
-        }
-        else if (visitorKind.equals("property")) {
-            return new PropertyFlagsVisitor(testedObjectName);
-        }
-        else if (visitorKind.equals("innerClass")) {
-            return new InnerClassFlagsVisitor(testedObjectName);
+        switch (visitorKind) {
+            case "class":
+                return new ClassFlagsVisitor();
+            case "function":
+                return new FunctionFlagsVisitor(testedObjectName, allowSynthetic);
+            case "property":
+                return new PropertyFlagsVisitor(testedObjectName);
+            case "innerClass":
+                return new InnerClassFlagsVisitor(testedObjectName);
+                default:
         }
 
         throw new IllegalArgumentException("Value of TESTED_OBJECT_KIND is incorrect: " + visitorKind);

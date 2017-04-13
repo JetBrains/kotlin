@@ -134,10 +134,10 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
 
     private void performTest() {
         Project project = getProject();
-        List<KtFile> files = new ArrayList<KtFile>(PluginJetFilesProvider.allFilesInProject(project));
+        List<KtFile> files = new ArrayList<>(PluginJetFilesProvider.allFilesInProject(project));
         if (files.isEmpty()) return;
 
-        final List<Breakpoint> breakpoints = Lists.newArrayList();
+        List<Breakpoint> breakpoints = Lists.newArrayList();
         for (KtFile file : files) {
             breakpoints.addAll(extractBreakpointsInfo(file, file.getText()));
         }
@@ -153,19 +153,16 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
 
         debugProcess = createDebugProcess(referencesByName);
 
-        final PositionManager positionManager = createPositionManager(debugProcess, files, state);
+        PositionManager positionManager = createPositionManager(debugProcess, files, state);
 
-        ApplicationManager.getApplication().runReadAction(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    for (Breakpoint breakpoint : breakpoints) {
-                        assertBreakpointIsHandledCorrectly(breakpoint, positionManager);
-                    }
+        ApplicationManager.getApplication().runReadAction(() -> {
+            try {
+                for (Breakpoint breakpoint : breakpoints) {
+                    assertBreakpointIsHandledCorrectly(breakpoint, positionManager);
                 }
-                catch (NoDataException e) {
-                    throw ExceptionUtilsKt.rethrow(e);
-                }
+            }
+            catch (NoDataException e) {
+                throw ExceptionUtilsKt.rethrow(e);
             }
         });
 
@@ -199,7 +196,7 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
         return new SmartMockReferenceTypeContext(outputFiles).getReferenceTypesByName();
     }
 
-    private DebugProcessEvents createDebugProcess(final Map<String, ReferenceType> referencesByName) {
+    private DebugProcessEvents createDebugProcess(Map<String, ReferenceType> referencesByName) {
         return new DebugProcessEvents(getProject()) {
             private VirtualMachineProxyImpl virtualMachineProxy;
 
@@ -264,7 +261,7 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
 
         @Override
         public List<ReferenceType> allClasses() {
-            return new ArrayList<ReferenceType>(referencesByName.values());
+            return new ArrayList<>(referencesByName.values());
         }
 
         @Override

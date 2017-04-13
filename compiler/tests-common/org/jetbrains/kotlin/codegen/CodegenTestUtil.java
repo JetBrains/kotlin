@@ -43,15 +43,6 @@ public class CodegenTestUtil {
         return GenerationUtils.compileFiles(files.getPsiFiles(), environment).getFactory();
     }
 
-    @NotNull
-    public static ClassFileFactory generateFiles(
-            @NotNull KotlinCoreEnvironment environment,
-            @NotNull CodegenTestFiles files,
-            @NotNull ClassBuilderFactory factory
-    ) {
-        return GenerationUtils.compileFiles(files.getPsiFiles(), environment, factory).getFactory();
-    }
-
     public static void assertThrows(@NotNull Method foo, @NotNull Class<? extends Throwable> exceptionClass,
             @Nullable Object instance, @NotNull Object... args) throws IllegalAccessException {
         boolean caught = false;

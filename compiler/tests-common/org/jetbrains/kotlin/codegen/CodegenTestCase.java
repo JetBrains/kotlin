@@ -86,7 +86,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     protected GeneratedClassLoader initializedClassLoader;
 
     protected ConfigurationKind configurationKind = ConfigurationKind.JDK_ONLY;
-    public final String defaultJvmTarget = System.getProperty(DEFAULT_JVM_TARGET_FOR_TEST);
+    private final String defaultJvmTarget = System.getProperty(DEFAULT_JVM_TARGET_FOR_TEST);
 
     protected final void createEnvironmentWithMockJdkAndIdeaAnnotations(
             @NotNull ConfigurationKind configurationKind,
@@ -399,7 +399,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     protected ClassFileFactory generateClassesInFile() {
         if (classFileFactory == null) {
             try {
-                classFileFactory = generateFiles(myEnvironment, myFiles, getClassBuilderFactory());
+                classFileFactory =
+                        GenerationUtils.compileFiles(myFiles.getPsiFiles(), myEnvironment, getClassBuilderFactory()).getFactory();
 
                 if (verifyWithDex() && DxChecker.RUN_DX_CHECKER) {
                     DxChecker.check(classFileFactory);
@@ -583,7 +584,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     @NotNull
-    protected List<String> extractJavacOptions(@NotNull List<TestFile> files) {
+    protected static List<String> extractJavacOptions(@NotNull List<TestFile> files) {
         List<String> javacOptions = new ArrayList<>(0);
         for (TestFile file : files) {
             javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"));

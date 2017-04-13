@@ -32,7 +32,7 @@ abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenT
     }
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
-        configuration.addJvmClasspathRoots(listOf(javaOutputDir!!))
+        configuration.addJvmClasspathRoots(listOf(javaOutputDir))
     }
 
     override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {
