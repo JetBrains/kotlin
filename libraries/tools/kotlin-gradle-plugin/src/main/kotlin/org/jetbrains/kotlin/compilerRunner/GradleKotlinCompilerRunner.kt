@@ -129,7 +129,15 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     }
 
     override fun compileWithDaemon(compilerClassName: String, compilerArgs: CommonCompilerArguments, environment: GradleCompilerEnvironment): ExitCode? {
-        val connection = getDaemonConnection(environment)
+        val connection =
+                try {
+                    getDaemonConnection(environment)
+                }
+                catch (e: Throwable) {
+                    log.warn("Caught an exception trying to connect to Kotlin Daemon")
+                    e.printStackTrace()
+                    null
+                }
         if (connection == null) {
             if (environment is GradleIncrementalCompilerEnvironment) {
                 log.warn("Could not perform incremental compilation: $COULD_NOT_CONNECT_TO_DAEMON_MESSAGE")
