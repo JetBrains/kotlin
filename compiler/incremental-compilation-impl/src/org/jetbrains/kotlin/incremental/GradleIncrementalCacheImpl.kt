@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.build.GeneratedJvmClass
+import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.incremental.snapshots.FileSnapshotMap
 import org.jetbrains.kotlin.incremental.storage.BasicStringMap
 import org.jetbrains.kotlin.incremental.storage.PathStringDescriptor
@@ -31,26 +32,36 @@ class GradleIncrementalCacheImpl(
         private val reporter: ICReporter
 ) : IncrementalCacheImpl<TargetId>(targetDataRoot, targetOutputDir, target) {
     companion object {
-        private val SOURCES_TO_CLASSFILES = "sources-to-classfiles"
-        private val GENERATED_SOURCE_SNAPSHOTS = "generated-source-snapshot"
+        private val SOURCE_TO_OUTPUT_FILES = "source-to-output"
         private val SOURCE_SNAPSHOTS = "source-snapshot"
     }
 
-    internal val sourceToClassfilesMap = registerMap(SourceToClassfilesMap(SOURCES_TO_CLASSFILES.storageFile))
-    internal val generatedSourceSnapshotMap = registerMap(FileSnapshotMap(GENERATED_SOURCE_SNAPSHOTS.storageFile))
+    internal val sourceToOutputMap = registerMap(SourceToOutputFilesMap(SOURCE_TO_OUTPUT_FILES.storageFile))
     internal val sourceSnapshotMap = registerMap(FileSnapshotMap(SOURCE_SNAPSHOTS.storageFile))
 
-    fun removeClassfilesBySources(sources: Iterable<File>): Unit =
-            sources.forEach { sourceToClassfilesMap.remove(it) }
+    // generatedFiles can contain multiple entries with the same source file
+    // for example Kapt3 IC will generate a .java stub and .class stub for each source file
+    fun registerOutputForSourceFiles(generatedFiles: List<GeneratedFile<*>>) {
+        val sourceToOutput = MultiMap<File, File>()
 
-    override fun saveFileToCache(generatedClass: GeneratedJvmClass<TargetId>): CompilationResult {
-        generatedClass.sourceFiles.forEach { sourceToClassfilesMap.add(it, generatedClass.outputFile) }
-        return super.saveFileToCache(generatedClass)
+        for (generatedFile in generatedFiles) {
+            for (source in generatedFile.sourceFiles) {
+                sourceToOutput.putValue(source, generatedFile.outputFile)
+            }
+        }
+
+        for ((source, outputs) in sourceToOutput.entrySet()) {
+            sourceToOutputMap[source] = outputs
+        }
     }
 
-    inner class SourceToClassfilesMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer) {
-        fun add(sourceFile: File, classFile: File) {
-            storage.append(sourceFile.absolutePath, classFile.absolutePath)
+    fun removeOutputForSourceFiles(sources: Iterable<File>) {
+        sources.forEach { sourceToOutputMap.remove(it) }
+    }
+
+    inner class SourceToOutputFilesMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer) {
+        operator fun set(sourceFile: File, outputFiles: Collection<File>) {
+            storage[sourceFile.absolutePath] = outputFiles.map { it.absolutePath }
         }
 
         operator fun get(sourceFile: File): Collection<File> =
