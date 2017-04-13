@@ -166,11 +166,10 @@ object KotlinToJVMBytecodeCompiler {
                 writeOutput(state.configuration, state.factory, null)
             }
 
-            if (chunk.size == 1) {
-                val javacWrapper = JavacWrapper.getInstance(environment.project)
-                if (projectConfiguration[JVMConfigurationKeys.USE_JAVAC]!!) {
-                    return javacWrapper.use { it.compile(File(chunk.first().getOutputDirectory())) }
-                } else javacWrapper.close()
+            if (chunk.size == 1 && projectConfiguration.getBoolean(JVMConfigurationKeys.USE_JAVAC)) {
+                return JavacWrapper.getInstance(environment.project).use {
+                    it.compile(File(chunk.first().getOutputDirectory()))
+                }
             }
 
             return true
