@@ -12,5 +12,6 @@
     <orderEntry type="library" scope="PROVIDED" name="native-platform-uberjar" level="project" />
     <orderEntry type="module" module-name="cli-common" scope="PROVIDED" />
     <orderEntry type="module" module-name="descriptors" scope="PROVIDED" />
+    <orderEntry type="library" name="kotlin-reflect" level="project" />
   </component>
 </module>

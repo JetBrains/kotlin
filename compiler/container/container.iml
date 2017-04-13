@@ -10,7 +10,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
-    <orderEntry type="library" name="kotlin-reflect" level="project" />
     <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="library" scope="TEST" name="junit-4.12" level="project" />
     <orderEntry type="library" exported="" name="javax.inject" level="project" />

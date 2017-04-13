@@ -18,5 +18,6 @@
     <orderEntry type="library" exported="" name="kotlin-script-runtime" level="project" />
     <orderEntry type="module" module-name="script.runtime" />
     <orderEntry type="library" name="javaslang" level="project" />
+    <orderEntry type="library" name="kotlin-reflect" level="project" />
   </component>
 </module>
