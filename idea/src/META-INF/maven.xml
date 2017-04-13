@@ -22,9 +22,9 @@
       <param name="experimentalCoroutines" values="enable,warn,error"/>
       <param name="languageVersion" refProvider="org.jetbrains.kotlin.idea.maven.LanguageVersionsProvider" />
       <param name="apiVersion" refProvider="org.jetbrains.kotlin.idea.maven.ApiVersionsProvider" />
-      <param name="main" values="CALL,NO_CALL" />
-      <param name="moduleKind" values="plain,commonjs,amd,umd" />
-      <param name="jvmTarget" values="1.6,1.8" />
+      <param name="main" refProvider="org.jetbrains.kotlin.idea.maven.JsMainCallProvider" />
+      <param name="moduleKind" refProvider="org.jetbrains.kotlin.idea.maven.JsModuleKindsProvider" />
+      <param name="jvmTarget" refProvider="org.jetbrains.kotlin.idea.maven.JvmTargetsProvider" />
 
       <param name="script" language="kotlin" />
     </pluginDescriptor>
