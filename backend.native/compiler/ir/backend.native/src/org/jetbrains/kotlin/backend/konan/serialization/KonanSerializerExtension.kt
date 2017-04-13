@@ -98,7 +98,9 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
         super.serializeClass(descriptor, proto)
     }
 
-    override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
+    override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) = serializeFunctionWithIR(descriptor, proto, null)
+
+    fun serializeFunctionWithIR(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder, typeSerializer: ((KotlinType)->Int)?) {
 
         proto.setFunctionIndex(
             inlineDescriptorTable.indexByValue(descriptor))
@@ -107,7 +109,7 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
   
         if (descriptor.needsInlining) {
             val encodedIR: String = IrSerializer( context, 
-                inlineDescriptorTable, stringTable, util, descriptor)
+                inlineDescriptorTable, stringTable, util, typeSerializer!!, descriptor)
                     .serializeInlineBody()
 
             val inlineIrBody = KonanLinkData.InlineIrBody

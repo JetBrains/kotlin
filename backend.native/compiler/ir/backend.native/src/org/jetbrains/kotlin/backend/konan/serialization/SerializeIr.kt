@@ -16,20 +16,25 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
+
+import org.jetbrains.kotlin.backend.common.DeepCopyIrTreeWithDescriptors
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.descriptors.getMemberScope
+import org.jetbrains.kotlin.backend.konan.KonanIrDeserializationException
 import org.jetbrains.kotlin.backend.konan.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.ir.ir2stringWhole
-import org.jetbrains.kotlin.backend.konan.KonanIrDeserializationException
 import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
 import org.jetbrains.kotlin.backend.konan.llvm.base64Encode
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.DEFINED
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrEnumEntryImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.serialization.KonanIr
@@ -37,17 +42,21 @@ import org.jetbrains.kotlin.serialization.KonanIr.IrConst.ValueCase.*
 import org.jetbrains.kotlin.serialization.KonanLinkData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
+
 
 internal class IrSerializer(val context: Context, 
     val descriptorTable: DescriptorTable,
     val stringTable: KonanStringTable, 
     val util: KonanSerializationUtil, 
+    val typeSerializer: ((KotlinType)->Int),
     var rootFunction: FunctionDescriptor) {
 
     val loopIndex = mutableMapOf<IrLoop, Int>()
     var currentLoopIndex = 0
     val irDescriptorSerializer = IrDescriptorSerializer(context,
-        descriptorTable, stringTable, util.typeSerializer, rootFunction)
+        descriptorTable, stringTable, typeSerializer, rootFunction)
 
     fun serializeInlineBody(): String {
         val declaration = context.ir.originalModuleIndex.functions[rootFunction]!!
@@ -1033,6 +1042,35 @@ internal class IrDeserializer(val context: Context,
         return declaration
     }
 
+    // We run inline body deserializations after the public descriptor tree
+    // deserialization is long gone. So we don't have the needed chain of
+    // deserialization contexts available to take type parameters.
+    // So typeDeserializer introduces a brand new set of DeserializadTypeParameterDescriptor
+    // for the rootFunction.
+    // This function takes the type parameters from the rootFunction descriptor
+    // and substitutes them instead the deserialized ones.
+    // TODO: consider lazy inline body deserialization during the public descriptors deserialization.
+    // I tried to copy over TypeDeserializaer, MemberDeserializer, 
+    // and the rest of what's needed, but it didn't work out.
+    fun adaptDeserializedTypeParameters(declaration: IrDeclaration): IrDeclaration {
+        val rootFunctionTypeParameters = 
+            descriptorDeserializer.localDeserializer.childContext.typeDeserializer.ownTypeParameters
+
+        val substitutionContext = rootFunctionTypeParameters.mapIndexed{
+            index, param ->
+            Pair(param.typeConstructor, TypeProjectionImpl(rootFunction.typeParameters[index].defaultType))
+        }.associate{
+            (key,value) ->
+        key to value}
+
+        val copyFunctionDeclaration = DeepCopyIrTreeWithDescriptors(rootFunction.containingDeclaration, context).copy(
+            irElement       = declaration,      
+            typeSubstitutor = TypeSubstitutor.create(substitutionContext)  
+        ) as IrFunction
+
+        return copyFunctionDeclaration
+    }
+
     fun decodeDeclaration(): IrDeclaration {
         val proto = (rootFunction as DeserializedSimpleFunctionDescriptor).proto
 
@@ -1044,7 +1082,11 @@ internal class IrDeserializer(val context: Context,
         val base64 = inlineProto.encodedIr
         val byteArray = base64Decode(base64)
         val irProto = KonanIr.IrDeclaration.parseFrom(byteArray, KonanSerializerProtocol.extensionRegistry)
-        return deserializeDeclaration(irProto)
+        val declaration =  deserializeDeclaration(irProto)
+
+        val copyFunctionDeclaration = adaptDeserializedTypeParameters(declaration)
+
+        return copyFunctionDeclaration
     }
 }
 

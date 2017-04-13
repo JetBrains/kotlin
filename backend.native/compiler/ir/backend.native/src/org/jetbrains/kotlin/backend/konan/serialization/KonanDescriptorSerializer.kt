@@ -286,7 +286,11 @@ class KonanDescriptorSerializer private constructor(
             builder.sinceKotlinInfo = writeSinceKotlinInfo(LanguageFeature.Coroutines)
         }
 
-        extension.serializeFunction(descriptor, builder)
+        if (extension is KonanSerializerExtension) {
+            extension.serializeFunctionWithIR(descriptor, builder, {it -> typeId(it)})
+        } else {
+            extension.serializeFunction(descriptor, builder)
+        }
 
         return builder
     }
