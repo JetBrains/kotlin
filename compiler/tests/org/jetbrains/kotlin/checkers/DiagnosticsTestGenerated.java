@@ -10048,6 +10048,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("fixVariableToNothing.kt")
+            public void testFixVariableToNothing() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/fixVariableToNothing.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("flexibleTypesAsUpperBound.kt")
             public void testFlexibleTypesAsUpperBound() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/flexibleTypesAsUpperBound.kt");
