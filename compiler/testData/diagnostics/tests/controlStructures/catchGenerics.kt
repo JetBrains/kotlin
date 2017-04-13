@@ -19,3 +19,7 @@ inline fun <reified E : Exception, R> tryCatch(lazy: () -> R, failure: (E) -> R)
     } catch (<!REIFIED_TYPE_IN_CATCH_CLAUSE!>e: E<!>) {
         failure(e)
     }
+
+fun <T : Throwable> tryCatch() {
+    try { } catch (<!TYPE_PARAMETER_IN_CATCH_CLAUSE!>e: T<!>) { }
+}

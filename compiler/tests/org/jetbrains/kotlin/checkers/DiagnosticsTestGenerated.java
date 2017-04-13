@@ -4390,6 +4390,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("catchWithDefault.kt")
+            public void testCatchWithDefault() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/catchWithDefault.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("commonSupertypeOfT.kt")
             public void testCommonSupertypeOfT() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/commonSupertypeOfT.kt");

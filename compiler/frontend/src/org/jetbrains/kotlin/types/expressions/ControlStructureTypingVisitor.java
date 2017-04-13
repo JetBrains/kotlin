@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
@@ -486,17 +487,12 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             KtExpression catchBody = catchClause.getCatchBody();
             boolean nothingInCatchBranch = false;
             if (catchParameter != null) {
-                components.identifierChecker.checkDeclaration(catchParameter, context.trace);
-                ModifiersChecker.ModifiersCheckingProcedure modifiersChecking = components.modifiersChecker.withTrace(context.trace);
-                modifiersChecking.checkParameterHasNoValOrVar(catchParameter, VAL_OR_VAR_ON_CATCH_PARAMETER);
-                ModifierCheckerCore.INSTANCE.check(catchParameter, context.trace, null, components.languageVersionSettings);
+                checkCatchParameterDeclaration(catchParameter, context);
 
                 VariableDescriptor variableDescriptor = components.descriptorResolver.resolveLocalVariableDescriptor(
                         context.scope, catchParameter, context.trace);
                 KotlinType catchParameterType = variableDescriptor.getType();
-                if (TypeUtils.isReifiedTypeParameter(catchParameterType)) {
-                    context.trace.report(REIFIED_TYPE_IN_CATCH_CLAUSE.on(catchParameter));
-                }
+                checkCatchParameterType(catchParameter, catchParameterType, context);
 
                 KotlinType throwableType = components.builtIns.getThrowable().getDefaultType();
                 components.dataFlowAnalyzer.checkType(catchParameterType, catchParameter, context.replaceExpectedType(throwableType));
@@ -536,6 +532,29 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             return result.replaceType(CommonSupertypes.commonSupertype(types));
+        }
+    }
+
+    private static void checkCatchParameterType(KtParameter catchParameter, KotlinType catchParameterType, ExpressionTypingContext context) {
+        TypeParameterDescriptor typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(catchParameterType);
+        if (typeParameterDescriptor != null) {
+            if (typeParameterDescriptor.isReified()) {
+                context.trace.report(REIFIED_TYPE_IN_CATCH_CLAUSE.on(catchParameter));
+            }
+            else {
+                context.trace.report(TYPE_PARAMETER_IN_CATCH_CLAUSE.on(catchParameter));
+            }
+        }
+    }
+
+    private void checkCatchParameterDeclaration(KtParameter catchParameter, ExpressionTypingContext context) {
+        components.identifierChecker.checkDeclaration(catchParameter, context.trace);
+        ModifiersChecker.ModifiersCheckingProcedure modifiersChecking = components.modifiersChecker.withTrace(context.trace);
+        modifiersChecking.checkParameterHasNoValOrVar(catchParameter, VAL_OR_VAR_ON_CATCH_PARAMETER);
+        ModifierCheckerCore.INSTANCE.check(catchParameter, context.trace, null, components.languageVersionSettings);
+
+        if (catchParameter.hasDefaultValue()) {
+            context.trace.report(Errors.CATCH_PARAMETER_WITH_DEFAULT_VALUE.on(catchParameter));
         }
     }
 

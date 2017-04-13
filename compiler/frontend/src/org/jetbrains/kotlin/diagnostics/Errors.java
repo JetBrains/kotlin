@@ -152,6 +152,7 @@ public interface Errors {
     DiagnosticFactory0<KtTypeArgumentList> TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtParameter> REIFIED_TYPE_IN_CATCH_CLAUSE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtParameter> TYPE_PARAMETER_IN_CATCH_CLAUSE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeParameterList> GENERIC_THROWABLE_SUBCLASS = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtTypeAlias> TOPLEVEL_TYPEALIASES_ONLY = DiagnosticFactory0.create(ERROR);
@@ -526,6 +527,8 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> DATA_CLASS_WITHOUT_PARAMETERS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtParameter> DATA_CLASS_VARARG_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtParameter> DATA_CLASS_NOT_PROPERTY_PARAMETER = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory0<KtParameter> CATCH_PARAMETER_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR);
 
     // Multi-platform projects
 
