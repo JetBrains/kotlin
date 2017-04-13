@@ -279,7 +279,7 @@ class ExpressionsOfTypeProcessor(
                 val scope = GlobalSearchScope.projectScope(project).excludeFileTypes(KotlinFileType.INSTANCE, XmlFileType.INSTANCE)
                 testLog?.add("Searched references to ${logPresentation(psiClass)} in non-Kotlin files")
                 searchReferences(psiClass, scope) { reference ->
-                    if (reference.element.language != JavaFileType.INSTANCE) { // reference in some JVM language can be method parameter (but we don't know)
+                    if (reference.element.language != JavaLanguage.INSTANCE) { // reference in some JVM language can be method parameter (but we don't know)
                         LOG.info(getFallbackDiagnosticsMessage(reference))
                         downShiftToPlainSearch()
                         return@searchReferences false
