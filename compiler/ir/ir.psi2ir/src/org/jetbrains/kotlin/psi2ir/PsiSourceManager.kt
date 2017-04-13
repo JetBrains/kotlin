@@ -41,11 +41,13 @@ class PsiSourceManager : SourceManager {
         }
 
         override fun getLineNumber(offset: Int): Int {
+            if (offset < 0) return -1
             val index = lineStartOffsets.binarySearch(offset)
             return if (index >= 0) index else -index - 2
         }
 
         override fun getColumnNumber(offset: Int): Int {
+            if (offset < 0) return -1
             val lineNumber = getLineNumber(offset)
             return offset - lineStartOffsets[lineNumber]
         }
