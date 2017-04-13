@@ -95,7 +95,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
 private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
-    val copyIrElement = DeepCopyIrTreeWithDescriptors(currentScope, context)                // Create DeepCopy for current scope.
+    val copyIrElement = DeepCopyIrTreeWithDescriptors(currentScope.scope.scopeOwner, context)                // Create DeepCopy for current scope.
 
     //-------------------------------------------------------------------------//
 
