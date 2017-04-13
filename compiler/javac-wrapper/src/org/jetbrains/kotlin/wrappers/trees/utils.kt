@@ -96,13 +96,9 @@ private fun TreePath.tryToResolve(name: String,
                           compilationUnit: JCTree.JCCompilationUnit,
                           javac: JavacWrapper): JavaClassifier? {
     // try to find an inner class
-    (parentPath.find { it is JCTree.JCClassDecl
-                       && it.extending != leaf
-                       && !it.implementing.contains(leaf) } as? JCTree.JCClassDecl)?.let { outerClass ->
-        javac.findClass(FqName("${compilationUnit.packageName}.${outerClass.name}"))
-                ?.tryToResolveInner(name, javac)
-                ?.let { return it }
-    }
+    findOuterClass(javac)
+            ?.tryToResolveInner(name, javac)
+            ?.let { return it }
 
     // try to find a package class
     javac.findClass(FqName("${compilationUnit.packageName}.$name"))?.let { return it }
@@ -118,6 +114,12 @@ private fun TreePath.tryToResolve(name: String,
 
     return javac.getKotlinClassifier(FqName(name))
 }
+
+private fun TreePath.findOuterClass(javac: JavacWrapper) = filterIsInstance<JCTree.JCClassDecl>()
+        .filter { it.extending != leaf && !it.implementing.contains(leaf) }
+        .reversed()
+        .joinToString(separator = ".", prefix = "${compilationUnit.packageName}.") { it.simpleName }
+        .let { javac.findClass(FqName(it)) }
 
 private fun TreePath.typeParameter(javac: JavacWrapper) = filter { it is JCTree.JCClassDecl || it is JCTree.JCMethodDecl }
         .flatMap {

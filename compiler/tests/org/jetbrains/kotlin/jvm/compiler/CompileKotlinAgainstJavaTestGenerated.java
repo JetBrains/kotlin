@@ -162,6 +162,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("Nesting.kt")
+    public void testNesting() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/Nesting.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("RawReturnType.kt")
     public void testRawReturnType() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/RawReturnType.kt");
