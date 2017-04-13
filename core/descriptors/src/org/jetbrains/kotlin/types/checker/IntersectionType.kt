@@ -23,6 +23,9 @@ import kotlin.collections.HashSet
 
 fun intersectWrappedTypes(types: Collection<KotlinType>) = intersectTypes(types.map { it.unwrap() })
 
+
+fun intersectTypes(types: List<SimpleType>) = intersectTypes(types as List<UnwrappedType>) as SimpleType
+
 fun intersectTypes(types: List<UnwrappedType>): UnwrappedType {
     when (types.size) {
         0 -> error("Expected some types")
@@ -45,7 +48,7 @@ fun intersectTypes(types: List<UnwrappedType>): UnwrappedType {
     }
 
     if (!hasFlexibleTypes) {
-        return intersectTypes(lowerBounds)
+        return TypeIntersector.intersectTypes(lowerBounds)
     }
 
     val upperBounds = types.map { it.upperIfFlexible() }
@@ -56,14 +59,9 @@ fun intersectTypes(types: List<UnwrappedType>): UnwrappedType {
      *
      *  Note: when we construct intersection type of dynamic(or Raw type) & other type, we can get non-dynamic type.  // todo discuss
      */
-    return KotlinTypeFactory.flexibleType(intersectTypes(lowerBounds), intersectTypes(upperBounds))
+    return KotlinTypeFactory.flexibleType(TypeIntersector.intersectTypes(lowerBounds), TypeIntersector.intersectTypes(upperBounds))
 }
 
-// types.size >= 2
-// It is incorrect see to nullability here, because of KT-12684
-private fun intersectTypes(types: List<SimpleType>): SimpleType {
-    return TypeIntersector.intersectTypes(types)
-}
 
 object TypeIntersector {
 
