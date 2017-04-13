@@ -41,7 +41,7 @@ internal enum class OptionsParser {
                         "derivedClasses" -> isDerivedClasses = true
                         "functionUsages" -> isMethodsUsages = true
                         "propertyUsages" -> isFieldsUsages = true
-                        else -> IllegalStateException("Invalid option: " + s)
+                        else -> throw IllegalStateException("Invalid option: " + s)
                     }
                 }
             }
@@ -63,7 +63,7 @@ internal enum class OptionsParser {
                             isIncludeOverloadUsages = true
                             isUsages = true
                         }
-                        else -> IllegalStateException("Invalid option: " + s)
+                        else -> throw IllegalStateException("Invalid option: " + s)
                     }
                 }
             }
@@ -80,7 +80,7 @@ internal enum class OptionsParser {
                         "overrides" -> searchOverrides = true
                         "skipRead" -> isReadAccess = false
                         "skipWrite" -> isWriteAccess = false
-                        else -> IllegalStateException("Invalid option: " + s)
+                        else -> throw IllegalStateException("Invalid option: " + s)
                     }
                 }
             }
@@ -100,7 +100,7 @@ internal enum class OptionsParser {
                         "implementingClasses" -> isImplementingClasses = true
                         "methodUsages" -> isMethodsUsages = true
                         "fieldUsages" -> isFieldsUsages = true
-                        else -> IllegalStateException("Invalid option: " + s)
+                        else -> throw IllegalStateException("Invalid option: " + s)
                     }
                 }
             }
@@ -118,7 +118,7 @@ internal enum class OptionsParser {
                             isOverridingMethods = true
                             isImplementingMethods = true
                         }
-                        else -> IllegalStateException("Invalid option: " + s)
+                        else -> throw IllegalStateException("Invalid option: " + s)
                     }
                 }
             }
