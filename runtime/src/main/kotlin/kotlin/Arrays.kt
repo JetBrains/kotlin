@@ -106,10 +106,6 @@ public final class CharArray {
     @SymbolName("Kotlin_CharArray_set")
     external public operator fun set(index: Int, value: Char): Unit
 
-    // TODO: Do we need it?
-    //@SymbolName("Kotlin_CharArray_copyOf")
-    //external public fun copyOf(newSize: Int): CharArray
-
     @SymbolName("Kotlin_CharArray_getArrayLength")
     external private fun getArrayLength(): Int
 
