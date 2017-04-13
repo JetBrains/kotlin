@@ -3,28 +3,30 @@ import kotlin.comparisons.*
 
 fun box() {
     class TestCollection<out E>(val data: Collection<E>) : AbstractCollection<E>() {
-        val invocations = mutableListOf<String>()
         override val size get() = data.size
         override fun iterator() = data.iterator()
 
-        override fun toArray(): Array<Any?> {
-            invocations += "toArray1"
-            return data.toTypedArray()
-        }
-
-        public override fun <T> toArray(array: Array<T>): Array<T> {
-            invocations += "toArray2"
-            return super.toArray(array)
-        }
+        public override fun toArray(): Array<Any?> = super.toArray()
+        public override fun <T> toArray(array: Array<T>): Array<T> = super.toArray(array)
     }
 
-    val data = listOf("abc", "def")
-    val coll = TestCollection(data)
+    val data = listOf(1, 2, 3)
+    assertEquals(TestCollection(data).toArray().asList(), data)
+    assertEquals(TestCollection(listOf<Int>()).toArray().size, 0)
 
-    val arr1 = coll.toTypedArray()
-    assertEquals(data, arr1.asList())
-    assertTrue("toArray1" in coll.invocations || "toArray2" in coll.invocations)
+    var arr1 = Array<Int>(3) { -1 }
+    var arr2 = TestCollection(data).toArray(arr1)
+    assertTrue(arr1 === arr2)
+    assertEquals(arr2.asList(), data)
 
-    val arr2: Array<String> = coll.toArray(Array(coll.size + 1) { "" })
-    assertEquals(data + listOf(null), arr2.asList())
+    arr1 = Array<Int>(4) { -1 }
+    arr2 = TestCollection(data).toArray(arr1)
+    assertTrue(arr1 === arr2)
+    assertEquals(arr2.asList(), data + listOf(-1))
+
+    arr1 = Array<Int>(2) { -1 }
+    arr2 = TestCollection(data).toArray(arr1)
+    assertFalse(arr1 === arr2)
+    assertEquals(arr2.asList(), data)
+
 }
