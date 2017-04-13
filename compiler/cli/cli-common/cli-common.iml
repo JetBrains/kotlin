@@ -12,5 +12,6 @@
     <orderEntry type="library" name="jps" level="project" />
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />
+    <orderEntry type="module" module-name="frontend.script" />
   </component>
 </module>

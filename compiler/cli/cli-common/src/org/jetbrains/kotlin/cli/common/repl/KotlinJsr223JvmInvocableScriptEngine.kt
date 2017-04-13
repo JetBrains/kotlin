@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.repl
 
-import org.jetbrains.kotlin.utils.tryCreateCallableMapping
+import org.jetbrains.kotlin.script.tryCreateCallableMapping
 import java.lang.reflect.Proxy
 import javax.script.Invocable
 import javax.script.ScriptException
