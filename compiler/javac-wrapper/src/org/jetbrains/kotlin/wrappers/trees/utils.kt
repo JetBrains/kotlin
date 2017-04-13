@@ -20,6 +20,7 @@ import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.javac.MockKotlinClassifier
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier
@@ -85,6 +86,7 @@ private fun JavaClass.tryToResolveInner(name: String, javac: JavacWrapper): Java
 
     supertypes
             .mapNotNull { it.classifier as? JavaClass }
+            .filter { it !is MockKotlinClassifier }
             .forEach { it.tryToResolveInner(name, javac)?.let { return it } }
 
     return null

@@ -176,7 +176,7 @@ class JavacWrapper(javaFiles: Collection<File>,
 
         val reader = ClassReader.instance(context)
         val names = Names.instance(context)
-        val outDirName = getLocation(StandardLocation.CLASS_OUTPUT).firstOrNull()?.path ?: ""
+        val outDirName = getLocation(StandardLocation.CLASS_OUTPUT)?.firstOrNull()?.path ?: ""
 
         list(StandardLocation.CLASS_OUTPUT, "", setOf(JavaFileObject.Kind.CLASS), true)
                 .forEach {

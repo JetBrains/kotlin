@@ -234,6 +234,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("UseKtClass.kt")
+    public void testUseKtClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/UseKtClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Vararg.kt")
     public void testVararg() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/Vararg.kt");

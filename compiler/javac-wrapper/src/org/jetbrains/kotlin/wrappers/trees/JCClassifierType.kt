@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.wrappers.trees
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.javac.MockKotlinClassifier
 import org.jetbrains.kotlin.load.java.structure.*
 
 sealed class ClassifierType<out T : JCTree>(tree: T,
@@ -54,7 +55,9 @@ class JCClassifierType<out T : JCTree.JCExpression>(tree: T,
         get() = emptyList()
 
     override val isRaw
-        get() = (classifier as? JavaClass)?.typeParameters?.isNotEmpty() ?: false
+        get() = (classifier as? MockKotlinClassifier)?.hasTypeParameters
+                ?: (classifier as? JavaClass)?.typeParameters?.isNotEmpty()
+                ?: false
 
 }
 

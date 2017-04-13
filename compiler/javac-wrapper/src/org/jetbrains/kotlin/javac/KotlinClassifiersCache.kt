@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.javac
 
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.structure.*
@@ -27,78 +26,83 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 
 class KotlinClassifiersCache(sourceFiles: Collection<KtFile>) {
 
-    private val kotlinClasses: List<FqName> = sourceFiles.flatMap {
-        it.collectDescendantsOfType<KtClassOrObject>().mapNotNull { it.fqName } + it.javaFileFacadeFqName
-    }
+    private val kotlinClasses: Map<FqName?, KtClassOrObject?> = sourceFiles.flatMap {
+        (it.collectDescendantsOfType<KtClassOrObject>()
+                .mapNotNull { it.fqName to it } + (it.javaFileFacadeFqName to null))
+    }.toMap()
 
     private val classifiers = hashMapOf<FqName, JavaClass>()
 
     fun getKotlinClassifier(fqName: FqName) = classifiers[fqName] ?: createClassifier(fqName)
 
     private fun createClassifier(fqName: FqName): JavaClass? {
-        if (!kotlinClasses.contains(fqName)) return null
+        if (!kotlinClasses.containsKey(fqName)) return null
+        val kotlinClassifier = kotlinClasses[fqName]
 
-        return object : JavaClass {
-            override val isAbstract: Boolean
-                get() = false
-
-            override val isStatic: Boolean
-                get() = false
-
-            override val isFinal: Boolean
-                get() = false
-
-            override val visibility: Visibility
-                get() = Visibilities.PUBLIC
-
-            override val typeParameters: List<JavaTypeParameter>
-                get() = emptyList()
-
-            override val fqName
-                get() = fqName
-
-            override val supertypes: Collection<JavaClassifierType>
-                get() = emptyList()
-
-            override val innerClasses: Collection<JavaClass>
-                get() = emptyList()
-
-            override val outerClass: JavaClass?
-                get() = null
-
-            override val isInterface: Boolean
-                get() = false
-
-            override val isAnnotationType: Boolean
-                get() = false
-
-            override val isEnum: Boolean
-                get() = false
-
-            override val lightClassOriginKind
-                get() = LightClassOriginKind.SOURCE
-
-            override val methods: Collection<JavaMethod>
-                get() = emptyList()
-
-            override val fields: Collection<JavaField>
-                get() = emptyList()
-
-            override val constructors: Collection<JavaConstructor>
-                get() = emptyList()
-
-            override val name
-                get() = fqName.shortNameOrSpecial()
-
-            override val annotations
-                get() = emptyList<JavaAnnotation>()
-
-            override val isDeprecatedInJavaDoc: Boolean
-                get() = false
-
-            override fun findAnnotation(fqName: FqName) = null
-
-        }.apply { classifiers[fqName] = this }
+        return MockKotlinClassifier(fqName,
+                                    kotlinClassifier?.typeParameters?.isNotEmpty() ?: false)
+                .apply { classifiers[fqName] = this }
     }
+
+}
+
+class MockKotlinClassifier(override val fqName: FqName,
+                           val hasTypeParameters: Boolean) : JavaClass {
+
+    override val isAbstract: Boolean
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val isStatic: Boolean
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val isFinal: Boolean
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val visibility: Visibility
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val typeParameters: List<JavaTypeParameter>
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val supertypes: Collection<JavaClassifierType>
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val innerClasses: Collection<JavaClass>
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val outerClass: JavaClass?
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val isInterface: Boolean
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val isAnnotationType: Boolean
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val isEnum: Boolean
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val lightClassOriginKind
+        get() = LightClassOriginKind.SOURCE
+
+    override val methods: Collection<JavaMethod>
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val fields: Collection<JavaField>
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val constructors: Collection<JavaConstructor>
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val name
+        get() = fqName.shortNameOrSpecial()
+
+    override val annotations
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = throw UnsupportedOperationException("Should not be called")
+
+    override fun findAnnotation(fqName: FqName) = throw UnsupportedOperationException("Should not be called")
 
 }
