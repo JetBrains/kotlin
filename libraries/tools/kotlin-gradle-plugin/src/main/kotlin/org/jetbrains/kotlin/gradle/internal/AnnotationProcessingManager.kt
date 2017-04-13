@@ -157,7 +157,7 @@ class AnnotationProcessingManager(
             return kotlinGeneratedDir
         }
 
-    val kaptProcessorPath get() = javaTask.classpath + setOf(wrappersDirectory) + aptFiles
+    val kaptProcessorPath get() = setOf(wrappersDirectory) + aptFiles + javaTask.classpath
 
     fun setupKapt() {
         originalJavaCompilerArgs = javaTask.options.compilerArgs
@@ -281,7 +281,7 @@ class AnnotationProcessingManager(
             javaTask.addCompilerArgument("-processorpath") { prevValue ->
                 if (prevValue != null)
                     javaTask.logger.warn("Processor path was modified by kapt. Previous value = $prevValue")
-                path.joinToString(prefix = prevValue?.let { it + File.pathSeparator }.orEmpty(),
+                path.joinToString(postfix = prevValue?.let { File.pathSeparator + it }.orEmpty(),
                                   separator = File.pathSeparator)
             }
         }
@@ -297,7 +297,7 @@ class AnnotationProcessingManager(
         if (originalProcessorPath != null)
             javaTask.logger.warn("Processor path was modified by kapt. Previous value = $originalProcessorPath")
 
-        val newPath = javaTask.project.files(path + (originalProcessorPath ?: emptyList<File>()))
+        val newPath = javaTask.project.files(path + (originalProcessorPath ?: emptyList()))
         setPath(javaTask.options, newPath)
         true
     } catch (_: NoSuchMethodException) {
