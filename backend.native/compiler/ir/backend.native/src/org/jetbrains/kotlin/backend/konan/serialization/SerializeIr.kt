@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.serialization.KonanIr.IrConst.ValueCase.*
+import org.jetbrains.kotlin.serialization.KonanIr.IrOperation.OperationCase.*
 import org.jetbrains.kotlin.serialization.KonanLinkData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -152,17 +153,15 @@ internal class IrSerializer(val context: Context,
         return proto.build()
     }
 
-    fun irCallToPrimitiveKind(call: IrCall): KonanIr.IrCall.Primitive {
-        return when (call) {
-            is IrNullaryPrimitiveImpl 
-                -> return KonanIr.IrCall.Primitive.NULLARY
-            is IrUnaryPrimitiveImpl 
-                -> return KonanIr.IrCall.Primitive.UNARY
-            is IrBinaryPrimitiveImpl 
-                -> return KonanIr.IrCall.Primitive.BINARY
-            else
-                -> return KonanIr.IrCall.Primitive.NOT_PRIMITIVE
-        }
+    fun irCallToPrimitiveKind(call: IrCall): KonanIr.IrCall.Primitive = when (call) {
+        is IrNullaryPrimitiveImpl 
+            -> KonanIr.IrCall.Primitive.NULLARY
+        is IrUnaryPrimitiveImpl 
+            -> KonanIr.IrCall.Primitive.UNARY
+        is IrBinaryPrimitiveImpl 
+            -> KonanIr.IrCall.Primitive.BINARY
+        else
+            -> KonanIr.IrCall.Primitive.NOT_PRIMITIVE
     }
 
     fun serializeMemberAccessCommon(call: IrMemberAccessExpression): KonanIr.MemberAccessCommon {
@@ -307,24 +306,22 @@ internal class IrSerializer(val context: Context,
         return proto.build()
     }
 
-    fun serializeTypeOperator(operator: IrTypeOperator): KonanIr.IrTypeOperator {
-        when (operator) {
-            IrTypeOperator.CAST
-                -> return KonanIr.IrTypeOperator.CAST
-            IrTypeOperator.IMPLICIT_CAST
-                -> return KonanIr.IrTypeOperator.IMPLICIT_CAST
-            IrTypeOperator.IMPLICIT_NOTNULL
-                -> return KonanIr.IrTypeOperator.IMPLICIT_NOTNULL
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
-                -> return KonanIr.IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
-            IrTypeOperator.SAFE_CAST
-                -> return KonanIr.IrTypeOperator.SAFE_CAST
-            IrTypeOperator.INSTANCEOF
-                -> return KonanIr.IrTypeOperator.INSTANCEOF
-            IrTypeOperator.NOT_INSTANCEOF
-                -> return KonanIr.IrTypeOperator.NOT_INSTANCEOF
-            else -> TODO("Unknown type operator")
-        }
+    fun serializeTypeOperator(operator: IrTypeOperator): KonanIr.IrTypeOperator = when (operator) {
+        IrTypeOperator.CAST
+            -> KonanIr.IrTypeOperator.CAST
+        IrTypeOperator.IMPLICIT_CAST
+            -> KonanIr.IrTypeOperator.IMPLICIT_CAST
+        IrTypeOperator.IMPLICIT_NOTNULL
+            -> KonanIr.IrTypeOperator.IMPLICIT_NOTNULL
+        IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+            -> KonanIr.IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+        IrTypeOperator.SAFE_CAST
+            -> KonanIr.IrTypeOperator.SAFE_CAST
+        IrTypeOperator.INSTANCEOF
+            -> KonanIr.IrTypeOperator.INSTANCEOF
+        IrTypeOperator.NOT_INSTANCEOF
+            -> KonanIr.IrTypeOperator.NOT_INSTANCEOF
+        else -> TODO("Unknown type operator")
     }
 
     fun serializeTypeOp(expression: IrTypeOperatorCall): KonanIr.IrTypeOp {
@@ -882,73 +879,72 @@ internal class IrDeserializer(val context: Context,
             NULL
                 -> IrConstImpl.constNull(start, end, type)
             BOOLEAN
-                -> IrConstImpl.boolean(start, end, type, proto.getBoolean())
+                -> IrConstImpl.boolean(start, end, type, proto.boolean)
             BYTE
-                -> IrConstImpl.byte(start, end, type, proto.getByte().toByte())
+                -> IrConstImpl.byte(start, end, type, proto.byte.toByte())
             SHORT
-                -> IrConstImpl.short(start, end, type, proto.getShort().toShort())
+                -> IrConstImpl.short(start, end, type, proto.short.toShort())
             INT
-                -> IrConstImpl.int(start, end, type, proto.getInt())
+                -> IrConstImpl.int(start, end, type, proto.int)
             LONG
-                -> IrConstImpl.long(start, end, type, proto.getLong())
+                -> IrConstImpl.long(start, end, type, proto.long)
             STRING
-                -> IrConstImpl.string(start, end, type, proto.getString())
+                -> IrConstImpl.string(start, end, type, proto.string)
             FLOAT
-                -> IrConstImpl.float(start, end, type, proto.getFloat())
+                -> IrConstImpl.float(start, end, type, proto.float)
             DOUBLE
-                -> IrConstImpl.double(start, end, type, proto.getDouble())
+                -> IrConstImpl.double(start, end, type, proto.double)
             else -> {
                 TODO("Not all const types have been implemented")
             }
         }
 
-    fun deserializeOperation(proto: KonanIr.IrOperation, start: Int, end: Int, type: KotlinType): IrExpression {
-        when {
-            proto.hasBlock()
-                -> return deserializeBlock(proto.getBlock(), start, end, type)
-            proto.hasBreak()
-                -> return deserializeBreak(proto.getBreak(), start, end, type)
-            proto.hasCall()
-                -> return deserializeCall(proto.getCall(), start, end, type)
-            proto.hasCallableReference()
-                -> return deserializeCallableReference(proto.getCallableReference(), start, end, type)
-            proto.hasConst()
-                -> return deserializeConst(proto.getConst(), start, end, type)
-            proto.hasContinue()
-                -> return deserializeContinue(proto.getContinue(), start, end, type)
-            proto.hasDelegatingConstructorCall()
-                -> return deserializeDelegatingConstructorCall(proto.getDelegatingConstructorCall(), start, end, type)
-            proto.hasGetValue()
-                -> return deserializeGetValue(proto.getGetValue(), start, end, type)
-            proto.hasGetEnumValue()
-                -> return deserializeGetEnumValue(proto.getGetEnumValue(), start, end, type)
-            proto.hasGetObject()
-                -> return deserializeGetObject(proto.getGetObject(), start, end, type)
-            proto.hasInstanceInitializerCall()
-                -> return deserializeInstanceInitializerCall(proto.getInstanceInitializerCall(), start, end, type)
-            proto.hasReturn()
-                -> return deserializeReturn(proto.getReturn(), start, end, type)
-            proto.hasSetVariable()
-                -> return deserializeSetVariable(proto.getSetVariable(), start, end, type)
-            proto.hasStringConcat()
-                -> return deserializeStringConcat(proto.getStringConcat(), start, end, type)
-            proto.hasThrow()
-                -> return deserializeThrow(proto.getThrow(), start, end, type)
-            proto.hasTry()
-                -> return deserializeTry(proto.getTry(), start, end, type)
-            proto.hasTypeOp()
-                -> return deserializeTypeOp(proto.getTypeOp(), start, end, type)
-            proto.hasVararg()
-                -> return deserializeVararg(proto.getVararg(), start, end, type)
-            proto.hasWhen()
-                -> return deserializeWhen(proto.getWhen(), start, end, type)
-            proto.hasWhile()
-                -> return deserializeWhile(proto.getWhile(), start, end, type)
+    fun deserializeOperation(proto: KonanIr.IrOperation, start: Int, end: Int, type: KotlinType): IrExpression =
+        when (proto.operationCase) {
+            BLOCK
+                -> deserializeBlock(proto.block, start, end, type)
+            BREAK
+                -> deserializeBreak(proto.getBreak(), start, end, type)
+            CALL
+                -> deserializeCall(proto.call, start, end, type)
+            CALLABLE_REFERENCE
+                -> deserializeCallableReference(proto.callableReference, start, end, type)
+            CONST
+                -> deserializeConst(proto.const, start, end, type)
+            CONTINUE
+                -> deserializeContinue(proto.getContinue(), start, end, type)
+            DELEGATING_CONSTRUCTOR_CALL
+                -> deserializeDelegatingConstructorCall(proto.delegatingConstructorCall, start, end, type)
+            GET_VALUE
+                -> deserializeGetValue(proto.getValue, start, end, type)
+            GET_ENUM_VALUE
+                -> deserializeGetEnumValue(proto.getEnumValue, start, end, type)
+            GET_OBJECT
+                -> deserializeGetObject(proto.getObject, start, end, type)
+            INSTANCE_INITIALIZER_CALL
+                -> deserializeInstanceInitializerCall(proto.instanceInitializerCall, start, end, type)
+            RETURN
+                -> deserializeReturn(proto.getReturn(), start, end, type)
+            SET_VARIABLE
+                -> deserializeSetVariable(proto.setVariable, start, end, type)
+            STRING_CONCAT
+                -> deserializeStringConcat(proto.stringConcat, start, end, type)
+            THROW
+                -> deserializeThrow(proto.getThrow(), start, end, type)
+            TRY
+                -> deserializeTry(proto.getTry(), start, end, type)
+            TYPE_OP
+                -> deserializeTypeOp(proto.typeOp, start, end, type)
+            VARARG
+                -> deserializeVararg(proto.vararg, start, end, type)
+            WHEN
+                -> deserializeWhen(proto.getWhen(), start, end, type)
+            WHILE
+                -> deserializeWhile(proto.getWhile(), start, end, type)
             else -> {
                 TODO("Expression deserialization not implemented}")
             }
         }
-    }
 
     fun deserializeExpression(proto: KonanIr.IrExpression): IrExpression {
         val start = proto.getCoordinates().getStartOffset()
