@@ -101,6 +101,8 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
     private class IrVerifier : IrElementVisitorVoid {
         private val errors = ArrayList<String>()
 
+        private val symbolForDeclaration = HashMap<IrElement, IrSymbol>()
+
         val hasErrors get() = errors.isNotEmpty()
 
         val errorsAsMessage get() = errors.joinToString(prefix = "IR verifier errors:\n", separator = "\n")
@@ -183,9 +185,14 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             expression.setter?.checkBinding("setter", expression)
         }
 
-        private fun IrSymbol.checkBinding(kind: String, owner: IrElement) {
+        private fun IrSymbol.checkBinding(kind: String, irElement: IrElement) {
             if (!isBound) {
-                error("$kind ${javaClass.simpleName} ${descriptor} is unbound: ${owner.render()}")
+                error("${javaClass.simpleName} $descriptor is unbound @$kind ${irElement.render()}")
+            }
+
+            val otherSymbol = symbolForDeclaration.getOrPut(owner) { this }
+            if (this != otherSymbol) {
+                error("Multiple symbols for $descriptor @$kind ${irElement.render()}")
             }
         }
 
