@@ -234,6 +234,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("TypeArgumentInSuperType.kt")
+    public void testTypeArgumentInSuperType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/TypeArgumentInSuperType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TypeParameter.kt")
     public void testTypeParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/TypeParameter.kt");
