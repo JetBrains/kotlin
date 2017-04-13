@@ -288,7 +288,7 @@ class IncrementalJvmCompilerRunner(
             val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
             val outdatedClasses = caches.incrementalCache.classesBySources(dirtySources)
             caches.incrementalCache.markOutputClassesDirty(dirtySources)
-            caches.incrementalCache.removeClassfilesBySources(dirtySources)
+            caches.incrementalCache.removeOutputForSourceFiles(dirtySources)
 
             val (sourcesToCompile, removedKotlinSources) = dirtySources.partition(File::exists)
 
@@ -300,8 +300,8 @@ class IncrementalJvmCompilerRunner(
 
             val compilerOutput = compileChanged(listOf(targetId), sourcesToCompile.toSet(), args, { caches.incrementalCache }, lookupTracker, messageCollector)
             exitCode = compilerOutput.exitCode
-            val generatedClassFiles = compilerOutput.generatedFiles
-            anyClassesCompiled = anyClassesCompiled || generatedClassFiles.isNotEmpty() || removedKotlinSources.isNotEmpty()
+            val generatedFiles = compilerOutput.generatedFiles
+            anyClassesCompiled = anyClassesCompiled || generatedFiles.isNotEmpty() || removedKotlinSources.isNotEmpty()
 
             if (exitCode == ExitCode.OK) {
                 dirtySourcesSinceLastTimeFile.delete()
@@ -313,15 +313,16 @@ class IncrementalJvmCompilerRunner(
 
             if (compilationMode is CompilationMode.Incremental) {
                 val dirtySourcesSet = dirtySources.toHashSet()
-                val additionalDirtyFiles = additionalDirtyFiles(caches, generatedClassFiles).filter { it !in dirtySourcesSet }
+                val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles).filter { it !in dirtySourcesSet }
                 if (additionalDirtyFiles.isNotEmpty()) {
                     dirtySources.addAll(additionalDirtyFiles)
                     continue
                 }
             }
 
-            allGeneratedFiles.addAll(generatedClassFiles)
-            val compilationResult = updateIncrementalCaches(listOf(targetId), generatedClassFiles,
+            allGeneratedFiles.addAll(generatedFiles)
+            caches.incrementalCache.registerOutputForSourceFiles(generatedFiles)
+            val compilationResult = updateIncrementalCaches(listOf(targetId), generatedFiles,
                     compiledWithErrors = exitCode != ExitCode.OK,
                     getIncrementalCache = { caches.incrementalCache })
 

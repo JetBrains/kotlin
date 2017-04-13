@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import java.io.File
 
-internal const val STANDALONE_CACHE_VERSION = 0
+internal const val STANDALONE_CACHE_VERSION = 1
 internal const val STANDALONE_VERSION_FILE_NAME = "standalone-ic-format-version.txt"
 
 fun standaloneCacheVersion(dataRoot: File): CacheVersion =
