@@ -31,8 +31,12 @@ class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass)
         assert(psiClass !is PsiTypeParameter) { "PsiTypeParameter should be wrapped in JavaTypeParameter, not JavaClass: use JavaClassifier.create()" }
     }
 
-    override val innerClasses: Collection<JavaClass>
-        get() = classes(psi.innerClasses)
+    override val innerClassNames: Collection<Name>
+        get() = psi.innerClasses.mapNotNull { it.name?.takeIf(Name::isValidIdentifier)?.let(Name::identifier) }
+
+    override fun findInnerClass(name: Name): JavaClass? {
+        return psi.findInnerClassByName(name.asString(), false)?.let(::JavaClassImpl)
+    }
 
     override val fqName: FqName?
         get() {

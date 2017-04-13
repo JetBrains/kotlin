@@ -50,14 +50,17 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.SmartSet
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 class LazyJavaClassMemberScope(
@@ -613,7 +616,7 @@ class LazyJavaClassMemberScope(
     }
 
     private val nestedClassIndex = c.storageManager.createLazyValue {
-        jClass.innerClasses.associateBy { c -> c.name }
+        jClass.innerClassNames.toSet()
     }
 
     private val enumEntryIndex = c.storageManager.createLazyValue {
@@ -622,8 +625,7 @@ class LazyJavaClassMemberScope(
 
     private val nestedClasses = c.storageManager.createMemoizedFunctionWithNullableValues {
         name: Name ->
-        val jNestedClass = nestedClassIndex()[name]
-        if (jNestedClass == null) {
+        if (name !in nestedClassIndex()) {
             val field = enumEntryIndex()[name]
             if (field != null) {
                 val enumMemberNames: NotNullLazyValue<Set<Name>> = c.storageManager.createLazyValue {
@@ -637,7 +639,9 @@ class LazyJavaClassMemberScope(
             else null
         }
         else {
-            LazyJavaClassDescriptor(c, ownerDescriptor, jNestedClass)
+            c.components.finder.findClass(ownerDescriptor.classId!!.createNestedClassId(name))?.let {
+                LazyJavaClassDescriptor(c, ownerDescriptor, it)
+            }
         }
     }
 
@@ -660,7 +664,7 @@ class LazyJavaClassMemberScope(
     }
 
     override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name>
-            = nestedClassIndex().keys + enumEntryIndex().keys
+            = nestedClassIndex() + enumEntryIndex().keys
 
     override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> {
         if (jClass.isAnnotationType) return getFunctionNames()

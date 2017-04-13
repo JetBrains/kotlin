@@ -31,7 +31,7 @@ class ReflectJavaClass(
 
     override val modifiers: Int get() = klass.modifiers
 
-    override val innerClasses: List<ReflectJavaClass>
+    override val innerClassNames: List<Name>
         get() = klass.declaredClasses
                 .asSequence()
                 .filterNot {
@@ -40,8 +40,13 @@ class ReflectJavaClass(
                     // nested class constructor accessed from the outer class
                     it.simpleName.isEmpty()
                 }
-                .map(::ReflectJavaClass)
-                .toList()
+                .mapNotNull { it.simpleName.takeIf(Name::isValidIdentifier)?.let(Name::identifier) }.toList()
+
+    override fun findInnerClass(name: Name) = klass.declaredClasses
+            .asSequence()
+            .firstOrNull {
+                it.simpleName == name.asString()
+            }?.let(::ReflectJavaClass)
 
     override val fqName: FqName
         get() = klass.classId.asSingleFqName()

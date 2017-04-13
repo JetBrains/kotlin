@@ -65,7 +65,8 @@ interface JavaClass : JavaClassifier, JavaTypeParameterListOwner, JavaModifierLi
     val fqName: FqName?
 
     val supertypes: Collection<JavaClassifierType>
-    val innerClasses: Collection<JavaClass>
+    val innerClassNames: Collection<Name>
+    fun findInnerClass(name: Name): JavaClass?
     val outerClass: JavaClass?
 
     val isInterface: Boolean
