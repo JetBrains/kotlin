@@ -20,18 +20,20 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.search.PsiShortNamesCache
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.caches.resolve.getNullableModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.lazy.DefaultImportProvider
+import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -157,12 +159,9 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
             return null
         }
 
-        if (file.getNullableModuleInfo() != null) {  // it can be null in tests
-            val defaultImportProvider = file.getResolutionFacade().frontendService<DefaultImportProvider>()
-            for (importPath in defaultImportProvider.defaultImports) {
-                result = analyzeSingleImport(result, importPath.fqName, importPath.isAllUnder, importPath.alias?.asString())
-                if (result == Result.Ambiguity) return null
-            }
+        for (importPath in file.getDefaultImports()) {
+            result = analyzeSingleImport(result, importPath.fqName, importPath.isAllUnder, importPath.alias?.asString())
+            if (result == Result.Ambiguity) return null
         }
 
         for (importDirective in file.importDirectives) {
@@ -239,4 +238,12 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
         }
         return Result.Ambiguity
     }
+}
+
+private fun KtFile.getDefaultImports(): List<ImportPath> {
+    val moduleInfo = getNullableModuleInfo() ?: return emptyList()
+    val versionSettings = LanguageSettingsProvider.getInstance(project).getLanguageVersionSettings(moduleInfo, project)
+    return TargetPlatformDetector.getPlatform(this).getDefaultImports(
+            versionSettings.supportsFeature(LanguageFeature.DefaultImportOfPackageKotlinComparisons)
+    )
 }
