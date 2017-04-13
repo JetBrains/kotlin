@@ -518,7 +518,7 @@ internal class IrSerializer(val context: Context,
                 .build()
         } else if (descriptor is ClassDescriptor) {
             // TODO
-            context.log("Can't serialize local class declarations in inline functions")
+            context.log("Can't serialize local class declarations in inline functions yet")
         }
 
         val coordinates = serializeCoordinates(declaration.startOffset, declaration.endOffset)
