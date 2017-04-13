@@ -562,7 +562,6 @@ internal class IrSerializer(val context: Context,
 // --------- Deserializer part -----------------------------
 
 internal class IrDeserializer(val context: Context, 
-    val descriptorIndex: IrDeserializationDescriptorIndex,
     val rootFunction: DeserializedSimpleFunctionDescriptor) {
 
     val loopIndex = mutableMapOf<Int, IrLoop>()
@@ -570,7 +569,7 @@ internal class IrDeserializer(val context: Context,
     val localDeserializer = LocalDeclarationDeserializer(rootFunction, context.moduleDescriptor)
 
     val descriptorDeserializer = IrDescriptorDeserializer(
-        context, descriptorIndex, rootFunction, localDeserializer)
+        context, rootFunction, localDeserializer)
 
 
     fun deserializeKotlinType(proto: KonanIr.KotlinType) 

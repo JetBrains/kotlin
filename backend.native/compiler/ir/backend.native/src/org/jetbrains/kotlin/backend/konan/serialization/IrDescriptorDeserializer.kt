@@ -121,14 +121,13 @@ internal fun DeserializedSimpleFunctionDescriptor.nameResolver(): NameResolver {
 // Kotlin descriptors and types for IR.
 
 internal class IrDescriptorDeserializer(val context: Context, 
-    val deserializationDescriptorIndex: IrDeserializationDescriptorIndex,
     val rootFunction: DeserializedSimpleFunctionDescriptor,
     val localDeserializer: LocalDeclarationDeserializer) {
 
     val loopIndex = mutableMapOf<Int, IrLoop>()
     val nameResolver = rootFunction.nameResolver() as NameResolverImpl
     val nameTable = rootFunction.nameTable()
-    val descriptorIndex = deserializationDescriptorIndex.map
+    val descriptorIndex = IrDeserializationDescriptorIndex(context.irBuiltIns).map
 
     fun deserializeKotlinType(proto: KonanIr.KotlinType): KotlinType {
 
