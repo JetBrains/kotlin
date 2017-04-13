@@ -5051,6 +5051,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("numberLiteralOverflow.kt")
+        public void testNumberLiteralOverflow() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsCode/numberLiteralOverflow.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("object.kt")
         public void testObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsCode/object.kt");
