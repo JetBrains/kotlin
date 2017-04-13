@@ -69,8 +69,7 @@ internal class ExpressionReplacementPerformer(
     override fun doIt(postProcessing: (PsiChildRange) -> PsiChildRange): KtExpression? {
         val insertedStatements = ArrayList<KtExpression>()
         for (statement in codeToInline.statementsBefore) {
-            // copy the statement if it can get invalidated by findOrCreateBlockToInsertStatement()
-            val statementToUse = if (statement.isPhysical) statement.copy() else statement
+            val statementToUse = statement.copy()
             val anchor = findOrCreateBlockToInsertStatement()
             val block = anchor.parent as KtBlockExpression
 
