@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.TypeParameterResolver
 import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.*
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.types.*
@@ -138,7 +139,7 @@ class JavaTypeResolver(
     // and treat the resulting qualified name as if it references a simple top-level class.
     // Note that this makes MISSING_DEPENDENCY_CLASS diagnostic messages not as precise as they could be in some corner cases.
     private fun createNotFoundClass(javaType: JavaClassifierType): TypeConstructor {
-        val classId = parseCanonicalFqNameIgnoringTypeArguments(javaType.canonicalText)
+        val classId = ClassId.topLevel(FqName(javaType.classifierQualifiedName))
         return c.components.deserializedDescriptorResolver.components.notFoundClasses.getClass(classId, listOf(0)).typeConstructor
     }
 

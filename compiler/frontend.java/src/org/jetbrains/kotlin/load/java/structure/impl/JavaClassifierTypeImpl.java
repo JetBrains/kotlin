@@ -71,8 +71,8 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
 
     @Override
     @NotNull
-    public String getCanonicalText() {
-        return getPsi().getCanonicalText();
+    public String getClassifierQualifiedName() {
+        return ClassNamesUtilKt.convertCanonicalNameToQName(getPsi().getCanonicalText());
     }
 
     @Override
