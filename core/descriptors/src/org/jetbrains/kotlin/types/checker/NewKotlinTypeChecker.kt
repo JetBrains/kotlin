@@ -227,7 +227,8 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
     }
 
     // nullability was checked earlier via nullabilityChecker
-    private fun TypeCheckerContext.findCorrespondingSupertypes(
+    // should be used only if you really sure that it is correct
+    fun TypeCheckerContext.findCorrespondingSupertypes(
             baseType: SimpleType,
             constructor: TypeConstructor
     ): List<SimpleType> {
@@ -409,6 +410,9 @@ object NullabilityChecker {
 
 fun UnwrappedType.hasSupertypeWithGivenTypeConstructor(typeConstructor: TypeConstructor) =
         TypeCheckerContext(false).anySupertype(lowerIfFlexible(), { it.constructor == typeConstructor }, { SupertypesPolicy.LowerIfFlexible })
+
+fun UnwrappedType.anySuperTypeConstructor(predicate: (TypeConstructor) -> Boolean) =
+        TypeCheckerContext(false).anySupertype(lowerIfFlexible(), { predicate(it.constructor) }, { SupertypesPolicy.LowerIfFlexible })
 
 /**
  * ClassType means that type constructor for this type is type for real class or interface
