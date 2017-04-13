@@ -9,6 +9,7 @@ buildscript {
 
 apply plugin: "java"
 apply plugin: "kotlin"
+// APPLY_KAPT_PLUGIN
 
 repositories {
     mavenLocal()

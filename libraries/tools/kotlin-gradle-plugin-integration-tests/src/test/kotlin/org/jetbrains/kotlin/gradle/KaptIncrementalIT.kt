@@ -9,19 +9,35 @@ import org.junit.Test
 class KaptIncrementalNoStubsIT : KaptIncrementalBaseIT(shouldUseStubs = false)
 class KaptIncrementalWithStubsIT : KaptIncrementalBaseIT(shouldUseStubs = true)
 
-abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean): BaseGradleIT() {
+class Kapt3Incremental : KaptIncrementalBaseIT(shouldUseStubs = false, useKapt3 = true)
+
+abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: Boolean = false): BaseGradleIT() {
+    init {
+        if (useKapt3) {
+            assert(!shouldUseStubs)
+        }
+    }
 
     companion object {
         private const val GRADLE_VERSION = "2.10"
         private val EXAMPLE_ANNOTATION_REGEX = "@(field:)?example.ExampleAnnotation".toRegex()
         private const val GENERATE_STUBS_PLACEHOLDER = "GENERATE_STUBS_PLACEHOLDER"
+
+        private const val APPLY_KAPT3_PLUGIN_PLACEHOLDER = "// APPLY_KAPT_PLUGIN"
+        private const val APPLY_KAPT3_PLUGIN = "apply plugin: \"kotlin-kapt\""
     }
 
+    protected open val projectName = "kaptIncrementalCompilationProject"
+
     private fun getProject() =
-            Project("kaptIncrementalCompilationProject", GRADLE_VERSION).apply {
+            Project(projectName, GRADLE_VERSION).apply {
                 setupWorkingDir()
                 val buildGradle = projectDir.parentFile.getFileByName("build.gradle")
                 buildGradle.modify { it.replace(GENERATE_STUBS_PLACEHOLDER, shouldUseStubs.toString()) }
+
+                if (useKapt3) {
+                    buildGradle.modify { it.replace(APPLY_KAPT3_PLUGIN_PLACEHOLDER, APPLY_KAPT3_PLUGIN) }
+                }
             }
 
     private val annotatedElements =
@@ -47,6 +63,11 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean): BaseGradleIT(
             assertContains(":compileKotlin UP-TO-DATE",
                            ":compileJava UP-TO-DATE")
 
+            if (useKapt3) {
+                assertContains(":kaptKotlin UP-TO-DATE",
+                               ":kaptGenerateStubsKotlin UP-TO-DATE")
+            }
+
             if (shouldUseStubs) {
                 assertContains(":compileKotlinAfterJava UP-TO-DATE")
             }
@@ -70,8 +91,10 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean): BaseGradleIT(
 
         project.build("build") {
             assertSuccessful()
+            assertKapt3FullyExecuted()
+
             // todo: for kapt with stubs check compileKotlin and compileKotlinAfterJava separately
-            assertCompiledKotlinSources(project.relativize(utilKt))
+            assertCompiledKotlinSourcesHandleKapt3(project.relativize(utilKt))
             checkGenerated(*(annotatedElements + arrayOf("newUtilFun")))
         }
     }
@@ -88,6 +111,7 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean): BaseGradleIT(
 
         project.build("build") {
             assertSuccessful()
+            assertKapt3FullyExecuted()
             assertCompiledKotlinSources(project.relativize(utilKt))
             checkGenerated(*(annotatedElements + arrayOf("notAnnotatedFun")))
         }
@@ -113,7 +137,8 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean): BaseGradleIT(
 
         project.build("build") {
             assertSuccessful()
-            assertCompiledKotlinSources(project.relativize(project.projectDir.allKotlinFiles()))
+            assertKapt3FullyExecuted()
+            assertCompiledKotlinSourcesHandleKapt3(project.relativize(project.projectDir.allKotlinFiles()))
             val affectedElements = arrayOf("B", "funB", "valB", "useB")
             checkGenerated(*(annotatedElements.toSet() - affectedElements).toTypedArray())
             checkNotGenerated(*affectedElements)
@@ -133,7 +158,19 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean): BaseGradleIT(
 
         project.build("build") {
             assertSuccessful()
-            if (shouldUseStubs) {
+
+            if (useKapt3) {
+                assertKapt3FullyExecuted()
+
+                val useBKt = project.projectDir.getFileByName("useB.kt")
+                assertCompiledKotlinSources(project.relativize(bKt, useBKt),
+                        output = getOutputForTask("kaptGenerateStubsKotlin"))
+
+                // java removal is detected
+                assertCompiledKotlinSources(project.relativize(project.projectDir.allKotlinFiles()),
+                        output = getOutputForTask("compileKotlin"))
+            }
+            else if (shouldUseStubs) {
                 // java removal is detected
                 assertCompiledKotlinSources(project.relativize(project.projectDir.allKotlinFiles()))
             }
@@ -159,8 +196,28 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean): BaseGradleIT(
 
         project.build("build") {
             assertSuccessful()
-            assertCompiledKotlinSources(project.relativize(bKt, useBKt))
+            assertKapt3FullyExecuted()
+            assertCompiledKotlinSourcesHandleKapt3(project.relativize(bKt, useBKt))
             checkGenerated(*annotatedElements)
+        }
+    }
+
+    private fun CompiledProject.assertCompiledKotlinSourcesHandleKapt3(
+            sources: Iterable<String>,
+            weakTesting: Boolean = false
+    ) {
+        if (useKapt3) {
+            assertCompiledKotlinSources(sources, weakTesting,
+                    tasks = listOf("compileKotlin", "kaptGenerateStubsKotlin"))
+        } else {
+            assertCompiledKotlinSources(sources, weakTesting)
+        }
+    }
+
+    private fun CompiledProject.assertKapt3FullyExecuted() {
+        if (useKapt3) {
+            assertNotContains(":kaptKotlin UP-TO-DATE",
+                    ":kaptGenerateStubsKotlin UP-TO-DATE")
         }
     }
 

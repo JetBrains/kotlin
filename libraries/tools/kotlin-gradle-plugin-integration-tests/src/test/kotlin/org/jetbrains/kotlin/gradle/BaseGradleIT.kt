@@ -153,7 +153,13 @@ abstract class BaseGradleIT {
             val javaSourcesListRegex = Regex("\\[DEBUG\\] \\[[^\\]]*JavaCompiler\\] Compiler arguments: ([^\\r\\n]*)")
         }
 
-        val compiledKotlinSources: Iterable<File> by lazy { kotlinSourcesListRegex.findAll(output).asIterable().flatMap { it.groups[1]!!.value.split(", ").map { File(project.projectDir, it).canonicalFile } } }
+        private fun getCompiledFiles(regex: Regex, output: String) = regex.findAll(output)
+                .asIterable()
+                .flatMap { it.groups[1]!!.value.split(", ")
+                .map { File(project.projectDir, it).canonicalFile } }
+
+        fun getCompiledKotlinSources(output: String) = getCompiledFiles(kotlinSourcesListRegex, output)
+
         val compiledJavaSources: Iterable<File> by lazy { javaSourcesListRegex.findAll(output).asIterable().flatMap { it.groups[1]!!.value.split(" ").filter { it.endsWith(".java", ignoreCase = true) }.map { File(it).canonicalFile } } }
     }
 
@@ -304,11 +310,35 @@ abstract class BaseGradleIT {
         return this
     }
 
-    fun CompiledProject.assertCompiledKotlinSources(sources: Iterable<String>, weakTesting: Boolean = false): CompiledProject =
+    fun CompiledProject.getOutputForTask(taskName: String): String {
+        fun String.substringAfter(delimiter: String, missingDelimiterValue: () -> String): String {
+            val index = indexOf(delimiter)
+            return if (index == -1) missingDelimiterValue() else substring(index + delimiter.length, length)
+        }
+
+        fun String.substringBefore(delimiter: String, missingDelimiterValue: () -> String): String {
+            val index = indexOf(delimiter)
+            return if (index == -1) missingDelimiterValue() else substring(0, index)
+        }
+
+        return output.substringAfter("[LIFECYCLE] [class org.gradle.TaskExecutionLogger] :$taskName") { error("Can't find start for task $taskName") }
+              .substringBefore("Finished executing task ':$taskName'") { error("Can't find completion for task $taskName") }
+    }
+
+    fun CompiledProject.assertCompiledKotlinSources(
+            sources: Iterable<String>,
+            weakTesting: Boolean = false,
+            tasks: List<String>) {
+        for (task in tasks) {
+            assertCompiledKotlinSources(sources, weakTesting, getOutputForTask(task))
+        }
+    }
+
+    fun CompiledProject.assertCompiledKotlinSources(sources: Iterable<String>, weakTesting: Boolean = false, output: String = this.output): CompiledProject =
             if (weakTesting)
-                assertContainFiles(sources, compiledKotlinSources.projectRelativePaths(this.project), "Compiled Kotlin files differ:\n  ")
+                assertContainFiles(sources, getCompiledKotlinSources(output).projectRelativePaths(this.project), "Compiled Kotlin files differ:\n  ")
             else
-                assertSameFiles(sources, compiledKotlinSources.projectRelativePaths(this.project), "Compiled Kotlin files differ:\n  ")
+                assertSameFiles(sources, getCompiledKotlinSources(output).projectRelativePaths(this.project), "Compiled Kotlin files differ:\n  ")
 
     fun CompiledProject.assertCompiledJavaSources(sources: Iterable<String>, weakTesting: Boolean = false): CompiledProject =
             if (weakTesting)

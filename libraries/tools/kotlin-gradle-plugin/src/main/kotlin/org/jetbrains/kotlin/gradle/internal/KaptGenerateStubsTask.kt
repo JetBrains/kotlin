@@ -18,11 +18,14 @@ package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.FilteringSourceRootsContainer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.GradleICReporter
+import org.jetbrains.kotlin.incremental.ICReporter
 import org.jetbrains.kotlin.incremental.pathsAsStringRelativeTo
 import java.io.File
 

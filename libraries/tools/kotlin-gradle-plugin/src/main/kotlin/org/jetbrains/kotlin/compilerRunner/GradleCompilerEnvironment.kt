@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import org.jetbrains.kotlin.incremental.ChangedFiles
-import org.jetbrains.kotlin.incremental.GradleICReporter
+import org.jetbrains.kotlin.incremental.ICReporter
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import java.io.File
 import java.net.URL
@@ -30,7 +30,7 @@ internal open class GradleCompilerEnvironment(
 internal class GradleIncrementalCompilerEnvironment(
         compilerJar: File,
         val changedFiles: ChangedFiles,
-        val reporter: GradleICReporter,
+        val reporter: ICReporter,
         val workingDir: File,
         messageCollector: GradleMessageCollector,
         outputItemsCollector: OutputItemsCollector,
