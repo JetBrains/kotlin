@@ -76,7 +76,11 @@ internal class IrDescriptorSerializer(
             proto.addValueParameter(serializeDescriptor(it))
         }
 
-        descriptor.typeParameters.forEach {
+        val typeParameters = if (descriptor is PropertyAccessorDescriptor) 
+                descriptor.correspondingProperty.typeParameters
+        else descriptor.typeParameters
+
+        typeParameters.forEach {
             proto.addTypeParameter(serializeDescriptor(it))
         }
 
@@ -122,12 +126,11 @@ internal class IrDescriptorSerializer(
 
         val index = descriptorTable.indexByValue(descriptor)
         // For getters and setters we use 
-        // the *protperty* original index.
+        // the *property* original index.
         val originalIndex = if (descriptor is PropertyAccessorDescriptor) {
             descriptorTable.indexByValue(descriptor.correspondingProperty.original)
         } else {
             descriptorTable.indexByValue(descriptor.original)
-
         }
 
         context.log("index = $index")
