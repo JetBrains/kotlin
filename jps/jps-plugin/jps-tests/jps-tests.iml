@@ -18,5 +18,6 @@
     <orderEntry type="library" scope="TEST" name="jps-test" level="project" />
     <orderEntry type="library" scope="TEST" name="idea-full" level="project" />
     <orderEntry type="module" module-name="incremental-compilation-impl" scope="TEST" />
+    <orderEntry type="library" name="kotlin-reflect" level="project" />
   </component>
 </module>
