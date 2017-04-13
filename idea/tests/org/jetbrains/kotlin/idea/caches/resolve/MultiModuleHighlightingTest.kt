@@ -61,80 +61,50 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         checkHighlightingInAllFiles()
     }
 
-    fun testPlatformBasic() {
-        val header = module("header")
-        header.createFacet(TargetPlatformKind.Common)
+    class MultiPlatform : AbstractMultiModuleHighlightingTest() {
+        override val testPath get() = super.testPath + "multiplatform/"
 
-        val jvm = module("jvm")
-        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        jvm.enableMultiPlatform()
-        jvm.addDependency(header)
+        private fun doTest(vararg platforms: TargetPlatformKind<*>) {
+            val commonModule = module("common")
+            commonModule.createFacet(TargetPlatformKind.Common)
 
-        checkHighlightingInAllFiles()
-    }
+            for (platform in platforms) {
+                val path = when (platform) {
+                    is TargetPlatformKind.Jvm -> "jvm"
+                    is TargetPlatformKind.JavaScript -> "js"
+                    else -> error("Unsupported platform: $platform")
+                }
+                val platformModule = module(path)
+                platformModule.createFacet(platform)
+                platformModule.enableMultiPlatform()
+                platformModule.addDependency(commonModule)
+            }
 
-    fun testPlatformClass() {
-        val header = module("header")
-        header.createFacet(TargetPlatformKind.Common)
+            checkHighlightingInAllFiles()
+        }
 
-        val jvm = module("jvm")
-        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        jvm.enableMultiPlatform()
-        jvm.addDependency(header)
+        fun testBasic() {
+            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        }
 
-        checkHighlightingInAllFiles()
-    }
+        fun testHeaderClass() {
+            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        }
 
-    fun testPlatformNotImplementedForBoth() {
-        val header = module("header")
-        header.createFacet(TargetPlatformKind.Common)
+        fun testHeaderWithoutImplForBoth() {
+            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], TargetPlatformKind.JavaScript)
+        }
 
-        val jvm = module("jvm")
-        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        jvm.enableMultiPlatform()
-        jvm.addDependency(header)
+        fun testHeaderPartiallyImplemented() {
+            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        }
 
-        val js = module("js")
-        js.createFacet(TargetPlatformKind.JavaScript)
-        js.enableMultiPlatform()
-        js.addDependency(header)
+        fun testHeaderFunctionProperty() {
+            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        }
 
-        checkHighlightingInAllFiles()
-    }
-
-    fun testPlatformPartiallyImplemented() {
-        val header = module("header")
-        header.createFacet(TargetPlatformKind.Common)
-
-        val jvm = module("jvm")
-        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        jvm.enableMultiPlatform()
-        jvm.addDependency(header)
-
-        checkHighlightingInAllFiles()
-    }
-
-    fun testPlatformFunctionProperty() {
-        val header = module("header")
-        header.createFacet(TargetPlatformKind.Common)
-
-        val jvm = module("jvm")
-        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        jvm.enableMultiPlatform()
-        jvm.addDependency(header)
-
-        checkHighlightingInAllFiles()
-    }
-
-    fun testPlatformSuppress() {
-        val header = module("header")
-        header.createFacet(TargetPlatformKind.Common)
-
-        val jvm = module("jvm")
-        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        jvm.enableMultiPlatform()
-        jvm.addDependency(header)
-
-        checkHighlightingInAllFiles()
+        fun testSuppressHeaderWithoutImpl() {
+            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        }
     }
 }
