@@ -7,8 +7,8 @@ fun test1() {
     val x: X = X()
     val y: FooBar = X()
 
-    x is FooBar
-    y is FooBar
+    x is <!PROTOCOL_NOT_ALLOWED!>FooBar<!>
+    y is <!PROTOCOL_NOT_ALLOWED!>FooBar<!>
 }
 
 fun test2() {
