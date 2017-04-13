@@ -376,7 +376,8 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createBlockStringTemplateEntry(expression: KtExpression): KtStringTemplateEntryWithExpression {
-        val stringTemplateExpression = createExpression("\"\${" + expression.text + "}\"") as KtStringTemplateExpression
+        // We don't want reformatting here as it can potentially change something in raw strings
+        val stringTemplateExpression = createExpressionByPattern("\"$\${$0}\"", expression, reformat = false) as KtStringTemplateExpression
         return stringTemplateExpression.entries[0] as KtStringTemplateEntryWithExpression
     }
 
