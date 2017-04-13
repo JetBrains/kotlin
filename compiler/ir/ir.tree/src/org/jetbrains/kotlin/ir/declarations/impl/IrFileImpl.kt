@@ -46,6 +46,10 @@ class IrFileImpl(
         this.declarations.addAll(declarations)
     }
 
+    init {
+        symbol.bind(this)
+    }
+
     override val packageFragmentDescriptor: PackageFragmentDescriptor get() = symbol.descriptor
 
     override val fileAnnotations: MutableList<AnnotationDescriptor> = SmartList()

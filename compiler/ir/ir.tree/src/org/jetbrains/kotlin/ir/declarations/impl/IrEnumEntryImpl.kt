@@ -44,6 +44,10 @@ class IrEnumEntryImpl(
         this.initializerExpression = initializerExpression
     }
 
+    init {
+        symbol.bind(this)
+    }
+
     override val descriptor: ClassDescriptor get() = symbol.descriptor
     override var correspondingClass: IrClass? = null
     override var initializerExpression: IrExpression? = null

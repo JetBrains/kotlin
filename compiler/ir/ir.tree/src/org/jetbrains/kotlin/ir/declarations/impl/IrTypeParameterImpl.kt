@@ -35,6 +35,10 @@ class IrTypeParameterImpl(
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: TypeParameterDescriptor) :
             this(startOffset, endOffset, origin, IrTypeParameterSymbolImpl(descriptor))
 
+    init {
+        symbol.bind(this)
+    }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitTypeParameter(this, data)
 

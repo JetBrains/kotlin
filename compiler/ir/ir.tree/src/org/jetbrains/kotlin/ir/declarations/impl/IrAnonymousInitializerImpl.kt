@@ -41,6 +41,10 @@ class IrAnonymousInitializerImpl(
         this.body = body
     }
 
+    init {
+        symbol.bind(this)
+    }
+
     override val descriptor: ClassDescriptor get() = symbol.descriptor
 
     override lateinit var body: IrBlockBody

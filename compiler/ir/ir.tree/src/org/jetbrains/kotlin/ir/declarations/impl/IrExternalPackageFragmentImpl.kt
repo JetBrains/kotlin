@@ -28,6 +28,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrExternalPackageFragmentImpl(
         override val symbol: IrExternalPackageFragmentSymbol
 ) : IrExternalPackageFragment, IrElementBase(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+    init {
+        symbol.bind(this)
+    }
+
     override val packageFragmentDescriptor: PackageFragmentDescriptor get() = symbol.descriptor
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()

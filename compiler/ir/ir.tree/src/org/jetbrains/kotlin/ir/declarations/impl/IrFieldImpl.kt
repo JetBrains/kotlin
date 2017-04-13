@@ -42,6 +42,10 @@ class IrFieldImpl(
         this.initializer = initializer
     }
 
+    init {
+        symbol.bind(this)
+    }
+
     override val descriptor: PropertyDescriptor = symbol.descriptor
 
     override var initializer: IrExpressionBody? = null

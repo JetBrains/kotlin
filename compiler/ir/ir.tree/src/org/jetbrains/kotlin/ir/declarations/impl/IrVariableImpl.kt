@@ -44,6 +44,10 @@ class IrVariableImpl(
         this.initializer = initializer
     }
 
+    init {
+        symbol.bind(this)
+    }
+
     override val descriptor: VariableDescriptor get() = symbol.descriptor
 
     override var initializer: IrExpression? = null

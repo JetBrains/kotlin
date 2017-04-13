@@ -46,6 +46,10 @@ class IrValueParameterImpl(
         this.defaultValue = defaultValue
     }
 
+    init {
+        symbol.bind(this)
+    }
+
     override var defaultValue: IrExpressionBody? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

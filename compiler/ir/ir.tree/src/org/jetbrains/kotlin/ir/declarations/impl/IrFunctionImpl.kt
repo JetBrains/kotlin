@@ -45,6 +45,10 @@ class IrFunctionImpl(
         this.body = body
     }
 
+    init {
+        symbol.bind(this)
+    }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitSimpleFunction(this, data)
 }

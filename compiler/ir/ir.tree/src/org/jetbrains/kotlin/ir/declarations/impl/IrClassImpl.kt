@@ -43,6 +43,10 @@ class IrClassImpl(
         addAll(members)
     }
 
+    init {
+        symbol.bind(this)
+    }
+
     override val descriptor: ClassDescriptor get() = symbol.descriptor
 
     override var newInstanceReceiver: IrValueParameter? = null

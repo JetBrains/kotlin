@@ -45,7 +45,6 @@ class SymbolTable {
         inline fun declare(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
             val symbol = getOrCreateSymbol(d, createSymbol)
             val owner = createOwner(symbol)
-            symbol.bind(owner)
             return owner
         }
 
@@ -128,7 +127,6 @@ class SymbolTable {
             val scope = currentScope ?: throw AssertionError("No active scope")
             val symbol = scope.getLocal(d) ?: createSymbol().also { scope[d] = it }
             val owner = createOwner(symbol)
-            symbol.bind(owner)
             return owner
         }
 
