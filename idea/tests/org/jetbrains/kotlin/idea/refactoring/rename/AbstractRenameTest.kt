@@ -37,16 +37,15 @@ import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
-import com.intellij.refactoring.rename.PsiElementRenameHandler
-import com.intellij.refactoring.rename.RenameHandlerRegistry
-import com.intellij.refactoring.rename.RenameProcessor
-import com.intellij.refactoring.rename.RenamePsiElementProcessor
+import com.intellij.refactoring.rename.*
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.asJava.finder.KtLightPackage
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -423,11 +422,26 @@ fun runRenameProcessor(
         isSearchTextOccurrences: Boolean
 ) {
     if (substitution == null) return
-    val renameProcessor = RenameProcessor(project, substitution, newName, isSearchInComments, isSearchTextOccurrences)
+
+    fun createProcessor(): BaseRefactoringProcessor {
+        if (substitution is PsiPackage && substitution !is KtLightPackage) {
+            val oldName = substitution.qualifiedName
+            if (StringUtil.getPackageName(oldName) != StringUtil.getPackageName(newName)) {
+                return RenamePsiPackageProcessor.createRenameMoveProcessor(newName, substitution, isSearchInComments, isSearchTextOccurrences)
+            }
+        }
+
+        return RenameProcessor(project, substitution, newName, isSearchInComments, isSearchTextOccurrences)
+    }
+
+    val processor = createProcessor()
+
     if (renameParamsObject["overloadRenamer.onlyPrimaryElement"]?.asBoolean ?: false) {
         with(AutomaticOverloadsRenamer) { substitution.elementFilter = { false } }
     }
-    Extensions.getExtensions(AutomaticRenamerFactory.EP_NAME).forEach { renameProcessor.addRenamerFactory(it) }
-    renameProcessor.run()
+    if (processor is RenameProcessor) {
+        Extensions.getExtensions(AutomaticRenamerFactory.EP_NAME).forEach { processor.addRenamerFactory(it) }
+    }
+    processor.run()
 }
 

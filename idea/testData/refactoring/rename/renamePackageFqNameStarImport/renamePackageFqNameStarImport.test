@@ -1,0 +1,7 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "a/b/bar.kt",
+  "newName": "x.y",
+  "withRuntime": "true",
+  "byRef": "true"
+}

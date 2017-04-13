@@ -75,10 +75,10 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
             project: Project,
             files: MutableSet<PsiFile>,
             infos: Array<UsageInfo>,
-            directory: PsiDirectory,
+            directory: PsiDirectory?,
             conflicts: MultiMap<PsiElement, String>
     ) {
-        val psiPackage = directory.getPackage() ?: return
+        val psiPackage = directory?.getPackage() ?: return
         val moveTarget = KotlinDirectoryMoveTarget(FqName(psiPackage.qualifiedName), directory)
         for ((index, usageInfo) in infos.withIndex()) {
             if (usageInfo !is FileUsagesWrapper) continue

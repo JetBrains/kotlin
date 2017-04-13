@@ -230,7 +230,9 @@ class MoveKotlinDeclarationsProcessor(
         return showConflicts(conflicts, refUsages.get())
     }
 
-    override fun performRefactoring(usages: Array<out UsageInfo>) {
+    override fun performRefactoring(usages: Array<out UsageInfo>) = doPerformRefactoring(usages.toList())
+
+    internal fun doPerformRefactoring(usages: List<UsageInfo>) {
         fun moveDeclaration(declaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): KtNamedDeclaration {
             val targetContainer = moveTarget.getOrCreateTargetPsi(declaration)
                                   ?: throw AssertionError("Couldn't create Kotlin file for: ${declaration::class.java}: ${declaration.text}")
@@ -240,8 +242,7 @@ class MoveKotlinDeclarationsProcessor(
             }
         }
 
-        val usageList = usages.toList()
-        val (oldInternalUsages, externalUsages) = usageList.partition { it is KotlinMoveUsage && it.isInternal }
+        val (oldInternalUsages, externalUsages) = usages.partition { it is KotlinMoveUsage && it.isInternal }
         val newInternalUsages = ArrayList<UsageInfo>()
 
         oldInternalUsages.forEach { (it.element as? KtSimpleNameExpression)?.internalUsageInfo = it }
@@ -249,7 +250,7 @@ class MoveKotlinDeclarationsProcessor(
         val usagesToProcess = ArrayList(externalUsages)
 
         try {
-            descriptor.delegate.preprocessUsages(descriptor, usageList)
+            descriptor.delegate.preprocessUsages(descriptor, usages)
 
             val oldToNewElementsMapping = THashMap<PsiElement, PsiElement>(ElementHashingStrategy)
 
@@ -257,7 +258,7 @@ class MoveKotlinDeclarationsProcessor(
 
             for ((sourceFile, kotlinToLightElements) in kotlinToLightElementsBySourceFile) {
                 for ((oldDeclaration, oldLightElements) in kotlinToLightElements) {
-                    val elementListener = transaction!!.getElementListener(oldDeclaration)
+                    val elementListener = transaction?.getElementListener(oldDeclaration)
 
                     val newDeclaration = moveDeclaration(oldDeclaration, descriptor.moveTarget)
                     newDeclarations += newDeclaration
@@ -265,7 +266,7 @@ class MoveKotlinDeclarationsProcessor(
                     oldToNewElementsMapping[oldDeclaration] = newDeclaration
                     oldToNewElementsMapping[sourceFile] = newDeclaration.containingKtFile
 
-                    elementListener.elementMoved(newDeclaration)
+                    elementListener?.elementMoved(newDeclaration)
                     for ((oldElement, newElement) in oldLightElements.asSequence().zip(newDeclaration.toLightElements().asSequence())) {
                         oldToNewElementsMapping[oldElement] = newElement
                     }
