@@ -86,6 +86,7 @@ public class DescriptorResolver {
     private final ModifiersChecker modifiersChecker;
     private final WrappedTypeFactory wrappedTypeFactory;
     private final SyntheticResolveExtension syntheticResolveExtension;
+    private final TypeApproximator typeApproximator;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -101,7 +102,8 @@ public class DescriptorResolver {
             @NotNull DestructuringDeclarationResolver destructuringDeclarationResolver,
             @NotNull ModifiersChecker modifiersChecker,
             @NotNull WrappedTypeFactory wrappedTypeFactory,
-            @NotNull Project project
+            @NotNull Project project,
+            TypeApproximator approximator
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -117,6 +119,7 @@ public class DescriptorResolver {
         this.modifiersChecker = modifiersChecker;
         this.wrappedTypeFactory = wrappedTypeFactory;
         this.syntheticResolveExtension = SyntheticResolveExtension.Companion.getInstance(project);
+        typeApproximator = approximator;
     }
 
     public List<KotlinType> resolveSupertypes(
@@ -666,11 +669,12 @@ public class DescriptorResolver {
             BindingTrace trace,
             @NotNull LexicalScope scope
     ) {
+        UnwrappedType approximatedType = typeApproximator.approximateDeclarationType(type, true);
         VariableDescriptor variableDescriptor = new LocalVariableDescriptor(
                 scope.getOwnerDescriptor(),
                 annotationResolver.resolveAnnotationsWithArguments(scope, parameter.getModifierList(), trace),
                 KtPsiUtil.safeName(parameter.getName()),
-                type,
+                approximatedType,
                 false,
                 false,
                 KotlinSourceElementKt.toSourceElement(parameter)

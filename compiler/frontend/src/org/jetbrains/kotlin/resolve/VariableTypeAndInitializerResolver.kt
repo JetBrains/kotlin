@@ -38,7 +38,8 @@ class VariableTypeAndInitializerResolver(
         private val typeResolver: TypeResolver,
         private val constantExpressionEvaluator: ConstantExpressionEvaluator,
         private val delegatedPropertyResolver: DelegatedPropertyResolver,
-        private val wrappedTypeFactory: WrappedTypeFactory
+        private val wrappedTypeFactory: WrappedTypeFactory,
+        private val typeApproximator: TypeApproximator
 ) {
     companion object {
         @JvmField
@@ -76,7 +77,7 @@ class VariableTypeAndInitializerResolver(
 
             !variable.hasInitializer() && variable is KtProperty && variableDescriptor is VariableDescriptorWithAccessors &&
                  variable.hasDelegateExpression() ->
-                    resolveDelegatedPropertyType(variable, variableDescriptor, scopeForInitializer, dataFlowInfo, trace)
+                    resolveDelegatedPropertyType(variable, variableDescriptor, scopeForInitializer, dataFlowInfo, trace, local)
 
             variable.hasInitializer() -> when {
                 !local ->
@@ -84,11 +85,11 @@ class VariableTypeAndInitializerResolver(
                             trace
                     ) {
                         PreliminaryDeclarationVisitor.createForDeclaration(variable, trace)
-                        val initializerType = resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace)
+                        val initializerType = resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace, local)
                         transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace)
                     }
 
-                else -> resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace)
+                else -> resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace, local)
             }
             else -> null
         }
@@ -129,7 +130,8 @@ class VariableTypeAndInitializerResolver(
             variableDescriptor: VariableDescriptorWithAccessors,
             scopeForInitializer: LexicalScope,
             dataFlowInfo: DataFlowInfo,
-            trace: BindingTrace
+            trace: BindingTrace,
+            local: Boolean
     ) = wrappedTypeFactory.createRecursionIntolerantDeferredType(trace) {
         val delegateExpression = property.delegateExpression!!
         val type = delegatedPropertyResolver.resolveDelegateExpression(
@@ -139,15 +141,18 @@ class VariableTypeAndInitializerResolver(
                 variableDescriptor, delegateExpression, type, trace, scopeForInitializer, dataFlowInfo
         )
 
-        getterReturnType ?: ErrorUtils.createErrorType("Type from delegate")
+        getterReturnType?.let { approximateType(it, local) } ?: ErrorUtils.createErrorType("Type from delegate")
     }
 
     private fun resolveInitializerType(
             scope: LexicalScope,
             initializer: KtExpression,
             dataFlowInfo: DataFlowInfo,
-            trace: BindingTrace
+            trace: BindingTrace,
+            local: Boolean
     ): KotlinType {
-        return expressionTypingServices.safeGetType(scope, initializer, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, trace)
+        return approximateType(expressionTypingServices.safeGetType(scope, initializer, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, trace), local)
     }
+
+    private fun approximateType(type: KotlinType, local: Boolean): UnwrappedType = typeApproximator.approximateDeclarationType(type, local)
 }
