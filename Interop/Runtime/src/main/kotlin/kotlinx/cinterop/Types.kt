@@ -406,15 +406,6 @@ interface CAdaptedFunctionType<F : Function<*>> : CFunctionType {
 }
 
 /**
- * Returns a pointer to `T`-typed C function which calls given Kotlin *static* function.
- * @see CAdaptedFunctionType.fromStatic
- */
-inline fun <reified F : Function<*>, reified T : CAdaptedFunctionType<F>> staticCFunction(body: F): CFunctionPointer<T> {
-    val type = CAdaptedFunctionType.getInstanceOf<T>()
-    return interpretPointed<CFunction<T>>(type.fromStatic(body)).ptr
-}
-
-/**
  * The C function.
  */
 class CFunction<T : CFunctionType>(override val rawPtr: NativePtr) : CPointed

@@ -35,6 +35,20 @@ fun <T : CVariable> typeOf(): CVariable.Type = throw Error("typeOf() is called w
 @Intrinsic external fun CPointer<*>.getRawValue(): NativePtr
 
 inline fun <reified T : CAdaptedFunctionType<*>> CAdaptedFunctionType.Companion.getInstanceOf(): T =
-        TODO("CAdaptedFunctionType.getInstanceOf")
+        TODO("CAdaptedFunctionType.getInstanceOf 11")
 
 internal fun CPointer<*>.cPointerToString() = "CPointer(raw=$rawValue)"
+
+/**
+ * Returns a pointer to `T`-typed C function which calls given Kotlin *static* function.
+ * @see CAdaptedFunctionType.fromStatic
+ */
+// TODO: This function is not inline, whereas the same name function in JvmTypes.kt 
+// is inline. We can't make it inline here, because native interop lowering 
+// expects to find and transform it. And native interop lowering is done after
+// inline expansions.
+fun <F : Function<*>, T : CAdaptedFunctionType<F>> staticCFunction(body: F): CFunctionPointer<T> {
+    val type = CAdaptedFunctionType.getInstanceOf<T>()
+    return interpretPointed<CFunction<T>>(type.fromStatic(body)).ptr
+}
+

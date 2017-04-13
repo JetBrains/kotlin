@@ -56,3 +56,13 @@ inline fun <reified T : CAdaptedFunctionType<*>> CAdaptedFunctionType.Companion.
         T::class.objectInstance!!
 
 internal fun CPointer<*>.cPointerToString() = "CPointer(raw=0x%x)".format(rawValue)
+
+/**
+ * Returns a pointer to `T`-typed C function which calls given Kotlin *static* function.
+ * @see CAdaptedFunctionType.fromStatic
+ */
+inline fun <reified F : Function<*>, reified T : CAdaptedFunctionType<F>> staticCFunction(body: F): CFunctionPointer<T> {
+    val type = CAdaptedFunctionType.getInstanceOf<T>()
+    return interpretPointed<CFunction<T>>(type.fromStatic(body)).ptr
+}
+
