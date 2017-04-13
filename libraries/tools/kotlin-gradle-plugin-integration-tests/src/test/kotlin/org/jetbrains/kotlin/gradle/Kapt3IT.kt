@@ -113,6 +113,8 @@ class Kapt3IT : BaseGradleIT() {
         project.build("build", options = options) {
             assertSuccessful()
             assertContains(":compileKotlin UP-TO-DATE")
+            assertContains(":kaptGenerateStubsKotlin UP-TO-DATE")
+            assertContains(":kaptKotlin UP-TO-DATE")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertClassFilesNotContain(classesDir, "ExampleSourceAnnotation")
         }
@@ -277,6 +279,7 @@ class Kapt3IT : BaseGradleIT() {
 
         project.build("classes", options = options) {
             assertSuccessful()
+            assertFileExists("build/generated/source/kapt/main/foo/InternalDummyGenerated.java")
         }
 
         // remove annotation
@@ -286,6 +289,7 @@ class Kapt3IT : BaseGradleIT() {
             assertSuccessful()
             val allMainKotlinSrc = File(project.projectDir, "src/main").allKotlinFiles()
             assertCompiledKotlinSources(project.relativize(allMainKotlinSrc))
+            assertNoSuchFile("build/generated/source/kapt/main/foo/InternalDummyGenerated.java")
         }
     }
 
