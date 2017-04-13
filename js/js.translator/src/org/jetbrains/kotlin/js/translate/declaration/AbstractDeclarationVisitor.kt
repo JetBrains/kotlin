@@ -102,7 +102,7 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
 
         if (descriptor.isSuspend) {
             if (descriptor.requiresStateMachineTransformation(context)) {
-                function.fillCoroutineMetadata(context, descriptor, hasController = false, isLambda = false)
+                function.fillCoroutineMetadata(context, descriptor, hasController = false)
             }
         }
 

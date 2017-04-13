@@ -161,7 +161,7 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
         functionWithBody.parameters += JsParameter(suspendedName)
 
         val instanceName = functionWithBody.scope.declareFreshName("instance")
-        functionWithBody.body.statements += JsAstUtils.newVar(instanceName, JsNameRef(context.metadata.facadeName, instantiation))
+        functionWithBody.body.statements += JsAstUtils.newVar(instanceName, instantiation)
 
         val invokeResume = JsReturn(JsInvocation(JsNameRef(context.metadata.doResumeName, instanceName.makeRef()), JsLiteral.NULL))
 

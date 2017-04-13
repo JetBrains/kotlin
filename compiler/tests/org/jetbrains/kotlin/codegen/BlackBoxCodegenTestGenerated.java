@@ -5150,6 +5150,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("suspendCoroutineFromStateMachine.kt")
+        public void testSuspendCoroutineFromStateMachine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendCoroutineFromStateMachine.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("suspendDefaultImpl.kt")
         public void testSuspendDefaultImpl() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendDefaultImpl.kt");

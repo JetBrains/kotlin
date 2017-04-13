@@ -92,7 +92,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
     fun JsFunction.fillCoroutineMetadata(context: TranslationContext, descriptor: FunctionDescriptor) {
         if (!descriptor.isSuspend) return
 
-        fillCoroutineMetadata(context, descriptor, hasController = descriptor.extensionReceiverParameter != null, isLambda = true)
+        fillCoroutineMetadata(context, descriptor, hasController = descriptor.extensionReceiverParameter != null)
     }
 
     fun ValueParameterDescriptorImpl.WithDestructuringDeclaration.translate(context: TranslationContext): JsVars {

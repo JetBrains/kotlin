@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.reference
 
+import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineOrReturn
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -154,8 +155,12 @@ class CallArgumentTranslator private constructor(
 
         val callableDescriptor = resolvedCall.resultingDescriptor
         if (callableDescriptor is FunctionDescriptor && callableDescriptor.isSuspend) {
-            val facadeName = context().getNameForDescriptor(TranslationUtils.getCoroutineProperty(context(), "facade"))
-            result.add(JsAstUtils.pureFqn(facadeName, TranslationUtils.translateContinuationArgument(context())))
+            var continuationArg: JsExpression = TranslationUtils.translateContinuationArgument(context())
+            if (callableDescriptor.original.isBuiltInSuspendCoroutineOrReturn()) {
+                val facadeName = context().getNameForDescriptor(TranslationUtils.getCoroutineProperty(context(), "facade"))
+                continuationArg = JsAstUtils.pureFqn(facadeName, continuationArg)
+            }
+            result.add(continuationArg)
         }
 
         removeLastUndefinedArguments(result)
