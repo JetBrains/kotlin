@@ -1281,3 +1281,22 @@ public inline fun CharSequence.singleOrNull(predicate: (Char) -> Boolean): Char?
     if (!found) return null
     return single
 }
+
+/**
+ * Returns first character.
+ * @throws [NoSuchElementException] if the char sequence is empty.
+ */
+public fun CharSequence.first(): Char {
+    if (isEmpty())
+        throw NoSuchElementException("Char sequence is empty.")
+    return this[0]
+}
+
+/**
+ * Returns the first character matching the given [predicate].
+ * @throws [NoSuchElementException] if no such character is found.
+ */
+public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char {
+    for (element in this) if (predicate(element)) return element
+    throw NoSuchElementException("Char sequence contains no character matching the predicate.")
+}
