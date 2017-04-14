@@ -1,0 +1,8 @@
+package test
+
+public fun getEntry(): kotlin.collections.(Mutable)Map.(Mutable)Entry<(raw) kotlin.Any?, (raw) kotlin.Any?>!
+
+public open class InnerCanonicalName {
+    public constructor InnerCanonicalName()
+    public open fun getEntry(): kotlin.collections.(Mutable)Map.(Mutable)Entry<(raw) kotlin.Any?, (raw) kotlin.Any?>!
+}

@@ -96,9 +96,39 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("Inheritance.kt")
+    public void testInheritance() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/Inheritance.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InheritedInner.kt")
+    public void testInheritedInner() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/InheritedInner.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InnerCanonicalName.kt")
+    public void testInnerCanonicalName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/InnerCanonicalName.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InnerClass.kt")
     public void testInnerClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/InnerClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InnerClassFromAsteriskImport.kt")
+    public void testInnerClassFromAsteriskImport() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/InnerClassFromAsteriskImport.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InnerClassFromImport.kt")
+    public void testInnerClassFromImport() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/InnerClassFromImport.kt");
         doTest(fileName);
     }
 
