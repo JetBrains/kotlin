@@ -92,8 +92,7 @@
         <element id="archive" name="noarg-ide-plugin.jar">
           <element id="module-output" name="noarg-ide" />
         </element>
-        <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-daemon-client.jar" />
-        <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-script-runtime.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-script-runtime.jar" />
         <element id="archive" name="sam-with-receiver-compiler-plugin.jar">
           <element id="module-output" name="sam-with-receiver-cli" />
         </element>
