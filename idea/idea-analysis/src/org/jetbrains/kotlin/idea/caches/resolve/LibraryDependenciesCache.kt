@@ -16,32 +16,25 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.roots.libraries.Library
-import com.intellij.util.containers.MultiMap
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.LibraryOrderEntry
-import com.intellij.openapi.roots.OrderEntry
-import com.intellij.openapi.roots.ModuleOrderEntry
-import com.intellij.openapi.util.Condition
-import java.util.LinkedHashSet
-import com.intellij.openapi.roots.RootPolicy
-import org.jetbrains.kotlin.utils.addIfNotNull
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.JdkOrderEntry
-import com.intellij.openapi.roots.ModuleSourceOrderEntry
+import com.intellij.openapi.roots.*
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.util.Condition
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.*
 
 class LibraryDependenciesCache(private val project: Project) {
 
     //NOTE: used LibraryRuntimeClasspathScope as reference
     fun getLibrariesAndSdksUsedWith(library: Library): Pair<List<Library>, List<Sdk>> {
-        val processedModules = LinkedHashSet<Module>()
-        val condition = Condition<OrderEntry>() { orderEntry ->
+        val processedModules = HashSet<Module>()
+        val condition = Condition<OrderEntry> { orderEntry ->
             if (orderEntry is ModuleOrderEntry) {
                 val module = orderEntry.module
                 module != null && module !in processedModules
@@ -54,28 +47,23 @@ class LibraryDependenciesCache(private val project: Project) {
         val libraries = LinkedHashSet<Library>()
         val sdks = LinkedHashSet<Sdk>()
 
-        fun collectLibrariesAndSdksAcrossDependencies(module: Module) {
-            if (!processedModules.add(module)) return
+        for (module in getLibraryUsageIndex().modulesLibraryIsUsedIn[library]) {
+            if (!processedModules.add(module)) continue
 
             ModuleRootManager.getInstance(module).orderEntries().recursively().satisfying(condition).process(object : RootPolicy<Unit>() {
-                override fun visitModuleSourceOrderEntry(moduleSourceOrderEntry: ModuleSourceOrderEntry?, value: Unit?): Unit? {
-                    processedModules.addIfNotNull(moduleSourceOrderEntry?.ownerModule)
-                    return Unit
+                override fun visitModuleSourceOrderEntry(moduleSourceOrderEntry: ModuleSourceOrderEntry, value: Unit) {
+                    processedModules.add(moduleSourceOrderEntry.ownerModule)
                 }
 
-                override fun visitLibraryOrderEntry(libraryOrderEntry: LibraryOrderEntry?, value: Unit?): Unit? {
-                    libraries.addIfNotNull(libraryOrderEntry?.library)
-                    return Unit
+                override fun visitLibraryOrderEntry(libraryOrderEntry: LibraryOrderEntry, value: Unit) {
+                    libraries.addIfNotNull(libraryOrderEntry.library)
                 }
 
-                override fun visitJdkOrderEntry(jdkOrderEntry: JdkOrderEntry?, value: Unit?): Unit? {
-                    sdks.addIfNotNull(jdkOrderEntry?.jdk)
-                    return Unit
+                override fun visitJdkOrderEntry(jdkOrderEntry: JdkOrderEntry, value: Unit) {
+                    sdks.addIfNotNull(jdkOrderEntry.jdk)
                 }
             }, Unit)
         }
-
-        getLibraryUsageIndex().modulesLibraryIsUsedIn[library].forEach(::collectLibrariesAndSdksAcrossDependencies)
 
         return Pair(libraries.toList(), sdks.toList())
     }
@@ -90,10 +78,8 @@ class LibraryDependenciesCache(private val project: Project) {
         val modulesLibraryIsUsedIn: MultiMap<Library, Module> = MultiMap.createSet()
 
         init {
-            ModuleManager.getInstance(project).modules.forEach {
-                module ->
-                ModuleRootManager.getInstance(module).orderEntries.forEach {
-                    entry ->
+            for (module in ModuleManager.getInstance(project).modules) {
+                for (entry in ModuleRootManager.getInstance(module).orderEntries) {
                     if (entry is LibraryOrderEntry) {
                         val library = entry.library
                         if (library != null) {
