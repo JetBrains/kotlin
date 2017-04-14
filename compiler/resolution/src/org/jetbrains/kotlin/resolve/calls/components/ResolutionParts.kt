@@ -102,7 +102,7 @@ internal object NoArguments : ResolutionPart {
     }
 }
 
-internal object CreteDescriptorWithFreshTypeVariables : ResolutionPart {
+internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
         if (candidateDescriptor.typeParameters.isEmpty()) {
             descriptorWithFreshTypes = candidateDescriptor
@@ -111,6 +111,7 @@ internal object CreteDescriptorWithFreshTypeVariables : ResolutionPart {
         val typeParameters = candidateDescriptor.typeParameters
 
         val freshTypeVariables = typeParameters.map { TypeVariableFromCallableDescriptor(kotlinCall, it) }
+        typeVariablesForFreshTypeParameters = freshTypeVariables
         val toFreshVariables = IndexedParametersSubstitution(typeParameters,
                                                              freshTypeVariables.map { it.defaultType.asTypeProjection() }).buildSubstitutor()
 

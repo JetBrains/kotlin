@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMa
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.Candidate
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
@@ -115,6 +116,7 @@ open class SimpleKotlinResolutionCandidate(
     lateinit var typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
     lateinit var argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     lateinit var descriptorWithFreshTypes: CallableDescriptor
+    lateinit var typeVariablesForFreshTypeParameters: List<NewTypeVariable>
 
     override val lastCall: SimpleKotlinResolutionCandidate get() = this
     override val resolutionSequence: List<ResolutionPart> get() = kotlinCall.callKind.resolutionSequence
