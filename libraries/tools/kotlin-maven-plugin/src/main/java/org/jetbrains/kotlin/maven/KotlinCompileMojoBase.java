@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.maven;
 
 import com.google.common.base.Joiner;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
@@ -188,6 +189,12 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     public List<String> args;
 
     private final static Pattern OPTION_PATTERN = Pattern.compile("([^:]+):([^=]+)=(.*)");
+
+    static {
+        if (System.getProperty("kotlin.compiler.X.enable.idea.logger") != null) {
+            Logger.setFactory(IdeaCoreLoggerFactory.class);
+        }
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
