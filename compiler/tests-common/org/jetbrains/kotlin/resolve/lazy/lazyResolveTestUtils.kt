@@ -51,7 +51,7 @@ private class TestModule(val dependsOnBuiltIns: Boolean) : ModuleInfo {
     override fun dependencies() = listOf(this)
     override fun dependencyOnBuiltIns() =
             if (dependsOnBuiltIns)
-                ModuleInfo.DependenciesOnBuiltIns.LAST
+                ModuleInfo.DependencyOnBuiltIns.LAST
             else
-                ModuleInfo.DependenciesOnBuiltIns.NONE
+                ModuleInfo.DependencyOnBuiltIns.NONE
 }

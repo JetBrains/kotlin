@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
+import kotlin.coroutines.experimental.buildSequence
 
 class ResolverForModule(
     val packageFragmentProvider: PackageFragmentProvider,
@@ -130,27 +131,22 @@ interface ModuleInfo {
     fun dependencies(): List<ModuleInfo>
     val platform: TargetPlatform? get() = null
     fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
-    fun dependencyOnBuiltIns(): DependencyOnBuiltIns = DependenciesOnBuiltIns.LAST
     val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = mapOf(Capability to this)
 
-    //TODO: (module refactoring) provide dependency on builtins after runtime in IDEA
-    interface DependencyOnBuiltIns {
-        fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>)
-    }
+    // For common modules, we add built-ins at the beginning of the dependencies list, after the SDK.
+    // This is needed because if a JVM module depends on the common module, we should use JVM built-ins for resolution of both modules.
+    // The common module usually depends on kotlin-stdlib-common which may or may not have its own (common, non-JVM) built-ins,
+    // but if they are present, they should come after JVM built-ins in the dependencies list, because JVM built-ins contain
+    // additional members dependent on the JDK
+    fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
+            if (platform == TargetPlatform.Default)
+                ModuleInfo.DependencyOnBuiltIns.AFTER_SDK
+            else
+                ModuleInfo.DependencyOnBuiltIns.LAST
 
-    enum class DependenciesOnBuiltIns : DependencyOnBuiltIns {
-        NONE {
-            override fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>) {
-                //do nothing
-            }
-        },
-        LAST {
-            override fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>) {
-                dependencies.add(builtinsModule)
-            }
-        };
-    }
+    //TODO: (module refactoring) provide dependency on builtins after runtime in IDEA
+    enum class DependencyOnBuiltIns { NONE, AFTER_SDK, LAST }
 
     companion object {
         val Capability = ModuleDescriptor.Capability<ModuleInfo>("ModuleInfo")
@@ -180,16 +176,24 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             }, delegateResolver)
 
             for (module in modules) {
-                resolverForProject.descriptorForModule(module).setDependencies(LazyModuleDependencies(
+                val moduleDescriptor = resolverForProject.descriptorForModule(module)
+                moduleDescriptor.setDependencies(LazyModuleDependencies(
                         storageManager,
                         computeDependencies = {
-                            val orderedDependencies = listOfNotNull(firstDependency) + module.dependencies()
-                            val dependenciesDescriptors = orderedDependencies.mapTo(ArrayList<ModuleDescriptorImpl>()) { dependencyInfo ->
-                                resolverForProject.descriptorForModule(dependencyInfo as M)
-                            }
-                            module.dependencyOnBuiltIns().adjustDependencies(
-                                    resolverForProject.descriptorForModule(module).builtIns.builtInsModule, dependenciesDescriptors)
-                            dependenciesDescriptors
+                            buildSequence {
+                                if (firstDependency != null) {
+                                    yield(resolverForProject.descriptorForModule(firstDependency))
+                                }
+                                if (module.dependencyOnBuiltIns() == ModuleInfo.DependencyOnBuiltIns.AFTER_SDK) {
+                                    yield(moduleDescriptor.builtIns.builtInsModule)
+                                }
+                                for (dependency in module.dependencies()) {
+                                    yield(resolverForProject.descriptorForModule(dependency as M))
+                                }
+                                if (module.dependencyOnBuiltIns() == ModuleInfo.DependencyOnBuiltIns.LAST) {
+                                    yield(moduleDescriptor.builtIns.builtInsModule)
+                                }
+                            }.toList()
                         },
                         computeModulesWhoseInternalsAreVisible = {
                             module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) {
@@ -202,8 +206,7 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
                                     .filter { modulePlatforms(it) != MultiTargetPlatform.Common && module in it.dependencies() }
                                     .mapTo(mutableSetOf(), resolverForProject::descriptorForModule)
                         }
-                )
-                )
+                ))
             }
 
             for (module in modules) {

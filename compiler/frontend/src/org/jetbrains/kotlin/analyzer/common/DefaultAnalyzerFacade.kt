@@ -60,7 +60,7 @@ object DefaultAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
         override fun dependencies() = listOf(this)
 
         override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
-                if (dependOnOldBuiltIns) ModuleInfo.DependenciesOnBuiltIns.LAST else ModuleInfo.DependenciesOnBuiltIns.NONE
+                if (dependOnOldBuiltIns) ModuleInfo.DependencyOnBuiltIns.LAST else ModuleInfo.DependencyOnBuiltIns.NONE
     }
 
     fun analyzeFiles(
