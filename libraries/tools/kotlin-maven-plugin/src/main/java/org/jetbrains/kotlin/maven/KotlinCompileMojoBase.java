@@ -452,11 +452,8 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         arguments.suppressWarnings = nowarn;
         arguments.languageVersion = languageVersion;
         arguments.apiVersion = apiVersion;
+        arguments.coroutinesState = experimentalCoroutines;
         arguments.multiPlatform = multiPlatform;
-
-        if (experimentalCoroutines != null) {
-            compiler.parseArguments(new String[] { "-Xcoroutines=" + experimentalCoroutines }, arguments);
-        }
 
         configureSpecificCompilerArguments(arguments);
 

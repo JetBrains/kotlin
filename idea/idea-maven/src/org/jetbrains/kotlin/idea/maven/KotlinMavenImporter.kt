@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.*
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
@@ -116,8 +119,8 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         arguments.multiPlatform = configuration.getChild("multiPlatform")?.text?.trim()?.toBoolean() ?: false
         arguments.suppressWarnings = configuration.getChild("nowarn")?.text?.trim()?.toBoolean() ?: false
 
-        configuration.getChild("experimentalCoroutines")?.text?.trim()?.let { coroutines ->
-            parseArguments(arrayOf("-Xcoroutines=$coroutines"), arguments, false)
+        configuration.getChild("experimentalCoroutines")?.text?.trim()?.let {
+            arguments.coroutinesState = it
         }
 
         when (arguments) {
