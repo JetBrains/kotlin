@@ -1,3 +1,4 @@
+Downgrade to plain text search: Unsupported reference: 'JavaWithGroovyInvoke_0' in JavaWithGroovyInvoke.0.groovy line 1 column 27
 Searched references to JavaWithGroovyInvoke_0
 Used plain search of JavaWithGroovyInvoke_0.invoke() in LocalSearchScope:
     JetFile: JavaWithGroovyInvoke.0.kt

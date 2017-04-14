@@ -173,7 +173,11 @@ class ExpressionsOfTypeProcessor(
         }
     }
 
-    private fun downShiftToPlainSearch() {
+    private fun downShiftToPlainSearch(reference: PsiReference) {
+        val message = getFallbackDiagnosticsMessage(reference)
+        LOG.info("ExpressionsOfTypeProcessor: " + message)
+        testLog?.add("Downgrade to plain text search: $message")
+
         tasks.clear()
         scopesToUsePlainSearch.clear()
         possibleMatchesInScopeHandler(searchScope)
@@ -187,15 +191,12 @@ class ExpressionsOfTypeProcessor(
                 searchReferences(classToSearch, scope) { reference ->
                     if (processClassUsage(reference)) return@searchReferences true
 
-                    val diagnosticsMessage = getFallbackDiagnosticsMessage(reference)
-
                     if (mode != Mode.ALWAYS_SMART) {
-                        LOG.info(diagnosticsMessage)
-                        downShiftToPlainSearch()
+                        downShiftToPlainSearch(reference)
                         return@searchReferences false
                     }
 
-                    error(diagnosticsMessage)
+                    error(getFallbackDiagnosticsMessage(reference))
                 }
 
                 // we must use plain search inside our class (and inheritors) because implicit 'this' can happen anywhere
@@ -209,7 +210,7 @@ class ExpressionsOfTypeProcessor(
         val element = reference.element
         val document = PsiDocumentManager.getInstance(project).getDocument(element.containingFile)
         val lineAndCol = DiagnosticUtils.offsetToLineAndColumn(document, element.startOffset)
-        return "ExpressionsOfTypeProcessor: Unsupported reference: '${element.text}' in ${element.containingFile.name} line ${lineAndCol.line} column ${lineAndCol.column}"
+        return "Unsupported reference: '${element.text}' in ${element.containingFile.name} line ${lineAndCol.line} column ${lineAndCol.column}"
     }
 
     private enum class ReferenceProcessor(val handler: (ExpressionsOfTypeProcessor, PsiReference) -> Boolean) {
@@ -230,8 +231,7 @@ class ExpressionsOfTypeProcessor(
                 searchReferences(searchParameters) { reference ->
                     val processed = processor.handler(this@ExpressionsOfTypeProcessor, reference)
                     if (!processed) { // we don't know how to handle this reference and down-shift to plain search
-                        LOG.info(getFallbackDiagnosticsMessage(reference))
-                        downShiftToPlainSearch()
+                        downShiftToPlainSearch(reference)
                     }
                     processed
                 }
@@ -280,8 +280,7 @@ class ExpressionsOfTypeProcessor(
                 testLog?.add("Searched references to ${logPresentation(psiClass)} in non-Kotlin files")
                 searchReferences(psiClass, scope) { reference ->
                     if (reference.element.language != JavaLanguage.INSTANCE) { // reference in some JVM language can be method parameter (but we don't know)
-                        LOG.info(getFallbackDiagnosticsMessage(reference))
-                        downShiftToPlainSearch()
+                        downShiftToPlainSearch(reference)
                         return@searchReferences false
                     }
 
