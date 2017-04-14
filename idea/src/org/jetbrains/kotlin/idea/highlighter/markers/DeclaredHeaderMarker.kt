@@ -50,14 +50,7 @@ fun ModuleDescriptor.hasDeclarationOf(descriptor: MemberDescriptor) = declaratio
 
 private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor): DeclarationDescriptor? =
         with (HeaderImplDeclarationChecker(this)) {
-            when (descriptor) {
-                is CallableMemberDescriptor ->
-                    descriptor.findNamesakesFromTheSameModule().filter { it.isHeader }.firstOrNull()
-                is ClassifierDescriptorWithTypeParameters ->
-                    descriptor.findClassifiersFromTheSameModule().filter { it is ClassDescriptor && it.isHeader }.firstOrNull()
-                else ->
-                    null
-            }
+            descriptor.findCompatibleDescriptors().firstOrNull { it.isHeader }
         }
 
 fun getHeaderDeclarationTooltip(declaration: KtDeclaration): String? {

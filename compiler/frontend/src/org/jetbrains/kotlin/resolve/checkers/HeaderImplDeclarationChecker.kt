@@ -71,7 +71,19 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
     fun checkHeaderDeclarationHasImplementation(
             reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink, checkImpl: Boolean
     ) {
-        val compatibility = when (descriptor) {
+        val compatibility = buildCompatibilityMap(descriptor, checkImpl)
+
+        if (compatibility != null && !compatibility.containsKey(Compatible)) {
+            assert(compatibility.keys.all { it is Incompatible })
+            @Suppress("UNCHECKED_CAST")
+            val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
+            diagnosticHolder.report(Errors.HEADER_WITHOUT_IMPLEMENTATION.on(
+                    reportOn, descriptor, moduleToCheck ?: descriptor.module, incompatibility))
+        }
+    }
+
+    private fun buildCompatibilityMap(descriptor: MemberDescriptor, checkImpl: Boolean): Map<Compatibility, List<MemberDescriptor>>? {
+        return when (descriptor) {
             is CallableMemberDescriptor -> {
                 descriptor.findNamesakesFromTheSameModule().filter { impl ->
                     descriptor != impl &&
@@ -90,14 +102,6 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
                 }
             }
             else -> null
-        }
-
-        if (compatibility != null && !compatibility.containsKey(Compatible)) {
-            assert(compatibility.keys.all { it is Incompatible })
-            @Suppress("UNCHECKED_CAST")
-            val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
-            diagnosticHolder.report(Errors.HEADER_WITHOUT_IMPLEMENTATION.on(
-                    reportOn, descriptor, moduleToCheck ?: descriptor.module, incompatibility))
         }
     }
 
@@ -144,7 +148,9 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
         }
     }
 
-    fun CallableMemberDescriptor.findNamesakesFromTheSameModule(): Collection<CallableMemberDescriptor> {
+    fun MemberDescriptor.findCompatibleDescriptors() = buildCompatibilityMap(this, false)?.get(Compatible) ?: emptyList()
+
+    private fun CallableMemberDescriptor.findNamesakesFromTheSameModule(): Collection<CallableMemberDescriptor> {
         val packageFqName = (containingDeclaration as? PackageFragmentDescriptor)?.fqName ?: return emptyList()
         val myModule = moduleToCheck ?: module
         val scope = myModule.getPackage(packageFqName).memberScope
@@ -156,7 +162,7 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
         } // TODO: only obtain descriptors from our module to start with
     }
 
-    fun ClassifierDescriptorWithTypeParameters.findClassifiersFromTheSameModule(): Collection<ClassifierDescriptorWithTypeParameters> {
+    private fun ClassifierDescriptorWithTypeParameters.findClassifiersFromTheSameModule(): Collection<ClassifierDescriptorWithTypeParameters> {
         val myModule = moduleToCheck ?: module
         val classId = classId ?: return emptyList()
 
