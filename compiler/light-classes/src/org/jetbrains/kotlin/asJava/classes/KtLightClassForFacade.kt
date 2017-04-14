@@ -194,12 +194,8 @@ class KtLightClassForFacade private constructor(
 
     override fun copy() = KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files)
 
-    override val lightClassData by lazyPub {
-        lightClassDataCache.value.findDataForFacade(facadeClassFqName)
-    }
-
-    override val clsDelegate: PsiClass
-        get() = lightClassData.clsDelegate
+    override val lightClassData
+        get() = lightClassDataCache.value.findDataForFacade(facadeClassFqName)
 
     override fun getNavigationElement() = files.iterator().next()
 
