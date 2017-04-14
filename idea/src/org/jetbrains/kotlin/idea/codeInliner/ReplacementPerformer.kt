@@ -182,8 +182,12 @@ internal class ExpressionReplacementPerformer(
             }
         }
 
-        //TODO
-        throw UnsupportedOperationException()
+        val runExpression = psiFactory.createExpressionByPattern("run { $0 }", elementToBeReplaced) as KtCallExpression
+        val runAfterReplacement = elementToBeReplaced.replaced(runExpression)
+        val block = runAfterReplacement.lambdaArguments[0].getLambdaExpression().bodyExpression!!
+        elementToBeReplaced = block.statements.single()
+        return elementToBeReplaced
+
     }
 
     private fun KtExpression.replaceWithBlock(): KtExpression {

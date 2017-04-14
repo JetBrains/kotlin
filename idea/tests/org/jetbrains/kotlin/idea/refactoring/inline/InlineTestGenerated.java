@@ -388,15 +388,45 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ClassDelegate.kt")
+            public void testClassDelegate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/ClassDelegate.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ConvertToBlockBody.kt")
             public void testConvertToBlockBody() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/ConvertToBlockBody.kt");
                 doTest(fileName);
             }
 
+            @TestMetadata("DefaultParameter.kt")
+            public void testDefaultParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/DefaultParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("MultipleStatements.kt")
             public void testMultipleStatements() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/MultipleStatements.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OnLocalMemberLevel.kt")
+            public void testOnLocalMemberLevel() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/OnLocalMemberLevel.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OnMemberLevel.kt")
+            public void testOnMemberLevel() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/OnMemberLevel.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OnTopLevel.kt")
+            public void testOnTopLevel() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/OnTopLevel.kt");
                 doTest(fileName);
             }
 

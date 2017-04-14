@@ -1,0 +1,5 @@
+interface DelegateFace
+class DelegatingB : DelegateFace by run {
+    val result = object : DelegateFace {}
+    result
+}
