@@ -341,7 +341,6 @@ public fun <K, V> MutableMap<in K, in V>.putAll(pairs: Sequence<Pair<K,V>>): Uni
  *
  * @sample samples.collections.Maps.Transforms.mapValues
  */
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public inline fun <K, V, R> Map<out K, V>.mapValues(transform: (Map.Entry<K, V>) -> R): Map<K, R> {
     return mapValuesTo(LinkedHashMap<K, R>(mapCapacity(size)), transform) // .optimizeReadOnlyMap()
 }
@@ -357,7 +356,6 @@ public inline fun <K, V, R> Map<out K, V>.mapValues(transform: (Map.Entry<K, V>)
  *
  * @sample samples.collections.Maps.Transforms.mapKeys
  */
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public inline fun <K, V, R> Map<out K, V>.mapKeys(transform: (Map.Entry<K, V>) -> R): Map<R, V> {
     return mapKeysTo(LinkedHashMap<R, V>(mapCapacity(size)), transform) // .optimizeReadOnlyMap()
 }

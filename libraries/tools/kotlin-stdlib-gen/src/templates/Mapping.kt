@@ -37,7 +37,6 @@ fun mapping(): List<GenericFunction> {
         }
         typeParam("R")
         returns("List<R>")
-        annotations(Iterables) { """@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")""" }
         body(Iterables) {
             "return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)"
         }
@@ -65,7 +64,6 @@ fun mapping(): List<GenericFunction> {
         }
         typeParam("R")
         returns("List<R>")
-        annotations(Iterables) { """@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")""" }
         body(Iterables) {
             "return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)"
         }
