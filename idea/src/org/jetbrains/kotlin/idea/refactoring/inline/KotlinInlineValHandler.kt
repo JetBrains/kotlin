@@ -61,6 +61,9 @@ class KotlinInlineValHandler : InlineActionHandler() {
         val declaration = element as KtProperty
         val file = declaration.containingKtFile
         val name = declaration.name ?: return
+        if (file.isCompiled) {
+            return showErrorHint(project, editor, "Cannot inline '$name' from a decompiled file")
+        }
 
         val references = ReferencesSearch.search(declaration)
         val referenceExpressions = mutableListOf<KtExpression>()
