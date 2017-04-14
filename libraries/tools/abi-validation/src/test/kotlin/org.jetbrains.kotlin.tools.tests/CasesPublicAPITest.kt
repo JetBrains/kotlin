@@ -8,7 +8,7 @@ import java.io.File
 class CasesPublicAPITest {
 
     companion object {
-        val visibilities = readKotlinVisibilities(File("build/cases-declarations.json"))
+        val visibilities by lazy { readKotlinVisibilities(File("build/cases-declarations.json")) }
         val baseClassPath = File("build/classes/test/cases").absoluteFile
         val baseOutputPath = File("src/test/kotlin/cases")
     }
