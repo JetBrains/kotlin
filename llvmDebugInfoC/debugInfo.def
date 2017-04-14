@@ -1,7 +1,0 @@
-headers = DebugInfoC.h
-
-compilerOpts=-fPIC
-linkerOpts.osx = -Wl,-all_load -L../llvmDebugInfoC/build/libs/debugInfo/static -ldebugInfo
-linkerOpts.linux = --Wl,--whole-archive -L../llvmDebugInfoC/build/libs/debugInfo/static -ldebugInfo --Wl,--no-whole-archive -lLLVMCore -lLLVMSupport
-compilerOpts.osx = -IllvmDebugInfoC/include -Idependencies/all/clang+llvm-3.9.0-darwin-macos/include
-compilerOpts.linux = -IllvmDebugInfoC/include -Idependencies/all/clang+llvm-3.9.0-linux-x86-64/include

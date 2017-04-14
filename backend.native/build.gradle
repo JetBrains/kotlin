@@ -128,12 +128,11 @@ List<String> llvmLinkerOpts() {
             '-lLLVMCore',
             '-lLLVMSupport',
             '-lLLVMDebugInfoCodeView',
-            '-lLLVMLinker'
+            '-lLLVMLinker',
+            "-ldebugInfo"
     ]
 
-    final List<String> res = new ArrayList<>()
-
-    res << "-L$llvmDir/lib"
+    final List<String> res = ["-L$llvmDir/lib", "-L${project(':llvmDebugInfoC').buildDir}/libs/debugInfo/static"]
 
     if (isLinux()) {
         res.addAll(["-Wl,-Bstatic", "-Wl,--whole-archive"]
@@ -146,20 +145,13 @@ List<String> llvmLinkerOpts() {
     return res
 }
 
+
 kotlinNativeInterop {
    llvm {
-     defFile 'llvm.def'
-     compilerOpts "-fPIC", "-I$llvmDir/include"
-     linkerOpts llvmLinkerOpts()
-   }
-
-   debugInfo {
      dependsOn ":llvmDebugInfoC:debugInfoStaticLibrary"
-     defFile '../llvmDebugInfoC/debugInfo.def'
+     defFile 'llvm.def'
      compilerOpts "-fPIC", "-I$llvmDir/include", "-I${project(':llvmDebugInfoC').projectDir}/src/main/include"
-     if (isLinux()) {
-       linker 'clang++'
-     }
+     linkerOpts llvmLinkerOpts()
    }
 
    hash { // TODO: copy-pasted from ':common:compileHash'
@@ -193,7 +185,6 @@ dependencies {
    compilerCompile kotlinCompilerModule
    compilerCompile kotlinNativeInterop['llvm'].configuration
    compilerCompile kotlinNativeInterop['hash'].configuration
-   compilerCompile kotlinNativeInterop['debugInfo'].configuration
 
    cli_bcCompile "org.jetbrains.kotlin:kotlin-runtime:$kotlin_version"
    cli_bcCompile sourceSets.compiler.output
@@ -274,8 +265,7 @@ task jars(type: Jar) {
     from 'build/classes/cli_bc', 
          'build/classes/compiler', 
          'build/classes/hashInteropStubs', 
-         'build/classes/llvmInteropStubs',
-         'build/classes/debugInfoInteropStubs'
+         'build/classes/llvmInteropStubs'
 
     dependsOn 'build', ':runtime:hostRuntime', 'external_jars'
 }
