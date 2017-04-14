@@ -60,19 +60,6 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
 
     //-------------------------------------------------------------------------//
 
-    val descriptorSubstitutorForExternalScope = object : IrElementTransformerVoid() {
-
-        override fun visitCall(expression: IrCall): IrExpression {
-            val oldExpression = super.visitCall(expression) as IrCall
-
-            if (oldExpression is IrCallImpl)
-                return copyIrCallImpl(oldExpression)
-            return oldExpression
-        }
-    }
-
-    //-------------------------------------------------------------------------//
-
     inner class DescriptorCollector: IrElementVisitorVoid {
 
         override fun visitElement(element: IrElement) {
@@ -194,8 +181,8 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
         private fun copyFunctionDescriptor(oldDescriptor: CallableDescriptor): CallableDescriptor {
 
             return when (oldDescriptor) {
-                is ConstructorDescriptor       -> copyConstructorDescriptor(oldDescriptor)
-                is SimpleFunctionDescriptor    -> copySimpleFunctionDescriptor(oldDescriptor)
+                is ConstructorDescriptor    -> copyConstructorDescriptor(oldDescriptor)
+                is SimpleFunctionDescriptor -> copySimpleFunctionDescriptor(oldDescriptor)
                 else -> TODO("Unsupported FunctionDescriptor subtype: $oldDescriptor")
             }
         }
@@ -417,10 +404,16 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
         //--- Visits ----------------------------------------------------------//
 
         override fun visitCall(expression: IrCall): IrCall {
-            val oldExpression = super.visitCall(expression)
-            if (oldExpression !is IrCallImpl) return oldExpression                                        // TODO what other kinds of call can we meet?
-
-            return copyIrCallImpl(oldExpression)
+            if (expression !is IrCallImpl) return super.visitCall(expression)
+            return IrCallImpl(
+                startOffset    = expression.startOffset,
+                endOffset      = expression.endOffset,
+                type           = substituteType(expression.type)!!,
+                descriptor     = mapCallee(expression.descriptor),
+                typeArguments  = substituteTypeArguments(expression.getTypeArgumentsMap()),
+                origin         = expression.origin,
+                superQualifier = mapSuperQualifier(expression.superQualifier)
+            ).transformValueArguments(expression)
         }
 
         //---------------------------------------------------------------------//
@@ -542,6 +535,43 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
 
     //-------------------------------------------------------------------------//
 
+    private fun substituteType(oldType: KotlinType?): KotlinType? {
+        if (typeSubstitutor == null) return oldType
+        if (oldType == null)         return oldType
+        return typeSubstitutor!!.substitute(oldType, Variance.INVARIANT) ?: oldType
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun substituteTypeArguments(oldTypeArguments: Map <TypeParameterDescriptor, KotlinType>?): Map <TypeParameterDescriptor, KotlinType>? {
+
+        if (oldTypeArguments == null) return null
+        if (typeSubstitutor  == null) return oldTypeArguments
+
+        val newTypeArguments = oldTypeArguments.entries.associate {
+            val typeParameterDescriptor = it.key
+            val oldTypeArgument         = it.value
+            val newTypeArgument         = substituteType(oldTypeArgument)!!
+            typeParameterDescriptor to newTypeArgument
+        }
+        return newTypeArguments
+    }
+
+    //-------------------------------------------------------------------------//
+
+    val descriptorSubstitutorForExternalScope = object : IrElementTransformerVoid() {
+
+        override fun visitCall(expression: IrCall): IrExpression {
+            val oldExpression = super.visitCall(expression) as IrCall
+
+            if (oldExpression is IrCallImpl)
+                return copyIrCallImpl(oldExpression)
+            return oldExpression
+        }
+    }
+
+    //-------------------------------------------------------------------------//
+
     private fun copyIrCallImpl(oldExpression: IrCallImpl): IrCallImpl {
 
         val oldDescriptor = oldExpression.descriptor
@@ -568,30 +598,6 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
         }
 
         return newExpression
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun substituteType(oldType: KotlinType?): KotlinType? {
-        if (typeSubstitutor == null) return oldType
-        if (oldType == null)         return oldType
-        return typeSubstitutor!!.substitute(oldType, Variance.INVARIANT) ?: oldType
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun substituteTypeArguments(oldTypeArguments: Map <TypeParameterDescriptor, KotlinType>?): Map <TypeParameterDescriptor, KotlinType>? {
-
-        if (oldTypeArguments == null) return null
-        if (typeSubstitutor  == null) return oldTypeArguments
-
-        val newTypeArguments = oldTypeArguments.entries.associate {
-            val typeParameterDescriptor = it.key
-            val oldTypeArgument         = it.value
-            val newTypeArgument         = substituteType(oldTypeArgument)!!
-            typeParameterDescriptor to newTypeArgument
-        }
-        return newTypeArguments
     }
 }
 
