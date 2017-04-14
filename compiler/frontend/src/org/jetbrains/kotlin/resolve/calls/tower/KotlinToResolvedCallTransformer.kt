@@ -350,12 +350,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
 
     override fun getTypeArguments(): Map<TypeParameterDescriptor, KotlinType> {
         val typeParameters = candidateDescriptor.typeParameters.takeIf { it.isNotEmpty() } ?: return emptyMap()
-
-        val result = HashMap<TypeParameterDescriptor, UnwrappedType>()
-        for ((parameter, argument) in typeParameters.zip(completedCall.typeArguments)) {
-            result[parameter] = argument
-        }
-        return result
+        return typeParameters.zip(completedCall.typeArguments).toMap()
     }
 
     override fun getSmartCastDispatchReceiverType(): KotlinType? = null // todo

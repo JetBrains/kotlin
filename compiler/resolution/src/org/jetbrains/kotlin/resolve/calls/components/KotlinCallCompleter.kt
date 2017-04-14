@@ -121,7 +121,9 @@ class KotlinCallCompleter(
                 descriptorWithFreshTypes
         }
 
-        val typeArguments = descriptorWithFreshTypes.typeParameters.map { substitutor.safeSubstitute(it.defaultType) }
+        val typeArguments = descriptorWithFreshTypes.typeParameters.map {
+            substitutor.safeSubstitute(typeVariablesForFreshTypeParameters[it.index].defaultType)
+        }
 
         val status = computeStatus(this, resultingDescriptor)
         return CompletedKotlinCall.Simple(kotlinCall, candidateDescriptor, resultingDescriptor, status, explicitReceiverKind,
