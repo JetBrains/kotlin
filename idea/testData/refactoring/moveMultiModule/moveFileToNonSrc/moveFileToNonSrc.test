@@ -1,0 +1,5 @@
+{
+  "mainFile": "A/src/test/foo.kt",
+  "type": "MOVE_FILES",
+  "targetDirectory": "A/notSrc"
+}

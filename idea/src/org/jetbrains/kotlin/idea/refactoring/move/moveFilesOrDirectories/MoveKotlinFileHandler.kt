@@ -132,7 +132,10 @@ class MoveKotlinFileHandler : MoveFileHandler() {
         val moveContext = MoveContext(file, moveProcessor)
         oldToNewMap[moveContext] = moveContext
         val packageNameInfo = file.getPackageNameInfo(moveDestination, true) ?: return
-        file.packageDirective?.fqName = packageNameInfo.newContainer.fqName!!.quoteIfNeeded()
+        val newFqName = packageNameInfo.newContainer.fqName
+        if (newFqName != null) {
+            file.packageDirective?.fqName = newFqName.quoteIfNeeded()
+        }
     }
 
     override fun updateMovedFile(file: PsiFile) {

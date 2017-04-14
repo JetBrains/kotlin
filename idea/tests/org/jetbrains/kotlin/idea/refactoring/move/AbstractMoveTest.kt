@@ -261,12 +261,19 @@ enum class MoveAction {
             val project = mainFile.project
 
             val targetPackage = config.getNullableString("targetPackage")
-            if (targetPackage != null) {
-                ActionRunner.runInsideWriteAction { VfsUtil.createDirectoryIfMissing(rootDir, targetPackage.replace('.', '/')) }
+            val targetDirPath = targetPackage?.replace('.', '/') ?: config.getNullableString("targetDirectory")
+            if (targetDirPath != null) {
+                ActionRunner.runInsideWriteAction { VfsUtil.createDirectoryIfMissing(rootDir, targetDirPath) }
+                val newParent = if (targetPackage != null) {
+                    JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.directories[0]
+                }
+                else {
+                    rootDir.findFileByRelativePath(targetDirPath)!!.toPsiDirectory(project)!!
+                }
                 MoveFilesOrDirectoriesProcessor(
                         project,
                         arrayOf(mainFile),
-                        JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.directories[0],
+                        newParent,
                         /* searchInComments = */ false,
                         /* searchInNonJavaFiles = */ true,
                         /* moveCallback = */ null,

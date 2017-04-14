@@ -48,6 +48,12 @@ public class MultiModuleMoveTestGenerated extends AbstractMultiModuleMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("moveFileToNonSrc/moveFileToNonSrc.test")
+    public void testMoveFileToNonSrc_MoveFileToNonSrc() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/moveMultiModule/moveFileToNonSrc/moveFileToNonSrc.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("moveFileWithDeclarationsToUnrelatedModuleConflict/moveFileWithDeclarationsToUnrelatedModuleConflict.test")
     public void testMoveFileWithDeclarationsToUnrelatedModuleConflict_MoveFileWithDeclarationsToUnrelatedModuleConflict() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/moveMultiModule/moveFileWithDeclarationsToUnrelatedModuleConflict/moveFileWithDeclarationsToUnrelatedModuleConflict.test");
