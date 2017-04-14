@@ -20,11 +20,11 @@
       <param name="defaultSourceDirs/dir" refProvider="org.jetbrains.idea.maven.plugins.api.common.MavenCommonParamReferenceProviders$DirPath"/>
 
       <param name="experimentalCoroutines" values="enable,warn,error"/>
-      <param name="languageVersion" refProvider="org.jetbrains.kotlin.idea.maven.LanguageVersionsProvider" />
-      <param name="apiVersion" refProvider="org.jetbrains.kotlin.idea.maven.ApiVersionsProvider" />
-      <param name="main" refProvider="org.jetbrains.kotlin.idea.maven.JsMainCallProvider" />
-      <param name="moduleKind" refProvider="org.jetbrains.kotlin.idea.maven.JsModuleKindsProvider" />
-      <param name="jvmTarget" refProvider="org.jetbrains.kotlin.idea.maven.JvmTargetsProvider" />
+      <param name="languageVersion" refProvider="org.jetbrains.kotlin.idea.maven.MavenLanguageVersionsCompletionProvider" />
+      <param name="apiVersion" refProvider="org.jetbrains.kotlin.idea.maven.MavenApiVersionsCompletionProvider" />
+      <param name="main" refProvider="org.jetbrains.kotlin.idea.maven.MavenJsMainCallCompletionProvider" />
+      <param name="moduleKind" refProvider="org.jetbrains.kotlin.idea.maven.MavenJsModuleKindsCompletionProvider" />
+      <param name="jvmTarget" refProvider="org.jetbrains.kotlin.idea.maven.MavenJvmTargetsCompletionProvider" />
 
       <param name="script" language="kotlin" />
     </pluginDescriptor>
