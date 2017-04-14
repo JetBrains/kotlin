@@ -727,7 +727,7 @@
             </classpath>
         </javac2>
 
-        <jar destfile="${kotlin-home}/lib/source-sections-compiler-plugin.jar">
+        <jar destfile="${kotlin-home}/lib/kotlin-source-sections-compiler-plugin.jar">
             <fileset dir="${output}/classes/source-sections-compiler-plugin"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
             <fileset dir="${basedir}/plugins/source-sections/source-sections-compiler/src" includes="META-INF/services/**"/>

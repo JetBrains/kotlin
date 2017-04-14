@@ -100,7 +100,7 @@ messages/**)
 }
 
 -keepclassmembers class com.intellij.openapi.vfs.VirtualFile {
-    public InputStream getInputStream();
+    public protected *;
 }
 
 -keep class com.intellij.openapi.vfs.StandardFileSystems {

@@ -32,13 +32,13 @@ import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.script.StandardScriptDefinition
-import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import java.io.*
 import java.lang.management.ManagementFactory
 import java.net.URLClassLoader
@@ -59,8 +59,8 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
     }
 
     val compilerClassPath = listOf(kotlinPaths.compilerPath)
-    val scriptRuntimeClassPath = listOf( kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
-    val sourceSectionsPluginJar = File(kotlinPaths.libPath, "source-sections-compiler-plugin.jar")
+    val scriptRuntimeClassPath = listOf( kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath)
+    val sourceSectionsPluginJar = File(kotlinPaths.libPath, "kotlin-source-sections-compiler-plugin.jar")
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
 
     private fun createEnvironment(vararg sources: String, withSourceSectionsPlugin: Boolean = true): KotlinCoreEnvironment {
