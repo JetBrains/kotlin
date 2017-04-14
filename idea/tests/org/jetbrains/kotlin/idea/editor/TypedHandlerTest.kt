@@ -603,6 +603,18 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         )
     }
 
+    fun testConvertToBody() {
+        doCharTypeTest(
+                '\n',
+                """fun school(): Int = {<caret>239""",
+                """
+                |fun school(): Int {
+                |    <caret>239
+                |}
+                """
+        )
+    }
+
 
     fun testMoveThroughGT() {
         LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
