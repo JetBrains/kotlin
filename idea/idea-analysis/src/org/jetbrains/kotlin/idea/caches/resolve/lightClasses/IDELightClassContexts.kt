@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -137,9 +138,11 @@ object IDELightClassContexts {
 
     private fun isDummyResolveApplicable(classOrObject: KtClassOrObject): Boolean {
         val hasDelegatedMembers = classOrObject.superTypeListEntries.any { it is KtDelegatedSuperTypeEntry }
-        val dataClassWithGeneratedMembersOverridden = classOrObject.declarations.filterIsInstance<KtFunction>().any {
-            isGeneratedForDataClass(it.nameAsSafeName)
-        }
+        val dataClassWithGeneratedMembersOverridden =
+                classOrObject.hasModifier(KtTokens.DATA_KEYWORD) &&
+                classOrObject.declarations.filterIsInstance<KtFunction>().any {
+                    isGeneratedForDataClass(it.nameAsSafeName)
+                }
         return !hasDelegatedMembers && !dataClassWithGeneratedMembersOverridden
                && classOrObject.declarations.filterIsInstance<KtClassOrObject>().all { isDummyResolveApplicable(it) }
     }
@@ -291,7 +294,7 @@ object IDELightClassContexts {
                     moduleDescriptor.getPackage(annotationFqName.parent()).memberScope
                             .getContributedClassifier(annotationFqName.shortName(), NoLookupLocation.FROM_IDE)?.let { return it as? ClassDescriptor }
 
-                }
+               }
             }
             return null
         }

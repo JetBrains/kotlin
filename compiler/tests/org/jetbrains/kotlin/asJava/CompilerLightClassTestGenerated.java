@@ -114,6 +114,12 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         doTest(fileName);
     }
 
+    @TestMetadata("NonDataClassWithComponentFunctions.kt")
+    public void testNonDataClassWithComponentFunctions() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/NonDataClassWithComponentFunctions.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("PublishedApi.kt")
     public void testPublishedApi() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/PublishedApi.kt");
