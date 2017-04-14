@@ -133,8 +133,9 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
 
     private fun KtExpression.includesCallOf(descriptor: FunctionDescriptor, context: BindingContext): Boolean {
         val refDescriptor = getResolvedCall(context)?.resultingDescriptor
-        return descriptor == refDescriptor ||
-               anyDescendantOfType<KtExpression> { it !== this && it.includesCallOf(descriptor, context) }
+        return descriptor == refDescriptor || anyDescendantOfType<KtExpression> {
+                   it !== this && descriptor == it.getResolvedCall(context)?.resultingDescriptor
+               }
     }
 
 }
