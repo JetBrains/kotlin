@@ -18,7 +18,7 @@ package kotlin.collections
 
 class HashSet<K> internal constructor(
         val backing: HashMap<K, *>
-) : MutableSet<K> {
+) : MutableSet<K>, AbstractMutableCollection<K>() {
 
     constructor() : this(HashMap<K, Nothing>())
 
@@ -51,30 +51,6 @@ class HashSet<K> internal constructor(
         while (it.hasNext()) {
             if (add(it.next()))
                 updated = true
-        }
-        return updated
-    }
-
-    override fun removeAll(elements: Collection<K>): Boolean {
-        val it = iterator()
-        var updated = false
-        while (it.hasNext()) {
-            if (elements.contains(it.next())) {
-                it.remove()
-                updated = true
-            }
-        }
-        return updated
-    }
-
-    override fun retainAll(elements: Collection<K>): Boolean {
-        val it = iterator()
-        var updated = false
-        while (it.hasNext()) {
-            if (!elements.contains(it.next())) {
-                it.remove()
-                updated = true
-            }
         }
         return updated
     }

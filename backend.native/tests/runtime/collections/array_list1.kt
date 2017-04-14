@@ -85,9 +85,9 @@ fun testRemove() {
 }
 
 fun testRemoveAll() {
-    val a = ArrayList(listOf("1", "2", "3", "4", "5"))
+    val a = ArrayList(listOf("1", "2", "3", "4", "5", "1"))
     assertFalse(a.removeAll(listOf("6", "7", "8")))
-    assertEquals(listOf("1", "2", "3", "4", "5"), a)
+    assertEquals(listOf("1", "2", "3", "4", "5", "1"), a)
     assertTrue(a.removeAll(listOf("5", "3", "1")))
     assertEquals(listOf("2", "4"), a)
 }
@@ -277,9 +277,9 @@ fun testSubListSubListRemoveAt() {
 }
 
 fun testSubListRemoveAll() {
-    val a = ArrayList(listOf("1", "2", "3", "4", "5"))
-    val s = a.subList(1, 4)
-    assertEquals(listOf("2", "3", "4"), s)
+    val a = ArrayList(listOf("1", "2", "3", "3", "4", "5"))
+    val s = a.subList(1, 5)
+    assertEquals(listOf("2", "3", "3", "4"), s)
 
     assertTrue(s.removeAll(listOf("3", "5")))
     assertEquals(listOf("2", "4"), s)

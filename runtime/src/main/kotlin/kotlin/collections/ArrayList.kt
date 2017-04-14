@@ -21,7 +21,7 @@ class ArrayList<E> private constructor(
         private var offset: Int,
         private var length: Int,
         private val backing: ArrayList<E>?
-) : MutableList<E>, RandomAccess {
+) : MutableList<E>, RandomAccess, AbstractMutableCollection<E>() {
 
     constructor() : this(10)
 
@@ -131,19 +131,11 @@ class ArrayList<E> private constructor(
     }
 
     override fun removeAll(elements: Collection<E>): Boolean {
-        var changed = false
-        val it = iterator()
-        while (it.hasNext()) {
-            if (elements.contains(it.next())) {
-                it.remove()
-                changed = true
-            }
-        }
-        return changed
+        return retainOrRemoveAllInternal(offset, length, elements, false) > 0
     }
 
     override fun retainAll(elements: Collection<E>): Boolean {
-        return retainAllInRangeInternal(offset, length, elements) > 0
+        return retainOrRemoveAllInternal(offset, length, elements, true) > 0
     }
 
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
@@ -274,16 +266,17 @@ class ArrayList<E> private constructor(
         length -= rangeLength
     }
 
-    private fun retainAllInRangeInternal(rangeOffset: Int, rangeLength: Int, elements: Collection<E>): Int {
+    /** Retains elements if [retain] == true and removes them it [retain] == false. */
+    private fun retainOrRemoveAllInternal(rangeOffset: Int, rangeLength: Int, elements: Collection<E>, retain: Boolean): Int {
         if (backing != null) {
-            val removed = backing.retainAllInRangeInternal(rangeOffset, rangeLength, elements)
+            val removed = backing.retainOrRemoveAllInternal(rangeOffset, rangeLength, elements, retain)
             length -= removed
             return removed
         } else {
             var i = 0
             var j = 0
             while (i < rangeLength) {
-                if (elements.contains(array[rangeOffset + i])) {
+                if (elements.contains(array[rangeOffset + i]) == retain) {
                     array[rangeOffset + j++] = array[rangeOffset + i++]
                 } else {
                     i++

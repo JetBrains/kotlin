@@ -103,9 +103,9 @@ fun testContainsAll() {
 }
 
 fun testRemoveAll() {
-    val s = HashSet(listOf("1", "2", "3", "4", "5"))
+    val s = HashSet(listOf("1", "2", "3", "4", "5", "1"))
     assertFalse(s.removeAll(listOf("6", "7", "8")))
-    assertEquals(setOf("1", "2", "3", "4", "5"), s)
+    assertEquals(setOf("1", "2", "3", "4", "5", "1"), s)
     assertTrue(s.removeAll(listOf("5", "3", "1")))
     assertEquals(setOf("2", "4"), s)
 }
