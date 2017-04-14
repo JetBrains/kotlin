@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.jsonUtils.getString
@@ -50,19 +47,5 @@ abstract class AbstractMultiModuleRenameTest : KotlinMultiFileTestCase() {
                 else -> TestCase.fail("Unexpected rename type: $renameType")
             }
         }
-    }
-
-    protected fun doTestCommittingDocuments(action : (VirtualFile, VirtualFile?) -> Unit) {
-        super.doTest({ rootDir, rootAfter ->
-            action(rootDir, rootAfter)
-
-            PsiDocumentManager.getInstance(project!!).commitAllDocuments()
-            FileDocumentManager.getInstance().saveAllDocuments()
-        }, getTestDirName(true))
-    }
-
-    protected fun getTestDirName(lowercaseFirstLetter : Boolean) : String {
-        val testName = getTestName(lowercaseFirstLetter)
-        return testName.substring(0, testName.indexOf('_'))
     }
 }

@@ -85,11 +85,6 @@ abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
                getTestDirName(true))
     }
 
-    protected fun getTestDirName(lowercaseFirstLetter : Boolean) : String {
-        val testName = getTestName(lowercaseFirstLetter)
-        return testName.substring(0, testName.lastIndexOf('_')).replace('_', '/')
-    }
-
     override fun getTestRoot() : String {
         return "/multiFileInspections/"
     }

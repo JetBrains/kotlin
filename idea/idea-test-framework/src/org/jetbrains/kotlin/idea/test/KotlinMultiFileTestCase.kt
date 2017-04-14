@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.idea.test
 
 import com.intellij.ide.highlighter.ModuleFileType
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.MultiFileTestCase
 import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -33,6 +35,22 @@ abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
     override fun setUp() {
         super.setUp()
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+    }
+
+    protected fun getTestDirName(lowercaseFirstLetter : Boolean) : String {
+        val testName = getTestName(lowercaseFirstLetter)
+        val endIndex = testName.lastIndexOf('_')
+        if (endIndex < 0) return testName
+        return testName.substring(0, endIndex).replace('_', '/')
+    }
+
+    protected fun doTestCommittingDocuments(action : (VirtualFile, VirtualFile?) -> Unit) {
+        super.doTest({ rootDir, rootAfter ->
+                         action(rootDir, rootAfter)
+
+                         PsiDocumentManager.getInstance(project!!).commitAllDocuments()
+                         FileDocumentManager.getInstance().saveAllDocuments()
+                     }, getTestDirName(true))
     }
 
     override fun prepareProject(rootDir: VirtualFile) {

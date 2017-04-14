@@ -16,11 +16,8 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move
 
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.refactoring.rename.loadTestConfiguration
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
@@ -70,19 +67,5 @@ abstract class AbstractMultiModuleMoveTest : KotlinMultiFileTestCase() {
                 }
             }
         }
-    }
-
-    protected fun doTestCommittingDocuments(action : (VirtualFile, VirtualFile?) -> Unit) {
-        super.doTest({ rootDir, rootAfter ->
-                         action(rootDir, rootAfter)
-
-                         PsiDocumentManager.getInstance(project!!).commitAllDocuments()
-                         FileDocumentManager.getInstance().saveAllDocuments()
-                     }, getTestDirName(true))
-    }
-
-    protected fun getTestDirName(lowercaseFirstLetter : Boolean) : String {
-        val testName = getTestName(lowercaseFirstLetter)
-        return testName.substring(0, testName.indexOf('_'))
     }
 }
