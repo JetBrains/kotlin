@@ -1,10 +1,22 @@
 apply plugin: 'kotlin'
 
+configurations {
+    testArtifacts
+}
+
 dependencies {
     compile project(':kotlin-stdlib')
     compile 'org.ow2.asm:asm-debug-all:5.0.4'
     compile 'com.google.code.gson:gson:2.6.2'
     testCompile project(':kotlin-test:kotlin-test-junit')
+
+    testArtifacts project(':kotlin-stdlib')
+    testArtifacts project(':kotlin-stdlib-jre7')
+    testArtifacts project(':kotlin-stdlib-jre8')
+    testArtifacts project(':kotlin-reflect')
+    // legacy
+    testArtifacts project(':kotlin-runtime')
+    testArtifacts files(project(':kotlin-stdlib').tasks.originalStdlibJar)
 }
 
 sourceSets {
@@ -23,8 +35,7 @@ compileTestKotlin {
 
 test {
     dependsOn cleanCompileTestKotlin
-    dependsOn(':kotlin-runtime:jar')
-    dependsOn(':kotlin-stdlib:originalStdlibJar')
+    dependsOn configurations.testArtifacts
 
     systemProperties['overwrite.output'] = System.getProperty("overwrite.output", "false")
     jvmArgs '-ea'
