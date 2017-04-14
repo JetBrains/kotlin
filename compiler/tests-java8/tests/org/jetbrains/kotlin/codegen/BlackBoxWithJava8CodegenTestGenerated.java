@@ -608,6 +608,18 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             doTest(fileName);
         }
 
+        @TestMetadata("complexCast.kt")
+        public void testComplexCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/complexCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultImpl.kt")
+        public void testDefaultImpl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/defaultImpl.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("downcast.kt")
         public void testDowncast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/downcast.kt");
