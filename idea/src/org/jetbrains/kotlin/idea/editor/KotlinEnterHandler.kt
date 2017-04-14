@@ -147,6 +147,7 @@ class KotlinConvertToBodyEnterHandler : EnterHandlerDelegateAdapter() {
                     KtDeclarationWithBody::class.java
             )) {
                 val declaration = element.parent.parent.parent as KtDeclarationWithBody
+                if (!declaration.hasDeclaredReturnType()) return EnterHandlerDelegate.Result.Continue
                 val equals = declaration.equalsToken
                 if (equals != null) {
                     val startOffset =
