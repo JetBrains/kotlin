@@ -67,7 +67,6 @@ internal fun <E, T> collectionToArray(collection: Collection<E>, array: Array<T>
         array
     }
     var i = 0
-    // TODO: What about a concurrent modification of the collection? Do we need to handle it here?
     for (v in collection) {
         toArray[i] = v as T
         i++
