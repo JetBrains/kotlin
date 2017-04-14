@@ -21,6 +21,7 @@ import java.lang.reflect.Field
 annotation class Argument(
         val value: String,
         val shortName: String = "",
+        val delimiter: String = ",",
         val valueDescription: String = "",
         val description: String
 )
@@ -81,15 +82,15 @@ fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>,
             result.duplicateArguments.put(argument.value, value)
         }
 
-        updateField(field, result, value)
+        updateField(field, result, value, argument.delimiter)
     }
 }
 
-private fun <A : CommonCompilerArguments> updateField(field: Field, result: A, value: Any) {
+private fun <A : CommonCompilerArguments> updateField(field: Field, result: A, value: Any, delimiter: String) {
     when (field.type) {
         Boolean::class.java, String::class.java -> field.set(result, value)
         Array<String>::class.java -> {
-            val newElements = (value as String).split(",").toTypedArray()
+            val newElements = (value as String).split(delimiter).toTypedArray()
             @Suppress("UNCHECKED_CAST")
             val oldValue = field.get(result) as Array<String>?
             field.set(result, if (oldValue != null) arrayOf(*oldValue, *newElements) else newElements)
