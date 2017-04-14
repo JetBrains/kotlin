@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -48,6 +46,30 @@ fun ir2stringWhole(ir: IrElement?, withDescriptors: Boolean = false): String {
     else
         ir?.accept(DumpIrTreeVisitor(strWriter), "")
     return strWriter.toString()
+}
+
+internal fun DeclarationDescriptor.createFakeOverrideDescriptor(owner: ClassDescriptor): DeclarationDescriptor? {
+    // We need to copy descriptors for vtable building, thus take only functions and properties.
+    return when (this) {
+        is FunctionDescriptor ->
+            newCopyBuilder()
+                    .setOwner(owner)
+                    .setKind(CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
+                    .setCopyOverrides(true)
+                    .build()!!.apply {
+                overriddenDescriptors += this@createFakeOverrideDescriptor
+            }
+        is PropertyDescriptor ->
+            copy(
+                    /* newOwner      = */ owner,
+                    /* modality      = */ modality,
+                    /* visibility    = */ visibility,
+                    /* kind          = */ CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
+                    /* copyOverrides = */ true).apply {
+                overriddenDescriptors += this@createFakeOverrideDescriptor
+            }
+        else -> null
+    }
 }
 
 internal fun ClassDescriptor.createSimpleDelegatingConstructorDescriptor(superConstructorDescriptor: ClassConstructorDescriptor, isPrimary: Boolean = false)
