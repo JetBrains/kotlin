@@ -17164,6 +17164,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("parameterAsDefaultValueInLocalFunction.kt")
+            public void testParameterAsDefaultValueInLocalFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/parameterAsDefaultValueInLocalFunction.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("resolveAnnotatedLambdaArgument.kt")
             public void testResolveAnnotatedLambdaArgument() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/resolveAnnotatedLambdaArgument.kt");
@@ -17215,6 +17221,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("resolveWithoutGenerics.kt")
             public void testResolveWithoutGenerics() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/resolveWithoutGenerics.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeParameterInDefaultValueInLocalFunction.kt")
+            public void testTypeParameterInDefaultValueInLocalFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/typeParameterInDefaultValueInLocalFunction.kt");
                 doTest(fileName);
             }
 
