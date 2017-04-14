@@ -19,10 +19,14 @@ package org.jetbrains.kotlin.idea.project;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.framework.CommonLibraryDetectionUtil;
+import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil;
+import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.psi.KtCodeFragment;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
@@ -69,5 +73,16 @@ public class TargetPlatformDetector {
     @NotNull
     public static TargetPlatform getPlatform(@NotNull Module module) {
         return ProjectStructureUtil.getCachedPlatformForModule(module);
+    }
+
+    @NotNull
+    public static TargetPlatform getPlatform(@NotNull Library library) {
+        if (KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(library)) {
+            return JsPlatform.INSTANCE;
+        }
+        if (CommonLibraryDetectionUtil.isCommonLibrary(library)) {
+            return TargetPlatform.Default.INSTANCE;
+        }
+        return JvmPlatform.INSTANCE;
     }
 }

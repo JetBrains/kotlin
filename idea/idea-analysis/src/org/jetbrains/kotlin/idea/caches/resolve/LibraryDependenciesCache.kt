@@ -26,6 +26,8 @@ import com.intellij.openapi.util.Condition
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -47,6 +49,8 @@ class LibraryDependenciesCache(private val project: Project) {
         val libraries = LinkedHashSet<Library>()
         val sdks = LinkedHashSet<Sdk>()
 
+        val platform = TargetPlatformDetector.getPlatform(library)
+
         for (module in getLibraryUsageIndex().modulesLibraryIsUsedIn[library]) {
             if (!processedModules.add(module)) continue
 
@@ -56,7 +60,10 @@ class LibraryDependenciesCache(private val project: Project) {
                 }
 
                 override fun visitLibraryOrderEntry(libraryOrderEntry: LibraryOrderEntry, value: Unit) {
-                    libraries.addIfNotNull(libraryOrderEntry.library)
+                    val otherLibrary = libraryOrderEntry.library
+                    if (otherLibrary != null && compatiblePlatforms(platform, TargetPlatformDetector.getPlatform(otherLibrary))) {
+                        libraries.add(otherLibrary)
+                    }
                 }
 
                 override fun visitJdkOrderEntry(jdkOrderEntry: JdkOrderEntry, value: Unit) {
@@ -66,6 +73,13 @@ class LibraryDependenciesCache(private val project: Project) {
         }
 
         return Pair(libraries.toList(), sdks.toList())
+    }
+
+    /**
+     * @return true if it's OK to add a dependency from a library with platform [from] to a library with platform [to]
+     */
+    private fun compatiblePlatforms(from: TargetPlatform, to: TargetPlatform): Boolean {
+        return from == to || to == TargetPlatform.Default
     }
 
     private fun getLibraryUsageIndex(): LibraryUsageIndex {

@@ -16,16 +16,20 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.testFramework.ModuleTestCase
-import com.intellij.openapi.module.StdModuleTypes
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.roots.ModuleRootModificationUtil
+import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.roots.DependencyScope
-import org.junit.Assert
+import com.intellij.openapi.roots.ModuleRootModificationUtil
+import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
 import com.intellij.openapi.roots.libraries.Library
-import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.testFramework.ModuleTestCase
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.junit.Assert
+import java.io.File
 
 class IdeaModuleInfoTest : ModuleTestCase() {
 
@@ -267,6 +271,24 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         lib3.classes.assertAdditionalLibraryDependencies(lib1.classes, lib2.classes)
     }
 
+    fun testCommonLibraryDoesNotDependOnPlatform() {
+        val stdlibCommon = stdlibCommon()
+        val stdlibJvm = stdlibJvm()
+        val stdlibJs = stdlibJs()
+
+        val a = module("a")
+        a.addDependency(stdlibCommon)
+        a.addDependency(stdlibJvm)
+
+        val b = module("b")
+        b.addDependency(stdlibCommon)
+        b.addDependency(stdlibJs)
+
+        stdlibCommon.classes.assertAdditionalLibraryDependencies()
+        stdlibJvm.classes.assertAdditionalLibraryDependencies(stdlibCommon.classes)
+        stdlibJs.classes.assertAdditionalLibraryDependencies(stdlibCommon.classes)
+    }
+
     private fun Module.addDependency(
             other: Module,
             dependencyScope: DependencyScope = DependencyScope.COMPILE,
@@ -308,10 +330,22 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         UsefulTestCase.assertSameElements(this.getDependentModules(), expected.toList())
     }
 
-    private fun projectLibrary(name: String = "lib"): Library {
+    private fun projectLibrary(name: String = "lib", vararg roots: File): Library {
         val libraryTable = ProjectLibraryTable.getInstance(myProject)!!
         return WriteCommandAction.runWriteCommandAction<Library>(myProject) {
-            libraryTable.createLibrary(name)
+            libraryTable.createLibrary(name).apply {
+                for (root in roots) {
+                    val model = modifiableModel
+                    model.addRoot(VfsUtil.getUrlForLibraryRoot(root), OrderRootType.CLASSES)
+                    model.commit()
+                }
+            }
         }!!
     }
+
+    private fun stdlibCommon(): Library = projectLibrary("kotlin-stdlib-common", ForTestCompileRuntime.stdlibCommonForTests())
+
+    private fun stdlibJvm(): Library = projectLibrary("kotlin-stdlib", ForTestCompileRuntime.runtimeJarForTests())
+
+    private fun stdlibJs(): Library = projectLibrary("kotlin-stdlib-js", ForTestCompileRuntime.runtimeJarForTests())
 }

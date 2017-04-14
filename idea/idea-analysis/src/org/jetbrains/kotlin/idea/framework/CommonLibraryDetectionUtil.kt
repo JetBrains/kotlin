@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.caches.JarUserDataManager
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 
 object CommonLibraryDetectionUtil {
+    @JvmStatic
     fun isCommonLibrary(library: Library): Boolean {
         if (library is LibraryEx && library.isDisposed) return false
 
