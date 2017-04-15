@@ -21,6 +21,7 @@ package kotlin.collections
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
+@kotlin.internal.InlineExposed
 internal fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
     // TODO: special case for size == 0?
     return Array<E>(size)

@@ -582,7 +582,7 @@ public inline operator fun <K, V> MutableMap<in K, in V>.plusAssign(map: Map<K, 
     putAll(map)
 }
 
-// do not expose for now @kotlin.internal.InlineExposed
+@kotlin.internal.InlineExposed
 internal fun <K, V> Map<K, V>.optimizeReadOnlyMap() = when (size) {
     0 -> emptyMap()
 //    1 -> toSingletonMapOrSelf()
