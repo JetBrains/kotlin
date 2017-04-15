@@ -17,16 +17,15 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanIrDeserializationException
 import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
-import org.jetbrains.kotlin.backend.konan.KonanIrDeserializationException
-import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
 import org.jetbrains.kotlin.backend.konan.llvm.symbolName
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.tasks.*
+import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.serialization.KonanIr.KotlinDescriptor
@@ -130,15 +129,19 @@ internal class IrDescriptorDeserializer(val context: Context,
     val descriptorIndex = IrDeserializationDescriptorIndex(context.irBuiltIns).map
 
     fun deserializeKotlinType(proto: KonanIr.KotlinType): KotlinType {
-
         val index = proto.getIndex()
         val text = proto.getDebugText()
         val typeProto = localDeserializer.typeTable[index]
         val type = localDeserializer.deserializeInlineType(typeProto)
         if (type.isError) throw KonanIrDeserializationException("Could not deserialize KotlinType: $text $type")
-        context.log("### deserialized Kotlin Type index=$index, text=$text:\t$type")
 
-        return type
+        val realType = if (proto.isCaptured) {
+            unpackCapturedType(type)
+        } else
+            type
+
+        context.log("### deserialized Kotlin Type index=$index, text=$text:\t$realType")
+        return realType
     }
     fun deserializeLocalDeclaration(proto: KonanLinkData.Descriptor): DeclarationDescriptor {
         when {

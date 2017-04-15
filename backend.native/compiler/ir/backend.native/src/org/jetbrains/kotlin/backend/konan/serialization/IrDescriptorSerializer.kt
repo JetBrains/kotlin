@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
+import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -40,10 +41,17 @@ internal class IrDescriptorSerializer(
     var rootFunction: FunctionDescriptor) {
 
     fun serializeKotlinType(type: KotlinType): KonanIr.KotlinType {
-        val index = this.typeSerializer(type)
-        val proto =  KonanIr.KotlinType.newBuilder()
+        val isCaptured = type.isCaptured()
+        val typeToSerialize = if (isCaptured) {
+            packCapturedType(type as CapturedType)
+        } else {
+            type
+        }
+        val index = typeSerializer(typeToSerialize)
+        val proto = KonanIr.KotlinType.newBuilder()
             .setIndex(index)
             .setDebugText(type.toString())
+            .setIsCaptured(isCaptured)
             .build()
         return proto
     }

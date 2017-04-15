@@ -44,7 +44,8 @@ message LocalDeclaration {
 
 message KotlinType {
     required int32 index = 1;
-    optional string debug_text = 2; // TODO: remove me
+    required bool isCaptured = 2; // TODO: make it a flag set?
+    optional string debug_text = 3; // TODO: remove me
 }
 
 message Coordinates {
@@ -190,6 +191,8 @@ message IrWhile {
     optional IrExpression body = 4;
 }
 
+// TODO: we need an extension mechanism to accomodate new 
+// IR operators in upcoming releases.
 message IrOperation {
     oneof operation {
         IrBlock block = 1;
@@ -257,6 +260,8 @@ message IrEnumEntry {
     optional IrDeclaration corresponding_class = 2;
 }
 
+// TODO: we need an extension mechanism to accomodate new 
+// IR operators in upcoming releases.
 message IrDeclarator {
     oneof symbol {
         IrVar variable = 1;
