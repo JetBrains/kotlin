@@ -354,7 +354,7 @@ private fun processLib(konanHome: String,
         }
     }
 
-    val workDir = defFile?.parentFile ?: File(System.getProperty("java.io.tmpdir"))
+    val workDir = defFile?.absoluteFile?.parentFile ?: File(System.getProperty("java.io.tmpdir"))
 
     if (flavor == KotlinPlatform.JVM) {
 
