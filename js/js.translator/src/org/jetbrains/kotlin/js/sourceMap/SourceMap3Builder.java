@@ -152,7 +152,7 @@ public class SourceMap3Builder implements SourceMapBuilder {
 
     @Override
     public void addLink() {
-        textOutput.print("\n//@ sourceMappingURL=");
+        textOutput.print("\n//# sourceMappingURL=");
         textOutput.print(generatedFile.getName());
         textOutput.print(".map\n");
     }
