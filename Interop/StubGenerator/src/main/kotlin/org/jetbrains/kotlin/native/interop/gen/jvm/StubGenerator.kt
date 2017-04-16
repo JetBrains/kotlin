@@ -1188,7 +1188,7 @@ class StubGenerator(
     private val FunctionDecl.cStubName: String
         get() {
             require(platform == KotlinPlatform.NATIVE)
-            return "kni_" + pkgName.replace('/', '_') + '_' + this.name
+            return "kni_" + pkgName.replace('.', '_') + '_' + this.name
         }
 
     private val FunctionDecl.kotlinExternalName: String
