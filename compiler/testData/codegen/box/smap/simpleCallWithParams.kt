@@ -5,8 +5,8 @@ package test
 fun testProperLineNumberAfterInline(): String {
     var exceptionCount = 0;
     try {
-        checkEquals(test(),
-                    "12")
+        fail(inlineFun(),
+             "12")
     }
     catch(e: AssertionError) {
         val entry = (e as java.lang.Throwable).getStackTrace()!!.get(1)
@@ -18,8 +18,8 @@ fun testProperLineNumberAfterInline(): String {
     }
 
     try {
-        checkEquals("12",
-                    test())
+        fail("12",
+             inlineFun())
     }
     catch(e: AssertionError) {
         val entry = e.stackTrace!![1]
@@ -36,13 +36,13 @@ fun testProperLineNumberAfterInline(): String {
 fun testProperLineForOtherParameters(): String {
     var exceptionCount = 0;
     try {
-        checkEquals(test(),
-                    fail())
+        fail(inlineFun(),
+             fail())
     }
     catch(e: AssertionError) {
         val entry = e.stackTrace!![1]
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
-        if ("simpleCallWithParams.kt:39" != actual) {
+        if ("simpleCallWithParams.kt:40" != actual) {
             return "fail 3: ${actual}"
         }
         exceptionCount++
@@ -50,8 +50,8 @@ fun testProperLineForOtherParameters(): String {
     }
 
     try {
-        checkEquals(fail(),
-                    test())
+        fail(fail(),
+             inlineFun())
     }
     catch(e: AssertionError) {
         val entry = e.stackTrace!![1]
@@ -63,7 +63,7 @@ fun testProperLineForOtherParameters(): String {
     }
 
     try {
-        checkEquals(fail(), test())
+        fail(fail(), inlineFun())
     }
     catch(e: AssertionError) {
         val entry = e.stackTrace!![1]
@@ -75,7 +75,7 @@ fun testProperLineForOtherParameters(): String {
     }
 
     try {
-        checkEquals(fail(), test())
+        fail(fail(), inlineFun())
     }
     catch(e: AssertionError) {
         val entry = e.stackTrace!![1]
@@ -97,11 +97,11 @@ fun box(): String {
     return testProperLineForOtherParameters()
 }
 
-public fun checkEquals(p1: String, p2: String) {
+public fun fail(p1: String, p2: String) {
     throw AssertionError("fail")
 }
 
-inline fun test(): String {
+inline fun inlineFun(): String {
     return "123"
 }
 
