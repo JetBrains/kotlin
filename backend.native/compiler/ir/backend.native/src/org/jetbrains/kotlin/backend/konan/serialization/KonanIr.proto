@@ -69,7 +69,8 @@ message IrBreak {
 
 message IrBlock {
     required bool is_transparent_scope = 1;
-    repeated IrStatement statement = 2; 
+    required bool is_lambda_origin = 2;
+    repeated IrStatement statement = 3; 
 }
 
 message MemberAccessCommon {

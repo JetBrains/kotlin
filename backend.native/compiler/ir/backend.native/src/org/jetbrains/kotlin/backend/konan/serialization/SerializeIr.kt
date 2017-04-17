@@ -130,8 +130,12 @@ internal class IrSerializer(val context: Context,
     }
 
     fun serializeBlock(block: IrBlock): KonanIr.IrBlock {
+        val isLambdaOrigin = 
+            block.origin == IrStatementOrigin.LAMBDA ||
+            block.origin == IrStatementOrigin.ANONYMOUS_FUNCTION
         val proto = KonanIr.IrBlock.newBuilder()
             .setIsTransparentScope(block.isTransparentScope)
+            .setIsLambdaOrigin(isLambdaOrigin)
         block.statements.forEach {
             proto.addStatement(serializeStatement(it))
         }
@@ -657,7 +661,9 @@ internal class IrDeserializer(val context: Context,
             statements.add(deserializeStatement(it) as IrStatement)
         }
 
-        val block = IrBlockImpl(start, end, type, null, statements)
+        val isLambdaOrigin = if (proto.isLambdaOrigin) IrStatementOrigin.LAMBDA else null
+
+        val block = IrBlockImpl(start, end, type, isLambdaOrigin, statements)
 
         // TODO: Need to set isTransparentScope somehow
         return block
