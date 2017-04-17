@@ -102,31 +102,29 @@ object LabelResolver {
         val labelName = expression.getLabelNameAsName()
         if (labelElement == null || labelName == null) return null
 
+        val element = resolveNamedLabel(labelName, labelElement, context.trace)
+        if (element != null) return element
+
         val declarationsByLabel = context.scope.getDeclarationsByLabel(labelName)
-        val size = declarationsByLabel.size
-
-        if (size > 1) {
-            BindingContextUtils.reportAmbiguousLabel(context.trace, labelElement, declarationsByLabel)
-            return null
-        }
-        if (size == 0) {
-            val element = resolveNamedLabel(labelName, labelElement, context.trace)
-            if (element == null) {
+        when (declarationsByLabel.size) {
+            0 -> {
                 context.trace.report(UNRESOLVED_REFERENCE.on(labelElement, labelElement))
+                return null
             }
-            return element
-        }
-
-        val declarationDescriptor = declarationsByLabel.iterator().next()
-        if (declarationDescriptor is FunctionDescriptor || declarationDescriptor is ClassDescriptor) {
-            val element = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor)
-            if (element is KtElement) {
-                context.trace.record(LABEL_TARGET, labelElement, element)
-                return element
+            1 -> {
+                val declarationDescriptor = declarationsByLabel.single()
+                if (declarationDescriptor is FunctionDescriptor || declarationDescriptor is ClassDescriptor) {
+                    val declarationElement = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor)
+                    if (declarationElement is KtElement) {
+                        context.trace.record(LABEL_TARGET, labelElement, declarationElement)
+                        return declarationElement
+                    }
+                }
             }
-        }
-        else {
-            throw UnsupportedOperationException(declarationDescriptor.javaClass.toString()) // TODO
+            else -> {
+                BindingContextUtils.reportAmbiguousLabel(context.trace, labelElement, declarationsByLabel)
+                return null
+            }
         }
 
         return null
@@ -144,7 +142,7 @@ object LabelResolver {
             trace.report(LABEL_NAME_CLASH.on(labelExpression))
         }
 
-        return list.single().also { trace.record(LABEL_TARGET, labelExpression, it) }
+        return list.first().also { trace.record(LABEL_TARGET, labelExpression, it) }
     }
 
     fun resolveThisOrSuperLabel(

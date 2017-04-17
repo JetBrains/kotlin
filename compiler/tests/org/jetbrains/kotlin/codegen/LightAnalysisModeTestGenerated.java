@@ -10064,6 +10064,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/labels"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("controlLabelClashesWithFuncitonName.kt")
+        public void testControlLabelClashesWithFuncitonName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/labels/controlLabelClashesWithFuncitonName.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("labeledDeclarations.kt")
         public void testLabeledDeclarations() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/labels/labeledDeclarations.kt");

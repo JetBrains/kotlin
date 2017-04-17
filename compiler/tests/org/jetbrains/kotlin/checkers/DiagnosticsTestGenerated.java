@@ -4402,6 +4402,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("continueAndBreakLabelWithSameFunctionName.kt")
+            public void testContinueAndBreakLabelWithSameFunctionName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/continueAndBreakLabelWithSameFunctionName.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("emptyIf.kt")
             public void testEmptyIf() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/emptyIf.kt");
