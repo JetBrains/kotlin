@@ -177,12 +177,10 @@ class KotlinFacetEditorGeneralTab(
             }
             val argumentClass = primaryArguments.javaClass
             val additionalArguments = argumentClass.newInstance().apply {
-                try {
-                    parseArguments(splitArgumentString(editor.compilerConfigurable.additionalArgsOptionsField.text).toTypedArray(), this)
-                }
-                catch(e: IllegalArgumentException) {
-                    return ValidationResult(e.message)
-                }
+                parseCommandLineArguments(
+                        splitArgumentString(editor.compilerConfigurable.additionalArgsOptionsField.text).toTypedArray(), this
+                )
+                validateArguments(errors)?.let { message -> return ValidationResult(message) }
             }
             val emptyArguments = argumentClass.newInstance()
             val fieldNamesToCheck = when (platform) {

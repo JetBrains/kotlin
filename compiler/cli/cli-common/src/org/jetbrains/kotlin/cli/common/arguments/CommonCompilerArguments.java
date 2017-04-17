@@ -109,16 +109,7 @@ public abstract class CommonCompilerArguments implements Serializable {
 
     public List<String> freeArgs = new SmartList<>();
 
-    public List<String> unknownArgs = new SmartList<>();
-
-    public List<String> unknownExtraFlags = new SmartList<>();
-
-    // Names of extra (-X...) arguments which have been passed in an obsolete form ("-Xaaa bbb", instead of "-Xaaa=bbb")
-    public List<String> extraArgumentsPassedInObsoleteForm = new SmartList<>();
-
-    // Non-boolean arguments which have been passed multiple times, possibly with different values.
-    // The key in the map is the name of the argument, the value is the last passed value.
-    public Map<String, String> duplicateArguments = new LinkedHashMap<>();
+    public ArgumentParseErrors errors = new ArgumentParseErrors();
 
     @NotNull
     public static CommonCompilerArguments createDefaultInstance() {

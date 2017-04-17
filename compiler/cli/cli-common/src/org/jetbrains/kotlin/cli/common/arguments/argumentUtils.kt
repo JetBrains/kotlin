@@ -20,16 +20,6 @@ import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.*
 
-@JvmOverloads
-fun <A : CommonCompilerArguments> parseArguments(args: Array<String>, arguments: A, ignoreInvalidArguments: Boolean = false) {
-    parseCommandLineArguments(args, arguments)
-
-    val invalidArgument = arguments.unknownArgs.firstOrNull()?.takeUnless { ignoreInvalidArguments }
-    if (invalidArgument != null) {
-        throw IllegalArgumentException("Invalid argument: $invalidArgument")
-    }
-}
-
 fun <T : Any> copyBean(bean: T) = copyFields(bean, bean::class.java.newInstance(), true, collectFieldsToCopy(bean::class.java, false))
 
 fun <From : Any, To : From> mergeBeans(from: From, to: To): To {

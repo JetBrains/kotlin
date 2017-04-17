@@ -175,10 +175,10 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: Lis
         val compilerArguments = this.compilerArguments ?: return
 
         val defaultCompilerArguments = compilerArguments::class.java.newInstance()
-        parseArguments(defaultArguments.toTypedArray(), defaultCompilerArguments, true)
+        parseCommandLineArguments(defaultArguments.toTypedArray(), defaultCompilerArguments)
         defaultCompilerArguments.convertPathsToSystemIndependent()
 
-        parseArguments(argumentArray, compilerArguments, true)
+        parseCommandLineArguments(argumentArray, compilerArguments)
 
         compilerArguments.convertPathsToSystemIndependent()
 

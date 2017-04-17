@@ -22,8 +22,9 @@ import kotlin.collections.ArraysKt;
 import org.fusesource.jansi.AnsiConsole;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.common.arguments.ArgumentUtilsKt;
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt;
 import org.jetbrains.kotlin.cli.common.messages.*;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException;
@@ -82,7 +83,11 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
     // Used in kotlin-maven-plugin (KotlinCompileMojoBase) and in kotlin-gradle-plugin (KotlinJvmOptionsImpl, KotlinJsOptionsImpl)
     public void parseArguments(@NotNull String[] args, @NotNull A arguments) {
-        ArgumentUtilsKt.parseArguments(args, arguments);
+        ParseCommandLineArgumentsKt.parseCommandLineArguments(args, arguments);
+        String message = ParseCommandLineArgumentsKt.validateArguments(arguments.errors);
+        if (message != null) {
+            throw new IllegalArgumentException(message);
+        }
     }
 
     @NotNull
@@ -142,7 +147,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             messageCollector = new FilteringMessageCollector(messageCollector, Predicate.isEqual(WARNING));
         }
 
-        reportArgumentParseProblems(messageCollector, arguments);
+        reportArgumentParseProblems(messageCollector, arguments.errors);
 
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
 
@@ -320,15 +325,15 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             @NotNull CompilerConfiguration configuration, @NotNull A arguments, @NotNull Services services
     );
 
-    private void reportArgumentParseProblems(@NotNull MessageCollector collector, @NotNull A arguments) {
-        for (String flag : arguments.unknownExtraFlags) {
+    private static void reportArgumentParseProblems(@NotNull MessageCollector collector, @NotNull ArgumentParseErrors errors) {
+        for (String flag : errors.getUnknownExtraFlags()) {
             collector.report(STRONG_WARNING, "Flag is not supported by this version of the compiler: " + flag, null);
         }
-        for (String argument : arguments.extraArgumentsPassedInObsoleteForm) {
+        for (String argument : errors.getExtraArgumentsPassedInObsoleteForm()) {
             collector.report(STRONG_WARNING, "Advanced option value is passed in an obsolete form. Please use the '=' character " +
                                              "to specify the value: " + argument + "=...", null);
         }
-        for (Map.Entry<String, String> argument : arguments.duplicateArguments.entrySet()) {
+        for (Map.Entry<String, String> argument : errors.getDuplicateArguments().entrySet()) {
             collector.report(STRONG_WARNING, "Argument " + argument.getKey() + " is passed multiple times. " +
                                              "Only the last value will be used: " + argument.getValue(), null);
         }

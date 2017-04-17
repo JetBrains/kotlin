@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import com.intellij.util.SmartList
 import java.lang.reflect.Field
+import java.util.LinkedHashMap
 
 annotation class Argument(
         val value: String,
@@ -32,6 +34,21 @@ val Argument.isAdvanced: Boolean
 private val ADVANCED_ARGUMENT_PREFIX = "-X"
 private val FREE_ARGS_DELIMITER = "--"
 
+class ArgumentParseErrors {
+    val unknownArgs: MutableList<String> = SmartList<String>()
+
+    val unknownExtraFlags: MutableList<String> = SmartList<String>()
+
+    // Names of extra (-X...) arguments which have been passed in an obsolete form ("-Xaaa bbb", instead of "-Xaaa=bbb")
+    val extraArgumentsPassedInObsoleteForm: MutableList<String> = SmartList<String>()
+
+    // Non-boolean arguments which have been passed multiple times, possibly with different values.
+    // The key in the map is the name of the argument, the value is the last passed value.
+    val duplicateArguments: MutableMap<String, String> = LinkedHashMap<String, String>()
+
+    var argumentWithoutValue: String? = null
+}
+
 // Parses arguments in the passed [result] object, or throws an [IllegalArgumentException] with the message to be displayed to the user
 fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>, result: A) {
     data class ArgumentField(val field: Field, val argument: Argument)
@@ -41,11 +58,12 @@ fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>,
         if (argument != null) ArgumentField(field, argument) else null
     }
 
+    val errors = result.errors
     val visitedArgs = mutableSetOf<String>()
     var freeArgsStarted = false
 
     var i = 0
-    while (i < args.size) {
+    loop@ while (i < args.size) {
         val arg = args[i++]
 
         if (freeArgsStarted) {
@@ -65,8 +83,8 @@ fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>,
 
         if (argumentField == null) {
             when {
-                arg.startsWith(ADVANCED_ARGUMENT_PREFIX) -> result.unknownExtraFlags.add(arg)
-                arg.startsWith("-") -> result.unknownArgs.add(arg)
+                arg.startsWith(ADVANCED_ARGUMENT_PREFIX) -> errors.unknownExtraFlags.add(arg)
+                arg.startsWith("-") -> errors.unknownArgs.add(arg)
                 else -> result.freeArgs.add(arg)
             }
             continue
@@ -80,17 +98,20 @@ fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>,
             }
             else -> {
                 if (i == args.size) {
-                    throw IllegalArgumentException("No value passed for argument $arg")
+                    errors.argumentWithoutValue = arg
+                    break@loop
                 }
-                if (argument.isAdvanced) {
-                    result.extraArgumentsPassedInObsoleteForm.add(arg)
+                else {
+                    if (argument.isAdvanced) {
+                        errors.extraArgumentsPassedInObsoleteForm.add(arg)
+                    }
+                    args[i++]
                 }
-                args[i++]
             }
         }
 
         if (!field.type.isArray && !visitedArgs.add(argument.value) && value is String && field.get(result) != value) {
-            result.duplicateArguments.put(argument.value, value)
+            errors.duplicateArguments.put(argument.value, value)
         }
 
         updateField(field, result, value, argument.delimiter)
@@ -108,4 +129,17 @@ private fun <A : CommonCompilerArguments> updateField(field: Field, result: A, v
         }
         else -> throw IllegalStateException("Unsupported argument type: ${field.type}")
     }
+}
+
+/**
+ * @return error message if arguments are parsed incorrectly, null otherwise
+ */
+fun validateArguments(errors: ArgumentParseErrors): String? {
+    if (errors.argumentWithoutValue != null) {
+        return "No value passed for argument ${errors.argumentWithoutValue}"
+    }
+    if (errors.unknownArgs.isNotEmpty()) {
+        return "Invalid argument: ${errors.unknownArgs.first()}"
+    }
+    return null
 }
