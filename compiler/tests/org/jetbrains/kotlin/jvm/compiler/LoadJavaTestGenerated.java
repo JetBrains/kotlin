@@ -284,6 +284,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestCompiledJava(fileName);
         }
 
+        @TestMetadata("TopLevel$Class.java")
+        public void testTopLevel$Class() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/TopLevel$Class.java");
+            doTestCompiledJava(fileName);
+        }
+
         @TestMetadata("TwoFields.java")
         public void testTwoFields() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/TwoFields.java");

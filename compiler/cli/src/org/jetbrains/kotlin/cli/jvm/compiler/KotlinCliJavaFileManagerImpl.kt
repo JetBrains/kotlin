@@ -28,6 +28,10 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolutionContext
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.isNotTopLevelClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
@@ -42,6 +46,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private val perfCounter = PerformanceCounter.create("Find Java class")
     private var index: JvmDependenciesIndex by Delegates.notNull()
     private val topLevelClassesCache: MutableMap<FqName, VirtualFile?> = THashMap()
+    private val allScope = GlobalSearchScope.allScope(myPsiManager.project)
 
     fun initIndex(packagesCache: JvmDependenciesIndex) {
         this.index = packagesCache
@@ -60,8 +65,41 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         }?.takeIf { it in searchScope }
     }
 
+    private val binaryCache: MutableMap<ClassId, JavaClass?> = THashMap()
+    private val signatureParsingComponent =
+            BinaryClassSignatureParser(ClassifierResolutionContext { findClass(it, allScope) })
+
     override fun findClass(classId: ClassId, searchScope: GlobalSearchScope): JavaClass? {
         val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null
+
+        if (virtualFile.extension == "class") {
+            // We return all class files' names in the directory in knownClassNamesInPackage method, so one may request an inner class
+            return binaryCache.getOrPut(classId) {
+                // Note that currently we implicitly suppose that searchScope for binary classes is constant and we do not use it
+                // as a key in cache
+                // This is a true assumption by now since there are two search scopes in compiler: one for sources and another one for binary
+                // When it become wrong because we introduce the modules into CLI, it's worth to consider
+                // having different KotlinCliJavaFileManagerImpl's for different modules
+                val classContent = virtualFile.contentsToByteArray()
+                if (virtualFile.nameWithoutExtension.contains("$") && isNotTopLevelClass(classContent)) return@getOrPut null
+                classId.outerClassId?.let { outerClassId ->
+                    val outerClass = findClass(outerClassId, searchScope)
+                    return@getOrPut outerClass?.findInnerClass(classId.shortClassName)
+                }
+
+                val resolver = ClassifierResolutionContext { findClass(it, searchScope) }
+
+                BinaryJavaClass(
+                        virtualFile,
+                        classId.asSingleFqName(),
+                        resolver,
+                        signatureParsingComponent,
+                        outerClass = null,
+                        classContent = classContent
+                )
+            }
+        }
+
         return virtualFile.findPsiClassInVirtualFile(classId.relativeClassName.asString())?.let(::JavaClassImpl)
     }
 

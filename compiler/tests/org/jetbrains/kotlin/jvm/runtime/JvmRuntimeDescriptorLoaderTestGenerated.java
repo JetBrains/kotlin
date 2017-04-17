@@ -3410,6 +3410,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             doTest(fileName);
         }
 
+        @TestMetadata("TopLevel$Class.java")
+        public void testTopLevel$Class() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/TopLevel$Class.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("TwoFields.java")
         public void testTwoFields() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/TwoFields.java");
