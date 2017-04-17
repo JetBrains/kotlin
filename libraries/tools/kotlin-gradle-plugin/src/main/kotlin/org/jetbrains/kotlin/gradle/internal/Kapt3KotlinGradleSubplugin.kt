@@ -68,7 +68,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 File(project.project.buildDir, "tmp/kapt3/classes/$sourceSetName")
     }
 
-    private val kotlinToKaptTasksMap = mutableMapOf<KotlinCompile, KaptTask>()
     private val kotlinToKaptGenerateStubsTasksMap = mutableMapOf<KotlinCompile, KaptGenerateStubsTask>()
 
     override fun isApplicable(project: Project, task: KotlinCompile) = Kapt3GradleSubplugin.isEnabled(project)
@@ -158,9 +157,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     }
 
     override fun getSubpluginKotlinTasks(project: Project, kotlinCompile: KotlinCompile): List<AbstractCompile> {
-        val kaptTask = kotlinToKaptTasksMap[kotlinCompile]
         val kaptGenerateStubsTask = kotlinToKaptGenerateStubsTasksMap[kotlinCompile]
-        return listOf(kaptTask, kaptGenerateStubsTask).filterNotNull()
+        return if (kaptGenerateStubsTask == null) emptyList() else listOf(kaptGenerateStubsTask)
     }
 
     // This method should be called no more than once for each Kapt3SubpluginContext
@@ -254,7 +252,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     private fun Kapt3SubpluginContext.createKaptKotlinTask(kaptGenerateStubsTask: KaptGenerateStubsTask) {
         val kaptTask = project.tasks.create(getKaptTaskName("kapt"), KaptTask::class.java)
         kaptTask.kotlinCompileTask = kotlinCompile
-        kotlinToKaptTasksMap[kotlinCompile] = kaptTask
 
         kaptClasspathArtifacts.forEach { kaptTask.pluginOptions.addClasspathEntry(it) }
 
@@ -262,6 +259,16 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.destinationDir = sourcesOutputDir
         kaptTask.mapClasspath { kotlinCompile.classpath }
         kaptTask.classesDir = classesOutputDir
+
+        kaptTask.mapSource {
+            val sourcesFromKotlinTask = kotlinCompile.source
+                    .filter { it.extension == "java" && !kaptTask.isInsideDestinationDirs(it) }
+                    .asFileTree
+
+            val stubSources = project.fileTree(kaptTask.stubsDir)
+
+            sourcesFromKotlinTask + stubSources
+        }
 
         kaptTask.dependsOn(kaptGenerateStubsTask)
         kotlinCompile.dependsOn(kaptTask)
