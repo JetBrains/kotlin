@@ -383,11 +383,12 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
 
         override fun visitCall(expression: IrCall): IrCall {
             if (expression !is IrCallImpl) return super.visitCall(expression)
+            val newDescriptor = mapCallee(expression.descriptor)
             return IrCallImpl(
                 startOffset    = expression.startOffset,
                 endOffset      = expression.endOffset,
-                type           = substituteType(expression.type)!!,
-                descriptor     = mapCallee(expression.descriptor),
+                type           = newDescriptor.returnType!!,
+                descriptor     = newDescriptor,
                 typeArguments  = substituteTypeArguments(expression.getTypeArgumentsMap()),
                 origin         = expression.origin,
                 superQualifier = mapSuperQualifier(expression.superQualifier)
@@ -419,15 +420,17 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
 
         //---------------------------------------------------------------------//
 
-        override fun visitCallableReference(expression: IrCallableReference): IrCallableReference =
-            IrCallableReferenceImpl(
+        override fun visitCallableReference(expression: IrCallableReference): IrCallableReference {
+            val newDescriptor = mapCallableReference(expression.descriptor)
+            return IrCallableReferenceImpl(
                 startOffset   = expression.startOffset,
                 endOffset     = expression.endOffset,
-                type          = substituteType(expression.type)!!,
-                descriptor    = mapCallableReference(expression.descriptor),
+                type          = newDescriptor.returnType!!,
+                descriptor    = newDescriptor,
                 typeArguments = expression.getTypeArgumentsMap(),
                 origin        = mapStatementOrigin(expression.origin)
             ).transformValueArguments(expression)
+        }
 
         //---------------------------------------------------------------------//
 
