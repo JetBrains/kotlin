@@ -155,8 +155,10 @@ class OptimizedImportsBuilder(
             }
             else {
                 descriptors
+                        .asSequence()
                         .filterIsInstance<ClassDescriptor>()
-                        .mapTo(classNamesToCheck) { it.importableFqName!! }
+                        .map { it.importableFqName!! }
+                        .filterTo(classNamesToCheck) { !isImportedByDefault(it) }
 
                 if (!fqNames.all(this::isImportedByDefault)) {
                     importsToGenerate.add(starImportPath)

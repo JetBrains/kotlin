@@ -220,6 +220,12 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
                 doTest(fileName);
             }
 
+            @TestMetadata("ClassNameConflictWithinDefaultImports.kt")
+            public void testClassNameConflictWithinDefaultImports() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/jvm/allUnderImports/ClassNameConflictWithinDefaultImports.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NameCountSetting.kt")
             public void testNameCountSetting() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/jvm/allUnderImports/NameCountSetting.kt");
