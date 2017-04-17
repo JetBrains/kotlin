@@ -12670,6 +12670,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("labeledFunctionLiteral.kt")
+            public void testLabeledFunctionLiteral() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/labels/labeledFunctionLiteral.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("labelsMustBeNamed.kt")
             public void testLabelsMustBeNamed() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/labels/labelsMustBeNamed.kt");

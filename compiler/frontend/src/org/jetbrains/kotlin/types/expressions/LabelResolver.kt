@@ -182,19 +182,14 @@ object LabelResolver {
         }
         else if (size == 0) {
             val element = resolveNamedLabel(labelName, targetLabel, context.trace)
-            if (element is KtFunctionLiteral) {
-                val declarationDescriptor = context.trace.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
-                if (declarationDescriptor is FunctionDescriptor) {
-                    val thisReceiver = declarationDescriptor.extensionReceiverParameter
-                    if (thisReceiver != null) {
-                        context.trace.record(LABEL_TARGET, targetLabel, element)
-                        context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor)
-                    }
-                    return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver)
+            val declarationDescriptor = context.trace.bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element]
+            if (declarationDescriptor is FunctionDescriptor) {
+                val thisReceiver = declarationDescriptor.extensionReceiverParameter
+                if (thisReceiver != null) {
+                    context.trace.record(LABEL_TARGET, targetLabel, element)
+                    context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor)
                 }
-                else {
-                    context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel, targetLabel))
-                }
+                return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver)
             }
             else {
                 context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel, targetLabel))
