@@ -478,4 +478,14 @@ class KotlinGradleIT: BaseGradleIT() {
             assertContains(":compileKotlin", ":compileTestKotlin")
         }
     }
+
+    @Test
+    fun testCleanAfterIncrementalBuild() {
+        val project = Project("kotlinProject", "3.3")
+        val options = defaultBuildOptions().copy(incremental = true)
+
+        project.build("build", "clean", options = options) {
+            assertSuccessful()
+        }
+    }
 }
