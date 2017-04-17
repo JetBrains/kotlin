@@ -101,6 +101,9 @@ class KotlinSourceFilterScope private constructor(
         @JvmStatic
         fun libraryClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, false, false, true, true, project)
 
+        @JvmStatic
+        fun projectAndLibrariesSources(delegate: GlobalSearchScope, project: Project) = create(delegate, true, true, false, false, project)
+
         private fun create(
                 delegate: GlobalSearchScope,
                 includeProjectSourceFiles: Boolean,
