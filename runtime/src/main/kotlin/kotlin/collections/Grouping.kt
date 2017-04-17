@@ -235,6 +235,15 @@ public inline fun <S, T : S, K, M : MutableMap<in K, S>> Grouping<T, K>.reduceTo
             if (first) e else operation(key, acc as S, e)
         }
 
+/**
+ * Groups elements from the [Grouping] source by key and counts elements in each group.
+ *
+ * @return a [Map] associating the key of each group with the count of elements in the group.
+ *
+ * @sample samples.collections.Collections.Transformations.groupingByEachCount
+ */
+@SinceKotlin("1.1")
+public fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int> = eachCountTo(mutableMapOf<K, Int>())
 
 /**
  * Groups elements from the [Grouping] source by key and counts elements in each group to the given [destination] map.
