@@ -9,5 +9,5 @@ fun transform(i: Int, tr: (<!WRONG_ANNOTATION_TARGET!>@special<!> Int) -> Int): 
 fun foo(i: Int): Int {
     val j = @special i + 1
     if (j == 1) return foo(@special 42)
-    return transform(@special j, @special { i: @base Int -> <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!><!WRONG_ANNOTATION_TARGET!>@base<!> i<!> * 2 })
+    return transform(@special j, @special { <!NAME_SHADOWING!>i<!>: @base Int -> <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!><!WRONG_ANNOTATION_TARGET!>@base<!> i<!> * 2 })
 }

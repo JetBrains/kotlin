@@ -44,7 +44,7 @@ fun foo() {
     manyArgumentsBuilder<String>({}, { "" }, { 1 })
     manyArgumentsBuilder<String>({}, { <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }, { 2 })
 
-    severalParamsInLambda { x, y ->
+    severalParamsInLambda { <!NAME_SHADOWING!>x<!>, <!NAME_SHADOWING!>y<!> ->
         x checkType { _<String>() }
         y checkType { _<Int>() }
     }
