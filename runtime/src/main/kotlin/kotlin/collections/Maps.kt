@@ -61,12 +61,13 @@ public fun <K, V> mapOf(vararg pairs: Pair<K, V>): Map<K, V> =
 @kotlin.internal.InlineOnly
 public inline fun <K, V> mapOf(): Map<K, V> = emptyMap()
 
+// TODO: Add a singleton map class (see Kotlin JVM mapOf(Pair) implementation).
 /**
  * Returns an immutable map, mapping only the specified key to the
  * specified value.  The returned map is serializable.
  * @sample samples.collections.Maps.Instantiation.mapFromPairs
  */
-//public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = java.util.Collections.singletonMap(pair.first, pair.second)
+public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
 
 /**
  * Returns a new [MutableMap] with the specified contents, given as a list of pairs
@@ -226,6 +227,18 @@ internal inline fun <K, V> Map<K, V>.getOrElseNullable(key: K, defaultValue: () 
         return value as V
     }
 }
+
+/**
+ * Returns the value for the given [key] or throws an exception if there is no such key in the map.
+ *
+ * If the map was created by [withDefault], resorts to its `defaultValue` provider function
+ * instead of throwing an exception.
+ *
+ * @throws NoSuchElementException when the map doesn't contain a value for the specified key and
+ * no implicit default value was provided for that map.
+ */
+@SinceKotlin("1.1")
+public fun <K, V> Map<K, V>.getValue(key: K): V = getOrImplicitDefault(key)
 
 /**
  * Returns the value for the given key. If the key is not found in the map, calls the [defaultValue] function,
@@ -718,3 +731,73 @@ public inline fun <K, V> Map<out K, V>.count(predicate: (Map.Entry<K, V>) -> Boo
 public inline fun <K, V> Map<out K, V>.forEach(action: (Map.Entry<K, V>) -> Unit): Unit {
     for (element in this) action(element)
 }
+
+/**
+ * Returns the first entry yielding the largest value of the given function or `null` if there are no entries.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
+    return entries.maxBy(selector)
+}
+
+/**
+ * Returns the first entry having the largest value according to the provided [comparator] or `null` if there are no entries.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<out K, V>.maxWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
+    return entries.maxWith(comparator)
+}
+
+/**
+ * Returns the first entry yielding the smallest value of the given function or `null` if there are no entries.
+ */
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
+    return entries.minBy(selector)
+}
+
+/**
+ * Returns the first entry having the smallest value according to the provided [comparator] or `null` if there are no entries.
+ */
+public fun <K, V> Map<out K, V>.minWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
+    return entries.minWith(comparator)
+}
+
+/**
+ * Returns `true` if the map has no entries.
+ */
+public fun <K, V> Map<out K, V>.none(): Boolean {
+    for (element in this) return false
+    return true
+}
+
+/**
+ * Returns `true` if no entries match the given [predicate].
+ */
+public inline fun <K, V> Map<out K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+}
+
+/**
+ * Performs the given [action] on each entry and returns the map itself afterwards.
+ */
+@SinceKotlin("1.1")
+public inline fun <K, V, M : Map<out K, V>> M.onEach(action: (Map.Entry<K, V>) -> Unit): M {
+    return apply { for (element in this) action(element) }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original map returning its entries when being iterated.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<out K, V>.asIterable(): Iterable<Map.Entry<K, V>> {
+    return entries
+}
+
+/**
+ * Creates a [Sequence] instance that wraps the original map returning its entries when being iterated.
+ */
+public fun <K, V> Map<out K, V>.asSequence(): Sequence<Map.Entry<K, V>> {
+    return entries.asSequence()
+}
+
