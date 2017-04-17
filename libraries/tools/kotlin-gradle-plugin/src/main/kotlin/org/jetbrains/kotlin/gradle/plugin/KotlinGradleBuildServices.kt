@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.incremental.BuildCacheStorage
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import org.jetbrains.kotlin.incremental.relativeToRoot
+import org.jetbrains.kotlin.incremental.stackTraceStr
 import java.io.File
 
 internal class KotlinGradleBuildServices private constructor(gradle: Gradle): BuildAdapter() {
@@ -120,17 +121,43 @@ internal class KotlinGradleBuildServices private constructor(gradle: Gradle): Bu
             }
         }
 
-
-        if (workingDir.exists()) {
-            // The working directory may have been removed by the clean task.
-            // https://youtrack.jetbrains.com/issue/KT-16298
-            buildCacheStorage.flush(memoryCachesOnly = false)
-        }
-        buildCacheStorage.close()
-
+        closeArtifactDifferenceRegistry()
         gradle.removeListener(this)
         instance = null
         log.kotlinDebug(DISPOSE_MESSAGE)
+    }
+
+    private fun closeArtifactDifferenceRegistry() {
+        var caughtError = false
+        try {
+            if (workingDir.exists()) {
+                // The working directory may have been removed by the clean task.
+                // https://youtrack.jetbrains.com/issue/KT-16298
+                buildCacheStorage.flush(memoryCachesOnly = false)
+            }
+        }
+        catch (e: Throwable) {
+            log.kotlinDebug { "Error trying to flush artifact difference registry: ${e.stackTraceStr}" }
+            caughtError = true
+        }
+        finally {
+            try {
+                buildCacheStorage.close()
+            }
+            catch (e: Throwable) {
+                log.kotlinDebug { "Error trying to close artifact difference registry: ${e.stackTraceStr}" }
+                caughtError = true
+            }
+        }
+
+        if (caughtError && workingDir.exists()) {
+            try {
+                workingDir.deleteRecursively()
+            }
+            catch (e: Throwable) {
+                log.kotlinDebug { "Error trying to delete kotlin-build $workingDir: ${e.stackTraceStr}" }
+            }
+        }
     }
 
     private fun getUsedMemoryKb(): Long? {

@@ -100,8 +100,13 @@ internal class BuildCacheStorage(workingDir: File) : BasicMapsOwner(), ArtifactD
         versionFile.delete()
     }
 
+    override fun flush(memoryCachesOnly: Boolean) {
+        super.flush(memoryCachesOnly)
+        version.saveIfNeeded()
+    }
+
     override fun close() {
         super.close()
-        version.saveIfNeeded()
+        artifactDifferenceRegistry = null
     }
 }
