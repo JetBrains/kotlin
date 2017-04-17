@@ -151,6 +151,16 @@ val intPtr: CPointer<IntVar> = bytePtr.reinterpret()
 As in C, those reinterpret casts are unsafe and could potentially lead to
 subtle memory problems in an application.
 
+Also there are unsafe casts between `CPointer<T>?` and `Long` available,
+provided by `.toLong()` and `.toCPointer<T>()` extension methods:
+```
+val longValue = ptr.toLong()
+val originalPtr = longValue.toCPointer<T>()
+```
+
+Note that if the type of the result is known from the context, the type argument
+can be omitted as usual due to type inference.
+
 ### Memory allocation ###
 
 The native memory can be allocated using `NativePlacement` interface, e.g.

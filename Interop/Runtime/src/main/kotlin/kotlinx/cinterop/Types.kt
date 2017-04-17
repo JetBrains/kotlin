@@ -161,6 +161,10 @@ val CPointer<*>?.rawValue: NativePtr
 
 fun <T : CPointed> CPointer<*>.reinterpret(): CPointer<T> = interpretCPointer(this.rawValue)!!
 
+fun <T : CPointed> CPointer<T>?.toLong() = this.rawValue.toLong()
+
+fun <T : CPointed> Long.toCPointer(): CPointer<T>? = interpretCPointer(nativeNullPtr + this)
+
 /**
  * The [CPointed] without any specified interpretation.
  */

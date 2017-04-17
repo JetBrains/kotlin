@@ -78,7 +78,7 @@ fun callWithVarargs(codePtr: NativePtr, returnValuePtr: NativePtr, returnTypeKin
     // All supported arguments take at most 8 bytes each:
     val argumentsStorage = argumentsPlacement.allocArray<LongVar>(totalArgumentsNumber)
     val arguments = argumentsPlacement.allocArray<CPointerVar<*>>(totalArgumentsNumber)
-    val types = argumentsPlacement.allocArray<CPointerVar<*>>(totalArgumentsNumber)
+    val types = argumentsPlacement.allocArray<COpaquePointerVar>(totalArgumentsNumber)
 
     var index = 0
 
@@ -87,7 +87,7 @@ fun callWithVarargs(codePtr: NativePtr, returnValuePtr: NativePtr, returnTypeKin
         val typeKind = convertArgument(argument, isVariadic = isVariadic,
                 location = storage, additionalPlacement = argumentsPlacement)
 
-        types[index] = interpretCPointer<COpaque>(nativeNullPtr + typeKind.toLong())
+        types[index] = typeKind.toLong().toCPointer()
         arguments[index] = storage
 
         ++index
