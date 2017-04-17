@@ -138,7 +138,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     override fun getNavigationElement(): PsiElement = classOrObject
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        return another is PsiClass && Comparing.equal(another.qualifiedName, qualifiedName)
+        return another is KtLightClassForSourceDeclaration && Comparing.equal(another.qualifiedName, qualifiedName)
     }
 
     override fun getElementIcon(flags: Int): Icon? {
