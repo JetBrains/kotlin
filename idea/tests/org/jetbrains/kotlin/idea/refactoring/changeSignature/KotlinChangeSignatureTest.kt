@@ -125,9 +125,9 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
         compareEditorsWithExpectedData()
     }
 
-    private fun doTestConflict(configure: KotlinChangeInfo.() -> Unit = {}) {
+    private fun runAndCheckConflicts(testAction: () -> Unit) {
         try {
-            doTest(configure)
+            testAction()
             TestCase.fail("No conflicts found")
         }
         catch (e: Throwable) {
@@ -141,6 +141,8 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
             UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message)
         }
     }
+
+    private fun doTestConflict(configure: KotlinChangeInfo.() -> Unit = {}) = runAndCheckConflicts { doTest(configure) }
 
     private fun doTestUnmodifiable(configure: KotlinChangeInfo.() -> Unit = {}) {
         try {
@@ -216,6 +218,8 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
 
         compareEditorsWithExpectedData()
     }
+
+    private fun doJavaTestConflict(configure: JavaRefactoringConfiguration.() -> Unit) = runAndCheckConflicts { doJavaTest(configure) }
 
     private fun compareEditorsWithExpectedData() {
         //noinspection ConstantConditions
@@ -671,7 +675,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testParameterToReceiverImplicitReceivers() = doTest { receiverParameterInfo = newParameters[0] }
 
-    fun testJavaMethodOverridesReplaceParam() = doJavaTest {
+    fun testJavaMethodOverridesReplaceParam() = doJavaTestConflict {
         newReturnType = stringPsiType
         newParameters[0] = ParameterInfoImpl(-1, "x", PsiType.INT, "1")
     }
