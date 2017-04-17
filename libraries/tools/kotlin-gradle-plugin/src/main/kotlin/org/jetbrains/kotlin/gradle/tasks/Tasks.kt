@@ -145,10 +145,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     internal abstract fun callCompiler(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
 
     open fun setupCompilerArgs(args: T, defaultsOnly: Boolean = false) {
-        coroutines.let {
-            args.coroutinesEnable = it == Coroutines.ENABLE
-            args.coroutinesWarn =   it == Coroutines.WARN
-            args.coroutinesError =  it == Coroutines.ERROR
+        args.coroutinesState = when (coroutines) {
+            Coroutines.ENABLE -> CommonCompilerArguments.ENABLE
+            Coroutines.WARN -> CommonCompilerArguments.WARN
+            Coroutines.ERROR -> CommonCompilerArguments.ERROR
         }
 
         if (project.logger.isDebugEnabled) {
