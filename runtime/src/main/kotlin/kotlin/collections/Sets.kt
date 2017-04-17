@@ -58,7 +58,7 @@ public fun <T> hashSetOf(vararg elements: T): HashSet<T> = elements.toCollection
  * Returns a new [LinkedHashSet] with the given elements.
  * Elements of the set are iterated in the order they were specified.
  */
-//public fun <T> linkedSetOf(vararg elements: T): LinkedHashSet<T> = elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
+public fun <T> linkedSetOf(vararg elements: T): LinkedHashSet<T> = elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
 
 /** Returns this Set if it's not `null` and the empty set otherwise. */
 @kotlin.internal.InlineOnly
