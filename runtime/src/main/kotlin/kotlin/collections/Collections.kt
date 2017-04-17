@@ -309,15 +309,6 @@ public fun CharArray.asList(): List<Char> {
     }
 }
 
-
-@FixmeVariance
-public fun <T, C : MutableCollection</*in */T>> Iterable<T>.toCollection(destination: C): C {
-    for (item in this) {
-        destination.add(item)
-    }
-    return destination
-}
-
 @Fixme
 internal fun <T> List<T>.optimizeReadOnlyList() = this
 

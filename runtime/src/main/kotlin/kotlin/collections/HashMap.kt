@@ -45,7 +45,7 @@ class HashMap<K, V> private constructor(
             INITIAL_MAX_PROBE_DISTANCE,
             0)
 
-    constructor(m: Map<K, V>) : this(m.size) {
+    constructor(m: Map<out K, out V>) : this(m.size) {
         putAll(m)
     }
 

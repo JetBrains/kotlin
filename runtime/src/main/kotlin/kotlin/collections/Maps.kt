@@ -487,7 +487,8 @@ public fun <K, V, M : MutableMap<in K, in V>> Sequence<Pair<K, V>>.toMap(destina
  *
  * The returned map preserves the entry iteration order of the original map.
  */
-public fun <K, V> Map</* out */K, V>.toMap(): Map<K, V> = when (size) {
+@SinceKotlin("1.1")
+public fun <K, V> Map<out K, V>.toMap(): Map<K, V> = when (size) {
     0 -> emptyMap()
 //    1 -> toSingletonMap()
     else -> toMutableMap()
@@ -498,7 +499,8 @@ public fun <K, V> Map</* out */K, V>.toMap(): Map<K, V> = when (size) {
  *
  * The returned map preserves the entry iteration order of the original map.
  */
-public fun <K, V> Map</*out */K, V>.toMutableMap(): MutableMap<K, V> = HashMap(this)
+@SinceKotlin("1.1")
+public fun <K, V> Map<out K, V>.toMutableMap(): MutableMap<K, V> = HashMap<K, V>(this)
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs from the given map.
@@ -512,9 +514,8 @@ public fun <K, V, M : MutableMap<in K, in V>> Map<out K, V>.toMap(destination: M
  * The returned map preserves the entry iteration order of the original map.
  * The [pair] is iterated in the end if it has a unique key.
  */
-@FixmeVariance
-public operator fun <K, V> Map</*out */K, V>.plus(pair: Pair<K, V>): Map<K, V>
-        = if (this.isEmpty()) mapOf(pair) else HashMap(this).apply { put(pair.first, pair.second) }
+public operator fun <K, V> Map<out K, V>.plus(pair: Pair<K, V>): Map<K, V>
+        = if (this.isEmpty()) mapOf(pair) else HashMap<K, V>(this).apply { put(pair.first, pair.second) }
 
 /**
  * Creates a new read-only map by replacing or adding entries to this map from a given collection of key-value [pairs].
@@ -522,8 +523,7 @@ public operator fun <K, V> Map</*out */K, V>.plus(pair: Pair<K, V>): Map<K, V>
  * The returned map preserves the entry iteration order of the original map.
  * Those [pairs] with unique keys are iterated in the end in the order of [pairs] collection.
  */
-@FixmeVariance
-public operator fun <K, V> Map</*out */K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V>
+public operator fun <K, V> Map<out K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V>
         = if (this.isEmpty()) pairs.toMap() else HashMap(this).apply { putAll(pairs) }
 
 /**
@@ -532,8 +532,7 @@ public operator fun <K, V> Map</*out */K, V>.plus(pairs: Iterable<Pair<K, V>>): 
  * The returned map preserves the entry iteration order of the original map.
  * Those [pairs] with unique keys are iterated in the end in the order of [pairs] array.
  */
-@FixmeVariance
-public operator fun <K, V> Map</*out */K, V>.plus(pairs: Array<out Pair<K, V>>): Map<K, V>
+public operator fun <K, V> Map<out K, V>.plus(pairs: Array<out Pair<K, V>>): Map<K, V>
         = if (this.isEmpty()) pairs.toMap() else HashMap(this).apply { putAll(pairs) }
 
 /**
@@ -542,7 +541,7 @@ public operator fun <K, V> Map</*out */K, V>.plus(pairs: Array<out Pair<K, V>>):
  * The returned map preserves the entry iteration order of the original map.
  * Those [pairs] with unique keys are iterated in the end in the order of [pairs] sequence.
  */
-public operator fun <K, V> Map</*out */K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<K, V>
+public operator fun <K, V> Map<out K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<K, V>
         = HashMap(this).apply { putAll(pairs) }.optimizeReadOnlyMap()
 
 /**
@@ -551,8 +550,7 @@ public operator fun <K, V> Map</*out */K, V>.plus(pairs: Sequence<Pair<K, V>>): 
  * The returned map preserves the entry iteration order of the original map.
  * Those entries of another [map] that are missing in this map are iterated in the end in the order of that [map].
  */
-@FixmeVariance
-public operator fun <K, V> Map</*out */K, V>.plus(map: Map</*out */K, V>): Map<K, V>
+public operator fun <K, V> Map<out K, V>.plus(map: Map<out K, V>): Map<K, V>
         = HashMap(this).apply { putAll(map) }
 
 /**
