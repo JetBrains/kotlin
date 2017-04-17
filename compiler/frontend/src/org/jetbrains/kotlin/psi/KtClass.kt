@@ -50,14 +50,27 @@ open class KtClass : KtClassOrObject {
     fun isInner(): Boolean = hasModifier(KtTokens.INNER_KEYWORD)
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (super.isEquivalentTo(another)) {
+        if (this === another) {
             return true
         }
-        if (another is KtClass) {
-            val fq1 = getQualifiedName()
-            val fq2 = another.getQualifiedName()
-            return fq1 != null && fq2 != null && fq1 == fq2
+
+        if (another !is KtClass) {
+            return false
         }
+
+        val fq1 = getQualifiedName() ?: return false
+        val fq2 = another.getQualifiedName() ?: return false
+        if (fq1 == fq2) {
+            val thisLocal = isLocal
+            if (thisLocal != another.isLocal) {
+                return false
+            }
+
+            // For non-local classes same fqn is enough
+            // Consider different instances of local classes non-equivalent
+            return !thisLocal
+        }
+
         return false
     }
 

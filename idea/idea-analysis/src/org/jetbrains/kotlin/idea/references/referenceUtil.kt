@@ -86,7 +86,11 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
     }
 
     val targets = unwrappedTargets
-    if (unwrappedCandidate in targets) return true
+
+    val manager = candidateTarget.manager
+    if (targets.any { manager.areElementsEquivalent(unwrappedCandidate, it) }) {
+        return true
+    }
 
     if (element is KtLabelReferenceExpression && (element.parent as? KtContainerNode)?.parent is KtReturnExpression) {
         targets.forEach {
@@ -96,9 +100,6 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
             if (calleeReference.matchesTarget(candidateTarget)) return true
         }
     }
-
-    // TODO: Investigate why PsiCompiledElement identity changes
-    if (unwrappedCandidate is PsiCompiledElement && targets.any { it.isEquivalentTo(unwrappedCandidate) }) return true
 
     if (this is KtReference) {
         return targets.any {
