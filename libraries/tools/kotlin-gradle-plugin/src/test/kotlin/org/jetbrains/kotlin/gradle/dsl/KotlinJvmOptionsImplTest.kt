@@ -12,7 +12,7 @@ class KotlinJvmOptionsTest {
                 "-Xreport-perf",
                 "-Xallow-kotlin-package",
                 "-Xmultifile-parts-inherit",
-                "-Xdump-declarations-to=declarationsPath",
+                "-Xdump-declarations-to", "declarationsPath",
                 "-script-templates", "a,b,c")
 
         val arguments = K2JVMCompilerArguments()

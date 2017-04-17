@@ -74,7 +74,7 @@ compileKotlin {
         freeCompilerArgs = ["-version",
                             "-Xallow-kotlin-package",
                             "-module-name", "kotlin-reflection",
-                            "-Xdump-declarations-to=${buildDir}/reflect-declarations.json"]
+                            "-Xdump-declarations-to", "${buildDir}/reflect-declarations.json"]
     }
 }
 
