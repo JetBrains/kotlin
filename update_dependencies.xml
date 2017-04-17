@@ -177,7 +177,7 @@
         </jar>
     </target>
 
-    <target name="fetch-third-party" depends="make-dependency-dirs, make-native-platform-uberjar">
+    <target name="fetch-third-party" depends="make-dependency-dirs, make-native-platform-uberjar, fetch-idea-artifacts-for-compiler-tests">
         <antcall target="override-version"/>
 
         <!-- ProGuard -->
@@ -863,6 +863,18 @@
       - Fill the target with downloading correct annotations
     -->
     <target name="fetch-annotations"/>
+
+    <target name="fetch-idea-artifacts-for-compiler-tests">
+        <!-- For running compiler tests with Java 1.6 -->
+        <local name="idea.for.compiler.testing.dir"/>
+        <property name="idea.for.compiler.testing.dir" value="dependencies/download/idea-for-compiler-test"/>
+        <mkdir dir="${idea.for.compiler.testing.dir}"/>
+        <local name="idea.for.compiler.testing.base.url"/>
+        <property name="idea.for.compiler.testing.base.url"
+                  value="https://teamcity.jetbrains.com/guestAuth/repository/download/IntelliJIdeaCe_OpenapiJar/idea-15.0.5"/>
+        <get src="${idea.for.compiler.testing.base.url}/idea_rt.jar" dest="${idea.for.compiler.testing.dir}/idea_rt.jar" usetimestamp="true"/>
+        <get src="${idea.for.compiler.testing.base.url}/openapi.jar" dest="${idea.for.compiler.testing.dir}/openapi.jar" usetimestamp="true"/>
+    </target>
 
     <target name="get_android_studio">
         <condition property="android.os.tag" value="windows">
