@@ -1,0 +1,31 @@
+package test
+
+private fun getJavaInner(): test.JavaClass2.JavaInner!
+private fun getKotlinInner(): test.KotlinClass.KotlinInner!
+
+public/*package*/ open class JavaClass2 {
+    public/*package*/ constructor JavaClass2()
+
+    public/*package*/ open class JavaInner {
+        public/*package*/ constructor JavaInner()
+    }
+}
+
+private open class KotlinClass : test.JavaClass2, test.KotlinInterface {
+    public constructor KotlinClass()
+    public final val innerCl: test.JavaClass2.JavaInner
+
+    public final inner class KotlinInner {
+        public constructor KotlinInner()
+    }
+}
+
+public interface KotlinInterface {
+}
+
+public open class UseKotlinInner : test.KotlinClass {
+    public constructor UseKotlinInner()
+    public final /*fake_override*/ val innerCl: test.JavaClass2.JavaInner
+    public/*package*/ open fun getJavaInner(): test.JavaClass2.JavaInner!
+    public/*package*/ open fun getKotlinInner(): test.KotlinClass.KotlinInner!
+}

@@ -108,7 +108,7 @@ class JavacWrapper(javaFiles: Collection<File>,
             .map { JCPackage(it.packageName.toString(), this) }
             .associateBy(JCPackage::fqName)
 
-    private val kotlinClassifiersCache = KotlinClassifiersCache(kotlinFiles)
+    private val kotlinClassifiersCache = KotlinClassifiersCache(kotlinFiles, this)
 
     fun compile(outDir: File? = null) = with(javac) {
         if (errorCount() > 0) return false
