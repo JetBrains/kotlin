@@ -204,6 +204,18 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("ReturnEnum.kt")
+    public void testReturnEnum() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/ReturnEnum.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ReturnInnerClass.kt")
+    public void testReturnInnerClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/ReturnInnerClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ReturnInnerInner.kt")
     public void testReturnInnerInner() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/ReturnInnerInner.kt");
