@@ -1659,8 +1659,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
     private fun IrFile.file(): DIFileRef {
         return context.debugInfo.files.getOrPut(this) {
-            val path = this.fileEntry.name.split("/")
-            DICreateFile(context.debugInfo.builder, path.last(), path.dropLast(1).joinToString("/"))!!
+            val path = this.fileEntry.name.toFileAndFolder()
+            DICreateFile(context.debugInfo.builder, path.file, path.folder)!!
         }
     }
 

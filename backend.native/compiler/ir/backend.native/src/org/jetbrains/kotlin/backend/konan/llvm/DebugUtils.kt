@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.KonanVersion
 import org.jetbrains.kotlin.ir.SourceManager.FileEntry
+import org.jetbrains.kotlin.backend.konan.util.File
 
 
 internal object DWARF {
@@ -50,20 +51,35 @@ internal fun FileEntry.line(offset: Int) = location(offset, this::getLineNumber)
 
 internal fun FileEntry.column(offset: Int) = location(offset, this::getColumnNumber)
 
+internal data class FileAndFolder(val file:String, val folder:String) {
+    companion object {
+        val NOFILE =  FileAndFolder("-", "")
+    }
+
+    fun path() = if (this == NOFILE) file else "$folder/$file"
+}
+
+internal fun String?.toFileAndFolder():FileAndFolder {
+    this ?: return FileAndFolder.NOFILE
+    val file = File(this).absoluteFile
+    return FileAndFolder(file.name, file.parent)
+}
+
 internal fun generateDebugInfoHeader(context: Context) {
     if (context.shouldContainDebugInfo()) {
+        val path = context.config.configuration.get(KonanConfigKeys.BITCODE_FILE).toFileAndFolder()
         context.debugInfo.module = DICreateModule(
                 builder = context.debugInfo.builder,
                 scope = context.llvmModule as DIScopeOpaqueRef,
-                name = context.config.configuration.get(KonanConfigKeys.BITCODE_FILE)!!,
+                name = path.path(),
                 configurationMacro = "",
                 includePath = "",
                 iSysRoot = "")
         context.debugInfo.compilationModule = DICreateCompilationUnit(
                 builder = context.debugInfo.builder,
                 lang = DWARF.DW_LANG_kotlin,
-                File = context.config.configuration.get(KonanConfigKeys.BITCODE_FILE)!!,
-                dir = "",
+                File = path.file,
+                dir = path.folder,
                 producer = DWARF.producer,
                 isOptimized = 0,
                 flags = "",
