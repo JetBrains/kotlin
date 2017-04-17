@@ -354,20 +354,21 @@ private fun processLib(konanHome: String,
         }
     }
 
-    val workDir = defFile?.absoluteFile?.parentFile ?: File(System.getProperty("java.io.tmpdir"))
+    val workDir = defFile?.absoluteFile?.parentFile ?: File(userDir)
 
     if (flavor == KotlinPlatform.JVM) {
 
         val outOFile = createTempFile(suffix = ".o")
 
         val compilerCmd = arrayOf("$llvmInstallPath/bin/$compiler", *gen.libraryForCStubs.compilerArgs.toTypedArray(),
-                "-c", outCFile.path, "-o", outOFile.path)
+                "-c", outCFile.absolutePath, "-o", outOFile.absolutePath)
 
         runCmd(compilerCmd, workDir, verbose)
 
-        val outLib = nativeLibsDir + "/" + System.mapLibraryName(libName)
+        val outLib = File(nativeLibsDir, System.mapLibraryName(libName))
 
-        val linkerCmd = arrayOf("$llvmInstallPath/bin/$linker", *linkerOpts, outOFile.path, "-shared", "-o", outLib,
+        val linkerCmd = arrayOf("$llvmInstallPath/bin/$linker", *linkerOpts, outOFile.absolutePath, "-shared",
+                "-o", outLib.absolutePath,
                 "-Wl,-flat_namespace,-undefined,dynamic_lookup")
 
         runCmd(linkerCmd, workDir, verbose)
@@ -375,9 +376,9 @@ private fun processLib(konanHome: String,
         outOFile.delete()
     } else if (flavor == KotlinPlatform.NATIVE) {
         val outBcName = libName + ".bc"
-        val outLib = nativeLibsDir + "/" + outBcName
+        val outLib = File(nativeLibsDir, outBcName)
         val compilerCmd = arrayOf("$llvmInstallPath/bin/$compiler", *gen.libraryForCStubs.compilerArgs.toTypedArray(),
-                "-emit-llvm", "-c", outCFile.path, "-o", outLib)
+                "-emit-llvm", "-c", outCFile.absolutePath, "-o", outLib.absolutePath)
 
         runCmd(compilerCmd, workDir, verbose)
     }
