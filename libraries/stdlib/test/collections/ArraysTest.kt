@@ -16,7 +16,7 @@
 
 package test.collections
 
-import test.collections.behaviors.listBehavior
+import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import kotlin.test.*
 import org.junit.Test
@@ -634,6 +634,24 @@ class ArraysTest {
 //        assertArrayNotSameButEquals(shortArrayOf(200, 100), shortArrayOf(50, 100, 200).sliceArray(2 downTo 1))
         assertArrayNotSameButEquals(longArrayOf(100L, 200L, 30L), longArrayOf(50L, 100L, 200L, 30L).sliceArray(1..3))
         assertArrayNotSameButEquals(booleanArrayOf(true, false, true), booleanArrayOf(true, false, true, true).sliceArray(coll))
+    }
+
+    @Test fun iterators() {
+        fun <T, E> checkContract(array: T, toList: T.() -> List<E>, iterator: T.() -> Iterator<E>) =
+                compare(array.toList().iterator(), array.iterator()) {
+                    iteratorBehavior()
+                }
+
+        checkContract(arrayOf("a", "b", "c"), { toList() }, { iterator() })
+        checkContract(intArrayOf(), { toList() }, { iterator() })
+        checkContract(intArrayOf(1, 2, 3), { toList() }, { iterator() })
+        checkContract(shortArrayOf(1, 2, 3), { toList() }, { iterator() })
+        checkContract(byteArrayOf(1, 2, 3), { toList() }, { iterator() })
+        checkContract(longArrayOf(1L, 2L, 3L), { toList() }, { iterator() })
+        checkContract(doubleArrayOf(2.0, 3.0, 9.0), { toList() }, { iterator() })
+        checkContract(floatArrayOf(2f, 3f, 9f), { toList() }, { iterator() })
+        checkContract(charArrayOf('a', 'b', 'c'), { toList() }, { iterator() })
+        checkContract(booleanArrayOf(true, false), { toList() }, { iterator() })
     }
 
     @Test fun asIterable() {

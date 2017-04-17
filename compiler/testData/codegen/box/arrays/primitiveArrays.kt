@@ -19,7 +19,7 @@ fun box(): String {
     assertEquals(true, booleanArrayOf(true).iterator().nextBoolean())
     assertEquals(true, booleanArrayOf(true).iterator().next())
     assertFalse(booleanArrayOf().iterator().hasNext())
-    assertTrue(assertFails { booleanArrayOf().iterator().next() } is IndexOutOfBoundsException)
+    assertTrue(assertFails { booleanArrayOf().iterator().next() } is NoSuchElementException)
 
     assertTrue(eqByte(byteArrayOf(0), ByteArray(1)))
     assertTrue(eqByte(byteArrayOf(1, 2, 3), ByteArray(3) { (it + 1).toByte() }))
@@ -34,7 +34,7 @@ fun box(): String {
     assertEquals(1, byteArrayOf(1).iterator().nextByte())
     assertEquals(1, byteArrayOf(1).iterator().next())
     assertFalse(byteArrayOf().iterator().hasNext())
-    assertTrue(assertFails { byteArrayOf().iterator().next() } is IndexOutOfBoundsException)
+    assertTrue(assertFails { byteArrayOf().iterator().next() } is NoSuchElementException)
 
     assertTrue(eqShort(shortArrayOf(0), ShortArray(1)))
     assertTrue(eqShort(shortArrayOf(1, 2, 3), ShortArray(3) { (it + 1).toShort() }))
@@ -49,7 +49,7 @@ fun box(): String {
     assertEquals(1, shortArrayOf(1).iterator().nextShort())
     assertEquals(1, shortArrayOf(1).iterator().next())
     assertFalse(shortArrayOf().iterator().hasNext())
-    assertTrue(assertFails { shortArrayOf().iterator().next() } is IndexOutOfBoundsException)
+    assertTrue(assertFails { shortArrayOf().iterator().next() } is NoSuchElementException)
 
     assertTrue(eqChar(charArrayOf(0.toChar()), CharArray(1)))
     assertTrue(eqChar(charArrayOf('a', 'b', 'c'), CharArray(3) { 'a' + it }))
@@ -64,7 +64,7 @@ fun box(): String {
     assertEquals('a', charArrayOf('a').iterator().nextChar())
     assertEquals('a', charArrayOf('a').iterator().next())
     assertFalse(charArrayOf().iterator().hasNext())
-    assertTrue(assertFails { charArrayOf().iterator().next() } is IndexOutOfBoundsException)
+    assertTrue(assertFails { charArrayOf().iterator().next() } is NoSuchElementException)
 
     assertTrue(eqInt(intArrayOf(0), IntArray(1)))
     assertTrue(eqInt(intArrayOf(1, 2, 3), IntArray(3) { it + 1 }))
@@ -79,7 +79,7 @@ fun box(): String {
     assertEquals(1, intArrayOf(1).iterator().nextInt())
     assertEquals(1, intArrayOf(1).iterator().next())
     assertFalse(intArrayOf().iterator().hasNext())
-    assertTrue(assertFails { intArrayOf().iterator().next() } is IndexOutOfBoundsException)
+    assertTrue(assertFails { intArrayOf().iterator().next() } is NoSuchElementException)
 
     assertTrue(eqFloat(floatArrayOf(0f), FloatArray(1)))
     assertTrue(eqFloat(floatArrayOf(1f, 2f, 3f), FloatArray(3) { (it + 1).toFloat() }))
@@ -94,7 +94,7 @@ fun box(): String {
     assertEquals(1f, floatArrayOf(1f).iterator().nextFloat())
     assertEquals(1f, floatArrayOf(1f).iterator().next())
     assertFalse(floatArrayOf().iterator().hasNext())
-    assertTrue(assertFails { floatArrayOf().iterator().next() } is IndexOutOfBoundsException)
+    assertTrue(assertFails { floatArrayOf().iterator().next() } is NoSuchElementException)
 
     assertTrue(eqDouble(doubleArrayOf(0.0), DoubleArray(1)))
     assertTrue(eqDouble(doubleArrayOf(1.0, 2.0, 3.0), DoubleArray(3) { (it + 1).toDouble() }))
@@ -109,7 +109,7 @@ fun box(): String {
     assertEquals(1.0, doubleArrayOf(1.0).iterator().nextDouble())
     assertEquals(1.0, doubleArrayOf(1.0).iterator().next())
     assertFalse(doubleArrayOf().iterator().hasNext())
-    assertTrue(assertFails { doubleArrayOf().iterator().next() } is IndexOutOfBoundsException)
+    assertTrue(assertFails { doubleArrayOf().iterator().next() } is NoSuchElementException)
 
     assertTrue(eqLong(longArrayOf(0), LongArray(1)))
     assertTrue(eqLong(longArrayOf(1, 2, 3), LongArray(3) { it + 1L }))
@@ -124,7 +124,7 @@ fun box(): String {
     assertEquals(1L, longArrayOf(1).iterator().nextLong())
     assertEquals(1L, longArrayOf(1).iterator().next())
     assertFalse(longArrayOf().iterator().hasNext())
-    assertTrue(assertFails { longArrayOf().iterator().next() } is IndexOutOfBoundsException)
+    assertTrue(assertFails { longArrayOf().iterator().next() } is NoSuchElementException)
 
     // If `is` checks work...
     if (intArrayOf() is IntArray) {
