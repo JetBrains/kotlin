@@ -45,13 +45,27 @@ class PrimitiveMapJsTest : MapJsTest() {
     override fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?> = HashMap()
 
     @Test fun compareBehavior() {
-        val specialJsStringMap = HashMap<String, Any>()
+        val specialJsStringMap = stringMapOf<Any>()
         specialJsStringMap.put("k1", "v1")
         compare(genericHashMapOf("k1" to "v1"), specialJsStringMap) { mapBehavior() }
 
         val specialJsNumberMap = HashMap<Int, Any>(4)
         specialJsNumberMap.put(5, "v5")
         compare(genericHashMapOf(5 to "v5"), specialJsNumberMap) { mapBehavior() }
+    }
+
+    @Test fun putNull() {
+        val map = stringMapOf("k" to null)
+        assertEquals(1, map.size)
+
+        map.put("k", null)
+        assertEquals(1, map.size)
+
+        map["k"] = null
+        assertEquals(1, map.size)
+
+        map.remove("k")
+        assertEquals(0, map.size)
     }
 }
 
