@@ -100,8 +100,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
         result.add(OriginalJavaMethodDescriptorWrapper(info.method))
 
-        if (info is KotlinChangeInfo) {
-            findAllMethodUsages(info, result)
+        if (info is KotlinChangeInfoWrapper) {
+            findAllMethodUsages(info.delegate!!, result)
         }
         else {
             findSAMUsages(info, result)
@@ -507,13 +507,15 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             refUsages.set(adjustedUsages.toTypedArray())
         }
 
-        if (info !is KotlinChangeInfo) return result
+        if (info !is KotlinChangeInfoWrapper) return result
+
+        val ktChangeInfo = info.delegate!!
 
         val parameterNames = HashSet<String>()
         val function = info.method
         val element = function
         val bindingContext = (element as KtElement).analyze(BodyResolveMode.FULL)
-        val oldDescriptor = info.originalBaseFunctionDescriptor
+        val oldDescriptor = ktChangeInfo.originalBaseFunctionDescriptor
         val containingDeclaration = oldDescriptor.containingDeclaration
 
         val parametersScope = when {
@@ -527,7 +529,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
         val callableScope = oldDescriptor.getContainingScope()
 
-        val kind = info.kind
+        val kind = ktChangeInfo.kind
         if (!kind.isConstructor && callableScope != null && !info.newName.isEmpty()) {
             val newName = Name.identifier(info.newName)
             val conflicts = if (oldDescriptor is FunctionDescriptor)
@@ -550,7 +552,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             }
         }
 
-        for (parameter in info.getNonReceiverParameters()) {
+        for (parameter in ktChangeInfo.getNonReceiverParameters()) {
             val valOrVar = parameter.valOrVar
             val parameterName = parameter.name
 
@@ -578,19 +580,19 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             }
         }
 
-        val newReceiverInfo = info.receiverParameterInfo
-        val originalReceiverInfo = info.methodDescriptor.receiver
+        val newReceiverInfo = ktChangeInfo.receiverParameterInfo
+        val originalReceiverInfo = ktChangeInfo.methodDescriptor.receiver
         if (function is KtCallableDeclaration && newReceiverInfo != originalReceiverInfo) {
             findReceiverIntroducingConflicts(result, function, newReceiverInfo)
             findInternalExplicitReceiverConflicts(refUsages.get(), result, originalReceiverInfo)
-            findReceiverToParameterInSafeCallsConflicts(refUsages.get(), result, info)
-            findThisLabelConflicts(refUsages, result, info, function)
+            findReceiverToParameterInSafeCallsConflicts(refUsages.get(), result, ktChangeInfo)
+            findThisLabelConflicts(refUsages, result, ktChangeInfo, function)
         }
 
         for (usageInfo in usageInfos) {
             if (usageInfo !is KotlinCallerUsage) continue
             val callerDescriptor = usageInfo.element?.resolveToDescriptorIfAny() ?: continue
-            findParameterDuplicationInCaller(result, info, usageInfo.element!!, callerDescriptor)
+            findParameterDuplicationInCaller(result, ktChangeInfo, usageInfo.element!!, callerDescriptor)
         }
 
         return result
@@ -823,9 +825,10 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         val isJavaMethodUsage = isJavaMethodUsage(usageInfo)
 
         if (usageInfo is KotlinWrapperForJavaUsageInfos) {
-            val javaChangeInfos = (changeInfo as KotlinChangeInfo).getOrCreateJavaChangeInfos() ?: return true
+            val ktChangeInfo = (changeInfo as KotlinChangeInfoWrapper).delegate!!
+            val javaChangeInfos = ktChangeInfo.getOrCreateJavaChangeInfos() ?: return true
             javaChangeInfos.firstOrNull {
-                changeInfo.originalToCurrentMethods[usageInfo.javaChangeInfo.method] == it.method
+                ktChangeInfo.originalToCurrentMethods[usageInfo.javaChangeInfo.method] == it.method
             }?.let { javaChangeInfo ->
                 val nullabilityPropagator = NullabilityPropagator(javaChangeInfo.method)
                 val javaUsageInfos = usageInfo.javaUsageInfos
@@ -910,12 +913,12 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         }
 
         @Suppress("UNCHECKED_CAST")
-        return (usageInfo as? KotlinUsageInfo<PsiElement>)?.processUsage(changeInfo as KotlinChangeInfo, element, usages) ?: false
+        return (usageInfo as? KotlinUsageInfo<PsiElement>)?.processUsage((changeInfo as KotlinChangeInfoWrapper).delegate!!, element, usages) ?: false
     }
 
     override fun processPrimaryMethod(changeInfo: ChangeInfo): Boolean {
         val ktChangeInfo = when (changeInfo) {
-            is KotlinChangeInfo -> changeInfo
+            is KotlinChangeInfoWrapper -> changeInfo.delegate!!
             is JavaChangeInfo -> {
                 val method = changeInfo.method as? KtLightMethod ?: return false
                 var baseFunction = method.kotlinOrigin ?: return false

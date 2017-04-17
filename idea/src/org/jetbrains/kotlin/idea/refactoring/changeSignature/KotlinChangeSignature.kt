@@ -232,5 +232,5 @@ class KotlinChangeSignature(project: Project,
             adjustedDescriptor,
             defaultValueContext
     ) as KotlinChangeSignatureProcessor
-    return processor.changeInfo
+    return processor.ktChangeInfo
 }

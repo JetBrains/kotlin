@@ -36,19 +36,24 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinUsageI
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinWrapperForJavaUsageInfos
 import java.util.*
 
-class KotlinChangeSignatureProcessor(project: Project,
-                                            changeInfo: KotlinChangeInfo,
-                                            private val commandName: String) : ChangeSignatureProcessorBase(project, changeInfo) {
+class KotlinChangeSignatureProcessor(
+        project: Project,
+        changeInfo: KotlinChangeInfo,
+        private val commandName: String
+) : ChangeSignatureProcessorBase(project, KotlinChangeInfoWrapper(changeInfo)) {
+    val ktChangeInfo
+        get() = changeInfo.delegate!!
+
     override fun createUsageViewDescriptor(usages: Array<UsageInfo>): UsageViewDescriptor {
-        val subject = if (changeInfo.kind.isConstructor) "constructor" else "function"
+        val subject = if (ktChangeInfo.kind.isConstructor) "constructor" else "function"
         return KotlinUsagesViewDescriptor(myChangeInfo.method, RefactoringBundle.message("0.to.change.signature", subject))
     }
 
-    override fun getChangeInfo() = super.getChangeInfo() as KotlinChangeInfo
+    override fun getChangeInfo() = super.getChangeInfo() as KotlinChangeInfoWrapper
 
     override fun findUsages(): Array<UsageInfo> {
         val allUsages = ArrayList<UsageInfo>()
-        changeInfo.getOrCreateJavaChangeInfos()?.let { javaChangeInfos ->
+        ktChangeInfo.getOrCreateJavaChangeInfos()?.let { javaChangeInfos ->
             val javaProcessor = JavaChangeSignatureUsageProcessor()
             javaChangeInfos.mapTo(allUsages) {
                 KotlinWrapperForJavaUsageInfos(it, javaProcessor.findUsages(it), changeInfo.method)
@@ -107,4 +112,13 @@ class KotlinChangeSignatureProcessor(project: Project,
     override fun isPreviewUsages(usages: Array<out UsageInfo>): Boolean = isPreviewUsages
 
     override fun getCommandName() = commandName
+
+    override fun performRefactoring(usages: Array<out UsageInfo>) {
+        try {
+            super.performRefactoring(usages)
+        }
+        finally {
+            changeInfo.invalidate()
+        }
+    }
 }
