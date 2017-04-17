@@ -106,32 +106,10 @@ object LabelResolver {
         val labelName = expression.getLabelNameAsName()
         if (labelElement == null || labelName == null) return null
 
-        val element = resolveNamedLabel(labelName, labelElement, context.trace)
-        if (element != null) return element
-
-        val declarationsByLabel = context.scope.getDeclarationsByLabel(labelName)
-        when (declarationsByLabel.size) {
-            0 -> {
-                context.trace.report(UNRESOLVED_REFERENCE.on(labelElement, labelElement))
-                return null
-            }
-            1 -> {
-                val declarationDescriptor = declarationsByLabel.single()
-                if (declarationDescriptor is FunctionDescriptor || declarationDescriptor is ClassDescriptor) {
-                    val declarationElement = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor)
-                    if (declarationElement is KtElement) {
-                        context.trace.record(LABEL_TARGET, labelElement, declarationElement)
-                        return declarationElement
-                    }
-                }
-            }
-            else -> {
-                BindingContextUtils.reportAmbiguousLabel(context.trace, labelElement, declarationsByLabel)
-                return null
-            }
+        return resolveNamedLabel(labelName, labelElement, context.trace) ?: run {
+            context.trace.report(UNRESOLVED_REFERENCE.on(labelElement, labelElement))
+            null
         }
-
-        return null
     }
 
     private fun resolveNamedLabel(
