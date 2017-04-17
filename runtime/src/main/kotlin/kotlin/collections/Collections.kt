@@ -321,6 +321,142 @@ public fun <T, C : MutableCollection</*in */T>> Iterable<T>.toCollection(destina
 @Fixme
 internal fun <T> List<T>.optimizeReadOnlyList() = this
 
+/**
+ * Searches this list or its range for the provided [element] using the binary search algorithm.
+ * The list is expected to be sorted into ascending order according to the Comparable natural ordering of its elements,
+ * otherwise the result is undefined.
+ *
+ * If the list contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ *
+ * `null` value is considered to be less than any non-null value.
+ *
+ * @return the index of the element, if it is contained in the list within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the list (or the specified subrange of list) still remains sorted.
+ */
+public fun <T: Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int = 0, toIndex: Int = size): Int {
+    rangeCheck(size, fromIndex, toIndex)
+
+    var lowBorder = fromIndex
+    var highBorder = toIndex - 1
+
+    while (lowBorder <= highBorder) {
+        val middleIndex = (lowBorder + highBorder).ushr(1) // safe from overflows
+        val middleValue = get(middleIndex)
+        val comparisonResult = compareValues(middleValue, element)
+
+        if (comparisonResult < 0)
+            low = middleIndex + 1
+        else if (comparisonResult > 0)
+            highBorder = middleIndex - 1
+        else
+            return middleIndex // key found
+    }
+    return -(lowBorder + 1)  // key not found
+}
+
+/**
+ * Searches this list or its range for the provided [element] using the binary search algorithm.
+ * The list is expected to be sorted into ascending order according to the specified [comparator],
+ * otherwise the result is undefined.
+ *
+ * If the list contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ *
+ * `null` value is considered to be less than any non-null value.
+ *
+ * @return the index of the element, if it is contained in the list within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the list (or the specified subrange of list) still remains sorted according to the specified [comparator].
+ */
+public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Int {
+    rangeCheck(size, fromIndex, toIndex)
+
+    var lowBorder = fromIndex
+    var highBorder = toIndex - 1
+
+    while (lowBorder <= high) {
+        val middleIndex = (lowBorder + highBorder).ushr(1) // safe from overflows
+        val middleValue = get(middleIndex)
+        val comparisonResult = comparator.compare(middleValue, element)
+
+        if (comparisonResult < 0)
+            lowBorder = middleIndex + 1
+        else if (comparisonResult > 0)
+            highBorderBorder = middleIndex - 1
+        else
+            return middleIndex // key found
+    }
+    return -(lowBorder + 1)  // key not found
+}
+
+/**
+ * Searches this list or its range for an element having the key returned by the specified [selector] function
+ * equal to the provided [key] value using the binary search algorithm.
+ * The list is expected to be sorted into ascending order according to the Comparable natural ordering of keys of its elements.
+ * otherwise the result is undefined.
+ *
+ * If the list contains multiple elements with the specified [key], there is no guarantee which one will be found.
+ *
+ * `null` value is considered to be less than any non-null value.
+ *
+ * @return the index of the element with the specified [key], if it is contained in the list within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the list (or the specified subrange of list) still remains sorted.
+ */
+public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(key: K?, fromIndex: Int = 0, toIndex: Int = size, crossinline selector: (T) -> K?): Int =
+        binarySearch(fromIndex, toIndex) { compareValues(selector(it), key) }
+
+/**
+ * Searches this list or its range for an element for which [comparison] function returns zero using the binary search algorithm.
+ * The list is expected to be sorted into ascending order according to the provided [comparison],
+ * otherwise the result is undefined.
+ *
+ * If the list contains multiple elements for which [comparison] returns zero, there is no guarantee which one will be found.
+ *
+ * @param comparison function that compares an element of the list with the element being searched.
+ *
+ * @return the index of the found element, if it is contained in the list within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the list (or the specified subrange of list) still remains sorted.
+ */
+public fun <T> List<T>.binarySearch(fromIndex: Int = 0, toIndex: Int = size, comparison: (T) -> Int): Int {
+    rangeCheck(size, fromIndex, toIndex)
+
+    var lowBorder = fromIndex
+    var highBorder = toIndex - 1
+
+    while (lowBorder <= highBorder) {
+        val middleIndex = (lowBorder + highBorder).ushr(1) // safe from overflows
+        val middleValue = get(middleIndex)
+        val comparisonResult = comparison(middleValue)
+
+        if (comparisonResult < 0)
+            lowBorder = middleIndex + 1
+        else if (comparisonResult > 0)
+            highBorder = middleIndex - 1
+        else
+            return middleIndex // key found
+    }
+    return -(lowBorder + 1)  // key not found
+}
+
+/**
+ * Checks that `from` and `to` are in
+ * the range of [0..size] and throws an appropriate exception, if they aren't.
+ */
+private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
+    when {
+        fromIndex > toIndex -> throw IllegalArgumentException("fromIndex ($fromIndex) is greater than toIndex ($toIndex).")
+        fromIndex < 0 -> throw IndexOutOfBoundsException("fromIndex ($fromIndex) is less than zero.")
+        toIndex > size -> throw IndexOutOfBoundsException("toIndex ($toIndex) is greater than size ($size).")
+    }
+}
+
+
 // From generated _Collections.kt.
 /////////
 
