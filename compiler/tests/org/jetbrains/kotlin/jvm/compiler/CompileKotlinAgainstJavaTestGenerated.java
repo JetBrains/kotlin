@@ -216,6 +216,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("ReturnInnerInInner.kt")
+    public void testReturnInnerInInner() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/ReturnInnerInInner.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ReturnInnerInner.kt")
     public void testReturnInnerInner() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/ReturnInnerInner.kt");

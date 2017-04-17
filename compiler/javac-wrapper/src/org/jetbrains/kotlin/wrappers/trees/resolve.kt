@@ -52,6 +52,7 @@ private fun JavaClass.findInner(name: String,
             javaClass, it -> javaClass.findInner(it, javac) ?: return null
         }.let { return it }
     } else {
+        if (name == this.fqName?.shortName()?.asString()) return this
         javac.findClass(FqName("${fqName!!.asString()}.$name"))?.let { return it }
 
         supertypes
