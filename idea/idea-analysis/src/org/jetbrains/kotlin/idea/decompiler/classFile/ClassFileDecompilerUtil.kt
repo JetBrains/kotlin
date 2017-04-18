@@ -49,16 +49,17 @@ fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
  * Checks if this file is a compiled "internal" Kotlin class, i.e. a Kotlin class (not necessarily ABI-compatible with the current plugin)
  * which should NOT be decompiled (and, as a result, shown under the library in the Project view, be searchable via Find class, etc.)
  */
-fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
-    if (!IDEKotlinBinaryClassCache.isKotlinJvmCompiledFile(file)) {
+fun isKotlinInternalCompiledFile(file: VirtualFile, fileContent: ByteArray): Boolean {
+    if (!IDEKotlinBinaryClassCache.isKotlinJvmCompiledFile(file, fileContent)) {
         return false
     }
 
-    if (ClassFileViewProvider.isInnerClass(file)) {
+    val innerClass = ClassFileViewProvider.isInnerClass(file, fileContent)
+    if (innerClass) {
         return true
     }
 
-    val (header, classId) = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file) ?: return false
+    val (header, classId) = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file, fileContent) ?: return false
     if (classId.isLocal) return true
 
     return header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS ||

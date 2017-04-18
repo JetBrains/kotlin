@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.isFlexible
+import java.io.IOException
 
 class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
     private val stubBuilder = KotlinClsStubBuilder()
@@ -47,14 +48,21 @@ class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
 
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): KotlinDecompiledFileViewProvider {
         val project = manager.project
-        return KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
+        return KotlinDecompiledFileViewProvider(manager, file, physical) factory@{ provider ->
             val virtualFile = provider.virtualFile
             val fileIndex = ServiceManager.getService(project, FileIndexFacade::class.java)
-            when {
-                !fileIndex.isInLibraryClasses(virtualFile) && fileIndex.isInSource(virtualFile) -> null
-                isKotlinInternalCompiledFile(virtualFile) -> null
-                else -> KtClsFile(provider)
+            if (!fileIndex.isInLibraryClasses(virtualFile) && fileIndex.isInSource(virtualFile)) return@factory null
+            val content = try {
+                virtualFile.contentsToByteArray(false)
             }
+            catch (e: IOException) {
+                return@factory null
+            }
+
+            if (isKotlinInternalCompiledFile(virtualFile, content))
+                null
+            else
+                KtClsFile(provider)
         }
     }
 }

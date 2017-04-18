@@ -32,7 +32,7 @@ object IDEKotlinBinaryClassCache {
     /**
      * Checks if this file is a compiled Kotlin class file (not necessarily ABI-compatible with the current plugin)
      */
-    fun isKotlinJvmCompiledFile(file: VirtualFile): Boolean {
+    fun isKotlinJvmCompiledFile(file: VirtualFile, fileContent: ByteArray? = null): Boolean {
         if (file.extension != JavaClassFileType.INSTANCE!!.defaultExtension) {
             return false
         }
@@ -41,7 +41,7 @@ object IDEKotlinBinaryClassCache {
         if (cached != null) {
             return cached.isKotlinBinary
         }
-        return getKotlinBinaryClass(file) != null
+        return getKotlinBinaryClass(file, fileContent) != null
     }
 
     fun getKotlinBinaryClass(file: VirtualFile, fileContent: ByteArray? = null): KotlinJvmBinaryClass? {

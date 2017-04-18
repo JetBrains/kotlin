@@ -44,7 +44,7 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val file = content.file
 
-        if (isKotlinInternalCompiledFile(file)) {
+        if (isKotlinInternalCompiledFile(file, content.content)) {
             return null
         }
 
