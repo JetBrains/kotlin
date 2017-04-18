@@ -20,39 +20,35 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
 
 class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
-    fun testFromCommonToJvmHeader() {
+
+    private fun doTest(vararg platforms: TargetPlatformKind<*>) {
         val header = module("header")
         header.createFacet(TargetPlatformKind.Common)
 
-        val jvm = module("jvm")
-        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        jvm.enableMultiPlatform()
-        jvm.addDependency(header)
+        for (platform in platforms) {
+            val path = when (platform) {
+                is TargetPlatformKind.Jvm -> "jvm"
+                is TargetPlatformKind.JavaScript -> "js"
+                else -> error("Unsupported platform: $platform")
+            }
+            val platformModule = module(path)
+            platformModule.createFacet(platform)
+            platformModule.enableMultiPlatform()
+            platformModule.addDependency(header)
+        }
 
         checkHighlightingInAllFiles()
+    }
+
+    fun testFromCommonToJvmHeader() {
+        doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
 
     fun testFromCommonToJvmImpl() {
-        val header = module("header")
-        header.createFacet(TargetPlatformKind.Common)
-
-        val jvm = module("jvm")
-        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        jvm.enableMultiPlatform()
-        jvm.addDependency(header)
-
-        checkHighlightingInAllFiles()
+        doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
 
     fun testFromClassToAlias() {
-        val header = module("header")
-        header.createFacet(TargetPlatformKind.Common)
-
-        val jvm = module("jvm")
-        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        jvm.enableMultiPlatform()
-        jvm.addDependency(header)
-
-        checkHighlightingInAllFiles()
+        doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
 }
