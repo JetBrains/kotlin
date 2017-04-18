@@ -159,6 +159,9 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
     fun MemberDescriptor.findCompatibleImplForHeader(): List<MemberDescriptor> =
             findImplForHeader(this, false)?.get(Compatible).orEmpty()
 
+    fun MemberDescriptor.findCompatibleHeaderForImpl(): List<MemberDescriptor> =
+            findHeaderForImpl(this)?.get(Compatible).orEmpty()
+
     private fun CallableMemberDescriptor.findNamesakesFromTheSameModule(): Collection<CallableMemberDescriptor> {
         val packageFqName = (containingDeclaration as? PackageFragmentDescriptor)?.fqName ?: return emptyList()
         val myModule = moduleToCheck ?: module

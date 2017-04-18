@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -32,8 +34,8 @@ fun ModuleDescriptor.hasImplementationsOf(descriptor: MemberDescriptor) =
         implementationsOf(descriptor).isNotEmpty()
 
 private fun ModuleDescriptor.implementationsOf(descriptor: MemberDescriptor): List<DeclarationDescriptor> =
-        with (HeaderImplDeclarationChecker(this)) {
-            descriptor.findCompatibleImplForHeader().filter { it.isImpl }
+        with(HeaderImplDeclarationChecker(this)) {
+            descriptor.findCompatibleImplForHeader()
         }
 
 fun getPlatformImplementationTooltip(declaration: KtDeclaration): String? {

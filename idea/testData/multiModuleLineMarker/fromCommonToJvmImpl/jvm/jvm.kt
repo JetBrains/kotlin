@@ -1,5 +1,5 @@
 impl class <lineMarker>Header</lineMarker> {
-    impl fun foo() = 42
+    impl fun <lineMarker>foo</lineMarker>() = 42
 }
 
 impl fun <lineMarker>foo</lineMarker>(arg: Int) = arg.toString()

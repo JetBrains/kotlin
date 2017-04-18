@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.idea.highlighter.markers
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleProductionSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
@@ -49,8 +51,8 @@ private enum class SourceKind { NONE, PRODUCTION, TEST }
 fun ModuleDescriptor.hasDeclarationOf(descriptor: MemberDescriptor) = declarationOf(descriptor) != null
 
 private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor): DeclarationDescriptor? =
-        with (HeaderImplDeclarationChecker(this)) {
-            descriptor.findCompatibleImplForHeader().firstOrNull { it.isHeader }
+        with(HeaderImplDeclarationChecker(this)) {
+            descriptor.findCompatibleHeaderForImpl().firstOrNull()
         }
 
 fun getHeaderDeclarationTooltip(declaration: KtDeclaration): String? {
