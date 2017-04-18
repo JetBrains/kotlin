@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.stubs
 
-import com.intellij.codeInsight.completion.CompletionTestCase
-import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.openapi.application.ApplicationManager

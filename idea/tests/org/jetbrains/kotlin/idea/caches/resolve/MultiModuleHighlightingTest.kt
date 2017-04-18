@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.DependencyScope
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
@@ -66,65 +65,37 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     class MultiPlatform : AbstractMultiModuleHighlightingTest() {
         override val testPath get() = super.testPath + "multiplatform/"
 
-        private fun doTest(
-                vararg platforms: TargetPlatformKind<*>,
-                withStdlibCommon: Boolean = false,
-                configureModule: (Module, TargetPlatformKind<*>) -> Unit = { _, _ -> },
-                useFullJdk: Boolean = false
-        ) {
-            val commonModule = module("common", useFullJdk = useFullJdk)
-            commonModule.createFacet(TargetPlatformKind.Common)
-            if (withStdlibCommon) {
-                commonModule.addLibrary(ForTestCompileRuntime.stdlibCommonForTests())
-            }
-
-            for (platform in platforms) {
-                val path = when (platform) {
-                    is TargetPlatformKind.Jvm -> "jvm"
-                    is TargetPlatformKind.JavaScript -> "js"
-                    else -> error("Unsupported platform: $platform")
-                }
-                val platformModule = module(path, useFullJdk = useFullJdk)
-                platformModule.createFacet(platform)
-                platformModule.enableMultiPlatform()
-                platformModule.addDependency(commonModule)
-                configureModule(platformModule, platform)
-            }
-
-            checkHighlightingInAllFiles()
-        }
-
         fun testBasic() {
-            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         }
 
         fun testHeaderClass() {
-            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         }
 
         fun testHeaderWithoutImplForBoth() {
-            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], TargetPlatformKind.JavaScript)
+            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], TargetPlatformKind.JavaScript)
         }
 
         fun testHeaderPartiallyImplemented() {
-            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         }
 
         fun testHeaderFunctionProperty() {
-            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         }
 
         fun testSuppressHeaderWithoutImpl() {
-            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         }
 
         fun testCatchHeaderExceptionInPlatformModule() {
-            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], withStdlibCommon = true)
+            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], withStdlibCommon = true)
         }
 
         fun testUseCorrectBuiltInsForCommonModule() {
-            doTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], TargetPlatformKind.JavaScript,
-                   withStdlibCommon = true, useFullJdk = true, configureModule = { module, platform ->
+            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], TargetPlatformKind.JavaScript,
+                                withStdlibCommon = true, useFullJdk = true, configureModule = { module, platform ->
                 if (platform == TargetPlatformKind.JavaScript) {
                     module.addLibrary(ForTestCompileRuntime.stdlibJsForTests())
                     module.addLibrary(ForTestCompileRuntime.stdlibCommonForTests())
