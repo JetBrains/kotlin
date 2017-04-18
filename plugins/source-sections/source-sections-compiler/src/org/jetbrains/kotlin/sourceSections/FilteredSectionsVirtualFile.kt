@@ -41,14 +41,7 @@ class FilteredSectionsVirtualFile(val delegate: VirtualFile, val sectionIds: Col
     override fun getTimeStamp(): Long = delegate.timeStamp
     override fun getName(): String = delegate.name
 
-    override fun contentsToByteArray(): ByteArray {
-        val res =  filterByteContents(sectionIds, delegate.contentsToByteArray(), delegate.charset)
-        val dbgDumpFile = delegate.canonicalPath?.let { java.io.File(it + ".${sectionIds.joinToString(".")}.dump") }
-        if (dbgDumpFile != null && !dbgDumpFile.exists()) {
-            dbgDumpFile.writeText(String(res))
-        }
-        return res
-    }
+    override fun contentsToByteArray(): ByteArray = filterByteContents(sectionIds, delegate.contentsToByteArray(), delegate.charset)
 
     override fun getInputStream(): InputStream = ByteArrayInputStream(contentsToByteArray())
 

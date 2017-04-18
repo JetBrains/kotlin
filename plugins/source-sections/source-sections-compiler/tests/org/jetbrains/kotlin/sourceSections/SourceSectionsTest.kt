@@ -98,6 +98,7 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
                 .lineSequence()
                 .map(String::trimEnd)
                 .toList()
+                .dropLastWhile { it.isBlank() }
     }
 
     fun testSourceSectionsFilter() {
@@ -110,7 +111,8 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
             val filteredVF = fileCreator.createPreprocessedFile(StandardFileSystems.local().findFileByPath(source.canonicalPath))
             TestCase.assertNotNull("Cannot generate preprocessed file", filteredVF)
             val expected = expectedResult.inputStream().trimmedLines(Charset.defaultCharset())
-            val actual = ByteArrayInputStream(filteredVF!!.contentsToByteArray()).trimmedLines(filteredVF.charset)
+            val filteredBytes = filteredVF!!.contentsToByteArray()
+            val actual = ByteArrayInputStream(filteredBytes).trimmedLines(filteredVF.charset)
             TestCase.assertEquals("Unexpected result on preprocessing file '${source.name}'", expected, actual)
         }
     }
