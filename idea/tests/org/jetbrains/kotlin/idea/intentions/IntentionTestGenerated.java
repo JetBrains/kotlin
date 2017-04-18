@@ -5384,6 +5384,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertReceiverToParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("autoSuggestedName.kt")
+        public void testAutoSuggestedName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReceiverToParameter/autoSuggestedName.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionExpression.kt")
         public void testFunctionExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReceiverToParameter/functionExpression.kt");

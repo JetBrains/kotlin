@@ -48,7 +48,7 @@ class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntent
                 return originalDescriptor.modify {
                     it.receiver = null
                     if (newName != null) {
-                        it.parameters.last().name = newName
+                        it.parameters.first().name = newName
                     }
                 }
             }
@@ -74,7 +74,7 @@ class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntent
 
             project.executeWriteCommand(text) {
                 function.setReceiverTypeReference(null)
-                val addedParameter = function.getOrCreateValueParameterList().addParameter(newParameter)
+                val addedParameter = function.getOrCreateValueParameterList().addParameterAfter(newParameter, null)
 
                 with(PsiDocumentManager.getInstance(project)) {
                     commitDocument(editor.document)

@@ -60,6 +60,11 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
         return EditCommaSeparatedListHelper.INSTANCE.addItemBefore(this, getParameters(), parameter, anchor);
     }
 
+    @NotNull
+    public KtParameter addParameterAfter(@NotNull KtParameter parameter, @Nullable KtParameter anchor) {
+        return EditCommaSeparatedListHelper.INSTANCE.addItemAfter(this, getParameters(), parameter, anchor);
+    }
+
     public void removeParameter(@NotNull KtParameter parameter) {
         EditCommaSeparatedListHelper.INSTANCE.removeItem(parameter);
     }
