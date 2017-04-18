@@ -41,7 +41,10 @@ fun TreePath.resolve(javac: JavacWrapper): JavaClassifier? {
 
 private fun TreePath.tryToResolveInner(name: String,
                                        javac: JavacWrapper,
-                                       nameParts: List<String> = emptyList()) = findEnclosingClass(javac)?.findInner(name, javac, nameParts)
+                                       nameParts: List<String> = emptyList()): JavaClass? = findEnclosingClasses(javac)
+        ?.forEach {
+            it.findInner(name, javac, nameParts)?.let { return it }
+        }.let { return null }
 
 fun JavaClass.findInner(name: String,
                         javac: JavacWrapper,
@@ -72,11 +75,20 @@ fun tryToResolveInJavaLang(name: String,
                            javac: JavacWrapper) = javac.findClass(FqName("java.lang.$name"))
 
 
-private fun TreePath.findEnclosingClass(javac: JavacWrapper) = filterIsInstance<JCTree.JCClassDecl>()
+private fun TreePath.findEnclosingClasses(javac: JavacWrapper) = filterIsInstance<JCTree.JCClassDecl>()
         .filter { it.extending != leaf && !it.implementing.contains(leaf) }
         .reversed()
         .joinToString(separator = ".", prefix = "${compilationUnit.packageName}.") { it.simpleName }
         .let { javac.findClass(FqName(it)) }
+        ?.let {
+            arrayListOf(it).apply {
+                var enclosingClass = it.outerClass
+                while (enclosingClass != null) {
+                    add(enclosingClass)
+                    enclosingClass = enclosingClass.outerClass
+                }
+            }
+        }
 
 private fun JCTree.JCCompilationUnit.tryToResolveSingleTypeImport(name: String,
                                                                   javac: JavacWrapper,

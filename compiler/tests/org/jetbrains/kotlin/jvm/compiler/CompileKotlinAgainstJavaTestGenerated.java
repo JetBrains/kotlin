@@ -90,6 +90,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("EnclosingClassInner.kt")
+    public void testEnclosingClassInner() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/EnclosingClassInner.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Enum.kt")
     public void testEnum() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/Enum.kt");
