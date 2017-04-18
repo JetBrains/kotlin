@@ -93,7 +93,7 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinTestWithEn
     }
 
     @NotNull
-    protected List<String> getEnvironmentConfigFiles() {
+    protected EnvironmentConfigFiles getEnvironmentConfigFiles() {
         return EnvironmentConfigFiles.JVM_CONFIG_FILES;
     }
 

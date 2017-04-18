@@ -19,16 +19,18 @@ package org.jetbrains.kotlin.cli.jvm.compiler;
 import java.util.Arrays;
 import java.util.List;
 
-public class EnvironmentConfigFiles {
+public enum EnvironmentConfigFiles {
+    JVM_CONFIG_FILES("extensions/common.xml", "extensions/kotlin2jvm.xml"),
+    JS_CONFIG_FILES("extensions/common.xml", "extensions/kotlin2js.xml"),
+    EMPTY();
 
-    private static final String EXTENSIONS_DIR = "extensions/";
+    private final List<String> files;
 
-    private static final String COMMON_CONFIG_FILE = EXTENSIONS_DIR + "common.xml";
-    private static final String JVM_CONFIG_FILE = EXTENSIONS_DIR + "kotlin2jvm.xml";
-    private static final String JS_CONFIG_FILE = EXTENSIONS_DIR + "kotlin2js.xml";
+    EnvironmentConfigFiles(String... fileArray) {
+        files = Arrays.asList(fileArray);
+    }
 
-    public static final List<String> JVM_CONFIG_FILES = Arrays.asList(COMMON_CONFIG_FILE, JVM_CONFIG_FILE);
-    public static final List<String> JS_CONFIG_FILES = Arrays.asList(COMMON_CONFIG_FILE, JS_CONFIG_FILE);
-
-    private EnvironmentConfigFiles() {}
+    public List<String> getFiles() {
+        return files;
+    }
 }

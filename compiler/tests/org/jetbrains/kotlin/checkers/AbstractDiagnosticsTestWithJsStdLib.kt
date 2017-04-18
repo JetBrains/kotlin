@@ -55,7 +55,7 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
         super.tearDown()
     }
 
-    override fun getEnvironmentConfigFiles(): List<String> = EnvironmentConfigFiles.JS_CONFIG_FILES
+    override fun getEnvironmentConfigFiles(): EnvironmentConfigFiles = EnvironmentConfigFiles.JS_CONFIG_FILES
 
     override fun analyzeModuleContents(
             moduleContext: ModuleContext,

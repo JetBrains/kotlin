@@ -111,7 +111,8 @@ import java.io.File
 class KotlinCoreEnvironment private constructor(
         parentDisposable: Disposable,
         applicationEnvironment: JavaCoreApplicationEnvironment,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
+        configFiles: EnvironmentConfigFiles
 ) {
 
     private val projectEnvironment: JavaCoreProjectEnvironment = object : KotlinCoreProjectEnvironment(parentDisposable, applicationEnvironment) {
@@ -167,7 +168,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
-        project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl())
+        project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl(configFiles == EnvironmentConfigFiles.JVM_CONFIG_FILES))
 
         registerProjectServicesForCLI(projectEnvironment)
         registerProjectServices(projectEnvironment)
@@ -337,10 +338,10 @@ class KotlinCoreEnvironment private constructor(
         private var ourProjectCount = 0
 
         @JvmStatic fun createForProduction(
-                parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>
+                parentDisposable: Disposable, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
             setCompatibleBuild()
-            val appEnv = getOrCreateApplicationEnvironmentForProduction(configuration, configFilePaths)
+            val appEnv = getOrCreateApplicationEnvironmentForProduction(configuration, configFiles.files)
             // Disposing of the environment is unsafe in production then parallel builds are enabled, but turning it off universally
             // breaks a lot of tests, therefore it is disabled for production and enabled for tests
             if (!(System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY).toBooleanLenient() ?: false)) {
@@ -354,7 +355,7 @@ class KotlinCoreEnvironment private constructor(
                     }
                 })
             }
-            val environment = KotlinCoreEnvironment(parentDisposable, appEnv, configuration)
+            val environment = KotlinCoreEnvironment(parentDisposable, appEnv, configuration, configFiles)
 
             synchronized (APPLICATION_LOCK) {
                 ourProjectCount++
@@ -369,10 +370,13 @@ class KotlinCoreEnvironment private constructor(
 
         @TestOnly
         @JvmStatic fun createForTests(
-                parentDisposable: Disposable, configuration: CompilerConfiguration, extensionConfigs: List<String>
+                parentDisposable: Disposable, configuration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
             // Tests are supposed to create a single project and dispose it right after use
-            return KotlinCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable, configuration, extensionConfigs), configuration)
+            return KotlinCoreEnvironment(parentDisposable,
+                                         createApplicationEnvironment(parentDisposable, configuration, extensionConfigs.files),
+                                         configuration,
+                                         extensionConfigs)
         }
 
         // used in the daemon for jar cache cleanup
