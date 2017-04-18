@@ -143,8 +143,18 @@ object IDELightClassContexts {
                 classOrObject.declarations.filterIsInstance<KtFunction>().any {
                     isGeneratedForDataClass(it.nameAsSafeName)
                 }
-        return !hasDelegatedMembers && !dataClassWithGeneratedMembersOverridden
+
+        return !hasDelegatedMembers && !dataClassWithGeneratedMembersOverridden && !classOrObject.possiblyHasHiddenDeclarations()
                && classOrObject.declarations.filterIsInstance<KtClassOrObject>().all { isDummyResolveApplicable(it) }
+    }
+
+    private fun KtDeclarationContainer.possiblyHasHiddenDeclarations(): Boolean {
+        return declarations.filterIsInstance<KtDeclaration>().any {
+            it.annotationEntries.any {
+                (it.typeReference?.typeElement as? KtUserType)?.referenceExpression?.getReferencedName() == "Deprecated" &&
+                it.valueArguments.any { it.getArgumentExpression() !is KtStringTemplateExpression }
+            }
+        }
     }
 
     private fun isGeneratedForDataClass(name: Name): Boolean {
@@ -156,13 +166,19 @@ object IDELightClassContexts {
                DataClassDescriptorResolver.isComponentLike(name)
     }
 
-    fun lightContextForFacade(files: List<KtFile>): LightClassConstructionContext {
+    fun lightContextForFacade(files: List<KtFile>): LightClassConstructionContext? {
+        if (!isDummyResolveApplicable(files)) return null
+
         val representativeFile = files.first()
         val resolveSession = setupAdHocResolve(representativeFile.project, representativeFile.getResolutionFacade().moduleDescriptor, files)
 
         forceResolvePackageDeclarations(files, resolveSession)
 
         return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, LIGHT)
+    }
+
+    private fun isDummyResolveApplicable(files: List<KtFile>): Boolean {
+        return files.none { it.possiblyHasHiddenDeclarations() }
     }
 
     fun forceResolvePackageDeclarations(files: Collection<KtFile>, session: ResolveSession) {
