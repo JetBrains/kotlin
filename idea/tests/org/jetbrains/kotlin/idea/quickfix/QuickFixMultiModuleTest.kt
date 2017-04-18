@@ -24,11 +24,12 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     private fun doMultiPlatformTest(headerName: String = "header",
                                     implName: String = "jvm",
-                                    implKind: TargetPlatformKind<*> = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]) {
-        val header = module(headerName)
+                                    implKind: TargetPlatformKind<*> = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6],
+                                    withTests: Boolean = false) {
+        val header = module(headerName, hasTestRoot = withTests)
         header.createFacet(TargetPlatformKind.Common)
 
-        val jvm = module(implName)
+        val jvm = module(implName, hasTestRoot = withTests)
         jvm.createFacet(implKind)
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
@@ -94,5 +95,10 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     @Test
     fun testSealed() {
         doMultiPlatformTest(implName = "js", implKind = TargetPlatformKind.JavaScript)
+    }
+
+    @Test
+    fun testWithTest() {
+        doMultiPlatformTest(headerName = "common", withTests = true)
     }
 }

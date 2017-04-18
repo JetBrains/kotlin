@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.highlighter.allImplementingCompatibleModules
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -286,7 +287,7 @@ private fun collectImplementationMarkers(declaration: KtNamedDeclaration,
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
     val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
-    if (commonModuleDescriptor.allImplementingModules.none { it.hasImplementationsOf(descriptor) }) return
+    if (commonModuleDescriptor.allImplementingCompatibleModules.none { it.hasImplementationsOf(descriptor) }) return
 
     val anchor = declaration.nameIdentifier ?: declaration
 

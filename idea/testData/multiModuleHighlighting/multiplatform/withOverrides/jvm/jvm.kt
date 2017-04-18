@@ -1,0 +1,1 @@
+impl fun foo(arg: Int) = arg

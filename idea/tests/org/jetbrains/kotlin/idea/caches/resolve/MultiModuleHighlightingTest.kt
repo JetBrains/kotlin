@@ -93,6 +93,10 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], withStdlibCommon = true)
         }
 
+        fun testWithOverrides() {
+            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        }
+
         fun testUseCorrectBuiltInsForCommonModule() {
             doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], TargetPlatformKind.JavaScript,
                                 withStdlibCommon = true, useFullJdk = true, configureModule = { module, platform ->

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.highlighter.allImplementingCompatibleModules
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
@@ -42,7 +43,7 @@ fun getPlatformImplementationTooltip(declaration: KtDeclaration): String? {
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return null
     val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
-    val platformModulesWithImplementation = commonModuleDescriptor.allImplementingModules.filter {
+    val platformModulesWithImplementation = commonModuleDescriptor.allImplementingCompatibleModules.filter {
         it.hasImplementationsOf(descriptor)
     }
     if (platformModulesWithImplementation.isEmpty()) return null
@@ -67,7 +68,7 @@ fun navigateToPlatformImplementation(e: MouseEvent?, declaration: KtDeclaration)
 internal fun KtDeclaration.headerImplementations(): Set<KtDeclaration> {
     val descriptor = toDescriptor() as? MemberDescriptor ?: return emptySet()
     val commonModuleDescriptor = containingKtFile.findModuleDescriptor()
-    return commonModuleDescriptor.allImplementingModules.flatMap {
+    return commonModuleDescriptor.allImplementingCompatibleModules.flatMap {
         it.implementationsOf(descriptor)
     }.mapNotNullTo(LinkedHashSet()) { DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration }
 }

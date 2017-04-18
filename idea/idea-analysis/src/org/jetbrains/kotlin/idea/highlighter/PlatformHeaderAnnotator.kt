@@ -19,11 +19,14 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleProductionSourceInfo
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
@@ -34,6 +37,22 @@ import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.diagnostics.SimpleDiagnostics
 
+val ModuleDescriptor.sourceKind: SourceKind
+    get() = when (getCapability(ModuleInfo.Capability)) {
+        is ModuleProductionSourceInfo -> SourceKind.PRODUCTION
+        is ModuleTestSourceInfo -> SourceKind.TEST
+        else -> SourceKind.OTHER
+    }
+
+enum class SourceKind { OTHER, PRODUCTION, TEST }
+
+val ModuleDescriptor.allImplementingCompatibleModules
+    get() = allImplementingModules.filter {
+        sourceKind == SourceKind.OTHER ||
+        it.sourceKind == SourceKind.OTHER ||
+        it.sourceKind == sourceKind
+    }
+
 class PlatformHeaderAnnotator : Annotator {
 
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
@@ -43,7 +62,7 @@ class PlatformHeaderAnnotator : Annotator {
         if (TargetPlatformDetector.getPlatform(declaration.containingKtFile) !is TargetPlatform.Default) return
 
         val defaultModuleDescriptor = declaration.findModuleDescriptor()
-        val dependentDescriptors = defaultModuleDescriptor.allImplementingModules
+        val dependentDescriptors = defaultModuleDescriptor.allImplementingCompatibleModules
         if (dependentDescriptors.isEmpty()) return
 
         val diagnostics = validate(declaration, dependentDescriptors)

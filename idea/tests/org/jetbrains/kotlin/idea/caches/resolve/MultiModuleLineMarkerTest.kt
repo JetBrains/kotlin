@@ -32,4 +32,8 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
     fun testFromClassToAlias() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
+
+    fun testWithOverloads() {
+        doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+    }
 }
