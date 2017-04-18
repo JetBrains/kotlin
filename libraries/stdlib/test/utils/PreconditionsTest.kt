@@ -1,10 +1,9 @@
-@file:kotlin.jvm.JvmVersion
 package test.utils
 
 import org.junit.Test
 import kotlin.test.*
 
-class PreconditionsJVMTest() {
+class PreconditionsTest() {
 
     @Test fun passingRequire() {
         require(true)
@@ -15,14 +14,14 @@ class PreconditionsJVMTest() {
     }
 
     @Test fun failingRequire() {
-        val error = assertFailsWith(IllegalArgumentException::class) {
+        val error = assertFailsWith<IllegalArgumentException> {
             require(false)
         }
         assertNotNull(error.message)
     }
 
     @Test fun failingRequireWithLazyMessage() {
-        val error = assertFailsWith(IllegalArgumentException::class) {
+        val error = assertFailsWith<IllegalArgumentException> {
             require(false) { "Hello" }
         }
         assertEquals("Hello", error.message)
@@ -37,14 +36,14 @@ class PreconditionsJVMTest() {
     }
 
     @Test fun failingCheck() {
-        val error = assertFailsWith(IllegalStateException::class) {
+        val error = assertFailsWith<IllegalStateException> {
             check(false)
         }
         assertNotNull(error.message)
     }
 
     @Test fun failingCheckWithLazyMessage() {
-        val error = assertFailsWith(IllegalStateException::class) {
+        val error = assertFailsWith<IllegalStateException> {
             check(false) { "Hello" }
         }
         assertEquals("Hello", error.message)
@@ -57,14 +56,14 @@ class PreconditionsJVMTest() {
     }
 
     @Test fun requireNotNullFails() {
-        assertFailsWith(IllegalArgumentException::class) {
+        assertFailsWith<IllegalArgumentException> {
             val s2: String? = null
             requireNotNull(s2)
         }
     }
 
     @Test fun requireNotNullWithLazyMessage() {
-        val error = assertFailsWith(IllegalArgumentException::class) {
+        val error = assertFailsWith<IllegalArgumentException> {
             val obj: Any? = null
             requireNotNull(obj) { "Message" }
         }
@@ -85,12 +84,13 @@ class PreconditionsJVMTest() {
     }
 
     @Test fun checkNotNullFails() {
-        assertFailsWith(IllegalStateException::class) {
+        assertFailsWith<IllegalStateException> {
             val s2: String? = null
             checkNotNull(s2)
         }
     }
 
+    @kotlin.jvm.JvmVersion
     @Test fun passingAssert() {
         assert(true)
         var called = false
@@ -100,51 +100,28 @@ class PreconditionsJVMTest() {
     }
 
 
+    @kotlin.jvm.JvmVersion
     @Test fun failingAssert() {
-        val error = assertFails {
+        val error = assertFailsWith<AssertionError> {
             assert(false)
         }
-        if (error is AssertionError) {
-            assertEquals("Assertion failed", error.message)
-        } else {
-            fail("Invalid exception type: " + error)
+        assertEquals("Assertion failed", error.message)
+    }
+
+
+    @kotlin.jvm.JvmVersion
+    @Test fun failingAssertWithMessage() {
+        val error = assertFailsWith<AssertionError> {
+            assert(false) { "Hello" }
         }
+        assertEquals("Hello", error.message)
     }
 
     @Test fun error() {
-        val error = assertFails {
+        val error = assertFailsWith<IllegalStateException> {
             error("There was a problem")
         }
-        if (error is IllegalStateException) {
-            assertEquals("There was a problem", error.message)
-        } else {
-            fail("Invalid exception type: " + error)
-        }
+        assertEquals("There was a problem", error.message)
     }
 
-    @Test fun passingAssertWithMessage() {
-        assert(true) { "Hello" }
-    }
-
-    @Test fun failingAssertWithMessage() {
-        val error = assertFails {
-            assert(false) { "Hello" }
-        }
-        if (error is AssertionError) {
-            assertEquals("Hello", error.message)
-        } else {
-            fail("Invalid exception type: " + error)
-        }
-    }
-
-    @Test fun failingAssertWithLazyMessage() {
-        val error = assertFails {
-            assert(false) { "Hello" }
-        }
-        if (error is AssertionError) {
-            assertEquals("Hello", error.message)
-        } else {
-            fail("Invalid exception type: " + error)
-        }
-    }
 }

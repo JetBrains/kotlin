@@ -6,28 +6,25 @@ import kotlin.test.*
 class Preconditions {
 
     @Sample
+    @Suppress("UNUSED_VARIABLE")
     fun failWithError() {
         val name: String? = null
 
-        val exception = assertFailsWith<IllegalStateException> {
-            val nonNullName = name ?: error("Name is missing")
-        }
-
-        assertPrints(exception.message, "Name is missing")
+        assertFailsWith<IllegalStateException> { val nonNullName = name ?: error("Name is missing") }
     }
 
     @Sample
     fun failRequireWithLazyMessage() {
 
-        fun getIndices(count: Int) {
+        fun getIndices(count: Int): List<Int> {
             require(count >= 0) { "Count must be non-negative, was $count" }
             // ...
+            return List(count) { it + 1 }
         }
 
-        val exception = assertFailsWith<IllegalArgumentException> {
-            getIndices(-1)
-        }
-        assertPrints(exception.message, "Count must be non-negative, was -1")
+        assertFailsWith<IllegalArgumentException> { getIndices(-1) }
+
+        assertPrints(getIndices(3), "[1, 2, 3]")
     }
 
     @Sample
@@ -41,15 +38,12 @@ class Preconditions {
             return state
         }
 
-        assertFailsWith<IllegalStateException> {
-            getStateValue()
-        }
+        assertFailsWith<IllegalStateException> { getStateValue() }
 
-        assertFailsWith<IllegalStateException> {
-            someState = ""
-            getStateValue()
-        }.let { exception ->
-            assertPrints(exception.message, "State must be non-empty")
-        }
+        someState = ""
+        assertFailsWith<IllegalStateException> { getStateValue() }
+
+        someState = "non-empty-state"
+        assertPrints(getStateValue(), "non-empty-state")
     }
 }
