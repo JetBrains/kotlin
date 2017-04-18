@@ -160,11 +160,12 @@ internal class KonanSerializationUtil(val context: Context) {
 
         if (skip(classDescriptor)) return
 
-        val classProto = serializer.classProto(classDescriptor).build()     
+        val localSerializer = KonanDescriptorSerializer.create(classDescriptor, serializerExtension)
+        val classProto = localSerializer.classProto(classDescriptor).build()
             ?: error("Class not serialized: $classDescriptor")
 
         builder.addClasses(classProto)
-        val index = serializer.stringTable.getFqNameIndex(classDescriptor)
+        val index = localSerializer.stringTable.getFqNameIndex(classDescriptor)
         builder.addClassName(index)
 
         serializeClasses(packageName, builder, 
