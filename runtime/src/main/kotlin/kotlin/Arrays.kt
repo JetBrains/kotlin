@@ -5058,6 +5058,7 @@ public inline fun <T> Array<out T>.single(predicate: (T) -> Boolean): T {
         }
     }
     if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return single as T
 }
 
@@ -10390,7 +10391,7 @@ public inline fun CharArray.copyOf(): CharArray {
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
-    return copyOfNulls(newSize) as Array<T?>
+    return copyOfNulls(newSize)
 }
 
 /**
@@ -11443,8 +11444,6 @@ public inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: 
 public infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean {
     if (this === other)
         return true
-    if (other == null)
-        return false
 
     if (size != other.size)
         return false
@@ -11758,7 +11757,7 @@ public fun <T> Array<out T>.contentHashCode(): Int {
 public fun ByteArray.contentHashCode(): Int {
     var result = 1
     for (element in this)
-        result = 31 * result  + (element?.hashCode() ?: 0)
+        result = 31 * result  + element.hashCode()
     return result
 }
 
@@ -11769,7 +11768,7 @@ public fun ByteArray.contentHashCode(): Int {
 public fun ShortArray.contentHashCode(): Int {
     var result = 1
     for (element in this)
-        result = 31 * result  + (element?.hashCode() ?: 0)
+        result = 31 * result  + element.hashCode()
     return result
 }
 
@@ -11780,7 +11779,7 @@ public fun ShortArray.contentHashCode(): Int {
 public fun IntArray.contentHashCode(): Int {
     var result = 1
     for (element in this)
-        result = 31 * result  + (element?.hashCode() ?: 0)
+        result = 31 * result  + element.hashCode()
     return result
 }
 
@@ -11791,7 +11790,7 @@ public fun IntArray.contentHashCode(): Int {
 public fun LongArray.contentHashCode(): Int {
     var result = 1
     for (element in this)
-        result = 31 * result  + (element?.hashCode() ?: 0)
+        result = 31 * result  + element.hashCode()
     return result
 }
 
@@ -11802,7 +11801,7 @@ public fun LongArray.contentHashCode(): Int {
 public fun FloatArray.contentHashCode(): Int {
     var result = 1
     for (element in this)
-        result = 31 * result  + (element?.hashCode() ?: 0)
+        result = 31 * result  + element.hashCode()
     return result
 }
 
@@ -11813,7 +11812,7 @@ public fun FloatArray.contentHashCode(): Int {
 public fun DoubleArray.contentHashCode(): Int {
     var result = 1
     for (element in this)
-        result = 31 * result  + (element?.hashCode() ?: 0)
+        result = 31 * result  + element.hashCode()
     return result
 }
 
@@ -11824,7 +11823,7 @@ public fun DoubleArray.contentHashCode(): Int {
 public fun BooleanArray.contentHashCode(): Int {
     var result = 1
     for (element in this)
-        result = 31 * result  + (element?.hashCode() ?: 0)
+        result = 31 * result  + element.hashCode()
     return result
 }
 
@@ -11835,7 +11834,7 @@ public fun BooleanArray.contentHashCode(): Int {
 public fun CharArray.contentHashCode(): Int {
     var result = 1
     for (element in this)
-        result = 31 * result  + (element?.hashCode() ?: 0)
+        result = 31 * result  + element.hashCode()
     return result
 }
 

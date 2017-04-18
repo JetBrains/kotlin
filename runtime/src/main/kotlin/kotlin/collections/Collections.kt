@@ -796,6 +796,7 @@ public inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T {
         }
     }
     if (!found) throw NoSuchElementException("Collection contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return last as T
 }
 
@@ -929,6 +930,7 @@ public inline fun <T> Iterable<T>.single(predicate: (T) -> Boolean): T {
         }
     }
     if (!found) throw NoSuchElementException("Collection contains no element matching the predicate.")
+    @Suppress("UNCHECKED_CAST")
     return single as T
 }
 

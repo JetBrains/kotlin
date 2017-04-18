@@ -69,6 +69,7 @@ internal fun <E, T> collectionToArray(collection: Collection<E>, array: Array<T>
     }
     var i = 0
     for (v in collection) {
+        @Suppress("UNCHECKED_CAST")
         toArray[i] = v as T
         i++
     }

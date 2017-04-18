@@ -224,6 +224,7 @@ internal inline fun <K, V> Map<K, V>.getOrElseNullable(key: K, defaultValue: () 
     if (value == null && !containsKey(key)) {
         return defaultValue()
     } else {
+        @Suppress("UNCHECKED_CAST")
         return value as V
     }
 }

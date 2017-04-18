@@ -109,6 +109,7 @@ public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.aggregateTo(
  * @return a [Map] associating the key of each group with the result of accumulating the group elements.
  */
 @SinceKotlin("1.1")
+@Suppress("UNCHECKED_CAST")
 public inline fun <T, K, R> Grouping<T, K>.fold(
         initialValueSelector: (key: K, element: T) -> R,
         operation: (key: K, accumulator: R, element: T) -> R
@@ -137,6 +138,7 @@ public inline fun <T, K, R> Grouping<T, K>.fold(
  * @return the [destination] map associating the key of each group with the result of accumulating the group elements.
  */
 @SinceKotlin("1.1")
+@Suppress("UNCHECKED_CAST")
 public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
         destination: M,
         initialValueSelector: (key: K, element: T) -> R,
@@ -157,6 +159,7 @@ public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
  * @return a [Map] associating the key of each group with the result of accumulating the group elements.
  */
 @SinceKotlin("1.1")
+@Suppress("UNCHECKED_CAST")
 public inline fun <T, K, R> Grouping<T, K>.fold(
         initialValue: R,
         operation: (accumulator: R, element: T) -> R
@@ -179,6 +182,7 @@ public inline fun <T, K, R> Grouping<T, K>.fold(
  * @return the [destination] map associating the key of each group with the result of accumulating the group elements.
  */
 @SinceKotlin("1.1")
+@Suppress("UNCHECKED_CAST")
 public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
         destination: M,
         initialValue: R,
@@ -202,6 +206,7 @@ public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
  * @return a [Map] associating the key of each group with the result of accumulating the group elements.
  */
 @SinceKotlin("1.1")
+@Suppress("UNCHECKED_CAST")
 public inline fun <S, T : S, K> Grouping<T, K>.reduce(
         operation: (key: K, accumulator: S, element: T) -> S
 ): Map<K, S> =
@@ -227,6 +232,7 @@ public inline fun <S, T : S, K> Grouping<T, K>.reduce(
  * @return the [destination] map associating the key of each group with the result of accumulating the group elements.
  */
 @SinceKotlin("1.1")
+@Suppress("UNCHECKED_CAST")
 public inline fun <S, T : S, K, M : MutableMap<in K, S>> Grouping<T, K>.reduceTo(
         destination: M,
         operation: (key: K, accumulator: S, element: T) -> S
