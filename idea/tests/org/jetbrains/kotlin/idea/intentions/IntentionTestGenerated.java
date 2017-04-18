@@ -535,6 +535,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddOpenModifier extends AbstractIntentionTest {
+        @TestMetadata("abstractClass.kt")
+        public void testAbstractClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addOpenModifier/abstractClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("abstractFunction.kt")
+        public void testAbstractFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addOpenModifier/abstractFunction.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInAddOpenModifier() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addOpenModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
@@ -545,9 +557,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("destructuringDeclaration.kt")
+        public void testDestructuringDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addOpenModifier/destructuringDeclaration.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("function.kt")
         public void testFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addOpenModifier/function.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("interface.kt")
+        public void testInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addOpenModifier/interface.kt");
             doTest(fileName);
         }
 
@@ -569,6 +593,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("parameter.kt")
+        public void testParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addOpenModifier/parameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("private.kt")
         public void testPrivate() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addOpenModifier/private.kt");
@@ -578,6 +608,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("property.kt")
         public void testProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addOpenModifier/property.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedClass.kt")
+        public void testSealedClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addOpenModifier/sealedClass.kt");
             doTest(fileName);
         }
     }
