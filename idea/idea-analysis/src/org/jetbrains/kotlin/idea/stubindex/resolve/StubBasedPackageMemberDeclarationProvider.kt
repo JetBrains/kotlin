@@ -18,18 +18,19 @@ package org.jetbrains.kotlin.idea.stubindex.resolve
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
-import org.jetbrains.kotlin.resolve.lazy.data.KtClassInfoUtil
-import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
-import java.util.ArrayList
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.kotlin.idea.stubindex.*
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassInfoUtil
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
+import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import java.util.*
 
 class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
@@ -62,20 +63,26 @@ class StubBasedPackageMemberDeclarationProvider(
 
     override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo> {
         val result = ArrayList<KtClassLikeInfo>()
-        KotlinFullClassNameIndex.getInstance().get(childName(name), project, searchScope)
-                .mapTo(result) { KtClassInfoUtil.createClassLikeInfo(it) }
+        runReadAction {
+            KotlinFullClassNameIndex.getInstance().get(childName(name), project, searchScope)
+                    .mapTo(result) { KtClassInfoUtil.createClassLikeInfo(it) }
 
-        KotlinScriptFqnIndex.instance.get(childName(name), project, searchScope)
-                .mapTo(result, ::KtScriptInfo)
+            KotlinScriptFqnIndex.instance.get(childName(name), project, searchScope)
+                    .mapTo(result, ::KtScriptInfo)
+        }
         return result
     }
 
     override fun getFunctionDeclarations(name: Name): Collection<KtNamedFunction> {
-        return KotlinTopLevelFunctionFqnNameIndex.getInstance().get(childName(name), project, searchScope)
+        return runReadAction {
+            KotlinTopLevelFunctionFqnNameIndex.getInstance().get(childName(name), project, searchScope)
+        }
     }
 
     override fun getPropertyDeclarations(name: Name): Collection<KtProperty> {
-        return KotlinTopLevelPropertyFqnNameIndex.getInstance().get(childName(name), project, searchScope)
+        return runReadAction {
+            KotlinTopLevelPropertyFqnNameIndex.getInstance().get(childName(name), project, searchScope)
+        }
     }
 
     override fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean): Collection<FqName> {

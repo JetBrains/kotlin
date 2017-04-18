@@ -47,11 +47,10 @@ import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope.Companion.sourceAndClassFiles
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -93,11 +92,15 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> {
-        return KotlinFullClassNameIndex.getInstance().get(fqName.asString(), project, sourceAndClassFiles(searchScope, project))
+        return runReadAction {
+            KotlinFullClassNameIndex.getInstance().get(fqName.asString(), project, sourceAndClassFiles(searchScope, project))
+        }
     }
 
     override fun findFilesForPackage(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
-        return PackageIndexUtil.findFilesWithExactPackage(fqName, sourceAndClassFiles(searchScope, project), project)
+        return runReadAction {
+            PackageIndexUtil.findFilesWithExactPackage(fqName, sourceAndClassFiles(searchScope, project), project)
+        }
     }
 
     override fun findClassOrObjectDeclarationsInPackage(
@@ -195,7 +198,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
     override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile> {
-        return KotlinFileFacadeFqNameIndex.INSTANCE.get(facadeFqName.asString(), project, scope)
+        return runReadAction {
+            KotlinFileFacadeFqNameIndex.INSTANCE.get(facadeFqName.asString(), project, scope)
+        }
     }
 
     override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor? {
@@ -212,12 +217,16 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     override fun analyzeFully(element: KtElement) = element.analyzeFully()
 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {
-        val facadeFilesInPackage = KotlinFileFacadeClassByPackageIndex.getInstance().get(packageFqName.asString(), project, scope)
+        val facadeFilesInPackage = runReadAction {
+            KotlinFileFacadeClassByPackageIndex.getInstance().get(packageFqName.asString(), project, scope)
+        }
         return facadeFilesInPackage.map { it.javaFileFacadeFqName.shortName().asString() }
     }
 
     override fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        val facadeFilesInPackage = KotlinFileFacadeClassByPackageIndex.getInstance().get(packageFqName.asString(), project, scope)
+        val facadeFilesInPackage = runReadAction {
+            KotlinFileFacadeClassByPackageIndex.getInstance().get(packageFqName.asString(), project, scope)
+        }
         val groupedByFqNameAndModuleInfo = facadeFilesInPackage.groupBy {
             Pair(it.javaFileFacadeFqName, it.getModuleInfo())
         }
