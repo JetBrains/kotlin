@@ -64,7 +64,8 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
         val functionDeclaration = getFunctionDeclaration(irCall)                            // Get declaration of the function to be inlined.
         if (functionDeclaration == null) {                                                  // We failed to get the declaration.
-            val message = "Inliner failed to obtain inline function declaration"
+            val message = "Inliner failed to obtain function declaration: " +
+                          functionDescriptor.name.toString()
             context.reportWarning(message, currentFile, irCall)                             // Report warning.
             return irCall
         }
