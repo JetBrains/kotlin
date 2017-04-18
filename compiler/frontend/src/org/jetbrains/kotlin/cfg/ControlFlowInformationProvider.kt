@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -879,6 +879,7 @@ class ControlFlowInformationProvider private constructor(
 
     private fun markAndCheckRecursiveTailCalls(subroutineDescriptor: FunctionDescriptor) {
         if (!subroutineDescriptor.isTailrec) return
+        if (subroutine is KtNamedFunction && !subroutine.hasBody()) return
 
         // finally blocks are copied which leads to multiple diagnostics reported on one instruction
         class KindAndCall(var kind: TailRecursionKind, internal val call: ResolvedCall<*>)

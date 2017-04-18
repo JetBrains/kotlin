@@ -188,6 +188,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DefaultValuesCheckWithoutBody.kt")
+        public void testDefaultValuesCheckWithoutBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/DefaultValuesCheckWithoutBody.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DefaultValuesTypechecking.kt")
         public void testDefaultValuesTypechecking() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/DefaultValuesTypechecking.kt");
