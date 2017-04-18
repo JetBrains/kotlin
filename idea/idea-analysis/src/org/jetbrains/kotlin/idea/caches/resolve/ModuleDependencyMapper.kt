@@ -28,12 +28,10 @@ import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.psi.KtFile
@@ -82,11 +80,11 @@ fun createModuleResolverProvider(
 
         return AnalyzerFacade.setupResolverForProject(
                 debugName, globalContext.withProject(project), modulesToCreateResolversFor,
-                { module -> AnalyzerFacadeProvider.getAnalyzerFacade(module.getTargetPlatform() ?: platform) },
+                { module -> AnalyzerFacadeProvider.getAnalyzerFacade(module.platform ?: platform) },
                 modulesContent, jvmPlatformParameters, IdeaEnvironment, builtInsProvider,
                 delegateResolver, { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
                 sdk?.let { SdkInfo(project, it) },
-                modulePlatforms = { module -> module.getTargetPlatform()?.multiTargetPlatform }
+                modulePlatforms = { module -> module.platform?.multiTargetPlatform }
         )
     }
 
@@ -104,13 +102,6 @@ fun createModuleResolverProvider(
             dependencies + listOf(globalContext.exceptionTracker)
     )
 }
-
-private fun ModuleInfo.getTargetPlatform(): TargetPlatform? =
-        when (this) {
-            is ModuleSourceInfo -> TargetPlatformDetector.getPlatform(module)
-            is LibraryModuleInfo -> libraryPlatform
-            else -> null
-        }
 
 fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
     val ideaModules = ModuleManager.getInstance(project).modules.toList()

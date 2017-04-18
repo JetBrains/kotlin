@@ -128,6 +128,7 @@ interface ModuleInfo {
         get() = false
     val name: Name
     fun dependencies(): List<ModuleInfo>
+    val platform: TargetPlatform? get() = null
     fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
     fun dependencyOnBuiltIns(): DependencyOnBuiltIns = DependenciesOnBuiltIns.LAST
     val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>

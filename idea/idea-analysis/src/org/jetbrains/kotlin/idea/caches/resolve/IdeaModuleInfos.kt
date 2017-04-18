@@ -98,8 +98,12 @@ private fun ideaModelDependencies(module: Module, productionOnly: Boolean): List
 
 interface ModuleSourceInfo : IdeaModuleInfo {
     val module: Module
+
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.MODULE
+
+    override val platform: TargetPlatform
+        get() = TargetPlatformDetector.getPlatform(module)
 }
 
 data class ModuleProductionSourceInfo(override val module: Module) : ModuleSourceInfo {
@@ -201,7 +205,7 @@ class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo, 
         return result.toList()
     }
 
-    override val libraryPlatform: TargetPlatform
+    override val platform: TargetPlatform
         get() = TargetPlatformDetector.getPlatform(library)
 
     override val sourcesModuleInfo: SourceForBinaryModuleInfo

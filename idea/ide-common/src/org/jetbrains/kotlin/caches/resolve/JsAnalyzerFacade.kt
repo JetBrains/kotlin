@@ -71,7 +71,7 @@ object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
         )
         var packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 
-        if (moduleInfo is LibraryModuleInfo && moduleInfo.libraryPlatform == JsPlatform) {
+        if (moduleInfo is LibraryModuleInfo && moduleInfo.platform == JsPlatform) {
             val providers = moduleInfo.getLibraryRoots()
                     .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(it) }
                     .filter { it.version.isCompatible() }

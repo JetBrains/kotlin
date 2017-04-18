@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
 interface LibraryModuleInfo : ModuleInfo {
-    val libraryPlatform: TargetPlatform
+    override val platform: TargetPlatform
 
     fun getLibraryRoots(): Collection<String>
 }
