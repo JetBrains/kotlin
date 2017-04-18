@@ -20,10 +20,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -144,6 +141,7 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
             val members = (shortNameCache.getMethodsByName(referenceName, scope).asList() +
                            shortNameCache.getFieldsByName(referenceName, scope).asList())
                     .map { it as PsiMember }
+                    .filter { it.getNullableModuleInfo() != null }
                     .map { it to it.getJavaMemberDescriptor(resolutionFacade) as? DeclarationDescriptorWithVisibility }
                     .filter { canBeImported(it.second) }
 
