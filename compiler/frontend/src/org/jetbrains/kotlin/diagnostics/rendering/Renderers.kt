@@ -21,6 +21,7 @@ import com.google.common.collect.Sets
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.WhenMissingCase
 import org.jetbrains.kotlin.cfg.hasUnknown
@@ -77,7 +78,7 @@ object Renderers {
 
     @JvmField val PLATFORM = Renderer<ModuleDescriptor> {
         val platform = it.getMultiTargetPlatform()
-        when (platform) {
+        " ${it.getCapability(ModuleInfo.Capability)?.displayedName ?: "<Unknown Name>"}" + when (platform) {
             MultiTargetPlatform.Common -> ""
             is MultiTargetPlatform.Specific -> " for " + platform.platform
             null -> ""

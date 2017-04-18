@@ -2,7 +2,7 @@
 
 }
 
-header class <error descr="[HEADER_WITHOUT_IMPLEMENTATION] Header declaration 'His' has no implementation in module for JVM">His</error> {
+header class <error descr="[HEADER_WITHOUT_IMPLEMENTATION] Header declaration 'His' has no implementation in module jvm for JVM">His</error> {
 
 }
 

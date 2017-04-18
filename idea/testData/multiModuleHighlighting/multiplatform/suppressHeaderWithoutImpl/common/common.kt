@@ -4,4 +4,4 @@
 header interface Event
 
 @Suppress("SOMETHING_WRONG")
-header class <error descr="[HEADER_WITHOUT_IMPLEMENTATION] Header declaration 'Wrong' has no implementation in module for JVM">Wrong</error>
+header class <error descr="[HEADER_WITHOUT_IMPLEMENTATION] Header declaration 'Wrong' has no implementation in module jvm (test) for JVM"><error descr="[HEADER_WITHOUT_IMPLEMENTATION] Header declaration 'Wrong' has no implementation in module jvm for JVM">Wrong</error></error>

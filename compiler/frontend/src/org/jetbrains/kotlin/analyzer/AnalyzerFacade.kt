@@ -128,6 +128,7 @@ interface ModuleInfo {
     val isLibrary: Boolean
         get() = false
     val name: Name
+    val displayedName: String get() = name.asString()
     fun dependencies(): List<ModuleInfo>
     val platform: TargetPlatform? get() = null
     fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()

@@ -99,6 +99,8 @@ private fun ideaModelDependencies(module: Module, productionOnly: Boolean): List
 interface ModuleSourceInfo : IdeaModuleInfo {
     val module: Module
 
+    override val displayedName get() = module.name
+
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.MODULE
 
@@ -121,6 +123,8 @@ data class ModuleProductionSourceInfo(override val module: Module) : ModuleSourc
 //TODO: (module refactoring) do not create ModuleTestSourceInfo when there are no test roots for module
 data class ModuleTestSourceInfo(override val module: Module) : ModuleSourceInfo {
     override val name = Name.special("<test sources for module ${module.name}>")
+
+    override val displayedName get() = module.name + " (test)"
 
     override fun contentScope(): GlobalSearchScope = ModuleTestSourceScope(module)
 
