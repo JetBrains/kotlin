@@ -33,7 +33,7 @@ fun ModuleDescriptor.hasImplementationsOf(descriptor: MemberDescriptor) =
 
 private fun ModuleDescriptor.implementationsOf(descriptor: MemberDescriptor): List<DeclarationDescriptor> =
         with (HeaderImplDeclarationChecker(this)) {
-            descriptor.findCompatibleDescriptors().filter { it.isImpl }
+            descriptor.findCompatibleImplForHeader().filter { it.isImpl }
         }
 
 fun getPlatformImplementationTooltip(declaration: KtDeclaration): String? {

@@ -71,9 +71,9 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
     fun checkHeaderDeclarationHasImplementation(
             reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink, checkImpl: Boolean
     ) {
-        val compatibility = buildCompatibilityMap(descriptor, checkImpl)
+        val compatibility = findImplForHeader(descriptor, checkImpl)
 
-        if (compatibility != null && !compatibility.containsKey(Compatible)) {
+        if (compatibility != null && Compatible !in compatibility) {
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
@@ -82,23 +82,23 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
         }
     }
 
-    private fun buildCompatibilityMap(descriptor: MemberDescriptor, checkImpl: Boolean): Map<Compatibility, List<MemberDescriptor>>? {
-        return when (descriptor) {
+    private fun findImplForHeader(header: MemberDescriptor, checkImpl: Boolean): Map<Compatibility, List<MemberDescriptor>>? {
+        return when (header) {
             is CallableMemberDescriptor -> {
-                descriptor.findNamesakesFromTheSameModule().filter { impl ->
-                    descriptor != impl &&
+                header.findNamesakesFromTheSameModule().filter { impl ->
+                    header != impl &&
                     // TODO: support non-source definitions (e.g. from Java)
                     DescriptorToSourceUtils.getSourceFromDescriptor(impl) is KtElement
                 }.groupBy { impl ->
-                    areCompatibleCallables(descriptor, impl, checkImpl)
+                    areCompatibleCallables(header, impl, checkImpl)
                 }
             }
             is ClassDescriptor -> {
-                descriptor.findClassifiersFromTheSameModule().filter { impl ->
-                    descriptor != impl &&
+                header.findClassifiersFromTheSameModule().filter { impl ->
+                    header != impl &&
                     DescriptorToSourceUtils.getSourceFromDescriptor(impl) is KtElement
                 }.groupBy { impl ->
-                    areCompatibleClassifiers(descriptor, impl, checkImpl)
+                    areCompatibleClassifiers(header, impl, checkImpl)
                 }
             }
             else -> null
@@ -108,22 +108,31 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
     private fun checkImplementationHasHeaderDeclaration(
             reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink
     ) {
-        fun ClassifierDescriptorWithTypeParameters.findDeclarationForClass(): ClassDescriptor? =
-                findClassifiersFromTheSameModule().firstOrNull { declaration ->
-                    this != declaration &&
-                    declaration is ClassDescriptor && declaration.isHeader &&
-                    areCompatibleClassifiers(declaration, this, checkImpl = false) == Compatible
-                } as? ClassDescriptor
+        val compatibility = findHeaderForImpl(descriptor)
 
-        val hasDeclaration = when (descriptor) {
+        if (compatibility != null && Compatible !in compatibility) {
+            assert(compatibility.keys.all { it is Incompatible })
+            // TODO: do not report this error for members which are "almost compatible" with some header declarations
+            diagnosticHolder.report(Errors.IMPLEMENTATION_WITHOUT_HEADER.on(reportOn.modifierList!!.getModifier(KtTokens.IMPL_KEYWORD)!!))
+        }
+    }
+
+    private fun findHeaderForImpl(impl: MemberDescriptor): Map<Compatibility, List<MemberDescriptor>>? {
+        return when (impl) {
             is CallableMemberDescriptor -> {
-                val container = descriptor.containingDeclaration
+                val container = impl.containingDeclaration
                 val candidates = when (container) {
-                    is ClassDescriptor -> container.findDeclarationForClass()?.getMembers(descriptor.name).orEmpty()
-                    is PackageFragmentDescriptor -> descriptor.findNamesakesFromTheSameModule()
-                    else -> return // do not report anything for incorrect code, e.g. 'impl' local function
+                    is ClassDescriptor -> {
+                        val headerClass = findHeaderForImpl(container)?.get(Compatible)?.firstOrNull() as? ClassDescriptor
+                        headerClass?.getMembers(impl.name).orEmpty()
+                    }
+                    is PackageFragmentDescriptor -> impl.findNamesakesFromTheSameModule()
+                    else -> return null // do not report anything for incorrect code, e.g. 'impl' local function
                 }
-                candidates.any { declaration ->
+
+                candidates.filter { declaration ->
+                    impl != declaration && declaration.isHeader
+                }.groupBy { declaration ->
                     // TODO: optimize by caching this per impl-header class pair, do not create a new substitutor for each impl member
                     val substitutor =
                             if (container is ClassDescriptor) {
@@ -132,23 +141,23 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
                                 Substitutor(headerClass.declaredTypeParameters, container.declaredTypeParameters)
                             }
                             else null
-
-                    descriptor != declaration &&
-                    declaration.isHeader &&
-                    areCompatibleCallables(declaration, descriptor, checkImpl = false, parentSubstitutor = substitutor) == Compatible
+                    areCompatibleCallables(declaration, impl, checkImpl = false, parentSubstitutor = substitutor)
                 }
             }
-            is ClassifierDescriptorWithTypeParameters -> descriptor.findDeclarationForClass() != null
-            else -> false
-        }
-
-        if (!hasDeclaration) {
-            // TODO: do not report this error for members which are "almost compatible" with some header declarations
-            diagnosticHolder.report(Errors.IMPLEMENTATION_WITHOUT_HEADER.on(reportOn.modifierList!!.getModifier(KtTokens.IMPL_KEYWORD)!!))
+            is ClassifierDescriptorWithTypeParameters -> {
+                impl.findClassifiersFromTheSameModule().filter { declaration ->
+                    impl != declaration &&
+                    declaration is ClassDescriptor && declaration.isHeader
+                }.groupBy { header ->
+                    areCompatibleClassifiers(header as ClassDescriptor, impl, checkImpl = false)
+                }
+            }
+            else -> null
         }
     }
 
-    fun MemberDescriptor.findCompatibleDescriptors() = buildCompatibilityMap(this, false)?.get(Compatible) ?: emptyList()
+    fun MemberDescriptor.findCompatibleImplForHeader(): List<MemberDescriptor> =
+            findImplForHeader(this, false)?.get(Compatible).orEmpty()
 
     private fun CallableMemberDescriptor.findNamesakesFromTheSameModule(): Collection<CallableMemberDescriptor> {
         val packageFqName = (containingDeclaration as? PackageFragmentDescriptor)?.fqName ?: return emptyList()
