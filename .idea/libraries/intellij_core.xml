@@ -5,7 +5,19 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/ideaSDK/core" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/annotations.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/asm-all.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/guava-19.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/intellij-core.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/jdom.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/jna.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/log4j.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/picocontainer.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/snappy-in-java-0.5.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/trove4j.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/util.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/xpp3-1.1.4-min.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/xstream-1.4.8.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
@@ -13,6 +25,5 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/dependencies/asm-src.zip!/" />
     </SOURCES>
-    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/core" recursive="false" />
   </library>
 </component>
