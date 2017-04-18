@@ -29,6 +29,6 @@ class KotlinStringTemplateUPolyadicExpression(
         UPolyadicExpression,
         KotlinUElementWithType,
         KotlinEvaluatableUElement {
-    override val operands: List<UExpression> by lz { psi.entries.map { KotlinConverter.convert(it, this) } }
+    override val operands: List<UExpression> by lz { psi.entries.map { KotlinConverter.convertEntry(it, { this })!! } }
     override val operator = UastBinaryOperator.PLUS
 }

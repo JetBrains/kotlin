@@ -250,14 +250,27 @@ internal object KotlinConverter {
     }
 
 
-    internal fun convert(entry: KtStringTemplateEntry, parent: UElement?): UExpression = when (entry) {
-        is KtStringTemplateEntryWithExpression -> KotlinConverter.convertOrEmpty(entry.expression, parent)
-        is KtEscapeStringTemplateEntry -> KotlinStringULiteralExpression(entry, parent, entry.unescapedValue)
-        else -> {
-            KotlinStringULiteralExpression(entry, parent)
+    internal fun convertEntry(entry: KtStringTemplateEntry,
+                              parentCallback: (() -> UElement?)?,
+                              requiredType: Class<out UElement>? = null): UExpression? {
+        return with(requiredType) {
+            if (entry is KtStringTemplateEntryWithExpression) {
+                expr<UExpression> {
+                    val parent = if (parentCallback == null) null else (parentCallback() ?: return null)
+                    KotlinConverter.convertOrEmpty(entry.expression, parent)
+                }
+            }
+            else {
+                expr<ULiteralExpression> {
+                    val parent = if (parentCallback == null) null else (parentCallback() ?: return null)
+                    if (entry is KtEscapeStringTemplateEntry)
+                        KotlinStringULiteralExpression(entry, parent, entry.unescapedValue)
+                    else
+                        KotlinStringULiteralExpression(entry, parent)
+                }
+            }
         }
     }
-
 
     internal fun convertExpression(expression: KtExpression,
                                    parentCallback: (() -> UElement?)?,
@@ -272,14 +285,17 @@ internal object KotlinConverter {
         return with (requiredType) { when (expression) {
             is KtVariableDeclaration -> expr<UDeclarationsExpression>(build(::convertVariablesDeclaration))
 
-            is KtStringTemplateExpression -> expr<ULiteralExpression> {
-                val parent = if (parentCallback == null) null else (parentCallback() ?: return null)
-                if (expression.entries.isEmpty())
-                    KotlinStringULiteralExpression(expression, parent, "")
+            is KtStringTemplateExpression -> {
+                if (expression.entries.isEmpty()) {
+                    val parent = if (parentCallback == null) null else (parentCallback() ?: return null)
+                    expr<ULiteralExpression> { KotlinStringULiteralExpression(expression, parent, "") }
+                }
                 else if (expression.entries.size == 1)
-                    convert(expression.entries[0], parent)
-                else
-                    KotlinStringTemplateUPolyadicExpression(expression, parent)
+                    convertEntry(expression.entries[0], parentCallback, requiredType)
+                else {
+                    val parent = if (parentCallback == null) null else (parentCallback() ?: return null)
+                    expr<UExpression> { KotlinStringTemplateUPolyadicExpression(expression, parent) }
+                }
             }
             is KtDestructuringDeclaration -> expr<UDeclarationsExpression> {
                 val parent = if (parentCallback == null) null else (parentCallback() ?: return null)

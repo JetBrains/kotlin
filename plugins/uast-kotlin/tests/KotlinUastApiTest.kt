@@ -1,11 +1,10 @@
 package org.jetbrains.uast.test.kotlin
 
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
-import org.jetbrains.uast.UAnnotation
-import org.jetbrains.uast.UFile
-import org.jetbrains.uast.ULiteralExpression
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.uast.*
 import org.jetbrains.uast.test.env.findElementByText
-import org.jetbrains.uast.toUElement
 import org.junit.Assert
 import org.junit.Test
 
@@ -30,6 +29,15 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
             val literalExpressionAgain = psi.toUElement()
             Assert.assertTrue(literalExpressionAgain is ULiteralExpression)
 
+        }
+    }
+
+    @Test fun testConvertStringTemplateWithExpectedType() {
+        doTest("StringTemplateWithVar") { _, file ->
+            val index = file.psi.text.indexOf("foo")
+            val stringTemplate = file.psi.findElementAt(index)!!.getParentOfType<KtStringTemplateExpression>(false)
+            val uLiteral = stringTemplate.toUElementOfType<ULiteralExpression>()
+            assertNull(uLiteral)
         }
     }
 }
