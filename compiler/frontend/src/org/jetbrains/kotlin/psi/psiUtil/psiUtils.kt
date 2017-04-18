@@ -324,7 +324,7 @@ val PsiElement.textRangeWithoutComments: TextRange
 // ---------------------------------- Debug/logging ----------------------------------------------------------------------------------------
 
 fun PsiElement.getElementTextWithContext(): String {
-    assert(isValid) { "Invalid element $this" }
+    if (!isValid) return "<invalid element $this>"
 
     if (this is PsiFile) {
         return containingFile.text
