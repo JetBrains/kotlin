@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.search.usagesSearch.operators
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchRequestCollector
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.uast.*
 
 class InvokeOperatorReferenceSearcher(
         targetFunction: PsiElement,
@@ -35,6 +37,15 @@ class InvokeOperatorReferenceSearcher(
         optimizer: SearchRequestCollector,
         options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtCallExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = emptyList()) {
+    private val callArgumentsSize: Int?
+
+    init {
+        val uastContext = ServiceManager.getService<UastContext>(targetFunction.project, UastContext::class.java)
+        val uMethod = uastContext.convertOpt<UMethod>(targetDeclaration, null)
+        val uastParameters = uMethod?.uastParameters
+
+        callArgumentsSize = if (uastParameters != null && uastParameters.none { it.uastInitializer != null }) uastParameters.size else null
+    }
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {
         val callExpression = expression.parent as? KtCallExpression ?: return
@@ -44,6 +55,12 @@ class InvokeOperatorReferenceSearcher(
     override fun isReferenceToCheck(ref: PsiReference) = ref is KtInvokeFunctionReference
 
     override fun extractReference(element: KtElement): PsiReference? {
-        return (element as? KtCallExpression)?.references?.firstIsInstance<KtInvokeFunctionReference>()
+        val callExpression = element as? KtCallExpression ?: return null
+
+        if (callArgumentsSize != null && callArgumentsSize != callExpression.valueArguments.size) {
+            return null
+        }
+
+        return callExpression.references.firstIsInstance<KtInvokeFunctionReference>()
     }
 }

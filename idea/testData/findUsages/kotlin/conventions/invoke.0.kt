@@ -26,4 +26,8 @@ class C(): B(12) {
 
 fun cTest(c: C) {
     c(5)
+
+    some(12, "Irrelevant usage")
 }
+
+fun some(i: Int, s: String) {}
