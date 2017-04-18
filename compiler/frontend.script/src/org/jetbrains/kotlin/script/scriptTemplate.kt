@@ -74,6 +74,16 @@ interface ScriptDependenciesResolver {
     ): Future<KotlinScriptExternalDependencies?> = PseudoFuture(null)
 }
 
+@Suppress("unused")
+@Deprecated("Used only for compatibility with legacy code, use kotlin.script.dependencies.ScriptDependenciesResolver instead",
+            replaceWith = ReplaceWith("kotlin.script.dependencies.ScriptDependenciesResolver"))
+interface ScriptDependenciesResolverEx {
+    fun resolve(script: ScriptContents,
+                environment: Map<String, Any?>?,
+                previousDependencies: KotlinScriptExternalDependencies?
+    ): KotlinScriptExternalDependencies? = null
+}
+
 @Deprecated("Used only for compatibility with legacy code, use kotlin.script.dependencies.KotlinScriptExternalDependencies instead",
             replaceWith = ReplaceWith("kotlin.script.dependencies.KotlinScriptExternalDependencies"))
 interface KotlinScriptExternalDependencies : Comparable<KotlinScriptExternalDependencies> {
