@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.config.TargetPlatformKind
 class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
 
     private fun doTest(vararg platforms: TargetPlatformKind<*>) {
-        val header = module("header")
-        header.createFacet(TargetPlatformKind.Common)
+        val commonModule = module("common")
+        commonModule.createFacet(TargetPlatformKind.Common)
 
         for (platform in platforms) {
             val path = when (platform) {
@@ -34,7 +34,7 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
             val platformModule = module(path)
             platformModule.createFacet(platform)
             platformModule.enableMultiPlatform()
-            platformModule.addDependency(header)
+            platformModule.addDependency(commonModule)
         }
 
         checkHighlightingInAllFiles()
