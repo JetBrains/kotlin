@@ -74,6 +74,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.core.util.showYesNoCancelDialog
 import org.jetbrains.kotlin.idea.highlighter.markers.getAccessorLightMethods
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
@@ -104,6 +105,8 @@ import java.io.File
 import java.lang.annotation.Retention
 import java.util.*
 import javax.swing.Icon
+
+val CHECK_SUPER_METHODS_YES_NO_DIALOG = "CHECK_SUPER_METHODS_YES_NO_DIALOG"
 
 @JvmOverloads
 fun getOrCreateKotlinFile(fileName: String,
@@ -854,8 +857,6 @@ fun checkSuperMethods(
             declarationDescriptor: CallableDescriptor,
             overriddenElementsToDescriptor: Map<PsiElement, CallableDescriptor>
     ): List<PsiElement> {
-        if (ApplicationManager.getApplication().isUnitTestMode) return overriddenElementsToDescriptor.keys.toList()
-
         val superClassDescriptions = getClassDescriptions(overriddenElementsToDescriptor)
 
         val message = KotlinBundle.message(
@@ -865,7 +866,9 @@ fun checkSuperMethods(
                 actionString
         )
 
-        val exitCode = Messages.showYesNoCancelDialog(declaration.project, message, IdeBundle.message("title.warning"), Messages.getQuestionIcon())
+        val exitCode = showYesNoCancelDialog(
+                CHECK_SUPER_METHODS_YES_NO_DIALOG,
+                declaration.project, message, IdeBundle.message("title.warning"), Messages.getQuestionIcon(), Messages.YES)
         when (exitCode) {
             Messages.YES -> return overriddenElementsToDescriptor.keys.toList()
             Messages.NO -> return listOf(declaration)

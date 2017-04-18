@@ -29,6 +29,7 @@ import com.intellij.lang.properties.psi.Property
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiComment
@@ -46,14 +47,14 @@ import com.intellij.usages.impl.rules.UsageTypeProvider
 import com.intellij.usages.rules.UsageFilteringRule
 import com.intellij.usages.rules.UsageGroupingRule
 import com.intellij.util.CommonProcessors
-import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
+import org.jetbrains.kotlin.idea.core.util.clearDialogsResults
+import org.jetbrains.kotlin.idea.core.util.setDialogsResult
+import org.jetbrains.kotlin.idea.refactoring.CHECK_SUPER_METHODS_YES_NO_DIALOG
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.TestFixtureExtension
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -206,7 +207,10 @@ internal fun <T : PsiElement> findUsagesAndCheckResults(
             ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.PLAIN_WHEN_NEEDED
         }
 
-        findUsages(caretElement, options, highlightingMode, project)
+        val searchSuperDeclaration =
+                InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, CHECK_SUPER_METHODS_YES_NO_DIALOG + ":").firstOrNull() != "no"
+
+        findUsages(caretElement, options, highlightingMode, project, searchSuperDeclaration)
     }
     finally {
         ExpressionsOfTypeProcessor.testLog = null
@@ -269,46 +273,54 @@ internal fun <T : PsiElement> findUsagesAndCheckResults(
     }
 }
 
-
 internal fun findUsages(
         targetElement: PsiElement,
         options: FindUsagesOptions?,
         highlightingMode: Boolean,
-        project: Project
+        project: Project,
+        searchSuperDeclaration: Boolean = true
 ): Collection<UsageInfo> {
-    val handler: FindUsagesHandler = (if (targetElement is PsiMember) {
-        JavaFindUsagesHandler(targetElement, JavaFindUsagesHandlerFactory(project))
-    }
-    else if (targetElement is KtDeclaration && targetElement !is KtTypeAlias) {
-        KotlinFindUsagesHandlerFactory(project).createFindUsagesHandlerNoQuestions(targetElement)
-    }
-    else {
-        (FindManager.getInstance(project) as FindManagerImpl).findUsagesManager.getFindUsagesHandler(targetElement, false)
-    }) ?: error("Cannot find handler for: $targetElement")
+    try {
+        val handler: FindUsagesHandler = when {
+            targetElement is PsiMember ->
+                JavaFindUsagesHandler(targetElement, JavaFindUsagesHandlerFactory(project))
+            else -> {
+                if (!searchSuperDeclaration) {
+                    setDialogsResult(CHECK_SUPER_METHODS_YES_NO_DIALOG, Messages.NO)
+                }
 
-    @Suppress("NAME_SHADOWING")
-    val options = options ?: handler.getFindUsagesOptions(null)
-
-    options.searchScope = GlobalSearchScope.allScope(project)
-
-    val processor = CommonProcessors.CollectProcessor<UsageInfo>()
-    for (psiElement in handler.primaryElements + handler.secondaryElements) {
-        if (highlightingMode) {
-            //TODO: should findReferencesToHighlight work outside read-action or it makes no sense?
-            for (reference in handler.findReferencesToHighlight(psiElement, options.searchScope)) {
-                processor.process(UsageInfo(reference))
+                val findManagerImpl = FindManager.getInstance(project) as FindManagerImpl
+                findManagerImpl.findUsagesManager.getFindUsagesHandler(targetElement, false) ?: error("Cannot find handler for: $targetElement")
             }
         }
-        else {
-            // run in another thread to test read-action assertions
-            val thread = Thread {
-                handler.processElementUsages(psiElement, processor, options)
-            }
-            thread.start()
-            thread.join()
-        }
-    }
 
-    return processor.results
+        @Suppress("NAME_SHADOWING")
+        val options = options ?: handler.getFindUsagesOptions(null)
+
+        options.searchScope = GlobalSearchScope.allScope(project)
+
+        val processor = CommonProcessors.CollectProcessor<UsageInfo>()
+        for (psiElement in handler.primaryElements + handler.secondaryElements) {
+            if (highlightingMode) {
+                //TODO: should findReferencesToHighlight work outside read-action or it makes no sense?
+                for (reference in handler.findReferencesToHighlight(psiElement, options.searchScope)) {
+                    processor.process(UsageInfo(reference))
+                }
+            }
+            else {
+                // run in another thread to test read-action assertions
+                val thread = Thread {
+                    handler.processElementUsages(psiElement, processor, options)
+                }
+                thread.start()
+                thread.join()
+            }
+        }
+
+        return processor.results
+    }
+    finally {
+        clearDialogsResults()
+    }
 }
 

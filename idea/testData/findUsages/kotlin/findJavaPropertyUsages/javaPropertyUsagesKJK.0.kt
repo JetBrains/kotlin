@@ -1,4 +1,5 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtProperty
+// CHECK_SUPER_METHODS_YES_NO_DIALOG: no
 // OPTIONS: usages
 open class A {
     open var p: Int = 1
