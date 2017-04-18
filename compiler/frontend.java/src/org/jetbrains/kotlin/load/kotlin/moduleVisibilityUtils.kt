@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeAliasDescriptor
 import java.io.File
 
 interface ModuleVisibilityManager {
@@ -53,7 +54,7 @@ fun isContainedByCompiledPartOfOurModule(descriptor: DeclarationDescriptor, outD
         is KotlinJvmBinarySourceElement ->
             source.binaryClass
         is KotlinJvmBinaryPackageSourceElement ->
-            if (descriptor is DeserializedCallableMemberDescriptor) {
+            if (descriptor is DeserializedMemberDescriptor) {
                 source.getContainingBinaryClass(descriptor) ?: source.getRepresentativeBinaryClass()
             }
             else {
@@ -76,6 +77,9 @@ fun isContainedByCompiledPartOfOurModule(descriptor: DeclarationDescriptor, outD
 
 fun getSourceElement(descriptor: DeclarationDescriptor): SourceElement =
         if (descriptor is CallableMemberDescriptor && descriptor.source === SourceElement.NO_SOURCE) {
+            descriptor.containingDeclaration.toSourceElement
+        }
+        else if (descriptor is DeserializedTypeAliasDescriptor) {
             descriptor.containingDeclaration.toSourceElement
         }
         else {
