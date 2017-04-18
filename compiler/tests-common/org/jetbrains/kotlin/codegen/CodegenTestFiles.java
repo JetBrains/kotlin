@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -133,7 +133,9 @@ public class CodegenTestFiles {
             }
         }
 
-        KotlinScriptDefinitionProvider.getInstance(project).addScriptDefinition(StandardScriptDefinition.INSTANCE);
+        KotlinScriptDefinitionProvider scriptDefinitionProvider = KotlinScriptDefinitionProvider.getInstance(project);
+        assert scriptDefinitionProvider != null;
+        scriptDefinitionProvider.addScriptDefinition(StandardScriptDefinition.INSTANCE);
 
         return new CodegenTestFiles(Collections.singletonList(file), expectedValues, scriptParameterValues);
     }

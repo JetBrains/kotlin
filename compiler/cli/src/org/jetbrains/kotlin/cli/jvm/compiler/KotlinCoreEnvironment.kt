@@ -178,7 +178,7 @@ class KotlinCoreEnvironment private constructor(
         })
         sourceFiles.sortBy { it.virtualFile.path }
 
-        KotlinScriptDefinitionProvider.getInstance(project).let { scriptDefinitionProvider ->
+        KotlinScriptDefinitionProvider.getInstance(project)?.let { scriptDefinitionProvider ->
             scriptDefinitionProvider.setScriptDefinitions(
                     configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS))
 
