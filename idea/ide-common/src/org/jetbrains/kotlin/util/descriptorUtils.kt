@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.CONFLICT
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
 
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -60,14 +61,18 @@ fun descriptorsEqualWithSubstitution(descriptor1: DeclarationDescriptor?, descri
     return true
 }
 
-fun ClassDescriptor.findCallableMemberBySignature(signature: CallableMemberDescriptor): CallableMemberDescriptor? {
+fun ClassDescriptor.findCallableMemberBySignature(
+        signature: CallableMemberDescriptor,
+        allowOverridabilityConflicts: Boolean = false
+): CallableMemberDescriptor? {
     val descriptorKind = if (signature is FunctionDescriptor) DescriptorKindFilter.FUNCTIONS else DescriptorKindFilter.VARIABLES
     return defaultType.memberScope
             .getContributedDescriptors(descriptorKind)
             .filterIsInstance<CallableMemberDescriptor>()
             .firstOrNull {
-                it.containingDeclaration == this
-                && OverridingUtil.DEFAULT.isOverridableBy(it as CallableDescriptor, signature, null).result == OVERRIDABLE
+                if (it.containingDeclaration != this) return@firstOrNull false
+                val overridability = OverridingUtil.DEFAULT.isOverridableBy(it as CallableDescriptor, signature, null).result
+                overridability == OVERRIDABLE || (allowOverridabilityConflicts && overridability == CONFLICT)
             } as? CallableMemberDescriptor
 }
 
