@@ -6,6 +6,10 @@
         <extensionPoint name="declarationAttributeAltererExtension"
                         interface="org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension"
                         area="IDEA_PROJECT"/>
+
+        <extensionPoint name="androidDexer"
+                        interface="org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.AndroidDexer"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">

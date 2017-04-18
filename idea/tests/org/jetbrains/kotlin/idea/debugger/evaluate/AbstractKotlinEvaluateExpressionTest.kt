@@ -23,6 +23,7 @@ import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.TextWithImports
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilderImpl
+import com.intellij.debugger.engine.events.SuspendContextCommandImpl
 import com.intellij.debugger.settings.NodeRendererSettings
 import com.intellij.debugger.ui.impl.watch.*
 import com.intellij.debugger.ui.tree.*
@@ -454,26 +455,39 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
 
             contextElement.putCopyableUserData(KotlinCodeFragmentFactory.DEBUG_CONTEXT_FOR_TESTS, this@AbstractKotlinEvaluateExpressionTest.debuggerContext)
 
-            try {
 
-                val evaluator =
-                        EvaluatorBuilderImpl.build(item,
-                                                   contextElement,
-                                                   sourcePosition,
-                                                   project)
+            runActionInSuspendCommand {
+                try {
+                    val evaluator = EvaluatorBuilderImpl.build(item, contextElement, sourcePosition, project)
+                                    ?: throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
 
-
-                if (evaluator == null) throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
-
-                val value = evaluator.evaluate(this@AbstractKotlinEvaluateExpressionTest.evaluationContext)
-                val actualResult = value.asValue().asString()
-                if (expectedResult != null) {
-                    Assert.assertTrue("Evaluate expression returns wrong result for ${item.text}:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)
+                    val value = evaluator.evaluate(this@AbstractKotlinEvaluateExpressionTest.evaluationContext)
+                    val actualResult = value.asValue().asString()
+                    if (expectedResult != null) {
+                        Assert.assertTrue("Evaluate expression returns wrong result for ${item.text}:" +
+                                          "\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)
+                    }
+                }
+                catch (e: EvaluateException) {
+                    Assert.assertTrue("Evaluate expression throws wrong exception for ${item.text}:" +
+                                      "\nexpected = $expectedResult\nactual   = ${e.message}\n", expectedResult == e.message?.replaceFirst(ID_PART_REGEX, "id=ID"))
                 }
             }
-            catch (e: EvaluateException) {
-                Assert.assertTrue("Evaluate expression throws wrong exception for ${item.text}:\nexpected = $expectedResult\nactual   = ${e.message}\n", expectedResult == e.message?.replaceFirst(ID_PART_REGEX, "id=ID"))
+        }
+    }
+
+    private fun SuspendContextImpl.runActionInSuspendCommand(action: SuspendContextImpl.() -> Unit) {
+        if (myInProgress) {
+            action()
+        } else {
+            val command = object : SuspendContextCommandImpl(this) {
+                override fun contextAction(suspendContext: SuspendContextImpl) {
+                    action(suspendContext)
+                }
             }
+
+            // Try to execute the action inside a command if we aren't already inside it.
+            debuggerContext.debugProcess?.managerThread?.invoke(command) ?: command.contextAction(this)
         }
     }
 
