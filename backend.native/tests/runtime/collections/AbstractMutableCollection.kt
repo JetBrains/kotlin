@@ -15,17 +15,6 @@ class TestCollection(): AbstractMutableCollection<Int>() {
         return true
     }
 
-    override fun remove(element: Int): Boolean {
-        val it = iterator()
-        while(it.hasNext()) {
-            if (it.next() == element) {
-                it.remove()
-                return true
-            }
-        }
-        return false
-    }
-
     override fun iterator(): MutableIterator<Int> = object: MutableIterator<Int> {
         var nextIndex = 0
 
@@ -67,4 +56,8 @@ fun main(args: Array<String>) {
     assertEquals(c, listOf(3, 4, 5, 4))
     c.retainAll(listOf(4, 5))
     assertEquals(c, listOf(4, 5, 4))
+    c.remove(4)
+    assertEquals(c, listOf(5, 4))
+    c.clear()
+    assertEquals(c, listOf())
 }

@@ -8,7 +8,7 @@ inline fun <T, R : Comparable<R>> assertSorted(list: List<out T>, message: Strin
     }
     val it = list.iterator()
     var prev = selector(it.next())
-    while(it.hasNext()) {
+    while (it.hasNext()) {
         val cur = selector(it.next())
         assertTrue(prev.compareTo(cur) <= 0, message)
         prev = cur
@@ -21,7 +21,7 @@ inline fun <T, R : Comparable<R>> assertSortedDescending(list: List<out T>, mess
     }
     val it = list.iterator()
     var prev = selector(it.next())
-    while(it.hasNext()) {
+    while (it.hasNext()) {
         val cur = selector(it.next())
         assertTrue(prev.compareTo(cur) >= 0, message)
         prev = cur

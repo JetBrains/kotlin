@@ -61,9 +61,26 @@ public abstract class AbstractMutableCollection<E> protected constructor(): Muta
     override public fun addAll(elements: Collection<E>): Boolean {
         var changed = false
         for (v in elements) {
-            if(add(v)) changed = true
+            if (add(v)) changed = true
         }
         return changed
+    }
+
+    /**
+     * Removes a single instance of the specified element from this
+     * collection, if it is present.
+     *
+     * @return `true` if the element has been successfully removed; `false` if it was not present in the collection.
+     */
+    override fun remove(element: E): Boolean {
+        val it = iterator()
+        while (it.hasNext()) {
+            if (it.next() == element) {
+                it.remove()
+                return true
+            }
+        }
+        return false
     }
 
     /**
@@ -71,30 +88,23 @@ public abstract class AbstractMutableCollection<E> protected constructor(): Muta
      *
      * @return `true` if any of the specified elements was removed from the collection, `false` if the collection was not modified.
      */
-    override public fun removeAll(elements: Collection<E>): Boolean = removeAll(elements, true)
+    override public fun removeAll(elements: Collection<E>): Boolean = (this as MutableIterable<E>).removeAll { it in elements }
 
     /**
      * Retains only the elements in this collection that are contained in the specified collection.
      *
      * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
      */
-    override public fun retainAll(elements: Collection<E>): Boolean = removeAll(elements, false)
+    override public fun retainAll(elements: Collection<E>): Boolean = (this as MutableIterable<E>).retainAll { it in elements }
 
     /**
-     * Removes the elements in this collection that are contained (if [contained] == true) or
-     * not contained (if [contained] == false) in [elements].
-     *
-     * @return `true` if the collection has been modified and `false` otherwise.
+     * Removes all elements from this collection.
      */
-    protected fun removeAll(elements: Collection<E>, contained: Boolean): Boolean {
+    override fun clear(): Unit {
         val it = iterator()
-        var changed = false
         while (it.hasNext()) {
-            if (elements.contains(it.next()) == contained) {
-                it.remove()
-                changed = true
-            }
+            it.next()
+            it.remove()
         }
-        return changed
     }
 }

@@ -790,9 +790,9 @@ task lateinit_notInitialized(type: RunKonanTest) {
     source = "codegen/lateinit/notInitialized.kt"
 }
 
-task AbstractMutableCollectionRemoveAll(type: RunKonanTest) {
+task AbstractMutableCollection(type: RunKonanTest) {
     expectedExitStatus = 0
-    source = "runtime/collections/AbstractMutableCollectionRemoveAll.kt"
+    source = "runtime/collections/AbstractMutableCollection.kt"
 }
 
 task array0(type: RunKonanTest) {
