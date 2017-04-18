@@ -26,7 +26,7 @@ interface IsDescriptorFromSourcePredicate: (CallableDescriptor) -> Boolean
 interface CommonSupertypeCalculator: (Collection<UnwrappedType>) -> UnwrappedType
 
 interface LambdaAnalyzer {
-    fun analyzeAndGetRelatedCalls(
+    fun analyzeAndGetLambdaResultArguments(
             topLevelCall: KotlinCall,
             lambdaArgument: LambdaKotlinCallArgument,
             receiverType: UnwrappedType?,
