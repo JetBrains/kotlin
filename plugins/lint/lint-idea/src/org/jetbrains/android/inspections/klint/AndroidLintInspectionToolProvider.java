@@ -255,7 +255,11 @@ public class AndroidLintInspectionToolProvider {
     public AndroidKLintParcelCreatorInspection() {
       super(AndroidBundle.message("android.lint.inspections.parcel.creator"), ParcelDetector.ISSUE);
     }
-
+    @NotNull
+    @Override
+    public AndroidLintQuickFix[] getQuickFixes(@NotNull String message) {
+        return new AndroidLintQuickFix[]{ new ParcelableQuickFix() };
+    }
   }
 
   public static class AndroidKLintPluralsCandidateInspection extends AndroidLintInspectionBase {

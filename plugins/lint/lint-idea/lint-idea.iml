@@ -19,5 +19,6 @@
     <orderEntry type="module" module-name="idea-analysis" />
     <orderEntry type="module" module-name="idea-core" />
     <orderEntry type="module" module-name="idea" />
+    <orderEntry type="module" module-name="idea-android" />
   </component>
 </module>

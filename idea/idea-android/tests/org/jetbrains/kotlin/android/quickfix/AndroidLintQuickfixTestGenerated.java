@@ -36,6 +36,27 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("idea/testData/android/lintQuickfix/parcelable")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Parcelable extends AbstractAndroidLintQuickfixTest {
+        public void testAllFilesPresentInParcelable() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/parcelable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("missingCreator.kt")
+        public void testMissingCreator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/parcelable/missingCreator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noImplementation.kt")
+        public void testNoImplementation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/parcelable/noImplementation.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/android/lintQuickfix/requiresApi")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

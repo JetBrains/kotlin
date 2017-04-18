@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.allopen.AbstractBytecodeListingTestForAllOpen
 import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.android.folding.AbstractAndroidResourceFoldingTest
+import org.jetbrains.kotlin.android.intention.AbstractAndroidIntentionTest
 import org.jetbrains.kotlin.android.intention.AbstractAndroidResourceIntentionTest
 import org.jetbrains.kotlin.android.lint.AbstractKotlinLintTest
 import org.jetbrains.kotlin.android.quickfix.AbstractAndroidLintQuickfixTest
@@ -1230,6 +1231,10 @@ fun main(args: Array<String>) {
     testGroup("idea/idea-android/tests", "idea/testData") {
         testClass<AbstractConfigureProjectTest> {
             model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
+        }
+
+        testClass<AbstractAndroidIntentionTest> {
+            model("android/intention", pattern = "^([\\w\\-_]+)\\.kt$")
         }
 
         testClass<AbstractAndroidResourceIntentionTest> {

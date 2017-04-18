@@ -23,6 +23,20 @@
             <category>Kotlin Android</category>
         </intentionAction>
 
+        <intentionAction>
+            <className>org.jetbrains.kotlin.android.intention.ImplementParcelableAction</className>
+            <category>Kotlin Android</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>org.jetbrains.kotlin.android.intention.RemoveParcelableAction</className>
+            <category>Kotlin Android</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>org.jetbrains.kotlin.android.intention.RedoParcelableAction</className>
+            <category>Kotlin Android</category>
+        </intentionAction>
 
         <codeInsight.unresolvedReferenceQuickFixProvider
             implementation="org.jetbrains.kotlin.android.inspection.KotlinAndroidResourceQuickFixProvider"/>

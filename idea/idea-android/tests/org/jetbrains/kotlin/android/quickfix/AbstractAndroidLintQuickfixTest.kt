@@ -58,7 +58,7 @@ abstract class AbstractAndroidLintQuickfixTest : KotlinAndroidTestCase() {
             myFixture.checkResultByFile(path + ".expected")
         }
         else {
-            assertNull("Intention should not be availabale", myFixture.availableIntentions.find { it.text == intentionText })
+            assertNull("Intention should not be available", myFixture.availableIntentions.find { it.text == intentionText })
         }
     }
 
