@@ -126,7 +126,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 
         fun makeScriptContents() = BasicScriptContents(file, getAnnotations = {
             val classLoader = template.java.classLoader
-            takeUnlessError {
+            takeUnlessError(reportError = false) {
                 getAnnotationEntries(file, project)
                         .mapNotNull { psiAnn ->
                             // TODO: consider advanced matching using semantic similar to actual resolving
@@ -138,7 +138,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
             ?: emptyList()
         })
 
-        return takeUnlessError {
+        return takeUnlessError(reportError = false) {
             val fileDeps = resolver?.resolve(makeScriptContents(), environment, ::logScriptDefMessage, previousDependencies)
             // TODO: use it as a Future
             fileDeps?.get()
@@ -177,12 +177,17 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
     override val annotationsForSamWithReceivers: List<String>
         get() = samWithReceiverAnnotations ?: super.annotationsForSamWithReceivers
 
-    private inline fun<T> takeUnlessError(body: () -> T?): T? =
+    private inline fun<T> takeUnlessError(reportError: Boolean = true, body: () -> T?): T? =
             try {
                 body()
             }
             catch (ex: Throwable) {
-                log.error("Invalid script template: ${template.qualifiedName}", ex)
+                if (reportError) {
+                    log.error("Invalid script template: " + template.qualifiedName, ex)
+                }
+                else {
+                    log.warn("Invalid script template: " + template.qualifiedName, ex)
+                }
                 null
             }
 
