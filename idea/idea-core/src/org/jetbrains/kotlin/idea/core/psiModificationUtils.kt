@@ -313,3 +313,10 @@ fun KtCallableDeclaration.setReceiverType(type: KotlinType) {
     ShortenReferences.DEFAULT.process(receiverTypeReference!!)
 }
 
+fun KtParameter.setDefaultValue(newDefaultValue: KtExpression): PsiElement? {
+    defaultValue?.let { return it.replaced(newDefaultValue) }
+
+    val psiFactory = KtPsiFactory(this)
+    val eq = equalsToken ?: add(psiFactory.createEQ())
+    return addAfter(newDefaultValue, eq) as KtExpression
+}

@@ -284,11 +284,11 @@ open class KotlinChangeInfo(
 
         val isLambda = inheritedCallable.declaration is KtFunctionLiteral
         if (isLambda && signatureParameters.size == 1 && !signatureParameters[0].requiresExplicitType(inheritedCallable)) {
-            return signatureParameters[0].getDeclarationSignature(0, inheritedCallable)
+            return signatureParameters[0].getDeclarationSignature(0, inheritedCallable).text
         }
 
         return signatureParameters.indices
-                .map { i -> signatureParameters[i].getDeclarationSignature(i, inheritedCallable) }
+                .map { i -> signatureParameters[i].getDeclarationSignature(i, inheritedCallable).text }
                 .joinToString(separator = ", ")
     }
 

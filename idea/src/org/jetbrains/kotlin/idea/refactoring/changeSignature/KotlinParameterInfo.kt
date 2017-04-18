@@ -22,11 +22,14 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.compareDescriptors
+import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.idea.core.setDefaultValue
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.addRemoveModifier.setModifierList
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -186,7 +189,15 @@ class KotlinParameterInfo @JvmOverloads constructor (
         return parameter.typeReference != null
     }
 
-    fun getDeclarationSignature(parameterIndex: Int, inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
+    private fun getOriginalParameter(inheritedCallable: KotlinCallableDefinitionUsage<*>): KtParameter? {
+        val currentFunction = inheritedCallable.declaration as? KtFunction ?: return null
+        val originalParameterIndex = if (currentFunction.receiverTypeReference == null) originalIndex else originalIndex - 1
+        return currentFunction.valueParameters.getOrNull(originalParameterIndex)
+    }
+
+    private fun buildNewParameter(inheritedCallable: KotlinCallableDefinitionUsage<*>, parameterIndex: Int): KtParameter {
+        val psiFactory = KtPsiFactory(inheritedCallable.project)
+
         val buffer = StringBuilder()
 
         if (modifierList != null) {
@@ -207,6 +218,35 @@ class KotlinParameterInfo @JvmOverloads constructor (
             defaultValueForParameter?.let { buffer.append(" = ").append(it.text) }
         }
 
-        return buffer.toString()
+        return psiFactory.createParameter(buffer.toString())
+    }
+
+    fun getDeclarationSignature(parameterIndex: Int, inheritedCallable: KotlinCallableDefinitionUsage<*>): KtParameter {
+        val originalParameter = getOriginalParameter(inheritedCallable)
+                                ?: return buildNewParameter(inheritedCallable, parameterIndex)
+
+        val psiFactory = KtPsiFactory(originalParameter)
+        val newParameter = originalParameter.copied()
+
+        modifierList?.let { newParameter.setModifierList(it) }
+
+        if (valOrVar != newParameter.valOrVarKeyword.toValVar()) {
+            newParameter.setValOrVar(valOrVar)
+        }
+
+        val newName = getInheritedName(inheritedCallable)
+        if (newParameter.name != newName) {
+            newParameter.setName(newName.quoteIfNeeded())
+        }
+
+        if (newParameter.typeReference != null || requiresExplicitType(inheritedCallable)) {
+            newParameter.typeReference = psiFactory.createType(renderType(parameterIndex, inheritedCallable))
+        }
+
+        if (!inheritedCallable.isInherited) {
+            defaultValueForParameter?.let { newParameter.setDefaultValue(it) }
+        }
+
+        return newParameter
     }
 }

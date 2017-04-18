@@ -28,14 +28,11 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.core.toKeywordToken
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.getCallableSubstitutor
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.replaceListPsiAndKeepDelimiters
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -237,30 +234,14 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
     }
 
     private fun changeParameter(parameterIndex: Int, parameter: KtParameter, parameterInfo: KotlinParameterInfo) {
-        val valOrVarKeyword = parameter.valOrVarKeyword
-        val valOrVar = parameterInfo.valOrVar
+        parameter.setValOrVar(parameterInfo.valOrVar)
 
         val psiFactory = KtPsiFactory(project)
-        val newKeyword = valOrVar.createKeyword(psiFactory)
-        if (valOrVarKeyword != null) {
-            if (newKeyword != null) {
-                valOrVarKeyword.replace(newKeyword)
-            }
-            else {
-                valOrVarKeyword.delete()
-            }
-        }
-        else if (valOrVar != KotlinValVar.None && newKeyword != null) {
-            val firstChild = parameter.firstChild
-            parameter.addBefore(newKeyword, firstChild)
-            parameter.addBefore(psiFactory.createWhiteSpace(), firstChild)
-        }
 
         if (parameterInfo.isTypeChanged && parameter.typeReference != null) {
             val renderedType = parameterInfo.renderType(parameterIndex, this)
             parameter.typeReference = psiFactory.createType(renderedType)
         }
-
 
         val inheritedName = parameterInfo.getInheritedName(this)
         if (Name.isValidIdentifier(inheritedName)) {

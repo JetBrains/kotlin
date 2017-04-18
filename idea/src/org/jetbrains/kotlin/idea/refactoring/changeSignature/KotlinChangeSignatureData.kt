@@ -65,8 +65,7 @@ class KotlinChangeSignatureData(
                             name = parameterDescriptor.name.asString(),
                             originalTypeInfo = KotlinTypeInfo(false, parameterType, parameterTypeText),
                             defaultValueForParameter = jetParameter?.defaultValue,
-                            valOrVar = jetParameter?.valOrVarKeyword.toValVar(),
-                            modifierList = jetParameter?.modifierList
+                            valOrVar = jetParameter?.valOrVarKeyword.toValVar()
                     )
                 }
     }

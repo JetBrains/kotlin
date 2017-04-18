@@ -942,4 +942,6 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testReceiverInSafeCall() = doTestConflict { receiverParameterInfo = null }
+
+    fun testRemoveParameterKeepOtherComments() = doTest { removeParameter(1) }
 }

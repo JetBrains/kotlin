@@ -24,13 +24,26 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
-private fun createModifierList(text: String, owner: KtModifierListOwner): KtModifierList {
-    val newModifierList = KtPsiFactory(owner).createModifierList(text)
-    val anchor = owner.firstChild!!
+private fun KtModifierListOwner.addModifierList(newModifierList: KtModifierList): KtModifierList {
+    val anchor = firstChild!!
             .siblings(forward = true)
             .dropWhile { it is PsiComment || it is PsiWhiteSpace }
             .first()
-    return owner.addBefore(newModifierList, anchor) as KtModifierList
+    return addBefore(newModifierList, anchor) as KtModifierList
+}
+
+private fun createModifierList(text: String, owner: KtModifierListOwner): KtModifierList {
+    return owner.addModifierList(KtPsiFactory(owner).createModifierList(text))
+}
+
+fun KtModifierListOwner.setModifierList(newModifierList: KtModifierList) {
+    val currentModifierList = modifierList
+    if (currentModifierList != null) {
+        currentModifierList.replace(newModifierList)
+    }
+    else {
+        addModifierList(newModifierList)
+    }
 }
 
 fun addModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
