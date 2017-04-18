@@ -63,7 +63,6 @@ messages/**)
 
 -keep class org.fusesource.** { *; }
 -keep class com.sun.jna.** { *; }
--keep class org.jdom.input.JAXPParserFactory { *; }
 
 -keep class org.jetbrains.annotations.** {
     public protected *;
@@ -121,11 +120,8 @@ messages/**)
 }
 
 # This is needed so that the platform code which parses XML wouldn't fail, see KT-16968
-# Note that these directives probably keep too much in the compiler JAR, we might not need all classes in these packages
--keep class org.apache.xerces.impl.** { public *; }
--keep class org.apache.xerces.jaxp.** { public *; }
--keep class org.apache.xerces.parsers.** { public *; }
--keep class org.apache.xml.** { public *; }
+# This API is used from org.jdom.input.SAXBuilder via reflection.
+-keep class org.jdom.input.JAXPParserFactory { public ** createParser(...); }
 
 # for kdoc & dokka
 -keep class com.intellij.openapi.util.TextRange { *; }
