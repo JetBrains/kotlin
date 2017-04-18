@@ -270,7 +270,7 @@ object IDELightClassContexts {
     private val annotationsThatAffectCodegen = listOf(
             "JvmField", "JvmOverloads", "JvmName", "JvmStatic",
             "Synchronized", "Transient", "Volatile", "Strictfp"
-    ).map { FqName("kotlin.jvm").child(Name.identifier(it)) } + FqName("kotlin.PublishedApi")
+    ).map { FqName("kotlin.jvm").child(Name.identifier(it)) } + FqName("kotlin.PublishedApi") + FqName("kotlin.Deprecated")
 
     class AdHocAnnotationResolver(
             private val moduleDescriptor: ModuleDescriptor,

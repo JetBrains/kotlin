@@ -66,6 +66,12 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         doTest(fileName);
     }
 
+    @TestMetadata("DeprecatedNotHiddenInClass.kt")
+    public void testDeprecatedNotHiddenInClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/DeprecatedNotHiddenInClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DollarsInName.kt")
     public void testDollarsInName() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/DollarsInName.kt");
@@ -87,6 +93,12 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     @TestMetadata("HiddenDeprecated.kt")
     public void testHiddenDeprecated() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/HiddenDeprecated.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("HiddenDeprecatedInClass.kt")
+    public void testHiddenDeprecatedInClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/HiddenDeprecatedInClass.kt");
         doTest(fileName);
     }
 
