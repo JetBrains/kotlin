@@ -27,16 +27,13 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.components.LambdaAnalyzer
-import org.jetbrains.kotlin.types.TypeApproximator
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 
@@ -44,10 +41,11 @@ class LambdaAnalyzerImpl(
         val expressionTypingServices: ExpressionTypingServices,
         val trace: BindingTrace,
         val typeApproximator: TypeApproximator,
-        val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer
+        val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
+        val argumentTypeResolver: ArgumentTypeResolver
 ): LambdaAnalyzer {
 
-    override fun analyzeAndGetRelatedCalls(
+    override fun analyzeAndGetLambdaResultArguments(
             topLevelCall: KotlinCall,
             lambdaArgument: LambdaKotlinCallArgument,
             receiverType: UnwrappedType?,
@@ -102,8 +100,21 @@ class LambdaAnalyzerImpl(
             is FunctionExpressionImpl -> psiCallArgument.ktFunction
             else -> throw AssertionError("Unexpected psiCallArgument for resolved lambda argument: $psiCallArgument")
         }
+
         val functionDescriptor = trace.bindingContext.get(BindingContext.FUNCTION, ktFunction) as? FunctionDescriptorImpl ?:
                                  throw AssertionError("No function descriptor for resolved lambda argument")
         functionDescriptor.setReturnType(returnType)
+
+        for (lambdaResult in lambdaArgument.resultArguments) {
+            val resultValueArgument = lambdaResult.psiCallArgument.valueArgument
+            val deparenthesized = resultValueArgument.getArgumentExpression()?.let {
+                KtPsiUtil.getLastElementDeparenthesized(it, expressionTypingServices.statementFilter)
+            } ?: continue
+
+            val recordedType = trace.getType(deparenthesized)
+            if (recordedType != null && !recordedType.constructor.isDenotable) {
+                argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(trace, expressionTypingServices.statementFilter, returnType, deparenthesized)
+            }
+        }
     }
 }

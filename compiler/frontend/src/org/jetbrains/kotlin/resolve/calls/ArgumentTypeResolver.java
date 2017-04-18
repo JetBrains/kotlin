@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
@@ -398,12 +399,22 @@ public class ArgumentTypeResolver {
             @NotNull ResolutionContext context,
             @NotNull KtExpression expression
     ) {
-        KotlinType type = context.trace.getType(expression);
+        return updateResultArgumentTypeIfNotDenotable(context.trace, context.statementFilter, context.expectedType, expression);
+    }
+
+    @Nullable
+    public KotlinType updateResultArgumentTypeIfNotDenotable(
+            @NotNull BindingTrace trace,
+            @NotNull StatementFilter statementFilter,
+            @NotNull KotlinType expectedType,
+            @NotNull KtExpression expression
+    ) {
+        KotlinType type = trace.getType(expression);
         if (type != null && !type.getConstructor().isDenotable()) {
             if (type.getConstructor() instanceof IntegerValueTypeConstructor) {
                 IntegerValueTypeConstructor constructor = (IntegerValueTypeConstructor) type.getConstructor();
-                KotlinType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
-                constantExpressionEvaluator.updateNumberType(primitiveType, expression, context.statementFilter, context.trace);
+                KotlinType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, expectedType);
+                constantExpressionEvaluator.updateNumberType(primitiveType, expression, statementFilter, trace);
                 return primitiveType;
             }
         }

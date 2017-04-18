@@ -245,10 +245,10 @@ class KotlinCallCompleter(
         val receiver = lambda.receiver?.let(::substitute)
         val parameters = lambda.parameters.map(::substitute)
         val expectedType = lambda.returnType.takeIf { c.canBeProper(it) }?.let(::substitute)
-        val callsFromLambda = lambdaAnalyzer.analyzeAndGetRelatedCalls(topLevelCall, lambda.argument, receiver, parameters, expectedType)
         lambda.analyzed = true
+        lambda.resultArguments = lambdaAnalyzer.analyzeAndGetLambdaResultArguments(topLevelCall, lambda.argument, receiver, parameters, expectedType)
 
-        for (innerCall in callsFromLambda) {
+        for (innerCall in lambda.resultArguments) {
             // todo strange code -- why top-level kotlinCall? may be it isn't right outer call
             CheckArguments.checkArgument(topLevelCallContext, topLevelCall, c.getBuilder(), innerCall, lambda.returnType)
         }

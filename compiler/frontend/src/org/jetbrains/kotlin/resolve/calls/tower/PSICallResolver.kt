@@ -77,7 +77,8 @@ class PSICallResolver(
         val constraintInjector: ConstraintInjector,
         private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
         private val kotlinCallResolver: KotlinCallResolver,
-        private val typeApproximator: TypeApproximator
+        private val typeApproximator: TypeApproximator,
+        private val argumentTypeResolver: ArgumentTypeResolver
 ) {
     private val GIVEN_CANDIDATES_NAME = Name.special("<given candidates>")
 
@@ -89,7 +90,7 @@ class PSICallResolver(
     ) : OverloadResolutionResults<D> {
         val kotlinCall = toKotlinCall(context, resolutionKind.kotlinCallKind, context.call, name, tracingStrategy)
         val scopeTower = ASTScopeTower(context)
-        val lambdaAnalyzer = LambdaAnalyzerImpl(expressionTypingServices, context.trace, typeApproximator, kotlinToResolvedCallTransformer)
+        val lambdaAnalyzer = createLambdaAnalyzer(context)
 
         val callContext = createCallContext(scopeTower, lambdaAnalyzer)
         val factoryProviderForInvoke = FactoryProviderForInvoke(context, callContext, kotlinCall)
@@ -112,7 +113,7 @@ class PSICallResolver(
 
         val kotlinCall = toKotlinCall(context, KotlinCallKind.FUNCTION, context.call, GIVEN_CANDIDATES_NAME, tracingStrategy, dispatchReceiver)
         val scopeTower = ASTScopeTower(context)
-        val lambdaAnalyzer = LambdaAnalyzerImpl(expressionTypingServices, context.trace, typeApproximator, kotlinToResolvedCallTransformer)
+        val lambdaAnalyzer = createLambdaAnalyzer(context)
         val callContext = createCallContext(scopeTower, lambdaAnalyzer)
 
         val givenCandidates = resolutionCandidates.map {
@@ -125,6 +126,9 @@ class PSICallResolver(
         return convertToOverloadResolutionResults(context, result, tracingStrategy)
 
     }
+
+    private fun createLambdaAnalyzer(context: BasicCallResolutionContext) =
+            LambdaAnalyzerImpl(expressionTypingServices, context.trace, typeApproximator, kotlinToResolvedCallTransformer, argumentTypeResolver)
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {
         val expectedType = context.expectedType.unwrap()
