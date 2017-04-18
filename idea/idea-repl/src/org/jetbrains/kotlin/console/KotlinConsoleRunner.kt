@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ class KotlinConsoleRunner(
 
     override fun finishConsole() {
         KotlinConsoleKeeper.getInstance(project).removeConsole(consoleView.virtualFile)
-        KotlinScriptDefinitionProvider.getInstance(project).removeScriptDefinition(consoleScriptDefinition)
+        KotlinScriptDefinitionProvider.getInstance(project)!!.removeScriptDefinition(consoleScriptDefinition)
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
             consoleTerminated.countDown()
@@ -157,7 +157,7 @@ class KotlinConsoleRunner(
         val executeAction = KtExecuteCommandAction(consoleView.virtualFile)
         executeAction.registerCustomShortcutSet(CommonShortcuts.CTRL_ENTER, consoleView.consoleEditor.component)
 
-        KotlinScriptDefinitionProvider.getInstance(project).addScriptDefinition(consoleScriptDefinition)
+        KotlinScriptDefinitionProvider.getInstance(project)!!.addScriptDefinition(consoleScriptDefinition)
         enableCompletion(consoleView)
 
         return consoleView
