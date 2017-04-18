@@ -216,6 +216,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("TypeInferedFromWrapperType.kt")
+    public void testTypeInferedFromWrapperType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/TypeInferedFromWrapperType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TypeParameter.kt")
     public void testTypeParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/TypeParameter.kt");
