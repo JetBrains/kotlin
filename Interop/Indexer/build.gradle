@@ -79,7 +79,7 @@ kotlinNativeInterop {
         defFile 'clang.def'
         compilerOpts "-I$llvmDir/include"
         linkerOpts "-L$llvmDir/lib"
-        genTask.args '-keepcstubs:true'
+        genTask.args '-keepcstubs', 'true'
     }
 }
 
