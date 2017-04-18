@@ -18,25 +18,29 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.core.implicitModality
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-class AddOpenModifierIntention : SelfTargetingIntention<KtDeclaration>(KtDeclaration::class.java, "Make open"), LowPriorityAction {
-    override fun isApplicableTo(element: KtDeclaration, caretOffset: Int): Boolean {
-        if (element.hasModifier(KtTokens.OPEN_KEYWORD) || element.hasModifier(KtTokens.PRIVATE_KEYWORD)) return false
-        when (element) {
-            is KtProperty -> if (element.isLocal) return false
-            is KtFunction -> if (element.isLocal) return false
-        }
-        val ktClass = element.getNonStrictParentOfType<KtClass>() ?: return false
-        return ktClass.hasModifier(KtTokens.OPEN_KEYWORD)
+class AddOpenModifierIntention : SelfTargetingIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Make open"), LowPriorityAction {
+
+    override fun isApplicableTo(element: KtCallableDeclaration, caretOffset: Int): Boolean {
+        if (element.hasModifier(KtTokens.OPEN_KEYWORD)
+            || element.hasModifier(KtTokens.ABSTRACT_KEYWORD)
+            || element.hasModifier(KtTokens.PRIVATE_KEYWORD)) return false
+        if (element is KtDestructuringDeclaration || element is KtParameter) return false
+        val implicitModality = element.implicitModality()
+        if (implicitModality == KtTokens.OPEN_KEYWORD || implicitModality == KtTokens.ABSTRACT_KEYWORD) return false
+        val ktClassOrObject = element.containingClassOrObject ?: return false
+        return ktClassOrObject.hasModifier(KtTokens.OPEN_KEYWORD)
+               || ktClassOrObject.hasModifier(KtTokens.ABSTRACT_KEYWORD)
+               || ktClassOrObject.hasModifier(KtTokens.SEALED_KEYWORD)
     }
 
-    override fun applyTo(element: KtDeclaration, editor: Editor?) {
+    override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
         element.addModifier(KtTokens.OPEN_KEYWORD)
     }
 }
