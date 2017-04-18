@@ -24,7 +24,9 @@ import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeInfo
 import org.jetbrains.kotlin.descriptors.Visibilities.PUBLIC
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.wrappers.symbols.JavacClass
 import org.jetbrains.kotlin.wrappers.symbols.JavacClassifierType
+import org.jetbrains.kotlin.wrappers.symbols.JavacType
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.name.FqName
@@ -72,6 +74,12 @@ class JCClass<out T : JCTree.JCClassDecl>(tree: T,
                 this is JCTree.JCTypeApply -> JCClassifierTypeWithTypeArgument(this, TreePath(treePath, this), javac)
                 this is JCTree.JCExpression -> JCClassifierType(this, TreePath(treePath, this), javac)
                 else -> null
+            }
+
+            if (isEnum) {
+                (javac.findClass(FqName("java.lang.Enum")) as? JavacClass<*>)
+                        ?.let { JavacType.create(it.element.asType(), javac) as? JavaClassifierType }
+                        ?.let { add(it) }
             }
 
             tree.extending.let {
