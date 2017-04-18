@@ -50,7 +50,7 @@ class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObjec
     private fun update(node: AbstractTreeNode<*>) {
         val project = project
         if (project != null) {
-            ProjectView.getInstance(project).currentProjectViewPane.treeBuilder.addSubtreeToUpdateByElement(node)
+            ProjectView.getInstance(project).currentProjectViewPane?.treeBuilder?.addSubtreeToUpdateByElement(node)
         }
     }
 
