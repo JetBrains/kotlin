@@ -19,5 +19,8 @@
     </buildFile>
     <buildFile url="file://$PROJECT_DIR$/TeamCityRelay.xml" />
     <buildFile url="file://$PROJECT_DIR$/node_utils.xml" />
+    <buildFile url="file://$PROJECT_DIR$/build-compiler-min.xml">
+      <maximumHeapSize value="1024" />
+    </buildFile>
   </component>
 </project>

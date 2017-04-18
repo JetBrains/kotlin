@@ -1,0 +1,133 @@
+<project xmlns:if="ant:if" xmlns:unless="ant:unless" name="Kotlin JS min" default="compiler.kjs.min">
+    <import file="build.xml" optional="false"/>
+
+    <dirset id="compilerSources.dirset.kjs" dir="${basedir}/">
+        <include name="compiler/util/src"/>
+
+        <include name="compiler/container/src"/>
+
+        <include name="core/descriptors/src"/>
+        <include name="core/deserialization/src"/>
+        <include name="core/util.runtime/src"/>
+        <include name="compiler/serialization/src"/>
+
+        <include name="compiler/frontend/src"/>
+        <include name="compiler/resolution/src"/>
+
+        <include name="compiler/backend-common/src"/>
+
+        <include name="js/js.ast/src"/>
+        <include name="js/js.translator/src"/>
+        <include name="js/js.frontend/src"/>
+        <include name="js/js.inliner/src"/>
+        <include name="js/js.parser/src"/>
+        <include name="js/js.serializer/src"/>
+
+        <include name="compiler/cli/cli-js/src"/>
+
+        <!--<include name="compiler/cli/src"/>-->
+        <!--<include name="compiler/cli/cli-common/src"/>-->
+
+        <!--<include name="compiler/plugin-api/src"/>-->
+    </dirset>
+
+    <path id="compilerSources.path.kjs">
+        <dirset refid="compilerSources.dirset.kjs"/>
+    </path>
+
+    <macrodef name="pack-compiler-min">
+        <attribute name="jarfile"/>
+        <attribute name="compress" default="true"/>
+
+        <sequential>
+            <jar jarfile="@{jarfile}" compress="@{compress}" duplicate="preserve">
+                <fileset dir="${output}/classes/compiler"/>
+                <fileset dir="${output}/builtins">
+                    <include name="kotlin/**"/>
+                </fileset>
+                <!--<fileset dir="${basedir}/core/descriptor.loader.java/src" includes="META-INF/services/**"/>-->
+                <!--<fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>-->
+                <!--<fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>-->
+                <!--<fileset dir="${basedir}/compiler/cli/src" includes="META-INF/services/**"/>-->
+                <fileset dir="${basedir}/resources" includes="kotlinManifest.properties"/>
+
+                <fileset dir="idea/src">
+                    <include name="META-INF/extensions/common.xml"/>
+                    <!--<include name="META-INF/extensions/kotlin2jvm.xml"/>-->
+                    <include name="META-INF/extensions/kotlin2js.xml"/>
+                </fileset>
+
+                <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/annotations.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/asm-all.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/guava-19.0.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/intellij-core.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/jdom.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/jna.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/log4j.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/picocontainer.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/snappy-in-java-0.5.1.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/trove4j.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/xpp3-1.1.4-min.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/xstream-1.4.8.jar"/>
+                <zipfileset src="${idea.sdk}/lib/jna-platform.jar"/>
+                <zipfileset src="${idea.sdk}/lib/oromatcher.jar"/>
+                <zipfileset src="${idea.sdk}/jps/jps-model.jar"/>
+                <zipfileset src="${dependencies}/jline.jar"/>
+                <zipfileset src="${dependencies}/javaslang-2.0.6.jar"/>
+                <zipfileset src="${protobuf.jar}"/>
+
+                <manifest>
+                    <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+
+                    <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                    <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler}"/>
+                    <attribute name="Implementation-Version" value="${build.number}"/>
+
+                    <!--<attribute name="Class-Path" value="${compiler.manifest.class.path}"/>-->
+                    <!--<attribute name="Main-Class" value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>-->
+
+                    <!-- This is needed if the compiler is run on Java 9 via "java -jar kotlin-compiler.jar" -->
+                    <attribute name="Add-Opens" value="java.base/java.lang java.base/java.util java.base/java.util.concurrent.atomic java.base/jdk.internal.misc"/>
+                </manifest>
+            </jar>
+        </sequential>
+    </macrodef>
+
+    <target name="compiler.kjs.min">
+        <cleandir dir="${output}/classes/compiler"/>
+
+        <javac2 destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
+                source="${java.target}" target="${java.target}">
+            <withKotlin modulename="kotlin-compiler">
+                <compilerarg value="-version"/>
+            </withKotlin>
+            <skip pattern="kotlin/Metadata"/>
+            <src refid="compilerSources.path.kjs"/>
+            <classpath refid="classpath"/>
+        </javac2>
+
+        <pack-compiler-min jarfile="${output}/kotlin-compiler-before-shrink-min.jar"/>
+
+        <delete file="${kotlin-home}/lib/kotlin-compiler-min.jar" failonerror="false"/>
+
+        <copy file="${output}/kotlin-compiler-before-shrink-min.jar"
+              tofile="${kotlin-home}/lib/kotlin-compiler-min.jar"
+              unless:true="${shrink}" />
+
+        <shrink2 />
+    </target>
+
+    <target name="shrink-compiler-min" >
+        <delete file="${kotlin-home}/lib/kotlin-compiler-min.jar" failonerror="false"/>
+        <shrink2 />
+    </target>
+
+    <macrodef name="shrink2">
+        <sequential>
+            <sequential if:true="${shrink}">
+                <shrink configuration="${basedir}/compiler/compiler-kjs-min.pro"/>
+            </sequential>
+        </sequential>
+    </macrodef>
+</project>
