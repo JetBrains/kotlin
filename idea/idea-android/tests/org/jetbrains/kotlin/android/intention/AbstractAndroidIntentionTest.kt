@@ -37,10 +37,17 @@ abstract class AbstractAndroidIntentionTest : KotlinAndroidTestCase() {
 
         val notAvailable = InTextDirectivesUtils.isDirectiveDefined(testFileText, "// NOT_AVAILABLE")
         val withRuntime = InTextDirectivesUtils.isDirectiveDefined(testFileText, "// WITH_RUNTIME")
+        val checkManifest = InTextDirectivesUtils.isDirectiveDefined(testFileText, "// CHECK_MANIFEST")
 
         try {
             if (withRuntime) {
                 ConfigLibraryUtil.configureKotlinRuntime(myFixture.module)
+            }
+
+            val customManifestPath = "${testFile.path}.AndroidManifest.xml"
+            if (FileUtil.exists("$testDataPath/$customManifestPath")) {
+                deleteManifest()
+                myFixture.copyFileToProject(customManifestPath, SdkConstants.FN_ANDROID_MANIFEST_XML)
             }
 
             val sourceFile = myFixture.copyFileToProject(path, "src/${PathUtil.getFileName(path)}")
@@ -55,8 +62,18 @@ abstract class AbstractAndroidIntentionTest : KotlinAndroidTestCase() {
                 error("Intention is not available!")
             }
 
+            if (notAvailable) {
+                error("Intention should not be available!")
+            }
+
             myFixture.launchAction(intention)
-            myFixture.checkResultByFile("$path.expected")
+
+            if (checkManifest) {
+                myFixture.checkResultByFile("AndroidManifest.xml", "$customManifestPath.expected", true)
+            }
+            else {
+                myFixture.checkResultByFile("$path.expected")
+            }
         }
         finally {
             if (withRuntime) {

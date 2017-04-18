@@ -36,6 +36,213 @@ public class AndroidIntentionTestGenerated extends AbstractAndroidIntentionTest 
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("idea/testData/android/intention/addActivityToManifest")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddActivityToManifest extends AbstractAndroidIntentionTest {
+        @TestMetadata("abstract.kt")
+        public void testAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addActivityToManifest/abstract.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInAddActivityToManifest() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/addActivityToManifest"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("alreadyExists.kt")
+        public void testAlreadyExists() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addActivityToManifest/alreadyExists.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inner.kt")
+        public void testInner() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addActivityToManifest/inner.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideBody.kt")
+        public void testInsideBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addActivityToManifest/insideBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("local.kt")
+        public void testLocal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addActivityToManifest/local.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nested.kt")
+        public void testNested() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addActivityToManifest/nested.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notActivity.kt")
+        public void testNotActivity() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addActivityToManifest/notActivity.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("private.kt")
+        public void testPrivate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addActivityToManifest/private.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("protected.kt")
+        public void testProtected() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addActivityToManifest/protected.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addActivityToManifest/simple.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/android/intention/addBroadcastReceiverToManifest")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddBroadcastReceiverToManifest extends AbstractAndroidIntentionTest {
+        @TestMetadata("abstract.kt")
+        public void testAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addBroadcastReceiverToManifest/abstract.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInAddBroadcastReceiverToManifest() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/addBroadcastReceiverToManifest"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("alreadyExists.kt")
+        public void testAlreadyExists() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addBroadcastReceiverToManifest/alreadyExists.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inner.kt")
+        public void testInner() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addBroadcastReceiverToManifest/inner.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideBody.kt")
+        public void testInsideBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addBroadcastReceiverToManifest/insideBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("local.kt")
+        public void testLocal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addBroadcastReceiverToManifest/local.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nested.kt")
+        public void testNested() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addBroadcastReceiverToManifest/nested.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notReceiver.kt")
+        public void testNotReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addBroadcastReceiverToManifest/notReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("private.kt")
+        public void testPrivate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addBroadcastReceiverToManifest/private.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("protected.kt")
+        public void testProtected() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addBroadcastReceiverToManifest/protected.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addBroadcastReceiverToManifest/simple.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/android/intention/addServiceToManifest")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddServiceToManifest extends AbstractAndroidIntentionTest {
+        @TestMetadata("abstract.kt")
+        public void testAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addServiceToManifest/abstract.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInAddServiceToManifest() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/addServiceToManifest"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("alreadyExists.kt")
+        public void testAlreadyExists() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addServiceToManifest/alreadyExists.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inner.kt")
+        public void testInner() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addServiceToManifest/inner.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideBody.kt")
+        public void testInsideBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addServiceToManifest/insideBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("local.kt")
+        public void testLocal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addServiceToManifest/local.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nested.kt")
+        public void testNested() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addServiceToManifest/nested.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notService.kt")
+        public void testNotService() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addServiceToManifest/notService.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("private.kt")
+        public void testPrivate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addServiceToManifest/private.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("protected.kt")
+        public void testProtected() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addServiceToManifest/protected.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/intention/addServiceToManifest/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/android/intention/implementParcelable")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

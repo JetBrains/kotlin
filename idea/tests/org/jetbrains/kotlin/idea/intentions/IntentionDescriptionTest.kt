@@ -27,6 +27,7 @@ import java.io.File
 class IntentionDescriptionTest : LightPlatformTestCase() {
 
     val necessaryNormalNames = listOf("description.html", "before.kt.template", "after.kt.template")
+    val necessaryXmlNames = listOf("description.html", "before.xml.template", "after.xml.template")
     val necessaryMavenNames = listOf("description.html")
 
     fun testDescriptionsAndShortNames() {
@@ -40,7 +41,11 @@ class IntentionDescriptionTest : LightPlatformTestCase() {
                 errors.append("No description directory for intention '").append(className).append("'\n")
             }
             else {
-                val necessaryNames = if (shortName.startsWith("MavenPlugin")) necessaryMavenNames else necessaryNormalNames
+                val necessaryNames = when {
+                    shortName.isMavenIntentionName() -> necessaryMavenNames
+                    shortName.isXmlIntentionName() -> necessaryXmlNames
+                    else -> necessaryNormalNames
+                }
                 for (fileName in necessaryNames) {
                     val file = directory.resolve(fileName)
                     if (!file.exists() || !file.isFile) {
@@ -51,6 +56,10 @@ class IntentionDescriptionTest : LightPlatformTestCase() {
         }
         UsefulTestCase.assertEmpty(errors.toString())
     }
+
+    private fun String.isMavenIntentionName() = startsWith("MavenPlugin")
+
+    private fun String.isXmlIntentionName() = startsWith("Add") && endsWith("ToManifest")
 
     private fun loadKotlinIntentions(): List<IntentionActionBean> {
         val extensionPoint = Extensions.getArea(null).getExtensionPoint(IntentionManager.EP_INTENTION_ACTIONS)

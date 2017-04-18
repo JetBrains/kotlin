@@ -24,6 +24,20 @@
         </intentionAction>
 
         <intentionAction>
+            <className>org.jetbrains.kotlin.android.intention.AddActivityToManifest</className>
+            <category>Kotlin Android</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>org.jetbrains.kotlin.android.intention.AddServiceToManifest</className>
+            <category>Kotlin Android</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>org.jetbrains.kotlin.android.intention.AddBroadcastReceiverToManifest</className>
+            <category>Kotlin Android</category>
+        </intentionAction>
+        <intentionAction>
             <className>org.jetbrains.kotlin.android.intention.ImplementParcelableAction</className>
             <category>Kotlin Android</category>
         </intentionAction>
