@@ -217,6 +217,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
     private fun argumentNeedsEvaluation(expression: IrExpression): Boolean {
         if (expression is IrGetValue)          return false                                 // Parameter is already GetValue - nothing to evaluate.
         if (expression is IrConst<*>)          return false                                 // Parameter is constant - nothing to evaluate.
+        if (expression is IrCallableReference) return false                                 // Parameter is callable reference - nothing to evaluate.
         if (isLambdaExpression(expression))    return false                                 // Parameter is lambda - will be inlined.
         return true
     }

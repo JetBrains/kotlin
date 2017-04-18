@@ -425,7 +425,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
             return IrCallableReferenceImpl(
                 startOffset   = expression.startOffset,
                 endOffset     = expression.endOffset,
-                type          = newDescriptor.returnType!!,
+                type          = expression.type,
                 descriptor    = newDescriptor,
                 typeArguments = expression.getTypeArgumentsMap(),
                 origin        = mapStatementOrigin(expression.origin)
