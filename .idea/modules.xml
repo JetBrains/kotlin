@@ -24,6 +24,7 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/builtins-serializer/builtins-serializer.iml" filepath="$PROJECT_DIR$/compiler/builtins-serializer/builtins-serializer.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/compiler/cli/cli.iml" filepath="$PROJECT_DIR$/compiler/cli/cli.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/compiler/cli/cli-common/cli-common.iml" filepath="$PROJECT_DIR$/compiler/cli/cli-common/cli-common.iml" group="compiler/cli" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/cli/cli-js/cli-js.iml" filepath="$PROJECT_DIR$/compiler/cli/cli-js/cli-js.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/compiler/cli/cli-runner/cli-runner.iml" filepath="$PROJECT_DIR$/compiler/cli/cli-runner/cli-runner.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/compiler/compiler-runner/compiler-runner.iml" filepath="$PROJECT_DIR$/compiler/compiler-runner/compiler-runner.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/tests/compiler-tests.iml" filepath="$PROJECT_DIR$/compiler/tests/compiler-tests.iml" group="compiler" />
