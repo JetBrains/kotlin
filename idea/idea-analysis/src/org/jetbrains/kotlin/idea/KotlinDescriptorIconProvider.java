@@ -36,7 +36,7 @@ public final class KotlinDescriptorIconProvider {
     private KotlinDescriptorIconProvider() {
     }
 
-    @NotNull
+    @Nullable
     public static Icon getIcon(@NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration, @Iconable.IconFlags int flags) {
         if (declaration != null && !(declaration instanceof KtElement)) {
             return declaration.getIcon(flags);
