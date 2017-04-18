@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerFo
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.frontend.java.di.initialize
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.javac.MockKotlinClassifier
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
@@ -247,7 +248,7 @@ object TopDownAnalyzerFacadeForJVM {
 
         override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
             val resolver = if (javaClass is JavaClassImpl && javaClass.psi.containingFile.virtualFile in sourceScope
-                               || javaClass is JCClass<*>)
+                               || javaClass is JCClass<*> || javaClass is MockKotlinClassifier)
                 sourceCodeResolver
             else
                 compiledCodeResolver
