@@ -4,4 +4,6 @@
 public class JavaClass {
     public void <caret>invoke() {
     }
+
+    public static class OtherJavaClass extends JavaClass {}
 }

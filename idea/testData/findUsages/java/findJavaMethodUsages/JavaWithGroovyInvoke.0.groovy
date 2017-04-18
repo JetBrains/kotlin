@@ -1,6 +1,6 @@
 class GroovyClass extends JavaWithGroovyInvoke_0 {
-    def fieldNoType = new JavaWithGroovyInvoke_0.OtherJavaClass()
-    def JavaWithGroovyInvoke_0.OtherJavaClass fieldWithType = new JavaWithGroovyInvoke_0.OtherJavaClass()
+    public def fieldNoType = new JavaWithGroovyInvoke_0.OtherJavaClass()
+    public def JavaWithGroovyInvoke_0.OtherJavaClass fieldWithType = fieldNoType
 
     def methodNoType() {
         new JavaWithGroovyInvoke_0.OtherJavaClass()

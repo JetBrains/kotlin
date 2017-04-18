@@ -22,6 +22,7 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -102,6 +103,10 @@ class ExpressionsOfTypeProcessor(
                 }
             }
         }
+
+        private fun PsiModifierListOwner.isPrivate() = hasModifierProperty(PsiModifier.PRIVATE)
+
+        private fun PsiModifierListOwner.isLocal() = parents.any { it is PsiCodeBlock }
     }
 
     // note: a Task must define equals & hashCode!
@@ -184,13 +189,52 @@ class ExpressionsOfTypeProcessor(
         possibleMatchesInScopeHandler(searchScope)
     }
 
+    private fun checkPsiClass(psiClass: PsiClass): Boolean {
+        // we don't filter out private classes because we can inherit public class from private inside the same visibility scope
+        if (psiClass.isLocal()) {
+            return false
+        }
+
+        val qualifiedName = runReadAction { psiClass.qualifiedName }
+        if (qualifiedName == null || qualifiedName.isEmpty()) {
+            return false
+        }
+
+        return true
+    }
+
+
+    private fun addNonKotlinClassToProcess(classToSearch: PsiClass) {
+        if (!checkPsiClass(classToSearch)) {
+            return
+        }
+
+        addClassToProcess(classToSearch)
+    }
+
     private fun addClassToProcess(classToSearch: PsiClass) {
         data class ProcessClassUsagesTask(val classToSearch: PsiClass) : Task {
             override fun perform() {
                 testLog?.add("Searched references to ${logPresentation(classToSearch)}")
                 val scope = GlobalSearchScope.allScope(project).excludeFileTypes(XmlFileType.INSTANCE) // ignore usages in XML - they don't affect us
                 searchReferences(classToSearch, scope) { reference ->
-                    if (processClassUsage(reference)) return@searchReferences true
+                    val element = reference.element
+                    val wasProcessed = when (element.language) {
+                        KotlinLanguage.INSTANCE -> processClassUsageInKotlin(element)
+                        JavaLanguage.INSTANCE -> processClassUsageInJava(element)
+                        else -> {
+                            if (element.language.displayName == "Groovy") {
+                                processClassUsageInLanguageWithPsiClass(element)
+                                true
+                            }
+                            else {
+                                // If there's no PsiClass - consider processed
+                                element.getParentOfType<PsiClass>(true) == null
+                            }
+                        }
+                    }
+
+                    if (wasProcessed) return@searchReferences true
 
                     if (mode != Mode.ALWAYS_SMART) {
                         downShiftToPlainSearch(reference)
@@ -241,6 +285,12 @@ class ExpressionsOfTypeProcessor(
         addTask(ProcessCallableUsagesTask(declaration, processor))
     }
 
+    private fun addPsiMemberTask(member: PsiMember) {
+        if (!member.isPrivate() && !member.isLocal()) {
+            addCallableDeclarationOfOurType(member)
+        }
+    }
+
     private fun addCallableDeclarationOfOurType(declaration: PsiElement) {
         addCallableDeclarationToProcess(declaration, searchScope.restrictToKotlinSources(), ReferenceProcessor.CallableOfOurType)
     }
@@ -275,6 +325,10 @@ class ExpressionsOfTypeProcessor(
     }
 
     private fun addSamInterfaceToProcess(psiClass: PsiClass) {
+        if (!checkPsiClass(psiClass)) {
+            return
+        }
+
         data class ProcessSamInterfaceTask(val psiClass: PsiClass) : Task {
             override fun perform() {
                 val scope = GlobalSearchScope.projectScope(project).excludeFileTypes(KotlinFileType.INSTANCE, XmlFileType.INSTANCE)
@@ -296,20 +350,6 @@ class ExpressionsOfTypeProcessor(
             }
         }
         addTask(ProcessSamInterfaceTask(psiClass))
-    }
-
-    /**
-     * Process usage of our class or one of its inheritors
-     */
-    private fun processClassUsage(reference: PsiReference): Boolean {
-        val element = reference.element
-        return when (element.language) {
-            KotlinLanguage.INSTANCE -> processClassUsageInKotlin(element)
-
-            JavaLanguage.INSTANCE -> processClassUsageInJava(element)
-
-            else -> false // we don't know anything about usages in other languages - so we downgrade to slow algorithm in this case
-        }
     }
 
     private fun processClassUsageInKotlin(element: PsiElement): Boolean {
@@ -476,15 +516,15 @@ class ExpressionsOfTypeProcessor(
                     break@ParentsLoop // ignore local usages
 
                 is PsiMethod -> {
-                    if (prev == parent.returnTypeElement && !parent.isPrivateOrLocal()) { // usage in return type of a method
-                        addCallableDeclarationOfOurType(parent)
+                    if (prev == parent.returnTypeElement) { // usage in return type of a method
+                        addPsiMemberTask(parent)
                     }
                     break@ParentsLoop
                 }
 
                 is PsiField -> {
-                    if (prev == parent.typeElement && !parent.isPrivateOrLocal()) { // usage in type of a field
-                        addCallableDeclarationOfOurType(parent)
+                    if (prev == parent.typeElement) { // usage in type of a field
+                        addPsiMemberTask(parent)
                     }
                     break@ParentsLoop
                 }
@@ -492,9 +532,7 @@ class ExpressionsOfTypeProcessor(
                 is PsiReferenceList -> { // usage in extends/implements list
                     if (parent.role == PsiReferenceList.Role.EXTENDS_LIST || parent.role == PsiReferenceList.Role.IMPLEMENTS_LIST) {
                         val psiClass = parent.parent as PsiClass
-                        if (!psiClass.isLocal()) { // we don't filter out private classes because we can inherit public class from private in Java
-                            addClassToProcess(psiClass)
-                        }
+                        addNonKotlinClassToProcess(psiClass)
                     }
                     break@ParentsLoop
                 }
@@ -502,19 +540,7 @@ class ExpressionsOfTypeProcessor(
                 //TODO: if Java parameter has Kotlin functional type then we should process method usages
                 is PsiParameter -> {
                     if (prev == parent.typeElement) { // usage in parameter type - check if the method is in SAM interface
-                        val method = parent.declarationScope as? PsiMethod
-                        if (method != null && method.hasModifierProperty(PsiModifier.ABSTRACT)) {
-                            val psiClass = method.containingClass
-                            if (psiClass != null) {
-                                testLog?.add("Resolved java class to descriptor: ${psiClass.qualifiedName}")
-
-                                val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacadeByFile(psiClass.containingFile, JvmPlatform)
-                                val classDescriptor = psiClass.resolveToDescriptor(resolutionFacade) as? JavaClassDescriptor
-                                if (classDescriptor != null && SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(classDescriptor) != null) {
-                                    addSamInterfaceToProcess(psiClass)
-                                }
-                            }
-                        }
+                        processParameterInSamClass(parent)
                     }
                     break@ParentsLoop
                 }
@@ -524,6 +550,100 @@ class ExpressionsOfTypeProcessor(
         }
 
         return true
+    }
+
+    private fun processClassUsageInLanguageWithPsiClass(element: PsiElement) {
+        fun checkReferenceInTypeElement(typeElement: PsiTypeElement?, element: PsiElement): Boolean {
+            val typeTextRange = typeElement?.textRange
+            return (typeTextRange != null && element.textRange in typeTextRange)
+        }
+
+        fun processParameter(parameter: PsiParameter): Boolean {
+            if (checkReferenceInTypeElement(parameter.typeElement, element)) {
+                processParameterInSamClass(parameter)
+                return true
+            }
+
+            return false
+        }
+
+        fun processMethod(method: PsiMethod): Boolean {
+            if (checkReferenceInTypeElement(method.returnTypeElement, element)) {
+                addPsiMemberTask(method)
+                return true
+            }
+
+            val parameters = method.parameterList.parameters
+            for (parameter in parameters) {
+                if (processParameter(parameter)) {
+                    return true
+                }
+            }
+
+            return false
+        }
+
+        fun processField(field: PsiField): Boolean {
+            if (checkReferenceInTypeElement(field.typeElement, element)) {
+                addPsiMemberTask(field)
+                return true
+            }
+
+            return false
+        }
+
+        fun processClass(psiClass: PsiClass) {
+            if (!checkPsiClass(psiClass)) {
+                return
+            }
+
+            val elementTextRange: TextRange? = element.textRange
+            if (elementTextRange != null) {
+                val superList = listOf(psiClass.extendsList, psiClass.implementsList)
+                for (psiReferenceList in superList) {
+                    val superListRange: TextRange? = psiReferenceList?.textRange
+                    if (superListRange != null && elementTextRange in superListRange) {
+                        addNonKotlinClassToProcess(psiClass)
+                        return
+                    }
+                }
+            }
+
+            if (psiClass.fields.any { processField(it) }) {
+                return
+            }
+
+            if (psiClass.methods.any { processMethod(it) }) {
+                return
+            }
+
+            return
+        }
+
+        val psiClass = element.getParentOfType<PsiClass>(true)
+        if (psiClass != null) {
+            processClass(psiClass)
+        }
+    }
+
+    private fun processParameterInSamClass(psiParameter: PsiParameter): Boolean {
+        val method = psiParameter.declarationScope as? PsiMethod ?: return false
+
+        if (method.hasModifierProperty(PsiModifier.ABSTRACT)) {
+            val psiClass = method.containingClass
+            if (psiClass != null) {
+                testLog?.add("Resolved java class to descriptor: ${psiClass.qualifiedName}")
+
+                val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacadeByFile(psiClass.containingFile, JvmPlatform)
+                val classDescriptor = psiClass.resolveToDescriptor(resolutionFacade) as? JavaClassDescriptor
+                if (classDescriptor != null && SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(classDescriptor) != null) {
+                    addSamInterfaceToProcess(psiClass)
+                    return true
+                }
+            }
+        }
+
+        return false
     }
 
     /**
@@ -664,12 +784,6 @@ class ExpressionsOfTypeProcessor(
         return true // we don't know
     }
 
-    private fun PsiModifierListOwner.isPrivateOrLocal(): Boolean {
-        return hasModifierProperty(PsiModifier.PRIVATE) || isLocal()
-    }
-
-    private fun PsiModifierListOwner.isLocal() = parents.any { it is PsiCodeBlock }
-
     private fun KotlinType.containsTypeOrDerivedInside(type: FuzzyType): Boolean {
         return type.checkIsSuperTypeOf(this) != null || arguments.any { it.type.containsTypeOrDerivedInside(type) }
     }
@@ -683,7 +797,7 @@ class ExpressionsOfTypeProcessor(
         }
     }
 
-    private fun searchReferences(element: PsiElement,scope: SearchScope, processor: (PsiReference) -> Boolean) {
+    private fun searchReferences(element: PsiElement, scope: SearchScope, processor: (PsiReference) -> Boolean) {
         val parameters = ReferencesSearch.SearchParameters(element, scope, false)
         searchReferences(parameters, processor)
     }

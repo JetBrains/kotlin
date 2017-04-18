@@ -20,14 +20,14 @@ fun test() {
     listOf(Obj)[0](1)
 }
 
-class C(): B(12) {
-    override fun invoke(i: Int) {}
-}
-
 fun cTest(c: C) {
     c(5)
 
     some(12, "Irrelevant usage")
+}
+
+class C(): B(12) {
+    override fun invoke(i: Int) {}
 }
 
 fun some(i: Int, s: String) {}
