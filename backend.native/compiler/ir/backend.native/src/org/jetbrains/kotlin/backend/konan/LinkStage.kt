@@ -279,8 +279,8 @@ internal class LinkStage(val context: Context) {
 
     fun executeCommand(vararg command: String): Int {
 
-        context.log("")
-        context.log(command.asList<String>().joinToString(" "))
+        context.log{""}
+        context.log{command.asList<String>().joinToString(" ")}
 
         val builder = ProcessBuilder(command.asList())
 
@@ -300,7 +300,7 @@ internal class LinkStage(val context: Context) {
     }
 
     fun linkStage() {
-        context.log("# Compiler root: ${distribution.konanHome}")
+        context.log{"# Compiler root: ${distribution.konanHome}"}
 
         val bitcodeFiles = listOf<BitcodeFile>(emitted, distribution.start, 
             distribution.runtime, distribution.launcher) + libraries

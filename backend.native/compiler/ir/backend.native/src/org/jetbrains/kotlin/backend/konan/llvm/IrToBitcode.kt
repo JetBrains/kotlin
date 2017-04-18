@@ -273,7 +273,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
     override fun visitModuleFragment(module: IrModuleFragment) {
-        context.log("visitModule                    : ${ir2string(module)}")
+        context.log{"visitModule                    : ${ir2string(module)}"}
 
         // computeLifetimes(module, this.codegen, resultLifetimes)
 
@@ -389,7 +389,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     override fun visitConstructor(constructorDeclaration: IrConstructor) {
-        context.log("visitConstructor               : ${ir2string(constructorDeclaration)}")
+        context.log{"visitConstructor               : ${ir2string(constructorDeclaration)}"}
         if (constructorDeclaration.descriptor.containingDeclaration.isIntrinsic) {
             // Do not generate any ctors for intrinsic classes.
             return
@@ -413,7 +413,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
-        context.log("visitAnonymousInitializer      : ${ir2string(declaration)}")
+        context.log{"visitAnonymousInitializer      : ${ir2string(declaration)}"}
     }
 
     //-------------------------------------------------------------------------//
@@ -522,7 +522,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     override fun visitFunction(declaration: IrFunction) {
-        context.log("visitFunction                  : ${ir2string(declaration)}")
+        context.log{"visitFunction                  : ${ir2string(declaration)}"}
         val body = declaration.body
 
         if (declaration.descriptor.modality == Modality.ABSTRACT) return
@@ -563,7 +563,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     override fun visitClass(declaration: IrClass) {
-        context.log("visitClass                     : ${ir2string(declaration)}")
+        context.log{"visitClass                     : ${ir2string(declaration)}"}
         if (declaration.descriptor.kind == ClassKind.ANNOTATION_CLASS) {
             // do not generate any code for annotation classes as a workaround for NotImplementedError
             return
@@ -587,7 +587,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     override fun visitField(expression: IrField) {
-        context.log("visitField                     : ${ir2string(expression)}")
+        context.log{"visitField                     : ${ir2string(expression)}"}
         val descriptor = expression.descriptor
         if (descriptor.containingDeclaration is PackageFragmentDescriptor) {
             val type = codegen.getLLVMType(descriptor.type)
@@ -1051,7 +1051,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
      *  we cannot determine if the result of when is assigned or not.
      */
     private fun evaluateWhen(expression: IrWhen): LLVMValueRef {
-        context.log("evaluateWhen                   : ${ir2string(expression)}")
+        context.log{"evaluateWhen                   : ${ir2string(expression)}"}
         var bbExit: LLVMBasicBlockRef? = null             // By default "when" does not have "exit".
         val isUnit                = KotlinBuiltIns.isUnit(expression.type)
         val isNothing             = KotlinBuiltIns.isNothing(expression.type)
@@ -1140,7 +1140,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateGetValue(value: IrGetValue): LLVMValueRef {
-        context.log("evaluateGetValue               : ${ir2string(value)}")
+        context.log{"evaluateGetValue               : ${ir2string(value)}"}
         return debugInfo(value) {
             currentCodeContext.genGetValue(value.descriptor)
         }
@@ -1149,7 +1149,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateSetVariable(value: IrSetVariable): LLVMValueRef {
-        context.log("evaluateSetVariable            : ${ir2string(value)}")
+        context.log{"evaluateSetVariable            : ${ir2string(value)}"}
         val result = evaluateExpression(value.value)
         val variable = currentCodeContext.getDeclaredVariable(value.descriptor)
         debugInfo(value) {
@@ -1163,7 +1163,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun generateVariable(value: IrVariable) {
-        context.log("generateVariable               : ${ir2string(value)}")
+        context.log{"generateVariable               : ${ir2string(value)}"}
         val result = value.initializer?.let { evaluateExpression(it) }
         val variableDescriptor = value.descriptor
         val index = currentCodeContext.genDeclareVariable(variableDescriptor, result)
@@ -1214,7 +1214,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     private fun evaluateIntegerCoercion(value: IrTypeOperatorCall): LLVMValueRef {
-        context.log("evaluateIntegerCoercion        : ${ir2string(value)}")
+        context.log{"evaluateIntegerCoercion        : ${ir2string(value)}"}
         val type = value.typeOperand
         assert(type.isPrimitiveInteger())
         val result = evaluateExpression(value.argument)
@@ -1245,7 +1245,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //    double  | fptosi   fptosi  fptosi  fptosi   fptrunc      x
 
     private fun evaluateCast(value: IrTypeOperatorCall): LLVMValueRef {
-        context.log("evaluateCast                   : ${ir2string(value)}")
+        context.log{"evaluateCast                   : ${ir2string(value)}"}
         val type = value.typeOperand
         assert(!KotlinBuiltIns.isPrimitiveType(type) && !KotlinBuiltIns.isPrimitiveType(value.argument.type))
         assert(!type.isTypeParameter())
@@ -1261,7 +1261,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateInstanceOf(value: IrTypeOperatorCall): LLVMValueRef {
-        context.log("evaluateInstanceOf             : ${ir2string(value)}")
+        context.log{"evaluateInstanceOf             : ${ir2string(value)}"}
 
         val type     = value.typeOperand
         val srcArg   = evaluateExpression(value.argument)     // Evaluate src expression.
@@ -1313,7 +1313,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateGetField(value: IrGetField): LLVMValueRef {
-        context.log("evaluateGetField               : ${ir2string(value)}")
+        context.log{"evaluateGetField               : ${ir2string(value)}"}
         if (value.descriptor.dispatchReceiverParameter != null) {
             val thisPtr = evaluateExpression(value.receiver!!)
             return debugInfo(value) {
@@ -1346,7 +1346,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateSetField(value: IrSetField): LLVMValueRef {
-        context.log("evaluateSetField               : ${ir2string(value)}")
+        context.log{"evaluateSetField               : ${ir2string(value)}"}
         val valueToAssign = evaluateExpression(value.value)
 
         if (value.descriptor.dispatchReceiverParameter != null) {
@@ -1414,7 +1414,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateConst(value: IrConst<*>): LLVMValueRef {
-        context.log("evaluateConst                  : ${ir2string(value)}")
+        context.log{"evaluateConst                  : ${ir2string(value)}"}
         debugLocation(value)
         when (value.kind) {
             IrConstKind.Null    -> return codegen.kNullObjHeaderPtr
@@ -1438,7 +1438,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateReturn(expression: IrReturn): LLVMValueRef {
-        context.log("evaluateReturn                 : ${ir2string(expression)}")
+        context.log{"evaluateReturn                 : ${ir2string(expression)}"}
         val value = expression.value
 
         val evaluated = evaluateExpression(value)
@@ -1500,7 +1500,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateInlineFunction(value: IrInlineFunctionBody): LLVMValueRef {
-        context.log("evaluateInlineFunction         : ${value.statements.forEach { ir2string(it) }}")
+        context.log{"evaluateInlineFunction         : ${value.statements.forEach { ir2string(it) }}"}
 
         val inlinedFunctionScope = InlinedFunctionScope(value)
         using(inlinedFunctionScope) {
@@ -1529,7 +1529,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateContainerExpression(value: IrContainerExpression): LLVMValueRef {
-        context.log("evaluateContainerExpression    : ${value.statements.forEach { ir2string(it) }}")
+        context.log{"evaluateContainerExpression    : ${value.statements.forEach { ir2string(it) }}"}
 
         val scope = if (value is IrContainerExpression && value.isTransparentScope) {
             null
@@ -1604,7 +1604,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
     private fun evaluateCall(value: IrMemberAccessExpression): LLVMValueRef {
-        context.log("evaluateCall                   : ${ir2string(value)}")
+        context.log{"evaluateCall                   : ${ir2string(value)}"}
 
         val args = evaluateExplicitArgs(value)
 
@@ -1826,7 +1826,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateSimpleFunctionCall(
             descriptor: FunctionDescriptor, args: List<LLVMValueRef>,
             resultLifetime: Lifetime, superClass: ClassDescriptor? = null): LLVMValueRef {
-        //context.log("evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}")
+        //context.log{"evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}"}
         if (descriptor.isOverridable && superClass == null)
             return callVirtual(descriptor, args, resultLifetime)
         else
@@ -1839,7 +1839,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     private fun evaluateConstructorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
-        context.log("evaluateConstructorCall        : ${ir2string(callee)}")
+        context.log{"evaluateConstructorCall        : ${ir2string(callee)}"}
         memScoped {
             val constructedClass = (callee.descriptor as ConstructorDescriptor).constructedClass
             val thisValue = if (constructedClass.isArray) {
@@ -1926,7 +1926,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
 
     private fun evaluateOperatorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
-        context.log("evaluateCall                   : origin:${ir2string(callee)}")
+        context.log{"evaluateCall                   : origin:${ir2string(callee)}"}
         val descriptor = callee.descriptor
         val ib = context.irModule!!.irBuiltins
         when (descriptor) {

@@ -299,7 +299,7 @@ internal class KonanSerializationUtil(val context: Context) {
 
         val proto = KonanLinkData.Descriptor.newBuilder()
 
-        context.log("### serializeLocalDeclaration: $descriptor")
+        context.log{"### serializeLocalDeclaration: $descriptor"}
 
         when (descriptor) {
             is FunctionDescriptor ->

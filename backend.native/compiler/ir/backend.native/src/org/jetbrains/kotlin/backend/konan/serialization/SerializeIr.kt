@@ -61,17 +61,17 @@ internal class IrSerializer(val context: Context,
 
     fun serializeInlineBody(): String {
         val declaration = context.ir.originalModuleIndex.functions[rootFunction]!!
-        context.log("INLINE: ${ir2stringWhole(declaration)}")
+        context.log{"INLINE: ${ir2stringWhole(declaration)}"}
         return encodeDeclaration(declaration)
     }
 
     fun serializeKotlinType(type: KotlinType): KonanIr.KotlinType {
-        context.log("### serializing KotlinType: " + type)
+        context.log{"### serializing KotlinType: " + type}
         return irDescriptorSerializer.serializeKotlinType(type)
     }
 
     fun serializeDescriptor(descriptor: DeclarationDescriptor): KonanIr.KotlinDescriptor {
-        context.log("### serializeDescriptor $descriptor")
+        context.log{"### serializeDescriptor $descriptor"}
 
         // Behind this call starts a large world of 
         // descriptor serialization for IR.
@@ -398,7 +398,7 @@ internal class IrSerializer(val context: Context,
     }
 
     fun serializeExpression(expression: IrExpression): KonanIr.IrExpression {
-        context.log("### serializing Expression: ${ir2string(expression)}")
+        context.log{"### serializing Expression: ${ir2string(expression)}"}
 
         val coordinates = serializeCoordinates(expression.startOffset, expression.endOffset)
         val proto = KonanIr.IrExpression.newBuilder()
@@ -445,7 +445,7 @@ internal class IrSerializer(val context: Context,
     }
 
     fun serializeStatement(statement: IrElement): KonanIr.IrStatement {
-        context.log("### serializing Statement: ${ir2string(statement)}")
+        context.log{"### serializing Statement: ${ir2string(statement)}"}
 
         val coordinates = serializeCoordinates(statement.startOffset, statement.endOffset)
         val proto = KonanIr.IrStatement.newBuilder()
@@ -512,7 +512,7 @@ internal class IrSerializer(val context: Context,
     }
 
     fun serializeDeclaration(declaration: IrDeclaration): KonanIr.IrDeclaration {
-        context.log("### serializing Declaration: ${ir2string(declaration)}")
+        context.log{"### serializing Declaration: ${ir2string(declaration)}"}
 
         val descriptor = declaration.descriptor
         var kotlinDescriptor = serializeDescriptor(descriptor)
@@ -528,7 +528,7 @@ internal class IrSerializer(val context: Context,
                 .build()
         } else if (descriptor is ClassDescriptor) {
             // TODO
-            context.log("Can't serialize local class declarations in inline functions yet")
+            context.log{"Can't serialize local class declarations in inline functions yet"}
         }
 
         val coordinates = serializeCoordinates(declaration.startOffset, declaration.endOffset)
@@ -598,7 +598,7 @@ internal class IrDeserializer(val context: Context,
             typeMap.put(typeParameter, 
                 deserializeKotlinType(pair.getType()))
         }
-        context.log("### deserialized typeMap = $typeMap")
+        context.log{"### deserialized typeMap = $typeMap"}
         return typeMap
     }
 
@@ -649,7 +649,7 @@ internal class IrDeserializer(val context: Context,
             }
         }
 
-        context.log("Deserialized statement: ${ir2string(element)}")
+        context.log{"Deserialized statement: ${ir2string(element)}"}
 
         return element
     }
@@ -959,7 +959,7 @@ internal class IrDeserializer(val context: Context,
         val operation = proto.getOperation()
         val expression = deserializeOperation(operation, start, end, type)
 
-        context.log("Deserialized expression: ${ir2string(expression)}")
+        context.log{"Deserialized expression: ${ir2string(expression)}"}
         return expression
     }
 
@@ -1040,7 +1040,7 @@ internal class IrDeserializer(val context: Context,
                 TODO("Declaration deserialization not implemented")
             }
         }
-        context.log("Deserialized declaration: ${ir2string(declaration)}")
+        context.log{"Deserialized declaration: ${ir2string(declaration)}"}
         return declaration
     }
 

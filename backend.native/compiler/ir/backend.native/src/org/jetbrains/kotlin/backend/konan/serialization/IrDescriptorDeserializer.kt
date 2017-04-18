@@ -140,7 +140,7 @@ internal class IrDescriptorDeserializer(val context: Context,
         } else
             type
 
-        context.log("### deserialized Kotlin Type index=$index, text=$text:\t$realType")
+        context.log{"### deserialized Kotlin Type index=$index, text=$text:\t$realType"}
         return realType
     }
     fun deserializeLocalDeclaration(proto: KonanLinkData.Descriptor): DeclarationDescriptor {
@@ -196,7 +196,7 @@ internal class IrDescriptorDeserializer(val context: Context,
 
     fun deserializeDescriptor(proto: KonanIr.KotlinDescriptor): DeclarationDescriptor {
 
-        context.log("### deserializeDescriptor ${proto.kind} ${proto.index}")
+        context.log{"### deserializeDescriptor ${proto.kind} ${proto.index}"}
 
         val descriptor = if (proto.hasIrLocalDeclaration()) {
             val realDescriptor = proto.irLocalDeclaration.descriptor
@@ -206,7 +206,7 @@ internal class IrDescriptorDeserializer(val context: Context,
         
         descriptorIndex.put(proto.index, descriptor)
 
-        context.log("### descriptor ${proto.kind} ${proto.index} -> $descriptor")
+        context.log{"### descriptor ${proto.kind} ${proto.index} -> $descriptor"}
 
         // Now there are several descriptors that automatically
         // recreated in addition to this one. Register them

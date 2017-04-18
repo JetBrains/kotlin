@@ -410,9 +410,9 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         return config.configuration.getBoolean(KonanConfigKeys.DEBUG)
     }
 
-    fun log(message: String) {
+    fun log(message: () -> String) {
         if (phase?.verbose ?: false) {
-            println(message)
+            println(message())
         }
     }
 

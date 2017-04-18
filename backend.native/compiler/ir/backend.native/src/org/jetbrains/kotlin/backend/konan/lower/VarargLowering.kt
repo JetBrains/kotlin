@@ -233,7 +233,7 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
     private fun hasSpreadElement(expression: IrVararg?) = expression?.elements?.any { it is IrSpreadElement }?:false
 
     private fun log(msg:String) {
-        context.log("VARARG-INJECTOR:    $msg")
+        context.log{"VARARG-INJECTOR:    $msg"}
     }
 
     data class ArrayHandle(val arrayDescriptor:ClassDescriptor,

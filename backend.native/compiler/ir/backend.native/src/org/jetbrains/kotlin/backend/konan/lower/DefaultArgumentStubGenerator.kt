@@ -81,7 +81,7 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
 
 
         log("detected ${functionDescriptor.name.asString()} has got #${bodies.size} default expressions")
-        functionDescriptor.overriddenDescriptors.forEach { context.log("DEFAULT-REPLACER: $it") }
+        functionDescriptor.overriddenDescriptors.forEach { context.log{"DEFAULT-REPLACER: $it"} }
         if (bodies.isNotEmpty()) {
             val descriptor = functionDescriptor.generateDefaultsDescription(context)
             log("$functionDescriptor -> $descriptor")
@@ -190,7 +190,7 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
     }
 
 
-    private fun log(msg:String) = context.log("DEFAULT-REPLACER: $msg")
+    private fun log(msg:String) = context.log{"DEFAULT-REPLACER: $msg"}
 }
 
 private fun Scope.createTemporaryVariableDescriptor(parameterDescriptor: ValueParameterDescriptor?): VariableDescriptor =
@@ -338,7 +338,7 @@ class DefaultParameterInjector internal constructor(val context: Context): BodyL
         })
     }
 
-    private fun log(msg: String) = context.log("DEFAULT-INJECTOR: $msg")
+    private fun log(msg: String) = context.log{"DEFAULT-INJECTOR: $msg"}
 }
 
 private val CallableMemberDescriptor.needsDefaultArgumentsLowering
@@ -410,7 +410,7 @@ private fun FunctionDescriptor.generateDefaultsDescription(context: Context): Fu
                 /* unsubstitutedReturnType       = */ returnType,
                 /* modality                      = */ Modality.FINAL,
                 /* visibility                    = */ this.visibility)
-        context.log("adds to cache[$this] = $descriptor")
+        context.log{"adds to cache[$this] = $descriptor"}
         descriptor
     }
 }

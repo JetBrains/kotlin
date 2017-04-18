@@ -50,14 +50,14 @@ internal class DeserializerDriver(val context: Context) {
 
         var deserializedIr: IrDeclaration? = null
         PhaseManager(context).phase(KonanPhase.DESERIALIZER) {
-            context.log("### IR deserialization attempt:\t$descriptor")
+            context.log{"### IR deserialization attempt:\t$descriptor"}
             try {
                 deserializedIr = IrDeserializer(context, descriptor).decodeDeclaration()
-                context.log("${deserializedIr!!.descriptor}")
-                context.log(ir2stringWhole(deserializedIr!!))
-                context.log("IR deserialization SUCCESS:\t$descriptor")
+                context.log{"${deserializedIr!!.descriptor}"}
+                context.log{ir2stringWhole(deserializedIr!!)}
+                context.log{"IR deserialization SUCCESS:\t$descriptor"}
             } catch(e: Throwable) {
-                context.log("IR deserialization FAILURE:\t$descriptor")
+                context.log{"IR deserialization FAILURE:\t$descriptor"}
                 e.printStackTrace()
             }
         }
@@ -66,7 +66,7 @@ internal class DeserializerDriver(val context: Context) {
 
     internal fun dumpAllInlineBodies() {
         if (! context.phase!!.verbose) return
-        context.log("Now deserializing all inlines for debugging purpose.")
+        context.log{"Now deserializing all inlines for debugging purpose."}
         context.moduleDescriptor.accept(
             InlineBodiesPrinterVisitor(InlineBodyPrinter()), Unit)
     }
