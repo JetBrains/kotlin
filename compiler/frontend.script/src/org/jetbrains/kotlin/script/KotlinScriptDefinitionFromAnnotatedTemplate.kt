@@ -49,14 +49,14 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 
     val scriptFilePattern by lazy {
         providedScriptFilePattern
-        ?: template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>()?.scriptFilePattern
-        ?: template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>()?.scriptFilePattern
+        ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>()?.scriptFilePattern }
+        ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>()?.scriptFilePattern }
         ?: DEFAULT_SCRIPT_FILE_PATTERN
     }
 
     val resolver: ScriptDependenciesResolver? by lazy {
-        val defAnn by lazy { template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>() }
-        val legacyDefAnn by lazy { template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>() }
+        val defAnn by lazy { takeUnlessError { template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>() } }
+        val legacyDefAnn by lazy { takeUnlessError { template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>() } }
         when {
             providedResolver != null -> providedResolver
             // TODO: logScriptDefMessage missing or invalid constructor
@@ -89,8 +89,8 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
     }
 
     val samWithReceiverAnnotations: List<String>? by lazy {
-        template.annotations.firstIsInstanceOrNull<kotlin.script.extensions.SamWithReceiverAnnotations>()?.annotations?.toList()
-        ?: template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.SamWithReceiverAnnotations>()?.annotations?.toList()
+        takeUnlessError { template.annotations.firstIsInstanceOrNull<kotlin.script.extensions.SamWithReceiverAnnotations>()?.annotations?.toList() }
+        ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.SamWithReceiverAnnotations>()?.annotations?.toList() }
     }
 
     private val acceptedAnnotations: List<KClass<out Annotation>> by lazy {
@@ -124,13 +124,9 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 
     override fun <TF: Any> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
 
-        fun logClassloadingError(ex: Throwable) {
-            logScriptDefMessage(ScriptDependenciesResolver.ReportSeverity.WARNING, ex.message ?: "Invalid script template: ${template.qualifiedName}", null)
-        }
-
         fun makeScriptContents() = BasicScriptContents(file, getAnnotations = {
             val classLoader = template.java.classLoader
-            try {
+            takeUnlessError {
                 getAnnotationEntries(file, project)
                         .mapNotNull { psiAnn ->
                             // TODO: consider advanced matching using semantic similar to actual resolving
@@ -139,21 +135,14 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
                             }?.let { constructAnnotation(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
                         }
             }
-            catch (ex: Throwable) {
-                logClassloadingError(ex)
-                emptyList()
-            }
+            ?: emptyList()
         })
 
-        try {
+        return takeUnlessError {
             val fileDeps = resolver?.resolve(makeScriptContents(), environment, ::logScriptDefMessage, previousDependencies)
             // TODO: use it as a Future
-            return fileDeps?.get()
+            fileDeps?.get()
         }
-        catch (ex: Throwable) {
-            logClassloadingError(ex)
-        }
-        return null
     }
 
     private fun <TF: Any> getAnnotationEntries(file: TF, project: Project): Iterable<KtAnnotationEntry> = when (file) {
@@ -187,6 +176,15 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 
     override val annotationsForSamWithReceivers: List<String>
         get() = samWithReceiverAnnotations ?: super.annotationsForSamWithReceivers
+
+    private inline fun<T> takeUnlessError(body: () -> T?): T? =
+            try {
+                body()
+            }
+            catch (ex: Throwable) {
+                log.error("Invalid script template: ${template.qualifiedName}", ex)
+                null
+            }
 
     companion object {
         internal val log = Logger.getInstance(KotlinScriptDefinitionFromAnnotatedTemplate::class.java)
