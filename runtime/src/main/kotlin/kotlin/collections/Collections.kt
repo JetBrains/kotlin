@@ -338,7 +338,7 @@ public fun <T: Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int 
         val comparisonResult = compareValues(middleValue, element)
 
         if (comparisonResult < 0)
-            low = middleIndex + 1
+            lowBorder = middleIndex + 1
         else if (comparisonResult > 0)
             highBorder = middleIndex - 1
         else
@@ -367,7 +367,7 @@ public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fr
     var lowBorder = fromIndex
     var highBorder = toIndex - 1
 
-    while (lowBorder <= high) {
+    while (lowBorder <= highBorder) {
         val middleIndex = (lowBorder + highBorder).ushr(1) // safe from overflows
         val middleValue = get(middleIndex)
         val comparisonResult = comparator.compare(middleValue, element)
@@ -375,7 +375,7 @@ public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fr
         if (comparisonResult < 0)
             lowBorder = middleIndex + 1
         else if (comparisonResult > 0)
-            highBorderBorder = middleIndex - 1
+            highBorder = middleIndex - 1
         else
             return middleIndex // key found
     }
