@@ -80,6 +80,8 @@ public annotation class FixmeReflection
  */
 public annotation class FixmeConcurrency
 
+public annotation class FixmeInline
+
 /**
  * Need to be fixed.
  */

@@ -314,7 +314,7 @@ public inline fun String.subSequence(start: Int, end: Int): CharSequence = subSe
  * @param endIndex the end index (exclusive). If not specified, the length of the char sequence is used.
  */
 // TODO: uncomment as soon as inlining works for stdlib.
-@Fixme
+@FixmeInline
 @kotlin.internal.InlineOnly
 public /*inline*/ fun CharSequence.substring(startIndex: Int, endIndex: Int = length): String = subSequence(startIndex, endIndex).toString()
 

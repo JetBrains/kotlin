@@ -90,9 +90,11 @@ public fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
             (this.create(receiver, completion) as CoroutineImpl).facade
 
 // INTERNAL DEFINITIONS
-private inline fun <T> buildContinuationByInvokeCall(
+// TODO: uncomment as soon as inlining works for stdlib.
+@FixmeInline
+private /*inline*/ fun <T> buildContinuationByInvokeCall(
         completion: Continuation<T>,
-        crossinline block: () -> Any?
+        /*crossinline*/ block: () -> Any?
 ): Continuation<Unit> {
     val continuation =
             object : Continuation<Unit> {
