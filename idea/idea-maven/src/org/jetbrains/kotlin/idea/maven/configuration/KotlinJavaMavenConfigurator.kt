@@ -21,6 +21,7 @@ import com.intellij.openapi.roots.ModuleRootManager
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.kotlin.idea.configuration.hasKotlinJvmRuntimeInScope
 import org.jetbrains.kotlin.idea.maven.PomFile
+import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
 import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
@@ -42,6 +43,14 @@ class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(KotlinJavaMavenConfi
     override fun createExecutions(pomFile: PomFile, kotlinPlugin: MavenDomPlugin, module: Module) {
         createExecution(pomFile, kotlinPlugin, PomFile.DefaultPhases.Compile, PomFile.KotlinGoals.Compile, module, false)
         createExecution(pomFile, kotlinPlugin, PomFile.DefaultPhases.TestCompile, PomFile.KotlinGoals.TestCompile, module, true)
+    }
+
+    override fun configurePlugin(pom: PomFile, plugin: MavenDomPlugin, module: Module, version: String) {
+        val sdk = ModuleRootManager.getInstance(module).sdk
+        val jvmTarget = getDefaultJvmTarget(sdk, version)
+        if (jvmTarget != null) {
+            pom.addPluginConfiguration(plugin, "jvmTarget", jvmTarget.description)
+        }
     }
 
     override val targetPlatform: TargetPlatform

@@ -298,6 +298,17 @@ class PomFile private constructor(val xmlFile: XmlFile, val domModel: MavenDomPr
         return configurationTag.add(newTag) as XmlTag
     }
 
+    fun addPluginConfiguration(plugin: MavenDomPlugin, optionName: String, optionValue: String) {
+        val configurationTag = plugin.configuration.ensureTagExists()
+        val existingTag = configurationTag.findFirstSubTag(optionName)
+        if (existingTag != null) {
+            existingTag.value.text = optionValue
+        }
+        else {
+            configurationTag.add(configurationTag.createChildTag(optionName, optionValue))
+        }
+    }
+
     fun addPluginRepository(id: String, name: String, url: String, snapshots: Boolean = false, releases: Boolean = true): MavenDomRepository {
         ensurePluginRepositories()
 

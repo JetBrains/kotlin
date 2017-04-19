@@ -160,9 +160,14 @@ abstract class KotlinMavenConfigurator
         val plugin = pom.addPlugin(MavenId(GROUP_ID, MAVEN_PLUGIN_ID, "\${$KOTLIN_VERSION_PROPERTY}"))
         createExecutions(pom, plugin, module)
 
+        configurePlugin(pom, plugin, module, version)
+
         CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement<PsiFile>(file)
 
         collector.addMessage(virtualFile.path + " was modified")
+    }
+
+    protected open fun configurePlugin(pom: PomFile, plugin: MavenDomPlugin, module: Module, version: String) {
     }
 
     protected fun createExecution(
