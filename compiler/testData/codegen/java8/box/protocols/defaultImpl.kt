@@ -3,7 +3,7 @@
 // FULL_JDK
 
 protocol interface Master {
-    fun foo(x: Any) = x
+    fun foo(x: String) = x
 }
 
 fun box(): String {

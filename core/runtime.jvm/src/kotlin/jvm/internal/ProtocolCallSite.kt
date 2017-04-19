@@ -18,6 +18,7 @@
 
 package kotlin.jvm.internal
 
+import java.lang.Exception
 import java.lang.invoke.*
 import java.lang.reflect.Method
 import kotlin.jvm.internal.cache.Cache.Companion.makeCache
@@ -43,7 +44,7 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
             return cached
         }
 
-        val method = lookup.unreflect(resolveMethod(receiverClass))
+        val method = lookup.unreflect(findAccessibleMethod(receiverClass))
         indyCache[receiverClass] = method
 
         return method
@@ -57,12 +58,28 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
             return cached
         }
 
-        val method = resolveMethod(receiverClass)!!
+        val method = findAccessibleMethod(receiverClass)!!
         reflectCache[receiverClass] = method
         return method
     }
 
-    private fun resolveMethod(target: Class<*>): Method? {
+    private fun findAccessibleMethod(root: Class<*>): Method? {
+        val result = resolveAccessibleMethod(root) ?: findAccessibleMethod(root.superclass)
+        if (result != null) {
+            return result
+        }
+
+        for (i in root.interfaces) {
+            val item = findAccessibleMethod(i)
+            if (item != null) {
+                return item
+            }
+        }
+
+        return null
+    }
+
+    private fun resolveAccessibleMethod(target: Class<*>): Method? {
         val protocolArgs = callableType.parameterArray()
         val methods = target.declaredMethods
 
@@ -70,7 +87,7 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
         var bestDistance = IntArray(protocolArgs.size)
 
         for (method in methods) {
-            if (method.name != callableName || method.parameterCount != protocolArgs.size) {
+            if (method.name != callableName || method.parameterCount != protocolArgs.size || !method.isAccessible) {
                 continue
             }
 
