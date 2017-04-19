@@ -40,6 +40,10 @@ class StringBuilder private constructor (
         length = array.size
     }
 
+    constructor(sequence: CharSequence): this(sequence.length) {
+        append(sequence)
+    }
+
     override var length: Int = 0
         set(capacity) {
             ensureCapacity(capacity)
@@ -73,6 +77,37 @@ class StringBuilder private constructor (
                 newSize = capacity
             array = array.copyOf(newSize)
         }
+    }
+
+    fun reverse(): StringBuilder {
+        var front = 0
+        var end = array.lastIndex
+        var hasSurrogates = false
+        while (front < end) {
+            if (array[front].isSurrogate() || array[end].isSurrogate()) {
+                hasSurrogates = true
+            }
+            val tmp = array[front]
+            array[front] = array[end]
+            array[end] = tmp
+            front++
+            end--
+        }
+
+        // Reverse surrogate pairs back.
+        if (hasSurrogates) {
+            var i = 0
+            while (i < length - 1) {
+                if (array[i].isLowSurrogate() && array[i + 1].isHighSurrogate()) {
+                    val tmp = array[i]
+                    array[i] = array[i + 1]
+                    array[i + 1] = tmp
+                    i++
+                }
+                i++
+            }
+        }
+        return this
     }
 
     // Of Appenable.
