@@ -1080,16 +1080,6 @@ task string_builder0(type: RunKonanTest) {
     source = "runtime/text/string_builder0.kt"
 }
 
-task string_builder_reverse(type: RunKonanTest) {
-    goldValue = "OK\n"
-    source = "runtime/text/string_builder_reverse.kt"
-}
-
-task string_builder_insert(type: RunKonanTest) {
-    goldValue = "OK\n"
-    source = "runtime/text/string_builder_insert.kt"
-}
-
 task string0(type: RunKonanTest) {
     goldValue = "true\ntrue\nПРИВЕТ\nпривет\nПока\ntrue\n"
     source = "runtime/text/string0.kt"
