@@ -901,6 +901,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/regressions/integerCoercionToT.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("typeAliasCtorForGenericClass.kt")
+        public void testTypeAliasCtorForGenericClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/regressions/typeAliasCtorForGenericClass.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/ir/irText/singletons")

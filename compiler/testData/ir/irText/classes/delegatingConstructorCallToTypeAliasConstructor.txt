@@ -18,14 +18,12 @@ FILE /delegatingConstructorCallToTypeAliasConstructor.kt
   CLASS CLASS C1
     CONSTRUCTOR public constructor C1()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(T)'
-          value: TYPE_OP type=T origin=IMPLICIT_CAST typeOperand=T
-            CONST String type=kotlin.String value='O'
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
+          value: CONST String type=kotlin.String value='O'
         INSTANCE_INITIALIZER_CALL classDescriptor='C1'
   CLASS CLASS C2
     CONSTRUCTOR public constructor C2()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(T)'
-          value: TYPE_OP type=T origin=IMPLICIT_CAST typeOperand=T
-            CONST String type=kotlin.String value='K'
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
+          value: CONST String type=kotlin.String value='K'
         INSTANCE_INITIALIZER_CALL classDescriptor='C2'
