@@ -9707,6 +9707,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt17404.kt")
+        public void testKt17404() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/kt17404.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("letClassImplementAdditionalInterface.kt")
         public void testLetClassImplementAdditionalInterface() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/letClassImplementAdditionalInterface.kt");

@@ -24,6 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
@@ -162,8 +163,9 @@ public class QuickFixUtil {
     }
 
     public static String renderTypeWithFqNameOnClash(KotlinType type, String nameToCheckAgainst) {
-        FqName typeFqName = DescriptorUtils.getFqNameSafe(DescriptorUtils.getClassDescriptorForType(type));
         FqName fqNameToCheckAgainst = new FqName(nameToCheckAgainst);
+        ClassifierDescriptor typeClassifierDescriptor = type.getConstructor().getDeclarationDescriptor();
+        FqName typeFqName = typeClassifierDescriptor != null ? DescriptorUtils.getFqNameSafe(typeClassifierDescriptor) : fqNameToCheckAgainst;
         DescriptorRenderer renderer = typeFqName.shortName().equals(fqNameToCheckAgainst.shortName())
                ? IdeDescriptorRenderers.SOURCE_CODE
                : IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES;
