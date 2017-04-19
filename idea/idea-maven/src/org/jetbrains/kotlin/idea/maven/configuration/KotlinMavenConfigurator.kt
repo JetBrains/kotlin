@@ -151,17 +151,10 @@ abstract class KotlinMavenConfigurator
             pom.addDependency(MavenId("junit", "junit", "4.12"), MavenArtifactScope.TEST, null, false, null)
         }
 
-        if (isSnapshot(version)) {
-            pom.addLibraryRepository(SNAPSHOT_REPOSITORY)
-            pom.addPluginRepository(SNAPSHOT_REPOSITORY)
-        }
-        else if (useEap11Repository(version)) {
-            pom.addLibraryRepository(EAP_11_REPOSITORY)
-            pom.addPluginRepository(EAP_11_REPOSITORY)
-        }
-        else if (isEap(version)) {
-            pom.addLibraryRepository(EAP_REPOSITORY)
-            pom.addPluginRepository(EAP_REPOSITORY)
+        val repositoryDescription = getRepositoryForVersion(version)
+        if (repositoryDescription != null) {
+            pom.addLibraryRepository(repositoryDescription)
+            pom.addPluginRepository(repositoryDescription)
         }
 
         val plugin = pom.addPlugin(MavenId(GROUP_ID, MAVEN_PLUGIN_ID, "\${$KOTLIN_VERSION_PROPERTY}"))

@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.utils.ifEmpty
 
 data class RepositoryDescription(val id: String, val name: String, val url: String, val bintrayUrl: String?, val isSnapshot: Boolean)
 
-@JvmField
 val SNAPSHOT_REPOSITORY = RepositoryDescription(
         "sonatype.oss.snapshots",
         "Sonatype OSS Snapshot Repository",
@@ -45,7 +44,6 @@ val SNAPSHOT_REPOSITORY = RepositoryDescription(
         null,
         isSnapshot = true)
 
-@JvmField
 val EAP_REPOSITORY = RepositoryDescription(
         "bintray.kotlin.eap",
         "Bintray Kotlin EAP Repository",
@@ -53,7 +51,6 @@ val EAP_REPOSITORY = RepositoryDescription(
         "https://bintray.com/kotlin/kotlin-eap/kotlin/",
         isSnapshot = false)
 
-@JvmField
 val EAP_11_REPOSITORY = RepositoryDescription(
         "bintray.kotlin.eap",
         "Bintray Kotlin 1.1 EAP Repository",
