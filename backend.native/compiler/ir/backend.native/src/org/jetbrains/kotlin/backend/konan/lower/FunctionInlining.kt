@@ -324,7 +324,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
         val parameterToArgumentNew = mutableMapOf<ValueDescriptor, IrExpression> ()         // Result map parameter_descriptor -> evaluated_argument_expression.
         val evaluationStatements   = mutableListOf<IrStatement>()                           // List of evaluation statements.
         parameterToArgumentOld.forEach {
-            val parameterDescriptor = it.parameterDescriptor.original as ValueDescriptor
+            val parameterDescriptor = it.parameterDescriptor
             val argumentExpression  = it.argumentExpression
 
             if (!argumentNeedsEvaluation(argumentExpression)) {                             // If argument does not need evaluation
