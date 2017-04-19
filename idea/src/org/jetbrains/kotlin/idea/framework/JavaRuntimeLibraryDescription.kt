@@ -17,8 +17,12 @@
 package org.jetbrains.kotlin.idea.framework
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.libraries.LibraryKind
+import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
+import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
+import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
 
 /**
  * @param project null when project doesn't exist yet (called from project wizard)
@@ -31,6 +35,15 @@ class JavaRuntimeLibraryDescription(project: Project?) :
                                                   LIBRARY_CAPTION,
                                                   KOTLIN_JAVA_RUNTIME_KIND,
                                                   SUITABLE_LIBRARY_KINDS) {
+
+    override fun configureKotlinSettings(project: Project, sdk: Sdk?) {
+        val defaultJvmTarget = getDefaultJvmTarget(sdk, bundledRuntimeVersion())
+        if (defaultJvmTarget != null) {
+            Kotlin2JvmCompilerArgumentsHolder.getInstance(project).update {
+                jvmTarget = defaultJvmTarget.description
+            }
+        }
+    }
 
     companion object {
         val KOTLIN_JAVA_RUNTIME_KIND = LibraryKind.create("kotlin-java-runtime")

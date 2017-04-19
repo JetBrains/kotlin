@@ -20,6 +20,7 @@ import com.google.common.collect.Lists
 import com.intellij.framework.library.LibraryVersionProperties
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.Library
@@ -93,11 +94,17 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
                     configurator.configureLibraryJar(model, jarState, copyToPath, jarDescriptor, collector)
                 }
             }
+
+            configureKotlinSettings(module.project, rootModel.sdk)
+
             collector.showNotification()
         }
         finally {
             model.commit()
         }
+    }
+
+    protected open fun configureKotlinSettings(project: Project, sdk: Sdk?) {
     }
 
     class DeferredCopyFileRequests(private val configurator: KotlinWithLibraryConfigurator) {
