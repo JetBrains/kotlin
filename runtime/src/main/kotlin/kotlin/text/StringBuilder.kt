@@ -29,6 +29,29 @@ external fun fromCharArray(array: CharArray, start: Int, size: Int) : String
 @SymbolName("Kotlin_String_toCharArray")
 external fun toCharArray(string: String) : CharArray
 
+/**
+ * Builds new string by populating newly created [StringBuilder] using provided [builderAction]
+ * and then converting it to [String].
+ */
+@kotlin.internal.InlineOnly
+public inline fun buildString(builderAction: StringBuilder.() -> Unit): String =
+        StringBuilder().apply(builderAction).toString()
+
+/**
+ * Builds new string by populating newly created [StringBuilder] initialized with the given [capacity]
+ * using provided [builderAction] and then converting it to [String].
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun buildString(capacity: Int, builderAction: StringBuilder.() -> Unit): String =
+        StringBuilder(capacity).apply(builderAction).toString()
+
+/**
+ * Sets the character at the specified [index] to the specified [value].
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun StringBuilder.set(index: Int, value: Char): Unit = this.setCharAt(index, value)
+
 class StringBuilder private constructor (
         private var array: CharArray
 ) : CharSequence, Appendable {
@@ -110,6 +133,79 @@ class StringBuilder private constructor (
         return this
     }
 
+    fun insert(index: Int, c: Char): StringBuilder {
+        checkInsertIndex(index)
+        ensureExtraCapacity(1)
+        val newLastIndex = lastIndex + 1
+        for (i in newLastIndex downTo index + 1) {
+            array[i] = array[i - 1]
+        }
+        array[index] = c
+        length++
+        return this
+    }
+
+    fun insert(index: Int, csq: CharSequence?): StringBuilder {
+        // TODO: how to treat nulls properly?
+        if (csq == null) return this
+        return insert(index, csq, 0, csq.length)
+    }
+
+    fun insert(index: Int, csq: CharSequence?, start: Int, end: Int): StringBuilder {
+        // TODO: how to treat nulls properly?
+        if (csq == null) return this
+        if (start < 0 || end < start || start > csq.length) throw IndexOutOfBoundsException()
+        checkInsertIndex(index)
+
+        val extraLength = end - start
+        ensureExtraCapacity(extraLength)
+        var from = lastIndex
+        var to = length + extraLength - 1
+        while (from >= index) {
+            array[to--] = array[from--]
+        }
+
+        from = start
+        to = index
+        while (from < end) {
+            array[to++] = csq[from++]
+        }
+
+        length += extraLength
+        return this
+    }
+
+    fun insert(index: Int, chars: CharArray): StringBuilder {
+        checkInsertIndex(index)
+        ensureExtraCapacity(chars.size)
+
+        var from = lastIndex
+        var to = length + chars.size - 1
+        while (from >= index) {
+            array[to--] = array[from--]
+        }
+
+        var i = index
+        for (c in chars) {
+            array[i++] = c
+        }
+
+        length += chars.size
+        return this
+    }
+
+    fun insert(index: Int, string: String): StringBuilder = insert(index, toCharArray(string))
+
+    fun insert(index: Int, value: Boolean) = insert(index, value.toString())
+    fun insert(index: Int, value: Byte)    = insert(index, value.toString())
+    fun insert(index: Int, value: Short)   = insert(index, value.toString())
+    fun insert(index: Int, value: Int)     = insert(index, value.toString())
+    fun insert(index: Int, value: Long)    = insert(index, value.toString())
+    fun insert(index: Int, value: Float)   = insert(index, value.toString())
+    fun insert(index: Int, value: Double)  = insert(index, value.toString())
+    fun insert(index: Int, value: Any?)    = insert(index, value.toString())
+
+
     // Of Appenable.
     override fun append(c: Char) : StringBuilder {
         ensureExtraCapacity(1)
@@ -126,6 +222,7 @@ class StringBuilder private constructor (
     override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder {
         // TODO: how to treat nulls properly?
         if (csq == null) return this
+        if (start < 0 || end < start || start > csq.length) throw IndexOutOfBoundsException()
         ensureExtraCapacity(end - start)
         var index = start
         while (index < end)
@@ -160,6 +257,11 @@ class StringBuilder private constructor (
         checkIndex(index)
         array.copyRangeTo(array, index + 1, length, index)
         --length
+    }
+
+    fun setCharAt(index: Int, value: Char) {
+        checkIndex(index)
+        array[index] = value
     }
 
     // ---------------------------- private ----------------------------
