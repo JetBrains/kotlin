@@ -190,6 +190,10 @@ public final class RhinoUtils {
             runFileWithRhino(DIST_DIR_JS_PATH + "kotlin.js", context, scope);
             runFileWithRhino(DIST_DIR_JS_PATH + "kotlin-test.js", context, scope);
 
+            context.evaluateString(scope,
+                                   "this['kotlin-test'].kotlin.test._asserter = new this['kotlin-test'].kotlin.test.DefaultAsserter();",
+                                   "change asserter to DefaultAsserter", 1, null);
+
             //runFileWithRhino(pathToTestFilesRoot() + "jshint.js", context, scope);
             for (String jsLibrary : jsLibraries) {
                 runFileWithRhino(jsLibrary, context, scope);
