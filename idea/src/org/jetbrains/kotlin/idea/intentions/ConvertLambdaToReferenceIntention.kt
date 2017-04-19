@@ -47,10 +47,15 @@ class ConvertLambdaToReferenceInspection : IntentionBasedInspection<KtLambdaExpr
     override fun inspectionTarget(element: KtLambdaExpression) = element.bodyExpression?.statements?.singleOrNull()
 }
 
-class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntention<KtLambdaExpression>(
-        KtLambdaExpression::class.java, "Convert lambda to reference"
-) {
-    private fun KtLambdaArgument.outerCalleeDescriptor(): FunctionDescriptor? {
+open class ConvertLambdaToReferenceIntention(text: String) :
+        SelfTargetingOffsetIndependentIntention<KtLambdaExpression>(KtLambdaExpression::class.java, text) {
+
+    @Suppress("unused")
+    constructor(): this("Convert lambda to reference")
+
+    open fun buildReferenceText(element: KtLambdaExpression) = buildReferenceText(lambdaExpression = element, shortTypes = false)
+
+    protected fun KtLambdaArgument.outerCalleeDescriptor(): FunctionDescriptor? {
         val outerCallExpression = parent as? KtCallExpression ?: return null
         val context = outerCallExpression.analyze()
         val outerCallee = outerCallExpression.calleeExpression as? KtReferenceExpression ?: return null
@@ -163,7 +168,7 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
     }
 
     override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
-        val referenceName = buildReferenceText(lambdaExpression = element, shortTypes = false) ?: return
+        val referenceName = buildReferenceText(element) ?: return
         val factory = KtPsiFactory(element)
         val lambdaArgument = element.parent as? KtLambdaArgument
         if (lambdaArgument == null) {

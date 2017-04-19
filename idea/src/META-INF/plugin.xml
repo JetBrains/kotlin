@@ -2128,6 +2128,13 @@
                      language="JAVA"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MoveSuspiciousCallableReferenceIntoParenthesesInspection"
+                     displayName="Suspicious callable reference used as lambda result"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
 
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
