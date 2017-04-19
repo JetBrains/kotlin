@@ -43,6 +43,14 @@ class KaptJavaLog(
             return
         }
 
+        if (diagnostic.type == JCDiagnostic.DiagnosticType.WARNING
+            && diagnostic.code == "compiler.warn.proc.unmatched.processor.options"
+            && diagnostic.args.singleOrNull() == "[kapt.kotlin.generated]"
+        ) {
+            // Do not report the warning about "kapt.kotlin.generated" option being ignored if it's the only ignored option
+            return
+        }
+
         val targetElement = diagnostic.diagnosticPosition
         if (diagnostic.code.contains("err.cant.resolve") && targetElement != null) {
             val sourceFile = interceptorData.files[diagnostic.source]

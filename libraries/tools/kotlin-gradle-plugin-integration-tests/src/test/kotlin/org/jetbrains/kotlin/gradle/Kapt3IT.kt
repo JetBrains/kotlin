@@ -75,6 +75,7 @@ class Kapt3IT : BaseGradleIT() {
             assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
             assertContains("example.JavaTest PASSED")
             assertClassFilesNotContain(File(project.projectDir, "build/classes"), "ExampleSourceAnnotation")
+            assertNotContains("warning: The following options were not recognized by any processor")
         }
 
         project.build("build") {
