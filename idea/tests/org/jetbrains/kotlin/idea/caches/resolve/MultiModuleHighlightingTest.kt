@@ -102,5 +102,17 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
                 }
             })
         }
+
+        fun testHeaderClassImplTypealias() {
+            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        }
+
+        fun testHeaderFunUsesStdlibInSignature() {
+            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], withStdlibCommon = true, configureModule = { module, platform ->
+                if (platform is TargetPlatformKind.Jvm) {
+                    module.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
+                }
+            })
+        }
     }
 }

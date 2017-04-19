@@ -40,9 +40,11 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
+import org.jetbrains.kotlin.types.checker.TypeCheckerContext
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap
@@ -293,11 +295,13 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         val bTypeParams = b.typeParameters
         if (aTypeParams.size != bTypeParams.size) return Incompatible.TypeParameterCount
 
+        val platformModule = b.module
         val substitutor = Substitutor(aTypeParams, bTypeParams, parentSubstitutor)
 
-        if (!areCompatibleTypeLists(aParams.map { substitutor(it.type) }, bParams.map { it.type }) ||
-            !areCompatibleTypes(aExtensionReceiver?.type?.let(substitutor), bExtensionReceiver?.type)) return Incompatible.ParameterTypes
-        if (!areCompatibleTypes(substitutor(a.returnType), b.returnType)) return Incompatible.ReturnType
+        if (!areCompatibleTypeLists(aParams.map { substitutor(it.type) }, bParams.map { it.type }, platformModule) ||
+            !areCompatibleTypes(aExtensionReceiver?.type?.let(substitutor), bExtensionReceiver?.type, platformModule))
+            return Incompatible.ParameterTypes
+        if (!areCompatibleTypes(substitutor(a.returnType), b.returnType, platformModule)) return Incompatible.ReturnType
 
         if (b.hasStableParameterNames() && !equalsBy(aParams, bParams, ValueParameterDescriptor::getName)) return Incompatible.ParameterNames
         if (!equalsBy(aTypeParams, bTypeParams, TypeParameterDescriptor::getName)) return Incompatible.TypeParameterNames
@@ -305,7 +309,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         if (a.modality != b.modality) return Incompatible.Modality
         if (a.visibility != b.visibility) return Incompatible.Visibility
 
-        areCompatibleTypeParameters(aTypeParams, bTypeParams, substitutor).let { if (it != Compatible) return it }
+        areCompatibleTypeParameters(aTypeParams, bTypeParams, platformModule, substitutor).let { if (it != Compatible) return it }
 
         if (!equalsBy(aParams, bParams, ValueParameterDescriptor::declaresDefaultValue)) return Incompatible.ValueParameterHasDefault
         if (!equalsBy(aParams, bParams, { p -> listOf(p.varargElementType != null, p.isCrossinline, p.isNoinline) })) return Incompatible.ValueParameterModifiers
@@ -321,19 +325,59 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         return Compatible
     }
 
-    private fun areCompatibleTypes(a: KotlinType?, b: KotlinType?): Boolean {
-        return if (a != null) b != null && TypeUtils.equalTypes(a, b) else b == null
+    private fun areCompatibleTypes(a: KotlinType?, b: KotlinType?, platformModule: ModuleDescriptor): Boolean {
+        if (a == null) return b == null
+        if (b == null) return false
+
+        with(NewKotlinTypeChecker) {
+            val context = object : TypeCheckerContext(false) {
+                override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
+                    return isHeaderClassAndImplTypeAlias(a, b, platformModule) ||
+                           isHeaderClassAndImplTypeAlias(b, a, platformModule) ||
+                           super.areEqualTypeConstructors(a, b)
+                }
+            }
+            return context.equalTypes(a.unwrap(), b.unwrap())
+        }
     }
 
-    private fun areCompatibleTypeLists(a: List<KotlinType?>, b: List<KotlinType?>): Boolean {
+    // For example, headerTypeConstructor may be the header class kotlin.text.StringBuilder, while implTypeConstructor
+    // is java.lang.StringBuilder. For the purposes of type compatibility checking, we must consider these types equal here.
+    // Note that the case of an "impl class" works as expected though, because the impl class by definition has the same FQ name
+    // as the corresponding header class, so their type constructors are equal as per AbstractClassTypeConstructor#equals
+    private fun isHeaderClassAndImplTypeAlias(
+            headerTypeConstructor: TypeConstructor,
+            implTypeConstructor: TypeConstructor,
+            platformModule: ModuleDescriptor
+    ): Boolean {
+        val header = headerTypeConstructor.declarationDescriptor
+        val impl = implTypeConstructor.declarationDescriptor
+        return header is ClassifierDescriptorWithTypeParameters &&
+               header.isHeader &&
+               impl is ClassifierDescriptorWithTypeParameters &&
+               header.findClassifiersFromModule(platformModule).any { classifier ->
+                   // Note that it's fine to only check that this "impl typealias" expands to the expected class, without checking
+                   // whether the type arguments in the expansion are in the correct order or have the correct variance, because we only
+                   // allow simple cases like "impl typealias Foo<A, B> = FooImpl<A, B>", see DeclarationsChecker#checkImplTypeAlias
+                   (classifier as? TypeAliasDescriptor)?.classDescriptor == impl
+               }
+    }
+
+    private fun areCompatibleTypeLists(a: List<KotlinType?>, b: List<KotlinType?>, platformModule: ModuleDescriptor): Boolean {
         for (i in a.indices) {
-            if (!areCompatibleTypes(a[i], b[i])) return false
+            if (!areCompatibleTypes(a[i], b[i], platformModule)) return false
         }
         return true
     }
 
-    private fun areCompatibleTypeParameters(a: List<TypeParameterDescriptor>, b: List<TypeParameterDescriptor>, substitutor: Substitutor): Compatibility {
-        if (!areCompatibleTypeLists(a.map { substitutor(it.defaultType) }, b.map { it.defaultType })) return Incompatible.TypeParameterUpperBounds
+    private fun areCompatibleTypeParameters(
+            a: List<TypeParameterDescriptor>,
+            b: List<TypeParameterDescriptor>,
+            platformModule: ModuleDescriptor,
+            substitutor: Substitutor
+    ): Compatibility {
+        if (!areCompatibleTypeLists(a.map { substitutor(it.defaultType) }, b.map { it.defaultType }, platformModule))
+            return Incompatible.TypeParameterUpperBounds
         if (!equalsBy(a, b, TypeParameterDescriptor::getVariance)) return Incompatible.TypeParameterVariance
         if (!equalsBy(a, b, TypeParameterDescriptor::isReified)) return Incompatible.TypeParameterReified
 
@@ -370,8 +414,8 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             is TypeAliasDescriptor -> {
                 val classDescriptor = other.classDescriptor ?: return Compatible // do not report extra error on erroneous typealias
                 implTypealias = true
-                // If a platform class test.C is implemented by a typealias test.C = test.CImpl, we must now state that any occurrence
-                // of the type "test.C" in the platform class scope should be replaced with "test.CImpl".
+                // If a header class test.C is implemented by a typealias test.C = test.CImpl, we must now state that any occurrence
+                // of the type "test.C" in the header class scope should be replaced with "test.CImpl".
                 // Otherwise the types would not be equal and e.g. test.C's constructor is not going to be found in test.CImpl's scope.
                 // For this, we construct an additional substitutor with a single mapping test.C -> test.CImpl
                 // TODO: this looks like a dirty hack
@@ -395,15 +439,16 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
 
         if (a.visibility != b.visibility) return Incompatible.Visibility
 
+        val platformModule = b.module
         val substitutor = Substitutor(aTypeParams, bTypeParams, parentSubstitutor)
-        areCompatibleTypeParameters(aTypeParams, bTypeParams, substitutor).let { if (it != Compatible) return it }
+        areCompatibleTypeParameters(aTypeParams, bTypeParams, platformModule, substitutor).let { if (it != Compatible) return it }
 
         // Subtract kotlin.Any from supertypes because it's implicitly added if no explicit supertype is specified,
         // and not added if an explicit supertype _is_ specified
         val aSupertypes = a.typeConstructor.supertypes.filterNot(KotlinBuiltIns::isAny)
         val bSupertypes = b.typeConstructor.supertypes.filterNot(KotlinBuiltIns::isAny)
         if (aSupertypes.map(substitutor).any { aSupertype ->
-            bSupertypes.none { bSupertype -> areCompatibleTypes(aSupertype, bSupertype) }
+            bSupertypes.none { bSupertype -> areCompatibleTypes(aSupertype, bSupertype, platformModule) }
         }) return Incompatible.Supertypes
 
         areCompatibleClassScopes(a, b, checkImpl && !implTypealias, substitutor).let { if (it != Compatible) return it }

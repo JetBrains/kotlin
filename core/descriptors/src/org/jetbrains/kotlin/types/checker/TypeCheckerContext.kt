@@ -29,7 +29,11 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean) {
 
     open fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType): Boolean? = null
 
-    inline fun <T> runWithArgumentsSettings(subArgument: UnwrappedType, f: TypeCheckerContext.() -> T): T {
+    open fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
+        return a == b
+    }
+
+    internal inline fun <T> runWithArgumentsSettings(subArgument: UnwrappedType, f: TypeCheckerContext.() -> T): T {
         if (argumentsDepth > 100) {
             error("Arguments depth is too high. Some related argument: $subArgument")
         }

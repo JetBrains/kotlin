@@ -78,9 +78,10 @@ object ErrorTypesAreEqualToAnything : KotlinTypeChecker {
 
 object NewKotlinTypeChecker : KotlinTypeChecker {
     override fun isSubtypeOf(subtype: KotlinType, supertype: KotlinType): Boolean =
-            TypeCheckerContext(true).run { isSubtypeOf(subtype.unwrap(), supertype.unwrap()) } // todo fix flag errorTypeEqualsToAnything
+            TypeCheckerContext(true).isSubtypeOf(subtype.unwrap(), supertype.unwrap()) // todo fix flag errorTypeEqualsToAnything
+
     override fun equalTypes(a: KotlinType, b: KotlinType): Boolean =
-            TypeCheckerContext(false).run { equalTypes(a.unwrap(), b.unwrap()) }
+            TypeCheckerContext(false).equalTypes(a.unwrap(), b.unwrap())
 
     fun TypeCheckerContext.equalTypes(a: UnwrappedType, b: UnwrappedType): Boolean {
         if (a === b) return true
@@ -247,7 +248,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         anySupertype(baseType, { false }) {
             val current = captureFromArguments(it, CaptureStatus.FOR_SUBTYPING)
 
-            if (current.constructor == constructor) {
+            if (areEqualTypeConstructors(current.constructor, constructor)) {
                 if (result == null) {
                     result = SmartList()
                 }
