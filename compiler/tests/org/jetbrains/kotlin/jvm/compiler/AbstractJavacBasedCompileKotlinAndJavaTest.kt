@@ -37,7 +37,7 @@ import java.lang.annotation.Retention
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
 
-abstract class AbstractJavacBasedCompileKotlinAndJava : TestCaseWithTmpdir() {
+abstract class AbstractJavacBasedCompileKotlinAndJavaTest : TestCaseWithTmpdir() {
 
     @Throws(IOException::class)
     protected fun doTest(ktFilePath: String) {

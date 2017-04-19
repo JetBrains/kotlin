@@ -16,6 +16,6 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-abstract class AbstractCompileKotlinAgainstJavaTest : AbstractJavacBasedCompileKotlinAndJava()
+abstract class AbstractCompileKotlinAgainstJavaTest : AbstractJavacBasedCompileKotlinAndJavaTest()
 
-abstract class AbstractJavacBasedCompileJavaAgainstKotlinTest : AbstractJavacBasedCompileKotlinAndJava()
+abstract class AbstractJavacBasedCompileJavaAgainstKotlinTest : AbstractJavacBasedCompileKotlinAndJavaTest()
