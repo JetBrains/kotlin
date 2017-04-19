@@ -21,6 +21,8 @@ def jsSrcJsDir = "${jsSrcDir}/js"
 def jsOutputFile = "${buildDir}/classes/kotlin.js"
 def jsTestOutputFile = "${buildDir}/classes/test/kotlin-stdlib-js_test.js"
 def kotlinTestJsOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/main/kotlin-test.js"
+def kotlinTestJsTestOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/test/kotlin-test-js_test.js"
+
 
 sourceSets {
     builtins {
@@ -268,10 +270,13 @@ karma {
         sourceFiles = []
 
         testBases = ['']
-        testFiles = [jsTestOutputFile]
+        testFiles = [jsTestOutputFile, kotlinTestJsTestOutputFile]
     }
 }
 
 karmaGenerateConfig.outputs.upToDateWhen { false }
-karmaRun.dependsOn testClasses
+karmaRun {
+    dependsOn testClasses
+    dependsOn tasks.getByPath(':kotlin-test:kotlin-test-js:testClasses')
+}
 clean.dependsOn karmaClean

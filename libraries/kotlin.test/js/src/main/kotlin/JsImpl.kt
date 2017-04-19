@@ -38,13 +38,14 @@ inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noin
 }
 */
 
-var _asserter: Asserter = QUnitAsserter()
-
 /**
  * Provides the JS implementation of asserter using [QUnit](http://QUnitjs.com/)
  */
-internal impl fun lookupAsserter(): Asserter = _asserter
+internal impl fun lookupAsserter(): Asserter = qunitAsserter
 
+private val qunitAsserter = QUnitAsserter()
+
+// TODO: make object in 1.2
 class QUnitAsserter : Asserter {
 
     override fun assertTrue(lazyMessage: () -> String?, actual: Boolean) {

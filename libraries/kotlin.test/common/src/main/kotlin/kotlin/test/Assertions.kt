@@ -25,8 +25,14 @@ package kotlin.test
 
 import kotlin.internal.*
 
+/**
+ * Current adapter providing assertion implementations
+ */
 val asserter: Asserter
-    get() = lookupAsserter()
+    get() = _asserter ?: lookupAsserter()
+
+/** Used to override current asserter internally */
+internal var _asserter: Asserter? = null
 
 /** Asserts that the given [block] returns `true`. */
 fun assertTrue(message: String? = null, block: () -> Boolean): Unit = assertTrue(block(), message)
@@ -97,6 +103,7 @@ fun assertFails(message: String?, block: () -> Unit): Throwable {
     try {
         block()
     } catch (e: Throwable) {
+        assertEquals(e.message, e.message) // success path assertion for qunit
         return e
     }
     asserter.fail(messagePrefix(message) + "Expected an exception to be thrown, but was completed successfully.")

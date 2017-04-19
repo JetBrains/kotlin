@@ -18,8 +18,12 @@ class BasicAssertionsTest {
     fun testAssertFailsWith() {
         assertFailsWith<IllegalStateException> { throw IllegalStateException() }
         assertFailsWith<AssertionError> { throw AssertionError() }
+    }
 
-        run {
+    @Test fun testAssertFailsWithFails() {
+        assertTrue(true) // at least one assertion required for qunit
+
+        withDefaultAsserter run@ {
             try {
                 assertFailsWith<IllegalStateException> { throw IllegalArgumentException() }
             }
@@ -29,7 +33,7 @@ class BasicAssertionsTest {
             throw AssertionError("Expected to fail")
         }
 
-        run {
+        withDefaultAsserter run@ {
             try {
                 assertFailsWith<IllegalStateException> {  }
             }
@@ -42,7 +46,7 @@ class BasicAssertionsTest {
 
     @Test
     fun testAssertEqualsFails() {
-        assertFailsWith<AssertionError> { assertEquals(1, 2) }
+        checkFailedAssertion { assertEquals(1, 2) }
     }
 
     @Test
@@ -53,16 +57,20 @@ class BasicAssertionsTest {
 
     @Test()
     fun testAssertTrueFails() {
-        assertFailsWith<AssertionError> { assertTrue(false) }
-        assertFailsWith<AssertionError> { assertTrue { false } }
+        checkFailedAssertion { assertTrue(false) }
+        checkFailedAssertion { assertTrue { false } }
     }
 
     @Test
     fun testAssertFalse() {
         assertFalse(false)
         assertFalse { false }
-        assertFailsWith<AssertionError> { assertFalse(true) }
-        assertFailsWith<AssertionError> { assertFalse { true } }
+    }
+
+    @Test
+    fun testAssertFalseFails() {
+        checkFailedAssertion { assertFalse(true) }
+        checkFailedAssertion{ assertFalse { true } }
     }
 
     @Test
@@ -72,7 +80,7 @@ class BasicAssertionsTest {
 
     @Test()
     fun testAssertFailsFails() {
-        assertFailsWith<AssertionError> { assertFails {  } }
+        checkFailedAssertion { assertFails {  } }
     }
 
 
@@ -83,7 +91,7 @@ class BasicAssertionsTest {
 
     @Test()
     fun testAssertNotEqualsFails() {
-        assertFailsWith<AssertionError> { assertNotEquals(1, 1) }
+        checkFailedAssertion { assertNotEquals(1, 1) }
     }
 
     @Test
@@ -93,7 +101,7 @@ class BasicAssertionsTest {
 
     @Test()
     fun testAssertNotNullFails() {
-        assertFailsWith<AssertionError> { assertNotNull(null) }
+        checkFailedAssertion { assertNotNull(null) }
     }
 
     @Test
@@ -103,7 +111,7 @@ class BasicAssertionsTest {
 
     @Test
     fun testAssertNotNullLambdaFails() {
-        assertFailsWith<AssertionError> {
+        checkFailedAssertion {
             val value: String? = null
             assertNotNull(value) {
                 it.substring(0, 0)
@@ -118,18 +126,37 @@ class BasicAssertionsTest {
 
     @Test
     fun testAssertNullFails() {
-        assertFailsWith<AssertionError> { assertNull("") }
+        checkFailedAssertion { assertNull("") }
     }
 
     @Test()
     fun testFail() {
-        assertFailsWith<AssertionError> { fail("should fail") }
+        checkFailedAssertion { fail("should fail") }
     }
 
     @Test
     fun testExpect() {
         expect(1) { 1 }
-        assertFailsWith<AssertionError> { expect(1) { 2 } }
     }
 
+    @Test
+    fun testExpectFails() {
+        checkFailedAssertion { expect(1) { 2 } }
+    }
+}
+
+
+private fun checkFailedAssertion(assertion: () -> Unit) {
+    assertFailsWith<AssertionError> { withDefaultAsserter(assertion) }
+}
+
+@Suppress("INVISIBLE_MEMBER")
+private fun withDefaultAsserter(block: () -> Unit) {
+    val current = overrideAsserter(DefaultAsserter())
+    try {
+        block()
+    }
+    finally {
+        overrideAsserter(current)
+    }
 }

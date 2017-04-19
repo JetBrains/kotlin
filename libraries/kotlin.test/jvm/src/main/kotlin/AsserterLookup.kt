@@ -11,6 +11,8 @@ private val contributors = ArrayList<AsserterContributor>()
 
 internal impl fun lookupAsserter(): Asserter = lookup()
 
+private val defaultAsserter = DefaultAsserter()
+
 internal fun lookup(): Asserter {
     initContributorsIfNeeded()
 
@@ -21,7 +23,7 @@ internal fun lookup(): Asserter {
         }
     }
 
-    return DefaultAsserter()
+    return defaultAsserter
 }
 
 private fun initContributors() {
