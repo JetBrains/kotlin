@@ -197,7 +197,7 @@ class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo, 
         val result = LinkedHashSet<IdeaModuleInfo>()
         result.add(this)
 
-        val (libraries, sdks) = LibraryDependenciesCache(project).getLibrariesAndSdksUsedWith(library)
+        val (libraries, sdks) = LibraryDependenciesCache.getInstance(project).getLibrariesAndSdksUsedWith(library)
 
         sdks.mapTo(result) { SdkInfo(project, it) }
         libraries.filter { it is LibraryEx && !it.isDisposed }.mapTo(result) { LibraryInfo(project, it) }

@@ -316,6 +316,9 @@
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.LibraryDependenciesCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.LibraryDependenciesCacheImpl"/>
+
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
@@ -25,16 +26,38 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.idea.core.util.CachedValue
+import org.jetbrains.kotlin.idea.core.util.getValue
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-class LibraryDependenciesCache(private val project: Project) {
+internal typealias LibrariesAndSdks = Pair<List<Library>, List<Sdk>>
+
+interface LibraryDependenciesCache {
+    companion object {
+        fun getInstance(project: Project) = ServiceManager.getService(project, LibraryDependenciesCache::class.java)!!
+    }
+
+    fun getLibrariesAndSdksUsedWith(library: Library): LibrariesAndSdks
+}
+
+class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDependenciesCache {
+
+    val cache by CachedValue(project) {
+        CachedValueProvider.Result(ContainerUtil.createConcurrentWeakMap<Library, LibrariesAndSdks>(),
+                                   ProjectRootManager.getInstance(project))
+    }
+
+    override fun getLibrariesAndSdksUsedWith(library: Library): LibrariesAndSdks =
+            cache.getOrPut(library) { computeLibrariesAndSdksUsedWith(library) }
+
 
     //NOTE: used LibraryRuntimeClasspathScope as reference
-    fun getLibrariesAndSdksUsedWith(library: Library): Pair<List<Library>, List<Sdk>> {
+    private fun computeLibrariesAndSdksUsedWith(library: Library): LibrariesAndSdks {
         val processedModules = HashSet<Module>()
         val condition = Condition<OrderEntry> { orderEntry ->
             if (orderEntry is ModuleOrderEntry) {
