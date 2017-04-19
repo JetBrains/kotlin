@@ -1,6 +1,6 @@
 FILE /secondaryConstructorWithInitializersFromClassBody.kt
   CLASS CLASS Base
-    $new: VALUE_PARAMETER <receiver: Base>
+    $new: VALUE_PARAMETER this@Base: Base
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -9,17 +9,17 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestProperty
-    $new: VALUE_PARAMETER <receiver: TestProperty>
+    $new: VALUE_PARAMETER this@TestProperty: TestProperty
     PROPERTY public final val x: kotlin.Int = 0
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int = 0
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='0'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: TestProperty>
+        $this: VALUE_PARAMETER this@TestProperty: TestProperty
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: TestProperty>' type=TestProperty origin=null
+              receiver: GET_VAR 'this@TestProperty: TestProperty' type=TestProperty origin=null
     CONSTRUCTOR public constructor TestProperty()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
@@ -28,19 +28,19 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitBlock
-    $new: VALUE_PARAMETER <receiver: TestInitBlock>
+    $new: VALUE_PARAMETER this@TestInitBlock: TestInitBlock
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: TestInitBlock>
+        $this: VALUE_PARAMETER this@TestInitBlock: TestInitBlock
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: TestInitBlock>' type=TestInitBlock origin=null
+              receiver: GET_VAR 'this@TestInitBlock: TestInitBlock' type=TestInitBlock origin=null
     ANONYMOUS_INITIALIZER TestInitBlock
       BLOCK_BODY
         SET_FIELD 'x: Int' type=kotlin.Unit origin=null
-          receiver: GET_VAR '<receiver: TestInitBlock>' type=TestInitBlock origin=null
+          receiver: GET_VAR 'this@TestInitBlock: TestInitBlock' type=TestInitBlock origin=null
           value: CONST Int type=kotlin.Int value='0'
     CONSTRUCTOR public constructor TestInitBlock()
       BLOCK_BODY

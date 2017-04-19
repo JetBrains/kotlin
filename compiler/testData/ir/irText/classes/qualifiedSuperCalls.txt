@@ -1,11 +1,11 @@
 FILE /qualifiedSuperCalls.kt
   CLASS INTERFACE ILeft
     FUN public open fun foo(): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: ILeft>
+      $this: VALUE_PARAMETER this@ILeft: ILeft
       BLOCK_BODY
     PROPERTY public open val bar: kotlin.Int
       FUN public open fun <get-bar>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: ILeft>
+        $this: VALUE_PARAMETER this@ILeft: ILeft
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             CONST Int type=kotlin.Int value='1'
@@ -14,11 +14,11 @@ FILE /qualifiedSuperCalls.kt
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IRight
     FUN public open fun foo(): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: IRight>
+      $this: VALUE_PARAMETER this@IRight: IRight
       BLOCK_BODY
     PROPERTY public open val bar: kotlin.Int
       FUN public open fun <get-bar>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: IRight>
+        $this: VALUE_PARAMETER this@IRight: IRight
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             CONST Int type=kotlin.Int value='2'
@@ -26,28 +26,28 @@ FILE /qualifiedSuperCalls.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS CBoth
-    $new: VALUE_PARAMETER <receiver: CBoth>
+    $new: VALUE_PARAMETER this@CBoth: CBoth
     CONSTRUCTOR public constructor CBoth()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='CBoth'
     FUN public open override fun foo(): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: CBoth>
+      $this: VALUE_PARAMETER this@CBoth: CBoth
       BLOCK_BODY
         CALL 'foo(): Unit' superQualifier=ILeft type=kotlin.Unit origin=null
-          $this: GET_VAR '<receiver: CBoth>' type=CBoth origin=null
+          $this: GET_VAR 'this@CBoth: CBoth' type=CBoth origin=null
         CALL 'foo(): Unit' superQualifier=IRight type=kotlin.Unit origin=null
-          $this: GET_VAR '<receiver: CBoth>' type=CBoth origin=null
+          $this: GET_VAR 'this@CBoth: CBoth' type=CBoth origin=null
     PROPERTY public open override val bar: kotlin.Int
       FUN public open override fun <get-bar>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: CBoth>
+        $this: VALUE_PARAMETER this@CBoth: CBoth
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
               $this: CALL '<get-bar>(): Int' superQualifier=ILeft type=kotlin.Int origin=GET_PROPERTY
-                $this: GET_VAR '<receiver: CBoth>' type=CBoth origin=null
+                $this: GET_VAR 'this@CBoth: CBoth' type=CBoth origin=null
               other: CALL '<get-bar>(): Int' superQualifier=IRight type=kotlin.Int origin=GET_PROPERTY
-                $this: GET_VAR '<receiver: CBoth>' type=CBoth origin=null
+                $this: GET_VAR 'this@CBoth: CBoth' type=CBoth origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

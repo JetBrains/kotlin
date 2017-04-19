@@ -1,12 +1,12 @@
 FILE /sealedClasses.kt
   CLASS CLASS Expr
-    $new: VALUE_PARAMETER <receiver: Expr>
+    $new: VALUE_PARAMETER this@Expr: Expr
     CONSTRUCTOR private constructor Expr()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Expr'
     CLASS CLASS Const
-      $new: VALUE_PARAMETER <receiver: Const>
+      $new: VALUE_PARAMETER this@Const: Const
       CONSTRUCTOR public constructor Const(number: kotlin.Double)
         VALUE_PARAMETER value-parameter number: kotlin.Double
         BLOCK_BODY
@@ -17,16 +17,16 @@ FILE /sealedClasses.kt
           EXPRESSION_BODY
             GET_VAR 'value-parameter number: Double' type=kotlin.Double origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-number>(): kotlin.Double
-          $this: VALUE_PARAMETER <receiver: Const>
+          $this: VALUE_PARAMETER this@Const: Const
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-number>(): Double'
               GET_FIELD 'number: Double' type=kotlin.Double origin=null
-                receiver: GET_VAR '<receiver: Const>' type=Expr.Const origin=null
+                receiver: GET_VAR 'this@Const: Const' type=Expr.Const origin=null
       FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
       FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
       FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS CLASS Sum
-      $new: VALUE_PARAMETER <receiver: Sum>
+      $new: VALUE_PARAMETER this@Sum: Sum
       CONSTRUCTOR public constructor Sum(e1: Expr, e2: Expr)
         VALUE_PARAMETER value-parameter e1: Expr
         VALUE_PARAMETER value-parameter e2: Expr
@@ -38,26 +38,26 @@ FILE /sealedClasses.kt
           EXPRESSION_BODY
             GET_VAR 'value-parameter e1: Expr' type=Expr origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-e1>(): Expr
-          $this: VALUE_PARAMETER <receiver: Sum>
+          $this: VALUE_PARAMETER this@Sum: Sum
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-e1>(): Expr'
               GET_FIELD 'e1: Expr' type=Expr origin=null
-                receiver: GET_VAR '<receiver: Sum>' type=Expr.Sum origin=null
+                receiver: GET_VAR 'this@Sum: Sum' type=Expr.Sum origin=null
       PROPERTY public final val e2: Expr
         FIELD PROPERTY_BACKING_FIELD public final val e2: Expr
           EXPRESSION_BODY
             GET_VAR 'value-parameter e2: Expr' type=Expr origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-e2>(): Expr
-          $this: VALUE_PARAMETER <receiver: Sum>
+          $this: VALUE_PARAMETER this@Sum: Sum
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-e2>(): Expr'
               GET_FIELD 'e2: Expr' type=Expr origin=null
-                receiver: GET_VAR '<receiver: Sum>' type=Expr.Sum origin=null
+                receiver: GET_VAR 'this@Sum: Sum' type=Expr.Sum origin=null
       FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
       FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
       FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS OBJECT NotANumber
-      $new: VALUE_PARAMETER <receiver: NotANumber>
+      $new: VALUE_PARAMETER this@NotANumber: NotANumber
       CONSTRUCTOR private constructor NotANumber()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'

@@ -10,14 +10,14 @@ FILE /class.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test
-    $new: VALUE_PARAMETER <receiver: Test>
+    $new: VALUE_PARAMETER this@Test: Test<T0>
     TYPE_PARAMETER <T0>
     CONSTRUCTOR public constructor Test<T0>()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
     CLASS CLASS TestNested
-      $new: VALUE_PARAMETER <receiver: TestNested>
+      $new: VALUE_PARAMETER this@TestNested: TestNested<T1>
       TYPE_PARAMETER <T1>
       CONSTRUCTOR public constructor TestNested<T1>()
         BLOCK_BODY
@@ -27,10 +27,10 @@ FILE /class.kt
       FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
       FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS CLASS TestInner
-      $new: VALUE_PARAMETER <receiver: TestInner>
+      $new: VALUE_PARAMETER this@TestInner: TestInner<T2, T0>
       TYPE_PARAMETER <T2>
       CONSTRUCTOR public constructor TestInner<T2>()
-        $outer: VALUE_PARAMETER <receiver: Test>
+        $outer: VALUE_PARAMETER this@Test: Test<T0>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='TestInner'

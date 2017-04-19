@@ -1,6 +1,6 @@
 FILE /safeAssignment.kt
   CLASS CLASS C
-    $new: VALUE_PARAMETER <receiver: C>
+    $new: VALUE_PARAMETER this@C: C
     CONSTRUCTOR public constructor C(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
@@ -11,17 +11,17 @@ FILE /safeAssignment.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: C>' type=C origin=null
+              receiver: GET_VAR 'this@C: C' type=C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x>(<set-?>: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
         VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<receiver: C>' type=C origin=null
+            receiver: GET_VAR 'this@C: C' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int

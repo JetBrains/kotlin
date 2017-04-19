@@ -1,29 +1,29 @@
 FILE /delegatedImplementationWithExplicitOverride.kt
   CLASS INTERFACE IFooBar
     FUN public abstract fun foo(): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: IFooBar>
+      $this: VALUE_PARAMETER this@IFooBar: IFooBar
     FUN public abstract fun bar(): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: IFooBar>
+      $this: VALUE_PARAMETER this@IFooBar: IFooBar
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT FooBarImpl
-    $new: VALUE_PARAMETER <receiver: FooBarImpl>
+    $new: VALUE_PARAMETER this@FooBarImpl: FooBarImpl
     CONSTRUCTOR private constructor FooBarImpl()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='FooBarImpl'
     FUN public open override fun foo(): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: FooBarImpl>
+      $this: VALUE_PARAMETER this@FooBarImpl: FooBarImpl
       BLOCK_BODY
     FUN public open override fun bar(): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: FooBarImpl>
+      $this: VALUE_PARAMETER this@FooBarImpl: FooBarImpl
       BLOCK_BODY
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS C
-    $new: VALUE_PARAMETER <receiver: C>
+    $new: VALUE_PARAMETER this@C: C
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -32,13 +32,13 @@ FILE /delegatedImplementationWithExplicitOverride.kt
       EXPRESSION_BODY
         GET_OBJECT 'FooBarImpl' type=FooBarImpl
     FUN DELEGATED_MEMBER public open override fun foo(): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: C>
+      $this: VALUE_PARAMETER this@C: C
       BLOCK_BODY
         CALL 'foo(): Unit' type=kotlin.Unit origin=null
           $this: GET_FIELD '`C$IFooBar$delegate`: FooBarImpl' type=FooBarImpl origin=null
-            receiver: GET_VAR '<receiver: C>' type=C origin=null
+            receiver: GET_VAR 'this@C: C' type=C origin=null
     FUN public open override fun bar(): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: C>
+      $this: VALUE_PARAMETER this@C: C
       BLOCK_BODY
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int

@@ -1,12 +1,12 @@
 FILE /Derived.kt
   CLASS CLASS Derived
-    $new: VALUE_PARAMETER <receiver: Derived>
+    $new: VALUE_PARAMETER this@Derived: Derived
     CONSTRUCTOR public constructor Derived()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Derived'
     FUN public final fun setValue(v: kotlin.Any): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: Derived>
+      $this: VALUE_PARAMETER this@Derived: Derived
       VALUE_PARAMETER value-parameter v: kotlin.Any
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
@@ -15,7 +15,7 @@ FILE /Derived.kt
               GET_VAR 'value-parameter v: Any' type=kotlin.Any origin=null
             then: BLOCK type=kotlin.Unit origin=null
               SET_FIELD 'value: String!' type=kotlin.Unit origin=EQ
-                receiver: GET_VAR '<receiver: Derived>' type=Derived origin=null
+                receiver: GET_VAR 'this@Derived: Derived' type=Derived origin=null
                 value: TYPE_OP type=kotlin.String! origin=IMPLICIT_CAST typeOperand=kotlin.String!
                   GET_VAR 'value-parameter v: Any' type=kotlin.Any origin=null
     PROPERTY FAKE_OVERRIDE public final override var value: kotlin.String!

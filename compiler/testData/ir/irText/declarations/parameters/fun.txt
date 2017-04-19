@@ -16,26 +16,26 @@ FILE /fun.kt
     VALUE_PARAMETER value-parameter vararg args: kotlin.String
     BLOCK_BODY
   FUN public fun kotlin.String.textExt1(i: kotlin.Int, j: kotlin.String): kotlin.Unit
-    $receiver: VALUE_PARAMETER <receiver: textExt1(Int, String) on String: Unit>
+    $receiver: VALUE_PARAMETER this@textExt1: String
     VALUE_PARAMETER value-parameter i: kotlin.Int
     VALUE_PARAMETER value-parameter j: kotlin.String
     BLOCK_BODY
   CLASS CLASS Host
-    $new: VALUE_PARAMETER <receiver: Host>
+    $new: VALUE_PARAMETER this@Host: Host
     CONSTRUCTOR public constructor Host()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
     FUN public final fun kotlin.String.testMembetExt1(i: kotlin.Int, j: kotlin.String): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: Host>
-      $receiver: VALUE_PARAMETER <receiver: testMembetExt1(Int, String) on String: Unit>
+      $this: VALUE_PARAMETER this@Host: Host
+      $receiver: VALUE_PARAMETER this@testMembetExt1: String
       VALUE_PARAMETER value-parameter i: kotlin.Int
       VALUE_PARAMETER value-parameter j: kotlin.String
       BLOCK_BODY
     FUN public final fun <T> kotlin.String.testMembetExt2(i: kotlin.Int, j: T): kotlin.Unit
       TYPE_PARAMETER <T>
-      $this: VALUE_PARAMETER <receiver: Host>
-      $receiver: VALUE_PARAMETER <receiver: testMembetExt2(Int, T) on String: Unit>
+      $this: VALUE_PARAMETER this@Host: Host
+      $receiver: VALUE_PARAMETER this@testMembetExt2: String
       VALUE_PARAMETER value-parameter i: kotlin.Int
       VALUE_PARAMETER value-parameter j: T
       BLOCK_BODY

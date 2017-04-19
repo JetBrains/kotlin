@@ -2,27 +2,27 @@ FILE /interfaceProperties.kt
   CLASS INTERFACE C
     PROPERTY public abstract val test1: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-test1>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
     PROPERTY public open val test2: kotlin.Int
       FUN public open fun <get-test2>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test2>(): Int'
             CONST Int type=kotlin.Int value='0'
     PROPERTY public abstract var test3: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-test3>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <set-test3>(<set-?>: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
         VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
     PROPERTY public open var test4: kotlin.Int
       FUN public open fun <get-test4>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test4>(): Int'
             CONST Int type=kotlin.Int value='0'
       FUN public open fun <set-test4>(value: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
         VALUE_PARAMETER value-parameter value: kotlin.Int
         BLOCK_BODY
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean

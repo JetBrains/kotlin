@@ -4,7 +4,7 @@ FILE /typeAlias.kt
     BLOCK_BODY
       TYPEALIAS typealias TestLocal = String type=kotlin.String
   CLASS CLASS C
-    $new: VALUE_PARAMETER <receiver: C>
+    $new: VALUE_PARAMETER this@C: C
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

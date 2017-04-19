@@ -1,6 +1,6 @@
 FILE /classMembers.kt
   CLASS CLASS C
-    $new: VALUE_PARAMETER <receiver: C>
+    $new: VALUE_PARAMETER this@C: C
     CONSTRUCTOR public constructor C(x: kotlin.Int, y: kotlin.Int, z: kotlin.Int = ...)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int
@@ -15,27 +15,27 @@ FILE /classMembers.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: C>' type=C origin=null
+              receiver: GET_VAR 'this@C: C' type=C origin=null
     PROPERTY public final var z: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var z: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter z: Int = ...' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-z>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-z>(): Int'
             GET_FIELD 'z: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: C>' type=C origin=null
+              receiver: GET_VAR 'this@C: C' type=C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-z>(<set-?>: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
         VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'z: Int' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<receiver: C>' type=C origin=null
+            receiver: GET_VAR 'this@C: C' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
@@ -48,56 +48,56 @@ FILE /classMembers.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='0'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-property>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-property>(): Int'
             GET_FIELD 'property: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: C>' type=C origin=null
+              receiver: GET_VAR 'this@C: C' type=C origin=null
     PROPERTY public final val propertyWithGet: kotlin.Int
       FUN public final fun <get-propertyWithGet>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-propertyWithGet>(): Int'
             CONST Int type=kotlin.Int value='42'
     PROPERTY public final var propertyWithGetAndSet: kotlin.Int
       FUN public final fun <get-propertyWithGetAndSet>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-propertyWithGetAndSet>(): Int'
             CALL '<get-z>(): Int' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<receiver: C>' type=C origin=null
+              $this: GET_VAR 'this@C: C' type=C origin=null
       FUN public final fun <set-propertyWithGetAndSet>(value: kotlin.Int): kotlin.Unit
-        $this: VALUE_PARAMETER <receiver: C>
+        $this: VALUE_PARAMETER this@C: C
         VALUE_PARAMETER value-parameter value: kotlin.Int
         BLOCK_BODY
           CALL '<set-z>(Int): Unit' type=kotlin.Unit origin=EQ
-            $this: GET_VAR '<receiver: C>' type=C origin=null
+            $this: GET_VAR 'this@C: C' type=C origin=null
             <set-?>: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
     FUN public final fun function(): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: C>
+      $this: VALUE_PARAMETER this@C: C
       BLOCK_BODY
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value='1'
     FUN public final fun kotlin.Int.memberExtensionFunction(): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: C>
-      $receiver: VALUE_PARAMETER <receiver: memberExtensionFunction() on Int: Unit>
+      $this: VALUE_PARAMETER this@C: C
+      $receiver: VALUE_PARAMETER this@memberExtensionFunction: Int
       BLOCK_BODY
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value='2'
     CLASS CLASS NestedClass
-      $new: VALUE_PARAMETER <receiver: NestedClass>
+      $new: VALUE_PARAMETER this@NestedClass: NestedClass
       CONSTRUCTOR public constructor NestedClass()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='NestedClass'
       FUN public final fun function(): kotlin.Unit
-        $this: VALUE_PARAMETER <receiver: NestedClass>
+        $this: VALUE_PARAMETER this@NestedClass: NestedClass
         BLOCK_BODY
           CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
             message: CONST String type=kotlin.String value='3'
       FUN public final fun kotlin.Int.memberExtensionFunction(): kotlin.Unit
-        $this: VALUE_PARAMETER <receiver: NestedClass>
-        $receiver: VALUE_PARAMETER <receiver: memberExtensionFunction() on Int: Unit>
+        $this: VALUE_PARAMETER this@NestedClass: NestedClass
+        $receiver: VALUE_PARAMETER this@memberExtensionFunction: Int
         BLOCK_BODY
           CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
             message: CONST String type=kotlin.String value='4'
@@ -106,18 +106,18 @@ FILE /classMembers.kt
       FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS INTERFACE NestedInterface
       FUN public abstract fun foo(): kotlin.Unit
-        $this: VALUE_PARAMETER <receiver: NestedInterface>
+        $this: VALUE_PARAMETER this@NestedInterface: NestedInterface
       FUN public open fun bar(): kotlin.Unit
-        $this: VALUE_PARAMETER <receiver: NestedInterface>
+        $this: VALUE_PARAMETER this@NestedInterface: NestedInterface
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='bar(): Unit'
             CALL 'foo(): Unit' type=kotlin.Unit origin=null
-              $this: GET_VAR '<receiver: NestedInterface>' type=C.NestedInterface origin=null
+              $this: GET_VAR 'this@NestedInterface: NestedInterface' type=C.NestedInterface origin=null
       FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
       FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
       FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS OBJECT companion object of C
-      $new: VALUE_PARAMETER <receiver: companion object of C>
+      $new: VALUE_PARAMETER this@Companion: Companion
       CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

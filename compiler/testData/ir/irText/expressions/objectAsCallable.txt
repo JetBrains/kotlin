@@ -1,6 +1,6 @@
 FILE /objectAsCallable.kt
   CLASS OBJECT A
-    $new: VALUE_PARAMETER <receiver: A>
+    $new: VALUE_PARAMETER this@A: A
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -9,7 +9,7 @@ FILE /objectAsCallable.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS ENUM_CLASS En
-    $new: VALUE_PARAMETER <receiver: En>
+    $new: VALUE_PARAMETER this@En: En
     CONSTRUCTOR private constructor En()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -32,13 +32,13 @@ FILE /objectAsCallable.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): En
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   FUN public operator fun A.invoke(i: kotlin.Int): kotlin.Int
-    $receiver: VALUE_PARAMETER <receiver: invoke(Int) on A: Int>
+    $receiver: VALUE_PARAMETER this@invoke: A
     VALUE_PARAMETER value-parameter i: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='invoke(Int) on A: Int'
         GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
   FUN public operator fun En.invoke(i: kotlin.Int): kotlin.Int
-    $receiver: VALUE_PARAMETER <receiver: invoke(Int) on En: Int>
+    $receiver: VALUE_PARAMETER this@invoke: En
     VALUE_PARAMETER value-parameter i: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='invoke(Int) on En: Int'

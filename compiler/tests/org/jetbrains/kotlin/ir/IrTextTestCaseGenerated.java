@@ -343,6 +343,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 doTest(fileName);
             }
 
+            @TestMetadata("genericInnerClass.kt")
+            public void testGenericInnerClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/parameters/genericInnerClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("lambdas.kt")
             public void testLambdas() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/parameters/lambdas.kt");

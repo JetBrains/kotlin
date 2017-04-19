@@ -1,6 +1,6 @@
 FILE /delegatingConstructorCallsInSecondaryConstructors.kt
   CLASS CLASS Base
-    $new: VALUE_PARAMETER <receiver: Base>
+    $new: VALUE_PARAMETER this@Base: Base
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -9,7 +9,7 @@ FILE /delegatingConstructorCallsInSecondaryConstructors.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test
-    $new: VALUE_PARAMETER <receiver: Test>
+    $new: VALUE_PARAMETER this@Test: Test
     CONSTRUCTOR public constructor Test()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'

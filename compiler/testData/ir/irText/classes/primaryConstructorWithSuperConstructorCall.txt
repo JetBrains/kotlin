@@ -1,6 +1,6 @@
 FILE /primaryConstructorWithSuperConstructorCall.kt
   CLASS CLASS Base
-    $new: VALUE_PARAMETER <receiver: Base>
+    $new: VALUE_PARAMETER this@Base: Base
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -9,7 +9,7 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestImplicitPrimaryConstructor
-    $new: VALUE_PARAMETER <receiver: TestImplicitPrimaryConstructor>
+    $new: VALUE_PARAMETER this@TestImplicitPrimaryConstructor: TestImplicitPrimaryConstructor
     CONSTRUCTOR public constructor TestImplicitPrimaryConstructor()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
@@ -18,7 +18,7 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestExplicitPrimaryConstructor
-    $new: VALUE_PARAMETER <receiver: TestExplicitPrimaryConstructor>
+    $new: VALUE_PARAMETER this@TestExplicitPrimaryConstructor: TestExplicitPrimaryConstructor
     CONSTRUCTOR public constructor TestExplicitPrimaryConstructor()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
@@ -27,7 +27,7 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestWithDelegatingConstructor
-    $new: VALUE_PARAMETER <receiver: TestWithDelegatingConstructor>
+    $new: VALUE_PARAMETER this@TestWithDelegatingConstructor: TestWithDelegatingConstructor
     CONSTRUCTOR public constructor TestWithDelegatingConstructor(x: kotlin.Int, y: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int
@@ -39,21 +39,21 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: TestWithDelegatingConstructor>
+        $this: VALUE_PARAMETER this@TestWithDelegatingConstructor: TestWithDelegatingConstructor
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: TestWithDelegatingConstructor>' type=TestWithDelegatingConstructor origin=null
+              receiver: GET_VAR 'this@TestWithDelegatingConstructor: TestWithDelegatingConstructor' type=TestWithDelegatingConstructor origin=null
     PROPERTY public final val y: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: TestWithDelegatingConstructor>
+        $this: VALUE_PARAMETER this@TestWithDelegatingConstructor: TestWithDelegatingConstructor
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: TestWithDelegatingConstructor>' type=TestWithDelegatingConstructor origin=null
+              receiver: GET_VAR 'this@TestWithDelegatingConstructor: TestWithDelegatingConstructor' type=TestWithDelegatingConstructor origin=null
     CONSTRUCTOR public constructor TestWithDelegatingConstructor(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY

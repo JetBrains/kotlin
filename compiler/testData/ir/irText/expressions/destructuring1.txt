@@ -1,6 +1,6 @@
 FILE /destructuring1.kt
   CLASS OBJECT A
-    $new: VALUE_PARAMETER <receiver: A>
+    $new: VALUE_PARAMETER this@A: A
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -9,20 +9,20 @@ FILE /destructuring1.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT B
-    $new: VALUE_PARAMETER <receiver: B>
+    $new: VALUE_PARAMETER this@B: B
     CONSTRUCTOR private constructor B()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='B'
     FUN public final operator fun A.component1(): kotlin.Int
-      $this: VALUE_PARAMETER <receiver: B>
-      $receiver: VALUE_PARAMETER <receiver: component1() on A: Int>
+      $this: VALUE_PARAMETER this@B: B
+      $receiver: VALUE_PARAMETER this@component1: A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component1() on A: Int'
           CONST Int type=kotlin.Int value='1'
     FUN public final operator fun A.component2(): kotlin.Int
-      $this: VALUE_PARAMETER <receiver: B>
-      $receiver: VALUE_PARAMETER <receiver: component2() on A: Int>
+      $this: VALUE_PARAMETER this@B: B
+      $receiver: VALUE_PARAMETER this@component2: A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component2() on A: Int'
           CONST Int type=kotlin.Int value='2'
@@ -30,16 +30,16 @@ FILE /destructuring1.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun B.test(): kotlin.Unit
-    $receiver: VALUE_PARAMETER <receiver: test() on B: Unit>
+    $receiver: VALUE_PARAMETER this@test: B
     BLOCK_BODY
       COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION
         VAR IR_TEMPORARY_VARIABLE val tmp0_container: A
           GET_OBJECT 'A' type=A
         VAR val x: kotlin.Int
           CALL 'component1() on A: Int' type=kotlin.Int origin=COMPONENT_N(index=1)
-            $this: GET_VAR '<receiver: test() on B: Unit>' type=B origin=null
+            $this: GET_VAR 'this@test: B' type=B origin=null
             $receiver: GET_VAR 'tmp0_container: A' type=A origin=null
         VAR val y: kotlin.Int
           CALL 'component2() on A: Int' type=kotlin.Int origin=COMPONENT_N(index=2)
-            $this: GET_VAR '<receiver: test() on B: Unit>' type=B origin=null
+            $this: GET_VAR 'this@test: B' type=B origin=null
             $receiver: GET_VAR 'tmp0_container: A' type=A origin=null

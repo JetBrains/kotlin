@@ -1,22 +1,22 @@
 FILE /arrayAugmentedAssignment2.kt
   CLASS INTERFACE IA
     FUN public abstract operator fun get(index: kotlin.String): kotlin.Int
-      $this: VALUE_PARAMETER <receiver: IA>
+      $this: VALUE_PARAMETER this@IA: IA
       VALUE_PARAMETER value-parameter index: kotlin.String
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IB
     FUN public abstract operator fun IA.set(index: kotlin.String, value: kotlin.Int): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: IB>
-      $receiver: VALUE_PARAMETER <receiver: set(String, Int) on IA: Unit>
+      $this: VALUE_PARAMETER this@IB: IB
+      $receiver: VALUE_PARAMETER this@set: IA
       VALUE_PARAMETER value-parameter index: kotlin.String
       VALUE_PARAMETER value-parameter value: kotlin.Int
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun IB.test(a: IA): kotlin.Unit
-    $receiver: VALUE_PARAMETER <receiver: test(IA) on IB: Unit>
+    $receiver: VALUE_PARAMETER this@test: IB
     VALUE_PARAMETER value-parameter a: IA
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=PLUSEQ
@@ -25,7 +25,7 @@ FILE /arrayAugmentedAssignment2.kt
         VAR IR_TEMPORARY_VARIABLE val tmp1_index0: kotlin.String
           CONST String type=kotlin.String value=''
         CALL 'set(String, Int) on IA: Unit' type=kotlin.Unit origin=PLUSEQ
-          $this: GET_VAR '<receiver: test(IA) on IB: Unit>' type=IB origin=null
+          $this: GET_VAR 'this@test: IB' type=IB origin=null
           $receiver: GET_VAR 'tmp0_array: IA' type=IA origin=null
           index: GET_VAR 'tmp1_index0: String' type=kotlin.String origin=null
           value: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ

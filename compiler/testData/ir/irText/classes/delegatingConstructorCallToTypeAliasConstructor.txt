@@ -1,6 +1,6 @@
 FILE /delegatingConstructorCallToTypeAliasConstructor.kt
   CLASS CLASS Cell
-    $new: VALUE_PARAMETER <receiver: Cell>
+    $new: VALUE_PARAMETER this@Cell: Cell<T>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Cell<T>(value: T)
       VALUE_PARAMETER value-parameter value: T
@@ -12,18 +12,18 @@ FILE /delegatingConstructorCallToTypeAliasConstructor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): T
-        $this: VALUE_PARAMETER <receiver: Cell>
+        $this: VALUE_PARAMETER this@Cell: Cell<T>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): T'
             GET_FIELD 'value: T' type=T origin=null
-              receiver: GET_VAR '<receiver: Cell>' type=Cell<T> origin=null
+              receiver: GET_VAR 'this@Cell: Cell<T>' type=Cell<T> origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   TYPEALIAS typealias CT = Cell<T> type=Cell<T>
   TYPEALIAS typealias CStr = Cell<String> type=Cell<kotlin.String>
   CLASS CLASS C1
-    $new: VALUE_PARAMETER <receiver: C1>
+    $new: VALUE_PARAMETER this@C1: C1
     CONSTRUCTOR public constructor C1()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
@@ -35,7 +35,7 @@ FILE /delegatingConstructorCallToTypeAliasConstructor.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS C2
-    $new: VALUE_PARAMETER <receiver: C2>
+    $new: VALUE_PARAMETER this@C2: C2
     CONSTRUCTOR public constructor C2()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'

@@ -22,24 +22,24 @@ FILE /calls.kt
             y: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
           y: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
   FUN public fun kotlin.Int.ext1(): kotlin.Int
-    $receiver: VALUE_PARAMETER <receiver: ext1() on Int: Int>
+    $receiver: VALUE_PARAMETER this@ext1: Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='ext1() on Int: Int'
-        GET_VAR '<receiver: ext1() on Int: Int>' type=kotlin.Int origin=null
+        GET_VAR 'this@ext1: Int' type=kotlin.Int origin=null
   FUN public fun kotlin.Int.ext2(x: kotlin.Int): kotlin.Int
-    $receiver: VALUE_PARAMETER <receiver: ext2(Int) on Int: Int>
+    $receiver: VALUE_PARAMETER this@ext2: Int
     VALUE_PARAMETER value-parameter x: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='ext2(Int) on Int: Int'
         CALL 'foo(Int, Int): Int' type=kotlin.Int origin=null
-          x: GET_VAR '<receiver: ext2(Int) on Int: Int>' type=kotlin.Int origin=null
+          x: GET_VAR 'this@ext2: Int' type=kotlin.Int origin=null
           y: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
   FUN public fun kotlin.Int.ext3(x: kotlin.Int): kotlin.Int
-    $receiver: VALUE_PARAMETER <receiver: ext3(Int) on Int: Int>
+    $receiver: VALUE_PARAMETER this@ext3: Int
     VALUE_PARAMETER value-parameter x: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='ext3(Int) on Int: Int'
         CALL 'foo(Int, Int): Int' type=kotlin.Int origin=null
           x: CALL 'ext1() on Int: Int' type=kotlin.Int origin=null
-            $receiver: GET_VAR '<receiver: ext3(Int) on Int: Int>' type=kotlin.Int origin=null
+            $receiver: GET_VAR 'this@ext3: Int' type=kotlin.Int origin=null
           y: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null

@@ -1,6 +1,6 @@
 FILE /destructuringInLambda.kt
   CLASS CLASS A
-    $new: VALUE_PARAMETER <receiver: A>
+    $new: VALUE_PARAMETER this@A: A
     CONSTRUCTOR public constructor A(x: kotlin.Int, y: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int
@@ -12,71 +12,71 @@ FILE /destructuringInLambda.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: A>
+        $this: VALUE_PARAMETER this@A: A
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: A>' type=A origin=null
+              receiver: GET_VAR 'this@A: A' type=A origin=null
     PROPERTY public final val y: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: A>
+        $this: VALUE_PARAMETER this@A: A
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: A>' type=A origin=null
+              receiver: GET_VAR 'this@A: A' type=A origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component1(): kotlin.Int
-      $this: VALUE_PARAMETER <receiver: A>
+      $this: VALUE_PARAMETER this@A: A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component1(): Int'
           CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<receiver: A>' type=A origin=null
+            $this: GET_VAR 'this@A: A' type=A origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component2(): kotlin.Int
-      $this: VALUE_PARAMETER <receiver: A>
+      $this: VALUE_PARAMETER this@A: A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component2(): Int'
           CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<receiver: A>' type=A origin=null
+            $this: GET_VAR 'this@A: A' type=A origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(x: kotlin.Int = ..., y: kotlin.Int = ...): A
-      $this: VALUE_PARAMETER <receiver: A>
+      $this: VALUE_PARAMETER this@A: A
       VALUE_PARAMETER value-parameter x: kotlin.Int = ...
         EXPRESSION_BODY
           CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<receiver: A>' type=A origin=null
+            $this: GET_VAR 'this@A: A' type=A origin=null
       VALUE_PARAMETER value-parameter y: kotlin.Int = ...
         EXPRESSION_BODY
           CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<receiver: A>' type=A origin=null
+            $this: GET_VAR 'this@A: A' type=A origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='copy(Int = ..., Int = ...): A'
           CALL 'constructor A(Int, Int)' type=A origin=null
             x: GET_VAR 'value-parameter x: Int = ...' type=kotlin.Int origin=null
             y: GET_VAR 'value-parameter y: Int = ...' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
-      $this: VALUE_PARAMETER <receiver: A>
+      $this: VALUE_PARAMETER this@A: A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
             CONST String type=kotlin.String value='A('
             CONST String type=kotlin.String value='x='
             CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<receiver: A>' type=A origin=null
+              $this: GET_VAR 'this@A: A' type=A origin=null
             CONST String type=kotlin.String value=', '
             CONST String type=kotlin.String value='y='
             CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<receiver: A>' type=A origin=null
+              $this: GET_VAR 'this@A: A' type=A origin=null
             CONST String type=kotlin.String value=')'
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
-      $this: VALUE_PARAMETER <receiver: A>
+      $this: VALUE_PARAMETER this@A: A
       BLOCK_BODY
         VAR IR_TEMPORARY_VARIABLE var tmp0_result: kotlin.Int
           CONST Int type=kotlin.Int value='0'
         SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
           CALL 'hashCode(): Int' type=kotlin.Int origin=null
             $this: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<receiver: A>' type=A origin=null
+              $this: GET_VAR 'this@A: A' type=A origin=null
         SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
           CALL 'plus(Int): Int' type=kotlin.Int origin=null
             $this: CALL 'times(Int): Int' type=kotlin.Int origin=null
@@ -84,17 +84,17 @@ FILE /destructuringInLambda.kt
               other: CONST Int type=kotlin.Int value='31'
             other: CALL 'hashCode(): Int' type=kotlin.Int origin=null
               $this: CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
-                $this: GET_VAR '<receiver: A>' type=A origin=null
+                $this: GET_VAR 'this@A: A' type=A origin=null
         RETURN type=kotlin.Nothing from='hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
-      $this: VALUE_PARAMETER <receiver: A>
+      $this: VALUE_PARAMETER this@A: A
       VALUE_PARAMETER value-parameter other: kotlin.Any?
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
-              arg0: GET_VAR '<receiver: A>' type=A origin=null
+              arg0: GET_VAR 'this@A: A' type=A origin=null
               arg1: GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value='true'
@@ -112,7 +112,7 @@ FILE /destructuringInLambda.kt
             if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
                 arg0: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
-                  $this: GET_VAR '<receiver: A>' type=A origin=null
+                  $this: GET_VAR 'this@A: A' type=A origin=null
                 arg1: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
                   $this: GET_VAR 'tmp0_other_with_cast: A' type=A origin=null
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
@@ -122,7 +122,7 @@ FILE /destructuringInLambda.kt
             if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
                 arg0: CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
-                  $this: GET_VAR '<receiver: A>' type=A origin=null
+                  $this: GET_VAR 'this@A: A' type=A origin=null
                 arg1: CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
                   $this: GET_VAR 'tmp0_other_with_cast: A' type=A origin=null
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'

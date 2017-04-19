@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -247,7 +248,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
         internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescriptor): String =
                 if (descriptor is ReceiverParameterDescriptor)
-                    "<receiver: ${descriptor.containingDeclaration.ref()}>"
+                    "this@${descriptor.containingDeclaration.name}: ${descriptor.type}"
                 else
                     render(descriptor)
 

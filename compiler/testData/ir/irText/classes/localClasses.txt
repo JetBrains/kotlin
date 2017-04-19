@@ -2,13 +2,13 @@ FILE /localClasses.kt
   FUN public fun outer(): kotlin.Unit
     BLOCK_BODY
       CLASS CLASS LocalClass
-        $new: VALUE_PARAMETER <receiver: LocalClass>
+        $new: VALUE_PARAMETER this@LocalClass: LocalClass
         CONSTRUCTOR public constructor LocalClass()
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
             INSTANCE_INITIALIZER_CALL classDescriptor='LocalClass'
         FUN public final fun foo(): kotlin.Unit
-          $this: VALUE_PARAMETER <receiver: LocalClass>
+          $this: VALUE_PARAMETER this@LocalClass: LocalClass
           BLOCK_BODY
         FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
         FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int

@@ -1,6 +1,6 @@
 FILE /constructor.kt
   CLASS CLASS Test1
-    $new: VALUE_PARAMETER <receiver: Test1>
+    $new: VALUE_PARAMETER this@Test1: Test1<T1, T2>
     TYPE_PARAMETER <T1>
     TYPE_PARAMETER <T2>
     CONSTRUCTOR public constructor Test1<T1, T2>(x: T1, y: T2)
@@ -14,26 +14,26 @@ FILE /constructor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: T1' type=T1 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): T1
-        $this: VALUE_PARAMETER <receiver: Test1>
+        $this: VALUE_PARAMETER this@Test1: Test1<T1, T2>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): T1'
             GET_FIELD 'x: T1' type=T1 origin=null
-              receiver: GET_VAR '<receiver: Test1>' type=Test1<T1, T2> origin=null
+              receiver: GET_VAR 'this@Test1: Test1<T1, T2>' type=Test1<T1, T2> origin=null
     PROPERTY public final val y: T2
       FIELD PROPERTY_BACKING_FIELD public final val y: T2
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: T2' type=T2 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): T2
-        $this: VALUE_PARAMETER <receiver: Test1>
+        $this: VALUE_PARAMETER this@Test1: Test1<T1, T2>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): T2'
             GET_FIELD 'y: T2' type=T2 origin=null
-              receiver: GET_VAR '<receiver: Test1>' type=Test1<T1, T2> origin=null
+              receiver: GET_VAR 'this@Test1: Test1<T1, T2>' type=Test1<T1, T2> origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test2
-    $new: VALUE_PARAMETER <receiver: Test2>
+    $new: VALUE_PARAMETER this@Test2: Test2
     CONSTRUCTOR public constructor Test2(x: kotlin.Int, y: kotlin.String)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.String
@@ -45,16 +45,16 @@ FILE /constructor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.String
-        $this: VALUE_PARAMETER <receiver: Test2>
+        $this: VALUE_PARAMETER this@Test2: Test2
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): String'
             GET_FIELD 'y: String' type=kotlin.String origin=null
-              receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
+              receiver: GET_VAR 'this@Test2: Test2' type=Test2 origin=null
     CLASS CLASS TestInner
-      $new: VALUE_PARAMETER <receiver: TestInner>
+      $new: VALUE_PARAMETER this@TestInner: TestInner<Z>
       TYPE_PARAMETER <Z>
       CONSTRUCTOR public constructor TestInner<Z>(z: Z)
-        $outer: VALUE_PARAMETER <receiver: Test2>
+        $outer: VALUE_PARAMETER this@Test2: Test2
         VALUE_PARAMETER value-parameter z: Z
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -64,19 +64,19 @@ FILE /constructor.kt
           EXPRESSION_BODY
             GET_VAR 'value-parameter z: Z' type=Z origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-z>(): Z
-          $this: VALUE_PARAMETER <receiver: TestInner>
+          $this: VALUE_PARAMETER this@TestInner: TestInner<Z>
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-z>(): Z'
               GET_FIELD 'z: Z' type=Z origin=null
-                receiver: GET_VAR '<receiver: TestInner>' type=Test2.TestInner<Z> origin=null
+                receiver: GET_VAR 'this@TestInner: TestInner<Z>' type=Test2.TestInner<Z> origin=null
       CONSTRUCTOR public constructor TestInner<Z>(z: Z, i: kotlin.Int)
-        $outer: VALUE_PARAMETER <receiver: Test2>
+        $outer: VALUE_PARAMETER this@Test2: Test2
         VALUE_PARAMETER value-parameter z: Z
         VALUE_PARAMETER value-parameter i: kotlin.Int
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor TestInner(Z)'
             <Z>: Z
-            $this: GET_VAR '<receiver: Test2>' type=Test2 origin=null
+            $this: GET_VAR 'this@Test2: Test2' type=Test2 origin=null
             z: GET_VAR 'value-parameter z: Z' type=Z origin=null
       FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
       FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
@@ -85,7 +85,7 @@ FILE /constructor.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test3
-    $new: VALUE_PARAMETER <receiver: Test3>
+    $new: VALUE_PARAMETER this@Test3: Test3
     CONSTRUCTOR public constructor Test3(x: kotlin.Int, y: kotlin.String = ...)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.String = ...
@@ -99,26 +99,26 @@ FILE /constructor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: Test3>
+        $this: VALUE_PARAMETER this@Test3: Test3
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: Test3>' type=Test3 origin=null
+              receiver: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
     PROPERTY public final val y: kotlin.String
       FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.String
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: String = ...' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.String
-        $this: VALUE_PARAMETER <receiver: Test3>
+        $this: VALUE_PARAMETER this@Test3: Test3
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): String'
             GET_FIELD 'y: String' type=kotlin.String origin=null
-              receiver: GET_VAR '<receiver: Test3>' type=Test3 origin=null
+              receiver: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test4
-    $new: VALUE_PARAMETER <receiver: Test4>
+    $new: VALUE_PARAMETER this@Test4: Test4<T>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Test4<T>(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
@@ -130,11 +130,11 @@ FILE /constructor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: Test4>
+        $this: VALUE_PARAMETER this@Test4: Test4<T>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: Test4>' type=Test4<T> origin=null
+              receiver: GET_VAR 'this@Test4: Test4<T>' type=Test4<T> origin=null
     CONSTRUCTOR public constructor Test4<T>(x: kotlin.Int, y: kotlin.Int = ...)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int = ...

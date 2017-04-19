@@ -1,6 +1,6 @@
 FILE /contructorCall.kt
   CLASS CLASS A
-    $new: VALUE_PARAMETER <receiver: A>
+    $new: VALUE_PARAMETER this@A: A
     CONSTRUCTOR public constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

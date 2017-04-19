@@ -1,6 +1,6 @@
 FILE /augmentedAssignment2.kt
   CLASS CLASS A
-    $new: VALUE_PARAMETER <receiver: A>
+    $new: VALUE_PARAMETER this@A: A
     CONSTRUCTOR public constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -9,23 +9,23 @@ FILE /augmentedAssignment2.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public operator fun A.plusAssign(s: kotlin.String): kotlin.Unit
-    $receiver: VALUE_PARAMETER <receiver: plusAssign(String) on A: Unit>
+    $receiver: VALUE_PARAMETER this@plusAssign: A
     VALUE_PARAMETER value-parameter s: kotlin.String
     BLOCK_BODY
   FUN public operator fun A.minusAssign(s: kotlin.String): kotlin.Unit
-    $receiver: VALUE_PARAMETER <receiver: minusAssign(String) on A: Unit>
+    $receiver: VALUE_PARAMETER this@minusAssign: A
     VALUE_PARAMETER value-parameter s: kotlin.String
     BLOCK_BODY
   FUN public operator fun A.timesAssign(s: kotlin.String): kotlin.Unit
-    $receiver: VALUE_PARAMETER <receiver: timesAssign(String) on A: Unit>
+    $receiver: VALUE_PARAMETER this@timesAssign: A
     VALUE_PARAMETER value-parameter s: kotlin.String
     BLOCK_BODY
   FUN public operator fun A.divAssign(s: kotlin.String): kotlin.Unit
-    $receiver: VALUE_PARAMETER <receiver: divAssign(String) on A: Unit>
+    $receiver: VALUE_PARAMETER this@divAssign: A
     VALUE_PARAMETER value-parameter s: kotlin.String
     BLOCK_BODY
   FUN public operator fun A.modAssign(s: kotlin.String): kotlin.Unit
-    $receiver: VALUE_PARAMETER <receiver: modAssign(String) on A: Unit>
+    $receiver: VALUE_PARAMETER this@modAssign: A
     VALUE_PARAMETER value-parameter s: kotlin.String
     BLOCK_BODY
   PROPERTY public val p: A

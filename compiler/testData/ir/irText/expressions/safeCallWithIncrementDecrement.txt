@@ -1,6 +1,6 @@
 FILE /safeCallWithIncrementDecrement.kt
   CLASS CLASS C
-    $new: VALUE_PARAMETER <receiver: C>
+    $new: VALUE_PARAMETER this@C: C
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -10,21 +10,21 @@ FILE /safeCallWithIncrementDecrement.kt
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   PROPERTY public var test.C?.p: kotlin.Int
     FUN public fun test.C?.<get-p>(): kotlin.Int
-      $receiver: VALUE_PARAMETER <receiver: p: Int on C?>
+      $receiver: VALUE_PARAMETER this@p: C?
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-p>() on C?: Int'
           CONST Int type=kotlin.Int value='42'
     FUN public fun test.C?.<set-p>(value: kotlin.Int): kotlin.Unit
-      $receiver: VALUE_PARAMETER <receiver: p: Int on C?>
+      $receiver: VALUE_PARAMETER this@p: C?
       VALUE_PARAMETER value-parameter value: kotlin.Int
       BLOCK_BODY
   FUN public operator fun kotlin.Int?.inc(): kotlin.Int?
-    $receiver: VALUE_PARAMETER <receiver: inc() on Int?: Int?>
+    $receiver: VALUE_PARAMETER this@inc: Int?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='inc() on Int?: Int?'
         BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.Int?
-            GET_VAR '<receiver: inc() on Int?: Int?>' type=kotlin.Int? origin=null
+            GET_VAR 'this@inc: Int?' type=kotlin.Int? origin=null
           WHEN type=kotlin.Int? origin=SAFE_CALL
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
@@ -36,13 +36,13 @@ FILE /safeCallWithIncrementDecrement.kt
               then: CALL 'inc(): Int' type=kotlin.Int origin=null
                 $this: GET_VAR 'tmp0_safe_receiver: Int?' type=kotlin.Int? origin=null
   FUN public operator fun kotlin.Int?.get(index: kotlin.Int): kotlin.Int
-    $receiver: VALUE_PARAMETER <receiver: get(Int) on Int?: Int>
+    $receiver: VALUE_PARAMETER this@get: Int?
     VALUE_PARAMETER value-parameter index: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='get(Int) on Int?: Int'
         CONST Int type=kotlin.Int value='42'
   FUN public operator fun kotlin.Int?.set(index: kotlin.Int, value: kotlin.Int): kotlin.Unit
-    $receiver: VALUE_PARAMETER <receiver: set(Int, Int) on Int?: Unit>
+    $receiver: VALUE_PARAMETER this@set: Int?
     VALUE_PARAMETER value-parameter index: kotlin.Int
     VALUE_PARAMETER value-parameter value: kotlin.Int
     BLOCK_BODY

@@ -1,6 +1,6 @@
 FILE /values.kt
   CLASS ENUM_CLASS Enum
-    $new: VALUE_PARAMETER <receiver: Enum>
+    $new: VALUE_PARAMETER this@Enum: Enum
     CONSTRUCTOR private constructor Enum()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -23,7 +23,7 @@ FILE /values.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Enum
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS OBJECT A
-    $new: VALUE_PARAMETER <receiver: A>
+    $new: VALUE_PARAMETER this@A: A
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -40,13 +40,13 @@ FILE /values.kt
         RETURN type=kotlin.Nothing from='<get-a>(): Int'
           GET_FIELD 'a: Int' type=kotlin.Int origin=null
   CLASS CLASS Z
-    $new: VALUE_PARAMETER <receiver: Z>
+    $new: VALUE_PARAMETER this@Z: Z
     CONSTRUCTOR public constructor Z()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Z'
     CLASS OBJECT companion object of Z
-      $new: VALUE_PARAMETER <receiver: companion object of Z>
+      $new: VALUE_PARAMETER this@Companion: Companion
       CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

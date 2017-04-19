@@ -18,7 +18,7 @@ FILE /lambdas.kt
       EXPRESSION_BODY
         BLOCK type=kotlin.Any.(kotlin.Any) -> kotlin.Int origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun kotlin.Any.<anonymous>(it: kotlin.Any): kotlin.Int
-            $receiver: VALUE_PARAMETER <receiver: <anonymous>(Any) on Any: Int>
+            $receiver: VALUE_PARAMETER this@<anonymous>: Any
             VALUE_PARAMETER value-parameter it: kotlin.Any
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(Any) on Any: Int'

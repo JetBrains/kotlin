@@ -1,13 +1,13 @@
 FILE /variableAsFunctionCall.kt
   FUN public fun kotlin.String.k(): () -> kotlin.String
-    $receiver: VALUE_PARAMETER <receiver: k() on String: () -> String>
+    $receiver: VALUE_PARAMETER this@k: String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='k() on String: () -> String'
         BLOCK type=() -> kotlin.String origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.String
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(): String'
-                GET_VAR '<receiver: k() on String: () -> String>' type=kotlin.String origin=null
+                GET_VAR 'this@k: String' type=kotlin.String origin=null
           FUNCTION_REFERENCE '<anonymous>(): String' type=() -> kotlin.String origin=LAMBDA
   FUN public fun test1(f: () -> kotlin.Unit): kotlin.Unit
     VALUE_PARAMETER value-parameter f: () -> kotlin.Unit

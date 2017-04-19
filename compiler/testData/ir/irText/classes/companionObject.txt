@@ -1,12 +1,12 @@
 FILE /companionObject.kt
   CLASS CLASS Test1
-    $new: VALUE_PARAMETER <receiver: Test1>
+    $new: VALUE_PARAMETER this@Test1: Test1
     CONSTRUCTOR public constructor Test1()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
     CLASS OBJECT companion object of Test1
-      $new: VALUE_PARAMETER <receiver: companion object of Test1>
+      $new: VALUE_PARAMETER this@Companion: Companion
       CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -18,13 +18,13 @@ FILE /companionObject.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test2
-    $new: VALUE_PARAMETER <receiver: Test2>
+    $new: VALUE_PARAMETER this@Test2: Test2
     CONSTRUCTOR public constructor Test2()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
     CLASS OBJECT companion object of Test2Named
-      $new: VALUE_PARAMETER <receiver: companion object of Test2Named>
+      $new: VALUE_PARAMETER this@Named: Named
       CONSTRUCTOR private constructor Named()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

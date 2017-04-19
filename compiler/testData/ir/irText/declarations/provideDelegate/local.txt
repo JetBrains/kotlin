@@ -1,6 +1,6 @@
 FILE /local.kt
   CLASS CLASS Delegate
-    $new: VALUE_PARAMETER <receiver: Delegate>
+    $new: VALUE_PARAMETER this@Delegate: Delegate
     CONSTRUCTOR public constructor Delegate(value: kotlin.String)
       VALUE_PARAMETER value-parameter value: kotlin.String
       BLOCK_BODY
@@ -11,24 +11,24 @@ FILE /local.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.String
-        $this: VALUE_PARAMETER <receiver: Delegate>
+        $this: VALUE_PARAMETER this@Delegate: Delegate
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): String'
             GET_FIELD 'value: String' type=kotlin.String origin=null
-              receiver: GET_VAR '<receiver: Delegate>' type=Delegate origin=null
+              receiver: GET_VAR 'this@Delegate: Delegate' type=Delegate origin=null
     FUN public final operator fun getValue(thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String
-      $this: VALUE_PARAMETER <receiver: Delegate>
+      $this: VALUE_PARAMETER this@Delegate: Delegate
       VALUE_PARAMETER value-parameter thisRef: kotlin.Any?
       VALUE_PARAMETER value-parameter property: kotlin.Any?
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='getValue(Any?, Any?): String'
           CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_VAR '<receiver: Delegate>' type=Delegate origin=null
+            $this: GET_VAR 'this@Delegate: Delegate' type=Delegate origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS DelegateProvider
-    $new: VALUE_PARAMETER <receiver: DelegateProvider>
+    $new: VALUE_PARAMETER this@DelegateProvider: DelegateProvider
     CONSTRUCTOR public constructor DelegateProvider(value: kotlin.String)
       VALUE_PARAMETER value-parameter value: kotlin.String
       BLOCK_BODY
@@ -39,20 +39,20 @@ FILE /local.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.String
-        $this: VALUE_PARAMETER <receiver: DelegateProvider>
+        $this: VALUE_PARAMETER this@DelegateProvider: DelegateProvider
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): String'
             GET_FIELD 'value: String' type=kotlin.String origin=null
-              receiver: GET_VAR '<receiver: DelegateProvider>' type=DelegateProvider origin=null
+              receiver: GET_VAR 'this@DelegateProvider: DelegateProvider' type=DelegateProvider origin=null
     FUN public final operator fun provideDelegate(thisRef: kotlin.Any?, property: kotlin.Any?): Delegate
-      $this: VALUE_PARAMETER <receiver: DelegateProvider>
+      $this: VALUE_PARAMETER this@DelegateProvider: DelegateProvider
       VALUE_PARAMETER value-parameter thisRef: kotlin.Any?
       VALUE_PARAMETER value-parameter property: kotlin.Any?
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='provideDelegate(Any?, Any?): Delegate'
           CALL 'constructor Delegate(String)' type=Delegate origin=null
             value: CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<receiver: DelegateProvider>' type=DelegateProvider origin=null
+              $this: GET_VAR 'this@DelegateProvider: DelegateProvider' type=DelegateProvider origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

@@ -1,6 +1,6 @@
 FILE /enumEntryAsReceiver.kt
   CLASS ENUM_CLASS X
-    $new: VALUE_PARAMETER <receiver: X>
+    $new: VALUE_PARAMETER this@X: X
     CONSTRUCTOR private constructor X()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -8,7 +8,7 @@ FILE /enumEntryAsReceiver.kt
     ENUM_ENTRY enum entry B
       init: ENUM_CONSTRUCTOR_CALL 'constructor B()'
       class: CLASS ENUM_ENTRY B
-        $new: VALUE_PARAMETER <receiver: B>
+        $new: VALUE_PARAMETER this@B: B
         CONSTRUCTOR private constructor B()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor X()'
@@ -18,11 +18,11 @@ FILE /enumEntryAsReceiver.kt
             EXPRESSION_BODY
               CONST String type=kotlin.String value='OK'
           FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value2>(): kotlin.String
-            $this: VALUE_PARAMETER <receiver: B>
+            $this: VALUE_PARAMETER this@B: B
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<get-value2>(): String'
                 GET_FIELD 'value2: String' type=kotlin.String origin=null
-                  receiver: GET_VAR '<receiver: B>' type=X.B origin=null
+                  receiver: GET_VAR 'this@B: B' type=X.B origin=null
         PROPERTY public open override val value: () -> kotlin.String
           FIELD PROPERTY_BACKING_FIELD public open override val value: () -> kotlin.String
             EXPRESSION_BODY
@@ -34,11 +34,11 @@ FILE /enumEntryAsReceiver.kt
                         $this: GET_ENUM 'B' type=X.B
                 FUNCTION_REFERENCE '<anonymous>(): String' type=() -> kotlin.String origin=LAMBDA
           FUN DEFAULT_PROPERTY_ACCESSOR public open override fun <get-value>(): () -> kotlin.String
-            $this: VALUE_PARAMETER <receiver: B>
+            $this: VALUE_PARAMETER this@B: B
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<get-value>(): () -> String'
                 GET_FIELD 'value: () -> String' type=() -> kotlin.String origin=null
-                  receiver: GET_VAR '<receiver: B>' type=X.B origin=null
+                  receiver: GET_VAR 'this@B: B' type=X.B origin=null
         FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
         FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
         FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<X!>!
@@ -52,7 +52,7 @@ FILE /enumEntryAsReceiver.kt
         FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     PROPERTY public abstract val value: () -> kotlin.String
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-value>(): () -> kotlin.String
-        $this: VALUE_PARAMETER <receiver: X>
+        $this: VALUE_PARAMETER this@X: X
     FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
     FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
     FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<X!>!

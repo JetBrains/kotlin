@@ -1,6 +1,6 @@
 FILE /enumEntry.kt
   CLASS ENUM_CLASS Z
-    $new: VALUE_PARAMETER <receiver: Z>
+    $new: VALUE_PARAMETER this@Z: Z
     CONSTRUCTOR private constructor Z()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -8,22 +8,22 @@ FILE /enumEntry.kt
     ENUM_ENTRY enum entry ENTRY
       init: ENUM_CONSTRUCTOR_CALL 'constructor ENTRY()'
       class: CLASS ENUM_ENTRY ENTRY
-        $new: VALUE_PARAMETER <receiver: ENTRY>
+        $new: VALUE_PARAMETER this@ENTRY: ENTRY
         CONSTRUCTOR private constructor ENTRY()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor Z()'
             INSTANCE_INITIALIZER_CALL classDescriptor='ENTRY'
         FUN public final fun test(): kotlin.Unit
-          $this: VALUE_PARAMETER <receiver: ENTRY>
+          $this: VALUE_PARAMETER this@ENTRY: ENTRY
           BLOCK_BODY
         CLASS CLASS A
-          $new: VALUE_PARAMETER <receiver: A>
+          $new: VALUE_PARAMETER this@A: A
           CONSTRUCTOR public constructor A()
             BLOCK_BODY
               DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
               INSTANCE_INITIALIZER_CALL classDescriptor='A'
           FUN public final fun test2(): kotlin.Unit
-            $this: VALUE_PARAMETER <receiver: A>
+            $this: VALUE_PARAMETER this@A: A
             BLOCK_BODY
               CALL 'test(): Unit' type=kotlin.Unit origin=null
                 $this: GET_ENUM 'ENTRY' type=Z.ENTRY

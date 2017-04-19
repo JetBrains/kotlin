@@ -19,7 +19,7 @@ FILE /localFun.kt
         VALUE_PARAMETER value-parameter vararg args: kotlin.String
         BLOCK_BODY
       FUN local final fun kotlin.String.textExt1(i: kotlin.Int, j: TT): kotlin.Unit
-        $receiver: VALUE_PARAMETER <receiver: textExt1(Int, TT) on String: Unit>
+        $receiver: VALUE_PARAMETER this@textExt1: String
         VALUE_PARAMETER value-parameter i: kotlin.Int
         VALUE_PARAMETER value-parameter j: TT
         BLOCK_BODY

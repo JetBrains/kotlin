@@ -1,6 +1,6 @@
 FILE /classes.kt
   CLASS CLASS TestClass
-    $new: VALUE_PARAMETER <receiver: TestClass>
+    $new: VALUE_PARAMETER this@TestClass: TestClass
     CONSTRUCTOR public constructor TestClass()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -13,7 +13,7 @@ FILE /classes.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT TestObject
-    $new: VALUE_PARAMETER <receiver: TestObject>
+    $new: VALUE_PARAMETER this@TestObject: TestObject
     CONSTRUCTOR private constructor TestObject()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -22,12 +22,12 @@ FILE /classes.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS ANNOTATION_CLASS TestAnnotationClass
-    $new: VALUE_PARAMETER <receiver: TestAnnotationClass>
+    $new: VALUE_PARAMETER this@TestAnnotationClass: TestAnnotationClass
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS ENUM_CLASS TestEnumClass
-    $new: VALUE_PARAMETER <receiver: TestEnumClass>
+    $new: VALUE_PARAMETER this@TestEnumClass: TestEnumClass
     CONSTRUCTOR private constructor TestEnumClass()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'

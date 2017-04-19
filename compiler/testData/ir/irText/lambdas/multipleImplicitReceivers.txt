@@ -1,6 +1,6 @@
 FILE /multipleImplicitReceivers.kt
   CLASS OBJECT A
-    $new: VALUE_PARAMETER <receiver: A>
+    $new: VALUE_PARAMETER this@A: A
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -9,7 +9,7 @@ FILE /multipleImplicitReceivers.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT B
-    $new: VALUE_PARAMETER <receiver: B>
+    $new: VALUE_PARAMETER this@B: B
     CONSTRUCTOR private constructor B()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -20,8 +20,8 @@ FILE /multipleImplicitReceivers.kt
   CLASS INTERFACE IFoo
     PROPERTY public open val A.foo: B
       FUN public open fun A.<get-foo>(): B
-        $this: VALUE_PARAMETER <receiver: IFoo>
-        $receiver: VALUE_PARAMETER <receiver: foo: B on A>
+        $this: VALUE_PARAMETER this@IFoo: IFoo
+        $receiver: VALUE_PARAMETER this@foo: A
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-foo>() on A: B'
             GET_OBJECT 'B' type=B
@@ -30,8 +30,8 @@ FILE /multipleImplicitReceivers.kt
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IInvoke
     FUN public open operator fun B.invoke(): kotlin.Int
-      $this: VALUE_PARAMETER <receiver: IInvoke>
-      $receiver: VALUE_PARAMETER <receiver: invoke() on B: Int>
+      $this: VALUE_PARAMETER this@IInvoke: IInvoke
+      $receiver: VALUE_PARAMETER this@invoke: B
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='invoke() on B: Int'
           CONST Int type=kotlin.Int value='42'
@@ -49,7 +49,7 @@ FILE /multipleImplicitReceivers.kt
           receiver: GET_OBJECT 'A' type=A
           block: BLOCK type=A.() -> kotlin.Int origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun A.<anonymous>(): kotlin.Int
-              $receiver: VALUE_PARAMETER <receiver: <anonymous>() on A: Int>
+              $receiver: VALUE_PARAMETER this@<anonymous>: A
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='<anonymous>() on A: Int'
                   CALL 'with(IFoo, IFoo.() -> Int): Int' type=kotlin.Int origin=null
@@ -58,7 +58,7 @@ FILE /multipleImplicitReceivers.kt
                     receiver: GET_VAR 'value-parameter fooImpl: IFoo' type=IFoo origin=null
                     block: BLOCK type=IFoo.() -> kotlin.Int origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun IFoo.<anonymous>(): kotlin.Int
-                        $receiver: VALUE_PARAMETER <receiver: <anonymous>() on IFoo: Int>
+                        $receiver: VALUE_PARAMETER this@<anonymous>: IFoo
                         BLOCK_BODY
                           RETURN type=kotlin.Nothing from='<anonymous>() on IFoo: Int'
                             CALL 'with(IInvoke, IInvoke.() -> Int): Int' type=kotlin.Int origin=null
@@ -67,14 +67,14 @@ FILE /multipleImplicitReceivers.kt
                               receiver: GET_VAR 'value-parameter invokeImpl: IInvoke' type=IInvoke origin=null
                               block: BLOCK type=IInvoke.() -> kotlin.Int origin=LAMBDA
                                 FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun IInvoke.<anonymous>(): kotlin.Int
-                                  $receiver: VALUE_PARAMETER <receiver: <anonymous>() on IInvoke: Int>
+                                  $receiver: VALUE_PARAMETER this@<anonymous>: IInvoke
                                   BLOCK_BODY
                                     RETURN type=kotlin.Nothing from='<anonymous>() on IInvoke: Int'
                                       CALL 'invoke() on B: Int' type=kotlin.Int origin=INVOKE
-                                        $this: GET_VAR '<receiver: <anonymous>() on IInvoke: Int>' type=IInvoke origin=null
+                                        $this: GET_VAR 'this@<anonymous>: IInvoke' type=IInvoke origin=null
                                         $receiver: CALL '<get-foo>() on A: B' type=B origin=GET_PROPERTY
-                                          $this: GET_VAR '<receiver: <anonymous>() on IFoo: Int>' type=IFoo origin=null
-                                          $receiver: GET_VAR '<receiver: <anonymous>() on A: Int>' type=A origin=null
+                                          $this: GET_VAR 'this@<anonymous>: IFoo' type=IFoo origin=null
+                                          $receiver: GET_VAR 'this@<anonymous>: A' type=A origin=null
                                 FUNCTION_REFERENCE '<anonymous>() on IInvoke: Int' type=IInvoke.() -> kotlin.Int origin=LAMBDA
                       FUNCTION_REFERENCE '<anonymous>() on IFoo: Int' type=IFoo.() -> kotlin.Int origin=LAMBDA
             FUNCTION_REFERENCE '<anonymous>() on A: Int' type=A.() -> kotlin.Int origin=LAMBDA

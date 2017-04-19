@@ -1,6 +1,6 @@
 FILE /enumWithSecondaryCtor.kt
   CLASS ENUM_CLASS Test0
-    $new: VALUE_PARAMETER <receiver: Test0>
+    $new: VALUE_PARAMETER this@Test0: Test0
     CONSTRUCTOR private constructor Test0(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
@@ -11,11 +11,11 @@ FILE /enumWithSecondaryCtor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: Test0>
+        $this: VALUE_PARAMETER this@Test0: Test0
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: Test0>' type=Test0 origin=null
+              receiver: GET_VAR 'this@Test0: Test0' type=Test0 origin=null
     ENUM_ENTRY enum entry ZERO
       init: ENUM_CONSTRUCTOR_CALL 'constructor Test0()'
     CONSTRUCTOR private constructor Test0()
@@ -38,7 +38,7 @@ FILE /enumWithSecondaryCtor.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test0
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS Test1
-    $new: VALUE_PARAMETER <receiver: Test1>
+    $new: VALUE_PARAMETER this@Test1: Test1
     CONSTRUCTOR private constructor Test1(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
@@ -49,11 +49,11 @@ FILE /enumWithSecondaryCtor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: Test1>
+        $this: VALUE_PARAMETER this@Test1: Test1
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: Test1>' type=Test1 origin=null
+              receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
     ENUM_ENTRY enum entry ZERO
       init: ENUM_CONSTRUCTOR_CALL 'constructor Test1()'
     ENUM_ENTRY enum entry ONE
@@ -79,7 +79,7 @@ FILE /enumWithSecondaryCtor.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test1
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS Test2
-    $new: VALUE_PARAMETER <receiver: Test2>
+    $new: VALUE_PARAMETER this@Test2: Test2
     CONSTRUCTOR private constructor Test2(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
@@ -90,21 +90,21 @@ FILE /enumWithSecondaryCtor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: Test2>
+        $this: VALUE_PARAMETER this@Test2: Test2
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
+              receiver: GET_VAR 'this@Test2: Test2' type=Test2 origin=null
     ENUM_ENTRY enum entry ZERO
       init: ENUM_CONSTRUCTOR_CALL 'constructor ZERO()'
       class: CLASS ENUM_ENTRY ZERO
-        $new: VALUE_PARAMETER <receiver: ZERO>
+        $new: VALUE_PARAMETER this@ZERO: ZERO
         CONSTRUCTOR private constructor ZERO()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor Test2()'
             INSTANCE_INITIALIZER_CALL classDescriptor='ZERO'
         FUN public open override fun foo(): kotlin.Unit
-          $this: VALUE_PARAMETER <receiver: ZERO>
+          $this: VALUE_PARAMETER this@ZERO: ZERO
           BLOCK_BODY
             CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
               message: CONST String type=kotlin.String value='ZERO'
@@ -124,14 +124,14 @@ FILE /enumWithSecondaryCtor.kt
     ENUM_ENTRY enum entry ONE
       init: ENUM_CONSTRUCTOR_CALL 'constructor ONE()'
       class: CLASS ENUM_ENTRY ONE
-        $new: VALUE_PARAMETER <receiver: ONE>
+        $new: VALUE_PARAMETER this@ONE: ONE
         CONSTRUCTOR private constructor ONE()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor Test2(Int)'
               x: CONST Int type=kotlin.Int value='1'
             INSTANCE_INITIALIZER_CALL classDescriptor='ONE'
         FUN public open override fun foo(): kotlin.Unit
-          $this: VALUE_PARAMETER <receiver: ONE>
+          $this: VALUE_PARAMETER this@ONE: ONE
           BLOCK_BODY
             CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
               message: CONST String type=kotlin.String value='ONE'
@@ -153,7 +153,7 @@ FILE /enumWithSecondaryCtor.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Test2(Int)'
           x: CONST Int type=kotlin.Int value='0'
     FUN public abstract fun foo(): kotlin.Unit
-      $this: VALUE_PARAMETER <receiver: Test2>
+      $this: VALUE_PARAMETER this@Test2: Test2
     FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
     FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
     FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<Test2!>!

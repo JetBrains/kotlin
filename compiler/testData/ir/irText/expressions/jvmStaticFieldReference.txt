@@ -22,7 +22,7 @@ FILE /jvmStaticFieldReference.kt
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
           p0: CONST String type=kotlin.String value='testProp/set'
   CLASS CLASS TestClass
-    $new: VALUE_PARAMETER <receiver: TestClass>
+    $new: VALUE_PARAMETER this@TestClass: TestClass
     CONSTRUCTOR public constructor TestClass()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -40,11 +40,11 @@ FILE /jvmStaticFieldReference.kt
                   p0: CONST String type=kotlin.String value='TestClass/test'
                 CONST Int type=kotlin.Int value='42'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test>(): kotlin.Int
-        $this: VALUE_PARAMETER <receiver: TestClass>
+        $this: VALUE_PARAMETER this@TestClass: TestClass
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test>(): Int'
             GET_FIELD 'test: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR '<receiver: TestClass>' type=TestClass origin=null
+              receiver: GET_VAR 'this@TestClass: TestClass' type=TestClass origin=null
     ANONYMOUS_INITIALIZER TestClass
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
