@@ -306,8 +306,12 @@ class CoroutineCodegen private constructor(
                 OtherOrigin(element),
                 doResumeDescriptor,
                 object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
+
+                    override fun wrapMethodVisitor(mv: MethodVisitor, access: Int, name: String, desc: String): MethodVisitor {
+                        return CoroutineTransformerMethodVisitor(mv, access, name, desc, null, null, v)
+                    }
+
                     override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
-                        codegen.v.visitAnnotation(CONTINUATION_METHOD_ANNOTATION_DESC, true).visitEnd()
                         codegen.initializeCoroutineParameters()
                         super.doGenerateBody(codegen, signature)
                     }

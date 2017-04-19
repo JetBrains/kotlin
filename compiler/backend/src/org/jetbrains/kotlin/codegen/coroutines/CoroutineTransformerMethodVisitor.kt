@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.util.containers.Stack
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
 import org.jetbrains.kotlin.codegen.optimization.DeadCodeEliminationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
@@ -34,24 +37,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 
-class CoroutineTransformationClassBuilder(private val delegate: ClassBuilder) : DelegatingClassBuilder() {
-    override fun getDelegate() = delegate
-
-    override fun newMethod(
-            origin: JvmDeclarationOrigin,
-            access: Int, name: String,
-            desc: String, signature:
-            String?,
-            exceptions: Array<out String>?
-    ) = CoroutineTransformerMethodVisitor(
-                delegate.newMethod(origin, access, name, desc, signature, exceptions),
-                access, name, desc, signature, exceptions, this)
-}
-
-class CoroutineTransformerClassBuilderFactory(delegate: ClassBuilderFactory) : DelegatingClassBuilderFactory(delegate) {
-    override fun newClassBuilder(origin: JvmDeclarationOrigin) = CoroutineTransformationClassBuilder(delegate.newClassBuilder(origin))
-}
-
 class CoroutineTransformerMethodVisitor(
         delegate: MethodVisitor,
         access: Int,
@@ -62,9 +47,6 @@ class CoroutineTransformerMethodVisitor(
         private val classBuilder: ClassBuilder
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
     override fun performTransformations(methodNode: MethodNode) {
-        if (methodNode.visibleAnnotations?.none { it.desc == CONTINUATION_METHOD_ANNOTATION_DESC } != false) return
-        methodNode.visibleAnnotations.removeAll { it.desc == CONTINUATION_METHOD_ANNOTATION_DESC }
-
         val customCoroutineStartMarker = methodNode.instructions.toArray().filterIsInstance<MethodInsnNode>().firstOrNull {
             it.owner == COROUTINE_MARKER_OWNER && it.name == ACTUAL_COROUTINE_START_MARKER_NAME
         }

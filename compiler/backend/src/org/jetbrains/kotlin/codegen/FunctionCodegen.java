@@ -200,12 +200,18 @@ public class FunctionCodegen {
             // Native methods are only defined in facades and do not need package part implementations
             return;
         }
-        MethodVisitor mv = v.newMethod(origin,
-                                       flags,
-                                       asmMethod.getName(),
-                                       asmMethod.getDescriptor(),
-                                       jvmSignature.getGenericsSignature(),
-                                       getThrownExceptions(functionDescriptor, typeMapper));
+        MethodVisitor mv =
+                strategy.wrapMethodVisitor(
+                        v.newMethod(origin,
+                                    flags,
+                                    asmMethod.getName(),
+                                    asmMethod.getDescriptor(),
+                                    jvmSignature.getGenericsSignature(),
+                                    getThrownExceptions(functionDescriptor, typeMapper)
+                        ),
+                        flags, asmMethod.getName(),
+                        asmMethod.getDescriptor()
+                );
 
         if (CodegenContextUtil.isImplClassOwner(owner)) {
             v.getSerializationBindings().put(METHOD_FOR_FUNCTION, CodegenUtilKt.unwrapFrontendVersion(functionDescriptor), asmMethod);

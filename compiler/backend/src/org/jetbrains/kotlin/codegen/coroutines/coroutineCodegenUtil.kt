@@ -53,8 +53,6 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 // These classes do not actually exist at runtime
-val CONTINUATION_METHOD_ANNOTATION_DESC = "Lkotlin/ContinuationMethod;"
-
 const val COROUTINE_MARKER_OWNER = "kotlin/coroutines/Markers"
 const val BEFORE_SUSPENSION_POINT_MARKER_NAME = "beforeSuspensionPoint"
 const val AFTER_SUSPENSION_POINT_MARKER_NAME = "afterSuspensionPoint"

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -32,6 +31,10 @@ public abstract class FunctionGenerationStrategy {
             @NotNull MethodContext context,
             @NotNull MemberCodegen<?> parentCodegen
     );
+
+    public MethodVisitor wrapMethodVisitor(@NotNull MethodVisitor mv, int access, @NotNull String name, @NotNull String desc) {
+        return mv;
+    }
 
     public static class FunctionDefault extends CodegenBased {
         private final KtDeclarationWithBody declaration;
