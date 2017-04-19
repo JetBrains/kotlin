@@ -1,0 +1,3 @@
+// "Replace '@JvmField' with 'const'" "true"
+// WITH_RUNTIME
+const private val number: Int = 42

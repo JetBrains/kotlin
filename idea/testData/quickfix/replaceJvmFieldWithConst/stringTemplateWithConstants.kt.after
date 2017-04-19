@@ -1,0 +1,4 @@
+// "Replace '@JvmField' with 'const'" "true"
+// WITH_RUNTIME
+const val three = 3
+const private val text = "${2 + three}"
