@@ -159,6 +159,10 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 }
 
 class Kapt3ComponentRegistrar : ComponentRegistrar {
+    private companion object {
+        private const val JAVAC_CONTEXT_CLASS = "com.sun.tools.javac.util.Context"
+    }
+
     fun decodeOptions(options: String): Map<String, String> {
         val map = LinkedHashMap<String, String>()
 
@@ -183,6 +187,13 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                                ?: PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, isVerbose)
         val logger = KaptLogger(isVerbose, messageCollector)
+
+        try {
+            Class.forName(JAVAC_CONTEXT_CLASS)
+        } catch (e: ClassNotFoundException) {
+            logger.warn("'$JAVAC_CONTEXT_CLASS' class can't be found ('tools.jar' is absent in the plugin classpath). Kapt won't work.")
+            return
+        }
 
         val sourcesOutputDir = configuration.get(Kapt3ConfigurationKeys.SOURCE_OUTPUT_DIR)?.let(::File)
         val classFilesOutputDir = configuration.get(Kapt3ConfigurationKeys.CLASS_OUTPUT_DIR)?.let(::File)
