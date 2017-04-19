@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        if (candidateDescriptor is ConstructorDescriptor && !kotlinCall.isSupertypeConstructorCall) {
+        if (candidateDescriptor is ConstructorDescriptor && !kotlinCall.isSuperOrDelegatingConstructorCall) {
             if (candidateDescriptor.constructedClass.modality == Modality.ABSTRACT) {
                 return listOf(InstantiationOfAbstractClass)
             }

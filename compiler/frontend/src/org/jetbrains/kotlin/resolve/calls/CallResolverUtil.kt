@@ -157,8 +157,8 @@ fun isInfixCall(call: Call): Boolean {
     return binaryExpression.operationReference === operationRefExpression && operationRefExpression.operationSignTokenType == null
 }
 
-fun isSupertypeConstructorCall(call: Call): Boolean =
-        call.calleeExpression is KtConstructorCalleeExpression
+fun isSuperOrDelegatingConstructorCall(call: Call): Boolean =
+        call.calleeExpression.let { it is KtConstructorCalleeExpression  || it is KtConstructorDelegationReferenceExpression }
 
 fun isInvokeCallOnVariable(call: Call): Boolean {
     if (call.callType !== Call.CallType.INVOKE) return false
