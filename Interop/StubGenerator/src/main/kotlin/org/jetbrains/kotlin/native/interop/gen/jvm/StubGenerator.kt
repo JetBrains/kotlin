@@ -1388,10 +1388,13 @@ class StubGenerator(
         out("")
 
         stubs.forEach {
-            it.nativeStubLines.forEach {
-                out(it)
+            val lines = it.nativeStubLines
+            if (lines.isNotEmpty()) {
+                lines.forEach {
+                    out(it)
+                }
+                out("")
             }
-            out("")
         }
 
         if (entryPoint != null) {
