@@ -24,6 +24,7 @@
 package kotlin.test
 
 import kotlin.internal.*
+import kotlin.reflect.KClass
 
 /**
  * Current adapter providing assertion implementations
@@ -120,6 +121,10 @@ inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noin
     assertTrue(exception is T, "${messagePrefix}An exception thrown is not of the expected type: $exception")
     return exception as T
 }
+
+/** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
+fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, null, block)
+
 
 /**
  * Abstracts the logic for performing assertions. Specific implementations of [Asserter] can use JUnit

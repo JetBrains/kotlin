@@ -45,6 +45,24 @@ class BasicAssertionsTest {
     }
 
     @Test
+    fun testAssertFailsWithClass() {
+        assertFailsWith(IllegalArgumentException::class) {
+            throw IllegalArgumentException("This is illegal")
+        }
+    }
+
+    @Test
+    fun testAssertFailsWithClassFails() {
+        checkFailedAssertion {
+            assertFailsWith(IllegalArgumentException::class) { throw IllegalStateException() }
+        }
+
+        checkFailedAssertion {
+            assertFailsWith(Exception::class) { }
+        }
+    }
+
+    @Test
     fun testAssertEqualsFails() {
         checkFailedAssertion { assertEquals(1, 2) }
     }

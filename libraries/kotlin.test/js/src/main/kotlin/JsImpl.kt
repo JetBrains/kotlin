@@ -16,6 +16,8 @@
 
 package kotlin.test
 
+import kotlin.reflect.KClass
+
 /**
  * Comments out a block of test code until it is implemented while keeping a link to the code
  * to implement in your unit test output
@@ -37,6 +39,16 @@ inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noin
     return exception as T
 }
 */
+/** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
+impl fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T {
+    val exception = assertFails(message, block)
+    @Suppress("INVISIBLE_MEMBER")
+    assertTrue(exceptionClass.isInstance(exception), messagePrefix(message) + "Expected an exception of $exceptionClass to be thrown, but was $exception")
+
+    @Suppress("UNCHECKED_CAST")
+    return exception as T
+}
+
 
 /**
  * Provides the JS implementation of asserter using [QUnit](http://QUnitjs.com/)
