@@ -60,7 +60,7 @@ inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noin
  * to implement in your unit test output
  */
 @InlineOnly
-inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {
+impl inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {
     System.out.println("TODO at " + currentStackTrace()[0])
 }
 
