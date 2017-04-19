@@ -60,7 +60,6 @@ FILE /defaultPropertyAccessors.kt
     $new: VALUE_PARAMETER <receiver: InPrimaryCtor>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor InPrimaryCtor<T>(testInPrimaryCtor1: T, testInPrimaryCtor2: kotlin.Int = ...)
-      TYPE_PARAMETER <T>
       VALUE_PARAMETER value-parameter testInPrimaryCtor1: T
       VALUE_PARAMETER value-parameter testInPrimaryCtor2: kotlin.Int = ...
         EXPRESSION_BODY

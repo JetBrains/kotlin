@@ -48,7 +48,6 @@ FILE /propertyAccessors.kt
     $new: VALUE_PARAMETER <receiver: Host>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Host<T>()
-      TYPE_PARAMETER <T>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'

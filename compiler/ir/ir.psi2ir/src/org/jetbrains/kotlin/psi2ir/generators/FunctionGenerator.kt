@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import com.sun.org.apache.xpath.internal.operations.Mod
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -204,7 +203,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             context.symbolTable.declareConstructor(
                     ktConstructorElement.startOffset, ktConstructorElement.endOffset, IrDeclarationOrigin.DEFINED, constructorDescriptor
             ).buildWithScope { irConstructor ->
-                generateFunctionParameterDeclarations(irConstructor, ktParametersElement, null)
+                generateValueParameterDeclarations(irConstructor, ktParametersElement, null)
                 irConstructor.body = createBodyGenerator(irConstructor.symbol).generateBody()
             }
 

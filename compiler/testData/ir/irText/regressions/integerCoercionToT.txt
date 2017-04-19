@@ -13,7 +13,6 @@ FILE /integerCoercionToT.kt
     $new: VALUE_PARAMETER <receiver: CInt32VarX>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor CInt32VarX<T>()
-      TYPE_PARAMETER <T>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='CInt32VarX'

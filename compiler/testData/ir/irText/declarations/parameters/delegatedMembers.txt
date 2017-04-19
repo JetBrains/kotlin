@@ -19,7 +19,6 @@ FILE /delegatedMembers.kt
     $new: VALUE_PARAMETER <receiver: Test>
     TYPE_PARAMETER <TT>
     CONSTRUCTOR public constructor Test<TT>(impl: IBase<TT>)
-      TYPE_PARAMETER <TT>
       VALUE_PARAMETER value-parameter impl: IBase<TT>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

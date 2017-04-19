@@ -4,8 +4,6 @@ FILE /constructor.kt
     TYPE_PARAMETER <T1>
     TYPE_PARAMETER <T2>
     CONSTRUCTOR public constructor Test1<T1, T2>(x: T1, y: T2)
-      TYPE_PARAMETER <T1>
-      TYPE_PARAMETER <T2>
       VALUE_PARAMETER value-parameter x: T1
       VALUE_PARAMETER value-parameter y: T2
       BLOCK_BODY
@@ -56,7 +54,6 @@ FILE /constructor.kt
       $new: VALUE_PARAMETER <receiver: TestInner>
       TYPE_PARAMETER <Z>
       CONSTRUCTOR public constructor TestInner<Z>(z: Z)
-        TYPE_PARAMETER <Z>
         $outer: VALUE_PARAMETER <receiver: Test2>
         VALUE_PARAMETER value-parameter z: Z
         BLOCK_BODY
@@ -73,7 +70,6 @@ FILE /constructor.kt
               GET_FIELD 'z: Z' type=Z origin=null
                 receiver: GET_VAR '<receiver: TestInner>' type=Test2.TestInner<Z> origin=null
       CONSTRUCTOR public constructor TestInner<Z>(z: Z, i: kotlin.Int)
-        TYPE_PARAMETER <Z>
         $outer: VALUE_PARAMETER <receiver: Test2>
         VALUE_PARAMETER value-parameter z: Z
         VALUE_PARAMETER value-parameter i: kotlin.Int
@@ -125,7 +121,6 @@ FILE /constructor.kt
     $new: VALUE_PARAMETER <receiver: Test4>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Test4<T>(x: kotlin.Int)
-      TYPE_PARAMETER <T>
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -141,7 +136,6 @@ FILE /constructor.kt
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: Test4>' type=Test4<T> origin=null
     CONSTRUCTOR public constructor Test4<T>(x: kotlin.Int, y: kotlin.Int = ...)
-      TYPE_PARAMETER <T>
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int = ...
         EXPRESSION_BODY

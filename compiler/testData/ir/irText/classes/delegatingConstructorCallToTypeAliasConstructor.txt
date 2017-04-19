@@ -3,7 +3,6 @@ FILE /delegatingConstructorCallToTypeAliasConstructor.kt
     $new: VALUE_PARAMETER <receiver: Cell>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Cell<T>(value: T)
-      TYPE_PARAMETER <T>
       VALUE_PARAMETER value-parameter value: T
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

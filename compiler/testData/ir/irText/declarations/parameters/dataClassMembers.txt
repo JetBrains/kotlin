@@ -3,7 +3,6 @@ FILE /dataClassMembers.kt
     $new: VALUE_PARAMETER <receiver: Test>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Test<T>(x: T, y: kotlin.String = ...)
-      TYPE_PARAMETER <T>
       VALUE_PARAMETER value-parameter x: T
       VALUE_PARAMETER value-parameter y: kotlin.String = ...
         EXPRESSION_BODY

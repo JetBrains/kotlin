@@ -13,7 +13,6 @@ FILE /class.kt
     $new: VALUE_PARAMETER <receiver: Test>
     TYPE_PARAMETER <T0>
     CONSTRUCTOR public constructor Test<T0>()
-      TYPE_PARAMETER <T0>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
@@ -21,7 +20,6 @@ FILE /class.kt
       $new: VALUE_PARAMETER <receiver: TestNested>
       TYPE_PARAMETER <T1>
       CONSTRUCTOR public constructor TestNested<T1>()
-        TYPE_PARAMETER <T1>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='TestNested'
@@ -32,7 +30,6 @@ FILE /class.kt
       $new: VALUE_PARAMETER <receiver: TestInner>
       TYPE_PARAMETER <T2>
       CONSTRUCTOR public constructor TestInner<T2>()
-        TYPE_PARAMETER <T2>
         $outer: VALUE_PARAMETER <receiver: Test>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
