@@ -27,18 +27,7 @@ impl fun todo(block: () -> Unit) {
     println("TODO at " + block)
 }
 
-/*
-/** Asserts that a [block] fails with a specific exception of type [T] being thrown.
- *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.
- */
-inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit): T {
-    val exception = assertFails(message, block)
-    val messagePrefix = if (message == null) "" else "$message. "
 
-    assertTrue(exception is T, "${messagePrefix}An exception thrown is not of the expected type: $exception")
-    return exception as T
-}
-*/
 /** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
 impl fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T {
     val exception = assertFails(message, block)
