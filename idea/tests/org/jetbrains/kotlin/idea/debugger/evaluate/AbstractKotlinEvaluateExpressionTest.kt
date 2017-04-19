@@ -197,7 +197,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         val session = myDebuggerSession.xDebugSession  as XDebugSessionImpl
         val watchesView = XWatchesViewImpl(session, false)
         Disposer.register(testRootDisposable, watchesView)
-        session.addSessionListener(XDebugViewSessionListener(watchesView, session), testRootDisposable)
+        XDebugViewSessionListener.attach(watchesView, session)
         return watchesView
     }
 
@@ -205,7 +205,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         val session = myDebuggerSession.xDebugSession as XDebugSessionImpl
         val variablesView = XVariablesView(session)
         Disposer.register(testRootDisposable, variablesView)
-        session.addSessionListener(XDebugViewSessionListener(variablesView, session), testRootDisposable)
+        XDebugViewSessionListener.attach(variablesView, session)
         return variablesView
     }
 
