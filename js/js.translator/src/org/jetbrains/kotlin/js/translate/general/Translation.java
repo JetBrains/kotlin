@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.js.backend.ast.*;
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.PackageDeclarationTranslator;
 import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor;
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator;
-import org.jetbrains.kotlin.js.translate.test.JSRhinoUnitTester;
 import org.jetbrains.kotlin.js.translate.test.JSTestGenerator;
 import org.jetbrains.kotlin.js.translate.test.JSTester;
 import org.jetbrains.kotlin.js.translate.test.QUnitTester;
@@ -280,7 +278,7 @@ public final class Translation {
             defineModule(context, statements, config.getModuleId());
         }
 
-        mayBeGenerateTests(files, config, rootBlock, context);
+        mayBeGenerateTests(files, rootBlock, context);
         rootFunction.getParameters().add(new JsParameter((rootPackageName)));
 
         // Invoke function passing modules as arguments
@@ -317,10 +315,9 @@ public final class Translation {
     }
 
     private static void mayBeGenerateTests(
-            @NotNull Collection<KtFile> files, @NotNull JsConfig config, @NotNull JsBlock rootBlock, @NotNull TranslationContext context
+            @NotNull Collection<KtFile> files, @NotNull JsBlock rootBlock, @NotNull TranslationContext context
     ) {
-        JSTester tester =
-                config.getConfiguration().getBoolean(JSConfigurationKeys.UNIT_TEST_CONFIG) ? new JSRhinoUnitTester() : new QUnitTester();
+        JSTester tester = new QUnitTester();
         tester.initialize(context, rootBlock);
         JSTestGenerator.generateTestCalls(context, files, tester);
         tester.deinitialize();

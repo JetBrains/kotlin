@@ -115,9 +115,8 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             return;
         }
         File outDir = new File(getOutputPath());
-        assert outDir.exists();
-        boolean success = FileUtil.delete(outDir);
-        assert success;
+        assertTrue(outDir.exists());
+        assertTrue(FileUtil.delete(outDir));
     }
 
     public void doTest(@NotNull String filePath) {
@@ -217,10 +216,6 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         return null;
     }
 
-    protected boolean shouldBeTranslateAsUnitTestClass() {
-        return false;
-    }
-
     protected boolean shouldGenerateSourceMap() {
         return false;
     }
@@ -251,7 +246,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     }
 
     @NotNull
-    protected List<String> additionalKotlinFiles() {
+    private List<String> additionalKotlinFiles() {
         List<String> additionalFiles = Lists.newArrayList();
 
         // add all kotlin files from testData/_commonFiles
@@ -263,7 +258,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     }
 
     @NotNull
-    protected List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {
+    private List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {
         List<String> additionalFiles = Lists.newArrayList();
 
         // add all js files from testData/_commonFiles
@@ -328,8 +323,6 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
 
         configuration.put(JSConfigurationKeys.SOURCE_MAP, shouldGenerateSourceMap());
         configuration.put(JSConfigurationKeys.META_INFO, false);
-
-        configuration.put(JSConfigurationKeys.UNIT_TEST_CONFIG, shouldBeTranslateAsUnitTestClass());
 
         return new JsConfig(project, configuration);
     }

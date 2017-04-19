@@ -65,7 +65,6 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
         configuration.put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME);
         configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB);
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
-        configuration.put(JSConfigurationKeys.UNIT_TEST_CONFIG, true);
         if (explicitLanguageVersion != null) {
             CommonConfigurationKeysKt.setLanguageVersionSettings(
                     configuration,

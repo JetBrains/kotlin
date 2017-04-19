@@ -34,9 +34,6 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<EcmaVersion> TARGET =
             CompilerConfigurationKey.create("ECMA version target");
 
-    public static final CompilerConfigurationKey<Boolean> UNIT_TEST_CONFIG =
-            CompilerConfigurationKey.create("unit test config");
-
     public static final CompilerConfigurationKey<ModuleKind> MODULE_KIND =
             CompilerConfigurationKey.create("module kind");
 
