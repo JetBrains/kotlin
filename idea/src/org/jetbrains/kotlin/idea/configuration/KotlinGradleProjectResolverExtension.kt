@@ -28,12 +28,15 @@ import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.CompilerArgumentsBySourceSet
 import org.jetbrains.kotlin.gradle.KotlinGradleModel
 import org.jetbrains.kotlin.gradle.KotlinGradleModelBuilder
+import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.plugins.gradle.model.ExternalProject
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil.getModuleId
 
+var DataNode<ModuleData>.hasKotlinPlugin
+        by NotNullableUserDataProperty(Key.create<Boolean>("HAS_KOTLIN_PLUGIN"), false)
 var DataNode<ModuleData>.currentCompilerArgumentsBySourceSet
         by UserDataProperty(Key.create<CompilerArgumentsBySourceSet>("CURRENT_COMPILER_ARGUMENTS"))
 var DataNode<ModuleData>.defaultCompilerArgumentsBySourceSet
@@ -67,6 +70,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
             }
         }
 
+        ideModule.hasKotlinPlugin = gradleModel.hasKotlinPlugin
         ideModule.currentCompilerArgumentsBySourceSet = gradleModel.currentCompilerArgumentsBySourceSet
         ideModule.defaultCompilerArgumentsBySourceSet = gradleModel.defaultCompilerArgumentsBySourceSet
         ideModule.coroutines = gradleModel.coroutines

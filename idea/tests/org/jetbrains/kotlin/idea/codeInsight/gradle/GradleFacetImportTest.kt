@@ -748,4 +748,64 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
         }
     }
+
+    @Test
+    fun testNoFacetInModuleWithoutKotlinPlugin() {
+        createProjectSubFile("build.gradle", """
+            group 'gr01'
+            version '1.0-SNAPSHOT'
+
+            apply plugin: 'java'
+            apply plugin: 'kotlin'
+
+            sourceCompatibility = 1.8
+
+            repositories {
+                mavenCentral()
+            }
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                }
+                dependencies {
+                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.1"
+                }
+            }
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.1"
+            }
+        """)
+        createProjectSubFile("settings.gradle", """
+            rootProject.name = 'gr01'
+            include 'm1'
+        """)
+        createProjectSubFile("m1/build.gradle", """
+            group 'gr01'
+            version '1.0-SNAPSHOT'
+
+            apply plugin: 'java'
+
+            sourceCompatibility = 1.8
+
+            repositories {
+                mavenCentral()
+            }
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                }
+            }
+            dependencies {
+                testCompile group: 'junit', name: 'junit', version: '4.11'
+            }
+        """)
+        importProject()
+
+        Assert.assertNotNull(KotlinFacet.get(getModule("gr01_main")))
+        Assert.assertNotNull(KotlinFacet.get(getModule("gr01_test")))
+        Assert.assertNull(KotlinFacet.get(getModule("m1_main")))
+        Assert.assertNull(KotlinFacet.get(getModule("m1_test")))
+    }
 }

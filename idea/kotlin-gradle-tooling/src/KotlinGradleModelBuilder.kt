@@ -31,6 +31,7 @@ import kotlin.collections.HashSet
 typealias CompilerArgumentsBySourceSet = Map<String, List<String>>
 
 interface KotlinGradleModel : Serializable {
+    val hasKotlinPlugin: Boolean
     val currentCompilerArgumentsBySourceSet: CompilerArgumentsBySourceSet
     val defaultCompilerArgumentsBySourceSet: CompilerArgumentsBySourceSet
     val coroutines: String?
@@ -39,6 +40,7 @@ interface KotlinGradleModel : Serializable {
 }
 
 class KotlinGradleModelImpl(
+        override val hasKotlinPlugin: Boolean,
         override val currentCompilerArgumentsBySourceSet: CompilerArgumentsBySourceSet,
         override val defaultCompilerArgumentsBySourceSet: CompilerArgumentsBySourceSet,
         override val coroutines: String?,
@@ -55,6 +57,7 @@ class KotlinGradleModelBuilder : ModelBuilderService {
                 "kotlin" to "kotlin-platform-jvm",
                 "kotlin2js" to "kotlin-platform-js"
         )
+        val kotlinPluginIds = listOf("kotlin", "kotlin2js")
         private val kotlinPlatformCommonPluginId = "kotlin-platform-common"
     }
 
@@ -151,6 +154,9 @@ class KotlinGradleModelBuilder : ModelBuilderService {
     }
 
     override fun buildAll(modelName: String?, project: Project): KotlinGradleModelImpl {
+        val kotlinPluginId = kotlinPluginIds.singleOrNull { project.plugins.findPlugin(it) != null }
+        val platformPluginId = platformPluginIds.singleOrNull { project.plugins.findPlugin(it) != null }
+
         val currentCompilerArgumentsBySourceSet = LinkedHashMap<String, List<String>>()
         val defaultCompilerArgumentsBySourceSet = LinkedHashMap<String, List<String>>()
 
@@ -161,11 +167,11 @@ class KotlinGradleModelBuilder : ModelBuilderService {
             collectCompilerArguments(compileTask, "getDefaultSerializedCompilerArguments", defaultCompilerArgumentsBySourceSet)
         }
 
-        val platform = platformPluginIds.singleOrNull { project.plugins.findPlugin(it) != null }
-                       ?: pluginToPlatform.entries.singleOrNull { project.plugins.findPlugin(it.key) != null }?.value
+        val platform = platformPluginId ?: pluginToPlatform.entries.singleOrNull { project.plugins.findPlugin(it.key) != null }?.value
         val transitiveCommon = getImplements(project)?.let { transitiveCommonDependencies(it) } ?: emptySet()
 
         return KotlinGradleModelImpl(
+                kotlinPluginId != null || platformPluginId != null,
                 currentCompilerArgumentsBySourceSet,
                 defaultCompilerArgumentsBySourceSet,
                 getCoroutines(project),

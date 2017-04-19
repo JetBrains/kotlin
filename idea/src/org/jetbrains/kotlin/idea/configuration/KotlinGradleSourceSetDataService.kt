@@ -109,6 +109,11 @@ private fun configureFacetByGradleModule(
         ideModule: Module,
         modelsProvider: IdeModifiableModelsProvider
 ): KotlinFacet? {
+    if (!moduleNode.hasKotlinPlugin) {
+        KotlinFacet.get(ideModule)?.let { modelsProvider.getModifiableFacetModel(ideModule).removeFacet(it) }
+        return null
+    }
+
     val compilerVersion = moduleNode.findAll(BuildScriptClasspathData.KEY).firstOrNull()?.data?.let(::findKotlinPluginVersion)
                           ?: return null
     val platformKind = detectPlatformByPlugin(moduleNode) ?: detectPlatformByLibrary(moduleNode)
