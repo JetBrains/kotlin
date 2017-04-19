@@ -14,40 +14,28 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration;
+package org.jetbrains.kotlin.idea.configuration
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.resolve.TargetPlatform;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-public class KotlinGradleModuleConfigurator extends KotlinWithGradleConfigurator {
-    public static final String NAME = "gradle";
+class KotlinGradleModuleConfigurator internal constructor() : KotlinWithGradleConfigurator() {
 
-    public static final String APPLY_KOTLIN = "apply plugin: 'kotlin'";
+    override val name: String
+        get() = NAME
 
-    @NotNull
-    @Override
-    public String getName() {
-        return NAME;
-    }
+    override val targetPlatform: TargetPlatform
+        get() = JvmPlatform
 
-    @NotNull
-    @Override
-    public TargetPlatform getTargetPlatform() {
-        return JvmPlatform.INSTANCE;
-    }
+    override val presentableText: String
+        get() = "Gradle"
 
-    @NotNull
-    @Override
-    public String getPresentableText() {
-        return "Gradle";
-    }
+    override val applyPluginDirective: String
+        get() = APPLY_KOTLIN
 
-    @Override
-    protected String getApplyPluginDirective() {
-        return APPLY_KOTLIN;
-    }
+    companion object {
+        val NAME = "gradle"
 
-    KotlinGradleModuleConfigurator() {
+        val APPLY_KOTLIN = "apply plugin: 'kotlin'"
     }
 }
