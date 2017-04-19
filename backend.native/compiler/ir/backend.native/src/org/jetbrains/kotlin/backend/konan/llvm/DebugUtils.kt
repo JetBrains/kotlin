@@ -23,6 +23,7 @@ import llvm.LLVMAddNamedMetadataOperand
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.KonanVersion
+import org.jetbrains.kotlin.ir.SourceManager.FileEntry
 
 
 internal object DWARF {
@@ -35,6 +36,19 @@ internal object DWARF {
     val dwarfVersion = 2 /* TODO: configurable? like gcc/clang -gdwarf-2 and so on. */
     val debugInfoVersion = 3 /* TODO: configurable? */
 }
+
+
+/**
+ * File entry starts offsets from zero while dwarf number lines/column starting from 1.
+ */
+private fun FileEntry.location(offset:Int, offsetToNumber:(Int) -> Int):Int {
+    return if (offset < 0) -1
+    else offsetToNumber(offset) + 1
+}
+
+internal fun FileEntry.line(offset: Int) = location(offset, this::getLineNumber)
+
+internal fun FileEntry.column(offset: Int) = location(offset, this::getColumnNumber)
 
 internal fun generateDebugInfoHeader(context: Context) {
     if (context.shouldContainDebugInfo()) {
