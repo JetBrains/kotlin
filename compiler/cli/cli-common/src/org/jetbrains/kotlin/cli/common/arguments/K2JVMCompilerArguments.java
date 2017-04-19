@@ -138,11 +138,13 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     public String[] scriptResolverEnvironment;
 
     // Javac options
-    @Argument(value = "Xuse-javac", description = "Use Javac analysis")
+    @Argument(value = "-Xuse-javac", description = "Use Javac analysis")
     public boolean useJavac;
 
-    @Argument(value = "Xjavac-arguments", description = "Java compiler arguments")
-    @ValueDescription("<option[,]>")
+    @Argument(
+            value = "-Xjavac-arguments",
+            valueDescription = "<option[,]>",
+            description = "Java compiler arguments")
     public String[] javacArguments;
 
     // Paths to output directories for friend modules.
