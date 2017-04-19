@@ -56,5 +56,6 @@ abstract class AbstractJsTypedArraysBoxTest : BasicBoxTest(
 abstract class AbstractSourceMapGenerationSmokeTest : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "sourcemap/",
         "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/sourcemap/",
-        generateSourceMap = true
+        generateSourceMap = true,
+        generateNodeJsRunner = false
 )

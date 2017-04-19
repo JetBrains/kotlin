@@ -63,7 +63,8 @@ abstract class BasicBoxTest(
         private val pathToTestDir: String,
         private val pathToOutputDir: String,
         private val typedArraysEnabled: Boolean = false,
-        private val generateSourceMap: Boolean = false
+        private val generateSourceMap: Boolean = false,
+        private val generateNodeJsRunner: Boolean = true
 ) : KotlinTestWithEnvironment() {
     val additionalCommonFileDirectories = mutableListOf<String>()
 
@@ -129,7 +130,7 @@ abstract class BasicBoxTest(
             val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles + globalCommonFiles + localCommonFiles +
                              additionalCommonFiles
 
-            if (!SKIP_NODE_JS.matcher(expectedText).find()) {
+            if (generateNodeJsRunner && !SKIP_NODE_JS.matcher(expectedText).find()) {
                 val nodeRunnerName = mainModule.outputFileName(outputDir) + ".node.js"
                 val ignored = InTextDirectivesUtils.isIgnoredTarget(TargetBackend.JS, file)
                 val nodeRunnerText = generateNodeRunner(allJsFiles, outputDir, mainModuleName, ignored, testFactory.testPackage)
