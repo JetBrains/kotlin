@@ -1,7 +1,0 @@
-package test
-
-public fun ohMy(/*0*/ kotlin.Array<kotlin.Array<kotlin.Int>>, /*1*/ java.util.List<kotlin.String>): kotlin.Array<kotlin.Array<kotlin.Int>>
-
-public/*package*/ open class ArrayOfIntArray {
-    public/*package*/ constructor ArrayOfIntArray()
-}

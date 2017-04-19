@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
+import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
@@ -45,9 +48,19 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
         val javaErrorFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".javaerr.txt"))
 
         val out = File(tmpdir, "out")
-        val compiledSuccessfully = KotlinTestUtils.compileKotlinWithJava(listOf(javaFile),
-                                                                         listOf(ktFile),
-                                                                         out, testRootDisposable, javaErrorFile)
+
+        val useJavac = this::class.java.name.contains("WithJavac")
+
+        val compiledSuccessfully = if (useJavac) {
+            compileKotlinWithJava(listOf(javaFile),
+                                  listOf(ktFile),
+                                  out, testRootDisposable)
+        } else {
+            KotlinTestUtils.compileKotlinWithJava(listOf(javaFile),
+                                                  listOf(ktFile),
+                                                  out, testRootDisposable, javaErrorFile)
+        }
+
         if (!compiledSuccessfully) return
 
         val environment = KotlinCoreEnvironment.createForTests(
@@ -56,12 +69,50 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
 
+        if (useJavac) {
+            environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
+            environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, out)
+            environment.registerJavac(emptyList<File>())
+        }
+
         val analysisResult = JvmResolveUtil.analyze(environment)
         val packageView = analysisResult.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
         assertFalse("Nothing found in package ${LoadDescriptorUtil.TEST_PACKAGE_FQNAME}", packageView.isEmpty())
 
+        if (useJavac) {
+            File("${ktFilePath.substringBefore(".kt")}2.txt").let {
+                if (it.exists()) {
+                    validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, it)
+                    return
+                }
+            }
+
+        }
+
         val expectedFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".txt"))
         validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile)
+    }
+
+    @Throws(IOException::class)
+    fun compileKotlinWithJava(
+            javaFiles: List<File>,
+            ktFiles: List<File>,
+            outDir: File,
+            disposable: Disposable
+    ): Boolean {
+        val environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable)
+        environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
+        environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, outDir)
+        environment.registerJavac(javaFiles, kotlinFiles = listOf(KotlinTestUtils.loadJetFile(environment.project, ktFiles.first())))
+        if (!ktFiles.isEmpty()) {
+            LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment)
+        }
+        else {
+            val mkdirs = outDir.mkdirs()
+            assert(mkdirs) { "Not created: $outDir" }
+        }
+
+        return JavacWrapper.getInstance(environment.project).use { it.compile() }
     }
 
     companion object {

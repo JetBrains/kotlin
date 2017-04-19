@@ -1,7 +1,0 @@
-package test
-
-public fun doNothing(/*0*/ kotlin.Array<kotlin.Int>, /*1*/ java.util.List<kotlin.String>): kotlin.Array<kotlin.Int>
-
-public/*package*/ open class IntArray {
-    public/*package*/ constructor IntArray()
-}
