@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap
 
-class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) : DeclarationChecker {
+object HeaderImplDeclarationChecker : DeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
@@ -61,7 +61,7 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
 
         val checkImpl = !languageVersionSettings.isFlagEnabled(AnalysisFlags.multiPlatformDoNotCheckImpl)
         if (descriptor.isHeader && declaration.hasModifier(KtTokens.HEADER_KEYWORD)) {
-            checkHeaderDeclarationHasImplementation(declaration, descriptor, diagnosticHolder, checkImpl)
+            checkHeaderDeclarationHasImplementation(declaration, descriptor, diagnosticHolder, descriptor.module, checkImpl)
         }
         else if (checkImpl && descriptor.isImpl && declaration.hasModifier(KtTokens.IMPL_KEYWORD)) {
             checkImplementationHasHeaderDeclaration(declaration, descriptor, diagnosticHolder)
@@ -69,23 +69,30 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
     }
 
     fun checkHeaderDeclarationHasImplementation(
-            reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink, checkImpl: Boolean
+            reportOn: KtDeclaration,
+            descriptor: MemberDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            platformModule: ModuleDescriptor,
+            checkImpl: Boolean
     ) {
-        val compatibility = findImplForHeader(descriptor, checkImpl)
+        val compatibility = findImplForHeader(descriptor, platformModule, checkImpl)
 
         if (compatibility != null && Compatible !in compatibility) {
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
-            diagnosticHolder.report(Errors.HEADER_WITHOUT_IMPLEMENTATION.on(
-                    reportOn, descriptor, moduleToCheck ?: descriptor.module, incompatibility))
+            diagnosticHolder.report(Errors.HEADER_WITHOUT_IMPLEMENTATION.on(reportOn, descriptor, platformModule, incompatibility))
         }
     }
 
-    private fun findImplForHeader(header: MemberDescriptor, checkImpl: Boolean): Map<Compatibility, List<MemberDescriptor>>? {
+    private fun findImplForHeader(
+            header: MemberDescriptor,
+            platformModule: ModuleDescriptor,
+            checkImpl: Boolean
+    ): Map<Compatibility, List<MemberDescriptor>>? {
         return when (header) {
             is CallableMemberDescriptor -> {
-                header.findNamesakesFromTheSameModule().filter { impl ->
+                header.findNamesakesFromModule(platformModule).filter { impl ->
                     header != impl &&
                     // TODO: support non-source definitions (e.g. from Java)
                     DescriptorToSourceUtils.getSourceFromDescriptor(impl) is KtElement
@@ -94,7 +101,7 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
                 }
             }
             is ClassDescriptor -> {
-                header.findClassifiersFromTheSameModule().filter { impl ->
+                header.findClassifiersFromModule(platformModule).filter { impl ->
                     header != impl &&
                     DescriptorToSourceUtils.getSourceFromDescriptor(impl) is KtElement
                 }.groupBy { impl ->
@@ -108,7 +115,10 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
     private fun checkImplementationHasHeaderDeclaration(
             reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink
     ) {
-        val compatibility = findHeaderForImpl(descriptor)
+        // Using the platform module instead of the common module is sort of fine here because the former always depends on the latter.
+        // However, it would be clearer to find the common module this platform module implements and look for headers there instead.
+        // TODO: use common module here
+        val compatibility = findHeaderForImpl(descriptor, descriptor.module)
 
         if (compatibility != null && Compatible !in compatibility) {
             assert(compatibility.keys.all { it is Incompatible })
@@ -117,16 +127,16 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
         }
     }
 
-    private fun findHeaderForImpl(impl: MemberDescriptor): Map<Compatibility, List<MemberDescriptor>>? {
+    private fun findHeaderForImpl(impl: MemberDescriptor, commonModule: ModuleDescriptor): Map<Compatibility, List<MemberDescriptor>>? {
         return when (impl) {
             is CallableMemberDescriptor -> {
                 val container = impl.containingDeclaration
                 val candidates = when (container) {
                     is ClassDescriptor -> {
-                        val headerClass = findHeaderForImpl(container)?.get(Compatible)?.firstOrNull() as? ClassDescriptor
+                        val headerClass = findHeaderForImpl(container, commonModule)?.get(Compatible)?.firstOrNull() as? ClassDescriptor
                         headerClass?.getMembers(impl.name).orEmpty()
                     }
-                    is PackageFragmentDescriptor -> impl.findNamesakesFromTheSameModule()
+                    is PackageFragmentDescriptor -> impl.findNamesakesFromModule(commonModule)
                     else -> return null // do not report anything for incorrect code, e.g. 'impl' local function
                 }
 
@@ -145,7 +155,7 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
                 }
             }
             is ClassifierDescriptorWithTypeParameters -> {
-                impl.findClassifiersFromTheSameModule().filter { declaration ->
+                impl.findClassifiersFromModule(commonModule).filter { declaration ->
                     impl != declaration &&
                     declaration is ClassDescriptor && declaration.isHeader
                 }.groupBy { header ->
@@ -156,26 +166,26 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
         }
     }
 
-    fun MemberDescriptor.findCompatibleImplForHeader(): List<MemberDescriptor> =
-            findImplForHeader(this, false)?.get(Compatible).orEmpty()
+    fun MemberDescriptor.findCompatibleImplForHeader(platformModule: ModuleDescriptor): List<MemberDescriptor> =
+            findImplForHeader(this, platformModule, false)?.get(Compatible).orEmpty()
 
-    fun MemberDescriptor.findCompatibleHeaderForImpl(): List<MemberDescriptor> =
-            findHeaderForImpl(this)?.get(Compatible).orEmpty()
+    fun MemberDescriptor.findCompatibleHeaderForImpl(commonModule: ModuleDescriptor): List<MemberDescriptor> =
+            findHeaderForImpl(this, commonModule)?.get(Compatible).orEmpty()
 
-    private fun CallableMemberDescriptor.findNamesakesFromTheSameModule(): Collection<CallableMemberDescriptor> {
+    private fun CallableMemberDescriptor.findNamesakesFromModule(module: ModuleDescriptor): Collection<CallableMemberDescriptor> {
         val packageFqName = (containingDeclaration as? PackageFragmentDescriptor)?.fqName ?: return emptyList()
-        val myModule = moduleToCheck ?: module
-        val scope = myModule.getPackage(packageFqName).memberScope
+        val scope = module.getPackage(packageFqName).memberScope
 
         return when (this) {
             is FunctionDescriptor -> scope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
             is PropertyDescriptor -> scope.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED)
             else -> throw AssertionError("Unsupported declaration: $this")
-        } // TODO: only obtain descriptors from our module to start with
+        }
     }
 
-    private fun ClassifierDescriptorWithTypeParameters.findClassifiersFromTheSameModule(): Collection<ClassifierDescriptorWithTypeParameters> {
-        val myModule = moduleToCheck ?: module
+    private fun ClassifierDescriptorWithTypeParameters.findClassifiersFromModule(
+            module: ModuleDescriptor
+    ): Collection<ClassifierDescriptorWithTypeParameters> {
         val classId = classId ?: return emptyList()
 
         fun MemberScope.getAllClassifiers(name: Name): Collection<ClassifierDescriptorWithTypeParameters> =
@@ -183,7 +193,7 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
                         .filterIsInstance<ClassifierDescriptorWithTypeParameters>()
 
         val segments = classId.relativeClassName.pathSegments()
-        var classifiers = myModule.getPackage(classId.packageFqName).memberScope.getAllClassifiers(segments.first())
+        var classifiers = module.getPackage(classId.packageFqName).memberScope.getAllClassifiers(segments.first())
 
         for (name in segments.subList(1, segments.size)) {
             classifiers = classifiers.mapNotNull { classifier ->

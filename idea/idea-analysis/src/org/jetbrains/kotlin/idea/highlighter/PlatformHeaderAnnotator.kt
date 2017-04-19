@@ -54,7 +54,6 @@ class PlatformHeaderAnnotator : Annotator {
         val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return Diagnostics.EMPTY
         if (!descriptor.isHeader) return Diagnostics.EMPTY
 
-        val checkers = modulesToCheck.map(::HeaderImplDeclarationChecker)
         val diagnosticList = mutableListOf<Diagnostic>()
         val diagnosticSink = object : DiagnosticSink {
             override fun report(diagnostic: Diagnostic) {
@@ -63,8 +62,10 @@ class PlatformHeaderAnnotator : Annotator {
 
             override fun wantsDiagnostics() = true
         }
-        for (checker in checkers) {
-            checker.checkHeaderDeclarationHasImplementation(declaration, descriptor, diagnosticSink, checkImpl = false)
+        for (module in modulesToCheck) {
+            HeaderImplDeclarationChecker.checkHeaderDeclarationHasImplementation(
+                    declaration, descriptor, diagnosticSink, module, checkImpl = false
+            )
         }
 
         val suppressionCache = KotlinCacheService.getInstance(declaration.project).getSuppressionCache()

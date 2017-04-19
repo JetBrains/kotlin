@@ -34,8 +34,8 @@ fun ModuleDescriptor.hasImplementationsOf(descriptor: MemberDescriptor) =
         implementationsOf(descriptor).isNotEmpty()
 
 private fun ModuleDescriptor.implementationsOf(descriptor: MemberDescriptor): List<DeclarationDescriptor> =
-        with(HeaderImplDeclarationChecker(this)) {
-            descriptor.findCompatibleImplForHeader()
+        with(HeaderImplDeclarationChecker) {
+            descriptor.findCompatibleImplForHeader(this@implementationsOf)
         }
 
 fun getPlatformImplementationTooltip(declaration: KtDeclaration): String? {

@@ -43,7 +43,7 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 TypeParameterBoundIsNotArrayChecker(),
                 JvmSyntheticApplicabilityChecker(),
                 StrictfpApplicabilityChecker(),
-                HeaderImplDeclarationChecker()
+                HeaderImplDeclarationChecker
         ),
 
         additionalCallCheckers = listOf(
