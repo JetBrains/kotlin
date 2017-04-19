@@ -24,6 +24,7 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
+import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
 import javax.swing.Icon
@@ -77,6 +78,15 @@ class GradleKotlinJavaFrameworkSupportProvider : GradleKotlinFrameworkSupportPro
 
     override fun getRuntimeLibrary(rootModel: ModifiableRootModel) =
             KotlinWithGradleConfigurator.getRuntimeLibraryForSdk(rootModel.sdk, bundledRuntimeVersion())
+
+    override fun addSupport(module: Module, rootModel: ModifiableRootModel, modifiableModelsProvider: ModifiableModelsProvider, buildScriptData: BuildScriptDataBuilder) {
+        super.addSupport(module, rootModel, modifiableModelsProvider, buildScriptData)
+        val jvmTarget = getDefaultJvmTarget(rootModel.sdk, bundledRuntimeVersion())
+        if (jvmTarget != null) {
+            buildScriptData.addOther("compileKotlin {\n    kotlinOptions.jvmTarget = \"1.8\"\n}\n\n")
+            buildScriptData.addOther("compileTestKotlin {\n    kotlinOptions.jvmTarget = \"1.8\"\n}\n")
+        }
+    }
 }
 
 class GradleKotlinJSFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider("KOTLIN_JS", "Kotlin (JavaScript)") {

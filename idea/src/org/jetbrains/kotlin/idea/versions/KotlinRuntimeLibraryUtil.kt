@@ -41,6 +41,7 @@ import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.ScalarIndexExtension
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
@@ -342,6 +343,17 @@ fun getStdlibArtifactId(sdk: Sdk?, version: String): String {
         else -> MAVEN_STDLIB_ID
     }
     return artifactId
+}
+
+fun getDefaultJvmTarget(sdk: Sdk?, version: String): JvmTarget? {
+    if (!hasJreSpecificRuntime(version)) {
+        return null
+    }
+    val sdkVersion = sdk?.let { JavaSdk.getInstance().getVersion(it) }
+    if (sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
+        return JvmTarget.JVM_1_8
+    }
+    return null
 }
 
 fun hasJreSpecificRuntime(version: String): Boolean =
