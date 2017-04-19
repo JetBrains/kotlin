@@ -77,4 +77,10 @@ public class ForeignAnnotationsTestGenerated extends AbstractForeignAnnotationsT
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/lombokSimple.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("rxjava.kt")
+    public void testRxjava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/rxjava.kt");
+        doTest(fileName);
+    }
 }

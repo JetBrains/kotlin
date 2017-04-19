@@ -238,7 +238,9 @@ object ExcludedTypeAnnotations {
             FqName("edu.umd.cs.findbugs.annotations.CheckForNull"),
             FqName("edu.umd.cs.findbugs.annotations.Nullable"),
             FqName("edu.umd.cs.findbugs.annotations.PossiblyNull"),
-            FqName("lombok.NonNull")
+            FqName("lombok.NonNull"),
+            FqName("io.reactivex.annotations.Nullable"),
+            FqName("io.reactivex.annotations.NonNull")
     )
 
     val internalAnnotationsForResolve = setOf(
