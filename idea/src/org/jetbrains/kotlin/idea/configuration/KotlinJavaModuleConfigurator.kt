@@ -17,12 +17,21 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.libraries.Library
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
+import org.jetbrains.kotlin.idea.util.projectStructure.allModules
+import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.idea.versions.isKotlinJavaRuntime
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -73,6 +82,30 @@ open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibra
 
     override val libraryMatcher: (Library) -> Boolean
         get() = ::isKotlinJavaRuntime
+
+    override fun configureKotlinSettings(modules: List<Module>) {
+        val project = modules.firstOrNull()?.project ?: return
+        val canChangeProjectSettings = project.allModules().all {
+            it.sdk?.let { JavaSdk.getInstance().getVersion(it)?.isAtLeast(JavaSdkVersion.JDK_1_8) } ?: true
+        }
+        if (canChangeProjectSettings) {
+            Kotlin2JvmCompilerArgumentsHolder.getInstance(project).update {
+                jvmTarget = "1.8"
+            }
+        }
+        else {
+            for (module in modules) {
+                val hasJdk8 = module.sdk?.let { JavaSdk.getInstance().getVersion(it)?.isAtLeast(JavaSdkVersion.JDK_1_8) }
+                if (hasJdk8 == true) {
+                    val modelsProvider = IdeModifiableModelsProviderImpl(project)
+                    val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false, commitModel = true)
+                    val facetSettings = facet.configuration.settings
+                    facetSettings.initializeIfNeeded(module, null, TargetPlatformKind.Jvm(JvmTarget.JVM_1_8))
+                    (facetSettings.compilerArguments as? K2JVMCompilerArguments)?.jvmTarget = "1.8"
+                }
+            }
+        }
+    }
 
     companion object {
         val NAME = "java"

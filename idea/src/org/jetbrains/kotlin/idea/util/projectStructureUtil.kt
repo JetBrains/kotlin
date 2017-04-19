@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.util.projectStructure
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderEnumerator
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.Library
@@ -28,6 +30,8 @@ import java.io.File
 fun Project.allModules() = ModuleManager.getInstance(this).modules.toList()
 
 fun Module.findLibrary(predicate: (Library) -> Boolean): Library? = OrderEnumerator.orderEntries(this).findLibrary(predicate)
+
+val Module.sdk: Sdk? get() = ModuleRootManager.getInstance(this).sdk
 
 fun OrderEnumerator.findLibrary(predicate: (Library) -> Boolean): Library? {
     var lib: Library? = null

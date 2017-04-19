@@ -98,6 +98,8 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
             configureModuleWithLibrary(module, defaultPathToJar, copyLibraryIntoPath, collector)
         }
 
+        configureKotlinSettings(modulesToConfigure)
+
         collector.showNotification()
     }
 
@@ -284,6 +286,9 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
     }
 
     abstract fun getLibraryJarDescriptors(sdk: Sdk?): List<LibraryJarDescriptor>
+
+    protected open fun configureKotlinSettings(modules: List<Module>) {
+    }
 
     companion object {
         val DEFAULT_LIBRARY_DIR = "lib"
