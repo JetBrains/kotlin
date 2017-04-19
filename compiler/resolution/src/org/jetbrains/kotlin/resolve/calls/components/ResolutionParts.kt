@@ -48,7 +48,7 @@ internal object CheckInstantiationOfAbstractClass : ResolutionPart {
 
 internal object CheckVisibility : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
-        val receiverValue = dispatchReceiverArgument?.receiver?.receiverValue
+        val receiverValue = dispatchReceiverArgument?.receiver?.receiverValue ?: Visibilities.ALWAYS_SUITABLE_RECEIVER
         val invisibleMember = Visibilities.findInvisibleMember(receiverValue, candidateDescriptor, containingDescriptor) ?: return emptyList()
 
         if (dispatchReceiverArgument is ExpressionKotlinCallArgument) {
