@@ -1559,6 +1559,11 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertLambdaToParenthesesIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupName="Kotlin"
@@ -2122,6 +2127,13 @@
                      language="JAVA"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertLambdaToParenthesesInspection"
+                     displayName="Replace '{}' with '()'"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
 
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 

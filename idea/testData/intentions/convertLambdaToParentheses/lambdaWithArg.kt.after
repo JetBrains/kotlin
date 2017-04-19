@@ -1,0 +1,13 @@
+// WITH_RUNTIME
+
+fun foo() {
+    x(1, ::y)
+}
+
+fun y() {
+
+}
+
+fun x(number: Int, func: () -> Unit) {
+
+}
