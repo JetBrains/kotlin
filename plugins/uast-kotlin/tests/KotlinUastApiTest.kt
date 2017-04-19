@@ -40,4 +40,17 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
             assertNull(uLiteral)
         }
     }
+
+    @Test fun testNameContainingFile() {
+        doTest("NameContainingFile") { _, file ->
+            val foo = file.findElementByText<UClass>("class Foo")
+            assertEquals(file.psi, foo.nameIdentifier!!.containingFile)
+
+            val bar = file.findElementByText<UMethod>("fun bar() {}")
+            assertEquals(file.psi, bar.nameIdentifier!!.containingFile)
+
+            val xyzzy = file.findElementByText<UVariable>("val xyzzy: Int = 0")
+            assertEquals(file.psi, xyzzy.nameIdentifier!!.containingFile)
+        }
+    }
 }

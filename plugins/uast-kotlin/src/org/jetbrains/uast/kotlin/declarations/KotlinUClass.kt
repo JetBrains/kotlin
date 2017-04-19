@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.AbstractJavaUClass
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
+import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
 
 class KotlinUClass private constructor(
         psi: KtLightClass,
@@ -39,6 +40,8 @@ class KotlinUClass private constructor(
     override fun getOriginalElement(): PsiElement? {
         return super.getOriginalElement()
     }
+
+    override fun getNameIdentifier() = UastLightIdentifier(psi, ktClass)
 
     override fun getContainingFile(): PsiFile? = ktClass?.containingFile ?: psi.containingFile
 

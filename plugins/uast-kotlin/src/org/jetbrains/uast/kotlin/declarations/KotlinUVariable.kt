@@ -18,6 +18,7 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.uast.*
@@ -25,6 +26,7 @@ import org.jetbrains.uast.java.AbstractJavaUVariable
 import org.jetbrains.uast.java.JavaAbstractUExpression
 import org.jetbrains.uast.java.JavaUAnnotation
 import org.jetbrains.uast.java.annotations
+import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
@@ -47,6 +49,11 @@ abstract class AbstractKotlinUVariable : AbstractJavaUVariable() {
             } ?: return null
             return getLanguagePlugin().convertElement(initializerExpression, this) as? UExpression ?: UastEmptyExpression
         }
+
+    override fun getNameIdentifier(): PsiIdentifier {
+        val kotlinOrigin = (psi as? KtLightElement<*, *>)?.kotlinOrigin
+        return UastLightIdentifier(psi, kotlinOrigin as KtNamedDeclaration?)
+    }
 }
 
 class KotlinUVariable(
@@ -66,6 +73,10 @@ class KotlinUVariable(
 
     override fun getOriginalElement(): PsiElement? {
         return super<AbstractKotlinUVariable>.getOriginalElement()
+    }
+
+    override fun getNameIdentifier(): PsiIdentifier {
+        return super.getNameIdentifier()
     }
 
     companion object {
@@ -95,6 +106,10 @@ open class KotlinUParameter(
     override fun getOriginalElement(): PsiElement? {
         return super<AbstractKotlinUVariable>.getOriginalElement()
     }
+
+    override fun getNameIdentifier(): PsiIdentifier {
+        return super.getNameIdentifier()
+    }
 }
 
 open class KotlinUField(
@@ -110,6 +125,10 @@ open class KotlinUField(
 
     override fun getOriginalElement(): PsiElement? {
         return super<AbstractKotlinUVariable>.getOriginalElement()
+    }
+
+    override fun getNameIdentifier(): PsiIdentifier {
+        return super.getNameIdentifier()
     }
 }
 
@@ -128,6 +147,9 @@ open class KotlinULocalVariable(
         return super<AbstractKotlinUVariable>.getOriginalElement()
     }
 
+    override fun getNameIdentifier(): PsiIdentifier {
+        return super.getNameIdentifier()
+    }
 }
 
 open class KotlinUEnumConstant(
@@ -144,6 +166,10 @@ open class KotlinUEnumConstant(
 
     override fun getOriginalElement(): PsiElement? {
         return super<AbstractKotlinUVariable>.getOriginalElement()
+    }
+
+    override fun getNameIdentifier(): PsiIdentifier {
+        return super.getNameIdentifier()
     }
 
     override val kind: UastCallKind

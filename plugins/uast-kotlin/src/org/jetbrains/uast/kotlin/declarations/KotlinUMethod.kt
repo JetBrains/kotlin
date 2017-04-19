@@ -43,6 +43,8 @@ open class KotlinUMethod(
 
     override fun getContainingFile(): PsiFile? = kotlinOrigin?.containingFile ?: psi.containingFile
 
+    override fun getNameIdentifier() = UastLightIdentifier(psi, kotlinOrigin as KtNamedDeclaration?)
+
     override val annotations by lz {
         (kotlinOrigin as? KtDeclaration)?.annotationEntries?.map { KotlinUAnnotation(it, this) } ?: emptyList()
     }
