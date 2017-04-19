@@ -65,15 +65,7 @@ abstract class BasicBoxTest(
         private val typedArraysEnabled: Boolean = false,
         private val generateSourceMap: Boolean = false
 ) : KotlinTestWithEnvironment() {
-    private val COMMON_FILES_NAME = "_common"
-    private val COMMON_FILES_DIR = "_commonFiles/"
-    val MODULE_EMULATION_FILE = TEST_DATA_DIR_PATH + "/moduleEmulation.js"
     val additionalCommonFileDirectories = mutableListOf<String>()
-
-    val TEST_MODULE = "JS_TESTS"
-    val DEFAULT_MODULE = "main"
-    val TEST_FUNCTION = "box"
-    private val OLD_MODULE_SUFFIX = "-old"
 
     fun doTest(filePath: String) {
         val file = File(filePath)
@@ -366,10 +358,19 @@ abstract class BasicBoxTest(
     companion object {
         val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
 
+        private val COMMON_FILES_NAME = "_common"
+        private val COMMON_FILES_DIR = "_commonFiles/"
+        private val MODULE_EMULATION_FILE = TEST_DATA_DIR_PATH + "/moduleEmulation.js"
+
         private val MODULE_KIND_PATTERN = Pattern.compile("^// *MODULE_KIND: *(.+)$", Pattern.MULTILINE)
         private val NO_MODULE_SYSTEM_PATTERN = Pattern.compile("^// *NO_JS_MODULE_SYSTEM", Pattern.MULTILINE)
         private val NO_INLINE_PATTERN = Pattern.compile("^// *NO_INLINE *$", Pattern.MULTILINE)
         private val SKIP_NODE_JS = Pattern.compile("^// *SKIP_NODE_JS *$", Pattern.MULTILINE)
+
+        private val TEST_MODULE = "JS_TESTS"
+        private val DEFAULT_MODULE = "main"
+        private val TEST_FUNCTION = "box"
+        private val OLD_MODULE_SUFFIX = "-old"
 
         const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
     }
