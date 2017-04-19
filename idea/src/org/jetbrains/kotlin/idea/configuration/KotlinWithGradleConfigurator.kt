@@ -135,39 +135,43 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
     }
 
     protected fun addElementsToModuleFile(file: GroovyFile, version: String): Boolean {
-        var wasModified = false
+        val oldText = file.text
 
         if (!containsDirective(file.text, applyPluginDirective)) {
             val apply = GroovyPsiElementFactory.getInstance(file.project).createExpressionFromText(applyPluginDirective)
             val applyStatement = getApplyStatement(file)
             if (applyStatement != null) {
                 file.addAfter(apply, applyStatement)
-                wasModified = true
             }
             else {
                 val buildScript = getBlockByName(file, "buildscript")
                 if (buildScript != null) {
                     file.addAfter(apply, buildScript.parent)
-                    wasModified = true
                 }
                 else {
                     file.addAfter(apply, file.statements.lastOrNull() ?: file.firstChild)
-                    wasModified = true
                 }
             }
         }
 
         val repositoriesBlock = getRepositoriesBlock(file)
-        wasModified = wasModified or addRepository(repositoriesBlock, version)
+        addRepository(repositoriesBlock, version)
 
         val dependenciesBlock = getDependenciesBlock(file)
         val sdk = ModuleUtil.findModuleForPsiElement(file)?.let { ModuleRootManager.getInstance(it).sdk }
-        wasModified = wasModified or addExpressionInBlockIfNeeded(getDependencyDirective(sdk, version), dependenciesBlock, false)
+        addExpressionInBlockIfNeeded(getDependencyDirective(sdk, version), dependenciesBlock, false)
+        val jvmTarget = getJvmTarget(sdk, version)
+        if (jvmTarget != null) {
+            changeKotlinTaskParameter(file, "jvmTarget", jvmTarget, forTests = false)
+            changeKotlinTaskParameter(file, "jvmTarget", jvmTarget, forTests = true)
+        }
 
-        return wasModified
+        return file.text != oldText
     }
 
     protected open fun getDependencyDirective(sdk: Sdk?, version: String) = getRuntimeLibrary(sdk, version)
+
+    protected open fun getJvmTarget(sdk: Sdk?, version: String): String? = null
 
     protected abstract val applyPluginDirective: String
 
@@ -299,26 +303,26 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         }
 
         fun changeLanguageVersion(gradleFile: GroovyFile, languageVersion: String, forTests: Boolean): PsiElement? {
-            return changeVersion(gradleFile, languageVersion, forTests, "languageVersion")
+            return changeKotlinTaskParameter(gradleFile, "languageVersion", languageVersion, forTests)
         }
 
         fun changeApiVersion(gradleFile: GroovyFile, apiVersion: String, forTests: Boolean): PsiElement? {
-            return changeVersion(gradleFile, apiVersion, forTests, "apiVersion")
+            return changeKotlinTaskParameter(gradleFile, "apiVersion", apiVersion, forTests)
         }
 
-        private fun changeVersion(gradleFile: GroovyFile, version: String, forTests: Boolean, versionParameter: String): PsiElement? {
-            val snippet = "$versionParameter = \"$version\""
+        private fun changeKotlinTaskParameter(gradleFile: GroovyFile, parameterName: String, parameterValue: String, forTests: Boolean): PsiElement? {
+            val snippet = "$parameterName = \"$parameterValue\""
             val kotlinBlock = getBlockOrCreate(gradleFile, if (forTests) "compileTestKotlin" else "compileKotlin")
 
             for (stmt in kotlinBlock.statements) {
-                if ((stmt as? GrAssignmentExpression)?.lValue?.text == "kotlinOptions." + versionParameter) {
+                if ((stmt as? GrAssignmentExpression)?.lValue?.text == "kotlinOptions." + parameterName) {
                     return stmt.replaceWithStatementFromText("kotlinOptions." + snippet)
                 }
             }
 
             val kotlinOptionsBlock = getBlockOrCreate(kotlinBlock, "kotlinOptions")
             addOrReplaceExpression(kotlinOptionsBlock, snippet) { stmt ->
-                (stmt as? GrAssignmentExpression)?.lValue?.text == versionParameter
+                (stmt as? GrAssignmentExpression)?.lValue?.text == parameterName
             }
             return kotlinBlock.parent
         }

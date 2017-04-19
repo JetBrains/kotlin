@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.projectRoots.Sdk
+import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
@@ -32,6 +34,8 @@ class KotlinGradleModuleConfigurator internal constructor() : KotlinWithGradleCo
 
     override val applyPluginDirective: String
         get() = APPLY_KOTLIN
+
+    override fun getJvmTarget(sdk: Sdk?, version: String) = getDefaultJvmTarget(sdk, version)?.description
 
     companion object {
         val NAME = "gradle"
