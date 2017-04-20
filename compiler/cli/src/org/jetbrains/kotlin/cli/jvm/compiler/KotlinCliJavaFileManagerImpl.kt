@@ -26,6 +26,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
@@ -45,7 +47,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         this.index = packagesCache
     }
 
-    override fun findClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? = perfCounter.time {
+    private fun findPsiClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? = perfCounter.time {
         findVirtualFileForTopLevelClass(classId, searchScope)?.findPsiClassInVirtualFile(classId.relativeClassName.asString())
     }
 
@@ -58,6 +60,11 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         }?.takeIf { it in searchScope }
     }
 
+    override fun findClass(classId: ClassId, searchScope: GlobalSearchScope): JavaClass? {
+        val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null
+        return virtualFile.findPsiClassInVirtualFile(classId.relativeClassName.asString())?.let(::JavaClassImpl)
+    }
+
     // this method is called from IDEA to resolve dependencies in Java code
     // which supposedly shouldn't have errors so the dependencies exist in general
     override fun findClass(qName: String, scope: GlobalSearchScope): PsiClass? {
@@ -68,7 +75,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         // "a.b.c", and so on, until we find something. Most classes are top level, so most of the times the search ends quickly
 
         forEachClassId(qName) { classId ->
-            findClass(classId, scope)?.let { return it }
+            findPsiClass(classId, scope)?.let { return it }
         }
 
         return null

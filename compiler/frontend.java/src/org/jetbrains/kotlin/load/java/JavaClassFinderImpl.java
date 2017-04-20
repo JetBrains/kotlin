@@ -18,17 +18,14 @@ package org.jetbrains.kotlin.load.java;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.KtLightClassMarker;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaPackage;
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPackageImpl;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -95,20 +92,7 @@ public class JavaClassFinderImpl implements JavaClassFinder {
     @Nullable
     @Override
     public JavaClass findClass(@NotNull ClassId classId) {
-        PsiClass psiClass = javaFacade.findClass(classId, javaSearchScope);
-        if (psiClass == null) return null;
-
-        JavaClassImpl javaClass = new JavaClassImpl(psiClass);
-        FqName fqName = classId.asSingleFqName();
-        if (!fqName.equals(javaClass.getFqName())) {
-            throw new IllegalStateException("Requested " + fqName + ", got " + javaClass.getFqName());
-        }
-
-        if (psiClass instanceof KtLightClassMarker) {
-            throw new IllegalStateException("Kotlin light classes should not be found by JavaPsiFacade, resolving: " + fqName);
-        }
-
-        return javaClass;
+        return javaFacade.findClass(classId, javaSearchScope);
     }
 
     @Nullable

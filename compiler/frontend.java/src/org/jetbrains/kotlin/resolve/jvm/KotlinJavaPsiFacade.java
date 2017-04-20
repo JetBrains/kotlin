@@ -41,8 +41,11 @@ import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.asJava.KtLightClassMarker;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl;
+import org.jetbrains.kotlin.load.java.structure.JavaClass;
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
@@ -97,7 +100,7 @@ public class KotlinJavaPsiFacade {
         return emptyModifierList;
     }
 
-    public PsiClass findClass(@NotNull ClassId classId, @NotNull GlobalSearchScope scope) {
+    public JavaClass findClass(@NotNull ClassId classId, @NotNull GlobalSearchScope scope) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled(); // We hope this method is being called often enough to cancel daemon processes smoothly
 
         String qualifiedName = classId.asSingleFqName().asString();
@@ -105,14 +108,14 @@ public class KotlinJavaPsiFacade {
         if (shouldUseSlowResolve()) {
             PsiClass[] classes = findClassesInDumbMode(qualifiedName, scope);
             if (classes.length != 0) {
-                return classes[0];
+                return createJavaClass(classId, classes[0]);
             }
             return null;
         }
 
         for (KotlinPsiElementFinderWrapper finder : finders()) {
             if (finder instanceof CliFinder) {
-                PsiClass aClass = ((CliFinder) finder).findClass(classId, scope);
+                JavaClass aClass = ((CliFinder) finder).findClass(classId, scope);
                 if (aClass != null) return aClass;
             }
             else {
@@ -139,12 +142,27 @@ public class KotlinJavaPsiFacade {
                         }
                     }
 
-                    return aClass;
+                    return createJavaClass(classId, aClass);
                 }
             }
         }
 
         return null;
+    }
+
+    @NotNull
+    private static JavaClass createJavaClass(@NotNull ClassId classId, @NotNull PsiClass psiClass) {
+        JavaClassImpl javaClass = new JavaClassImpl(psiClass);
+        FqName fqName = classId.asSingleFqName();
+        if (!fqName.equals(javaClass.getFqName())) {
+            throw new IllegalStateException("Requested " + fqName + ", got " + javaClass.getFqName());
+        }
+
+        if (psiClass instanceof KtLightClassMarker) {
+            throw new IllegalStateException("Kotlin light classes should not be found by JavaPsiFacade, resolving: " + fqName);
+        }
+
+        return javaClass;
     }
 
     @Nullable
@@ -361,7 +379,7 @@ public class KotlinJavaPsiFacade {
             return javaFileManager.findClass(qualifiedName, scope);
         }
 
-        public PsiClass findClass(@NotNull ClassId classId, @NotNull GlobalSearchScope scope) {
+        public JavaClass findClass(@NotNull ClassId classId, @NotNull GlobalSearchScope scope) {
             return javaFileManager.findClass(classId, scope);
         }
 

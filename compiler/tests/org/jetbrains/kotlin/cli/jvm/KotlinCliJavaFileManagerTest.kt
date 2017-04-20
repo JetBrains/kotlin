@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -210,7 +211,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         val classId = ClassId(FqName(packageFQName), FqName(classFqName), false)
         val stringRequest = classId.asSingleFqName().asString()
 
-        val foundByClassId = manager.findClass(classId, allScope)
+        val foundByClassId = (manager.findClass(classId, allScope) as JavaClassImpl).psi
         val foundByString = manager.findClass(stringRequest, allScope)
 
         TestCase.assertNotNull("Could not find: $classId", foundByClassId)
