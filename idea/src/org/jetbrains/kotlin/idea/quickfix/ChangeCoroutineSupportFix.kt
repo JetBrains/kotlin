@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
+import com.intellij.psi.xml.XmlFile
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
@@ -37,6 +39,9 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgu
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
+import org.jetbrains.kotlin.idea.maven.PomFile
+import org.jetbrains.kotlin.idea.maven.changeCoroutineConfiguration
+import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.psi.KtFile
 
 sealed class ChangeCoroutineSupportFix(
@@ -55,7 +60,7 @@ sealed class ChangeCoroutineSupportFix(
             val runtimeUpdateRequired = coroutineSupportEnabled &&
                                         (getRuntimeLibraryVersion(module)?.startsWith("1.0") ?: false)
 
-            if (KotlinPluginUtil.isGradleModule(module)) {
+            if (KotlinPluginUtil.isGradleModule(module) || KotlinPluginUtil.isMavenModule(module)) {
                 if (runtimeUpdateRequired) {
                     Messages.showErrorDialog(project,
                                              "Coroutines support requires version 1.1 or later of the Kotlin runtime library. " +
@@ -64,9 +69,13 @@ sealed class ChangeCoroutineSupportFix(
                     return
                 }
 
-                val element = KotlinWithGradleConfigurator.changeCoroutineConfiguration(
+                val element = if (KotlinPluginUtil.isGradleModule(module))
+                    KotlinWithGradleConfigurator.changeCoroutineConfiguration(
                         module, CoroutineSupport.getCompilerArgument(coroutineSupport)
-                )
+                    )
+                else
+                    changeMavenCoroutineConfiguration(module, CoroutineSupport.getCompilerArgument(coroutineSupport))
+
                 if (element != null) {
                     OpenFileDescriptor(project, element.containingFile.virtualFile, element.textRange.startOffset).navigate(true)
                 }
@@ -85,6 +94,22 @@ sealed class ChangeCoroutineSupportFix(
             }
         }
 
+        private fun changeMavenCoroutineConfiguration(module: Module, value: String): PsiElement? {
+            fun doChangeMavenCoroutineConfiguration(): PsiElement? {
+                val psi = KotlinMavenConfigurator.findModulePomFile(module) as? XmlFile ?: return null
+                val pom = PomFile.forFileOrNull(psi) ?: return null
+                return pom.changeCoroutineConfiguration(value)
+            }
+
+            val element = doChangeMavenCoroutineConfiguration()
+            if (element == null) {
+                Messages.showErrorDialog(module.project,
+                                         "Failed to update.pom.xml. Please update the file manually.",
+                                         text)
+            }
+            return element
+
+        }
     }
 
     class InProject(element: PsiElement, coroutineSupport: LanguageFeature.State) : ChangeCoroutineSupportFix(element, coroutineSupport) {
@@ -131,11 +156,10 @@ sealed class ChangeCoroutineSupportFix(
                 else -> return emptyList()
             }
             val module = ModuleUtilCore.findModuleForPsiElement(diagnostic.psiElement) ?: return emptyList()
-            if (KotlinPluginUtil.isMavenModule(module)) return emptyList()
             val facetSettings = KotlinFacet.get(module)?.configuration?.settings
 
             val configureInProject = (facetSettings == null || facetSettings.useProjectSettings) &&
-                                     !KotlinPluginUtil.isGradleModule(module)
+                                     !KotlinPluginUtil.isGradleModule(module) && !KotlinPluginUtil.isMavenModule(module)
             val quickFixConstructor: (PsiElement, LanguageFeature.State) -> ChangeCoroutineSupportFix =
                     if (configureInProject) ::InProject else ::InModule
             return newCoroutineSupports.map { quickFixConstructor(diagnostic.psiElement, it) }
