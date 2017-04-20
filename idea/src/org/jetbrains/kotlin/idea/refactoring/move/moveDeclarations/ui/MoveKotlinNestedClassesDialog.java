@@ -70,7 +70,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
     private JCheckBox openInEditorCheckBox;
     private JPanel targetClassChooserPanel;
     private KotlinMemberSelectionTable memberTable;
-    private KtClassOrObject targetClass;
+    private PsiElement targetClass;
     public MoveKotlinNestedClassesDialog(
             @NotNull Project project,
             @NotNull List<KtClassOrObject> elementsToMove,
@@ -149,6 +149,9 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
                             targetClass = ((KtLightClassForSourceDeclaration) aClass).getKotlinOrigin();
                             targetClassChooser.setText(aClass.getQualifiedName());
                         }
+                        else {
+                            targetClass = aClass;
+                        }
                     }
                 },
                 initialTargetClass.getFqName().asString(),
@@ -179,7 +182,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
                                 .findClass(targetClassChooser.getText(), GlobalSearchScope.projectScope(myProject));
                         targetClass = aClass instanceof KtLightClassForSourceDeclaration
                                       ? ((KtLightClassForSourceDeclaration) aClass).getKotlinOrigin()
-                                      : null;
+                                      : aClass;
                         validateButtons();
                     }
                 }
@@ -240,6 +243,8 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
     protected void canRun() throws ConfigurationException {
         if (targetClass == null) throw new ConfigurationException("No destination class specified");
 
+        if (!(targetClass instanceof KtClassOrObject)) throw new ConfigurationException("Destination class must be a Kotlin class");
+
         if (originalClass == targetClass) {
             throw new ConfigurationException(RefactoringBundle.message("source.and.destination.classes.should.be.different"));
         }
@@ -254,7 +259,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
     @Override
     protected void doAction() {
         List<KtClassOrObject> elementsToMove = getSelectedElementsToMove();
-        KotlinMoveTarget target = new KotlinMoveTargetForExistingElement(targetClass);
+        KotlinMoveTarget target = new KotlinMoveTargetForExistingElement((KtClassOrObject) targetClass);
         MoveDeclarationsDelegate.NestedClass delegate = new MoveDeclarationsDelegate.NestedClass();
         MoveDeclarationsDescriptor descriptor = new MoveDeclarationsDescriptor(
                 myProject, elementsToMove, target, delegate, false, false, false, false, moveCallback, openInEditorCheckBox.isSelected()
