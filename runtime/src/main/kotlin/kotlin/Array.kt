@@ -54,6 +54,7 @@ private class IteratorImpl<T>(val collection: Array<T>) : Iterator<T> {
     var index : Int = 0
 
     public override fun next(): T {
+        if (!hasNext()) throw NoSuchElementException("$index")
         return collection[index++]
     }
 

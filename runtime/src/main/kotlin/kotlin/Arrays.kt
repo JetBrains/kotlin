@@ -70,6 +70,7 @@ private class ByteIteratorImpl(val collection: ByteArray) : ByteIterator() {
     var index : Int = 0
 
     public override fun nextByte(): Byte {
+        if (!hasNext()) throw NoSuchElementException("$index")
         return collection[index++]
     }
 
@@ -119,6 +120,7 @@ private class CharIteratorImpl(val collection: CharArray) : CharIterator() {
     var index : Int = 0
 
     public override fun nextChar(): Char {
+        if (!hasNext()) throw NoSuchElementException("$index")
         return collection[index++]
     }
 
@@ -168,6 +170,7 @@ private class ShortIteratorImpl(val collection: ShortArray) : ShortIterator() {
     var index : Int = 0
 
     public override fun nextShort(): Short {
+        if (!hasNext()) throw NoSuchElementException("$index")
         return collection[index++]
     }
 
@@ -217,6 +220,7 @@ private class IntIteratorImpl(val collection: IntArray) : IntIterator() {
     var index : Int = 0
 
     public override fun nextInt(): Int {
+        if (!hasNext()) throw NoSuchElementException("$index")
         return collection[index++]
     }
 
@@ -266,6 +270,7 @@ private class LongIteratorImpl(val collection: LongArray) : LongIterator() {
     var index : Int = 0
 
     public override fun nextLong(): Long {
+        if (!hasNext()) throw NoSuchElementException("$index")
         return collection[index++]
     }
 
@@ -315,6 +320,7 @@ private class FloatIteratorImpl(val collection: FloatArray) : FloatIterator() {
     var index : Int = 0
 
     public override fun nextFloat(): Float {
+        if (!hasNext()) throw NoSuchElementException("$index")
         return collection[index++]
     }
 
@@ -360,6 +366,7 @@ private class DoubleIteratorImpl(val collection: DoubleArray) : DoubleIterator()
     var index : Int = 0
 
     public override fun nextDouble(): Double {
+        if (!hasNext()) throw NoSuchElementException("$index")
         return collection[index++]
     }
 
@@ -405,6 +412,7 @@ private class BooleanIteratorImpl(val collection: BooleanArray) : BooleanIterato
     var index : Int = 0
 
     public override fun nextBoolean(): Boolean {
+        if (!hasNext()) throw NoSuchElementException("$index")
         return collection[index++]
     }
 
