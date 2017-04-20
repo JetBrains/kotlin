@@ -23,17 +23,25 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiManager
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.extensions.PreprocessedFileCreator
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationResult
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import java.io.File
 
 
@@ -61,8 +69,22 @@ fun main(args: Array<String>) {
     val ktFiles = getKtFiles(env.project, sources) {}
     env.addSourceFiles(ktFiles)
 
-    val tr = K2JSTranslator(JsConfig(env.project, env.configuration))
-    val result = tr.translate(env.getSourceFiles(), MainCallParameters.noCall())
+    val config = JsConfig(env.project, env.configuration)
+    val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(env.getSourceFiles(), config)
+
+    val (errors, other) = analysisResult.bindingContext.diagnostics.partition { it.severity == Severity.ERROR }
+
+    if (errors.isNotEmpty()) {
+        printDiagnosticsToStderr(errors)
+        return
+    }
+
+    if (reportSyntacticErrors(ktFiles)) return
+
+//    printDiagnosticsToStderr(other)
+
+    val tr = K2JSTranslator(config)
+    val result = tr.translate(env.getSourceFiles(), MainCallParameters.noCall(), analysisResult)
 
     val generatedCode = (result as TranslationResult.Success).program.globalBlock.toString()
 
@@ -73,6 +95,31 @@ fun main(args: Array<String>) {
     else {
         System.out.println(generatedCode)
     }
+}
+
+private fun printDiagnosticsToStderr(diagnostics: List<Diagnostic>) {
+    for (d in diagnostics) {
+        if (!d.isValid) continue
+
+        val psiFile = d.psiFile
+        val textRanges = d.textRanges
+        val diagnosticText = DefaultErrorMessages.render(d)
+        System.err.println(d.severity.name + ": " + d.factory.name + ": " + diagnosticText + " " + DiagnosticUtils.atLocation(psiFile, textRanges[0]))
+    }
+}
+
+fun reportSyntacticErrors(files: List<KtFile>): Boolean {
+    var hasError = false
+    for (file in files) {
+        file.acceptChildren( object : KtTreeVisitorVoid() {
+            override fun visitErrorElement(@NotNull element: PsiErrorElement) {
+                hasError = true
+                System.err.println("ERROR: " + element.errorDescription + "; looking at " + element.node.elementType + " '" + element.text + DiagnosticUtils.atLocation(element))
+            }
+        })
+    }
+
+    return hasError
 }
 
 fun getKtFiles(
