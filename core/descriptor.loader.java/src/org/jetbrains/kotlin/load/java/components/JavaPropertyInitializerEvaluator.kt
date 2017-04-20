@@ -23,11 +23,7 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 interface JavaPropertyInitializerEvaluator {
     fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor): ConstantValue<*>?
 
-    fun isNotNullCompileTimeConstant(field: JavaField): Boolean
-
     object DoNothing : JavaPropertyInitializerEvaluator {
         override fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor) = null
-
-        override fun isNotNullCompileTimeConstant(field: JavaField) = false
     }
 }

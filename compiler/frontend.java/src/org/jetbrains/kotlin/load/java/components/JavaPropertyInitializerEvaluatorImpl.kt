@@ -16,23 +16,15 @@
 
 package org.jetbrains.kotlin.load.java.components
 
-import com.intellij.psi.impl.JavaConstantExpressionEvaluator
-import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.structure.JavaField
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaField
-import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 class JavaPropertyInitializerEvaluatorImpl : JavaPropertyInitializerEvaluator {
     override fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor): ConstantValue<*>? {
-        val evaluated = when (field) {
-            is JavaFieldImpl -> JavaConstantExpressionEvaluator.computeConstantExpression(field.initializer, false)
-            is BinaryJavaField -> field.compiledValue
-            else -> null
-        } ?: return null
+        val evaluated = field.initializerValue ?: return null
 
         val factory = ConstantValueFactory(descriptor.builtIns)
         when (evaluated) {
@@ -45,15 +37,5 @@ class JavaPropertyInitializerEvaluatorImpl : JavaPropertyInitializerEvaluator {
                 return factory.createConstantValue(evaluated)
             }
         }
-    }
-
-    override fun isNotNullCompileTimeConstant(field: JavaField): Boolean {
-        if (field is BinaryJavaField) {
-            return field.compiledValue != null
-        }
-
-        // PsiUtil.isCompileTimeConstant returns false for null-initialized fields,
-        // see com.intellij.psi.util.IsConstantExpressionVisitor.visitLiteralExpression()
-        return PsiUtil.isCompileTimeConstant((field as JavaFieldImpl).psi)
     }
 }

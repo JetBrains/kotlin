@@ -29,10 +29,13 @@ class BinaryJavaField(
         override val containingClass: JavaClass,
         override val isEnumEntry: Boolean,
         override val type: JavaType,
-        val compiledValue: Any?
+        override val initializerValue: Any?
 ) : JavaField, BinaryJavaAnnotationOwner, BinaryJavaModifierListOwner {
     override val annotations: MutableCollection<JavaAnnotation> = ContainerUtil.newSmartList()
     override val annotationsByFqName by buildLazyValueForMap()
+
+    override val hasConstantNotNullInitializer: Boolean
+        get() = initializerValue != null
 }
 
 class BinaryJavaTypeParameter(

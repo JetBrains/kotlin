@@ -97,6 +97,8 @@ interface JavaMethod : JavaMember, JavaTypeParameterListOwner {
 interface JavaField : JavaMember {
     val isEnumEntry: Boolean
     val type: JavaType
+    val initializerValue: Any?
+    val hasConstantNotNullInitializer: Boolean
 }
 
 interface JavaConstructor : JavaMember, JavaTypeParameterListOwner {

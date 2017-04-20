@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.PsiEnumConstant;
-import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiField;
+import com.intellij.psi.impl.JavaConstantExpressionEvaluator;
+import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
@@ -41,7 +42,15 @@ public class JavaFieldImpl extends JavaMemberImpl<PsiField> implements JavaField
     }
 
     @Nullable
-    public PsiExpression getInitializer() {
-        return getPsi().getInitializer();
+    @Override
+    public Object getInitializerValue() {
+        return JavaConstantExpressionEvaluator.computeConstantExpression(getPsi().getInitializer(), false);
+    }
+
+    @Override
+    public boolean getHasConstantNotNullInitializer() {
+        // PsiUtil.isCompileTimeConstant returns false for null-initialized fields,
+        // see com.intellij.psi.util.IsConstantExpressionVisitor.visitLiteralExpression()
+        return PsiUtil.isCompileTimeConstant(getPsi());
     }
 }
