@@ -70,10 +70,11 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         this.returnType = returnType
         this.constructedClass = null
         prologueBb = LLVMAppendBasicBlock(function, "prologue")
+        localsInitBb = LLVMAppendBasicBlock(function, "locals_init")
         entryBb = LLVMAppendBasicBlock(function, "entry")
         epilogueBb = LLVMAppendBasicBlock(function, "epilogue")
         cleanupLandingpad = LLVMAppendBasicBlock(function, "cleanup_landingpad")!!
-        positionAtEnd(entryBb!!)
+        positionAtEnd(localsInitBb!!)
         locationInfo?.let {
             debugLocation(it)
         }
@@ -84,6 +85,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         // Is removed by DCE trivially, if not needed.
         arenaSlot = intToPtr(
                 or(ptrToInt(slotsPhi, intPtrType), immOneIntPtrType), kObjHeaderPtrPtr)
+        positionAtEnd(entryBb!!)
     }
 
     fun epilogue(locationInfo: LocationInfo? = null) {
@@ -106,6 +108,10 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
                                 Int1(0).llvm))
             }
             addPhiIncoming(slotsPhi!!, prologueBb!! to slots)
+            br(localsInitBb!!)
+        }
+
+        appendingTo(localsInitBb!!) {
             br(entryBb!!)
         }
 
@@ -156,6 +162,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     }
 
     private var prologueBb: LLVMBasicBlockRef? = null
+    private var localsInitBb: LLVMBasicBlockRef? = null
     private var entryBb: LLVMBasicBlockRef? = null
     private var epilogueBb: LLVMBasicBlockRef? = null
     private var cleanupLandingpad: LLVMBasicBlockRef? = null
@@ -191,7 +198,9 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     fun alloca(type: LLVMTypeRef?, name: String = ""): LLVMValueRef {
         if (isObjectType(type!!)) {
-            return gep(slotsPhi!!, Int32(slotCount++).llvm)
+            appendingTo(localsInitBb!!) {
+                return gep(slotsPhi!!, Int32(slotCount++).llvm, name)
+            }
         }
         appendingTo(prologueBb!!) {
             return LLVMBuildAlloca(builder, type, name)!!
@@ -241,8 +250,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         }
     }
 
-    fun gep(base: LLVMValueRef, index: LLVMValueRef): LLVMValueRef {
-        return LLVMBuildGEP(builder, base, cValuesOf(index), 1, "")!!
+    fun gep(base: LLVMValueRef, index: LLVMValueRef, name: String = ""): LLVMValueRef {
+        return LLVMBuildGEP(builder, base, cValuesOf(index), 1, name)!!
     }
 
     fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
