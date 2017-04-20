@@ -123,7 +123,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         Assert.assertEquals("test", packageFromSource.getName().asString());
 
         PackageViewDescriptor packageFromBinary = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
-                tmpdir, getTestRootDisposable(), getJdkKind(), configurationKind, true
+                tmpdir, getTestRootDisposable(), getJdkKind(), configurationKind, true, false
         ).first;
 
         for (DeclarationDescriptor descriptor : DescriptorUtils.getAllDescriptors(packageFromBinary.getMemberScope())) {
@@ -136,6 +136,10 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         DescriptorValidator.validate(new DeserializedScopeValidationVisitor(), packageFromBinary);
         Configuration comparatorConfiguration = COMPARATOR_CONFIGURATION.checkPrimaryConstructors(true).checkPropertyAccessors(true);
         compareDescriptors(packageFromSource, packageFromBinary, comparatorConfiguration, txtFile);
+    }
+
+    protected boolean useFastClassFilesReading() {
+        return false;
     }
 
     protected void doTestJavaAgainstKotlin(String expectedFileName) throws Exception {
@@ -207,8 +211,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         FileUtil.copy(originalJavaFile, new File(testPackageDir, originalJavaFile.getName()));
 
         Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = loadTestPackageAndBindingContextFromJavaRoot(
-                tmpdir, getTestRootDisposable(), getJdkKind(), ConfigurationKind.JDK_ONLY, false
-        );
+                tmpdir, getTestRootDisposable(), getJdkKind(), ConfigurationKind.JDK_ONLY, false,
+                false);
 
         checkJavaPackage(
                 expectedFile, javaPackageAndContext.first, javaPackageAndContext.second,
@@ -253,7 +257,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             @NotNull ConfigurationKind configurationKind
     ) throws IOException {
         compileJavaWithAnnotationsJar(javaFiles, outDir);
-        return loadTestPackageAndBindingContextFromJavaRoot(outDir, myTestRootDisposable, getJdkKind(), configurationKind, true);
+        return loadTestPackageAndBindingContextFromJavaRoot(outDir, myTestRootDisposable, getJdkKind(), configurationKind, true,
+                                                            useFastClassFilesReading());
     }
 
     private static void checkJavaPackage(

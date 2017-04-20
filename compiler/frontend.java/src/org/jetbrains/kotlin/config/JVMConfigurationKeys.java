@@ -107,4 +107,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> IR =
             CompilerConfigurationKey.create("IR");
+
+    public static final CompilerConfigurationKey<Boolean> USE_FAST_CLASS_FILES_READING =
+            CompilerConfigurationKey.create("use fast class files reading implementation [experimental]");
 }

@@ -209,8 +209,8 @@ class KotlinCoreEnvironment private constructor(
         rootsIndex = indexFactory.makeIndexFor(initialRoots)
         updateClasspathFromRootsIndex(rootsIndex)
 
-        (ServiceManager.getService(project, CoreJavaFileManager::class.java)
-                as KotlinCliJavaFileManagerImpl).initIndex(rootsIndex)
+        (ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl)
+                .initialize(rootsIndex, configuration.getBoolean(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING))
 
         val finderFactory = CliVirtualFileFinderFactory(rootsIndex)
         project.registerService(MetadataFinderFactory::class.java, finderFactory)

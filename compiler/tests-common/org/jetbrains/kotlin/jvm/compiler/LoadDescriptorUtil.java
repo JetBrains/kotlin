@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.name.FqName;
@@ -70,7 +71,8 @@ public class LoadDescriptorUtil {
             @NotNull Disposable disposable,
             @NotNull TestJdkKind testJdkKind,
             @NotNull ConfigurationKind configurationKind,
-            boolean isBinaryRoot
+            boolean isBinaryRoot,
+            boolean useFastClassReading
     ) {
         List<File> javaBinaryRoots = new ArrayList<>();
         javaBinaryRoots.add(KotlinTestUtils.getAnnotationsJar());
@@ -85,6 +87,7 @@ public class LoadDescriptorUtil {
         }
         CompilerConfiguration configuration =
                 KotlinTestUtils.newConfiguration(configurationKind, testJdkKind, javaBinaryRoots, javaSourceRoots);
+        configuration.put(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING, useFastClassReading);
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 

@@ -108,6 +108,13 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     public boolean skipRuntimeVersionCheck;
 
     @Argument(
+            value = "-Xuse-old-class-files-reading",
+            description = "Use old class files reading implementation " +
+                          "(may slow down the build and should be used in case of problems with the new implementation)"
+    )
+    public boolean useOldClassFilesReading;
+
+    @Argument(
             value = "-Xdump-declarations-to",
             valueDescription = "<path>",
             description = "Path to JSON file to dump Java to Kotlin declaration mappings"

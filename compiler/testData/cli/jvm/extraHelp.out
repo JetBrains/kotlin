@@ -6,6 +6,7 @@ where advanced options include:
   -Xreport-perf              Report detailed performance statistics
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xskip-runtime-version-check Allow Kotlin runtime libraries of incompatible versions in the classpath
+  -Xuse-old-class-files-reading Use old class files reading implementation (may slow down the build and should be used in case of problems with the new implementation)
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
   -Xsingle-module            Combine modules for source files and binary dependencies into a single module
   -Xadd-compiler-builtins    Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)
