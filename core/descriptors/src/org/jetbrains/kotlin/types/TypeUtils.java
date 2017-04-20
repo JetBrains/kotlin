@@ -394,6 +394,16 @@ public class TypeUtils {
             && (contains(flexibleType.getLowerBound(), isSpecialType) || contains(flexibleType.getUpperBound(), isSpecialType))) {
             return true;
         }
+
+        TypeConstructor typeConstructor = type.getConstructor();
+        if (typeConstructor instanceof IntersectionTypeConstructor) {
+            IntersectionTypeConstructor intersectionTypeConstructor = (IntersectionTypeConstructor) typeConstructor;
+            for (KotlinType supertype : intersectionTypeConstructor.getSupertypes()) {
+                if (contains(supertype, isSpecialType)) return true;
+            }
+            return false;
+        }
+
         for (TypeProjection projection : type.getArguments()) {
             if (!projection.isStarProjection() && contains(projection.getType(), isSpecialType)) return true;
         }
