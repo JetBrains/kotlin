@@ -21,7 +21,7 @@ fun assertEquals(value1: Int, value2: Int) {
 
 fun assertEquals(builder: StringBuilder, content: String) = assertEquals(builder.toString(), content)
 
-// IndexOutOfBoundsException
+// IndexOutOfBoundsException.
 fun assertException(body: () -> Unit) {
     try {
         body()
@@ -101,7 +101,7 @@ fun testInsertSingle(value: Char) {
 }
 
 fun testInsert() {
-    // String/CharSequence/CharArray
+    // String/CharSequence/CharArray.
     testInsertString("abcd", 0, "12", "12abcd")
     testInsertString("abcd", 4, "12", "abcd12")
     testInsertString("abcd", 2, "12", "ab12cd")
@@ -109,31 +109,39 @@ fun testInsert() {
     testInsertStringException("a", -1, "1")
     testInsertStringException("a", 2, "1")
 
-    // Subsequence of CharSequence
-    // Insert in the beginning
-    assertEquals(StringBuilder("abcd").insert(0, "1234", 0, 0), "abcd")     // 0 symbols
-    assertEquals(StringBuilder("abcd").insert(0, "1234", 0, 1), "1abcd")    // 1 symbol
-    assertEquals(StringBuilder("abcd").insert(0, "1234", 1, 3), "23abcd")   // 2 symbols
+    // Null inserting.
+    assertEquals(StringBuilder("abcd").insert(0, null as CharSequence?), "nullabcd")
+    assertEquals(StringBuilder("abcd").insert(4, null as CharSequence?), "abcdnull")
+    assertEquals(StringBuilder("abcd").insert(2, null as CharSequence?), "abnullcd")
+    assertEquals(StringBuilder("").insert(0, null as CharSequence?), "null")
 
-    // Insert in the end
+    // Subsequence of CharSequence.
+    // Insert in the beginning.
+    assertEquals(StringBuilder("abcd").insert(0, "1234", 0, 0), "abcd")                    // 0 symbols
+    assertEquals(StringBuilder("abcd").insert(0, "1234", 0, 1), "1abcd")                   // 1 symbol
+    assertEquals(StringBuilder("abcd").insert(0, "1234", 1, 3), "23abcd")                  // 2 symbols
+    assertEquals(StringBuilder("abcd").insert(0, null as CharSequence?, 1, 3), "ulabcd")   // 2 symbols of null
+
+    // Insert in the end.
     assertEquals(StringBuilder("abcd").insert(4, "1234", 0, 0), "abcd")
     assertEquals(StringBuilder("abcd").insert(4, "1234", 0, 1), "abcd1")
     assertEquals(StringBuilder("abcd").insert(4, "1234", 1, 3), "abcd23")
+    assertEquals(StringBuilder("abcd").insert(4, null as CharSequence?, 1, 3), "abcdul")
 
-    // Insert in the middle
+    // Insert in the middle.
     assertEquals(StringBuilder("abcd").insert(2, "1234", 0, 0), "abcd")
     assertEquals(StringBuilder("abcd").insert(2, "1234", 0, 1), "ab1cd")
     assertEquals(StringBuilder("abcd").insert(2, "1234", 1, 3), "ab23cd")
+    assertEquals(StringBuilder("abcd").insert(2, null as CharSequence?, 1, 3), "abulcd")
 
-    // Incorrect indices
+    // Incorrect indices.
     assertException { StringBuilder("a").insert(-1, "1", 0, 0) }
     assertException { StringBuilder("a").insert(2, "1", 0, 0) }
     assertException { StringBuilder("a").insert(1, "1", -1, 0) }
     assertException { StringBuilder("a").insert(1, "1", 0, 2) }
     assertException { StringBuilder("a").insert(1, "123", 2, 0) }
 
-
-    // Other types
+    // Other types.
     testInsertSingle(true)
     testInsertSingle(42.toByte())
     testInsertSingle(42.toShort())
@@ -147,7 +155,6 @@ fun testInsert() {
         }
     })
     testInsertSingle('a')
-
 }
 
 // Reverse ==================================================================================================
@@ -248,6 +255,9 @@ fun testBasic() {
     sb.append(12345678L)
     assertEquals(15, sb.length)
     assertEquals("1, true12345678", sb.toString())
+    sb.append(null as CharSequence?)
+    assertEquals(19, sb.length)
+    assertEquals("1, true12345678null", sb.toString())
 
     sb.length = 0
     assertEquals(0, sb.length)

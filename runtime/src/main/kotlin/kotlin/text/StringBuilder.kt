@@ -146,15 +146,15 @@ class StringBuilder private constructor (
     }
 
     fun insert(index: Int, csq: CharSequence?): StringBuilder {
-        // TODO: how to treat nulls properly?
-        if (csq == null) return this
-        return insert(index, csq, 0, csq.length)
+        // Kotlin JVM inserts the "null" string if the argument is null.
+        val toInsert = csq ?: "null"
+        return insert(index, toInsert, 0, toInsert.length)
     }
 
     fun insert(index: Int, csq: CharSequence?, start: Int, end: Int): StringBuilder {
-        // TODO: how to treat nulls properly?
-        if (csq == null) return this
-        if (start < 0 || end < start || start > csq.length) throw IndexOutOfBoundsException()
+        // Kotlin JVM processes null as if the argument was "null" char sequence.
+        val toInsert = csq ?: "null"
+        if (start < 0 || end < start || start > toInsert.length) throw IndexOutOfBoundsException()
         checkInsertIndex(index)
 
         val extraLength = end - start
@@ -168,7 +168,7 @@ class StringBuilder private constructor (
         from = start
         to = index
         while (from < end) {
-            array[to++] = csq[from++]
+            array[to++] = toInsert[from++]
         }
 
         length += extraLength
@@ -214,19 +214,19 @@ class StringBuilder private constructor (
     }
 
     override fun append(csq: CharSequence?): StringBuilder {
-        // TODO: how to treat nulls properly?
-        if (csq == null) return this
-        return append(csq, 0, csq.length)
+        // Kotlin JVM processes null as if the argument was "null" char sequence.
+        val toAppend = csq ?: "null"
+        return append(toAppend, 0, toAppend.length)
     }
 
     override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder {
-        // TODO: how to treat nulls properly?
-        if (csq == null) return this
-        if (start < 0 || end < start || start > csq.length) throw IndexOutOfBoundsException()
+        // Kotlin JVM processes null as if the argument was "null" char sequence.
+        val toAppend = csq ?: "null"
+        if (start < 0 || end < start || start > toAppend.length) throw IndexOutOfBoundsException()
         ensureExtraCapacity(end - start)
         var index = start
         while (index < end)
-            array[length++] = csq[index++]
+            array[length++] = toAppend[index++]
         return this
     }
 
