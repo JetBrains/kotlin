@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
@@ -87,9 +86,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     private void invokeBox(@NotNull String className) throws Exception {
-        Method box = createGeneratedClassLoader().loadClass(className).getMethod("box");
-        String result = (String) box.invoke(null);
-        assertEquals("OK", result);
+        callBoxMethodAndCheckResult(createGeneratedClassLoader(), className);
     }
 
     @NotNull

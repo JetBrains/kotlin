@@ -16,13 +16,9 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.ide.highlighter.JavaFileType;
-import com.intellij.openapi.util.io.FileUtil;
-import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
@@ -31,8 +27,11 @@ import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
+
+import static org.jetbrains.kotlin.codegen.TestUtilsKt.clearReflectionCache;
+import static org.jetbrains.kotlin.codegen.TestUtilsKt.getBoxMethodOrNull;
+import static org.jetbrains.kotlin.codegen.TestUtilsKt.getGeneratedClass;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
@@ -40,21 +39,6 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
         compile(files, javaFilesDir);
         blackBox();
-    }
-
-
-    @NotNull
-    protected static List<String> findJavaSourcesInDirectory(@NotNull File directory) {
-        List<String> javaFilePaths = new ArrayList<>(1);
-
-        FileUtil.processFilesRecursively(directory, file -> {
-            if (file.isFile() && FilesKt.getExtension(file).equals(JavaFileType.DEFAULT_EXTENSION)) {
-                javaFilePaths.add(file.getPath());
-            }
-            return true;
-        });
-
-        return javaFilePaths;
     }
 
     protected void blackBox() {
@@ -67,8 +51,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             try {
                 Method method = getBoxMethodOrNull(aClass);
                 if (method != null) {
-                    String r = (String) method.invoke(null);
-                    assertEquals("OK", r);
+                    callBoxMethodAndCheckResult(generatedClassLoader, aClass, method);
                     return;
                 }
             }
@@ -80,21 +63,9 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                 clearReflectionCache(generatedClassLoader);
             }
         }
+        fail("Can't find box method!");
     }
 
-    private static void clearReflectionCache(@NotNull ClassLoader classLoader) {
-        try {
-            Class<?> klass = classLoader.loadClass(JvmAbi.REFLECTION_FACTORY_IMPL.asSingleFqName().asString());
-            Method method = klass.getDeclaredMethod("clearCaches");
-            method.invoke(null);
-        }
-        catch (ClassNotFoundException e) {
-            // This is OK for a test without kotlin-reflect in the dependencies
-        }
-        catch (Exception e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-    }
 
     @Nullable
     private static String getFacadeFqName(@NotNull KtFile firstFile) {
@@ -104,24 +75,5 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             }
         }
         return null;
-    }
-
-    private static Class<?> getGeneratedClass(GeneratedClassLoader generatedClassLoader, String className) {
-        try {
-            return generatedClassLoader.loadClass(className);
-        }
-        catch (ClassNotFoundException e) {
-            fail("No class file was generated for: " + className);
-        }
-        return null;
-    }
-
-    private static Method getBoxMethodOrNull(Class<?> aClass) {
-        try {
-            return aClass.getMethod("box");
-        }
-        catch (NoSuchMethodException e){
-            return null;
-        }
     }
 }

@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.test.clientserver
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-
-/*This suite is used to run common java-backend tests under jdk 8, jdk 9 with default target 1.8 (and in future 1.9)*/
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-        BlackBoxCodegenTestGenerated.class,
-        BlackBoxInlineCodegenTestGenerated.class,
-        CompileKotlinAgainstInlineKotlinTestGenerated.class,
-        CompileKotlinAgainstKotlinTestGenerated.class,
-        BlackBoxAgainstJavaCodegenTestGenerated.class
-})
-public class CodegenJdkCommonTestSuite {}
+enum class MessageHeader {
+    NEW_TEST,
+    CLASS_PATH,
+    RESULT,
+    ERROR
+}
