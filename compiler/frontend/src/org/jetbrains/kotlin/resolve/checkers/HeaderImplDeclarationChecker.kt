@@ -276,6 +276,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             a: CallableMemberDescriptor,
             b: CallableMemberDescriptor,
             checkImpl: Boolean,
+            platformModule: ModuleDescriptor = b.module,
             parentSubstitutor: Substitutor? = null
     ): Compatibility {
         assert(a.name == b.name) { "This function should be invoked only for declarations with the same name: $a, $b" }
@@ -295,7 +296,6 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
         val bTypeParams = b.typeParameters
         if (aTypeParams.size != bTypeParams.size) return Incompatible.TypeParameterCount
 
-        val platformModule = b.module
         val substitutor = Substitutor(aTypeParams, bTypeParams, parentSubstitutor)
 
         if (!areCompatibleTypeLists(aParams.map { substitutor(it.type) }, bParams.map { it.type }, platformModule) ||
@@ -406,23 +406,12 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
     private fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor, checkImpl: Boolean): Compatibility {
         assert(a.fqNameUnsafe == other.fqNameUnsafe) { "This function should be invoked only for declarations with the same name: $a, $other" }
 
-        var parentSubstitutor: Substitutor? = null
         var implTypealias = false
-
         val b = when (other) {
             is ClassDescriptor -> other
             is TypeAliasDescriptor -> {
-                val classDescriptor = other.classDescriptor ?: return Compatible // do not report extra error on erroneous typealias
                 implTypealias = true
-                // If a header class test.C is implemented by a typealias test.C = test.CImpl, we must now state that any occurrence
-                // of the type "test.C" in the header class scope should be replaced with "test.CImpl".
-                // Otherwise the types would not be equal and e.g. test.C's constructor is not going to be found in test.CImpl's scope.
-                // For this, we construct an additional substitutor with a single mapping test.C -> test.CImpl
-                // TODO: this looks like a dirty hack
-                parentSubstitutor = Substitutor(null, TypeSubstitutor.create(TypeConstructorSubstitution.createByConstructorsMap(
-                        mapOf(a.typeConstructor to classDescriptor.defaultType.asTypeProjection())
-                )))
-                classDescriptor
+                other.classDescriptor ?: return Compatible // do not report extra error on erroneous typealias
             }
             else -> throw AssertionError("Incorrect impl classifier for $a: $other")
         }
@@ -439,8 +428,8 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
 
         if (a.visibility != b.visibility) return Incompatible.Visibility
 
-        val platformModule = b.module
-        val substitutor = Substitutor(aTypeParams, bTypeParams, parentSubstitutor)
+        val platformModule = other.module
+        val substitutor = Substitutor(aTypeParams, bTypeParams)
         areCompatibleTypeParameters(aTypeParams, bTypeParams, platformModule, substitutor).let { if (it != Compatible) return it }
 
         // Subtract kotlin.Any from supertypes because it's implicitly added if no explicit supertype is specified,
@@ -451,7 +440,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             bSupertypes.none { bSupertype -> areCompatibleTypes(aSupertype, bSupertype, platformModule) }
         }) return Incompatible.Supertypes
 
-        areCompatibleClassScopes(a, b, checkImpl && !implTypealias, substitutor).let { if (it != Compatible) return it }
+        areCompatibleClassScopes(a, b, checkImpl && !implTypealias, platformModule, substitutor).let { if (it != Compatible) return it }
 
         if (checkImpl && !b.isImpl && !implTypealias) return Incompatible.NoImpl
 
@@ -462,6 +451,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             a: ClassDescriptor,
             b: ClassDescriptor,
             checkImpl: Boolean,
+            platformModule: ModuleDescriptor,
             substitutor: Substitutor
     ): Compatibility {
         val unimplemented = arrayListOf<Pair<CallableMemberDescriptor, Map<Incompatible, MutableCollection<CallableMemberDescriptor>>>>()
@@ -472,7 +462,7 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
             if (!aMember.kind.isReal) continue
 
             val mapping = bMembersByName[aMember.name].orEmpty().keysToMap { bMember ->
-                areCompatibleCallables(aMember, bMember, checkImpl, substitutor)
+                areCompatibleCallables(aMember, bMember, checkImpl, platformModule, substitutor)
             }
             if (mapping.values.any { it == Compatible }) continue
 
@@ -522,18 +512,15 @@ object HeaderImplDeclarationChecker : DeclarationChecker {
 
     // This substitutor takes the type from A's signature and returns the type that should be in that place in B's signature
     private class Substitutor(
-            private val parent: Substitutor?,
-            private val typeSubstitutor: TypeSubstitutor
+            aTypeParams: List<TypeParameterDescriptor>,
+            bTypeParams: List<TypeParameterDescriptor>,
+            private val parent: Substitutor? = null
     ) : (KotlinType?) -> KotlinType? {
-        constructor(
-                aTypeParams: List<TypeParameterDescriptor>,
-                bTypeParams: List<TypeParameterDescriptor>,
-                parent: Substitutor? = null
-        ) : this(parent, TypeSubstitutor.create(
+        private val typeSubstitutor = TypeSubstitutor.create(
                 TypeConstructorSubstitution.createByParametersMap(aTypeParams.keysToMap {
                     bTypeParams[it.index].defaultType.asTypeProjection()
                 })
-        ))
+        )
 
         override fun invoke(type: KotlinType?): KotlinType? =
                 (parent?.invoke(type) ?: type)?.asTypeProjection()?.let(typeSubstitutor::substitute)?.type
