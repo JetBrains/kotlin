@@ -7,7 +7,7 @@
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/ideaSDK/core/annotations.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/core/asm-all.jar!/" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/core/guava-19.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/guava-21.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/core/intellij-core.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/core/jdom.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/core/jna.jar!/" />
@@ -21,7 +21,7 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/dependencies/guava-19.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/guava-21.0-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/dependencies/asm-src.zip!/" />
     </SOURCES>
