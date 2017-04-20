@@ -81,7 +81,7 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
             context.getVtableBuilder(classDescriptor.getSuperClassOrAny()).vtableEntries
         }
 
-        val methods = classDescriptor.contributedMethods
+        val methods = classDescriptor.sortedContributedMethods
         val newVtableSlots = mutableListOf<OverriddenFunctionDescriptor>()
 
         val inheritedVtableSlots = superVtableEntries.map { superMethod ->
@@ -117,7 +117,7 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
     val methodTableEntries: List<OverriddenFunctionDescriptor> by lazy {
         assert(!classDescriptor.isAbstract())
 
-        classDescriptor.contributedMethods
+        classDescriptor.sortedContributedMethods
                 .flatMap { method -> method.allOverriddenDescriptors.map { OverriddenFunctionDescriptor(method, it) } }
                 .filter { it.canBeCalledVirtually }
                 .distinctBy { Triple(it.overriddenDescriptor.functionName, it.descriptor, it.needBridge) }

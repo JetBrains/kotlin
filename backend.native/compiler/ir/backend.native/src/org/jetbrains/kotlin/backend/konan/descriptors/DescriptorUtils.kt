@@ -172,8 +172,16 @@ internal val <T : CallableMemberDescriptor> T.allOverriddenDescriptors: List<T>
         return result
     }
 
+internal val ClassDescriptor.sortedContributedMethods: List<FunctionDescriptor>
+    get () = unsubstitutedMemberScope.sortedContributedMethods
+
 internal val ClassDescriptor.contributedMethods: List<FunctionDescriptor>
     get () = unsubstitutedMemberScope.contributedMethods
+
+internal val MemberScope.sortedContributedMethods: List<FunctionDescriptor>
+    get () = contributedMethods.sortedBy {
+            it.functionName.localHash.value
+    }
 
 internal val MemberScope.contributedMethods: List<FunctionDescriptor>
     get () {
@@ -185,13 +193,8 @@ internal val MemberScope.contributedMethods: List<FunctionDescriptor>
         val getters = properties.mapNotNull { it.getter }
         val setters = properties.mapNotNull { it.setter }
 
-        val allMethods = (functions + getters + setters).sortedBy {
-            it.functionName.localHash.value
-        }
-
-        return allMethods
+        return functions + getters + setters
     }
-
 
 fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
         || this.kind == ClassKind.ENUM_CLASS
