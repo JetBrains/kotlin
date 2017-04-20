@@ -149,9 +149,9 @@ private fun TreePath.tryToResolveTypeParameter(javac: JavacWrapper) = filter { i
         }
         .find { it.toString().substringBefore(" ") == leaf.toString() }
         ?.let {
-            JCTypeParameter(it,
-                            javac.getTreePath(it, compilationUnit),
-                            javac)
+            TreeBasedTypeParameter(it,
+                                   javac.getTreePath(it, compilationUnit),
+                                   javac)
         }
 
 fun find(fqName: FqName,

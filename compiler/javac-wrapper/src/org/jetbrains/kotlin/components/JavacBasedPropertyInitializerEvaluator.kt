@@ -22,45 +22,45 @@ import org.jetbrains.kotlin.load.java.components.JavaPropertyInitializerEvaluato
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.wrappers.symbols.JavacField
-import org.jetbrains.kotlin.wrappers.trees.JCClassifierTypeWithoutTypeArgument
-import org.jetbrains.kotlin.wrappers.trees.JCField
-import org.jetbrains.kotlin.wrappers.trees.JCPrimitiveType
+import org.jetbrains.kotlin.wrappers.symbols.SymbolBasedField
+import org.jetbrains.kotlin.wrappers.trees.TreeBasedClassifierTypeWithoutTypeArgument
+import org.jetbrains.kotlin.wrappers.trees.TreeBasedField
+import org.jetbrains.kotlin.wrappers.trees.TreeBasedPrimitiveType
 
 class JavacBasedPropertyInitializerEvaluator : JavaPropertyInitializerEvaluator {
 
     override fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor) = when (field) {
-        is JavacField<*> -> field.constant(descriptor)
-        is JCField<*> -> field.constant(descriptor)
+        is SymbolBasedField<*> -> field.constant(descriptor)
+        is TreeBasedField<*> -> field.constant(descriptor)
         else -> null
     }
 
     override fun isNotNullCompileTimeConstant(field: JavaField) = when(field) {
-        is JavacField<*> -> field.isCompileTimeConstant()
-        is JCField<*> -> field.isCompileTimeConstant()
+        is SymbolBasedField<*> -> field.isCompileTimeConstant()
+        is TreeBasedField<*> -> field.isCompileTimeConstant()
         else -> false
     }
 
-    private fun JavacField<*>.constant(descriptor: PropertyDescriptor) = value?.let {
+    private fun SymbolBasedField<*>.constant(descriptor: PropertyDescriptor) = value?.let {
         ConstantValueFactory(descriptor.builtIns).createConstantValue(it)
     }
 
-    private fun JCField<*>.constant(descriptor: PropertyDescriptor) = value?.let {
+    private fun TreeBasedField<*>.constant(descriptor: PropertyDescriptor) = value?.let {
         if (isCompileTimeConstant() && it is JCTree.JCLiteral) {
             ConstantValueFactory(descriptor.builtIns).createConstantValue(it.value)
         } else null
     }
 
-    private fun JavacField<*>.isCompileTimeConstant() = value?.let {
+    private fun SymbolBasedField<*>.isCompileTimeConstant() = value?.let {
         val typeMirror = type.typeMirror
 
         (typeMirror.kind.isPrimitive || typeMirror.toString() == "java.lang.String")
     } ?: false
 
-    private fun JCField<*>.isCompileTimeConstant() = value?.let {
+    private fun TreeBasedField<*>.isCompileTimeConstant() = value?.let {
         val type = this.type
 
-        isFinal && ((type is JCPrimitiveType<*>) || (type is JCClassifierTypeWithoutTypeArgument<*> && type.canonicalText == "java.lang.String"))
+        isFinal && ((type is TreeBasedPrimitiveType<*>) || (type is TreeBasedClassifierTypeWithoutTypeArgument<*> && type.canonicalText == "java.lang.String"))
     } ?: false
 
 }

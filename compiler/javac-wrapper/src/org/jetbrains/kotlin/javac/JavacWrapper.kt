@@ -44,15 +44,15 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import com.sun.tools.javac.util.List as JavacList
-import org.jetbrains.kotlin.wrappers.symbols.JavacClass
-import org.jetbrains.kotlin.wrappers.symbols.JavacPackage
+import org.jetbrains.kotlin.wrappers.symbols.SymbolBasedClass
+import org.jetbrains.kotlin.wrappers.symbols.SymbolBasedPackage
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.wrappers.trees.JCClass
-import org.jetbrains.kotlin.wrappers.trees.JCPackage
+import org.jetbrains.kotlin.wrappers.trees.TreeBasedClass
+import org.jetbrains.kotlin.wrappers.trees.TreeBasedPackage
 import java.io.Closeable
 import java.io.File
 import javax.lang.model.element.Element
@@ -100,13 +100,13 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     private val javaClasses = compilationUnits
             .flatMap { unit -> unit.typeDecls
-                    .flatMap { JCClass(it as JCTree.JCClassDecl, trees.getPath(unit, it), this).withInnerClasses() }
+                    .flatMap { TreeBasedClass(it as JCTree.JCClassDecl, trees.getPath(unit, it), this).withInnerClasses() }
             }
             .associateBy(JavaClass::fqName)
 
     private val javaPackages = compilationUnits
-            .map { JCPackage(it.packageName.toString(), this) }
-            .associateBy(JCPackage::fqName)
+            .map { TreeBasedPackage(it.packageName.toString(), this) }
+            .associateBy(TreeBasedPackage::fqName)
 
     private val kotlinClassifiersCache = KotlinClassifiersCache(kotlinFiles, this)
 
@@ -139,7 +139,7 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     fun findSubPackages(fqName: FqName) = symbols.packages
                                                   .filterKeys { it.toString().startsWith("$fqName.") }
-                                                  .map { JavacPackage(it.value, this) } +
+                                                  .map { SymbolBasedPackage(it.value, this) } +
                                           javaPackages
                                                   .filterKeys { it.isSubpackageOf(fqName) && it != fqName }
                                                   .map { it.value }
@@ -151,7 +151,7 @@ class JavacWrapper(javaFiles: Collection<File>,
                                                          ?.members()
                                                          ?.elements
                                                          ?.filterIsInstance(TypeElement::class.java)
-                                                         ?.map { JavacClass(it, this) }
+                                                         ?.map { SymbolBasedClass(it, this) }
                                                          .orEmpty()
 
     fun getTreePath(tree: JCTree, compilationUnit: CompilationUnitTree): TreePath = trees.getPath(compilationUnit, tree)
@@ -164,9 +164,9 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     private inline fun <reified T> Iterable<T>.toJavacList() = JavacList.from(this)
 
-    private fun findClassInSymbols(fqName: String) = elements.getTypeElement(fqName)?.let { JavacClass(it, this) }
+    private fun findClassInSymbols(fqName: String) = elements.getTypeElement(fqName)?.let { SymbolBasedClass(it, this) }
 
-    private fun findPackageInSymbols(fqName: String) = elements.getPackageElement(fqName)?.let { JavacPackage(it, this) }
+    private fun findPackageInSymbols(fqName: String) = elements.getPackageElement(fqName)?.let { SymbolBasedPackage(it, this) }
 
     private fun JavacFileManager.setClassPathForCompilation(outDir: File?) = apply {
         (outDir ?: configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY])?.let {

@@ -64,6 +64,6 @@ fun ExecutableElement.valueParameters(javac: JavacWrapper) = let {
     parameters.mapIndexed { index, it ->
         val isLastParameter = index == parameterTypesCount - 1
         val parameterName = it.simpleName.toString()
-        JavacValueParameter(it, parameterName, isLastParameter && isVarArgs, javac)
+        SymbolBasedValueParameter(it, parameterName, isLastParameter && isVarArgs, javac)
     }
 }

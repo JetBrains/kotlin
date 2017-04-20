@@ -62,7 +62,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.wrappers.trees.JCClass
+import org.jetbrains.kotlin.wrappers.trees.TreeBasedClass
 import java.util.*
 
 object TopDownAnalyzerFacadeForJVM {
@@ -248,7 +248,7 @@ object TopDownAnalyzerFacadeForJVM {
 
         override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
             val resolver = if (javaClass is JavaClassImpl && javaClass.psi.containingFile.virtualFile in sourceScope
-                               || javaClass is JCClass<*> || javaClass is MockKotlinClassifier)
+                               || javaClass is TreeBasedClass<*> || javaClass is MockKotlinClassifier)
                 sourceCodeResolver
             else
                 compiledCodeResolver
