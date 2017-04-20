@@ -20,15 +20,13 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.DiagnosticReporterByTrackingStrategy
 import org.jetbrains.kotlin.resolve.calls.REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.isFakeElement
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
@@ -41,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
@@ -175,21 +174,82 @@ class KotlinToResolvedCallTransformer(
             // todo
 //            if (valueArgument.isExternal()) continue
 
-            val deparenthesized = valueArgument.getArgumentExpression()?.let {
+            val argumentExpression = valueArgument.getArgumentExpression() ?: continue
+            val deparenthesized = argumentExpression.let {
                 KtPsiUtil.getLastElementDeparenthesized(it, context.statementFilter)
             } ?: continue
 
-            var recordedType = context.trace.getType(deparenthesized)
+            val recordedType = context.trace.getType(deparenthesized)
+            var updatedType = recordedType
+
+            val resolvedCall = deparenthesized.getResolvedCall(trace.bindingContext)
+            if (resolvedCall != null) {
+                updatedType = resolvedCall.resultingDescriptor.returnType ?: updatedType
+            }
 
             // For the cases like 'foo(1)' the type of '1' depends on expected type (it can be Int, Byte, etc.),
             // so while the expected type is not known, it's IntegerValueType(1), and should be updated when the expected type is known.
             if (recordedType != null && !recordedType.constructor.isDenotable) {
-                recordedType = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(newContext, deparenthesized) ?: recordedType
+                updatedType = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(newContext, deparenthesized) ?: updatedType
             }
 
-//            dataFlowAnalyzer.checkType(recordedType, deparenthesized, newContext)
+            updatedType = updateRecordedTypeForArgument(updatedType, recordedType, argumentExpression, context)
+
+//            dataFlowAnalyzer.checkType(updatedType, deparenthesized, newContext)
         }
 
+    }
+
+    // See CallCompleter#updateRecordedTypeForArgument
+    private fun updateRecordedTypeForArgument(
+            updatedType: KotlinType?,
+            recordedType: KotlinType?,
+            argumentExpression: KtExpression,
+            context: BasicCallResolutionContext
+    ): KotlinType? {
+        if ((!ErrorUtils.containsErrorType(recordedType) && recordedType == updatedType) || updatedType == null) return updatedType
+
+        val expressions = ArrayList<KtExpression>().also { expressions ->
+            var expression: KtExpression? = argumentExpression
+            while (expression != null) {
+                expressions.add(expression)
+                expression = deparenthesizeOrGetSelector(expression, context.statementFilter)
+            }
+            expressions.reverse()
+        }
+
+        var shouldBeMadeNullable: Boolean = false
+        for (expression in expressions) {
+            if (!(expression is KtParenthesizedExpression || expression is KtLabeledExpression || expression is KtAnnotatedExpression)) {
+                shouldBeMadeNullable = hasNecessarySafeCall(expression, context.trace)
+            }
+            BindingContextUtils.updateRecordedType(updatedType, expression, context.trace, shouldBeMadeNullable)
+        }
+
+        return context.trace.getType(argumentExpression)
+    }
+
+    private fun deparenthesizeOrGetSelector(expression: KtExpression, statementFilter: StatementFilter): KtExpression? {
+        val deparenthesized = KtPsiUtil.deparenthesizeOnce(expression)
+        if (deparenthesized != expression) return deparenthesized
+
+        return when (expression) {
+            is KtBlockExpression -> statementFilter.getLastStatementInABlock(expression)
+            is KtQualifiedExpression -> expression.selectorExpression
+            else -> null
+        }
+    }
+
+    private fun hasNecessarySafeCall(expression: KtExpression, trace: BindingTrace): Boolean {
+        // We are interested in type of the last call:
+        // 'a.b?.foo()' is safe call, but 'a?.b.foo()' is not.
+        // Since receiver is 'a.b' and selector is 'foo()',
+        // we can only check if an expression is safe call.
+        if (expression !is KtSafeQualifiedExpression) return false
+
+        //If a receiver type is not null, then this safe expression is useless, and we don't need to make the result type nullable.
+        val expressionType = trace.getType(expression.receiverExpression)
+        return expressionType != null && TypeUtils.isNullableType(expressionType)
     }
 
     private fun bindResolvedCall(context: BasicCallResolutionContext, trace: BindingTrace, simpleResolvedCall: NewResolvedCallImpl<*>) {
