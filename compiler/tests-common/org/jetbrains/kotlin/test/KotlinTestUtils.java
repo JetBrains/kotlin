@@ -459,7 +459,18 @@ public class KotlinTestUtils {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, findAndroidApiJar());
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_6) {
-            JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRootsFromJre(getJre6Home()));
+            String jdk6 = System.getenv("JDK_16");
+            assert jdk6 != null : "Environment variable JDK_16 is not set";
+            JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRootsFromJre(getJreHome(jdk6)));
+        }
+        else if (jdkKind == TestJdkKind.FULL_JDK_9) {
+            String jdk9 = System.getenv("JDK_9");
+            if (jdk9 != null) {
+                JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRootsFromJre(getJreHome(jdk9)));
+            }
+            else {
+                System.err.println("Environment variable JDK_9 is not set, the test will be skipped");
+            }
         }
         else {
             JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRootsFromCurrentJre());
@@ -484,12 +495,9 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    private static String getJre6Home() {
-        String home = System.getenv("JDK_16");
-        if (home == null) throw new AssertionError("Environment variable JDK_16 is not set");
-
-        File jre = new File(home, "jre");
-        return jre.isDirectory() ? jre.getPath() : home;
+    private static String getJreHome(@NotNull String jdkHome) {
+        File jre = new File(jdkHome, "jre");
+        return jre.isDirectory() ? jre.getPath() : jdkHome;
     }
 
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {

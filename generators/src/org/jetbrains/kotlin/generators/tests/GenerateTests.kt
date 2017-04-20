@@ -205,6 +205,10 @@ fun main(args: Array<String>) {
             model("diagnostics/testWithModifiedMockJdk")
         }
 
+        testClass<AbstractDiagnosticsWithJdk9Test> {
+            model("diagnostics/testsWithJava9")
+        }
+
         testClass<AbstractMultiPlatformIntegrationTest> {
             model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)
         }
