@@ -16,20 +16,16 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.text.StringUtil
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.kapt3.AbstractKapt3Extension
-import org.jetbrains.kotlin.kapt3.AptMode
 import org.jetbrains.kotlin.kapt3.AptMode.STUBS_AND_APT
 import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
 import org.jetbrains.kotlin.kapt3.KaptContext
-import org.jetbrains.kotlin.kapt3.diagnostic.DefaultErrorMessagesKapt3
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
@@ -129,8 +125,6 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
                                                     stubsOutputDir = stubsDir, incrementalDataOutputDir = incrementalDataDir)
 
         AnalysisHandlerExtension.registerExtension(myEnvironment.project, kapt3Extension)
-
-        Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesKapt3())
 
         try {
             loadMultiFiles(files)

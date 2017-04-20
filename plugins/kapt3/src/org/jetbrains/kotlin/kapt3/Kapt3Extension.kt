@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.kapt3.AptMode.*
-import org.jetbrains.kotlin.kapt3.diagnostic.ErrorsKapt3
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
@@ -162,18 +161,11 @@ abstract class AbstractKapt3Extension(
 
         try {
             runAnnotationProcessing(kaptContext, processors)
+        } catch (error: KaptError) {
+            val originalException = error.cause ?: error
+            return AnalysisResult.error(bindingTrace.bindingContext, originalException)
         } catch (thr: Throwable) {
-            if (thr !is KaptError || thr.kind != KaptError.Kind.ERROR_RAISED) {
-                logger.exception(thr)
-            }
-
-            // We don't have any Kotlin files, so there isn't anything we can report diagnostic on
-            if (files.isEmpty()) {
-                throw thr
-            }
-
-            bindingTrace.report(ErrorsKapt3.KAPT3_PROCESSING_ERROR.on(files.first()))
-            return null // Compilation will be aborted anyway because of the error above
+            return AnalysisResult.error(bindingTrace.bindingContext, thr)
         } finally {
             kaptContext.close()
         }
