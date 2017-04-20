@@ -43,8 +43,6 @@ class KotlinInlineValDialog(
         init()
     }
 
-    override fun allowInlineAll() = true
-
     override fun getBorderTitle() = refactoringName
 
     override fun getNameLabelText() = "${kind.capitalize()} ${property.name}"
@@ -56,10 +54,6 @@ class KotlinInlineValDialog(
     override fun getInlineAllText() =
             "Inline all references and remove the $kind" + occurrencesString
 
-    override fun getKeepTheDeclarationText(): String? =
-            if (property.isWritable) "Inline all references and keep the $kind" + occurrencesString
-            else super.getKeepTheDeclarationText()
-
     override fun isInlineThis() = JavaRefactoringSettings.getInstance().INLINE_LOCAL_THIS
 
     override fun getInlineThisText() = "Inline this occurrence and leave the $kind"
@@ -68,7 +62,7 @@ class KotlinInlineValDialog(
         invokeRefactoring(
                 KotlinInlineCallableProcessor(project, replacementStrategy, property, reference,
                                               inlineThisOnly = isInlineThisOnly,
-                                              deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration,
+                                              deleteAfter = !isInlineThisOnly,
                                               assignments = assignments)
         )
 
