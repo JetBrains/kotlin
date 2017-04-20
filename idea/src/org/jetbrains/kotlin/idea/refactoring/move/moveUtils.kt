@@ -29,9 +29,10 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.SmartList
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -47,10 +48,9 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.kotlin.resolve.descriptorUtil.isAncestorOf
-import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
-import org.jetbrains.kotlin.resolve.descriptorUtil.parents
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -120,7 +120,7 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
         if (descriptor is ClassDescriptor && descriptor.isInner && refExpr.parent is KtCallExpression) return null
 
         val isCallable = descriptor is CallableDescriptor
-        val isExtension = isCallable && (descriptor as CallableDescriptor).extensionReceiverParameter != null
+        val isExtension = isCallable && refExpr.isExtensionRef(bindingContext)
         val isCallableReference = isCallableReference(refExpr.mainReference)
 
         if (isCallable) {
@@ -238,18 +238,26 @@ private enum class ReferenceKind {
     IRRELEVANT
 }
 
+private fun KtSimpleNameExpression.isExtensionRef(bindingContext: BindingContext? = null): Boolean {
+    val resolvedCall = getResolvedCall(bindingContext ?: analyze(BodyResolveMode.PARTIAL)) ?: return false
+    if (resolvedCall is VariableAsFunctionResolvedCall) {
+        return resolvedCall.variableCall.candidateDescriptor.isExtension || resolvedCall.functionCall.candidateDescriptor.isExtension
+    }
+    return resolvedCall.candidateDescriptor.isExtension
+}
+
 private fun getReferenceKind(reference: PsiReference, referencedElement: PsiElement): ReferenceKind {
+    val target = referencedElement.unwrapped
     val element = reference.element as? KtSimpleNameExpression ?: return ReferenceKind.QUALIFIABLE
 
     if (element.getStrictParentOfType<KtSuperExpression>() != null) return ReferenceKind.IRRELEVANT
 
-    if ((referencedElement.namedUnwrappedElement as? KtDeclaration)?.isExtensionDeclaration() ?: false
-        && reference.element.getNonStrictParentOfType<KtImportDirective>() == null) return ReferenceKind.UNQUALIFIABLE
+    if (element.isExtensionRef() && reference.element.getNonStrictParentOfType<KtImportDirective>() == null) return ReferenceKind.UNQUALIFIABLE
 
     element.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference }?.let {
         if (it.receiverExpression != null) return ReferenceKind.IRRELEVANT
-        if (referencedElement is KtDeclaration && referencedElement.parent is KtFile) return ReferenceKind.UNQUALIFIABLE
-        if (referencedElement is PsiMember && referencedElement.getContainingClass() == null) return ReferenceKind.UNQUALIFIABLE
+        if (target is KtDeclaration && target.parent is KtFile) return ReferenceKind.UNQUALIFIABLE
+        if (target is PsiMember && target.containingClass == null) return ReferenceKind.UNQUALIFIABLE
     }
 
     return ReferenceKind.QUALIFIABLE

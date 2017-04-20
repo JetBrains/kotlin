@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
@@ -232,8 +234,15 @@ fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor): Boolean {
     if (target.isExtension) return true // assume that any type of reference can use imports when resolved to extension
 
     val referenceExpression = this.element as? KtNameReferenceExpression ?: return false
-    if (CallTypeAndReceiver.detect(referenceExpression).receiver != null) return false
+    val callTypeAndReceiver = CallTypeAndReceiver.detect(referenceExpression)
+
+    if (callTypeAndReceiver.receiver != null) {
+        if (target !is PropertyDescriptor || !target.type.isExtensionFunctionType) return false
+        if (callTypeAndReceiver !is CallTypeAndReceiver.DOT && callTypeAndReceiver !is CallTypeAndReceiver.SAFE) return false
+    }
+
     if (element.parent is KtThisExpression || element.parent is KtSuperExpression) return false // TODO: it's a bad design of PSI tree, we should change it
+
     return true
 }
 
