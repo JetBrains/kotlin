@@ -51,7 +51,7 @@ public final class RhinoSystemOutputChecker implements RhinoResultChecker {
     }
 
     @NotNull
-    public static String trimSpace(@NotNull String s) {
+    private static String trimSpace(@NotNull String s) {
         String[] choppedUpString = s.trim().split("\\s");
         StringBuilder sb = new StringBuilder();
         for (String word : choppedUpString) {

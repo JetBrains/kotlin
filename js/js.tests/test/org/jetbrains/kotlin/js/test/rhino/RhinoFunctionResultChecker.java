@@ -33,10 +33,6 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
     private final Object expectedResult;
     private final boolean withModuleSystem;
 
-    public RhinoFunctionResultChecker(@NotNull String moduleId, @Nullable String packageName, @NotNull String functionName, @NotNull Object expectedResult) {
-        this(moduleId, packageName, functionName, expectedResult, false);
-    }
-
     public RhinoFunctionResultChecker(
             @NotNull String moduleId,
             @Nullable String packageName,
@@ -58,7 +54,7 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
         assertResultValid(result, context);
     }
 
-    protected void assertResultValid(Object result, Context context) {
+    private void assertResultValid(Object result, Context context) {
         String ecmaVersion = context.getLanguageVersion() == Context.VERSION_1_8 ? "ecma5" : "ecma3";
         assertEquals("Result of " + packageName + "." + functionName + "() is not what expected (" + ecmaVersion + ")!", expectedResult, result);
     }
