@@ -1098,6 +1098,11 @@ task parse0(type: RunKonanTest) {
     source = "runtime/text/parse0.kt"
 }
 
+task to_string0(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "runtime/text/to_string0.kt"
+}
+
 task catch1(type: RunKonanTest) {
     goldValue = "Before\nCaught Throwable\nDone\n"
     source = "runtime/exceptions/catch1.kt"

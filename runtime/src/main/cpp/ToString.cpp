@@ -24,6 +24,17 @@
 #include "KString.h"
 #include "Types.h"
 
+constexpr int MIN_RADIX = 2;
+constexpr int MAX_RADIX = 36;
+
+char int_to_digit(uint32_t value) {
+    if (value < 10) {
+        return '0' + value;
+    } else {
+        return 'a' + (value - 10);
+    }
+}
+
 extern "C" {
 
 OBJ_GETTER(Kotlin_Any_toString, KConstRef thiz) {
@@ -60,21 +71,34 @@ OBJ_GETTER(Kotlin_Int_toString, KInt value) {
 }
 
 OBJ_GETTER(Kotlin_Int_toStringRadix, KInt value, KInt radix) {
+  if (value == 0) {
+    RETURN_RESULT_OF(CreateStringFromCString, "0");
+  }
+  if (radix < MIN_RADIX || radix > MAX_RADIX) {
+    radix = 10;
+  }
   // TODO: maye not fit for smaller radices.
   char cstring[32];
-  switch (radix) {
-    case 8:
-      snprintf(cstring, sizeof(cstring), "%o", value);
-      break;
-    case 10:
-      snprintf(cstring, sizeof(cstring), "%d", value);
-      break;
-    case 16:
-      snprintf(cstring, sizeof(cstring), "%x", value);
-      break;
-    default:
-      RuntimeAssert(false, "Unsupported radix");
+  bool negative = (value < 0);
+  // Calculate in negative values because MIN_VALUE * -1 == MIN_VALUE
+  if  (!negative) {
+    value = -value;
   }
+
+  int32_t length = 0;
+  while (value < 0) {
+    cstring[length++] = int_to_digit(-(value % radix));
+    value /= radix;
+  }
+  if (negative) {
+    cstring[length++] = '-';
+  }
+  for (int i = 0, j = length - 1; i < j; i++, j--) {
+    char tmp = cstring[i];
+    cstring[i] = cstring[j];
+    cstring[j] = tmp;
+  }
+  cstring[length] = '\0';
   RETURN_RESULT_OF(CreateStringFromCString, cstring);
 }
 
@@ -85,21 +109,34 @@ OBJ_GETTER(Kotlin_Long_toString, KLong value) {
 }
 
 OBJ_GETTER(Kotlin_Long_toStringRadix, KLong value, KInt radix) {
-  // TODO: may not fit for smaller radices.
-  char cstring[64];
-  switch (radix) {
-    case 8:
-      snprintf(cstring, sizeof(cstring), "%llo", value);
-      break;
-    case 10:
-      snprintf(cstring, sizeof(cstring), "%lld", value);
-      break;
-    case 16:
-      snprintf(cstring, sizeof(cstring), "%llx", value);
-      break;
-    default:
-      RuntimeAssert(false, "Unsupported radix");
+  if (value == 0) {
+    RETURN_RESULT_OF(CreateStringFromCString, "0");
   }
+  if (radix < MIN_RADIX || radix > MAX_RADIX) {
+    radix = 10;
+  }
+  // TODO: maye not fit for smaller radices.
+  char cstring[64];
+  bool negative = (value < 0);
+  // Calculate in negative values because MIN_VALUE * -1 == MIN_VALUE
+  if  (!negative) {
+    value = -value;
+  }
+
+  int32_t length = 0;
+  while (value < 0) {
+    cstring[length++] = int_to_digit(-(value % radix));
+    value /= radix;
+  }
+  if (negative) {
+    cstring[length++] = '-';
+  }
+  for (int i = 0, j = length - 1; i < j; i++, j--) {
+    char tmp = cstring[i];
+    cstring[i] = cstring[j];
+    cstring[j] = tmp;
+  }
+  cstring[length] = '\0';
   RETURN_RESULT_OF(CreateStringFromCString, cstring);
 }
 
