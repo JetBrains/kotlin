@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
     curl.close()
 
 /*
-    val write_data: CPointer<write_data_callback> = staticCFunction(::write_data)
+    val write_data = staticCFunction(::write_data)
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 */
 }

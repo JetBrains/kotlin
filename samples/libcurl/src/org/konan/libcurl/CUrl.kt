@@ -10,7 +10,7 @@ class CUrl(val url: String)  {
 
     init {
         curl_easy_setopt(curl, CURLOPT_URL, url)
-        val header: CPointer<header_callback> = staticCFunction(::header_callback)
+        val header = staticCFunction(::header_callback)
         curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header)
         curl_easy_setopt(curl, CURLOPT_HEADERDATA, stablePtr.value)
     }
