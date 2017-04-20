@@ -31,13 +31,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.jps.model.java.JavaSourceRootType
-import org.jetbrains.kotlin.idea.maven.inspections.KotlinMavenPluginPhaseInspection
 import org.jetbrains.kotlin.idea.maven.inspections.DifferentKotlinMavenVersionInspection
+import org.jetbrains.kotlin.idea.maven.inspections.KotlinMavenPluginPhaseInspection
 import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import java.io.File
@@ -141,12 +139,7 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
         val sourceFolder = getContentRoots(myProject.allModules().single().name).single().getSourceFolders(JavaSourceRootType.SOURCE).single()
         ApplicationManager.getApplication().runWriteAction {
             val javaFile = sourceFolder.file?.toPsiDirectory(myProject)?.createFile("Test.java") ?: throw IllegalStateException()
-            javaFile.virtualFile.setBinaryContent("class Test {}\n".toByteArray())
-
-            FileBasedIndex.getInstance().ensureUpToDate(FileTypeIndex.NAME, myProject, GlobalSearchScope.projectScope(myProject))
-            myProject.allModules().forEach { module ->
-                FileBasedIndex.getInstance().ensureUpToDate(FileTypeIndex.NAME, myProject, module.moduleScope)
-            }
+            javaFile.viewProvider.document!!.setText("class Test {}\n")
         }
 
         assertTrue(FileTypeIndex.containsFileOfType(JavaFileType.INSTANCE, myProject.allModules().single().moduleScope))
