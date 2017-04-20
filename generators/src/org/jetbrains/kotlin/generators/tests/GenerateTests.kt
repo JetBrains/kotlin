@@ -1279,6 +1279,10 @@ fun main(args: Array<String>) {
         testClass<AbstractSourceMapGenerationSmokeTest> {
             model("sourcemap/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
         }
+
+        testClass<AbstractOutputPrefixPostfixTest> {
+            model("outputPrefixPostfix/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
+        }
     }
 
     testGroup("js/js.tests/test", "compiler/testData") {

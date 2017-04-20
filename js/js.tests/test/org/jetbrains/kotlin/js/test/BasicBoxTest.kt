@@ -68,15 +68,21 @@ abstract class BasicBoxTest(
 ) : KotlinTestWithEnvironment() {
     val additionalCommonFileDirectories = mutableListOf<String>()
 
+    protected open fun getOutputPrefixFile(testFilePath: String): File? = null
+    protected open fun getOutputPostfixFile(testFilePath: String): File? = null
+
     fun doTest(filePath: String) {
         val file = File(filePath)
         val outputDir = getOutputDir(file)
-        val expectedText = KotlinTestUtils.doLoadFile(file)
+        val fileContent = KotlinTestUtils.doLoadFile(file)
+
+        val outputPrefixFile = getOutputPrefixFile(filePath)
+        val outputPostfixFile = getOutputPostfixFile(filePath)
 
         TestFileFactoryImpl().use { testFactory ->
             testFactory.defaultModule.moduleKind
 
-            val inputFiles = KotlinTestUtils.createTestFiles(file.name, expectedText, testFactory)
+            val inputFiles = KotlinTestUtils.createTestFiles(file.name, fileContent, testFactory)
             val modules = inputFiles
                     .map { it.module }.distinct()
                     .map { it.name to it }.toMap()
@@ -87,7 +93,7 @@ abstract class BasicBoxTest(
                 val dependencies = module.dependencies.mapNotNull { modules[it]?.outputFileName(outputDir) + ".meta.js" }
 
                 val outputFileName = module.outputFileName(outputDir) + ".js"
-                generateJavaScriptFile(file.parent, module, outputFileName, dependencies, modules.size > 1)
+                generateJavaScriptFile(file.parent, module, outputFileName, dependencies, modules.size > 1, outputPrefixFile, outputPostfixFile)
 
                 if (!module.name.endsWith(OLD_MODULE_SUFFIX)) outputFileName else null
             }
@@ -113,10 +119,10 @@ abstract class BasicBoxTest(
 
             val additionalFiles = mutableListOf<String>()
 
-            val moduleKindMatcher = MODULE_KIND_PATTERN.matcher(expectedText)
+            val moduleKindMatcher = MODULE_KIND_PATTERN.matcher(fileContent)
             val moduleKind = if (moduleKindMatcher.find()) ModuleKind.valueOf(moduleKindMatcher.group(1)) else ModuleKind.PLAIN
 
-            val withModuleSystem = moduleKind != ModuleKind.PLAIN && !NO_MODULE_SYSTEM_PATTERN.matcher(expectedText).find()
+            val withModuleSystem = moduleKind != ModuleKind.PLAIN && !NO_MODULE_SYSTEM_PATTERN.matcher(fileContent).find()
 
             if (withModuleSystem) {
                 additionalFiles += MODULE_EMULATION_FILE
@@ -130,7 +136,7 @@ abstract class BasicBoxTest(
             val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles + globalCommonFiles + localCommonFiles +
                              additionalCommonFiles
 
-            if (generateNodeJsRunner && !SKIP_NODE_JS.matcher(expectedText).find()) {
+            if (generateNodeJsRunner && !SKIP_NODE_JS.matcher(fileContent).find()) {
                 val nodeRunnerName = mainModule.outputFileName(outputDir) + ".node.js"
                 val ignored = InTextDirectivesUtils.isIgnoredTarget(TargetBackend.JS, file)
                 val nodeRunnerText = generateNodeRunner(allJsFiles, outputDir, mainModuleName, ignored, testFactory.testPackage)
@@ -139,8 +145,12 @@ abstract class BasicBoxTest(
 
             val checker = RhinoFunctionResultChecker(mainModuleName, testFactory.testPackage, TEST_FUNCTION, "OK", withModuleSystem)
             RhinoUtils.runRhinoTest(allJsFiles, checker)
+
+            performAdditionalChecks(generatedJsFiles, outputPrefixFile, outputPostfixFile)
         }
     }
+
+    protected open fun performAdditionalChecks(generatedJsFiles: List<String>, outputPrefixFile: File?, outputPostfixFile: File?) {}
 
     private fun generateNodeRunner(
             files: Collection<String>,
@@ -196,7 +206,9 @@ abstract class BasicBoxTest(
             module: TestModule,
             outputFileName: String,
             dependencies: List<String>,
-            multiModule: Boolean
+            multiModule: Boolean,
+            outputPrefixFile: File?,
+            outputPostfixFile: File?
     ) {
         val testFiles = module.files.map { it.fileName }.filter { it.endsWith(".kt") }
         val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(
@@ -211,10 +223,16 @@ abstract class BasicBoxTest(
         val config = createConfig(module, dependencies, multiModule)
         val outputFile = File(outputFileName)
 
-        translateFiles(psiFiles, outputFile, config)
+        translateFiles(psiFiles, outputFile, config, outputPrefixFile, outputPostfixFile)
     }
 
-    protected fun translateFiles(psiFiles: List<KtFile>, outputFile: File, config: JsConfig) {
+    protected fun translateFiles(
+            psiFiles: List<KtFile>,
+            outputFile: File,
+            config: JsConfig,
+            outputPrefixFile: File?,
+            outputPostfixFile: File?
+    ) {
         val translator = K2JSTranslator(config)
         val translationResult = translator.translate(psiFiles, MainCallParameters.noCall())
 
@@ -226,7 +244,7 @@ abstract class BasicBoxTest(
             throw AssertionError("The following errors occurred compiling test:\n" + messages)
         }
 
-        val outputFiles = translationResult.getOutputFiles(outputFile, null, null)
+        val outputFiles = translationResult.getOutputFiles(outputFile, outputPrefixFile, outputPostfixFile)
         val outputDir = outputFile.parentFile ?: error("Parent file for output file should not be null, outputFilePath: " + outputFile.path)
         outputFiles.writeAllTo(outputDir)
 
