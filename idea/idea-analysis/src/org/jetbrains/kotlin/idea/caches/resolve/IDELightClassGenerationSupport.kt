@@ -73,7 +73,8 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             LazyLightClassDataHolder.ForClass(
                     builder,
                     exactContextProvider = { IDELightClassContexts.contextForNonLocalClassOrObject(classOrObject) },
-                    dummyContextProvider = { IDELightClassContexts.lightContextForClassOrObject(classOrObject) }
+                    // turned off for 1.1.2
+                    dummyContextProvider = null
             )
         }
     }
