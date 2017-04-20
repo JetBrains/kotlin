@@ -57,6 +57,6 @@ class KaptLogger(
             e.printStackTrace(PrintWriter(writer))
             writer.toString()
         }
-        messageCollector.report(CompilerMessageSeverity.EXCEPTION, PREFIX + "An exception occurred: " + stacktrace)
+        messageCollector.report(CompilerMessageSeverity.ERROR, PREFIX + "An exception occurred: " + stacktrace)
     }
 }
