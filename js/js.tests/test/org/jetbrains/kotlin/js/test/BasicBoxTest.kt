@@ -60,7 +60,7 @@ import java.nio.charset.Charset
 import java.util.regex.Pattern
 
 abstract class BasicBoxTest(
-        private val pathToTestDir: String,
+        protected val pathToTestDir: String,
         private val pathToOutputDir: String,
         private val typedArraysEnabled: Boolean = false,
         private val generateSourceMap: Boolean = false,
@@ -72,6 +72,10 @@ abstract class BasicBoxTest(
     protected open fun getOutputPostfixFile(testFilePath: String): File? = null
 
     fun doTest(filePath: String) {
+        doTest(filePath, "OK", MainCallParameters.noCall())
+    }
+
+    fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters) {
         val file = File(filePath)
         val outputDir = getOutputDir(file)
         val fileContent = KotlinTestUtils.doLoadFile(file)
@@ -93,7 +97,8 @@ abstract class BasicBoxTest(
                 val dependencies = module.dependencies.mapNotNull { modules[it]?.outputFileName(outputDir) + ".meta.js" }
 
                 val outputFileName = module.outputFileName(outputDir) + ".js"
-                generateJavaScriptFile(file.parent, module, outputFileName, dependencies, modules.size > 1, outputPrefixFile, outputPostfixFile)
+                generateJavaScriptFile(file.parent, module, outputFileName, dependencies, modules.size > 1,
+                                       outputPrefixFile, outputPostfixFile, mainCallParameters)
 
                 if (!module.name.endsWith(OLD_MODULE_SUFFIX)) outputFileName else null
             }
@@ -143,11 +148,22 @@ abstract class BasicBoxTest(
                 FileUtil.writeToFile(File(nodeRunnerName), nodeRunnerText)
             }
 
-            val checker = RhinoFunctionResultChecker(mainModuleName, testFactory.testPackage, TEST_FUNCTION, "OK", withModuleSystem)
-            RhinoUtils.runRhinoTest(allJsFiles, checker)
+            runGeneratedCode(allJsFiles, mainModuleName, testFactory.testPackage, TEST_FUNCTION, expectedResult, withModuleSystem)
 
             performAdditionalChecks(generatedJsFiles, outputPrefixFile, outputPostfixFile)
         }
+    }
+
+    protected open fun runGeneratedCode(
+            jsFiles: List<String>,
+            testModuleName: String,
+            testPackage: String?,
+            testFunction: String,
+            expectedResult: String,
+            withModuleSystem: Boolean
+    ) {
+        val checker = RhinoFunctionResultChecker(testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
+        RhinoUtils.runRhinoTest(jsFiles, checker)
     }
 
     protected open fun performAdditionalChecks(generatedJsFiles: List<String>, outputPrefixFile: File?, outputPostfixFile: File?) {}
@@ -208,7 +224,8 @@ abstract class BasicBoxTest(
             dependencies: List<String>,
             multiModule: Boolean,
             outputPrefixFile: File?,
-            outputPostfixFile: File?
+            outputPostfixFile: File?,
+            mainCallParameters: MainCallParameters
     ) {
         val testFiles = module.files.map { it.fileName }.filter { it.endsWith(".kt") }
         val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(
@@ -223,7 +240,7 @@ abstract class BasicBoxTest(
         val config = createConfig(module, dependencies, multiModule)
         val outputFile = File(outputFileName)
 
-        translateFiles(psiFiles, outputFile, config, outputPrefixFile, outputPostfixFile)
+        translateFiles(psiFiles, outputFile, config, outputPrefixFile, outputPostfixFile, mainCallParameters)
     }
 
     protected fun translateFiles(
@@ -231,10 +248,11 @@ abstract class BasicBoxTest(
             outputFile: File,
             config: JsConfig,
             outputPrefixFile: File?,
-            outputPostfixFile: File?
+            outputPostfixFile: File?,
+            mainCallParameters: MainCallParameters
     ) {
         val translator = K2JSTranslator(config)
-        val translationResult = translator.translate(psiFiles, MainCallParameters.noCall())
+        val translationResult = translator.translate(psiFiles, mainCallParameters)
 
         if (translationResult !is TranslationResult.Success) {
             val outputStream = ByteArrayOutputStream()
@@ -375,7 +393,8 @@ abstract class BasicBoxTest(
     }
 
     companion object {
-        val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
+        const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
+        const val DIST_DIR_JS_PATH = "dist/js/"
 
         private val COMMON_FILES_NAME = "_common"
         private val COMMON_FILES_DIR = "_commonFiles/"

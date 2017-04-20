@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
-import org.jetbrains.kotlin.js.test.BasicTest
+import org.jetbrains.kotlin.js.test.BasicBoxTest
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.junit.Assert
 import org.junit.Rule
@@ -41,7 +41,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
 
     protected fun box() {
         val methodName = testName.methodName
-        val baseName = "${BasicTest.TEST_DATA_DIR_PATH}/js-optimizer/$basePath"
+        val baseName = "${BasicBoxTest.TEST_DATA_DIR_PATH}/js-optimizer/$basePath"
         val unoptimizedName = "$baseName/$methodName.original.js"
         val optimizedName = "$baseName/$methodName.optimized.js"
 

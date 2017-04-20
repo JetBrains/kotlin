@@ -16,25 +16,23 @@
 
 package org.jetbrains.kotlin.js.test.semantics;
 
-import org.jetbrains.kotlin.js.test.SingleFileTranslationTest;
-
-public final class WebDemoExamples2Test extends SingleFileTranslationTest {
+public final class WebDemoExamples2Test extends AbstractWebDemoExamplesTest {
 
     public WebDemoExamples2Test() {
         super("webDemoExamples2/");
     }
 
     public void testBottles() throws Exception {
-        performTestWithMain("bottles", "2", "2");
-        performTestWithMain("bottles", "");
+        runMainAndCheckOutputWithExpectedFile("bottles", "2", "2");
+        runMainAndCheckOutputWithExpectedFile("bottles", "");
     }
 
     public void testLife() throws Exception {
-        performTestWithMain("life", "", "2");
+        runMainAndCheckOutputWithExpectedFile("life", "", "2");
     }
 
     public void testBuilder() throws Exception {
-        performTestWithMain("builder", "");
-        performTestWithMain("builder", "1", "over9000");
+        runMainAndCheckOutputWithExpectedFile("builder", "");
+        runMainAndCheckOutputWithExpectedFile("builder", "1", "over9000");
     }
 }
