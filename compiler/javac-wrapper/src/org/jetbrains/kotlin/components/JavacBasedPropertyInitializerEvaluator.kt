@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.wrappers.symbols.JavacField
-import org.jetbrains.kotlin.wrappers.trees.JCClassifierType
+import org.jetbrains.kotlin.wrappers.trees.JCClassifierTypeWithoutTypeArgument
 import org.jetbrains.kotlin.wrappers.trees.JCField
 import org.jetbrains.kotlin.wrappers.trees.JCPrimitiveType
 
@@ -60,7 +60,7 @@ class JavacBasedPropertyInitializerEvaluator : JavaPropertyInitializerEvaluator 
     private fun JCField<*>.isCompileTimeConstant() = value?.let {
         val type = this.type
 
-        isFinal && ((type is JCPrimitiveType<*>) || (type is JCClassifierType<*> && type.canonicalText == "java.lang.String"))
+        isFinal && ((type is JCPrimitiveType<*>) || (type is JCClassifierTypeWithoutTypeArgument<*> && type.canonicalText == "java.lang.String"))
     } ?: false
 
 }

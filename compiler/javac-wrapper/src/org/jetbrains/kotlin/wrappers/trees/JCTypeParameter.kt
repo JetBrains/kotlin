@@ -41,7 +41,7 @@ class JCTypeParameter<out T : JCTree.JCTypeParameter>(tree: T,
         get() = tree.bounds.map {
             when (it) {
                 is JCTree.JCTypeApply -> JCClassifierTypeWithTypeArgument(it, TreePath(treePath, it), javac)
-                is JCTree.JCIdent -> JCClassifierType(it, TreePath(treePath, it), javac)
+                is JCTree.JCIdent -> JCClassifierTypeWithoutTypeArgument(it, TreePath(treePath, it), javac)
                 else -> null
             }
         }.filterNotNull()

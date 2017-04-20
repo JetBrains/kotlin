@@ -50,7 +50,7 @@ class JCClass<out T : JCTree.JCClassDecl>(tree: T,
         get() = tree.modifiers.isAbstract
 
     override val isStatic
-        get() = if (outerClass?.isInterface ?: false) true else tree.modifiers.isStatic
+        get() = (outerClass?.isInterface ?: false) || tree.modifiers.isStatic
 
     override val isFinal
         get() = tree.modifiers.isFinal
@@ -72,7 +72,7 @@ class JCClass<out T : JCTree.JCClassDecl>(tree: T,
         get() = arrayListOf<JavaClassifierType>().apply {
             fun JCTree.mapToJavaClassifierType() = when {
                 this is JCTree.JCTypeApply -> JCClassifierTypeWithTypeArgument(this, TreePath(treePath, this), javac)
-                this is JCTree.JCExpression -> JCClassifierType(this, TreePath(treePath, this), javac)
+                this is JCTree.JCExpression -> JCClassifierTypeWithoutTypeArgument(this, TreePath(treePath, this), javac)
                 else -> null
             }
 

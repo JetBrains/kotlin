@@ -47,9 +47,9 @@ sealed class ClassifierType<out T : JCTree>(tree: T,
 
 }
 
-class JCClassifierType<out T : JCTree.JCExpression>(tree: T,
-                                                    treePath: TreePath,
-                                                    javac: JavacWrapper) : ClassifierType<T>(tree, treePath, javac) {
+class JCClassifierTypeWithoutTypeArgument<out T : JCTree.JCExpression>(tree: T,
+                                                                       treePath: TreePath,
+                                                                       javac: JavacWrapper) : ClassifierType<T>(tree, treePath, javac) {
 
     override val typeArguments: List<JavaType>
         get() = emptyList()

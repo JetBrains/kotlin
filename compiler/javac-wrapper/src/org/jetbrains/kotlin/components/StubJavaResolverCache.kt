@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
-class JavacBasedJavaResolverCache(resolveSession: ResolveSession) : AbstractJavaResolverCache(resolveSession) {
+class StubJavaResolverCache(resolveSession: ResolveSession) : AbstractJavaResolverCache(resolveSession) {
 
     override fun recordMethod(method: JavaMethod, descriptor: SimpleFunctionDescriptor) {}
 
