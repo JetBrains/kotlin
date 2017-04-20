@@ -17,6 +17,7 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/core/util.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/core/xpp3-1.1.4-min.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/core/xstream-1.4.8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/core/guava-17.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/lib/jsr305.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/core/guava-17.0.jar!/" />
     </CLASSES>
