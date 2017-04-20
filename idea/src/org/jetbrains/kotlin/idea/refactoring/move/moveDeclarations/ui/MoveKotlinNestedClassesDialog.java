@@ -194,8 +194,12 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
                     @Override
                     public KotlinMemberInfo invoke(KtDeclaration declaration) {
                         if (!(declaration instanceof KtClassOrObject)) return null;
+                        KtClassOrObject classOrObject = (KtClassOrObject) declaration;
 
-                        KotlinMemberInfo memberInfo = new KotlinMemberInfo((KtClassOrObject) declaration, false);
+                        if (classOrObject instanceof KtClass && ((KtClass) classOrObject).isInner()) return null;
+                        if (classOrObject instanceof KtObjectDeclaration && ((KtObjectDeclaration) classOrObject).isCompanion()) return null;
+
+                        KotlinMemberInfo memberInfo = new KotlinMemberInfo(classOrObject, false);
                         memberInfo.setChecked(elementsToMove.contains(declaration));
                         return memberInfo;
                     }
