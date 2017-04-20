@@ -36,7 +36,7 @@
                         <id>compile</id>
                         <phase>compile</phase>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>js</goal>
                         </goals>
                     </execution>
                 </executions>
