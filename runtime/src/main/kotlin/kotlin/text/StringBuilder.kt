@@ -15,10 +15,12 @@
  */
 
 package kotlin.text
-import kotlin.collections.*
 
 @SymbolName("Kotlin_String_fromUtf8Array")
 external fun fromUtf8Array(array: ByteArray, start: Int, size: Int) : String
+
+@SymbolName("Kotlin_String_toUtf8Array")
+external fun toUtf8Array(string: String, start: Int, size: Int) : ByteArray
 
 // TODO: make it somewhat private?
 @SymbolName("Kotlin_String_fromCharArray")
@@ -26,7 +28,6 @@ external fun fromCharArray(array: CharArray, start: Int, size: Int) : String
 
 @SymbolName("Kotlin_String_toCharArray")
 external fun toCharArray(string: String) : CharArray
-
 
 class StringBuilder private constructor (
         private var array: CharArray

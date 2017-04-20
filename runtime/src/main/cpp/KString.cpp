@@ -784,6 +784,20 @@ OBJ_GETTER(Kotlin_String_fromUtf8Array, KConstRef thiz, KInt start, KInt size) {
   RETURN_RESULT_OF(utf8ToUtf16, rawString, array->count_);
 }
 
+OBJ_GETTER(Kotlin_String_toUtf8Array, KString thiz, KInt start, KInt size) {
+  RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must use String");
+  if (start < 0 || size < 0 || size > thiz->count_ - start) {
+    ThrowArrayIndexOutOfBoundsException();
+  }
+  const KChar* utf16 = CharArrayAddressOfElementAt(thiz, start);
+  std::string utf8;
+  utf8::utf16to8(utf16, utf16 + size, back_inserter(utf8));
+  ArrayHeader* result = AllocArrayInstance(
+      theByteArrayTypeInfo, utf8.size() + 1, OBJ_RESULT)->array();
+  ::memcpy(ByteArrayAddressOfElementAt(result, 0), utf8.c_str(), utf8.size());
+  RETURN_OBJ(result->obj());
+}
+
 OBJ_GETTER(Kotlin_String_fromCharArray, KConstRef thiz, KInt start, KInt size) {
   const ArrayHeader* array = thiz->array();
   RuntimeAssert(array->type_info() == theCharArrayTypeInfo, "Must use a char array");
@@ -796,7 +810,7 @@ OBJ_GETTER(Kotlin_String_fromCharArray, KConstRef thiz, KInt start, KInt size) {
   }
 
   ArrayHeader* result = AllocArrayInstance(
-    theStringTypeInfo, size, OBJ_RESULT)->array();
+      theStringTypeInfo, size, OBJ_RESULT)->array();
   memcpy(CharArrayAddressOfElementAt(result, 0),
          CharArrayAddressOfElementAt(array, start),
          size * sizeof(KChar));
