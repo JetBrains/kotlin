@@ -457,6 +457,63 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         }
     }
 
+    fun testJvmFacetConfigurationFromProperties() {
+        createProjectSubDirs("src/main/kotlin", "src/main/kotlin.jvm", "src/test/kotlin", "src/test/kotlin.jvm")
+
+        importProject("""
+        <groupId>test</groupId>
+        <artifactId>project</artifactId>
+        <version>1.0.0</version>
+
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>$kotlinVersion</version>
+            </dependency>
+        </dependencies>
+
+        <properties>
+            <kotlin.compiler.languageVersion>1.0</kotlin.compiler.languageVersion>
+            <kotlin.compiler.apiVersion>1.0</kotlin.compiler.apiVersion>
+            <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
+        </properties>
+
+        <build>
+            <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+            <plugins>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
+        """)
+
+        assertModules("project")
+        assertImporterStatePresent()
+
+        with (facetSettings) {
+            Assert.assertEquals("1.0", languageLevel!!.versionString)
+            Assert.assertEquals("1.0", compilerArguments!!.languageVersion)
+            Assert.assertEquals("1.0", apiLevel!!.versionString)
+            Assert.assertEquals("1.0", compilerArguments!!.apiVersion)
+            Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
+            Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
+        }
+    }
+
     fun testJsFacetConfiguration() {
         createProjectSubDirs("src/main/kotlin", "src/main/kotlin.jvm", "src/test/kotlin", "src/test/kotlin.jvm")
 

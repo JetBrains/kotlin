@@ -107,38 +107,40 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         configureFacet(mavenProject, modifiableModelsProvider, module)
     }
 
-    private fun getCompilerArgumentsByConfigurationElement(configuration: Element, platform: TargetPlatformKind<*>): List<String> {
+    private fun getCompilerArgumentsByConfigurationElement(mavenProject: MavenProject,
+                                                           configuration: Element?,
+                                                           platform: TargetPlatformKind<*>): List<String> {
         val arguments = when (platform) {
             is TargetPlatformKind.Jvm -> K2JVMCompilerArguments()
             is TargetPlatformKind.JavaScript -> K2JSCompilerArguments()
             is TargetPlatformKind.Common -> K2MetadataCompilerArguments()
         }
 
-        arguments.apiVersion = configuration.getChild("apiVersion")?.text
-        arguments.languageVersion = configuration.getChild("languageVersion")?.text
-        arguments.multiPlatform = configuration.getChild("multiPlatform")?.text?.trim()?.toBoolean() ?: false
-        arguments.suppressWarnings = configuration.getChild("nowarn")?.text?.trim()?.toBoolean() ?: false
+        arguments.apiVersion = configuration?.getChild("apiVersion")?.text ?: mavenProject.properties["kotlin.compiler.apiVersion"]?.toString()
+        arguments.languageVersion = configuration?.getChild("languageVersion")?.text ?: mavenProject.properties["kotlin.compiler.languageVersion"]?.toString()
+        arguments.multiPlatform = configuration?.getChild("multiPlatform")?.text?.trim()?.toBoolean() ?: false
+        arguments.suppressWarnings = configuration?.getChild("nowarn")?.text?.trim()?.toBoolean() ?: false
 
-        configuration.getChild("experimentalCoroutines")?.text?.trim()?.let {
+        configuration?.getChild("experimentalCoroutines")?.text?.trim()?.let {
             arguments.coroutinesState = it
         }
 
         when (arguments) {
             is K2JVMCompilerArguments -> {
-                arguments.classpath = configuration.getChild("classpath")?.text
-                arguments.jdkHome = configuration.getChild("jdkHome")?.text
-                arguments.jvmTarget = configuration.getChild("jvmTarget")?.text
+                arguments.classpath = configuration?.getChild("classpath")?.text
+                arguments.jdkHome = configuration?.getChild("jdkHome")?.text ?: mavenProject.properties["kotlin.compiler.jdkHome"]?.toString()
+                arguments.jvmTarget = configuration?.getChild("jvmTarget")?.text ?: mavenProject.properties["kotlin.compiler.jvmTarget"]?.toString()
             }
             is K2JSCompilerArguments -> {
-                arguments.sourceMap = configuration.getChild("sourceMap")?.text?.trim()?.toBoolean() ?: false
-                arguments.outputFile = configuration.getChild("outputFile")?.text
-                arguments.metaInfo = configuration.getChild("metaInfo")?.text?.trim()?.toBoolean() ?: false
-                arguments.moduleKind = configuration.getChild("moduleKind")?.text
-                arguments.main = configuration.getChild("main")?.text
+                arguments.sourceMap = configuration?.getChild("sourceMap")?.text?.trim()?.toBoolean() ?: false
+                arguments.outputFile = configuration?.getChild("outputFile")?.text
+                arguments.metaInfo = configuration?.getChild("metaInfo")?.text?.trim()?.toBoolean() ?: false
+                arguments.moduleKind = configuration?.getChild("moduleKind")?.text
+                arguments.main = configuration?.getChild("main")?.text
             }
         }
 
-        val additionalArgs = configuration.getChild("args")?.getChildren("arg")?.mapNotNull { it.text } ?: emptyList()
+        val additionalArgs = configuration?.getChild("args")?.getChildren("arg")?.mapNotNull { it.text } ?: emptyList()
         parseCommandLineArguments(additionalArgs.toTypedArray(), arguments)
 
         return ArgumentUtils.convertArgumentsToStringList(arguments)
@@ -159,10 +161,10 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         kotlinFacet.configureFacet(compilerVersion, LanguageFeature.Coroutines.defaultState, platform, modifiableModelsProvider)
         val configuredPlatform = kotlinFacet.configuration.settings.targetPlatformKind!!
         val configuration = mavenPlugin.configurationElement
-        val sharedArguments = configuration?.let { getCompilerArgumentsByConfigurationElement(it, configuredPlatform) } ?: emptyList()
+        val sharedArguments = getCompilerArgumentsByConfigurationElement(mavenProject, configuration, configuredPlatform)
         val executionArguments = mavenPlugin.executions?.filter { it.goals.any { it in compilationGoals } }
                                          ?.firstOrNull()
-                                         ?.configurationElement?.let { getCompilerArgumentsByConfigurationElement(it, configuredPlatform) }
+                                         ?.configurationElement?.let { getCompilerArgumentsByConfigurationElement(mavenProject, it, configuredPlatform) }
         parseCompilerArgumentsToFacet(sharedArguments, emptyList(), kotlinFacet)
         if (executionArguments != null) {
             parseCompilerArgumentsToFacet(executionArguments, emptyList(), kotlinFacet)
