@@ -234,11 +234,15 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
             CXType_Elaborated -> convertType(clang_Type_getNamedType(type))
 
             CXType_Unexposed -> {
-                val canonicalType = clang_getCanonicalType(type)
-                if (canonicalType.kind != CXType_Unexposed) {
-                    convertType(canonicalType)
+                if (clang_getResultType(type).kind != CXTypeKind.CXType_Invalid) {
+                    convertFunctionType(type)
                 } else {
-                    throw NotImplementedError()
+                    val canonicalType = clang_getCanonicalType(type)
+                    if (canonicalType.kind != CXType_Unexposed) {
+                        convertType(canonicalType)
+                    } else {
+                        throw NotImplementedError()
+                    }
                 }
             }
 
@@ -269,19 +273,26 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
             }
 
             CXType_FunctionProto -> {
-                if (clang_isFunctionTypeVariadic(type) != 0) {
-                    UnsupportedType
-                } else {
-                    val returnType = convertType(clang_getResultType(type))
-                    val numArgs = clang_getNumArgTypes(type)
-                    val paramTypes = (0..numArgs - 1).map {
-                        convertType(clang_getArgType(type, it))
-                    }
-                    FunctionType(paramTypes, returnType)
-                }
+                convertFunctionType(type)
             }
 
             else -> UnsupportedType
+        }
+    }
+
+    private fun convertFunctionType(type: CValue<CXType>): Type {
+        val kind = type.kind
+        assert (kind == CXType_Unexposed || kind == CXType_FunctionProto)
+
+        return if (clang_isFunctionTypeVariadic(type) != 0) {
+            UnsupportedType
+        } else {
+            val returnType = convertType(clang_getResultType(type))
+            val numArgs = clang_getNumArgTypes(type)
+            val paramTypes = (0..numArgs - 1).map {
+                convertType(clang_getArgType(type, it))
+            }
+            FunctionType(paramTypes, returnType)
         }
     }
 

@@ -4707,37 +4707,37 @@ class IndexerCallbacks(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(64, 8)
     
-    var abortQuery: CPointer<CFunction<(COpaquePointer?, COpaquePointer?) -> Int>>?
-        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?) -> Int>>>(0).value
-        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?) -> Int>>>(0).value = value }
+    var abortQuery: CPointer<CFunction<(CXClientData?, COpaquePointer?) -> Int>>?
+        get() = memberAt<CPointerVar<CFunction<(CXClientData?, COpaquePointer?) -> Int>>>(0).value
+        set(value) { memberAt<CPointerVar<CFunction<(CXClientData?, COpaquePointer?) -> Int>>>(0).value = value }
     
-    var diagnostic: CPointer<CFunction<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> Unit>>?
-        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> Unit>>>(8).value
-        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> Unit>>>(8).value = value }
+    var diagnostic: CPointer<CFunction<(CXClientData?, CXDiagnosticSet?, COpaquePointer?) -> Unit>>?
+        get() = memberAt<CPointerVar<CFunction<(CXClientData?, CXDiagnosticSet?, COpaquePointer?) -> Unit>>>(8).value
+        set(value) { memberAt<CPointerVar<CFunction<(CXClientData?, CXDiagnosticSet?, COpaquePointer?) -> Unit>>>(8).value = value }
     
-    var enteredMainFile: CPointer<CFunction<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> COpaquePointer?>>?
-        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> COpaquePointer?>>>(16).value
-        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> COpaquePointer?>>>(16).value = value }
+    var enteredMainFile: CPointer<CFunction<(CXClientData?, CXFile?, COpaquePointer?) -> CXIdxClientFile?>>?
+        get() = memberAt<CPointerVar<CFunction<(CXClientData?, CXFile?, COpaquePointer?) -> CXIdxClientFile?>>>(16).value
+        set(value) { memberAt<CPointerVar<CFunction<(CXClientData?, CXFile?, COpaquePointer?) -> CXIdxClientFile?>>>(16).value = value }
     
-    var ppIncludedFile: CPointer<CFunction<(COpaquePointer?, CPointer<CXIdxIncludedFileInfo>?) -> COpaquePointer?>>?
-        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxIncludedFileInfo>?) -> COpaquePointer?>>>(24).value
-        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxIncludedFileInfo>?) -> COpaquePointer?>>>(24).value = value }
+    var ppIncludedFile: CPointer<CFunction<(CXClientData?, CPointer<CXIdxIncludedFileInfo>?) -> CXIdxClientFile?>>?
+        get() = memberAt<CPointerVar<CFunction<(CXClientData?, CPointer<CXIdxIncludedFileInfo>?) -> CXIdxClientFile?>>>(24).value
+        set(value) { memberAt<CPointerVar<CFunction<(CXClientData?, CPointer<CXIdxIncludedFileInfo>?) -> CXIdxClientFile?>>>(24).value = value }
     
-    var importedASTFile: CPointer<CFunction<(COpaquePointer?, CPointer<CXIdxImportedASTFileInfo>?) -> COpaquePointer?>>?
-        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxImportedASTFileInfo>?) -> COpaquePointer?>>>(32).value
-        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxImportedASTFileInfo>?) -> COpaquePointer?>>>(32).value = value }
+    var importedASTFile: CPointer<CFunction<(CXClientData?, CPointer<CXIdxImportedASTFileInfo>?) -> CXIdxClientASTFile?>>?
+        get() = memberAt<CPointerVar<CFunction<(CXClientData?, CPointer<CXIdxImportedASTFileInfo>?) -> CXIdxClientASTFile?>>>(32).value
+        set(value) { memberAt<CPointerVar<CFunction<(CXClientData?, CPointer<CXIdxImportedASTFileInfo>?) -> CXIdxClientASTFile?>>>(32).value = value }
     
-    var startedTranslationUnit: CPointer<CFunction<(COpaquePointer?, COpaquePointer?) -> COpaquePointer?>>?
-        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?) -> COpaquePointer?>>>(40).value
-        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?) -> COpaquePointer?>>>(40).value = value }
+    var startedTranslationUnit: CPointer<CFunction<(CXClientData?, COpaquePointer?) -> CXIdxClientContainer?>>?
+        get() = memberAt<CPointerVar<CFunction<(CXClientData?, COpaquePointer?) -> CXIdxClientContainer?>>>(40).value
+        set(value) { memberAt<CPointerVar<CFunction<(CXClientData?, COpaquePointer?) -> CXIdxClientContainer?>>>(40).value = value }
     
-    var indexDeclaration: CPointer<CFunction<(COpaquePointer?, CPointer<CXIdxDeclInfo>?) -> Unit>>?
-        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxDeclInfo>?) -> Unit>>>(48).value
-        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxDeclInfo>?) -> Unit>>>(48).value = value }
+    var indexDeclaration: CPointer<CFunction<(CXClientData?, CPointer<CXIdxDeclInfo>?) -> Unit>>?
+        get() = memberAt<CPointerVar<CFunction<(CXClientData?, CPointer<CXIdxDeclInfo>?) -> Unit>>>(48).value
+        set(value) { memberAt<CPointerVar<CFunction<(CXClientData?, CPointer<CXIdxDeclInfo>?) -> Unit>>>(48).value = value }
     
-    var indexEntityReference: CPointer<CFunction<(COpaquePointer?, CPointer<CXIdxEntityRefInfo>?) -> Unit>>?
-        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxEntityRefInfo>?) -> Unit>>>(56).value
-        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxEntityRefInfo>?) -> Unit>>>(56).value = value }
+    var indexEntityReference: CPointer<CFunction<(CXClientData?, CPointer<CXIdxEntityRefInfo>?) -> Unit>>?
+        get() = memberAt<CPointerVar<CFunction<(CXClientData?, CPointer<CXIdxEntityRefInfo>?) -> Unit>>>(56).value
+        set(value) { memberAt<CPointerVar<CFunction<(CXClientData?, CPointer<CXIdxEntityRefInfo>?) -> Unit>>>(56).value = value }
     
 }
 
@@ -5891,7 +5891,7 @@ typealias CXCursorSetVar = CPointerVarOf<CXCursorSet>
 typealias CXCursorSet = CPointer<CXCursorSetImpl>
 
 typealias CXCursorVisitorVar = CPointerVarOf<CXCursorVisitor>
-typealias CXCursorVisitor = CPointer<CFunction<(CValue<CXCursor>, CValue<CXCursor>, COpaquePointer?) -> CXChildVisitResult>>
+typealias CXCursorVisitor = CPointer<CFunction<(CValue<CXCursor>, CValue<CXCursor>, CXClientData?) -> CXChildVisitResult>>
 
 typealias CXModuleVar = CPointerVarOf<CXModule>
 typealias CXModule = COpaquePointer
@@ -5900,7 +5900,7 @@ typealias CXCompletionStringVar = CPointerVarOf<CXCompletionString>
 typealias CXCompletionString = COpaquePointer
 
 typealias CXInclusionVisitorVar = CPointerVarOf<CXInclusionVisitor>
-typealias CXInclusionVisitor = CPointer<CFunction<(COpaquePointer?, CPointer<CXSourceLocation>?, Int, COpaquePointer?) -> Unit>>
+typealias CXInclusionVisitor = CPointer<CFunction<(CXFile?, CPointer<CXSourceLocation>?, Int, CXClientData?) -> Unit>>
 
 typealias CXEvalResultVar = CPointerVarOf<CXEvalResult>
 typealias CXEvalResult = COpaquePointer
@@ -5924,6 +5924,6 @@ typealias CXIndexActionVar = CPointerVarOf<CXIndexAction>
 typealias CXIndexAction = COpaquePointer
 
 typealias CXFieldVisitorVar = CPointerVarOf<CXFieldVisitor>
-typealias CXFieldVisitor = CPointer<CFunction<(CValue<CXCursor>, COpaquePointer?) -> CXVisitorResult>>
+typealias CXFieldVisitor = CPointer<CFunction<(CValue<CXCursor>, CXClientData?) -> CXVisitorResult>>
 
 private val loadLibrary = System.loadLibrary("clangstubs")
