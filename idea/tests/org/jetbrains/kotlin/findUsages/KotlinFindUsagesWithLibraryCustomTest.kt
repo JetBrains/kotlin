@@ -19,14 +19,13 @@ package org.jetbrains.kotlin.findUsages
 import com.intellij.psi.search.FilenameIndex
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import kotlin.test.assertEquals
 
 class KotlinFindUsagesWithLibraryCustomTest : AbstractKotlinFindUsagesWithLibraryTest() {
     fun testFindUsagesForLocalClassProperty() {
         val libraryFile = FilenameIndex.getFilesByName(getProject(), "library.kt", myFixture.module.moduleWithLibrariesScope).first()
         val indexOf = libraryFile.text.indexOf("localClassProperty")
         val jetParameter = libraryFile.findElementAt(indexOf)!!.getStrictParentOfType<KtParameter>()!!
-        val usages = findUsages(jetParameter.getOriginalElement(), null, false)
+        val usages = findUsages(jetParameter.getOriginalElement(), null, false, project)
         assertEquals(2, usages.size)
     }
 }
