@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.konan.Context
@@ -275,27 +276,42 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                 builder.readValue(receiver, typeArgument) ?: expression
             }
 
-            interop.staticCFunction -> {
+            in interop.staticCFunction -> {
                 val argument = expression.getValueArgument(0)!!
                 if (argument !is IrCallableReference || argument.getArguments().isNotEmpty()) {
                     context.reportCompilationError(
-                            "${interop.staticCFunction.fqNameSafe} must take an unbound, non-capturing function",
+                            "${descriptor.fqNameSafe} must take an unbound, non-capturing function",
                             irFile, expression
                     )
                     // TODO: should probably be reported during analysis.
                 }
 
-                val cFunctionType = expression.getTypeArgument(descriptor.typeParameters[1])!!
+                val target = argument.descriptor.original
+                val signatureTypes = target.allParameters.map { it.type } + target.returnType!!
 
-                if (interop.isTriviallyAdaptedFunctionType(cFunctionType)) {
-                    IrCallableReferenceImpl(
-                            builder.startOffset, builder.endOffset,
-                            expression.type,
-                            argument.descriptor,
-                            typeArguments = null)
-                } else {
-                    TODO("$cFunctionType requiring non-trivial C adapter")
+                signatureTypes.forEachIndexed { index, type ->
+                    type.ensureSupportedInCallbacks(
+                            isReturnType = (index == signatureTypes.lastIndex),
+                            reportError = { context.reportCompilationError(it, irFile, expression) }
+                    )
                 }
+
+                descriptor.typeParameters.forEachIndexed { index, typeParameterDescriptor ->
+                    val typeArgument = expression.getTypeArgument(typeParameterDescriptor)!!
+                    val signatureType = signatureTypes[index]
+                    if (typeArgument != signatureType) {
+                        context.reportCompilationError(
+                                "C function signature element mismatch: expected '$signatureType', got '$typeArgument'",
+                                irFile, expression
+                        )
+                    }
+                }
+
+                IrCallableReferenceImpl(
+                        builder.startOffset, builder.endOffset,
+                        expression.type,
+                        target,
+                        typeArguments = null)
             }
 
             interop.signExtend, interop.narrow -> {
@@ -344,6 +360,29 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
 
             else -> expression
         }
+    }
+
+    private fun KotlinType.ensureSupportedInCallbacks(isReturnType: Boolean, reportError: (String) -> Nothing) {
+        if (isReturnType && KotlinBuiltIns.isUnit(this)) {
+            return
+        }
+
+        if (KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(this)) {
+            if (!this.isMarkedNullable) {
+                return
+            }
+            reportError("Type $this must not be nullable when used in callback signature")
+        }
+
+        if (TypeUtils.getClassDescriptor(this) == interop.cPointer) {
+            if (this.isMarkedNullable) {
+                return
+            }
+
+            reportError("Type $this must be nullable when used in callback signature")
+        }
+
+        reportError("Type $this is not supported in callback signature")
     }
 
     private fun IrCall.getSingleTypeArgument(): KotlinType {

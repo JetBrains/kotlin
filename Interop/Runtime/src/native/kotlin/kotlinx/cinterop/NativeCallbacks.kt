@@ -45,12 +45,3 @@ private external fun disposeStablePointer(pointer: COpaquePointer)
 
 @SymbolName("Kotlin_Interop_derefStablePointer")
 private external fun derefStablePointer(pointer: COpaquePointer): Any
-
-/**
- * The type of C function which can be constructed from the appropriate Kotlin function without using any adapter.
- */
-abstract class CTriviallyAdaptedFunctionType<F : Function<*>> : CAdaptedFunctionType<F> {
-    @konan.internal.Intrinsic
-    override final fun fromStatic(function: F): NativePtr =
-            throw Error("CTriviallyAdaptedFunctionType.fromStatic is called virtually")
-}

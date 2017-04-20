@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:JvmName("clang")
 @file:Suppress("UNUSED_EXPRESSION", "UNUSED_VARIABLE")
 package clang
 
@@ -22,62 +23,78 @@ import kotlinx.cinterop.*
 fun asctime(arg0: CValuesRef<tm>?): CPointer<ByteVar>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.asctime(_arg0)
+        val res = kni_asctime(_arg0)
         interpretCPointer<ByteVar>(res)
     }
 }
 
+private external fun kni_asctime(arg0: NativePtr): NativePtr
+
 fun clock(): clock_t {
-    val res = externals.clock()
+    val res = kni_clock()
     return res
 }
+
+private external fun kni_clock(): Long
 
 fun ctime(arg0: CValuesRef<time_tVar>?): CPointer<ByteVar>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.ctime(_arg0)
+        val res = kni_ctime(_arg0)
         interpretCPointer<ByteVar>(res)
     }
 }
 
+private external fun kni_ctime(arg0: NativePtr): NativePtr
+
 fun difftime(arg0: time_t, arg1: time_t): Double {
     val _arg0 = arg0
     val _arg1 = arg1
-    val res = externals.difftime(_arg0, _arg1)
+    val res = kni_difftime(_arg0, _arg1)
     return res
 }
+
+private external fun kni_difftime(arg0: Long, arg1: Long): Double
 
 fun getdate(arg0: String?): CPointer<tm>? {
     return memScoped {
         val _arg0 = arg0?.cstr?.getPointer(memScope).rawValue
-        val res = externals.getdate(_arg0)
+        val res = kni_getdate(_arg0)
         interpretCPointer<tm>(res)
     }
 }
+
+private external fun kni_getdate(arg0: NativePtr): NativePtr
 
 fun gmtime(arg0: CValuesRef<time_tVar>?): CPointer<tm>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.gmtime(_arg0)
+        val res = kni_gmtime(_arg0)
         interpretCPointer<tm>(res)
     }
 }
+
+private external fun kni_gmtime(arg0: NativePtr): NativePtr
 
 fun localtime(arg0: CValuesRef<time_tVar>?): CPointer<tm>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.localtime(_arg0)
+        val res = kni_localtime(_arg0)
         interpretCPointer<tm>(res)
     }
 }
 
+private external fun kni_localtime(arg0: NativePtr): NativePtr
+
 fun mktime(arg0: CValuesRef<tm>?): time_t {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.mktime(_arg0)
+        val res = kni_mktime(_arg0)
         res
     }
 }
+
+private external fun kni_mktime(arg0: NativePtr): Long
 
 fun strftime(arg0: CValuesRef<ByteVar>?, arg1: size_t, arg2: String?, arg3: CValuesRef<tm>?): size_t {
     return memScoped {
@@ -85,196 +102,246 @@ fun strftime(arg0: CValuesRef<ByteVar>?, arg1: size_t, arg2: String?, arg3: CVal
         val _arg1 = arg1
         val _arg2 = arg2?.cstr?.getPointer(memScope).rawValue
         val _arg3 = arg3?.getPointer(memScope).rawValue
-        val res = externals.strftime(_arg0, _arg1, _arg2, _arg3)
+        val res = kni_strftime(_arg0, _arg1, _arg2, _arg3)
         res
     }
 }
+
+private external fun kni_strftime(arg0: NativePtr, arg1: Long, arg2: NativePtr, arg3: NativePtr): Long
 
 fun strptime(arg0: String?, arg1: String?, arg2: CValuesRef<tm>?): CPointer<ByteVar>? {
     return memScoped {
         val _arg0 = arg0?.cstr?.getPointer(memScope).rawValue
         val _arg1 = arg1?.cstr?.getPointer(memScope).rawValue
         val _arg2 = arg2?.getPointer(memScope).rawValue
-        val res = externals.strptime(_arg0, _arg1, _arg2)
+        val res = kni_strptime(_arg0, _arg1, _arg2)
         interpretCPointer<ByteVar>(res)
     }
 }
 
+private external fun kni_strptime(arg0: NativePtr, arg1: NativePtr, arg2: NativePtr): NativePtr
+
 fun time(arg0: CValuesRef<time_tVar>?): time_t {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.time(_arg0)
+        val res = kni_time(_arg0)
         res
     }
 }
 
+private external fun kni_time(arg0: NativePtr): Long
+
 fun tzset(): Unit {
-    val res = externals.tzset()
+    val res = kni_tzset()
     return res
 }
+
+private external fun kni_tzset(): Unit
 
 fun asctime_r(arg0: CValuesRef<tm>?, arg1: CValuesRef<ByteVar>?): CPointer<ByteVar>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
         val _arg1 = arg1?.getPointer(memScope).rawValue
-        val res = externals.asctime_r(_arg0, _arg1)
+        val res = kni_asctime_r(_arg0, _arg1)
         interpretCPointer<ByteVar>(res)
     }
 }
+
+private external fun kni_asctime_r(arg0: NativePtr, arg1: NativePtr): NativePtr
 
 fun ctime_r(arg0: CValuesRef<time_tVar>?, arg1: CValuesRef<ByteVar>?): CPointer<ByteVar>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
         val _arg1 = arg1?.getPointer(memScope).rawValue
-        val res = externals.ctime_r(_arg0, _arg1)
+        val res = kni_ctime_r(_arg0, _arg1)
         interpretCPointer<ByteVar>(res)
     }
 }
+
+private external fun kni_ctime_r(arg0: NativePtr, arg1: NativePtr): NativePtr
 
 fun gmtime_r(arg0: CValuesRef<time_tVar>?, arg1: CValuesRef<tm>?): CPointer<tm>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
         val _arg1 = arg1?.getPointer(memScope).rawValue
-        val res = externals.gmtime_r(_arg0, _arg1)
+        val res = kni_gmtime_r(_arg0, _arg1)
         interpretCPointer<tm>(res)
     }
 }
+
+private external fun kni_gmtime_r(arg0: NativePtr, arg1: NativePtr): NativePtr
 
 fun localtime_r(arg0: CValuesRef<time_tVar>?, arg1: CValuesRef<tm>?): CPointer<tm>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
         val _arg1 = arg1?.getPointer(memScope).rawValue
-        val res = externals.localtime_r(_arg0, _arg1)
+        val res = kni_localtime_r(_arg0, _arg1)
         interpretCPointer<tm>(res)
     }
 }
 
+private external fun kni_localtime_r(arg0: NativePtr, arg1: NativePtr): NativePtr
+
 fun posix2time(arg0: time_t): time_t {
     val _arg0 = arg0
-    val res = externals.posix2time(_arg0)
+    val res = kni_posix2time(_arg0)
     return res
 }
 
+private external fun kni_posix2time(arg0: Long): Long
+
 fun tzsetwall(): Unit {
-    val res = externals.tzsetwall()
+    val res = kni_tzsetwall()
     return res
 }
+
+private external fun kni_tzsetwall(): Unit
 
 fun time2posix(arg0: time_t): time_t {
     val _arg0 = arg0
-    val res = externals.time2posix(_arg0)
+    val res = kni_time2posix(_arg0)
     return res
 }
+
+private external fun kni_time2posix(arg0: Long): Long
 
 fun timelocal(arg0: CValuesRef<tm>?): time_t {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.timelocal(_arg0)
+        val res = kni_timelocal(_arg0)
         res
     }
 }
 
+private external fun kni_timelocal(arg0: NativePtr): Long
+
 fun timegm(arg0: CValuesRef<tm>?): time_t {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.timegm(_arg0)
+        val res = kni_timegm(_arg0)
         res
     }
 }
+
+private external fun kni_timegm(arg0: NativePtr): Long
 
 fun nanosleep(__rqtp: CValuesRef<timespec>?, __rmtp: CValuesRef<timespec>?): Int {
     return memScoped {
         val ___rqtp = __rqtp?.getPointer(memScope).rawValue
         val ___rmtp = __rmtp?.getPointer(memScope).rawValue
-        val res = externals.nanosleep(___rqtp, ___rmtp)
+        val res = kni_nanosleep(___rqtp, ___rmtp)
         res
     }
 }
+
+private external fun kni_nanosleep(__rqtp: NativePtr, __rmtp: NativePtr): Int
 
 fun clock_getres(__clock_id: clockid_t, __res: CValuesRef<timespec>?): Int {
     return memScoped {
         val ___clock_id = __clock_id
         val ___res = __res?.getPointer(memScope).rawValue
-        val res = externals.clock_getres(___clock_id, ___res)
+        val res = kni_clock_getres(___clock_id, ___res)
         res
     }
 }
+
+private external fun kni_clock_getres(__clock_id: Int, __res: NativePtr): Int
 
 fun clock_gettime(__clock_id: clockid_t, __tp: CValuesRef<timespec>?): Int {
     return memScoped {
         val ___clock_id = __clock_id
         val ___tp = __tp?.getPointer(memScope).rawValue
-        val res = externals.clock_gettime(___clock_id, ___tp)
+        val res = kni_clock_gettime(___clock_id, ___tp)
         res
     }
 }
 
+private external fun kni_clock_gettime(__clock_id: Int, __tp: NativePtr): Int
+
 fun clock_gettime_nsec_np(__clock_id: clockid_t): __uint64_t {
     val ___clock_id = __clock_id
-    val res = externals.clock_gettime_nsec_np(___clock_id)
+    val res = kni_clock_gettime_nsec_np(___clock_id)
     return res
 }
+
+private external fun kni_clock_gettime_nsec_np(__clock_id: Int): Long
 
 fun clock_settime(__clock_id: clockid_t, __tp: CValuesRef<timespec>?): Int {
     return memScoped {
         val ___clock_id = __clock_id
         val ___tp = __tp?.getPointer(memScope).rawValue
-        val res = externals.clock_settime(___clock_id, ___tp)
+        val res = kni_clock_settime(___clock_id, ___tp)
         res
     }
 }
+
+private external fun kni_clock_settime(__clock_id: Int, __tp: NativePtr): Int
 
 fun clang_getCString(string: CValue<CXString>): CPointer<ByteVar>? {
     return memScoped {
         val _string = string.getPointer(memScope).rawValue
-        val res = externals.clang_getCString(_string)
+        val res = kni_clang_getCString(_string)
         interpretCPointer<ByteVar>(res)
     }
 }
 
+private external fun kni_clang_getCString(string: NativePtr): NativePtr
+
 fun clang_disposeString(string: CValue<CXString>): Unit {
     return memScoped {
         val _string = string.getPointer(memScope).rawValue
-        val res = externals.clang_disposeString(_string)
+        val res = kni_clang_disposeString(_string)
         res
     }
 }
+
+private external fun kni_clang_disposeString(string: NativePtr): Unit
 
 fun clang_disposeStringSet(set: CValuesRef<CXStringSet>?): Unit {
     return memScoped {
         val _set = set?.getPointer(memScope).rawValue
-        val res = externals.clang_disposeStringSet(_set)
+        val res = kni_clang_disposeStringSet(_set)
         res
     }
 }
 
+private external fun kni_clang_disposeStringSet(set: NativePtr): Unit
+
 fun clang_getBuildSessionTimestamp(): Long {
-    val res = externals.clang_getBuildSessionTimestamp()
+    val res = kni_clang_getBuildSessionTimestamp()
     return res
 }
 
+private external fun kni_clang_getBuildSessionTimestamp(): Long
+
 fun clang_VirtualFileOverlay_create(options: Int): CXVirtualFileOverlay? {
     val _options = options
-    val res = externals.clang_VirtualFileOverlay_create(_options)
+    val res = kni_clang_VirtualFileOverlay_create(_options)
     return interpretCPointer<CXVirtualFileOverlayImpl>(res)
 }
+
+private external fun kni_clang_VirtualFileOverlay_create(options: Int): NativePtr
 
 fun clang_VirtualFileOverlay_addFileMapping(arg0: CXVirtualFileOverlay?, virtualPath: String?, realPath: String?): CXErrorCode {
     return memScoped {
         val _arg0 = arg0.rawValue
         val _virtualPath = virtualPath?.cstr?.getPointer(memScope).rawValue
         val _realPath = realPath?.cstr?.getPointer(memScope).rawValue
-        val res = externals.clang_VirtualFileOverlay_addFileMapping(_arg0, _virtualPath, _realPath)
+        val res = kni_clang_VirtualFileOverlay_addFileMapping(_arg0, _virtualPath, _realPath)
         CXErrorCode.byValue(res)
     }
 }
 
+private external fun kni_clang_VirtualFileOverlay_addFileMapping(arg0: NativePtr, virtualPath: NativePtr, realPath: NativePtr): Int
+
 fun clang_VirtualFileOverlay_setCaseSensitivity(arg0: CXVirtualFileOverlay?, caseSensitive: Int): CXErrorCode {
     val _arg0 = arg0.rawValue
     val _caseSensitive = caseSensitive
-    val res = externals.clang_VirtualFileOverlay_setCaseSensitivity(_arg0, _caseSensitive)
+    val res = kni_clang_VirtualFileOverlay_setCaseSensitivity(_arg0, _caseSensitive)
     return CXErrorCode.byValue(res)
 }
+
+private external fun kni_clang_VirtualFileOverlay_setCaseSensitivity(arg0: NativePtr, caseSensitive: Int): Int
 
 fun clang_VirtualFileOverlay_writeToBuffer(arg0: CXVirtualFileOverlay?, options: Int, out_buffer_ptr: CValuesRef<CPointerVar<ByteVar>>?, out_buffer_size: CValuesRef<IntVar>?): CXErrorCode {
     return memScoped {
@@ -282,46 +349,58 @@ fun clang_VirtualFileOverlay_writeToBuffer(arg0: CXVirtualFileOverlay?, options:
         val _options = options
         val _out_buffer_ptr = out_buffer_ptr?.getPointer(memScope).rawValue
         val _out_buffer_size = out_buffer_size?.getPointer(memScope).rawValue
-        val res = externals.clang_VirtualFileOverlay_writeToBuffer(_arg0, _options, _out_buffer_ptr, _out_buffer_size)
+        val res = kni_clang_VirtualFileOverlay_writeToBuffer(_arg0, _options, _out_buffer_ptr, _out_buffer_size)
         CXErrorCode.byValue(res)
     }
 }
 
+private external fun kni_clang_VirtualFileOverlay_writeToBuffer(arg0: NativePtr, options: Int, out_buffer_ptr: NativePtr, out_buffer_size: NativePtr): Int
+
 fun clang_free(buffer: COpaquePointer?): Unit {
     val _buffer = buffer.rawValue
-    val res = externals.clang_free(_buffer)
+    val res = kni_clang_free(_buffer)
     return res
 }
+
+private external fun kni_clang_free(buffer: NativePtr): Unit
 
 fun clang_VirtualFileOverlay_dispose(arg0: CXVirtualFileOverlay?): Unit {
     val _arg0 = arg0.rawValue
-    val res = externals.clang_VirtualFileOverlay_dispose(_arg0)
+    val res = kni_clang_VirtualFileOverlay_dispose(_arg0)
     return res
 }
 
+private external fun kni_clang_VirtualFileOverlay_dispose(arg0: NativePtr): Unit
+
 fun clang_ModuleMapDescriptor_create(options: Int): CXModuleMapDescriptor? {
     val _options = options
-    val res = externals.clang_ModuleMapDescriptor_create(_options)
+    val res = kni_clang_ModuleMapDescriptor_create(_options)
     return interpretCPointer<CXModuleMapDescriptorImpl>(res)
 }
+
+private external fun kni_clang_ModuleMapDescriptor_create(options: Int): NativePtr
 
 fun clang_ModuleMapDescriptor_setFrameworkModuleName(arg0: CXModuleMapDescriptor?, name: String?): CXErrorCode {
     return memScoped {
         val _arg0 = arg0.rawValue
         val _name = name?.cstr?.getPointer(memScope).rawValue
-        val res = externals.clang_ModuleMapDescriptor_setFrameworkModuleName(_arg0, _name)
+        val res = kni_clang_ModuleMapDescriptor_setFrameworkModuleName(_arg0, _name)
         CXErrorCode.byValue(res)
     }
 }
+
+private external fun kni_clang_ModuleMapDescriptor_setFrameworkModuleName(arg0: NativePtr, name: NativePtr): Int
 
 fun clang_ModuleMapDescriptor_setUmbrellaHeader(arg0: CXModuleMapDescriptor?, name: String?): CXErrorCode {
     return memScoped {
         val _arg0 = arg0.rawValue
         val _name = name?.cstr?.getPointer(memScope).rawValue
-        val res = externals.clang_ModuleMapDescriptor_setUmbrellaHeader(_arg0, _name)
+        val res = kni_clang_ModuleMapDescriptor_setUmbrellaHeader(_arg0, _name)
         CXErrorCode.byValue(res)
     }
 }
+
+private external fun kni_clang_ModuleMapDescriptor_setUmbrellaHeader(arg0: NativePtr, name: NativePtr): Int
 
 fun clang_ModuleMapDescriptor_writeToBuffer(arg0: CXModuleMapDescriptor?, options: Int, out_buffer_ptr: CValuesRef<CPointerVar<ByteVar>>?, out_buffer_size: CValuesRef<IntVar>?): CXErrorCode {
     return memScoped {
@@ -329,104 +408,132 @@ fun clang_ModuleMapDescriptor_writeToBuffer(arg0: CXModuleMapDescriptor?, option
         val _options = options
         val _out_buffer_ptr = out_buffer_ptr?.getPointer(memScope).rawValue
         val _out_buffer_size = out_buffer_size?.getPointer(memScope).rawValue
-        val res = externals.clang_ModuleMapDescriptor_writeToBuffer(_arg0, _options, _out_buffer_ptr, _out_buffer_size)
+        val res = kni_clang_ModuleMapDescriptor_writeToBuffer(_arg0, _options, _out_buffer_ptr, _out_buffer_size)
         CXErrorCode.byValue(res)
     }
 }
 
+private external fun kni_clang_ModuleMapDescriptor_writeToBuffer(arg0: NativePtr, options: Int, out_buffer_ptr: NativePtr, out_buffer_size: NativePtr): Int
+
 fun clang_ModuleMapDescriptor_dispose(arg0: CXModuleMapDescriptor?): Unit {
     val _arg0 = arg0.rawValue
-    val res = externals.clang_ModuleMapDescriptor_dispose(_arg0)
+    val res = kni_clang_ModuleMapDescriptor_dispose(_arg0)
     return res
 }
+
+private external fun kni_clang_ModuleMapDescriptor_dispose(arg0: NativePtr): Unit
 
 fun clang_createIndex(excludeDeclarationsFromPCH: Int, displayDiagnostics: Int): CXIndex? {
     val _excludeDeclarationsFromPCH = excludeDeclarationsFromPCH
     val _displayDiagnostics = displayDiagnostics
-    val res = externals.clang_createIndex(_excludeDeclarationsFromPCH, _displayDiagnostics)
+    val res = kni_clang_createIndex(_excludeDeclarationsFromPCH, _displayDiagnostics)
     return interpretCPointer<COpaque>(res)
 }
 
+private external fun kni_clang_createIndex(excludeDeclarationsFromPCH: Int, displayDiagnostics: Int): NativePtr
+
 fun clang_disposeIndex(index: CXIndex?): Unit {
     val _index = index.rawValue
-    val res = externals.clang_disposeIndex(_index)
+    val res = kni_clang_disposeIndex(_index)
     return res
 }
+
+private external fun kni_clang_disposeIndex(index: NativePtr): Unit
 
 fun clang_CXIndex_setGlobalOptions(arg0: CXIndex?, options: Int): Unit {
     val _arg0 = arg0.rawValue
     val _options = options
-    val res = externals.clang_CXIndex_setGlobalOptions(_arg0, _options)
+    val res = kni_clang_CXIndex_setGlobalOptions(_arg0, _options)
     return res
 }
 
+private external fun kni_clang_CXIndex_setGlobalOptions(arg0: NativePtr, options: Int): Unit
+
 fun clang_CXIndex_getGlobalOptions(arg0: CXIndex?): Int {
     val _arg0 = arg0.rawValue
-    val res = externals.clang_CXIndex_getGlobalOptions(_arg0)
+    val res = kni_clang_CXIndex_getGlobalOptions(_arg0)
     return res
 }
+
+private external fun kni_clang_CXIndex_getGlobalOptions(arg0: NativePtr): Int
 
 fun clang_getFileName(SFile: CXFile?): CValue<CXString> {
     return memScoped {
         val _SFile = SFile.rawValue
-        val res = externals.clang_getFileName(_SFile, alloc<CXString>().rawPtr)
+        val res = kni_clang_getFileName(_SFile, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_getFileName(SFile: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getFileTime(SFile: CXFile?): time_t {
     val _SFile = SFile.rawValue
-    val res = externals.clang_getFileTime(_SFile)
+    val res = kni_clang_getFileTime(_SFile)
     return res
 }
+
+private external fun kni_clang_getFileTime(SFile: NativePtr): Long
 
 fun clang_getFileUniqueID(file: CXFile?, outID: CValuesRef<CXFileUniqueID>?): Int {
     return memScoped {
         val _file = file.rawValue
         val _outID = outID?.getPointer(memScope).rawValue
-        val res = externals.clang_getFileUniqueID(_file, _outID)
+        val res = kni_clang_getFileUniqueID(_file, _outID)
         res
     }
 }
 
+private external fun kni_clang_getFileUniqueID(file: NativePtr, outID: NativePtr): Int
+
 fun clang_isFileMultipleIncludeGuarded(tu: CXTranslationUnit?, file: CXFile?): Int {
     val _tu = tu.rawValue
     val _file = file.rawValue
-    val res = externals.clang_isFileMultipleIncludeGuarded(_tu, _file)
+    val res = kni_clang_isFileMultipleIncludeGuarded(_tu, _file)
     return res
 }
+
+private external fun kni_clang_isFileMultipleIncludeGuarded(tu: NativePtr, file: NativePtr): Int
 
 fun clang_getFile(tu: CXTranslationUnit?, file_name: String?): CXFile? {
     return memScoped {
         val _tu = tu.rawValue
         val _file_name = file_name?.cstr?.getPointer(memScope).rawValue
-        val res = externals.clang_getFile(_tu, _file_name)
+        val res = kni_clang_getFile(_tu, _file_name)
         interpretCPointer<COpaque>(res)
     }
 }
 
+private external fun kni_clang_getFile(tu: NativePtr, file_name: NativePtr): NativePtr
+
 fun clang_File_isEqual(file1: CXFile?, file2: CXFile?): Int {
     val _file1 = file1.rawValue
     val _file2 = file2.rawValue
-    val res = externals.clang_File_isEqual(_file1, _file2)
+    val res = kni_clang_File_isEqual(_file1, _file2)
     return res
 }
 
+private external fun kni_clang_File_isEqual(file1: NativePtr, file2: NativePtr): Int
+
 fun clang_getNullLocation(): CValue<CXSourceLocation> {
     return memScoped {
-        val res = externals.clang_getNullLocation(alloc<CXSourceLocation>().rawPtr)
+        val res = kni_clang_getNullLocation(alloc<CXSourceLocation>().rawPtr)
         interpretPointed<CXSourceLocation>(res).readValue()
     }
 }
+
+private external fun kni_clang_getNullLocation(retValPlacement: NativePtr): NativePtr
 
 fun clang_equalLocations(loc1: CValue<CXSourceLocation>, loc2: CValue<CXSourceLocation>): Int {
     return memScoped {
         val _loc1 = loc1.getPointer(memScope).rawValue
         val _loc2 = loc2.getPointer(memScope).rawValue
-        val res = externals.clang_equalLocations(_loc1, _loc2)
+        val res = kni_clang_equalLocations(_loc1, _loc2)
         res
     }
 }
+
+private external fun kni_clang_equalLocations(loc1: NativePtr, loc2: NativePtr): Int
 
 fun clang_getLocation(tu: CXTranslationUnit?, file: CXFile?, line: Int, column: Int): CValue<CXSourceLocation> {
     return memScoped {
@@ -434,69 +541,85 @@ fun clang_getLocation(tu: CXTranslationUnit?, file: CXFile?, line: Int, column: 
         val _file = file.rawValue
         val _line = line
         val _column = column
-        val res = externals.clang_getLocation(_tu, _file, _line, _column, alloc<CXSourceLocation>().rawPtr)
+        val res = kni_clang_getLocation(_tu, _file, _line, _column, alloc<CXSourceLocation>().rawPtr)
         interpretPointed<CXSourceLocation>(res).readValue()
     }
 }
+
+private external fun kni_clang_getLocation(tu: NativePtr, file: NativePtr, line: Int, column: Int, retValPlacement: NativePtr): NativePtr
 
 fun clang_getLocationForOffset(tu: CXTranslationUnit?, file: CXFile?, offset: Int): CValue<CXSourceLocation> {
     return memScoped {
         val _tu = tu.rawValue
         val _file = file.rawValue
         val _offset = offset
-        val res = externals.clang_getLocationForOffset(_tu, _file, _offset, alloc<CXSourceLocation>().rawPtr)
+        val res = kni_clang_getLocationForOffset(_tu, _file, _offset, alloc<CXSourceLocation>().rawPtr)
         interpretPointed<CXSourceLocation>(res).readValue()
     }
 }
 
+private external fun kni_clang_getLocationForOffset(tu: NativePtr, file: NativePtr, offset: Int, retValPlacement: NativePtr): NativePtr
+
 fun clang_Location_isInSystemHeader(location: CValue<CXSourceLocation>): Int {
     return memScoped {
         val _location = location.getPointer(memScope).rawValue
-        val res = externals.clang_Location_isInSystemHeader(_location)
+        val res = kni_clang_Location_isInSystemHeader(_location)
         res
     }
 }
+
+private external fun kni_clang_Location_isInSystemHeader(location: NativePtr): Int
 
 fun clang_Location_isFromMainFile(location: CValue<CXSourceLocation>): Int {
     return memScoped {
         val _location = location.getPointer(memScope).rawValue
-        val res = externals.clang_Location_isFromMainFile(_location)
+        val res = kni_clang_Location_isFromMainFile(_location)
         res
     }
 }
 
+private external fun kni_clang_Location_isFromMainFile(location: NativePtr): Int
+
 fun clang_getNullRange(): CValue<CXSourceRange> {
     return memScoped {
-        val res = externals.clang_getNullRange(alloc<CXSourceRange>().rawPtr)
+        val res = kni_clang_getNullRange(alloc<CXSourceRange>().rawPtr)
         interpretPointed<CXSourceRange>(res).readValue()
     }
 }
+
+private external fun kni_clang_getNullRange(retValPlacement: NativePtr): NativePtr
 
 fun clang_getRange(begin: CValue<CXSourceLocation>, end: CValue<CXSourceLocation>): CValue<CXSourceRange> {
     return memScoped {
         val _begin = begin.getPointer(memScope).rawValue
         val _end = end.getPointer(memScope).rawValue
-        val res = externals.clang_getRange(_begin, _end, alloc<CXSourceRange>().rawPtr)
+        val res = kni_clang_getRange(_begin, _end, alloc<CXSourceRange>().rawPtr)
         interpretPointed<CXSourceRange>(res).readValue()
     }
 }
+
+private external fun kni_clang_getRange(begin: NativePtr, end: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_equalRanges(range1: CValue<CXSourceRange>, range2: CValue<CXSourceRange>): Int {
     return memScoped {
         val _range1 = range1.getPointer(memScope).rawValue
         val _range2 = range2.getPointer(memScope).rawValue
-        val res = externals.clang_equalRanges(_range1, _range2)
+        val res = kni_clang_equalRanges(_range1, _range2)
         res
     }
 }
 
+private external fun kni_clang_equalRanges(range1: NativePtr, range2: NativePtr): Int
+
 fun clang_Range_isNull(range: CValue<CXSourceRange>): Int {
     return memScoped {
         val _range = range.getPointer(memScope).rawValue
-        val res = externals.clang_Range_isNull(_range)
+        val res = kni_clang_Range_isNull(_range)
         res
     }
 }
+
+private external fun kni_clang_Range_isNull(range: NativePtr): Int
 
 fun clang_getExpansionLocation(location: CValue<CXSourceLocation>, file: CValuesRef<CXFileVar>?, line: CValuesRef<IntVar>?, column: CValuesRef<IntVar>?, offset: CValuesRef<IntVar>?): Unit {
     return memScoped {
@@ -505,10 +628,12 @@ fun clang_getExpansionLocation(location: CValue<CXSourceLocation>, file: CValues
         val _line = line?.getPointer(memScope).rawValue
         val _column = column?.getPointer(memScope).rawValue
         val _offset = offset?.getPointer(memScope).rawValue
-        val res = externals.clang_getExpansionLocation(_location, _file, _line, _column, _offset)
+        val res = kni_clang_getExpansionLocation(_location, _file, _line, _column, _offset)
         res
     }
 }
+
+private external fun kni_clang_getExpansionLocation(location: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
 
 fun clang_getPresumedLocation(location: CValue<CXSourceLocation>, filename: CValuesRef<CXString>?, line: CValuesRef<IntVar>?, column: CValuesRef<IntVar>?): Unit {
     return memScoped {
@@ -516,10 +641,12 @@ fun clang_getPresumedLocation(location: CValue<CXSourceLocation>, filename: CVal
         val _filename = filename?.getPointer(memScope).rawValue
         val _line = line?.getPointer(memScope).rawValue
         val _column = column?.getPointer(memScope).rawValue
-        val res = externals.clang_getPresumedLocation(_location, _filename, _line, _column)
+        val res = kni_clang_getPresumedLocation(_location, _filename, _line, _column)
         res
     }
 }
+
+private external fun kni_clang_getPresumedLocation(location: NativePtr, filename: NativePtr, line: NativePtr, column: NativePtr): Unit
 
 fun clang_getInstantiationLocation(location: CValue<CXSourceLocation>, file: CValuesRef<CXFileVar>?, line: CValuesRef<IntVar>?, column: CValuesRef<IntVar>?, offset: CValuesRef<IntVar>?): Unit {
     return memScoped {
@@ -528,10 +655,12 @@ fun clang_getInstantiationLocation(location: CValue<CXSourceLocation>, file: CVa
         val _line = line?.getPointer(memScope).rawValue
         val _column = column?.getPointer(memScope).rawValue
         val _offset = offset?.getPointer(memScope).rawValue
-        val res = externals.clang_getInstantiationLocation(_location, _file, _line, _column, _offset)
+        val res = kni_clang_getInstantiationLocation(_location, _file, _line, _column, _offset)
         res
     }
 }
+
+private external fun kni_clang_getInstantiationLocation(location: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
 
 fun clang_getSpellingLocation(location: CValue<CXSourceLocation>, file: CValuesRef<CXFileVar>?, line: CValuesRef<IntVar>?, column: CValuesRef<IntVar>?, offset: CValuesRef<IntVar>?): Unit {
     return memScoped {
@@ -540,10 +669,12 @@ fun clang_getSpellingLocation(location: CValue<CXSourceLocation>, file: CValuesR
         val _line = line?.getPointer(memScope).rawValue
         val _column = column?.getPointer(memScope).rawValue
         val _offset = offset?.getPointer(memScope).rawValue
-        val res = externals.clang_getSpellingLocation(_location, _file, _line, _column, _offset)
+        val res = kni_clang_getSpellingLocation(_location, _file, _line, _column, _offset)
         res
     }
 }
+
+private external fun kni_clang_getSpellingLocation(location: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
 
 fun clang_getFileLocation(location: CValue<CXSourceLocation>, file: CValuesRef<CXFileVar>?, line: CValuesRef<IntVar>?, column: CValuesRef<IntVar>?, offset: CValuesRef<IntVar>?): Unit {
     return memScoped {
@@ -552,207 +683,263 @@ fun clang_getFileLocation(location: CValue<CXSourceLocation>, file: CValuesRef<C
         val _line = line?.getPointer(memScope).rawValue
         val _column = column?.getPointer(memScope).rawValue
         val _offset = offset?.getPointer(memScope).rawValue
-        val res = externals.clang_getFileLocation(_location, _file, _line, _column, _offset)
+        val res = kni_clang_getFileLocation(_location, _file, _line, _column, _offset)
         res
     }
 }
+
+private external fun kni_clang_getFileLocation(location: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
 
 fun clang_getRangeStart(range: CValue<CXSourceRange>): CValue<CXSourceLocation> {
     return memScoped {
         val _range = range.getPointer(memScope).rawValue
-        val res = externals.clang_getRangeStart(_range, alloc<CXSourceLocation>().rawPtr)
+        val res = kni_clang_getRangeStart(_range, alloc<CXSourceLocation>().rawPtr)
         interpretPointed<CXSourceLocation>(res).readValue()
     }
 }
+
+private external fun kni_clang_getRangeStart(range: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getRangeEnd(range: CValue<CXSourceRange>): CValue<CXSourceLocation> {
     return memScoped {
         val _range = range.getPointer(memScope).rawValue
-        val res = externals.clang_getRangeEnd(_range, alloc<CXSourceLocation>().rawPtr)
+        val res = kni_clang_getRangeEnd(_range, alloc<CXSourceLocation>().rawPtr)
         interpretPointed<CXSourceLocation>(res).readValue()
     }
 }
 
+private external fun kni_clang_getRangeEnd(range: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getSkippedRanges(tu: CXTranslationUnit?, file: CXFile?): CPointer<CXSourceRangeList>? {
     val _tu = tu.rawValue
     val _file = file.rawValue
-    val res = externals.clang_getSkippedRanges(_tu, _file)
+    val res = kni_clang_getSkippedRanges(_tu, _file)
     return interpretCPointer<CXSourceRangeList>(res)
 }
+
+private external fun kni_clang_getSkippedRanges(tu: NativePtr, file: NativePtr): NativePtr
 
 fun clang_disposeSourceRangeList(ranges: CValuesRef<CXSourceRangeList>?): Unit {
     return memScoped {
         val _ranges = ranges?.getPointer(memScope).rawValue
-        val res = externals.clang_disposeSourceRangeList(_ranges)
+        val res = kni_clang_disposeSourceRangeList(_ranges)
         res
     }
 }
 
+private external fun kni_clang_disposeSourceRangeList(ranges: NativePtr): Unit
+
 fun clang_getNumDiagnosticsInSet(Diags: CXDiagnosticSet?): Int {
     val _Diags = Diags.rawValue
-    val res = externals.clang_getNumDiagnosticsInSet(_Diags)
+    val res = kni_clang_getNumDiagnosticsInSet(_Diags)
     return res
 }
+
+private external fun kni_clang_getNumDiagnosticsInSet(Diags: NativePtr): Int
 
 fun clang_getDiagnosticInSet(Diags: CXDiagnosticSet?, Index: Int): CXDiagnostic? {
     val _Diags = Diags.rawValue
     val _Index = Index
-    val res = externals.clang_getDiagnosticInSet(_Diags, _Index)
+    val res = kni_clang_getDiagnosticInSet(_Diags, _Index)
     return interpretCPointer<COpaque>(res)
 }
+
+private external fun kni_clang_getDiagnosticInSet(Diags: NativePtr, Index: Int): NativePtr
 
 fun clang_loadDiagnostics(file: String?, error: CValuesRef<CXLoadDiag_Error.Var>?, errorString: CValuesRef<CXString>?): CXDiagnosticSet? {
     return memScoped {
         val _file = file?.cstr?.getPointer(memScope).rawValue
         val _error = error?.getPointer(memScope).rawValue
         val _errorString = errorString?.getPointer(memScope).rawValue
-        val res = externals.clang_loadDiagnostics(_file, _error, _errorString)
+        val res = kni_clang_loadDiagnostics(_file, _error, _errorString)
         interpretCPointer<COpaque>(res)
     }
 }
 
+private external fun kni_clang_loadDiagnostics(file: NativePtr, error: NativePtr, errorString: NativePtr): NativePtr
+
 fun clang_disposeDiagnosticSet(Diags: CXDiagnosticSet?): Unit {
     val _Diags = Diags.rawValue
-    val res = externals.clang_disposeDiagnosticSet(_Diags)
+    val res = kni_clang_disposeDiagnosticSet(_Diags)
     return res
 }
+
+private external fun kni_clang_disposeDiagnosticSet(Diags: NativePtr): Unit
 
 fun clang_getChildDiagnostics(D: CXDiagnostic?): CXDiagnosticSet? {
     val _D = D.rawValue
-    val res = externals.clang_getChildDiagnostics(_D)
+    val res = kni_clang_getChildDiagnostics(_D)
     return interpretCPointer<COpaque>(res)
 }
 
+private external fun kni_clang_getChildDiagnostics(D: NativePtr): NativePtr
+
 fun clang_getNumDiagnostics(Unit: CXTranslationUnit?): Int {
     val _Unit = Unit.rawValue
-    val res = externals.clang_getNumDiagnostics(_Unit)
+    val res = kni_clang_getNumDiagnostics(_Unit)
     return res
 }
+
+private external fun kni_clang_getNumDiagnostics(Unit: NativePtr): Int
 
 fun clang_getDiagnostic(Unit: CXTranslationUnit?, Index: Int): CXDiagnostic? {
     val _Unit = Unit.rawValue
     val _Index = Index
-    val res = externals.clang_getDiagnostic(_Unit, _Index)
+    val res = kni_clang_getDiagnostic(_Unit, _Index)
     return interpretCPointer<COpaque>(res)
 }
+
+private external fun kni_clang_getDiagnostic(Unit: NativePtr, Index: Int): NativePtr
 
 fun clang_getDiagnosticSetFromTU(Unit: CXTranslationUnit?): CXDiagnosticSet? {
     val _Unit = Unit.rawValue
-    val res = externals.clang_getDiagnosticSetFromTU(_Unit)
+    val res = kni_clang_getDiagnosticSetFromTU(_Unit)
     return interpretCPointer<COpaque>(res)
 }
 
+private external fun kni_clang_getDiagnosticSetFromTU(Unit: NativePtr): NativePtr
+
 fun clang_disposeDiagnostic(Diagnostic: CXDiagnostic?): Unit {
     val _Diagnostic = Diagnostic.rawValue
-    val res = externals.clang_disposeDiagnostic(_Diagnostic)
+    val res = kni_clang_disposeDiagnostic(_Diagnostic)
     return res
 }
+
+private external fun kni_clang_disposeDiagnostic(Diagnostic: NativePtr): Unit
 
 fun clang_formatDiagnostic(Diagnostic: CXDiagnostic?, Options: Int): CValue<CXString> {
     return memScoped {
         val _Diagnostic = Diagnostic.rawValue
         val _Options = Options
-        val res = externals.clang_formatDiagnostic(_Diagnostic, _Options, alloc<CXString>().rawPtr)
+        val res = kni_clang_formatDiagnostic(_Diagnostic, _Options, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_formatDiagnostic(Diagnostic: NativePtr, Options: Int, retValPlacement: NativePtr): NativePtr
+
 fun clang_defaultDiagnosticDisplayOptions(): Int {
-    val res = externals.clang_defaultDiagnosticDisplayOptions()
+    val res = kni_clang_defaultDiagnosticDisplayOptions()
     return res
 }
 
+private external fun kni_clang_defaultDiagnosticDisplayOptions(): Int
+
 fun clang_getDiagnosticSeverity(arg0: CXDiagnostic?): CXDiagnosticSeverity {
     val _arg0 = arg0.rawValue
-    val res = externals.clang_getDiagnosticSeverity(_arg0)
+    val res = kni_clang_getDiagnosticSeverity(_arg0)
     return CXDiagnosticSeverity.byValue(res)
 }
+
+private external fun kni_clang_getDiagnosticSeverity(arg0: NativePtr): Int
 
 fun clang_getDiagnosticLocation(arg0: CXDiagnostic?): CValue<CXSourceLocation> {
     return memScoped {
         val _arg0 = arg0.rawValue
-        val res = externals.clang_getDiagnosticLocation(_arg0, alloc<CXSourceLocation>().rawPtr)
+        val res = kni_clang_getDiagnosticLocation(_arg0, alloc<CXSourceLocation>().rawPtr)
         interpretPointed<CXSourceLocation>(res).readValue()
     }
 }
 
+private external fun kni_clang_getDiagnosticLocation(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getDiagnosticSpelling(arg0: CXDiagnostic?): CValue<CXString> {
     return memScoped {
         val _arg0 = arg0.rawValue
-        val res = externals.clang_getDiagnosticSpelling(_arg0, alloc<CXString>().rawPtr)
+        val res = kni_clang_getDiagnosticSpelling(_arg0, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_getDiagnosticSpelling(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getDiagnosticOption(Diag: CXDiagnostic?, Disable: CValuesRef<CXString>?): CValue<CXString> {
     return memScoped {
         val _Diag = Diag.rawValue
         val _Disable = Disable?.getPointer(memScope).rawValue
-        val res = externals.clang_getDiagnosticOption(_Diag, _Disable, alloc<CXString>().rawPtr)
+        val res = kni_clang_getDiagnosticOption(_Diag, _Disable, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_getDiagnosticOption(Diag: NativePtr, Disable: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getDiagnosticCategory(arg0: CXDiagnostic?): Int {
     val _arg0 = arg0.rawValue
-    val res = externals.clang_getDiagnosticCategory(_arg0)
+    val res = kni_clang_getDiagnosticCategory(_arg0)
     return res
 }
+
+private external fun kni_clang_getDiagnosticCategory(arg0: NativePtr): Int
 
 fun clang_getDiagnosticCategoryName(Category: Int): CValue<CXString> {
     return memScoped {
         val _Category = Category
-        val res = externals.clang_getDiagnosticCategoryName(_Category, alloc<CXString>().rawPtr)
+        val res = kni_clang_getDiagnosticCategoryName(_Category, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_getDiagnosticCategoryName(Category: Int, retValPlacement: NativePtr): NativePtr
 
 fun clang_getDiagnosticCategoryText(arg0: CXDiagnostic?): CValue<CXString> {
     return memScoped {
         val _arg0 = arg0.rawValue
-        val res = externals.clang_getDiagnosticCategoryText(_arg0, alloc<CXString>().rawPtr)
+        val res = kni_clang_getDiagnosticCategoryText(_arg0, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_getDiagnosticCategoryText(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getDiagnosticNumRanges(arg0: CXDiagnostic?): Int {
     val _arg0 = arg0.rawValue
-    val res = externals.clang_getDiagnosticNumRanges(_arg0)
+    val res = kni_clang_getDiagnosticNumRanges(_arg0)
     return res
 }
+
+private external fun kni_clang_getDiagnosticNumRanges(arg0: NativePtr): Int
 
 fun clang_getDiagnosticRange(Diagnostic: CXDiagnostic?, Range: Int): CValue<CXSourceRange> {
     return memScoped {
         val _Diagnostic = Diagnostic.rawValue
         val _Range = Range
-        val res = externals.clang_getDiagnosticRange(_Diagnostic, _Range, alloc<CXSourceRange>().rawPtr)
+        val res = kni_clang_getDiagnosticRange(_Diagnostic, _Range, alloc<CXSourceRange>().rawPtr)
         interpretPointed<CXSourceRange>(res).readValue()
     }
 }
 
+private external fun kni_clang_getDiagnosticRange(Diagnostic: NativePtr, Range: Int, retValPlacement: NativePtr): NativePtr
+
 fun clang_getDiagnosticNumFixIts(Diagnostic: CXDiagnostic?): Int {
     val _Diagnostic = Diagnostic.rawValue
-    val res = externals.clang_getDiagnosticNumFixIts(_Diagnostic)
+    val res = kni_clang_getDiagnosticNumFixIts(_Diagnostic)
     return res
 }
+
+private external fun kni_clang_getDiagnosticNumFixIts(Diagnostic: NativePtr): Int
 
 fun clang_getDiagnosticFixIt(Diagnostic: CXDiagnostic?, FixIt: Int, ReplacementRange: CValuesRef<CXSourceRange>?): CValue<CXString> {
     return memScoped {
         val _Diagnostic = Diagnostic.rawValue
         val _FixIt = FixIt
         val _ReplacementRange = ReplacementRange?.getPointer(memScope).rawValue
-        val res = externals.clang_getDiagnosticFixIt(_Diagnostic, _FixIt, _ReplacementRange, alloc<CXString>().rawPtr)
+        val res = kni_clang_getDiagnosticFixIt(_Diagnostic, _FixIt, _ReplacementRange, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_getDiagnosticFixIt(Diagnostic: NativePtr, FixIt: Int, ReplacementRange: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getTranslationUnitSpelling(CTUnit: CXTranslationUnit?): CValue<CXString> {
     return memScoped {
         val _CTUnit = CTUnit.rawValue
-        val res = externals.clang_getTranslationUnitSpelling(_CTUnit, alloc<CXString>().rawPtr)
+        val res = kni_clang_getTranslationUnitSpelling(_CTUnit, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_getTranslationUnitSpelling(CTUnit: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_createTranslationUnitFromSourceFile(CIdx: CXIndex?, source_filename: String?, num_clang_command_line_args: Int, clang_command_line_args: CValuesRef<CPointerVar<ByteVar>>?, num_unsaved_files: Int, unsaved_files: CValuesRef<CXUnsavedFile>?): CXTranslationUnit? {
     return memScoped {
@@ -762,34 +949,42 @@ fun clang_createTranslationUnitFromSourceFile(CIdx: CXIndex?, source_filename: S
         val _clang_command_line_args = clang_command_line_args?.getPointer(memScope).rawValue
         val _num_unsaved_files = num_unsaved_files
         val _unsaved_files = unsaved_files?.getPointer(memScope).rawValue
-        val res = externals.clang_createTranslationUnitFromSourceFile(_CIdx, _source_filename, _num_clang_command_line_args, _clang_command_line_args, _num_unsaved_files, _unsaved_files)
+        val res = kni_clang_createTranslationUnitFromSourceFile(_CIdx, _source_filename, _num_clang_command_line_args, _clang_command_line_args, _num_unsaved_files, _unsaved_files)
         interpretCPointer<CXTranslationUnitImpl>(res)
     }
 }
+
+private external fun kni_clang_createTranslationUnitFromSourceFile(CIdx: NativePtr, source_filename: NativePtr, num_clang_command_line_args: Int, clang_command_line_args: NativePtr, num_unsaved_files: Int, unsaved_files: NativePtr): NativePtr
 
 fun clang_createTranslationUnit(CIdx: CXIndex?, ast_filename: String?): CXTranslationUnit? {
     return memScoped {
         val _CIdx = CIdx.rawValue
         val _ast_filename = ast_filename?.cstr?.getPointer(memScope).rawValue
-        val res = externals.clang_createTranslationUnit(_CIdx, _ast_filename)
+        val res = kni_clang_createTranslationUnit(_CIdx, _ast_filename)
         interpretCPointer<CXTranslationUnitImpl>(res)
     }
 }
+
+private external fun kni_clang_createTranslationUnit(CIdx: NativePtr, ast_filename: NativePtr): NativePtr
 
 fun clang_createTranslationUnit2(CIdx: CXIndex?, ast_filename: String?, out_TU: CValuesRef<CXTranslationUnitVar>?): CXErrorCode {
     return memScoped {
         val _CIdx = CIdx.rawValue
         val _ast_filename = ast_filename?.cstr?.getPointer(memScope).rawValue
         val _out_TU = out_TU?.getPointer(memScope).rawValue
-        val res = externals.clang_createTranslationUnit2(_CIdx, _ast_filename, _out_TU)
+        val res = kni_clang_createTranslationUnit2(_CIdx, _ast_filename, _out_TU)
         CXErrorCode.byValue(res)
     }
 }
 
+private external fun kni_clang_createTranslationUnit2(CIdx: NativePtr, ast_filename: NativePtr, out_TU: NativePtr): Int
+
 fun clang_defaultEditingTranslationUnitOptions(): Int {
-    val res = externals.clang_defaultEditingTranslationUnitOptions()
+    val res = kni_clang_defaultEditingTranslationUnitOptions()
     return res
 }
+
+private external fun kni_clang_defaultEditingTranslationUnitOptions(): Int
 
 fun clang_parseTranslationUnit(CIdx: CXIndex?, source_filename: String?, command_line_args: CValuesRef<CPointerVar<ByteVar>>?, num_command_line_args: Int, unsaved_files: CValuesRef<CXUnsavedFile>?, num_unsaved_files: Int, options: Int): CXTranslationUnit? {
     return memScoped {
@@ -800,10 +995,12 @@ fun clang_parseTranslationUnit(CIdx: CXIndex?, source_filename: String?, command
         val _unsaved_files = unsaved_files?.getPointer(memScope).rawValue
         val _num_unsaved_files = num_unsaved_files
         val _options = options
-        val res = externals.clang_parseTranslationUnit(_CIdx, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _options)
+        val res = kni_clang_parseTranslationUnit(_CIdx, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _options)
         interpretCPointer<CXTranslationUnitImpl>(res)
     }
 }
+
+private external fun kni_clang_parseTranslationUnit(CIdx: NativePtr, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, options: Int): NativePtr
 
 fun clang_parseTranslationUnit2(CIdx: CXIndex?, source_filename: String?, command_line_args: CValuesRef<CPointerVar<ByteVar>>?, num_command_line_args: Int, unsaved_files: CValuesRef<CXUnsavedFile>?, num_unsaved_files: Int, options: Int, out_TU: CValuesRef<CXTranslationUnitVar>?): CXErrorCode {
     return memScoped {
@@ -815,10 +1012,12 @@ fun clang_parseTranslationUnit2(CIdx: CXIndex?, source_filename: String?, comman
         val _num_unsaved_files = num_unsaved_files
         val _options = options
         val _out_TU = out_TU?.getPointer(memScope).rawValue
-        val res = externals.clang_parseTranslationUnit2(_CIdx, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _options, _out_TU)
+        val res = kni_clang_parseTranslationUnit2(_CIdx, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _options, _out_TU)
         CXErrorCode.byValue(res)
     }
 }
+
+private external fun kni_clang_parseTranslationUnit2(CIdx: NativePtr, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, options: Int, out_TU: NativePtr): Int
 
 fun clang_parseTranslationUnit2FullArgv(CIdx: CXIndex?, source_filename: String?, command_line_args: CValuesRef<CPointerVar<ByteVar>>?, num_command_line_args: Int, unsaved_files: CValuesRef<CXUnsavedFile>?, num_unsaved_files: Int, options: Int, out_TU: CValuesRef<CXTranslationUnitVar>?): CXErrorCode {
     return memScoped {
@@ -830,38 +1029,48 @@ fun clang_parseTranslationUnit2FullArgv(CIdx: CXIndex?, source_filename: String?
         val _num_unsaved_files = num_unsaved_files
         val _options = options
         val _out_TU = out_TU?.getPointer(memScope).rawValue
-        val res = externals.clang_parseTranslationUnit2FullArgv(_CIdx, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _options, _out_TU)
+        val res = kni_clang_parseTranslationUnit2FullArgv(_CIdx, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _options, _out_TU)
         CXErrorCode.byValue(res)
     }
 }
 
+private external fun kni_clang_parseTranslationUnit2FullArgv(CIdx: NativePtr, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, options: Int, out_TU: NativePtr): Int
+
 fun clang_defaultSaveOptions(TU: CXTranslationUnit?): Int {
     val _TU = TU.rawValue
-    val res = externals.clang_defaultSaveOptions(_TU)
+    val res = kni_clang_defaultSaveOptions(_TU)
     return res
 }
+
+private external fun kni_clang_defaultSaveOptions(TU: NativePtr): Int
 
 fun clang_saveTranslationUnit(TU: CXTranslationUnit?, FileName: String?, options: Int): Int {
     return memScoped {
         val _TU = TU.rawValue
         val _FileName = FileName?.cstr?.getPointer(memScope).rawValue
         val _options = options
-        val res = externals.clang_saveTranslationUnit(_TU, _FileName, _options)
+        val res = kni_clang_saveTranslationUnit(_TU, _FileName, _options)
         res
     }
 }
 
+private external fun kni_clang_saveTranslationUnit(TU: NativePtr, FileName: NativePtr, options: Int): Int
+
 fun clang_disposeTranslationUnit(arg0: CXTranslationUnit?): Unit {
     val _arg0 = arg0.rawValue
-    val res = externals.clang_disposeTranslationUnit(_arg0)
+    val res = kni_clang_disposeTranslationUnit(_arg0)
     return res
 }
 
+private external fun kni_clang_disposeTranslationUnit(arg0: NativePtr): Unit
+
 fun clang_defaultReparseOptions(TU: CXTranslationUnit?): Int {
     val _TU = TU.rawValue
-    val res = externals.clang_defaultReparseOptions(_TU)
+    val res = kni_clang_defaultReparseOptions(_TU)
     return res
 }
+
+private external fun kni_clang_defaultReparseOptions(TU: NativePtr): Int
 
 fun clang_reparseTranslationUnit(TU: CXTranslationUnit?, num_unsaved_files: Int, unsaved_files: CValuesRef<CXUnsavedFile>?, options: Int): Int {
     return memScoped {
@@ -869,166 +1078,212 @@ fun clang_reparseTranslationUnit(TU: CXTranslationUnit?, num_unsaved_files: Int,
         val _num_unsaved_files = num_unsaved_files
         val _unsaved_files = unsaved_files?.getPointer(memScope).rawValue
         val _options = options
-        val res = externals.clang_reparseTranslationUnit(_TU, _num_unsaved_files, _unsaved_files, _options)
+        val res = kni_clang_reparseTranslationUnit(_TU, _num_unsaved_files, _unsaved_files, _options)
         res
     }
 }
 
+private external fun kni_clang_reparseTranslationUnit(TU: NativePtr, num_unsaved_files: Int, unsaved_files: NativePtr, options: Int): Int
+
 fun clang_getTUResourceUsageName(kind: CXTUResourceUsageKind): CPointer<ByteVar>? {
     val _kind = kind.value
-    val res = externals.clang_getTUResourceUsageName(_kind)
+    val res = kni_clang_getTUResourceUsageName(_kind)
     return interpretCPointer<ByteVar>(res)
 }
+
+private external fun kni_clang_getTUResourceUsageName(kind: Int): NativePtr
 
 fun clang_getCXTUResourceUsage(TU: CXTranslationUnit?): CValue<CXTUResourceUsage> {
     return memScoped {
         val _TU = TU.rawValue
-        val res = externals.clang_getCXTUResourceUsage(_TU, alloc<CXTUResourceUsage>().rawPtr)
+        val res = kni_clang_getCXTUResourceUsage(_TU, alloc<CXTUResourceUsage>().rawPtr)
         interpretPointed<CXTUResourceUsage>(res).readValue()
     }
 }
 
+private external fun kni_clang_getCXTUResourceUsage(TU: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_disposeCXTUResourceUsage(usage: CValue<CXTUResourceUsage>): Unit {
     return memScoped {
         val _usage = usage.getPointer(memScope).rawValue
-        val res = externals.clang_disposeCXTUResourceUsage(_usage)
+        val res = kni_clang_disposeCXTUResourceUsage(_usage)
         res
     }
 }
 
+private external fun kni_clang_disposeCXTUResourceUsage(usage: NativePtr): Unit
+
 fun clang_getNullCursor(): CValue<CXCursor> {
     return memScoped {
-        val res = externals.clang_getNullCursor(alloc<CXCursor>().rawPtr)
+        val res = kni_clang_getNullCursor(alloc<CXCursor>().rawPtr)
         interpretPointed<CXCursor>(res).readValue()
     }
 }
 
+private external fun kni_clang_getNullCursor(retValPlacement: NativePtr): NativePtr
+
 fun clang_getTranslationUnitCursor(arg0: CXTranslationUnit?): CValue<CXCursor> {
     return memScoped {
         val _arg0 = arg0.rawValue
-        val res = externals.clang_getTranslationUnitCursor(_arg0, alloc<CXCursor>().rawPtr)
+        val res = kni_clang_getTranslationUnitCursor(_arg0, alloc<CXCursor>().rawPtr)
         interpretPointed<CXCursor>(res).readValue()
     }
 }
+
+private external fun kni_clang_getTranslationUnitCursor(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_equalCursors(arg0: CValue<CXCursor>, arg1: CValue<CXCursor>): Int {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
         val _arg1 = arg1.getPointer(memScope).rawValue
-        val res = externals.clang_equalCursors(_arg0, _arg1)
+        val res = kni_clang_equalCursors(_arg0, _arg1)
         res
     }
 }
+
+private external fun kni_clang_equalCursors(arg0: NativePtr, arg1: NativePtr): Int
 
 fun clang_Cursor_isNull(cursor: CValue<CXCursor>): Int {
     return memScoped {
         val _cursor = cursor.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_isNull(_cursor)
+        val res = kni_clang_Cursor_isNull(_cursor)
         res
     }
 }
+
+private external fun kni_clang_Cursor_isNull(cursor: NativePtr): Int
 
 fun clang_hashCursor(arg0: CValue<CXCursor>): Int {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_hashCursor(_arg0)
+        val res = kni_clang_hashCursor(_arg0)
         res
     }
 }
+
+private external fun kni_clang_hashCursor(arg0: NativePtr): Int
 
 fun clang_getCursorKind(arg0: CValue<CXCursor>): CXCursorKind {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorKind(_arg0)
+        val res = kni_clang_getCursorKind(_arg0)
         CXCursorKind.byValue(res)
     }
 }
 
+private external fun kni_clang_getCursorKind(arg0: NativePtr): Int
+
 fun clang_isDeclaration(arg0: CXCursorKind): Int {
     val _arg0 = arg0.value
-    val res = externals.clang_isDeclaration(_arg0)
+    val res = kni_clang_isDeclaration(_arg0)
     return res
 }
+
+private external fun kni_clang_isDeclaration(arg0: Int): Int
 
 fun clang_isReference(arg0: CXCursorKind): Int {
     val _arg0 = arg0.value
-    val res = externals.clang_isReference(_arg0)
+    val res = kni_clang_isReference(_arg0)
     return res
 }
+
+private external fun kni_clang_isReference(arg0: Int): Int
 
 fun clang_isExpression(arg0: CXCursorKind): Int {
     val _arg0 = arg0.value
-    val res = externals.clang_isExpression(_arg0)
+    val res = kni_clang_isExpression(_arg0)
     return res
 }
+
+private external fun kni_clang_isExpression(arg0: Int): Int
 
 fun clang_isStatement(arg0: CXCursorKind): Int {
     val _arg0 = arg0.value
-    val res = externals.clang_isStatement(_arg0)
+    val res = kni_clang_isStatement(_arg0)
     return res
 }
 
+private external fun kni_clang_isStatement(arg0: Int): Int
+
 fun clang_isAttribute(arg0: CXCursorKind): Int {
     val _arg0 = arg0.value
-    val res = externals.clang_isAttribute(_arg0)
+    val res = kni_clang_isAttribute(_arg0)
     return res
 }
+
+private external fun kni_clang_isAttribute(arg0: Int): Int
 
 fun clang_Cursor_hasAttrs(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_hasAttrs(_C)
+        val res = kni_clang_Cursor_hasAttrs(_C)
         res
     }
 }
 
+private external fun kni_clang_Cursor_hasAttrs(C: NativePtr): Int
+
 fun clang_isInvalid(arg0: CXCursorKind): Int {
     val _arg0 = arg0.value
-    val res = externals.clang_isInvalid(_arg0)
+    val res = kni_clang_isInvalid(_arg0)
     return res
 }
+
+private external fun kni_clang_isInvalid(arg0: Int): Int
 
 fun clang_isTranslationUnit(arg0: CXCursorKind): Int {
     val _arg0 = arg0.value
-    val res = externals.clang_isTranslationUnit(_arg0)
+    val res = kni_clang_isTranslationUnit(_arg0)
     return res
 }
+
+private external fun kni_clang_isTranslationUnit(arg0: Int): Int
 
 fun clang_isPreprocessing(arg0: CXCursorKind): Int {
     val _arg0 = arg0.value
-    val res = externals.clang_isPreprocessing(_arg0)
+    val res = kni_clang_isPreprocessing(_arg0)
     return res
 }
 
+private external fun kni_clang_isPreprocessing(arg0: Int): Int
+
 fun clang_isUnexposed(arg0: CXCursorKind): Int {
     val _arg0 = arg0.value
-    val res = externals.clang_isUnexposed(_arg0)
+    val res = kni_clang_isUnexposed(_arg0)
     return res
 }
+
+private external fun kni_clang_isUnexposed(arg0: Int): Int
 
 fun clang_getCursorLinkage(cursor: CValue<CXCursor>): CXLinkageKind {
     return memScoped {
         val _cursor = cursor.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorLinkage(_cursor)
+        val res = kni_clang_getCursorLinkage(_cursor)
         CXLinkageKind.byValue(res)
     }
 }
 
+private external fun kni_clang_getCursorLinkage(cursor: NativePtr): Int
+
 fun clang_getCursorVisibility(cursor: CValue<CXCursor>): CXVisibilityKind {
     return memScoped {
         val _cursor = cursor.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorVisibility(_cursor)
+        val res = kni_clang_getCursorVisibility(_cursor)
         CXVisibilityKind.byValue(res)
     }
 }
 
+private external fun kni_clang_getCursorVisibility(cursor: NativePtr): Int
+
 fun clang_getCursorAvailability(cursor: CValue<CXCursor>): CXAvailabilityKind {
     return memScoped {
         val _cursor = cursor.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorAvailability(_cursor)
+        val res = kni_clang_getCursorAvailability(_cursor)
         CXAvailabilityKind.byValue(res)
     }
 }
+
+private external fun kni_clang_getCursorAvailability(cursor: NativePtr): Int
 
 fun clang_getCursorPlatformAvailability(cursor: CValue<CXCursor>, always_deprecated: CValuesRef<IntVar>?, deprecated_message: CValuesRef<CXString>?, always_unavailable: CValuesRef<IntVar>?, unavailable_message: CValuesRef<CXString>?, availability: CValuesRef<CXPlatformAvailability>?, availability_size: Int): Int {
     return memScoped {
@@ -1039,1011 +1294,1259 @@ fun clang_getCursorPlatformAvailability(cursor: CValue<CXCursor>, always_depreca
         val _unavailable_message = unavailable_message?.getPointer(memScope).rawValue
         val _availability = availability?.getPointer(memScope).rawValue
         val _availability_size = availability_size
-        val res = externals.clang_getCursorPlatformAvailability(_cursor, _always_deprecated, _deprecated_message, _always_unavailable, _unavailable_message, _availability, _availability_size)
+        val res = kni_clang_getCursorPlatformAvailability(_cursor, _always_deprecated, _deprecated_message, _always_unavailable, _unavailable_message, _availability, _availability_size)
         res
     }
 }
+
+private external fun kni_clang_getCursorPlatformAvailability(cursor: NativePtr, always_deprecated: NativePtr, deprecated_message: NativePtr, always_unavailable: NativePtr, unavailable_message: NativePtr, availability: NativePtr, availability_size: Int): Int
 
 fun clang_disposeCXPlatformAvailability(availability: CValuesRef<CXPlatformAvailability>?): Unit {
     return memScoped {
         val _availability = availability?.getPointer(memScope).rawValue
-        val res = externals.clang_disposeCXPlatformAvailability(_availability)
+        val res = kni_clang_disposeCXPlatformAvailability(_availability)
         res
     }
 }
 
+private external fun kni_clang_disposeCXPlatformAvailability(availability: NativePtr): Unit
+
 fun clang_getCursorLanguage(cursor: CValue<CXCursor>): CXLanguageKind {
     return memScoped {
         val _cursor = cursor.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorLanguage(_cursor)
+        val res = kni_clang_getCursorLanguage(_cursor)
         CXLanguageKind.byValue(res)
     }
 }
 
+private external fun kni_clang_getCursorLanguage(cursor: NativePtr): Int
+
 fun clang_Cursor_getTranslationUnit(arg0: CValue<CXCursor>): CXTranslationUnit? {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_getTranslationUnit(_arg0)
+        val res = kni_clang_Cursor_getTranslationUnit(_arg0)
         interpretCPointer<CXTranslationUnitImpl>(res)
     }
 }
 
+private external fun kni_clang_Cursor_getTranslationUnit(arg0: NativePtr): NativePtr
+
 fun clang_createCXCursorSet(): CXCursorSet? {
-    val res = externals.clang_createCXCursorSet()
+    val res = kni_clang_createCXCursorSet()
     return interpretCPointer<CXCursorSetImpl>(res)
 }
 
+private external fun kni_clang_createCXCursorSet(): NativePtr
+
 fun clang_disposeCXCursorSet(cset: CXCursorSet?): Unit {
     val _cset = cset.rawValue
-    val res = externals.clang_disposeCXCursorSet(_cset)
+    val res = kni_clang_disposeCXCursorSet(_cset)
     return res
 }
+
+private external fun kni_clang_disposeCXCursorSet(cset: NativePtr): Unit
 
 fun clang_CXCursorSet_contains(cset: CXCursorSet?, cursor: CValue<CXCursor>): Int {
     return memScoped {
         val _cset = cset.rawValue
         val _cursor = cursor.getPointer(memScope).rawValue
-        val res = externals.clang_CXCursorSet_contains(_cset, _cursor)
+        val res = kni_clang_CXCursorSet_contains(_cset, _cursor)
         res
     }
 }
+
+private external fun kni_clang_CXCursorSet_contains(cset: NativePtr, cursor: NativePtr): Int
 
 fun clang_CXCursorSet_insert(cset: CXCursorSet?, cursor: CValue<CXCursor>): Int {
     return memScoped {
         val _cset = cset.rawValue
         val _cursor = cursor.getPointer(memScope).rawValue
-        val res = externals.clang_CXCursorSet_insert(_cset, _cursor)
+        val res = kni_clang_CXCursorSet_insert(_cset, _cursor)
         res
     }
 }
 
+private external fun kni_clang_CXCursorSet_insert(cset: NativePtr, cursor: NativePtr): Int
+
 fun clang_getCursorSemanticParent(cursor: CValue<CXCursor>): CValue<CXCursor> {
     return memScoped {
         val _cursor = cursor.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorSemanticParent(_cursor, alloc<CXCursor>().rawPtr)
+        val res = kni_clang_getCursorSemanticParent(_cursor, alloc<CXCursor>().rawPtr)
         interpretPointed<CXCursor>(res).readValue()
     }
 }
 
+private external fun kni_clang_getCursorSemanticParent(cursor: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getCursorLexicalParent(cursor: CValue<CXCursor>): CValue<CXCursor> {
     return memScoped {
         val _cursor = cursor.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorLexicalParent(_cursor, alloc<CXCursor>().rawPtr)
+        val res = kni_clang_getCursorLexicalParent(_cursor, alloc<CXCursor>().rawPtr)
         interpretPointed<CXCursor>(res).readValue()
     }
 }
+
+private external fun kni_clang_getCursorLexicalParent(cursor: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getOverriddenCursors(cursor: CValue<CXCursor>, overridden: CValuesRef<CPointerVar<CXCursor>>?, num_overridden: CValuesRef<IntVar>?): Unit {
     return memScoped {
         val _cursor = cursor.getPointer(memScope).rawValue
         val _overridden = overridden?.getPointer(memScope).rawValue
         val _num_overridden = num_overridden?.getPointer(memScope).rawValue
-        val res = externals.clang_getOverriddenCursors(_cursor, _overridden, _num_overridden)
+        val res = kni_clang_getOverriddenCursors(_cursor, _overridden, _num_overridden)
         res
     }
 }
+
+private external fun kni_clang_getOverriddenCursors(cursor: NativePtr, overridden: NativePtr, num_overridden: NativePtr): Unit
 
 fun clang_disposeOverriddenCursors(overridden: CValuesRef<CXCursor>?): Unit {
     return memScoped {
         val _overridden = overridden?.getPointer(memScope).rawValue
-        val res = externals.clang_disposeOverriddenCursors(_overridden)
+        val res = kni_clang_disposeOverriddenCursors(_overridden)
         res
     }
 }
 
+private external fun kni_clang_disposeOverriddenCursors(overridden: NativePtr): Unit
+
 fun clang_getIncludedFile(cursor: CValue<CXCursor>): CXFile? {
     return memScoped {
         val _cursor = cursor.getPointer(memScope).rawValue
-        val res = externals.clang_getIncludedFile(_cursor)
+        val res = kni_clang_getIncludedFile(_cursor)
         interpretCPointer<COpaque>(res)
     }
 }
+
+private external fun kni_clang_getIncludedFile(cursor: NativePtr): NativePtr
 
 fun clang_getCursor(arg0: CXTranslationUnit?, arg1: CValue<CXSourceLocation>): CValue<CXCursor> {
     return memScoped {
         val _arg0 = arg0.rawValue
         val _arg1 = arg1.getPointer(memScope).rawValue
-        val res = externals.clang_getCursor(_arg0, _arg1, alloc<CXCursor>().rawPtr)
+        val res = kni_clang_getCursor(_arg0, _arg1, alloc<CXCursor>().rawPtr)
         interpretPointed<CXCursor>(res).readValue()
     }
 }
 
+private external fun kni_clang_getCursor(arg0: NativePtr, arg1: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getCursorLocation(arg0: CValue<CXCursor>): CValue<CXSourceLocation> {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorLocation(_arg0, alloc<CXSourceLocation>().rawPtr)
+        val res = kni_clang_getCursorLocation(_arg0, alloc<CXSourceLocation>().rawPtr)
         interpretPointed<CXSourceLocation>(res).readValue()
     }
 }
 
+private external fun kni_clang_getCursorLocation(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getCursorExtent(arg0: CValue<CXCursor>): CValue<CXSourceRange> {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorExtent(_arg0, alloc<CXSourceRange>().rawPtr)
+        val res = kni_clang_getCursorExtent(_arg0, alloc<CXSourceRange>().rawPtr)
         interpretPointed<CXSourceRange>(res).readValue()
     }
 }
 
+private external fun kni_clang_getCursorExtent(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getCursorType(C: CValue<CXCursor>): CValue<CXType> {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorType(_C, alloc<CXType>().rawPtr)
+        val res = kni_clang_getCursorType(_C, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
+
+private external fun kni_clang_getCursorType(C: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getTypeSpelling(CT: CValue<CXType>): CValue<CXString> {
     return memScoped {
         val _CT = CT.getPointer(memScope).rawValue
-        val res = externals.clang_getTypeSpelling(_CT, alloc<CXString>().rawPtr)
+        val res = kni_clang_getTypeSpelling(_CT, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_getTypeSpelling(CT: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getTypedefDeclUnderlyingType(C: CValue<CXCursor>): CValue<CXType> {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_getTypedefDeclUnderlyingType(_C, alloc<CXType>().rawPtr)
+        val res = kni_clang_getTypedefDeclUnderlyingType(_C, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
+
+private external fun kni_clang_getTypedefDeclUnderlyingType(C: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getEnumDeclIntegerType(C: CValue<CXCursor>): CValue<CXType> {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_getEnumDeclIntegerType(_C, alloc<CXType>().rawPtr)
+        val res = kni_clang_getEnumDeclIntegerType(_C, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
 
+private external fun kni_clang_getEnumDeclIntegerType(C: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getEnumConstantDeclValue(C: CValue<CXCursor>): Long {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_getEnumConstantDeclValue(_C)
+        val res = kni_clang_getEnumConstantDeclValue(_C)
         res
     }
 }
+
+private external fun kni_clang_getEnumConstantDeclValue(C: NativePtr): Long
 
 fun clang_getEnumConstantDeclUnsignedValue(C: CValue<CXCursor>): Long {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_getEnumConstantDeclUnsignedValue(_C)
+        val res = kni_clang_getEnumConstantDeclUnsignedValue(_C)
         res
     }
 }
+
+private external fun kni_clang_getEnumConstantDeclUnsignedValue(C: NativePtr): Long
 
 fun clang_getFieldDeclBitWidth(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_getFieldDeclBitWidth(_C)
+        val res = kni_clang_getFieldDeclBitWidth(_C)
         res
     }
 }
 
+private external fun kni_clang_getFieldDeclBitWidth(C: NativePtr): Int
+
 fun clang_Cursor_getNumArguments(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_getNumArguments(_C)
+        val res = kni_clang_Cursor_getNumArguments(_C)
         res
     }
 }
+
+private external fun kni_clang_Cursor_getNumArguments(C: NativePtr): Int
 
 fun clang_Cursor_getArgument(C: CValue<CXCursor>, i: Int): CValue<CXCursor> {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
         val _i = i
-        val res = externals.clang_Cursor_getArgument(_C, _i, alloc<CXCursor>().rawPtr)
+        val res = kni_clang_Cursor_getArgument(_C, _i, alloc<CXCursor>().rawPtr)
         interpretPointed<CXCursor>(res).readValue()
     }
 }
 
+private external fun kni_clang_Cursor_getArgument(C: NativePtr, i: Int, retValPlacement: NativePtr): NativePtr
+
 fun clang_Cursor_getNumTemplateArguments(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_getNumTemplateArguments(_C)
+        val res = kni_clang_Cursor_getNumTemplateArguments(_C)
         res
     }
 }
+
+private external fun kni_clang_Cursor_getNumTemplateArguments(C: NativePtr): Int
 
 fun clang_Cursor_getTemplateArgumentKind(C: CValue<CXCursor>, I: Int): CXTemplateArgumentKind {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
         val _I = I
-        val res = externals.clang_Cursor_getTemplateArgumentKind(_C, _I)
+        val res = kni_clang_Cursor_getTemplateArgumentKind(_C, _I)
         CXTemplateArgumentKind.byValue(res)
     }
 }
+
+private external fun kni_clang_Cursor_getTemplateArgumentKind(C: NativePtr, I: Int): Int
 
 fun clang_Cursor_getTemplateArgumentType(C: CValue<CXCursor>, I: Int): CValue<CXType> {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
         val _I = I
-        val res = externals.clang_Cursor_getTemplateArgumentType(_C, _I, alloc<CXType>().rawPtr)
+        val res = kni_clang_Cursor_getTemplateArgumentType(_C, _I, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
+
+private external fun kni_clang_Cursor_getTemplateArgumentType(C: NativePtr, I: Int, retValPlacement: NativePtr): NativePtr
 
 fun clang_Cursor_getTemplateArgumentValue(C: CValue<CXCursor>, I: Int): Long {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
         val _I = I
-        val res = externals.clang_Cursor_getTemplateArgumentValue(_C, _I)
+        val res = kni_clang_Cursor_getTemplateArgumentValue(_C, _I)
         res
     }
 }
+
+private external fun kni_clang_Cursor_getTemplateArgumentValue(C: NativePtr, I: Int): Long
 
 fun clang_Cursor_getTemplateArgumentUnsignedValue(C: CValue<CXCursor>, I: Int): Long {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
         val _I = I
-        val res = externals.clang_Cursor_getTemplateArgumentUnsignedValue(_C, _I)
+        val res = kni_clang_Cursor_getTemplateArgumentUnsignedValue(_C, _I)
         res
     }
 }
+
+private external fun kni_clang_Cursor_getTemplateArgumentUnsignedValue(C: NativePtr, I: Int): Long
 
 fun clang_equalTypes(A: CValue<CXType>, B: CValue<CXType>): Int {
     return memScoped {
         val _A = A.getPointer(memScope).rawValue
         val _B = B.getPointer(memScope).rawValue
-        val res = externals.clang_equalTypes(_A, _B)
+        val res = kni_clang_equalTypes(_A, _B)
         res
     }
 }
+
+private external fun kni_clang_equalTypes(A: NativePtr, B: NativePtr): Int
 
 fun clang_getCanonicalType(T: CValue<CXType>): CValue<CXType> {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_getCanonicalType(_T, alloc<CXType>().rawPtr)
+        val res = kni_clang_getCanonicalType(_T, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
+
+private external fun kni_clang_getCanonicalType(T: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_isConstQualifiedType(T: CValue<CXType>): Int {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_isConstQualifiedType(_T)
+        val res = kni_clang_isConstQualifiedType(_T)
         res
     }
 }
+
+private external fun kni_clang_isConstQualifiedType(T: NativePtr): Int
 
 fun clang_Cursor_isMacroFunctionLike(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_isMacroFunctionLike(_C)
+        val res = kni_clang_Cursor_isMacroFunctionLike(_C)
         res
     }
 }
+
+private external fun kni_clang_Cursor_isMacroFunctionLike(C: NativePtr): Int
 
 fun clang_Cursor_isMacroBuiltin(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_isMacroBuiltin(_C)
+        val res = kni_clang_Cursor_isMacroBuiltin(_C)
         res
     }
 }
+
+private external fun kni_clang_Cursor_isMacroBuiltin(C: NativePtr): Int
 
 fun clang_Cursor_isFunctionInlined(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_isFunctionInlined(_C)
+        val res = kni_clang_Cursor_isFunctionInlined(_C)
         res
     }
 }
+
+private external fun kni_clang_Cursor_isFunctionInlined(C: NativePtr): Int
 
 fun clang_isVolatileQualifiedType(T: CValue<CXType>): Int {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_isVolatileQualifiedType(_T)
+        val res = kni_clang_isVolatileQualifiedType(_T)
         res
     }
 }
+
+private external fun kni_clang_isVolatileQualifiedType(T: NativePtr): Int
 
 fun clang_isRestrictQualifiedType(T: CValue<CXType>): Int {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_isRestrictQualifiedType(_T)
+        val res = kni_clang_isRestrictQualifiedType(_T)
         res
     }
 }
+
+private external fun kni_clang_isRestrictQualifiedType(T: NativePtr): Int
 
 fun clang_getPointeeType(T: CValue<CXType>): CValue<CXType> {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_getPointeeType(_T, alloc<CXType>().rawPtr)
+        val res = kni_clang_getPointeeType(_T, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
+
+private external fun kni_clang_getPointeeType(T: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getTypeDeclaration(T: CValue<CXType>): CValue<CXCursor> {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_getTypeDeclaration(_T, alloc<CXCursor>().rawPtr)
+        val res = kni_clang_getTypeDeclaration(_T, alloc<CXCursor>().rawPtr)
         interpretPointed<CXCursor>(res).readValue()
     }
 }
 
+private external fun kni_clang_getTypeDeclaration(T: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getDeclObjCTypeEncoding(C: CValue<CXCursor>): CValue<CXString> {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_getDeclObjCTypeEncoding(_C, alloc<CXString>().rawPtr)
+        val res = kni_clang_getDeclObjCTypeEncoding(_C, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_getDeclObjCTypeEncoding(C: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_Type_getObjCEncoding(type: CValue<CXType>): CValue<CXString> {
     return memScoped {
         val _type = type.getPointer(memScope).rawValue
-        val res = externals.clang_Type_getObjCEncoding(_type, alloc<CXString>().rawPtr)
+        val res = kni_clang_Type_getObjCEncoding(_type, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_Type_getObjCEncoding(type: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getTypeKindSpelling(K: CXTypeKind): CValue<CXString> {
     return memScoped {
         val _K = K.value
-        val res = externals.clang_getTypeKindSpelling(_K, alloc<CXString>().rawPtr)
+        val res = kni_clang_getTypeKindSpelling(_K, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_getTypeKindSpelling(K: Int, retValPlacement: NativePtr): NativePtr
+
 fun clang_getFunctionTypeCallingConv(T: CValue<CXType>): CXCallingConv {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_getFunctionTypeCallingConv(_T)
+        val res = kni_clang_getFunctionTypeCallingConv(_T)
         CXCallingConv.byValue(res)
     }
 }
 
+private external fun kni_clang_getFunctionTypeCallingConv(T: NativePtr): Int
+
 fun clang_getResultType(T: CValue<CXType>): CValue<CXType> {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_getResultType(_T, alloc<CXType>().rawPtr)
+        val res = kni_clang_getResultType(_T, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
 
+private external fun kni_clang_getResultType(T: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getNumArgTypes(T: CValue<CXType>): Int {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_getNumArgTypes(_T)
+        val res = kni_clang_getNumArgTypes(_T)
         res
     }
 }
+
+private external fun kni_clang_getNumArgTypes(T: NativePtr): Int
 
 fun clang_getArgType(T: CValue<CXType>, i: Int): CValue<CXType> {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
         val _i = i
-        val res = externals.clang_getArgType(_T, _i, alloc<CXType>().rawPtr)
+        val res = kni_clang_getArgType(_T, _i, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
+
+private external fun kni_clang_getArgType(T: NativePtr, i: Int, retValPlacement: NativePtr): NativePtr
 
 fun clang_isFunctionTypeVariadic(T: CValue<CXType>): Int {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_isFunctionTypeVariadic(_T)
+        val res = kni_clang_isFunctionTypeVariadic(_T)
         res
     }
 }
+
+private external fun kni_clang_isFunctionTypeVariadic(T: NativePtr): Int
 
 fun clang_getCursorResultType(C: CValue<CXCursor>): CValue<CXType> {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorResultType(_C, alloc<CXType>().rawPtr)
+        val res = kni_clang_getCursorResultType(_C, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
+
+private external fun kni_clang_getCursorResultType(C: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_isPODType(T: CValue<CXType>): Int {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_isPODType(_T)
+        val res = kni_clang_isPODType(_T)
         res
     }
 }
+
+private external fun kni_clang_isPODType(T: NativePtr): Int
 
 fun clang_getElementType(T: CValue<CXType>): CValue<CXType> {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_getElementType(_T, alloc<CXType>().rawPtr)
+        val res = kni_clang_getElementType(_T, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
+
+private external fun kni_clang_getElementType(T: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getNumElements(T: CValue<CXType>): Long {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_getNumElements(_T)
+        val res = kni_clang_getNumElements(_T)
         res
     }
 }
+
+private external fun kni_clang_getNumElements(T: NativePtr): Long
 
 fun clang_getArrayElementType(T: CValue<CXType>): CValue<CXType> {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_getArrayElementType(_T, alloc<CXType>().rawPtr)
+        val res = kni_clang_getArrayElementType(_T, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
+
+private external fun kni_clang_getArrayElementType(T: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getArraySize(T: CValue<CXType>): Long {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_getArraySize(_T)
+        val res = kni_clang_getArraySize(_T)
         res
     }
 }
+
+private external fun kni_clang_getArraySize(T: NativePtr): Long
 
 fun clang_Type_getNamedType(T: CValue<CXType>): CValue<CXType> {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_Type_getNamedType(_T, alloc<CXType>().rawPtr)
+        val res = kni_clang_Type_getNamedType(_T, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
+
+private external fun kni_clang_Type_getNamedType(T: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_Type_getAlignOf(T: CValue<CXType>): Long {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_Type_getAlignOf(_T)
+        val res = kni_clang_Type_getAlignOf(_T)
         res
     }
 }
+
+private external fun kni_clang_Type_getAlignOf(T: NativePtr): Long
 
 fun clang_Type_getClassType(T: CValue<CXType>): CValue<CXType> {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_Type_getClassType(_T, alloc<CXType>().rawPtr)
+        val res = kni_clang_Type_getClassType(_T, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
 
+private external fun kni_clang_Type_getClassType(T: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_Type_getSizeOf(T: CValue<CXType>): Long {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_Type_getSizeOf(_T)
+        val res = kni_clang_Type_getSizeOf(_T)
         res
     }
 }
+
+private external fun kni_clang_Type_getSizeOf(T: NativePtr): Long
 
 fun clang_Type_getOffsetOf(T: CValue<CXType>, S: String?): Long {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
         val _S = S?.cstr?.getPointer(memScope).rawValue
-        val res = externals.clang_Type_getOffsetOf(_T, _S)
+        val res = kni_clang_Type_getOffsetOf(_T, _S)
         res
     }
 }
+
+private external fun kni_clang_Type_getOffsetOf(T: NativePtr, S: NativePtr): Long
 
 fun clang_Cursor_getOffsetOfField(C: CValue<CXCursor>): Long {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_getOffsetOfField(_C)
+        val res = kni_clang_Cursor_getOffsetOfField(_C)
         res
     }
 }
+
+private external fun kni_clang_Cursor_getOffsetOfField(C: NativePtr): Long
 
 fun clang_Cursor_isAnonymous(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_isAnonymous(_C)
+        val res = kni_clang_Cursor_isAnonymous(_C)
         res
     }
 }
 
+private external fun kni_clang_Cursor_isAnonymous(C: NativePtr): Int
+
 fun clang_Type_getNumTemplateArguments(T: CValue<CXType>): Int {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_Type_getNumTemplateArguments(_T)
+        val res = kni_clang_Type_getNumTemplateArguments(_T)
         res
     }
 }
+
+private external fun kni_clang_Type_getNumTemplateArguments(T: NativePtr): Int
 
 fun clang_Type_getTemplateArgumentAsType(T: CValue<CXType>, i: Int): CValue<CXType> {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
         val _i = i
-        val res = externals.clang_Type_getTemplateArgumentAsType(_T, _i, alloc<CXType>().rawPtr)
+        val res = kni_clang_Type_getTemplateArgumentAsType(_T, _i, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
 
+private external fun kni_clang_Type_getTemplateArgumentAsType(T: NativePtr, i: Int, retValPlacement: NativePtr): NativePtr
+
 fun clang_Type_getCXXRefQualifier(T: CValue<CXType>): CXRefQualifierKind {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
-        val res = externals.clang_Type_getCXXRefQualifier(_T)
+        val res = kni_clang_Type_getCXXRefQualifier(_T)
         res
     }
 }
+
+private external fun kni_clang_Type_getCXXRefQualifier(T: NativePtr): Int
 
 fun clang_Cursor_isBitField(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_isBitField(_C)
+        val res = kni_clang_Cursor_isBitField(_C)
         res
     }
 }
+
+private external fun kni_clang_Cursor_isBitField(C: NativePtr): Int
 
 fun clang_isVirtualBase(arg0: CValue<CXCursor>): Int {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_isVirtualBase(_arg0)
+        val res = kni_clang_isVirtualBase(_arg0)
         res
     }
 }
+
+private external fun kni_clang_isVirtualBase(arg0: NativePtr): Int
 
 fun clang_getCXXAccessSpecifier(arg0: CValue<CXCursor>): CX_CXXAccessSpecifier {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_getCXXAccessSpecifier(_arg0)
+        val res = kni_clang_getCXXAccessSpecifier(_arg0)
         CX_CXXAccessSpecifier.byValue(res)
     }
 }
 
+private external fun kni_clang_getCXXAccessSpecifier(arg0: NativePtr): Int
+
 fun clang_Cursor_getStorageClass(arg0: CValue<CXCursor>): CX_StorageClass {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_getStorageClass(_arg0)
+        val res = kni_clang_Cursor_getStorageClass(_arg0)
         CX_StorageClass.byValue(res)
     }
 }
 
+private external fun kni_clang_Cursor_getStorageClass(arg0: NativePtr): Int
+
 fun clang_getNumOverloadedDecls(cursor: CValue<CXCursor>): Int {
     return memScoped {
         val _cursor = cursor.getPointer(memScope).rawValue
-        val res = externals.clang_getNumOverloadedDecls(_cursor)
+        val res = kni_clang_getNumOverloadedDecls(_cursor)
         res
     }
 }
+
+private external fun kni_clang_getNumOverloadedDecls(cursor: NativePtr): Int
 
 fun clang_getOverloadedDecl(cursor: CValue<CXCursor>, index: Int): CValue<CXCursor> {
     return memScoped {
         val _cursor = cursor.getPointer(memScope).rawValue
         val _index = index
-        val res = externals.clang_getOverloadedDecl(_cursor, _index, alloc<CXCursor>().rawPtr)
+        val res = kni_clang_getOverloadedDecl(_cursor, _index, alloc<CXCursor>().rawPtr)
         interpretPointed<CXCursor>(res).readValue()
     }
 }
 
+private external fun kni_clang_getOverloadedDecl(cursor: NativePtr, index: Int, retValPlacement: NativePtr): NativePtr
+
 fun clang_getIBOutletCollectionType(arg0: CValue<CXCursor>): CValue<CXType> {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_getIBOutletCollectionType(_arg0, alloc<CXType>().rawPtr)
+        val res = kni_clang_getIBOutletCollectionType(_arg0, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
+
+private external fun kni_clang_getIBOutletCollectionType(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_visitChildren(parent: CValue<CXCursor>, visitor: CXCursorVisitor?, client_data: CXClientData?): Int {
     return memScoped {
         val _parent = parent.getPointer(memScope).rawValue
         val _visitor = visitor.rawValue
         val _client_data = client_data.rawValue
-        val res = externals.clang_visitChildren(_parent, _visitor, _client_data)
+        val res = kni_clang_visitChildren(_parent, _visitor, _client_data)
         res
     }
 }
 
+private external fun kni_clang_visitChildren(parent: NativePtr, visitor: NativePtr, client_data: NativePtr): Int
+
 fun clang_getCursorUSR(arg0: CValue<CXCursor>): CValue<CXString> {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorUSR(_arg0, alloc<CXString>().rawPtr)
+        val res = kni_clang_getCursorUSR(_arg0, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_getCursorUSR(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_constructUSR_ObjCClass(class_name: String?): CValue<CXString> {
     return memScoped {
         val _class_name = class_name?.cstr?.getPointer(memScope).rawValue
-        val res = externals.clang_constructUSR_ObjCClass(_class_name, alloc<CXString>().rawPtr)
+        val res = kni_clang_constructUSR_ObjCClass(_class_name, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_constructUSR_ObjCClass(class_name: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_constructUSR_ObjCCategory(class_name: String?, category_name: String?): CValue<CXString> {
     return memScoped {
         val _class_name = class_name?.cstr?.getPointer(memScope).rawValue
         val _category_name = category_name?.cstr?.getPointer(memScope).rawValue
-        val res = externals.clang_constructUSR_ObjCCategory(_class_name, _category_name, alloc<CXString>().rawPtr)
+        val res = kni_clang_constructUSR_ObjCCategory(_class_name, _category_name, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_constructUSR_ObjCCategory(class_name: NativePtr, category_name: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_constructUSR_ObjCProtocol(protocol_name: String?): CValue<CXString> {
     return memScoped {
         val _protocol_name = protocol_name?.cstr?.getPointer(memScope).rawValue
-        val res = externals.clang_constructUSR_ObjCProtocol(_protocol_name, alloc<CXString>().rawPtr)
+        val res = kni_clang_constructUSR_ObjCProtocol(_protocol_name, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_constructUSR_ObjCProtocol(protocol_name: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_constructUSR_ObjCIvar(name: String?, classUSR: CValue<CXString>): CValue<CXString> {
     return memScoped {
         val _name = name?.cstr?.getPointer(memScope).rawValue
         val _classUSR = classUSR.getPointer(memScope).rawValue
-        val res = externals.clang_constructUSR_ObjCIvar(_name, _classUSR, alloc<CXString>().rawPtr)
+        val res = kni_clang_constructUSR_ObjCIvar(_name, _classUSR, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_constructUSR_ObjCIvar(name: NativePtr, classUSR: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_constructUSR_ObjCMethod(name: String?, isInstanceMethod: Int, classUSR: CValue<CXString>): CValue<CXString> {
     return memScoped {
         val _name = name?.cstr?.getPointer(memScope).rawValue
         val _isInstanceMethod = isInstanceMethod
         val _classUSR = classUSR.getPointer(memScope).rawValue
-        val res = externals.clang_constructUSR_ObjCMethod(_name, _isInstanceMethod, _classUSR, alloc<CXString>().rawPtr)
+        val res = kni_clang_constructUSR_ObjCMethod(_name, _isInstanceMethod, _classUSR, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_constructUSR_ObjCMethod(name: NativePtr, isInstanceMethod: Int, classUSR: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_constructUSR_ObjCProperty(property: String?, classUSR: CValue<CXString>): CValue<CXString> {
     return memScoped {
         val _property = property?.cstr?.getPointer(memScope).rawValue
         val _classUSR = classUSR.getPointer(memScope).rawValue
-        val res = externals.clang_constructUSR_ObjCProperty(_property, _classUSR, alloc<CXString>().rawPtr)
+        val res = kni_clang_constructUSR_ObjCProperty(_property, _classUSR, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_constructUSR_ObjCProperty(property: NativePtr, classUSR: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getCursorSpelling(arg0: CValue<CXCursor>): CValue<CXString> {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorSpelling(_arg0, alloc<CXString>().rawPtr)
+        val res = kni_clang_getCursorSpelling(_arg0, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_getCursorSpelling(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_Cursor_getSpellingNameRange(arg0: CValue<CXCursor>, pieceIndex: Int, options: Int): CValue<CXSourceRange> {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
         val _pieceIndex = pieceIndex
         val _options = options
-        val res = externals.clang_Cursor_getSpellingNameRange(_arg0, _pieceIndex, _options, alloc<CXSourceRange>().rawPtr)
+        val res = kni_clang_Cursor_getSpellingNameRange(_arg0, _pieceIndex, _options, alloc<CXSourceRange>().rawPtr)
         interpretPointed<CXSourceRange>(res).readValue()
     }
 }
 
+private external fun kni_clang_Cursor_getSpellingNameRange(arg0: NativePtr, pieceIndex: Int, options: Int, retValPlacement: NativePtr): NativePtr
+
 fun clang_getCursorDisplayName(arg0: CValue<CXCursor>): CValue<CXString> {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorDisplayName(_arg0, alloc<CXString>().rawPtr)
+        val res = kni_clang_getCursorDisplayName(_arg0, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_getCursorDisplayName(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getCursorReferenced(arg0: CValue<CXCursor>): CValue<CXCursor> {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorReferenced(_arg0, alloc<CXCursor>().rawPtr)
+        val res = kni_clang_getCursorReferenced(_arg0, alloc<CXCursor>().rawPtr)
         interpretPointed<CXCursor>(res).readValue()
     }
 }
+
+private external fun kni_clang_getCursorReferenced(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getCursorDefinition(arg0: CValue<CXCursor>): CValue<CXCursor> {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorDefinition(_arg0, alloc<CXCursor>().rawPtr)
+        val res = kni_clang_getCursorDefinition(_arg0, alloc<CXCursor>().rawPtr)
         interpretPointed<CXCursor>(res).readValue()
     }
 }
+
+private external fun kni_clang_getCursorDefinition(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_isCursorDefinition(arg0: CValue<CXCursor>): Int {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_isCursorDefinition(_arg0)
+        val res = kni_clang_isCursorDefinition(_arg0)
         res
     }
 }
+
+private external fun kni_clang_isCursorDefinition(arg0: NativePtr): Int
 
 fun clang_getCanonicalCursor(arg0: CValue<CXCursor>): CValue<CXCursor> {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_getCanonicalCursor(_arg0, alloc<CXCursor>().rawPtr)
+        val res = kni_clang_getCanonicalCursor(_arg0, alloc<CXCursor>().rawPtr)
         interpretPointed<CXCursor>(res).readValue()
     }
 }
 
+private external fun kni_clang_getCanonicalCursor(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_Cursor_getObjCSelectorIndex(arg0: CValue<CXCursor>): Int {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_getObjCSelectorIndex(_arg0)
+        val res = kni_clang_Cursor_getObjCSelectorIndex(_arg0)
         res
     }
 }
+
+private external fun kni_clang_Cursor_getObjCSelectorIndex(arg0: NativePtr): Int
 
 fun clang_Cursor_isDynamicCall(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_isDynamicCall(_C)
+        val res = kni_clang_Cursor_isDynamicCall(_C)
         res
     }
 }
 
+private external fun kni_clang_Cursor_isDynamicCall(C: NativePtr): Int
+
 fun clang_Cursor_getReceiverType(C: CValue<CXCursor>): CValue<CXType> {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_getReceiverType(_C, alloc<CXType>().rawPtr)
+        val res = kni_clang_Cursor_getReceiverType(_C, alloc<CXType>().rawPtr)
         interpretPointed<CXType>(res).readValue()
     }
 }
+
+private external fun kni_clang_Cursor_getReceiverType(C: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_Cursor_getObjCPropertyAttributes(C: CValue<CXCursor>, reserved: Int): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
         val _reserved = reserved
-        val res = externals.clang_Cursor_getObjCPropertyAttributes(_C, _reserved)
+        val res = kni_clang_Cursor_getObjCPropertyAttributes(_C, _reserved)
         res
     }
 }
+
+private external fun kni_clang_Cursor_getObjCPropertyAttributes(C: NativePtr, reserved: Int): Int
 
 fun clang_Cursor_getObjCDeclQualifiers(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_getObjCDeclQualifiers(_C)
+        val res = kni_clang_Cursor_getObjCDeclQualifiers(_C)
         res
     }
 }
+
+private external fun kni_clang_Cursor_getObjCDeclQualifiers(C: NativePtr): Int
 
 fun clang_Cursor_isObjCOptional(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_isObjCOptional(_C)
+        val res = kni_clang_Cursor_isObjCOptional(_C)
         res
     }
 }
+
+private external fun kni_clang_Cursor_isObjCOptional(C: NativePtr): Int
 
 fun clang_Cursor_isVariadic(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_isVariadic(_C)
+        val res = kni_clang_Cursor_isVariadic(_C)
         res
     }
 }
 
+private external fun kni_clang_Cursor_isVariadic(C: NativePtr): Int
+
 fun clang_Cursor_getCommentRange(C: CValue<CXCursor>): CValue<CXSourceRange> {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_getCommentRange(_C, alloc<CXSourceRange>().rawPtr)
+        val res = kni_clang_Cursor_getCommentRange(_C, alloc<CXSourceRange>().rawPtr)
         interpretPointed<CXSourceRange>(res).readValue()
     }
 }
 
+private external fun kni_clang_Cursor_getCommentRange(C: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_Cursor_getRawCommentText(C: CValue<CXCursor>): CValue<CXString> {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_getRawCommentText(_C, alloc<CXString>().rawPtr)
+        val res = kni_clang_Cursor_getRawCommentText(_C, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_Cursor_getRawCommentText(C: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_Cursor_getBriefCommentText(C: CValue<CXCursor>): CValue<CXString> {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_getBriefCommentText(_C, alloc<CXString>().rawPtr)
+        val res = kni_clang_Cursor_getBriefCommentText(_C, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_Cursor_getBriefCommentText(C: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_Cursor_getMangling(arg0: CValue<CXCursor>): CValue<CXString> {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_getMangling(_arg0, alloc<CXString>().rawPtr)
+        val res = kni_clang_Cursor_getMangling(_arg0, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_Cursor_getMangling(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_Cursor_getCXXManglings(arg0: CValue<CXCursor>): CPointer<CXStringSet>? {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_getCXXManglings(_arg0)
+        val res = kni_clang_Cursor_getCXXManglings(_arg0)
         interpretCPointer<CXStringSet>(res)
     }
 }
 
+private external fun kni_clang_Cursor_getCXXManglings(arg0: NativePtr): NativePtr
+
 fun clang_Cursor_getModule(C: CValue<CXCursor>): CXModule? {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_getModule(_C)
+        val res = kni_clang_Cursor_getModule(_C)
         interpretCPointer<COpaque>(res)
     }
 }
 
+private external fun kni_clang_Cursor_getModule(C: NativePtr): NativePtr
+
 fun clang_getModuleForFile(arg0: CXTranslationUnit?, arg1: CXFile?): CXModule? {
     val _arg0 = arg0.rawValue
     val _arg1 = arg1.rawValue
-    val res = externals.clang_getModuleForFile(_arg0, _arg1)
+    val res = kni_clang_getModuleForFile(_arg0, _arg1)
     return interpretCPointer<COpaque>(res)
 }
+
+private external fun kni_clang_getModuleForFile(arg0: NativePtr, arg1: NativePtr): NativePtr
 
 fun clang_Module_getASTFile(Module: CXModule?): CXFile? {
     val _Module = Module.rawValue
-    val res = externals.clang_Module_getASTFile(_Module)
+    val res = kni_clang_Module_getASTFile(_Module)
     return interpretCPointer<COpaque>(res)
 }
 
+private external fun kni_clang_Module_getASTFile(Module: NativePtr): NativePtr
+
 fun clang_Module_getParent(Module: CXModule?): CXModule? {
     val _Module = Module.rawValue
-    val res = externals.clang_Module_getParent(_Module)
+    val res = kni_clang_Module_getParent(_Module)
     return interpretCPointer<COpaque>(res)
 }
+
+private external fun kni_clang_Module_getParent(Module: NativePtr): NativePtr
 
 fun clang_Module_getName(Module: CXModule?): CValue<CXString> {
     return memScoped {
         val _Module = Module.rawValue
-        val res = externals.clang_Module_getName(_Module, alloc<CXString>().rawPtr)
+        val res = kni_clang_Module_getName(_Module, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_Module_getName(Module: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_Module_getFullName(Module: CXModule?): CValue<CXString> {
     return memScoped {
         val _Module = Module.rawValue
-        val res = externals.clang_Module_getFullName(_Module, alloc<CXString>().rawPtr)
+        val res = kni_clang_Module_getFullName(_Module, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_Module_getFullName(Module: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_Module_isSystem(Module: CXModule?): Int {
     val _Module = Module.rawValue
-    val res = externals.clang_Module_isSystem(_Module)
+    val res = kni_clang_Module_isSystem(_Module)
     return res
 }
+
+private external fun kni_clang_Module_isSystem(Module: NativePtr): Int
 
 fun clang_Module_getNumTopLevelHeaders(arg0: CXTranslationUnit?, Module: CXModule?): Int {
     val _arg0 = arg0.rawValue
     val _Module = Module.rawValue
-    val res = externals.clang_Module_getNumTopLevelHeaders(_arg0, _Module)
+    val res = kni_clang_Module_getNumTopLevelHeaders(_arg0, _Module)
     return res
 }
+
+private external fun kni_clang_Module_getNumTopLevelHeaders(arg0: NativePtr, Module: NativePtr): Int
 
 fun clang_Module_getTopLevelHeader(arg0: CXTranslationUnit?, Module: CXModule?, Index: Int): CXFile? {
     val _arg0 = arg0.rawValue
     val _Module = Module.rawValue
     val _Index = Index
-    val res = externals.clang_Module_getTopLevelHeader(_arg0, _Module, _Index)
+    val res = kni_clang_Module_getTopLevelHeader(_arg0, _Module, _Index)
     return interpretCPointer<COpaque>(res)
 }
+
+private external fun kni_clang_Module_getTopLevelHeader(arg0: NativePtr, Module: NativePtr, Index: Int): NativePtr
 
 fun clang_CXXConstructor_isConvertingConstructor(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_CXXConstructor_isConvertingConstructor(_C)
+        val res = kni_clang_CXXConstructor_isConvertingConstructor(_C)
         res
     }
 }
+
+private external fun kni_clang_CXXConstructor_isConvertingConstructor(C: NativePtr): Int
 
 fun clang_CXXConstructor_isCopyConstructor(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_CXXConstructor_isCopyConstructor(_C)
+        val res = kni_clang_CXXConstructor_isCopyConstructor(_C)
         res
     }
 }
+
+private external fun kni_clang_CXXConstructor_isCopyConstructor(C: NativePtr): Int
 
 fun clang_CXXConstructor_isDefaultConstructor(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_CXXConstructor_isDefaultConstructor(_C)
+        val res = kni_clang_CXXConstructor_isDefaultConstructor(_C)
         res
     }
 }
+
+private external fun kni_clang_CXXConstructor_isDefaultConstructor(C: NativePtr): Int
 
 fun clang_CXXConstructor_isMoveConstructor(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_CXXConstructor_isMoveConstructor(_C)
+        val res = kni_clang_CXXConstructor_isMoveConstructor(_C)
         res
     }
 }
+
+private external fun kni_clang_CXXConstructor_isMoveConstructor(C: NativePtr): Int
 
 fun clang_CXXField_isMutable(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_CXXField_isMutable(_C)
+        val res = kni_clang_CXXField_isMutable(_C)
         res
     }
 }
+
+private external fun kni_clang_CXXField_isMutable(C: NativePtr): Int
 
 fun clang_CXXMethod_isDefaulted(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_CXXMethod_isDefaulted(_C)
+        val res = kni_clang_CXXMethod_isDefaulted(_C)
         res
     }
 }
+
+private external fun kni_clang_CXXMethod_isDefaulted(C: NativePtr): Int
 
 fun clang_CXXMethod_isPureVirtual(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_CXXMethod_isPureVirtual(_C)
+        val res = kni_clang_CXXMethod_isPureVirtual(_C)
         res
     }
 }
+
+private external fun kni_clang_CXXMethod_isPureVirtual(C: NativePtr): Int
 
 fun clang_CXXMethod_isStatic(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_CXXMethod_isStatic(_C)
+        val res = kni_clang_CXXMethod_isStatic(_C)
         res
     }
 }
+
+private external fun kni_clang_CXXMethod_isStatic(C: NativePtr): Int
 
 fun clang_CXXMethod_isVirtual(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_CXXMethod_isVirtual(_C)
+        val res = kni_clang_CXXMethod_isVirtual(_C)
         res
     }
 }
+
+private external fun kni_clang_CXXMethod_isVirtual(C: NativePtr): Int
 
 fun clang_CXXMethod_isConst(C: CValue<CXCursor>): Int {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_CXXMethod_isConst(_C)
+        val res = kni_clang_CXXMethod_isConst(_C)
         res
     }
 }
 
+private external fun kni_clang_CXXMethod_isConst(C: NativePtr): Int
+
 fun clang_getTemplateCursorKind(C: CValue<CXCursor>): CXCursorKind {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_getTemplateCursorKind(_C)
+        val res = kni_clang_getTemplateCursorKind(_C)
         CXCursorKind.byValue(res)
     }
 }
 
+private external fun kni_clang_getTemplateCursorKind(C: NativePtr): Int
+
 fun clang_getSpecializedCursorTemplate(C: CValue<CXCursor>): CValue<CXCursor> {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_getSpecializedCursorTemplate(_C, alloc<CXCursor>().rawPtr)
+        val res = kni_clang_getSpecializedCursorTemplate(_C, alloc<CXCursor>().rawPtr)
         interpretPointed<CXCursor>(res).readValue()
     }
 }
+
+private external fun kni_clang_getSpecializedCursorTemplate(C: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getCursorReferenceNameRange(C: CValue<CXCursor>, NameFlags: Int, PieceIndex: Int): CValue<CXSourceRange> {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
         val _NameFlags = NameFlags
         val _PieceIndex = PieceIndex
-        val res = externals.clang_getCursorReferenceNameRange(_C, _NameFlags, _PieceIndex, alloc<CXSourceRange>().rawPtr)
+        val res = kni_clang_getCursorReferenceNameRange(_C, _NameFlags, _PieceIndex, alloc<CXSourceRange>().rawPtr)
         interpretPointed<CXSourceRange>(res).readValue()
     }
 }
 
+private external fun kni_clang_getCursorReferenceNameRange(C: NativePtr, NameFlags: Int, PieceIndex: Int, retValPlacement: NativePtr): NativePtr
+
 fun clang_getTokenKind(arg0: CValue<CXToken>): CXTokenKind {
     return memScoped {
         val _arg0 = arg0.getPointer(memScope).rawValue
-        val res = externals.clang_getTokenKind(_arg0)
+        val res = kni_clang_getTokenKind(_arg0)
         CXTokenKind.byValue(res)
     }
 }
+
+private external fun kni_clang_getTokenKind(arg0: NativePtr): Int
 
 fun clang_getTokenSpelling(arg0: CXTranslationUnit?, arg1: CValue<CXToken>): CValue<CXString> {
     return memScoped {
         val _arg0 = arg0.rawValue
         val _arg1 = arg1.getPointer(memScope).rawValue
-        val res = externals.clang_getTokenSpelling(_arg0, _arg1, alloc<CXString>().rawPtr)
+        val res = kni_clang_getTokenSpelling(_arg0, _arg1, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_getTokenSpelling(arg0: NativePtr, arg1: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getTokenLocation(arg0: CXTranslationUnit?, arg1: CValue<CXToken>): CValue<CXSourceLocation> {
     return memScoped {
         val _arg0 = arg0.rawValue
         val _arg1 = arg1.getPointer(memScope).rawValue
-        val res = externals.clang_getTokenLocation(_arg0, _arg1, alloc<CXSourceLocation>().rawPtr)
+        val res = kni_clang_getTokenLocation(_arg0, _arg1, alloc<CXSourceLocation>().rawPtr)
         interpretPointed<CXSourceLocation>(res).readValue()
     }
 }
+
+private external fun kni_clang_getTokenLocation(arg0: NativePtr, arg1: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getTokenExtent(arg0: CXTranslationUnit?, arg1: CValue<CXToken>): CValue<CXSourceRange> {
     return memScoped {
         val _arg0 = arg0.rawValue
         val _arg1 = arg1.getPointer(memScope).rawValue
-        val res = externals.clang_getTokenExtent(_arg0, _arg1, alloc<CXSourceRange>().rawPtr)
+        val res = kni_clang_getTokenExtent(_arg0, _arg1, alloc<CXSourceRange>().rawPtr)
         interpretPointed<CXSourceRange>(res).readValue()
     }
 }
+
+private external fun kni_clang_getTokenExtent(arg0: NativePtr, arg1: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_tokenize(TU: CXTranslationUnit?, Range: CValue<CXSourceRange>, Tokens: CValuesRef<CPointerVar<CXToken>>?, NumTokens: CValuesRef<IntVar>?): Unit {
     return memScoped {
@@ -2051,10 +2554,12 @@ fun clang_tokenize(TU: CXTranslationUnit?, Range: CValue<CXSourceRange>, Tokens:
         val _Range = Range.getPointer(memScope).rawValue
         val _Tokens = Tokens?.getPointer(memScope).rawValue
         val _NumTokens = NumTokens?.getPointer(memScope).rawValue
-        val res = externals.clang_tokenize(_TU, _Range, _Tokens, _NumTokens)
+        val res = kni_clang_tokenize(_TU, _Range, _Tokens, _NumTokens)
         res
     }
 }
+
+private external fun kni_clang_tokenize(TU: NativePtr, Range: NativePtr, Tokens: NativePtr, NumTokens: NativePtr): Unit
 
 fun clang_annotateTokens(TU: CXTranslationUnit?, Tokens: CValuesRef<CXToken>?, NumTokens: Int, Cursors: CValuesRef<CXCursor>?): Unit {
     return memScoped {
@@ -2062,28 +2567,34 @@ fun clang_annotateTokens(TU: CXTranslationUnit?, Tokens: CValuesRef<CXToken>?, N
         val _Tokens = Tokens?.getPointer(memScope).rawValue
         val _NumTokens = NumTokens
         val _Cursors = Cursors?.getPointer(memScope).rawValue
-        val res = externals.clang_annotateTokens(_TU, _Tokens, _NumTokens, _Cursors)
+        val res = kni_clang_annotateTokens(_TU, _Tokens, _NumTokens, _Cursors)
         res
     }
 }
+
+private external fun kni_clang_annotateTokens(TU: NativePtr, Tokens: NativePtr, NumTokens: Int, Cursors: NativePtr): Unit
 
 fun clang_disposeTokens(TU: CXTranslationUnit?, Tokens: CValuesRef<CXToken>?, NumTokens: Int): Unit {
     return memScoped {
         val _TU = TU.rawValue
         val _Tokens = Tokens?.getPointer(memScope).rawValue
         val _NumTokens = NumTokens
-        val res = externals.clang_disposeTokens(_TU, _Tokens, _NumTokens)
+        val res = kni_clang_disposeTokens(_TU, _Tokens, _NumTokens)
         res
     }
 }
 
+private external fun kni_clang_disposeTokens(TU: NativePtr, Tokens: NativePtr, NumTokens: Int): Unit
+
 fun clang_getCursorKindSpelling(Kind: CXCursorKind): CValue<CXString> {
     return memScoped {
         val _Kind = Kind.value
-        val res = externals.clang_getCursorKindSpelling(_Kind, alloc<CXString>().rawPtr)
+        val res = kni_clang_getCursorKindSpelling(_Kind, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_getCursorKindSpelling(Kind: Int, retValPlacement: NativePtr): NativePtr
 
 fun clang_getDefinitionSpellingAndExtent(arg0: CValue<CXCursor>, startBuf: CValuesRef<CPointerVar<ByteVar>>?, endBuf: CValuesRef<CPointerVar<ByteVar>>?, startLine: CValuesRef<IntVar>?, startColumn: CValuesRef<IntVar>?, endLine: CValuesRef<IntVar>?, endColumn: CValuesRef<IntVar>?): Unit {
     return memScoped {
@@ -2094,109 +2605,139 @@ fun clang_getDefinitionSpellingAndExtent(arg0: CValue<CXCursor>, startBuf: CValu
         val _startColumn = startColumn?.getPointer(memScope).rawValue
         val _endLine = endLine?.getPointer(memScope).rawValue
         val _endColumn = endColumn?.getPointer(memScope).rawValue
-        val res = externals.clang_getDefinitionSpellingAndExtent(_arg0, _startBuf, _endBuf, _startLine, _startColumn, _endLine, _endColumn)
+        val res = kni_clang_getDefinitionSpellingAndExtent(_arg0, _startBuf, _endBuf, _startLine, _startColumn, _endLine, _endColumn)
         res
     }
 }
 
+private external fun kni_clang_getDefinitionSpellingAndExtent(arg0: NativePtr, startBuf: NativePtr, endBuf: NativePtr, startLine: NativePtr, startColumn: NativePtr, endLine: NativePtr, endColumn: NativePtr): Unit
+
 fun clang_enableStackTraces(): Unit {
-    val res = externals.clang_enableStackTraces()
+    val res = kni_clang_enableStackTraces()
     return res
 }
 
-fun clang_executeOnThread(fn: CPointer<CFunction<CFunctionType2>>?, user_data: COpaquePointer?, stack_size: Int): Unit {
+private external fun kni_clang_enableStackTraces(): Unit
+
+fun clang_executeOnThread(fn: CPointer<CFunction<(COpaquePointer?) -> Unit>>?, user_data: COpaquePointer?, stack_size: Int): Unit {
     val _fn = fn.rawValue
     val _user_data = user_data.rawValue
     val _stack_size = stack_size
-    val res = externals.clang_executeOnThread(_fn, _user_data, _stack_size)
+    val res = kni_clang_executeOnThread(_fn, _user_data, _stack_size)
     return res
 }
+
+private external fun kni_clang_executeOnThread(fn: NativePtr, user_data: NativePtr, stack_size: Int): Unit
 
 fun clang_getCompletionChunkKind(completion_string: CXCompletionString?, chunk_number: Int): CXCompletionChunkKind {
     val _completion_string = completion_string.rawValue
     val _chunk_number = chunk_number
-    val res = externals.clang_getCompletionChunkKind(_completion_string, _chunk_number)
+    val res = kni_clang_getCompletionChunkKind(_completion_string, _chunk_number)
     return CXCompletionChunkKind.byValue(res)
 }
+
+private external fun kni_clang_getCompletionChunkKind(completion_string: NativePtr, chunk_number: Int): Int
 
 fun clang_getCompletionChunkText(completion_string: CXCompletionString?, chunk_number: Int): CValue<CXString> {
     return memScoped {
         val _completion_string = completion_string.rawValue
         val _chunk_number = chunk_number
-        val res = externals.clang_getCompletionChunkText(_completion_string, _chunk_number, alloc<CXString>().rawPtr)
+        val res = kni_clang_getCompletionChunkText(_completion_string, _chunk_number, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_getCompletionChunkText(completion_string: NativePtr, chunk_number: Int, retValPlacement: NativePtr): NativePtr
+
 fun clang_getCompletionChunkCompletionString(completion_string: CXCompletionString?, chunk_number: Int): CXCompletionString? {
     val _completion_string = completion_string.rawValue
     val _chunk_number = chunk_number
-    val res = externals.clang_getCompletionChunkCompletionString(_completion_string, _chunk_number)
+    val res = kni_clang_getCompletionChunkCompletionString(_completion_string, _chunk_number)
     return interpretCPointer<COpaque>(res)
 }
 
+private external fun kni_clang_getCompletionChunkCompletionString(completion_string: NativePtr, chunk_number: Int): NativePtr
+
 fun clang_getNumCompletionChunks(completion_string: CXCompletionString?): Int {
     val _completion_string = completion_string.rawValue
-    val res = externals.clang_getNumCompletionChunks(_completion_string)
+    val res = kni_clang_getNumCompletionChunks(_completion_string)
     return res
 }
+
+private external fun kni_clang_getNumCompletionChunks(completion_string: NativePtr): Int
 
 fun clang_getCompletionPriority(completion_string: CXCompletionString?): Int {
     val _completion_string = completion_string.rawValue
-    val res = externals.clang_getCompletionPriority(_completion_string)
+    val res = kni_clang_getCompletionPriority(_completion_string)
     return res
 }
+
+private external fun kni_clang_getCompletionPriority(completion_string: NativePtr): Int
 
 fun clang_getCompletionAvailability(completion_string: CXCompletionString?): CXAvailabilityKind {
     val _completion_string = completion_string.rawValue
-    val res = externals.clang_getCompletionAvailability(_completion_string)
+    val res = kni_clang_getCompletionAvailability(_completion_string)
     return CXAvailabilityKind.byValue(res)
 }
 
+private external fun kni_clang_getCompletionAvailability(completion_string: NativePtr): Int
+
 fun clang_getCompletionNumAnnotations(completion_string: CXCompletionString?): Int {
     val _completion_string = completion_string.rawValue
-    val res = externals.clang_getCompletionNumAnnotations(_completion_string)
+    val res = kni_clang_getCompletionNumAnnotations(_completion_string)
     return res
 }
+
+private external fun kni_clang_getCompletionNumAnnotations(completion_string: NativePtr): Int
 
 fun clang_getCompletionAnnotation(completion_string: CXCompletionString?, annotation_number: Int): CValue<CXString> {
     return memScoped {
         val _completion_string = completion_string.rawValue
         val _annotation_number = annotation_number
-        val res = externals.clang_getCompletionAnnotation(_completion_string, _annotation_number, alloc<CXString>().rawPtr)
+        val res = kni_clang_getCompletionAnnotation(_completion_string, _annotation_number, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_getCompletionAnnotation(completion_string: NativePtr, annotation_number: Int, retValPlacement: NativePtr): NativePtr
 
 fun clang_getCompletionParent(completion_string: CXCompletionString?, kind: CValuesRef<CXCursorKind.Var>?): CValue<CXString> {
     return memScoped {
         val _completion_string = completion_string.rawValue
         val _kind = kind?.getPointer(memScope).rawValue
-        val res = externals.clang_getCompletionParent(_completion_string, _kind, alloc<CXString>().rawPtr)
+        val res = kni_clang_getCompletionParent(_completion_string, _kind, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_getCompletionParent(completion_string: NativePtr, kind: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getCompletionBriefComment(completion_string: CXCompletionString?): CValue<CXString> {
     return memScoped {
         val _completion_string = completion_string.rawValue
-        val res = externals.clang_getCompletionBriefComment(_completion_string, alloc<CXString>().rawPtr)
+        val res = kni_clang_getCompletionBriefComment(_completion_string, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_getCompletionBriefComment(completion_string: NativePtr, retValPlacement: NativePtr): NativePtr
+
 fun clang_getCursorCompletionString(cursor: CValue<CXCursor>): CXCompletionString? {
     return memScoped {
         val _cursor = cursor.getPointer(memScope).rawValue
-        val res = externals.clang_getCursorCompletionString(_cursor)
+        val res = kni_clang_getCursorCompletionString(_cursor)
         interpretCPointer<COpaque>(res)
     }
 }
 
+private external fun kni_clang_getCursorCompletionString(cursor: NativePtr): NativePtr
+
 fun clang_defaultCodeCompleteOptions(): Int {
-    val res = externals.clang_defaultCodeCompleteOptions()
+    val res = kni_clang_defaultCodeCompleteOptions()
     return res
 }
+
+private external fun kni_clang_defaultCodeCompleteOptions(): Int
 
 fun clang_codeCompleteAt(TU: CXTranslationUnit?, complete_filename: String?, complete_line: Int, complete_column: Int, unsaved_files: CValuesRef<CXUnsavedFile>?, num_unsaved_files: Int, options: Int): CPointer<CXCodeCompleteResults>? {
     return memScoped {
@@ -2207,159 +2748,201 @@ fun clang_codeCompleteAt(TU: CXTranslationUnit?, complete_filename: String?, com
         val _unsaved_files = unsaved_files?.getPointer(memScope).rawValue
         val _num_unsaved_files = num_unsaved_files
         val _options = options
-        val res = externals.clang_codeCompleteAt(_TU, _complete_filename, _complete_line, _complete_column, _unsaved_files, _num_unsaved_files, _options)
+        val res = kni_clang_codeCompleteAt(_TU, _complete_filename, _complete_line, _complete_column, _unsaved_files, _num_unsaved_files, _options)
         interpretCPointer<CXCodeCompleteResults>(res)
     }
 }
+
+private external fun kni_clang_codeCompleteAt(TU: NativePtr, complete_filename: NativePtr, complete_line: Int, complete_column: Int, unsaved_files: NativePtr, num_unsaved_files: Int, options: Int): NativePtr
 
 fun clang_sortCodeCompletionResults(Results: CValuesRef<CXCompletionResult>?, NumResults: Int): Unit {
     return memScoped {
         val _Results = Results?.getPointer(memScope).rawValue
         val _NumResults = NumResults
-        val res = externals.clang_sortCodeCompletionResults(_Results, _NumResults)
+        val res = kni_clang_sortCodeCompletionResults(_Results, _NumResults)
         res
     }
 }
+
+private external fun kni_clang_sortCodeCompletionResults(Results: NativePtr, NumResults: Int): Unit
 
 fun clang_disposeCodeCompleteResults(Results: CValuesRef<CXCodeCompleteResults>?): Unit {
     return memScoped {
         val _Results = Results?.getPointer(memScope).rawValue
-        val res = externals.clang_disposeCodeCompleteResults(_Results)
+        val res = kni_clang_disposeCodeCompleteResults(_Results)
         res
     }
 }
 
+private external fun kni_clang_disposeCodeCompleteResults(Results: NativePtr): Unit
+
 fun clang_codeCompleteGetNumDiagnostics(Results: CValuesRef<CXCodeCompleteResults>?): Int {
     return memScoped {
         val _Results = Results?.getPointer(memScope).rawValue
-        val res = externals.clang_codeCompleteGetNumDiagnostics(_Results)
+        val res = kni_clang_codeCompleteGetNumDiagnostics(_Results)
         res
     }
 }
+
+private external fun kni_clang_codeCompleteGetNumDiagnostics(Results: NativePtr): Int
 
 fun clang_codeCompleteGetDiagnostic(Results: CValuesRef<CXCodeCompleteResults>?, Index: Int): CXDiagnostic? {
     return memScoped {
         val _Results = Results?.getPointer(memScope).rawValue
         val _Index = Index
-        val res = externals.clang_codeCompleteGetDiagnostic(_Results, _Index)
+        val res = kni_clang_codeCompleteGetDiagnostic(_Results, _Index)
         interpretCPointer<COpaque>(res)
     }
 }
 
+private external fun kni_clang_codeCompleteGetDiagnostic(Results: NativePtr, Index: Int): NativePtr
+
 fun clang_codeCompleteGetContexts(Results: CValuesRef<CXCodeCompleteResults>?): Long {
     return memScoped {
         val _Results = Results?.getPointer(memScope).rawValue
-        val res = externals.clang_codeCompleteGetContexts(_Results)
+        val res = kni_clang_codeCompleteGetContexts(_Results)
         res
     }
 }
+
+private external fun kni_clang_codeCompleteGetContexts(Results: NativePtr): Long
 
 fun clang_codeCompleteGetContainerKind(Results: CValuesRef<CXCodeCompleteResults>?, IsIncomplete: CValuesRef<IntVar>?): CXCursorKind {
     return memScoped {
         val _Results = Results?.getPointer(memScope).rawValue
         val _IsIncomplete = IsIncomplete?.getPointer(memScope).rawValue
-        val res = externals.clang_codeCompleteGetContainerKind(_Results, _IsIncomplete)
+        val res = kni_clang_codeCompleteGetContainerKind(_Results, _IsIncomplete)
         CXCursorKind.byValue(res)
     }
 }
 
+private external fun kni_clang_codeCompleteGetContainerKind(Results: NativePtr, IsIncomplete: NativePtr): Int
+
 fun clang_codeCompleteGetContainerUSR(Results: CValuesRef<CXCodeCompleteResults>?): CValue<CXString> {
     return memScoped {
         val _Results = Results?.getPointer(memScope).rawValue
-        val res = externals.clang_codeCompleteGetContainerUSR(_Results, alloc<CXString>().rawPtr)
+        val res = kni_clang_codeCompleteGetContainerUSR(_Results, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_codeCompleteGetContainerUSR(Results: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_codeCompleteGetObjCSelector(Results: CValuesRef<CXCodeCompleteResults>?): CValue<CXString> {
     return memScoped {
         val _Results = Results?.getPointer(memScope).rawValue
-        val res = externals.clang_codeCompleteGetObjCSelector(_Results, alloc<CXString>().rawPtr)
+        val res = kni_clang_codeCompleteGetObjCSelector(_Results, alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
+
+private external fun kni_clang_codeCompleteGetObjCSelector(Results: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_getClangVersion(): CValue<CXString> {
     return memScoped {
-        val res = externals.clang_getClangVersion(alloc<CXString>().rawPtr)
+        val res = kni_clang_getClangVersion(alloc<CXString>().rawPtr)
         interpretPointed<CXString>(res).readValue()
     }
 }
 
+private external fun kni_clang_getClangVersion(retValPlacement: NativePtr): NativePtr
+
 fun clang_toggleCrashRecovery(isEnabled: Int): Unit {
     val _isEnabled = isEnabled
-    val res = externals.clang_toggleCrashRecovery(_isEnabled)
+    val res = kni_clang_toggleCrashRecovery(_isEnabled)
     return res
 }
+
+private external fun kni_clang_toggleCrashRecovery(isEnabled: Int): Unit
 
 fun clang_getInclusions(tu: CXTranslationUnit?, visitor: CXInclusionVisitor?, client_data: CXClientData?): Unit {
     val _tu = tu.rawValue
     val _visitor = visitor.rawValue
     val _client_data = client_data.rawValue
-    val res = externals.clang_getInclusions(_tu, _visitor, _client_data)
+    val res = kni_clang_getInclusions(_tu, _visitor, _client_data)
     return res
 }
+
+private external fun kni_clang_getInclusions(tu: NativePtr, visitor: NativePtr, client_data: NativePtr): Unit
 
 fun clang_Cursor_Evaluate(C: CValue<CXCursor>): CXEvalResult? {
     return memScoped {
         val _C = C.getPointer(memScope).rawValue
-        val res = externals.clang_Cursor_Evaluate(_C)
+        val res = kni_clang_Cursor_Evaluate(_C)
         interpretCPointer<COpaque>(res)
     }
 }
 
+private external fun kni_clang_Cursor_Evaluate(C: NativePtr): NativePtr
+
 fun clang_EvalResult_getKind(E: CXEvalResult?): CXEvalResultKind {
     val _E = E.rawValue
-    val res = externals.clang_EvalResult_getKind(_E)
+    val res = kni_clang_EvalResult_getKind(_E)
     return CXEvalResultKind.byValue(res)
 }
 
+private external fun kni_clang_EvalResult_getKind(E: NativePtr): Int
+
 fun clang_EvalResult_getAsInt(E: CXEvalResult?): Int {
     val _E = E.rawValue
-    val res = externals.clang_EvalResult_getAsInt(_E)
+    val res = kni_clang_EvalResult_getAsInt(_E)
     return res
 }
+
+private external fun kni_clang_EvalResult_getAsInt(E: NativePtr): Int
 
 fun clang_EvalResult_getAsDouble(E: CXEvalResult?): Double {
     val _E = E.rawValue
-    val res = externals.clang_EvalResult_getAsDouble(_E)
+    val res = kni_clang_EvalResult_getAsDouble(_E)
     return res
 }
+
+private external fun kni_clang_EvalResult_getAsDouble(E: NativePtr): Double
 
 fun clang_EvalResult_getAsStr(E: CXEvalResult?): CPointer<ByteVar>? {
     val _E = E.rawValue
-    val res = externals.clang_EvalResult_getAsStr(_E)
+    val res = kni_clang_EvalResult_getAsStr(_E)
     return interpretCPointer<ByteVar>(res)
 }
 
+private external fun kni_clang_EvalResult_getAsStr(E: NativePtr): NativePtr
+
 fun clang_EvalResult_dispose(E: CXEvalResult?): Unit {
     val _E = E.rawValue
-    val res = externals.clang_EvalResult_dispose(_E)
+    val res = kni_clang_EvalResult_dispose(_E)
     return res
 }
+
+private external fun kni_clang_EvalResult_dispose(E: NativePtr): Unit
 
 fun clang_getRemappings(path: String?): CXRemapping? {
     return memScoped {
         val _path = path?.cstr?.getPointer(memScope).rawValue
-        val res = externals.clang_getRemappings(_path)
+        val res = kni_clang_getRemappings(_path)
         interpretCPointer<COpaque>(res)
     }
 }
+
+private external fun kni_clang_getRemappings(path: NativePtr): NativePtr
 
 fun clang_getRemappingsFromFileList(filePaths: CValuesRef<CPointerVar<ByteVar>>?, numFiles: Int): CXRemapping? {
     return memScoped {
         val _filePaths = filePaths?.getPointer(memScope).rawValue
         val _numFiles = numFiles
-        val res = externals.clang_getRemappingsFromFileList(_filePaths, _numFiles)
+        val res = kni_clang_getRemappingsFromFileList(_filePaths, _numFiles)
         interpretCPointer<COpaque>(res)
     }
 }
 
+private external fun kni_clang_getRemappingsFromFileList(filePaths: NativePtr, numFiles: Int): NativePtr
+
 fun clang_remap_getNumFiles(arg0: CXRemapping?): Int {
     val _arg0 = arg0.rawValue
-    val res = externals.clang_remap_getNumFiles(_arg0)
+    val res = kni_clang_remap_getNumFiles(_arg0)
     return res
 }
+
+private external fun kni_clang_remap_getNumFiles(arg0: NativePtr): Int
 
 fun clang_remap_getFilenames(arg0: CXRemapping?, index: Int, original: CValuesRef<CXString>?, transformed: CValuesRef<CXString>?): Unit {
     return memScoped {
@@ -2367,144 +2950,180 @@ fun clang_remap_getFilenames(arg0: CXRemapping?, index: Int, original: CValuesRe
         val _index = index
         val _original = original?.getPointer(memScope).rawValue
         val _transformed = transformed?.getPointer(memScope).rawValue
-        val res = externals.clang_remap_getFilenames(_arg0, _index, _original, _transformed)
+        val res = kni_clang_remap_getFilenames(_arg0, _index, _original, _transformed)
         res
     }
 }
 
+private external fun kni_clang_remap_getFilenames(arg0: NativePtr, index: Int, original: NativePtr, transformed: NativePtr): Unit
+
 fun clang_remap_dispose(arg0: CXRemapping?): Unit {
     val _arg0 = arg0.rawValue
-    val res = externals.clang_remap_dispose(_arg0)
+    val res = kni_clang_remap_dispose(_arg0)
     return res
 }
+
+private external fun kni_clang_remap_dispose(arg0: NativePtr): Unit
 
 fun clang_findReferencesInFile(cursor: CValue<CXCursor>, file: CXFile?, visitor: CValue<CXCursorAndRangeVisitor>): CXResult {
     return memScoped {
         val _cursor = cursor.getPointer(memScope).rawValue
         val _file = file.rawValue
         val _visitor = visitor.getPointer(memScope).rawValue
-        val res = externals.clang_findReferencesInFile(_cursor, _file, _visitor)
+        val res = kni_clang_findReferencesInFile(_cursor, _file, _visitor)
         CXResult.byValue(res)
     }
 }
+
+private external fun kni_clang_findReferencesInFile(cursor: NativePtr, file: NativePtr, visitor: NativePtr): Int
 
 fun clang_findIncludesInFile(TU: CXTranslationUnit?, file: CXFile?, visitor: CValue<CXCursorAndRangeVisitor>): CXResult {
     return memScoped {
         val _TU = TU.rawValue
         val _file = file.rawValue
         val _visitor = visitor.getPointer(memScope).rawValue
-        val res = externals.clang_findIncludesInFile(_TU, _file, _visitor)
+        val res = kni_clang_findIncludesInFile(_TU, _file, _visitor)
         CXResult.byValue(res)
     }
 }
 
+private external fun kni_clang_findIncludesInFile(TU: NativePtr, file: NativePtr, visitor: NativePtr): Int
+
 fun clang_index_isEntityObjCContainerKind(arg0: CXIdxEntityKind): Int {
     val _arg0 = arg0.value
-    val res = externals.clang_index_isEntityObjCContainerKind(_arg0)
+    val res = kni_clang_index_isEntityObjCContainerKind(_arg0)
     return res
 }
+
+private external fun kni_clang_index_isEntityObjCContainerKind(arg0: Int): Int
 
 fun clang_index_getObjCContainerDeclInfo(arg0: CValuesRef<CXIdxDeclInfo>?): CPointer<CXIdxObjCContainerDeclInfo>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.clang_index_getObjCContainerDeclInfo(_arg0)
+        val res = kni_clang_index_getObjCContainerDeclInfo(_arg0)
         interpretCPointer<CXIdxObjCContainerDeclInfo>(res)
     }
 }
 
+private external fun kni_clang_index_getObjCContainerDeclInfo(arg0: NativePtr): NativePtr
+
 fun clang_index_getObjCInterfaceDeclInfo(arg0: CValuesRef<CXIdxDeclInfo>?): CPointer<CXIdxObjCInterfaceDeclInfo>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.clang_index_getObjCInterfaceDeclInfo(_arg0)
+        val res = kni_clang_index_getObjCInterfaceDeclInfo(_arg0)
         interpretCPointer<CXIdxObjCInterfaceDeclInfo>(res)
     }
 }
 
+private external fun kni_clang_index_getObjCInterfaceDeclInfo(arg0: NativePtr): NativePtr
+
 fun clang_index_getObjCCategoryDeclInfo(arg0: CValuesRef<CXIdxDeclInfo>?): CPointer<CXIdxObjCCategoryDeclInfo>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.clang_index_getObjCCategoryDeclInfo(_arg0)
+        val res = kni_clang_index_getObjCCategoryDeclInfo(_arg0)
         interpretCPointer<CXIdxObjCCategoryDeclInfo>(res)
     }
 }
 
+private external fun kni_clang_index_getObjCCategoryDeclInfo(arg0: NativePtr): NativePtr
+
 fun clang_index_getObjCProtocolRefListInfo(arg0: CValuesRef<CXIdxDeclInfo>?): CPointer<CXIdxObjCProtocolRefListInfo>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.clang_index_getObjCProtocolRefListInfo(_arg0)
+        val res = kni_clang_index_getObjCProtocolRefListInfo(_arg0)
         interpretCPointer<CXIdxObjCProtocolRefListInfo>(res)
     }
 }
 
+private external fun kni_clang_index_getObjCProtocolRefListInfo(arg0: NativePtr): NativePtr
+
 fun clang_index_getObjCPropertyDeclInfo(arg0: CValuesRef<CXIdxDeclInfo>?): CPointer<CXIdxObjCPropertyDeclInfo>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.clang_index_getObjCPropertyDeclInfo(_arg0)
+        val res = kni_clang_index_getObjCPropertyDeclInfo(_arg0)
         interpretCPointer<CXIdxObjCPropertyDeclInfo>(res)
     }
 }
 
+private external fun kni_clang_index_getObjCPropertyDeclInfo(arg0: NativePtr): NativePtr
+
 fun clang_index_getIBOutletCollectionAttrInfo(arg0: CValuesRef<CXIdxAttrInfo>?): CPointer<CXIdxIBOutletCollectionAttrInfo>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.clang_index_getIBOutletCollectionAttrInfo(_arg0)
+        val res = kni_clang_index_getIBOutletCollectionAttrInfo(_arg0)
         interpretCPointer<CXIdxIBOutletCollectionAttrInfo>(res)
     }
 }
 
+private external fun kni_clang_index_getIBOutletCollectionAttrInfo(arg0: NativePtr): NativePtr
+
 fun clang_index_getCXXClassDeclInfo(arg0: CValuesRef<CXIdxDeclInfo>?): CPointer<CXIdxCXXClassDeclInfo>? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.clang_index_getCXXClassDeclInfo(_arg0)
+        val res = kni_clang_index_getCXXClassDeclInfo(_arg0)
         interpretCPointer<CXIdxCXXClassDeclInfo>(res)
     }
 }
 
+private external fun kni_clang_index_getCXXClassDeclInfo(arg0: NativePtr): NativePtr
+
 fun clang_index_getClientContainer(arg0: CValuesRef<CXIdxContainerInfo>?): CXIdxClientContainer? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.clang_index_getClientContainer(_arg0)
+        val res = kni_clang_index_getClientContainer(_arg0)
         interpretCPointer<COpaque>(res)
     }
 }
+
+private external fun kni_clang_index_getClientContainer(arg0: NativePtr): NativePtr
 
 fun clang_index_setClientContainer(arg0: CValuesRef<CXIdxContainerInfo>?, arg1: CXIdxClientContainer?): Unit {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
         val _arg1 = arg1.rawValue
-        val res = externals.clang_index_setClientContainer(_arg0, _arg1)
+        val res = kni_clang_index_setClientContainer(_arg0, _arg1)
         res
     }
 }
 
+private external fun kni_clang_index_setClientContainer(arg0: NativePtr, arg1: NativePtr): Unit
+
 fun clang_index_getClientEntity(arg0: CValuesRef<CXIdxEntityInfo>?): CXIdxClientEntity? {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
-        val res = externals.clang_index_getClientEntity(_arg0)
+        val res = kni_clang_index_getClientEntity(_arg0)
         interpretCPointer<COpaque>(res)
     }
 }
+
+private external fun kni_clang_index_getClientEntity(arg0: NativePtr): NativePtr
 
 fun clang_index_setClientEntity(arg0: CValuesRef<CXIdxEntityInfo>?, arg1: CXIdxClientEntity?): Unit {
     return memScoped {
         val _arg0 = arg0?.getPointer(memScope).rawValue
         val _arg1 = arg1.rawValue
-        val res = externals.clang_index_setClientEntity(_arg0, _arg1)
+        val res = kni_clang_index_setClientEntity(_arg0, _arg1)
         res
     }
 }
 
+private external fun kni_clang_index_setClientEntity(arg0: NativePtr, arg1: NativePtr): Unit
+
 fun clang_IndexAction_create(CIdx: CXIndex?): CXIndexAction? {
     val _CIdx = CIdx.rawValue
-    val res = externals.clang_IndexAction_create(_CIdx)
+    val res = kni_clang_IndexAction_create(_CIdx)
     return interpretCPointer<COpaque>(res)
 }
 
+private external fun kni_clang_IndexAction_create(CIdx: NativePtr): NativePtr
+
 fun clang_IndexAction_dispose(arg0: CXIndexAction?): Unit {
     val _arg0 = arg0.rawValue
-    val res = externals.clang_IndexAction_dispose(_arg0)
+    val res = kni_clang_IndexAction_dispose(_arg0)
     return res
 }
+
+private external fun kni_clang_IndexAction_dispose(arg0: NativePtr): Unit
 
 fun clang_indexSourceFile(arg0: CXIndexAction?, client_data: CXClientData?, index_callbacks: CValuesRef<IndexerCallbacks>?, index_callbacks_size: Int, index_options: Int, source_filename: String?, command_line_args: CValuesRef<CPointerVar<ByteVar>>?, num_command_line_args: Int, unsaved_files: CValuesRef<CXUnsavedFile>?, num_unsaved_files: Int, out_TU: CValuesRef<CXTranslationUnitVar>?, TU_options: Int): Int {
     return memScoped {
@@ -2520,10 +3139,12 @@ fun clang_indexSourceFile(arg0: CXIndexAction?, client_data: CXClientData?, inde
         val _num_unsaved_files = num_unsaved_files
         val _out_TU = out_TU?.getPointer(memScope).rawValue
         val _TU_options = TU_options
-        val res = externals.clang_indexSourceFile(_arg0, _client_data, _index_callbacks, _index_callbacks_size, _index_options, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _out_TU, _TU_options)
+        val res = kni_clang_indexSourceFile(_arg0, _client_data, _index_callbacks, _index_callbacks_size, _index_options, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _out_TU, _TU_options)
         res
     }
 }
+
+private external fun kni_clang_indexSourceFile(arg0: NativePtr, client_data: NativePtr, index_callbacks: NativePtr, index_callbacks_size: Int, index_options: Int, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, out_TU: NativePtr, TU_options: Int): Int
 
 fun clang_indexSourceFileFullArgv(arg0: CXIndexAction?, client_data: CXClientData?, index_callbacks: CValuesRef<IndexerCallbacks>?, index_callbacks_size: Int, index_options: Int, source_filename: String?, command_line_args: CValuesRef<CPointerVar<ByteVar>>?, num_command_line_args: Int, unsaved_files: CValuesRef<CXUnsavedFile>?, num_unsaved_files: Int, out_TU: CValuesRef<CXTranslationUnitVar>?, TU_options: Int): Int {
     return memScoped {
@@ -2539,10 +3160,12 @@ fun clang_indexSourceFileFullArgv(arg0: CXIndexAction?, client_data: CXClientDat
         val _num_unsaved_files = num_unsaved_files
         val _out_TU = out_TU?.getPointer(memScope).rawValue
         val _TU_options = TU_options
-        val res = externals.clang_indexSourceFileFullArgv(_arg0, _client_data, _index_callbacks, _index_callbacks_size, _index_options, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _out_TU, _TU_options)
+        val res = kni_clang_indexSourceFileFullArgv(_arg0, _client_data, _index_callbacks, _index_callbacks_size, _index_options, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _out_TU, _TU_options)
         res
     }
 }
+
+private external fun kni_clang_indexSourceFileFullArgv(arg0: NativePtr, client_data: NativePtr, index_callbacks: NativePtr, index_callbacks_size: Int, index_options: Int, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, out_TU: NativePtr, TU_options: Int): Int
 
 fun clang_indexTranslationUnit(arg0: CXIndexAction?, client_data: CXClientData?, index_callbacks: CValuesRef<IndexerCallbacks>?, index_callbacks_size: Int, index_options: Int, arg5: CXTranslationUnit?): Int {
     return memScoped {
@@ -2552,10 +3175,12 @@ fun clang_indexTranslationUnit(arg0: CXIndexAction?, client_data: CXClientData?,
         val _index_callbacks_size = index_callbacks_size
         val _index_options = index_options
         val _arg5 = arg5.rawValue
-        val res = externals.clang_indexTranslationUnit(_arg0, _client_data, _index_callbacks, _index_callbacks_size, _index_options, _arg5)
+        val res = kni_clang_indexTranslationUnit(_arg0, _client_data, _index_callbacks, _index_callbacks_size, _index_options, _arg5)
         res
     }
 }
+
+private external fun kni_clang_indexTranslationUnit(arg0: NativePtr, client_data: NativePtr, index_callbacks: NativePtr, index_callbacks_size: Int, index_options: Int, arg5: NativePtr): Int
 
 fun clang_indexLoc_getFileLocation(loc: CValue<CXIdxLoc>, indexFile: CValuesRef<CXIdxClientFileVar>?, file: CValuesRef<CXFileVar>?, line: CValuesRef<IntVar>?, column: CValuesRef<IntVar>?, offset: CValuesRef<IntVar>?): Unit {
     return memScoped {
@@ -2565,303 +3190,582 @@ fun clang_indexLoc_getFileLocation(loc: CValue<CXIdxLoc>, indexFile: CValuesRef<
         val _line = line?.getPointer(memScope).rawValue
         val _column = column?.getPointer(memScope).rawValue
         val _offset = offset?.getPointer(memScope).rawValue
-        val res = externals.clang_indexLoc_getFileLocation(_loc, _indexFile, _file, _line, _column, _offset)
+        val res = kni_clang_indexLoc_getFileLocation(_loc, _indexFile, _file, _line, _column, _offset)
         res
     }
 }
 
+private external fun kni_clang_indexLoc_getFileLocation(loc: NativePtr, indexFile: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
+
 fun clang_indexLoc_getCXSourceLocation(loc: CValue<CXIdxLoc>): CValue<CXSourceLocation> {
     return memScoped {
         val _loc = loc.getPointer(memScope).rawValue
-        val res = externals.clang_indexLoc_getCXSourceLocation(_loc, alloc<CXSourceLocation>().rawPtr)
+        val res = kni_clang_indexLoc_getCXSourceLocation(_loc, alloc<CXSourceLocation>().rawPtr)
         interpretPointed<CXSourceLocation>(res).readValue()
     }
 }
+
+private external fun kni_clang_indexLoc_getCXSourceLocation(loc: NativePtr, retValPlacement: NativePtr): NativePtr
 
 fun clang_Type_visitFields(T: CValue<CXType>, visitor: CXFieldVisitor?, client_data: CXClientData?): Int {
     return memScoped {
         val _T = T.getPointer(memScope).rawValue
         val _visitor = visitor.rawValue
         val _client_data = client_data.rawValue
-        val res = externals.clang_Type_visitFields(_T, _visitor, _client_data)
+        val res = kni_clang_Type_visitFields(_T, _visitor, _client_data)
         res
     }
 }
 
+private external fun kni_clang_Type_visitFields(T: NativePtr, visitor: NativePtr, client_data: NativePtr): Int
+
 val __llvm__: Int = 1
+
 val __clang__: Int = 1
+
 val __clang_major__: Int = 3
+
 val __clang_minor__: Int = 9
+
 val __clang_patchlevel__: Int = 0
+
 val __GNUC_MINOR__: Int = 2
+
 val __GNUC_PATCHLEVEL__: Int = 1
+
 val __GNUC__: Int = 4
+
 val __GXX_ABI_VERSION: Int = 1002
+
 val __ATOMIC_RELAXED: Int = 0
+
 val __ATOMIC_CONSUME: Int = 1
+
 val __ATOMIC_ACQUIRE: Int = 2
+
 val __ATOMIC_RELEASE: Int = 3
+
 val __ATOMIC_ACQ_REL: Int = 4
+
 val __ATOMIC_SEQ_CST: Int = 5
+
 val __PRAGMA_REDEFINE_EXTNAME: Int = 1
+
 val __STRICT_ANSI__: Int = 1
+
 val __CONSTANT_CFSTRINGS__: Int = 1
+
 val __BLOCKS__: Int = 1
+
 val __ORDER_LITTLE_ENDIAN__: Int = 1234
+
 val __ORDER_BIG_ENDIAN__: Int = 4321
+
 val __ORDER_PDP_ENDIAN__: Int = 3412
+
 val __BYTE_ORDER__: Int = 1234
+
 val __LITTLE_ENDIAN__: Int = 1
+
 val _LP64: Int = 1
+
 val __LP64__: Int = 1
+
 val __CHAR_BIT__: Int = 8
+
 val __SCHAR_MAX__: Int = 127
+
 val __SHRT_MAX__: Int = 32767
+
 val __INT_MAX__: Int = 2147483647
+
 val __LONG_MAX__: Long = 9223372036854775807
+
 val __LONG_LONG_MAX__: Long = 9223372036854775807
+
 val __WCHAR_MAX__: Int = 2147483647
+
 val __INTMAX_MAX__: Long = 9223372036854775807
+
 val __SIZE_MAX__: Long = -1
+
 val __UINTMAX_MAX__: Long = -1
+
 val __PTRDIFF_MAX__: Long = 9223372036854775807
+
 val __INTPTR_MAX__: Long = 9223372036854775807
+
 val __UINTPTR_MAX__: Long = -1
+
 val __SIZEOF_DOUBLE__: Int = 8
+
 val __SIZEOF_FLOAT__: Int = 4
+
 val __SIZEOF_INT__: Int = 4
+
 val __SIZEOF_LONG__: Int = 8
+
 val __SIZEOF_LONG_DOUBLE__: Int = 16
+
 val __SIZEOF_LONG_LONG__: Int = 8
+
 val __SIZEOF_POINTER__: Int = 8
+
 val __SIZEOF_SHORT__: Int = 2
+
 val __SIZEOF_PTRDIFF_T__: Int = 8
+
 val __SIZEOF_SIZE_T__: Int = 8
+
 val __SIZEOF_WCHAR_T__: Int = 4
+
 val __SIZEOF_WINT_T__: Int = 4
+
 val __SIZEOF_INT128__: Int = 16
+
 val __INTMAX_WIDTH__: Int = 64
+
 val __PTRDIFF_WIDTH__: Int = 64
+
 val __INTPTR_WIDTH__: Int = 64
+
 val __SIZE_WIDTH__: Int = 64
+
 val __WCHAR_WIDTH__: Int = 32
+
 val __WINT_WIDTH__: Int = 32
+
 val __SIG_ATOMIC_WIDTH__: Int = 32
+
 val __SIG_ATOMIC_MAX__: Int = 2147483647
+
 val __UINTMAX_WIDTH__: Int = 64
+
 val __UINTPTR_WIDTH__: Int = 64
+
 val __FLT_DENORM_MIN__: Float = bitsToFloat(1) /* == 1.4E-45 */
+
 val __FLT_HAS_DENORM__: Int = 1
+
 val __FLT_DIG__: Int = 6
+
 val __FLT_DECIMAL_DIG__: Int = 9
+
 val __FLT_EPSILON__: Float = bitsToFloat(872415232) /* == 1.1920929E-7 */
+
 val __FLT_HAS_INFINITY__: Int = 1
+
 val __FLT_HAS_QUIET_NAN__: Int = 1
+
 val __FLT_MANT_DIG__: Int = 24
+
 val __FLT_MAX_10_EXP__: Int = 38
+
 val __FLT_MAX_EXP__: Int = 128
+
 val __FLT_MAX__: Float = bitsToFloat(2139095039) /* == 3.4028235E38 */
+
 val __FLT_MIN_10_EXP__: Int = -37
+
 val __FLT_MIN_EXP__: Int = -125
+
 val __FLT_MIN__: Float = bitsToFloat(8388608) /* == 1.17549435E-38 */
+
 val __DBL_DENORM_MIN__: Double = bitsToDouble(1) /* == 4.9E-324 */
+
 val __DBL_HAS_DENORM__: Int = 1
+
 val __DBL_DIG__: Int = 15
+
 val __DBL_DECIMAL_DIG__: Int = 17
+
 val __DBL_EPSILON__: Double = bitsToDouble(4372995238176751616) /* == 2.220446049250313E-16 */
+
 val __DBL_HAS_INFINITY__: Int = 1
+
 val __DBL_HAS_QUIET_NAN__: Int = 1
+
 val __DBL_MANT_DIG__: Int = 53
+
 val __DBL_MAX_10_EXP__: Int = 308
+
 val __DBL_MAX_EXP__: Int = 1024
+
 val __DBL_MAX__: Double = bitsToDouble(9218868437227405311) /* == 1.7976931348623157E308 */
+
 val __DBL_MIN_10_EXP__: Int = -307
+
 val __DBL_MIN_EXP__: Int = -1021
+
 val __DBL_MIN__: Double = bitsToDouble(4503599627370496) /* == 2.2250738585072014E-308 */
+
+
 val __LDBL_HAS_DENORM__: Int = 1
+
 val __LDBL_DIG__: Int = 18
+
 val __LDBL_DECIMAL_DIG__: Int = 21
+
+
 val __LDBL_HAS_INFINITY__: Int = 1
+
 val __LDBL_HAS_QUIET_NAN__: Int = 1
+
 val __LDBL_MANT_DIG__: Int = 64
+
 val __LDBL_MAX_10_EXP__: Int = 4932
+
 val __LDBL_MAX_EXP__: Int = 16384
+
+
 val __LDBL_MIN_10_EXP__: Int = -4931
+
 val __LDBL_MIN_EXP__: Int = -16381
+
+
 val __POINTER_WIDTH__: Int = 64
+
 val __BIGGEST_ALIGNMENT__: Int = 16
+
 val __UINT8_MAX__: Int = 255
+
 val __INT8_MAX__: Int = 127
+
 val __UINT16_MAX__: Int = 65535
+
 val __INT16_MAX__: Int = 32767
+
 val __UINT32_MAX__: Int = -1
+
 val __INT32_MAX__: Int = 2147483647
+
 val __UINT64_MAX__: Long = -1
+
 val __INT64_MAX__: Long = 9223372036854775807
+
 val __INT_LEAST8_MAX__: Int = 127
+
 val __UINT_LEAST8_MAX__: Int = 255
+
 val __INT_LEAST16_MAX__: Int = 32767
+
 val __UINT_LEAST16_MAX__: Int = 65535
+
 val __INT_LEAST32_MAX__: Int = 2147483647
+
 val __UINT_LEAST32_MAX__: Int = -1
+
 val __INT_LEAST64_MAX__: Long = 9223372036854775807
+
 val __UINT_LEAST64_MAX__: Long = -1
+
 val __INT_FAST8_MAX__: Int = 127
+
 val __UINT_FAST8_MAX__: Int = 255
+
 val __INT_FAST16_MAX__: Int = 32767
+
 val __UINT_FAST16_MAX__: Int = 65535
+
 val __INT_FAST32_MAX__: Int = 2147483647
+
 val __UINT_FAST32_MAX__: Int = -1
+
 val __INT_FAST64_MAX__: Long = 9223372036854775807
+
 val __UINT_FAST64_MAX__: Long = -1
+
 val __FINITE_MATH_ONLY__: Int = 0
+
 val __GNUC_STDC_INLINE__: Int = 1
+
 val __GCC_ATOMIC_TEST_AND_SET_TRUEVAL: Int = 1
+
 val __GCC_ATOMIC_BOOL_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_CHAR_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_CHAR16_T_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_CHAR32_T_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_WCHAR_T_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_SHORT_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_INT_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_LONG_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_LLONG_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_POINTER_LOCK_FREE: Int = 2
+
 val __NO_INLINE__: Int = 1
+
 val __PIC__: Int = 2
+
 val __pic__: Int = 2
+
 val __FLT_EVAL_METHOD__: Int = 0
+
 val __FLT_RADIX__: Int = 2
+
 val __DECIMAL_DIG__: Int = 21
+
 val __SSP__: Int = 1
+
 val __amd64__: Int = 1
+
 val __amd64: Int = 1
+
 val __x86_64: Int = 1
+
 val __x86_64__: Int = 1
+
 val __core2: Int = 1
+
 val __core2__: Int = 1
+
 val __tune_core2__: Int = 1
+
 val __NO_MATH_INLINES: Int = 1
+
 val __FXSR__: Int = 1
+
 val __GCC_HAVE_SYNC_COMPARE_AND_SWAP_16: Int = 1
+
 val __SSSE3__: Int = 1
+
 val __SSE3__: Int = 1
+
 val __SSE2__: Int = 1
+
 val __SSE2_MATH__: Int = 1
+
 val __SSE__: Int = 1
+
 val __SSE_MATH__: Int = 1
+
 val __MMX__: Int = 1
+
 val __GCC_HAVE_SYNC_COMPARE_AND_SWAP_1: Int = 1
+
 val __GCC_HAVE_SYNC_COMPARE_AND_SWAP_2: Int = 1
+
 val __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4: Int = 1
+
 val __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8: Int = 1
+
 val __APPLE_CC__: Int = 6000
+
 val __APPLE__: Int = 1
+
 val OBJC_NEW_PROPERTIES: Int = 1
+
 val __DYNAMIC__: Int = 1
-val __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__: Int = 101000
+
+val __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__: Int = 101100
+
 val __MACH__: Int = 1
+
 val __STDC__: Int = 1
+
 val __STDC_HOSTED__: Int = 1
+
 val __STDC_VERSION__: Long = 199901
+
 val __STDC_UTF_16__: Int = 1
+
 val __STDC_UTF_32__: Int = 1
+
 val __DARWIN_ONLY_64_BIT_INO_T: Int = 0
+
 val __DARWIN_ONLY_VERS_1050: Int = 0
+
 val __DARWIN_ONLY_UNIX_CONFORMANCE: Int = 1
+
 val __DARWIN_UNIX03: Int = 1
+
 val __DARWIN_64_BIT_INO_T: Int = 1
+
 val __DARWIN_VERS_1050: Int = 1
+
 val __DARWIN_NON_CANCELABLE: Int = 0
+
 val __DARWIN_C_ANSI: Long = 4096
+
 val __DARWIN_C_FULL: Long = 900000
+
 val __DARWIN_C_LEVEL: Long = 900000
+
 val _DARWIN_FEATURE_64_BIT_INODE: Int = 1
+
 val _DARWIN_FEATURE_ONLY_UNIX_CONFORMANCE: Int = 1
+
 val _DARWIN_FEATURE_UNIX_CONFORMANCE: Int = 3
+
 val __PTHREAD_SIZE__: Int = 8176
+
 val __PTHREAD_ATTR_SIZE__: Int = 56
+
 val __PTHREAD_MUTEXATTR_SIZE__: Int = 8
+
 val __PTHREAD_MUTEX_SIZE__: Int = 56
+
 val __PTHREAD_CONDATTR_SIZE__: Int = 8
+
 val __PTHREAD_COND_SIZE__: Int = 40
+
 val __PTHREAD_ONCE_SIZE__: Int = 8
+
 val __PTHREAD_RWLOCK_SIZE__: Int = 192
+
 val __PTHREAD_RWLOCKATTR_SIZE__: Int = 16
+
 val __DARWIN_WCHAR_MAX: Int = 2147483647
+
 val __DARWIN_WCHAR_MIN: Int = -2147483648
+
 val __DARWIN_WEOF: __darwin_wint_t = -1
+
 val _FORTIFY_SOURCE: Int = 2
+
 val __MAC_10_0: Int = 1000
+
 val __MAC_10_1: Int = 1010
+
 val __MAC_10_2: Int = 1020
+
 val __MAC_10_3: Int = 1030
+
 val __MAC_10_4: Int = 1040
+
 val __MAC_10_5: Int = 1050
+
 val __MAC_10_6: Int = 1060
+
 val __MAC_10_7: Int = 1070
+
 val __MAC_10_8: Int = 1080
+
 val __MAC_10_9: Int = 1090
+
 val __MAC_10_10: Int = 101000
+
 val __MAC_10_10_2: Int = 101002
+
 val __MAC_10_10_3: Int = 101003
+
 val __MAC_10_11: Int = 101100
+
 val __MAC_10_11_2: Int = 101102
+
 val __MAC_10_11_3: Int = 101103
+
 val __MAC_10_11_4: Int = 101104
+
 val __MAC_10_12: Int = 101200
+
 val __IPHONE_2_0: Int = 20000
+
 val __IPHONE_2_1: Int = 20100
+
 val __IPHONE_2_2: Int = 20200
+
 val __IPHONE_3_0: Int = 30000
+
 val __IPHONE_3_1: Int = 30100
+
 val __IPHONE_3_2: Int = 30200
+
 val __IPHONE_4_0: Int = 40000
+
 val __IPHONE_4_1: Int = 40100
+
 val __IPHONE_4_2: Int = 40200
+
 val __IPHONE_4_3: Int = 40300
+
 val __IPHONE_5_0: Int = 50000
+
 val __IPHONE_5_1: Int = 50100
+
 val __IPHONE_6_0: Int = 60000
+
 val __IPHONE_6_1: Int = 60100
+
 val __IPHONE_7_0: Int = 70000
+
 val __IPHONE_7_1: Int = 70100
+
 val __IPHONE_8_0: Int = 80000
+
 val __IPHONE_8_1: Int = 80100
+
 val __IPHONE_8_2: Int = 80200
+
 val __IPHONE_8_3: Int = 80300
+
 val __IPHONE_8_4: Int = 80400
+
 val __IPHONE_9_0: Int = 90000
+
 val __IPHONE_9_1: Int = 90100
+
 val __IPHONE_9_2: Int = 90200
+
 val __IPHONE_9_3: Int = 90300
+
 val __IPHONE_10_0: Int = 100000
+
 val __TVOS_9_0: Int = 90000
+
 val __TVOS_9_1: Int = 90100
+
 val __TVOS_9_2: Int = 90200
+
 val __TVOS_10_0: Int = 100000
+
 val __WATCHOS_1_0: Int = 10000
+
 val __WATCHOS_2_0: Int = 20000
+
 val __WATCHOS_3_0: Int = 30000
-val __MAC_OS_X_VERSION_MIN_REQUIRED: Int = 101000
+
+val __MAC_OS_X_VERSION_MIN_REQUIRED: Int = 101100
+
 val __MAC_OS_X_VERSION_MAX_ALLOWED: Int = 101200
+
 val CLOCKS_PER_SEC: Int = 1000000
+
 val CLOCK_REALTIME: Int = 0
+
 val CLOCK_MONOTONIC: Int = 6
+
 val CLOCK_MONOTONIC_RAW: Int = 4
+
 val CLOCK_MONOTONIC_RAW_APPROX: Int = 5
+
 val CLOCK_UPTIME_RAW: Int = 8
+
 val CLOCK_UPTIME_RAW_APPROX: Int = 9
+
 val CLOCK_PROCESS_CPUTIME_ID: Int = 12
+
 val CLOCK_THREAD_CPUTIME_ID: Int = 16
+
 val CINDEX_VERSION_MAJOR: Int = 0
+
 val CINDEX_VERSION_MINOR: Int = 35
+
 val CINDEX_VERSION: Int = 35
 
 class __mbstate_t(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(128, 8)
     
+    @CLength(128)
     val __mbstate8: CArrayPointer<ByteVar>
         get() = arrayMemberAt(0)
     
@@ -2899,13 +3803,14 @@ class __builtin_va_list(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("__routine", "__arg", "__next")
 class __darwin_pthread_handler_rec(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
     
-    var __routine: CPointer<CFunction<CFunctionType2>>?
-        get() = memberAt<CPointerVar<CFunction<CFunctionType2>>>(0).value
-        set(value) { memberAt<CPointerVar<CFunction<CFunctionType2>>>(0).value = value }
+    var __routine: CPointer<CFunction<(COpaquePointer?) -> Unit>>?
+        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?) -> Unit>>>(0).value
+        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?) -> Unit>>>(0).value = value }
     
     var __arg: COpaquePointer?
         get() = memberAt<COpaquePointerVar>(8).value
@@ -2917,6 +3822,7 @@ class __darwin_pthread_handler_rec(override val rawPtr: NativePtr) : CStructVar(
     
 }
 
+@CNaturalStruct("__sig", "__opaque")
 class _opaque_pthread_attr_t(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(64, 8)
@@ -2925,11 +3831,13 @@ class _opaque_pthread_attr_t(override val rawPtr: NativePtr) : CStructVar() {
         get() = memberAt<LongVar>(0).value
         set(value) { memberAt<LongVar>(0).value = value }
     
+    @CLength(56)
     val __opaque: CArrayPointer<ByteVar>
         get() = arrayMemberAt(8)
     
 }
 
+@CNaturalStruct("__sig", "__opaque")
 class _opaque_pthread_cond_t(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(48, 8)
@@ -2938,11 +3846,13 @@ class _opaque_pthread_cond_t(override val rawPtr: NativePtr) : CStructVar() {
         get() = memberAt<LongVar>(0).value
         set(value) { memberAt<LongVar>(0).value = value }
     
+    @CLength(40)
     val __opaque: CArrayPointer<ByteVar>
         get() = arrayMemberAt(8)
     
 }
 
+@CNaturalStruct("__sig", "__opaque")
 class _opaque_pthread_condattr_t(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(16, 8)
@@ -2951,11 +3861,13 @@ class _opaque_pthread_condattr_t(override val rawPtr: NativePtr) : CStructVar() 
         get() = memberAt<LongVar>(0).value
         set(value) { memberAt<LongVar>(0).value = value }
     
+    @CLength(8)
     val __opaque: CArrayPointer<ByteVar>
         get() = arrayMemberAt(8)
     
 }
 
+@CNaturalStruct("__sig", "__opaque")
 class _opaque_pthread_mutex_t(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(64, 8)
@@ -2964,11 +3876,13 @@ class _opaque_pthread_mutex_t(override val rawPtr: NativePtr) : CStructVar() {
         get() = memberAt<LongVar>(0).value
         set(value) { memberAt<LongVar>(0).value = value }
     
+    @CLength(56)
     val __opaque: CArrayPointer<ByteVar>
         get() = arrayMemberAt(8)
     
 }
 
+@CNaturalStruct("__sig", "__opaque")
 class _opaque_pthread_mutexattr_t(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(16, 8)
@@ -2977,11 +3891,13 @@ class _opaque_pthread_mutexattr_t(override val rawPtr: NativePtr) : CStructVar()
         get() = memberAt<LongVar>(0).value
         set(value) { memberAt<LongVar>(0).value = value }
     
+    @CLength(8)
     val __opaque: CArrayPointer<ByteVar>
         get() = arrayMemberAt(8)
     
 }
 
+@CNaturalStruct("__sig", "__opaque")
 class _opaque_pthread_once_t(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(16, 8)
@@ -2990,11 +3906,13 @@ class _opaque_pthread_once_t(override val rawPtr: NativePtr) : CStructVar() {
         get() = memberAt<LongVar>(0).value
         set(value) { memberAt<LongVar>(0).value = value }
     
+    @CLength(8)
     val __opaque: CArrayPointer<ByteVar>
         get() = arrayMemberAt(8)
     
 }
 
+@CNaturalStruct("__sig", "__opaque")
 class _opaque_pthread_rwlock_t(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(200, 8)
@@ -3003,11 +3921,13 @@ class _opaque_pthread_rwlock_t(override val rawPtr: NativePtr) : CStructVar() {
         get() = memberAt<LongVar>(0).value
         set(value) { memberAt<LongVar>(0).value = value }
     
+    @CLength(192)
     val __opaque: CArrayPointer<ByteVar>
         get() = arrayMemberAt(8)
     
 }
 
+@CNaturalStruct("__sig", "__opaque")
 class _opaque_pthread_rwlockattr_t(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
@@ -3016,11 +3936,13 @@ class _opaque_pthread_rwlockattr_t(override val rawPtr: NativePtr) : CStructVar(
         get() = memberAt<LongVar>(0).value
         set(value) { memberAt<LongVar>(0).value = value }
     
+    @CLength(16)
     val __opaque: CArrayPointer<ByteVar>
         get() = arrayMemberAt(8)
     
 }
 
+@CNaturalStruct("__sig", "__cleanup_stack", "__opaque")
 class _opaque_pthread_t(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(8192, 8)
@@ -3033,11 +3955,13 @@ class _opaque_pthread_t(override val rawPtr: NativePtr) : CStructVar() {
         get() = memberAt<CPointerVar<__darwin_pthread_handler_rec>>(8).value
         set(value) { memberAt<CPointerVar<__darwin_pthread_handler_rec>>(8).value = value }
     
+    @CLength(8176)
     val __opaque: CArrayPointer<ByteVar>
         get() = arrayMemberAt(16)
     
 }
 
+@CNaturalStruct("tv_sec", "tv_nsec")
 class timespec(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(16, 8)
@@ -3052,6 +3976,7 @@ class timespec(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("tm_sec", "tm_min", "tm_hour", "tm_mday", "tm_mon", "tm_year", "tm_wday", "tm_yday", "tm_isdst", "tm_gmtoff", "tm_zone")
 class tm(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(56, 8)
@@ -3102,6 +4027,7 @@ class tm(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("data", "private_flags")
 class CXString(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(16, 8)
@@ -3116,6 +4042,7 @@ class CXString(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("Strings", "Count")
 class CXStringSet(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(16, 8)
@@ -3136,6 +4063,7 @@ class CXModuleMapDescriptorImpl(override val rawPtr: NativePtr) : COpaque
 
 class CXTranslationUnitImpl(override val rawPtr: NativePtr) : COpaque
 
+@CNaturalStruct("Filename", "Contents", "Length")
 class CXUnsavedFile(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
@@ -3154,6 +4082,7 @@ class CXUnsavedFile(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("Major", "Minor", "Subminor")
 class CXVersion(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(12, 4)
@@ -3172,19 +4101,23 @@ class CXVersion(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("data")
 class CXFileUniqueID(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
     
+    @CLength(3)
     val data: CArrayPointer<LongVar>
         get() = arrayMemberAt(0)
     
 }
 
+@CNaturalStruct("ptr_data", "int_data")
 class CXSourceLocation(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
     
+    @CLength(2)
     val ptr_data: CArrayPointer<COpaquePointerVar>
         get() = arrayMemberAt(0)
     
@@ -3194,10 +4127,12 @@ class CXSourceLocation(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("ptr_data", "begin_int_data", "end_int_data")
 class CXSourceRange(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
     
+    @CLength(2)
     val ptr_data: CArrayPointer<COpaquePointerVar>
         get() = arrayMemberAt(0)
     
@@ -3211,6 +4146,7 @@ class CXSourceRange(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("count", "ranges")
 class CXSourceRangeList(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(16, 8)
@@ -3225,6 +4161,7 @@ class CXSourceRangeList(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("kind", "amount")
 class CXTUResourceUsageEntry(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(16, 8)
@@ -3239,6 +4176,7 @@ class CXTUResourceUsageEntry(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("data", "numEntries", "entries")
 class CXTUResourceUsage(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
@@ -3257,6 +4195,7 @@ class CXTUResourceUsage(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("kind", "xdata", "data")
 class CXCursor(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(32, 8)
@@ -3269,11 +4208,13 @@ class CXCursor(override val rawPtr: NativePtr) : CStructVar() {
         get() = memberAt<IntVar>(4).value
         set(value) { memberAt<IntVar>(4).value = value }
     
+    @CLength(3)
     val data: CArrayPointer<COpaquePointerVar>
         get() = arrayMemberAt(8)
     
 }
 
+@CNaturalStruct("Platform", "Introduced", "Deprecated", "Obsoleted", "Unavailable", "Message")
 class CXPlatformAvailability(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(72, 8)
@@ -3301,6 +4242,7 @@ class CXPlatformAvailability(override val rawPtr: NativePtr) : CStructVar() {
 
 class CXCursorSetImpl(override val rawPtr: NativePtr) : COpaque
 
+@CNaturalStruct("kind", "data")
 class CXType(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
@@ -3309,15 +4251,18 @@ class CXType(override val rawPtr: NativePtr) : CStructVar() {
         get() = memberAt<CXTypeKind.Var>(0).value
         set(value) { memberAt<CXTypeKind.Var>(0).value = value }
     
+    @CLength(2)
     val data: CArrayPointer<COpaquePointerVar>
         get() = arrayMemberAt(8)
     
 }
 
+@CNaturalStruct("int_data", "ptr_data")
 class CXToken(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
     
+    @CLength(4)
     val int_data: CArrayPointer<IntVar>
         get() = arrayMemberAt(0)
     
@@ -3327,6 +4272,7 @@ class CXToken(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("CursorKind", "CompletionString")
 class CXCompletionResult(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(16, 8)
@@ -3341,6 +4287,7 @@ class CXCompletionResult(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("Results", "NumResults")
 class CXCodeCompleteResults(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(16, 8)
@@ -3355,6 +4302,7 @@ class CXCodeCompleteResults(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("context", "visit")
 class CXCursorAndRangeVisitor(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(16, 8)
@@ -3363,16 +4311,18 @@ class CXCursorAndRangeVisitor(override val rawPtr: NativePtr) : CStructVar() {
         get() = memberAt<COpaquePointerVar>(0).value
         set(value) { memberAt<COpaquePointerVar>(0).value = value }
     
-    var visit: CPointer<CFunction<CFunctionType5>>?
-        get() = memberAt<CPointerVar<CFunction<CFunctionType5>>>(8).value
-        set(value) { memberAt<CPointerVar<CFunction<CFunctionType5>>>(8).value = value }
+    var visit: CPointer<CFunction<(COpaquePointer?, CValue<CXCursor>, CValue<CXSourceRange>) -> CXVisitorResult>>?
+        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, CValue<CXCursor>, CValue<CXSourceRange>) -> CXVisitorResult>>>(8).value
+        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, CValue<CXCursor>, CValue<CXSourceRange>) -> CXVisitorResult>>>(8).value = value }
     
 }
 
+@CNaturalStruct("ptr_data", "int_data")
 class CXIdxLoc(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
     
+    @CLength(2)
     val ptr_data: CArrayPointer<COpaquePointerVar>
         get() = arrayMemberAt(0)
     
@@ -3382,6 +4332,7 @@ class CXIdxLoc(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("hashLoc", "filename", "file", "isImport", "isAngled", "isModuleImport")
 class CXIdxIncludedFileInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(56, 8)
@@ -3411,6 +4362,7 @@ class CXIdxIncludedFileInfo(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("file", "module", "loc", "isImplicit")
 class CXIdxImportedASTFileInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(48, 8)
@@ -3432,6 +4384,7 @@ class CXIdxImportedASTFileInfo(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("kind", "cursor", "loc")
 class CXIdxAttrInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(64, 8)
@@ -3448,6 +4401,7 @@ class CXIdxAttrInfo(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("kind", "templateKind", "lang", "name", "USR", "cursor", "attributes", "numAttributes")
 class CXIdxEntityInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(80, 8)
@@ -3485,6 +4439,7 @@ class CXIdxEntityInfo(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("cursor")
 class CXIdxContainerInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(32, 8)
@@ -3494,6 +4449,7 @@ class CXIdxContainerInfo(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("attrInfo", "objcClass", "classCursor", "classLoc")
 class CXIdxIBOutletCollectionAttrInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(72, 8)
@@ -3514,6 +4470,7 @@ class CXIdxIBOutletCollectionAttrInfo(override val rawPtr: NativePtr) : CStructV
     
 }
 
+@CNaturalStruct("entityInfo", "cursor", "loc", "semanticContainer", "lexicalContainer", "isRedeclaration", "isDefinition", "isContainer", "declAsContainer", "isImplicit", "attributes", "numAttributes", "flags")
 class CXIdxDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(128, 8)
@@ -3570,6 +4527,7 @@ class CXIdxDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("declInfo", "kind")
 class CXIdxObjCContainerDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(16, 8)
@@ -3584,6 +4542,7 @@ class CXIdxObjCContainerDeclInfo(override val rawPtr: NativePtr) : CStructVar() 
     
 }
 
+@CNaturalStruct("base", "cursor", "loc")
 class CXIdxBaseClassInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(64, 8)
@@ -3600,6 +4559,7 @@ class CXIdxBaseClassInfo(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("protocol", "cursor", "loc")
 class CXIdxObjCProtocolRefInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(64, 8)
@@ -3616,6 +4576,7 @@ class CXIdxObjCProtocolRefInfo(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("protocols", "numProtocols")
 class CXIdxObjCProtocolRefListInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(16, 8)
@@ -3630,6 +4591,7 @@ class CXIdxObjCProtocolRefListInfo(override val rawPtr: NativePtr) : CStructVar(
     
 }
 
+@CNaturalStruct("containerInfo", "superInfo", "protocols")
 class CXIdxObjCInterfaceDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
@@ -3648,6 +4610,7 @@ class CXIdxObjCInterfaceDeclInfo(override val rawPtr: NativePtr) : CStructVar() 
     
 }
 
+@CNaturalStruct("containerInfo", "objcClass", "classCursor", "classLoc", "protocols")
 class CXIdxObjCCategoryDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(80, 8)
@@ -3672,6 +4635,7 @@ class CXIdxObjCCategoryDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("declInfo", "getter", "setter")
 class CXIdxObjCPropertyDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
@@ -3690,6 +4654,7 @@ class CXIdxObjCPropertyDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("declInfo", "bases", "numBases")
 class CXIdxCXXClassDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
@@ -3708,6 +4673,7 @@ class CXIdxCXXClassDeclInfo(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("kind", "cursor", "loc", "referencedEntity", "parentEntity", "container")
 class CXIdxEntityRefInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(88, 8)
@@ -3736,41 +4702,42 @@ class CXIdxEntityRefInfo(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
+@CNaturalStruct("abortQuery", "diagnostic", "enteredMainFile", "ppIncludedFile", "importedASTFile", "startedTranslationUnit", "indexDeclaration", "indexEntityReference")
 class IndexerCallbacks(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(64, 8)
     
-    var abortQuery: CPointer<CFunction<CFunctionType6>>?
-        get() = memberAt<CPointerVar<CFunction<CFunctionType6>>>(0).value
-        set(value) { memberAt<CPointerVar<CFunction<CFunctionType6>>>(0).value = value }
+    var abortQuery: CPointer<CFunction<(COpaquePointer?, COpaquePointer?) -> Int>>?
+        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?) -> Int>>>(0).value
+        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?) -> Int>>>(0).value = value }
     
-    var diagnostic: CPointer<CFunction<CFunctionType7>>?
-        get() = memberAt<CPointerVar<CFunction<CFunctionType7>>>(8).value
-        set(value) { memberAt<CPointerVar<CFunction<CFunctionType7>>>(8).value = value }
+    var diagnostic: CPointer<CFunction<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> Unit>>?
+        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> Unit>>>(8).value
+        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> Unit>>>(8).value = value }
     
-    var enteredMainFile: CPointer<CFunction<CFunctionType8>>?
-        get() = memberAt<CPointerVar<CFunction<CFunctionType8>>>(16).value
-        set(value) { memberAt<CPointerVar<CFunction<CFunctionType8>>>(16).value = value }
+    var enteredMainFile: CPointer<CFunction<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> COpaquePointer?>>?
+        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> COpaquePointer?>>>(16).value
+        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> COpaquePointer?>>>(16).value = value }
     
-    var ppIncludedFile: CPointer<CFunction<CFunctionType9>>?
-        get() = memberAt<CPointerVar<CFunction<CFunctionType9>>>(24).value
-        set(value) { memberAt<CPointerVar<CFunction<CFunctionType9>>>(24).value = value }
+    var ppIncludedFile: CPointer<CFunction<(COpaquePointer?, CPointer<CXIdxIncludedFileInfo>?) -> COpaquePointer?>>?
+        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxIncludedFileInfo>?) -> COpaquePointer?>>>(24).value
+        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxIncludedFileInfo>?) -> COpaquePointer?>>>(24).value = value }
     
-    var importedASTFile: CPointer<CFunction<CFunctionType10>>?
-        get() = memberAt<CPointerVar<CFunction<CFunctionType10>>>(32).value
-        set(value) { memberAt<CPointerVar<CFunction<CFunctionType10>>>(32).value = value }
+    var importedASTFile: CPointer<CFunction<(COpaquePointer?, CPointer<CXIdxImportedASTFileInfo>?) -> COpaquePointer?>>?
+        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxImportedASTFileInfo>?) -> COpaquePointer?>>>(32).value
+        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxImportedASTFileInfo>?) -> COpaquePointer?>>>(32).value = value }
     
-    var startedTranslationUnit: CPointer<CFunction<CFunctionType11>>?
-        get() = memberAt<CPointerVar<CFunction<CFunctionType11>>>(40).value
-        set(value) { memberAt<CPointerVar<CFunction<CFunctionType11>>>(40).value = value }
+    var startedTranslationUnit: CPointer<CFunction<(COpaquePointer?, COpaquePointer?) -> COpaquePointer?>>?
+        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?) -> COpaquePointer?>>>(40).value
+        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, COpaquePointer?) -> COpaquePointer?>>>(40).value = value }
     
-    var indexDeclaration: CPointer<CFunction<CFunctionType12>>?
-        get() = memberAt<CPointerVar<CFunction<CFunctionType12>>>(48).value
-        set(value) { memberAt<CPointerVar<CFunction<CFunctionType12>>>(48).value = value }
+    var indexDeclaration: CPointer<CFunction<(COpaquePointer?, CPointer<CXIdxDeclInfo>?) -> Unit>>?
+        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxDeclInfo>?) -> Unit>>>(48).value
+        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxDeclInfo>?) -> Unit>>>(48).value = value }
     
-    var indexEntityReference: CPointer<CFunction<CFunctionType13>>?
-        get() = memberAt<CPointerVar<CFunction<CFunctionType13>>>(56).value
-        set(value) { memberAt<CPointerVar<CFunction<CFunctionType13>>>(56).value = value }
+    var indexEntityReference: CPointer<CFunction<(COpaquePointer?, CPointer<CXIdxEntityRefInfo>?) -> Unit>>?
+        get() = memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxEntityRefInfo>?) -> Unit>>>(56).value
+        set(value) { memberAt<CPointerVar<CFunction<(COpaquePointer?, CPointer<CXIdxEntityRefInfo>?) -> Unit>>>(56).value = value }
     
 }
 
@@ -4924,7 +5891,7 @@ typealias CXCursorSetVar = CPointerVarOf<CXCursorSet>
 typealias CXCursorSet = CPointer<CXCursorSetImpl>
 
 typealias CXCursorVisitorVar = CPointerVarOf<CXCursorVisitor>
-typealias CXCursorVisitor = CPointer<CFunction<CFunctionType1>>
+typealias CXCursorVisitor = CPointer<CFunction<(CValue<CXCursor>, CValue<CXCursor>, COpaquePointer?) -> CXChildVisitResult>>
 
 typealias CXModuleVar = CPointerVarOf<CXModule>
 typealias CXModule = COpaquePointer
@@ -4933,7 +5900,7 @@ typealias CXCompletionStringVar = CPointerVarOf<CXCompletionString>
 typealias CXCompletionString = COpaquePointer
 
 typealias CXInclusionVisitorVar = CPointerVarOf<CXInclusionVisitor>
-typealias CXInclusionVisitor = CPointer<CFunction<CFunctionType3>>
+typealias CXInclusionVisitor = CPointer<CFunction<(COpaquePointer?, CPointer<CXSourceLocation>?, Int, COpaquePointer?) -> Unit>>
 
 typealias CXEvalResultVar = CPointerVarOf<CXEvalResult>
 typealias CXEvalResult = COpaquePointer
@@ -4957,724 +5924,6 @@ typealias CXIndexActionVar = CPointerVarOf<CXIndexAction>
 typealias CXIndexAction = COpaquePointer
 
 typealias CXFieldVisitorVar = CPointerVarOf<CXFieldVisitor>
-typealias CXFieldVisitor = CPointer<CFunction<CFunctionType4>>
+typealias CXFieldVisitor = CPointer<CFunction<(CValue<CXCursor>, COpaquePointer?) -> CXVisitorResult>>
 
-object CFunctionType1 : CAdaptedFunctionTypeImpl<(CXCursor, CXCursor, COpaquePointer?) -> CXChildVisitResult>(UInt32, Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Pointer) {
-    override fun invoke(function: (CXCursor, CXCursor, COpaquePointer?) -> CXChildVisitResult,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
-        val res = function(args[0]!!.reinterpret<CXCursor>().pointed, args[1]!!.reinterpret<CXCursor>().pointed, args[2]!!.reinterpret<COpaquePointerVar>().pointed.value)
-        ret.reinterpret<CXChildVisitResult.Var>().pointed.value = res
-    }
-}
-
-object CFunctionType2 : CAdaptedFunctionTypeImpl<(COpaquePointer?) -> Unit>(Void, Pointer) {
-    override fun invoke(function: (COpaquePointer?) -> Unit,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
-        val res = function(args[0]!!.reinterpret<COpaquePointerVar>().pointed.value)
-    }
-}
-
-object CFunctionType3 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXSourceLocation>?, Int, COpaquePointer?) -> Unit>(Void, Pointer, Pointer, UInt32, Pointer) {
-    override fun invoke(function: (COpaquePointer?, CPointer<CXSourceLocation>?, Int, COpaquePointer?) -> Unit,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
-        val res = function(args[0]!!.reinterpret<COpaquePointerVar>().pointed.value, args[1]!!.reinterpret<CPointerVar<CXSourceLocation>>().pointed.value, args[2]!!.reinterpret<IntVar>().pointed.value, args[3]!!.reinterpret<COpaquePointerVar>().pointed.value)
-    }
-}
-
-object CFunctionType4 : CAdaptedFunctionTypeImpl<(CXCursor, COpaquePointer?) -> CXVisitorResult>(UInt32, Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Pointer) {
-    override fun invoke(function: (CXCursor, COpaquePointer?) -> CXVisitorResult,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
-        val res = function(args[0]!!.reinterpret<CXCursor>().pointed, args[1]!!.reinterpret<COpaquePointerVar>().pointed.value)
-        ret.reinterpret<CXVisitorResult.Var>().pointed.value = res
-    }
-}
-
-object CFunctionType5 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CXCursor, CXSourceRange) -> CXVisitorResult>(UInt32, Pointer, Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Struct(Struct(Pointer, Pointer), UInt32, UInt32)) {
-    override fun invoke(function: (COpaquePointer?, CXCursor, CXSourceRange) -> CXVisitorResult,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
-        val res = function(args[0]!!.reinterpret<COpaquePointerVar>().pointed.value, args[1]!!.reinterpret<CXCursor>().pointed, args[2]!!.reinterpret<CXSourceRange>().pointed)
-        ret.reinterpret<CXVisitorResult.Var>().pointed.value = res
-    }
-}
-
-object CFunctionType6 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?) -> Int>(SInt32, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, COpaquePointer?) -> Int,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
-        val res = function(args[0]!!.reinterpret<COpaquePointerVar>().pointed.value, args[1]!!.reinterpret<COpaquePointerVar>().pointed.value)
-        ret.reinterpret<IntVar>().pointed.value = res
-    }
-}
-
-object CFunctionType7 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> Unit>(Void, Pointer, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, COpaquePointer?, COpaquePointer?) -> Unit,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
-        val res = function(args[0]!!.reinterpret<COpaquePointerVar>().pointed.value, args[1]!!.reinterpret<COpaquePointerVar>().pointed.value, args[2]!!.reinterpret<COpaquePointerVar>().pointed.value)
-    }
-}
-
-object CFunctionType8 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> COpaquePointer?>(Pointer, Pointer, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, COpaquePointer?, COpaquePointer?) -> COpaquePointer?,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
-        val res = function(args[0]!!.reinterpret<COpaquePointerVar>().pointed.value, args[1]!!.reinterpret<COpaquePointerVar>().pointed.value, args[2]!!.reinterpret<COpaquePointerVar>().pointed.value)
-        ret.reinterpret<COpaquePointerVar>().pointed.value = res
-    }
-}
-
-object CFunctionType9 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxIncludedFileInfo>?) -> COpaquePointer?>(Pointer, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, CPointer<CXIdxIncludedFileInfo>?) -> COpaquePointer?,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
-        val res = function(args[0]!!.reinterpret<COpaquePointerVar>().pointed.value, args[1]!!.reinterpret<CPointerVar<CXIdxIncludedFileInfo>>().pointed.value)
-        ret.reinterpret<COpaquePointerVar>().pointed.value = res
-    }
-}
-
-object CFunctionType10 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxImportedASTFileInfo>?) -> COpaquePointer?>(Pointer, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, CPointer<CXIdxImportedASTFileInfo>?) -> COpaquePointer?,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
-        val res = function(args[0]!!.reinterpret<COpaquePointerVar>().pointed.value, args[1]!!.reinterpret<CPointerVar<CXIdxImportedASTFileInfo>>().pointed.value)
-        ret.reinterpret<COpaquePointerVar>().pointed.value = res
-    }
-}
-
-object CFunctionType11 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?) -> COpaquePointer?>(Pointer, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, COpaquePointer?) -> COpaquePointer?,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
-        val res = function(args[0]!!.reinterpret<COpaquePointerVar>().pointed.value, args[1]!!.reinterpret<COpaquePointerVar>().pointed.value)
-        ret.reinterpret<COpaquePointerVar>().pointed.value = res
-    }
-}
-
-object CFunctionType12 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxDeclInfo>?) -> Unit>(Void, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, CPointer<CXIdxDeclInfo>?) -> Unit,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
-        val res = function(args[0]!!.reinterpret<COpaquePointerVar>().pointed.value, args[1]!!.reinterpret<CPointerVar<CXIdxDeclInfo>>().pointed.value)
-    }
-}
-
-object CFunctionType13 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxEntityRefInfo>?) -> Unit>(Void, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, CPointer<CXIdxEntityRefInfo>?) -> Unit,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
-        val res = function(args[0]!!.reinterpret<COpaquePointerVar>().pointed.value, args[1]!!.reinterpret<CPointerVar<CXIdxEntityRefInfo>>().pointed.value)
-    }
-}
-
-object externals {
-    init { System.loadLibrary("clangstubs") }
-    external fun asctime(arg0: NativePtr): NativePtr
-    
-    external fun clock(): Long
-    
-    external fun ctime(arg0: NativePtr): NativePtr
-    
-    external fun difftime(arg0: Long, arg1: Long): Double
-    
-    external fun getdate(arg0: NativePtr): NativePtr
-    
-    external fun gmtime(arg0: NativePtr): NativePtr
-    
-    external fun localtime(arg0: NativePtr): NativePtr
-    
-    external fun mktime(arg0: NativePtr): Long
-    
-    external fun strftime(arg0: NativePtr, arg1: Long, arg2: NativePtr, arg3: NativePtr): Long
-    
-    external fun strptime(arg0: NativePtr, arg1: NativePtr, arg2: NativePtr): NativePtr
-    
-    external fun time(arg0: NativePtr): Long
-    
-    external fun tzset(): Unit
-    
-    external fun asctime_r(arg0: NativePtr, arg1: NativePtr): NativePtr
-    
-    external fun ctime_r(arg0: NativePtr, arg1: NativePtr): NativePtr
-    
-    external fun gmtime_r(arg0: NativePtr, arg1: NativePtr): NativePtr
-    
-    external fun localtime_r(arg0: NativePtr, arg1: NativePtr): NativePtr
-    
-    external fun posix2time(arg0: Long): Long
-    
-    external fun tzsetwall(): Unit
-    
-    external fun time2posix(arg0: Long): Long
-    
-    external fun timelocal(arg0: NativePtr): Long
-    
-    external fun timegm(arg0: NativePtr): Long
-    
-    external fun nanosleep(__rqtp: NativePtr, __rmtp: NativePtr): Int
-    
-    external fun clock_getres(__clock_id: Int, __res: NativePtr): Int
-    
-    external fun clock_gettime(__clock_id: Int, __tp: NativePtr): Int
-    
-    external fun clock_gettime_nsec_np(__clock_id: Int): Long
-    
-    external fun clock_settime(__clock_id: Int, __tp: NativePtr): Int
-    
-    external fun clang_getCString(string: NativePtr): NativePtr
-    
-    external fun clang_disposeString(string: NativePtr): Unit
-    
-    external fun clang_disposeStringSet(set: NativePtr): Unit
-    
-    external fun clang_getBuildSessionTimestamp(): Long
-    
-    external fun clang_VirtualFileOverlay_create(options: Int): NativePtr
-    
-    external fun clang_VirtualFileOverlay_addFileMapping(arg0: NativePtr, virtualPath: NativePtr, realPath: NativePtr): Int
-    
-    external fun clang_VirtualFileOverlay_setCaseSensitivity(arg0: NativePtr, caseSensitive: Int): Int
-    
-    external fun clang_VirtualFileOverlay_writeToBuffer(arg0: NativePtr, options: Int, out_buffer_ptr: NativePtr, out_buffer_size: NativePtr): Int
-    
-    external fun clang_free(buffer: NativePtr): Unit
-    
-    external fun clang_VirtualFileOverlay_dispose(arg0: NativePtr): Unit
-    
-    external fun clang_ModuleMapDescriptor_create(options: Int): NativePtr
-    
-    external fun clang_ModuleMapDescriptor_setFrameworkModuleName(arg0: NativePtr, name: NativePtr): Int
-    
-    external fun clang_ModuleMapDescriptor_setUmbrellaHeader(arg0: NativePtr, name: NativePtr): Int
-    
-    external fun clang_ModuleMapDescriptor_writeToBuffer(arg0: NativePtr, options: Int, out_buffer_ptr: NativePtr, out_buffer_size: NativePtr): Int
-    
-    external fun clang_ModuleMapDescriptor_dispose(arg0: NativePtr): Unit
-    
-    external fun clang_createIndex(excludeDeclarationsFromPCH: Int, displayDiagnostics: Int): NativePtr
-    
-    external fun clang_disposeIndex(index: NativePtr): Unit
-    
-    external fun clang_CXIndex_setGlobalOptions(arg0: NativePtr, options: Int): Unit
-    
-    external fun clang_CXIndex_getGlobalOptions(arg0: NativePtr): Int
-    
-    external fun clang_getFileName(SFile: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getFileTime(SFile: NativePtr): Long
-    
-    external fun clang_getFileUniqueID(file: NativePtr, outID: NativePtr): Int
-    
-    external fun clang_isFileMultipleIncludeGuarded(tu: NativePtr, file: NativePtr): Int
-    
-    external fun clang_getFile(tu: NativePtr, file_name: NativePtr): NativePtr
-    
-    external fun clang_File_isEqual(file1: NativePtr, file2: NativePtr): Int
-    
-    external fun clang_getNullLocation(retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_equalLocations(loc1: NativePtr, loc2: NativePtr): Int
-    
-    external fun clang_getLocation(tu: NativePtr, file: NativePtr, line: Int, column: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getLocationForOffset(tu: NativePtr, file: NativePtr, offset: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Location_isInSystemHeader(location: NativePtr): Int
-    
-    external fun clang_Location_isFromMainFile(location: NativePtr): Int
-    
-    external fun clang_getNullRange(retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getRange(begin: NativePtr, end: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_equalRanges(range1: NativePtr, range2: NativePtr): Int
-    
-    external fun clang_Range_isNull(range: NativePtr): Int
-    
-    external fun clang_getExpansionLocation(location: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
-    
-    external fun clang_getPresumedLocation(location: NativePtr, filename: NativePtr, line: NativePtr, column: NativePtr): Unit
-    
-    external fun clang_getInstantiationLocation(location: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
-    
-    external fun clang_getSpellingLocation(location: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
-    
-    external fun clang_getFileLocation(location: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
-    
-    external fun clang_getRangeStart(range: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getRangeEnd(range: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getSkippedRanges(tu: NativePtr, file: NativePtr): NativePtr
-    
-    external fun clang_disposeSourceRangeList(ranges: NativePtr): Unit
-    
-    external fun clang_getNumDiagnosticsInSet(Diags: NativePtr): Int
-    
-    external fun clang_getDiagnosticInSet(Diags: NativePtr, Index: Int): NativePtr
-    
-    external fun clang_loadDiagnostics(file: NativePtr, error: NativePtr, errorString: NativePtr): NativePtr
-    
-    external fun clang_disposeDiagnosticSet(Diags: NativePtr): Unit
-    
-    external fun clang_getChildDiagnostics(D: NativePtr): NativePtr
-    
-    external fun clang_getNumDiagnostics(Unit: NativePtr): Int
-    
-    external fun clang_getDiagnostic(Unit: NativePtr, Index: Int): NativePtr
-    
-    external fun clang_getDiagnosticSetFromTU(Unit: NativePtr): NativePtr
-    
-    external fun clang_disposeDiagnostic(Diagnostic: NativePtr): Unit
-    
-    external fun clang_formatDiagnostic(Diagnostic: NativePtr, Options: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_defaultDiagnosticDisplayOptions(): Int
-    
-    external fun clang_getDiagnosticSeverity(arg0: NativePtr): Int
-    
-    external fun clang_getDiagnosticLocation(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getDiagnosticSpelling(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getDiagnosticOption(Diag: NativePtr, Disable: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getDiagnosticCategory(arg0: NativePtr): Int
-    
-    external fun clang_getDiagnosticCategoryName(Category: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getDiagnosticCategoryText(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getDiagnosticNumRanges(arg0: NativePtr): Int
-    
-    external fun clang_getDiagnosticRange(Diagnostic: NativePtr, Range: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getDiagnosticNumFixIts(Diagnostic: NativePtr): Int
-    
-    external fun clang_getDiagnosticFixIt(Diagnostic: NativePtr, FixIt: Int, ReplacementRange: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getTranslationUnitSpelling(CTUnit: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_createTranslationUnitFromSourceFile(CIdx: NativePtr, source_filename: NativePtr, num_clang_command_line_args: Int, clang_command_line_args: NativePtr, num_unsaved_files: Int, unsaved_files: NativePtr): NativePtr
-    
-    external fun clang_createTranslationUnit(CIdx: NativePtr, ast_filename: NativePtr): NativePtr
-    
-    external fun clang_createTranslationUnit2(CIdx: NativePtr, ast_filename: NativePtr, out_TU: NativePtr): Int
-    
-    external fun clang_defaultEditingTranslationUnitOptions(): Int
-    
-    external fun clang_parseTranslationUnit(CIdx: NativePtr, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, options: Int): NativePtr
-    
-    external fun clang_parseTranslationUnit2(CIdx: NativePtr, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, options: Int, out_TU: NativePtr): Int
-    
-    external fun clang_parseTranslationUnit2FullArgv(CIdx: NativePtr, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, options: Int, out_TU: NativePtr): Int
-    
-    external fun clang_defaultSaveOptions(TU: NativePtr): Int
-    
-    external fun clang_saveTranslationUnit(TU: NativePtr, FileName: NativePtr, options: Int): Int
-    
-    external fun clang_disposeTranslationUnit(arg0: NativePtr): Unit
-    
-    external fun clang_defaultReparseOptions(TU: NativePtr): Int
-    
-    external fun clang_reparseTranslationUnit(TU: NativePtr, num_unsaved_files: Int, unsaved_files: NativePtr, options: Int): Int
-    
-    external fun clang_getTUResourceUsageName(kind: Int): NativePtr
-    
-    external fun clang_getCXTUResourceUsage(TU: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_disposeCXTUResourceUsage(usage: NativePtr): Unit
-    
-    external fun clang_getNullCursor(retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getTranslationUnitCursor(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_equalCursors(arg0: NativePtr, arg1: NativePtr): Int
-    
-    external fun clang_Cursor_isNull(cursor: NativePtr): Int
-    
-    external fun clang_hashCursor(arg0: NativePtr): Int
-    
-    external fun clang_getCursorKind(arg0: NativePtr): Int
-    
-    external fun clang_isDeclaration(arg0: Int): Int
-    
-    external fun clang_isReference(arg0: Int): Int
-    
-    external fun clang_isExpression(arg0: Int): Int
-    
-    external fun clang_isStatement(arg0: Int): Int
-    
-    external fun clang_isAttribute(arg0: Int): Int
-    
-    external fun clang_Cursor_hasAttrs(C: NativePtr): Int
-    
-    external fun clang_isInvalid(arg0: Int): Int
-    
-    external fun clang_isTranslationUnit(arg0: Int): Int
-    
-    external fun clang_isPreprocessing(arg0: Int): Int
-    
-    external fun clang_isUnexposed(arg0: Int): Int
-    
-    external fun clang_getCursorLinkage(cursor: NativePtr): Int
-    
-    external fun clang_getCursorVisibility(cursor: NativePtr): Int
-    
-    external fun clang_getCursorAvailability(cursor: NativePtr): Int
-    
-    external fun clang_getCursorPlatformAvailability(cursor: NativePtr, always_deprecated: NativePtr, deprecated_message: NativePtr, always_unavailable: NativePtr, unavailable_message: NativePtr, availability: NativePtr, availability_size: Int): Int
-    
-    external fun clang_disposeCXPlatformAvailability(availability: NativePtr): Unit
-    
-    external fun clang_getCursorLanguage(cursor: NativePtr): Int
-    
-    external fun clang_Cursor_getTranslationUnit(arg0: NativePtr): NativePtr
-    
-    external fun clang_createCXCursorSet(): NativePtr
-    
-    external fun clang_disposeCXCursorSet(cset: NativePtr): Unit
-    
-    external fun clang_CXCursorSet_contains(cset: NativePtr, cursor: NativePtr): Int
-    
-    external fun clang_CXCursorSet_insert(cset: NativePtr, cursor: NativePtr): Int
-    
-    external fun clang_getCursorSemanticParent(cursor: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getCursorLexicalParent(cursor: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getOverriddenCursors(cursor: NativePtr, overridden: NativePtr, num_overridden: NativePtr): Unit
-    
-    external fun clang_disposeOverriddenCursors(overridden: NativePtr): Unit
-    
-    external fun clang_getIncludedFile(cursor: NativePtr): NativePtr
-    
-    external fun clang_getCursor(arg0: NativePtr, arg1: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getCursorLocation(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getCursorExtent(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getCursorType(C: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getTypeSpelling(CT: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getTypedefDeclUnderlyingType(C: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getEnumDeclIntegerType(C: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getEnumConstantDeclValue(C: NativePtr): Long
-    
-    external fun clang_getEnumConstantDeclUnsignedValue(C: NativePtr): Long
-    
-    external fun clang_getFieldDeclBitWidth(C: NativePtr): Int
-    
-    external fun clang_Cursor_getNumArguments(C: NativePtr): Int
-    
-    external fun clang_Cursor_getArgument(C: NativePtr, i: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Cursor_getNumTemplateArguments(C: NativePtr): Int
-    
-    external fun clang_Cursor_getTemplateArgumentKind(C: NativePtr, I: Int): Int
-    
-    external fun clang_Cursor_getTemplateArgumentType(C: NativePtr, I: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Cursor_getTemplateArgumentValue(C: NativePtr, I: Int): Long
-    
-    external fun clang_Cursor_getTemplateArgumentUnsignedValue(C: NativePtr, I: Int): Long
-    
-    external fun clang_equalTypes(A: NativePtr, B: NativePtr): Int
-    
-    external fun clang_getCanonicalType(T: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_isConstQualifiedType(T: NativePtr): Int
-    
-    external fun clang_Cursor_isMacroFunctionLike(C: NativePtr): Int
-    
-    external fun clang_Cursor_isMacroBuiltin(C: NativePtr): Int
-    
-    external fun clang_Cursor_isFunctionInlined(C: NativePtr): Int
-    
-    external fun clang_isVolatileQualifiedType(T: NativePtr): Int
-    
-    external fun clang_isRestrictQualifiedType(T: NativePtr): Int
-    
-    external fun clang_getPointeeType(T: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getTypeDeclaration(T: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getDeclObjCTypeEncoding(C: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Type_getObjCEncoding(type: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getTypeKindSpelling(K: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getFunctionTypeCallingConv(T: NativePtr): Int
-    
-    external fun clang_getResultType(T: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getNumArgTypes(T: NativePtr): Int
-    
-    external fun clang_getArgType(T: NativePtr, i: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_isFunctionTypeVariadic(T: NativePtr): Int
-    
-    external fun clang_getCursorResultType(C: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_isPODType(T: NativePtr): Int
-    
-    external fun clang_getElementType(T: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getNumElements(T: NativePtr): Long
-    
-    external fun clang_getArrayElementType(T: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getArraySize(T: NativePtr): Long
-    
-    external fun clang_Type_getNamedType(T: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Type_getAlignOf(T: NativePtr): Long
-    
-    external fun clang_Type_getClassType(T: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Type_getSizeOf(T: NativePtr): Long
-    
-    external fun clang_Type_getOffsetOf(T: NativePtr, S: NativePtr): Long
-    
-    external fun clang_Cursor_getOffsetOfField(C: NativePtr): Long
-    
-    external fun clang_Cursor_isAnonymous(C: NativePtr): Int
-    
-    external fun clang_Type_getNumTemplateArguments(T: NativePtr): Int
-    
-    external fun clang_Type_getTemplateArgumentAsType(T: NativePtr, i: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Type_getCXXRefQualifier(T: NativePtr): Int
-    
-    external fun clang_Cursor_isBitField(C: NativePtr): Int
-    
-    external fun clang_isVirtualBase(arg0: NativePtr): Int
-    
-    external fun clang_getCXXAccessSpecifier(arg0: NativePtr): Int
-    
-    external fun clang_Cursor_getStorageClass(arg0: NativePtr): Int
-    
-    external fun clang_getNumOverloadedDecls(cursor: NativePtr): Int
-    
-    external fun clang_getOverloadedDecl(cursor: NativePtr, index: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getIBOutletCollectionType(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_visitChildren(parent: NativePtr, visitor: NativePtr, client_data: NativePtr): Int
-    
-    external fun clang_getCursorUSR(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_constructUSR_ObjCClass(class_name: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_constructUSR_ObjCCategory(class_name: NativePtr, category_name: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_constructUSR_ObjCProtocol(protocol_name: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_constructUSR_ObjCIvar(name: NativePtr, classUSR: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_constructUSR_ObjCMethod(name: NativePtr, isInstanceMethod: Int, classUSR: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_constructUSR_ObjCProperty(property: NativePtr, classUSR: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getCursorSpelling(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Cursor_getSpellingNameRange(arg0: NativePtr, pieceIndex: Int, options: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getCursorDisplayName(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getCursorReferenced(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getCursorDefinition(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_isCursorDefinition(arg0: NativePtr): Int
-    
-    external fun clang_getCanonicalCursor(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Cursor_getObjCSelectorIndex(arg0: NativePtr): Int
-    
-    external fun clang_Cursor_isDynamicCall(C: NativePtr): Int
-    
-    external fun clang_Cursor_getReceiverType(C: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Cursor_getObjCPropertyAttributes(C: NativePtr, reserved: Int): Int
-    
-    external fun clang_Cursor_getObjCDeclQualifiers(C: NativePtr): Int
-    
-    external fun clang_Cursor_isObjCOptional(C: NativePtr): Int
-    
-    external fun clang_Cursor_isVariadic(C: NativePtr): Int
-    
-    external fun clang_Cursor_getCommentRange(C: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Cursor_getRawCommentText(C: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Cursor_getBriefCommentText(C: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Cursor_getMangling(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Cursor_getCXXManglings(arg0: NativePtr): NativePtr
-    
-    external fun clang_Cursor_getModule(C: NativePtr): NativePtr
-    
-    external fun clang_getModuleForFile(arg0: NativePtr, arg1: NativePtr): NativePtr
-    
-    external fun clang_Module_getASTFile(Module: NativePtr): NativePtr
-    
-    external fun clang_Module_getParent(Module: NativePtr): NativePtr
-    
-    external fun clang_Module_getName(Module: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Module_getFullName(Module: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Module_isSystem(Module: NativePtr): Int
-    
-    external fun clang_Module_getNumTopLevelHeaders(arg0: NativePtr, Module: NativePtr): Int
-    
-    external fun clang_Module_getTopLevelHeader(arg0: NativePtr, Module: NativePtr, Index: Int): NativePtr
-    
-    external fun clang_CXXConstructor_isConvertingConstructor(C: NativePtr): Int
-    
-    external fun clang_CXXConstructor_isCopyConstructor(C: NativePtr): Int
-    
-    external fun clang_CXXConstructor_isDefaultConstructor(C: NativePtr): Int
-    
-    external fun clang_CXXConstructor_isMoveConstructor(C: NativePtr): Int
-    
-    external fun clang_CXXField_isMutable(C: NativePtr): Int
-    
-    external fun clang_CXXMethod_isDefaulted(C: NativePtr): Int
-    
-    external fun clang_CXXMethod_isPureVirtual(C: NativePtr): Int
-    
-    external fun clang_CXXMethod_isStatic(C: NativePtr): Int
-    
-    external fun clang_CXXMethod_isVirtual(C: NativePtr): Int
-    
-    external fun clang_CXXMethod_isConst(C: NativePtr): Int
-    
-    external fun clang_getTemplateCursorKind(C: NativePtr): Int
-    
-    external fun clang_getSpecializedCursorTemplate(C: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getCursorReferenceNameRange(C: NativePtr, NameFlags: Int, PieceIndex: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getTokenKind(arg0: NativePtr): Int
-    
-    external fun clang_getTokenSpelling(arg0: NativePtr, arg1: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getTokenLocation(arg0: NativePtr, arg1: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getTokenExtent(arg0: NativePtr, arg1: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_tokenize(TU: NativePtr, Range: NativePtr, Tokens: NativePtr, NumTokens: NativePtr): Unit
-    
-    external fun clang_annotateTokens(TU: NativePtr, Tokens: NativePtr, NumTokens: Int, Cursors: NativePtr): Unit
-    
-    external fun clang_disposeTokens(TU: NativePtr, Tokens: NativePtr, NumTokens: Int): Unit
-    
-    external fun clang_getCursorKindSpelling(Kind: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getDefinitionSpellingAndExtent(arg0: NativePtr, startBuf: NativePtr, endBuf: NativePtr, startLine: NativePtr, startColumn: NativePtr, endLine: NativePtr, endColumn: NativePtr): Unit
-    
-    external fun clang_enableStackTraces(): Unit
-    
-    external fun clang_executeOnThread(fn: NativePtr, user_data: NativePtr, stack_size: Int): Unit
-    
-    external fun clang_getCompletionChunkKind(completion_string: NativePtr, chunk_number: Int): Int
-    
-    external fun clang_getCompletionChunkText(completion_string: NativePtr, chunk_number: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getCompletionChunkCompletionString(completion_string: NativePtr, chunk_number: Int): NativePtr
-    
-    external fun clang_getNumCompletionChunks(completion_string: NativePtr): Int
-    
-    external fun clang_getCompletionPriority(completion_string: NativePtr): Int
-    
-    external fun clang_getCompletionAvailability(completion_string: NativePtr): Int
-    
-    external fun clang_getCompletionNumAnnotations(completion_string: NativePtr): Int
-    
-    external fun clang_getCompletionAnnotation(completion_string: NativePtr, annotation_number: Int, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getCompletionParent(completion_string: NativePtr, kind: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getCompletionBriefComment(completion_string: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getCursorCompletionString(cursor: NativePtr): NativePtr
-    
-    external fun clang_defaultCodeCompleteOptions(): Int
-    
-    external fun clang_codeCompleteAt(TU: NativePtr, complete_filename: NativePtr, complete_line: Int, complete_column: Int, unsaved_files: NativePtr, num_unsaved_files: Int, options: Int): NativePtr
-    
-    external fun clang_sortCodeCompletionResults(Results: NativePtr, NumResults: Int): Unit
-    
-    external fun clang_disposeCodeCompleteResults(Results: NativePtr): Unit
-    
-    external fun clang_codeCompleteGetNumDiagnostics(Results: NativePtr): Int
-    
-    external fun clang_codeCompleteGetDiagnostic(Results: NativePtr, Index: Int): NativePtr
-    
-    external fun clang_codeCompleteGetContexts(Results: NativePtr): Long
-    
-    external fun clang_codeCompleteGetContainerKind(Results: NativePtr, IsIncomplete: NativePtr): Int
-    
-    external fun clang_codeCompleteGetContainerUSR(Results: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_codeCompleteGetObjCSelector(Results: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_getClangVersion(retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_toggleCrashRecovery(isEnabled: Int): Unit
-    
-    external fun clang_getInclusions(tu: NativePtr, visitor: NativePtr, client_data: NativePtr): Unit
-    
-    external fun clang_Cursor_Evaluate(C: NativePtr): NativePtr
-    
-    external fun clang_EvalResult_getKind(E: NativePtr): Int
-    
-    external fun clang_EvalResult_getAsInt(E: NativePtr): Int
-    
-    external fun clang_EvalResult_getAsDouble(E: NativePtr): Double
-    
-    external fun clang_EvalResult_getAsStr(E: NativePtr): NativePtr
-    
-    external fun clang_EvalResult_dispose(E: NativePtr): Unit
-    
-    external fun clang_getRemappings(path: NativePtr): NativePtr
-    
-    external fun clang_getRemappingsFromFileList(filePaths: NativePtr, numFiles: Int): NativePtr
-    
-    external fun clang_remap_getNumFiles(arg0: NativePtr): Int
-    
-    external fun clang_remap_getFilenames(arg0: NativePtr, index: Int, original: NativePtr, transformed: NativePtr): Unit
-    
-    external fun clang_remap_dispose(arg0: NativePtr): Unit
-    
-    external fun clang_findReferencesInFile(cursor: NativePtr, file: NativePtr, visitor: NativePtr): Int
-    
-    external fun clang_findIncludesInFile(TU: NativePtr, file: NativePtr, visitor: NativePtr): Int
-    
-    external fun clang_index_isEntityObjCContainerKind(arg0: Int): Int
-    
-    external fun clang_index_getObjCContainerDeclInfo(arg0: NativePtr): NativePtr
-    
-    external fun clang_index_getObjCInterfaceDeclInfo(arg0: NativePtr): NativePtr
-    
-    external fun clang_index_getObjCCategoryDeclInfo(arg0: NativePtr): NativePtr
-    
-    external fun clang_index_getObjCProtocolRefListInfo(arg0: NativePtr): NativePtr
-    
-    external fun clang_index_getObjCPropertyDeclInfo(arg0: NativePtr): NativePtr
-    
-    external fun clang_index_getIBOutletCollectionAttrInfo(arg0: NativePtr): NativePtr
-    
-    external fun clang_index_getCXXClassDeclInfo(arg0: NativePtr): NativePtr
-    
-    external fun clang_index_getClientContainer(arg0: NativePtr): NativePtr
-    
-    external fun clang_index_setClientContainer(arg0: NativePtr, arg1: NativePtr): Unit
-    
-    external fun clang_index_getClientEntity(arg0: NativePtr): NativePtr
-    
-    external fun clang_index_setClientEntity(arg0: NativePtr, arg1: NativePtr): Unit
-    
-    external fun clang_IndexAction_create(CIdx: NativePtr): NativePtr
-    
-    external fun clang_IndexAction_dispose(arg0: NativePtr): Unit
-    
-    external fun clang_indexSourceFile(arg0: NativePtr, client_data: NativePtr, index_callbacks: NativePtr, index_callbacks_size: Int, index_options: Int, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, out_TU: NativePtr, TU_options: Int): Int
-    
-    external fun clang_indexSourceFileFullArgv(arg0: NativePtr, client_data: NativePtr, index_callbacks: NativePtr, index_callbacks_size: Int, index_options: Int, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, out_TU: NativePtr, TU_options: Int): Int
-    
-    external fun clang_indexTranslationUnit(arg0: NativePtr, client_data: NativePtr, index_callbacks: NativePtr, index_callbacks_size: Int, index_options: Int, arg5: NativePtr): Int
-    
-    external fun clang_indexLoc_getFileLocation(loc: NativePtr, indexFile: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
-    
-    external fun clang_indexLoc_getCXSourceLocation(loc: NativePtr, retValPlacement: NativePtr): NativePtr
-    
-    external fun clang_Type_visitFields(T: NativePtr, visitor: NativePtr, client_data: NativePtr): Int
-    
-}
+private val loadLibrary = System.loadLibrary("clangstubs")

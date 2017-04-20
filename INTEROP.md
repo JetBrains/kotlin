@@ -275,14 +275,7 @@ methods available:
 ### Callbacks ###
 
 To convert Kotlin function to pointer to C function,
-`staticCFunction(::kotlinFunction)` can be used. Currently `staticCFunction`
-heavily relies on type inference, so the expression `staticCFunction(...)`
-should be either assigned to the variable having proper type explicitly
-specified, or passed to the function, e.g.
-
-```
-glutDisplayFunc(staticCFunction(::display))
-```
+`staticCFunction(::kotlinFunction)` can be used.
 
 Note that some function types are not supported currently. For example,
 it is not possible to get pointer to function that receives or returns structs

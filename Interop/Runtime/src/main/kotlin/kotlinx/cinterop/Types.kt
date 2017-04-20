@@ -382,42 +382,15 @@ typealias CArrayPointer<T> = CPointer<T>
 typealias CArrayPointerVar<T> = CPointerVar<T>
 
 /**
- * The type of C function.
- */
-interface CFunctionType
-
-/**
- * The type of C function constructed from some Kotlin function, possibly using an adapter.
- * The (non-abstract) implementation classes are supposed to be object declarations.
- */
-interface CAdaptedFunctionType<F : Function<*>> : CFunctionType {
-
-    /**
-     * Returns a raw pointer to C function of this type, which calls given Kotlin *static* function.
-     *
-     * This inconvenient method should not be used directly; use [staticCFunction] instead.
-     *
-     * @param function must be *static*, i.e. an (unbound) reference to a Kotlin function or
-     * a closure which doesn't capture any variable
-     */
-    fun fromStatic(function: F): NativePtr
-
-    companion object
-}
-
-/**
  * The C function.
  */
-class CFunction<T : CFunctionType>(override val rawPtr: NativePtr) : CPointed
+class CFunction<T : Function<*>>(override val rawPtr: NativePtr) : CPointed
 
 /**
- * The pointer to [CFunction].
- * TODO: remove.
+ * Returns a pointer to C function which calls given Kotlin *static* function.
+ *
+ * @param function must be *static*, i.e. an (unbound) reference to a Kotlin function or
+ * a closure which doesn't capture any variable
  */
-typealias CFunctionPointer<T> = CPointer<CFunction<T>>
-
-/**
- * The variable containing a [CFunctionPointer].
- * TODO: remove.
- */
-typealias CFunctionPointerVar<T> = CPointerVarOf<CFunctionPointer<T>>
+@Deprecated("The function type is too general. Supply argument with known arity.", level = DeprecationLevel.ERROR)
+external fun <F : Function<*>> staticCFunction(function: F): CPointer<CFunction<F>>

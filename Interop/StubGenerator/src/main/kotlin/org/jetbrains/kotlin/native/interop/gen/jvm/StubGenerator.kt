@@ -152,15 +152,6 @@ class StubGenerator(
 
     val functionsToBind = nativeIndex.functions.filter { it.name !in excludedFunctions }
 
-    private val usedFunctionTypes = mutableMapOf<FunctionType, String>()
-
-    val FunctionType.kotlinName: String
-        get() {
-            return usedFunctionTypes.getOrPut(this, {
-                "CFunctionType" + (usedFunctionTypes.size + 1)
-            })
-        }
-
     private val macroConstantsByName = nativeIndex.macroConstants.associateBy { it.name }
 
     /**
@@ -442,7 +433,7 @@ class StubGenerator(
             }
         }
 
-        is FunctionType -> byRefTypeMirror("CFunction<${type.kotlinName}>")
+        is FunctionType -> byRefTypeMirror("CFunction<${getKotlinFunctionType(type)}>")
 
         is Typedef -> {
             val baseType = mirror(type.def.aliased)
@@ -485,6 +476,17 @@ class StubGenerator(
      * Constructs [OutValueBinding] for the value of given C type.
      */
     fun getOutValueBinding(type: Type): OutValueBinding {
+        if (type.unwrapTypedefs() is RecordType) {
+            // TODO: this case should probably be handled more generally.
+            val typeMirror = mirror(type)
+            return OutValueBinding(
+                    kotlinType = "CValue<${typeMirror.pointedTypeName}>",
+                    kotlinConv = { name -> "$name.getPointer(memScope).rawValue" }, // TODO: eliminate this copying
+                    memScoped = true,
+                    kotlinJniBridgeType = "NativePtr"
+            )
+        }
+
         val mirror = mirror(type)
 
         return OutValueBinding(
@@ -539,16 +541,6 @@ class StubGenerator(
                     kotlinJniBridgeType = "NativePtr"
             )
         }
-        if (type.unwrapTypedefs() is RecordType) {
-            // TODO: this case should probably be handled more generally.
-            val typeMirror = mirror(type)
-            return OutValueBinding(
-                    kotlinType = "CValue<${typeMirror.pointedTypeName}>",
-                    kotlinConv = { name -> "$name.getPointer(memScope).rawValue" }, // TODO: eliminate this copying
-                    memScoped = true,
-                    kotlinJniBridgeType = "NativePtr"
-            )
-        }
 
         return getOutValueBinding(type)
     }
@@ -569,6 +561,15 @@ class StubGenerator(
      * Constructs [InValueBinding] for the value of given C type.
      */
     fun getInValueBinding(type: Type): InValueBinding  {
+        if (type.unwrapTypedefs() is RecordType) {
+            val typeMirror = mirror(type)
+            return InValueBinding(
+                    kotlinJniBridgeType = "NativePtr",
+                    conv = { name -> "interpretPointed<${typeMirror.pointedTypeName}>($name).readValue()" },
+                    kotlinType = "CValue<${typeMirror.pointedTypeName}>"
+            )
+        }
+
         val mirror = mirror(type)
 
         return InValueBinding(
@@ -581,15 +582,6 @@ class StubGenerator(
     fun getCFunctionRetValBinding(func: FunctionDecl): InValueBinding {
         when {
             func.returnsVoid() -> return InValueBinding("Unit")
-            func.returnsRecord() -> {
-                // TODO: this case should probably be handled more generally.
-                val typeMirror = mirror(func.returnType)
-                return InValueBinding(
-                        kotlinJniBridgeType = "NativePtr",
-                        conv = { name -> "interpretPointed<${typeMirror.pointedTypeName}>($name).readValue()" },
-                        kotlinType = "CValue<${typeMirror.pointedTypeName}>"
-                )
-            }
         }
 
         return getInValueBinding(func.returnType)
@@ -606,6 +598,23 @@ class StubGenerator(
                 getCallbackRetValBinding(type.returnType).kotlinType
     }
 
+    private fun getArrayLength(type: ArrayType): Long {
+        val unwrappedElementType = type.elemType.unwrapTypedefs()
+        val elementLength = if (unwrappedElementType is ArrayType) {
+            getArrayLength(unwrappedElementType)
+        } else {
+            1L
+        }
+
+        val elementCount = when (type) {
+            is ConstArrayType -> type.length
+            is IncompleteArrayType -> 0L
+            else -> TODO(type.toString())
+        }
+
+        return elementLength * elementCount
+    }
+
     /**
      * Produces to [out] the definition of Kotlin class representing the reference to given struct.
      */
@@ -614,6 +623,12 @@ class StubGenerator(
         if (def == null) {
             generateForwardStruct(decl)
             return
+        }
+
+        if (platform == KotlinPlatform.JVM) {
+            if (def.hasNaturalLayout) {
+                out("@CNaturalStruct(${def.fields.joinToString { it.name.quoteAsKotlinLiteral() }})")
+            }
         }
 
         block("class ${decl.kotlinName.asSimpleName()}(override val rawPtr: NativePtr) : CStructVar()") {
@@ -628,8 +643,16 @@ class StubGenerator(
                     assert(field.offset % 8 == 0L)
                     val offset = field.offset / 8
                     val fieldRefType = mirror(field.type)
-                    if (field.type.unwrapTypedefs() is ArrayType) {
+                    val unwrappedFieldType = field.type.unwrapTypedefs()
+                    if (unwrappedFieldType is ArrayType) {
                         val type = (fieldRefType as TypeMirror.ByValue).valueTypeName
+
+                        if (platform == KotlinPlatform.JVM) {
+                            val length = getArrayLength(unwrappedFieldType)
+
+                            // TODO: @CLength should probably be used on types instead of properties.
+                            out("@CLength($length)")
+                        }
 
                         out("val ${field.name.asSimpleName()}: $type")
                         out("    get() = arrayMemberAt($offset)")
@@ -990,51 +1013,6 @@ class StubGenerator(
         return sb.toString()
     }
 
-    private fun getFfiStructType(elementTypes: List<Type>) =
-            "Struct(" +
-                    elementTypes.map { getFfiType(it) }.joinToString(", ") +
-                    ")"
-
-    private fun getFfiType(type: Type): String {
-        return when(type) {
-            is VoidType -> "Void"
-            is CharType -> "SInt8" // TODO: libffi has separate representation for char type.
-            is IntegerType -> when (type.size) {
-                1 -> if (type.isSigned) "SInt8" else "UInt8"
-                2 -> if (type.isSigned) "SInt16" else "UInt16"
-                4 -> if (type.isSigned) "SInt32" else "UInt32"
-                8 -> if (type.isSigned) "SInt64" else "UInt64"
-                else -> TODO(type.toString())
-            }
-            is PointerType -> "Pointer"
-            is ConstArrayType -> getFfiStructType(
-                    Array(type.length.toInt(), { type.elemType }).toList()
-            )
-            is EnumType -> getFfiType(type.def.baseType)
-            is RecordType -> {
-                val def = type.decl.def!!
-                if (!def.hasNaturalLayout) {
-                    throw NotImplementedError(type.kotlinName)
-                }
-                getFfiStructType(def.fields.map { it.type })
-            }
-            is Typedef -> getFfiType(type.def.aliased)
-            else -> throw NotImplementedError(type.toString())
-        }
-    }
-
-    private fun getArgFfiType(type: Type) = when (type.unwrapTypedefs()) {
-        is ArrayType -> "Pointer"
-        else -> getFfiType(type)
-    }
-
-    private fun getRetValFfiType(type: Type) = getArgFfiType(type)
-
-    private fun generateFunctionType(type: FunctionType, name: String) = when (platform) {
-        KotlinPlatform.JVM -> generateJvmFunctionType(type, name)
-        KotlinPlatform.NATIVE -> generateNativeFunctionType(type, name)
-    }
-
     /**
      * Returns `true` iff the function binding for Kotlin Native
      * requires non-trivial Kotlin adapter to convert arguments.
@@ -1062,64 +1040,6 @@ class StubGenerator(
         }
 
         return true
-    }
-
-    private fun FunctionType.requiresAdapterOnNative(): Boolean {
-        assert (platform == KotlinPlatform.NATIVE)
-        return (parameterTypes + returnType).any {
-            val unwrappedType = it.unwrapTypedefs()
-            unwrappedType is RecordType || (unwrappedType is EnumType && unwrappedType.def.isStrictEnum)
-        }
-    }
-
-    private fun generateNativeFunctionType(type: FunctionType, name: String) {
-        if (type.requiresAdapterOnNative()) {
-            out("object $name : CFunctionType {}")
-        } else {
-            val kotlinFunctionType = getKotlinFunctionType(type)
-            out("object $name : CTriviallyAdaptedFunctionType<$kotlinFunctionType>()")
-        }
-    }
-
-    private fun generateJvmFunctionType(type: FunctionType, name: String) {
-        val kotlinFunctionType = getKotlinFunctionType(type)
-
-        val constructorArgs = try {
-            listOf(getRetValFfiType(type.returnType)) +
-                    type.parameterTypes.map { getArgFfiType(it) }
-
-        } catch (e: Throwable) {
-            log("Warning: cannot generate definition for function type $name")
-            out("object $name : CFunctionType {}")
-            return
-        }
-
-        val constructorArgsStr = constructorArgs.joinToString(", ")
-
-        block("object $name : CAdaptedFunctionTypeImpl<$kotlinFunctionType>($constructorArgsStr)") {
-            block("override fun invoke(function: $kotlinFunctionType,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer)") {
-                val args = type.parameterTypes.mapIndexed { i, paramType ->
-                    val pointedTypeName = mirror(paramType).pointedTypeName
-                    val ref = "args[$i]!!.reinterpret<$pointedTypeName>().pointed"
-                    when (paramType.unwrapTypedefs()) {
-                        is RecordType -> ref
-                        else -> "$ref.value"
-                    }
-                }.joinToString(", ")
-
-                out("val res = function($args)")
-
-                when (type.returnType.unwrapTypedefs()) {
-                    is RecordType -> throw NotImplementedError()
-                    is VoidType -> {} // nothing to do
-                    else -> {
-                        val pointedTypeName = mirror(type.returnType).pointedTypeName
-                        out("ret.reinterpret<$pointedTypeName>().pointed.value = res")
-                    }
-                }
-
-            }
-        }
     }
 
     private fun integerLiteral(type: Type, value: Long): String? {
@@ -1285,12 +1205,6 @@ class StubGenerator(
             } catch (e: Throwable) {
                 log("Warning: cannot generate typedef ${t.name}")
             }
-        }
-
-        usedFunctionTypes.entries.forEach {
-            stubs.add(
-                    generateKotlinFragmentBy { generateFunctionType(it.key, it.value) }
-            )
         }
 
         return stubs

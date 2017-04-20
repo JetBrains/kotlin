@@ -144,20 +144,7 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val bitsToDouble = packageScope.getContributedFunctions("bitsToDouble").single()
 
-    val staticCFunction = packageScope.getContributedFunctions("staticCFunction").single()
-
-    private val triviallyAdaptedFunctionTypeClass =
-            packageScope.getContributedClassifier("CTriviallyAdaptedFunctionType") as ClassDescriptor
-
-    private val trivallyAdaptedFunctionTypeType =
-            triviallyAdaptedFunctionTypeClass.defaultType.replace(
-                    newArguments = listOf(
-                            StarProjectionImpl(triviallyAdaptedFunctionTypeClass.declaredTypeParameters.single())
-                    )
-            )
-
-    fun isTriviallyAdaptedFunctionType(type: KotlinType): Boolean =
-            type.isSubtypeOf(trivallyAdaptedFunctionTypeType)
+    val staticCFunction = packageScope.getContributedFunctions("staticCFunction").toSet()
 
     val signExtend = packageScope.getContributedFunctions("signExtend").single()
 
