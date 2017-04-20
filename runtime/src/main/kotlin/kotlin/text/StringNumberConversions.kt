@@ -56,7 +56,7 @@ public inline fun Long.toString(radix: Int): String = longToString(this, checkRa
  * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toBoolean(): Boolean = this == "true"
+public inline fun String.toBoolean(): Boolean = this.equals("true", ignoreCase = true)
 
 @SymbolName("Kotlin_String_parseByte")
 external private fun parseByte(value: String, radix: Int): Byte
