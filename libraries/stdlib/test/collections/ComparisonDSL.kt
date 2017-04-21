@@ -1,6 +1,7 @@
 package test.collections
 
 import test.*
+import kotlin.reflect.KProperty1
 import kotlin.test.*
 
 public fun <T> compare(expected: T, actual: T, block:CompareContext<T>.() -> Unit) {
@@ -12,6 +13,11 @@ public class CompareContext<out T>(public val expected: T, public val actual: T)
     public fun equals(message: String = "") {
         assertEquals(expected, actual, message)
     }
+
+    public fun <P> propertyEquals(property: KProperty1<in T, P>) {
+        propertyEquals(property.name, property)
+    }
+
     public fun <P> propertyEquals(message: String = "", getter: T.() -> P) {
         assertEquals(expected.getter(), actual.getter(), message)
     }
