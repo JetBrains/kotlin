@@ -146,27 +146,22 @@ class StringBuilder private constructor (
     }
 
     fun insert(index: Int, csq: CharSequence?): StringBuilder {
-        // Kotlin JVM inserts the "null" string if the argument is null.
+        // Kotlin/JVM inserts the "null" string if the argument is null.
         val toInsert = csq ?: "null"
         return insert(index, toInsert, 0, toInsert.length)
     }
 
     fun insert(index: Int, csq: CharSequence?, start: Int, end: Int): StringBuilder {
-        // Kotlin JVM processes null as if the argument was "null" char sequence.
+        // Kotlin/JVM processes null as if the argument was "null" char sequence.
         val toInsert = csq ?: "null"
         if (start < 0 || end < start || start > toInsert.length) throw IndexOutOfBoundsException()
         checkInsertIndex(index)
-
         val extraLength = end - start
         ensureExtraCapacity(extraLength)
-        var from = lastIndex
-        var to = length + extraLength - 1
-        while (from >= index) {
-            array[to--] = array[from--]
-        }
 
-        from = start
-        to = index
+        array.copyRangeTo(array, index, length, index + extraLength)
+        var from = start
+        var to = index
         while (from < end) {
             array[to++] = toInsert[from++]
         }
@@ -179,16 +174,8 @@ class StringBuilder private constructor (
         checkInsertIndex(index)
         ensureExtraCapacity(chars.size)
 
-        var from = lastIndex
-        var to = length + chars.size - 1
-        while (from >= index) {
-            array[to--] = array[from--]
-        }
-
-        var i = index
-        for (c in chars) {
-            array[i++] = c
-        }
+        array.copyRangeTo(array, index, length, index + chars.size)
+        chars.copyRangeTo(array, 0, chars.size, index)
 
         length += chars.size
         return this
@@ -214,13 +201,13 @@ class StringBuilder private constructor (
     }
 
     override fun append(csq: CharSequence?): StringBuilder {
-        // Kotlin JVM processes null as if the argument was "null" char sequence.
+        // Kotlin/JVM processes null as if the argument was "null" char sequence.
         val toAppend = csq ?: "null"
         return append(toAppend, 0, toAppend.length)
     }
 
     override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder {
-        // Kotlin JVM processes null as if the argument was "null" char sequence.
+        // Kotlin/JVM processes null as if the argument was "null" char sequence.
         val toAppend = csq ?: "null"
         if (start < 0 || end < start || start > toAppend.length) throw IndexOutOfBoundsException()
         ensureExtraCapacity(end - start)
@@ -232,17 +219,12 @@ class StringBuilder private constructor (
 
     fun append(it: CharArray): StringBuilder {
         ensureExtraCapacity(it.size)
-        for (c in it)
-            array[length++] = c
+        it.copyRangeTo(array, 0, it.size, length)
+        length += it.size
         return this
     }
 
-    fun append(it: String): StringBuilder {
-        ensureExtraCapacity(it.length)
-        for (c in toCharArray(it))
-            array[length++] = c
-        return this
-    }
+    fun append(it: String): StringBuilder = append(toCharArray(it))
 
     fun append(it: Boolean) = append(it.toString())
     fun append(it: Byte) = append(it.toString())
