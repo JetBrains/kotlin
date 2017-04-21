@@ -5188,6 +5188,8 @@ public inline fun <T> Array<out T>.contentDeepHashCode(): Int {
  * 
  * If any of arrays contains itself on any nesting level that reference
  * is rendered as `"[...]"` to prevent recursion.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentDeepToString
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -5368,6 +5370,8 @@ public inline fun CharArray.contentHashCode(): Int {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -5377,6 +5381,8 @@ public inline fun <T> Array<out T>.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -5386,6 +5392,8 @@ public inline fun ByteArray.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -5395,6 +5403,8 @@ public inline fun ShortArray.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -5404,6 +5414,8 @@ public inline fun IntArray.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -5413,6 +5425,8 @@ public inline fun LongArray.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -5422,6 +5436,8 @@ public inline fun FloatArray.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -5431,6 +5447,8 @@ public inline fun DoubleArray.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -5440,6 +5458,8 @@ public inline fun BooleanArray.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
