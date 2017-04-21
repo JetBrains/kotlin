@@ -796,6 +796,112 @@ task lateinit_notInitialized(type: RunKonanTest) {
     source = "codegen/lateinit/notInitialized.kt"
 }
 
+task coroutines_simple(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/coroutines/simple.kt"
+}
+
+task coroutines_withReceiver(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/coroutines/withReceiver.kt"
+}
+
+task coroutines_correctOrder1(type: RunKonanTest) {
+    goldValue = "f1\ns1\nf2\n160\n"
+    source = "codegen/coroutines/correctOrder1.kt"
+}
+
+task coroutines_controlFlow_if1(type: RunKonanTest) {
+    goldValue = "f1\ns1\nf3\n84\n"
+    source = "codegen/coroutines/controlFlow_if1.kt"
+}
+
+task coroutines_controlFlow_if2(type: RunKonanTest) {
+    goldValue = "f1\ns1\nf2\n43\n"
+    source = "codegen/coroutines/controlFlow_if2.kt"
+}
+
+// Enable after finally blocks lowering.
+
+task coroutines_controlFlow_finally1(type: RunKonanTest) {
+    disabled = true
+    goldValue = "f1\ns1\n117\n"
+    source = "codegen/coroutines/controlFlow_finally1.kt"
+}
+
+task coroutines_controlFlow_finally2(type: RunKonanTest) {
+    disabled = true
+    goldValue = "f1\ns1\n117\n"
+    source = "codegen/coroutines/controlFlow_finally2.kt"
+}
+
+task coroutines_controlFlow_finally3(type: RunKonanTest) {
+    disabled = true
+    goldValue = "f1\ns1\n117\n"
+    source = "codegen/coroutines/controlFlow_finally3.kt"
+}
+
+task coroutines_controlFlow_finally4(type: RunKonanTest) {
+    disabled = true
+    goldValue = "s1\nfinally\n117\n"
+    source = "codegen/coroutines/controlFlow_finally4.kt"
+}
+
+task coroutines_controlFlow_inline1(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/coroutines/controlFlow_inline1.kt"
+}
+
+task coroutines_controlFlow_inline2(type: RunKonanTest) {
+    goldValue = "s1\n42\n"
+    source = "codegen/coroutines/controlFlow_inline2.kt"
+}
+
+task coroutines_controlFlow_inline3(type: RunKonanTest) {
+    goldValue = "f1\ns1\n42\n"
+    source = "codegen/coroutines/controlFlow_inline3.kt"
+}
+
+task coroutines_controlFlow_tryCatch1(type: RunKonanTest) {
+    goldValue = "s1\n42\n"
+    source = "codegen/coroutines/controlFlow_tryCatch1.kt"
+}
+
+task coroutines_controlFlow_tryCatch2(type: RunKonanTest) {
+    goldValue = "s1\n42\n"
+    source = "codegen/coroutines/controlFlow_tryCatch2.kt"
+}
+
+task coroutines_controlFlow_tryCatch3(type: RunKonanTest) {
+    goldValue = "s2\nf2\n1\n"
+    source = "codegen/coroutines/controlFlow_tryCatch3.kt"
+}
+
+task coroutines_controlFlow_tryCatch4(type: RunKonanTest) {
+    goldValue = "s2\nf2\n1\n"
+    source = "codegen/coroutines/controlFlow_tryCatch4.kt"
+}
+
+task coroutines_controlFlow_tryCatch5(type: RunKonanTest) {
+    goldValue = "s2\ns1\nError\n42\n"
+    source = "codegen/coroutines/controlFlow_tryCatch5.kt"
+}
+
+task coroutines_controlFlow_while1(type: RunKonanTest) {
+    goldValue = "s3\ns3\ns3\ns3\n3\n"
+    source = "codegen/coroutines/controlFlow_while1.kt"
+}
+
+task coroutines_controlFlow_while2(type: RunKonanTest) {
+    goldValue = "s3\ns3\ns3\n3\n"
+    source = "codegen/coroutines/controlFlow_while2.kt"
+}
+
+task coroutines_returnsUnit1(type: RunKonanTest) {
+    goldValue = "117\ns1\n0\n"
+    source = "codegen/coroutines/returnsUnit1.kt"
+}
+
 task AbstractMutableCollection(type: RunKonanTest) {
     expectedExitStatus = 0
     source = "runtime/collections/AbstractMutableCollection.kt"
