@@ -54,7 +54,7 @@ private val typeRenderer = DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptio
 
 private enum class HintType(desc: String, enabled: Boolean) {
 
-    PROPERTY_HINT("Show property type hints", true) {
+    PROPERTY_HINT("Show property type hints", false) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
             return providePropertyTypeHint(elem)
         }
@@ -62,7 +62,7 @@ private enum class HintType(desc: String, enabled: Boolean) {
         override fun isApplicable(elem: PsiElement): Boolean = elem is KtProperty && elem.getReturnTypeReference() == null && !elem.isLocal
     },
 
-    LOCAL_VARIABLE_HINT("Show local variable type hints", true) {
+    LOCAL_VARIABLE_HINT("Show local variable type hints", false) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
             return providePropertyTypeHint(elem)
         }
@@ -71,7 +71,7 @@ private enum class HintType(desc: String, enabled: Boolean) {
                                                                (elem is KtParameter && elem.isLoopParameter)
     },
 
-    FUNCTION_HINT("Show function return type hints", true) {
+    FUNCTION_HINT("Show function return type hints", false) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
             (elem as? KtNamedFunction)?.let { namedFunc ->
                 namedFunc.valueParameterList?.let { paramList ->
