@@ -170,15 +170,21 @@ class NameSuggestion {
         }
         val fixedDescriptor = current
 
-        do {
-            parts += getSuggestedName(current)
-            val last = current
+        parts += if (fixedDescriptor is ConstructorDescriptor) {
             current = current.containingDeclaration!!
-            if (last is ConstructorDescriptor && !last.isPrimary) {
-                parts[parts.lastIndex] = getSuggestedName(current) + "_init"
-                current = current.containingDeclaration!!
-            }
-        } while (current is FunctionDescriptor)
+            getSuggestedName(current) + "_init"
+        }
+        else {
+            getSuggestedName(fixedDescriptor)
+        }
+        if (current.containingDeclaration is FunctionDescriptor && current !is TypeParameterDescriptor) {
+            val outerFunctionName = suggest(current.containingDeclaration as FunctionDescriptor)!!
+            parts += outerFunctionName.names.single()
+            current = outerFunctionName.scope
+        }
+        else {
+            current = current.containingDeclaration!!
+        }
 
         // Getters and setters have generation strategy similar to common declarations, except for they are declared as
         // members of classes/packages, not corresponding properties.
