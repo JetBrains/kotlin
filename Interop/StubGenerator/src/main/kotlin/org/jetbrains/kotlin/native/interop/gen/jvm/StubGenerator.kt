@@ -1018,16 +1018,8 @@ class StubGenerator(
      * requires non-trivial Kotlin adapter to convert arguments.
      */
     private fun FunctionDecl.requiresKotlinAdapter(): Boolean {
-        if (platform != KotlinPlatform.NATIVE) {
-            return true
-        }
-
-        return this.returnsRecord() || this.generateAsFfiVarargs() ||
-                this.parameters.map { it.type }.any {
-                    it.unwrapTypedefs() is RecordType ||
-                            representCFunctionParameterAsString(it) ||
-                            representCFunctionParameterAsValuesRef(it) != null
-                }
+        // TODO: restore this optimization after refactoring stub generator.
+        return true
     }
 
     /**
