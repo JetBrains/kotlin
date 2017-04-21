@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.typeBinding.TypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBinding
@@ -64,6 +65,7 @@ class VarianceCheckerCore(
     fun checkClassOrObject(klass: KtClassOrObject): Boolean {
         if (klass is KtClass) {
             if (!checkClassHeader(klass)) return false
+            if (klass.getSuperTypeList()?.anyDescendantOfType<KtClassOrObject> { !checkClassOrObject(it) } == true) return false
         }
         for (member in klass.declarations + klass.primaryConstructorParameters) {
             val descriptor = when (member) {
@@ -77,6 +79,7 @@ class VarianceCheckerCore(
                 }
                 is KtCallableDeclaration -> {
                     if (descriptor is CallableMemberDescriptor && !checkMember(member, descriptor)) return false
+                    if (member.anyDescendantOfType<KtClassOrObject> { !checkClassOrObject(it) }) return false
                 }
             }
         }
