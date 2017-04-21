@@ -74,7 +74,7 @@ private enum class HintType(desc: String, enabled: Boolean) {
                 namedFunc ->
                 namedFunc.valueParameterList?.let {
                     paramList ->
-                    return provideTypeHint(namedFunc, paramList.startOffset)
+                    return provideTypeHint(namedFunc, paramList.endOffset)
                 }
             }
             return emptyList()
