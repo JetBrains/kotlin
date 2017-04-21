@@ -280,7 +280,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 // we must unwrap progress indicator because ProgressWrapper does not do anything on changing text and fraction
                 val progress = ProgressWrapper.unwrap(ProgressIndicatorProvider.getGlobalProgressIndicator())
                 progress?.pushState()
-                progress?.text = "Searching implicit usages..."
+                progress?.text = "Searching for implicit usages..."
 
                 try {
                     val files = runReadAction { FileTypeIndex.getFiles(KotlinFileType.INSTANCE, scope) }
