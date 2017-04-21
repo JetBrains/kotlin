@@ -20,6 +20,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.common.DeepCopyIrTreeWithDescriptors
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.KonanIrDeserializationException
 import org.jetbrains.kotlin.backend.konan.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.ir.ir2stringWhole
@@ -41,7 +42,7 @@ import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.serialization.KonanIr.IrConst.ValueCase.*
 import org.jetbrains.kotlin.serialization.KonanIr.IrOperation.OperationCase.*
 import org.jetbrains.kotlin.serialization.KonanLinkData
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -572,15 +573,15 @@ internal class IrSerializer(val context: Context,
 // --------- Deserializer part -----------------------------
 
 internal class IrDeserializer(val context: Context, 
-    val rootFunction: DeserializedSimpleFunctionDescriptor) {
+    val rootFunction: FunctionDescriptor) {
 
     val loopIndex = mutableMapOf<Int, IrLoop>()
 
-    val localDeserializer = LocalDeclarationDeserializer(rootFunction, context.moduleDescriptor)
+    val rootMember = rootFunction.deserializedPropertyIfAccessor
+    val localDeserializer = LocalDeclarationDeserializer(rootMember, context.moduleDescriptor)
 
     val descriptorDeserializer = IrDescriptorDeserializer(
-        context, rootFunction, localDeserializer)
-
+        context, rootMember, localDeserializer)
 
     fun deserializeKotlinType(proto: KonanIr.KotlinType) 
         = descriptorDeserializer.deserializeKotlinType(proto)
@@ -1047,7 +1048,7 @@ internal class IrDeserializer(val context: Context,
     // We run inline body deserializations after the public descriptor tree
     // deserialization is long gone. So we don't have the needed chain of
     // deserialization contexts available to take type parameters.
-    // So typeDeserializer introduces a brand new set of DeserializadTypeParameterDescriptor
+    // So typeDeserializer introduces a brand new set of DeserializadTypeParameterDescriptors
     // for the rootFunction.
     // This function takes the type parameters from the rootFunction descriptor
     // and substitutes them instead the deserialized ones.
@@ -1058,9 +1059,12 @@ internal class IrDeserializer(val context: Context,
         val rootFunctionTypeParameters = 
             descriptorDeserializer.localDeserializer.childContext.typeDeserializer.ownTypeParameters
 
+        val realTypeParameters =
+            rootFunction.deserializedPropertyIfAccessor.typeParameters
+
         val substitutionContext = rootFunctionTypeParameters.mapIndexed{
             index, param ->
-            Pair(param.typeConstructor, TypeProjectionImpl(rootFunction.typeParameters[index].defaultType))
+            Pair(param.typeConstructor, TypeProjectionImpl(realTypeParameters[index].defaultType))
         }.associate{
             (key,value) ->
         key to value}
@@ -1073,14 +1077,24 @@ internal class IrDeserializer(val context: Context,
         return copyFunctionDeclaration
     }
 
-    fun decodeDeclaration(): IrDeclaration {
-        val proto = rootFunction.proto
-
-        if (!proto.hasExtension(KonanLinkData.inlineIrBody)) {
-            throw KonanIrDeserializationException("$rootFunction doesn't have ir serialized.")
+    val extractInlineProto: KonanLinkData.InlineIrBody
+        get() = when (rootFunction) {
+            is DeserializedSimpleFunctionDescriptor -> {
+                rootFunction.proto.inlineIr
+            }
+            is PropertyGetterDescriptor -> {
+                (rootMember as DeserializedPropertyDescriptor).proto.getterIr
+            }
+            is PropertySetterDescriptor -> {
+                (rootMember as DeserializedPropertyDescriptor).proto.setterIr
+            }
+            else -> error("Unexpected descriptor: rootFunction")
         }
 
-        val inlineProto = proto.getExtension(KonanLinkData.inlineIrBody)
+    fun decodeDeclaration(): IrDeclaration {
+        assert(rootFunction.isDeserializableCallable)
+
+        val inlineProto = extractInlineProto
         val base64 = inlineProto.encodedIr
         val byteArray = base64Decode(base64)
         val irProto = KonanIr.IrDeclaration.parseFrom(byteArray, KonanSerializerProtocol.extensionRegistry)
@@ -1091,4 +1105,3 @@ internal class IrDeserializer(val context: Context,
         return copyFunctionDeclaration
     }
 }
-

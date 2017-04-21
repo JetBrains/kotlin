@@ -20,7 +20,7 @@ message KotlinDescriptor {
         RECEIVER = 7;
         ACCESSOR = 8;
     }
-    // TODO: Use the string table?
+    // TODO: Use the string table index.
     optional string name = 1;
     required Kind kind = 2;
     required UniqId uniq_id = 3;

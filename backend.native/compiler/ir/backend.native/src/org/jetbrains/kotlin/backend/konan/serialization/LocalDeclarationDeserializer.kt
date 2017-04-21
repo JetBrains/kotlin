@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedN
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfoTable
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.types.KotlinType
@@ -35,9 +34,9 @@ import org.jetbrains.kotlin.types.KotlinType
 // MemberDeserializer to deserialize descriptors declared in IR.
 // Consider merging it all to the very MemberDesereializer itself eventually.
 
-class LocalDeclarationDeserializer(val rootFunction: FunctionDescriptor, val module: ModuleDescriptor) {
+class LocalDeclarationDeserializer(val rootDescriptor: DeserializedCallableMemberDescriptor, val module: ModuleDescriptor) {
         
-    val pkg = rootFunction.getContainingDeclaration() as KonanPackageFragment
+    val pkg = rootDescriptor.getContainingDeclaration() as KonanPackageFragment
     init {
         assert(pkg is KonanPackageFragment)
     }
@@ -49,8 +48,17 @@ class LocalDeclarationDeserializer(val rootFunction: FunctionDescriptor, val mod
     val context = components.createContext(
         pkg, nameResolver, typeTable, SinceKotlinInfoTable.EMPTY, null)
 
-    val typeParameterProtos = (rootFunction as DeserializedSimpleFunctionDescriptor).proto.typeParameterList
-    val childContext = context.childContext(rootFunction, typeParameterProtos, nameResolver, typeTable)
+    val typeParameterProtos = when (rootDescriptor) {
+        // These are two different typeParameterLists not 
+        // having a common ancestor.
+        is DeserializedSimpleFunctionDescriptor
+            -> rootDescriptor.proto.typeParameterList
+        is DeserializedPropertyDescriptor
+            -> rootDescriptor.proto.typeParameterList
+        else -> error("Unexpected descriptor kind")
+    }
+
+    val childContext = context.childContext(rootDescriptor, typeParameterProtos, nameResolver, typeTable)
     val typeDeserializer = childContext.typeDeserializer
 
     val memberDeserializer = MemberDeserializer(childContext)

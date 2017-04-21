@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanIrDeserializationException
 import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
-import org.jetbrains.kotlin.backend.konan.llvm.symbolName
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.expressions.IrLoop
@@ -33,99 +32,36 @@ import org.jetbrains.kotlin.serialization.KonanLinkData
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassConstructorDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.types.KotlinType
-
-fun newUniqId(index: Long): KonanLinkData.UniqId =
-   KonanLinkData.UniqId.newBuilder().setIndex(index).build() 
-
-val ProtoBuf.Function.functionIndex: Long
-    get() = this.getExtension(KonanLinkData.functionIndex).index
-
-val ProtoBuf.Constructor.constructorIndex: Long
-    get() = this.getExtension(KonanLinkData.constructorIndex).index
-
-val ProtoBuf.Property.propertyIndex: Long
-    get() = this.getExtension(KonanLinkData.propertyIndex).index
-
-
-fun ProtoBuf.Function.Builder.setFunctionIndex(index: Long)
-    = this.setExtension(KonanLinkData.functionIndex, newUniqId(index))
-
-fun ProtoBuf.Constructor.Builder.setConstructorIndex(index: Long)
-    = this.setExtension(KonanLinkData.constructorIndex, newUniqId(index))
-
-fun ProtoBuf.Property.Builder.setPropertyIndex(index: Long)
-    = this.setExtension(KonanLinkData.propertyIndex, newUniqId(index))
-
-fun ProtoBuf.Class.Builder.setClassIndex(index: Long)
-    = this.setExtension(KonanLinkData.classIndex, newUniqId(index))
-
-
-val KonanIr.KotlinDescriptor.index: Long
-    get() = this.uniqId.index
-
-fun KonanIr.KotlinDescriptor.Builder.setIndex(index: Long)
-    = this.setUniqId(newUniqId(index))
-
-val KonanIr.KotlinDescriptor.originalIndex: Long
-    get() = this.originalUniqId.index
-
-fun KonanIr.KotlinDescriptor.Builder.setOriginalIndex(index: Long) 
-    = this.setOriginalUniqId(newUniqId(index))
-
-val KonanIr.KotlinDescriptor.dispatchReceiverIndex: Long
-    get() = this.dispatchReceiverUniqId.index
-
-fun KonanIr.KotlinDescriptor.Builder.setDispatchReceiverIndex(index: Long) 
-    = this.setDispatchReceiverUniqId(newUniqId(index))
-
-val KonanIr.KotlinDescriptor.extensionReceiverIndex: Long
-    get() = this.extensionReceiverUniqId.index
-
-fun KonanIr.KotlinDescriptor.Builder.setExtensionReceiverIndex(index: Long) 
-    = this.setExtensionReceiverUniqId(newUniqId(index))
-
-internal fun printType(proto: ProtoBuf.Type) {
-    println("debug text: " + proto.getExtension(KonanLinkData.typeText))
-}
-
-internal fun printTypeTable(proto: ProtoBuf.TypeTable) {
-    proto.getTypeList().forEach {
-        printType(it)
-    }
-}
 
 internal fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
     return if (this is PackageFragmentDescriptor) this 
         else this.containingDeclaration!!.findPackage()
 }
 
-internal fun DeserializedSimpleFunctionDescriptor.nameTable(): ProtoBuf.QualifiedNameTable {
+internal fun DeserializedMemberDescriptor.nameTable(): ProtoBuf.QualifiedNameTable {
     val pkg = this.findPackage()
     assert(pkg is KonanPackageFragment)
     return (pkg as KonanPackageFragment).proto.getNameTable()
 }
 
 
-internal fun DeserializedSimpleFunctionDescriptor.nameResolver(): NameResolver {
+internal fun DeserializedMemberDescriptor.nameResolver(): NameResolver {
     val pkg = this.findPackage() as KonanPackageFragment
     return NameResolverImpl(pkg.proto.getStringTable(), pkg.proto.getNameTable())
 }
-
 
 // This is the class that knowns how to deserialize
 // Kotlin descriptors and types for IR.
 
 internal class IrDescriptorDeserializer(val context: Context, 
-    val rootFunction: DeserializedSimpleFunctionDescriptor,
+    val rootDescriptor: DeserializedCallableMemberDescriptor,
     val localDeserializer: LocalDeclarationDeserializer) {
 
     val loopIndex = mutableMapOf<Int, IrLoop>()
-    val nameResolver = rootFunction.nameResolver() as NameResolverImpl
-    val nameTable = rootFunction.nameTable()
+    val nameResolver = rootDescriptor.nameResolver() as NameResolverImpl
+    val nameTable = rootDescriptor.nameTable()
     val descriptorIndex = IrDeserializationDescriptorIndex(context.irBuiltIns).map
 
     fun deserializeKotlinType(proto: KonanIr.KotlinType): KotlinType {
@@ -483,8 +419,8 @@ internal class IrDescriptorDeserializer(val context: Context,
         // copies for public descriptors if we know the substituted
         // descriptor is going to be the same.
         // But that's not a trivial thing to find out.
-        if (originalDescriptor == rootFunction) 
-            return rootFunction
+        if (originalDescriptor == rootDescriptor) 
+            return rootDescriptor
 
         return when (originalDescriptor) {
             is SimpleFunctionDescriptor ->

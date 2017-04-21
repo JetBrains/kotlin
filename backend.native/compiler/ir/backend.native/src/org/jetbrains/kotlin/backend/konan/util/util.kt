@@ -45,3 +45,9 @@ fun <T> Collection<T>.atMostOne(): T? {
 }
 
 inline fun <T> Iterable<T>.atMostOne(predicate: (T) -> Boolean): T? = this.filter(predicate).atMostOne()
+
+fun <T: Any> T.only(condition: T.()->Boolean, then: (T)->Unit): T {
+    if (this.condition()) then(this)
+    return this
+}
+

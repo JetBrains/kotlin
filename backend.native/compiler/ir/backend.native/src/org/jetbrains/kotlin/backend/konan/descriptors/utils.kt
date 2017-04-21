@@ -16,9 +16,8 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.FqName
@@ -59,3 +58,23 @@ fun DeclarationDescriptor.deepPrint() {
 internal val String.synthesizedName get() = Name.identifier(this.synthesizedString)
 
 internal val String.synthesizedString get() = "\$$this"
+
+
+internal val DeclarationDescriptor.propertyIfAccessor
+    get() = if (this is PropertyAccessorDescriptor)
+                this.correspondingProperty
+                else this
+
+internal val FunctionDescriptor.deserializedPropertyIfAccessor: DeserializedCallableMemberDescriptor
+    get() {
+        val member = this.propertyIfAccessor
+        if (member is DeserializedCallableMemberDescriptor) 
+            return member
+        else 
+            error("Unexpected deserializable callable descriptor")
+    }
+
+internal val DeclarationDescriptor.isDeserializableCallable
+    get () = (this.propertyIfAccessor is DeserializedCallableMemberDescriptor)
+
+

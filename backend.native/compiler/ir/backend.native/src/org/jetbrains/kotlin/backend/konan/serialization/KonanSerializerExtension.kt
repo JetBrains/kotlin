@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
 import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
+import org.jetbrains.kotlin.backend.konan.util.only
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
@@ -98,6 +99,18 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
         super.serializeClass(descriptor, proto)
     }
 
+    private fun serializeInlineBody(descriptor: FunctionDescriptor, typeSerializer: ((KotlinType)->Int)): KonanLinkData.InlineIrBody {
+
+        val encodedIR = IrSerializer( 
+            context, inlineDescriptorTable, stringTable, util, 
+            typeSerializer, descriptor).serializeInlineBody()
+
+         return KonanLinkData.InlineIrBody
+            .newBuilder()
+            .setEncodedIr(encodedIR)
+            .build()
+    }
+
     override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) = serializeFunctionWithIR(descriptor, proto, null)
 
     fun serializeFunctionWithIR(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder, typeSerializer: ((KotlinType)->Int)?) {
@@ -106,20 +119,11 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
             inlineDescriptorTable.indexByValue(descriptor))
         val parentIndex = descriptor.parentFqNameIndex()
         proto.setExtension(KonanLinkData.functionParent, parentIndex)
-  
         if (descriptor.needsInlining) {
-            val encodedIR: String = IrSerializer( context, 
-                inlineDescriptorTable, stringTable, util, typeSerializer!!, descriptor)
-                    .serializeInlineBody()
-
-            val inlineIrBody = KonanLinkData.InlineIrBody
-                .newBuilder()
-                .setEncodedIr(encodedIR)
-                .build()
-
-            proto.setExtension(KonanLinkData.inlineIrBody, inlineIrBody)
-
+            proto.setInlineIr(
+                serializeInlineBody(descriptor, typeSerializer!!))
         }
+
         super.serializeFunction(descriptor, proto)
     }
 
@@ -129,8 +133,9 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
     private val backingFieldAnnotation = AnnotationDescriptorImpl(
        backingFieldClass, emptyMap(), SourceElement.NO_SOURCE)
 
+    override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder)  = serializePropertyWithIR(descriptor, proto, null) 
 
-    override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
+    fun serializePropertyWithIR(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder, typeSerializer: ((KotlinType)->Int)?) {
         val parentIndex = descriptor.parentFqNameIndex()
         proto.setExtension(KonanLinkData.propertyParent, parentIndex)
         val variable = originalVariables[descriptor]
@@ -142,6 +147,16 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
         } else {
             proto.setPropertyIndex(
                 inlineDescriptorTable.indexByValue(descriptor))
+        }
+
+        descriptor.getter?.only({needsInlining}) {
+            proto.setGetterIr(
+                serializeInlineBody(it, typeSerializer!!))
+        }
+
+        descriptor.setter?.only({needsInlining}) {
+            proto.setSetterIr(
+                serializeInlineBody(it, typeSerializer!!))
         }
 
         super.serializeProperty(descriptor, proto)
