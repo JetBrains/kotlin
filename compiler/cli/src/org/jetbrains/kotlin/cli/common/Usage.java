@@ -18,46 +18,43 @@ package org.jetbrains.kotlin.cli.common;
 
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.arguments.Argument;
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments;
 import org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt;
 
-import java.io.PrintStream;
 import java.lang.reflect.Field;
 
-class Usage {
+public class Usage {
     // The magic number 29 corresponds to the similar padding width in javac and scalac command line compilers
     private static final int OPTION_NAME_PADDING_WIDTH = 29;
 
-    public static <A extends CommonToolArguments> void print(
-            @NotNull PrintStream target, @NotNull CLITool<A> compiler, @NotNull A arguments
-    ) {
-        target.println("Usage: " + compiler.executableScriptFileName() + " <options> <source files>");
-        target.println("where " + (arguments.extraHelp ? "advanced" : "possible") + " options include:");
+    @NotNull
+    public static <A extends CommonToolArguments> String render(@NotNull CLITool<A> tool, @NotNull A arguments) {
+        StringBuilder sb = new StringBuilder();
+        appendln(sb, "Usage: " + tool.executableScriptFileName() + " <options> <source files>");
+        appendln(sb, "where " + (arguments.extraHelp ? "advanced" : "possible") + " options include:");
         for (Class<?> clazz = arguments.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
             for (Field field : clazz.getDeclaredFields()) {
-                String usage = fieldUsage(field, arguments.extraHelp);
-                if (usage != null) {
-                    target.println(usage);
-                }
+                fieldUsage(sb, field, arguments.extraHelp);
             }
         }
 
         if (arguments.extraHelp) {
-            target.println();
-            target.println("Advanced options are non-standard and may be changed or removed without any notice.");
+            appendln(sb, "");
+            appendln(sb, "Advanced options are non-standard and may be changed or removed without any notice.");
         }
+
+        return sb.toString();
     }
 
-    @Nullable
-    private static String fieldUsage(@NotNull Field field, boolean extraHelp) {
+    private static void fieldUsage(@NotNull StringBuilder sb, @NotNull Field field, boolean extraHelp) {
         Argument argument = field.getAnnotation(Argument.class);
-        if (argument == null) return null;
+        if (argument == null) return;
 
-        if (extraHelp != ParseCommandLineArgumentsKt.isAdvanced(argument)) return null;
+        if (extraHelp != ParseCommandLineArgumentsKt.isAdvanced(argument)) return;
 
-        StringBuilder sb = new StringBuilder("  ");
+        int startLength = sb.length();
+        sb.append("  ");
         sb.append(argument.value());
 
         if (!argument.shortName().isEmpty()) {
@@ -71,17 +68,21 @@ class Usage {
             sb.append(argument.valueDescription());
         }
 
-        int width = OPTION_NAME_PADDING_WIDTH - 1;
-        if (sb.length() >= width + 5) { // Break the line if it's too long
+        int margin = startLength + OPTION_NAME_PADDING_WIDTH - 1;
+        if (sb.length() >= margin + 5) { // Break the line if it's too long
             sb.append("\n");
-            width += sb.length();
+            margin += sb.length() - startLength;
         }
-        while (sb.length() < width) {
+        while (sb.length() < margin) {
             sb.append(" ");
         }
 
         sb.append(" ");
-        sb.append(argument.description().replace("\n", "\n" + StringsKt.repeat(" ", OPTION_NAME_PADDING_WIDTH)));
-        return sb.toString();
+        appendln(sb, argument.description().replace("\n", "\n" + StringsKt.repeat(" ", OPTION_NAME_PADDING_WIDTH)));
+    }
+
+    private static void appendln(@NotNull StringBuilder sb, @NotNull String string) {
+        sb.append(string);
+        StringsKt.appendln(sb);
     }
 }

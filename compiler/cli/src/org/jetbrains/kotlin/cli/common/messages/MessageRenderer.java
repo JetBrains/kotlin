@@ -56,5 +56,7 @@ public interface MessageRenderer {
 
     String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location);
 
+    String renderUsage(@NotNull String usage);
+
     String renderConclusion();
 }

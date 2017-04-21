@@ -42,21 +42,8 @@ abstract class CLITool<A : CommonToolArguments> {
     ): ExitCode {
         K2JVMCompiler.resetInitStartTime()
 
-        val parseArgumentsCollector = PrintingMessageCollector(errStream, messageRenderer, false)
-        val arguments = try {
-            parseArguments(parseArgumentsCollector, args) ?: return ExitCode.INTERNAL_ERROR
-        }
-        catch (e: IllegalArgumentException) {
-            parseArgumentsCollector.report(CompilerMessageSeverity.ERROR, e.message!!, null)
-            parseArgumentsCollector.report(CompilerMessageSeverity.INFO, "Use -help for more information", null)
-            return ExitCode.COMPILATION_ERROR
-        }
-
-        if (arguments.help || arguments.extraHelp) {
-            Usage.print(errStream, this, arguments)
-            return ExitCode.OK
-        }
-
+        val arguments = createArguments()
+        parseCommandLineArguments(args, arguments)
         val collector = PrintingMessageCollector(errStream, messageRenderer, arguments.verbose)
 
         try {
@@ -65,6 +52,19 @@ abstract class CLITool<A : CommonToolArguments> {
             }
 
             errStream.print(messageRenderer.renderPreamble())
+
+            val errorMessage = validateArguments(arguments.errors)
+            if (errorMessage != null) {
+                collector.report(CompilerMessageSeverity.ERROR, errorMessage, null)
+                collector.report(CompilerMessageSeverity.INFO, "Use -help for more information", null)
+                return ExitCode.COMPILATION_ERROR
+            }
+
+            if (arguments.help || arguments.extraHelp) {
+                errStream.print(messageRenderer.renderUsage(Usage.render(this, arguments)))
+                return ExitCode.OK
+            }
+
             return exec(collector, services, arguments)
         }
         finally {
@@ -92,19 +92,6 @@ abstract class CLITool<A : CommonToolArguments> {
 
     // Used in kotlin-maven-plugin (KotlinCompileMojoBase)
     protected abstract fun execImpl(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode
-
-    private fun parseArguments(messageCollector: MessageCollector, args: Array<out String>): A? {
-        return try {
-            createArguments().also { parseArguments(args, it) }
-        }
-        catch (e: IllegalArgumentException) {
-            throw e
-        }
-        catch (t: Throwable) {
-            messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(t), null)
-            null
-        }
-    }
 
     abstract fun createArguments(): A
 

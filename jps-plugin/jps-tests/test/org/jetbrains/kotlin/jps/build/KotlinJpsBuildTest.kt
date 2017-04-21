@@ -51,6 +51,9 @@ import org.jetbrains.jps.model.java.JpsJavaSdkType
 import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.cli.common.Usage
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
@@ -785,6 +788,26 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                     it.messageText.replace(File("").absolutePath, "TEST_PATH").replace("\\", "/")
                 }.sorted().toTypedArray()
         )
+    }
+
+    fun testHelp() {
+        initProject()
+
+        val result = buildAllModules()
+        result.assertSuccessful()
+        val warning = result.getMessages(BuildMessage.Kind.WARNING).single()
+
+        Assert.assertEquals(Usage.render(K2JVMCompiler(), K2JVMCompilerArguments()), warning.messageText)
+    }
+
+    fun testWrongArgument() {
+        initProject()
+
+        val result = buildAllModules()
+        result.assertFailed()
+        val errors = result.getMessages(BuildMessage.Kind.ERROR).joinToString("\n\n") { it.messageText }
+
+        Assert.assertEquals("Invalid argument: -abcdefghij-invalid-argument", errors)
     }
 
     fun testCodeInKotlinPackage() {
