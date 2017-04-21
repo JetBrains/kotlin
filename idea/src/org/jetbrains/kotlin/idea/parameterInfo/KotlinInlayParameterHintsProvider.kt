@@ -56,24 +56,25 @@ private enum class HintType(desc: String, enabled: Boolean) {
 
     PROPERTY_HINT("Show property type hints", true) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
-            (elem as? KtProperty)?.let {
-                property ->
-                property.nameIdentifier?.let {
-                    ident ->
-                    return provideTypeHint(property, ident.endOffset)
-                }
-            }
-            return emptyList()
+            return providePropertyTypeHint(elem)
         }
 
-        override fun isApplicable(elem: PsiElement): Boolean = elem is KtProperty && elem.getReturnTypeReference() == null
+        override fun isApplicable(elem: PsiElement): Boolean = elem is KtProperty && elem.getReturnTypeReference() == null && !elem.isLocal
     },
-    FUNCTION_HINT("Show function type hints", true) {
+
+    LOCAL_VARIABLE_HINT("Show local variable type hints", true) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
-            (elem as? KtNamedFunction)?.let {
-                namedFunc ->
-                namedFunc.valueParameterList?.let {
-                    paramList ->
+            return providePropertyTypeHint(elem)
+        }
+
+        override fun isApplicable(elem: PsiElement): Boolean = (elem is KtProperty && elem.getReturnTypeReference() == null && elem.isLocal) ||
+                                                               (elem is KtParameter && elem.isLoopParameter)
+    },
+
+    FUNCTION_HINT("Show function return type hints", true) {
+        override fun provideHints(elem: PsiElement): List<InlayInfo> {
+            (elem as? KtNamedFunction)?.let { namedFunc ->
+                namedFunc.valueParameterList?.let { paramList ->
                     return provideTypeHint(namedFunc, paramList.endOffset)
                 }
             }
@@ -84,19 +85,17 @@ private enum class HintType(desc: String, enabled: Boolean) {
     },
     PARAMETER_TYPE_HINT("Show parameter type hints ", false) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
-            (elem as? KtParameter)?.let {
-                param ->
-                param.nameIdentifier?.let {
-                    ident ->
+            (elem as? KtParameter)?.let { param ->
+                param.nameIdentifier?.let { ident ->
                     return provideTypeHint(param, ident.endOffset)
                 }
             }
             return emptyList()
         }
 
-        override fun isApplicable(elem: PsiElement): Boolean = elem is KtParameter && elem.typeReference == null
+        override fun isApplicable(elem: PsiElement): Boolean = elem is KtParameter && elem.typeReference == null && !elem.isLoopParameter
     },
-    PARAMETER_HINT("Show parameter hints", true) {
+    PARAMETER_HINT("Show argument name hints", true) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
             (elem as? KtCallExpression)?.let {
                 return provideParameterInfo(it)
@@ -143,6 +142,15 @@ private enum class HintType(desc: String, enabled: Boolean) {
             is KtConstantExpression, is KtThisExpression, is KtBinaryExpression -> true
             is KtPrefixExpression -> baseExpression is KtConstantExpression && (operationToken == KtTokens.PLUS || operationToken == KtTokens.MINUS)
             else -> false
+        }
+
+        private fun providePropertyTypeHint(elem: PsiElement): List<InlayInfo> {
+            (elem as? KtCallableDeclaration)?.let { property ->
+                property.nameIdentifier?.let { ident ->
+                    return HintType.provideTypeHint(property, ident.endOffset)
+                }
+            }
+            return emptyList()
         }
 
         private fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo> {
