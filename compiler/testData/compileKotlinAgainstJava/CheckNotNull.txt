@@ -4,5 +4,5 @@ public fun notNullable(): kotlin.String
 
 public open class CheckNotNull {
     public constructor CheckNotNull()
-    @org.jetbrains.annotations.NotNull public open fun returnNotNull(): kotlin.String!
+    @org.jetbrains.annotations.NotNull public open fun returnNotNull(): kotlin.String
 }
