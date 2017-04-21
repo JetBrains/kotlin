@@ -234,9 +234,6 @@
         <!-- Android SDK platform -->
         <ant antfile="download_android_sdk.xml" target="download_android_sdk"/>
 
-        <!-- Rhino -->
-        <get-maven-library prefix="org/mozilla" lib="rhino" version="1.7.6"/>
-
         <!-- Javaslang -->
         <get-maven-library prefix="io/javaslang" lib="javaslang" version="2.0.6"/>
 
