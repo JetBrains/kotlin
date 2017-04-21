@@ -737,6 +737,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("outerClassInstanceReference.kt")
+        public void testOuterClassInstanceReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/outerClassInstanceReference.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("primitiveComparisons.kt")
         public void testPrimitiveComparisons() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/primitiveComparisons.kt");
