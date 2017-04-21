@@ -3748,6 +3748,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("fieldAsClassDelegate.kt")
+            public void testFieldAsClassDelegate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/fieldAsClassDelegate.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("infiniteLoops.kt")
             public void testInfiniteLoops() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/infiniteLoops.kt");
