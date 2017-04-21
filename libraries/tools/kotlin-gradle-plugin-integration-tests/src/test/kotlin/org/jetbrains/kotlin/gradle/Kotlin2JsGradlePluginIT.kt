@@ -125,6 +125,23 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
     }
 
     @Test
+    fun testCompilerTestAccessInternalProduction() {
+        val project = Project("kotlin2JsInternalTest", "2.10")
+
+        project.build("build") {
+            assertSuccessful()
+
+            assertContains(
+                    ":compileKotlin2Js",
+                    ":compileTestKotlin2Js"
+            )
+
+            assertFileExists("build/kotlin2js/main/module.js")
+            assertFileExists("build/kotlin2js/test/module-tests.js")
+        }
+    }
+
+    @Test
     fun testJsCustomSourceSet() {
         val project = Project("kotlin2JsProjectWithCustomSourceset", "2.10")
 
