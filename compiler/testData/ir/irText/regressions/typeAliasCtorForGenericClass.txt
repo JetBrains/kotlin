@@ -1,6 +1,9 @@
 FILE /typeAliasCtorForGenericClass.kt
   CLASS CLASS A
+    $new: VALUE_PARAMETER this@A: A<Q>
+    TYPE_PARAMETER <Q>
     CONSTRUCTOR public constructor A<Q>(q: Q)
+      VALUE_PARAMETER value-parameter q: Q
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
@@ -9,10 +12,14 @@ FILE /typeAliasCtorForGenericClass.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter q: Q' type=Q origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-q>(): Q
+        $this: VALUE_PARAMETER this@A: A<Q>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-q>(): Q'
             GET_FIELD 'q: Q' type=Q origin=null
-              receiver: GET_VAR '<receiver: A>' type=A<Q> origin=null
+              receiver: GET_VAR 'this@A: A<Q>' type=A<Q> origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   TYPEALIAS typealias B = A<X> type=A<X>
   TYPEALIAS typealias B2 = A<A<T>> type=A<A<T>>
   FUN public fun bar(): kotlin.Unit

@@ -103,7 +103,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
                 val descriptor = call.descriptor as? ClassConstructorDescriptor
                                  ?: throw AssertionError("Class constructor expected: ${call.descriptor}")
                 val constructorSymbol = context.symbolTable.referenceConstructor(descriptor.original)
-                val irCall = IrDelegatingConstructorCallImpl(startOffset, endOffset, constructorSymbol, getTypeArguments(call.original))
+                val irCall = IrDelegatingConstructorCallImpl(startOffset, endOffset, constructorSymbol, descriptor, getTypeArguments(call.original))
                 irCall.dispatchReceiver = dispatchReceiver?.load()
                 irCall.extensionReceiver = extensionReceiver?.load()
                 addParametersToCall(startOffset, endOffset, call, irCall, descriptor.builtIns.unitType)

@@ -356,6 +356,7 @@ class DeepCopyIrTree(private val symbolsRemapper: DeepCopySymbolsRemapper) : IrE
             IrDelegatingConstructorCallImpl(
                     expression.startOffset, expression.endOffset,
                     symbolsRemapper.getReferencedConstructor(expression.symbol),
+                    expression.descriptor,
                     expression.getTypeArgumentsMap()
             ).transformValueArguments(expression)
 

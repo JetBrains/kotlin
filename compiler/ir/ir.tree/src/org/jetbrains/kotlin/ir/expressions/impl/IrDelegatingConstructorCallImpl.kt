@@ -29,6 +29,7 @@ class IrDelegatingConstructorCallImpl(
         startOffset: Int,
         endOffset: Int,
         override val symbol: IrConstructorSymbol,
+        override val descriptor: ClassConstructorDescriptor,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null
 ) : IrDelegatingConstructorCall,
         IrCallWithIndexedArgumentsBase(
@@ -46,9 +47,8 @@ class IrDelegatingConstructorCallImpl(
             typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null
     ) : this(startOffset, endOffset,
              IrConstructorSymbolImpl(constructorDescriptor),
+             constructorDescriptor,
              typeArguments)
-
-    override val descriptor: ClassConstructorDescriptor get() = symbol.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitDelegatingConstructorCall(this, data)
