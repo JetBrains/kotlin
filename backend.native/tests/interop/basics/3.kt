@@ -11,7 +11,12 @@ fun main(args: Array<String>) {
         values[3] = 13
         values[4] = 8
 
-        cstdlib.qsort(values, count.toLong(), IntVar.size, staticCFunction(::comparator))
+        cstdlib.qsort(values, count.toLong(), IntVar.size, staticCFunction { a, b ->
+            val aValue = a!!.reinterpret<IntVar>()[0]
+            val bValue = b!!.reinterpret<IntVar>()[0]
+
+            (aValue - bValue)
+        })
 
         for (i in 0 .. count - 1) {
             print(values[i])
@@ -19,11 +24,4 @@ fun main(args: Array<String>) {
         }
         println()
     }
-}
-
-private fun comparator(a: COpaquePointer?, b: COpaquePointer?): Int {
-    val aValue = a!!.reinterpret<IntVar>()[0]
-    val bValue = b!!.reinterpret<IntVar>()[0]
-
-    return (aValue - bValue)
 }

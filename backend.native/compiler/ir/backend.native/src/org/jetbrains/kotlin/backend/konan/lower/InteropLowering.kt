@@ -277,16 +277,17 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
             }
 
             in interop.staticCFunction -> {
-                val argument = expression.getValueArgument(0)!!
-                if (argument !is IrCallableReference || argument.getArguments().isNotEmpty()) {
+                val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(0)!!)
+
+                if (irCallableReference == null || irCallableReference.getArguments().isNotEmpty()) {
                     context.reportCompilationError(
-                            "${descriptor.fqNameSafe} must take an unbound, non-capturing function",
+                            "${descriptor.fqNameSafe} must take an unbound, non-capturing function or lambda",
                             irFile, expression
                     )
                     // TODO: should probably be reported during analysis.
                 }
 
-                val target = argument.descriptor.original
+                val target = irCallableReference.descriptor.original
                 val signatureTypes = target.allParameters.map { it.type } + target.returnType!!
 
                 signatureTypes.forEachIndexed { index, type ->
@@ -383,6 +384,35 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
         }
 
         reportError("Type $this is not supported in callback signature")
+    }
+
+    private fun unwrapStaticFunctionArgument(argument: IrExpression): IrCallableReference? {
+        if (argument is IrCallableReference) {
+            return argument
+        }
+
+        // Otherwise check whether it is a lambda:
+
+        // 1. It is a container with two statements and expected origin:
+
+        if (argument !is IrContainerExpression || argument.statements.size != 2) {
+            return null
+        }
+        if (argument.origin != IrStatementOrigin.LAMBDA && argument.origin != IrStatementOrigin.ANONYMOUS_FUNCTION) {
+            return null
+        }
+
+        // 2. First statement is an empty container (created during local functions lowering):
+
+        val firstStatement = argument.statements.first()
+
+        if (firstStatement !is IrContainerExpression || firstStatement.statements.size != 0) {
+            return null
+        }
+
+        // 3. Second statement is IrCallableReference:
+
+        return argument.statements.last() as? IrCallableReference
     }
 
     private fun IrCall.getSingleTypeArgument(): KotlinType {

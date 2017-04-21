@@ -275,7 +275,9 @@ methods available:
 ### Callbacks ###
 
 To convert Kotlin function to pointer to C function,
-`staticCFunction(::kotlinFunction)` can be used.
+`staticCFunction(::kotlinFunction)` can be used. It is also allowed to provide
+the lambda instead of function reference. The function or lambda must not
+capture any values.
 
 Note that some function types are not supported currently. For example,
 it is not possible to get pointer to function that receives or returns structs
