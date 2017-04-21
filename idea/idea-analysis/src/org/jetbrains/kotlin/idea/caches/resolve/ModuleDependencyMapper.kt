@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
+import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.js.resolve.JsPlatform
@@ -77,7 +78,9 @@ fun createModuleResolverProvider(
         return AnalyzerFacade.setupResolverForProject(
                 debugName, globalContext.withProject(project), modulesToCreateResolversFor,
                 { module -> AnalyzerFacadeProvider.getAnalyzerFacade(module.platform ?: analysisSettings.platform) },
-                modulesContent, jvmPlatformParameters, IdeaEnvironment, builtIns,
+                modulesContent, jvmPlatformParameters,
+                IDELanguageSettingsProvider,
+                IdeaEnvironment, builtIns,
                 delegateResolver, { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
                 analysisSettings.sdk?.let { SdkInfo(project, it) },
                 modulePlatforms = { module -> module.platform?.multiTargetPlatform },

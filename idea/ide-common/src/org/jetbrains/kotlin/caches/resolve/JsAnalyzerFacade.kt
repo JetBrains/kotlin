@@ -46,6 +46,7 @@ object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
             platformParameters: PlatformAnalysisParameters,
             targetEnvironment: TargetEnvironment,
             resolverForProject: ResolverForProject<M>,
+            languageSettingsProvider: LanguageSettingsProvider,
             packagePartProvider: PackagePartProvider
     ): ResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
@@ -58,8 +59,6 @@ object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
                 moduleInfo
         )
 
-        val languageVersionSettings = LanguageSettingsProvider.getInstance(project).getLanguageVersionSettings(moduleInfo, project)
-
         val container = createContainerForLazyResolve(
                 moduleContext,
                 declarationProviderFactory,
@@ -67,7 +66,7 @@ object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
                 JsPlatform,
                 TargetPlatformVersion.NoVersion,
                 targetEnvironment,
-                languageVersionSettings
+                languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
         )
         var packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 

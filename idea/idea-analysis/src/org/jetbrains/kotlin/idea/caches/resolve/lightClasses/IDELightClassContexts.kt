@@ -21,7 +21,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
-import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.container.get
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IDELightClassConstructionContext.Mode.EXACT
 import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IDELightClassConstructionContext.Mode.LIGHT
+import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.idea.stubindex.KotlinOverridableInternalMembersShortNameIndex
@@ -254,7 +254,7 @@ object IDELightClassContexts {
 
         val moduleInfo = files.first().getModuleInfo()
         val container = createContainer("LightClassStub", JvmPlatform) {
-            val jvmTarget = LanguageSettingsProvider.getInstance(project).getTargetPlatform(moduleInfo) as? JvmTarget
+            val jvmTarget = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo) as? JvmTarget
             configureModule(
                     ModuleContext(moduleDescriptor, project), JvmPlatform,
                     jvmTarget ?: JvmTarget.DEFAULT, trace
@@ -263,7 +263,7 @@ object IDELightClassContexts {
             useInstance(GlobalSearchScope.EMPTY_SCOPE)
             useInstance(LookupTracker.DO_NOTHING)
             useImpl<FileScopeProviderImpl>()
-            useInstance(LanguageSettingsProvider.getInstance(project).getLanguageVersionSettings(moduleInfo, project))
+            useInstance(IDELanguageSettingsProvider.getLanguageVersionSettings(moduleInfo, project))
             useInstance(FileBasedDeclarationProviderFactory(sm, files))
 
             useImpl<AdHocAnnotationResolver>()
