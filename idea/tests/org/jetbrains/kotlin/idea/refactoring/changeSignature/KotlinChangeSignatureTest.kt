@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinMethodNode
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangeSignatureDialog.Companion.getTypeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangeSignatureDialog.Companion.getTypeCodeFragmentContext
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
@@ -244,6 +246,11 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
         val temp = newParameters[i]
         setNewParameter(i, newParameters[j])
         setNewParameter(j, temp)
+    }
+
+    private fun KotlinChangeInfo.resolveType(text: String, isCovariant: Boolean, forPreview: Boolean): KotlinTypeInfo {
+        val codeFragment = KtPsiFactory(project).createTypeCodeFragment(text, getTypeCodeFragmentContext(context))
+        return codeFragment.getTypeInfo(isCovariant, forPreview)
     }
 
     // --------------------------------- Tests ---------------------------------
@@ -944,4 +951,9 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testReceiverInSafeCall() = doTestConflict { receiverParameterInfo = null }
 
     fun testRemoveParameterKeepOtherComments() = doTest { removeParameter(1) }
+
+    fun testReturnTypeViaCodeFragment() = doTest {
+        newName = "bar"
+        newReturnTypeInfo = resolveType("A<T, U>", true, true)
+    }
 }

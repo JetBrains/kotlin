@@ -407,7 +407,7 @@ class KotlinChangeSignatureDialog(
             }
         }
 
-        private fun getTypeCodeFragmentContext(startFrom: PsiElement): KtElement {
+        fun getTypeCodeFragmentContext(startFrom: PsiElement): KtElement {
             return startFrom.parentsWithSelf.mapNotNull {
                 when {
                     it is KtNamedFunction -> it.bodyExpression ?: it.valueParameterList
@@ -440,7 +440,7 @@ class KotlinChangeSignatureDialog(
             return KotlinChangeSignatureProcessor(project, changeInfo, commandName)
         }
 
-        private fun PsiCodeFragment?.getTypeInfo(isCovariant: Boolean, forPreview: Boolean): KotlinTypeInfo {
+        fun PsiCodeFragment?.getTypeInfo(isCovariant: Boolean, forPreview: Boolean): KotlinTypeInfo {
             if (this !is KtTypeCodeFragment) return KotlinTypeInfo(isCovariant)
 
             val typeRef = getContentElement()
