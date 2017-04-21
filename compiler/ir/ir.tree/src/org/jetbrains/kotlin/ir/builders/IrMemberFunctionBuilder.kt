@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.putDefault
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
+// This class can be used by kotlin-native.
+@Suppress("unused")
+@Deprecated("Migrate to symbols")
 class IrMemberFunctionBuilder(
         context: IrGeneratorContext,
         val irClass: IrClass,
