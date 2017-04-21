@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -210,10 +211,16 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
 
     private fun getMethodInfo(elem: KtCallExpression): HintInfo.MethodInfo? {
         val ctx = elem.analyze(BodyResolveMode.PARTIAL)
-        val resolvedCall = elem.getResolvedCall(ctx)?.candidateDescriptor
-        if (resolvedCall is FunctionDescriptor) {
-            val fqName = resolvedCall.fqNameOrNull()?.asString() ?: return null
-            val paramNames = resolvedCall.valueParameters.map { it.name }.filter { !it.isSpecial }.map(Name::asString)
+        val resolvedCall = elem.getResolvedCall(ctx)
+        val resolvedCallee = resolvedCall?.candidateDescriptor
+        if (resolvedCallee is FunctionDescriptor) {
+            val fqName = resolvedCallee.fqNameOrNull()?.asString() ?: return null
+            val paramNames = resolvedCall.valueArguments
+                    .mapNotNull { (valueParameterDescriptor, resolvedValueArgument) ->
+                        if (resolvedValueArgument !is DefaultValueArgument) valueParameterDescriptor.name else null
+                    }
+                    .filter { !it.isSpecial }
+                    .map(Name::asString)
             return HintInfo.MethodInfo(fqName, paramNames)
         }
         return null
