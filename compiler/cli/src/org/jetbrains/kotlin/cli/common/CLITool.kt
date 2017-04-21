@@ -106,7 +106,7 @@ abstract class CLITool<A : CommonToolArguments> {
         }
     }
 
-    protected abstract fun createArguments(): A
+    abstract fun createArguments(): A
 
     // Used in kotlin-maven-plugin (KotlinCompileMojoBase) and in kotlin-gradle-plugin (KotlinJvmOptionsImpl, KotlinJsOptionsImpl)
     fun parseArguments(args: Array<out String>, arguments: A) {

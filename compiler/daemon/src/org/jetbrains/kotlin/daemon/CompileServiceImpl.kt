@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.utils.stackTraceStr
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -336,33 +335,35 @@ class CompileServiceImpl(
     ): CompileService.CallResult<Int> = ifAlive {
         val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = DaemonMessageReporter(servicesFacade, compilationOptions)
-        val compilerMode = compilationOptions.compilerMode
         val targetPlatform = compilationOptions.targetPlatform
         log.info("Starting compilation with args: " + compilerArguments.joinToString(" "))
-        val k2PlatformArgs = try {
-            when (targetPlatform) {
-                CompileService.TargetPlatform.JVM -> K2JVMCompilerArguments().apply { K2JVMCompiler().parseArguments(compilerArguments, this) }
-                CompileService.TargetPlatform.JS -> K2JSCompilerArguments().apply { K2JSCompiler().parseArguments(compilerArguments, this) }
-                CompileService.TargetPlatform.METADATA -> K2MetadataCompilerArguments().apply { K2MetadataCompiler().parseArguments(compilerArguments, this) }
-            }
-        }
-        catch (e: IllegalArgumentException) {
-            messageCollector.report(CompilerMessageSeverity.EXCEPTION, e.stackTraceStr)
-            return@ifAlive CompileService.CallResult.Error("Could not deserialize compiler arguments")
-        }
 
-        return@ifAlive when (compilerMode) {
+        @Suppress("UNCHECKED_CAST")
+        val compiler = when (targetPlatform) {
+            CompileService.TargetPlatform.JVM -> K2JVMCompiler()
+            CompileService.TargetPlatform.JS -> K2JSCompiler()
+            CompileService.TargetPlatform.METADATA -> K2MetadataCompiler()
+        } as CLICompiler<CommonCompilerArguments>
+
+        val k2PlatformArgs = compiler.createArguments()
+        parseCommandLineArguments(compilerArguments, k2PlatformArgs)
+        val argumentParseError = validateArguments(k2PlatformArgs.errors)
+        if (argumentParseError != null) {
+            messageCollector.report(CompilerMessageSeverity.ERROR, argumentParseError)
+            CompileService.CallResult.Good(ExitCode.COMPILATION_ERROR.code)
+        }
+        else when (compilationOptions.compilerMode) {
             CompilerMode.JPS_COMPILER -> {
                 val jpsServicesFacade = servicesFacade as JpsCompilerServicesFacade
 
                 doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
                     val services = createCompileServices(jpsServicesFacade, eventManger, profiler)
-                    execCompiler(compilationOptions.targetPlatform, services, k2PlatformArgs, messageCollector)
+                    compiler.exec(messageCollector, services, k2PlatformArgs)
                 }
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
                 doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
-                    execCompiler(targetPlatform, Services.EMPTY, k2PlatformArgs, messageCollector)
+                    compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
                 }
             }
             CompilerMode.INCREMENTAL_COMPILER -> {
@@ -382,27 +383,9 @@ class CompileServiceImpl(
                 }
 
             }
-            else -> throw IllegalStateException("Unknown compilation mode $compilerMode")
+            else -> throw IllegalStateException("Unknown compilation mode ${compilationOptions.compilerMode}")
         }
     }
-
-    private fun execCompiler(
-            targetPlatform: CompileService.TargetPlatform,
-            services: Services,
-            args: CommonCompilerArguments,
-            messageCollector: MessageCollector
-    ): ExitCode =
-            when(targetPlatform) {
-                CompileService.TargetPlatform.JVM -> {
-                    K2JVMCompiler().exec(messageCollector, services, args as K2JVMCompilerArguments)
-                }
-                CompileService.TargetPlatform.JS -> {
-                    K2JSCompiler().exec(messageCollector, services, args as K2JSCompilerArguments)
-                }
-                CompileService.TargetPlatform.METADATA -> {
-                    K2MetadataCompiler().exec(messageCollector, services, args as K2MetadataCompilerArguments)
-                }
-            }
 
     private fun execIncrementalCompiler(
             k2jvmArgs: K2JVMCompilerArguments,

@@ -49,7 +49,7 @@ data class ArgumentParseErrors(
     var argumentWithoutValue: String? = null
 )
 
-// Parses arguments in the passed [result] object, or throws an [IllegalArgumentException] with the message to be displayed to the user
+// Parses arguments into the passed [result] object. Errors related to the parsing will be collected into [CommonToolArguments.errors].
 fun <A : CommonToolArguments> parseCommandLineArguments(args: Array<out String>, result: A) {
     data class ArgumentField(val field: Field, val argument: Argument)
 

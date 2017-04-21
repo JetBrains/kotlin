@@ -82,7 +82,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
     @NotNull
     @Override
-    protected K2JSCompilerArguments createArguments() {
+    public K2JSCompilerArguments createArguments() {
         return new K2JSCompilerArguments();
     }
 
