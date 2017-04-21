@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
@@ -28,7 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
-import org.jetbrains.kotlin.resolve.calls.inference.substitute
+import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
@@ -71,11 +73,9 @@ class KotlinCallCompleter(
     ): ResolvedKotlinCall {
         lambdaAnalyzer.bindStubResolvedCallForCandidate(candidate)
         val topLevelCall =
-                if (candidate is VariableAsFunctionKotlinResolutionCandidate) {
-                    candidate.invokeCandidate
-                }
-                else {
-                    candidate as SimpleKotlinResolutionCandidate
+                when (candidate) {
+                    is VariableAsFunctionKotlinResolutionCandidate -> candidate.invokeCandidate
+                    else -> candidate as SimpleKotlinResolutionCandidate
                 }
 
         if (topLevelCall.prepareForCompletion(expectedType)) {
@@ -111,7 +111,15 @@ class KotlinCallCompleter(
     }
 
     private fun SimpleKotlinResolutionCandidate.toCompletedCall(substitutor: NewTypeSubstitutor): CompletedKotlinCall.Simple {
-        val resultingDescriptor = if (descriptorWithFreshTypes.typeParameters.isNotEmpty()) descriptorWithFreshTypes.substitute(substitutor)!! else descriptorWithFreshTypes
+        val resultingDescriptor = when {
+            descriptorWithFreshTypes is FunctionDescriptor ||
+            descriptorWithFreshTypes is PropertyDescriptor && descriptorWithFreshTypes.typeParameters.isNotEmpty() ->
+                // this code is very suspicious. Now it is very useful for BE, because they cannot do nothing with captured types,
+                // but it seems like temporary solution.
+                descriptorWithFreshTypes.substituteAndApproximateCapturedTypes(substitutor)!!
+            else ->
+                descriptorWithFreshTypes
+        }
 
         val typeArguments = descriptorWithFreshTypes.typeParameters.map { substitutor.safeSubstitute(it.defaultType) }
 
