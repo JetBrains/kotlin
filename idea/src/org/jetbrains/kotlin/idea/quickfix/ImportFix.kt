@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
@@ -355,7 +356,12 @@ internal class ImportConstructorReferenceFix(expression: KtSimpleNameExpression)
 
         val filterByCallType = callTypeAndReceiver.toFilter()
         // TODO Type-aliases
-        return indicesHelper.getClassesByName(expression, name).asSequence().map { it.constructors }.flatten().filter(filterByCallType).toList()
+        return indicesHelper.getClassesByName(expression, name)
+                .asSequence()
+                .map { it.constructors }.flatten()
+                .filter { it.importableFqName != null }
+                .filter(filterByCallType)
+                .toList()
     }
 
     override fun createAction(project: Project, editor: Editor, element: KtExpression): KotlinAddImportAction {
