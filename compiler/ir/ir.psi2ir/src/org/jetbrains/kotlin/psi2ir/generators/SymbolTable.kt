@@ -32,39 +32,28 @@ class SymbolTable {
         protected abstract fun get(d: D): S?
         protected abstract fun set(d: D, s: S)
 
-        fun markAsUnbound(s: S) {
-            assert(unboundSymbols.add(s)) {
-                "Symbol for ${s.descriptor} was already referenced"
-            }
-        }
-
-        fun markAsBound(s: S) {
-            unboundSymbols.remove(s)
-        }
-
         inline fun declare(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
-            val symbol = getOrCreateSymbol(d, createSymbol)
-            val owner = createOwner(symbol)
-            return owner
-        }
-
-        inline fun getOrCreateSymbol(d: D, createSymbol: () -> S): S {
             val existing = get(d)
-            return if (existing == null) {
+            val symbol = if (existing == null) {
                 val new = createSymbol()
                 set(d, new)
                 new
             }
             else {
-                markAsBound(existing)
+                unboundSymbols.remove(existing)
                 existing
             }
+            val owner = createOwner(symbol)
+            return owner
         }
 
         inline fun referenced(d: D, createSymbol: () -> S): S {
             val s = get(d)
             if (s == null) {
-                val new = createSymbol().also { markAsUnbound(it) }
+                val new = createSymbol()
+                assert(unboundSymbols.add(new)) {
+                    "Symbol for ${new.descriptor} was already referenced"
+                }
                 set(d, new)
                 return new
             }
