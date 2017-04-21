@@ -54,6 +54,9 @@ class StatementGenerator(
     fun generateStatement(ktElement: KtElement): IrStatement =
             ktElement.genStmt()
 
+    fun generateStatements(ktStatements: List<KtExpression>, to: IrStatementContainer) =
+            ktStatements.mapTo(to.statements) { generateStatement(it) }
+
     fun generateExpression(ktExpression: KtExpression): IrExpression =
             ktExpression.genExpr()
 

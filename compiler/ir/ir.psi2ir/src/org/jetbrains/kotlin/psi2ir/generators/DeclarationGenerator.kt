@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrErrorDeclarationImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -53,7 +52,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     fun generateClassMemberDeclaration(ktDeclaration: KtDeclaration, classDescriptor: ClassDescriptor): IrDeclaration =
             when (ktDeclaration) {
                 is KtAnonymousInitializer ->
-                    generateAnonymousInitializerDeclaration(ktDeclaration, classDescriptor)
+                    AnonymousInitializerGenerator(this).generateAnonymousInitializerDeclaration(ktDeclaration, classDescriptor)
                 is KtSecondaryConstructor ->
                     FunctionGenerator(this).generateSecondaryConstructor(ktDeclaration)
                 is KtEnumEntry ->
@@ -71,13 +70,6 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     fun generateTypeAliasDeclaration(ktDeclaration: KtTypeAlias): IrDeclaration =
             IrTypeAliasImpl(ktDeclaration.startOffset, ktDeclaration.endOffset, IrDeclarationOrigin.DEFINED,
                             getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration))
-
-    fun generateAnonymousInitializerDeclaration(ktAnonymousInitializer: KtAnonymousInitializer, classDescriptor: ClassDescriptor): IrDeclaration =
-            context.symbolTable.declareAnonymousInitializer(
-                ktAnonymousInitializer.startOffset, ktAnonymousInitializer.endOffset, IrDeclarationOrigin.DEFINED, classDescriptor
-            ).apply {
-                body = createBodyGenerator(symbol).generateAnonymousInitializerBody(ktAnonymousInitializer)
-            }
 
 
     fun generateTypeParameterDeclarations(

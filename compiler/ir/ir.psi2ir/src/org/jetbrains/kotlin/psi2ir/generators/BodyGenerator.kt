@@ -47,7 +47,7 @@ class BodyGenerator(
 
         val irBlockBody = IrBlockBodyImpl(ktBody.startOffset, ktBody.endOffset)
         if (ktBody is KtBlockExpression) {
-            statementGenerator.generateBlockBodyStatements(irBlockBody, ktBody)
+            statementGenerator.generateStatements(ktBody.statements, irBlockBody)
         }
         else {
             statementGenerator.generateReturnExpression(ktBody, irBlockBody)
@@ -94,12 +94,6 @@ class BodyGenerator(
         return irBlockBody
     }
 
-    private fun StatementGenerator.generateBlockBodyStatements(irBlockBody: IrBlockBodyImpl, ktBody: KtBlockExpression) {
-        for (ktStatement in ktBody.statements) {
-            irBlockBody.statements.add(generateStatement(ktStatement))
-        }
-    }
-
     private fun StatementGenerator.generateReturnExpression(ktExpression: KtExpression, irBlockBody: IrBlockBodyImpl) {
         val irReturnExpression = generateStatement(ktExpression)
         if (irReturnExpression is IrExpression) {
@@ -132,7 +126,7 @@ class BodyGenerator(
         generateDelegatingConstructorCall(irBlockBody, ktConstructor)
 
         ktConstructor.bodyExpression?.let { ktBody ->
-            createStatementGenerator().generateBlockBodyStatements(irBlockBody, ktBody)
+            createStatementGenerator().generateStatements(ktBody.statements, irBlockBody)
         }
 
         return irBlockBody
@@ -193,7 +187,7 @@ class BodyGenerator(
                                                                  context.symbolTable.referenceClass(classDescriptor)))
 
         ktConstructor.bodyExpression?.let { ktBody ->
-            createStatementGenerator().generateBlockBodyStatements(irBlockBody, ktBody)
+            createStatementGenerator().generateStatements(ktBody.statements, irBlockBody)
         }
 
         return irBlockBody
@@ -257,18 +251,6 @@ class BodyGenerator(
 
     private fun generateEnumEntrySuperConstructorCall(ktEnumEntry: KtEnumEntry, enumEntryDescriptor: ClassDescriptor): IrExpression {
         return generateEnumConstructorCallOrSuperCall(ktEnumEntry, enumEntryDescriptor.containingDeclaration as ClassDescriptor)
-    }
-
-    fun generateAnonymousInitializerBody(ktAnonymousInitializer: KtAnonymousInitializer): IrBlockBody {
-        val ktBody = ktAnonymousInitializer.body!!
-        val irBlockBody = IrBlockBodyImpl(ktBody.startOffset, ktBody.endOffset)
-        if (ktBody is KtBlockExpression) {
-            createStatementGenerator().generateBlockBodyStatements(irBlockBody, ktBody)
-        }
-        else {
-            irBlockBody.statements.add(createStatementGenerator().generateStatement(ktBody))
-        }
-        return irBlockBody
     }
 
     fun generateEnumEntryInitializer(ktEnumEntry: KtEnumEntry, enumEntryDescriptor: ClassDescriptor): IrExpression {
