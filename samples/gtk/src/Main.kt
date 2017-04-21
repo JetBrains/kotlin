@@ -17,18 +17,10 @@
 import kotlinx.cinterop.*
 import gtk3.*
 
-internal fun print_hello(widget: CPointer<GtkApplication>?, data: gpointer?) {
-    println("Hi Kotlin")
-}
-
-internal fun finish(widget: CPointer<GtkWidget>?) {
-    gtk_widget_destroy(widget)
-}
-
 // Note that all callback parameters must be primitive types or nullable C pointers.
-fun g_signal_connect(obj: CPointer<*>, actionName: String,
-        action: GCallback, data: gpointer? = null, connect_flags: Int = 0) {
-    g_signal_connect_data(obj.reinterpret(), actionName, action,
+fun <F : CFunction<*>> g_signal_connect(obj: CPointer<*>, actionName: String,
+        action: CPointer<F>, data: gpointer? = null, connect_flags: Int = 0) {
+    g_signal_connect_data(obj.reinterpret(), actionName, action.reinterpret(),
             data = data, destroy_data = null, connect_flags = connect_flags)
 
 }
@@ -45,9 +37,14 @@ fun activate(app: CPointer<GtkApplication>?, user_data: gpointer?) {
 
     val button = gtk_button_new_with_label("Konan говорит: click me!")!!
     g_signal_connect(button, "clicked",
-            staticCFunction(::print_hello).reinterpret());
+            staticCFunction { widget: CPointer<GtkApplication>?, data: gpointer? ->
+                println("Hi Kotlin")
+            });
     g_signal_connect(button, "clicked",
-            staticCFunction(::finish).reinterpret(), window, G_CONNECT_SWAPPED)
+            staticCFunction { widget: CPointer<GtkWidget>? ->
+                gtk_widget_destroy(widget)
+            },
+            window, G_CONNECT_SWAPPED)
     gtk_container_add (button_box.reinterpret(), button);
 
     gtk_widget_show_all(windowWidget)
@@ -55,7 +52,7 @@ fun activate(app: CPointer<GtkApplication>?, user_data: gpointer?) {
 
 fun gtkMain(args: Array<String>): Int {
     val app = gtk_application_new("org.gtk.example", G_APPLICATION_FLAGS_NONE)!!
-    g_signal_connect(app, "activate", staticCFunction(::activate).reinterpret())
+    g_signal_connect(app, "activate", staticCFunction(::activate))
     val status = memScoped {
         g_application_run(app.reinterpret(),
                 args.size, args.map { it.cstr.getPointer(memScope) }.toCValues())
