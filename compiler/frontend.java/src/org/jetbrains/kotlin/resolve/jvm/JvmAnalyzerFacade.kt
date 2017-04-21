@@ -52,6 +52,7 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
             platformParameters: JvmPlatformParameters,
             targetEnvironment: TargetEnvironment,
             resolverForProject: ResolverForProject<M>,
+            languageSettingsProvider: LanguageSettingsProvider,
             packagePartProvider: PackagePartProvider
     ): ResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
@@ -80,7 +81,6 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
             resolverForModule.componentProvider.get<JavaDescriptorResolver>()
         }
 
-        val languageSettingsProvider = LanguageSettingsProvider.getInstance(project)
         val jvmTarget = languageSettingsProvider.getTargetPlatform(moduleInfo) as? JvmTarget ?: JvmTarget.JVM_1_6
         val languageVersionSettings = languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
 

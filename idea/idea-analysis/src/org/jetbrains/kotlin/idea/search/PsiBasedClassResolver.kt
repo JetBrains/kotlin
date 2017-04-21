@@ -20,11 +20,11 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.search.PsiShortNamesCache
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.caches.resolve.getNullableModuleInfo
+import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -235,7 +235,7 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
 
 private fun KtFile.getDefaultImports(): List<ImportPath> {
     val moduleInfo = getNullableModuleInfo() ?: return emptyList()
-    val versionSettings = LanguageSettingsProvider.getInstance(project).getLanguageVersionSettings(moduleInfo, project)
+    val versionSettings = IDELanguageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
     return TargetPlatformDetector.getPlatform(this).getDefaultImports(
             versionSettings.supportsFeature(LanguageFeature.DefaultImportOfPackageKotlinComparisons)
     )

@@ -340,9 +340,6 @@
     <projectService serviceInterface="org.jetbrains.kotlin.console.KotlinConsoleKeeper"
                     serviceImplementation="org.jetbrains.kotlin.console.KotlinConsoleKeeper"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.analyzer.LanguageSettingsProvider"
-                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.LanguageVersionSettingsProviderImpl"/>
-
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IdeLightClassInheritanceHelper"/>
 
