@@ -213,7 +213,7 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
         val resolvedCall = elem.getResolvedCall(ctx)?.candidateDescriptor
         if (resolvedCall is FunctionDescriptor) {
             val fqName = resolvedCall.fqNameOrNull()?.asString() ?: return null
-            val paramNames = resolvedCall.valueParameters.map { it.name }.filter { it.isSpecial }.map(Name::asString)
+            val paramNames = resolvedCall.valueParameters.map { it.name }.filter { !it.isSpecial }.map(Name::asString)
             return HintInfo.MethodInfo(fqName, paramNames)
         }
         return null
