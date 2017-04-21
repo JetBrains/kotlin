@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.psi.KtFile
 
 sealed class ChangeCoroutineSupportFix(
@@ -97,10 +99,11 @@ sealed class ChangeCoroutineSupportFix(
                 else -> return emptyList()
             }
             val module = ModuleUtilCore.findModuleForPsiElement(diagnostic.psiElement) ?: return emptyList()
+            if (KotlinPluginUtil.isMavenModule(module)) return emptyList()
             val facetSettings = KotlinFacet.get(module)?.configuration?.settings
 
             val configureInProject = (facetSettings == null || facetSettings.useProjectSettings) &&
-                                     !KotlinPluginUtil.isGradleModule(module) && !KotlinPluginUtil.isMavenModule(module)
+                                     !KotlinPluginUtil.isGradleModule(module)
             val quickFixConstructor: (PsiElement, LanguageFeature.State) -> ChangeCoroutineSupportFix =
                     if (configureInProject) ::InProject else ::InModule
             return newCoroutineSupports.map { quickFixConstructor(diagnostic.psiElement, it) }
