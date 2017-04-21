@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -126,7 +127,7 @@ private enum class HintType(desc: String, enabled: Boolean) {
                 return resolvedCall.valueArguments.mapNotNull { (valueParam: ValueParameterDescriptor, resolvedArg) ->
                     resolvedArg.arguments.firstOrNull()?.let { arg ->
                         arg.getArgumentExpression()?.let { argExp ->
-                            if (!arg.isNamed() && !valueParam.name.isSpecial) {
+                            if (!arg.isNamed() && !valueParam.name.isSpecial && argExp.isUnclearExpression()) {
                                 return@mapNotNull InlayInfo(valueParam.name.identifier, argExp.startOffset)
                             }
                         }
@@ -136,6 +137,12 @@ private enum class HintType(desc: String, enabled: Boolean) {
             }
 
             return emptyList()
+        }
+
+        private fun KtExpression.isUnclearExpression() = when(this) {
+            is KtConstantExpression, is KtThisExpression, is KtBinaryExpression -> true
+            is KtPrefixExpression -> baseExpression is KtConstantExpression && (operationToken == KtTokens.PLUS || operationToken == KtTokens.MINUS)
+            else -> false
         }
 
         private fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo> {
