@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
@@ -32,7 +33,15 @@ class IrEnumConstructorCallImpl(
                 symbol.descriptor.builtIns.unitType,
                 symbol.descriptor.valueParameters.size,
                 null
-        ) {
+        )
+{
+    @Deprecated("Creates unbound symbols")
+    constructor(
+            startOffset: Int,
+            endOffset: Int,
+            descriptor: ClassConstructorDescriptor
+    ) : this(startOffset, endOffset, IrConstructorSymbolImpl(descriptor))
+
     override val descriptor: ClassConstructorDescriptor get() = symbol.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {

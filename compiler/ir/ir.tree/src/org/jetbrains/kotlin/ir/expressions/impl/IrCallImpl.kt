@@ -44,6 +44,24 @@ class IrCallImpl(
     constructor(
             startOffset: Int,
             endOffset: Int,
+            type: KotlinType,
+            calleeDescriptor: FunctionDescriptor,
+            typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
+            origin: IrStatementOrigin? = null,
+            superQualifierDescriptor: ClassDescriptor? = null
+    ) : this(
+            startOffset, endOffset,
+            type,
+            createFunctionSymbol(calleeDescriptor),
+            calleeDescriptor,
+            typeArguments, origin,
+            createClassSymbolOrNull(superQualifierDescriptor)
+    )
+
+    @Deprecated("Creates unbound symbols")
+    constructor(
+            startOffset: Int,
+            endOffset: Int,
             calleeDescriptor: FunctionDescriptor,
             typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
             origin: IrStatementOrigin? = null,
@@ -51,7 +69,7 @@ class IrCallImpl(
     ) : this(
             startOffset, endOffset,
             calleeDescriptor.returnType!!,
-            createFunctionSymbol(calleeDescriptor.original),
+            createFunctionSymbol(calleeDescriptor),
             calleeDescriptor,
             typeArguments, origin,
             createClassSymbolOrNull(superQualifierDescriptor)

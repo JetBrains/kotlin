@@ -38,7 +38,7 @@ class IrEnumEntryImpl(
 
     constructor(
             startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
-            correspondingClass: IrClass?, initializerExpression: IrExpression
+            correspondingClass: IrClass?, initializerExpression: IrExpression?
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.correspondingClass = correspondingClass
         this.initializerExpression = initializerExpression

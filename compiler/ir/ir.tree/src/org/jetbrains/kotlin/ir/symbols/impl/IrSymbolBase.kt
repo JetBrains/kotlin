@@ -107,7 +107,7 @@ class IrConstructorSymbolImpl(descriptor: ClassConstructorDescriptor) :
 
 fun createFunctionSymbol(descriptor: CallableMemberDescriptor): IrFunctionSymbol =
         when (descriptor) {
-            is ClassConstructorDescriptor -> IrConstructorSymbolImpl(descriptor)
-            is FunctionDescriptor -> IrSimpleFunctionSymbolImpl(descriptor)
+            is ClassConstructorDescriptor -> IrConstructorSymbolImpl(descriptor.original)
+            is FunctionDescriptor -> IrSimpleFunctionSymbolImpl(descriptor.original)
             else -> throw IllegalArgumentException("Unexpected descriptor kind: $descriptor")
         }

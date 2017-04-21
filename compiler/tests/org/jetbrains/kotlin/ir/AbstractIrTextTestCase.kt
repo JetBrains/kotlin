@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.deepCopy
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -79,10 +76,14 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             verify(irFile)
 
             // Check that deep copy produces an equivalent result
-            val irFileCopy = irFile.deepCopy()
+            val irFileCopy = irFile.deepCopyWithSymbols()
             val copiedTrees = irFileCopy.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber)
-            TestCase.assertEquals("IR dump mismatch after deep copy", actualTrees, copiedTrees)
+            TestCase.assertEquals("IR dump mismatch after deep copy with symbols", actualTrees, copiedTrees)
             verify(irFileCopy)
+
+            val irFileCopyOld = irFile.deepCopyOld()
+            val copiedTreesOld = irFileCopyOld.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber)
+            TestCase.assertEquals("IR dump mismatch after old deep copy", actualTrees, copiedTrees)
         }
 
         try {

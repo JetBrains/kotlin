@@ -46,7 +46,7 @@ class IrDelegatingConstructorCallImpl(
             constructorDescriptor: ClassConstructorDescriptor,
             typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null
     ) : this(startOffset, endOffset,
-             IrConstructorSymbolImpl(constructorDescriptor),
+             IrConstructorSymbolImpl(constructorDescriptor.original),
              constructorDescriptor,
              typeArguments)
 
