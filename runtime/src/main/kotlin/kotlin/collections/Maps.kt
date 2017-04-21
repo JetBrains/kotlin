@@ -110,13 +110,14 @@ internal fun mapCapacity(expectedSize: Int): Int {
     if (expectedSize < 3) {
         return expectedSize + 1
     }
-    if (expectedSize < INT_MAX_POWER_OF_TWO) {
+    if (expectedSize < 0x40000000 /* INT_MAX_POWER_OF_TWO */) {
         return expectedSize + expectedSize / 3
     }
-    return Int.MAX_VALUE // any large value
+    return 0x7fffffff // any large value
 }
 
-private const val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
+// Using global constant with dependency like that introduces weird init order dependencies.
+// private const val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
 
 /** Returns `true` if this map is not empty. */
 @kotlin.internal.InlineOnly
