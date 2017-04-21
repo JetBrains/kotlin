@@ -24,6 +24,7 @@ import com.intellij.lang.Language
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -40,11 +41,8 @@ import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-
-/**
- * @author Yuli Fiterman
- */
 
 //hack to separate type presentation from param info presentation
 private const val TYPE_INFO_PREFIX = "@TYPE@"
@@ -140,7 +138,7 @@ private enum class HintType(desc: String, enabled: Boolean) {
         }
 
         private fun KtExpression.isUnclearExpression() = when(this) {
-            is KtConstantExpression, is KtThisExpression, is KtBinaryExpression -> true
+            is KtConstantExpression, is KtThisExpression, is KtBinaryExpression, is KtStringTemplateExpression -> true
             is KtPrefixExpression -> baseExpression is KtConstantExpression && (operationToken == KtTokens.PLUS || operationToken == KtTokens.MINUS)
             else -> false
         }
@@ -214,7 +212,10 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
         val resolvedCall = elem.getResolvedCall(ctx)
         val resolvedCallee = resolvedCall?.candidateDescriptor
         if (resolvedCallee is FunctionDescriptor) {
-            val fqName = resolvedCallee.fqNameOrNull()?.asString() ?: return null
+            val fqName = if (resolvedCallee is ConstructorDescriptor)
+                resolvedCallee.containingDeclaration.fqNameSafe.asString()
+            else
+                (resolvedCallee.fqNameOrNull()?.asString() ?: return null)
             val paramNames = resolvedCall.valueArguments
                     .mapNotNull { (valueParameterDescriptor, resolvedValueArgument) ->
                         if (resolvedValueArgument !is DefaultValueArgument) valueParameterDescriptor.name else null
