@@ -427,12 +427,6 @@ public final class JsAstUtils {
         return new JsVars(new JsVars.JsVar(name, expr));
     }
 
-    public static void setParameters(@NotNull JsFunction function, @NotNull List<JsParameter> newParams) {
-        List<JsParameter> parameters = function.getParameters();
-        assert parameters.isEmpty() : "Arguments already set.";
-        parameters.addAll(newParams);
-    }
-
     @NotNull
     public static JsExpression newSequence(@NotNull List<JsExpression> expressions) {
         assert !expressions.isEmpty();
@@ -573,15 +567,6 @@ public final class JsAstUtils {
     public static JsExpression stateMachineReceiver() {
         JsNameRef result = new JsNameRef("$this$");
         MetadataProperties.setCoroutineReceiver(result, true);
-        return result;
-    }
-
-    @NotNull
-    public static JsExpression comma(JsExpression first, JsExpression... tail) {
-        JsExpression result = first;
-        for (JsExpression e : tail) {
-            result = new JsBinaryOperation(JsBinaryOperator.COMMA, result, e);
-        }
         return result;
     }
 }

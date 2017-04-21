@@ -268,11 +268,11 @@ public final class Translation {
         JsName internalModuleName = program.getScope().declareName("_");
         Merger merger = new Merger(rootFunction, internalModuleName, moduleDescriptor);
 
-        Map<KtFile, JsProgramFragment> fragmentMap = new HashMap<KtFile, JsProgramFragment>();
-        List<JsProgramFragment> fragments = new ArrayList<JsProgramFragment>();
-        List<JsProgramFragment> newFragments = new ArrayList<JsProgramFragment>();
+        Map<KtFile, JsProgramFragment> fragmentMap = new HashMap<>();
+        List<JsProgramFragment> fragments = new ArrayList<>();
+        List<JsProgramFragment> newFragments = new ArrayList<>();
 
-        Map<KtFile, List<DeclarationDescriptor>> fileMemberScopes = new HashMap<KtFile, List<DeclarationDescriptor>>();
+        Map<KtFile, List<DeclarationDescriptor>> fileMemberScopes = new HashMap<>();
 
         JsAstDeserializer deserializer = new JsAstDeserializer(program);
         for (TranslationUnit unit : units) {
@@ -280,7 +280,7 @@ public final class Translation {
                 KtFile file = ((TranslationUnit.SourceFile) unit).getFile();
                 StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor);
                 TranslationContext context = TranslationContext.rootContext(staticContext);
-                List<DeclarationDescriptor> fileMemberScope = new ArrayList<DeclarationDescriptor>();
+                List<DeclarationDescriptor> fileMemberScope = new ArrayList<>();
                 translateFile(context, file, fileMemberScope);
                 fragments.add(staticContext.getFragment());
                 newFragments.add(staticContext.getFragment());
@@ -371,10 +371,7 @@ public final class Translation {
         catch (TranslationRuntimeException e) {
             throw e;
         }
-        catch (RuntimeException e) {
-            throw new TranslationRuntimeException(file, e);
-        }
-        catch (AssertionError e) {
+        catch (RuntimeException | AssertionError e) {
             throw new TranslationRuntimeException(file, e);
         }
     }

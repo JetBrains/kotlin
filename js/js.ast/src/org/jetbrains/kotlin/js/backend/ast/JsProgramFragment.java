@@ -10,14 +10,14 @@ import java.util.*;
 
 public class JsProgramFragment {
     private final JsScope scope;
-    private final List<JsImportedModule> importedModules = new ArrayList<JsImportedModule>();
-    private final Map<String, JsExpression> imports = new LinkedHashMap<String, JsExpression>();
+    private final List<JsImportedModule> importedModules = new ArrayList<>();
+    private final Map<String, JsExpression> imports = new LinkedHashMap<>();
     private final JsGlobalBlock declarationBlock = new JsGlobalBlock();
     private final JsGlobalBlock exportBlock = new JsGlobalBlock();
     private final JsGlobalBlock initializerBlock = new JsGlobalBlock();
-    private final List<JsNameBinding> nameBindings = new ArrayList<JsNameBinding>();
-    private final Map<JsName, JsClassModel> classes = new LinkedHashMap<JsName, JsClassModel>();
-    private final Map<String, JsExpression> inlineModuleMap = new LinkedHashMap<String, JsExpression>();
+    private final List<JsNameBinding> nameBindings = new ArrayList<>();
+    private final Map<JsName, JsClassModel> classes = new LinkedHashMap<>();
+    private final Map<String, JsExpression> inlineModuleMap = new LinkedHashMap<>();
 
     public JsProgramFragment(@NotNull JsScope scope) {
         this.scope = scope;
