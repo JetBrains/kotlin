@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.core
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.*
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -260,7 +262,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             protected val failedToImportDescriptors: Set<DeclarationDescriptor>
     ) {
         protected val resolutionFacade = file.getResolutionFacade()
-        private val elementsToShorten = ArrayList<TElement>()
+        private val elementsToShorten = ArrayList<SmartPsiElementPointer<TElement>>()
         private val descriptorsToImport = LinkedHashSet<DeclarationDescriptor>()
 
         abstract val collectElementsVisitor: CollectElementsVisitor<TElement>
@@ -277,7 +279,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 val toBeShortened: Boolean
                 when (result) {
                     is AnalyzeQualifiedElementResult.ShortenNow -> {
-                        elementsToShorten.add(element)
+                        elementsToShorten.add(element.createSmartPointer())
                         toBeShortened = true
                     }
 
@@ -324,7 +326,8 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         protected abstract fun shortenElement(element: TElement): KtElement
 
         fun shortenElements(elementSetToUpdate: MutableSet<KtElement>) {
-            for (element in elementsToShorten) {
+            for (elementPointer in elementsToShorten) {
+                val element = elementPointer.element ?: continue
                 if (!element.isValid) continue
 
                 var newElement: KtElement? = null
