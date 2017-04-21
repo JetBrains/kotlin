@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.backend.jvm.descriptors.initialize
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.konan.ir.Ir
-import org.jetbrains.kotlin.backend.konan.llvm.Llvm
-import org.jetbrains.kotlin.backend.konan.llvm.LlvmDeclarations
-import org.jetbrains.kotlin.backend.konan.llvm.functionName
-import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
+import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -268,6 +265,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
             field = module!!
 
             llvm = Llvm(this, module)
+            debugInfo = DebugInfo(this)
         }
 
     lateinit var llvm: Llvm
@@ -419,14 +417,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         }
     }
 
-    val  debugInfo = DebugInfo()
-    class DebugInfo {
-        val files = mutableMapOf<IrFile, DIFileRef>()
-        val subprograms = mutableMapOf<FunctionDescriptor, DISubprogramRef>()
-        var builder: DIBuilderRef? = null
-        var module: DIModuleRef? = null
-        var compilationModule: DICompileUnitRef? = null
-        var types = mutableMapOf<KotlinType, DITypeOpaqueRef>()
-    }
+    lateinit var debugInfo:DebugInfo
 }
 

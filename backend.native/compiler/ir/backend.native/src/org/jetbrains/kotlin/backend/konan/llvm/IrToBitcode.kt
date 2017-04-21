@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
@@ -197,9 +196,17 @@ internal interface CodeContext {
     /**
      * Returns owning file scope.
      *
-     * @return the requested value
+     * @return the requested value if in the file scope or null.
      */
     fun fileScope(): CodeContext?
+
+    /**
+     * Returns owning class scope [ClassScope].
+     *
+     * @returns the requested value if in the class scope or null.
+     */
+    fun classScope(): CodeContext?
+
     fun addResumePoint(bbLabel: LLVMBasicBlockRef)
 }
 
@@ -243,7 +250,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         override fun functionScope(): CodeContext? = null
 
         override fun fileScope(): CodeContext? = null
-        
+
+        override fun classScope(): CodeContext? = null
+
         override fun addResumePoint(bbLabel: LLVMBasicBlockRef) = unsupported(bbLabel)
     }
 
@@ -575,8 +584,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             // do not generate any code for annotation classes as a workaround for NotImplementedError
             return
         }
-
-        declaration.acceptChildrenVoid(this)
+        using(ClassScope(declaration)) {
+            debugClassDeclaration(declaration) {
+                declaration.acceptChildrenVoid(this)
+            }
+        }
     }
 
     //-------------------------------------------------------------------------//
@@ -595,6 +607,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     override fun visitField(expression: IrField) {
         context.log{"visitField                     : ${ir2string(expression)}"}
+        debugFieldDeclaration(expression)
         val descriptor = expression.descriptor
         if (descriptor.containingDeclaration is PackageFragmentDescriptor) {
             val type = codegen.getLLVMType(descriptor.type)
@@ -1071,7 +1084,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             val line = value.line()
             codegen.vars.debugInfoLocalVariableLocation(
                     functionScope = functionScope,
-                    diType        = variableDescriptor.diType,
+                    diType        = variableDescriptor.type.diType(context, codegen.llvmTargetData),
                     name          = variableDescriptor.name,
                     variable      = variable,
                     file          = file,
@@ -1395,6 +1408,26 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
+    private inner class ClassScope(val clazz:IrClass) : InnerScopeImpl() {
+        val isExported
+            get() = clazz.descriptor.isExported()
+        var offsetInBits = 0L
+        val members = mutableListOf<DIDerivedTypeRef>()
+        @Suppress("UNCHECKED_CAST")
+        val scope = if (isExported && context.shouldContainDebugInfo())
+            DICreateReplaceableCompositeType(
+                    tag        = DwarfTag.DW_TAG_structure_type.value,
+                    refBuilder = context.debugInfo.builder,
+                    refScope   = context.debugInfo.compilationModule as DIScopeOpaqueRef,
+                    name       = clazz.descriptor.typeInfoSymbolName,
+                    refFile    = file().file(),
+                    line       = clazz.line()) as DITypeOpaqueRef
+        else null
+        override fun classScope(): CodeContext? = this
+    }
+
+    //-------------------------------------------------------------------------//
+
     private fun evaluateReturnableBlock(value: IrReturnableBlockImpl): LLVMValueRef {
         context.log{"evaluateReturnableBlock         : ${value.statements.forEach { ir2string(it) }}"}
 
@@ -1553,6 +1586,55 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     //-------------------------------------------------------------------------//
+    @Suppress("UNCHECKED_CAST")
+    private fun debugClassDeclaration(declaration: IrClass, body: () -> Unit): Unit {
+        val doDebugInfo = context.shouldContainDebugInfo() && declaration.descriptor.isExported()
+        val classScope = currentCodeContext.classScope() as ClassScope
+        if (doDebugInfo) context.debugInfo.types[declaration.descriptor.defaultType] = classScope.scope!!
+        body()
+        memScoped {
+            if (doDebugInfo) context.debugInfo.types[declaration.descriptor.defaultType] = DICreateStructType(
+                    refBuilder = context.debugInfo.builder,
+                    scope = context.debugInfo.compilationModule as DIScopeOpaqueRef,
+                    name = declaration.descriptor.typeInfoSymbolName,
+                    file = file().file(),
+                    lineNumber = declaration.line(),
+                    sizeInBits = 64 /* TODO */,
+                    alignInBits = 4 /* TODO */,
+                    derivedFrom = null,
+                    elements = classScope.members.toCValues(),
+                    elementsCount = classScope.members.size.toLong(),
+                    refPlace = context.debugInfo.types[declaration.descriptor.defaultType] as DICompositeTypeRef,
+                    flags = 0
+            ) as DITypeOpaqueRef
+        }
+    }
+
+    //-------------------------------------------------------------------------//
+    private fun debugFieldDeclaration(expression: IrField) {
+        val scope = currentCodeContext.classScope() as? ClassScope ?: return
+        if (!scope.isExported || !context.shouldContainDebugInfo()) return
+        val irFile = (currentCodeContext.fileScope() as FileScope).file
+        val sizeInBits = expression.descriptor.type.size(context)
+        scope.offsetInBits += sizeInBits
+        val alignInBits = expression.descriptor.type.alignment(context)
+        scope.offsetInBits = alignTo(scope.offsetInBits, alignInBits)
+        scope.members.add(DICreateMemberType(
+                refBuilder   = context.debugInfo.builder,
+                refScope     = scope.scope as DIScopeOpaqueRef,
+                name         = expression.descriptor.symbolName,
+                file         = irFile.file(),
+                lineNum      = expression.line(),
+                sizeInBits   = sizeInBits,
+                alignInBits  = alignInBits,
+                offsetInBits = scope.offsetInBits,
+                flags        = 0,
+                type         = expression.descriptor.type.diType(context, codegen.llvmTargetData)
+        )!!)
+    }
+
+
+    //-------------------------------------------------------------------------//
     private fun IrFile.file(): DIFileRef {
         return context.debugInfo.files.getOrPut(this) {
             val path = this.fileEntry.name.toFileAndFolder()
@@ -1561,11 +1643,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     //-------------------------------------------------------------------------//
+    @Suppress("UNCHECKED_CAST")
     private fun IrFunction.scope():DIScopeOpaqueRef? {
         if (!context.shouldContainDebugInfo()) return null
         return context.debugInfo.subprograms.getOrPut(descriptor) {
             memScoped {
-                val subroutineType = descriptor.subroutineType
+                val subroutineType = descriptor.subroutineType(context, codegen.llvmTargetData)
                 val functionLlvmValue = codegen.functionLlvmValue(descriptor)
                 val linkageName = LLVMGetValueName(functionLlvmValue)!!.toKString()
                 val diFunction = DICreateFunction(
@@ -1585,37 +1668,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             }
         } as DIScopeOpaqueRef
     }
-
-    //-------------------------------------------------------------------------//
-    private val  FunctionDescriptor.subroutineType: DISubroutineTypeRef
-        get() = memScoped {
-            DICreateSubroutineType(context.debugInfo.builder, allocArrayOf(
-	    this@subroutineType.valueParameters.map{it.diType}),
-	    this@subroutineType.valueParameters.size)!!
-        }
-
-    //-------------------------------------------------------------------------//
-    private val  VariableDescriptor.diType: DITypeOpaqueRef
-    get() = context.debugInfo.types.getOrPut(this.type) {
-        when {
-            KotlinBuiltIns.isInt(this.type)              -> debugInfoBaseType("Int",     LLVMInt32Type()!!)
-            KotlinBuiltIns.isBoolean(this.type)          -> debugInfoBaseType("Boolean", LLVMInt1Type()!!)
-            KotlinBuiltIns.isChar(this.type)             -> debugInfoBaseType("Char",    LLVMInt8Type()!!)
-            KotlinBuiltIns.isShort(this.type)            -> debugInfoBaseType("Short",   LLVMInt16Type()!!)
-            KotlinBuiltIns.isByte(this.type)             -> debugInfoBaseType("Byte",    LLVMInt8Type()!!)
-            KotlinBuiltIns.isLong(this.type)             -> debugInfoBaseType("Long",    LLVMInt64Type()!!)
-            KotlinBuiltIns.isFloat(this.type)            -> debugInfoBaseType("Float",   LLVMFloatType()!!)
-            KotlinBuiltIns.isDouble(this.type)           -> debugInfoBaseType("Double",  LLVMDoubleType()!!)
-            (!KotlinBuiltIns.isPrimitiveType(this.type)) -> debugInfoBaseType("Any?",    codegen.kObjHeaderPtr)
-            else                                         -> TODO(this.type.toString())
-        }
-    }
-
-    private fun debugInfoBaseType(typeName:String, type:LLVMTypeRef) = DICreateBasicType(
-            context.debugInfo.builder, typeName,
-            LLVMSizeOfTypeInBits(codegen.llvmTargetData, type),
-            LLVMPreferredAlignmentOfType(codegen.llvmTargetData, type).toLong(), 0) as DITypeOpaqueRef
-
 
     //-------------------------------------------------------------------------//
 
