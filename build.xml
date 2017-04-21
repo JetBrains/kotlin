@@ -5,12 +5,6 @@
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
     <property name="shrink" value="true"/>
 
-    <!-- Set to false to disable compiler's javadoc generation. Speeds up the build -->
-    <property name="generate.javadoc" value="false"/>
-
-    <!-- Set to false to prevent jarjar and metadata stripping on kotlin-reflect.jar and reflection sources. Use to debug reflection -->
-    <property name="obfuscate.reflect" value="true"/>
-
     <property name="max.heap.size.for.forked.jvm" value="1024m"/>
 
     <property name="bootstrap.home" value="${basedir}/dependencies/bootstrap-compiler"/>
