@@ -15,6 +15,7 @@
  */
 
 #include <DebugInfoC.h>
+#include <common.h>
 //clang llvmDebugInfoC/test/demo.c -IllvmDebugInfoC/include/ -Idependencies/all/clang+llvm-3.9.0-darwin-macos/include  -c
 
 //c++ demo.o -Idependencies/all/clang+llvm-3.9.0-darwin-macos/include -Ldependencies/all/clang+llvm-3.9.0-darwin-macos/lib  -lLLVMCore -lLLVMSupport -lncurses -o demo
@@ -88,31 +89,25 @@
 //  !23 = !DILocation(line: 4, column: 10, scope: !17)
 //  !24 = !DILocation(line: 4, column: 3, scope: !17)
 
-int main() {
-  LLVMModuleRef module = LLVMModuleCreateWithName("test");
-  DIBuilderRef builder = DICreateBuilder(module);
-  DIFileRef file = DICreateFile(builder, "1.kt", "src");
-  DIModuleRef m =  DICreateModule(builder, m, "a.out", "", "", "");
-  DICompileUnitRef cu = DICreateCompilationUnit(builder, 4, "1.kt", "src", "konanc", 0, "", 0);
-  DIBasicTypeRef type0 = DICreateBasicType(builder, "int", 32, 4, 0);
-  DISubroutineTypeRef subroutineType = DICreateSubroutineType(builder, &type0, 1);
-
+int
+main() {
+  codegen_init();
+  DIBasicTypeRef type0 = DICreateBasicType(g_codegen.di_builder, "int", 32, 4, 0);
+  DISubroutineTypeRef subroutineType = DICreateSubroutineType(g_codegen.di_builder, (DITypeOpaqueRef *)&type0, 1);
   const char *functionName = "foo";
+  DIFileRef file = DICreateFile(g_codegen.di_builder, "1.kt", "src");
+  DISubprogramRef diFunction = DICreateFunction(g_codegen.di_builder, SCOPE(g_codegen.di_compile_unit), functionName, "foo:link", file, 66, subroutineType, 0, 1, 0);
 
-  DISubprogramRef diFunction = DICreateFunction(builder, cu, functionName, "foo:link", file, 66, subroutineType, 0, 1, 0);
-  
   //function creation.
-  LLVMBuilderRef llvmBuilder = LLVMCreateBuilderInContext(LLVMGetModuleContext(module));
+
   LLVMTypeRef intType = LLVMInt32Type();
   LLVMValueRef functionType = LLVMFunctionType(intType, &intType, 1, 0);
-  LLVMValueRef llvmFunction = LLVMAddFunction(module, functionName, functionType);
+  LLVMValueRef llvmFunction = LLVMAddFunction(g_codegen.module, functionName, functionType);
   DIFunctionAddSubprogram(llvmFunction, diFunction);
   LLVMBasicBlockRef bb = LLVMAppendBasicBlock(llvmFunction, "entry");
-  LLVMPositionBuilderAtEnd(llvmBuilder, bb);
-  LLVMBuilderSetDebugLocation(llvmBuilder, 42, 15, diFunction);
-  LLVMValueRef ret = LLVMBuildRet(llvmBuilder, LLVMGetParam(llvmFunction, 0));
-  
-  DIFinalize(builder);
-  LLVMDumpModule(module);
+  LLVMPositionBuilderAtEnd(g_codegen.llvm_builder, bb);
+  LLVMBuilderSetDebugLocation(g_codegen.llvm_builder, 42, 15, SCOPE(diFunction));
+  LLVMValueRef ret = LLVMBuildRet(g_codegen.llvm_builder, LLVMGetParam(llvmFunction, 0));
+  codegen_destroy();
   return 0;
 }

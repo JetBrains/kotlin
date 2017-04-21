@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <llvm-c/Analysis.h>
 #include <DebugInfoC.h>
+#include <common.h>
 /**
  * this demo produces bitcode for case when several functions generated from one source code.
  * e.g. for following source:
@@ -37,29 +38,8 @@
  *     return(5:14)
  */
 
-LLVMModuleRef       module;
-DIBuilderRef        di_builder;
-LLVMBuilderRef      llvm_builder;
-DICompileUnitRef    di_compile_unit;
-DIFileRef           file;
-DISubroutineTypeRef subroutine_type;
-
-static LLVMValueRef
-create_function(const char* name) {
-  LLVMTypeRef function_type = LLVMFunctionType(LLVMVoidType(), NULL, 0, 0);
-  return LLVMAddFunction(module, name, function_type);
-}
-
-static DISubprogramRef 
-create_function_with_entry(const char *name, int line) {
-  LLVMValueRef function = create_function(name);
-  LLVMBasicBlockRef bb = LLVMAppendBasicBlock(function, "entry");
-  DISubprogramRef   di_function = DICreateFunction(di_builder, di_compile_unit, name, name, file, line,
-                   subroutine_type, 0, 1, 0);
-  LLVMPositionBuilderAtEnd(llvm_builder, bb);
-  DIFunctionAddSubprogram(function, di_function);
-  return di_function;
-}
+static DIFileRef           file;
+static DISubroutineTypeRef subroutine_type;
 
 #define FOO_FUNCTION "foo"
 #define MAIN_FUNCTION "main"
@@ -68,47 +48,45 @@ create_function_with_entry(const char *name, int line) {
 
 static void
 create_foo() {
-  DISubprogramRef di = create_function_with_entry(FOO_FUNCTION, 5);
-  LLVMBuilderSetDebugLocation(llvm_builder, 5, 14, di);
-  LLVMBuildRetVoid(llvm_builder);
+  DISubprogramRef di;
+  location loc = {&file, 5};
+  create_function_with_entry(FOO_FUNCTION, loc, subroutine_type, &di);
+  LLVMBuilderSetDebugLocation(g_codegen.llvm_builder, 5, 14, SCOPE(di));
+  LLVMBuildRetVoid(g_codegen.llvm_builder);
 }
 
 static void
 create_main_caller_foo() {
-  DISubprogramRef di = create_function_with_entry(MAIN_CALLER_FOO_FUNCTION, 2);
-  LLVMValueRef    fn = LLVMGetNamedFunction(module, FOO_FUNCTION);
-  LLVMBuilderSetDebugLocation(llvm_builder, 5, 2, di);
-  LLVMBuildCall(llvm_builder, fn, NULL, 0, "");
-  LLVMBuilderResetDebugLocation(llvm_builder);
-  LLVMBuildRetVoid(llvm_builder);
+  DISubprogramRef di;
+  location loc = {&file, 2};
+  create_function_with_entry(MAIN_CALLER_FOO_FUNCTION, loc, subroutine_type, &di);
+  LLVMValueRef    fn = LLVMGetNamedFunction(g_codegen.module, FOO_FUNCTION);
+  LLVMBuilderSetDebugLocation(g_codegen.llvm_builder, 5, 2, SCOPE(di));
+  LLVMBuildCall(g_codegen.llvm_builder, fn, NULL, 0, "");
+  LLVMBuilderResetDebugLocation(g_codegen.llvm_builder);
+  LLVMBuildRetVoid(g_codegen.llvm_builder);
 }
 
 static void
 create_main() {
-  DISubprogramRef di = create_function_with_entry(MAIN_FUNCTION, 1);
-  LLVMValueRef    fn = LLVMGetNamedFunction(module, MAIN_CALLER_FOO_FUNCTION);
-  LLVMBuilderSetDebugLocation(llvm_builder, 2, 12, di);
-  LLVMBuildCall(llvm_builder, fn, NULL, 0, "");
-  LLVMBuilderSetDebugLocation(llvm_builder, 3, 4, di);
-  LLVMBuildRetVoid(llvm_builder);
+  DISubprogramRef di;
+  location loc = {&file, 1};
+  create_function_with_entry(MAIN_FUNCTION, loc, subroutine_type, &di);
+  LLVMValueRef    fn = LLVMGetNamedFunction(g_codegen.module, MAIN_CALLER_FOO_FUNCTION);
+  LLVMBuilderSetDebugLocation(g_codegen.llvm_builder, 2, 12, SCOPE(di));
+  LLVMBuildCall(g_codegen.llvm_builder, fn, NULL, 0, "");
+  LLVMBuilderSetDebugLocation(g_codegen.llvm_builder, 3, 4, SCOPE(di));
+  LLVMBuildRetVoid(g_codegen.llvm_builder);
 }
 
 
 int
 main() {
-  module          = LLVMModuleCreateWithName("test");
-  di_builder      = DICreateBuilder(module);
-  di_compile_unit = DICreateCompilationUnit(di_builder, 4,
-                                            "<stdin>", "",
-                                            "konanc", 0, "", 0);
-  llvm_builder    = LLVMCreateBuilderInContext(LLVMGetModuleContext(module));
-  file            = DICreateFile(di_builder, "<stdin>", "");
-  subroutine_type = DICreateSubroutineType(di_builder, NULL, 0);
+  codegen_init();
+  file            = DICreateFile(g_codegen.di_builder, "<stdin>", "");
+  subroutine_type = DICreateSubroutineType(g_codegen.di_builder, NULL, 0);
   create_foo();
   create_main_caller_foo();
   create_main();
-  DIFinalize(di_builder);
-
-  LLVMVerifyModule(module, LLVMPrintMessageAction, NULL);
-  LLVMDumpModule(module);
+  codegen_destroy();
 }

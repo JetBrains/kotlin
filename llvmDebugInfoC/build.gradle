@@ -21,64 +21,70 @@ model {
   components {
     debugInfo(NativeLibrarySpec) {
       sources.cpp.source.srcDirs "src/main/cpp"
-      
         binaries.all {
           cppCompiler.args "--std=c++11", "-g", "-fPIC", "-I${llvmDir}/include", "-I${projectDir}/src/main/include"
           linker.args "-L${llvmDir}/lib", "-lLLVMCore", "-lLLVMSupport"
         }
     }
-    
+
+    def demoCFlags = ["-g", "-I${llvmDir}/include".toString(),
+                  "-I${projectDir}/src/main/include".toString(),
+		  "-I${projectDir}/src/demo-common/include".toString()]
+    def demoLdFlagsLinux = ["-L${buildDir}/libs/debugInfo/static".toString(), "-ldebugInfo",
+	             "-L${llvmDir}/lib".toString(), "-Wl,-(", "-lLLVMSupport", "-lLLVMAnalysis", "-lLLVMProfileData", "-lLLVMCore", "-Wl,-)",
+                     "-L/usr/lib/x86_64-linux-gnu", "-L/lib/x86_64-linux-gnu", "-lncurses", "-lz",
+		      "-ldl", "-lpthread"]
+    def demoLdFlagsMac = ["-L${llvmDir}/lib".toString(), "-lLLVMCore", "-lLLVMSupport", "-lLLVMAnalysis", "-lLLVMProfileData",
+                     "-lncurses", "-lz", "-L${buildDir}/libs/debugInfo/static".toString(), "-ldebugInfo"]
     demosimple(NativeExecutableSpec) {
       //dependsOn project("debugInfoStaticLibrary")
-      sources.c.source.srcDirs "src/demo-simple/c"
+      sources.c.source.srcDirs "src/demo-simple/c", "src/demo-common/c"
       binaries.all {
-         cCompiler.args "-g", "-I${llvmDir}/include",
-                  "-I${projectDir}/src/main/include"
+         cCompiler.args.addAll(demoCFlags)
          if (targetPlatform.operatingSystem.linux) {
-             linker.args "-L${buildDir}/libs/debugInfo/static", "-ldebugInfo",
-	             "-L${llvmDir}/lib", "-Wl,-(", "-lLLVMSupport", "-lLLVMCore", "-Wl,-)",
-                     "-L/usr/lib/x86_64-linux-gnu", "-L/lib/x86_64-linux-gnu", "-lncurses",
-		      "-ldl", "-lpthread"
+             linker.args.addAll(demoLdFlagsLinux)
          } else {
-	     linker.args "-L${llvmDir}/lib", "-lLLVMCore", "-lLLVMSupport",
-                     "-lncurses", "-L${buildDir}/libs/debugInfo/static", "-ldebugInfo"
+	     linker.args.addAll(demoLdFlagsMac)
 	 }
       }
     }
 
     demogenerated(NativeExecutableSpec) {
       //dependsOn project("debugInfoStaticLibrary")
-      sources.c.source.srcDirs "src/demo-generated/c"
+      sources.c.source.srcDirs "src/demo-generated/c", "src/demo-common/c"
       binaries.all {
-         cCompiler.args "-g", "-I${llvmDir}/include",
-                  "-I${projectDir}/src/main/include"
+         cCompiler.args.addAll(demoCFlags)
          if (targetPlatform.operatingSystem.linux) {
-             linker.args "-L${buildDir}/libs/debugInfo/static", "-ldebugInfo",
-	             "-L${llvmDir}/lib", "-Wl,-(", "-lLLVMSupport", "-lLLVMAnalysis", "-lLLVMProfileData", "-lLLVMCore", "-Wl,-)",
-                     "-L/usr/lib/x86_64-linux-gnu", "-L/lib/x86_64-linux-gnu", "-lncurses", "-lz",
-		      "-ldl", "-lpthread"
+             linker.args.addAll(demoLdFlagsLinux)
          } else {
-	     linker.args "-L${llvmDir}/lib", "-lLLVMCore", "-lLLVMSupport",
-                     "-lncurses", "-L${buildDir}/libs/debugInfo/static", "-ldebugInfo"
+	     linker.args.addAll(demoLdFlagsMac)
 	 }
       }
     }
 
     demolocalvariable(NativeExecutableSpec) {
       //dependsOn project("debugInfoStaticLibrary")
-      sources.c.source.srcDirs "src/demo-local-variable/c"
+      sources.c.source.srcDirs "src/demo-local-variable/c", "src/demo-common/c"
       binaries.all {
-         cCompiler.args "-g", "-I${llvmDir}/include",
-                  "-I${projectDir}/src/main/include"
+         cCompiler.args.addAll(demoCFlags)
          if (targetPlatform.operatingSystem.linux) {
-             linker.args "-L${buildDir}/libs/debugInfo/static", "-ldebugInfo",
-	             "-L${llvmDir}/lib", "-Wl,-(", "-lLLVMSupport", "-lLLVMAnalysis", "-lLLVMProfileData", "-lLLVMCore", "-Wl,-)",
-                     "-L/usr/lib/x86_64-linux-gnu", "-L/lib/x86_64-linux-gnu", "-lncurses", "-lz",
-		      "-ldl", "-lpthread"
+             linker.args.addAll(demoLdFlagsLinux)
          } else {
-	     linker.args "-L${llvmDir}/lib", "-lLLVMCore", "-lLLVMSupport", "-lLLVMAnalysis", "-lLLVMProfileData",
-                     "-lncurses", "-L${buildDir}/libs/debugInfo/static", "-ldebugInfo", "-lz"
+	     linker.args.addAll(demoLdFlagsMac)
 	 }
+      }
+    }
+
+    demotypes(NativeExecutableSpec) {
+      //dependsOn project("debugInfoStaticLibrary")
+      sources.c.source.srcDirs "src/demo-types/c", "src/demo-common/c"
+      binaries.all {
+         cCompiler.args.addAll(demoCFlags)
+         if (targetPlatform.operatingSystem.linux) {
+             linker.args.addAll(demoLdFlagsLinux)
+         } else {
+             linker.args.addAll(demoLdFlagsMac)
+         }
       }
     }
   }

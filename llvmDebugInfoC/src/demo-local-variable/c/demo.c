@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <llvm-c/Analysis.h>
 #include <DebugInfoC.h>
-
+#include <common.h>
 /**
  *  0:b-backend-dwarf:minamoto@unit-703(0)# clang -xc -S -g -emit-llvm -o - -
  *  "TERMCAP", line 20, col 1, terminal 'SC': Missing separator
@@ -71,63 +71,37 @@
  *  !16 = !DILocation(line: 3, column: 3, scope: !7)
  */
 
-static LLVMModuleRef       module;
-static DIBuilderRef        di_builder;
-static LLVMBuilderRef      llvm_builder;
-static DICompileUnitRef    di_compile_unit;
 static DIFileRef           file;
 static DISubroutineTypeRef subroutine_type;
 static LLVMTypeRef         int_type;
 static DITypeOpaqueRef     di_int_type;
 
-static LLVMValueRef
-create_function(const char* name) {
-  LLVMTypeRef function_type = LLVMFunctionType(int_type, NULL, 0, 0);
-  return LLVMAddFunction(module, name, function_type);
-}
-
-static DISubprogramRef 
-create_function_with_entry(const char *name, int line) {
-  LLVMValueRef function = create_function(name);
-  LLVMBasicBlockRef bb = LLVMAppendBasicBlock(function, "entry");
-  DISubprogramRef   di_function = DICreateFunction(di_builder, di_compile_unit, name, name, file, line,
-                   subroutine_type, 0, 1, 0);
-  LLVMPositionBuilderAtEnd(llvm_builder, bb);
-  DIFunctionAddSubprogram(function, di_function);
-  return di_function;
-}
 
 static void
 create_main() {
-  DISubprogramRef di = create_function_with_entry("main", 1);
-  LLVMValueRef address = LLVMBuildAlloca(llvm_builder, int_type, "");
-  DILocationRef location = LLVMBuilderSetDebugLocation(llvm_builder, 2, 1, di);
-  DILocalVariableRef variable_a = DICreateAutoVariable(di_builder, di, "a", file, 2, di_int_type);
-  DIInsertDeclarationWithEmptyExpression(di_builder, address, variable_a, location, LLVMGetInsertBlock(llvm_builder));
-  LLVMBuildStore(llvm_builder, LLVMConstInt(int_type, 42, 1), address);
-  LLVMValueRef value = LLVMBuildLoad(llvm_builder, address, "");
-  LLVMBuildRet(llvm_builder, value);
+  DISubprogramRef di;
+  location loc = {&file, 1};
+  create_function_with_entry("main", loc, subroutine_type, &di);
+  LLVMValueRef address = LLVMBuildAlloca(g_codegen.llvm_builder, int_type, "");
+  DILocationRef location = LLVMBuilderSetDebugLocation(g_codegen.llvm_builder,
+                                                       2, 1, SCOPE(di));
+  DILocalVariableRef variable_a = DICreateAutoVariable(g_codegen.di_builder, SCOPE(di),
+                                                       "a", file, 2, di_int_type);
+  DIInsertDeclarationWithEmptyExpression(g_codegen.di_builder, address, variable_a,
+                                         location, LLVMGetInsertBlock(g_codegen.llvm_builder));
+  LLVMBuildStore(g_codegen.llvm_builder, LLVMConstInt(int_type, 42, 1), address);
+  LLVMValueRef value = LLVMBuildLoad(g_codegen.llvm_builder, address, "");
+  LLVMBuildRet(g_codegen.llvm_builder, value);
 }
 
 
 int
 main() {
-  module           = LLVMModuleCreateWithName("test");
-  di_builder       = DICreateBuilder(module);
-  di_compile_unit  = DICreateCompilationUnit(di_builder, 4,
-                                            "<stdin>", "",
-                                            "konanc", 0, "", 0);
-  llvm_builder     = LLVMCreateBuilderInContext(LLVMGetModuleContext(module));
-  file             = DICreateFile(di_builder, "<stdin>", "");
-  subroutine_type  = DICreateSubroutineType(di_builder, NULL, 0);
+  codegen_init();
+  file             = DICreateFile(g_codegen.di_builder, "<stdin>", "");
+  subroutine_type  = DICreateSubroutineType(g_codegen.di_builder, NULL, 0);
   int_type         = LLVMInt32Type();
-  di_int_type      = DICreateBasicType(di_builder, "int", 32, 4, 0);
+  di_int_type      = TYPE(DICreateBasicType(g_codegen.di_builder, "int", 32, 4, 0));
   create_main();
-  DIFinalize(di_builder);
-
-  LLVMVerifyModule(module, LLVMPrintMessageAction, NULL);
-  LLVMDumpModule(module);
-  LLVMDisposeBuilder(llvm_builder);
-  LLVMDisposeModule(module);
-  LLVMShutdown();
+  codegen_destroy();
 }
