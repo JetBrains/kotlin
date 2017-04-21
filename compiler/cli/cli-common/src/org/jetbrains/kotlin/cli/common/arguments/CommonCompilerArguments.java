@@ -109,7 +109,7 @@ public abstract class CommonCompilerArguments implements Serializable {
 
     public List<String> freeArgs = new SmartList<>();
 
-    public ArgumentParseErrors errors = new ArgumentParseErrors();
+    public transient ArgumentParseErrors errors = new ArgumentParseErrors();
 
     @NotNull
     public static CommonCompilerArguments createDefaultInstance() {

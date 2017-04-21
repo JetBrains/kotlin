@@ -79,7 +79,7 @@ fun collectFieldsToCopy(clazz: Class<*>, inheritedOnly: Boolean): List<Field> {
     while (currentClass != null) {
         for (field in currentClass.declaredFields) {
             val modifiers = field.modifiers
-            if (!Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers)) {
+            if (!Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers) && !Modifier.isTransient(modifiers)) {
                 fromFields.add(field)
             }
         }
