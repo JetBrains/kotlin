@@ -5191,6 +5191,8 @@ public fun <T> Array<out T>.contentDeepHashCode(): Int {
  * 
  * If any of arrays contains itself on any nesting level that reference
  * is rendered as `"[...]"` to prevent recursion.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentDeepToString
  */
 @SinceKotlin("1.1")
 @library("arrayDeepToString")
@@ -5380,6 +5382,8 @@ public fun CharArray.contentHashCode(): Int {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @library("arrayToString")
@@ -5389,6 +5393,8 @@ public fun <T> Array<out T>.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @library("arrayToString")
@@ -5398,6 +5404,8 @@ public fun ByteArray.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @library("arrayToString")
@@ -5407,6 +5415,8 @@ public fun ShortArray.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @library("arrayToString")
@@ -5416,6 +5426,8 @@ public fun IntArray.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @library("arrayToString")
@@ -5425,6 +5437,8 @@ public fun LongArray.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @library("arrayToString")
@@ -5434,6 +5448,8 @@ public fun FloatArray.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @library("arrayToString")
@@ -5443,6 +5459,8 @@ public fun DoubleArray.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @library("arrayToString")
@@ -5452,6 +5470,8 @@ public fun BooleanArray.contentToString(): String {
 
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.1")
 @library("arrayToString")
