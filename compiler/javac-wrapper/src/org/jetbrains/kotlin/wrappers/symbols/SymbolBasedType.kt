@@ -43,7 +43,7 @@ open class SymbolBasedType<out T : TypeMirror>(val typeMirror: T,
         get() = javac.isDeprecated(typeMirror)
 
     override fun findAnnotation(fqName: FqName) = typeMirror.annotationMirrors
-            .find { it.toString() == fqName.asString() }
+            .find { it.toString() == "@${fqName.asString()}" }
             ?.let { SymbolBasedAnnotation(it, javac) }
 
     override fun equals(other: Any?) = (other as? SymbolBasedType<*>)?.typeMirror == typeMirror

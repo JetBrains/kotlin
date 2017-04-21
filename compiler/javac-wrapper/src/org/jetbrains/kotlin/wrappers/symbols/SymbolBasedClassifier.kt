@@ -30,8 +30,7 @@ abstract class SymbolBasedClassifier<out T : Element>(element: T,
                 .map { SymbolBasedAnnotation(it, javac) }
 
     override fun findAnnotation(fqName: FqName) = element.annotationMirrors
-            .filter { it.toString() == fqName.asString() }
-            .firstOrNull()
+            .find { it.toString() == "@${fqName.asString()}" }
             ?.let { SymbolBasedAnnotation(it, javac) }
 
     override val isDeprecatedInJavaDoc

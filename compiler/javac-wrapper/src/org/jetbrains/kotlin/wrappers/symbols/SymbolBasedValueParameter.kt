@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.wrappers.symbols
 
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -30,10 +29,9 @@ class SymbolBasedValueParameter<out T : VariableElement>(element: T, private val
     override val annotations
         get() = element.annotationMirrors.map { SymbolBasedAnnotation(it, javac) }
 
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? = element.annotationMirrors
-            .filter { it.toString() == fqName.asString() }
-            .firstOrNull()
-            ?.let { SymbolBasedAnnotation(it, javac)}
+    override fun findAnnotation(fqName: FqName) = element.annotationMirrors
+            .find { it.toString() == "@${fqName.asString()}" }
+            ?.let { SymbolBasedAnnotation(it, javac) }
 
     override val isDeprecatedInJavaDoc
         get() =  javac.isDeprecated(element)
