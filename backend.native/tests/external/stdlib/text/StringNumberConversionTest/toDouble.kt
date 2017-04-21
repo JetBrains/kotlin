@@ -50,7 +50,12 @@ private class ConversionWithRadixContext<T: Any>(val convertOrFail: (String, Int
     }
 }
 
-private fun doubleTotalOrderEquals(a: Any?, b: Any?) = a == b
+private fun doubleTotalOrderEquals(a: Double?, b: Double?): Boolean {
+    if (a != null && b != null && a.isNaN() && b.isNaN()) {
+        return true
+    }
+    return a == b
+}
 
 fun box() {
     compareConversion(String::toDouble, String::toDoubleOrNull, ::doubleTotalOrderEquals) {

@@ -58,6 +58,7 @@ public inline fun Long.toString(radix: Int): String = longToString(this, checkRa
 @kotlin.internal.InlineOnly
 public inline fun String.toBoolean(): Boolean = this.equals("true", ignoreCase = true)
 
+// TODO: Remove it?
 @SymbolName("Kotlin_String_parseByte")
 external private fun parseByte(value: String, radix: Int): Byte
 
@@ -66,8 +67,7 @@ external private fun parseByte(value: String, radix: Int): Byte
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun String.toByte(): Byte = parseByte(this, 10)
+public inline fun String.toByte(): Byte = toByteOrNull() ?: throw NumberFormatException()
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.
@@ -75,8 +75,7 @@ public inline fun String.toByte(): Byte = parseByte(this, 10)
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun String.toByte(radix: Int): Byte = parseByte(this, checkRadix(radix))
+public inline fun String.toByte(radix: Int): Byte = toByteOrNull(radix) ?: throw NumberFormatException()
 
 @SymbolName("Kotlin_String_parseShort")
 external private fun parseShort(value: String, radix: Int): Short
@@ -86,8 +85,7 @@ external private fun parseShort(value: String, radix: Int): Short
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun String.toShort(): Short = parseShort(this, 10)
+public inline fun String.toShort(): Short = toShortOrNull() ?: throw NumberFormatException()
 
 /**
  * Parses the string as a [Short] number and returns the result.
@@ -95,8 +93,7 @@ public inline fun String.toShort(): Short = parseShort(this, 10)
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun String.toShort(radix: Int): Short = parseShort(this, checkRadix(radix))
+public inline fun String.toShort(radix: Int): Short = toShortOrNull(radix) ?: throw NumberFormatException()
 
 @SymbolName("Kotlin_String_parseInt")
 external private fun parseInt(value: String, radix: Int): Int
@@ -106,8 +103,7 @@ external private fun parseInt(value: String, radix: Int): Int
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun String.toInt(): Int = parseInt(this, 10)
+public inline fun String.toInt(): Int = toIntOrNull() ?: throw NumberFormatException()
 
 /**
  * Parses the string as an [Int] number and returns the result.
@@ -115,8 +111,7 @@ public inline fun String.toInt(): Int = parseInt(this, 10)
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun String.toInt(radix: Int): Int = parseInt(this, checkRadix(radix))
+public inline fun String.toInt(radix: Int): Int = toIntOrNull(radix) ?: throw NumberFormatException()
 
 
 @SymbolName("Kotlin_String_parseLong")
@@ -127,8 +122,7 @@ external private fun parseLong(value: String, radix: Int): Long
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun String.toLong(): Long = parseLong(this, 10)
+public inline fun String.toLong(): Long = toLongOrNull() ?: throw NumberFormatException()
 
 /**
  * Parses the string as a [Long] number and returns the result.
@@ -136,8 +130,7 @@ public inline fun String.toLong(): Long = parseLong(this, 10)
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun String.toLong(radix: Int): Long = parseLong(this, checkRadix(radix))
+public inline fun String.toLong(radix: Int): Long = toLongOrNull(radix) ?: throw NumberFormatException()
 
 @SymbolName("Kotlin_String_parseFloat")
 external private fun parseFloat(value: String): Float
@@ -326,11 +319,23 @@ public fun String.toLongOrNull(radix: Int): Long? {
  * or `null` if the string is not a valid representation of a number.
  */
 @SinceKotlin("1.1")
-public fun String.toFloatOrNull(): Float? = TODO()
+public fun String.toFloatOrNull(): Float? {
+    try {
+        return toFloat()
+    } catch (e: NumberFormatException) {
+        return null
+    }
+}
 
 /**
  * Parses the string as a [Double] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
 @SinceKotlin("1.1")
-public fun String.toDoubleOrNull(): Double? = TODO()
+public fun String.toDoubleOrNull(): Double? {
+    try {
+        return toDouble()
+    } catch (e: NumberFormatException) {
+        return null
+    }
+}

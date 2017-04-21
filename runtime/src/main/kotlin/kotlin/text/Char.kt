@@ -96,8 +96,11 @@ external public fun Char.isHighSurrogate(): Boolean
 @SymbolName("Kotlin_Char_isLowSurrogate")
 external public fun Char.isLowSurrogate(): Boolean
 
-@SymbolName("Kotlin_Char_digitOf")
-external internal fun digitOf(char: Char, radix: Int): Int
+
+internal fun digitOf(char: Char, radix: Int): Int = digitOfChecked(char, checkRadix(radix))
+
+@SymbolName("Kotlin_Char_digitOfChecked")
+external internal fun digitOfChecked(char: Char, radix: Int): Int
 
 /**
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.

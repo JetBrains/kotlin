@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <errno.h>
 #include <limits.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -46,39 +47,54 @@ OBJ_GETTER(utf8ToUtf16, const char* rawString, size_t rawStringLength) {
   RETURN_OBJ(result->obj());
 }
 
-template <typename T> T parseInt(KString value, KInt radix) {
-  const KChar* utf16 = CharArrayAddressOfElementAt(value, 0);
-  std::string utf8;
-  utf8::utf16to8(utf16, utf16 + value->count_, back_inserter(utf8));
-  char* end = nullptr;
-  long result = strtol(utf8.c_str(), &end, radix);
-  if (end != utf8.c_str() + utf8.size()) {
-    ThrowNumberFormatException();
-  }
-  return result;
-}
-
+// TODO: Suppose thar we can remove these parsers
 KLong parseLong(KString value, KInt radix) {
   const KChar* utf16 = CharArrayAddressOfElementAt(value, 0);
   std::string utf8;
   utf8::utf16to8(utf16, utf16 + value->count_, back_inserter(utf8));
   char* end = nullptr;
+  errno = 0;
   KLong result = strtoll(utf8.c_str(), &end, radix);
-  if (end != utf8.c_str() + utf8.size()) {
+  if (utf8.size() == 0 || end != utf8.c_str() + utf8.size() || errno == ERANGE) {
     ThrowNumberFormatException();
   }
   return result;
 }
 
+template <typename T> T parseInt(KString value, KInt radix) {
+  KLong result = parseLong(value, radix);
+  if (result < std::numeric_limits<T>::min() || result > std::numeric_limits<T>::max()) {
+    ThrowNumberFormatException();
+  }
+  return result;
+}
+
+void checkParsingErrors(const char* c_str, char* end, std::string::size_type c_str_size) {
+  if (end == c_str) {
+    ThrowNumberFormatException();
+  }
+  // According to http://docs.oracle.com/javase/8/docs/api/java/lang/Double.html#valueOf-java.lang.String-
+  // trailing whitespace characters must be ignored so we need to do an additional check.
+  for (char* p = end; p < c_str + c_str_size; p++) {
+    if (!isspace(*p)) {
+      ThrowNumberFormatException();
+    }
+  }
+}
+
+// TODO: Java Double.valueOf specification requires mandatory binary exponent character (p) in the string parsed if the string is a hex one.
+// See: http://docs.oracle.com/javase/8/docs/api/java/lang/Double.html#valueOf-java.lang.String-
+// E.g.
+// "0x77p0".toDouble() // OK for both Kotlin/JVM and Kotlin/Native.
+// "0x77".toDouble()   // throws NumberFormatException in Kotlin/JVM and OK in Kotlin/Native.
+// Do we need to handle such case? Or it is OK to consume such strings?
 KFloat parseFloat(KString value) {
   const KChar* utf16 = CharArrayAddressOfElementAt(value, 0);
   std::string utf8;
   utf8::utf16to8(utf16, utf16 + value->count_, back_inserter(utf8));
   char* end = nullptr;
   KFloat result = strtof(utf8.c_str(), &end);
-  if (end != utf8.c_str() + utf8.size()) {
-    ThrowNumberFormatException();
-  }
+  checkParsingErrors(utf8.c_str(), end, utf8.size());
   return result;
 }
 
@@ -89,9 +105,7 @@ KDouble parseDouble(KString value) {
   utf8::utf16to8(utf16, utf16 + value->count_, back_inserter(utf8));
   char* end = nullptr;
   KDouble result = strtod(utf8.c_str(), &end);
-  if (end != utf8.c_str() + utf8.size()) {
-    ThrowNumberFormatException();
-  }
+  checkParsingErrors(utf8.c_str(), end, utf8.size());
   return result;
 }
 
@@ -1005,20 +1019,34 @@ KChar Kotlin_Char_toUpperCase(KChar ch) {
   return towupper_Konan(ch);
 }
 
-KInt Kotlin_Char_digitOf(KChar ch, KInt radix) {
-  // TODO: make smarter and support full unicode.
-  const static KInt digits[] = {
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-    -1, -1, -1, -1, -1, -1, -1,
-    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-    20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-    30, 31, 32, 33, 34, 35,
-    -1, -1, -1, -1, -1, -1,
-    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-    20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-    30, 31, 32, 33, 34, 35 };
-  if (ch < 0x30 /* 0 */ || ch > 0x7a /* z */) return -1;
-  return digits[ch - 0x30];
+constexpr KInt digits[] = {
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+  -1, -1, -1, -1, -1, -1, -1,
+  10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+  20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+  30, 31, 32, 33, 34, 35,
+  -1, -1, -1, -1, -1, -1,
+  10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+  20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+  30, 31, 32, 33, 34, 35
+};
+
+// Based on Apache Harmony implementation.
+// Radix check is performed on the Kotlin side.
+KInt Kotlin_Char_digitOfChecked(KChar ch, KInt radix) {
+
+  KInt result = -1;
+  if (ch >= 0x30 /* 0 */ && ch <= 0x7a /* z */) {
+    result = digits[ch - 0x30];
+  } else {
+    int index = -1;
+    index = binarySearchRange(digitKeys, ARRAY_SIZE(digitKeys), ch);
+    if (index >= 0 && ch <= digitValues[index * 2]) {
+      result = ch - digitValues[index * 2 + 1];
+    }
+  }
+  if (result >= radix) return -1;
+  return result;
 }
 
 KInt Kotlin_String_indexOfChar(KString thiz, KChar ch, KInt fromIndex) {

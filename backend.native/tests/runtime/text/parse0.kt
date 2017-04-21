@@ -2,7 +2,8 @@ fun main(args: Array<String>) {
     println("false".toBoolean())
     println("true".toBoolean())
     println("-1".toByte())
-    println("aa".toByte(16))
+    println("a".toByte(16))
+    println("aa".toShort(16))
     println("11110".toInt(2))
     println("ffffffff".toLong(16))
     try {

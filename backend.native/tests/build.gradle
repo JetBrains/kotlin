@@ -1090,7 +1090,8 @@ task parse0(type: RunKonanTest) {
     goldValue = "false\n" +
             "true\n" +
             "-1\n" +
-            "-86\n" +
+            "10\n" +
+            "170\n" +
             "30\n" +
             "4294967295\n" +
             "bad format\n" +

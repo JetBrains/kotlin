@@ -27,9 +27,6 @@
 
 namespace {
 
-  constexpr int MIN_RADIX = 2;
-  constexpr int MAX_RADIX = 36;
-
   char int_to_digit(uint32_t value) {
     if (value < 10) {
         return '0' + value;
@@ -38,12 +35,10 @@ namespace {
     }
   }
 
+  // Radix is checked on the Kotlin side.
   template <typename T> OBJ_GETTER(Kotlin_toStringRadix, T value, KInt radix) {
     if (value == 0) {
       RETURN_RESULT_OF(CreateStringFromCString, "0");
-    }
-    if (radix < MIN_RADIX || radix > MAX_RADIX) {
-      radix = 10;
     }
     char cstring[sizeof(T) * CHAR_BIT + 1];
     bool negative = (value < 0);
