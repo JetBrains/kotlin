@@ -20,8 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker;
-import org.jetbrains.kotlin.js.test.rhino.RhinoUtils;
+import org.jetbrains.kotlin.js.test.NashornJsTestChecker;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
@@ -59,7 +58,7 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
 
         List<String> filePaths = CollectionsKt.map(fileNames, s -> getOutputFileByName(s).getAbsolutePath());
 
-        RhinoUtils.runRhinoTest(filePaths, new RhinoFunctionResultChecker("out", "foo", "box", "OK", withModuleSystem));
+        NashornJsTestChecker.INSTANCE.check(filePaths, "out", "foo", "box", "OK", withModuleSystem);
     }
 
     private void doJsAntTestForPostfixPrefix(@Nullable String prefix, @Nullable String postfix) throws Exception {

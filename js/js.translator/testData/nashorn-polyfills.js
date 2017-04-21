@@ -37,16 +37,4 @@
             });
         }
     }
-
-    // Patch apply to work with TypedArrays if needed.
-    try {
-        (function() {}).apply(null, new Int32Array(0))
-    } catch (e) {
-        var apply = Function.prototype.apply;
-        Object.defineProperty(Function.prototype, 'apply', {
-            value: function(self, array) {
-                return apply.call(this, self, [].slice.call(array));
-            }
-        });
-    }
 })();

@@ -3,29 +3,29 @@ package foo
 fun box(): String {
     // in object
 
-    assertEquals("Object.Object.a", Object.Object.a)
-    assertEquals("Object.Object.b", Object.Object.b)
-    assertEquals(123, Object.Object.test())
+    assertEquals("MyObject.Object.a", MyObject.Object.a)
+    assertEquals("MyObject.Object.b", MyObject.Object.b)
+    assertEquals(123, MyObject.Object.test())
 
-    assertEquals("Object.Object.Class().a", Object.Object.Class("Object.Object.Class().a").a)
-    assertEquals("Object.Object.Class().b", Object.Object.Class("something").b)
-    assertEquals(42, Object.Object.Class("something").test())
-    assertEquals("Object.Object.Class.a", Object.Object.Class.a)
-    assertEquals("Object.Object.Class.b", Object.Object.Class.b)
-    assertEquals(142, Object.Object.Class.test())
+    assertEquals("MyObject.Object.Class().a", MyObject.Object.Class("MyObject.Object.Class().a").a)
+    assertEquals("MyObject.Object.Class().b", MyObject.Object.Class("something").b)
+    assertEquals(42, MyObject.Object.Class("something").test())
+    assertEquals("MyObject.Object.Class.a", MyObject.Object.Class.a)
+    assertEquals("MyObject.Object.Class.b", MyObject.Object.Class.b)
+    assertEquals(142, MyObject.Object.Class.test())
 
-    assertEquals("Object.Class().a", Object.Class("Object.Class().a").a)
-    assertEquals("Object.Class().b", Object.Class("something").b)
-    assertEquals(42, Object.Class("something").test())
-    assertEquals("Object.Class.a", Object.Class.a)
-    assertEquals("Object.Class.b", Object.Class.b)
-    assertEquals(142, Object.Class.test())
+    assertEquals("MyObject.Class().a", MyObject.Class("MyObject.Class().a").a)
+    assertEquals("MyObject.Class().b", MyObject.Class("something").b)
+    assertEquals(42, MyObject.Class("something").test())
+    assertEquals("MyObject.Class.a", MyObject.Class.a)
+    assertEquals("MyObject.Class.b", MyObject.Class.b)
+    assertEquals(142, MyObject.Class.test())
 
-    assertEquals("Object.a.a", Object.a.a)
-    assertEquals("Object.a.b", Object.a.b)
-    assertEquals(34, Object.a.test())
-    assertEquals("Object.b", Object.b)
-    assertEquals(23, Object.test())
+    assertEquals("MyObject.a.a", MyObject.a.a)
+    assertEquals("MyObject.a.b", MyObject.a.b)
+    assertEquals(34, MyObject.a.test())
+    assertEquals("MyObject.b", MyObject.b)
+    assertEquals(23, MyObject.test())
 
     // in class
 
@@ -49,7 +49,7 @@ fun box(): String {
     return "OK";
 }
 
-external object Object {
+external object MyObject {
     object Object {
         val a: String = definedExternally
         var b: String = definedExternally

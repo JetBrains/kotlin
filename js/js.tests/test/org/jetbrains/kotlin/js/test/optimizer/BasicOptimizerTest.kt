@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
 import org.jetbrains.kotlin.js.test.BasicBoxTest
+import org.jetbrains.kotlin.js.test.createScriptEngine
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.rules.TestName
-import org.mozilla.javascript.Context
 import java.io.File
 
 abstract class BasicOptimizerTest(private var basePath: String) {
@@ -48,19 +48,9 @@ abstract class BasicOptimizerTest(private var basePath: String) {
         val unoptimizedCode = FileUtil.loadFile(File(unoptimizedName))
         val optimizedCode = FileUtil.loadFile(File(optimizedName))
 
-        runFiles(unoptimizedName, optimizedName, unoptimizedCode, optimizedCode)
+        runScript(unoptimizedName, unoptimizedCode)
+        runScript(optimizedName, optimizedCode)
         checkOptimizer(unoptimizedCode, optimizedCode)
-    }
-
-    private fun runFiles(unoptimizedName: String, optimizedName: String, unoptimizedCode: String, optimizedCode: String) {
-        try {
-            val ctx = Context.enter()
-            runScript(ctx, unoptimizedName, unoptimizedCode)
-            runScript(ctx, optimizedName, optimizedCode)
-        }
-        finally {
-            Context.exit()
-        }
     }
 
     private fun checkOptimizer(unoptimizedCode: String, optimizedCode: String) {
@@ -133,12 +123,12 @@ abstract class BasicOptimizerTest(private var basePath: String) {
         return output.toString()
     }
 
-    private fun runScript(ctx: Context, fileName: String, code: String) {
-        val scope = ctx.initStandardObjects()
-        ctx.evaluateString(scope, code, fileName, 1, null)
-        val result = ctx.evaluateString(scope, "box()", "unit test", 1, null)
+    private fun runScript(fileName: String, code: String) {
+        val engine = createScriptEngine()
+        engine.eval(code)
+        val result = engine.eval("box()")
 
-        Assert.assertEquals("box() function must return 'OK'", "OK", result)
+        Assert.assertEquals("$fileName: box() function must return 'OK'", "OK", result)
     }
 
     private val errorReporter = object : ErrorReporter {

@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.js.test.semantics;
 
 import org.jetbrains.annotations.NotNull;
-import org.mozilla.javascript.EcmaError;
+
+import javax.script.ScriptException;
 
 /*
 * We can't really check that this examples work in non-browser environment, so we just check that examples compile and
@@ -50,8 +51,8 @@ public final class WebDemoCanvasExamplesTest extends AbstractWebDemoExamplesTest
             runMainAndCheckOutput(filename, "");
             fail();
         }
-        catch (EcmaError e) {
-            String expectedErrorMessage = "ReferenceError: \"" + firstUnknownSymbolEncountered + "\" is not defined.";
+        catch (ScriptException e) {
+            String expectedErrorMessage = "ReferenceError: \"" + firstUnknownSymbolEncountered + "\" is not defined";
             assertTrue("Unexpected error when running compiled canvas examples with rhino.\n" +
                        "Expected: " + expectedErrorMessage + "\n" +
                        "Actual: " + e.getMessage(),

@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.js.test.semantics
 
 import org.jetbrains.kotlin.js.test.BasicBoxTest
-import org.jetbrains.kotlin.js.test.rhino.RhinoResultChecker
-import org.jetbrains.kotlin.js.test.rhino.RhinoUtils
-import org.mozilla.javascript.JavaScriptException
+import org.jetbrains.kotlin.js.test.NashornJsTestChecker
 import java.io.File
+import javax.script.ScriptException
 
 class MultiModuleOrderTest : BasicBoxTest("$TEST_DATA_DIR_PATH/multiModuleOrder/cases/", "$TEST_DATA_DIR_PATH/multiModuleOrder/out/") {
     fun testPlain() {
@@ -42,11 +41,9 @@ class MultiModuleOrderTest : BasicBoxTest("$TEST_DATA_DIR_PATH/multiModuleOrder/
         val mainJsFile = File(parentDir, "$name-main_v5.js").path
         val libJsFile = File(parentDir, "$name-lib_v5.js").path
         try {
-            RhinoUtils.runRhinoTest(listOf(mainJsFile, libJsFile), RhinoResultChecker { _, _ ->
-                // don't check anything, expect exception from function
-            })
+            NashornJsTestChecker.run(listOf(mainJsFile, libJsFile))
         }
-        catch (e: JavaScriptException) {
+        catch (e: ScriptException) {
             val message = e.message!!
             assertTrue("Exception message should contain reference to dependency (lib)", "'lib'" in message)
             assertTrue("Exception message should contain reference to module that failed to load (main)", "'main'" in message)

@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.js.test.semantics
 import com.google.common.collect.Lists
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.test.BasicBoxTest
-import org.jetbrains.kotlin.js.test.rhino.RhinoSystemOutputChecker
-import org.jetbrains.kotlin.js.test.rhino.RhinoUtils
+import org.jetbrains.kotlin.js.test.NashornJsTestChecker
 import java.io.File
+import javax.script.ScriptException
 
 abstract class AbstractWebDemoExamplesTest(relativePath: String) : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "/$relativePath/",
@@ -36,9 +36,10 @@ abstract class AbstractWebDemoExamplesTest(relativePath: String) : BasicBoxTest(
             expectedResult: String,
             withModuleSystem: Boolean
     ) {
-        RhinoUtils.runRhinoTest(jsFiles, RhinoSystemOutputChecker(expectedResult))
+        NashornJsTestChecker.checkStdout(jsFiles, expectedResult)
     }
 
+    @Throws(ScriptException::class)
     protected fun runMainAndCheckOutput(fileName: String, expectedResult: String, vararg args: String) {
         doTest(pathToTestDir + fileName, expectedResult, MainCallParameters.mainWithArguments(Lists.newArrayList(*args)))
     }

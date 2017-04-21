@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationResult
 import org.jetbrains.kotlin.js.facade.TranslationUnit
-import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker
-import org.jetbrains.kotlin.js.test.rhino.RhinoUtils
 import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils
 import org.jetbrains.kotlin.js.test.utils.verifyAst
@@ -165,8 +163,7 @@ abstract class BasicBoxTest(
             expectedResult: String,
             withModuleSystem: Boolean
     ) {
-        val checker = RhinoFunctionResultChecker(testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
-        RhinoUtils.runRhinoTest(jsFiles, checker)
+        NashornJsTestChecker.check(jsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
     }
 
     protected open fun performAdditionalChecks(generatedJsFiles: List<String>, outputPrefixFile: File?, outputPostfixFile: File?) {}
