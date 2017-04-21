@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.SmartList
 import java.lang.reflect.Field
-import java.util.LinkedHashMap
+import java.util.*
 
 annotation class Argument(
         val value: String,
@@ -34,20 +34,20 @@ val Argument.isAdvanced: Boolean
 private val ADVANCED_ARGUMENT_PREFIX = "-X"
 private val FREE_ARGS_DELIMITER = "--"
 
-class ArgumentParseErrors {
-    val unknownArgs: MutableList<String> = SmartList<String>()
+data class ArgumentParseErrors(
+    val unknownArgs: MutableList<String> = SmartList<String>(),
 
-    val unknownExtraFlags: MutableList<String> = SmartList<String>()
+    val unknownExtraFlags: MutableList<String> = SmartList<String>(),
 
     // Names of extra (-X...) arguments which have been passed in an obsolete form ("-Xaaa bbb", instead of "-Xaaa=bbb")
-    val extraArgumentsPassedInObsoleteForm: MutableList<String> = SmartList<String>()
+    val extraArgumentsPassedInObsoleteForm: MutableList<String> = SmartList<String>(),
 
     // Non-boolean arguments which have been passed multiple times, possibly with different values.
     // The key in the map is the name of the argument, the value is the last passed value.
-    val duplicateArguments: MutableMap<String, String> = LinkedHashMap<String, String>()
+    val duplicateArguments: MutableMap<String, String> = LinkedHashMap<String, String>(),
 
     var argumentWithoutValue: String? = null
-}
+)
 
 // Parses arguments in the passed [result] object, or throws an [IllegalArgumentException] with the message to be displayed to the user
 fun <A : CommonCompilerArguments> parseCommandLineArguments(args: Array<String>, result: A) {
