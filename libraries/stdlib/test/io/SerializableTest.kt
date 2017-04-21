@@ -57,25 +57,32 @@ class SerializableTest {
     }
 }
 
-public fun <T> serializeAndDeserialize(value: T): T {
+public fun <T> serializeToByteArray(value: T): ByteArray {
     val outputStream = ByteArrayOutputStream()
     val objectOutputStream = ObjectOutputStream(outputStream)
 
     objectOutputStream.writeObject(value)
     objectOutputStream.close()
     outputStream.close()
+    return outputStream.toByteArray()
+}
 
-    val inputStream = ByteArrayInputStream(outputStream.toByteArray())
+public fun <T> deserializeFromByteArray(bytes: ByteArray): T {
+    val inputStream = ByteArrayInputStream(bytes)
     val inputObjectStream = ObjectInputStream(inputStream)
     @Suppress("UNCHECKED_CAST")
     return inputObjectStream.readObject() as T
 }
 
+public fun <T> serializeAndDeserialize(value: T): T {
+    val bytes = serializeToByteArray(value)
+    return deserializeFromByteArray(bytes)
+}
+
 private fun hexToBytes(value: String): ByteArray = value.split(" ").map { Integer.parseInt(it, 16).toByte() }.toByteArray()
 
-public fun <T> deserializeFromHex(value: String) = hexToBytes(value).let {
-    val inputStream = ByteArrayInputStream(it)
-    val inputObjectStream = ObjectInputStream(inputStream)
-    @Suppress("UNCHECKED_CAST")
-    inputObjectStream.readObject() as T
-}
+public fun <T> deserializeFromHex(value: String) = deserializeFromByteArray<T>(hexToBytes(value))
+
+public fun <T> serializeToHex(value: T) =
+        serializeToByteArray(value).joinToString(" ") { (it.toInt() and 0xFF).toString(16).padStart(2, '0') }
+

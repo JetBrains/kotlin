@@ -2420,7 +2420,7 @@ public final class kotlin/text/MatchResult$Destructured {
 	public final fun toList ()Ljava/util/List;
 }
 
-public final class kotlin/text/Regex {
+public final class kotlin/text/Regex : java/io/Serializable {
 	public static final field Companion Lkotlin/text/Regex$Companion;
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Ljava/util/Set;)V
