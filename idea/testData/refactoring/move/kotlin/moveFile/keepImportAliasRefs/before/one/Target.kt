@@ -1,0 +1,3 @@
+package one
+
+class ImportedWithAlias

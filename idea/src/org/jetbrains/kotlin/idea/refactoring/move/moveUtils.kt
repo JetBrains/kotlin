@@ -163,7 +163,10 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
                 }
                 .firstOrNull()
 
-        if (isExtension || containerFqName != null || isImported(descriptor)) return {
+        val isImported = isImported(descriptor)
+        if (isImported && this is KtFile) return null
+
+        if (isExtension || containerFqName != null || isImported) return {
             createMoveUsageInfoIfPossible(it.mainReference, declaration, false, true)
         }
 
