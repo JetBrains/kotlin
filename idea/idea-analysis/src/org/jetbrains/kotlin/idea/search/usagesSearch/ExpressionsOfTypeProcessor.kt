@@ -223,13 +223,17 @@ class ExpressionsOfTypeProcessor(
                         KotlinLanguage.INSTANCE -> processClassUsageInKotlin(element)
                         JavaLanguage.INSTANCE -> processClassUsageInJava(element)
                         else -> {
-                            if (element.language.displayName == "Groovy") {
-                                processClassUsageInLanguageWithPsiClass(element)
-                                true
-                            }
-                            else {
-                                // If there's no PsiClass - consider processed
-                                element.getParentOfType<PsiClass>(true) == null
+                            when (element.language.displayName) {
+                                "Groovy" -> {
+                                    processClassUsageInLanguageWithPsiClass(element)
+                                    true
+                                }
+                                "Scala" -> false
+                                "Clojure" -> false
+                                else -> {
+                                    // If there's no PsiClass - consider processed
+                                    element.getParentOfType<PsiClass>(true) == null
+                                }
                             }
                         }
                     }
