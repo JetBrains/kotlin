@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.wrappers.symbols
 
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
 import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.name.FqName
@@ -37,12 +36,15 @@ open class SymbolBasedType<out T : TypeMirror>(val typeMirror: T,
         }
     }
 
-    override val annotations: Collection<JavaAnnotation> = emptyList()
+    override val annotations
+        get() = typeMirror.annotationMirrors.map { SymbolBasedAnnotation(it, javac) }
 
     override val isDeprecatedInJavaDoc
         get() = javac.isDeprecated(typeMirror)
 
-    override fun findAnnotation(fqName: FqName) = null
+    override fun findAnnotation(fqName: FqName) = typeMirror.annotationMirrors
+            .find { it.toString() == fqName.asString() }
+            ?.let { SymbolBasedAnnotation(it, javac) }
 
     override fun equals(other: Any?) = (other as? SymbolBasedType<*>)?.typeMirror == typeMirror
 
