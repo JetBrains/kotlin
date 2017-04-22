@@ -126,7 +126,8 @@ private enum class HintType(desc: String, enabled: Boolean) {
                     resolvedArg.arguments.firstOrNull()?.let { arg ->
                         arg.getArgumentExpression()?.let { argExp ->
                             if (!arg.isNamed() && !valueParam.name.isSpecial && argExp.isUnclearExpression()) {
-                                return@mapNotNull InlayInfo(valueParam.name.identifier, argExp.startOffset)
+                                val prefix = if (valueParam.varargElementType != null) "..." else ""
+                                return@mapNotNull InlayInfo(prefix + valueParam.name.identifier, argExp.startOffset)
                             }
                         }
                     }

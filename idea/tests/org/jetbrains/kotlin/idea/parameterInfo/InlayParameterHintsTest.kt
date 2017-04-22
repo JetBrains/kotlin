@@ -52,4 +52,44 @@ class InlayParameterHintsTest : KotlinLightCodeInsightFixtureTestCase() {
     val t = IllegalStateException("crime");
   }""")
     }
+
+    fun `test single varargs hint`() {
+        check("""
+  fun main() {
+    testBooleanVarargs(<hint text="test:" />13, <hint text="...booleans:" />false)
+  }
+
+  fun testBooleanVarargs(test: Int, vararg booleans: Boolean): Boolean {
+    return false
+  }
+}
+""")
+    }
+
+    fun `test no hint if varargs null`() {
+        check("""
+  fun main() {
+    testBooleanVarargs(<hint text="test:" />13)
+  }
+
+  fun testBooleanVarargs(test: Int, vararg booleans: Boolean): Boolean {
+    return false
+  }
+""")
+    }
+
+
+    fun `test multiple vararg hint`() {
+        check("""
+  fun main() {
+    testBooleanVarargs(<hint text="test:" />13, <hint text="...booleans:" />false, true, false)
+  }
+
+  fun testBooleanVarargs(test: Int, vararg booleans: Boolean): Boolean {
+    return false
+  }
+""")
+    }
+
+
 }
