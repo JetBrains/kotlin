@@ -50,13 +50,13 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.SmartSet
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
 class MoveConflictChecker(
@@ -327,27 +327,67 @@ class MoveConflictChecker(
 
     private fun checkVisibilityInDeclarations(conflicts: MultiMap<PsiElement, String>) {
         val targetContainer = moveTarget.getContainerDescriptor() ?: return
+
+        fun DeclarationDescriptor.targetAwareContainingDescriptor(): DeclarationDescriptor? {
+            val defaultContainer = containingDeclaration
+            val psi = (this as? DeclarationDescriptorWithSource)?.source?.getPsi()
+            return if (psi != null && psi in allElementsToMove) targetContainer else defaultContainer
+        }
+
+        fun DeclarationDescriptor.targetAwareContainers(): Sequence<DeclarationDescriptor> {
+            return generateSequence(this) { it.targetAwareContainingDescriptor() }.drop(1)
+        }
+
+        fun DeclarationDescriptor.targetAwareContainingClass(): ClassDescriptor? {
+            return targetAwareContainers().firstIsInstanceOrNull<ClassDescriptor>()
+        }
+
+        fun DeclarationDescriptorWithVisibility.isProtectedVisible(referrerDescriptor: DeclarationDescriptor): Boolean {
+            val givenClassDescriptor = targetAwareContainingClass()
+            val referrerClassDescriptor = referrerDescriptor.targetAwareContainingClass() ?: return false
+            if (givenClassDescriptor != null && givenClassDescriptor.isCompanionObject) {
+                val companionOwner = givenClassDescriptor.targetAwareContainingClass()
+                if (companionOwner != null && referrerClassDescriptor.isSubclassOf(companionOwner)) return true
+            }
+            val whatDeclaration = DescriptorUtils.unwrapFakeOverrideToAnyDeclaration(this)
+            val classDescriptor = whatDeclaration.targetAwareContainingClass() ?: return false
+            if (referrerClassDescriptor.isSubclassOf(classDescriptor)) return true
+            return referrerDescriptor.targetAwareContainingDescriptor()?.let { isProtectedVisible(it) } ?: false
+        }
+
+        fun DeclarationDescriptorWithVisibility.isVisibleFrom(ref: PsiReference): Boolean {
+            val targetVisibility = visibility.normalize()
+            if (targetVisibility == Visibilities.PUBLIC) return true
+
+            return when (targetVisibility) {
+                Visibilities.PROTECTED -> {
+                    val referrer = ref.element.getStrictParentOfType<KtDeclaration>()
+                    val referrerDescriptor = referrer?.resolveToDescriptor() ?: return true
+                    isProtectedVisible(referrerDescriptor)
+                }
+                else -> isVisibleIn(targetContainer)
+            }
+        }
+
         for (declaration in elementsToMove - doNotGoIn) {
             declaration.forEachDescendantOfType<KtReferenceExpression> { refExpr ->
                 refExpr.references
                         .forEach { ref ->
                             val target = ref.resolve() ?: return@forEach
                             if (isToBeMoved(target)) return@forEach
+
                             val targetDescriptor = when (target) {
                                                        is KtDeclaration -> target.resolveToDescriptor()
                                                        is PsiMember -> target.getJavaMemberDescriptor()
                                                        else -> null
-                                                   } ?: return@forEach
-                            if (targetDescriptor is CallableMemberDescriptor &&
-                                targetDescriptor.visibility.normalize() == Visibilities.PROTECTED) {
-                                val resolvedCall = refExpr.getResolvedCall(refExpr.analyze(BodyResolveMode.PARTIAL)) ?: return@forEach
-                                val dispatchReceiver = resolvedCall.dispatchReceiver
-                                if (dispatchReceiver is ExpressionReceiver && dispatchReceiver.expression is KtSuperExpression) return@forEach
-                                val receiverClass = resolvedCall.dispatchReceiver?.type?.constructor?.declarationDescriptor?.source?.getPsi()
-                                if (receiverClass != null && isToBeMoved(receiverClass)) return@forEach
+                                                   } as? DeclarationDescriptorWithVisibility ?: return@forEach
+
+                            var isVisible = targetDescriptor.isVisibleFrom(ref)
+                            if (isVisible && targetDescriptor is ConstructorDescriptor) {
+                                isVisible = targetDescriptor.containingDeclaration.isVisibleFrom(ref)
                             }
 
-                            if (!targetDescriptor.isVisibleIn(targetContainer)) {
+                            if (!isVisible) {
                                 val message = "${render(declaration)} uses ${render(target)} which will be inaccessible after move"
                                 conflicts.putValue(refExpr, message.capitalize())
                             }
