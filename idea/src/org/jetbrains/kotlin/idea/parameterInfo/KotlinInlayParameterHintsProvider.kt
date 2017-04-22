@@ -24,11 +24,14 @@ import com.intellij.lang.Language
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -38,8 +41,10 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -121,21 +126,32 @@ private enum class HintType(desc: String, enabled: Boolean) {
 
         private fun provideParameterInfo(element: KtCallExpression): List<InlayInfo> {
             val ctx = element.analyze(BodyResolveMode.PARTIAL)
-            element.getResolvedCall(ctx)?.let { resolvedCall ->
-                return resolvedCall.valueArguments.mapNotNull { (valueParam: ValueParameterDescriptor, resolvedArg) ->
-                    resolvedArg.arguments.firstOrNull()?.let { arg ->
-                        arg.getArgumentExpression()?.let { argExp ->
-                            if (!arg.isNamed() && !valueParam.name.isSpecial && argExp.isUnclearExpression()) {
-                                val prefix = if (valueParam.varargElementType != null) "..." else ""
-                                return@mapNotNull InlayInfo(prefix + valueParam.name.identifier, argExp.startOffset)
-                            }
+            val call = element.getCall(ctx) ?: return emptyList()
+            val candidates = call.resolveCandidates(ctx, element.getResolutionFacade())
+            if (candidates.isEmpty()) return emptyList()
+            candidates.singleOrNull()?.let { return getParameterInfoForCallCandidate(it) }
+            return candidates.map { getParameterInfoForCallCandidate(it) }.reduce { infos1, infos2 ->
+                for (index in infos1.indices) {
+                    if (index >= infos2.size || infos1[index] != infos2[index]) {
+                        return@reduce infos1.subList(0, index)
+                    }
+                }
+                infos1
+            }
+        }
+
+        private fun getParameterInfoForCallCandidate(resolvedCall: ResolvedCall<out CallableDescriptor>): List<InlayInfo> {
+            return resolvedCall.valueArguments.mapNotNull { (valueParam: ValueParameterDescriptor, resolvedArg) ->
+                resolvedArg.arguments.firstOrNull()?.let { arg ->
+                    arg.getArgumentExpression()?.let { argExp ->
+                        if (!arg.isNamed() && !valueParam.name.isSpecial && argExp.isUnclearExpression()) {
+                            val prefix = if (valueParam.varargElementType != null) "..." else ""
+                            return@mapNotNull InlayInfo(prefix + valueParam.name.identifier, argExp.startOffset)
                         }
                     }
-                    null
                 }
+                null
             }
-
-            return emptyList()
         }
 
         private fun KtExpression.isUnclearExpression() = when(this) {

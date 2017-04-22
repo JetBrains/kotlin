@@ -91,5 +91,44 @@ class InlayParameterHintsTest : KotlinLightCodeInsightFixtureTestCase() {
 """)
     }
 
+    fun `test inline positive and negative numbers`() {
+        check("""
+  fun main() {
+    val obj = Any()
+    count(<hint text="test:"/>-1, obj);
+    count(<hint text="test:"/>+1, obj);
+  }
+
+  fun count(test: Int, obj: Any) {
+  }
+}
+""")
+    }
+
+    fun `test show ambiguous`() {
+        check("""
+  fun main() {
+    test(<hint text="a:"/>10, x);
+  }
+  fun test(a: Int, bS: String) {}
+  fun test(a: Int, bI: Int) {}
+""")
+    }
+
+    fun `test show ambiguous constructor`() {
+        check("""
+  fun main() {
+    X(<hint text="a:"/>10, x);
+  }
+}
+
+class X {
+  constructor(a: Int, bI: Int) {}
+  constructor(a: Int, bS: String) {}
+}
+""")
+    }
+
+
 
 }
