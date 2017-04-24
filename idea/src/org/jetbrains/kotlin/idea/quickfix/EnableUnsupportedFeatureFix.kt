@@ -118,7 +118,8 @@ sealed class EnableUnsupportedFeatureFix(
             }
 
             val module = ModuleUtilCore.findModuleForPsiElement(diagnostic.psiElement) ?: return null
-            if (!KotlinPluginUtil.isGradleModule(module) && !KotlinPluginUtil.isMavenModule(module)) {
+            if (KotlinPluginUtil.isMavenModule(module)) return null
+            if (!KotlinPluginUtil.isGradleModule(module)) {
                 val facetSettings = KotlinFacet.get(module)?.configuration?.settings
                 if (facetSettings == null || facetSettings.useProjectSettings) return InProject(diagnostic.psiElement, feature, apiVersionOnly)
             }
