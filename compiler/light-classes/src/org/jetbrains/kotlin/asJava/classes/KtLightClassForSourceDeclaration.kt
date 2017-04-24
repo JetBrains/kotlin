@@ -17,11 +17,15 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.google.common.collect.Lists
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
+import com.intellij.psi.impl.PsiSubstitutorImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
+import com.intellij.psi.impl.source.PsiImmediateClassType
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
@@ -31,6 +35,8 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
+import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.UNSURE
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
@@ -174,12 +180,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     override fun getName(): String? = classOrObject.nameAsName?.asString()
 
-    private val _modifierList: PsiModifierList by lazyPub {
-        object : KtLightModifierListWithExplicitModifiers(this@KtLightClassForSourceDeclaration, computeModifiers()) {
-            override val delegate: PsiAnnotationOwner
-                get() = this@KtLightClassForSourceDeclaration.delegate.modifierList!!
-        }
-    }
+    private val _modifierList: PsiModifierList by lazyPub { KtLightModifierListWithExplicitModifiers(this@KtLightClassForSourceDeclaration, computeModifiers()) }
 
     override fun getModifierList(): PsiModifierList? = _modifierList
 
@@ -274,6 +275,8 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     override fun isValid(): Boolean = classOrObject.isValid
 
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
+        LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }
+
         val qualifiedName: String?
         if (baseClass is KtLightClassForSourceDeclaration) {
             val baseDescriptor = baseClass.getDescriptor()
@@ -412,6 +415,41 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
         private val LOG = Logger.getInstance(KtLightClassForSourceDeclaration::class.java)
     }
 
+    override fun getSupers(): Array<PsiClass> {
+        if (classOrObject.superTypeListEntries.isEmpty()) {
+            return getSupertypeByPsi()?.let { arrayOf(it.resolve()!!) } ?: emptyArray()
+        }
+        return clsDelegate.supers
+    }
+
+    override fun getSuperTypes(): Array<PsiClassType> {
+        if (classOrObject.superTypeListEntries.isEmpty()) {
+            return getSupertypeByPsi()?.let { arrayOf<PsiClassType>(it) } ?: emptyArray()
+        }
+        return clsDelegate.superTypes
+    }
+
+    private fun getSupertypeByPsi(): PsiImmediateClassType? {
+        return classOrObject.defaultJavaAncestorQualifiedName()?.let {
+            ancestorFqName ->
+            JavaPsiFacade.getInstance(project).findClass(ancestorFqName, resolveScope)?.let {
+                PsiImmediateClassType(it, createSubstitutor(it))
+            }
+        }
+    }
+
+    private fun createSubstitutor(ancestor: PsiClass): PsiSubstitutor {
+        if (ancestor.qualifiedName != CommonClassNames.JAVA_LANG_ENUM) {
+            return PsiSubstitutor.EMPTY
+        }
+        val javaLangEnumsTypeParameter = ancestor.typeParameters.firstOrNull() ?: return PsiSubstitutor.EMPTY
+        return PsiSubstitutorImpl.createSubstitutor(
+                mapOf(
+                        javaLangEnumsTypeParameter to PsiImmediateClassType(this, PsiSubstitutor.EMPTY)
+                )
+        )
+    }
+
     override val originKind: LightClassOriginKind
         get() = LightClassOriginKind.SOURCE
 }
@@ -423,3 +461,30 @@ fun getOutermostClassOrObject(classOrObject: KtClassOrObject): KtClassOrObject {
     return outermostClass
 }
 
+interface LightClassInheritanceHelper {
+    fun isInheritor(
+            lightClass: KtLightClassForSourceDeclaration,
+            baseClass: PsiClass,
+            checkDeep: Boolean
+    ): ImpreciseResolveResult
+
+    object NoHelp : LightClassInheritanceHelper {
+        override fun isInheritor(lightClass: KtLightClassForSourceDeclaration, baseClass: PsiClass, checkDeep: Boolean) = UNSURE
+    }
+
+    companion object {
+        fun getService(project: Project): LightClassInheritanceHelper =
+                ServiceManager.getService(project, LightClassInheritanceHelper::class.java) ?: NoHelp
+    }
+}
+
+fun KtClassOrObject.defaultJavaAncestorQualifiedName(): String? {
+    if (this !is KtClass) return CommonClassNames.JAVA_LANG_OBJECT
+
+    return when {
+        isAnnotation() -> CommonClassNames.JAVA_LANG_ANNOTATION_ANNOTATION
+        isEnum() -> CommonClassNames.JAVA_LANG_ENUM
+        isInterface() -> CommonClassNames.JAVA_LANG_OBJECT // see com.intellij.psi.impl.PsiClassImplUtil.getSuperClass
+        else -> CommonClassNames.JAVA_LANG_OBJECT
+    }
+}

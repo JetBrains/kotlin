@@ -27,6 +27,4 @@ abstract class KtLazyLightClass(manager: PsiManager) : KtLightClassBase(manager)
 
     override fun getOwnFields() = lightClassData.getOwnFields(this)
     override fun getOwnMethods() = lightClassData.getOwnMethods(this)
-    override fun getSuperTypes() = lightClassData.supertypes
-
 }

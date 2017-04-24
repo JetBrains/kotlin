@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.caches.resolve.lightClasses
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
@@ -65,7 +64,7 @@ sealed class LazyLightClassDataHolder(
 
     // for facade or defaultImpls
     override fun findData(findDelegate: (PsiJavaFileStub) -> PsiClass): LightClassData =
-            LazyLightClassData(relyOnDummySupertypes = true) { lightClassBuilderResult ->
+            LazyLightClassData { lightClassBuilderResult ->
                 findDelegate(lightClassBuilderResult.stub)
             }
 
@@ -73,7 +72,7 @@ sealed class LazyLightClassDataHolder(
             builder: LightClassBuilder, exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
     ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForClass {
         override fun findDataForClassOrObject(classOrObject: KtClassOrObject): LightClassData =
-                LazyLightClassData(relyOnDummySupertypes = classOrObject.getSuperTypeList() == null) { lightClassBuilderResult ->
+                LazyLightClassData { lightClassBuilderResult ->
                     lightClassBuilderResult.stub.findDelegate(classOrObject)
                 }
     }
@@ -83,7 +82,6 @@ sealed class LazyLightClassDataHolder(
     ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForFacade
 
     private inner class LazyLightClassData(
-            private val relyOnDummySupertypes: Boolean,
             findDelegate: (LightClassBuilderResult) -> PsiClass
     ) : LightClassData {
         override val clsDelegate: PsiClass by lazyPub { findDelegate(exactResult) }
@@ -133,17 +131,13 @@ sealed class LazyLightClassDataHolder(
                 }
             }
         }
-
-        override val supertypes: Array<PsiClassType>
-            get() = if (relyOnDummySupertypes && dummyDelegate != null) dummyDelegate!!.superTypes else clsDelegate.superTypes
-
     }
 
     private fun <T : PsiMember> T?.assertMatches(dummyMember: T, containingClass: KtLightClass): T {
         if (this == null) throw LazyLightClassMemberMatchingError.NoMatch(dummyMember, containingClass)
 
         val parameterCountMatches = (this as? PsiMethod)?.parameterList?.parametersCount ?: 0 ==
-                                    (dummyMember as? PsiMethod)?.parameterList?.parametersCount ?: 0
+                (dummyMember as? PsiMethod)?.parameterList?.parametersCount ?: 0
         if (this.memberIndex != dummyMember.memberIndex || !parameterCountMatches) {
             throw LazyLightClassMemberMatchingError.WrongMatch(this, dummyMember, containingClass)
         }
@@ -156,7 +150,6 @@ private fun shouldRollbackOptimization(origin: LightMemberOriginForDeclaration?)
     val kotlinDeclaration = origin?.originalElement as? KtNamedDeclaration ?: return false
 
     if (!kotlinDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
-
 
     val possiblyOverridesInternalMember = kotlinDeclaration.name?.let { anyInternalMembersWithThisName(it, kotlinDeclaration.project) } ?: false
     return possiblyOverridesInternalMember
