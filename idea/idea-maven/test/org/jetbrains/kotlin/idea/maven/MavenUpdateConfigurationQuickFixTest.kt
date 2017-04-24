@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/*
 package org.jetbrains.kotlin.idea.maven
 
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -63,6 +64,14 @@ class MavenUpdateConfigurationQuickFixTest : MavenImportingTestCase() {
         doTest("Set module language version to 1.1")
     }
 
+    @Test fun testEnableCoroutines() {
+        doTest("Enable coroutine support in the current module")
+    }
+
+    @Test fun testAddKotlinReflect() {
+        doTest("Add kotlin-reflect.jar to the classpath")
+    }
+
     private fun doTest(intentionName: String) {
         val pomVFile = createProjectSubFile("pom.xml", File(getTestDataPath(), "pom.xml").readText())
         val sourceVFile = createProjectSubFile("src/main/kotlin/src.kt", File(getTestDataPath(), "src.kt").readText())
@@ -87,3 +96,4 @@ class MavenUpdateConfigurationQuickFixTest : MavenImportingTestCase() {
         }
     }
 }
+*/
