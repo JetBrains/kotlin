@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -57,7 +58,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                           ): ExitCode {
 
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable,
-            configuration, Arrays.asList<String>("extensions/common.xml"))
+            configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES)
         val project = environment.project
         val konanConfig = KonanConfig(project, configuration)
 
