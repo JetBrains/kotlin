@@ -34,7 +34,7 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewUtil
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -100,7 +100,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
                 || (getterJvmName == null && (it.resolve() as? PsiNamedElement)?.name != setterJvmName)
                 || (setterJvmName == null && (it.resolve() as? PsiNamedElement)?.name != getterJvmName)
             }
-            element is KtLightElement<*, *> -> {
+            element is KtLightDeclaration<*, *> -> {
                 val name = element.name
                 if (name == getterJvmName || name == setterJvmName) allReferences.filterNot { it is KtReference } else allReferences
             }

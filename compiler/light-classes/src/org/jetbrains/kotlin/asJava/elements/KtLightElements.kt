@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
-interface KtLightElement<out T : KtElement, out D : PsiElement> : PsiNamedElement {
+interface KtLightElement<out T : KtElement, out D : PsiElement> : PsiElement {
     val kotlinOrigin: T?
 
     val clsDelegate: D
 }
 
-interface KtLightDeclaration<out T : KtDeclaration, out D : PsiElement> : KtLightElement<T, D>
+interface KtLightDeclaration<out T : KtDeclaration, out D : PsiElement> : KtLightElement<T, D>, PsiNamedElement
 
 interface KtLightMember<out D : PsiMember> : PsiMember, KtLightDeclaration<KtDeclaration, D>, PsiNameIdentifierOwner, PsiDocCommentOwner {
     val lightMemberOrigin: LightMemberOrigin?

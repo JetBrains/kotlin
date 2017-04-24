@@ -38,8 +38,6 @@ class KtLightPsiReferenceList (
     inner class KtLightSuperTypeReference(
             override val clsDelegate: PsiJavaCodeReferenceElement
     ) : KtLightElement<KtSuperTypeListEntry, PsiJavaCodeReferenceElement>, PsiJavaCodeReferenceElement by clsDelegate {
-        override fun getName() = null
-        override fun setName(name: String) = throw UnsupportedOperationException()
 
         override val kotlinOrigin by lazyPub {
             val superTypeList = this@KtLightPsiReferenceList.kotlinOrigin ?: return@lazyPub null
@@ -68,9 +66,6 @@ class KtLightPsiReferenceList (
     private val _referenceElements by lazyPub {
         clsDelegate.referenceElements.map { KtLightSuperTypeReference(it) }.toTypedArray()
     }
-
-    override fun getName() = null
-    override fun setName(name: String) = throw UnsupportedOperationException()
 
     override fun getParent() = owner
 
