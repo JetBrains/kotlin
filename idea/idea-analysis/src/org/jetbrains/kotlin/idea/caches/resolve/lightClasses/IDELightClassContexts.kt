@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
@@ -50,12 +48,12 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallResolver
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
-import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory
+import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
@@ -68,6 +66,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.WrappedTypeFactory
 import org.jetbrains.kotlin.utils.sure
 
@@ -275,21 +274,17 @@ object IDELightClassContexts {
 
     class AdHocAnnotationResolver(
             private val moduleDescriptor: ModuleDescriptor,
-            callResolver: CallResolver,
+            private val callResolver: CallResolver,
             constantExpressionEvaluator: ConstantExpressionEvaluator,
             storageManager: StorageManager
     ) : AnnotationResolverImpl(callResolver, constantExpressionEvaluator, storageManager) {
-
-        override fun resolveAnnotationEntries(scope: LexicalScope, annotationEntries: List<KtAnnotationEntry>, trace: BindingTrace, shouldResolveArguments: Boolean): Annotations {
-            return super.resolveAnnotationEntries(scope, annotationEntries, trace, shouldResolveArguments)
-        }
 
         override fun resolveAnnotationType(scope: LexicalScope, entryElement: KtAnnotationEntry, trace: BindingTrace): KotlinType {
             return annotationClassByEntry(entryElement)?.defaultType ?: super.resolveAnnotationType(scope, entryElement, trace)
         }
 
         private fun annotationClassByEntry(entryElement: KtAnnotationEntry): ClassDescriptor? {
-            val annotationTypeReferencePsi = (entryElement.typeReference?.typeElement as? KtUserType)?.referenceExpression ?: return null
+            val annotationTypeReferencePsi = entryElement.calleeExpression?.constructorReferenceExpression ?: return null
             val referencedName = annotationTypeReferencePsi.getReferencedName()
             for (annotationFqName in annotationsThatAffectCodegen) {
                 if (referencedName == annotationFqName.shortName().asString()) {
@@ -304,56 +299,18 @@ object IDELightClassContexts {
         override fun resolveAnnotationCall(annotationEntry: KtAnnotationEntry, scope: LexicalScope, trace: BindingTrace): OverloadResolutionResults<FunctionDescriptor> {
             val annotationConstructor = annotationClassByEntry(annotationEntry)?.constructors?.singleOrNull()
                                         ?: return super.resolveAnnotationCall(annotationEntry, scope, trace)
-            val valueArgumentText = valueArgumentText(annotationEntry)
-                                    ?: return super.resolveAnnotationCall(annotationEntry, scope, trace)
-            val fakeResolvedCall = object : ResolvedCall<FunctionDescriptor> {
-                override fun getStatus() = ResolutionStatus.SUCCESS
-                override fun getCandidateDescriptor() = annotationConstructor
-                override fun getResultingDescriptor() = annotationConstructor
-                override fun getValueArguments() =
-                        annotationConstructor.valueParameters.singleOrNull()?.let { mapOf(it to FakeResolvedValueArgument(valueArgumentText)) }.orEmpty()
 
-                override fun getCall() = notImplemented
-                override fun getExtensionReceiver() = notImplemented
-                override fun getDispatchReceiver() = notImplemented
-                override fun getExplicitReceiverKind() = notImplemented
-
-                override fun getValueArgumentsByIndex() = notImplemented
-                override fun getArgumentMapping(valueArgument: ValueArgument) = notImplemented
-                override fun getTypeArguments() = notImplemented
-                override fun getDataFlowInfoForArguments() = notImplemented
-                override fun getSmartCastDispatchReceiverType() = notImplemented
-            }
-
-            return object : OverloadResolutionResults<FunctionDescriptor> {
-                override fun isSingleResult() = true
-                override fun getResultingCall(): ResolvedCall<FunctionDescriptor> = fakeResolvedCall
-                override fun getResultingDescriptor() = annotationConstructor
-                override fun getAllCandidates() = notImplemented
-                override fun getResultingCalls() = notImplemented
-                override fun getResultCode() = notImplemented
-                override fun isSuccess() = notImplemented
-                override fun isNothing() = notImplemented
-                override fun isAmbiguity() = notImplemented
-                override fun isIncomplete() = notImplemented
-            }
-        }
-
-        private fun valueArgumentText(annotationEntry: KtAnnotationEntry) =
-                ((annotationEntry.valueArguments.singleOrNull()?.getArgumentExpression() as? KtStringTemplateExpression)?.entries?.singleOrNull() as? KtLiteralStringTemplateEntry)?.text
-
-        override fun getAnnotationArgumentValue(trace: BindingTrace, valueParameter: ValueParameterDescriptor, resolvedArgument: ResolvedValueArgument): ConstantValue<*>? {
-            if (resolvedArgument is FakeResolvedValueArgument) return StringValue(resolvedArgument.argumentText, moduleDescriptor.builtIns)
-
-            return super.getAnnotationArgumentValue(trace, valueParameter, resolvedArgument)
-        }
-
-        private class FakeResolvedValueArgument(val argumentText: String) : ResolvedValueArgument {
-            override fun getArguments() = notImplemented
+            @Suppress("UNCHECKED_CAST")
+            return callResolver.resolveConstructorCall(
+                    BasicCallResolutionContext.create(
+                            trace, scope, CallMaker.makeCall(null, null, annotationEntry), TypeUtils.NO_EXPECTED_TYPE,
+                            DataFlowInfoFactory.EMPTY, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                            true
+                    ),
+                    annotationEntry.calleeExpression!!.constructorReferenceExpression!!,
+                    annotationConstructor.returnType
+            ) as OverloadResolutionResults<FunctionDescriptor>
         }
     }
-
-    private val notImplemented: Nothing
-        get() = error("Should not be called")
 }
 

@@ -346,6 +346,15 @@ public class CallResolver {
             return checkArgumentTypesAndFail(context);
         }
 
+        return resolveConstructorCall(context, functionReference, constructedType);
+    }
+
+    @NotNull
+    public OverloadResolutionResults<ConstructorDescriptor> resolveConstructorCall(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull KtReferenceExpression functionReference,
+            @NotNull KotlinType constructedType
+    ) {
         Pair<Collection<ResolutionCandidate<ConstructorDescriptor>>, BasicCallResolutionContext> candidatesAndContext =
                 prepareCandidatesAndContextForConstructorCall(constructedType, context);
 
