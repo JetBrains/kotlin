@@ -159,8 +159,7 @@ abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleTy
 }
 
 val KotlinType.isError: Boolean
-    get() {
-        val unwrapped = unwrap()
-        return unwrapped is ErrorUtils.ErrorTypeImpl ||
-               (unwrapped is FlexibleType && unwrapped.delegate is ErrorUtils.ErrorTypeImpl)
+    get() = unwrap().let { unwrapped ->
+        unwrapped is ErrorType ||
+        (unwrapped is FlexibleType && unwrapped.delegate is ErrorType)
     }
