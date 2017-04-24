@@ -22,6 +22,7 @@ import java.util.List;
 public enum EnvironmentConfigFiles {
     JVM_CONFIG_FILES("extensions/common.xml", "extensions/kotlin2jvm.xml"),
     JS_CONFIG_FILES("extensions/common.xml", "extensions/kotlin2js.xml"),
+    NATIVE_CONFIG_FILES("extensions/common.xml"),
     EMPTY();
 
     private final List<String> files;
