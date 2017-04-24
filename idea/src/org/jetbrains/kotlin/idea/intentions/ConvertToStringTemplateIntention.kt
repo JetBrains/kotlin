@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ class ConvertToStringTemplateInspection : IntentionBasedInspection<KtBinaryExpre
         { it -> ConvertToStringTemplateIntention.shouldSuggestToConvert(it) }
 )
 
-class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Convert concatenation to template") {
+open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Convert concatenation to template") {
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         if (!isApplicableToNoParentCheck(element)) return false
 
@@ -56,7 +56,8 @@ class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention
                    && !expression.textContains('\n')
         }
 
-        private fun buildReplacement(expression: KtBinaryExpression): KtStringTemplateExpression {
+        @JvmStatic
+        protected fun buildReplacement(expression: KtBinaryExpression): KtStringTemplateExpression {
             val rightText = buildText(expression.right, false)
             return fold(expression.left, rightText, KtPsiFactory(expression))
         }
