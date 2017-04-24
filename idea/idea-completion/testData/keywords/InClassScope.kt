@@ -20,11 +20,11 @@ class TestClass {
 // EXIST:  var
 // EXIST:  constructor
 // EXIST:  init
-// EXIST:  companion object
+// EXIST:  { itemText: "companion object", tailText: " {...}" }
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed class
-// EXIST:  lateinit
+// EXIST:  lateinit var
 // EXIST:  data
 // EXIST:  inline
 // EXIST:  tailrec

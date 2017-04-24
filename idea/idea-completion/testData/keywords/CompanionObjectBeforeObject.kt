@@ -3,4 +3,4 @@ class TestClass {
     object O {}
 }
 
-// EXIST: "companion object"
+// EXIST: { itemText: "companion object", tailText: " {...}" }

@@ -58,7 +58,8 @@ object KeywordCompletion {
             COMPANION_KEYWORD to OBJECT_KEYWORD,
             ENUM_KEYWORD to CLASS_KEYWORD,
             ANNOTATION_KEYWORD to CLASS_KEYWORD,
-            SEALED_KEYWORD to CLASS_KEYWORD
+            SEALED_KEYWORD to CLASS_KEYWORD,
+            LATEINIT_KEYWORD to VAR_KEYWORD
     )
 
     private val KEYWORD_CONSTRUCTS = mapOf<KtKeywordToken, String>(
@@ -70,7 +71,8 @@ object KeywordCompletion {
             FINALLY_KEYWORD to "fun foo() { try {\n}\nfinally{\ncaret\n}",
             DO_KEYWORD to "fun foo() { do {\ncaret\n}",
             INIT_KEYWORD to "class C { init {\ncaret\n}",
-            CONSTRUCTOR_KEYWORD to "class C { constructor(caret)"
+            CONSTRUCTOR_KEYWORD to "class C { constructor(caret)",
+            COMPANION_KEYWORD to "class C { companion object {\ncaret\n}"
     )
 
     private val NO_SPACE_AFTER = listOf(THIS_KEYWORD,
@@ -95,6 +97,7 @@ object KeywordCompletion {
             var keyword = keywordToken.value
 
             val nextKeyword = COMPOUND_KEYWORDS[keywordToken]
+            var applicableAsCompound = false
             if (nextKeyword != null) {
                 fun PsiElement.isSpace() = this is PsiWhiteSpace && '\n' !in getText()
 
@@ -102,9 +105,10 @@ object KeywordCompletion {
                 if (next != null && next.startsWith("$")) {
                     next = next.substring(1)
                 }
-                if (next != nextKeyword.value) {
+                if (next != nextKeyword.value)
                     keyword += " " + nextKeyword.value
-                }
+                else
+                    applicableAsCompound = true
             }
 
             if (keywordToken == DYNAMIC_KEYWORD && isJvmModule) continue // not supported for JVM
@@ -115,7 +119,7 @@ object KeywordCompletion {
             if (!parserFilter(keywordToken)) continue
 
             val constructText = KEYWORD_CONSTRUCTS[keywordToken]
-            if (constructText != null) {
+            if (constructText != null && !applicableAsCompound) {
                 val element = createKeywordConstructLookupElement(position.project, keyword, constructText)
                 consumer(element)
             }

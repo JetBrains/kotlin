@@ -14,11 +14,11 @@ enum class Test {
 // EXIST:  private
 // EXIST:  protected
 // EXIST:  public
-// EXIST:  companion object
+// EXIST: { itemText: "companion object", tailText: " {...}" }
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed class
-// EXIST:  lateinit
+// EXIST:  lateinit var
 // EXIST:  data
 // EXIST:  inline
 // EXIST:  tailrec
