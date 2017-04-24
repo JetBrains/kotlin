@@ -28,6 +28,8 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.Processor
 import com.intellij.util.QueryExecutor
 import com.intellij.util.indexing.FileBasedIndex
+import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.NO_MATCH
+import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.UNSURE
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -94,8 +96,8 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
                         psiBasedClassResolver.canBeTargetReference(ref)
                     }
 
-                    if (psiBasedResolveResult == false) return true
-                    if (psiBasedResolveResult == null) {
+                    if (psiBasedResolveResult == NO_MATCH) return true
+                    if (psiBasedResolveResult == UNSURE) {
                         val context = elt.analyze(BodyResolveMode.PARTIAL)
                         val annotationDescriptor = context.get(BindingContext.ANNOTATION, elt) ?: return true
 

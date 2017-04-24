@@ -21,6 +21,8 @@ import com.intellij.psi.PsiModifier
 import com.intellij.psi.search.PsiShortNamesCache
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
+import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
+import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.caches.resolve.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
@@ -123,22 +125,22 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
      * @return true if it will definitely resolve to that class, false if it will definitely resolve to something else,
      * null if full resolve is required to answer that question.
      */
-    fun canBeTargetReference(ref: KtSimpleNameExpression): Boolean? {
+    fun canBeTargetReference(ref: KtSimpleNameExpression): ImpreciseResolveResult {
         attempts.incrementAndGet()
         // The names can be different if the target was imported via an import alias
         if (ref.getReferencedName() != targetShortName) {
-            return null
+            return UNSURE
         }
 
         // Names in expressions can conflict with local declarations and methods of implicit receivers,
         // so we can't find out what they refer to without a full resolve.
-        val userType = ref.getStrictParentOfType<KtUserType>() ?: return null
+        val userType = ref.getStrictParentOfType<KtUserType>() ?: return UNSURE
         if (forceAmbiguityForNonAnnotations && userType.getParentOfTypeAndBranch<KtAnnotationEntry> { typeReference } == null) {
-            return null
+            return UNSURE
         }
 
         if (forceAmbiguity) {
-            return null
+            return UNSURE
         }
 
         val qualifiedCheckResult = checkQualifiedReferenceToTarget(ref)
@@ -156,23 +158,23 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
             result = result.changeTo(Result.FoundOther)
         }
         else if (filePackage in packagesWithTypeAliases) {
-            return null
+            return UNSURE
         }
 
         for (importPath in file.getDefaultImports()) {
             result = analyzeSingleImport(result, importPath.fqName, importPath.isAllUnder, importPath.alias?.asString())
-            if (result == Result.Ambiguity) return null
+            if (result == Result.Ambiguity) return UNSURE
         }
 
         for (importDirective in file.importDirectives) {
             result = analyzeSingleImport(result, importDirective.importedFqName, importDirective.isAllUnder, importDirective.aliasName)
-            if (result == Result.Ambiguity) return null
+            if (result == Result.Ambiguity) return UNSURE
         }
 
-        if (result.returnValue == true) {
+        if (result.returnValue == MATCH) {
             trueHits.incrementAndGet()
         }
-        else if (result.returnValue == false) {
+        else if (result.returnValue == NO_MATCH) {
             falseHits.incrementAndGet()
         }
         return result.returnValue
@@ -225,11 +227,11 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
         return null
     }
 
-    enum class Result(val returnValue: Boolean?) {
-        NothingFound(false),
-        Found(true),
-        FoundOther(false),
-        Ambiguity(null)
+    enum class Result(val returnValue: ImpreciseResolveResult) {
+        NothingFound(NO_MATCH),
+        Found(MATCH),
+        FoundOther(NO_MATCH),
+        Ambiguity(UNSURE)
     }
 
     fun Result.changeTo(newResult: Result): Result {
