@@ -995,8 +995,9 @@ public class Parser extends Observable {
     int tt;
     while ((tt = ts.getToken()) > ts.EOF) {
       if (tt == ts.DOT) {
+        ts.treatKeywordAsIdentifier = true;
         mustMatchToken(ts, ts.NAME, "msg.no.name.after.dot");
-        String s = ts.getString();
+        ts.treatKeywordAsIdentifier = false;
         pn = nf.createBinary(ts.DOT, pn, nf.createName(ts.getString()));
         /*
          * pn = nf.createBinary(ts.DOT, pn, memberExpr(ts)) is the version in

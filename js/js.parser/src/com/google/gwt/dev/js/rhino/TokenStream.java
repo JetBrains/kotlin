@@ -695,7 +695,7 @@ public class TokenStream {
             in.unread();
 
                String str = getStringFromBuffer();
-            if (!containsEscape) {
+            if (!containsEscape && !treatKeywordAsIdentifier) {
                 // OPT we shouldn't have to make a string (object!) to
                 // check if it's a keyword.
 
@@ -1477,6 +1477,7 @@ public class TokenStream {
     CodePosition lastPosition;
 
     private int op;
+    public boolean treatKeywordAsIdentifier;
 
     // Set this to an inital non-null value so that the Parser has
     // something to retrieve even if an error has occured and no
