@@ -76,6 +76,16 @@ val ProtoBuf.Function.inlineIr: InlineIrBody
 fun ProtoBuf.Function.Builder.setInlineIr(body: InlineIrBody): ProtoBuf.Function.Builder = 
     this.setExtension(inlineIrBody, body)
 
+// -----------------------------------------------------------
+
+fun inlineBody(encodedIR: String) 
+    = KonanLinkData.InlineIrBody
+        .newBuilder()
+        .setEncodedIr(encodedIR)
+        .build()
+
+// -----------------------------------------------------------
+
 internal fun printType(proto: ProtoBuf.Type) {
     println("debug text: " + proto.getExtension(KonanLinkData.typeText))
 }

@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.serialization
 
+import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
+import org.jetbrains.kotlin.backend.konan.serialization.IrAwareExtension
+import org.jetbrains.kotlin.backend.konan.util.onlyIf
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
@@ -35,13 +38,6 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.Interner
 import java.io.ByteArrayOutputStream
 import java.util.*
-
-import org.jetbrains.kotlin.backend.konan.serialization.KonanSerializerExtension
-
-// This is an almost exact copy of DescriptorSerializer 
-// from the big Kotlin.
-// The only difference for now is typeId is public now.
-// Consider bringing the new functionaity upstream.
 
 class KonanDescriptorSerializer private constructor(
         private val containingDeclaration: DeclarationDescriptor?,
@@ -229,12 +225,18 @@ class KonanDescriptorSerializer private constructor(
             builder.sinceKotlinInfo = writeSinceKotlinInfo(LanguageFeature.Coroutines)
         }
 
-        if (extension is KonanSerializerExtension) {
-            extension.serializePropertyWithIR(descriptor, builder, {it -> typeId(it)})
-        } else {
-            extension.serializeProperty(descriptor, builder)
-        }
+        extension.serializeProperty(descriptor, builder)
 
+        if (extension is IrAwareExtension) {
+            descriptor.getter?.onlyIf({needsInlining}) {
+                extension.addGetterIR(builder,
+                    extension.serializeInlineBody(it, {it -> typeId(it)}))
+            }
+            descriptor.setter?.onlyIf({needsInlining}) {
+                extension.addSetterIR(builder,
+                    extension.serializeInlineBody(it, {it -> typeId(it)}))
+            }
+        }
 
         return builder
     }
@@ -291,10 +293,12 @@ class KonanDescriptorSerializer private constructor(
             builder.sinceKotlinInfo = writeSinceKotlinInfo(LanguageFeature.Coroutines)
         }
 
-        if (extension is KonanSerializerExtension) {
-            extension.serializeFunctionWithIR(descriptor, builder, {it -> typeId(it)})
-        } else {
-            extension.serializeFunction(descriptor, builder)
+        extension.serializeFunction(descriptor, builder)
+
+        if (extension is IrAwareExtension 
+            && descriptor.needsInlining) {
+            extension.addFunctionIR(builder, 
+                extension.serializeInlineBody(descriptor, {it -> typeId(it)}))
         }
 
         return builder
