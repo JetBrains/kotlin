@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.caches.resolve.lightClasses
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiMember
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 
 typealias ExactLightClassContextProvider = () -> LightClassConstructionContext
 typealias DummyLightClassContextProvider = (() -> LightClassConstructionContext?)?
@@ -173,17 +175,23 @@ private fun anyInternalMembersWithThisName(name: String, project: Project): Bool
     return result
 }
 
-private sealed class LazyLightClassMemberMatchingError(message: String)
+private sealed class LazyLightClassMemberMatchingError(message: String, containingClass: KtLightClass)
     : AssertionError(message) {
 
+    init {
+        containingClass.kotlinOrigin?.hasLightClassMatchingErrors = true
+    }
+
     class NoMatch(dummyMember: PsiMember, containingClass: KtLightClass) : LazyLightClassMemberMatchingError(
-            "Couldn't match ${dummyMember.debugName} in $containingClass"
+            "Couldn't match ${dummyMember.debugName} in $containingClass", containingClass
     )
 
     class WrongMatch(realMember: PsiMember, dummyMember: PsiMember, containingClass: KtLightClass) : LazyLightClassMemberMatchingError(
-            "Matched ${dummyMember.debugName} to ${realMember.debugName} in $containingClass"
+            "Matched ${dummyMember.debugName} to ${realMember.debugName} in $containingClass", containingClass
     )
 }
 
 private val PsiMember.debugName
-    get() = "${this::class.simpleName}:${this.name} ${this.memberIndex}" + if (this is PsiMethod) " (with ${parameterList.parametersCount} parameters)" else ""
+    get() = "${this::class.java.simpleName}:${this.name} ${this.memberIndex}" + if (this is PsiMethod) " (with ${parameterList.parametersCount} parameters)" else ""
+
+var KtClassOrObject.hasLightClassMatchingErrors: Boolean by NotNullableUserDataProperty(Key.create("LIGHT_CLASS_MATCHING_ERRORS"), false)

@@ -137,6 +137,8 @@ object IDELightClassContexts {
     }
 
     private fun isDummyResolveApplicable(classOrObject: KtClassOrObject): Boolean {
+        if (classOrObject.hasLightClassMatchingErrors) return false
+
         val hasDelegatedMembers = classOrObject.superTypeListEntries.any { it is KtDelegatedSuperTypeEntry }
         val dataClassWithGeneratedMembersOverridden =
                 classOrObject.hasModifier(KtTokens.DATA_KEYWORD) &&
