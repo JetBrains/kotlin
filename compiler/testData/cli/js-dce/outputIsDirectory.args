@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/simple.js
+-output-dir
+$TESTDATA_DIR$/min

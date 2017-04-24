@@ -377,6 +377,7 @@ fun main(args: Array<String>) {
         testClass<AbstractCliTest> {
             model("cli/jvm", extension = "args", testMethod = "doJvmTest", recursive = false)
             model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
+            model("cli/js-dce", extension = "args", testMethod = "doJsDceTest", recursive = false)
         }
 
         testClass<AbstractReplInterpreterTest> {

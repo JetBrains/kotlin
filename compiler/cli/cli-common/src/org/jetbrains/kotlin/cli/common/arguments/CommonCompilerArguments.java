@@ -16,15 +16,9 @@
 
 package org.jetbrains.kotlin.cli.common.arguments;
 
-import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-public abstract class CommonCompilerArguments implements Serializable {
+public abstract class CommonCompilerArguments extends CommonToolArguments {
     public static final long serialVersionUID = 0L;
 
     public static final String PLUGIN_OPTION_FORMAT = "plugin:<pluginId>:<optionName>=<value>";
@@ -44,23 +38,6 @@ public abstract class CommonCompilerArguments implements Serializable {
             description = "Allow to use declarations only from the specified version of bundled libraries"
     )
     public String apiVersion;
-
-    @GradleOption(DefaultValues.BooleanFalseDefault.class)
-    @Argument(value = "-nowarn", description = "Generate no warnings")
-    public boolean suppressWarnings;
-
-    @GradleOption(DefaultValues.BooleanFalseDefault.class)
-    @Argument(value = "-verbose", description = "Enable verbose logging output")
-    public boolean verbose;
-
-    @Argument(value = "-version", description = "Display compiler version")
-    public boolean version;
-
-    @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options")
-    public boolean help;
-
-    @Argument(value = "-X", description = "Print a synopsis of advanced options")
-    public boolean extraHelp;
 
     @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin")
     public String[] pluginOptions;
@@ -109,10 +86,6 @@ public abstract class CommonCompilerArguments implements Serializable {
             description = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier"
     )
     public String coroutinesState = WARN;
-
-    public List<String> freeArgs = new SmartList<>();
-
-    public transient ArgumentParseErrors errors = new ArgumentParseErrors();
 
     @NotNull
     public static CommonCompilerArguments createDefaultInstance() {

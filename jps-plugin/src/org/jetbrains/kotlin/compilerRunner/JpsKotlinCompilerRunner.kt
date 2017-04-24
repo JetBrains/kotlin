@@ -207,7 +207,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
     private fun setupK2JsArguments(_outputFile: File, sourceFiles: Collection<File>, _libraries: List<String>, _friendModules: List<String>, settings: K2JSCompilerArguments) {
         with(settings) {
             noStdlib = true
-            freeArgs = sourceFiles.map { it.path }
+            freeArgs = sourceFiles.map { it.path }.toMutableList()
             outputFile = _outputFile.path
             metaInfo = true
             libraries = _libraries.joinToString(File.pathSeparator)

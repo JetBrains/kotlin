@@ -539,4 +539,67 @@ public class CliTestGenerated extends AbstractCliTest {
             doJsTest(fileName);
         }
     }
+
+    @TestMetadata("compiler/testData/cli/js-dce")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Js_dce extends AbstractCliTest {
+        public void testAllFilesPresentInJs_dce() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/js-dce"), Pattern.compile("^(.+)\\.args$"), TargetBackend.ANY, false);
+        }
+
+        @TestMetadata("dceHelp.args")
+        public void testDceHelp() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/dceHelp.args");
+            doJsDceTest(fileName);
+        }
+
+        @TestMetadata("emptySources.args")
+        public void testEmptySources() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/emptySources.args");
+            doJsDceTest(fileName);
+        }
+
+        @TestMetadata("jsExtraHelp.args")
+        public void testJsExtraHelp() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/jsExtraHelp.args");
+            doJsDceTest(fileName);
+        }
+
+        @TestMetadata("nonExistingSourcePath.args")
+        public void testNonExistingSourcePath() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/nonExistingSourcePath.args");
+            doJsDceTest(fileName);
+        }
+
+        @TestMetadata("notFile.args")
+        public void testNotFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/notFile.args");
+            doJsDceTest(fileName);
+        }
+
+        @TestMetadata("outputIsDirectory.args")
+        public void testOutputIsDirectory() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/outputIsDirectory.args");
+            doJsDceTest(fileName);
+        }
+
+        @TestMetadata("overrideOutputName.args")
+        public void testOverrideOutputName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/overrideOutputName.args");
+            doJsDceTest(fileName);
+        }
+
+        @TestMetadata("printReachability.args")
+        public void testPrintReachability() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/printReachability.args");
+            doJsDceTest(fileName);
+        }
+
+        @TestMetadata("simple.args")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/simple.args");
+            doJsDceTest(fileName);
+        }
+    }
 }
