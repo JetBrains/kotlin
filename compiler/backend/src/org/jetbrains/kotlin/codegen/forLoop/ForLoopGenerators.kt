@@ -16,13 +16,17 @@
 
 package org.jetbrains.kotlin.codegen.forLoop
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.RangeCodegenUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.org.objectweb.asm.Type
 
 fun ExpressionCodegen.getForLoopGenerator(forExpression: KtForExpression) : AbstractForLoopGenerator {
@@ -43,10 +47,15 @@ fun ExpressionCodegen.getForLoopGenerator(forExpression: KtForExpression) : Abst
             ForInRangeInstanceLoopGenerator(this, forExpression)
         RangeCodegenUtil.isProgression(loopRangeType) ->
             ForInProgressionExpressionLoopGenerator(this, forExpression)
+        isSubtypeOfCharSequence(loopRangeType, state.module.builtIns) ->
+            ForInCharSequenceLoopGenerator(this, forExpression)
         else ->
             IteratorForLoopGenerator(this, forExpression)
     }
 }
+
+private fun isSubtypeOfCharSequence(type: KotlinType, builtIns: KotlinBuiltIns) =
+        KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.getBuiltInClassByName(Name.identifier("CharSequence")).defaultType)
 
 private fun ExpressionCodegen.createOptimizedForLoopGeneratorOrNull(
         forExpression: KtForExpression,
