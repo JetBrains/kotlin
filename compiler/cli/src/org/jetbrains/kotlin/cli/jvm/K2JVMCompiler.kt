@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.jvm
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -276,7 +277,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         @JvmStatic fun main(args: Array<String>) {
-            CLICompiler.doMain(K2JVMCompiler(), args)
+            CLITool.doMain(K2JVMCompiler(), args)
         }
 
         fun reportPerf(configuration: CompilerConfiguration, message: String) {

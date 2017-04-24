@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.sourceSections
 
 import com.intellij.openapi.vfs.StandardFileSystems
 import junit.framework.TestCase
-import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -179,7 +179,7 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
                                "-Xplugin=${sourceSectionsPluginJar.canonicalPath}",
                                "-P", TEST_ALLOWED_SECTIONS.joinToString(",") { "plugin:${SourceSectionsCommandLineProcessor.PLUGIN_ID}:${SourceSectionsCommandLineProcessor.SECTIONS_OPTION.name}=$it" })
             val (output, code) = captureOut {
-                CLICompiler.doMainNoExit(K2JVMCompiler(), args)
+                CLITool.doMainNoExit(K2JVMCompiler(), args)
             }
 
             TestCase.assertEquals("Compilation failed:\n$output", 0, code.code)
