@@ -54,6 +54,11 @@ public class MockUpdateParameterInfoContext implements UpdateParameterInfoContex
     }
 
     @Override
+    public Object getHighlightedParameter() {
+        return null;
+    }
+
+    @Override
     public void setCurrentParameter(int index) {
         myCurrentParameter = index;
     }
