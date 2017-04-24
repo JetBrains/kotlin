@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.isError
 
 object ConstModifierChecker : SimpleDeclarationChecker {
     override fun check(

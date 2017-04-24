@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.isError
 
 class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<KtLambdaExpression>(KtLambdaExpression::class.java, "Specify explicit lambda signature"), LowPriorityAction {
 

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink.DO_NOTHING
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.isError
 
 // Checker for all seven EXPOSED_* errors
 // All functions return true if everything is OK, or false in case of any errors

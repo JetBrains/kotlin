@@ -52,10 +52,7 @@ import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
-import org.jetbrains.kotlin.types.AbstractClassTypeConstructor;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeConstructor;
-import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,7 +67,7 @@ import static org.jetbrains.kotlin.resolve.ModifiersChecker.*;
 
 public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptorWithResolutionScopes, LazyEntity {
     private static final Function1<KotlinType, Boolean> VALID_SUPERTYPE = type -> {
-        assert !type.isError() : "Error types must be filtered out in DescriptorResolver";
+        assert !KotlinTypeKt.isError(type) : "Error types must be filtered out in DescriptorResolver";
         return TypeUtils.getClassDescriptor(type) != null;
     };
 

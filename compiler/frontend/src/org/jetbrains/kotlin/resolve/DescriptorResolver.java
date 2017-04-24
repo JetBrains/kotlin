@@ -152,7 +152,7 @@ public class DescriptorResolver {
     }
 
     private static void addValidSupertype(List<KotlinType> supertypes, KotlinType declaredSupertype) {
-        if (!declaredSupertype.isError()) {
+        if (!KotlinTypeKt.isError(declaredSupertype)) {
             supertypes.add(declaredSupertype);
         }
     }
@@ -251,7 +251,7 @@ public class DescriptorResolver {
         }
 
         // If we have an abbreviated type (written with a type alias), it still can contain type projections in top-level arguments.
-        if (!type.isError() && SpecialTypesKt.getAbbreviatedType(type) != null && !hasProjectionsInWrittenArguments) {
+        if (!KotlinTypeKt.isError(type) && SpecialTypesKt.getAbbreviatedType(type) != null && !hasProjectionsInWrittenArguments) {
             // Only interface inheritance should be checked here.
             // Corresponding check for classes is performed for type alias constructor calls in CandidateResolver.
             if (TypeUtilsKt.isInterface(type) && TypeUtilsKt.containsTypeProjectionsInTopLevelArguments(type)) {
@@ -566,7 +566,7 @@ public class DescriptorResolver {
             KotlinType upperBound = request.upperBoundType;
             KtTypeReference upperBoundElement = request.upperBound;
 
-            if (!upperBound.isError()) {
+            if (!KotlinTypeKt.isError(upperBound)) {
                 if (!allBounds.add(new Pair<>(typeParameterName, upperBound.getConstructor()))) {
                     trace.report(REPEATED_BOUND.on(upperBoundElement));
                 }
@@ -1154,7 +1154,7 @@ public class DescriptorResolver {
     }
 
     public static void checkBounds(@NotNull KtTypeReference typeReference, @NotNull KotlinType type, @NotNull BindingTrace trace) {
-        if (type.isError()) return;
+        if (KotlinTypeKt.isError(type)) return;
 
         KtTypeElement typeElement = typeReference.getTypeElement();
         if (typeElement == null) return;

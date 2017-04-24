@@ -38,8 +38,6 @@ class AbbreviatedType(override val delegate: SimpleType, val abbreviation: Simpl
 
     override fun makeNullableAsSpecified(newNullability: Boolean)
             = AbbreviatedType(delegate.makeNullableAsSpecified(newNullability), abbreviation.makeNullableAsSpecified(newNullability))
-
-    override val isError: Boolean get() = false
 }
 
 fun KotlinType.getAbbreviatedType(): AbbreviatedType? = unwrap() as? AbbreviatedType

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.junit.Assert;
 
 import java.io.PrintStream;
@@ -101,7 +102,7 @@ public class DescriptorValidator {
                 return;
             }
 
-            if (!allowErrorTypes && type.isError()) {
+            if (!allowErrorTypes && KotlinTypeKt.isError(type)) {
                 report(collector, descriptor, "Error type: " + type);
                 return;
             }
@@ -166,7 +167,7 @@ public class DescriptorValidator {
                 KotlinType expected,
                 KotlinType actual
         ) {
-            if (expected.isError() && actual.isError()) {
+            if (KotlinTypeKt.isError(expected) && KotlinTypeKt.isError(actual)) {
                 assertEquals(descriptor, collector, name, expected.toString(), actual.toString());
             }
             else if (!expected.equals(actual)) {

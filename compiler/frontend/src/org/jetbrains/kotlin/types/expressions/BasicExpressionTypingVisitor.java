@@ -144,7 +144,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @Nullable KotlinType type
     ) {
         // Receivers are normally analyzed at resolve, with an exception of KT-10175
-        if (type != null && !type.isError() && !isLValueOrUnsafeReceiver(expression)) {
+        if (type != null && !KotlinTypeKt.isError(type) && !isLValueOrUnsafeReceiver(expression)) {
             DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, context);
             Nullability nullability = context.dataFlowInfo.getStableNullability(dataFlowValue);
             if (!nullability.canBeNonNull() && nullability.canBeNull()) {
@@ -362,7 +362,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             KotlinType targetType,
             ExpressionTypingContext context
     ) {
-        if (actualType == null || noExpectedType(targetType) || targetType.isError()) return;
+        if (actualType == null || noExpectedType(targetType) || KotlinTypeKt.isError(targetType)) return;
 
         if (DynamicTypesKt.isDynamic(targetType)) {
             KtTypeReference right = expression.getRight();
@@ -565,7 +565,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
 
             boolean validClassifier = classifierCandidate != null && !ErrorUtils.isError(classifierCandidate);
-            boolean validType = supertype != null && !supertype.isError();
+            boolean validType = supertype != null && !KotlinTypeKt.isError(supertype);
             if (result == null && (validClassifier || validType)) {
                 context.trace.report(NOT_A_SUPERTYPE.on(superTypeQualifier));
             }
@@ -963,7 +963,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     ) {
         if (ktType == null) return false;
 
-        if (ktType.isError() && !ErrorUtils.isUninferredParameter(ktType)) return false;
+        if (KotlinTypeKt.isError(ktType) && !ErrorUtils.isUninferredParameter(ktType)) return false;
 
         if (!TypeUtils.isNullableType(ktType)) return true;
 
@@ -1235,7 +1235,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KotlinTypeInfo typeInfo = getTypeInfoForBinaryCall(OperatorNameConventions.COMPARE_TO, context, expression);
         KotlinType compareToReturnType = typeInfo.getType();
         KotlinType type = null;
-        if (compareToReturnType != null && !compareToReturnType.isError()) {
+        if (compareToReturnType != null && !KotlinTypeKt.isError(compareToReturnType)) {
             if (KotlinTypeChecker.DEFAULT.equalTypes(components.builtIns.getIntType(), compareToReturnType)) {
                 type = components.builtIns.getBooleanType();
             }

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,7 +77,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
 
         for (KtTypeReference typeReference : getAllUpperBounds()) {
             KotlinType resolvedType = resolveBoundType(typeReference);
-            if (!resolvedType.isError()) {
+            if (!KotlinTypeKt.isError(resolvedType)) {
                 upperBounds.add(resolvedType);
             }
         }

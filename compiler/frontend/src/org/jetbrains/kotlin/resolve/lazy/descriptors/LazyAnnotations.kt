@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.isError
 
 abstract class LazyAnnotationsContext(
         val annotationResolver: AnnotationResolver,

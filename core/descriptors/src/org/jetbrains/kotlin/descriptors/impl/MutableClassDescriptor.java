@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
-import org.jetbrains.kotlin.types.ClassTypeConstructorImpl;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeConstructor;
-import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.*;
 
 import java.util.*;
 
@@ -126,7 +123,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
     }
 
     public void addSupertype(@NotNull KotlinType supertype) {
-        assert !supertype.isError() : "Error types must be filtered out in DescriptorResolver";
+        assert !KotlinTypeKt.isError(supertype) : "Error types must be filtered out in DescriptorResolver";
         if (TypeUtils.getClassDescriptor(supertype) != null) {
             // See the Errors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE
             supertypes.add(supertype);

@@ -49,11 +49,6 @@ public class TypeUtils {
             throw new IllegalStateException(name);
         }
 
-        @Override
-        public boolean isError() {
-            return false;
-        }
-
         @NotNull
         @Override
         public SimpleType replaceAnnotations(@NotNull Annotations newAnnotations) {
@@ -66,6 +61,7 @@ public class TypeUtils {
             throw new IllegalStateException(name);
         }
 
+        @NotNull
         @Override
         public String toString() {
             return name;
@@ -444,7 +440,7 @@ public class TypeUtils {
             @NotNull IntegerValueTypeConstructor numberValueTypeConstructor,
             @NotNull KotlinType expectedType
     ) {
-        if (noExpectedType(expectedType) || expectedType.isError()) {
+        if (noExpectedType(expectedType) || KotlinTypeKt.isError(expectedType)) {
             return getDefaultPrimitiveNumberType(numberValueTypeConstructor);
         }
         for (KotlinType primitiveNumberType : numberValueTypeConstructor.getSupertypes()) {

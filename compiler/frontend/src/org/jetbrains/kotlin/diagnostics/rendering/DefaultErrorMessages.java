@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.util.MappedExtensionProvider;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
@@ -696,7 +697,7 @@ public class DefaultErrorMessages {
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. " +
                                    "The function ''" + OperatorNameConventions.INVOKE.asString() + "()'' is not found",
                 ELEMENT_TEXT, (type, context) -> {
-                    if (type.isError()) return "";
+                    if (KotlinTypeKt.isError(type)) return "";
                     return " of type '" + RENDER_TYPE.render(type, context) + "'";
                 });
         MAP.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", ELEMENT_TEXT,

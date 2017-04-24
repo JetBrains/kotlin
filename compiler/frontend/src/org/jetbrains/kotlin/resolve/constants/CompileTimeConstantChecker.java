@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
@@ -277,7 +278,7 @@ public class CompileTimeConstantChecker {
     }
 
     private static boolean noExpectedTypeOrError(KotlinType expectedType) {
-        return TypeUtils.noExpectedType(expectedType) || expectedType.isError();
+        return TypeUtils.noExpectedType(expectedType) || KotlinTypeKt.isError(expectedType);
     }
 
     private boolean reportConstantExpectedTypeMismatch(

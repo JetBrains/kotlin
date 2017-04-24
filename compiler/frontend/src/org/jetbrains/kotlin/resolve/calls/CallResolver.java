@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingVisitorDispatcher;
@@ -328,7 +329,7 @@ public class CallResolver {
             return checkArgumentTypesAndFail(context); // No type there
         }
         KotlinType constructedType = typeResolver.resolveType(context.scope, typeReference, context.trace, true);
-        if (constructedType.isError()) {
+        if (KotlinTypeKt.isError(constructedType)) {
             return checkArgumentTypesAndFail(context);
         }
 

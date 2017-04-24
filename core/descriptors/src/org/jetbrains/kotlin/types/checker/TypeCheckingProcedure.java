@@ -65,7 +65,8 @@ public class TypeCheckingProcedure {
         if (type1 == type2) return true;
         if (FlexibleTypesKt.isFlexible(type1)) {
             if (FlexibleTypesKt.isFlexible(type2)) {
-                return !type1.isError() && !type2.isError() && isSubtypeOf(type1, type2) && isSubtypeOf(type2, type1);
+                return !KotlinTypeKt.isError(type1) && !KotlinTypeKt.isError(type2) &&
+                       isSubtypeOf(type1, type2) && isSubtypeOf(type2, type1);
             }
             return heterogeneousEquivalence(type2, type1);
         }
@@ -194,7 +195,7 @@ public class TypeCheckingProcedure {
     }
 
     private boolean isSubtypeOfForRepresentatives(KotlinType subtype, KotlinType supertype) {
-        if (subtype.isError() || supertype.isError()) {
+        if (KotlinTypeKt.isError(subtype) || KotlinTypeKt.isError(supertype)) {
             return true;
         }
 
@@ -239,7 +240,7 @@ public class TypeCheckingProcedure {
 
             if (capture(subArgument, superArgument, parameter)) continue;
 
-            boolean argumentIsErrorType = subArgument.getType().isError() || superArgument.getType().isError();
+            boolean argumentIsErrorType = KotlinTypeKt.isError(subArgument.getType()) || KotlinTypeKt.isError(superArgument.getType());
             if (!argumentIsErrorType && parameter.getVariance() == INVARIANT &&
                 subArgument.getProjectionKind() == INVARIANT && superArgument.getProjectionKind() == INVARIANT) {
                 if (!constraints.assertEqualTypes(subArgument.getType(), superArgument.getType(), this)) return false;

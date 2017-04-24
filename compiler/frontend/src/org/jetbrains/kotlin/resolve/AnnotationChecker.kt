@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.isError
 
 class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
 

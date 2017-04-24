@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.asSimpleType
+import org.jetbrains.kotlin.types.*
 
 class LazyTypeAliasDescriptor(
         override val storageManager: StorageManager,

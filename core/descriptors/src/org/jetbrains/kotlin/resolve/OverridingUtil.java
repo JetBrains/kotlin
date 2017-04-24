@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl;
@@ -270,7 +271,7 @@ public class OverridingUtil {
             KotlinType subReturnType = subDescriptor.getReturnType();
 
             if (superReturnType != null && subReturnType != null) {
-                boolean bothErrors = subReturnType.isError() && superReturnType.isError();
+                boolean bothErrors = KotlinTypeKt.isError(subReturnType) && KotlinTypeKt.isError(superReturnType);
                 if (!bothErrors && !typeChecker.isSubtypeOf(subReturnType, superReturnType)) {
                     return OverrideCompatibilityInfo.conflict("Return type mismatch");
                 }
@@ -353,7 +354,7 @@ public class OverridingUtil {
             @NotNull KotlinType typeInSub,
             @NotNull KotlinTypeChecker typeChecker
     ) {
-        boolean bothErrors = typeInSuper.isError() && typeInSub.isError();
+        boolean bothErrors = KotlinTypeKt.isError(typeInSuper) && KotlinTypeKt.isError(typeInSub);
         return bothErrors || typeChecker.equalTypes(typeInSuper, typeInSub);
     }
 

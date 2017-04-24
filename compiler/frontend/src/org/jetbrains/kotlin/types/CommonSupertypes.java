@@ -122,7 +122,7 @@ public class CommonSupertypes {
             if (KotlinBuiltIns.isNothingOrNullableNothing(type)) {
                 iterator.remove();
             }
-            if (type.isError()) {
+            if (KotlinTypeKt.isError(type)) {
                 return ErrorUtils.createErrorType("Supertype of error type " + type);
             }
             nullable |= type.isMarkedNullable();

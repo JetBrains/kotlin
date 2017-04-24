@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.*;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -326,7 +327,8 @@ public class DataFlowAnalyzer {
 
     @Nullable
     public KotlinType checkStatementType(@NotNull KtExpression expression, @NotNull ResolutionContext context) {
-        if (!noExpectedType(context.expectedType) && !KotlinBuiltIns.isUnit(context.expectedType) && !context.expectedType.isError()) {
+        if (!noExpectedType(context.expectedType) && !KotlinBuiltIns.isUnit(context.expectedType) &&
+            !KotlinTypeKt.isError(context.expectedType)) {
             context.trace.report(EXPECTED_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
         }

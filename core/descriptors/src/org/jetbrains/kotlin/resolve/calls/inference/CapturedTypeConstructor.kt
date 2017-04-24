@@ -65,14 +65,12 @@ class CapturedType(
         override val isMarkedNullable: Boolean = false,
         override val annotations: Annotations = Annotations.EMPTY
 ): SimpleType(), SubtypingRepresentatives {
-
     override val arguments: List<TypeProjection>
         get() = listOf()
+
     override val memberScope: MemberScope
         get() = ErrorUtils.createErrorScope(
                 "No member resolution should be done on captured type, it used only during constraint system resolution", true)
-    override val isError: Boolean
-        get() = false
 
     override val subTypeRepresentative: KotlinType
         get() = representative(OUT_VARIANCE, builtIns.nullableAnyType)

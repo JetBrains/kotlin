@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -89,7 +90,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             @NotNull ExpressionTypingContext context
     ) {
         if (assignmentType != null && !KotlinBuiltIns.isUnit(assignmentType) && !noExpectedType(context.expectedType) &&
-            !context.expectedType.isError() && TypeUtils.equalTypes(context.expectedType, assignmentType)) {
+            !KotlinTypeKt.isError(context.expectedType) && TypeUtils.equalTypes(context.expectedType, assignmentType)) {
             context.trace.report(Errors.ASSIGNMENT_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
         }

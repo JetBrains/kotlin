@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Res
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 
 class DelegationResolver<T : CallableMemberDescriptor> private constructor(

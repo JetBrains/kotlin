@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.lang.IllegalStateException
 
@@ -75,11 +74,11 @@ private class SimpleTypeImpl(
         override val isMarkedNullable: Boolean,
         override val memberScope: MemberScope
 ) : SimpleType() {
-    override fun replaceAnnotations(newAnnotations: Annotations) = SimpleTypeImpl(newAnnotations, constructor, arguments, isMarkedNullable, memberScope)
-    override fun makeNullableAsSpecified(newNullability: Boolean) = SimpleTypeImpl(annotations, constructor, arguments, newNullability, memberScope)
+    override fun replaceAnnotations(newAnnotations: Annotations) =
+            SimpleTypeImpl(newAnnotations, constructor, arguments, isMarkedNullable, memberScope)
 
-    override val isError: Boolean
-        get() = false
+    override fun makeNullableAsSpecified(newNullability: Boolean) =
+            SimpleTypeImpl(annotations, constructor, arguments, newNullability, memberScope)
 
     init {
         if (memberScope is ErrorUtils.ErrorScope) {

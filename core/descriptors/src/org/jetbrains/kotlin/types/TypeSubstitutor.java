@@ -156,7 +156,7 @@ public class TypeSubstitutor {
             return new TypeProjectionImpl(substitutedProjectionKind, substitutedFlexibleType);
         }
 
-        if (KotlinBuiltIns.isNothing(type) || type.isError()) return originalProjection;
+        if (KotlinBuiltIns.isNothing(type) || KotlinTypeKt.isError(type)) return originalProjection;
 
         if (replacement != null) {
             VarianceConflictType varianceConflict = conflictType(originalProjectionKind, replacement.getProjectionKind());

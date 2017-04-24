@@ -28,12 +28,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.core.ShortenReferences;
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,7 +131,7 @@ public class MoveDeclarationsOutHelper {
         if (typeRef != null) {
             typeString = typeRef.getText();
         }
-        else if (!propertyType.isError()) {
+        else if (!KotlinTypeKt.isError(propertyType)) {
             typeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(propertyType);
         }
 

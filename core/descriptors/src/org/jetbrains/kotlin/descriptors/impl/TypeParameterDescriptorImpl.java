@@ -19,12 +19,16 @@ package org.jetbrains.kotlin.descriptors.impl;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.SourceElement;
+import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker;
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.Variance;
 
 import java.util.ArrayList;
@@ -126,7 +130,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
     }
 
     private void doAddUpperBound(KotlinType bound) {
-        if (bound.isError()) return;
+        if (KotlinTypeKt.isError(bound)) return;
         upperBounds.add(bound); // TODO : Duplicates?
     }
 

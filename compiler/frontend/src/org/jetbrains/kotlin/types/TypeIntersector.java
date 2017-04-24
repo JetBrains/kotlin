@@ -54,7 +54,7 @@ public class TypeIntersector {
         boolean allNullable = true;
         List<KotlinType> nullabilityStripped = new ArrayList<>(types.size());
         for (KotlinType type : types) {
-            if (type.isError()) continue;
+            if (KotlinTypeKt.isError(type)) continue;
 
             if (KotlinBuiltIns.isNothingOrNullableNothing(type)) {
                 nothingOrNullableNothing = type;

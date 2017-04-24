@@ -470,7 +470,7 @@ public class ErrorUtils {
 
     public static boolean containsErrorType(@Nullable KotlinType type) {
         if (type == null) return false;
-        if (type.isError()) return true;
+        if (KotlinTypeKt.isError(type)) return true;
         for (TypeProjection projection : type.getArguments()) {
             if (!projection.isStarProjection() && containsErrorType(projection.getType())) return true;
         }
@@ -486,7 +486,7 @@ public class ErrorUtils {
         return candidate instanceof ErrorClassDescriptor;
     }
 
-    private static class ErrorTypeImpl extends SimpleType {
+    public static class ErrorTypeImpl extends SimpleType {
         private final TypeConstructor constructor;
         private final MemberScope memberScope;
         private final List<TypeProjection> arguments;
@@ -531,17 +531,13 @@ public class ErrorUtils {
             return memberScope;
         }
 
-        @Override
-        public boolean isError() {
-            return true;
-        }
-
         @NotNull
         @Override
         public Annotations getAnnotations() {
             return Annotations.Companion.getEMPTY();
         }
 
+        @NotNull
         @Override
         public String toString() {
             return constructor.toString() + (arguments.isEmpty() ? "" : joinToString(arguments, ", ", "<", ">", -1, "...", null));

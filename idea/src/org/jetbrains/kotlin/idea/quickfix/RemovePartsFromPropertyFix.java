@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
 
 public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<KtProperty> {
     private final boolean removeInitializer;
@@ -88,7 +89,7 @@ public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<KtProperty>
         if (!super.isAvailable(project, editor, file)) return false;
 
         KotlinType type = QuickFixUtil.getDeclarationReturnType(getElement());
-        return type != null && !type.isError();
+        return type != null && !KotlinTypeKt.isError(type);
     }
 
     @Override

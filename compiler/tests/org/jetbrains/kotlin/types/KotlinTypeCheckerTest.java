@@ -537,14 +537,8 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         Project project = getProject();
         KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
         KotlinType type = expressionTypingServices.getType(scopeWithImports, ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfoFactory.EMPTY, KotlinTestUtils.DUMMY_TRACE);
+        assertNotNull(type);
         assertTrue(type + " != " + expectedType, type.equals(expectedType));
-    }
-
-    private void assertErrorType(String expression) {
-        Project project = getProject();
-        KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
-        KotlinType type = expressionTypingServices.safeGetType(scopeWithImports, ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfoFactory.EMPTY, KotlinTestUtils.DUMMY_TRACE);
-        assertTrue("Error type expected but " + type + " returned", type.isError());
     }
 
     private void assertType(String contextType, String expression, String expectedType) {

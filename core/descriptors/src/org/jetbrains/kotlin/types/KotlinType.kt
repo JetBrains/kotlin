@@ -46,7 +46,6 @@ sealed class KotlinType : Annotated {
     abstract val arguments: List<TypeProjection>
     abstract val isMarkedNullable: Boolean
     abstract val memberScope: MemberScope
-    abstract val isError: Boolean
 
     abstract fun unwrap(): UnwrappedType
 
@@ -67,7 +66,7 @@ sealed class KotlinType : Annotated {
     }
 }
 
-abstract class WrappedType() : KotlinType() {
+abstract class WrappedType : KotlinType() {
     open fun isComputed(): Boolean = true
     protected abstract val delegate: KotlinType
 
@@ -76,7 +75,6 @@ abstract class WrappedType() : KotlinType() {
     override val arguments: List<TypeProjection> get() = delegate.arguments
     override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable
     override val memberScope: MemberScope get() = delegate.memberScope
-    override val isError: Boolean get() = delegate.isError
 
     override final fun unwrap(): UnwrappedType {
         var result = delegate
@@ -156,8 +154,13 @@ abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleTy
     override val arguments: List<TypeProjection> get() = delegate.arguments
     override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable
     override val memberScope: MemberScope get() = delegate.memberScope
-    override val isError: Boolean get() = delegate.isError // todo should be false?
 
     override fun toString(): String = DescriptorRenderer.DEBUG_TEXT.renderType(this)
 }
 
+val KotlinType.isError: Boolean
+    get() {
+        val unwrapped = unwrap()
+        return unwrapped is ErrorUtils.ErrorTypeImpl ||
+               (unwrapped is FlexibleType && unwrapped.delegate is ErrorUtils.ErrorTypeImpl)
+    }

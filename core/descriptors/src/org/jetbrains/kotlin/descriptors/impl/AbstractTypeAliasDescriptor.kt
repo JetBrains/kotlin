@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 
 abstract class AbstractTypeAliasDescriptor(
         containingDeclaration: DeclarationDescriptor,
@@ -53,9 +50,9 @@ abstract class AbstractTypeAliasDescriptor(
             // NB: it's ok to use underlyingType here, since referenced inner type aliases also capture type parameters.
             // Using expandedType looks "proper", but in fact will cause a recursion in expandedType resolution,
             // which will silently produce wrong result.
-            TypeUtils.contains(underlyingType) {
-                !it.isError && run {
-                    val constructorDescriptor = it.constructor.declarationDescriptor
+            TypeUtils.contains(underlyingType) { type ->
+                !type.isError && run {
+                    val constructorDescriptor = type.constructor.declarationDescriptor
                     constructorDescriptor is TypeParameterDescriptor &&
                     constructorDescriptor.containingDeclaration != this@AbstractTypeAliasDescriptor
                 }

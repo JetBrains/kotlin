@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isError
 
 @Suppress("UNCHECKED_CAST")
 inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T {
