@@ -216,6 +216,10 @@ object KeywordCompletion {
                             }
                         }
 
+                        if (prevLeaf?.getParentOfType<KtIfExpression>(strict = false) != null) {
+                            prefixText += "if(true){}"
+                        }
+
                         return buildFilterWithContext(prefixText, prevParent, position)
                     }
                     else {

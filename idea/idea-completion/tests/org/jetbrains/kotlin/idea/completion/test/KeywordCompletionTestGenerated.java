@@ -144,6 +144,18 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("ElseAfterBlocklessIf.kt")
+    public void testElseAfterBlocklessIf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ElseAfterBlocklessIf.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ElseOnOtherLine.kt")
+    public void testElseOnOtherLine() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ElseOnOtherLine.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("FileKeyword.kt")
     public void testFileKeyword() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/FileKeyword.kt");
