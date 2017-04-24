@@ -16,16 +16,11 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.codeHighlighting.RainbowHighlighter
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtExpressionWithLabel
 import org.jetbrains.kotlin.psi.KtLambdaExpression
@@ -39,7 +34,7 @@ internal class BeforeResolveHighlightingVisitor(private val holder: AnnotationHo
     override fun visitElement(element: PsiElement) {
         val elementType = element.node.elementType
         val attributes = when {
-            element is KDocLink && !willApplyRainbowHighlight(element) -> KotlinHighlightingColors.KDOC_LINK
+            element is KDocLink -> KotlinHighlightingColors.KDOC_LINK
 
             elementType in KtTokens.SOFT_KEYWORDS -> {
                 when (elementType) {
@@ -52,14 +47,6 @@ internal class BeforeResolveHighlightingVisitor(private val holder: AnnotationHo
         }
 
         holder.createInfoAnnotation(element, null).textAttributes = attributes
-    }
-
-    private fun willApplyRainbowHighlight(element: KDocLink): Boolean {
-        if (!RainbowHighlighter.isRainbowEnabledWithInheritance(EditorColorsManager.getInstance().globalScheme, KotlinLanguage.INSTANCE)) {
-            return false
-        }
-        // Can't use resolve because it will access indices
-        return (element.parent as? KDocTag)?.knownTag == KDocKnownTag.PARAM
     }
 
     override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
