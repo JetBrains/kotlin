@@ -102,33 +102,69 @@ class StringBuilder private constructor (
         }
     }
 
+    // Based on Apache Harmony implementation.
     fun reverse(): StringBuilder {
+        if (this.length < 2) {
+            return this
+        }
+        var end = length - 1
         var front = 0
-        var end = array.lastIndex
-        var hasSurrogates = false
-        while (front < end) {
-            if (array[front].isSurrogate() || array[end].isSurrogate()) {
-                hasSurrogates = true
+        var frontHigh = array[0]
+        var endLow = array[end]
+        var allowFrontSur = true
+        var allowEndSur = true
+        while (front < length / 2) {
+
+            var frontLow = array[front + 1]
+            var endHigh = array[end - 1]
+            var surAtFront = allowFrontSur && frontLow.isLowSurrogate() && frontHigh.isHighSurrogate()
+            if (surAtFront && length < 3) {
+                return this
             }
-            val tmp = array[front]
-            array[front] = array[end]
-            array[end] = tmp
+            var surAtEnd = allowEndSur && endLow.isLowSurrogate() && endHigh.isHighSurrogate()
+            allowFrontSur = true
+            allowEndSur = true
+            when {
+                surAtFront && surAtEnd -> {
+                    // Both surrogates - just exchange them.
+                    array[end] = frontLow
+                    array[end - 1] = frontHigh
+                    array[front] = endHigh
+                    array[front + 1] = endLow
+                    frontHigh = array[front + 2]
+                    endLow = array[end - 2]
+                    front++
+                    end--
+                }
+                !surAtFront && !surAtEnd -> {
+                    // Neither surrogates - exchange only front/end.
+                    array[end] = frontHigh
+                    array[front] = endLow
+                    frontHigh = frontLow
+                    endLow = endHigh
+                }
+                surAtFront && !surAtEnd -> {
+                    // Surrogate only at the front -
+                    // move the low part, the high part will be moved as a usual character on the next iteration.
+                    array[end] = frontLow
+                    array[front] = endLow
+                    endLow = endHigh
+                    allowFrontSur = false
+                }
+                !surAtFront && surAtEnd -> {
+                    // Surrogate only at the end -
+                    // move the high part, the low part will be moved as a usual character on the next iteration.
+                    array[end] = frontHigh
+                    array[front] = endHigh
+                    frontHigh = frontLow
+                    allowEndSur = false
+                }
+            }
             front++
             end--
         }
-
-        // Reverse surrogate pairs back.
-        if (hasSurrogates) {
-            var i = 0
-            while (i < length - 1) {
-                if (array[i].isLowSurrogate() && array[i + 1].isHighSurrogate()) {
-                    val tmp = array[i]
-                    array[i] = array[i + 1]
-                    array[i + 1] = tmp
-                    i++
-                }
-                i++
-            }
+        if (length % 2 == 1 && (!allowEndSur || !allowFrontSur)) {
+            array[end] = if (allowFrontSur) endLow else frontHigh
         }
         return this
     }
