@@ -20,7 +20,6 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.context.TypeLazinessToken
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -62,11 +61,9 @@ class TypeResolver(
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val moduleDescriptor: ModuleDescriptor,
         private val typeTransformerForTests: TypeTransformerForTests,
-        private val lazinessToken: TypeLazinessToken,
         private val dynamicTypesSettings: DynamicTypesSettings,
         private val dynamicCallableDescriptors: DynamicCallableDescriptors,
         private val identifierChecker: IdentifierChecker,
-        private val wrappedTypeFactory: WrappedTypeFactory,
         private val platformToKotlinClassMap: PlatformToKotlinClassMap,
         private val languageVersionSettings: LanguageVersionSettings
 ) {
@@ -115,37 +112,16 @@ class TypeResolver(
             return type(debugType)
         }
 
-        if (!c.allowBareTypes && !c.forceResolveLazyTypes && lazinessToken.isLazy()) {
-            // Bare types can be allowed only inside expressions; lazy type resolution is only relevant for declarations
-
-            val lazyKotlinType = wrappedTypeFactory.createLazyWrappedType {
-                doResolvePossiblyBareType(c, typeReference).actualType
-            }
-            c.trace.record(resolvedTypeSlice, typeReference, lazyKotlinType)
-            return type(lazyKotlinType)
-        }
-
-        val type = doResolvePossiblyBareType(c, typeReference)
-        if (!type.isBare) {
-            c.trace.record(resolvedTypeSlice, typeReference, type.actualType)
-        }
-        return type
-    }
-
-    private fun doResolvePossiblyBareType(c: TypeResolutionContext, typeReference: KtTypeReference): PossiblyBareType {
-        val typeElement = typeReference.typeElement
-
         val annotations = resolveTypeAnnotations(c, typeReference)
-
-        val type = resolveTypeElement(c, annotations, typeReference.modifierList, typeElement)
+        val type = resolveTypeElement(c, annotations, typeReference.modifierList, typeReference.typeElement)
         c.trace.recordScope(c.scope, typeReference)
 
         if (!type.isBare) {
             for (argument in type.actualType.arguments) {
                 forceResolveTypeContents(argument.type)
             }
+            c.trace.record(resolvedTypeSlice, typeReference, type.actualType)
         }
-
         return type
     }
 

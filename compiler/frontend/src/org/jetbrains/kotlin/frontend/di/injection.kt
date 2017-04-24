@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -161,7 +160,6 @@ fun createContainerForLazyResolve(
     useImpl<CompilerDeserializationConfiguration>()
     targetEnvironment.configure(this)
 
-    useImpl<LazyResolveToken>()
     useImpl<ResolveSession>()
 }
 

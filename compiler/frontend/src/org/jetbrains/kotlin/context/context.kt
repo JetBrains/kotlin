@@ -104,15 +104,3 @@ fun ContextForNewModule(
     val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, builtIns, multiTargetPlatform)
     return MutableModuleContextImpl(module, projectContext)
 }
-
-
-@Deprecated("Used temporarily while we are in transition from to lazy resolve")
-open class TypeLazinessToken {
-    @Deprecated("Used temporarily while we are in transition from to lazy resolve")
-    open fun isLazy(): Boolean = false
-}
-
-@Deprecated("Used temporarily while we are in transition from to lazy resolve") class LazyResolveToken : TypeLazinessToken() {
-    @Deprecated("Used temporarily while we are in transition from to lazy resolve")
-    override fun isLazy() = true
-}

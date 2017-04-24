@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.storage.StorageManager
 
 open class WrappedTypeFactory(private val storageManager: StorageManager) {
-    open fun createLazyWrappedType(computation: () -> KotlinType): KotlinType = LazyWrappedType(storageManager, computation)
-    open fun createDeferredType(trace: BindingTrace, computation: () -> KotlinType): KotlinType = DeferredType.create(storageManager, trace, computation)
-    open fun createRecursionIntolerantDeferredType(trace: BindingTrace, computation: () -> KotlinType): KotlinType = DeferredType.createRecursionIntolerant(storageManager, trace, computation)
+    open fun createDeferredType(trace: BindingTrace, computation: () -> KotlinType): KotlinType =
+            DeferredType.create(storageManager, trace, computation)
+
+    open fun createRecursionIntolerantDeferredType(trace: BindingTrace, computation: () -> KotlinType): KotlinType =
+            DeferredType.createRecursionIntolerant(storageManager, trace, computation)
 }

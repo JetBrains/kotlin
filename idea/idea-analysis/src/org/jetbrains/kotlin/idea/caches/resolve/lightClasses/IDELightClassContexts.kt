@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -270,8 +269,6 @@ object IDELightClassContexts {
             useImpl<AdHocAnnotationResolver>()
 
             useInstance(object : WrappedTypeFactory(sm) {
-                override fun createLazyWrappedType(computation: () -> KotlinType): KotlinType = errorType()
-
                 override fun createDeferredType(trace: BindingTrace, computation: () -> KotlinType) = errorType()
 
                 override fun createRecursionIntolerantDeferredType(trace: BindingTrace, computation: () -> KotlinType) = errorType()
@@ -280,7 +277,6 @@ object IDELightClassContexts {
             })
 
             IdeaEnvironment.configure(this)
-            useImpl<LazyResolveToken>()
 
             useImpl<ResolveSession>()
         }
