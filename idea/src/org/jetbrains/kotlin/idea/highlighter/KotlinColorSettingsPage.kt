@@ -22,15 +22,13 @@ import com.intellij.openapi.options.OptionsBundle
 import com.intellij.openapi.options.colors.AttributesDescriptor
 import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
-import com.intellij.openapi.options.colors.RainbowColorSettingsPage
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import java.lang.reflect.Modifier
 import java.util.*
 
-class KotlinColorSettingsPage : ColorSettingsPage, RainbowColorSettingsPage {
-    override fun getLanguage() = KotlinLanguage.INSTANCE
+class KotlinColorSettingsPage : ColorSettingsPage {
     override fun getIcon() = KotlinIcons.SMALL_LOGO
     override fun getHighlighter(): SyntaxHighlighter = KotlinHighlighter()
 
@@ -165,9 +163,4 @@ var <PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAG
 
     override fun getColorDescriptors(): Array<ColorDescriptor> = ColorDescriptor.EMPTY_ARRAY
     override fun getDisplayName(): String = KotlinLanguage.NAME
-
-    override fun isRainbowType(type: TextAttributesKey): Boolean {
-        return type == KotlinHighlightingColors.LOCAL_VARIABLE ||
-               type == KotlinHighlightingColors.PARAMETER
-    }
 }
