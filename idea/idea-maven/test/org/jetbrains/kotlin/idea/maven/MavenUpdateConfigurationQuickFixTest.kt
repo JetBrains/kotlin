@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/*
 package org.jetbrains.kotlin.idea.maven
 
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -103,3 +104,4 @@ class MavenUpdateConfigurationQuickFixTest : MavenImportingTestCase() {
         }
     }
 }
+*/
