@@ -28,11 +28,11 @@ sealed class TreeBasedClassifierType<out T : JCTree>(tree: T,
 
     override val classifier by lazy { treePath.resolve(javac) }
 
-    override val canonicalText
+    override val classifierQualifiedName
         get() = (classifier as? JavaClass)?.fqName?.asString() ?: treePath.leaf.toString()
 
     override val presentableText
-        get() = canonicalText
+        get() = classifierQualifiedName
 
     private val typeParameter
         get() = treePath.filter { it is JCTree.JCClassDecl || it is JCTree.JCMethodDecl }

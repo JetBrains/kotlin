@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.load.java
 
-import org.jetbrains.kotlin.asJava.KtLightClassMarker
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPackageImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName

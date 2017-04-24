@@ -49,7 +49,7 @@ class SymbolBasedClassifierType<out T : TypeMirror>(typeMirror: T,
             else -> typeMirror.typeArguments.isEmpty()
         }
 
-    override val canonicalText
+    override val classifierQualifiedName
         get() = typeMirror.toString()
 
     override val presentableText

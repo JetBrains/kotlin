@@ -30,9 +30,6 @@ class TreeBasedField<out T : JCTree.JCVariableDecl>(tree: T,
                                                     containingClass: JavaClass,
                                                     javac: JavacWrapper) : TreeBasedMember<T>(tree, treePath, containingClass, javac), JavaField {
 
-    val value: JCTree.JCExpression?
-        get() = tree.init
-
     override val name
         get() = Name.identifier(tree.name.toString())
 
@@ -53,5 +50,21 @@ class TreeBasedField<out T : JCTree.JCVariableDecl>(tree: T,
 
     override val type
         get() = TreeBasedType.create(tree.getType(), treePath, javac)
+
+    override val initializerValue
+        get() = tree.init?.let {
+            if (hasConstantNotNullInitializer && it is JCTree.JCLiteral) {
+                it.value
+            } else null
+        }
+
+    override val hasConstantNotNullInitializer
+        get() = tree.init?.let {
+            val type = this.type
+
+            isFinal && ((type is TreeBasedPrimitiveType<*>) ||
+                        (type is TreeBasedClassifierTypeWithoutTypeArgument<*> &&
+                         type.classifierQualifiedName == "java.lang.String"))
+        } ?: false
 
 }

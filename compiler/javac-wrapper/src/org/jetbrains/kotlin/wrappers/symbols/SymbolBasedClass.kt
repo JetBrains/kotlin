@@ -65,7 +65,7 @@ class SymbolBasedClass<T : TypeElement>(element: T,
             }
         }.map { SymbolBasedClassifierType(it, javac) }
 
-    override val innerClasses
+    val innerClasses
         get() = element.enclosedElements
                 .filter { it.asType().kind == TypeKind.DECLARED }
                 .filterIsInstance(TypeElement::class.java)
@@ -102,5 +102,10 @@ class SymbolBasedClass<T : TypeElement>(element: T,
         get() = element.enclosedElements
                 .filter { it.kind == ElementKind.CONSTRUCTOR }
                 .map { SymbolBasedConstructor(it as ExecutableElement, javac) }
+
+    override val innerClassNames
+        get() = innerClasses.map(SymbolBasedClass<TypeElement>::name)
+
+    override fun findInnerClass(name: Name) = innerClasses.find { it.name == name }
 
 }

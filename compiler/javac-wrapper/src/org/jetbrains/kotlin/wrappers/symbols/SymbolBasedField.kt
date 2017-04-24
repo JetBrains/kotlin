@@ -24,13 +24,20 @@ import javax.lang.model.element.VariableElement
 class SymbolBasedField<out T : VariableElement>(element: T,
                                                 javac: JavacWrapper) : SymbolBasedMember<T>(element, javac), JavaField {
 
-    val value: Any?
-        get() = element.constantValue
-
     override val isEnumEntry
         get() = element.kind == ElementKind.ENUM_CONSTANT
 
     override val type
         get() = SymbolBasedType.create(element.asType(), javac)
+
+    override val initializerValue: Any?
+        get() = element.constantValue
+
+    override val hasConstantNotNullInitializer
+        get() = element.constantValue?.let {
+            val typeMirror = type.typeMirror
+
+            (typeMirror.kind.isPrimitive || typeMirror.toString() == "java.lang.String")
+        } ?: false
 
 }

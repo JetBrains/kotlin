@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -92,7 +93,7 @@ class MockKotlinClassifier(override val fqName: FqName,
                 .mapNotNull { resolveSupertype(it, classOrObject, javac) }
                 .map { MockKotlinClassifierType(it) }
 
-    override val innerClasses: Collection<JavaClass>
+    val innerClasses: Collection<JavaClass>
         get() = classOrObject.declarations.filterIsInstance<KtClassOrObject>()
                 .mapNotNull { it.fqName?.let { javac.getKotlinClassifier(it) } }
 
@@ -131,6 +132,11 @@ class MockKotlinClassifier(override val fqName: FqName,
 
     override fun findAnnotation(fqName: FqName) = throw UnsupportedOperationException("Should not be called")
 
+    override val innerClassNames
+        get() = innerClasses.map(JavaClass::name)
+
+    override fun findInnerClass(name: Name) = innerClasses.find { it.name == name }
+
 }
 
 class MockKotlinClassifierType(override val classifier: JavaClassifier) : JavaClassifierType {
@@ -144,7 +150,7 @@ class MockKotlinClassifierType(override val classifier: JavaClassifier) : JavaCl
     override val annotations: Collection<JavaAnnotation>
         get() = throw UnsupportedOperationException("Should not be called")
 
-    override val canonicalText: String
+    override val classifierQualifiedName: String
         get() = throw UnsupportedOperationException("Should not be called")
 
     override val presentableText: String

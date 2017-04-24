@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
@@ -38,7 +39,7 @@ class CliVirtualFileFinder(
 ) : VirtualFileFinder() {
 
     override fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass? {
-        if (javaClass !is JavaClassImpl) {
+        if (javaClass !is JavaClassImpl && javaClass !is BinaryJavaClass) {
             return javaClass.computeClassId()?.let(this::findKotlinClass)
         }
 

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.wrappers.symbols.SymbolBasedType
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
 class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
@@ -93,7 +94,7 @@ class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
             tree.implementing?.map { it.mapToJavaClassifierType() }?.filterNotNull()?.let(this::addAll)
         }
 
-    override val innerClasses
+    val innerClasses
         get() = tree.members
                 .filterIsInstance(JCTree.JCClassDecl::class.java)
                 .map { TreeBasedClass(it, TreePath(treePath, it), javac) }
@@ -129,5 +130,10 @@ class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
                 .filterIsInstance(JCTree.JCMethodDecl::class.java)
                 .filter { TreeInfo.isConstructor(it) }
                 .map { TreeBasedConstructor(it, TreePath(treePath, it), this, javac) }
+
+    override val innerClassNames
+        get() = innerClasses.map(TreeBasedClass<JCTree.JCClassDecl>::name)
+
+    override fun findInnerClass(name: Name) = innerClasses.find { it.name == name }
 
 }
