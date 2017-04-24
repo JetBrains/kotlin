@@ -34,7 +34,9 @@ import org.jetbrains.kotlin.idea.refactoring.rename.RenameJavaSyntheticPropertyH
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinPropertyProcessor
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class KotlinElementDescriptionProvider : ElementDescriptionProvider {
@@ -44,7 +46,16 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
         return parent
     }
 
+    private fun KtNamedDeclaration.name() = nameAsName ?: Name.special("<no name provided>")
+
     private fun KtNamedDeclaration.fqName(): FqNameUnsafe {
+        containingClassOrObject?.let {
+            if (it is KtObjectDeclaration && it.isCompanion()) {
+                return it.fqName().child(name())
+            }
+            return FqNameUnsafe("${it.name()}.${name()}")
+        }
+
         val internalSegments = generateSequence(this) { it.parentForFqName() }
                 .filterIsInstance<KtNamedDeclaration>()
                 .map { it.name ?: "<no name provided>" }

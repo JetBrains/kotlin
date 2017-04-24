@@ -142,7 +142,13 @@ fun VirtualFile.toPsiFileOrDirectory(project: Project): PsiFileSystemItem? = if 
 
 fun PsiElement.getUsageContext(): PsiElement {
     return when (this) {
-        is KtElement -> PsiTreeUtil.getParentOfType(this, KtPropertyAccessor::class.java, KtNamedDeclaration::class.java, KtFile::class.java)!!
+        is KtElement -> PsiTreeUtil.getParentOfType(
+                this,
+                KtPropertyAccessor::class.java,
+                KtProperty::class.java,
+                KtFunction::class.java,
+                KtClassOrObject::class.java
+        ) ?: containingFile
         else -> ConflictsUtil.getContainer(this)
     }
 }

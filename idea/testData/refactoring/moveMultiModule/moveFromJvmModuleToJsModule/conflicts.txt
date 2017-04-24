@@ -1,1 +1,1 @@
-Constructor JvmStatic(), referenced in function packJvm.ClassUsageJvm.Companion.foo(), will not be accessible in module B
+Constructor JvmStatic(), referenced in function ClassUsageJvm.Companion.foo(), will not be accessible in module B

@@ -1,1 +1,1 @@
-Constructor JsName(String), referenced in function packJs.ClassUsageJs.foo(), will not be accessible in module A
+Constructor JsName(String), referenced in function ClassUsageJs.foo(), will not be accessible in module A

@@ -170,8 +170,7 @@ class MoveConflictChecker(
             val usageFile = element.containingFile
             val usageVFile = usageFile.virtualFile ?: continue
             val usageModule = ModuleUtilCore.findModuleForFile(usageVFile, project) ?: continue
-            val container = if (usageFile is PsiJavaFile) ConflictsUtil.getContainer(element) else usageFile
-            val scopeDescription = RefactoringUIUtil.getDescription(container, true)
+            val scopeDescription = RefactoringUIUtil.getDescription(element.getUsageContext(), true)
             val referencedElement = (if (usage is MoveRenameUsageInfo) usage.referencedElement else usage.element) ?: error(usage)
             val message = if (usageModule == targetModule && isInTestSources) {
                 RefactoringBundle.message("0.referenced.in.1.will.not.be.accessible.from.production.of.module.2",
