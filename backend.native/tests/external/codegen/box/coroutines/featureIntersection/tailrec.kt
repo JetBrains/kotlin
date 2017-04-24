@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: NATIVE
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 import kotlin.test.assertEquals
