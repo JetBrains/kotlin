@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegen;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.coroutines.ResolvedCallWithRealDescriptor;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
+import org.jetbrains.kotlin.codegen.forLoop.*;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.*;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
@@ -53,9 +54,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
@@ -422,7 +421,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private Type asmType(@NotNull KotlinType type) {
+    public Type asmType(@NotNull KotlinType type) {
         return typeMapper.mapType(type);
     }
 
@@ -605,68 +604,18 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private void generateFor(@NotNull KtForExpression forExpression) {
-        ResolvedCall<? extends CallableDescriptor> loopRangeCall = RangeCodegenUtil.getLoopRangeResolvedCall(forExpression, bindingContext);
-        if (loopRangeCall != null) {
-            AbstractForLoopGenerator optimizedForLoopGenerator = createOptimizedForLoopGeneratorOrNull(forExpression, loopRangeCall);
-            if (optimizedForLoopGenerator != null) {
-                generateForLoop(optimizedForLoopGenerator);
-                return;
-            }
-        }
-
-        KtExpression loopRange = forExpression.getLoopRange();
-        assert loopRange != null;
-        KotlinType loopRangeType = bindingContext.getType(loopRange);
-        assert loopRangeType != null;
-        Type asmLoopRangeType = asmType(loopRangeType);
-        if (asmLoopRangeType.getSort() == Type.ARRAY) {
-            generateForLoop(new ForInArrayLoopGenerator(forExpression));
-        }
-        else if (RangeCodegenUtil.isRange(loopRangeType)) {
-            generateForLoop(new ForInRangeInstanceLoopGenerator(forExpression));
-        }
-        else if (RangeCodegenUtil.isProgression(loopRangeType)) {
-            generateForLoop(new ForInProgressionExpressionLoopGenerator(forExpression));
-        }
-        else {
-            generateForLoop(new IteratorForLoopGenerator(forExpression));
-        }
-    }
-
-    @Nullable
-    private AbstractForLoopGenerator createOptimizedForLoopGeneratorOrNull(
-            @NotNull KtForExpression forExpression,
-            @NotNull ResolvedCall<? extends CallableDescriptor> loopRangeCall
-    ) {
-        CallableDescriptor loopRangeCallee = loopRangeCall.getResultingDescriptor();
-        if (RangeCodegenUtil.isPrimitiveNumberRangeTo(loopRangeCallee)) {
-            return new ForInRangeLiteralLoopGenerator(forExpression, loopRangeCall);
-        }
-        else if (RangeCodegenUtil.isPrimitiveNumberDownTo(loopRangeCallee)) {
-            return new ForInDownToProgressionLoopGenerator(forExpression, loopRangeCall);
-        }
-        else if (RangeCodegenUtil.isArrayOrPrimitiveArrayIndices(loopRangeCallee)) {
-            return new ForInArrayIndicesRangeLoopGenerator(forExpression, loopRangeCall);
-        }
-        else if (RangeCodegenUtil.isCollectionIndices(loopRangeCallee)) {
-            return new ForInCollectionIndicesRangeLoopGenerator(forExpression, loopRangeCall);
-        }
-        else if (RangeCodegenUtil.isCharSequenceIndices(loopRangeCallee)) {
-            return new ForInCharSequenceIndicesRangeLoopGenerator(forExpression, loopRangeCall);
-        }
-
-        return null;
+        generateForLoop(ForLoopGeneratorsKt.getForLoopGenerator(this, forExpression));
     }
 
     @NotNull
-    private static KotlinType getExpectedReceiverType(@NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall) {
+    public static KotlinType getExpectedReceiverType(@NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall) {
         ReceiverParameterDescriptor extensionReceiver = resolvedCall.getResultingDescriptor().getExtensionReceiverParameter();
         assert extensionReceiver != null : "Extension receiver should be non-null";
         return extensionReceiver.getType();
     }
 
     @Nullable
-    private static KtExpression getSingleArgumentExpression(@NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall) {
+    public static KtExpression getSingleArgumentExpression(@NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall) {
         List<ResolvedValueArgument> resolvedValueArguments = resolvedCall.getValueArgumentsByIndex();
         if (resolvedValueArguments == null) return null;
         if (resolvedValueArguments.size() != 1) return null;
@@ -694,7 +643,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         PseudoInsnsKt.fakeAlwaysFalseIfeq(v, continueLabel);
 
         generator.beforeBody();
-        blockStackElements.push(new LoopBlockStackElement(loopExit, continueLabel, targetLabel(generator.forExpression)));
+        blockStackElements.push(new LoopBlockStackElement(loopExit, continueLabel, targetLabel(generator.getForExpression())));
         generator.body();
         blockStackElements.pop();
         v.mark(continueLabel);
@@ -706,613 +655,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         generator.afterLoop();
     }
 
-    private abstract class AbstractForLoopGenerator {
-
-        // for (e : E in c) {...}
-        protected final KtForExpression forExpression;
-        private final Label loopParameterStartLabel = new Label();
-        private final Label bodyEnd = new Label();
-        private final List<Runnable> leaveVariableTasks = Lists.newArrayList();
-
-        protected final KotlinType elementType;
-        protected final Type asmElementType;
-
-        protected int loopParameterVar;
-        protected Type loopParameterType;
-
-        private AbstractForLoopGenerator(@NotNull KtForExpression forExpression) {
-            this.forExpression = forExpression;
-            this.elementType = getElementType(forExpression);
-            this.asmElementType = asmType(elementType);
-        }
-
-        @NotNull
-        private KotlinType getElementType(KtForExpression forExpression) {
-            KtExpression loopRange = forExpression.getLoopRange();
-            assert loopRange != null;
-            ResolvedCall<FunctionDescriptor> nextCall = getNotNull(bindingContext,
-                                                                   LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange,
-                                                                   "No next() function " + DiagnosticUtils.atLocation(loopRange));
-            //noinspection ConstantConditions
-            return nextCall.getResultingDescriptor().getReturnType();
-        }
-
-        public void beforeLoop() {
-            KtParameter loopParameter = forExpression.getLoopParameter();
-            if (loopParameter == null) return;
-            KtDestructuringDeclaration multiParameter = loopParameter.getDestructuringDeclaration();
-            if (multiParameter != null) {
-                // E tmp<e> = tmp<iterator>.next()
-                loopParameterType = asmElementType;
-                loopParameterVar = createLoopTempVariable(asmElementType);
-            }
-            else {
-                // E e = tmp<iterator>.next()
-                VariableDescriptor parameterDescriptor = bindingContext.get(VALUE_PARAMETER, loopParameter);
-                loopParameterType = asmType(parameterDescriptor.getType());
-                loopParameterVar = myFrameMap.enter(parameterDescriptor, loopParameterType);
-                scheduleLeaveVariable(() -> {
-                    myFrameMap.leave(parameterDescriptor);
-                    v.visitLocalVariable(parameterDescriptor.getName().asString(),
-                                         loopParameterType.getDescriptor(), null,
-                                         loopParameterStartLabel, bodyEnd,
-                                         loopParameterVar);
-                });
-            }
-        }
-
-        public abstract void checkEmptyLoop(@NotNull Label loopExit);
-
-        public abstract void checkPreCondition(@NotNull Label loopExit);
-
-        public void beforeBody() {
-            assignToLoopParameter();
-            v.mark(loopParameterStartLabel);
-
-            KtDestructuringDeclaration destructuringDeclaration = forExpression.getDestructuringDeclaration();
-            if (destructuringDeclaration != null) {
-                generateDestructuringDeclaration(destructuringDeclaration);
-            }
-        }
-
-        private void generateDestructuringDeclaration(@NotNull KtDestructuringDeclaration destructuringDeclaration) {
-            Label destructuringStartLabel = new Label();
-
-            List<VariableDescriptor> componentDescriptors =
-                    CollectionsKt.map(destructuringDeclaration.getEntries(), ExpressionCodegen.this::getVariableDescriptorNotNull);
-
-            for (VariableDescriptor componentDescriptor : CodegenUtilKt.filterOutDescriptorsWithSpecialNames(componentDescriptors)) {
-                @SuppressWarnings("ConstantConditions") Type componentAsmType = asmType(componentDescriptor.getReturnType());
-                int componentVarIndex = myFrameMap.enter(componentDescriptor, componentAsmType);
-                scheduleLeaveVariable(() -> {
-                    myFrameMap.leave(componentDescriptor);
-                    v.visitLocalVariable(componentDescriptor.getName().asString(),
-                                         componentAsmType.getDescriptor(), null,
-                                         destructuringStartLabel, bodyEnd,
-                                         componentVarIndex);
-                });
-            }
-
-            v.visitLabel(destructuringStartLabel);
-
-            initializeDestructuringDeclarationVariables(
-                    destructuringDeclaration,
-                    new TransientReceiver(elementType),
-                    StackValue.local(loopParameterVar, asmElementType));
-        }
-
-        protected abstract void assignToLoopParameter();
-
-        protected abstract void increment(@NotNull Label loopExit);
-
-        public void body() {
-            generateLoopBody(forExpression.getBody());
-        }
-
-        private void scheduleLeaveVariable(Runnable runnable) {
-            leaveVariableTasks.add(runnable);
-        }
-
-        protected int createLoopTempVariable(Type type) {
-            int varIndex = myFrameMap.enterTemp(type);
-            scheduleLeaveVariable(() -> myFrameMap.leaveTemp(type));
-            return varIndex;
-        }
-
-        public void afterBody(@NotNull Label loopExit) {
-            markStartLineNumber(forExpression);
-
-            increment(loopExit);
-
-            v.mark(bodyEnd);
-        }
-
-        public void afterLoop() {
-            for (Runnable task : Lists.reverse(leaveVariableTasks)) {
-                task.run();
-            }
-        }
-
-        // This method consumes range/progression from stack
-        // The result is stored to local variable
-        protected void generateRangeOrProgressionProperty(
-                @NotNull Type loopRangeType,
-                @NotNull String getterName,
-                @NotNull Type getterReturnType,
-                @NotNull Type varType,
-                int varToStore
-        ) {
-            v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + getterReturnType.getDescriptor(), false);
-            StackValue.local(varToStore, varType).store(StackValue.onStack(getterReturnType), v);
-        }
-    }
-
-    private void generateLoopBody(@Nullable KtExpression body) {
+    public void generateLoopBody(@Nullable KtExpression body) {
         if (body != null) {
             gen(body, Type.VOID_TYPE);
-        }
-    }
-
-    private class IteratorForLoopGenerator extends AbstractForLoopGenerator {
-
-        private int iteratorVarIndex;
-        private final ResolvedCall<FunctionDescriptor> iteratorCall;
-        private final ResolvedCall<FunctionDescriptor> nextCall;
-        private final Type asmTypeForIterator;
-
-        private IteratorForLoopGenerator(@NotNull KtForExpression forExpression) {
-            super(forExpression);
-
-            KtExpression loopRange = forExpression.getLoopRange();
-            assert loopRange != null;
-            this.iteratorCall = getNotNull(bindingContext,
-                                           LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRange,
-                                           "No .iterator() function " + DiagnosticUtils.atLocation(loopRange));
-
-            KotlinType iteratorType = iteratorCall.getResultingDescriptor().getReturnType();
-            assert iteratorType != null;
-            this.asmTypeForIterator = asmType(iteratorType);
-
-            this.nextCall = getNotNull(bindingContext,
-                                       LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange,
-                                       "No next() function " + DiagnosticUtils.atLocation(loopRange));
-        }
-
-        @Override
-        public void beforeLoop() {
-            super.beforeLoop();
-
-            // Iterator<E> tmp<iterator> = c.iterator()
-
-            iteratorVarIndex = createLoopTempVariable(asmTypeForIterator);
-
-            StackValue.local(iteratorVarIndex, asmTypeForIterator).store(invokeFunction(iteratorCall, StackValue.none()), v);
-        }
-
-        @Override
-        public void checkEmptyLoop(@NotNull Label loopExit) {
-        }
-
-        @Override
-        public void checkPreCondition(@NotNull Label loopExit) {
-            // tmp<iterator>.hasNext()
-
-            KtExpression loopRange = forExpression.getLoopRange();
-            @SuppressWarnings("ConstantConditions") ResolvedCall<FunctionDescriptor> hasNextCall = getNotNull(bindingContext,
-                                                                      LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, loopRange,
-                                                                      "No hasNext() function " + DiagnosticUtils.atLocation(loopRange));
-            @SuppressWarnings("ConstantConditions") Call fakeCall = makeFakeCall(new TransientReceiver(iteratorCall.getResultingDescriptor().getReturnType()));
-            StackValue result = invokeFunction(fakeCall, hasNextCall, StackValue.local(iteratorVarIndex, asmTypeForIterator));
-            result.put(Type.BOOLEAN_TYPE, v);
-
-            v.ifeq(loopExit);
-        }
-
-        @Override
-        protected void assignToLoopParameter() {
-            @SuppressWarnings("ConstantConditions") Call fakeCall =
-                    makeFakeCall(new TransientReceiver(iteratorCall.getResultingDescriptor().getReturnType()));
-            StackValue value = invokeFunction(fakeCall, nextCall, StackValue.local(iteratorVarIndex, asmTypeForIterator));
-            //noinspection ConstantConditions
-            StackValue.local(loopParameterVar, loopParameterType).store(value, v);
-        }
-
-        @Override
-        protected void increment(@NotNull Label loopExit) {
-        }
-    }
-
-    private class ForInArrayLoopGenerator extends AbstractForLoopGenerator {
-        private int indexVar;
-        private int arrayVar;
-        private final KotlinType loopRangeType;
-
-        private ForInArrayLoopGenerator(@NotNull KtForExpression forExpression) {
-            super(forExpression);
-            loopRangeType = bindingContext.getType(forExpression.getLoopRange());
-        }
-
-        @Override
-        public void beforeLoop() {
-            super.beforeLoop();
-
-            indexVar = createLoopTempVariable(Type.INT_TYPE);
-
-            KtExpression loopRange = forExpression.getLoopRange();
-            StackValue value = gen(loopRange);
-            Type asmLoopRangeType = asmType(loopRangeType);
-            if (value instanceof StackValue.Local && value.type.equals(asmLoopRangeType)) {
-                arrayVar = ((StackValue.Local) value).index; // no need to copy local variable into another variable
-            }
-            else {
-                arrayVar = createLoopTempVariable(OBJECT_TYPE);
-                value.put(asmLoopRangeType, v);
-                v.store(arrayVar, OBJECT_TYPE);
-            }
-
-            v.iconst(0);
-            v.store(indexVar, Type.INT_TYPE);
-        }
-
-        @Override
-        public void checkEmptyLoop(@NotNull Label loopExit) {
-        }
-
-        @Override
-        public void checkPreCondition(@NotNull Label loopExit) {
-            v.load(indexVar, Type.INT_TYPE);
-            v.load(arrayVar, OBJECT_TYPE);
-            v.arraylength();
-            v.ificmpge(loopExit);
-        }
-
-        @Override
-        protected void assignToLoopParameter() {
-            Type arrayElParamType;
-            if (KotlinBuiltIns.isArray(loopRangeType)) {
-                arrayElParamType = boxType(asmElementType);
-            }
-            else {
-                arrayElParamType = asmElementType;
-            }
-
-            v.load(arrayVar, OBJECT_TYPE);
-            v.load(indexVar, Type.INT_TYPE);
-            v.aload(arrayElParamType);
-            StackValue.onStack(arrayElParamType).put(asmElementType, v);
-            v.store(loopParameterVar, asmElementType);
-        }
-
-        @Override
-        protected void increment(@NotNull Label loopExit) {
-            v.iinc(indexVar, 1);
-        }
-    }
-
-    private abstract class AbstractForInProgressionOrRangeLoopGenerator extends AbstractForLoopGenerator {
-        protected int endVar;
-
-        private StackValue loopParameter;
-
-        private AbstractForInProgressionOrRangeLoopGenerator(@NotNull KtForExpression forExpression) {
-            super(forExpression);
-
-            switch (asmElementType.getSort()) {
-                case Type.INT:
-                case Type.BYTE:
-                case Type.SHORT:
-                case Type.CHAR:
-                case Type.LONG:
-                    break;
-
-                default:
-                    throw new IllegalStateException("Unexpected range element type: " + asmElementType);
-            }
-        }
-
-        @Override
-        public void beforeLoop() {
-            super.beforeLoop();
-
-            endVar = createLoopTempVariable(asmElementType);
-        }
-
-        protected void checkPostCondition(@NotNull Label loopExit) {
-            assert endVar != -1 :
-                    "endVar must be allocated, endVar = " + endVar;
-            loopParameter().put(asmElementType, v);
-            v.load(endVar, asmElementType);
-            if (asmElementType.getSort() == Type.LONG) {
-                v.lcmp();
-                v.ifeq(loopExit);
-            }
-            else {
-                v.ificmpeq(loopExit);
-            }
-        }
-
-        @Override
-        public void checkPreCondition(@NotNull Label loopExit) {
-        }
-
-        @NotNull
-        protected StackValue loopParameter() {
-            if (loopParameter == null) {
-                loopParameter = StackValue.local(loopParameterVar, loopParameterType);
-            }
-            return loopParameter;
-        }
-    }
-
-    private abstract class AbstractForInRangeLoopGenerator extends AbstractForInProgressionOrRangeLoopGenerator {
-        private final int step;
-
-        private AbstractForInRangeLoopGenerator(@NotNull KtForExpression forExpression, int step) {
-            super(forExpression);
-            this.step = step;
-            assert step == 1 || step == -1 : "'step' should be either 1 or -1: " + step;
-        }
-
-        private AbstractForInRangeLoopGenerator(@NotNull KtForExpression forExpression) {
-            this(forExpression, 1);
-        }
-
-        @Override
-        public void beforeLoop() {
-            super.beforeLoop();
-
-            storeRangeStartAndEnd();
-        }
-
-        protected abstract void storeRangeStartAndEnd();
-
-        @Override
-        public void checkEmptyLoop(@NotNull Label loopExit) {
-            loopParameter().put(asmElementType, v);
-            v.load(endVar, asmElementType);
-            if (asmElementType.getSort() == Type.LONG) {
-                v.lcmp();
-                if (step > 0) {
-                    v.ifgt(loopExit);
-                }
-                else {
-                    v.iflt(loopExit);
-                }
-            }
-            else {
-                if (step > 0) {
-                    v.ificmpgt(loopExit);
-                }
-                else {
-                    v.ificmplt(loopExit);
-                }
-            }
-        }
-
-        @Override
-        protected void assignToLoopParameter() {
-        }
-
-        @Override
-        protected void increment(@NotNull Label loopExit) {
-            checkPostCondition(loopExit);
-
-            if (loopParameterType == Type.INT_TYPE) {
-                v.iinc(loopParameterVar, step);
-            }
-            else {
-                StackValue loopParameter = loopParameter();
-                loopParameter.put(asmElementType, v);
-                genIncrement(asmElementType, step, v);
-                loopParameter.store(StackValue.onStack(asmElementType), v);
-            }
-        }
-    }
-
-    private class ForInRangeLiteralLoopGenerator extends AbstractForInRangeLoopGenerator {
-        private final ReceiverValue from;
-        private final KtExpression to;
-
-        private ForInRangeLiteralLoopGenerator(@NotNull KtForExpression forExpression, @NotNull ResolvedCall<?> loopRangeCall) {
-            super(forExpression);
-            this.from = loopRangeCall.getDispatchReceiver();
-            this.to = getSingleArgumentExpression(loopRangeCall);
-        }
-
-        @Override
-        protected void storeRangeStartAndEnd() {
-            loopParameter().store(generateReceiverValue(from, false), v);
-            StackValue.local(endVar, asmElementType).store(gen(to), v);
-        }
-    }
-
-    private class ForInDownToProgressionLoopGenerator extends AbstractForInRangeLoopGenerator {
-        private final ReceiverValue from;
-        private final KtExpression to;
-
-        private ForInDownToProgressionLoopGenerator(@NotNull KtForExpression forExpression, @NotNull ResolvedCall<?> loopRangeCall) {
-            super(forExpression, -1);
-            this.from = loopRangeCall.getExtensionReceiver();
-            this.to = getSingleArgumentExpression(loopRangeCall);
-        }
-
-        @Override
-        protected void storeRangeStartAndEnd() {
-            loopParameter().store(generateReceiverValue(from, false), v);
-            StackValue.local(endVar, asmElementType).store(gen(to), v);
-        }
-    }
-
-    private class ForInRangeInstanceLoopGenerator extends AbstractForInRangeLoopGenerator {
-        private ForInRangeInstanceLoopGenerator(@NotNull KtForExpression forExpression) {
-            super(forExpression);
-        }
-
-        @Override
-        protected void storeRangeStartAndEnd() {
-            KotlinType loopRangeType = bindingContext.getType(forExpression.getLoopRange());
-            assert loopRangeType != null;
-            Type asmLoopRangeType = asmType(loopRangeType);
-            gen(forExpression.getLoopRange(), asmLoopRangeType);
-            v.dup();
-
-            // ranges inherit first and last from corresponding progressions
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType, loopParameterVar);
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, asmElementType, endVar);
-        }
-    }
-
-    private abstract class ForInOptimizedIndicesLoopGenerator extends AbstractForInRangeLoopGenerator {
-        protected final ReceiverValue receiverValue;
-        protected final KotlinType expectedReceiverType;
-
-        private ForInOptimizedIndicesLoopGenerator(@NotNull KtForExpression forExpression, @NotNull ResolvedCall<?> loopRangeCall) {
-            super(forExpression);
-            this.receiverValue = loopRangeCall.getExtensionReceiver();
-            this.expectedReceiverType = getExpectedReceiverType(loopRangeCall);
-        }
-
-        @Override
-        protected void storeRangeStartAndEnd() {
-            loopParameter().store(StackValue.constant(0, asmElementType), v);
-
-            StackValue receiver = generateReceiverValue(receiverValue, false);
-            Type receiverType = asmType(expectedReceiverType);
-            receiver.put(receiverType, v);
-            getReceiverSizeAsInt();
-            v.iconst(1);
-            v.sub(Type.INT_TYPE);
-            StackValue.local(endVar, asmElementType).store(StackValue.onStack(Type.INT_TYPE), v);
-        }
-
-        /**
-         * <code>(receiver -> size:I)</code>
-         */
-        protected abstract void getReceiverSizeAsInt();
-    }
-
-    private class ForInCollectionIndicesRangeLoopGenerator extends ForInOptimizedIndicesLoopGenerator {
-        private ForInCollectionIndicesRangeLoopGenerator(@NotNull KtForExpression forExpression, @NotNull ResolvedCall<?> loopRangeCall) {
-            super(forExpression, loopRangeCall);
-        }
-
-        @Override
-        protected void getReceiverSizeAsInt() {
-            v.invokeinterface("java/util/Collection", "size", "()I");
-        }
-    }
-
-    private class ForInArrayIndicesRangeLoopGenerator extends ForInOptimizedIndicesLoopGenerator {
-        private ForInArrayIndicesRangeLoopGenerator(@NotNull KtForExpression forExpression, @NotNull ResolvedCall<?> loopRangeCall) {
-            super(forExpression, loopRangeCall);
-        }
-
-        @Override
-        protected void getReceiverSizeAsInt() {
-            v.arraylength();
-        }
-    }
-
-    private class ForInCharSequenceIndicesRangeLoopGenerator extends ForInOptimizedIndicesLoopGenerator {
-        private ForInCharSequenceIndicesRangeLoopGenerator(@NotNull KtForExpression forExpression, @NotNull ResolvedCall<?> loopRangeCall) {
-            super(forExpression, loopRangeCall);
-        }
-
-        @Override
-        protected void getReceiverSizeAsInt() {
-            v.invokeinterface("java/lang/CharSequence", "length", "()I");
-        }
-    }
-
-    private class ForInProgressionExpressionLoopGenerator extends AbstractForInProgressionOrRangeLoopGenerator {
-        private int incrementVar;
-        private Type incrementType;
-
-        private ForInProgressionExpressionLoopGenerator(@NotNull KtForExpression forExpression) {
-            super(forExpression);
-        }
-
-        @Override
-        public void beforeLoop() {
-            super.beforeLoop();
-
-            incrementVar = createLoopTempVariable(asmElementType);
-
-            KotlinType loopRangeType = bindingContext.getType(forExpression.getLoopRange());
-            assert loopRangeType != null;
-            Type asmLoopRangeType = asmType(loopRangeType);
-
-            Collection<PropertyDescriptor> incrementProp =
-                    loopRangeType.getMemberScope().getContributedVariables(Name.identifier("step"), NoLookupLocation.FROM_BACKEND);
-            assert incrementProp.size() == 1 : loopRangeType + " " + incrementProp.size();
-            incrementType = asmType(incrementProp.iterator().next().getType());
-
-            gen(forExpression.getLoopRange(), asmLoopRangeType);
-            v.dup();
-            v.dup();
-
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType, loopParameterVar);
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, asmElementType, endVar);
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getStep", incrementType, incrementType, incrementVar);
-        }
-
-        @Override
-        public void checkEmptyLoop(@NotNull Label loopExit) {
-            loopParameter().put(asmElementType, v);
-            v.load(endVar, asmElementType);
-            v.load(incrementVar, incrementType);
-
-            Label negativeIncrement = new Label();
-            Label afterIf = new Label();
-
-            if (asmElementType.getSort() == Type.LONG) {
-                v.lconst(0L);
-                v.lcmp();
-                v.ifle(negativeIncrement); // if increment < 0, jump
-
-                // increment > 0
-                v.lcmp();
-                v.ifgt(loopExit);
-                v.goTo(afterIf);
-
-                // increment < 0
-                v.mark(negativeIncrement);
-                v.lcmp();
-                v.iflt(loopExit);
-                v.mark(afterIf);
-            }
-            else {
-                v.ifle(negativeIncrement); // if increment < 0, jump
-
-                // increment > 0
-                v.ificmpgt(loopExit);
-                v.goTo(afterIf);
-
-                // increment < 0
-                v.mark(negativeIncrement);
-                v.ificmplt(loopExit);
-                v.mark(afterIf);
-            }
-        }
-
-        @Override
-        protected void assignToLoopParameter() {
-        }
-
-        @Override
-        protected void increment(@NotNull Label loopExit) {
-            checkPostCondition(loopExit);
-
-            StackValue loopParameter = loopParameter();
-            loopParameter.put(asmElementType, v);
-            v.load(incrementVar, asmElementType);
-            v.add(asmElementType);
-
-            if (asmElementType == Type.BYTE_TYPE || asmElementType == Type.SHORT_TYPE || asmElementType == Type.CHAR_TYPE) {
-                StackValue.coerce(Type.INT_TYPE, asmElementType, v);
-            }
-
-            loopParameter.store(StackValue.onStack(asmElementType), v);
         }
     }
 
@@ -4187,7 +3532,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private VariableDescriptor getVariableDescriptorNotNull(@NotNull KtElement declaration) {
+    public VariableDescriptor getVariableDescriptorNotNull(@NotNull KtElement declaration) {
         VariableDescriptor descriptor = bindingContext.get(VARIABLE, declaration);
         assert descriptor != null :  "Couldn't find variable declaration in binding context " + declaration.getText();
         return descriptor;
@@ -4774,7 +4119,7 @@ The "returned" value of try expression with no finally is either the last expres
         }
     }
 
-    private Call makeFakeCall(ReceiverValue initializerAsReceiver) {
+    public Call makeFakeCall(ReceiverValue initializerAsReceiver) {
         KtSimpleNameExpression fake = KtPsiFactoryKt.KtPsiFactory(state.getProject(), false).createSimpleName("fake");
         return CallMaker.makeCall(fake, initializerAsReceiver);
     }

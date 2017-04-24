@@ -75,27 +75,6 @@ public class RangeCodegenUtil {
     }
 
     @Nullable
-    public static ResolvedCall<? extends CallableDescriptor> getLoopRangeResolvedCall(@NotNull KtForExpression forExpression, @NotNull BindingContext bindingContext) {
-        KtExpression loopRange = KtPsiUtil.deparenthesize(forExpression.getLoopRange());
-
-        if (loopRange instanceof KtQualifiedExpression) {
-            KtQualifiedExpression qualifiedExpression = (KtQualifiedExpression) loopRange;
-            KtExpression selector = qualifiedExpression.getSelectorExpression();
-            if (selector instanceof KtCallExpression || selector instanceof KtSimpleNameExpression) {
-                return CallUtilKt.getResolvedCall(selector, bindingContext);
-            }
-        }
-        else if (loopRange instanceof KtSimpleNameExpression || loopRange instanceof KtCallExpression) {
-            return CallUtilKt.getResolvedCall(loopRange, bindingContext);
-        }
-        else if (loopRange instanceof KtBinaryExpression) {
-            return CallUtilKt.getResolvedCall(((KtBinaryExpression) loopRange).getOperationReference(), bindingContext);
-        }
-
-        return null;
-    }
-
-    @Nullable
     private static PrimitiveType getPrimitiveRangeElementType(KotlinType rangeType) {
         return getPrimitiveRangeOrProgressionElementType(rangeType, RANGE_TO_ELEMENT_TYPE);
     }
