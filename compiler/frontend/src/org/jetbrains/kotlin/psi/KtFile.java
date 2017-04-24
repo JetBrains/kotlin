@@ -46,6 +46,7 @@ import java.util.List;
 public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnnotated, KtElement, PsiClassOwner, PsiNamedElement {
 
     private final boolean isCompiled;
+    private Boolean isScript = null;
 
     public KtFile(FileViewProvider viewProvider, boolean compiled) {
         super(viewProvider, KotlinLanguage.INSTANCE);
@@ -183,9 +184,22 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
     @Override
     public void setPackageName(String packageName) { }
 
+    @Override
+    public void clearCaches() {
+        super.clearCaches();
+        isScript = null;
+    }
+
     @Nullable
     public KtScript getScript() {
-        return PsiTreeUtil.getChildOfType(this, KtScript.class);
+        if (isScript != null && !isScript) return null;
+
+        KtScript result = PsiTreeUtil.getChildOfType(this, KtScript.class);
+        if (isScript == null) {
+            isScript = result != null;
+        }
+
+        return result;
     }
 
     public boolean isScript() {
