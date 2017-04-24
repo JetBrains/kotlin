@@ -13951,6 +13951,69 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/replaceUnderscoreWithParameterName")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceUnderscoreWithParameterName extends AbstractIntentionTest {
+        public void testAllFilesPresentInReplaceUnderscoreWithParameterName() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceUnderscoreWithParameterName"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("anonymous.kt")
+        public void testAnonymous() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceUnderscoreWithParameterName/anonymous.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("conflict.kt")
+        public void testConflict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceUnderscoreWithParameterName/conflict.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("destructuringDeclaration.kt")
+        public void testDestructuringDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceUnderscoreWithParameterName/destructuringDeclaration.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("for.kt")
+        public void testFor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceUnderscoreWithParameterName/for.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceUnderscoreWithParameterName/lambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaConflict.kt")
+        public void testLambdaConflict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceUnderscoreWithParameterName/lambdaConflict.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaNoNames.kt")
+        public void testLambdaNoNames() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceUnderscoreWithParameterName/lambdaNoNames.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("map.kt")
+        public void testMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceUnderscoreWithParameterName/map.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("triple.kt")
+        public void testTriple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceUnderscoreWithParameterName/triple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/replaceUntilWithRangeTo")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

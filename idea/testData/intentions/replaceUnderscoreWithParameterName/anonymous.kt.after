@@ -1,0 +1,1 @@
+val f = fun(i: Int, s: String) = i
