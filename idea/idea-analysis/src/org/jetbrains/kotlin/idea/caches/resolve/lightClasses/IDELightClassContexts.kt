@@ -77,6 +77,8 @@ class IDELightClassConstructionContext(bindingContext: BindingContext, module: M
         LIGHT,
         EXACT
     }
+
+    override fun toString() = "${this.javaClass.simpleName}:$mode"
 }
 
 object IDELightClassContexts {
