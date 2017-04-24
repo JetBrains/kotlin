@@ -297,7 +297,7 @@ protected constructor(
             return !FileTypeIndex.getFiles(JavaFileType.INSTANCE, GlobalSearchScope.moduleScope(module)).isEmpty()
         }
 
-        fun findModulePomFile(module: Module): PsiFile? {
+        private fun findModulePomFile(module: Module): PsiFile? {
             val files = MavenProjectsManager.getInstance(module.project).projectsFiles
             for (file in files) {
                 val fileModule = ModuleUtilCore.findModuleForFile(file, module.project)
