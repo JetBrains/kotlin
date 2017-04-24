@@ -286,34 +286,27 @@ class NameSuggestion {
                     }
                 }
                 is ClassDescriptor -> {
-                    // valueOf() is created in the library with a mangled name for every enum class
-                    if (descriptor is FunctionDescriptor && descriptor.isEnumValueOfMethod()) return mangledAndStable()
+                    return when {
+                        // valueOf() is created in the library with a mangled name for every enum class
+                        descriptor is FunctionDescriptor && descriptor.isEnumValueOfMethod() -> mangledAndStable()
 
-                    // Make all public declarations stable
-                    if (effectiveVisibility == Visibilities.PUBLIC) {
-                        return mangledAndStable()
-                    }
+                        // Make all public declarations stable
+                        effectiveVisibility == Visibilities.PUBLIC -> mangledAndStable()
 
-                    if (effectiveVisibility == Visibilities.INTERNAL) {
-                        return mangledInternal()
-                    }
+                        descriptor is CallableMemberDescriptor && descriptor.isOverridableOrOverrides -> mangledAndStable()
 
-                    if (descriptor is CallableMemberDescriptor && descriptor.isOverridableOrOverrides) return mangledAndStable()
-
-                    // Make all protected declarations of non-final public classes stable
-                    if (effectiveVisibility == Visibilities.PROTECTED &&
+                        // Make all protected declarations of non-final public classes stable
+                        effectiveVisibility == Visibilities.PROTECTED &&
                         !containingDeclaration.isFinalClass &&
-                        containingDeclaration.visibility.isPublicAPI
-                    ) {
-                        return mangledAndStable()
-                    }
+                        containingDeclaration.visibility.isPublicAPI -> mangledAndStable()
 
-                    // Mangle (but make unstable) all non-public API of public classes
-                    if (containingDeclaration.visibility.isPublicAPI && !containingDeclaration.isFinalClass) {
-                        return mangledPrivate()
-                    }
+                        effectiveVisibility == Visibilities.INTERNAL -> mangledInternal()
 
-                    regularAndUnstable()
+                        // Mangle (but make unstable) all non-public API of public classes
+                        containingDeclaration.visibility.isPublicAPI && !containingDeclaration.isFinalClass -> mangledPrivate()
+
+                        else -> regularAndUnstable()
+                    }
                 }
                 else -> {
                     assert(containingDeclaration is CallableMemberDescriptor) {

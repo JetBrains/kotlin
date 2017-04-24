@@ -257,33 +257,29 @@ public class JsConfig {
         initialized = true;
     }
 
-    private IdentityHashMap<KotlinJavascriptMetadata, JsModuleDescriptor<ModuleDescriptorImpl>> factoryMap = new IdentityHashMap<>();
+    private final IdentityHashMap<KotlinJavascriptMetadata, JsModuleDescriptor<ModuleDescriptorImpl>> factoryMap = new IdentityHashMap<>();
 
     private JsModuleDescriptor<ModuleDescriptorImpl> createModuleDescriptor(KotlinJavascriptMetadata metadata) {
-        if (factoryMap.containsKey(metadata)) {
-            return factoryMap.get(metadata);
-        }
+        return factoryMap.computeIfAbsent(metadata, m -> {
+            LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
+            assert m.getVersion().isCompatible() ||
+                   languageVersionSettings.isFlagEnabled(AnalysisFlags.getSkipMetadataVersionCheck()) :
+                    "Expected JS metadata version " + JsMetadataVersion.INSTANCE + ", but actual metadata version is " + m.getVersion();
 
-        LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
-        assert metadata.getVersion().isCompatible() ||
-               languageVersionSettings.isFlagEnabled(AnalysisFlags.getSkipMetadataVersionCheck()) :
-                "Expected JS metadata version " + JsMetadataVersion.INSTANCE + ", but actual metadata version is " + metadata.getVersion();
+            ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(
+                    Name.special("<" + m.getModuleName() + ">"), storageManager, JsPlatform.INSTANCE.getBuiltIns()
+            );
 
-        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(
-                Name.special("<" + metadata.getModuleName() + ">"), storageManager, JsPlatform.INSTANCE.getBuiltIns()
-        );
+            JsModuleDescriptor<PackageFragmentProvider> rawDescriptor = KotlinJavascriptSerializationUtil.readModule(
+                    m.getBody(), storageManager, moduleDescriptor,
+                    new CompilerDeserializationConfiguration(languageVersionSettings)
+            );
 
-        JsModuleDescriptor<PackageFragmentProvider> rawDescriptor = KotlinJavascriptSerializationUtil.readModule(
-                metadata.getBody(), storageManager, moduleDescriptor,
-                new CompilerDeserializationConfiguration(languageVersionSettings)
-        );
+            PackageFragmentProvider provider = rawDescriptor.getData();
+            moduleDescriptor.initialize(provider != null ? provider : PackageFragmentProvider.Empty.INSTANCE);
 
-        PackageFragmentProvider provider = rawDescriptor.getData();
-        moduleDescriptor.initialize(provider != null ? provider : PackageFragmentProvider.Empty.INSTANCE);
-
-        JsModuleDescriptor<ModuleDescriptorImpl> result = rawDescriptor.copy(moduleDescriptor);
-        factoryMap.put(metadata, result);
-        return result;
+            return rawDescriptor.copy(moduleDescriptor);
+        });
     }
 
     private static void setDependencies(ModuleDescriptorImpl module, List<ModuleDescriptorImpl> modules) {

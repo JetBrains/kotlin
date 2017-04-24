@@ -83,11 +83,11 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     public boolean typedArrays;
 
     @GradleOption(DefaultValues.BooleanFalseDefault.class)
-    @Argument(value = "XfriendModulesDisabled", description = "Disable internal declaration export")
+    @Argument(value = "-XfriendModulesDisabled", description = "Disable internal declaration export")
     public boolean friendModulesDisabled;
 
     @Argument(
-            value = "XfriendModules",
+            value = "-XfriendModules",
             valueDescription = "<path>",
             description = "Paths to friend modules"
     )
