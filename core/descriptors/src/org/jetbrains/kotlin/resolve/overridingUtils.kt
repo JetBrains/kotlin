@@ -81,3 +81,9 @@ fun <H : Any> Collection<H>.selectMostSpecificInEachOverridableGroup(
     }
     return result
 }
+
+fun <D : CallableDescriptor> MutableCollection<D>.retainMostSpecificInEachOverridableGroup() {
+    val newResult = selectMostSpecificInEachOverridableGroup { this }
+    if (size == newResult.size) return
+    retainAll(newResult)
+}

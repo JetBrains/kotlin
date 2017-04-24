@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.load.java.typeEnhancement.enhanceSignatures
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.retainMostSpecificInEachOverridableGroup
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -85,6 +86,8 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
                 result.addIfNotNull(c.components.samConversionResolver.resolveSamAdapter(descriptor))
             }
         }
+
+        result.retainMostSpecificInEachOverridableGroup()
 
         computeNonDeclaredFunctions(result, name)
 

@@ -12100,6 +12100,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("selectMoreSpecific.kt")
+            public void testSelectMoreSpecific() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/selectMoreSpecific.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("serializable.kt")
             public void testSerializable() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/serializable.kt");
