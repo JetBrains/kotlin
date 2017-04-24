@@ -24,6 +24,8 @@ typedef struct DIBuilder          *DIBuilderRef;
 typedef struct DICompileUnit      *DICompileUnitRef;
 typedef struct DIFile             *DIFileRef;
 typedef struct DIBasicType        *DIBasicTypeRef;
+typedef struct DICompositeType    *DICompositeTypeRef;
+typedef struct DIDerivedType      *DIDerivedTypeRef;
 typedef struct DIType             *DITypeOpaqueRef;
 typedef struct DISubprogram       *DISubprogramRef;
 typedef struct DIModule           *DIModuleRef;
@@ -42,6 +44,38 @@ DICompileUnitRef DICreateCompilationUnit(DIBuilderRef builder, unsigned int lang
 DIFileRef DICreateFile(DIBuilderRef builder, const char *filename, const char *directory);
 
 DIBasicTypeRef DICreateBasicType(DIBuilderRef builder, const char* name, uint64_t sizeInBits, uint64_t alignment, unsigned encoding);
+
+DICompositeTypeRef DICreateStructType(DIBuilderRef refBuilder,
+                                      DIScopeOpaqueRef scope, const char *name,
+                                      DIFileRef file, unsigned lineNumber,
+                                      uint64_t sizeInBits, uint64_t alignInBits,
+                                      unsigned flags, DITypeOpaqueRef derivedFrom,
+                                      DIDerivedTypeRef *elements,
+                                      uint64_t elementsCount,
+                                      DICompositeTypeRef refPlace);
+DICompositeTypeRef DICreateArrayType(DIBuilderRef refBuilder,
+                                      uint64_t size, uint64_t alignInBits,
+                                      DITypeOpaqueRef type,
+                                      uint64_t elementsCount);
+
+DIDerivedTypeRef DICreateReferenceType(DIBuilderRef refBuilder, DITypeOpaqueRef refType);
+DICompositeTypeRef DICreateReplaceableCompositeType(DIBuilderRef refBuilder,
+                                                    int tag,
+                                                    const char *name,
+                                                    DIScopeOpaqueRef refScope,
+                                                    DIFileRef refFile,
+                                                    unsigned line);
+DIDerivedTypeRef DICreateMemberType(DIBuilderRef refBuilder,
+                                    DIScopeOpaqueRef refScope,
+                                    const char *name,
+                                    DIFileRef file,
+                                    unsigned lineNum,
+                                    uint64_t sizeInBits,
+                                    uint64_t alignInBits,
+                                    uint64_t offsetInBits,
+                                    unsigned flags,
+                                    DITypeOpaqueRef type);
+
 
 DIModuleRef DICreateModule(DIBuilderRef builder, DIScopeOpaqueRef scope,
                            const char* name, const char* configurationMacro,
