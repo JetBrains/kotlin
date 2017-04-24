@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.ClosureCodegen;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer;
+import org.jetbrains.kotlin.codegen.optimization.fixStack.StackTransformationUtilsKt;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.utils.SmartList;
 import org.jetbrains.kotlin.utils.SmartSet;
@@ -512,7 +513,12 @@ public class MethodInliner {
                             )
                         );
                     }
-
+                }
+                else if (cur.getOpcode() == Opcodes.POP) {
+                    LambdaInfo lambda = getLambdaIfExists(MethodInlinerUtilKt.singleOrNullInsn(StackTransformationUtilsKt.top(frame)));
+                    if (lambda != null) {
+                        toDelete.add(cur);
+                    }
                 }
             }
             AbstractInsnNode prevNode = cur;
