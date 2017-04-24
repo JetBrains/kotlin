@@ -97,11 +97,6 @@ class PomFile private constructor(val xmlFile: XmlFile, val domModel: MavenDomPr
         }
     }
 
-    fun findProperty(name: String): XmlTag? {
-        val propertiesNode = nodesByName["properties"] ?: return null
-        return propertiesNode.findFirstSubTag(name)
-    }
-
     fun addDependency(artifact: MavenId, scope: MavenArtifactScope? = null, classifier: String? = null, optional: Boolean = false, systemPath: String? = null): MavenDomDependency {
         require(systemPath == null || scope == MavenArtifactScope.SYSTEM) { "systemPath is only applicable for system scope dependency" }
         require(artifact.groupId != null) { "groupId shouldn't be null" }
@@ -582,41 +577,4 @@ class PomFile private constructor(val xmlFile: XmlFile, val domModel: MavenDomPr
 
         val recommendedOrderAsList = recommendedElementsOrder.toList()
     }
-}
-
-fun PomFile.changeLanguageVersion(languageVersion: String?, apiVersion: String?): PsiElement? {
-    val kotlinPlugin = findPlugin(MavenId(KotlinMavenConfigurator.GROUP_ID,
-                                          KotlinMavenConfigurator.MAVEN_PLUGIN_ID,
-                                          null)) ?: return null
-    val languageElement = languageVersion?.let {
-        changeConfigurationOrProperty(kotlinPlugin, "languageVersion", "kotlin.compiler.languageVersion", it)
-    }
-    val apiElement = apiVersion?.let {
-        changeConfigurationOrProperty(kotlinPlugin, "apiVersion", "kotlin.compiler.apiVersion", it)
-    }
-    return languageElement ?: apiElement
-}
-
-private fun PomFile.changeConfigurationOrProperty(kotlinPlugin: MavenDomPlugin,
-                                                  configurationTagName: String,
-                                                  propertyName: String, value: String): XmlTag? {
-    val configuration = kotlinPlugin.configuration
-    if (configuration.exists()) {
-        val subTag = configuration.xmlTag.findFirstSubTag(configurationTagName)
-        if (subTag != null) {
-            subTag.value.text = value
-            return subTag
-        }
-    }
-
-    val propertyTag = findProperty(propertyName)
-    if (propertyTag != null) {
-        val textNode = propertyTag.children.filterIsInstance<XmlText>().firstOrNull()
-        if (textNode != null) {
-            textNode.value = value
-            return propertyTag
-        }
-    }
-
-    return null
 }
