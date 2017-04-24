@@ -20,7 +20,7 @@ import com.intellij.psi.*
 import com.intellij.psi.PsiModifier.*
 import com.intellij.psi.impl.PsiSubstitutorImpl
 import com.intellij.psi.util.PsiTypesUtil
-import org.jetbrains.kotlin.asJava.elements.KtLightAnnotation
+import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import javax.lang.model.element.Modifier
 
 private val HAS_DEFAULT by lazy {
@@ -54,7 +54,7 @@ private fun PsiModifierList.getJavaModifiers(): Set<Modifier> {
 internal fun PsiExpression.calcConstantValue(evaluator: PsiConstantEvaluationHelper? = null): Any? {
     return when (this) {
         is PsiLiteral -> value
-        is KtLightAnnotation.LightExpressionValue<*> -> getConstantValue() ?: delegate.calcConstantValue(evaluator)
+        is KtLightAnnotationForSourceEntry.LightExpressionValue<*> -> getConstantValue() ?: delegate.calcConstantValue(evaluator)
         is PsiExpression -> (evaluator ?: getConstantEvaluator(this)).computeConstantExpression(this)
         else -> null
     }
@@ -71,7 +71,7 @@ internal val PsiModifierListOwner.isFinal: Boolean
 fun PsiModifierListOwner.getJavaModifiers() = modifierList?.getJavaModifiers() ?: emptySet()
 
 fun PsiModifierListOwner.getAnnotationsWithInherited(): List<PsiAnnotation> {
-    val annotations = modifierList?.annotations?.toMutableList() ?: mutableListOf()
+    val annotations = modifierList?.annotations?.filter { it.qualifiedName != null }?.toMutableList() ?: mutableListOf()
 
     if (this is PsiClass) {
         var superClass = superClass

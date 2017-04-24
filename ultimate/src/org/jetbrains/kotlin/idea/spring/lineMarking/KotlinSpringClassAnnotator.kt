@@ -26,7 +26,7 @@ import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.spring.gutter.SpringClassAnnotator
 import com.intellij.util.Function
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.asJava.elements.KtLightAnnotation
+import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -78,7 +78,7 @@ class KotlinSpringClassAnnotator : SpringClassAnnotator() {
         }
 
         // Workaround for SpringClassAnnotator
-        (getElementToProcess(psiElement) as? KtLightAnnotation)?.let { return super.collectNavigationMarkers(it, result) }
+        (getElementToProcess(psiElement) as? KtLightAnnotationForSourceEntry)?.let { return super.collectNavigationMarkers(it, result) }
 
         super.collectNavigationMarkers(psiElement, result)
     }

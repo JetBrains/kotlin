@@ -23,13 +23,15 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.builder.StubComputationTracker
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
-import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase
 import org.jetbrains.kotlin.idea.caches.resolve.LightClassLazinessChecker.Tracker.Level.*
 import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IDELightClassConstructionContext
@@ -42,9 +44,12 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.keysToMap
+import org.jetbrains.plugins.groovy.lang.psi.impl.stringValue
 import org.junit.Assert
 import java.io.File
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(testDataPath: String) {
@@ -219,17 +224,53 @@ object LightClassLazinessChecker {
             for ((field, lightFieldInfo) in fieldsToInfo) {
                 val delegate = (field as KtLightField).clsDelegate
                 assertEquals(fieldInfo(delegate), lightFieldInfo)
+                checkAnnotationConsistency(field)
             }
             for ((method, lightMethodInfo) in methodsToInfo) {
                 val delegate = (method as KtLightMethod).clsDelegate
                 assertEquals(methodInfo(delegate, lazinessMode), lightMethodInfo)
+                checkAnnotationConsistency(method)
+                method.parameterList.parameters.forEach {
+                    checkAnnotationConsistency(it as KtLightParameter)
+                }
             }
 
             assertEquals(classInfo(lightClass.clsDelegate), classInfo)
+            checkAnnotationConsistency(lightClass)
 
             innerClasses.forEach(LazinessInfo::checkConsistency)
         }
     }
+
+    private fun checkAnnotationConsistency(modifierListOwner: KtLightElement<*, PsiModifierListOwner>) {
+        if (modifierListOwner is KtLightClassForFacade) return
+
+        modifierListOwner.clsDelegate.modifierList!!.annotations.groupBy { delegateAnnotation ->
+            delegateAnnotation.qualifiedName!!
+        }.map {
+            (fqName, clsAnnotations) ->
+
+            val lightAnnotations = (modifierListOwner as? PsiModifierListOwner)?.modifierList?.annotations?.filter { it.qualifiedName == fqName }.orEmpty()
+            if (fqName != Nullable::class.java.name && fqName != NotNull::class.java.name) {
+                assertEquals(clsAnnotations.size, lightAnnotations.size, "Missing $fqName annotation")
+            }
+            else {
+                // having duplicating nullability annotations is fine
+                // see KtLightNullabilityAnnotation
+                assertTrue(lightAnnotations.isNotEmpty(), "Missing $fqName annotation")
+            }
+            clsAnnotations.zip(lightAnnotations).forEach {
+                (clsAnnotation, lightAnnotation) ->
+                assertNotNull(lightAnnotation!!.nameReferenceElement)
+                if (lightAnnotation is KtLightAbstractAnnotation) {
+                    assertEquals(clsAnnotation.values(), lightAnnotation.values())
+                    assertEquals(clsAnnotation, lightAnnotation.clsDelegate)
+                }
+            }
+        }
+    }
+
+    private fun PsiAnnotation.values() = parameterList.attributes.map { it.value.stringValue() }
 
     private data class ClassInfo(
             val fieldNames: Collection<String>,
@@ -247,6 +288,8 @@ object LightClassLazinessChecker {
     )
 
     private fun fieldInfo(field: PsiField) = with(field) {
+        modifierList?.annotations // check getting annotations list doesn't trigger exact resolve
+
         FieldInfo(
                 name!!, PsiModifier.MODIFIERS.asList().filter { modifierList!!.hasModifierProperty(it) }
         )
@@ -261,6 +304,8 @@ object LightClassLazinessChecker {
     )
 
     private fun methodInfo(method: PsiMethod, lazinessMode: Mode) = with(method) {
+        modifierList.annotations // check getting annotations list doesn't trigger exact resolve
+
         MethodInfo(
                 name, relevantModifiers(lazinessMode),
                 isConstructor, method.parameterList.parametersCount, isVarArgs

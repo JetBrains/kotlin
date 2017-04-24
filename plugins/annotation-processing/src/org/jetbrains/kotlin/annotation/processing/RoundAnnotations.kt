@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.annotation.processing
 
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.asJava.elements.KtLightAnnotation
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper

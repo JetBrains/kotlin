@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.asJava.elements
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
-import com.intellij.util.IncorrectOperationException
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -33,18 +34,35 @@ import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.TypeUtils
 
-class KtLightAnnotation(
-        override val clsDelegate: PsiAnnotation,
+abstract class KtLightAbstractAnnotation(parent: PsiElement, computeDelegate: () -> PsiAnnotation) :
+        KtLightElementBase(parent), PsiAnnotation, KtLightElement<KtAnnotationEntry, PsiAnnotation> {
+    override val clsDelegate by lazyPub(computeDelegate)
+
+    override fun getNameReferenceElement() = clsDelegate.nameReferenceElement
+
+    override fun getOwner() = parent as? PsiAnnotationOwner
+
+    override fun getMetaData() = clsDelegate.metaData
+
+    override fun getParameterList() = clsDelegate.parameterList
+}
+
+class KtLightAnnotationForSourceEntry(
+        private val qualifiedName: String,
         override val kotlinOrigin: KtAnnotationEntry,
-        private val owner: PsiAnnotationOwner
-) : PsiAnnotation by clsDelegate, KtLightElement<KtAnnotationEntry, PsiAnnotation> {
+        parent: KtLightElement<*, *>,
+        computeDelegate: () -> PsiAnnotation
+) : KtLightAbstractAnnotation(parent, computeDelegate) {
+
+    override fun getQualifiedName() = qualifiedName
+
     open inner class LightExpressionValue<out D : PsiExpression>(
             val delegate: D,
             private val parent: PsiElement
     ) : PsiAnnotationMemberValue, PsiExpression by delegate {
         val originalExpression: PsiElement? by lazyPub {
             val nameAndValue = delegate.getStrictParentOfType<PsiNameValuePair>() ?: return@lazyPub null
-            val annotationEntry = this@KtLightAnnotation.kotlinOrigin
+            val annotationEntry = this@KtLightAnnotationForSourceEntry.kotlinOrigin
             val context = LightClassGenerationSupport.getInstance(project).analyze(annotationEntry)
             val resolvedCall = annotationEntry.getResolvedCall(context) ?: return@lazyPub null
             val annotationConstructor = resolvedCall.resultingDescriptor
@@ -73,10 +91,10 @@ class KtLightAnnotation(
                 else -> null
             }
         }
-        
+
         fun getConstantValue(): Any? {
             val expression = originalExpression as? KtExpression ?: return null
-            val annotationEntry = this@KtLightAnnotation.kotlinOrigin
+            val annotationEntry = this@KtLightAnnotationForSourceEntry.kotlinOrigin
             val context = LightClassGenerationSupport.getInstance(project).analyze(annotationEntry)
             return context[BindingContext.COMPILE_TIME_VALUE, expression]?.getValue(TypeUtils.NO_EXPECTED_TYPE)
         }
@@ -102,7 +120,8 @@ class KtLightAnnotation(
             val exprToReplace =
                     if (origin is KtCallExpression /*arrayOf*/) {
                         unwrapArray(origin.valueArguments)
-                    } else {
+                    }
+                    else {
                         origin as? KtExpression
                     } ?: return this
             exprToReplace.replace(KtPsiFactory(this).createExpression("\"${StringUtil.escapeStringCharacters(value)}\""))
@@ -114,7 +133,7 @@ class KtLightAnnotation(
     inner class LightStringLiteral(
             delegate: PsiLiteralExpression,
             parent: PsiElement
-    ): LightExpressionValue<PsiLiteralExpression>(delegate, parent), PsiLiteralExpression {
+    ) : LightExpressionValue<PsiLiteralExpression>(delegate, parent), PsiLiteralExpression {
         override fun getValue() = delegate.value
     }
 
@@ -150,31 +169,75 @@ class KtLightAnnotation(
     override fun isPhysical() = true
 
     override fun getName() = null
-    override fun setName(newName: String) = throw IncorrectOperationException()
-
-    override fun getOwner() = owner
 
     override fun findAttributeValue(name: String?) = clsDelegate.findAttributeValue(name)?.let { wrapAnnotationValue(it, this) }
     override fun findDeclaredAttributeValue(name: String?) = clsDelegate.findDeclaredAttributeValue(name)?.let { wrapAnnotationValue(it, this) }
 
-    override fun getText() = kotlinOrigin.text ?: ""
-    override fun getTextRange() = kotlinOrigin.textRange ?: TextRange.EMPTY_RANGE
-
-    override fun getParent() = owner as? PsiElement
-
-    override fun getLanguage() = KotlinLanguage.INSTANCE
-
-    override fun delete() {
-        kotlinOrigin.delete()
-    }
+    override fun delete() = kotlinOrigin.delete()
 
     override fun toString() = "@$qualifiedName"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || other::class.java != this::class.java) return false
-        return kotlinOrigin == (other as KtLightAnnotation).kotlinOrigin
+        return kotlinOrigin == (other as KtLightAnnotationForSourceEntry).kotlinOrigin
     }
 
     override fun hashCode() = kotlinOrigin.hashCode()
+
+    override fun <T : PsiAnnotationMemberValue?> setDeclaredAttributeValue(attributeName: String?, value: T?): T
+            = clsDelegate.setDeclaredAttributeValue(attributeName, value)
 }
+
+class KtLightNonSourceAnnotation(
+        parent: PsiElement, clsDelegate: PsiAnnotation
+): KtLightAbstractAnnotation(parent, { clsDelegate }) {
+    override val kotlinOrigin: KtAnnotationEntry? get() = null
+    override fun getQualifiedName() = clsDelegate.qualifiedName
+    override fun <T : PsiAnnotationMemberValue?> setDeclaredAttributeValue(attributeName: String?, value: T?)
+            = clsDelegate.setDeclaredAttributeValue(attributeName, value)
+    override fun findAttributeValue(attributeName: String?) = clsDelegate.findAttributeValue(attributeName)
+    override fun findDeclaredAttributeValue(attributeName: String?) = clsDelegate.findDeclaredAttributeValue(attributeName)
+}
+
+class KtLightNonExistentAnnotation(parent: KtLightElement<*, *>) : KtLightElementBase(parent), PsiAnnotation {
+    override val kotlinOrigin get() = null
+    override fun toString() = this.javaClass.name
+
+    override fun <T : PsiAnnotationMemberValue?> setDeclaredAttributeValue(attributeName: String?, value: T?) = cannotModify()
+
+    override fun getNameReferenceElement() = null
+    override fun findAttributeValue(attributeName: String?) = null
+    override fun getQualifiedName() = null
+    override fun getOwner() = parent as? PsiAnnotationOwner
+    override fun findDeclaredAttributeValue(attributeName: String?) = null
+    override fun getMetaData() = null
+    override fun getParameterList() = KtLightEmptyAnnotationParameterList(this)
+}
+
+class KtLightEmptyAnnotationParameterList(parent: PsiElement) : KtLightElementBase(parent), PsiAnnotationParameterList {
+    override val kotlinOrigin get() = null
+    override fun getAttributes(): Array<PsiNameValuePair> = emptyArray()
+}
+
+class KtLightNullabilityAnnotation(member: KtLightElement<*, PsiModifierListOwner>, parent: PsiElement) : KtLightAbstractAnnotation(parent, {
+    // searching for last because nullability annotations are generated after backend generates source annotations
+    member.clsDelegate.modifierList?.annotations?.findLast {
+        isNullabilityAnnotation(it.qualifiedName)
+    } ?: KtLightNonExistentAnnotation(member)
+}) {
+    override val kotlinOrigin get() = null
+    override fun <T : PsiAnnotationMemberValue?> setDeclaredAttributeValue(attributeName: String?, value: T?) = cannotModify()
+
+    override fun findAttributeValue(attributeName: String?) = null
+
+    override fun getQualifiedName(): String? = clsDelegate.qualifiedName
+
+    override fun findDeclaredAttributeValue(attributeName: String?) = null
+}
+
+private fun cannotModify(): Nothing = error("Cannot modify") // TODO: meaningful message?
+
+internal fun isNullabilityAnnotation(qualifiedName: String?) = qualifiedName in backendNullabilityAnnotations
+
+private val backendNullabilityAnnotations = arrayOf(Nullable::class.java.name, NotNull::class.java.name)

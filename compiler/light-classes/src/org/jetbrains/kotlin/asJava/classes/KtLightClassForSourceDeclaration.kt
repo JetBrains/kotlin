@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForClassOrObject
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
+import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.asJava.elements.KtLightModifierListWithExplicitModifiers
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiReferenceList
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -180,11 +180,11 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     override fun getName(): String? = classOrObject.nameAsName?.asString()
 
-    private val _modifierList: PsiModifierList by lazyPub { KtLightModifierListWithExplicitModifiers(this@KtLightClassForSourceDeclaration, computeModifiers()) }
+    private val _modifierList: PsiModifierList by lazyPub { KtLightSimpleModifierList(this@KtLightClassForSourceDeclaration, computeModifiers()) }
 
     override fun getModifierList(): PsiModifierList? = _modifierList
 
-    protected open fun computeModifiers(): Array<String> {
+    protected open fun computeModifiers(): Set<String> {
         val psiModifiers = hashSetOf<String>()
 
         // PUBLIC, PROTECTED, PRIVATE, ABSTRACT, FINAL
@@ -218,7 +218,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
             psiModifiers.add(PsiModifier.STATIC)
         }
 
-        return psiModifiers.toTypedArray()
+        return psiModifiers
     }
 
     private fun isAbstract(): Boolean = classOrObject.hasModifier(ABSTRACT_KEYWORD) || isInterface

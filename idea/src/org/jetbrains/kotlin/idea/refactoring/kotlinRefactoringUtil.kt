@@ -471,7 +471,7 @@ private fun copyModifierListItems(from: PsiModifierList, to: PsiModifierList, wi
         }
     }
     for (annotation in from.annotations) {
-        val annotationName = annotation.qualifiedName!!
+        val annotationName = annotation.qualifiedName ?: continue
 
         if (Retention::class.java.name != annotationName) {
             to.addAnnotation(annotationName)

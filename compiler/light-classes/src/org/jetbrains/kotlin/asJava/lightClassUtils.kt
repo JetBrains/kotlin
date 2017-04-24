@@ -20,7 +20,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.asJava.elements.KtLightAnnotation
+import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
-import java.util.*
 
 fun KtClassOrObject.toLightClass(): KtLightClass? = LightClassGenerationSupport.getInstance(project).getLightClass(this)
 
@@ -125,7 +124,7 @@ val PsiElement.unwrapped: PsiElement?
     get() = when {
         this is KtLightElement<*, *> -> kotlinOrigin
         this is KtLightIdentifier -> origin
-        this is KtLightAnnotation.LightExpressionValue<*> -> originalExpression
+        this is KtLightAnnotationForSourceEntry.LightExpressionValue<*> -> originalExpression
         else -> this
     }
 
@@ -153,7 +152,7 @@ fun KtAnnotationEntry.toLightAnnotation(): PsiAnnotation? {
     val ktDeclaration = getStrictParentOfType<KtModifierList>()?.parent as? KtDeclaration ?: return null
     for (lightElement in ktDeclaration.toLightElements()) {
         if (lightElement !is PsiModifierListOwner) continue
-        lightElement.modifierList?.annotations?.firstOrNull { it is KtLightAnnotation && it.kotlinOrigin == this }?.let { return it }
+        lightElement.modifierList?.annotations?.firstOrNull { it is KtLightAnnotationForSourceEntry && it.kotlinOrigin == this }?.let { return it }
     }
     return null
 }

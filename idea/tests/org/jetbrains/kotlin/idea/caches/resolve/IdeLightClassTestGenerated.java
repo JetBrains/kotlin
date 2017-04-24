@@ -138,6 +138,12 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         doTest(fileName);
     }
 
+    @TestMetadata("SpecialAnnotationsOnAnnotationClass.kt")
+    public void testSpecialAnnotationsOnAnnotationClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/SpecialAnnotationsOnAnnotationClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("VarArgs.kt")
     public void testVarArgs() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/VarArgs.kt");
@@ -161,6 +167,12 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         @TestMetadata("PrivateInTrait.kt")
         public void testPrivateInTrait() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/PrivateInTrait.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("RepetableAnnotations.kt")
+        public void testRepetableAnnotations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/RepetableAnnotations.kt");
             doTest(fileName);
         }
 

@@ -229,7 +229,7 @@ internal object KotlinConverter {
             is KtContainerNode -> element.getExpression()?.let {
                 KotlinConverter.convertExpression(it, parentCallback, requiredType)
             } ?: el<UExpression> { UastEmptyExpression }
-            is KtLightAnnotation.LightExpressionValue<*> -> {
+            is KtLightAnnotationForSourceEntry.LightExpressionValue<*> -> {
                 val expression = element.originalExpression
                 when (expression) {
                     is KtExpression -> KotlinConverter.convertExpression(expression, parentCallback, requiredType)

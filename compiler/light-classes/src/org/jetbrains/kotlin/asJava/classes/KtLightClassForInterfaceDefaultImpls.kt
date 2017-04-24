@@ -40,7 +40,7 @@ class KtLightClassForInterfaceDefaultImpls(classOrObject: KtClassOrObject)
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()
 
-    override fun computeModifiers(): Array<String> = arrayOf(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL)
+    override fun computeModifiers() = publicStaticFinal
 
     override fun isInterface(): Boolean = false
     override fun isDeprecated(): Boolean = false
@@ -58,3 +58,5 @@ class KtLightClassForInterfaceDefaultImpls(classOrObject: KtClassOrObject)
 
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
 }
+
+private val publicStaticFinal = setOf(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL)

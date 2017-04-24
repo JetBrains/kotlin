@@ -40,7 +40,7 @@ object PsiElementChecker {
     }
 
     private fun checkPsiElement(element: PsiElement) {
-        if (element !is KtLightElement<*, *> && element !is KtLightModifierList) return
+        if (element !is KtLightElement<*, *> && element !is KtLightModifierList<*>) return
 
         if (element is PsiModifierListOwner) {
             val modifierList = element.modifierList

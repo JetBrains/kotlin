@@ -41,7 +41,7 @@ abstract class KtLightMemberImpl<out D : PsiMember>(
 
     private val _modifierList by lazyPub {
         if (lightMemberOrigin is LightMemberOriginForDeclaration)
-            KtLightModifierList(this, dummyDelegate?.modifierList)
+            KtLightMemberModifierList(this, dummyDelegate?.modifierList)
         else clsDelegate.modifierList!!
     }
 
@@ -64,8 +64,6 @@ abstract class KtLightMemberImpl<out D : PsiMember>(
     override fun isDeprecated() = (clsDelegate as PsiDocCommentOwner).isDeprecated
 }
 
-private val visibilityModifiers = arrayOf(PsiModifier.PRIVATE, PsiModifier.PACKAGE_LOCAL, PsiModifier.PROTECTED, PsiModifier.PUBLIC)
-
 internal fun getMemberOrigin(member: PsiMember): LightMemberOriginForDeclaration? {
     if (member !is ClsRepositoryPsiElement<*>) return null
 
@@ -74,14 +72,11 @@ internal fun getMemberOrigin(member: PsiMember): LightMemberOriginForDeclaration
     return stubElement.getUserData<LightElementOrigin>(ORIGIN) as? LightMemberOriginForDeclaration ?: return null
 }
 
+private val visibilityModifiers = arrayOf(PsiModifier.PRIVATE, PsiModifier.PACKAGE_LOCAL, PsiModifier.PROTECTED, PsiModifier.PUBLIC)
 
-class KtLightModifierList(
-        private val owner: KtLightMember<*>,
-        private val dummyDelegate: PsiModifierList?
-) : LightElement(owner.manager, KotlinLanguage.INSTANCE), PsiModifierList {
-    private val clsDelegate by lazyPub { owner.clsDelegate.modifierList!! }
-    private val _annotations by lazyPub { computeAnnotations(this, clsDelegate) }
-
+private class KtLightMemberModifierList(
+        owner: KtLightMember<*>, private val dummyDelegate: PsiModifierList?
+) : KtLightModifierList<KtLightMember<*>>(owner) {
     override fun hasModifierProperty(name: String) = when {
         name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false
         name == PsiModifier.DEFAULT && isImplementationInInterface() -> true
@@ -100,21 +95,6 @@ class KtLightModifierList(
     private fun isImplementationInInterface()
             = owner.containingClass.isInterface && owner is KtLightMethod && owner.kotlinOrigin?.hasBody() ?: false
 
-    override fun hasExplicitModifier(name: String) = hasModifierProperty(name)
-
-    override fun setModifierProperty(name: String, value: Boolean) = clsDelegate.setModifierProperty(name, value)
-    override fun checkSetModifierProperty(name: String, value: Boolean) = clsDelegate.checkSetModifierProperty(name, value)
-    override fun addAnnotation(qualifiedName: String) = clsDelegate.addAnnotation(qualifiedName)
-    override fun getApplicableAnnotations(): Array<out PsiAnnotation> = annotations
-    override fun getAnnotations(): Array<out PsiAnnotation> = _annotations.value
-    override fun findAnnotation(qualifiedName: String) = annotations.firstOrNull { it.qualifiedName == qualifiedName }
-    override fun getParent() = owner
-    override fun getText(): String? = ""
-    override fun getTextRange() = TextRange.EMPTY_RANGE
-    override fun copy(): PsiElement = KtLightModifierList(owner, dummyDelegate)
-    override fun getReferences() = PsiReference.EMPTY_ARRAY
-    override fun isEquivalentTo(another: PsiElement?) =
-            another is KtLightModifierList && owner == another.owner
-
-    override fun toString() = "Light modifier list of $owner"
+    override fun copy() = KtLightMemberModifierList(owner, dummyDelegate)
 }
+

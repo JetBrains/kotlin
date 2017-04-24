@@ -7,6 +7,7 @@ public final class Test {
     public final java.lang.String getF()
 
     @org.jetbrains.annotations.NotNull
+    @org.jetbrains.annotations.NotNull
     public final void a()
 
     @kotlin.jvm.Synchronized

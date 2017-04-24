@@ -138,6 +138,12 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         doTest(fileName);
     }
 
+    @TestMetadata("SpecialAnnotationsOnAnnotationClass.kt")
+    public void testSpecialAnnotationsOnAnnotationClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/SpecialAnnotationsOnAnnotationClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("VarArgs.kt")
     public void testVarArgs() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/VarArgs.kt");
