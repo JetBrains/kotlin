@@ -16,26 +16,17 @@
 
 package org.jetbrains.kotlin.android
 
-import com.intellij.codeInsight.TargetElementUtil
 
 abstract class AbstractAndroidFindUsagesTest : KotlinAndroidTestCase() {
 
-    override fun getTestDataPath() = KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/findUsages/" + getTestName(true) + "/"
-
     fun doTest(path: String) {
-        if (true) return // Muted (actually works in IDEA)
+        return // TODO: investigate and fix this test
+        copyResourceDirectoryForTest(path)
+        val testFileName = getTestName(true) + ".kt"
+        val virtualFile = myFixture.copyFileToProject(path + testFileName, "src/" + getTestName(true) + ".kt")
+        myFixture.configureFromExistingVirtualFile(virtualFile)
 
-        val f = myFixture!!
-        getResourceDirs(path).forEach { myFixture.copyDirectoryToProject(it.name, it.name) }
-        val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt")
-        f.configureFromExistingVirtualFile(virtualFile)
-
-        val targetElement = TargetElementUtil.findTargetElement(
-                f.editor, TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED)
-        assertNotNull(targetElement)
-
-        val propUsages = f.findUsages(targetElement!!)
-
+        val propUsages = myFixture.findUsages(myFixture.elementAtCaret)
         assertTrue(propUsages.isNotEmpty())
     }
 }

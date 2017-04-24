@@ -5,6 +5,6 @@
 
 
     <application>
-        <activity android:name=".Test$MyActivity"/>
+        <activity android:name=".Test$MyActivity" />
     </application>
 </manifest>

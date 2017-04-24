@@ -20,7 +20,6 @@ import org.jetbrains.android.inspections.klint.AndroidLintInspectionBase
 import org.jetbrains.kotlin.android.KotlinAndroidTestCase
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
@@ -70,6 +69,4 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
 
         myFixture.checkHighlighting(true, false, false)
     }
-
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory() + "/idea/testData/android/lint/"
 }

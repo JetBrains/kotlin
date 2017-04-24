@@ -5,6 +5,6 @@
 
 
     <application>
-        <receiver android:name=".Test$MyReceiver"/>
+        <receiver android:name=".Test$MyReceiver" />
     </application>
 </manifest>

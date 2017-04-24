@@ -29,12 +29,11 @@ abstract class AbstractAndroidLayoutRenameTest : KotlinAndroidTestCase() {
     private val NEW_NAME_XML = "$NEW_NAME.xml"
 
     fun doTest(path: String) {
-        val f = myFixture!!
-        getResourceDirs(path).forEach { myFixture.copyDirectoryToProject(it.name, it.name) }
-        val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt")
-        f.configureFromExistingVirtualFile(virtualFile)
+        copyResourceDirectoryForTest(path)
+        val virtualFile = myFixture.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt")
+        myFixture.configureFromExistingVirtualFile(virtualFile)
 
-        val completionEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(f.editor, f.file)
+        val completionEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(myFixture.editor, myFixture.file)
 
         val element = TargetElementUtil.findTargetElement(
                 completionEditor,
@@ -42,10 +41,8 @@ abstract class AbstractAndroidLayoutRenameTest : KotlinAndroidTestCase() {
 
         val file = element.containingFile as XmlFile
 
-        RenameProcessor(f.project, file, NEW_NAME_XML, false, true).run()
+        RenameProcessor(myFixture.project, file, NEW_NAME_XML, false, true).run()
 
-        (f.file as KtFile).importDirectives.any { it.importedFqName!!.asString() == AndroidConst.SYNTHETIC_PACKAGE + ".main." + NEW_NAME }
+        (myFixture.file as KtFile).importDirectives.any { it.importedFqName!!.asString() == AndroidConst.SYNTHETIC_PACKAGE + ".main." + NEW_NAME }
     }
-
-    override fun getTestDataPath() = KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/rename/" + getTestName(true) + "/"
 }

@@ -16,21 +16,16 @@
 
 package org.jetbrains.kotlin.android.folding
 
-import com.android.SdkConstants
 import org.jetbrains.kotlin.android.KotlinAndroidTestCase
+import java.io.File
 
 
 abstract class AbstractAndroidResourceFoldingTest : KotlinAndroidTestCase() {
 
     fun doTest(path: String) {
-        myFixture.copyFileToProject("values.xml", "res/values/values.xml")
-        myFixture.copyFileToProject("R.java", "gen/com/myapp/R.java")
+        val testFile = File(path)
+        myFixture.copyFileToProject("${testFile.parent}/values.xml", "res/values/values.xml")
+        myFixture.copyFileToProject("${testFile.parent}/R.java", "gen/com/myapp/R.java")
         myFixture.testFoldingWithCollapseStatus(path, "${myFixture.tempDirPath}/src/main.kt")
     }
-
-    override fun createManifest() {
-        myFixture.copyFileToProject("idea/testData/android/AndroidManifest.xml", SdkConstants.FN_ANDROID_MANIFEST_XML)
-    }
-
-    override fun getTestDataPath() = "idea/testData/android/folding"
 }

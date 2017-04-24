@@ -31,22 +31,17 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 
 abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
 
-    override fun getTestDataPath(): String {
-        return KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/goto/" + getTestName(true) + "/"
-    }
-
     fun doTest(path: String) {
-        val f = myFixture!!
-        getResourceDirs(path).forEach { myFixture.copyDirectoryToProject(it.name, it.name) }
-        val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt")
-        f.configureFromExistingVirtualFile(virtualFile)
+        copyResourceDirectoryForTest(path)
+        val virtualFile = myFixture.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt")
+        myFixture.configureFromExistingVirtualFile(virtualFile)
 
-        val expression = TargetElementUtil.findReference(f.editor, f.caretOffset)!!.element as KtElement
+        val expression = TargetElementUtil.findReference(myFixture.editor, myFixture.caretOffset)!!.element as KtElement
         val bindingContext = expression.analyzeFully()
         val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, bindingContext[BindingContext.CALL, expression]]!!
         val property = resolvedCall.resultingDescriptor as? PropertyDescriptor ?: throw AssertionError("PropertyDescriptor expected")
 
-        val targetElement = GotoDeclarationAction.findTargetElement(f.project, f.editor, f.caretOffset)!!
+        val targetElement = GotoDeclarationAction.findTargetElement(myFixture.project, myFixture.editor, myFixture.caretOffset)!!
 
         assert(targetElement is XmlAttributeValue) { "XmlAttributeValue expected, got ${targetElement::class.java}" }
         assertEquals("@+id/${property.name}", (targetElement as XmlAttributeValue).value)

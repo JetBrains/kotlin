@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.android.configure;
+package org.jetbrains.kotlin.android;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.configuration.AbstractGradleConfigureProjectByChangingFileTest;
 
-public abstract class AbstractConfigureProjectTest extends AbstractGradleConfigureProjectByChangingFileTest {
-    public void doTestAndroidGradle(@NotNull String path) throws Exception {
-         doTest(path, path.replace("before", "after"), new KotlinAndroidGradleModuleConfigurator());
+import com.android.annotations.NonNull;
+import com.intellij.openapi.application.PathManager;
+
+import java.io.File;
+
+/**
+ * Stub for com.android.testutils.TestUtils
+ * stabbed to minimize changes in AndroidTestBase
+ */
+public class TestUtils {
+    @NonNull
+    public static File getSdk() {
+        return new File(PathManager.getHomePath() + "/../dependencies/androidSDK");
+    }
+
+    @NonNull
+    public static String getLatestAndroidPlatform() {
+        return "android-23";
     }
 }

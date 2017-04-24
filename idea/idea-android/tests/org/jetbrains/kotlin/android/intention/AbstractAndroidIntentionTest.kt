@@ -22,9 +22,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.android.KotlinAndroidTestCase
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 
@@ -81,10 +79,4 @@ abstract class AbstractAndroidIntentionTest : KotlinAndroidTestCase() {
             }
         }
     }
-
-    override fun createManifest() {
-        myFixture.copyFileToProject("idea/testData/android/AndroidManifest.xml", SdkConstants.FN_ANDROID_MANIFEST_XML)
-    }
-
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 }

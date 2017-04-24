@@ -5,6 +5,6 @@
 
 
     <application>
-        <service android:name=".MyService"/>
+        <service android:name=".MyService" />
     </application>
 </manifest>

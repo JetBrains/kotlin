@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.android.intention
 
-import com.android.SdkConstants
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.codeInsight.intention.IntentionAction
@@ -116,8 +115,4 @@ abstract class AbstractAndroidResourceIntentionTest : KotlinAndroidTestCase() {
     fun getResourceDirectory() = LocalFileSystem.getInstance().findFileByPath(myFixture.tempDirPath + "/res")
 
     fun getTargetElement() = myFixture.file.findElementAt(myFixture.caretOffset)?.parent
-
-    override fun createManifest() {
-        myFixture.copyFileToProject("idea/testData/android/AndroidManifest.xml", SdkConstants.FN_ANDROID_MANIFEST_XML)
-    }
 }

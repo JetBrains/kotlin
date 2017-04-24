@@ -16,24 +16,19 @@
 
 package org.jetbrains.kotlin.android
 
-import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
-import com.intellij.refactoring.rename.RenameProcessor
-import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
 import com.intellij.testFramework.PlatformTestUtil
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
 abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
     private val NEW_NAME = "NEWNAME"
     private val NEW_ID_NAME = "@+id/$NEW_NAME"
 
     fun doTest(path: String) {
-        getResourceDirs(path).forEach { myFixture.copyDirectoryToProject(it.name, it.name) }
+        copyResourceDirectoryForTest(path)
         val virtualFile = myFixture.copyFileToProject("$path${getTestName(true)}.kt", "src/${getTestName(true)}.kt")
         myFixture.configureFromExistingVirtualFile(virtualFile)
         myFixture.renameElement(myFixture.elementAtCaret, NEW_ID_NAME)
-        myFixture.checkResultByFile("expected/${getTestName(true)}.kt")
+        myFixture.checkResultByFile("$path/expected/${getTestName(true)}.kt")
         assertResourcesEqual("$path/expected/res")
     }
 
@@ -42,6 +37,4 @@ abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
     }
 
     fun getResourceDirectory() = LocalFileSystem.getInstance().findFileByPath(myFixture.tempDirPath + "/res")
-
-    override fun getTestDataPath() = KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/rename/" + getTestName(true) + "/"
 }
