@@ -303,7 +303,7 @@ class PomFile private constructor(val xmlFile: XmlFile, val domModel: MavenDomPr
         return configurationTag.add(newTag) as XmlTag
     }
 
-    fun addPluginConfiguration(plugin: MavenDomPlugin, optionName: String, optionValue: String): XmlTag {
+    fun addPluginConfiguration(plugin: MavenDomPlugin, optionName: String, optionValue: String) {
         val configurationTag = plugin.configuration.ensureTagExists()
         val existingTag = configurationTag.findFirstSubTag(optionName)
         if (existingTag != null) {
@@ -312,7 +312,6 @@ class PomFile private constructor(val xmlFile: XmlFile, val domModel: MavenDomPr
         else {
             configurationTag.add(configurationTag.createChildTag(optionName, optionValue))
         }
-        return configurationTag
     }
 
     fun addPluginRepository(id: String, name: String, url: String, snapshots: Boolean = false, releases: Boolean = true): MavenDomRepository {
@@ -602,12 +601,5 @@ private fun PomFile.changeConfigurationOrProperty(kotlinPlugin: MavenDomPlugin,
         }
     }
 
-    return addPluginConfiguration(kotlinPlugin, configurationTagName, value)
-}
-
-fun PomFile.changeCoroutineConfiguration(value: String): PsiElement? {
-    val kotlinPlugin = findPlugin(MavenId(KotlinMavenConfigurator.GROUP_ID,
-                                          KotlinMavenConfigurator.MAVEN_PLUGIN_ID,
-                                          null)) ?: return null
-    return changeConfigurationOrProperty(kotlinPlugin, "experimentalCoroutines", "kotlin.compiler.experimental.coroutines", value)
+    return null
 }
