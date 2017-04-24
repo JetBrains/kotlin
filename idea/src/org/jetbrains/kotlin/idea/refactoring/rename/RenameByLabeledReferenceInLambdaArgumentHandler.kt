@@ -17,20 +17,33 @@
 package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.psi.PsiElement
+import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.refactoring.project
 import org.jetbrains.kotlin.idea.references.getCalleeByLambdaArgument
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
+import org.jetbrains.kotlin.psi.psiUtil.getLabeledParent
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class RenameFunctionByLabeledReferenceInLambdaArgumentHandler : AbstractReferenceSubstitutionRenameHandler<FunctionDescriptor>() {
-    override fun getTargetDescriptor(dataContext: DataContext): FunctionDescriptor? {
+class RenameByLabeledReferenceInLambdaArgumentHandler :
+        AbstractReferenceSubstitutionRenameHandler(VariableInplaceRenameHandler()) {
+    override fun getElementToRename(dataContext: DataContext): PsiElement? {
         val refExpr = getReferenceExpression(dataContext) as? KtLabelReferenceExpression ?: return null
         val context = refExpr.analyze(BodyResolveMode.PARTIAL)
         val lambda = context[BindingContext.LABEL_TARGET, refExpr] as? KtFunction ?: return null
-        val calleeExpression = lambda.getCalleeByLambdaArgument() ?: return null
-        return context[BindingContext.REFERENCE_TARGET, calleeExpression] as? FunctionDescriptor
+        val labeledParent = lambda.getLabeledParent(refExpr.getReferencedName())
+        return if (labeledParent != null) {
+            labeledParent
+        }
+        else {
+            val calleeExpression = lambda.getCalleeByLambdaArgument() ?: return null
+            val descriptor = context[BindingContext.REFERENCE_TARGET, calleeExpression] as? FunctionDescriptor ?: return null
+            DescriptorToSourceUtilsIde.getAnyDeclaration(dataContext.project, descriptor)
+        }
     }
 }

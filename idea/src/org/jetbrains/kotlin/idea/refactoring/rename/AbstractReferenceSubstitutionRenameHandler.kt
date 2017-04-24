@@ -25,18 +25,17 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.refactoring.rename.PsiElementRenameHandler
+import com.intellij.refactoring.rename.RenameHandler
 import com.intellij.refactoring.rename.inplace.MemberInplaceRenameHandler
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-abstract class AbstractReferenceSubstitutionRenameHandler<D : DeclarationDescriptor> : PsiElementRenameHandler() {
-    private val inplaceRenameHandler = MemberInplaceRenameHandler()
-
-    protected fun getReferenceExpression(dataContext: DataContext): KtSimpleNameExpression? {
+abstract class AbstractReferenceSubstitutionRenameHandler(
+        private val delegateHandler: RenameHandler = MemberInplaceRenameHandler()
+) : PsiElementRenameHandler() {
+        protected fun getReferenceExpression(dataContext: DataContext): KtSimpleNameExpression? {
         val caret = CommonDataKeys.CARET.getData(dataContext) ?: return null
         val ktFile = CommonDataKeys.PSI_FILE.getData(dataContext) as? KtFile ?: return null
         var elementAtCaret = ktFile.findElementAt(caret.offset)
@@ -46,25 +45,21 @@ abstract class AbstractReferenceSubstitutionRenameHandler<D : DeclarationDescrip
         return elementAtCaret?.getNonStrictParentOfType<KtSimpleNameExpression>()
     }
 
-    protected abstract fun getTargetDescriptor(dataContext: DataContext): D?
-
-    protected open fun getElementToRename(project: Project, descriptor: D): PsiElement? {
-        return DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
-    }
+    protected abstract fun getElementToRename(dataContext: DataContext): PsiElement?
 
     override fun isAvailableOnDataContext(dataContext: DataContext): Boolean {
-        return CommonDataKeys.EDITOR.getData(dataContext) != null && getTargetDescriptor(dataContext) != null
+        return CommonDataKeys.EDITOR.getData(dataContext) != null && getElementToRename(dataContext) != null
     }
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext) {
-        val descriptor = getTargetDescriptor(dataContext) ?: return
+        val elementToRename = getElementToRename(dataContext) ?: return
         val wrappingContext = DataContext { id ->
-            if (CommonDataKeys.PSI_ELEMENT.`is`(id)) return@DataContext getElementToRename(project, descriptor)
+            if (CommonDataKeys.PSI_ELEMENT.`is`(id)) return@DataContext elementToRename
             dataContext.getData(id)
         }
         // Can't provide new name for inplace refactoring in unit test mode
-        if (!ApplicationManager.getApplication().isUnitTestMode && inplaceRenameHandler.isAvailableOnDataContext(wrappingContext)) {
-            inplaceRenameHandler.invoke(project, editor, file, wrappingContext)
+        if (!ApplicationManager.getApplication().isUnitTestMode && delegateHandler.isAvailableOnDataContext(wrappingContext)) {
+            delegateHandler.invoke(project, editor, file, wrappingContext)
         }
         else {
             super.invoke(project, editor, file, wrappingContext)

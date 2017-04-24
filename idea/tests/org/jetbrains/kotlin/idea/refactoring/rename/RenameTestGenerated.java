@@ -204,6 +204,60 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("labeledAnonymousFunByLabel/labeledLambdaByLabel.test")
+    public void testLabeledAnonymousFunByLabel_LabeledLambdaByLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledAnonymousFunByLabel/labeledLambdaByLabel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaByLabel/labeledLambdaByLabel.test")
+    public void testLabeledLambdaByLabel_LabeledLambdaByLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabel/labeledLambdaByLabel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaByLabelRef/labeledLambdaByLabelRef.test")
+    public void testLabeledLambdaByLabelRef_LabeledLambdaByLabelRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabelRef/labeledLambdaByLabelRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaByLabelWithParens/labeledLambdaByLabelWithParens.test")
+    public void testLabeledLambdaByLabelWithParens_LabeledLambdaByLabelWithParens() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabelWithParens/labeledLambdaByLabelWithParens.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaByLabelWithSameName/labeledLambdaByLabelWithSameName.test")
+    public void testLabeledLambdaByLabelWithSameName_LabeledLambdaByLabelWithSameName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabelWithSameName/labeledLambdaByLabelWithSameName.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaWithMultipleLabels/labeledLambdaWithMultipleLabels.test")
+    public void testLabeledLambdaWithMultipleLabels_LabeledLambdaWithMultipleLabels() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaWithMultipleLabels/labeledLambdaWithMultipleLabels.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLoopByLabel/labeledLoopByLabel.test")
+    public void testLabeledLoopByLabel_LabeledLoopByLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLoopByLabel/labeledLoopByLabel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLoopByLabelRefInBreak/labeledLoopByLabelRefInBreak.test")
+    public void testLabeledLoopByLabelRefInBreak_LabeledLoopByLabelRefInBreak() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLoopByLabelRefInBreak/labeledLoopByLabelRefInBreak.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLoopByLabelRefInContinue/labeledLoopByLabelRefInContinue.test")
+    public void testLabeledLoopByLabelRefInContinue_LabeledLoopByLabelRefInContinue() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLoopByLabelRefInContinue/labeledLoopByLabelRefInContinue.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("labeledReturnInAnonymousFun/labeledReturnInAnonymousFun.test")
     public void testLabeledReturnInAnonymousFun_LabeledReturnInAnonymousFun() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledReturnInAnonymousFun/labeledReturnInAnonymousFun.test");

@@ -17,11 +17,15 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.search.LocalSearchScope;
+import com.intellij.psi.search.SearchScope;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class KtLabeledExpression extends KtExpressionWithLabel {
-
+public class KtLabeledExpression extends KtExpressionWithLabel implements PsiNameIdentifierOwner {
     public KtLabeledExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -34,5 +38,35 @@ public class KtLabeledExpression extends KtExpressionWithLabel {
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
         return visitor.visitLabeledExpression(this, data);
+    }
+
+    @Override
+    public String getName() {
+        return getLabelName();
+    }
+
+    @Override
+    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+        KtSimpleNameExpression currentLabel = getTargetLabel();
+        if (currentLabel != null) {
+            KtSimpleNameExpression newLabel = new KtPsiFactory(getProject()).createLabeledExpression(name).getTargetLabel();
+            //noinspection ConstantConditions
+            currentLabel.replace(newLabel);
+        }
+        return this;
+    }
+
+    @Nullable
+    @Override
+    public PsiElement getNameIdentifier() {
+        KtSimpleNameExpression targetLabel = getTargetLabel();
+        if (targetLabel == null) return null;
+        return targetLabel.getIdentifier();
+    }
+
+    @NotNull
+    @Override
+    public SearchScope getUseScope() {
+        return new LocalSearchScope(this);
     }
 }

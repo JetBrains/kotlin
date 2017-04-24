@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
@@ -98,12 +95,25 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
         return true
     }
 
-    if (element is KtLabelReferenceExpression && (element.parent as? KtContainerNode)?.parent is KtReturnExpression) {
-        targets.forEach {
-            if (it !is KtFunctionLiteral && !(it is KtNamedFunction && it.name.isNullOrEmpty())) return@forEach
+    val element = element
+    if (element is KtLabelReferenceExpression) {
+        val labelParent = (element.parent as? KtContainerNode)?.parent
+        when (labelParent) {
+            is KtReturnExpression -> targets.forEach {
+                if (it !is KtFunctionLiteral && !(it is KtNamedFunction && it.name.isNullOrEmpty())) return@forEach
+                it as KtFunction
 
-            val calleeReference = (it as KtFunction).getCalleeByLambdaArgument()?.mainReference ?: return@forEach
-            if (calleeReference.matchesTarget(candidateTarget)) return true
+                val labeledExpression = it.getLabeledParent(element.getReferencedName())
+                if (labeledExpression != null) {
+                    if (candidateTarget == labeledExpression) return true else return@forEach
+                }
+                val calleeReference = it.getCalleeByLambdaArgument()?.mainReference ?: return@forEach
+                if (calleeReference.matchesTarget(candidateTarget)) return true
+            }
+            is KtBreakExpression, is KtContinueExpression -> targets.forEach {
+                val labeledExpression = (it as? KtExpression)?.getLabeledParent(element.getReferencedName()) ?: return@forEach
+                if (candidateTarget == labeledExpression) return true
+            }
         }
     }
 

@@ -26,6 +26,7 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.impl.text.TextEditorPsiDataProvider
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
@@ -333,12 +334,17 @@ abstract class AbstractRenameTest : KotlinLightCodeInsightFixtureTestCase() {
             assert(marker != -1)
 
             editor.caretModel.moveToOffset(marker)
+            val currentCaret = editor.caretModel.currentCaret
+
+            val textEditorPsiDataProvider = TextEditorPsiDataProvider()
 
             val dataContext = DataContext { dataId ->
                 when (dataId) {
+                    CommonDataKeys.PROJECT.name -> project
                     CommonDataKeys.EDITOR.name -> editor
-                    CommonDataKeys.CARET.name -> editor.caretModel.currentCaret
-                    CommonDataKeys.PSI_FILE.name -> psiFile
+                    CommonDataKeys.CARET.name,
+                    CommonDataKeys.PSI_ELEMENT.name,
+                    CommonDataKeys.PSI_FILE.name -> textEditorPsiDataProvider.getData(dataId, editor, currentCaret)
                     PsiElementRenameHandler.DEFAULT_NAME.name -> newName
                     else -> null
                 }

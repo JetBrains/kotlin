@@ -36,6 +36,24 @@ public class UsageHighlightingTestGenerated extends AbstractUsageHighlightingTes
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/usageHighlighter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("labeledAnonymousFun.kt")
+    public void testLabeledAnonymousFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/usageHighlighter/labeledAnonymousFun.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambda.kt")
+    public void testLabeledLambda() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/usageHighlighter/labeledLambda.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLoop.kt")
+    public void testLabeledLoop() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/usageHighlighter/labeledLoop.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("localVal.kt")
     public void testLocalVal() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/usageHighlighter/localVal.kt");

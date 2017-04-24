@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
@@ -27,6 +26,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.refactoring.project
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
-class RenameJavaSyntheticPropertyHandler : AbstractReferenceSubstitutionRenameHandler<SyntheticJavaPropertyDescriptor>() {
+class RenameJavaSyntheticPropertyHandler : AbstractReferenceSubstitutionRenameHandler() {
     class Processor : RenamePsiElementProcessor() {
         override fun prepareRenaming(element: PsiElement, newName: String, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
             val propertyWrapper = element as? SyntheticPropertyWrapper ?: return
@@ -68,12 +68,10 @@ class RenameJavaSyntheticPropertyHandler : AbstractReferenceSubstitutionRenameHa
         }
     }
 
-    override fun getTargetDescriptor(dataContext: DataContext): SyntheticJavaPropertyDescriptor? {
+    override fun getElementToRename(dataContext: DataContext): PsiElement? {
         val refExpr = getReferenceExpression(dataContext) ?: return null
-        return refExpr.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, refExpr] as? SyntheticJavaPropertyDescriptor
-    }
-
-    override fun getElementToRename(project: Project, descriptor: SyntheticJavaPropertyDescriptor): PsiElement? {
-        return SyntheticPropertyWrapper(PsiManager.getInstance(project), descriptor)
+        val descriptor = refExpr.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, refExpr] as? SyntheticJavaPropertyDescriptor
+                         ?: return null
+        return SyntheticPropertyWrapper(PsiManager.getInstance(dataContext.project), descriptor)
     }
 }

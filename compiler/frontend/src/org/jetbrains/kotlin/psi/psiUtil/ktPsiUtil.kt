@@ -537,3 +537,14 @@ fun KtDeclaration.hasBody() = when (this) {
 
 fun KtExpression.referenceExpression(): KtReferenceExpression? =
         (if (this is KtCallExpression) calleeExpression else this) as? KtReferenceExpression
+
+fun KtExpression.getLabeledParent(labelName: String): KtLabeledExpression? {
+    parents.forEach {
+        when (it) {
+            is KtLabeledExpression -> if (it.getLabelName() == labelName) return it
+            is KtParenthesizedExpression, is KtAnnotatedExpression, is KtLambdaExpression -> return@forEach
+            else -> return null
+        }
+    }
+    return null
+}
