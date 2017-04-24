@@ -78,7 +78,8 @@ task update_external_tests() {
 
         // Copy only used tests into the test directory.
         externalTestsDir.mkdirs()
-        delete(externalTestsDir.listFiles())
+        delete("${externalTestsDir.canonicalPath}/codegen")
+        delete("${externalTestsDir.canonicalPath}/compileKotlinAgainstKotlin")
 
         copy {
             from temporaryDir.absolutePath + "/compiler"
