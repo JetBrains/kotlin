@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.idea.parameterInfo
 import com.intellij.codeInsight.hints.InlayInfo
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
@@ -46,7 +48,7 @@ fun providePropertyTypeHint(elem: PsiElement): List<InlayInfo> {
 
 fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo> {
     val type = SpecifyTypeExplicitlyIntention.getTypeForDeclaration(element)
-    return if (!type.isError) {
+    return if (!type.isError && isUnclearType(type, element)) {
         val settings = CodeStyleSettingsManager.getInstance(element.project).currentSettings
                 .getCustomSettings(KotlinCodeStyleSettings::class.java)
 
@@ -66,3 +68,18 @@ fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo
     }
 }
 
+private fun isUnclearType(type: KotlinType, element: KtCallableDeclaration): Boolean {
+    if (element is KtProperty) {
+        val initializer = element.initializer ?: return true
+        if (initializer is KtConstantExpression || initializer is KtStringTemplateExpression) return false
+        if (initializer is KtCallExpression) {
+            val bindingContext = element.analyze()
+            val resolvedCall = initializer.getResolvedCall(bindingContext)
+            val constructorDescriptor = resolvedCall?.candidateDescriptor as? ConstructorDescriptor
+            if (constructorDescriptor != null && constructorDescriptor.constructedClass.declaredTypeParameters.isEmpty()) {
+                return false
+            }
+        }
+    }
+    return true
+}
