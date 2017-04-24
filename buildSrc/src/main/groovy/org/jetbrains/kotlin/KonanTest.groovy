@@ -133,6 +133,37 @@ abstract class KonanTest extends JavaExec {
         return sourceFiles
     }
 
+    void createCoroutineUtil(String file) {
+        StringBuilder text = new StringBuilder("import kotlin.coroutines.experimental.*\n")
+        text.append(
+                """
+open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
+    companion object : EmptyContinuation()
+    override fun resume(value: Any?) {}
+    override fun resumeWithException(exception: Throwable) { throw exception }
+}
+
+fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {
+    override val context = EmptyCoroutineContext
+    override fun resumeWithException(exception: Throwable) {
+        throw exception
+    }
+
+    override fun resume(data: T) = x(data)
+}
+
+fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = object: Continuation<Any?> {
+    override val context = EmptyCoroutineContext
+    override fun resumeWithException(exception: Throwable) {
+        x(exception)
+    }
+
+    override fun resume(data: Any?) { }
+}
+"""     )
+        createFile(file, text.toString())
+    }
+
     // TODO refactor
     List<String> buildCompileList() {
         def result = []
@@ -140,6 +171,12 @@ abstract class KonanTest extends JavaExec {
         def srcFile = project.file(source)
         def srcText = removeDiagnostics(srcFile.text)
         def matcher = filePattern.matcher(srcText)
+
+        if (srcText.contains('// WITH_COROUTINES')) {
+            def coroutineUtilFileName = "$outputDirectory/CoroutineUtil.kt"
+            createCoroutineUtil(coroutineUtilFileName)
+            result.add(coroutineUtilFileName)
+        }
 
         if (!matcher.find()) {
             // There is only one file in the input
@@ -394,6 +431,7 @@ class RunExternalTestGroup extends RunKonanTest {
         for (v in imports) {
             text.append("import ").append(v).append('\n')
         }
+
         text.append(
 """
 fun main(args : Array<String>) {
