@@ -25,6 +25,7 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.MetaLanguage
 import com.intellij.lang.java.JavaParserDefinition
 import com.intellij.mock.MockApplication
@@ -329,6 +330,8 @@ class KotlinCoreEnvironment private constructor(
     }
 
     companion object {
+        private val ideaCompatibleBuildNumber = "171.9999"
+
         init {
             setCompatibleBuild()
         }
@@ -365,7 +368,8 @@ class KotlinCoreEnvironment private constructor(
 
         @JvmStatic
         private fun setCompatibleBuild() {
-            System.getProperties().setProperty("idea.plugins.compatible.build", "171.9999")
+            PluginManagerCore.BUILD_NUMBER = ideaCompatibleBuildNumber
+            System.getProperties().setProperty("idea.plugins.compatible.build", ideaCompatibleBuildNumber)
         }
 
         @TestOnly
