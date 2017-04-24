@@ -2,6 +2,7 @@
 // WITH_REFLECT
 
 // IGNORE_BACKEND: JS
+// IGNORE_BACKEND: NATIVE
 
 import java.util.Arrays
 import kotlin.reflect.KFunction0
