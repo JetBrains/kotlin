@@ -5,5 +5,8 @@
   "devDependencies" : {
     "mocha": "3.2.0",
     "mocha-teamcity-reporter": "1.1.1"
+  },
+  "scripts": {
+    "test": "mocha --reporter mocha-teamcity-reporter"
   }
 }

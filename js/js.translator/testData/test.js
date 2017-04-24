@@ -1,7 +1,11 @@
 "use strict";
 
+var path = require('path');
+var assert = require('assert');
+var fs = require('fs');
+
 (function () {
-    var kotlinJsLocation = process.env.KOTLIN_JS_LOCATION || __dirname + "/../../../dist/js/kotlin.js";
+    var kotlinJsLocation = process.env.KOTLIN_JS_LOCATION || path.resolve(__dirname, "../../../dist/js/kotlin.js");
     var Module = require('module');
     var originalRequire = Module.prototype.require;
 
@@ -13,10 +17,7 @@
     };
 })();
 
-var assert = require('assert');
-var fs = require('fs');
-var path = require('path');
-var kotlinJsTestLocation = process.env.KOTLIN_JS_TEST_LOCATION || __dirname + "/../../../dist/js/kotlin-test.js";
+var kotlinJsTestLocation = process.env.KOTLIN_JS_TEST_LOCATION || path.resolve(__dirname, "../../../dist/js/kotlin-test.js");
 
 var kotlin = require("kotlin");
 var kotlinTest = require(kotlinJsTestLocation);
@@ -25,15 +26,15 @@ var requireFromString = require('require-from-string');
 
 var baseDir = "out";
 var model = generateModel(baseDir);
-exposeModel(model, "./" + baseDir);
+exposeModel(model, path.resolve(baseDir));
 
-function exposeModel(model, path) {
+function exposeModel(model, currentPath) {
     for (var property in model) {
         if (!model.hasOwnProperty(property)) {
             continue;
         }
 
-        var childPath = path + "/" + property;
+        var childPath = path.join(currentPath, property);
         var item = model[property];
         describe(property, function(childPath, item) {
             return function() {
@@ -52,18 +53,18 @@ function exposeModel(model, path) {
 }
 
 /**
- * @param path String
+ * @param currentPath String
  * @returns String|{}
  */
-function generateModel(path) {
-    var stats = fs.statSync(path);
+function generateModel(currentPath) {
+    var stats = fs.statSync(currentPath);
     if (stats.isDirectory()) {
         var result = {};
-        var files = fs.readdirSync(path);
+        var files = fs.readdirSync(currentPath);
         var empty = true;
         for (var i = 0; i < files.length; ++i) {
             var child = files[i];
-            var childModel = generateModel(path + "/" + child);
+            var childModel = generateModel(path.join(currentPath, child));
             if (childModel !== void 0) {
                 result[child] = childModel;
                 empty = false;
@@ -72,8 +73,8 @@ function generateModel(path) {
         return !empty ? result : void 0;
     }
     else if (stats.isFile()) {
-        if (path.endsWith(".node.js")) {
-            return path;
+        if (currentPath.endsWith(".node.js")) {
+            return currentPath;
         }
         else {
             return void 0;
@@ -92,7 +93,7 @@ function runTest(testRunner, location) {
         text += 'module.exports = function(kotlin) {\n';
         text += "var exports = void 0;";
         for (var i = 0; i < fileNames.length; ++i) {
-            text += fs.readFileSync(basePath + "/" + fileNames[i]) + "\n";
+            text += fs.readFileSync(path.resolve(basePath, fileNames[i])) + "\n";
         }
         text += 'var resultModule = typeof emulatedModules != "undefined" ? emulatedModules.' + moduleName + ' : null;\n';
         text += "resultModule = resultModule || this." + moduleName + ";\n";
