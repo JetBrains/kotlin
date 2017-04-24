@@ -25,7 +25,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.util.*
+import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.refactoring.util.MoveRenameUsageInfo
+import com.intellij.refactoring.util.NonCodeUsageInfo
+import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
@@ -317,7 +320,7 @@ class MoveConflictChecker(
             val targetContainer = moveTarget.getContainerDescriptor() ?: continue
             val descriptorToCheck = referencedDescriptor.asPredicted(targetContainer) ?: continue
 
-            if (!descriptorToCheck.isVisibleIn(referencingDescriptor)) {
+            if (referencedDescriptor.isVisibleIn(referencingDescriptor) && !descriptorToCheck.isVisibleIn(referencingDescriptor)) {
                 val message = "${render(container)} uses ${render(referencedElement)} which will be inaccessible after move"
                 conflicts.putValue(element, message.capitalize())
             }
@@ -358,12 +361,13 @@ class MoveConflictChecker(
             val targetVisibility = visibility.normalize()
             if (targetVisibility == Visibilities.PUBLIC) return true
 
+            val referrer = ref.element.getStrictParentOfType<KtDeclaration>()
+            val referrerDescriptor = referrer?.resolveToDescriptor() ?: return true
+
+            if (!isVisibleIn(referrerDescriptor)) return true
+
             return when (targetVisibility) {
-                Visibilities.PROTECTED -> {
-                    val referrer = ref.element.getStrictParentOfType<KtDeclaration>()
-                    val referrerDescriptor = referrer?.resolveToDescriptor() ?: return true
-                    isProtectedVisible(referrerDescriptor)
-                }
+                Visibilities.PROTECTED -> isProtectedVisible(referrerDescriptor)
                 else -> isVisibleIn(targetContainer)
             }
         }
