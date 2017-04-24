@@ -31,9 +31,7 @@ class SymbolBasedPackage(val element: PackageElement, val javac: JavacWrapper) :
         get() = javac.findSubPackages(FqName(element.qualifiedName.toString()))
 
     override fun getClasses(nameFilter: (Name) -> Boolean) = javac.findClassesFromPackage(fqName)
-            .filter { Name.isValidIdentifier(it.name.toString())
-                      && nameFilter(Name.identifier(it.name.toString()))
-            }
+            .filter { nameFilter(it.name) }
 
     override fun hashCode() = element.hashCode()
 

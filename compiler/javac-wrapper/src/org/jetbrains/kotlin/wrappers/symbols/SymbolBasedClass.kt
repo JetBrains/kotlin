@@ -67,7 +67,6 @@ class SymbolBasedClass<T : TypeElement>(element: T,
 
     val innerClasses
         get() = element.enclosedElements
-                .filter { it.asType().kind == TypeKind.DECLARED }
                 .filterIsInstance(TypeElement::class.java)
                 .map { SymbolBasedClass(it, javac) }
 
@@ -94,8 +93,7 @@ class SymbolBasedClass<T : TypeElement>(element: T,
 
     override val fields
         get() = element.enclosedElements
-                .filter { it.kind.isField }
-                .filter { Name.isValidIdentifier(it.simpleName.toString()) }
+                .filter { it.kind.isField && Name.isValidIdentifier(it.simpleName.toString()) }
                 .map { SymbolBasedField(it as VariableElement, javac) }
 
     override val constructors

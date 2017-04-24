@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.*
 
 val Element.isAbstract
-        get() = modifiers.contains(Modifier.ABSTRACT)
+    get() = modifiers.contains(Modifier.ABSTRACT)
 
 val Element.isStatic
-        get() = modifiers.contains(Modifier.STATIC)
+    get() = modifiers.contains(Modifier.STATIC)
 
 val Element.isFinal
-        get() = modifiers.contains(Modifier.FINAL)
+    get() = modifiers.contains(Modifier.FINAL)
 
 fun Element.getVisibility() = with(modifiers) {
     when {
@@ -58,12 +58,6 @@ fun TypeElement.computeClassId(): ClassId? {
     return ClassId.topLevel(FqName(qualifiedName.toString()))
 }
 
-fun ExecutableElement.valueParameters(javac: JavacWrapper) = let {
-    val parameterTypesCount = parameters.size
-
-    parameters.mapIndexed { index, it ->
-        val isLastParameter = index == parameterTypesCount - 1
-        val parameterName = it.simpleName.toString()
-        SymbolBasedValueParameter(it, parameterName, isLastParameter && isVarArgs, javac)
-    }
+fun ExecutableElement.valueParameters(javac: JavacWrapper) = parameters.mapIndexed { index, it ->
+    SymbolBasedValueParameter(it, it.simpleName.toString(), (index == parameters.size - 1) && isVarArgs, javac)
 }

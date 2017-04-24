@@ -35,6 +35,6 @@ class TreeBasedAnnotation(val annotation: JCTree.JCAnnotation,
     override val classId
         get() = resolve()?.computeClassId()
 
-    override fun resolve() = TreePath.getPath(treePath.compilationUnit, annotation.annotationType).resolve(javac) as? JavaClass
+    override fun resolve() = javac.resolve(TreePath.getPath(treePath.compilationUnit, annotation.annotationType)) as? JavaClass
 
 }

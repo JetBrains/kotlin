@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.wrappers.trees.TreeBasedClass
 import org.jetbrains.kotlin.wrappers.trees.TreeBasedPackage
+import org.jetbrains.kotlin.wrappers.trees.TreePathResolverCache
 import java.io.Closeable
 import java.io.File
 import javax.lang.model.element.Element
@@ -109,6 +110,7 @@ class JavacWrapper(javaFiles: Collection<File>,
             .associateBy(TreeBasedPackage::fqName)
 
     private val kotlinClassifiersCache = KotlinClassifiersCache(kotlinFiles, this)
+    private val treePathResolverCache = TreePathResolverCache(this)
 
     fun compile(outDir: File? = null) = with(javac) {
         if (errorCount() > 0) return false
@@ -161,6 +163,8 @@ class JavacWrapper(javaFiles: Collection<File>,
     fun isDeprecated(element: Element) = elements.isDeprecated(element)
 
     fun isDeprecated(typeMirror: TypeMirror) = isDeprecated(types.asElement(typeMirror))
+
+    fun resolve(treePath: TreePath) = treePathResolverCache.resolve(treePath)
 
     private inline fun <reified T> Iterable<T>.toJavacList() = JavacList.from(this)
 

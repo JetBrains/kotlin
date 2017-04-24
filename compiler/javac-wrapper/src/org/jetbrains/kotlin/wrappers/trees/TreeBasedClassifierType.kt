@@ -26,7 +26,8 @@ sealed class TreeBasedClassifierType<out T : JCTree>(tree: T,
                                                      treePath: TreePath,
                                                      javac: JavacWrapper) : TreeBasedType<T>(tree, treePath, javac), JavaClassifierType {
 
-    override val classifier by lazy { treePath.resolve(javac) }
+    override val classifier
+        get() = javac.resolve(treePath)
 
     override val classifierQualifiedName
         get() = (classifier as? JavaClass)?.fqName?.asString() ?: treePath.leaf.toString()

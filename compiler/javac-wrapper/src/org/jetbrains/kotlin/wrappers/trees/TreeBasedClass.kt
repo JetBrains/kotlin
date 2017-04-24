@@ -94,10 +94,11 @@ class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
             tree.implementing?.map { it.mapToJavaClassifierType() }?.filterNotNull()?.let(this::addAll)
         }
 
-    val innerClasses
-        get() = tree.members
+    val innerClasses by lazy {
+        tree.members
                 .filterIsInstance(JCTree.JCClassDecl::class.java)
                 .map { TreeBasedClass(it, TreePath(treePath, it), javac) }
+    }
 
     override val outerClass
         get() = (treePath.parentPath.leaf as? JCTree.JCClassDecl)?.let { TreeBasedClass(it, treePath.parentPath, javac) }
@@ -115,10 +116,8 @@ class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
 
     override val methods
         get() = tree.members
-                .filterIsInstance(JCTree.JCMethodDecl::class.java)
-                .filter { it.kind == Tree.Kind.METHOD }
-                .filter { it.name.toString() != "<init>" }
-                .map { TreeBasedMethod(it, TreePath(treePath, it), this, javac) }
+                .filter { it.kind == Tree.Kind.METHOD && !TreeInfo.isConstructor(it) }
+                .map { TreeBasedMethod(it as JCTree.JCMethodDecl, TreePath(treePath, it), this, javac) }
 
     override val fields
         get() = tree.members
@@ -127,9 +126,8 @@ class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
 
     override val constructors
         get() = tree.members
-                .filterIsInstance(JCTree.JCMethodDecl::class.java)
                 .filter { TreeInfo.isConstructor(it) }
-                .map { TreeBasedConstructor(it, TreePath(treePath, it), this, javac) }
+                .map { TreeBasedConstructor(it as JCTree.JCMethodDecl, TreePath(treePath, it), this, javac) }
 
     override val innerClassNames
         get() = innerClasses.map(TreeBasedClass<JCTree.JCClassDecl>::name)

@@ -30,7 +30,7 @@ class TreeBasedPackage(val name: String, val javac: JavacWrapper) : JavaPackage 
         get() = javac.findSubPackages(fqName)
 
     override fun getClasses(nameFilter: (Name) -> Boolean) = javac.findClassesFromPackage(fqName)
-            .filter { Name.isValidIdentifier(it.fqName!!.shortName().asString()) && nameFilter(Name.identifier(it.fqName!!.shortName().asString())) }
+            .filter { nameFilter(it.fqName!!.shortName()) }
 
     override fun equals(other: Any?) = (other as? TreeBasedPackage)?.name == name
 
