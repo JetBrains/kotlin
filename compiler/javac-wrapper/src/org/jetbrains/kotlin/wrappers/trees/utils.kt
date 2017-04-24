@@ -52,12 +52,4 @@ fun JCTree.annotations() = when (this) {
     else -> null
 } ?: emptyList<JCTree.JCAnnotation>()
 
-fun JavaClass.computeClassId(): ClassId? {
-    val outer = outerClass
-    outer?.let {
-        val parentClassId = outer.computeClassId() ?: return null
-        return parentClassId.createNestedClassId(name)
-    }
-
-    return fqName?.let { ClassId.topLevel(it) }
-}
+fun JavaClass.computeClassId(): ClassId? = outerClass?.computeClassId()?.createNestedClassId(name) ?: fqName?.let { ClassId.topLevel(it) }

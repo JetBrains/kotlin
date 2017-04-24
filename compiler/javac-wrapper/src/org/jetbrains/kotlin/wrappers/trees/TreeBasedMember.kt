@@ -33,6 +33,6 @@ abstract class TreeBasedMember<out T : JCTree>(tree: T,
 
     override val annotations by lazy { tree.annotations().map { TreeBasedAnnotation(it, treePath, javac) } }
 
-    override fun findAnnotation(fqName: FqName) = annotations.firstOrNull { it.classId?.asSingleFqName() == fqName }
+    override fun findAnnotation(fqName: FqName) = annotations.find { it.classId?.asSingleFqName() == fqName }
 
 }

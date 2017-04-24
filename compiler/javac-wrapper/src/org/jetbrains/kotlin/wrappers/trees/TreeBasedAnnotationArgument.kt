@@ -21,12 +21,11 @@ import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 open class TreeBasedAnnotationArgument(val tree: JCTree.JCExpression,
                                        fqName: FqName,
                                        val javac: JavacWrapper) : JavaAnnotationArgument, JavaElement {
 
-    override val name = Name.identifier(fqName.shortName().asString())
+    override val name = fqName.shortName()
 
 }

@@ -100,8 +100,9 @@ class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
                 .map { TreeBasedClass(it, TreePath(treePath, it), javac) }
     }
 
-    override val outerClass
-        get() = (treePath.parentPath.leaf as? JCTree.JCClassDecl)?.let { TreeBasedClass(it, treePath.parentPath, javac) }
+    override val outerClass by lazy {
+        (treePath.parentPath.leaf as? JCTree.JCClassDecl)?.let { TreeBasedClass(it, treePath.parentPath, javac) }
+    }
 
     override val isInterface
         get() = tree.modifiers.flags and Flags.INTERFACE.toLong() != 0L
