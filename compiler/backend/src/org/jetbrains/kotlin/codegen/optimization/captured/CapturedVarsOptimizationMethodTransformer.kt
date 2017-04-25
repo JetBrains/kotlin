@@ -230,7 +230,7 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
         private fun findCleanInstructions(refValue: CapturedVarDescriptor, oldVarIndex: Int, instructions: InsnList): List<VarInsnNode> {
             val cleanInstructions =
                 InsnSequence(instructions).filterIsInstance<VarInsnNode>().filter {
-                    it.`var` == oldVarIndex
+                    it.opcode == Opcodes.ASTORE && it.`var` == oldVarIndex
                 }.filter {
                     it.previous?.opcode == Opcodes.ACONST_NULL
                 }.filter {
