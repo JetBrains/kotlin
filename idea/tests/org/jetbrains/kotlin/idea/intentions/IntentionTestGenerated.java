@@ -4409,6 +4409,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("it.kt")
+        public void testIt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToParentheses/it.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambdaWithArg.kt")
         public void testLambdaWithArg() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToParentheses/lambdaWithArg.kt");
