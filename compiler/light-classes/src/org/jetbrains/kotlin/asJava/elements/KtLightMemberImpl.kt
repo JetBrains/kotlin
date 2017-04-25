@@ -16,20 +16,15 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
-import com.intellij.navigation.ItemPresentation
-import com.intellij.navigation.ItemPresentationProviders
-import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsRepositoryPsiElement
-import com.intellij.psi.impl.light.LightElement
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory.ORIGIN
 import org.jetbrains.kotlin.asJava.builder.LightElementOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -40,7 +35,7 @@ abstract class KtLightMemberImpl<out D : PsiMember>(
         override val lightMemberOrigin: LightMemberOrigin?,
         private val containingClass: KtLightClass,
         private val dummyDelegate: D?
-) : LightElement(containingClass.manager, KotlinLanguage.INSTANCE), PsiMember, KtLightMember<D> {
+) : KtLightElementBase(containingClass), PsiMember, KtLightMember<D> {
     override val clsDelegate by lazyPub(computeRealDelegate)
     private val lightIdentifier by lazyPub { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
 
@@ -58,29 +53,11 @@ abstract class KtLightMemberImpl<out D : PsiMember>(
 
     override fun getContainingClass() = containingClass
 
-    override fun getContainingFile() = containingClass.containingFile
-
-    override fun getParent(): PsiElement = containingClass
-
-    override fun isValid() = containingClass.isValid
-
     override fun getName(): String = dummyDelegate?.name ?: clsDelegate.name!!
 
     override fun getNameIdentifier(): PsiIdentifier = lightIdentifier
 
-    override fun getUseScope() = kotlinOrigin?.useScope ?: super.getUseScope()
-
     override val kotlinOrigin: KtDeclaration? get() = lightMemberOrigin?.originalElement
-
-    override fun getNavigationElement() = kotlinOrigin ?: super.getNavigationElement()
-
-    override fun getPresentation(): ItemPresentation? = (kotlinOrigin ?: this).let { ItemPresentationProviders.getItemPresentation(it) }
-
-    override fun getText() = kotlinOrigin?.text ?: ""
-
-    override fun getTextRange() = kotlinOrigin?.textRange ?: TextRange.EMPTY_RANGE
-
-    override fun isWritable() = kotlinOrigin?.isWritable ?: false
 
     override fun getDocComment() = (clsDelegate as PsiDocCommentOwner).docComment
 
