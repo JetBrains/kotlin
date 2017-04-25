@@ -47,28 +47,6 @@ OBJ_GETTER(utf8ToUtf16, const char* rawString, size_t rawStringLength) {
   RETURN_OBJ(result->obj());
 }
 
-// TODO: Suppose thar we can remove these parsers
-KLong parseLong(KString value, KInt radix) {
-  const KChar* utf16 = CharArrayAddressOfElementAt(value, 0);
-  std::string utf8;
-  utf8::utf16to8(utf16, utf16 + value->count_, back_inserter(utf8));
-  char* end = nullptr;
-  errno = 0;
-  KLong result = strtoll(utf8.c_str(), &end, radix);
-  if (utf8.size() == 0 || end != utf8.c_str() + utf8.size() || errno == ERANGE) {
-    ThrowNumberFormatException();
-  }
-  return result;
-}
-
-template <typename T> T parseInt(KString value, KInt radix) {
-  KLong result = parseLong(value, radix);
-  if (result < std::numeric_limits<T>::min() || result > std::numeric_limits<T>::max()) {
-    ThrowNumberFormatException();
-  }
-  return result;
-}
-
 void checkParsingErrors(const char* c_str, char* end, std::string::size_type c_str_size) {
   if (end == c_str) {
     ThrowNumberFormatException();
@@ -1175,22 +1153,6 @@ OBJ_GETTER0(Kotlin_io_Console_readLine) {
     return nullptr;
   }
   RETURN_RESULT_OF(CreateStringFromCString, data);
-}
-
-KByte Kotlin_String_parseByte(KString value, KInt radix) {
-  return parseInt<KByte>(value, radix);
-}
-
-KShort Kotlin_String_parseShort(KString value, KInt radix) {
-  return parseInt<KShort>(value, radix);
-}
-
-KInt Kotlin_String_parseInt(KString value, KInt radix) {
-  return parseInt<KInt>(value, radix);
-}
-
-KLong Kotlin_String_parseLong(KString value, KInt radix) {
-  return parseLong(value, radix);
 }
 
 KFloat Kotlin_String_parseFloat(KString value) {

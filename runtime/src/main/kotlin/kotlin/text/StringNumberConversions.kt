@@ -58,10 +58,6 @@ public inline fun Long.toString(radix: Int): String = longToString(this, checkRa
 @kotlin.internal.InlineOnly
 public inline fun String.toBoolean(): Boolean = this.equals("true", ignoreCase = true)
 
-// TODO: Remove it?
-@SymbolName("Kotlin_String_parseByte")
-external private fun parseByte(value: String, radix: Int): Byte
-
 /**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
@@ -76,9 +72,6 @@ public inline fun String.toByte(): Byte = toByteOrNull() ?: throw NumberFormatEx
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun String.toByte(radix: Int): Byte = toByteOrNull(radix) ?: throw NumberFormatException()
-
-@SymbolName("Kotlin_String_parseShort")
-external private fun parseShort(value: String, radix: Int): Short
 
 /**
  * Parses the string as a [Short] number and returns the result.
@@ -95,9 +88,6 @@ public inline fun String.toShort(): Short = toShortOrNull() ?: throw NumberForma
 @kotlin.internal.InlineOnly
 public inline fun String.toShort(radix: Int): Short = toShortOrNull(radix) ?: throw NumberFormatException()
 
-@SymbolName("Kotlin_String_parseInt")
-external private fun parseInt(value: String, radix: Int): Int
-
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
@@ -112,10 +102,6 @@ public inline fun String.toInt(): Int = toIntOrNull() ?: throw NumberFormatExcep
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun String.toInt(radix: Int): Int = toIntOrNull(radix) ?: throw NumberFormatException()
-
-
-@SymbolName("Kotlin_String_parseLong")
-external private fun parseLong(value: String, radix: Int): Long
 
 /**
  * Parses the string as a [Long] number and returns the result.
