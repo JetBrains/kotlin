@@ -421,8 +421,9 @@ public class MethodInliner {
     ) {
         node = prepareNode(node, finallyDeepShift);
 
-        Frame<SourceValue>[] sources = analyzeMethodNodeBeforeInline(node);
-        LocalReturnsNormalizer localReturnsNormalizer = LocalReturnsNormalizer.createFor(node, labelOwner, sources);
+        normalizeLocalReturns(node, labelOwner);
+
+        Frame<SourceValue>[] sources = analyzeMethodNodeWithoutMandatoryTransformations(node);
 
         Set<AbstractInsnNode> toDelete = SmartSet.create();
         InsnList instructions = node.instructions;
@@ -551,9 +552,37 @@ public class MethodInliner {
             }
         }
 
-        localReturnsNormalizer.transform(node);
-
         return node;
+    }
+
+    private void normalizeLocalReturns(@NotNull MethodNode node, @NotNull LabelOwner labelOwner) {
+        Frame<SourceValue>[] frames = analyzeMethodNodeBeforeInline(node);
+
+        LocalReturnsNormalizer localReturnsNormalizer = new LocalReturnsNormalizer();
+
+        AbstractInsnNode[] instructions = node.instructions.toArray();
+
+        for (int i = 0; i < instructions.length; ++i) {
+            Frame<SourceValue> frame = frames[i];
+            // Don't care about dead code, it will be eliminated
+            if (frame == null) continue;
+
+            AbstractInsnNode insnNode = instructions[i];
+            if (!InlineCodegenUtil.isReturnOpcode(insnNode.getOpcode())) continue;
+
+            AbstractInsnNode insertBeforeInsn = insnNode;
+
+            // TODO extract isLocalReturn / isNonLocalReturn, see processReturns
+            String labelName = getMarkedReturnLabelOrNull(insnNode);
+            if (labelName != null) {
+                if (!labelOwner.isMyLabel(labelName)) continue;
+                insertBeforeInsn = insnNode.getPrevious();
+            }
+
+            localReturnsNormalizer.addLocalReturnToTransform(insnNode, insertBeforeInsn, frame);
+        }
+
+        localReturnsNormalizer.transform(node);
     }
 
     private boolean isAnonymousClassThatMustBeRegenerated(@Nullable Type type) {
@@ -571,6 +600,10 @@ public class MethodInliner {
             throw wrapException(e, node, "couldn't inline method call");
         }
 
+        return analyzeMethodNodeWithoutMandatoryTransformations(node);
+    }
+
+    private static Frame<SourceValue>[] analyzeMethodNodeWithoutMandatoryTransformations(@NotNull MethodNode node) {
         Analyzer<SourceValue> analyzer = new Analyzer<SourceValue>(new SourceInterpreter()) {
             @NotNull
             @Override
@@ -590,7 +623,7 @@ public class MethodInliner {
             return analyzer.analyze("fake", node);
         }
         catch (AnalyzerException e) {
-            throw wrapException(e, node, "couldn't inline method call");
+            throw new RuntimeException(e);
         }
     }
 
@@ -872,7 +905,7 @@ public class MethodInliner {
 
         private final List<LocalReturn> localReturns = new SmartList<LocalReturn>();
 
-        private boolean needsReturnVariable = false;
+        private int returnVariableSize = 0;
         private int returnOpcode = -1;
 
         private void addLocalReturnToTransform(
@@ -887,54 +920,26 @@ public class MethodInliner {
 
             localReturns.add(new LocalReturn(returnInsn, insertBeforeInsn, sourceValueFrame));
 
-            if (returnInsn.getOpcode() != Opcodes.RETURN && sourceValueFrame.getStackSize() > 1) {
-                needsReturnVariable = true;
+            if (returnInsn.getOpcode() != Opcodes.RETURN) {
+                if (returnInsn.getOpcode() == Opcodes.LRETURN || returnInsn.getOpcode() == Opcodes.DRETURN) {
+                    returnVariableSize = 2;
+                }
+                else {
+                    returnVariableSize = 1;
+                }
             }
         }
 
         public void transform(@NotNull MethodNode methodNode) {
             int returnVariableIndex = -1;
-            if (needsReturnVariable) {
+            if (returnVariableSize > 0) {
                 returnVariableIndex = methodNode.maxLocals;
-                methodNode.maxLocals++;
+                methodNode.maxLocals += returnVariableSize;
             }
 
             for (LocalReturn localReturn : localReturns) {
                 localReturn.transform(methodNode.instructions, returnVariableIndex);
             }
-        }
-
-        @NotNull
-        public static LocalReturnsNormalizer createFor(
-                @NotNull MethodNode methodNode,
-                @NotNull LabelOwner owner,
-                @NotNull Frame<SourceValue>[] frames
-        ) {
-            LocalReturnsNormalizer result = new LocalReturnsNormalizer();
-
-            AbstractInsnNode[] instructions = methodNode.instructions.toArray();
-
-            for (int i = 0; i < instructions.length; ++i) {
-                Frame<SourceValue> frame = frames[i];
-                // Don't care about dead code, it will be eliminated
-                if (frame == null) continue;
-
-                AbstractInsnNode insnNode = instructions[i];
-                if (!InlineCodegenUtil.isReturnOpcode(insnNode.getOpcode())) continue;
-
-                AbstractInsnNode insertBeforeInsn = insnNode;
-
-                // TODO extract isLocalReturn / isNonLocalReturn, see processReturns
-                String labelName = getMarkedReturnLabelOrNull(insnNode);
-                if (labelName != null) {
-                    if (!owner.isMyLabel(labelName)) continue;
-                    insertBeforeInsn = insnNode.getPrevious();
-                }
-
-                result.addLocalReturnToTransform(insnNode, insertBeforeInsn, frame);
-            }
-
-            return result;
         }
     }
 
