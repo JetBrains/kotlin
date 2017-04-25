@@ -421,10 +421,10 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
                 System.err.println("Generating instructions as text...");
                 try {
                     if (classFileFactory == null) {
-                        System.out.println("Cannot generate text: exception was thrown during generation");
+                        System.err.println("Cannot generate text: exception was thrown during generation");
                     }
                     else {
-                        System.out.println(classFileFactory.createText());
+                        System.err.println(classFileFactory.createText());
                     }
                 }
                 catch (Throwable e1) {
