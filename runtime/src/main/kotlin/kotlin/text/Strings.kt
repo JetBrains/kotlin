@@ -640,10 +640,6 @@ public fun String.replaceBeforeLast(delimiter: String, replacement: String, miss
     return if (index == -1) missingDelimiterValue else replaceRange(0, index, replacement)
 }
 
-
-// public fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean): String // JVM- and JS-specific
-// public fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean): String // JVM- and JS-specific
-
 /**
  * Returns a new string obtained by replacing each substring of this char sequence that matches the given regular expression
  * with the given [replacement].

@@ -1060,6 +1060,10 @@ KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
       other->count_ > thiz->count_ - fromIndex) {
     return -1;
   }
+  // An empty string can be always found.
+  if (other->count_ == 0) {
+    return fromIndex;
+  }
   KInt count = thiz->count_;
   const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, fromIndex);
   const KChar* otherRaw = CharArrayAddressOfElementAt(other, 0);
