@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.test
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
@@ -56,7 +55,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactory
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.DFS
-import org.mozilla.javascript.Context
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
 import java.io.File
@@ -75,6 +73,8 @@ abstract class BasicBoxTest(
 
     protected open fun getOutputPrefixFile(testFilePath: String): File? = null
     protected open fun getOutputPostfixFile(testFilePath: String): File? = null
+
+    protected open val runMinifierByDefault: Boolean = false
 
     fun doTest(filePath: String) {
         doTest(filePath, "OK", MainCallParameters.noCall())
@@ -158,8 +158,45 @@ abstract class BasicBoxTest(
 
             performAdditionalChecks(generatedJsFiles.map { it.first }, outputPrefixFile, outputPostfixFile)
 
-            minifyAndRun(File(File(outputDir, "min"), file.nameWithoutExtension), allJsFiles, generatedJsFiles, expectedResult,
-                         mainModuleName, testFactory.testPackage, TEST_FUNCTION, withModuleSystem)
+            val minificationThresholdMatcher = MINIFICATION_THRESHOLD.matcher(fileContent)
+            val minificationThresholdFound = minificationThresholdMatcher.find()
+            val skipMinification = System.getProperty("kotlin.js.skipMinificationTest", "false").toBoolean()
+            if (!skipMinification &&
+                (runMinifierByDefault || minificationThresholdFound) &&
+                !SKIP_MINIFICATION.matcher(fileContent).find()
+            ) {
+                val thresholdChecker: (Int) -> Unit = if (!minificationThresholdFound) {
+                    ({ reachableNodesCount ->
+                        if (!System.getProperty("kotlin.js.generateThreshold", "false").toBoolean()) {
+                            fail("Minification threshold was not set. Reachable nodes: $reachableNodesCount")
+                        }
+                        else {
+                            val suggestedThreshold = reachableNodesCount * 11 / 10
+                            val prefix = "// MINIFICATION_THRESHOLD: $suggestedThreshold\n"
+                            FileUtil.writeToFile(file, prefix + fileContent)
+                        }
+                    })
+                }
+                else {
+                    val threshold = minificationThresholdMatcher.group(1).toInt()
+                    ({ reachableNodesCount ->
+                        if (reachableNodesCount > threshold) {
+                            fail("DCE marked $reachableNodesCount as reachable, while threshold was $threshold")
+                        }
+                    })
+                }
+
+                minifyAndRun(
+                        workDir = File(File(outputDir, "min"), file.nameWithoutExtension),
+                        allJsFiles = allJsFiles,
+                        generatedJsFiles = generatedJsFiles,
+                        expectedResult = expectedResult,
+                        testModuleName = mainModuleName,
+                        testPackage = testFactory.testPackage,
+                        testFunction = TEST_FUNCTION,
+                        withModuleSystem = withModuleSystem,
+                        minificationThresholdChecker =  thresholdChecker)
+            }
         }
     }
 
@@ -404,7 +441,8 @@ abstract class BasicBoxTest(
 
     private fun minifyAndRun(
             workDir: File, allJsFiles: List<String>, generatedJsFiles: List<Pair<String, TestModule>>,
-            expectedResult: String, testModuleName: String, testPackage: String?, testFunction: String, withModuleSystem: Boolean
+            expectedResult: String, testModuleName: String, testPackage: String?, testFunction: String, withModuleSystem: Boolean,
+            minificationThresholdChecker: (Int) -> Unit
     ) {
         val kotlinJsLib = DIST_DIR_JS_PATH + "kotlin.js"
         val kotlinTestJsLib = DIST_DIR_JS_PATH + "kotlin-test.js"
@@ -422,37 +460,28 @@ abstract class BasicBoxTest(
         val testFunctionFqn = testModuleName + (if (testPackage.isNullOrEmpty()) "" else ".$testPackage") + ".$testFunction"
         val additionalReachableNodes = setOf(
                 testFunctionFqn, "kotlin.kotlin.io.BufferedOutput", "kotlin.kotlin.io.output.flush",
-                "kotlin.kotlin.io.output.buffer"
+                "kotlin.kotlin.io.output.buffer", "kotlin-test.kotlin.test.overrideAsserter_wbnzx$"
         )
         val allFilesToMinify = filesToMinify.values + kotlinJsInputFile + kotlinTestJsInputFile
-        val reachableNodes = DeadCodeElimination.run(allFilesToMinify, additionalReachableNodes) {  }
-        if (reachableNodes.size > 1500) println("!!!")
-        println(reachableNodes.size.toString() + ": " + workDir.path)
+        val dceResult = DeadCodeElimination.run(allFilesToMinify, additionalReachableNodes) { }
+
+        val moduleDeclarations = dceResult.globalScope.member("module").member("exports")
+        val reachableNodes = dceResult.reachableNodes.filter { moduleDeclarations !in generateSequence(it) { it.qualifier?.parent } }
+        minificationThresholdChecker(reachableNodes.size)
 
         val runList = mutableListOf<String>()
         runList += kotlinJsLibOutput
         runList += kotlinTestJsLibOutput
+        runList += TEST_DATA_DIR_PATH + "nashorn-polyfills.js"
+        runList += allJsFiles.map { filesToMinify[it]?.outputName ?: it }
 
-        val context = Context.enter()
-        context.languageVersion = Context.VERSION_1_8
-        context.optimizationLevel = -1
-        val scope = context.initStandardObjects()
-
-        fun applyFile(fileToRun: String) {
-            val code = FileUtil.loadFile(File(fileToRun), CharsetToolkit.UTF8, true)
-            context.evaluateString(scope, code, fileToRun, 1, null)
+        val result = engineForMinifier.runAndRestoreContext {
+            runList.forEach(this::loadFile)
+            overrideAsserter()
+            eval(NashornJsTestChecker.SETUP_KOTLIN_OUTPUT)
+            runTestFunction(testModuleName, testPackage, testFunction, withModuleSystem)
         }
-
-        applyFile(DIST_DIR_JS_PATH + RhinoUtils.RHINO_POLYFILLS_RELATIVE_PATH)
-        applyFile(kotlinJsLibOutput)
-        applyFile(kotlinTestJsLibOutput)
-        context.evaluateString(scope, "function ok() {}", "setup assertions", 0, null)
-        context.evaluateString(scope, RhinoUtils.SETUP_KOTLIN_OUTPUT, "setup kotlin output", 0, null)
-
-        allJsFiles.map { filesToMinify[it]?.outputName ?: it }.forEach(::applyFile)
-
-        val checker = RhinoFunctionResultChecker(testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
-        checker.runChecks(context, scope)
+        TestCase.assertEquals(expectedResult, result)
     }
 
     private inner class TestFileFactoryImpl : TestFileFactory<TestModule, TestFile>, Closeable {
@@ -538,6 +567,8 @@ abstract class BasicBoxTest(
         private val NO_MODULE_SYSTEM_PATTERN = Pattern.compile("^// *NO_JS_MODULE_SYSTEM", Pattern.MULTILINE)
         private val NO_INLINE_PATTERN = Pattern.compile("^// *NO_INLINE *$", Pattern.MULTILINE)
         private val SKIP_NODE_JS = Pattern.compile("^// *SKIP_NODE_JS *$", Pattern.MULTILINE)
+        private val SKIP_MINIFICATION = Pattern.compile("^// *SKIP_MINIFICATION *$", Pattern.MULTILINE)
+        private val MINIFICATION_THRESHOLD = Pattern.compile("^// *MINIFICATION_THRESHOLD: *([0-9]+) *$", Pattern.MULTILINE)
         private val RECOMPILE_PATTERN = Pattern.compile("^// *RECOMPILE *$", Pattern.MULTILINE)
         private val AST_EXTENSION = "jsast"
         private val METADATA_EXTENSION = "jsmeta"
@@ -549,5 +580,7 @@ abstract class BasicBoxTest(
         private val OLD_MODULE_SUFFIX = "-old"
 
         const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
+
+        private val engineForMinifier = createScriptEngine()
     }
 }
