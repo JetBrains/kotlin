@@ -33,14 +33,13 @@ internal class FixStackContext(val methodNode: MethodNode) {
     val fakeAlwaysFalseIfeqMarkers = arrayListOf<AbstractInsnNode>()
 
     val isThereAnyTryCatch: Boolean
-    val saveStackMarkerForRestoreMarker: Map<AbstractInsnNode, AbstractInsnNode>
+    val saveStackMarkerForRestoreMarker = insertTryCatchBlocksMarkers(methodNode)
     val restoreStackMarkersForSaveMarker = hashMapOf<AbstractInsnNode, MutableList<AbstractInsnNode>>()
 
     val openingInlineMethodMarker = hashMapOf<AbstractInsnNode, AbstractInsnNode>()
     var consistentInlineMarkers: Boolean = true; private set
 
     init {
-        saveStackMarkerForRestoreMarker = insertTryCatchBlocksMarkers(methodNode)
         isThereAnyTryCatch = saveStackMarkerForRestoreMarker.isNotEmpty()
         for ((restore, save) in saveStackMarkerForRestoreMarker) {
             restoreStackMarkersForSaveMarker.getOrPut(save) { SmartList() }.add(restore)

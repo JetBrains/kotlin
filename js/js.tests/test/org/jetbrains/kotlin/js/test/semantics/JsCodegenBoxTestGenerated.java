@@ -5525,6 +5525,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt17573.kt")
+            public void testKt17573() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/kt17573.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt17573_nested.kt")
+            public void testKt17573_nested() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/kt17573_nested.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt8608.kt")
             public void testKt8608() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/kt8608.kt");

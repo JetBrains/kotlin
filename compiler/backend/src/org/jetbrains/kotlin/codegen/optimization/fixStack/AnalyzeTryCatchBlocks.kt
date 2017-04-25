@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.optimization.fixStack
 import org.jetbrains.kotlin.codegen.optimization.common.findNextOrNull
 import org.jetbrains.kotlin.codegen.optimization.common.hasOpcode
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
+import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
@@ -117,6 +118,11 @@ private fun insertSaveRestoreStackMarkers(
 private fun collectDecompiledTryDescriptors(methodNode: MethodNode): Map<LabelNode, DecompiledTryDescriptor> {
     val decompiledTryDescriptorForStart: MutableMap<LabelNode, DecompiledTryDescriptor> = hashMapOf()
     val decompiledTryDescriptorForHandler: MutableMap<LabelNode, DecompiledTryDescriptor> = hashMapOf()
+
+    val defaultHandlers = methodNode.tryCatchBlocks.mapNotNullTo(SmartSet.create()) {
+        if (it.isDefaultHandlerNode()) it.handler else null
+    }
+
     for (tcb in methodNode.tryCatchBlocks) {
         if (tcb.isDefaultHandlerNode()) {
             assert(decompiledTryDescriptorForHandler.containsKey(tcb.start)) { "${methodNode.debugString(tcb)}: default handler should occur after some regular handler" }
@@ -127,15 +133,18 @@ private fun collectDecompiledTryDescriptors(methodNode: MethodNode): Map<LabelNo
                 DecompiledTryDescriptor(tcb.start)
             }
         }
-        with(decompiledTryDescriptor) {
-            handlerStartLabels.add(tcb.handler)
 
+        with(decompiledTryDescriptor) {
             if (tcb.isDefaultHandlerNode()) {
                 assert(defaultHandlerTcb == null) {
                     "${methodNode.debugString(tcb)}: default handler is already found: ${methodNode.debugString(defaultHandlerTcb!!)}"
                 }
 
                 defaultHandlerTcb = tcb
+            }
+
+            if (tcb.handler !in defaultHandlers) {
+                handlerStartLabels.add(tcb.handler)
             }
         }
     }
