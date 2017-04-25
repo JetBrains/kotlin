@@ -186,6 +186,9 @@ private fun Properties.defaultCompilerOpts(target: String, dependencies: String)
     val sysRoot = targetSysRoot
     val llvmHomeDir = this.getOsSpecific("llvmHome")!!
     val llvmHome = "$dependencies/$llvmHomeDir"
+
+    System.load("$llvmHome/lib/${System.mapLibraryName("clang")}")
+
     val llvmVersion = this.getProperty("llvmVersion")!!
 
     val dependencyList = getOsSpecific("dependencies", target)?.split(' ') ?: listOf<String>()

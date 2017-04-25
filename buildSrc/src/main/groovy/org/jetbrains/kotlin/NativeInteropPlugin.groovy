@@ -190,8 +190,6 @@ class NamedNativeInteropConfig implements Named {
             ).asPath
             systemProperties "konan.home": project.rootProject.file("dist")
             environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
-            environment "DYLD_LIBRARY_PATH": "${project.llvmDir}/lib"
-            environment "LD_LIBRARY_PATH": "${project.llvmDir}/lib"
 
             outputs.dir generatedSrcDir
             outputs.dir nativeLibsDir
