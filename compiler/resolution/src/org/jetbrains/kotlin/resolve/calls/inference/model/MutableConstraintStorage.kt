@@ -84,14 +84,14 @@ class MutableVariableWithConstraints(
 
 }
 
-// todo may be we should use LinkedHasMap
+
 class MutableConstraintStorage : ConstraintStorage {
-    override val allTypeVariables: MutableMap<TypeConstructor, NewTypeVariable> = HashMap()
-    override val notFixedTypeVariables: MutableMap<TypeConstructor, MutableVariableWithConstraints> = HashMap()
+    override val allTypeVariables: MutableMap<TypeConstructor, NewTypeVariable> = LinkedHashMap()
+    override val notFixedTypeVariables: MutableMap<TypeConstructor, MutableVariableWithConstraints> = LinkedHashMap()
     override val initialConstraints: MutableList<InitialConstraint> = ArrayList()
     override var maxTypeDepthFromInitialConstraints: Int = 1
     override val errors: MutableList<KotlinCallDiagnostic> = ArrayList()
-    override val fixedTypeVariables: MutableMap<TypeConstructor, UnwrappedType> = HashMap()
+    override val fixedTypeVariables: MutableMap<TypeConstructor, UnwrappedType> = LinkedHashMap()
     override val lambdaArguments: MutableList<ResolvedLambdaArgument> = ArrayList()
     override val innerCalls: MutableList<ResolvedKotlinCall.OnlyResolvedKotlinCall> = ArrayList()
 }
