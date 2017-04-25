@@ -16,17 +16,16 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
-import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaTypeVariable
-import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.isIntersectionType
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
+import kotlin.collections.HashMap
 
 private typealias Variable = VariableWithConstraints
 
@@ -51,27 +50,84 @@ class FixationOrderCalculator {
             topReturnType: UnwrappedType
     ): List<NodeWithDirection> = DependencyGraph(c).getCompletionOrder(topReturnType)
 
+    /**
+     * U depends-on V if one of the following conditions is met:
+     *
+     *      LAMBDA
+     *              result type U depends-on all parameters types V of the corresponding lambda
+     *
+     *      LAMBDA-RESULT
+     *              V is a lambda result type variable,
+     *              V <: T constraint exists for V,
+     *              U is a constituent type of T in position matching approximation direction for U
+     *
+     *      STRONG-CONSTRAINT
+     *              'U <op> T' constraint exists for U,
+     *              <op> is a constraint operator relevant to U approximation direction,
+     *              V is a proper constituent type of T
+     *
+     *      WEAK-CONSTRAINT
+     *              'U <op> V' constraint exists for U,
+     *              <op> is a constraint operator relevant to U approximation direction
+     */
     private class DependencyGraph(val c: Context) {
         private val directions = HashMap<Variable, ResolveDirection>()
+
+        private val lambdaResultDependencyEdges = HashMap<Variable, MutableList<Variable>>()
 
         // first in the list -- first fix
         fun getCompletionOrder(topReturnType: UnwrappedType): List<NodeWithDirection> {
             setupDirections(topReturnType)
 
+            computeLambdaResultDependencyEdges()
+
             return topologicalOrderWith0Priority().map { NodeWithDirection(it, directions[it] ?: ResolveDirection.UNKNOWN) }
+        }
+
+        private fun computeLambdaResultDependencyEdges() {
+            val resolvedLambdaArguments = c.lambdaArguments.associateBy({ it.argument }, { it })
+
+            for (variable in c.notFixedTypeVariables.values) {
+                val lambdaResultVariable = variable.typeVariable.takeLambdaResultVariable() ?: continue
+
+                val lambdaArgument = lambdaResultVariable.lambdaArgument
+
+                if (resolvedLambdaArguments[lambdaArgument]?.analyzed ?: false) continue
+
+                for (constraint in variable.constraints) {
+                    val initialDirection = when (constraint.kind) {
+                        ConstraintKind.LOWER -> ResolveDirection.TO_SUBTYPE
+                        ConstraintKind.UPPER -> ResolveDirection.TO_SUPERTYPE
+                        ConstraintKind.EQUALITY -> ResolveDirection.UNKNOWN // ???
+                    }
+
+                    constraint.type.visitType(initialDirection) { constituentVariable, direction ->
+                        val constituentVariableDirection = directions.getOrElse(constituentVariable) { ResolveDirection.UNKNOWN }
+
+                        val constituentTypeVariable = constituentVariable.typeVariable
+                        if (constituentTypeVariable is LambdaTypeVariable) {
+                            if (constituentTypeVariable.lambdaArgument == lambdaArgument) return@visitType
+                        }
+
+                        if (direction == ResolveDirection.UNKNOWN || direction == constituentVariableDirection) {
+                            lambdaResultDependencyEdges.getOrPut(constituentVariable) { SmartList() }.add(variable)
+                        }
+                    }
+                }
+            }
         }
 
         private fun topologicalOrderWith0Priority(): List<Variable> {
             val handler = object : DFS.CollectingNodeHandler<Variable, Variable, LinkedHashSet<Variable>>(LinkedHashSet()) {
                 override fun afterChildren(current: Variable) {
-                    // we have guaranty that from end of 0 edge there is no other edges with priority 0
-                    result.addAll(get0Edges(current))
+                    // LAMBDA dependency edges should always be satisfied
+                    result.addAll(getLambdaDependencies(current))
 
                     result.add(current)
                 }
             }
 
-            for (typeVariable in c.notFixedTypeVariables.values) {
+            for (typeVariable in c.notFixedTypeVariables.values.sortByTypeVariable()) {
                 DFS.doDfs(typeVariable, DFS.Neighbors(this::getEdges), DFS.VisitedWithSet<Variable>(), handler)
             }
             return handler.result().toList()
@@ -106,57 +162,77 @@ class FixationOrderCalculator {
 
             directions[variable] = direction
 
-            for ((otherVariable, otherDirection) in get12Edges(variable, direction)) {
+            for ((otherVariable, otherDirection) in getConstraintDependencies(variable, direction)) {
                 enterToNode(otherVariable, otherDirection)
             }
         }
 
         private fun getEdges(variable: Variable): List<Variable> {
             val direction = directions[variable] ?: ResolveDirection.UNKNOWN
-            return get12Edges(variable, direction).map(NodeWithDirection::variableWithConstraints) + get0Edges(variable)
+            val constraintEdges =
+                    LinkedHashSet<Variable>().also { set ->
+                        getConstraintDependencies(variable, direction).mapTo(set) { it.variableWithConstraints }
+                        set.addAll(getLambdaResultDependencies(variable))
+                    }.toList().sortByTypeVariable()
+            val lambdaEdges = getLambdaDependencies(variable).sortByTypeVariable()
+            return constraintEdges + lambdaEdges
         }
 
-        /**
-         * Now we use only priority 0 and {1, 2}.
-         * Current vision of edge priority for type variable \alpha to variable \beta:
-         *      0 -- { \beta -> \alpha } i.e. return type depend of all parameters types of lambda
-         *      1 -- \alpha <: Inv<\beta> or \alpha >: Pair<Inv<\beta & Any>, Int> ot \alpha <: \beta & Any
-         *      2 -- \alpha <: \beta or \alpha >: \beta?
-         */
-        private fun get12Edges(variableWithConstraints: Variable, direction: ResolveDirection, include2: Boolean = true): List<NodeWithDirection> {
-            fun isNotInterestingConstraint(direction: ResolveDirection, constraint: Constraint): Boolean {
-                return (direction == ResolveDirection.TO_SUBTYPE && constraint.kind == ConstraintKind.UPPER) ||
-                       (direction == ResolveDirection.TO_SUPERTYPE && constraint.kind == ConstraintKind.LOWER)
-            }
+        private fun Collection<Variable>.sortByTypeVariable() =
+                // TODO hack, provide some reasonable stable order
+                sortedBy { it.typeVariable.toString() }
 
-            val result = SmartList<NodeWithDirection>()
+        private enum class ConstraintDependencyKind { STRONG, WEAK }
 
-            for (constraint in variableWithConstraints.constraints) {
-                if (isNotInterestingConstraint(direction, constraint)) continue
+        private fun getConstraintDependencies(
+                variableWithConstraints: Variable,
+                direction: ResolveDirection,
+                filterByDependencyKind: ConstraintDependencyKind? = null
+        ): List<NodeWithDirection> =
+                SmartList<NodeWithDirection>().also { result ->
+                    for (constraint in variableWithConstraints.constraints) {
+                        if (!isInterestingConstraint(direction, constraint)) continue
 
-                if (include2 || !c.notFixedTypeVariables.containsKey(constraint.type.constructor)) { // because we collect only type 1 of edges
-                    constraint.type.visitType(direction) { variable, direction ->
-                        result.add(NodeWithDirection(variable, direction))
+                        if (filterByDependencyKind == null || filterByDependencyKind == getConstraintDependencyKind(constraint)) {
+                            constraint.type.visitType(direction) { nodeVariable, nodeDirection ->
+                                result.add(NodeWithDirection(nodeVariable, nodeDirection))
+                            }
+                        }
                     }
                 }
-            }
 
-            return result
-        }
+        private fun getConstraintDependencyKind(constraint: Constraint): ConstraintDependencyKind =
+                if (c.notFixedTypeVariables.containsKey(constraint.type.constructor))
+                    ConstraintDependencyKind.WEAK
+                else
+                    ConstraintDependencyKind.STRONG
 
-        private fun get0Edges(variable: Variable): List<Variable> {
-            val typeVariable = variable.typeVariable
-            if (typeVariable !is LambdaTypeVariable || typeVariable.kind != LambdaTypeVariable.Kind.RETURN_TYPE) return emptyList()
+        private fun isInterestingConstraint(direction: ResolveDirection, constraint: Constraint): Boolean =
+                !(direction == ResolveDirection.TO_SUBTYPE && constraint.kind == ConstraintKind.UPPER) &&
+                !(direction == ResolveDirection.TO_SUPERTYPE && constraint.kind == ConstraintKind.LOWER)
+
+        private fun getLambdaResultDependencies(variable: Variable): List<Variable> =
+                lambdaResultDependencyEdges.getOrElse(variable) { emptyList() }
+
+        private fun getLambdaDependencies(variable: Variable): List<Variable> {
+            val typeVariable = variable.typeVariable.takeLambdaResultVariable() ?: return emptyList()
 
             val resolvedLambdaArgument = c.lambdaArguments.find { it.argument == typeVariable.lambdaArgument } ?:
                                          error("Missing resolved lambda argument for ${typeVariable.lambdaArgument}")
 
-            return resolvedLambdaArgument.myTypeVariables.mapNotNull {
-                if (it.kind == LambdaTypeVariable.Kind.RETURN_TYPE) return@mapNotNull null
-                c.notFixedTypeVariables[it.freshTypeConstructor]
+            return buildVariablesList {
+                for (lambdaTypeVariable in resolvedLambdaArgument.myTypeVariables) {
+                    if (lambdaTypeVariable.kind == LambdaTypeVariable.Kind.RETURN_TYPE) continue
+                    addIfNotNull(c.notFixedTypeVariables[lambdaTypeVariable.freshTypeConstructor])
+                }
             }
         }
 
+        private inline fun buildVariablesList(builder: MutableList<Variable>.() -> Unit): List<Variable> =
+                SmartList<Variable>().apply(builder).toList()
+
+        private fun NewTypeVariable.takeLambdaResultVariable(): LambdaTypeVariable? =
+                if (this is LambdaTypeVariable && this.kind == LambdaTypeVariable.Kind.RETURN_TYPE) this else null
 
         private fun UnwrappedType.visitType(startDirection: ResolveDirection, action: (variable: Variable, direction: ResolveDirection) -> Unit) =
                 when (this) {
@@ -185,12 +261,6 @@ class FixationOrderCalculator {
             val parameters = constructor.parameters
             if (parameters.size != arguments.size) return // incorrect type
 
-            fun ResolveDirection.opposite() = when (this) {
-                ResolveDirection.UNKNOWN -> ResolveDirection.UNKNOWN
-                ResolveDirection.TO_SUPERTYPE -> ResolveDirection.TO_SUBTYPE
-                ResolveDirection.TO_SUBTYPE -> ResolveDirection.TO_SUPERTYPE
-            }
-
             for ((argument, parameter) in arguments.zip(parameters)) {
                 if (argument.isStarProjection) continue
 
@@ -203,6 +273,12 @@ class FixationOrderCalculator {
 
                 argument.type.unwrap().visitType(innerDirection, action)
             }
+        }
+
+        private fun ResolveDirection.opposite() = when (this) {
+            ResolveDirection.UNKNOWN -> ResolveDirection.UNKNOWN
+            ResolveDirection.TO_SUPERTYPE -> ResolveDirection.TO_SUBTYPE
+            ResolveDirection.TO_SUBTYPE -> ResolveDirection.TO_SUPERTYPE
         }
     }
 
