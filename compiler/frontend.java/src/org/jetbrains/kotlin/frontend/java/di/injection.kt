@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.frontend.java.di
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.JvmBuiltInsPackageFragmentProvider
-import org.jetbrains.kotlin.components.JavacBasedClassFinder
-import org.jetbrains.kotlin.components.StubJavaResolverCache
-import org.jetbrains.kotlin.components.JavacBasedSourceElementFactory
+import org.jetbrains.kotlin.javac.components.JavacBasedClassFinder
+import org.jetbrains.kotlin.javac.components.StubJavaResolverCache
+import org.jetbrains.kotlin.javac.components.JavacBasedSourceElementFactory
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
-import org.jetbrains.kotlin.wrappers.trees.computeClassId
+import org.jetbrains.kotlin.javac.wrappers.trees.computeClassId
 import java.io.InputStream
 
 class CliVirtualFileFinder(

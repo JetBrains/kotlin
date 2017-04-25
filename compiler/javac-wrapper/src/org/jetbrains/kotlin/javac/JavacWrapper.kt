@@ -44,16 +44,16 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import com.sun.tools.javac.util.List as JavacList
-import org.jetbrains.kotlin.wrappers.symbols.SymbolBasedClass
-import org.jetbrains.kotlin.wrappers.symbols.SymbolBasedPackage
+import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedClass
+import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedPackage
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.wrappers.trees.TreeBasedClass
-import org.jetbrains.kotlin.wrappers.trees.TreeBasedPackage
-import org.jetbrains.kotlin.wrappers.trees.TreePathResolverCache
+import org.jetbrains.kotlin.javac.wrappers.trees.TreeBasedClass
+import org.jetbrains.kotlin.javac.wrappers.trees.TreeBasedPackage
+import org.jetbrains.kotlin.javac.wrappers.trees.TreePathResolverCache
 import java.io.Closeable
 import java.io.File
 import javax.lang.model.element.Element

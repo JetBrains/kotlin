@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.wrappers.trees.find
-import org.jetbrains.kotlin.wrappers.trees.findInner
-import org.jetbrains.kotlin.wrappers.trees.tryToResolveByFqName
-import org.jetbrains.kotlin.wrappers.trees.tryToResolveInJavaLang
+import org.jetbrains.kotlin.javac.wrappers.trees.find
+import org.jetbrains.kotlin.javac.wrappers.trees.findInner
+import org.jetbrains.kotlin.javac.wrappers.trees.tryToResolveByFqName
+import org.jetbrains.kotlin.javac.wrappers.trees.tryToResolveInJavaLang
 
 class KotlinClassifiersCache(sourceFiles: Collection<KtFile>,
                              private val javac: JavacWrapper) {

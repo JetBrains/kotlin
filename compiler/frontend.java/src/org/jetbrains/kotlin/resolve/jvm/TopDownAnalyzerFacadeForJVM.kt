@@ -62,7 +62,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.wrappers.trees.TreeBasedClass
+import org.jetbrains.kotlin.javac.wrappers.trees.TreeBasedClass
 import java.util.*
 
 object TopDownAnalyzerFacadeForJVM {
