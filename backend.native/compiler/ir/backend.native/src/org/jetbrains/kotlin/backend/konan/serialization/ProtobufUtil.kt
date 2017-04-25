@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.serialization.KonanLinkData
 import org.jetbrains.kotlin.serialization.KonanLinkData.*
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 
 fun newUniqId(index: Long): KonanLinkData.UniqId =
    KonanLinkData.UniqId.newBuilder().setIndex(index).build() 
@@ -83,6 +84,37 @@ fun inlineBody(encodedIR: String)
         .newBuilder()
         .setEncodedIr(encodedIR)
         .build()
+
+// -----------------------------------------------------------
+
+val ProtoBuf.Function.parent: Int?
+    get() = if (this.hasExtension(KonanLinkData.functionParent)) 
+                this.getExtension(KonanLinkData.functionParent)
+            else null
+
+val ProtoBuf.Property.parent: Int?
+    get() = if (this.hasExtension(KonanLinkData.propertyParent)) 
+                this.getExtension(KonanLinkData.propertyParent)
+            else null
+
+
+val ProtoBuf.Constructor.parent: Int?
+    get() = if (this.hasExtension(KonanLinkData.constructorParent)) 
+                this.getExtension(KonanLinkData.constructorParent)
+            else null
+
+val GeneratedMessageLite.parent: Int? 
+    get() = when (this) {
+        is ProtoBuf.Function
+            -> this.parent
+        is ProtoBuf.Property
+            -> this.parent
+        is ProtoBuf.Constructor 
+            -> this.parent
+        else 
+            -> error("Unexpected protobuf message")
+}
+
 
 // -----------------------------------------------------------
 

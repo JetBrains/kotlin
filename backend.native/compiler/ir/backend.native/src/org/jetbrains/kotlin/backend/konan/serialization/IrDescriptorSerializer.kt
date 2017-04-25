@@ -134,7 +134,7 @@ internal class IrDescriptorSerializer(
         val classOrPackage = descriptor.classOrPackage
         val parentFqNameIndex = if (classOrPackage is ClassOrPackageFragmentDescriptor) {
             stringTable.getClassOrPackageFqNameIndex(classOrPackage)
-        } else { -1 }
+        } else null
 
         val index = descriptorTable.indexByValue(descriptor)
         // For getters and setters we use 
@@ -150,7 +150,9 @@ internal class IrDescriptorSerializer(
             .setKind(kotlinDescriptorKind(descriptor))
             .setIndex(index)
             .setOriginalIndex(originalIndex)
-            .setClassOrPackage(parentFqNameIndex)
+
+        if (parentFqNameIndex != null)
+            proto.setClassOrPackage(parentFqNameIndex)
 
         when (descriptor) {
             is FunctionDescriptor ->

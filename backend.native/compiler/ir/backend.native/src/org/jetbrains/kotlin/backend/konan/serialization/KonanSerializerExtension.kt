@@ -53,14 +53,14 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
         super.serializeEnumEntry(descriptor, proto)
     }
 
-    fun DeclarationDescriptor.parentFqNameIndex(): Int {
+    fun DeclarationDescriptor.parentFqNameIndex(): Int? {
 
         if (this.containingDeclaration is ClassOrPackageFragmentDescriptor) {
             val parentIndex = stringTable.getClassOrPackageFqNameIndex(
                     this.containingDeclaration as ClassOrPackageFragmentDescriptor)
             return parentIndex
         } else {
-            return -1
+            return null
         }
     }
 
@@ -69,7 +69,7 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
         proto.setConstructorIndex(
             inlineDescriptorTable.indexByValue(descriptor))
         val parentIndex = descriptor.parentFqNameIndex()
-        proto.setExtension(KonanLinkData.constructorParent, parentIndex)
+        if (parentIndex != null) proto.setExtension(KonanLinkData.constructorParent, parentIndex)
         
         super.serializeConstructor(descriptor, proto)
     }
@@ -86,7 +86,7 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
         proto.setFunctionIndex(
             inlineDescriptorTable.indexByValue(descriptor))
         val parentIndex = descriptor.parentFqNameIndex()
-        proto.setExtension(KonanLinkData.functionParent, parentIndex)
+        if (parentIndex != null) proto.setExtension(KonanLinkData.functionParent, parentIndex)
         super.serializeFunction(descriptor, proto)
     }
 
@@ -98,7 +98,7 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
 
     override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
         val parentIndex = descriptor.parentFqNameIndex()
-        proto.setExtension(KonanLinkData.propertyParent, parentIndex)
+        if (parentIndex != null) proto.setExtension(KonanLinkData.propertyParent, parentIndex)
         val variable = originalVariables[descriptor]
         if (variable != null) {
             proto.setExtension(KonanLinkData.usedAsVariable, true)
