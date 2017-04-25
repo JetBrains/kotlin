@@ -2483,6 +2483,24 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("kt17591.kt")
+        public void testKt17591() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/kt17591.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17591a.kt")
+        public void testKt17591a() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/kt17591a.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17591b.kt")
+        public void testKt17591b() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/kt17591b.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("mixedTypesOnStack1.kt")
         public void testMixedTypesOnStack1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/stackOnReturn/mixedTypesOnStack1.kt");

@@ -516,8 +516,11 @@ public class MethodInliner {
                     }
                 }
                 else if (cur.getOpcode() == Opcodes.POP) {
-                    LambdaInfo lambda = getLambdaIfExists(MethodInlinerUtilKt.singleOrNullInsn(StackTransformationUtilsKt.top(frame)));
-                    if (lambda != null) {
+                    SourceValue top = StackTransformationUtilsKt.top(frame);
+                    LambdaInfo lambdaInfo = MethodInlinerUtilKt.getLambdaIfExistsAndMarkInstructions(
+                            this, top, true, instructions, sources, toDelete
+                    );
+                    if (lambdaInfo != null) {
                         toDelete.add(cur);
                     }
                 }
