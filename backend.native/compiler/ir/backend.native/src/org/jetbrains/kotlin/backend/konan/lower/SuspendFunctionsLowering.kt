@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
@@ -60,6 +61,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
             else null
         }
         transformCallableReferencesToSuspendLambdas(irDeclarationContainer)
+        transformCallsToExtensionSuspendFunctions(irDeclarationContainer)
     }
 
     private fun markSuspendLambdas(irDeclarationContainer: IrDeclarationContainer) {
@@ -100,6 +102,37 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                         return irCall(coroutine.coroutineConstructorDescriptor).apply {
                             expressionArguments.forEachIndexed { index, argument ->
                                 putValueArgument(index, argument) }
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    private fun transformCallsToExtensionSuspendFunctions(irDeclarationContainer: IrDeclarationContainer) {
+        irDeclarationContainer.declarations.forEach {
+            it.transformChildrenVoid(object: IrElementTransformerVoid() {
+
+                override fun visitCall(expression: IrCall): IrExpression {
+                    expression.transformChildrenVoid(this)
+
+                    val descriptor = expression.descriptor as? FunctionDescriptor
+                            ?: return expression
+
+                    if (!descriptor.isSuspendFunctionInvoke || descriptor.extensionReceiverParameter == null)
+                        return expression
+
+                    val invokeFunctionDescriptor = descriptor.dispatchReceiverParameter!!.type.memberScope
+                            .getContributedFunctions(Name.identifier("invoke"), NoLookupLocation.FROM_BACKEND).single()
+                    return IrCallImpl(
+                            startOffset = expression.startOffset,
+                            endOffset = expression.endOffset,
+                            descriptor = invokeFunctionDescriptor
+                    ).apply {
+                        dispatchReceiver = expression.dispatchReceiver
+                        putValueArgument(0, expression.extensionReceiver)
+                        invokeFunctionDescriptor.valueParameters.drop(1).forEach {
+                            putValueArgument(it.index, expression.getValueArgument(it.index - 1))
                         }
                     }
                 }
@@ -191,6 +224,8 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
     private val getContinuationDescriptor = context.builtIns.getKonanInternalFunctions("getContinuation").single()
     private val returnIfSuspendedDescriptor = context.builtIns.getKonanInternalFunctions("returnIfSuspended").single()
 
+    private fun KotlinType.replace(types: List<KotlinType>) = this.replace(types.map(::TypeProjectionImpl))
+
     private fun FunctionDescriptor.substitute(vararg types: KotlinType): FunctionDescriptor {
         val typeSubstitutor = TypeSubstitutor.create(
                 typeParameters
@@ -272,7 +307,24 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
 
     private var coroutineId = 0
 
+    private val COROUTINES_FQ_NAME            = FqName.fromSegments(listOf("kotlin", "coroutines", "experimental"))
+    private val COROUTINES_INTRINSICS_FQ_NAME = FqName.fromSegments(listOf("kotlin", "coroutines", "experimental", "intrinsics"))
+    private val KOTLIN_FQ_NAME                = FqName("kotlin")
+
+    private val coroutinesScope           = context.irModule!!.descriptor.getPackage(COROUTINES_FQ_NAME).memberScope
+    private val coroutinesIntrinsicsScope = context.irModule!!.descriptor.getPackage(COROUTINES_INTRINSICS_FQ_NAME).memberScope
+    private val kotlinPackageScope        = context.irModule!!.descriptor.getPackage(KOTLIN_FQ_NAME).memberScope
+
+    private val continuationClassDescriptor = coroutinesScope
+            .getContributedClassifier(Name.identifier("Continuation"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+    private val COROUTINE_SUSPENDED = coroutinesIntrinsicsScope
+            .getContributedVariables(Name.identifier("COROUTINE_SUSPENDED"), NoLookupLocation.FROM_BACKEND).first()
+
     private inner class CoroutineBuilder(val irFunction: IrFunction, val callableReference: IrCallableReference?) {
+
+        private val functionParameters = irFunction.descriptor.explicitParameters
+        private val boundFunctionParameters = callableReference?.getArguments()?.map { it.first }
+        private val unboundFunctionParameters = boundFunctionParameters?.let { functionParameters - it }
 
         private var tempIndex = 0
         private var suspensionPointIdIndex = 0
@@ -283,66 +335,87 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
         private lateinit var argumentToPropertiesMap: Map<ParameterDescriptor, PropertyDescriptor>
         private val coroutineMembers = mutableListOf<IrDeclaration>()
 
-        private val COROUTINES_INTRINSICS_FQ_NAME = FqName.fromSegments(listOf("kotlin", "coroutines", "experimental", "intrinsics"))
-        private val coroutinesIntrinsicsScope = context.irModule!!.descriptor.getPackage(COROUTINES_INTRINSICS_FQ_NAME).memberScope
-
         private val coroutineImplClassDescriptor = context.builtIns.getKonanInternalClass("CoroutineImpl")
         private val create1FunctionDescriptor = coroutineImplClassDescriptor.unsubstitutedMemberScope
                 .getContributedFunctions(Name.identifier("create"), NoLookupLocation.FROM_BACKEND)
                 .single { it.valueParameters.size == 1 }
         private val create1CompletionParameter = create1FunctionDescriptor.valueParameters[0]
 
-        private val COROUTINE_SUSPENDED = coroutinesIntrinsicsScope
-                .getContributedVariables(Name.identifier("COROUTINE_SUSPENDED"), NoLookupLocation.FROM_BACKEND).first()
-
         fun build(): BuiltCoroutine {
+            val superTypes = mutableListOf<KotlinType>(coroutineImplClassDescriptor.defaultType)
+            var suspendFunctionClassDescriptor: ClassDescriptor? = null
+            var functionClassDescriptor: ClassDescriptor? = null
+            if (unboundFunctionParameters != null) {
+                // Suspend lambda inherits SuspendFunction.
+                val numberOfParameters = unboundFunctionParameters.size
+                suspendFunctionClassDescriptor = kotlinPackageScope.getContributedClassifier(
+                        Name.identifier("SuspendFunction$numberOfParameters"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+                superTypes += suspendFunctionClassDescriptor.defaultType.replace(
+                        unboundFunctionParameters.map { it.type } + irFunction.descriptor.returnType!!
+                )
+
+                functionClassDescriptor = kotlinPackageScope.getContributedClassifier(
+                        Name.identifier("Function${numberOfParameters + 1}"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+                val continuationType = continuationClassDescriptor.defaultType.replace(listOf(irFunction.descriptor.returnType!!))
+                superTypes += functionClassDescriptor.defaultType.replace(
+                        unboundFunctionParameters.map { it.type }     // Main arguments,
+                                + continuationType                    // and continuation.
+                                + context.builtIns.nullableAnyType)   // Return type
+            }
             coroutineClassDescriptor = ClassDescriptorImpl(
                     /* containingDeclaration = */ irFunction.descriptor.containingDeclaration,
                     /* name                  = */ "${irFunction.descriptor.name}\$${coroutineId++}".synthesizedName,
                     /* modality              = */ Modality.FINAL,
                     /* kind                  = */ ClassKind.CLASS,
-                    /* superTypes            = */ listOf(coroutineImplClassDescriptor.defaultType),
+                    /* superTypes            = */ superTypes,
                     /* source                = */ SourceElement.NO_SOURCE,
                     /* isExternal            = */ false
             )
-            val overriddenMap = mutableMapOf<FunctionDescriptor, FunctionDescriptor>()
+            val overriddenMap = mutableMapOf<CallableMemberDescriptor, CallableMemberDescriptor>()
             val constructors = mutableSetOf<ClassConstructorDescriptor>()
             val coroutineConstructorBuilder = createConstructorBuilder()
             constructors.add(coroutineConstructorBuilder.descriptor)
 
-            var coroutineFactoryConstructorBuilder: DescriptorWithIrBuilder<ClassConstructorDescriptor, IrConstructor>? = null
-            var createMethodBuilder: DescriptorWithIrBuilder<FunctionDescriptor, IrFunction>? = null
-            if (callableReference != null) {
-                // Suspend lambda - create factory methods.
-                val boundArgs = callableReference.getArguments()
-                val boundParams = boundArgs.map { it.first }
-
-                val allParams = irFunction.descriptor.explicitParameters
-                val unboundParams = allParams - boundParams
-
-                coroutineFactoryConstructorBuilder = createFactoryConstructorBuilder(boundParams)
-                constructors.add(coroutineFactoryConstructorBuilder.descriptor)
-                val createFunctionDescriptor = coroutineImplClassDescriptor.unsubstitutedMemberScope
-                        .getContributedFunctions(Name.identifier("create"), NoLookupLocation.FROM_BACKEND)
-                        .atMostOne { it.valueParameters.size == unboundParams.size + 1 }
-                createMethodBuilder = createCreateMethodBuilder(unboundParams, createFunctionDescriptor, coroutineConstructorBuilder.descriptor)
-
-                if (createFunctionDescriptor != null)
-                    overriddenMap += createFunctionDescriptor to createMethodBuilder.descriptor
-            }
-
             val doResumeFunctionDescriptor = coroutineImplClassDescriptor.unsubstitutedMemberScope
                     .getContributedFunctions(Name.identifier("doResume"), NoLookupLocation.FROM_BACKEND).single()
-
             val doResumeMethodBuilder = createDoResumeMethodBuilder(doResumeFunctionDescriptor)
-
             overriddenMap += doResumeFunctionDescriptor to doResumeMethodBuilder.descriptor
 
-            val contributedDescriptors = coroutineImplClassDescriptor.unsubstitutedMemberScope
+            var coroutineFactoryConstructorBuilder: DescriptorWithIrBuilder<ClassConstructorDescriptor, IrConstructor>? = null
+            var createMethodBuilder: DescriptorWithIrBuilder<FunctionDescriptor, IrFunction>? = null
+            var invokeMethodBuilder: DescriptorWithIrBuilder<FunctionDescriptor, IrFunction>? = null
+            if (callableReference != null) {
+                // Suspend lambda - create factory methods.
+                coroutineFactoryConstructorBuilder = createFactoryConstructorBuilder(boundFunctionParameters!!)
+                constructors.add(coroutineFactoryConstructorBuilder.descriptor)
+
+                val createFunctionDescriptor = coroutineImplClassDescriptor.unsubstitutedMemberScope
+                        .getContributedFunctions(Name.identifier("create"), NoLookupLocation.FROM_BACKEND)
+                        .atMostOne { it.valueParameters.size == unboundFunctionParameters!!.size + 1 }
+                createMethodBuilder = createCreateMethodBuilder(
+                        unboundArgs                    = unboundFunctionParameters!!,
+                        superFunctionDescriptor        = createFunctionDescriptor,
+                        coroutineConstructorDescriptor = coroutineConstructorBuilder.descriptor)
+                if (createFunctionDescriptor != null)
+                    overriddenMap += createFunctionDescriptor to createMethodBuilder.descriptor
+
+                val invokeFunctionDescriptor = functionClassDescriptor!!.unsubstitutedMemberScope
+                        .getContributedFunctions(Name.identifier("invoke"), NoLookupLocation.FROM_BACKEND).single()
+                val suspendInvokeFunctionDescriptor = suspendFunctionClassDescriptor!!.unsubstitutedMemberScope
+                        .getContributedFunctions(Name.identifier("invoke"), NoLookupLocation.FROM_BACKEND).single()
+                invokeMethodBuilder = createInvokeMethodBuilder(
+                        suspendFunctionInvokeFunctionDescriptor = suspendInvokeFunctionDescriptor,
+                        functionInvokeFunctionDescriptor        = invokeFunctionDescriptor,
+                        createFunctionDescriptor                = createMethodBuilder.descriptor,
+                        doResumeFunctionDescriptor              = doResumeMethodBuilder.descriptor)
+            }
+
+            val inheritedFromCoroutineImpl = coroutineImplClassDescriptor.unsubstitutedMemberScope
                     .getContributedDescriptors()
                     .map { overriddenMap[it] ?: it.createFakeOverrideDescriptor(coroutineClassDescriptor) }
-                    .filterNotNull()
-                    .toList()
+            val contributedDescriptors = (
+                    inheritedFromCoroutineImpl + invokeMethodBuilder?.descriptor
+                    ).filterNotNull().toList()
             coroutineClassDescriptor.initialize(SimpleMemberScope(contributedDescriptors), constructors, null)
 
             coroutineConstructorBuilder.initialize()
@@ -358,6 +431,11 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                 coroutineMembers.add(it.ir)
             }
 
+            invokeMethodBuilder?.let {
+                it.initialize()
+                coroutineMembers.add(it.ir)
+            }
+
             doResumeMethodBuilder.initialize()
             coroutineMembers.add(doResumeMethodBuilder.ir)
 
@@ -369,10 +447,10 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                     members     = coroutineMembers
             )
             return BuiltCoroutine(
-                    coroutineClass = coroutineClass,
+                    coroutineClass                 = coroutineClass,
                     coroutineConstructorDescriptor = coroutineFactoryConstructorBuilder?.descriptor
                             ?: coroutineConstructorBuilder.descriptor,
-                    doResumeFunctionDescriptor = doResumeMethodBuilder.descriptor)
+                    doResumeFunctionDescriptor     = doResumeMethodBuilder.descriptor)
         }
 
         private fun createConstructorBuilder()
@@ -380,7 +458,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
 
             private val coroutineImplConstructorDescriptor = coroutineImplClassDescriptor.constructors.single()
             private lateinit var constructorParameters: List<ValueParameterDescriptor>
-            private lateinit var functionParameters: List<ParameterDescriptor>
 
             override fun buildDescriptor(): ClassConstructorDescriptorImpl {
                 return ClassConstructorDescriptorImpl.create(
@@ -392,8 +469,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
             }
 
             override fun doInitialize() {
-                val functionDescriptor = irFunction.descriptor
-                functionParameters = functionDescriptor.explicitParameters
                 constructorParameters = (
                         functionParameters
                         + coroutineImplConstructorDescriptor.valueParameters[0] // completion.
@@ -543,7 +618,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                     body = irBuilder.irBlockBody(startOffset, endOffset) {
                         +irReturn(
                                 irCall(coroutineConstructorDescriptor).apply {
-                                    val functionParameters = irFunction.descriptor.explicitParameters
                                     var unboundIndex = 0
                                     val unboundArgsSet = unboundArgs.toSet()
                                     functionParameters.map {
@@ -558,6 +632,69 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                                     assert(unboundIndex == ourDescriptor.valueParameters.size - 1,
                                             { "Not all arguments of <create> are used" })
                                 })
+                    }
+                }
+            }
+        }
+
+        private fun createInvokeMethodBuilder(suspendFunctionInvokeFunctionDescriptor: FunctionDescriptor,
+                                              functionInvokeFunctionDescriptor: FunctionDescriptor,
+                                              createFunctionDescriptor: FunctionDescriptor,
+                                              doResumeFunctionDescriptor: FunctionDescriptor)
+                = object: DescriptorWithIrBuilder<SimpleFunctionDescriptorImpl, IrFunction>() {
+
+            override fun buildDescriptor() = SimpleFunctionDescriptorImpl.create(
+                        /* containingDeclaration = */ coroutineClassDescriptor,
+                        /* annotations           = */ Annotations.EMPTY,
+                        /* name                  = */ Name.identifier("invoke"),
+                        /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
+                        /* source                = */ SourceElement.NO_SOURCE)
+
+            override fun doInitialize() {
+                val valueParameters = createFunctionDescriptor.valueParameters
+                        // Skip completion - invoke() already has it implicitly as a suspend function.
+                        .take(createFunctionDescriptor.valueParameters.size - 1)
+                        .map { it.copyAsValueParameter(this.descriptor, it.index) }
+
+                this.descriptor.initialize(
+                        /* receiverParameterType        = */ null,
+                        /* dispatchReceiverParameter    = */ coroutineClassDescriptor.thisAsReceiverParameter,
+                        /* typeParameters               = */ emptyList(),
+                        /* unsubstitutedValueParameters = */ valueParameters,
+                        /* unsubstitutedReturnType      = */ irFunction.descriptor.returnType,
+                        /* modality                     = */ Modality.FINAL,
+                        /* visibility                   = */ Visibilities.PRIVATE).apply {
+                    overriddenDescriptors               +=   suspendFunctionInvokeFunctionDescriptor
+                    overriddenDescriptors               +=   functionInvokeFunctionDescriptor
+                    isSuspend                           =    true
+                }
+            }
+
+            override fun buildIr(): IrFunction {
+                val startOffset = irFunction.startOffset
+                val endOffset = irFunction.endOffset
+                val ourDescriptor = this.descriptor
+                val irBuilder = context.createIrBuilder(this.descriptor, startOffset, endOffset)
+                return IrFunctionImpl(
+                        startOffset = startOffset,
+                        endOffset   = endOffset,
+                        origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
+                        descriptor  = this.descriptor).apply {
+                    body = irBuilder.irBlockBody(startOffset, endOffset) {
+                        +irReturn(
+                                irCall(doResumeFunctionDescriptor).apply {
+                                    dispatchReceiver = irCall(createFunctionDescriptor).apply {
+                                        dispatchReceiver = irThis()
+                                        ourDescriptor.valueParameters.forEach {
+                                            putValueArgument(it.index, irGet(it))
+                                        }
+                                        putValueArgument(ourDescriptor.valueParameters.size,
+                                                irCall(getContinuationDescriptor.substitute(ourDescriptor.returnType!!)))
+                                    }
+                                    putValueArgument(0, irUnit())       // value
+                                    putValueArgument(1, irNull())       // exception
+                                }
+                        )
                     }
                 }
             }

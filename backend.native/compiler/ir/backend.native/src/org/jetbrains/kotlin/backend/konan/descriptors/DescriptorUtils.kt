@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -156,6 +157,15 @@ internal val FunctionDescriptor.isFunctionInvoke: Boolean
         assert(!dispatchReceiver.type.isKFunctionType)
 
         return dispatchReceiver.type.isFunctionType &&
+                this.isOperator && this.name == OperatorNameConventions.INVOKE
+    }
+
+internal val FunctionDescriptor.isSuspendFunctionInvoke: Boolean
+    get() {
+        val dispatchReceiver = dispatchReceiverParameter
+                ?: return false
+
+        return dispatchReceiver.type.isSuspendFunctionType &&
                 this.isOperator && this.name == OperatorNameConventions.INVOKE
     }
 
