@@ -395,6 +395,10 @@ public class AsmUtil {
             return null;
         }
 
+        if (memberDescriptor instanceof FunctionDescriptor && ((FunctionDescriptor) memberDescriptor).isSuspend()) {
+            return NO_FLAG_PACKAGE_PRIVATE;
+        }
+
         // the following code is only for PRIVATE visibility of member
         if (memberDescriptor instanceof ConstructorDescriptor) {
             if (isEnumEntry(containingDeclaration)) {
