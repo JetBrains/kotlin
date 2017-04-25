@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+
 class Generic<P : Any>(val p: P)
 
 class Host {
