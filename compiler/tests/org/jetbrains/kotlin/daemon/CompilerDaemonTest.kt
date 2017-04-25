@@ -208,6 +208,26 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
+    fun testDaemonRunError() {
+        withFlagFile(getTestName(true), ".alive") { flagFile ->
+            val daemonOptions = DaemonOptions(shutdownDelayMilliseconds = 1, verbose = true, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+
+            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+
+            val daemonJVMOptions = configureDaemonJVMOptions("-abracadabra", inheritMemoryLimits = false, inheritAdditionalProperties = false)
+
+            val messageCollector = TestMessageCollector()
+
+            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                                                                      DaemonReportingTargets(messageCollector = messageCollector), autostart = true)
+
+            assertNull(daemon)
+
+            assertTrue("Expecting error message, actual:\n${messageCollector.messages.joinToString("\n") { it.message }}",
+                       messageCollector.messages.any { it.message == "Unrecognized option: --abracadabra" })
+        }
+    }
+
     fun testDaemonAutoshutdownOnUnused() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = DaemonOptions(autoshutdownUnusedSeconds = 1, shutdownDelayMilliseconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
