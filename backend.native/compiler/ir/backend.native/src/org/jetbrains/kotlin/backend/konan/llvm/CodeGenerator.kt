@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
@@ -398,6 +397,17 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         val res = LLVMBuildUnreachable(builder)
         currentPositionHolder.setAfterTerminator()
         return res
+    }
+
+    fun blockAddress(bbLabel: LLVMBasicBlockRef): LLVMValueRef {
+        return LLVMBlockAddress(function, bbLabel)!!
+    }
+
+    fun indirectBr(address: LLVMValueRef, destinations: Collection<LLVMBasicBlockRef>): LLVMValueRef? {
+        val indirectBr = LLVMBuildIndirectBr(builder, address, destinations.size)
+        destinations.forEach { LLVMAddDestination(indirectBr, it) }
+        currentPositionHolder.setAfterTerminator()
+        return indirectBr
     }
 
     //-------------------------------------------------------------------------//

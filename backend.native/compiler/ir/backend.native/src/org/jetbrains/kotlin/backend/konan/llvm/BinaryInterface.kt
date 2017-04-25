@@ -195,8 +195,14 @@ private fun getStringValue(annotation: AnnotationDescriptor): String? {
 // TODO: bring here dependencies of this method?
 internal fun RuntimeAware.getLlvmFunctionType(function: FunctionDescriptor): LLVMTypeRef {
     val original = function.original
-    val returnType = if (original is ConstructorDescriptor) voidType else getLLVMReturnType(original.returnType!!)
+    val returnType = when {
+        original is ConstructorDescriptor -> voidType
+        original.isSuspend -> kObjHeaderPtr                // Suspend functions return Any?.
+        else -> getLLVMReturnType(original.returnType!!)
+    }
     val paramTypes = ArrayList(original.allParameters.map { getLLVMType(it.type) })
+    if (original.isSuspend)
+        paramTypes.add(kObjHeaderPtr)                       // Suspend functions have implicit parameter of type Continuation<>.
     if (isObjectType(returnType)) paramTypes.add(kObjHeaderPtrPtr)
 
     return functionType(returnType, isVarArg = false, paramTypes = *paramTypes.toTypedArray())
