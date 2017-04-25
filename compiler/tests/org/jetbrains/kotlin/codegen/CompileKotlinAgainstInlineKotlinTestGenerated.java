@@ -2432,6 +2432,18 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("loopInStoreLoadChains.kt")
+        public void testLoopInStoreLoadChains() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/special/loopInStoreLoadChains.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("loopInStoreLoadChains2.kt")
+        public void testLoopInStoreLoadChains2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/special/loopInStoreLoadChains2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("plusAssign.kt")
         public void testPlusAssign() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/special/plusAssign.kt");
