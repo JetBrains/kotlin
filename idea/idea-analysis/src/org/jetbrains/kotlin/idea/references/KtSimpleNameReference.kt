@@ -23,6 +23,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.copied
@@ -43,6 +45,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleReference<KtSimpleNameExpression>(expression) {
@@ -235,4 +239,17 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
 
             return listOf(element.getReferencedNameAsName())
         }
+
+    fun getImportAlias(): KtImportAlias? {
+        val element = element
+        val name = element.getReferencedName()
+        val file = element.containingKtFile
+        val importDirective = file.findImportByAlias(name) ?: return null
+        val fqName = importDirective.importedFqName ?: return null
+        val importedDescriptors = file.resolveImportReference(fqName)
+        if (getTargetDescriptors(element.analyze(BodyResolveMode.PARTIAL)).any { it.getImportableDescriptor() in importedDescriptors }) {
+            return importDirective.alias
+        }
+        return null
+    }
 }

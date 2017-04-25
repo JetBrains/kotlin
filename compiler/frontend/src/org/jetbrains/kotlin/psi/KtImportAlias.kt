@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
+import com.intellij.psi.search.LocalSearchScope
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
@@ -31,6 +33,9 @@ class KtImportAlias : KtElementImplStub<KotlinImportAliasStub>, PsiNameIdentifie
         return visitor.visitImportAlias(this, data)
     }
 
+    val importDirective: KtImportDirective?
+        get() = parent as? KtImportDirective
+
     override fun getName() = stub?.getName() ?: nameIdentifier?.text
 
     override fun setName(name: String): PsiElement {
@@ -39,4 +44,8 @@ class KtImportAlias : KtElementImplStub<KotlinImportAliasStub>, PsiNameIdentifie
     }
 
     override fun getNameIdentifier(): PsiElement? = findChildByType(KtTokens.IDENTIFIER)
+
+    override fun getTextOffset() = nameIdentifier?.textOffset ?: startOffset
+
+    override fun getUseScope() = LocalSearchScope(containingFile)
 }

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.idea.intentions.isAutoCreatedItUsage
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 class KotlinTargetElementEvaluator : TargetElementEvaluatorEx, TargetElementUtilExtender {
     companion object {
         val DO_NOT_UNWRAP_LABELED_EXPRESSION = 0x100
+        val BYPASS_IMPORT_ALIAS = 0x200
 
         // Place caret after the open curly brace in lambda for generated 'it'
         fun findLambdaOpenLBraceForGeneratedIt(ref: PsiReference): PsiElement? {
@@ -69,9 +71,9 @@ class KotlinTargetElementEvaluator : TargetElementEvaluatorEx, TargetElementUtil
 
     override fun getAdditionalDefinitionSearchFlags() = 0
 
-    override fun getAdditionalReferenceSearchFlags() = DO_NOT_UNWRAP_LABELED_EXPRESSION
+    override fun getAdditionalReferenceSearchFlags() = DO_NOT_UNWRAP_LABELED_EXPRESSION or BYPASS_IMPORT_ALIAS
 
-    override fun getAllAdditionalFlags() = DO_NOT_UNWRAP_LABELED_EXPRESSION
+    override fun getAllAdditionalFlags() = additionalDefinitionSearchFlags + additionalReferenceSearchFlags
 
     override fun includeSelfInGotoImplementation(element: PsiElement): Boolean = !(element is KtClass && element.isAbstract())
 
@@ -82,6 +84,10 @@ class KotlinTargetElementEvaluator : TargetElementEvaluatorEx, TargetElementUtil
                 return refTarget.getLabeledParent(ref.expression.getReferencedName()) ?: refTarget
             }
             return refTarget
+        }
+
+        if (!BitUtil.isSet(flags, BYPASS_IMPORT_ALIAS)) {
+            (ref.element as? KtSimpleNameExpression)?.mainReference?.getImportAlias()?.let { return it }
         }
 
         // prefer destructing declaration entry to its target if element name is accepted

@@ -80,6 +80,7 @@ class KotlinFindUsagesProvider : FindUsagesProvider {
                 return funDescription + (element.containerDescription?.let { " of $it" } ?: "")
             }
             is KtLabeledExpression -> element.getLabelName() ?: ""
+            is KtImportAlias -> element.getName() ?: ""
             is KtLightElement<*, *> -> element.kotlinOrigin?.let { getDescriptiveName(it) } ?: ""
             else -> ""
         }
