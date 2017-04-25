@@ -100,4 +100,9 @@ public class DelegatingCall implements Call {
     public CallType getCallType() {
         return delegate.getCallType();
     }
+
+    @Override
+    public String toString() {
+        return "*" + delegate.toString();
+    }
 }
