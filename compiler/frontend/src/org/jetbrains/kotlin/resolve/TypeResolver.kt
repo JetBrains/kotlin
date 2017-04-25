@@ -222,7 +222,7 @@ class TypeResolver(
                     val arguments = resolveTypeProjections(
                             c, ErrorUtils.createErrorType("No type").constructor, qualifierResolutionResult.allProjections
                     )
-                    result = type(ErrorUtils.createErrorTypeWithArguments(type.getDebugText(), arguments))
+                    result = type(ErrorUtils.createUnresolvedType(type.getDebugText(), arguments))
                     return
                 }
 

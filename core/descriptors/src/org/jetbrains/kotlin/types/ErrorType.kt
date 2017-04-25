@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-class ErrorType @JvmOverloads internal constructor(
+open class ErrorType @JvmOverloads internal constructor(
         override val constructor: TypeConstructor,
         override val memberScope: MemberScope,
         override val arguments: List<TypeProjection> = emptyList(),
@@ -35,4 +35,15 @@ class ErrorType @JvmOverloads internal constructor(
 
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType =
             ErrorType(constructor, memberScope, arguments, newNullability)
+}
+
+class UnresolvedType(
+        val presentableName: String,
+        constructor: TypeConstructor,
+        memberScope: MemberScope,
+        arguments: List<TypeProjection>,
+        isMarkedNullable: Boolean
+) : ErrorType(constructor, memberScope, arguments, isMarkedNullable) {
+    override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType =
+            UnresolvedType(presentableName, constructor, memberScope, arguments, newNullability)
 }

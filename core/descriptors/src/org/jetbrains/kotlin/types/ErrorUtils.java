@@ -412,6 +412,12 @@ public class ErrorUtils {
     }
 
     @NotNull
+    public static SimpleType createUnresolvedType(@NotNull String presentableName, @NotNull List<TypeProjection> arguments) {
+        return new UnresolvedType(presentableName, createErrorTypeConstructor(presentableName), createErrorScope(presentableName),
+                                  arguments, false);
+    }
+
+    @NotNull
     public static TypeConstructor createErrorTypeConstructor(@NotNull String debugMessage) {
         return createErrorTypeConstructorWithCustomDebugName("[ERROR : " + debugMessage + "]", ERROR_CLASS);
     }
