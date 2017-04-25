@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
-import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
-import org.jetbrains.kotlin.resolve.calls.model.LambdaKotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
 interface IsDescriptorFromSourcePredicate: (CallableDescriptor) -> Boolean
@@ -38,5 +36,7 @@ interface LambdaAnalyzer {
 
     // todo this is hack for some client which try to read ResolvedCall from trace before all calls completed
     fun bindStubResolvedCallForCandidate(candidate: KotlinResolutionCandidate)
+
+    fun completeLambdaReturnType(lambdaArgument: ResolvedLambdaArgument, returnType: KotlinType)
 
 }

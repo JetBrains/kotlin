@@ -63,8 +63,8 @@ class KotlinCallCompleter(
         fun getBuilder(): ConstraintSystemBuilder
     }
 
-    fun transformWhenAmbiguity(candidate: KotlinResolutionCandidate): ResolvedKotlinCall =
-            toCompletedBaseResolvedCall(candidate.lastCall.constraintSystem.asCallCompleterContext(), candidate)
+    fun transformWhenAmbiguity(candidate: KotlinResolutionCandidate, lambdaAnalyzer: LambdaAnalyzer): ResolvedKotlinCall =
+            toCompletedBaseResolvedCall(candidate.lastCall.constraintSystem.asCallCompleterContext(), candidate, lambdaAnalyzer)
 
     fun completeCallIfNecessary(
             candidate: KotlinResolutionCandidate,
@@ -82,7 +82,7 @@ class KotlinCallCompleter(
             val c = candidate.lastCall.constraintSystem.asCallCompleterContext()
 
             topLevelCall.competeCall(c, lambdaAnalyzer)
-            return toCompletedBaseResolvedCall(c, candidate)
+            return toCompletedBaseResolvedCall(c, candidate, lambdaAnalyzer)
         }
 
         return ResolvedKotlinCall.OnlyResolvedKotlinCall(candidate)
@@ -90,12 +90,16 @@ class KotlinCallCompleter(
 
     private fun toCompletedBaseResolvedCall(
             c: Context,
-            candidate: KotlinResolutionCandidate
+            candidate: KotlinResolutionCandidate,
+            lambdaAnalyzer: LambdaAnalyzer
     ): ResolvedKotlinCall.CompletedResolvedKotlinCall {
         val currentSubstitutor = c.buildResultingSubstitutor()
         val completedCall = candidate.toCompletedCall(currentSubstitutor)
         val competedCalls = c.innerCalls.map {
             it.candidate.toCompletedCall(currentSubstitutor)
+        }
+        c.lambdaArguments.forEach {
+            lambdaAnalyzer.completeLambdaReturnType(it, currentSubstitutor.safeSubstitute(it.returnType))
         }
         return ResolvedKotlinCall.CompletedResolvedKotlinCall(completedCall, competedCalls)
     }

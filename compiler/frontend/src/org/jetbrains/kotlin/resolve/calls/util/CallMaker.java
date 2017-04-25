@@ -366,6 +366,11 @@ public class CallMaker {
             public CallType getCallType() {
                 return CallType.DEFAULT;
             }
+
+            @Override
+            public String toString() {
+                return DebugTextUtilKt.getDebugText(callElement);
+            }
         };
     }
 

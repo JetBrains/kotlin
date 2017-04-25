@@ -102,7 +102,7 @@ class KotlinCallResolver(
         }
 
         return maximallySpecificCandidates.map {
-            kotlinCallCompleter.transformWhenAmbiguity(it)
+            kotlinCallCompleter.transformWhenAmbiguity(it, callContext.lambdaAnalyzer)
         }
     }
 }

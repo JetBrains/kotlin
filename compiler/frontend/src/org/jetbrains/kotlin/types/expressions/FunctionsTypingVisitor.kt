@@ -220,8 +220,10 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
 
         // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
         context.trace.record(EXPECTED_RETURN_TYPE, functionLiteral, expectedType)
-        val typeOfBodyExpression = // Type-check the body
-                components.expressionTypingServices.getBlockReturnedType(functionLiteral.bodyExpression!!, COERCION_TO_UNIT, newContext).type
+
+        // Type-check the body
+        val blockReturnedType = components.expressionTypingServices.getBlockReturnedType(functionLiteral.bodyExpression!!, COERCION_TO_UNIT, newContext)
+        val typeOfBodyExpression = blockReturnedType.type
 
         return computeReturnTypeBasedOnReturnExpressions(functionLiteral, context, typeOfBodyExpression)
     }
