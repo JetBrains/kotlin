@@ -71,10 +71,13 @@ interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction> {
     fun hasTypeParameterListBeforeFunctionName(): Boolean
 }
 
+interface KotlinImportAliasStub : StubElement<KtImportAlias> {
+    fun getName(): String?
+}
+
 interface KotlinImportDirectiveStub : StubElement<KtImportDirective> {
     fun isAllUnder(): Boolean
     fun getImportedFqName(): FqName?
-    fun getAliasName(): String?
     fun isValid(): Boolean
 }
 

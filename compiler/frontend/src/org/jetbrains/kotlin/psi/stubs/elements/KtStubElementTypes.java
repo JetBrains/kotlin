@@ -62,6 +62,8 @@ public interface KtStubElementTypes {
 
     KtImportDirectiveElementType IMPORT_DIRECTIVE = new KtImportDirectiveElementType("IMPORT_DIRECTIVE");
 
+    KtImportAliasElementType IMPORT_ALIAS = new KtImportAliasElementType("IMPORT_ALIAS");
+
     KtPlaceHolderStubElementType<KtPackageDirective> PACKAGE_DIRECTIVE =
             new KtPlaceHolderStubElementType<>("PACKAGE_DIRECTIVE", KtPackageDirective.class);
 

@@ -55,6 +55,7 @@ public interface KtNodeTypes {
     IElementType IMPORT_LIST                        = KtStubElementTypes.IMPORT_LIST;
     IElementType FILE_ANNOTATION_LIST               = KtStubElementTypes.FILE_ANNOTATION_LIST;
     IElementType IMPORT_DIRECTIVE                   = KtStubElementTypes.IMPORT_DIRECTIVE;
+    IElementType IMPORT_ALIAS                       = KtStubElementTypes.IMPORT_ALIAS;
     IElementType MODIFIER_LIST                      = KtStubElementTypes.MODIFIER_LIST;
     IElementType ANNOTATION                         = KtStubElementTypes.ANNOTATION;
     IElementType ANNOTATION_ENTRY                   = KtStubElementTypes.ANNOTATION_ENTRY;

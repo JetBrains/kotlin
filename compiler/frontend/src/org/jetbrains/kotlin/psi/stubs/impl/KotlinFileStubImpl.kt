@@ -25,8 +25,11 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
+import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.FILE
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.IMPORT_LIST
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 open class KotlinFileStubImpl(
         jetFile: KtFile?,
@@ -39,7 +42,7 @@ open class KotlinFileStubImpl(
 
     override fun getPackageFqName(): FqName = FqName(StringRef.toString(packageName)!!)
     override fun isScript(): Boolean = isScript
-    override fun getType(): IStubFileElementType<KotlinFileStub> = KtStubElementTypes.FILE
+    override fun getType(): IStubFileElementType<KotlinFileStub> = FILE
 
     override fun toString(): String = "PsiJetFileStubImpl[" + "package=" + getPackageFqName().asString() + "]"
 
@@ -48,7 +51,9 @@ open class KotlinFileStubImpl(
     }
 
     override fun findImportsByAlias(alias: String): List<KotlinImportDirectiveStub> {
-        val importList = childrenStubs.firstOrNull { it.stubType == KtStubElementTypes.IMPORT_LIST } ?: return emptyList()
-        return importList.childrenStubs.filterIsInstance<KotlinImportDirectiveStub>().filter { it.getAliasName() == alias }
+        val importList = childrenStubs.firstOrNull { it.stubType == IMPORT_LIST } ?: return emptyList()
+        return importList.childrenStubs.filterIsInstance<KotlinImportDirectiveStub>().filter {
+            it.childrenStubs.firstIsInstanceOrNull<KotlinImportAliasStub>()?.getName() == alias
+        }
     }
 }

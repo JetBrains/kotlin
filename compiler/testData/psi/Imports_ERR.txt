@@ -62,7 +62,8 @@ JetFile: Imports_ERR.kt
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
-      PsiElement(as)('as')
+      IMPORT_ALIAS
+        PsiElement(as)('as')
       PsiErrorElement:Expecting identifier
         <empty list>
     PsiWhiteSpace('\n')
@@ -76,7 +77,8 @@ JetFile: Imports_ERR.kt
         PsiErrorElement:Qualified name must be a '.'-separated identifier list
           <empty list>
       PsiWhiteSpace(' ')
-      PsiElement(as)('as')
+      IMPORT_ALIAS
+        PsiElement(as)('as')
       PsiErrorElement:Expecting identifier
         <empty list>
     PsiWhiteSpace('\n')
@@ -102,9 +104,10 @@ JetFile: Imports_ERR.kt
         PsiErrorElement:Qualified name must be a '.'-separated identifier list
           <empty list>
       PsiWhiteSpace(' ')
-      PsiElement(as)('as')
-      PsiErrorElement:Expecting identifier
-        <empty list>
+      IMPORT_ALIAS
+        PsiElement(as)('as')
+        PsiErrorElement:Expecting identifier
+          <empty list>
       PsiWhiteSpace(' ')
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n')
@@ -117,7 +120,8 @@ JetFile: Imports_ERR.kt
       PsiElement(MUL)('*')
       PsiWhiteSpace(' ')
       PsiErrorElement:Cannot rename all imported items to one identifier
-        PsiElement(as)('as')
+        IMPORT_ALIAS
+          PsiElement(as)('as')
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n\n')
     IMPORT_DIRECTIVE
@@ -126,69 +130,75 @@ JetFile: Imports_ERR.kt
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
-      PsiElement(as)('as')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting identifier
-        PsiElement(DOT)('.')
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        PsiElement(IDENTIFIER)('foo')
-      PsiWhiteSpace(' ')
-      PsiElement(as)('as')
-      PsiErrorElement:Expecting identifier
-        <empty list>
-      PsiWhiteSpace(' ')
-      PsiElement(SEMICOLON)(';')
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        PsiElement(IDENTIFIER)('foo')
-      PsiWhiteSpace(' ')
-      PsiElement(as)('as')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting identifier
-        PsiElement(MUL)('*')
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        PsiElement(IDENTIFIER)('foo')
-      PsiWhiteSpace(' ')
-      PsiElement(as)('as')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('sdfsdf')
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        PsiElement(IDENTIFIER)('foo')
-      PsiElement(DOT)('.')
-      PsiElement(MUL)('*')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Cannot rename all imported items to one identifier
-        PsiElement(as)('as')
-      PsiWhiteSpace(' ')
-      PsiElement(SEMICOLON)(';')
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        PsiElement(IDENTIFIER)('foo')
-      PsiElement(DOT)('.')
-      PsiElement(MUL)('*')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Cannot rename all imported items to one identifier
+      IMPORT_ALIAS
         PsiElement(as)('as')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('bar')
+        PsiErrorElement:Expecting identifier
+          PsiElement(DOT)('.')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      IMPORT_ALIAS
+        PsiElement(as)('as')
+        PsiErrorElement:Expecting identifier
+          <empty list>
+      PsiWhiteSpace(' ')
+      PsiElement(SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      IMPORT_ALIAS
+        PsiElement(as)('as')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expecting identifier
+          PsiElement(MUL)('*')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      IMPORT_ALIAS
+        PsiElement(as)('as')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('sdfsdf')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
+      PsiElement(DOT)('.')
+      PsiElement(MUL)('*')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Cannot rename all imported items to one identifier
+        IMPORT_ALIAS
+          PsiElement(as)('as')
+      PsiWhiteSpace(' ')
+      PsiElement(SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
+      PsiElement(DOT)('.')
+      PsiElement(MUL)('*')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Cannot rename all imported items to one identifier
+        IMPORT_ALIAS
+          PsiElement(as)('as')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
@@ -213,9 +223,10 @@ JetFile: Imports_ERR.kt
         PsiErrorElement:Qualified name must be a '.'-separated identifier list
           <empty list>
       PsiWhiteSpace(' ')
-      PsiElement(as)('as')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('bar')
+      IMPORT_ALIAS
+        PsiElement(as)('as')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
@@ -227,9 +238,10 @@ JetFile: Imports_ERR.kt
         PsiErrorElement:Qualified name must be a '.'-separated identifier list
           <empty list>
       PsiWhiteSpace(' ')
-      PsiElement(as)('as')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('bar')
+      IMPORT_ALIAS
+        PsiElement(as)('as')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n\n')
@@ -246,9 +258,10 @@ JetFile: Imports_ERR.kt
       PsiElement(MUL)('*')
       PsiWhiteSpace(' ')
       PsiErrorElement:Cannot rename all imported items to one identifier
-        PsiElement(as)('as')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('bar')
+        IMPORT_ALIAS
+          PsiElement(as)('as')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
@@ -295,9 +308,10 @@ JetFile: Imports_ERR.kt
       PsiElement(MUL)('*')
       PsiWhiteSpace(' ')
       PsiErrorElement:Cannot rename all imported items to one identifier
-        PsiElement(as)('as')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('bar')
+        IMPORT_ALIAS
+          PsiElement(as)('as')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n')
@@ -314,7 +328,8 @@ JetFile: Imports_ERR.kt
       PsiElement(MUL)('*')
       PsiWhiteSpace(' ')
       PsiErrorElement:Cannot rename all imported items to one identifier
-        PsiElement(as)('as')
+        IMPORT_ALIAS
+          PsiElement(as)('as')
       PsiWhiteSpace(' ')
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n')

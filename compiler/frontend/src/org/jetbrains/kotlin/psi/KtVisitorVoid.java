@@ -73,6 +73,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitScript(script, null);
     }
 
+    public void visitImportAlias(@NotNull KtImportAlias importAlias) {
+        super.visitImportAlias(importAlias, null);
+    }
+
     public void visitImportDirective(@NotNull KtImportDirective importDirective) {
         super.visitImportDirective(importDirective, null);
     }

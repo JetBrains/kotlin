@@ -292,7 +292,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker importDirective = mark();
         advance(); // IMPORT_KEYWORD
 
-        if (closeImportWithErrorIfNewline(importDirective, "Expecting qualified name")) {
+        if (closeImportWithErrorIfNewline(importDirective, null, "Expecting qualified name")) {
             return;
         }
 
@@ -313,7 +313,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         while (at(DOT) && lookahead(1) != MUL) {
             advance(); // DOT
 
-            if (closeImportWithErrorIfNewline(importDirective, "Import must be placed on a single line")) {
+            if (closeImportWithErrorIfNewline(importDirective, null, "Import must be placed on a single line")) {
                 qualifiedName.drop();
                 return;
             }
@@ -339,28 +339,37 @@ public class KotlinParsing extends AbstractKotlinParsing {
             if (at(AS_KEYWORD)) {
                 PsiBuilder.Marker as = mark();
                 advance(); // AS_KEYWORD
-                if (closeImportWithErrorIfNewline(importDirective, "Expecting identifier")) {
+                if (closeImportWithErrorIfNewline(importDirective, null, "Expecting identifier")) {
                     as.drop();
                     return;
                 }
                 consumeIf(IDENTIFIER);
-                as.error("Cannot rename all imported items to one identifier");
+                as.done(IMPORT_ALIAS);
+                as.precede().error("Cannot rename all imported items to one identifier");
             }
         }
         if (at(AS_KEYWORD)) {
+            PsiBuilder.Marker alias = mark();
             advance(); // AS_KEYWORD
-            if (closeImportWithErrorIfNewline(importDirective, "Expecting identifier")) {
+            if (closeImportWithErrorIfNewline(importDirective, alias, "Expecting identifier")) {
                 return;
             }
             expect(IDENTIFIER, "Expecting identifier", TokenSet.create(SEMICOLON));
+            alias.done(IMPORT_ALIAS);
         }
         consumeIf(SEMICOLON);
         importDirective.done(IMPORT_DIRECTIVE);
         importDirective.setCustomEdgeTokenBinders(null, TrailingCommentsBinder.INSTANCE);
     }
 
-    private boolean closeImportWithErrorIfNewline(PsiBuilder.Marker importDirective, String errorMessage) {
+    private boolean closeImportWithErrorIfNewline(
+            PsiBuilder.Marker importDirective,
+            @Nullable PsiBuilder.Marker importAlias,
+            String errorMessage) {
         if (myBuilder.newlineBeforeCurrentToken()) {
+            if (importAlias != null) {
+                importAlias.done(IMPORT_ALIAS);
+            }
             error(errorMessage);
             importDirective.done(IMPORT_DIRECTIVE);
             return true;

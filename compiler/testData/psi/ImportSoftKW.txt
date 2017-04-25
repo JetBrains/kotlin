@@ -20,6 +20,7 @@ JetFile: ImportSoftKW.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('import')
       PsiWhiteSpace(' ')
-      PsiElement(as)('as')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('import')
+      IMPORT_ALIAS
+        PsiElement(as)('as')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('import')

@@ -36,9 +36,10 @@ JetFile: Imports.kt
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
-      PsiElement(as)('as')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('bar')
+      IMPORT_ALIAS
+        PsiElement(as)('as')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
@@ -50,9 +51,10 @@ JetFile: Imports.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
-      PsiElement(as)('as')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('bar')
+      IMPORT_ALIAS
+        PsiElement(as)('as')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')

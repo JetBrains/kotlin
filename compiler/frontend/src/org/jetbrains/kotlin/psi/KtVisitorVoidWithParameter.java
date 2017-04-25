@@ -70,6 +70,10 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
         super.visitImportDirective(importDirective, data);
     }
 
+    public void visitImportAliasVoid(@NotNull KtImportAlias importAlias, P data) {
+        super.visitImportAlias(importAlias, data);
+    }
+
     public void visitImportListVoid(@NotNull KtImportList importList, P data) {
         super.visitImportList(importList, data);
     }

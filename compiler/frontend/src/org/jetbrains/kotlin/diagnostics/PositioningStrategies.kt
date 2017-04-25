@@ -471,7 +471,7 @@ object PositioningStrategies {
 
     @JvmField val IMPORT_ALIAS: PositioningStrategy<KtImportDirective> = object: PositioningStrategy<KtImportDirective>() {
         override fun mark(element: KtImportDirective): List<TextRange> {
-            element.aliasNameNode?.let { return markNode(it) }
+            element.alias?.nameIdentifier?.let { return markElement(it) }
             element.importedReference?.let {
                 if (it is KtQualifiedExpression) {
                     it.selectorExpression?.let { return markElement(it) }
