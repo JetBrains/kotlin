@@ -60,7 +60,12 @@ ${"    "}
     """.trimIndent()
 
     assertEquals(23, deindented.lines().size)
-    val indents = deindented.lines().map { "^\\s*".toRegex().find(it)!!.value.length }
+    val indents = deindented.lines().map {
+        var i = 0
+        while (i < it.length && it[i].isWhitespace())
+            i++
+        return@map i
+    }
     assertEquals(0, indents.min())
     assertEquals(42, indents.max())
     assertEquals(1, deindented.lines().count { it.isEmpty() })
