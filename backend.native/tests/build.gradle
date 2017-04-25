@@ -1633,21 +1633,18 @@ kotlinNativeInterop {
     cstdio {
         defFile 'interop/basics/cstdio.def'
         flavor 'native'
-        compilerOpts '-D_POSIX_SOURCE' // Exclude Darwin extensions causing link errors.
     }
 
     sockets {
-        defFile 'interop/basics/sockets.def'
+        defFile '../../samples/socket/sockets.def'
         flavor 'native'
     }
 
     if (isMac()) {
         opengl {
-            flavor 'native'
-            compilerOpts '-framework', 'OpenGL', '-framework', 'GLUT'
+            defFile '../../samples/opengl/opengl.def'
             linkerOpts '-framework', 'OpenGL', '-framework', 'GLUT'
-            pkg 'opengl'
-            headers 'GLUT/glut.h'
+            flavor 'native'
         }
     }
 }

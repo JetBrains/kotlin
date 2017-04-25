@@ -1,5 +1,0 @@
-headers = sys/socket.h netdb.h stdio.h string.h unistd.h stdlib.h arpa/inet.h
-excludedFunctions = _IO_flockfile _IO_funlockfile _IO_ftrylockfile _IO_cleanup_region_start _IO_cleanup_region_end \
-    mkstemp_dprotected_np
-
-compilerOpts = -D_POSIX_SOURCE

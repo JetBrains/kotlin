@@ -1,3 +1,3 @@
-headers = git2.h
+headers = git2.h time.h
 linkerOpts = -lgit2
-excludedFunctions =
+headerFilter = git2/** time.h

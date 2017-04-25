@@ -1,1 +1,2 @@
 headers = MessageChannel.h
+headerFilter = MessageChannel.h
