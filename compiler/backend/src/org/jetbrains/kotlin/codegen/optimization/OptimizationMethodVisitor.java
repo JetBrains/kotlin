@@ -34,7 +34,7 @@ public class OptimizationMethodVisitor extends TransformationMethodVisitor {
     private static final MethodTransformer MANDATORY_METHOD_TRANSFORMER = new FixStackWithLabelNormalizationMethodTransformer();
 
     private static final MethodTransformer[] OPTIMIZATION_TRANSFORMERS = new MethodTransformer[] {
-            new CapturedVarsOptimizationMethodTransformer(),
+            //new CapturedVarsOptimizationMethodTransformer(),
             new RedundantNullCheckV2MethodTransformer(),
             new RedundantCheckCastEliminationMethodTransformer(),
             new RedundantBoxingMethodTransformer(),
