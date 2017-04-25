@@ -5495,6 +5495,36 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt17572.kt")
+            public void testKt17572() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/kt17572.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt17572_2.kt")
+            public void testKt17572_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/kt17572_2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt17572_2_ext.kt")
+            public void testKt17572_2_ext() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/kt17572_2_ext.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt17572_ext.kt")
+            public void testKt17572_ext() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/kt17572_ext.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt17572_nested.kt")
+            public void testKt17572_nested() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/kt17572_nested.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt8608.kt")
             public void testKt8608() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/kt8608.kt");

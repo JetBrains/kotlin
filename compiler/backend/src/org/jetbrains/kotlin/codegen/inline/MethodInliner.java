@@ -456,7 +456,7 @@ public class MethodInliner {
                         SourceValue sourceValue = frame.getStack(firstParameterIndex);
 
                         LambdaInfo lambdaInfo = MethodInlinerUtilKt.getLambdaIfExistsAndMarkInstructions(
-                                this, MethodInlinerUtilKt.singleOrNullInsn(sourceValue), true, instructions, sources, toDelete
+                                this, sourceValue, true, instructions, sources, toDelete
                         );
 
                         invokeCalls.add(new InvokeCall(lambdaInfo, currentFinallyDeep));
@@ -469,7 +469,7 @@ public class MethodInliner {
                         for (int i = 0; i < paramCount; i++) {
                             SourceValue sourceValue = frame.getStack(firstParameterIndex + i);
                             LambdaInfo lambdaInfo = MethodInlinerUtilKt.getLambdaIfExistsAndMarkInstructions(
-                                    this, MethodInlinerUtilKt.singleOrNullInsn(sourceValue), false, instructions, sources, toDelete
+                                    this, sourceValue, false, instructions, sources, toDelete
                             );
                             if (lambdaInfo != null) {
                                 lambdaMapping.put(offset, lambdaInfo);
