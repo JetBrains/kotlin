@@ -84,18 +84,15 @@ private fun String.targetSuffix(): String =
 //  foo = ${foo} ${foo.${arch}} ${foo.${os}}
 private fun substitute(properties: Properties, substitutions: Map<String, String>) {
     for (key in properties.stringPropertyNames()) {
-        if (key.contains('.')) {
-            continue
-        }
-        var value = ""
-        for (substitution in substitutions.keys) {
-            val property = properties.getProperty(key + "." + substitutions[substitution])
-            if (property != null) {
-                value += " " + property
+        for (substitution in substitutions.values) {
+            val suffix = ".$substitution"
+            if (key.endsWith(suffix)) {
+                val baseKey = key.removeSuffix(suffix)
+                val oldValue = properties.getProperty(baseKey, "")
+                val appendedValue = properties.getProperty(key, "")
+                val newValue = if (oldValue != "") "$oldValue $appendedValue" else appendedValue
+                properties.setProperty(baseKey, newValue)
             }
-        }
-        if (value != "") {
-            properties.setProperty(key, properties.getProperty(key, "") + " " + value)
         }
     }
 }
