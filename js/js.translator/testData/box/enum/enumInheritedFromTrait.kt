@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 586
 package foo
 
 fun box() = MyEnum.E1.f() + MyEnum.E2.f()

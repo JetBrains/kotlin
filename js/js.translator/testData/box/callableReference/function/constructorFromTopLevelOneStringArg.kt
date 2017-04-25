@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 539
 // This test was adapted from compiler/testData/codegen/box/callableReference/function/.
 package foo
 

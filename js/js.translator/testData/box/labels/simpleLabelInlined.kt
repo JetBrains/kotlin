@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 535
 package foo
 
 // CHECK_NOT_CALLED: testBreak

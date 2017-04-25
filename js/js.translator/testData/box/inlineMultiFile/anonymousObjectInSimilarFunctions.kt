@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 546
 // FILE: a.kt
 
 inline fun foo(x: String): I = object : I {

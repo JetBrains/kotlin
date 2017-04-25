@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 540
 package foo
 
 fun testShortConversions(c: Short): Boolean {

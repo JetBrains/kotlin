@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 536
 package foo
 
 fun Int.quadruple(): Int {

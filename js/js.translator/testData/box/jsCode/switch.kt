@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 541
 package foo
 
 fun testSwitch(number: Int): String = js("""

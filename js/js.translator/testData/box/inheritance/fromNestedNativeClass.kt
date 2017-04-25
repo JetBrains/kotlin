@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 544
 // FILE: foo.kt
 
 package foo

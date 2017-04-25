@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 544
 var log = ""
 
 fun foo() {

@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 536
 // KT-2221 if in when
 
 package foo

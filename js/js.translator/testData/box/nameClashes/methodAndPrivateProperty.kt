@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 542
 package foo
 
 fun bar() = 23

@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 540
 // MODULE: lib
 // FILE: lib.kt
 // MODULE_KIND: UMD

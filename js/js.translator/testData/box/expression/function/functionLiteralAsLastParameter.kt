@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 539
 package foo
 
 fun f(a: (Int) -> Int) = a(1)

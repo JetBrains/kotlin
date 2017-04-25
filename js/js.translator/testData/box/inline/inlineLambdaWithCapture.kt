@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 551
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: maxBySquare except=imul

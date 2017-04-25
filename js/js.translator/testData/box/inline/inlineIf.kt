@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 543
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: testIf1

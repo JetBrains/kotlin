@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 581
 enum class A {
     X,
     Y

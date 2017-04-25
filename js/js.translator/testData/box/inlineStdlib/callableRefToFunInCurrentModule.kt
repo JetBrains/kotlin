@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 982
 package foo
 
 // CHECK_NOT_CALLED_IN_SCOPE: scope=test function=even

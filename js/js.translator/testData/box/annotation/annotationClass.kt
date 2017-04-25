@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 535
 package foo
 
 annotation class bar

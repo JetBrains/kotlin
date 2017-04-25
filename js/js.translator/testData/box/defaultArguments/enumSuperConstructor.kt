@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 574
 package foo
 
 enum class A {

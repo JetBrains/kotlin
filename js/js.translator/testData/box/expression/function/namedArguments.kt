@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 536
 package foo
 
 fun test(x: Int, y: Int) = y - x

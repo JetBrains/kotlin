@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 551
 package foo
 
 class A(val x: Int) {

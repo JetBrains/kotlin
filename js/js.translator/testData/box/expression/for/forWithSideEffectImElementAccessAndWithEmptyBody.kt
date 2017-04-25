@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 556
 package foo
 
 var log = ""

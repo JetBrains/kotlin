@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 999
 package foo
 
 import kotlin.comparisons.*

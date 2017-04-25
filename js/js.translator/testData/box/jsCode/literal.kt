@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 541
 package foo
 
 external interface HasName {

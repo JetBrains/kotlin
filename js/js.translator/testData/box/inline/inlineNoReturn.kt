@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 580
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: factAbsNoInline1 except=imul

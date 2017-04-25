@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 539
 // FILE: a.kt
 
 private fun bar(): String = "O"

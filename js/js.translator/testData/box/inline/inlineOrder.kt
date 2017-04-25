@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 542
 package foo
 
 // CHECK_FUNCTIONS_HAVE_SAME_LINES: declaredBefore declaredAfter match=(h|g)1 replace=$1

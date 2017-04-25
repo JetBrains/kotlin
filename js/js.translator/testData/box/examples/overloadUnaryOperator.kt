@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 981
 
 class ArrayWrapper<T>() {
     val contents = ArrayList<T>()

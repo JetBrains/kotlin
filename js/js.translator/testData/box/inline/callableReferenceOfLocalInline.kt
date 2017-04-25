@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 543
 package foo
 
 fun multiplyBy(x: Int): () -> ((Int) -> Int) {

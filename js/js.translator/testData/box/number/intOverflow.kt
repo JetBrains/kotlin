@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 539
 package foo
 
 fun bigValue() = 0x7FFFFFFC

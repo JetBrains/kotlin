@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 576
 // See KT-6326, KT-6777
 package foo
 

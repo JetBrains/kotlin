@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 553
 interface M {
     var backingB: Int
     var b: Int

@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 542
 package foo
 
 // CHECK_CALLED_IN_SCOPE: scope=multiplyBy2 function=multiplyBy2$lambda

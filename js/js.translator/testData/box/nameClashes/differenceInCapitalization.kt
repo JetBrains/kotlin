@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 537
 package foo
 
 class Box<T>(t: T) {

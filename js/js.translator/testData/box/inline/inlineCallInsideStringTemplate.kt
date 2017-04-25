@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 540
 package foo
 
 inline fun foo(): Any? = "foo()"

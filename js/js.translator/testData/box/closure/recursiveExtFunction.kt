@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 545
 package foo
 
 fun Int.foo(a: Int): Int {

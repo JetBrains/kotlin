@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 552
 package foo
 
 var t: Any? = null

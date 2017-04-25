@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 541
 package foo
 
 fun testIf(flag: Boolean): Int = js("""

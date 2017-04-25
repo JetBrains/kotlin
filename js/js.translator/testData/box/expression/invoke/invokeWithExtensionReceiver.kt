@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 536
 package foo
 
 operator fun Int.invoke(x: Int) = this + x

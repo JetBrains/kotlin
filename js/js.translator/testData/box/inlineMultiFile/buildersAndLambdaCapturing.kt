@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 1399
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/builders/buildersAndLambdaCapturing.1.kt

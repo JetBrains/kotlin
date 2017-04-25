@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 541
 package foo
 
 internal external class A(v: String) {

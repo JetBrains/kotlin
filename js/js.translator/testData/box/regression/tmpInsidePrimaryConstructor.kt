@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 596
 package foo
 
 val x: Int?

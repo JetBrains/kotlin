@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 547
 // KT-4218 Nested function literal on singleton object fails
 
 package foo

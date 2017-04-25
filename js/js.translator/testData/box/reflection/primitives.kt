@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 550
 import kotlin.reflect.KClass
 
 fun box(): String {

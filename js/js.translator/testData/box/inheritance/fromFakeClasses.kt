@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 561
 package foo
 
 class FromAny : Any()

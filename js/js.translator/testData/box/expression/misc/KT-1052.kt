@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 539
 var log = ""
 
 fun printlnLog(message: Any) {

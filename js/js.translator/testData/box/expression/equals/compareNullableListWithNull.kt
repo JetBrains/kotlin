@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 976
 // KT-3518 Null pointer during null comparison in JS Backend
 package foo
 

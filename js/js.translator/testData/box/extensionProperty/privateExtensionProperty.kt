@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 541
 class A {
     fun result() = "OK"
 }

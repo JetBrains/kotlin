@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 540
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/simple/simpleLambda.1.kt

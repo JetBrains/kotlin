@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 536
 // http://youtrack.jetbrains.com/issue/KT-5253
 // JS: generated wrong code when use `if` inside `when`
 

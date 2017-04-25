@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 543
 // MODULE_KIND: AMD
 package foo
 

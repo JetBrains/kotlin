@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 993
 /*
 This tests that variables (aliases) are created for array literals.
 

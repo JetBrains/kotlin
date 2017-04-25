@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 540
 class SimpleClass() {
     fun foo() = 610
 }

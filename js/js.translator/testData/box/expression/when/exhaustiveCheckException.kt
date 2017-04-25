@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 610
 fun <T> checkThrown(x: T, block: (T) -> Any?): Unit? {
     return try {
         println((block(x) ?: "").toString())

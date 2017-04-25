@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 537
 class C() {
     public var f: Int
 

@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 540
 package foo
 
 fun test(f: (Int) -> Boolean, p: Int) = f(p)

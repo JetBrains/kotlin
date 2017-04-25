@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 552
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/simple/simpleObject.1.kt

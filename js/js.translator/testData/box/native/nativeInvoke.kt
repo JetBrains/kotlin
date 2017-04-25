@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 544
 package foo
 
 external class Function(vararg argsAndCode: String) {

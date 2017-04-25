@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 540
 package foo
 
 fun A.create(init: A.() -> Unit): A {

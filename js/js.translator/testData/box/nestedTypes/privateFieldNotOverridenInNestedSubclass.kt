@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 547
 package foo
 
 open class A(private val bar: String = "1") {

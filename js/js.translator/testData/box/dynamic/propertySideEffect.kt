@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 537
 external class C
 
 inline val C.foo: String

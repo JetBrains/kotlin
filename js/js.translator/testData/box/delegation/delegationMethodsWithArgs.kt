@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 555
 // This test was adapted from compiler/testData/codegen/box/classes
 package foo
 

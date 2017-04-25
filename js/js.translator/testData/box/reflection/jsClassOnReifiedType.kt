@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 602
 package foo
 
 inline fun <reified T : Any> foo(): JsClass<T> {

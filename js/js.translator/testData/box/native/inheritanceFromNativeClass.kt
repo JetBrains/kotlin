@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 555
 package foo
 
 internal external open class A(a: Int) {

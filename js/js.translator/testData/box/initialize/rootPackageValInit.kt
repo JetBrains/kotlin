@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 541
 class A(val a: Int)
 
 val x = 1

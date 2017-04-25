@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 545
 package foo
 
 open class A(val a: Int = 1, val b: Int = 2)

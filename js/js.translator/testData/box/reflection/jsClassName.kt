@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 611
 package foo
 
 fun testWithInstance() {

@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 544
 // MODULE_KIND: UMD
 package foo
 

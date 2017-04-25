@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 523
 // SKIP_NODE_JS
 package foo
 

@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 594
 package foo
 
 public class PublicClass {

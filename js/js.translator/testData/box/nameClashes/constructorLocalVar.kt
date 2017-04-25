@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 545
 var log = ""
 
 inline fun f(x: Int): Int {

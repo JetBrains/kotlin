@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 543
 external class A
 
 external object O

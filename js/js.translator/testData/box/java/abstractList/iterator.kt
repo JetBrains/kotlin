@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 666
 package foo
 
 class MyList<T>(vararg val data: T) : AbstractList<T>() {

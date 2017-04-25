@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 537
 package foo
 
 var d = 0

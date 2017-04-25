@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 597
 package foo
 
 var g: Any?

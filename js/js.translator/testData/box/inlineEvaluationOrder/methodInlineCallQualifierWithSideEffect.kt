@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 550
 package foo
 
 // Test for KT-7502

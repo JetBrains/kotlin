@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 548
 open class Foo() {
     fun xyzzy(): String = "xyzzy"
 }

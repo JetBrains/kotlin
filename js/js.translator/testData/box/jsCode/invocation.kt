@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 542
 package foo
 
 fun <A, B, C> run(a: A, b: B, func: (A, B) -> C): C = js("func(a, b)")

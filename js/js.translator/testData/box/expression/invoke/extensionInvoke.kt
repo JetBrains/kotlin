@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 546
 package foo
 
 class A(val f: (B.() -> Int)?)

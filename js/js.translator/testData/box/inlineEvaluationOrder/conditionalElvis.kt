@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 545
 package foo
 
 fun test(x: Boolean?): Boolean = fizz(x) ?: buzz(true)

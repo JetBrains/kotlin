@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 589
 package foo
 
 object f {

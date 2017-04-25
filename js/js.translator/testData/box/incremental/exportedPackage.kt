@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 537
 // FILE: a.kt
 package foo.bar
 

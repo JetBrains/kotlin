@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 545
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: test except=SumHolder_getInstance

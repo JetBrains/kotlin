@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 996
 // KT-5192 JS compiler fails to generate correct code for List implementation
 package foo
 

@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 570
 package foo
 
 open class X(private val x: String) {

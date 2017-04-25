@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 535
 fun box(): String {
     val i: Int? = 7
     val j: Int? = null

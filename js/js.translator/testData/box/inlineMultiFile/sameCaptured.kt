@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 545
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/lambdaTransformation/sameCaptured.1.kt

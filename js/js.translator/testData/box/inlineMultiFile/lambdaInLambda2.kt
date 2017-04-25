@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 543
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/lambdaTransformation/lambdaInLambda2.1.kt

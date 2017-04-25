@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 583
 package foo
 
 external fun paramCount(vararg a: Int): Int = definedExternally

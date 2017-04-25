@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 575
 package foo
 
 data class Holder<T>(val v: T)

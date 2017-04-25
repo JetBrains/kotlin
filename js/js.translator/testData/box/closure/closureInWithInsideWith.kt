@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 543
 // KT-4237 With in with
 
 package foo

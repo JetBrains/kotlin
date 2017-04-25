@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 556
 external open class A
 
 interface I

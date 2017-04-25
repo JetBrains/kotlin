@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 548
 // FILE: a.kt
 // MODULE_KIND: AMD
 @file:JsModule("lib")

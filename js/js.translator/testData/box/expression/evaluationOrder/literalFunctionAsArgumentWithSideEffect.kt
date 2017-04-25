@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 547
 // http://youtrack.jetbrains.com/issue/KT-4225
 // Compiler to JavaScript produces semantically wrong code
 

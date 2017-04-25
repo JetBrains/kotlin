@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 546
 package foo
 
 class Sum(x: Int, y: Int) {

@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 554
 open class Base() {
     fun n(n: Int): Int = n + 1
 }

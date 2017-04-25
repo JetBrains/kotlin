@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 544
 // KT-4263 Wrong capturing a function literal variable
 
 package foo

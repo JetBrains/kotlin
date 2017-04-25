@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 552
 // CHECK_LABELS_COUNT: function=test0 count=0
 // CHECK_LABELS_COUNT: function=test1 count=0
 // CHECK_LABELS_COUNT: function=test2 count=0

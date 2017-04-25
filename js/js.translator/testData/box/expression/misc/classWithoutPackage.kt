@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 537
 class A(var a: Int) {
     init {
         a = 3

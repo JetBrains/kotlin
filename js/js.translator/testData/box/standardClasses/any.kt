@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 542
 // CHECK_CALLED_IN_SCOPE: function=isType scope=box
 package foo
 

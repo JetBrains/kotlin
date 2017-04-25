@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 537
 fun box(): String {
     return invoker({ "OK" })
 }

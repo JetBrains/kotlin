@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 548
 interface I {
     fun foo() = "OK"
 }

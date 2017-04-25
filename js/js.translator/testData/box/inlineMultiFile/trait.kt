@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 556
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/trait/trait.1.kt

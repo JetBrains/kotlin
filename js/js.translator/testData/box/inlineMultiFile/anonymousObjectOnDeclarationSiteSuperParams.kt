@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 564
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectOnDeclarationSiteSuperParams.1.kt

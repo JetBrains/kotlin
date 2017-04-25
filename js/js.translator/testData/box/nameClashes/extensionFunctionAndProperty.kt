@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 985
 package foo
 
 public fun <T> List<T>.some(): T = this[0]

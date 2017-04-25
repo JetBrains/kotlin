@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 541
 package foo
 
 external fun run(i:Int, s:String, funRef: (Int, String) -> String): String = definedExternally

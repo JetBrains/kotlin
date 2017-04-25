@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 552
 package foo
 
 data class Dat(val start: String, val middle: String, val end: String) {

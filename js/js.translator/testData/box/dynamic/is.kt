@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 555
 // FILE: is.kt
 package foo
 

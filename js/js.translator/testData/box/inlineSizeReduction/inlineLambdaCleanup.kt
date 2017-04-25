@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 536
 // CHECK_NOT_CALLED: produceOK except=box
 
 fun produceOK() = "OK"

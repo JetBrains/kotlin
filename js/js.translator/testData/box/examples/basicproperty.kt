@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 557
 open class M() {
     open var b: Int = 0
 }

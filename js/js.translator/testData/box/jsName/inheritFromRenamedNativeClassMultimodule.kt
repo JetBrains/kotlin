@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 544
 // MODULE: module1
 // FILE: module1.kt
 

@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 550
 // See KT-11100
 package foo
 

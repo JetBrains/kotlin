@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 537
 package test
 
 external fun foo(ignore: dynamic): String

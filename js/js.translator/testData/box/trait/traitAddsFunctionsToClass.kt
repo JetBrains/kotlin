@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 555
 package foo
 
 interface Test {

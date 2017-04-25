@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 540
 package foo
 
 // CHECK_FUNCTIONS_HAVE_SAME_LINES: syntaxTestInline syntaxTest

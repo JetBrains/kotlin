@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 980
 package foo
 
 

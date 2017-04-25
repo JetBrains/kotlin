@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 550
 // MODULE: lib
 // FILE: lib.kt
 // MODULE_KIND: AMD

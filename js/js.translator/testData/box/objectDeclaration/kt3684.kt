@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 548
 // copied from JVM backend tests
 package foo
 

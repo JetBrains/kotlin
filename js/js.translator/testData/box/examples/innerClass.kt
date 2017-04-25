@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 562
 class Outer(val foo: StringBuilder) {
     inner class Inner() {
         fun len(): Int {

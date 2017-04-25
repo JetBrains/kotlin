@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 562
 external open class A {
     open fun f(x: Int): String = definedExternally
 

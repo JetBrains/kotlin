@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 586
 package foo
 
 fun box() = E.E1.f() + E.E2.f()

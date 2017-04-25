@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 540
 // FILE: castToNativeClassChecked.kt
 external abstract class S() {
     abstract fun foo(): String

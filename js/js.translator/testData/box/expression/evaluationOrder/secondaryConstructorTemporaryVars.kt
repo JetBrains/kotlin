@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 542
 // HAS_NO_CAPTURED_VARS: function=A_init except=Kotlin;A
 
 class A() {

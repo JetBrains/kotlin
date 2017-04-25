@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 1016
 package foo
 
 fun sequenceFromFunctionWithInitialValue() {
