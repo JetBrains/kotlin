@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.konan.llvm.loadMetadata
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -26,9 +25,12 @@ import java.io.File
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
+    val moduleId: String
+        get() = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
+
     internal val distribution = Distribution(configuration)
 
-    internal val libraries: List<String>
+    private val libraryNames: List<String>
         get() {
             val fromCommandLine = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
             if (configuration.get(KonanConfigKeys.NOSTDLIB) ?: false) {
@@ -37,25 +39,23 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             return fromCommandLine + distribution.stdlib
         }
 
-    private val loadedDescriptors = loadLibMetadata(libraries)
+    internal val libraries: List<KonanLibrary> by lazy {
+        // Here we have chosen a particular .kt.bc KonanLibrary implementation
+        libraryNames.map{it -> KtBcLibrary(it, configuration)}
+    }
+
+    private val loadedDescriptors = loadLibMetadata()
 
     internal val nativeLibraries: List<String> = configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
 
-    val moduleId: String
-        get() = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
 
-    fun loadLibMetadata(libraries: List<String>): List<ModuleDescriptorImpl> {
+    fun loadLibMetadata(): List<ModuleDescriptorImpl> {
 
         val allMetadata = mutableListOf<ModuleDescriptorImpl>()
 
-        for (path in libraries) {
-            val filePath = File(path)
-            if (!filePath.exists()) {
-                error("Path '" + path + "' does not exist")
-            }
-
-            profile("Loading ${filePath}") {
-                val moduleDescriptor = loadMetadata(configuration, filePath)
+        for (klib in libraries) {
+            profile("Loading ${klib.libraryName}") {
+                val moduleDescriptor = klib.moduleDescriptor
                 allMetadata.add(moduleDescriptor)
             }
         }

@@ -20,57 +20,44 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.serialization.deserializeModule
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import java.io.Closeable
 import java.io.File
 
-fun loadMetadata(configuration: CompilerConfiguration, file: File): ModuleDescriptorImpl {
+class NamedModuleData(val name:String, val base64: String)
 
-    val reader = MetadataReader(file)
-
-    var moduleName: String? = null
-    val currentAbiVersion = configuration.get(KonanConfigKeys.ABI_VERSION)
-
-    val (nodeCount, kmetadataNodeArg) = reader.namedMetadataNode("kmetadata")
+fun MetadataReader.loadSerializedModule(currentAbiVersion: Int): NamedModuleData  {
+    val (nodeCount, kmetadataNodeArg) = namedMetadataNode("kmetadata")
 
     if (nodeCount != 1) {
         throw Error("Unknown metadata format. The 'kmetadata' node has ${nodeCount} arguments. Don't know what to do.")
     }
 
-    val operands = reader.metadataNodeOperands(kmetadataNodeArg)
+    val operands = metadataNodeOperands(kmetadataNodeArg)
 
     val abiNode = operands[0]
     val nameNode = operands[1]
     val dataNode = operands[2]
 
-    val abiVersion = reader.string(abiNode).toInt()
-
+    val abiVersion = string(abiNode).toInt()
     if (abiVersion != currentAbiVersion) {
         throw Error("Expected ABI version ${currentAbiVersion}, but the binary is ${abiVersion}")
     }
-    moduleName = reader.string(nameNode)
-
-    val tableOfContentsAsString = reader.string(dataNode)
-
-    val moduleDescriptor = 
-        deserializeModule(configuration, {it->loadPackageFragment(reader, it)}, tableOfContentsAsString, moduleName)
-
-    return moduleDescriptor
+    val moduleName = string(nameNode)
+    val tableOfContentsAsString = string(dataNode)
+    return NamedModuleData(moduleName, tableOfContentsAsString)
 }
 
-fun loadPackageFragment(reader: MetadataReader, fqName: String): String {
-    val (nodeCount, kpackageNodeArg) = reader.namedMetadataNode("kpackage:$fqName")
+fun MetadataReader.loadSerializedPackageFragment(fqName: String): String {
+    val (nodeCount, kpackageNodeArg) = namedMetadataNode("kpackage:$fqName")
 
     if (nodeCount != 1) {
         throw Error("The 'kpackage:$fqName' node has ${nodeCount} arguments.")
     }
 
-    val operands = reader.metadataNodeOperands(kpackageNodeArg)
+    val operands = metadataNodeOperands(kpackageNodeArg)
     val dataNode = operands[0]
-    val base64 =  reader.string(dataNode)
+    val base64 =  string(dataNode)
     return base64
 }
 
