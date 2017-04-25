@@ -42,7 +42,9 @@ abstract class AbstractInlineDefaultValuesTests : BorrowedInlineTest("defaultVal
 abstract class AbstractBoxJsTest : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
         BasicBoxTest.TEST_DATA_DIR_PATH + "out/box/"
-)
+) {
+    override val runMinifierByDefault: Boolean = true
+}
 
 abstract class AbstractJsCodegenBoxTest : BasicBoxTest(
         "compiler/testData/codegen/box/",
