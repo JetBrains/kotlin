@@ -33,20 +33,18 @@ val Element.isStatic
 val Element.isFinal
     get() = modifiers.contains(Modifier.FINAL)
 
-fun Element.getVisibility() = with(modifiers) {
-    when {
-        contains(Modifier.PUBLIC) -> Visibilities.PUBLIC
-        contains(Modifier.PRIVATE) -> Visibilities.PRIVATE
-        contains(Modifier.PROTECTED) -> {
-            if (contains(Modifier.STATIC)) {
-                JavaVisibilities.PROTECTED_STATIC_VISIBILITY
-            }
-            else {
-                JavaVisibilities.PROTECTED_AND_PACKAGE
-            }
+fun Element.getVisibility() = when {
+    Modifier.PUBLIC in modifiers -> Visibilities.PUBLIC
+    Modifier.PRIVATE in modifiers -> Visibilities.PRIVATE
+    Modifier.PROTECTED in modifiers -> {
+        if (Modifier.STATIC in modifiers) {
+            JavaVisibilities.PROTECTED_STATIC_VISIBILITY
         }
-        else -> JavaVisibilities.PACKAGE_VISIBILITY
+        else {
+            JavaVisibilities.PROTECTED_AND_PACKAGE
+        }
     }
+    else -> JavaVisibilities.PACKAGE_VISIBILITY
 }
 
 fun TypeElement.computeClassId(): ClassId? {

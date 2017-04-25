@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.wrappers.trees
 
-import com.intellij.psi.CommonClassNames
 import com.sun.source.tree.Tree
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.code.Flags
@@ -83,15 +82,12 @@ class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
                         ?.let { add(it) }
             }
 
-            tree.extending.let {
-                if (it == null && fqName.asString() != CommonClassNames.JAVA_LANG_OBJECT) {
-                    javac.JAVA_LANG_OBJECT?.let { add(SymbolBasedClassifierType(it.element.asType(), javac)) }
-                } else {
-                    it?.mapToJavaClassifierType()?.let(this::add)
-                }
-            }
-
             tree.implementing?.map { it.mapToJavaClassifierType() }?.filterNotNull()?.let(this::addAll)
+            tree.extending?.let { it.mapToJavaClassifierType()?.let(this::add) }
+
+            if (isEmpty()) {
+                javac.JAVA_LANG_OBJECT?.let { add(SymbolBasedClassifierType(it.element.asType(), javac)) }
+            }
         }
 
     val innerClasses by lazy {

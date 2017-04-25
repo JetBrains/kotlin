@@ -58,8 +58,7 @@ class SymbolBasedClass<T : TypeElement>(element: T,
             if (element.superclass !is NoType) {
                 add(element.superclass)
             } else {
-                val hasObject = any { it.toString() == CommonClassNames.JAVA_LANG_OBJECT }
-                if (!hasObject && element.toString() != CommonClassNames.JAVA_LANG_OBJECT) {
+                if (isEmpty() && element.toString() != CommonClassNames.JAVA_LANG_OBJECT) {
                     javac.JAVA_LANG_OBJECT?.let { add(it.element.asType()) }
                 }
             }

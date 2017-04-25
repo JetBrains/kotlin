@@ -129,13 +129,13 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     fun findClass(fqName: FqName, scope: GlobalSearchScope = EverythingGlobalScope()) = when {
         scope is EverythingGlobalScope -> javaClasses[fqName] ?: findClassInSymbols(fqName.asString())
-        scope.contains(AnyJavaSourceVirtualFile) -> javaClasses[fqName]
+        AnyJavaSourceVirtualFile in scope -> javaClasses[fqName]
         else -> findClassInSymbols(fqName.asString()) ?: javaClasses[fqName]
     }
 
     fun findPackage(fqName: FqName, scope: GlobalSearchScope) = when {
         scope is EverythingGlobalScope -> javaPackages[fqName] ?: findPackageInSymbols(fqName.asString())
-        scope.contains(AnyJavaSourceVirtualFile) -> javaPackages[fqName]
+        AnyJavaSourceVirtualFile in scope -> javaPackages[fqName]
         else -> findPackageInSymbols(fqName.asString()) ?: javaPackages[fqName]
     }
 
