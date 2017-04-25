@@ -339,7 +339,6 @@ object KotlinCompilerClient {
     }
 
     private fun DaemonReportingTargets.report(category: DaemonReportCategory, message: String, source: String = "daemon client") {
-        if (category == DaemonReportCategory.DEBUG && !verboseReporting) return
         out?.println("[$source] ${category.name}: $message")
         messages?.add(DaemonReportMessage(category, "[$source] $message"))
         messageCollector?.let {
@@ -421,12 +420,13 @@ object KotlinCompilerClient {
                         daemon.inputStream
                                 .reader()
                                 .forEachLine {
-                                    reportingTargets.report(DaemonReportCategory.DEBUG, it, "daemon")
-
                                     if (it == COMPILE_DAEMON_IS_READY_MESSAGE) {
                                         reportingTargets.report(DaemonReportCategory.DEBUG, "Received the message signalling that the daemon is ready")
                                         isEchoRead.release()
                                         return@forEachLine
+                                    }
+                                    else {
+                                        reportingTargets.report(DaemonReportCategory.INFO, it, "daemon")
                                     }
                                 }
                     }
@@ -434,6 +434,7 @@ object KotlinCompilerClient {
                         daemon.inputStream.close()
                         daemon.outputStream.close()
                         daemon.errorStream.close()
+                        isEchoRead.release()
                     }
                 }
         try {
