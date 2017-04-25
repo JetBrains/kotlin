@@ -304,6 +304,7 @@ internal class KonanSerializationUtil(val context: Context) {
         when (descriptor) {
             is FunctionDescriptor ->
                 proto.setFunction(serializer.functionProto(descriptor))
+
             is PropertyDescriptor ->
                 proto.setProperty(serializer.propertyProto(descriptor))
 

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
@@ -80,16 +81,13 @@ internal class IrDescriptorSerializer(
 
     fun functionDescriptorSpecifics(descriptor: FunctionDescriptor, proto: KonanIr.KotlinDescriptor.Builder) {
 
-        descriptor.valueParameters.forEach {
-            proto.addValueParameter(serializeDescriptor(it))
-        }
-
-        val typeParameters = if (descriptor is PropertyAccessorDescriptor) 
-                descriptor.correspondingProperty.typeParameters
-        else descriptor.typeParameters
-
+        val typeParameters = descriptor.propertyIfAccessor.typeParameters
         typeParameters.forEach {
             proto.addTypeParameter(serializeDescriptor(it))
+        }
+
+        descriptor.valueParameters.forEach {
+            proto.addValueParameter(serializeDescriptor(it))
         }
 
         // Allocate two indicies for the receivers.
@@ -135,11 +133,7 @@ internal class IrDescriptorSerializer(
         val index = descriptorTable.indexByValue(descriptor)
         // For getters and setters we use 
         // the *property* original index.
-        val originalIndex = if (descriptor is PropertyAccessorDescriptor) {
-            descriptorTable.indexByValue(descriptor.correspondingProperty.original)
-        } else {
-            descriptorTable.indexByValue(descriptor.original)
-        }
+        val originalIndex = descriptorTable.indexByValue(descriptor.propertyIfAccessor.original)
 
         context.log{"index = $index"}
         context.log{"originalIndex = $originalIndex"}

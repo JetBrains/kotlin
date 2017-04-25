@@ -65,6 +65,11 @@ internal val DeclarationDescriptor.propertyIfAccessor
                 this.correspondingProperty
                 else this
 
+internal val CallableMemberDescriptor.propertyIfAccessor
+    get() = if (this is PropertyAccessorDescriptor)
+                this.correspondingProperty
+                else this
+
 internal val FunctionDescriptor.deserializedPropertyIfAccessor: DeserializedCallableMemberDescriptor
     get() {
         val member = this.propertyIfAccessor
@@ -74,7 +79,7 @@ internal val FunctionDescriptor.deserializedPropertyIfAccessor: DeserializedCall
             error("Unexpected deserializable callable descriptor")
     }
 
-internal val DeclarationDescriptor.isDeserializableCallable
+internal val CallableMemberDescriptor.isDeserializableCallable
     get () = (this.propertyIfAccessor is DeserializedCallableMemberDescriptor)
 
 
