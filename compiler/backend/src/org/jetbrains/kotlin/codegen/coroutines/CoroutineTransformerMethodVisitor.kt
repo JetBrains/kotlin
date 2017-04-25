@@ -54,12 +54,15 @@ class CoroutineTransformerMethodVisitor(
     private val exceptionIndex = dataIndex + 1
 
     override fun performTransformations(methodNode: MethodNode) {
-        val customCoroutineStartMarker = methodNode.instructions.toArray().filterIsInstance<MethodInsnNode>().firstOrNull {
-            it.owner == COROUTINE_MARKER_OWNER && it.name == ACTUAL_COROUTINE_START_MARKER_NAME
-        }
+        val customCoroutineStart = run {
+            val customCoroutineStartMarker = methodNode.instructions.toArray().filterIsInstance<MethodInsnNode>().firstOrNull {
+                it.owner == COROUTINE_MARKER_OWNER && it.name == ACTUAL_COROUTINE_START_MARKER_NAME
+            }
 
-        val customCoroutineStart = customCoroutineStartMarker?.next
-        customCoroutineStartMarker?.let(methodNode.instructions::remove)
+            customCoroutineStartMarker?.next?.also {
+                methodNode.instructions.remove(customCoroutineStartMarker)
+            }
+        }
 
         val suspensionPoints = collectSuspensionPoints(methodNode)
 
