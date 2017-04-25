@@ -360,45 +360,30 @@ fun buildNativeIndexImpl(library: NativeLibrary): NativeIndex {
 
 private fun indexDeclarations(library: NativeLibrary, nativeIndex: NativeIndexImpl) {
     val index = clang_createIndex(0, 0)!!
-    val indexAction = clang_IndexAction_create(index)!!
     try {
-        val translationUnit = library.parse(index).ensureNoCompileErrors()
+        val translationUnit = library.parse(index, options = CXTranslationUnit_DetailedPreprocessingRecord)
         try {
-            memScoped {
-                val callbacks = alloc<IndexerCallbacks>()
+            translationUnit.ensureNoCompileErrors()
 
-                val nativeIndexPtr = StableObjPtr.create(nativeIndex)
-                val clientData = nativeIndexPtr.value
+            val headers = getFilteredHeaders(library, index, translationUnit)
 
-                try {
-                    with(callbacks) {
-                        abortQuery = null
-                        diagnostic = null
-                        enteredMainFile = null
-                        ppIncludedFile = null
-                        importedASTFile = null
-                        startedTranslationUnit = null
-                        indexDeclaration = staticCFunction { clientData, info ->
-                            @Suppress("NAME_SHADOWING")
-                            val nativeIndex = StableObjPtr.fromValue(clientData!!).get() as NativeIndexImpl
-                            nativeIndex.indexDeclaration(info!!.pointed)
-                        }
-                        indexEntityReference = null
+            indexTranslationUnit(index, translationUnit, 0, object : Indexer {
+                override fun indexDeclaration(info: CXIdxDeclInfo) {
+                    val file = memScoped {
+                        val fileVar = alloc<CXFileVar>()
+                        clang_indexLoc_getFileLocation(info.loc.readValue(), null, fileVar.ptr, null, null, null)
+                        fileVar.value
                     }
 
-                    clang_indexTranslationUnit(indexAction, clientData,
-                            callbacks.ptr, IndexerCallbacks.size.toInt(),
-                            0, translationUnit)
-
-                } finally {
-                    nativeIndexPtr.dispose()
+                    if (file in headers) {
+                        nativeIndex.indexDeclaration(info)
+                    }
                 }
-            }
+            })
         } finally {
             clang_disposeTranslationUnit(translationUnit)
         }
     } finally {
-        clang_IndexAction_dispose(indexAction)
         clang_disposeIndex(index)
     }
 }

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.native.interop.indexer
 
 import clang.*
-import kotlinx.cinterop.CValue
+import kotlinx.cinterop.*
 import java.io.File
 
 /**
@@ -54,9 +54,8 @@ private fun expandMacroConstants(
     try {
         val sourceFile = library.createTempSource()
         val translationUnit = parseTranslationUnit(index, sourceFile, library.compilerArgs, options = 0)
-                .ensureNoCompileErrors()
-
         try {
+            translationUnit.ensureNoCompileErrors()
             return names.mapNotNull {
                 expandMacroAsConstant(library, translationUnit, sourceFile, it, typeConverter)
             }
@@ -214,11 +213,21 @@ private fun collectMacroConstantsNames(library: NativeLibrary): List<String> {
         // Include macros into AST:
         val options = CXTranslationUnit_DetailedPreprocessingRecord
 
-        val translationUnit = library.parse(index, options).ensureNoCompileErrors()
+        val translationUnit = library.parse(index, options)
         try {
+            translationUnit.ensureNoCompileErrors()
+            val headers = getFilteredHeaders(library, index, translationUnit)
+
             visitChildren(translationUnit) { cursor, _ ->
+                val file = memScoped {
+                    val fileVar = alloc<CXFileVar>()
+                    clang_getFileLocation(clang_getCursorLocation(cursor), fileVar.ptr, null, null, null)
+                    fileVar.value
+                }
+
                 if (cursor.kind == CXCursorKind.CXCursor_MacroDefinition &&
                         library.includesDeclaration(cursor) &&
+                        file in headers &&
                         canMacroBeConstant(cursor))
                 {
                     val spelling = getCursorSpelling(cursor)

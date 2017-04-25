@@ -78,6 +78,52 @@ output of config script with `--cflags` flag (maybe without exact paths).
 Output of config script with `--libs` shall be passed as `-linkedArgs`  `kotlinc`
 flag value (quoted) when compiling.
 
+### Selecting library headers
+
+When library headers are imported to C program with `#include` directive,
+all of the headers included by these headers are also included to the program.
+Thus all header dependencies are included in generated stubs as well.
+
+This behaviour is correct but may be very inconvenient for some libraries. So
+it is possible to specify in `.def` file which of the included headers are to
+be imported. The separate declarations from other headers may also be imported
+in case of direct dependencies.
+
+#### Filtering headers by globs
+
+It is possible to filter header by globs. The `headerFilter` property value
+from the `.def` file is treated as space-separated list of globs. If the
+included header matches any of the globs, then declarations from this header
+are included into the bindings.
+
+The globs are applied to the header paths relative to the appropriate include
+path elements, e.g. `time.h` or `curl/curl.h`. So if the library is usually
+included with `#include <SomeLbrary/Header.h>`, then it would probably be
+correct to filter headers with
+```
+headerFilter = SomeLbrary/**
+```
+
+If `headerFilter` is not specified, then all headers are included.
+
+#### Filtering by module maps
+
+Some libraries have proper `module.modulemap` or `module.map` files among its
+headers. For example, macOS and iOS system libraries and frameworks do.
+The [module map file](https://clang.llvm.org/docs/Modules.html#module-map-language)
+describes the correspondence between header files and modules. When the module
+maps are available, the headers from the modules that are not included directly
+can be filtered out using experimental `excludeDependentModules` option of the
+`.def` file:
+```
+headers = OpenGL/gl.h OpenGL/glu.h GLUT/glut.h
+compilerOpts = -framework OpenGL -framework GLUT
+excludeDependentModules = true
+```
+
+When both `excludeDependentModules` and `headerFilter` are used, they are
+applied as intersection.
+
 ## Using bindings ##
 
 ### Basic interop types ###

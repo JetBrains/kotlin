@@ -16,17 +16,14 @@
 
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
-import org.jetbrains.kotlin.native.interop.indexer.Language
-import org.jetbrains.kotlin.native.interop.indexer.NativeIndex
-import org.jetbrains.kotlin.native.interop.indexer.NativeLibrary
-import org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex
+import org.jetbrains.kotlin.native.interop.indexer.*
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.reflect.KFunction
 
 fun main(args: Array<String>) {
-    val konanHome = System.getProperty("konan.home")!!
+    val konanHome = File(System.getProperty("konan.home")).absolutePath
 
     // TODO: remove OSX defaults.
     val substitutions = mapOf(
@@ -115,6 +112,10 @@ private fun <T> Collection<T>.atMostOne(): T? {
         else -> throw IllegalArgumentException("Collection has more than one element.")
     }
 }
+
+private fun String.matchesToGlob(glob: String): Boolean =
+        java.nio.file.FileSystems.getDefault()
+                .getPathMatcher("glob:$glob").matches(java.nio.file.Paths.get(this))
 
 private fun Properties.getOsSpecific(name: String, 
     host: String = detectHost()): String? {
@@ -292,6 +293,7 @@ private fun processLib(konanHome: String,
     val compiler = "clang"
     val language = Language.C
     val excludeSystemLibs = config.getProperty("excludeSystemLibs")?.toBoolean() ?: false
+    val excludeDependentModules = config.getProperty("excludeDependentModules")?.toBoolean() ?: false
 
     val entryPoint = config.getSpaceSeparated("entryPoint").atMostOne()
     val linkerOpts = 
@@ -312,7 +314,25 @@ private fun processLib(konanHome: String,
 
     val libName = args["-cstubsname"]?.atMostOne() ?: fqParts.joinToString("") + "stubs"
 
-    val library = NativeLibrary(headerFiles, compilerOpts, language, excludeSystemLibs)
+    val headerFilterGlobs = config.getSpaceSeparated("headerFilter")
+
+    val headerFilter = { name: String ->
+        if (headerFilterGlobs.isEmpty()) {
+            true
+        } else {
+            headerFilterGlobs.any { name.matchesToGlob(it) }
+        }
+    }
+
+    val library = NativeLibrary(
+            includes = headerFiles,
+            compilerArgs = compilerOpts,
+            language = language,
+            excludeSystemLibs = excludeSystemLibs,
+            excludeDepdendentModules = excludeDependentModules,
+            headerFilter = headerFilter
+    )
+
     val configuration = InteropConfiguration(
             library = library,
             pkgName = outKtPkg,

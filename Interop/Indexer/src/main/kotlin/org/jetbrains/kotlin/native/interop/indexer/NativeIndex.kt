@@ -23,7 +23,9 @@ enum class Language {
 data class NativeLibrary(val includes: List<String>,
                          val compilerArgs: List<String>,
                          val language: Language,
-                         val excludeSystemLibs: Boolean = true)
+                         val excludeSystemLibs: Boolean, // TODO: drop?
+                         val excludeDepdendentModules: Boolean,
+                         val headerFilter: (String) -> Boolean)
 
 /**
  * Retrieves the definitions from given C header file using given compiler arguments (e.g. defines).
