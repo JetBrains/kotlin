@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName
@@ -32,6 +33,7 @@ internal fun NameResolverImpl.getDescriptorByFqNameIndex(
     fqNameIndex: Int): DeclarationDescriptor {
 
     val packageName = this.getPackageFqName(fqNameIndex)
+    if (packageName.isRoot) return module.getPackage(FqName.ROOT)
     // TODO: Here we are using internals of NameresolverImpl. 
     // Consider extending NameResolver.
     val proto = nameTable.getQualifiedName(fqNameIndex)
