@@ -44,8 +44,15 @@ class CoroutineTransformerMethodVisitor(
         desc: String,
         signature: String?,
         exceptions: Array<out String>?,
-        private val classBuilder: ClassBuilder
+        private val containingClassInternalName: String,
+        private val classBuilderForCoroutineState: ClassBuilder,
+        isForNamedFunction: Boolean
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
+
+    private val continuationIndex = if (isForNamedFunction) getLastParameterIndex(desc, access) else 0
+    private val dataIndex = continuationIndex + 1
+    private val exceptionIndex = dataIndex + 1
+
     override fun performTransformations(methodNode: MethodNode) {
         val customCoroutineStartMarker = methodNode.instructions.toArray().filterIsInstance<MethodInsnNode>().firstOrNull {
             it.owner == COROUTINE_MARKER_OWNER && it.name == ACTUAL_COROUTINE_START_MARKER_NAME
@@ -61,7 +68,7 @@ class CoroutineTransformerMethodVisitor(
         }
 
         // Spill stack to variables before suspension points, try/catch blocks
-        FixStackWithLabelNormalizationMethodTransformer().transform(classBuilder.thisName, methodNode)
+        FixStackWithLabelNormalizationMethodTransformer().transform(containingClassInternalName, methodNode)
 
         // Remove unreachable suspension points
         // If we don't do this, then relevant frames will not be analyzed, that is unexpected from point of view of next steps (e.g. variable spilling)
@@ -86,7 +93,7 @@ class CoroutineTransformerMethodVisitor(
                          insnListOf(
                                  *withInstructionAdapter { loadCoroutineSuspendedMarker() }.toArray(),
                                  VarInsnNode(Opcodes.ASTORE, suspendMarkerVarIndex),
-                                 VarInsnNode(Opcodes.ALOAD, 0),
+                                 VarInsnNode(Opcodes.ALOAD, continuationIndex),
                                  FieldInsnNode(
                                          Opcodes.GETFIELD,
                                          COROUTINE_IMPL_ASM_TYPE.internalName,
@@ -101,7 +108,7 @@ class CoroutineTransformerMethodVisitor(
                          )
             )
 
-            insert(startLabel, withInstructionAdapter(InstructionAdapter::generateResumeWithExceptionCheck))
+            insert(startLabel, withInstructionAdapter { generateResumeWithExceptionCheck(exceptionIndex) })
 
             insert(last, withInstructionAdapter {
                 visitLabel(defaultLabel.label)
@@ -116,7 +123,7 @@ class CoroutineTransformerMethodVisitor(
     }
 
     private fun removeUnreachableSuspensionPointsAndExitPoints(methodNode: MethodNode, suspensionPoints: MutableList<SuspensionPoint>) {
-        val dceResult = DeadCodeEliminationMethodTransformer().transformWithResult(classBuilder.thisName, methodNode)
+        val dceResult = DeadCodeEliminationMethodTransformer().transformWithResult(containingClassInternalName, methodNode)
 
         // If the suspension call begin is alive and suspension call end is dead
         // (e.g., an inlined suspend function call ends with throwing a exception -- see KT-15017),
@@ -166,7 +173,7 @@ class CoroutineTransformerMethodVisitor(
 
     private fun spillVariables(suspensionPoints: List<SuspensionPoint>, methodNode: MethodNode) {
         val instructions = methodNode.instructions
-        val frames = performRefinedTypeAnalysis(methodNode, classBuilder.thisName)
+        val frames = performRefinedTypeAnalysis(methodNode, containingClassInternalName)
         fun AbstractInsnNode.index() = instructions.indexOf(this)
 
         // We postpone these actions because they change instruction indices that we use when obtaining frames
@@ -200,13 +207,15 @@ class CoroutineTransformerMethodVisitor(
             val livenessFrame = livenessFrames[suspensionCallBegin.index()]
 
             // 0 - this
-            // 1 - continuation argument
-            // 2 - continuation exception
+            // 1 - parameter
+            // ...
+            // k - continuation
+            // k + 1 - data
+            // k + 2 - exception
             val variablesToSpill =
-                    (3 until localsCount)
+                    ((exceptionIndex + 1) until localsCount)
                             .map { Pair(it, frame.getLocal(it)) }
-                            .filter {
-                                val (index, value) = it
+                            .filter { (index, value) ->
                                 value != StrictBasicValue.UNINITIALIZED_VALUE && livenessFrame.isAlive(index)
                             }
 
@@ -235,16 +244,16 @@ class CoroutineTransformerMethodVisitor(
                     with(instructions) {
                         // store variable before suspension call
                         insertBefore(suspension.suspensionCallBegin, withInstructionAdapter {
-                            load(0, AsmTypes.OBJECT_TYPE)
+                            load(continuationIndex, AsmTypes.OBJECT_TYPE)
                             load(index, type)
                             StackValue.coerce(type, normalizedType, this)
-                            putfield(classBuilder.thisName, fieldName, normalizedType.descriptor)
+                            putfield(classBuilderForCoroutineState.thisName, fieldName, normalizedType.descriptor)
                         })
 
                         // restore variable after suspension call
                         insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
-                            load(0, AsmTypes.OBJECT_TYPE)
-                            getfield(classBuilder.thisName, fieldName, normalizedType.descriptor)
+                            load(continuationIndex, AsmTypes.OBJECT_TYPE)
+                            getfield(classBuilderForCoroutineState.thisName, fieldName, normalizedType.descriptor)
                             StackValue.coerce(normalizedType, type, this)
                             store(index, type)
                         })
@@ -262,8 +271,8 @@ class CoroutineTransformerMethodVisitor(
         maxVarsCountByType.forEach { entry ->
             val (type, maxIndex) = entry
             for (index in 0..maxIndex) {
-                classBuilder.newField(
-                        JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PRIVATE,
+                classBuilderForCoroutineState.newField(
+                        JvmDeclarationOrigin.NO_ORIGIN, AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
                         type.fieldNameForVar(index), type.descriptor, null, null)
             }
         }
@@ -294,7 +303,7 @@ class CoroutineTransformerMethodVisitor(
             // Save state
             insertBefore(suspension.suspensionCallBegin,
                          insnListOf(
-                                 VarInsnNode(Opcodes.ALOAD, 0),
+                                 VarInsnNode(Opcodes.ALOAD, continuationIndex),
                                  *withInstructionAdapter { iconst(id) }.toArray(),
                                  FieldInsnNode(
                                          Opcodes.PUTFIELD, COROUTINE_IMPL_ASM_TYPE.internalName, COROUTINE_LABEL_FIELD_NAME,
@@ -327,10 +336,10 @@ class CoroutineTransformerMethodVisitor(
             remove(possibleTryCatchBlockStart.previous)
 
             insert(possibleTryCatchBlockStart, withInstructionAdapter {
-                generateResumeWithExceptionCheck()
+                generateResumeWithExceptionCheck(exceptionIndex)
 
                 // Load continuation argument just like suspending function returns it
-                load(1, AsmTypes.OBJECT_TYPE)
+                load(dataIndex, AsmTypes.OBJECT_TYPE)
 
                 visitLabel(continuationLabelAfterLoadedResult.label)
             })
@@ -389,9 +398,9 @@ class CoroutineTransformerMethodVisitor(
     }
 }
 
-private fun InstructionAdapter.generateResumeWithExceptionCheck() {
+private fun InstructionAdapter.generateResumeWithExceptionCheck(exceptionIndex: Int) {
     // Check if resumeWithException has been called
-    load(2, AsmTypes.OBJECT_TYPE)
+    load(exceptionIndex, AsmTypes.OBJECT_TYPE)
     dup()
     val noExceptionLabel = Label()
     ifnull(noExceptionLabel)
@@ -432,3 +441,6 @@ private class SuspensionPoint(
 ) {
     lateinit var tryCatchBlocksContinuationLabel: LabelNode
 }
+
+private fun getLastParameterIndex(desc: String, access: Int) =
+        Type.getArgumentTypes(desc).dropLast(1).map { it.size }.sum() + (if (access and Opcodes.ACC_STATIC != 0) 0 else 1)

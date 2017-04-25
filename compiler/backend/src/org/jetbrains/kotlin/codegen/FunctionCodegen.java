@@ -135,7 +135,8 @@ public class FunctionCodegen {
                 strategy = new SuspendFunctionGenerationStrategy(
                         state,
                         CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
-                        function
+                        function,
+                        v.getThisName()
                 );
             }
             else {

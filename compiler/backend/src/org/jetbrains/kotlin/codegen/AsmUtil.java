@@ -646,6 +646,8 @@ public class AsmUtil {
             @NotNull FrameMap frameMap
     ) {
         if (state.isParamAssertionsDisabled()) return;
+        // currently when resuming a suspend function we pass default values instead of real arguments (i.e. nulls for references)
+        if (descriptor.isSuspend()) return;
 
         // Private method is not accessible from other classes, no assertions needed
         if (getVisibilityAccessFlag(descriptor) == ACC_PRIVATE) return;

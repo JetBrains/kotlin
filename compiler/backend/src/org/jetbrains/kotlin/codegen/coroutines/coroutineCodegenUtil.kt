@@ -72,6 +72,10 @@ val CONTINUATION_ASM_TYPE = DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME.topLe
 @JvmField
 val COROUTINE_IMPL_ASM_TYPE = COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineImpl")).topLevelClassAsmType()
 
+@JvmField
+val COROUTINE_IMPL_FOR_NAMED_ASM_TYPE =
+        COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineImplForNamedFunction")).topLevelClassAsmType()
+
 private val COROUTINES_INTRINSICS_FILE_FACADE_INTERNAL_NAME =
         COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.child(Name.identifier("IntrinsicsKt")).topLevelClassAsmType()
 

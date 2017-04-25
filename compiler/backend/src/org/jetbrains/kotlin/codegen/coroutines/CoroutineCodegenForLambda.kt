@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -42,7 +41,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -50,19 +49,64 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 
 
-class CoroutineCodegen private constructor(
+abstract class AbstractCoroutineCodegen(
         outerExpressionCodegen: ExpressionCodegen,
         element: KtElement,
-        private val closureContext: ClosureContext,
-        classBuilder: ClassBuilder,
-        private val originalSuspendFunctionDescriptor: FunctionDescriptor,
-        private val isSuspendLambda: Boolean
+        closureContext: ClosureContext,
+        classBuilder: ClassBuilder
 ) : ClosureCodegen(
         outerExpressionCodegen.state,
         element, null, closureContext, null,
         FailingFunctionGenerationStrategy,
         outerExpressionCodegen.parentCodegen, classBuilder
 ) {
+    override fun generateConstructor(): Method {
+        val args = calculateConstructorParameters(typeMapper, closure, asmType)
+        val argTypes = args.map { it.fieldType }.plus(CONTINUATION_ASM_TYPE).toTypedArray()
+
+        val constructor = Method("<init>", Type.VOID_TYPE, argTypes)
+        val mv = v.newMethod(
+                OtherOrigin(element, funDescriptor), visibilityFlag, "<init>", constructor.descriptor, null,
+                ArrayUtil.EMPTY_STRING_ARRAY
+        )
+
+        if (state.classBuilderMode.generateBodies) {
+            mv.visitCode()
+            val iv = InstructionAdapter(mv)
+
+            iv.generateClosureFieldsInitializationFromParameters(closure, args)
+
+            iv.load(0, AsmTypes.OBJECT_TYPE)
+            if (passArityToSuperClass) {
+                iv.iconst(calculateArity())
+            }
+            iv.load(argTypes.map { it.size }.sum(), AsmTypes.OBJECT_TYPE)
+
+            val superClassConstructorDescriptor = Type.getMethodDescriptor(
+                    Type.VOID_TYPE,
+                    *(if (passArityToSuperClass) arrayOf(Type.INT_TYPE) else emptyArray()),
+                    CONTINUATION_ASM_TYPE
+            )
+            iv.invokespecial(superClassAsmType.internalName, "<init>", superClassConstructorDescriptor, false)
+
+            iv.visitInsn(Opcodes.RETURN)
+
+            FunctionCodegen.endVisit(iv, "constructor", element)
+        }
+
+        return constructor
+    }
+
+    abstract protected val passArityToSuperClass: Boolean
+}
+
+class CoroutineCodegenForLambda private constructor(
+        outerExpressionCodegen: ExpressionCodegen,
+        element: KtElement,
+        private val closureContext: ClosureContext,
+        classBuilder: ClassBuilder,
+        private val originalSuspendFunctionDescriptor: FunctionDescriptor
+) : AbstractCoroutineCodegen(outerExpressionCodegen, element, closureContext, classBuilder) {
     private val classDescriptor = closureContext.contextDescriptor
     private val builtIns = funDescriptor.builtIns
 
@@ -126,15 +170,8 @@ class CoroutineCodegen private constructor(
         generateDoResume()
     }
 
-    override fun generateBridges() {
-        if (!isSuspendLambda) return
-        super.generateBridges()
-    }
-
     override fun generateBody() {
         super.generateBody()
-
-        if (!isSuspendLambda) return
 
         // create() = ...
         functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, createCoroutineDescriptor,
@@ -187,41 +224,14 @@ class CoroutineCodegen private constructor(
         areturn(AsmTypes.OBJECT_TYPE)
     }
 
+    override val passArityToSuperClass get() = true
+
     override fun generateConstructor(): Method {
-        val args = calculateConstructorParameters(typeMapper, closure, asmType)
-        val argTypes = args.map { it.fieldType }.plus(CONTINUATION_ASM_TYPE).toTypedArray()
-
-        val constructor = Method("<init>", Type.VOID_TYPE, argTypes)
-        val mv = v.newMethod(
-                OtherOrigin(element, funDescriptor), visibilityFlag, "<init>", constructor.descriptor, null,
-                ArrayUtil.EMPTY_STRING_ARRAY
-        )
-
-        constructorToUseFromInvoke = constructor
-
-        if (state.classBuilderMode.generateBodies) {
-            mv.visitCode()
-            val iv = InstructionAdapter(mv)
-
-            iv.generateClosureFieldsInitializationFromParameters(closure, args)
-
-            iv.load(0, AsmTypes.OBJECT_TYPE)
-            iv.iconst(calculateArity())
-            iv.load(argTypes.map { it.size }.sum(), AsmTypes.OBJECT_TYPE)
-
-            val superClassConstructorDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE, CONTINUATION_ASM_TYPE)
-            iv.invokespecial(superClassAsmType.internalName, "<init>", superClassConstructorDescriptor, false)
-
-            iv.visitInsn(Opcodes.RETURN)
-
-            FunctionCodegen.endVisit(iv, "constructor", element)
-        }
-
-        return constructor
+        constructorToUseFromInvoke = super.generateConstructor()
+        return constructorToUseFromInvoke
     }
 
     private fun generateCreateCoroutineMethod(codegen: ExpressionCodegen) {
-        assert(isSuspendLambda) { "create method should only be generated for suspend lambdas" }
         val classDescriptor = closureContext.contextDescriptor
         val owner = typeMapper.mapClass(classDescriptor)
 
@@ -260,15 +270,11 @@ class CoroutineCodegen private constructor(
     }
 
     private fun ExpressionCodegen.initializeCoroutineParameters() {
-        if (!isSuspendLambda && !originalSuspendFunctionDescriptor.isTailrec) return
         for (parameter in allFunctionParameters()) {
             val fieldStackValue =
-                    if (isSuspendLambda)
-                        StackValue.field(
-                                parameter.getFieldInfoForCoroutineLambdaParameter(), generateThisOrOuter(context.thisDescriptor, false)
-                        )
-                    else
-                        closureContext.lookupInContext(parameter, null, state, /* ignoreNoOuter = */ false)
+                    StackValue.field(
+                            parameter.getFieldInfoForCoroutineLambdaParameter(), generateThisOrOuter(context.thisDescriptor, false)
+                    )
 
             val mappedType = typeMapper.mapType(parameter.type)
             fieldStackValue.put(mappedType, v)
@@ -277,14 +283,7 @@ class CoroutineCodegen private constructor(
             v.store(newIndex, mappedType)
         }
 
-        // necessary for proper tailrec codegen
-        val actualMethodStartLabel = Label()
-        v.visitLabel(actualMethodStartLabel)
-        context.setMethodStartLabel(actualMethodStartLabel)
-
-        if (isSuspendLambda) {
-            initializeVariablesForDestructuredLambdaParameters(this, originalSuspendFunctionDescriptor.valueParameters)
-        }
+        initializeVariablesForDestructuredLambdaParameters(this, originalSuspendFunctionDescriptor.valueParameters)
     }
 
     private fun allFunctionParameters() =
@@ -308,7 +307,12 @@ class CoroutineCodegen private constructor(
                 object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
 
                     override fun wrapMethodVisitor(mv: MethodVisitor, access: Int, name: String, desc: String): MethodVisitor {
-                        return CoroutineTransformerMethodVisitor(mv, access, name, desc, null, null, v)
+                        return CoroutineTransformerMethodVisitor(
+                                mv, access, name, desc, null, null,
+                                obtainClassBuilderForCoroutineState = { v },
+                                containingClassInternalName = v.thisName,
+                                isForNamedFunction = false
+                        )
                     }
 
                     override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
@@ -319,34 +323,17 @@ class CoroutineCodegen private constructor(
         )
     }
 
-    override fun generateKotlinMetadataAnnotation() {
-        if (isSuspendLambda) {
-            super.generateKotlinMetadataAnnotation()
-        }
-        else {
-            writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0) {
-                // Do not write method metadata for raw coroutine state machines
-            }
-        }
-    }
-
     companion object {
-        fun shouldCreateByLambda(
-                originalSuspendLambdaDescriptor: CallableDescriptor,
-                declaration: KtElement): Boolean {
-            return (declaration is KtFunctionLiteral && originalSuspendLambdaDescriptor.isSuspendLambda)
-        }
-
         @JvmStatic
-        fun createByLambda(
+        fun create(
                 expressionCodegen: ExpressionCodegen,
                 originalSuspendLambdaDescriptor: FunctionDescriptor,
                 declaration: KtElement,
                 classBuilder: ClassBuilder
         ): ClosureCodegen? {
-            if (!shouldCreateByLambda(originalSuspendLambdaDescriptor, declaration)) return null
+            if (declaration !is KtFunctionLiteral || !originalSuspendLambdaDescriptor.isSuspendLambda) return null
 
-            return CoroutineCodegen(
+            return CoroutineCodegenForLambda(
                     expressionCodegen,
                     declaration,
                     expressionCodegen.context.intoCoroutineClosure(
@@ -354,31 +341,116 @@ class CoroutineCodegen private constructor(
                             originalSuspendLambdaDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
                     ),
                     classBuilder,
-                    originalSuspendLambdaDescriptor,
-                    isSuspendLambda = true
+                    originalSuspendLambdaDescriptor
             )
         }
+    }
+}
 
+class CoroutineCodegenForNamedFunction private constructor(
+        outerExpressionCodegen: ExpressionCodegen,
+        element: KtElement,
+        closureContext: ClosureContext,
+        classBuilder: ClassBuilder,
+        originalSuspendFunctionDescriptor: FunctionDescriptor
+) : AbstractCoroutineCodegen(outerExpressionCodegen, element, closureContext, classBuilder) {
+    private val classDescriptor = closureContext.contextDescriptor
+
+    private val suspendFunctionJvmView =
+            bindingContext[CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, originalSuspendFunctionDescriptor]!!
+
+    // protected fun doResume(): Any?
+    private val doResumeDescriptor =
+            SimpleFunctionDescriptorImpl.create(
+                    classDescriptor, Annotations.EMPTY, Name.identifier(DO_RESUME_METHOD_NAME), CallableMemberDescriptor.Kind.DECLARATION,
+                    funDescriptor.source
+            ).apply doResume@{
+                initialize(
+                      /* receiverParameterType = */ null,
+                      classDescriptor.thisAsReceiverParameter,
+                      /* typeParameters =   */ emptyList(),
+                      listOf(),
+                      builtIns.nullableAnyType,
+                      Modality.FINAL,
+                      Visibilities.PUBLIC
+                )
+            }
+
+    override val passArityToSuperClass get() = false
+
+    override fun generateBridges() {
+        // Do not generate any closure bridges
+    }
+
+    override fun generateClosureBody() {
+        generateDoResume()
+    }
+
+    private fun generateDoResume() {
+        functionCodegen.generateMethod(
+                OtherOrigin(element),
+                doResumeDescriptor,
+                object : FunctionGenerationStrategy.CodegenBased(state) {
+                    override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                        val captureThisType = closure.captureThis?.let(typeMapper::mapType)
+                        if (captureThisType != null) {
+                            StackValue.field(
+                                    captureThisType, Type.getObjectType(v.thisName), AsmUtil.CAPTURED_THIS_FIELD,
+                                    false, StackValue.LOCAL_0
+                            ).put(captureThisType, codegen.v)
+                        }
+
+                        val callableMethod = typeMapper.mapToCallableMethod(suspendFunctionJvmView, false)
+
+                        for (argumentType in callableMethod.getAsmMethod().argumentTypes.dropLast(1)) {
+                            AsmUtil.pushDefaultValueOnStack(argumentType, codegen.v)
+                        }
+
+                        codegen.v.load(0, AsmTypes.OBJECT_TYPE)
+                        callableMethod.genInvokeInstruction(codegen.v)
+
+                        codegen.v.visitInsn(Opcodes.ARETURN)
+                    }
+                }
+        )
+    }
+
+    override fun generateKotlinMetadataAnnotation() {
+        writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0) {
+            // Do not write method metadata for raw coroutine state machines
+        }
+    }
+
+    companion object {
         fun create(
+                cv: ClassBuilder,
                 expressionCodegen: ExpressionCodegen,
                 originalSuspendDescriptor: FunctionDescriptor,
-                declaration: KtFunction,
-                state: GenerationState
-        ): CoroutineCodegen {
-            val cv = state.factory.newVisitor(
-                    OtherOrigin(declaration, originalSuspendDescriptor),
-                    CodegenBinding.asmTypeForAnonymousClass(state.bindingContext, originalSuspendDescriptor),
-                    declaration.containingFile
-            )
+                declaration: KtFunction
+        ): CoroutineCodegenForNamedFunction {
+            val bindingContext = expressionCodegen.state.bindingContext
+            val closure =
+                    bindingContext[
+                            CodegenBinding.CLOSURE,
+                            bindingContext[CodegenBinding.CLASS_FOR_CALLABLE, originalSuspendDescriptor]
+                    ].sure { "There must be a closure defined for $originalSuspendDescriptor" }
 
-            return CoroutineCodegen(
+            val suspendFunctionView =
+                    bindingContext[
+                            CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, originalSuspendDescriptor
+                    ].sure { "There must be a jvm view defined for $originalSuspendDescriptor" }
+
+            if (suspendFunctionView.dispatchReceiverParameter != null) {
+                closure.setCaptureThis()
+            }
+
+            return CoroutineCodegenForNamedFunction(
                     expressionCodegen, declaration,
                     expressionCodegen.context.intoClosure(
                             originalSuspendDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
                     ),
                     cv,
-                    originalSuspendDescriptor,
-                    isSuspendLambda = false
+                    originalSuspendDescriptor
             )
         }
     }
