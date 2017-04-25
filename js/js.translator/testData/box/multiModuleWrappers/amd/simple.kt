@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 495
 // MODULE: module1
 // FILE: bar.kt
 // MODULE_KIND: AMD

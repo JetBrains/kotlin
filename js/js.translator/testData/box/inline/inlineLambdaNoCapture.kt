@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 492
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: sumEven

@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 494
 package foo
 
 fun singleQuoted(i: Int): Int = js("return i")

@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 543
 package foo
 
 var g: Any?

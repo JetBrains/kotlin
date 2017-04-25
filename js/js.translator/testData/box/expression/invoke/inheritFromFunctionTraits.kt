@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 504
 /**
  * NOTE: this test originally checked that values of classes inheriting from functions could be invoked as functions.
  * However, Function{n} / ExtensionFunction{n} classes were incompatible with JS functions our lambdas were compiled to.

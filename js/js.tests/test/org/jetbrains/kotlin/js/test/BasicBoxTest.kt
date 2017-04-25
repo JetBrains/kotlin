@@ -469,8 +469,7 @@ abstract class BasicBoxTest(
         val allFilesToMinify = filesToMinify.values + kotlinJsInputFile + kotlinTestJsInputFile
         val dceResult = DeadCodeElimination.run(allFilesToMinify, additionalReachableNodes) { }
 
-        val moduleDeclarations = dceResult.globalScope.member("module").member("exports")
-        val reachableNodes = dceResult.reachableNodes.filter { moduleDeclarations !in generateSequence(it) { it.qualifier?.parent } }
+        val reachableNodes = dceResult.reachableNodes
         minificationThresholdChecker(reachableNodes.size)
 
         val runList = mutableListOf<String>()

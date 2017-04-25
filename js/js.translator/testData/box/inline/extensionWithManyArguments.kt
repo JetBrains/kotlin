@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 494
 package foo
 
 // CHECK_NOT_CALLED_IN_SCOPE: scope=multiply function=multiply$lambda

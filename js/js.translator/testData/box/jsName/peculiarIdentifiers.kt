@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 498
 private fun `+`(a: Int, b: Int) = a + b
 
 @JsName("minus")

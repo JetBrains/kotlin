@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 536
 package foo
 
 object f {

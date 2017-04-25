@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 491
 package foo
 
 // CHECK_LABELS_COUNT: function=box name=block count=1

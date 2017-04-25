@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 488
 // FILE: a.kt
 
 inline fun baz(): String =

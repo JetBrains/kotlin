@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 509
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: test1 except=imul

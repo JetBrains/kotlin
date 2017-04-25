@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 533
 package foo
 
 fun box() = E.E1.f() + E.E2.f()

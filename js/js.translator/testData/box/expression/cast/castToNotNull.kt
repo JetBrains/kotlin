@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 504
 package foo
 
 interface A

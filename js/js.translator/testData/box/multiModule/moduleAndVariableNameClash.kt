@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 494
 // MODULE: main(module1)
 // FILE: main.kt
 

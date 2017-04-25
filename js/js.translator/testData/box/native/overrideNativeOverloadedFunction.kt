@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 511
 external open class A {
     open fun f(x: Int): String = definedExternally
 

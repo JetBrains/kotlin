@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 504
 open class Base() {
     fun n(n: Int): Int = n + 1
 }

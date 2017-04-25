@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 504
 // MODULE: m3
 // FILE: m3.kt
 

@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 513
 // MODULE: lib
 // FILE: lib.kt
 package foo

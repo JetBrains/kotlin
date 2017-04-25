@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 488
 // http://youtrack.jetbrains.com/issue/KT-5253
 // JS: generated wrong code when use `if` inside `when`
 

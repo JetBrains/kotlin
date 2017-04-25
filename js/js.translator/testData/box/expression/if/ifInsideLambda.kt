@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 487
 // http://youtrack.jetbrains.com/issue/KT-5594
 // JS: compiler crashes
 

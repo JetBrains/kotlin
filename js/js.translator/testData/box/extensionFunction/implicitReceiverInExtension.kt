@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 488
 package foo
 
 fun <T> T.toPrefixedString(prefix: String = "", suffix: String = "") = prefix + toString() + suffix

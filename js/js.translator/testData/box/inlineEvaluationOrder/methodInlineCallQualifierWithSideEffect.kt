@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 500
 package foo
 
 // Test for KT-7502

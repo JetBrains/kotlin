@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 495
 // MODULE_KIND: UMD
 package foo
 

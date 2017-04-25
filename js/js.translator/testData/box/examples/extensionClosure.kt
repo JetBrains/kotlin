@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 491
 class Point(val x: Int, val y: Int)
 
 fun box(): String {

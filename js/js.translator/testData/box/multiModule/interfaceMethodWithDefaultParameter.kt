@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 496
 // MODULE: lib
 // FILE: lib.kt
 public interface I {

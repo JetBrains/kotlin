@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 894
 fun imul32(a: Int, b: Int): Int = js("Kotlin").imulEmulated(a, b)
 
 fun imul64(a: Int, b: Int): Int = (a.toLong() * b.toLong()).toInt()

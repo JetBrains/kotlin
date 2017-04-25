@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 903
 /*
 This tests that variables (aliases) are created for array literals.
 

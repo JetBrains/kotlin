@@ -1,3 +1,4 @@
+// MINIFICATION_THRESHOLD: 1433
 open class A {
     val a: Int
     open val b: Int

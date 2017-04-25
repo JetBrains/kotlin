@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 490
 package foo
 
 fun bigValue() = 0x7FFFFFFC

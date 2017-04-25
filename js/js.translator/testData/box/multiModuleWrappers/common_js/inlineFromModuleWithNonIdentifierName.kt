@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 495
 // MODULE: #my-libr@ry
 // FILE: bar.kt
 // MODULE_KIND: COMMON_JS

@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 493
 package foo
 
 fun bar(e: Exception): String {

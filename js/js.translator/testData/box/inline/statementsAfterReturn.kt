@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 533
 package foo
 
 data class State(public var value: Int = 10)

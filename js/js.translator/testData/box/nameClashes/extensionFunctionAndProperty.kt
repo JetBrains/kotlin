@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 896
 package foo
 
 public fun <T> List<T>.some(): T = this[0]
