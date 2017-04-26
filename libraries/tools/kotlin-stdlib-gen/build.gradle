@@ -10,7 +10,11 @@ dependencies {
 
 compileKotlin {
     compilerJarFile = null
-    kotlinOptions.freeCompilerArgs = ["-version"]
+    kotlinOptions {
+        languageVersion = "1.1"
+        apiVersion = "1.1"
+        freeCompilerArgs = ["-version"]
+    }
 }
 
 task run(type: JavaExec) {

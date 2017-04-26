@@ -35,6 +35,12 @@ subprojects {
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile) {
         compilerJarFile = bootstrapCompilerFile
     }
+    tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile) {
+        kotlinOptions {
+            languageVersion = kotlin_language_version
+            apiVersion = kotlin_language_version
+        }
+    }
 
     task javadocJar(type: Jar) {
         classifier = 'javadoc'
