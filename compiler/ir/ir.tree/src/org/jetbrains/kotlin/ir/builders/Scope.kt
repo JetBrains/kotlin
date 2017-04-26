@@ -37,9 +37,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
     val scopeOwner: DeclarationDescriptor get() = scopeOwnerSymbol.descriptor
 
     @Deprecated("Creates unbound symbol")
-    constructor(scopeOwner: ClassDescriptor) : this(IrClassSymbolImpl(scopeOwner))
-
-    @Deprecated("C")
+    constructor(descriptor: DeclarationDescriptor): this(createSymbolForScopeOwner(descriptor))
 
     private var lastTemporaryIndex: Int = 0
     private fun nextTemporaryIndex(): Int = lastTemporaryIndex++
@@ -60,11 +58,12 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
             )
 }
 
+@Suppress("DeprecatedCallableAddReplaceWith")
 @Deprecated("Creates unbound symbol")
-fun Scope(descriptor: DeclarationDescriptor) =
+fun createSymbolForScopeOwner(descriptor: DeclarationDescriptor) =
         when (descriptor) {
-            is ClassDescriptor -> Scope(IrClassSymbolImpl(descriptor))
-            is FunctionDescriptor -> Scope(createFunctionSymbol(descriptor))
-            is PropertyDescriptor -> Scope(IrFieldSymbolImpl(descriptor))
+            is ClassDescriptor -> IrClassSymbolImpl(descriptor)
+            is FunctionDescriptor -> createFunctionSymbol(descriptor)
+            is PropertyDescriptor -> IrFieldSymbolImpl(descriptor)
             else -> throw AssertionError("Unexpected scopeOwner descriptor: $descriptor")
         }
