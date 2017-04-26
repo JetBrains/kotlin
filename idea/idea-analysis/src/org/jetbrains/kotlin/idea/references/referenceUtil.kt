@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -78,6 +79,9 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
     when (this) {
         is KtInvokeFunctionReference -> {
             if (candidateTarget !is KtNamedFunction && candidateTarget !is PsiMethod) return false
+            if ((candidateTarget as PsiNamedElement).name != OperatorNameConventions.INVOKE.asString()) {
+                return false
+            }
         }
         is KtDestructuringDeclarationReference -> {
             if (candidateTarget !is KtNamedFunction && candidateTarget !is KtParameter && candidateTarget !is PsiMethod) return false
