@@ -116,6 +116,25 @@ abstract class OrderedIterableTests<T : Iterable<String>>(createFrom: (Array<out
         expect(null) { empty.lastOrNull() }
         expect("foo") { data.lastOrNull { it.startsWith("f") } }
     }
+
+
+    @Test
+    fun pairwise() {
+        val data = createFrom("", "a", "xyz")
+        val lengthDeltas = data.pairwise { a, b -> b.length - a.length }
+        assertEquals(listOf(1, 2), lengthDeltas)
+
+        assertTrue(empty.pairwise { a, b -> a + b }.isEmpty())
+        assertTrue(createFrom("foo").pairwise { a, b -> a + b }.isEmpty())
+    }
+
+    @Test
+    fun pairwisePairs() {
+        assertTrue(empty.pairwise().isEmpty())
+        assertTrue(createFrom("foo").pairwise().isEmpty())
+        assertEquals(listOf("a" to "b"), createFrom("a", "b").pairwise())
+        assertEquals(listOf("a" to "b", "b" to "c"), createFrom("a", "b", "c").pairwise())
+    }
 }
 
 abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out String>) -> T, val empty: T) {

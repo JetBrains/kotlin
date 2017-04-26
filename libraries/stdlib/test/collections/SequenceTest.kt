@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package test.collections
 
 import org.junit.Test
@@ -11,6 +27,22 @@ fun fibonacci(): Sequence<Int> {
 }
 
 public class SequenceTest {
+
+    private class TriggerSequence<out T>(val source: Sequence<T>) : Sequence<T> {
+        var iterated: Boolean = false
+            private set
+
+        override fun iterator(): Iterator<T> = source.iterator().also { iterated = true }
+    }
+
+    fun <T> ensureIsIntermediate(source: Sequence<T>, operation: (Sequence<T>) -> Sequence<*>) {
+        TriggerSequence(source).let { s ->
+            val result = operation(s)
+            assertFalse(s.iterated, "Source should not be iterated before the result is")
+            result.iterator().hasNext()
+            assertTrue(s.iterated, "Source should be iterated after the result is iterated")
+        }
+    }
 
     @Test fun filterEmptySequence() {
         for (sequence in listOf(emptySequence<String>(), sequenceOf<String>())) {
@@ -163,6 +195,25 @@ public class SequenceTest {
     @Test fun dropWhile() {
         assertEquals("233, 377, 610", fibonacci().dropWhile { it < 200 }.take(3).joinToString(limit = 10))
         assertEquals("", sequenceOf(1).dropWhile { it < 200 }.joinToString(limit = 10))
+    }
+
+    @Test fun pairwise() {
+        val deltas = fibonacci().pairwise { a, b -> b - a }
+        // deltas of 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, ...
+        // is the same sequence prepended by 1
+        assertEquals(listOf(1) + fibonacci().take(9), deltas.take(10).toList())
+
+        ensureIsIntermediate(source = sequenceOf(1, 2)) { it.pairwise { a, b -> b - a } }
+    }
+
+    @Test fun pairwisePairs() {
+        val pairs: Sequence<Pair<String, String>> = sequenceOf("a", "b", "c", "d").pairwise()
+        assertEquals(listOf("a" to "b", "b" to "c", "c" to "d"), pairs.toList())
+
+        assertTrue(emptySequence<String>().pairwise().toList().isEmpty())
+        assertTrue(sequenceOf(1).pairwise().toList().isEmpty())
+
+        ensureIsIntermediate(source = sequenceOf(1, 2)) { it.pairwise() }
     }
 
     @Test fun zip() {

@@ -848,6 +848,12 @@ public expect operator fun <T> Sequence<T>.minus(elements: Sequence<T>): Sequenc
 @kotlin.internal.InlineOnly
 public expect inline fun <T> Sequence<T>.minusElement(element: T): Sequence<T>
 
+@SinceKotlin("1.2")
+public expect fun <T> Sequence<T>.pairwise(): Sequence<Pair<T, T>>
+
+@SinceKotlin("1.2")
+public expect fun <T, R> Sequence<T>.pairwise(transform: (a: T, b: T) -> R): Sequence<R>
+
 /**
  * Splits the original sequence into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
