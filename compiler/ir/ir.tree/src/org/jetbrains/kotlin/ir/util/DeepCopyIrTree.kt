@@ -34,6 +34,7 @@ import java.util.HashMap
 inline fun <reified T : IrElement> T.deepCopyOld() =
         transform(DeepCopyIrTree(), null) as T
 
+@Deprecated("Creates unbound symbols")
 open class DeepCopyIrTree : IrElementTransformerVoid() {
     protected open fun mapDeclarationOrigin(declarationOrigin: IrDeclarationOrigin) = declarationOrigin
     protected open fun mapStatementOrigin(statementOrigin: IrStatementOrigin?) = statementOrigin
@@ -404,7 +405,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
         return IrFunctionReferenceImpl(
                 expression.startOffset, expression.endOffset,
                 expression.type,
-                expression.descriptor,
+                newCallee,
                 expression.transformTypeArguments(newCallee),
                 mapStatementOrigin(expression.origin)
         ).transformValueArguments(expression)
