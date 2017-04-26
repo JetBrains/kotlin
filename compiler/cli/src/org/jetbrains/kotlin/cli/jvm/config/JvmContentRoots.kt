@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.jvm.config
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.ContentRoot
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.KotlinSourceRoot
 import java.io.File
 
 data class JvmClasspathRoot(override val file: File): JvmContentRoot
@@ -46,3 +47,10 @@ val CompilerConfiguration.jvmClasspathRoots: List<File>
 
 @JvmOverloads fun CompilerConfiguration.addJavaSourceRoots(files: List<File>, packagePrefix: String? = null): Unit =
         files.forEach { addJavaSourceRoot(it, packagePrefix) }
+
+val CompilerConfiguration.javaSourceRoots: Set<String>
+    get() = get(JVMConfigurationKeys.CONTENT_ROOTS)
+            ?.mapNotNullTo(hashSetOf<String>()) {
+                (it as? KotlinSourceRoot)?.path ?: (it as? JavaSourceRoot)?.file?.path
+            }
+            .orEmpty()

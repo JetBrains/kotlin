@@ -162,6 +162,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("InterfaceWithDefault.kt")
+    public void testInterfaceWithDefault() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/InterfaceWithDefault.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ListImpl.kt")
     public void testListImpl() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/ListImpl.kt");

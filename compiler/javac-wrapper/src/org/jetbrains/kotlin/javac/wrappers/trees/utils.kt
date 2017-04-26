@@ -32,6 +32,9 @@ val JCTree.JCModifiers.isFinal
 val JCTree.JCModifiers.isStatic
     get() = Modifier.STATIC in getFlags()
 
+val JCTree.JCModifiers.hasDefaultModifier
+    get() = Modifier.DEFAULT in getFlags()
+
 val JCTree.JCModifiers.visibility
     get() = getFlags().let {
         when {

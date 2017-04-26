@@ -229,7 +229,7 @@ class KotlinCoreEnvironment private constructor(
                 }
 
     private val javaFiles
-        get() = configuration.kotlinSourceRoots
+        get() = configuration.javaSourceRoots
                 .mapNotNull(this::findLocalDirectory)
                 .flatMap { it.javaFiles }
                 .map { File(it.canonicalPath) }

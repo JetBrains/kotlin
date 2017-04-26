@@ -33,7 +33,7 @@ class TreeBasedMethod<out T : JCTree.JCMethodDecl>(tree: T,
         get() = Name.identifier(tree.name.toString())
 
     override val isAbstract
-        get() = if (containingClass.isInterface) true else tree.modifiers.isAbstract
+        get() = if (containingClass.isInterface && !tree.modifiers.hasDefaultModifier) true else tree.modifiers.isAbstract
 
     override val isStatic
         get() = tree.modifiers.isStatic
