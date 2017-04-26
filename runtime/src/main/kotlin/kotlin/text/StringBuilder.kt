@@ -109,62 +109,62 @@ class StringBuilder private constructor (
         }
         var end = length - 1
         var front = 0
-        var frontHigh = array[0]
-        var endLow = array[end]
-        var allowFrontSur = true
-        var allowEndSur = true
+        var frontLeadingChar = array[0]
+        var endTrailingChar = array[end]
+        var allowFrontSurrogate = true
+        var allowEndSurrogate = true
         while (front < length / 2) {
 
-            var frontLow = array[front + 1]
-            var endHigh = array[end - 1]
-            var surAtFront = allowFrontSur && frontLow.isLowSurrogate() && frontHigh.isHighSurrogate()
-            if (surAtFront && length < 3) {
+            var frontTrailingChar = array[front + 1]
+            var endLeadingChar = array[end - 1]
+            var surrogateAtFront = allowFrontSurrogate && frontTrailingChar.isLowSurrogate() && frontLeadingChar.isHighSurrogate()
+            if (surrogateAtFront && length < 3) {
                 return this
             }
-            var surAtEnd = allowEndSur && endLow.isLowSurrogate() && endHigh.isHighSurrogate()
-            allowFrontSur = true
-            allowEndSur = true
+            var surrogateAtEnd = allowEndSurrogate && endTrailingChar.isLowSurrogate() && endLeadingChar.isHighSurrogate()
+            allowFrontSurrogate = true
+            allowEndSurrogate = true
             when {
-                surAtFront && surAtEnd -> {
+                surrogateAtFront && surrogateAtEnd -> {
                     // Both surrogates - just exchange them.
-                    array[end] = frontLow
-                    array[end - 1] = frontHigh
-                    array[front] = endHigh
-                    array[front + 1] = endLow
-                    frontHigh = array[front + 2]
-                    endLow = array[end - 2]
+                    array[end] = frontTrailingChar
+                    array[end - 1] = frontLeadingChar
+                    array[front] = endLeadingChar
+                    array[front + 1] = endTrailingChar
+                    frontLeadingChar = array[front + 2]
+                    endTrailingChar = array[end - 2]
                     front++
                     end--
                 }
-                !surAtFront && !surAtEnd -> {
+                !surrogateAtFront && !surrogateAtEnd -> {
                     // Neither surrogates - exchange only front/end.
-                    array[end] = frontHigh
-                    array[front] = endLow
-                    frontHigh = frontLow
-                    endLow = endHigh
+                    array[end] = frontLeadingChar
+                    array[front] = endTrailingChar
+                    frontLeadingChar = frontTrailingChar
+                    endTrailingChar = endLeadingChar
                 }
-                surAtFront && !surAtEnd -> {
+                surrogateAtFront && !surrogateAtEnd -> {
                     // Surrogate only at the front -
                     // move the low part, the high part will be moved as a usual character on the next iteration.
-                    array[end] = frontLow
-                    array[front] = endLow
-                    endLow = endHigh
-                    allowFrontSur = false
+                    array[end] = frontTrailingChar
+                    array[front] = endTrailingChar
+                    endTrailingChar = endLeadingChar
+                    allowFrontSurrogate = false
                 }
-                !surAtFront && surAtEnd -> {
+                !surrogateAtFront && surrogateAtEnd -> {
                     // Surrogate only at the end -
                     // move the high part, the low part will be moved as a usual character on the next iteration.
-                    array[end] = frontHigh
-                    array[front] = endHigh
-                    frontHigh = frontLow
-                    allowEndSur = false
+                    array[end] = frontLeadingChar
+                    array[front] = endLeadingChar
+                    frontLeadingChar = frontTrailingChar
+                    allowEndSurrogate = false
                 }
             }
             front++
             end--
         }
-        if (length % 2 == 1 && (!allowEndSur || !allowFrontSur)) {
-            array[end] = if (allowFrontSur) endLow else frontHigh
+        if (length % 2 == 1 && (!allowEndSurrogate || !allowFrontSurrogate)) {
+            array[end] = if (allowFrontSurrogate) endTrailingChar else frontLeadingChar
         }
         return this
     }

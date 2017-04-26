@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <errno.h>
 #include <limits.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -691,13 +690,13 @@ int iswlower_Konan(KChar ch) {
   return getType(ch) == LOWERCASE_LETTER;
 }
 
-void checkParsingErrors(const char* c_str, char* end, std::string::size_type c_str_size) {
+void checkParsingErrors(const char* c_str, const char* end, std::string::size_type c_str_size) {
   if (end == c_str) {
     ThrowNumberFormatException();
   }
   // According to http://docs.oracle.com/javase/8/docs/api/java/lang/Double.html#valueOf-java.lang.String-
   // trailing whitespace characters must be ignored so we need to do an additional check.
-  for (char* p = end; p < c_str + c_str_size; p++) {
+  for (const char* p = end; p < c_str + c_str_size; p++) {
     if (!iswspace_Konan(*p)) {
       ThrowNumberFormatException();
     }
