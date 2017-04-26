@@ -60,6 +60,7 @@ internal class InteropLowering(val context: Context) : FileLoweringPass {
 private class InteropTransformer(val context: Context, val irFile: IrFile) : IrBuildingTransformer(context) {
 
     val interop = context.interopBuiltIns
+    val konanBuiltins = context.builtIns
 
     private fun MemberScope.getSingleContributedFunction(name: String,
                                                          predicate: (SimpleFunctionDescriptor) -> Boolean) =
@@ -119,7 +120,7 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
         val elementType = array.type.arguments.single().type
         val elementSize = sizeOf(elementType) ?: return null
 
-        val resultRawPtr = irCall(interop.nativePtrPlusLong).apply {
+        val resultRawPtr = irCall(konanBuiltins.nativePtrPlusLong).apply {
             dispatchReceiver = irCall(interop.cPointerGetRawValue).apply {
                 extensionReceiver = array
             }

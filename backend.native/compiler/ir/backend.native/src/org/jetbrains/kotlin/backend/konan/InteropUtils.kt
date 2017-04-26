@@ -30,27 +30,21 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 private val cPointerName = "CPointer"
 private val nativePointedName = "NativePointed"
-private val nativePtrName = "NativePtr"
 
 internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     object FqNames {
         val packageName = FqName("kotlinx.cinterop")
 
-        val nativePtr = packageName.child(Name.identifier(nativePtrName)).toUnsafe()
         val cPointer = packageName.child(Name.identifier(cPointerName)).toUnsafe()
         val nativePointed = packageName.child(Name.identifier(nativePointedName)).toUnsafe()
     }
 
     private val packageScope = builtIns.builtInsModule.getPackage(FqNames.packageName).memberScope
 
-    val getNativeNullPtr = packageScope.getContributedFunctions("getNativeNullPtr").single()
-
     val getPointerSize = packageScope.getContributedFunctions("getPointerSize").single()
 
     val nullableInteropValueTypes = listOf(ValueType.C_POINTER, ValueType.NATIVE_POINTED)
-
-    private val nativePtr = packageScope.getContributedClassifier(nativePtrName) as ClassDescriptor
 
     private val nativePointed = packageScope.getContributedClassifier(nativePointedName) as ClassDescriptor
 
@@ -125,7 +119,7 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
     private val primitives = listOf(
             builtIns.byte, builtIns.short, builtIns.int, builtIns.long,
             builtIns.float, builtIns.double,
-            nativePtr
+            builtIns.nativePtr
     )
 
     val readPrimitive = primitives.map {
@@ -135,10 +129,6 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
     val writePrimitive = primitives.map {
         nativeMemUtils.unsubstitutedMemberScope.getContributedFunctions("put" + it.name).single()
     }.toSet()
-
-    val nativePtrPlusLong = nativePtr.unsubstitutedMemberScope.getContributedFunctions("plus").single()
-
-    val nativePtrToLong = nativePtr.unsubstitutedMemberScope.getContributedFunctions("toLong").single()
 
     val bitsToFloat = packageScope.getContributedFunctions("bitsToFloat").single()
 

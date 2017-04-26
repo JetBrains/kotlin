@@ -41,7 +41,7 @@ enum class ValueType(val classFqName: FqNameUnsafe, val isNullable: Boolean = fa
     DOUBLE(KotlinBuiltIns.FQ_NAMES._double),
 
     UNBOUND_CALLABLE_REFERENCE(FqNameUnsafe("konan.internal.UnboundCallableReference")),
-    NATIVE_PTR(InteropBuiltIns.FqNames.nativePtr),
+    NATIVE_PTR(KonanBuiltIns.FqNames.nativePtr),
 
     NATIVE_POINTED(InteropBuiltIns.FqNames.nativePointed, isNullable = true),
     C_POINTER(InteropBuiltIns.FqNames.cPointer, isNullable = true)

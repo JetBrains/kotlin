@@ -89,8 +89,7 @@ abstract internal class CoroutineImpl(
 
     // label == -1 when coroutine cannot be started (it is just a factory object) or has already finished execution
     // label == 0 in initial part of the coroutine
-    // TODO: use IntPtr.
-    protected var label: Long = if (completion != null) 0L else -1L
+    protected var label: NativePtr = if (completion != null) NativePtr.NULL else NativePtr.NULL + (-1L)
 
     private val _context: CoroutineContext? = completion?.context
 

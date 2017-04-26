@@ -1799,13 +1799,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         val resumePoints = mutableListOf<LLVMBasicBlockRef>()
         using (SuspendableExpressionScope(resumePoints)) {
-            codegen.condBr(codegen.icmpEq(suspensionPointId, kIntPtrZero), bbStart, bbDispatch)
+            codegen.condBr(codegen.icmpEq(suspensionPointId, kNullInt8Ptr), bbStart, bbDispatch)
 
             codegen.positionAtEnd(bbStart)
             val result = evaluateExpression(expression.result)
 
             codegen.appendingTo(bbDispatch) {
-                codegen.indirectBr(codegen.intToPtr(suspensionPointId, int8TypePtr), resumePoints)
+                codegen.indirectBr(suspensionPointId, resumePoints)
             }
             return result
         }
@@ -1815,7 +1815,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                                              val bbResume: LLVMBasicBlockRef): InnerScopeImpl() {
         override fun genGetValue(descriptor: ValueDescriptor): LLVMValueRef {
             if (descriptor == suspensionPointId)
-                return codegen.ptrToInt(codegen.blockAddress(bbResume), LLVMInt64Type()!!) // TODO: intptr.
+                return codegen.blockAddress(bbResume)
             return super.genGetValue(descriptor)
         }
     }
@@ -1979,10 +1979,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 codegen.store(args[2], pointer)
                 codegen.theUnitInstanceRef.llvm
             }
-            interop.nativePtrPlusLong -> codegen.gep(args[0], args[1])
-            interop.getNativeNullPtr -> kNullInt8Ptr
+            context.builtIns.nativePtrPlusLong -> codegen.gep(args[0], args[1])
+            context.builtIns.getNativeNullPtr -> kNullInt8Ptr
             interop.getPointerSize -> Int32(LLVMPointerSize(codegen.llvmTargetData)).llvm
-            interop.nativePtrToLong -> {
+            context.builtIns.nativePtrToLong -> {
                 val intPtrValue = codegen.ptrToInt(args.single(), codegen.intPtrType)
                 val resultType = codegen.getLLVMType(descriptor.returnType!!)
 

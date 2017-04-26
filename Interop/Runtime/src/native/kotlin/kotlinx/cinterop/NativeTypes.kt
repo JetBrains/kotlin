@@ -1,23 +1,12 @@
 package kotlinx.cinterop
 
+import konan.internal.getNativeNullPtr
 import konan.internal.Intrinsic
 
-class NativePtr private constructor() {
-    @Intrinsic external operator fun plus(offset: Long): NativePtr
-
-    @Intrinsic external fun toLong(): Long
-
-    override fun equals(other: Any?) = (other is NativePtr) && konan.internal.areEqualByValue(this, other)
-
-    override fun hashCode() = this.toLong().hashCode()
-
-    override fun toString() = this.toLong().toString() // TODO: format as hex.
-}
+typealias NativePtr = konan.internal.NativePtr
 
 inline val nativeNullPtr: NativePtr
     get() = getNativeNullPtr()
-
-@Intrinsic external fun getNativeNullPtr(): NativePtr
 
 fun <T : CVariable> typeOf(): CVariable.Type = throw Error("typeOf() is called with erased argument")
 
