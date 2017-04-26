@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import java.io.File
+import java.nio.file.Paths
 
 interface ModuleVisibilityManager {
     val chunk: Collection<Module>
@@ -63,10 +64,12 @@ fun isContainedByCompiledPartOfOurModule(descriptor: DeclarationDescriptor, outD
 
     if (binaryClass is VirtualFileKotlinClass) {
         val file = binaryClass.file
-        if (file.fileSystem.protocol == StandardFileSystems.FILE_PROTOCOL) {
-            val ioFile = VfsUtilCore.virtualToIoFile(file)
-            return ioFile.absolutePath.startsWith(outDirectory.absolutePath + File.separator)
+        val ioFile = when (file.fileSystem.protocol) {
+            StandardFileSystems.FILE_PROTOCOL -> VfsUtilCore.virtualToIoFile(file)
+            StandardFileSystems.JAR_PROTOCOL -> VfsUtilCore.getVirtualFileForJar(file)?.let(VfsUtilCore::virtualToIoFile)
+            else -> null
         }
+        return ioFile != null && Paths.get(ioFile.toURI()).startsWith(Paths.get(outDirectory.toURI()))
     }
 
     return false
