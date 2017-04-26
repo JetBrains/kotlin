@@ -96,6 +96,7 @@ import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
 import org.jetbrains.kotlin.idea.highlighter.*
 import org.jetbrains.kotlin.idea.imports.AbstractJsOptimizeImportsTest
 import org.jetbrains.kotlin.idea.imports.AbstractJvmOptimizeImportsTest
+import org.jetbrains.kotlin.idea.inspections.AbstractLocalInspectionTest
 import org.jetbrains.kotlin.idea.intentions.AbstractConcatenatedStringGeneratorTest
 import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
 import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest2
@@ -605,6 +606,10 @@ fun main(args: Array<String>) {
         testClass<AbstractInspectionTest> {
             model("intentions", pattern = "^(inspections\\.test)$", singleClass = true)
             model("inspections", pattern = "^(inspections\\.test)$", singleClass = true)
+        }
+
+        testClass<AbstractLocalInspectionTest> {
+            model("inspectionsLocal", pattern = "^([\\w\\-_]+)\\.kt$")
         }
 
         testClass<AbstractHierarchyTest> {
