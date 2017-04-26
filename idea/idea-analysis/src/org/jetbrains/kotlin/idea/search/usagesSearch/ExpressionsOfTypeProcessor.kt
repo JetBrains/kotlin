@@ -381,7 +381,8 @@ class ExpressionsOfTypeProcessor(
                     }
 
                     is KtQualifiedExpression -> {
-                        if (element == parent.receiverExpression) { // <class name>.memberName
+                        // <class name>.memberName or some.<class name>.memberName
+                        if (element == parent.receiverExpression || parent.parent is KtQualifiedExpression) {
                             return true // companion object member or static member access - ignore it
                         }
                     }

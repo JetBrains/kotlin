@@ -4,4 +4,5 @@ fun f(c: JavaClass) {
 
 fun foo(o: JavaClass.OtherJavaClass) {
     o()
+    JavaClass.OtherJavaClass.OJC()
 }

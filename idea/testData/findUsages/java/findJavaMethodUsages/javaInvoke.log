@@ -1,6 +1,8 @@
+Resolved OJC()
 Resolved c()
 Resolved o()
 Searched references to JavaClass
 Searched references to JavaClass.OtherJavaClass
+Searched references to JavaClass.OtherJavaClass.OJC in non-Java files
 Searched references to parameter c of f(c: JavaClass) in non-Java files
 Searched references to parameter o of foo(o: JavaClass.OtherJavaClass) in non-Java files
