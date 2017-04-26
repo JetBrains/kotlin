@@ -10,6 +10,7 @@ package kotlin.sequences
 
 import kotlin.js.*
 import kotlin.comparisons.*
+import kotlin.coroutines.experimental.*
 
 /**
  * Returns `true` if [element] is found in the sequence.
