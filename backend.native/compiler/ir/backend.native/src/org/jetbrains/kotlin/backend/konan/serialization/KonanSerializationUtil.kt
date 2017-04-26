@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
+import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.serialization.KonanLinkData
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
@@ -295,9 +296,9 @@ internal class KonanSerializationUtil(val context: Context) {
         return property
     }
 
-    fun serializeLocalDeclaration(descriptor: DeclarationDescriptor): KonanLinkData.Descriptor {
+    fun serializeLocalDeclaration(descriptor: DeclarationDescriptor): KonanIr.DeclarationDescriptor {
 
-        val proto = KonanLinkData.Descriptor.newBuilder()
+        val proto = KonanIr.DeclarationDescriptor.newBuilder()
 
         context.log{"### serializeLocalDeclaration: $descriptor"}
 

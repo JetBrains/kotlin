@@ -79,7 +79,7 @@ internal class IrDescriptorDeserializer(val context: Context,
         context.log{"### deserialized Kotlin Type index=$index, text=$text:\t$realType"}
         return realType
     }
-    fun deserializeLocalDeclaration(irProto: KonanIr.KotlinDescriptor, proto: KonanLinkData.Descriptor): DeclarationDescriptor {
+    fun deserializeLocalDeclaration(irProto: KonanIr.KotlinDescriptor, proto: KonanIr.DeclarationDescriptor): DeclarationDescriptor {
         when {
             proto.hasFunction() -> {
                 val functionProto = proto.function

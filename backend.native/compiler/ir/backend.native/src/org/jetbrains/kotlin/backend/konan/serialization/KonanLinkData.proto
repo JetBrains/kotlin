@@ -70,16 +70,6 @@ message InlineIrBody {
     required string encoded_ir = 11;
 }
 
-// Inner descriptors used for inlining.
-message Descriptor {
-    oneof descriptor {
-        Function function = 1;
-        Class clazz = 2;
-        Property property = 3;
-        Constructor constructor = 4;
-    }
-}
-
 // Konan Binary Linkdata structures.
 
 message PackageFragment {

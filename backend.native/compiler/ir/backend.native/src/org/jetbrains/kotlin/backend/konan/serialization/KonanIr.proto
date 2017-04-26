@@ -2,6 +2,7 @@
 syntax = "proto2";
 package org.jetbrains.kotlin.serialization;
 
+import "org/jetbrains/kotlin/backend/konan/serialization/descriptors.proto1";
 import "org/jetbrains/kotlin/backend/konan/serialization/KonanLinkData.proto";
 option java_outer_classname = "KonanIr";
 option optimize_for = LITE_RUNTIME;
@@ -41,9 +42,18 @@ message UniqId {
     required int64 index = 1;
 }
 
+// Inner descriptors used for inlining.
+message DeclarationDescriptor {
+    // These are ProtoBuf.Function, ProtoBuf.Class etc
+    oneof descriptor {
+        Function function = 1;
+        Class clazz = 2;
+        Property property = 3;
+        Constructor constructor = 4;
+    }
+}
 message LocalDeclaration {
-    // This is Descriptor message from KonanLinkData
-    required Descriptor descriptor = 1;
+    required DeclarationDescriptor descriptor = 1;
 }
 
 message KotlinType {
