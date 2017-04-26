@@ -69,6 +69,7 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
     : PlatformFlags(distribution) {
 
     override val linker = "${distribution.sysRoot}/usr/bin/ld"
+    private val dsymutil = "${distribution.llvmBin}/llvm-dsymutil"
 
     open val osVersionMin = listOf(
         propertyTargetString("osVersionMinFlagLd"),
@@ -89,6 +90,14 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
             if (optimize) linkerOptimizationFlags else {listOf<String>()} +
             linkerKonanFlags +
             listOf("-lSystem")
+    }
+
+    open fun dsymutilCommand(executable: ExecutableFile): List<String> {
+        return listOf(dsymutil, executable)
+    }
+
+    open fun dsymutilDryRunVerboseCommand(executable: ExecutableFile): List<String> {
+        return listOf(dsymutil, "-dump-debug-map" ,executable)
     }
 }
 
@@ -222,6 +231,11 @@ internal class LinkStage(val context: Context) {
                 entryPointSelector
 
         runTool(*linkCommand.toTypedArray())
+        if (platform is MacOSBasedPlatform && context.shouldContainDebugInfo()) {
+            if (context.phase?.verbose ?: false)
+                runTool(*platform.dsymutilDryRunVerboseCommand(executable).toTypedArray())
+            runTool(*platform.dsymutilCommand(executable).toTypedArray())
+        }
 
         return executable
     }
