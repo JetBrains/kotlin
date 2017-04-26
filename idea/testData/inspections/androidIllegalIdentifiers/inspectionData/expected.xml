@@ -1,46 +1,46 @@
 <problems>
     <problem>
-        <file>temp:///src/test.kt</file>
+        <file>test.kt</file>
         <line>7</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Illegal Android Identifier</problem_class>
-        <description>Illegal Android Identifier</description>
+        <description>Identifier not allowed in Android projects</description>
     </problem>
 
     <problem>
-        <file>temp:///src/test.kt</file>
+        <file>test.kt</file>
         <line>8</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Illegal Android Identifier</problem_class>
-        <description>Illegal Android Identifier</description>
+        <description>Identifier not allowed in Android projects</description>
     </problem>
 
     <problem>
-        <file>temp:///src/test.kt</file>
+        <file>test.kt</file>
         <line>9</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Illegal Android Identifier</problem_class>
-        <description>Illegal Android Identifier</description>
+        <description>Identifier not allowed in Android projects</description>
     </problem>
 
     <problem>
-        <file>temp:///src/test.kt</file>
+        <file>test.kt</file>
         <line>10</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Illegal Android Identifier</problem_class>
-        <description>Illegal Android Identifier</description>
+        <description>Identifier not allowed in Android projects</description>
     </problem>
 
     <problem>
-        <file>temp:///src/test.kt</file>
+        <file>test.kt</file>
         <line>11</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Illegal Android Identifier</problem_class>
-        <description>Illegal Android Identifier</description>
+        <description>Identifier not allowed in Android projects</description>
     </problem>
 </problems>
