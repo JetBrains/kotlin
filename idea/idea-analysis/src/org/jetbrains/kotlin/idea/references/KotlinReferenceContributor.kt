@@ -20,7 +20,11 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceRegistrar
 import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtPackageDirective
+import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
 class KotlinReferenceContributor() : AbstractKotlinReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
@@ -29,6 +33,9 @@ class KotlinReferenceContributor() : AbstractKotlinReferenceContributor() {
 
             registerMultiProvider<KtNameReferenceExpression> {
                 if (it.getReferencedNameElementType() != KtTokens.IDENTIFIER) return@registerMultiProvider emptyArray()
+                if (it.parents.any { it is KtImportDirective || it is KtPackageDirective || it is KtUserType }) {
+                    return@registerMultiProvider emptyArray()
+                }
 
                 when (it.readWriteAccess(useResolveForReadWrite = false)) {
                     ReferenceAccess.READ ->
