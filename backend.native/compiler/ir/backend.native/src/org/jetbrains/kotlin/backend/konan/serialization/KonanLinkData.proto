@@ -25,18 +25,15 @@ extend Class {
 
 extend Constructor {
     repeated Annotation constructor_annotation = 170;
-    optional int32 constructor_parent = 172;
 }
 
 extend Function {
     repeated Annotation function_annotation = 170;
-    optional int32 function_parent = 172;
     optional InlineIrBody inline_ir_body = 174;
 }
 
 extend Property {
     repeated Annotation property_annotation = 170;
-    optional int32 property_parent = 172;
     optional bool used_as_variable = 173;
     optional Annotation.Argument.Value compile_time_value = 174;
     optional InlineIrBody inline_getter_ir_body = 175;

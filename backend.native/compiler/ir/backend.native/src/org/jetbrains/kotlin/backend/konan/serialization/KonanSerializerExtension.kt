@@ -53,22 +53,8 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
         super.serializeEnumEntry(descriptor, proto)
     }
 
-    fun DeclarationDescriptor.parentFqNameIndex(): Int? {
-
-        if (this.containingDeclaration is ClassOrPackageFragmentDescriptor) {
-            val parentIndex = stringTable.getClassOrPackageFqNameIndex(
-                    this.containingDeclaration as ClassOrPackageFragmentDescriptor)
-            return parentIndex
-        } else {
-            return null
-        }
-    }
-
     override fun serializeConstructor(descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder) {
 
-        val parentIndex = descriptor.parentFqNameIndex()
-        if (parentIndex != null) proto.setExtension(KonanLinkData.constructorParent, parentIndex)
-        
         super.serializeConstructor(descriptor, proto)
     }
 
@@ -79,8 +65,6 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
 
     override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
 
-        val parentIndex = descriptor.parentFqNameIndex()
-        if (parentIndex != null) proto.setExtension(KonanLinkData.functionParent, parentIndex)
         super.serializeFunction(descriptor, proto)
     }
 
@@ -91,8 +75,6 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
        backingFieldClass, emptyMap(), SourceElement.NO_SOURCE)
 
     override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
-        val parentIndex = descriptor.parentFqNameIndex()
-        if (parentIndex != null) proto.setExtension(KonanLinkData.propertyParent, parentIndex)
         val variable = originalVariables[descriptor]
         if (variable != null) {
             proto.setExtension(KonanLinkData.usedAsVariable, true)

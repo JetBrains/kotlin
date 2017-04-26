@@ -79,25 +79,26 @@ internal class IrDescriptorDeserializer(val context: Context,
         context.log{"### deserialized Kotlin Type index=$index, text=$text:\t$realType"}
         return realType
     }
-    fun deserializeLocalDeclaration(irProto: KonanIr.KotlinDescriptor, proto: KonanIr.DeclarationDescriptor): DeclarationDescriptor {
+    fun deserializeLocalDeclaration(irProto: KonanIr.KotlinDescriptor): DeclarationDescriptor {
+        val localDeclarationProto = irProto.irLocalDeclaration.descriptor
         when {
-            proto.hasFunction() -> {
-                val functionProto = proto.function
+            localDeclarationProto.hasFunction() -> {
+                val functionProto = localDeclarationProto.function
                 val index = irProto.index
-                val descriptor = localDeserializer.deserializeFunction(functionProto)
+                val descriptor = localDeserializer.deserializeFunction(irProto)
                 descriptorIndex.put(index, descriptor)
                 return descriptor
             }
 
-            proto.hasProperty() -> {
-                val propertyProto = proto.property
+            localDeclarationProto.hasProperty() -> {
+                val propertyProto = localDeclarationProto.property
                 val index = irProto.index
-                val descriptor = localDeserializer.deserializeProperty(propertyProto)
+                val descriptor = localDeserializer.deserializeProperty(irProto)
                 descriptorIndex.put(index, descriptor)
                 return descriptor
             }
             // TODO
-            //  proto.hasClazz() -> 
+            //  localDclarationProto.hasClazz() -> 
             else -> TODO("Unexpected descriptor kind")
         }
     }
@@ -135,8 +136,7 @@ internal class IrDescriptorDeserializer(val context: Context,
         context.log{"### deserializeDescriptor ${proto.kind} ${proto.index}"}
 
         val descriptor = if (proto.hasIrLocalDeclaration()) {
-            val realDescriptor = proto.irLocalDeclaration.descriptor
-            deserializeLocalDeclaration(proto, realDescriptor)
+            deserializeLocalDeclaration(proto)
         } else 
             deserializeKnownDescriptor(proto)
         

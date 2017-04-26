@@ -3,7 +3,6 @@ syntax = "proto2";
 package org.jetbrains.kotlin.serialization;
 
 import "org/jetbrains/kotlin/backend/konan/serialization/descriptors.proto1";
-import "org/jetbrains/kotlin/backend/konan/serialization/KonanLinkData.proto";
 option java_outer_classname = "KonanIr";
 option optimize_for = LITE_RUNTIME;
 
@@ -28,7 +27,10 @@ message KotlinDescriptor {
     required UniqId original_uniq_id = 4;
     // index in fq name table
     optional int32 class_or_package = 5;
+
     // Descriptor kind specific fields.
+    // TODO: consider introducing specific messages
+    // for functions, variables etc.
     optional KotlinType type = 6;
     repeated KotlinDescriptor value_parameter = 7;
     repeated KotlinDescriptor type_parameter = 8;
