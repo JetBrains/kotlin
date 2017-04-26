@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -530,23 +530,33 @@ public class KotlinTypeMapper {
 
         List<PossiblyInnerType> innerTypesAsList = possiblyInnerType.segments();
 
-        if (innerTypesAsList.size() == 1) {
+        int indexOfParameterizedType = CollectionsKt.indexOfFirst(innerTypesAsList, innerPart -> !innerPart.getArguments().isEmpty());
+        if (indexOfParameterizedType < 0 || innerTypesAsList.size() == 1) {
             signatureVisitor.writeClassBegin(asmType);
+            writeGenericArguments(signatureVisitor, possiblyInnerType, mode);
         }
         else {
-            ClassDescriptor outermostClass = innerTypesAsList.get(0).getClassDescriptor();
-            signatureVisitor.writeOuterClassBegin(asmType, mapType(outermostClass.getDefaultType()).getInternalName());
-        }
+            PossiblyInnerType outerType = innerTypesAsList.get(indexOfParameterizedType);
 
-        for (int i = 0; i < innerTypesAsList.size(); i++) {
-            PossiblyInnerType innerPart = innerTypesAsList.get(i);
-            if (i > 0) {
-                signatureVisitor.writeInnerClass(getJvmShortName(innerPart.getClassDescriptor()));
-            }
-            writeGenericArguments(signatureVisitor, innerPart, mode);
+            signatureVisitor.writeOuterClassBegin(asmType, mapType(outerType.getClassDescriptor()).getInternalName());
+            writeGenericArguments(signatureVisitor, outerType, mode);
+
+            writeInnerParts(innerTypesAsList, signatureVisitor, mode, indexOfParameterizedType + 1); // inner parts separated by `.`
         }
 
         signatureVisitor.writeClassEnd();
+    }
+
+    private void writeInnerParts(
+            @NotNull List<PossiblyInnerType> innerTypesAsList,
+            @NotNull JvmSignatureWriter signatureVisitor,
+            @NotNull TypeMappingMode mode,
+            int index
+    ) {
+        for (PossiblyInnerType innerPart : innerTypesAsList.subList(index, innerTypesAsList.size())) {
+            signatureVisitor.writeInnerClass(getJvmShortName(innerPart.getClassDescriptor()));
+            writeGenericArguments(signatureVisitor, innerPart, mode);
+        }
     }
 
     @NotNull

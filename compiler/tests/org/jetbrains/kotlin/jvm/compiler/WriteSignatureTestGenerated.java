@@ -60,9 +60,21 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         doTest(fileName);
     }
 
+    @TestMetadata("DeepGenericInnerClass.kt")
+    public void testDeepGenericInnerClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/DeepGenericInnerClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("GenericInnerClass.kt")
     public void testGenericInnerClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/GenericInnerClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GenericInnerClassWithSimpleOuter.kt")
+    public void testGenericInnerClassWithSimpleOuter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/GenericInnerClassWithSimpleOuter.kt");
         doTest(fileName);
     }
 

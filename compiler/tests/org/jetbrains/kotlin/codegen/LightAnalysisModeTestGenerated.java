@@ -14514,6 +14514,42 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/genericSignature/kt6106.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("signatureOfDeepGenericInner.kt")
+            public void testSignatureOfDeepGenericInner() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/genericSignature/signatureOfDeepGenericInner.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("signatureOfDeepInner.kt")
+            public void testSignatureOfDeepInner() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/genericSignature/signatureOfDeepInner.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("signatureOfDeepInnerLastGeneric.kt")
+            public void testSignatureOfDeepInnerLastGeneric() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/genericSignature/signatureOfDeepInnerLastGeneric.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("signatureOfGenericInnerGenericOuter.kt")
+            public void testSignatureOfGenericInnerGenericOuter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/genericSignature/signatureOfGenericInnerGenericOuter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("signatureOfGenericInnerSimpleOuter.kt")
+            public void testSignatureOfGenericInnerSimpleOuter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/genericSignature/signatureOfGenericInnerSimpleOuter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("signatureOfSimpleInnerSimpleOuter.kt")
+            public void testSignatureOfSimpleInnerSimpleOuter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/genericSignature/signatureOfSimpleInnerSimpleOuter.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/reflection/isInstance")

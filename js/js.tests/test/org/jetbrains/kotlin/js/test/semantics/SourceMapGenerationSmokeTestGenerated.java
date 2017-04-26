@@ -53,5 +53,4 @@ public class SourceMapGenerationSmokeTestGenerated extends AbstractSourceMapGene
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/sourcemap/methodCallInMethod.kt");
         doTest(fileName);
     }
-
 }
