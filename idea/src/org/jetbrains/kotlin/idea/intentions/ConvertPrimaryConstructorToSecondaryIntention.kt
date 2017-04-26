@@ -40,8 +40,11 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
         KtPrimaryConstructor::class.java,
         "Convert to secondary constructor"
 ) {
-    override fun isApplicableTo(element: KtPrimaryConstructor, caretOffset: Int) =
-            element.containingClassOrObject is KtClass && element.valueParameters.all { !it.hasValOrVar() || it.annotationEntries.isEmpty() }
+    override fun isApplicableTo(element: KtPrimaryConstructor, caretOffset: Int): Boolean {
+        val containingClass = element.containingClassOrObject as? KtClass ?: return false
+        if (containingClass.isAnnotation()) return false;
+        return element.valueParameters.all { !it.hasValOrVar() || it.annotationEntries.isEmpty() }
+    }
 
     private fun KtReferenceExpression.isIndependent(classDescriptor: ClassDescriptor, context: BindingContext): Boolean {
         val referencedDescriptor = context[BindingContext.REFERENCE_TARGET, this] ?: return false
@@ -61,6 +64,7 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
 
     override fun applyTo(element: KtPrimaryConstructor, editor: Editor?) {
         val klass = element.containingClassOrObject as? KtClass ?: return
+        if (klass.isAnnotation()) return
         val context = klass.analyze()
         val factory = KtPsiFactory(klass)
         val commentSaver = CommentSaver(element)

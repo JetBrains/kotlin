@@ -5012,6 +5012,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("annotationClass.kt")
+        public void testAnnotationClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/annotationClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("defaultValueChain.kt")
         public void testDefaultValueChain() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/defaultValueChain.kt");
