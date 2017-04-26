@@ -72,6 +72,12 @@ public class DumpDeclarationsTestGenerated extends AbstractDumpDeclarationsTest 
         doTest(fileName);
     }
 
+    @TestMetadata("suspendLambda.kt")
+    public void testSuspendLambda() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/dumpDeclarations/suspendLambda.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("suspendOverride.kt")
     public void testSuspendOverride() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/dumpDeclarations/suspendOverride.kt");

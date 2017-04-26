@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
-import java.lang.UnsupportedOperationException
 import java.util.*
 
 internal class DescriptorRendererImpl(
@@ -1048,8 +1047,8 @@ internal class DescriptorRendererImpl(
             renderFunction(descriptor, builder)
         }
 
-        override fun visitReceiverParameterDescriptor(descriptor: ReceiverParameterDescriptor, data: StringBuilder) {
-            throw UnsupportedOperationException("Don't render receiver parameters")
+        override fun visitReceiverParameterDescriptor(descriptor: ReceiverParameterDescriptor, builder: StringBuilder) {
+            builder.append(descriptor.name) // renders <this>
         }
 
         override fun visitConstructorDescriptor(constructorDescriptor: ConstructorDescriptor, builder: StringBuilder) {
