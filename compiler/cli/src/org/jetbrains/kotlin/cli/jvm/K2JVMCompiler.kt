@@ -354,7 +354,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                         configuration.addJvmClasspathRoots(classesRoots)
                     }
                     else {
-                        configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
+                        configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRootsFromCurrentJre())
                     }
                 }
                 else {

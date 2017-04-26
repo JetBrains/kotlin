@@ -15,15 +15,15 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
-import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.uast.UastLanguagePlugin
 import org.jetbrains.uast.evaluation.UEvaluatorExtension
 import org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService
@@ -106,21 +106,14 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
     }
 
     private fun createKotlinCompilerConfiguration(sourceFile: File): CompilerConfiguration {
-        val configuration = CompilerConfiguration()
-        configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
+        return KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK).apply {
+            addKotlinSourceRoot(sourceFile.canonicalPath)
 
-        val kotlinLibsDir = File("dist/kotlinc/lib")
-        configuration.addJvmClasspathRoot(File(kotlinLibsDir, "kotlin-runtime.jar"))
-        configuration.addJvmClasspathRoot(File(kotlinLibsDir, "kotlin-reflect.jar"))
+            val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, true)
+            put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
 
-        configuration.addKotlinSourceRoot(sourceFile.canonicalPath)
-
-        val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, true)
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
-
-        configuration.put<String>(CommonConfigurationKeys.MODULE_NAME, "test-module")
-
-        return configuration
+            put(CommonConfigurationKeys.MODULE_NAME, "test-module")
+        }
     }
 
     private class KotlinCoreEnvironmentWrapper(val environment: KotlinCoreEnvironment,

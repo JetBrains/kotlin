@@ -84,7 +84,7 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
 
         applicationEnvironment.application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
 
-        for (root in PathUtil.getJdkClassesRoots()) {
+        for (root in PathUtil.getJdkClassesRootsFromCurrentJre()) {
             javaCoreEnvironment.addJarToClassPath(root)
         }
         val annotations: File? = findAnnotations()
