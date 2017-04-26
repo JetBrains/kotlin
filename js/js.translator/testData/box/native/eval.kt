@@ -1,4 +1,4 @@
-// MINIFICATION_THRESHOLD: 509
+// SKIP_MINIFICATION
 package foo
 
 val top = "TOP LEVEL"

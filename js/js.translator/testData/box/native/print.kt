@@ -1,4 +1,5 @@
-// MINIFICATION_THRESHOLD: 523
+// SKIP_MINIFICATION
+// This test uses eval
 // SKIP_NODE_JS
 package foo
 

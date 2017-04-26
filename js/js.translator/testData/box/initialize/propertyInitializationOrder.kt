@@ -1,4 +1,5 @@
-// MINIFICATION_THRESHOLD: 1433
+// SKIP_MINIFICATION
+// This test uses eval
 open class A {
     val a: Int
     open val b: Int
