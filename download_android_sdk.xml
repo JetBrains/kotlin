@@ -34,8 +34,9 @@
         <mkdir dir="${android.sdk.dir}/build-tools"/>
 
         <download_android_platform android.versioncode="23_r01" android.sdk.version="23" android.full.version="6.0" />
+        <download_android_platform_new android.versioncode="25_r01" android.sdk.version="25" android.full.version="7.1.1" />
 
-        <download_platform_tools android.platform.tools.version="23" />
+        <download_platform_tools android.platform.tools.version="25.0.3" />
         <download_tools android.tools.version="24.3.4" />
         <download_build_tools android.build.tools.version="23.0.1" android.build.tools.full.version="6.0" />
     </target>
@@ -58,6 +59,22 @@
 
         <sequential>
             <get src="http://dl-ssl.google.com/android/repository/android-@{android.versioncode}.zip"
+                 dest="${download.dir}/android-platform-@{android.versioncode}.zip" usetimestamp="true"/>
+
+            <unzip src="${download.dir}/android-platform-@{android.versioncode}.zip" dest="${android.sdk.dir}/platforms"/>
+
+            <move file="${android.sdk.dir}/platforms/android-@{android.full.version}" tofile="${android.sdk.dir}/platforms/android-@{android.sdk.version}"/>
+            <delete dir="${android.sdk.dir}/platforms/android-@{android.full.version}"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="download_android_platform_new">
+        <attribute name="android.versioncode" />
+        <attribute name="android.sdk.version" />
+        <attribute name="android.full.version" />
+
+        <sequential>
+            <get src="http://dl-ssl.google.com/android/repository/platform-@{android.versioncode}.zip"
                  dest="${download.dir}/android-platform-@{android.versioncode}.zip" usetimestamp="true"/>
 
             <unzip src="${download.dir}/android-platform-@{android.versioncode}.zip" dest="${android.sdk.dir}/platforms"/>

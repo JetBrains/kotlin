@@ -34,6 +34,6 @@ public class TestUtils {
 
     @NonNull
     public static String getLatestAndroidPlatform() {
-        return "android-23";
+        return "android-25";
     }
 }
