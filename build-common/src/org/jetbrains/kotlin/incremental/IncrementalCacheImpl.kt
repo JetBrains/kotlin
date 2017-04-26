@@ -149,7 +149,7 @@ open class IncrementalCacheImpl<Target>(
 
     fun saveModuleMappingToCache(sourceFiles: Collection<File>, file: File): CompilationResult {
         val jvmClassName = JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)
-        protoMap.process(jvmClassName, file.readBytes(), emptyArray<String>(), isPackage = false, checkChangesIsOpenPart = false)
+        protoMap.storeModuleMapping(jvmClassName, file.readBytes())
         dirtyOutputClassesMap.notDirty(MODULE_MAPPING_FILE_NAME)
         sourceFiles.forEach { sourceToClassesMap.add(it, jvmClassName) }
         return CompilationResult.NO_CHANGES
@@ -386,15 +386,26 @@ open class IncrementalCacheImpl<Target>(
         fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean): CompilationResult {
             val header = kotlinClass.classHeader
             val bytes = BitEncoding.decodeBytes(header.data!!)
-            return put(kotlinClass.className, bytes, header.strings!!, isPackage, checkChangesIsOpenPart = true)
+            return put(kotlinClass.className, bytes, header.strings!!, isPackage)
         }
 
-        fun process(className: JvmClassName, data: ByteArray, strings: Array<String>, isPackage: Boolean, checkChangesIsOpenPart: Boolean): CompilationResult {
-            return put(className, data, strings, isPackage, checkChangesIsOpenPart)
+        // A module mapping (.kotlin_module file) is stored in a cache,
+        // because a corresponding file will be deleted on each round
+        // (it is reported as output for each [package part?] source file).
+        // If a mapping is not preserved, a resulting file will only contain data
+        // from files compiled during last round.
+        // However there is no need to compare old and new data in this case
+        // (also that would fail with exception).
+        fun storeModuleMapping(className: JvmClassName, bytes: ByteArray): CompilationResult {
+            storage[className.internalName] = ProtoMapValue(isPackageFacade = false, bytes = bytes, strings = emptyArray())
+            return CompilationResult(protoChanged = true)
         }
 
         private fun put(
-                className: JvmClassName, bytes: ByteArray, strings: Array<String>, isPackage: Boolean, checkChangesIsOpenPart: Boolean
+                className: JvmClassName,
+                bytes: ByteArray,
+                strings: Array<String>,
+                isPackage: Boolean
         ): CompilationResult {
             val key = className.internalName
             val oldData = storage[key]
@@ -407,8 +418,6 @@ open class IncrementalCacheImpl<Target>(
             ) {
                 storage[key] = data
             }
-
-            if (!checkChangesIsOpenPart) return CompilationResult(protoChanged = true)
 
             if (oldData == null) {
                 val changes =
