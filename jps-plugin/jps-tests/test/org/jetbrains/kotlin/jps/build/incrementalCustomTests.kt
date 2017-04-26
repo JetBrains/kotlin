@@ -29,5 +29,4 @@ open class IncrementalRenameModuleTest : AbstractIncrementalJpsTest() {
 }
 
 class ExperimentalIncrementalRenameModuleTest : IncrementalRenameModuleTest() {
-    override val enableExperimentalIncrementalCompilation = true
 }

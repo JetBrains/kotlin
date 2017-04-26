@@ -31,7 +31,7 @@ fun customCacheVersion(version: Int, fileName: String, dataRoot: File, forceEnab
                 whenVersionChanged = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                 whenTurnedOn = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                 whenTurnedOff = CacheVersion.Action.REBUILD_ALL_KOTLIN,
-                isEnabled = { IncrementalCompilation.isExperimental() || forceEnable })
+                isEnabled = { IncrementalCompilation.isEnabled() || forceEnable })
 
 fun commonCacheVersions(cachesDir: File): List<CacheVersion> =
         listOf(normalCacheVersion(cachesDir),

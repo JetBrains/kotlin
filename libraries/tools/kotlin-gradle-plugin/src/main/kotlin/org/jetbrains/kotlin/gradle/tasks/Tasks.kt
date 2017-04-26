@@ -94,7 +94,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             field = value
             logger.kotlinDebug { "Set $this.incremental=$value" }
             System.setProperty("kotlin.incremental.compilation", value.toString())
-            System.setProperty("kotlin.incremental.compilation.experimental", value.toString())
         }
 
     private lateinit var destinationDirProvider: Lazy<File>
