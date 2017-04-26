@@ -2987,6 +2987,9 @@ public abstract interface class kotlin/properties/ReadWriteProperty {
 	public abstract fun setValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
 }
 
+public abstract interface annotation class kotlin/properties/StatelessProperty : java/lang/annotation/Annotation {
+}
+
 public class kotlin/ranges/CharProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/CharProgression$Companion;
 	public fun equals (Ljava/lang/Object;)Z

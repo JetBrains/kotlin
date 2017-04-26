@@ -312,7 +312,7 @@ class DelegatedPropertyResolver(
     ): OverloadResolutionResults<FunctionDescriptor> {
         val expectedType = TypeUtils.NO_EXPECTED_TYPE
         val context = ExpressionTypingContext.newContext(trace, initializerScope, dataFlowInfo, expectedType)
-        val propertyHasReceiver = propertyDescriptor.dispatchReceiverParameter != null
+        val propertyHasReceiver = propertyDescriptor.dispatchReceiverParameter != null && !KotlinBuiltIns.isStatelessProperty(delegateExpressionType)
         val arguments = KtPsiFactory(delegateExpression, markGenerated = false).run {
             listOf(
                     createExpression(if (propertyHasReceiver) "this" else "null"),

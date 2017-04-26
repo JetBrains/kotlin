@@ -72,7 +72,7 @@ class MultifileClassPartCodegen(
 
     private val requiresDeferredStaticInitialization =
             shouldGeneratePartHierarchy && file.declarations.any {
-                it is KtProperty && shouldInitializeProperty(it)
+                it is KtProperty && propertyCodegen.shouldInitializeProperty(it)
             }
 
     override fun generate() {

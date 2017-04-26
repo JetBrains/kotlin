@@ -23,6 +23,7 @@ import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedSimple;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.inline.*;
@@ -462,8 +463,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         NotNullLazyValue<ExpressionCodegen> codegen = LockBasedStorageManager.NO_LOCKS.createLazyValue(createCodegen);
         for (KtDeclaration declaration : ((KtDeclarationContainer) element).getDeclarations()) {
             if (declaration instanceof KtProperty) {
-                if (shouldInitializeProperty((KtProperty) declaration)) {
-                    initializeProperty(codegen.invoke(), (KtProperty) declaration);
+                if (propertyCodegen.shouldInitializeProperty((KtProperty) declaration)) {
+                    propertyCodegen.initializeProperty(codegen.invoke(), (KtProperty) declaration);
                 }
             }
             else if (declaration instanceof KtAnonymousInitializer) {
@@ -478,105 +479,16 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     public void beforeMethodBody(@NotNull MethodVisitor mv) {
     }
 
-    private void initializeProperty(@NotNull ExpressionCodegen codegen, @NotNull KtProperty property) {
-        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
-        assert propertyDescriptor != null;
-
-        KtExpression initializer = property.getDelegateExpressionOrInitializer();
-        assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
-
-        StackValue.Property propValue = codegen.intermediateValueForProperty(
-                propertyDescriptor, true, false, null, true, StackValue.LOCAL_0, null);
-
-        ResolvedCall<FunctionDescriptor> provideDelegateResolvedCall = bindingContext.get(PROVIDE_DELEGATE_RESOLVED_CALL, propertyDescriptor);
-        if (provideDelegateResolvedCall == null) {
-            propValue.store(codegen.gen(initializer), codegen.v);
-            return;
-        }
-
-        StackValue provideDelegateReceiver = codegen.gen(initializer);
-
-        int indexOfDelegatedProperty = PropertyCodegen.indexOfDelegatedProperty(property);
-
-        StackValue delegateValue = PropertyCodegen.invokeDelegatedPropertyConventionMethodWithReceiver(
-                codegen, typeMapper, provideDelegateResolvedCall, indexOfDelegatedProperty, 1,
-                provideDelegateReceiver, propertyDescriptor
-        );
-
-        propValue.store(delegateValue, codegen.v);
-    }
-
-    protected boolean shouldInitializeProperty(@NotNull KtProperty property) {
-        if (!property.hasDelegateExpressionOrInitializer()) return false;
-
-        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
-        assert propertyDescriptor != null;
-
-        if (propertyDescriptor.isConst()) {
-            //const initializer always inlined
-            return false;
-        }
-
-        KtExpression initializer = property.getInitializer();
-
-        ConstantValue<?> initializerValue =
-                initializer != null ? ExpressionCodegen.getCompileTimeConstant(initializer, bindingContext, state.getShouldInlineConstVals()) : null;
-        // we must write constant values for fields in light classes,
-        // because Java's completion for annotation arguments uses this information
-        if (initializerValue == null) return state.getClassBuilderMode().generateBodies;
-
-        //TODO: OPTIMIZATION: don't initialize static final fields
-        KotlinType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
-        Type type = typeMapper.mapType(jetType);
-        return !skipDefaultValue(propertyDescriptor, initializerValue.getValue(), type);
-    }
-
-    @NotNull
-    private KotlinType getPropertyOrDelegateType(@NotNull KtProperty property, @NotNull PropertyDescriptor descriptor) {
-        KtExpression delegateExpression = property.getDelegateExpression();
-        if (delegateExpression != null) {
-            KotlinType delegateType = bindingContext.getType(delegateExpression);
-            assert delegateType != null : "Type of delegate expression should be recorded";
-            return delegateType;
-        }
-        return descriptor.getType();
-    }
-
-    private static boolean skipDefaultValue(@NotNull PropertyDescriptor propertyDescriptor, Object value, @NotNull Type type) {
-        if (isPrimitive(type)) {
-            if (!propertyDescriptor.getType().isMarkedNullable() && value instanceof Number) {
-                if (type == Type.INT_TYPE && ((Number) value).intValue() == 0) {
-                    return true;
-                }
-                if (type == Type.BYTE_TYPE && ((Number) value).byteValue() == 0) {
-                    return true;
-                }
-                if (type == Type.LONG_TYPE && ((Number) value).longValue() == 0L) {
-                    return true;
-                }
-                if (type == Type.SHORT_TYPE && ((Number) value).shortValue() == 0) {
-                    return true;
-                }
-                if (type == Type.DOUBLE_TYPE && ((Number) value).doubleValue() == 0d) {
-                    return true;
-                }
-                if (type == Type.FLOAT_TYPE && ((Number) value).floatValue() == 0f) {
-                    return true;
+    void generateStatelessPropertyInitializers() {
+        List<KtProperty> delegatedProperties = new ArrayList<>();
+        for (KtDeclaration declaration : ((KtDeclarationContainer) element).getDeclarations()) {
+            if(declaration instanceof KtProperty){
+                KtProperty propDeclaration =  (KtProperty) declaration;
+                if(propDeclaration.hasDelegate()){
+                    propertyCodegen.generateStatelessInitializerIfNeeded(createOrGetClInitCodegen(), propDeclaration);
                 }
             }
-            if (type == Type.BOOLEAN_TYPE && value instanceof Boolean && !((Boolean) value)) {
-                return true;
-            }
-            if (type == Type.CHAR_TYPE && value instanceof Character && ((Character) value) == 0) {
-                return true;
-            }
         }
-        else {
-            if (value == null) {
-                return true;
-            }
-        }
-        return false;
     }
 
     protected void generatePropertyMetadataArrayFieldIfNeeded(@NotNull Type thisAsmType) {

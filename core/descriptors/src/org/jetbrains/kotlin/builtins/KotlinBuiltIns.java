@@ -57,6 +57,7 @@ public abstract class KotlinBuiltIns {
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
     private static final FqName ANNOTATION_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("annotation"));
     public static final FqName COLLECTIONS_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("collections"));
+    public static final FqName PROPERTIES_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("properties"));
     public static final FqName RANGES_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("ranges"));
     public static final FqName TEXT_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("text"));
 
@@ -321,6 +322,7 @@ public abstract class KotlinBuiltIns {
         public final FqName mutableSet = collectionsFqName("MutableSet");
         public final FqName mutableMap = collectionsFqName("MutableMap");
         public final FqName mutableMapEntry = mutableMap.child(Name.identifier("MutableEntry"));
+        public final FqName statelessProperty = propertiesName("StatelessProperty");
 
         public final FqNameUnsafe kClass = reflect("KClass");
         public final FqNameUnsafe kCallable = reflect("KCallable");
@@ -371,6 +373,11 @@ public abstract class KotlinBuiltIns {
         @NotNull
         private static FqName annotationName(@NotNull String simpleName) {
             return ANNOTATION_PACKAGE_FQ_NAME.child(Name.identifier(simpleName));
+        }
+
+        @NotNull
+        private static FqName propertiesName(@NotNull String simpleName) {
+            return PROPERTIES_PACKAGE_FQ_NAME.child(Name.identifier(simpleName));
         }
     }
 
@@ -1070,6 +1077,10 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isIterableOrNullableIterable(@NotNull KotlinType type) {
         return isConstructedFromGivenClass(type, FQ_NAMES.iterable);
+    }
+
+    public static boolean isStatelessProperty(@NotNull KotlinType type) {
+        return containsAnnotation(type.getConstructor().getDeclarationDescriptor(), FQ_NAMES.statelessProperty);
     }
 
     public static boolean isKClass(@NotNull ClassDescriptor descriptor) {

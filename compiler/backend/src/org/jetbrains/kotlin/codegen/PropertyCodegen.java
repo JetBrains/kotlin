@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithFakeAnnotations;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
@@ -57,10 +59,13 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getDeprecatedAccessFlag;
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityForBackingField;
+import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.FIELD_FOR_PROPERTY;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY;
+import static org.jetbrains.kotlin.resolve.BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL;
+import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PROPERTY_TYPE;
@@ -321,6 +326,10 @@ public class PropertyCodegen {
             modifiers |= ACC_STATIC;
         }
 
+        if (KotlinBuiltIns.isStatelessProperty(kotlinType)){
+            modifiers |= ACC_STATIC;
+        }
+
         if (!propertyDescriptor.isLateInit() && (!propertyDescriptor.isVar() || isDelegate)) {
             modifiers |= ACC_FINAL;
         }
@@ -375,7 +384,7 @@ public class PropertyCodegen {
     }
 
     @NotNull
-    private KotlinType getDelegateTypeForProperty(@NotNull KtProperty p, @NotNull PropertyDescriptor propertyDescriptor) {
+    KotlinType getDelegateTypeForProperty(@NotNull KtProperty p, @NotNull PropertyDescriptor propertyDescriptor) {
         KotlinType delegateType = null;
 
         ResolvedCall<FunctionDescriptor> provideDelegateResolvedCall =
@@ -463,6 +472,113 @@ public class PropertyCodegen {
         functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(accessor != null ? accessor : p, accessorDescriptor), accessorDescriptor, strategy);
     }
 
+    public void initializeProperty(@NotNull ExpressionCodegen codegen, @NotNull KtProperty property) {
+        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
+        assert propertyDescriptor != null;
+
+        KtExpression initializer = property.getDelegateExpressionOrInitializer();
+        assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
+
+        StackValue.Property propValue = codegen.intermediateValueForProperty(
+                propertyDescriptor, true, false, null, true, StackValue.LOCAL_0, null);
+
+        ResolvedCall<FunctionDescriptor> provideDelegateResolvedCall = bindingContext.get(PROVIDE_DELEGATE_RESOLVED_CALL, propertyDescriptor);
+        if (provideDelegateResolvedCall == null) {
+            propValue.store(codegen.gen(initializer), codegen.v);
+            return;
+        }
+
+        StackValue provideDelegateReceiver = codegen.gen(initializer);
+
+        int indexOfDelegatedProperty = PropertyCodegen.indexOfDelegatedProperty(property);
+
+        StackValue delegateValue = PropertyCodegen.invokeDelegatedPropertyConventionMethodWithReceiver(
+                codegen, typeMapper, provideDelegateResolvedCall, indexOfDelegatedProperty, 1,
+                provideDelegateReceiver, propertyDescriptor
+        );
+
+        propValue.store(delegateValue, codegen.v);
+    }
+
+    protected boolean shouldInitializeProperty(@NotNull KtProperty property) {
+        if (!property.hasDelegateExpressionOrInitializer()) return false;
+
+        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
+        assert propertyDescriptor != null;
+
+        if (propertyDescriptor.isConst()) {
+            //const initializer always inlined
+            return false;
+        }
+
+        KotlinType kotlinType = getDelegateTypeForProperty(property, propertyDescriptor);
+
+        if(KotlinBuiltIns.isStatelessProperty(kotlinType)) {
+            return false;
+        }
+
+        KtExpression initializer = property.getInitializer();
+
+        ConstantValue<?> initializerValue =
+                initializer != null ? ExpressionCodegen.getCompileTimeConstant(initializer, bindingContext, state.getShouldInlineConstVals()) : null;
+        // we must write constant values for fields in light classes,
+        // because Java's completion for annotation arguments uses this information
+        if (initializerValue == null) return state.getClassBuilderMode().generateBodies;
+
+        //TODO: OPTIMIZATION: don't initialize static final fields
+        KotlinType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
+        Type type = typeMapper.mapType(jetType);
+        return !skipDefaultValue(propertyDescriptor, initializerValue.getValue(), type);
+    }
+
+    @NotNull
+    private KotlinType getPropertyOrDelegateType(@NotNull KtProperty property, @NotNull PropertyDescriptor descriptor) {
+        KtExpression delegateExpression = property.getDelegateExpression();
+        if (delegateExpression != null) {
+            KotlinType delegateType = bindingContext.getType(delegateExpression);
+            assert delegateType != null : "Type of delegate expression should be recorded";
+            return delegateType;
+        }
+        return descriptor.getType();
+    }
+
+    private static boolean skipDefaultValue(@NotNull PropertyDescriptor propertyDescriptor, Object value, @NotNull Type type) {
+        if (isPrimitive(type)) {
+            if (!propertyDescriptor.getType().isMarkedNullable() && value instanceof Number) {
+                if (type == Type.INT_TYPE && ((Number) value).intValue() == 0) {
+                    return true;
+                }
+                if (type == Type.BYTE_TYPE && ((Number) value).byteValue() == 0) {
+                    return true;
+                }
+                if (type == Type.LONG_TYPE && ((Number) value).longValue() == 0L) {
+                    return true;
+                }
+                if (type == Type.SHORT_TYPE && ((Number) value).shortValue() == 0) {
+                    return true;
+                }
+                if (type == Type.DOUBLE_TYPE && ((Number) value).doubleValue() == 0d) {
+                    return true;
+                }
+                if (type == Type.FLOAT_TYPE && ((Number) value).floatValue() == 0f) {
+                    return true;
+                }
+            }
+            if (type == Type.BOOLEAN_TYPE && value instanceof Boolean && !((Boolean) value)) {
+                return true;
+            }
+            if (type == Type.CHAR_TYPE && value instanceof Character && ((Character) value) == 0) {
+                return true;
+            }
+        }
+        else {
+            if (value == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static int indexOfDelegatedProperty(@NotNull KtProperty property) {
         PsiElement parent = property.getParent();
         KtDeclarationContainer container;
@@ -491,6 +607,15 @@ public class PropertyCodegen {
         }
 
         throw new IllegalStateException("Delegated property not found in its parent: " + PsiUtilsKt.getElementTextWithContext(property));
+    }
+
+    public void generateStatelessInitializerIfNeeded(ExpressionCodegen codegen, KtProperty propDeclaration) {
+        PropertyDescriptor propDescriptor = (PropertyDescriptor) BindingContextUtils
+                .getNotNull(bindingContext, VARIABLE, propDeclaration);
+        KotlinType kotlinType = getDelegateTypeForProperty(propDeclaration, propDescriptor);
+        if (KotlinBuiltIns.isStatelessProperty(kotlinType)) {
+            initializeProperty(codegen, propDeclaration);
+        }
     }
 
 
