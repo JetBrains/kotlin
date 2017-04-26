@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.HashMap
 
 inline fun <reified T : IrElement> T.deepCopyOld() =
-        transform(OldDeepCopyIrTree(), null) as T
+        transform(DeepCopyIrTree(), null) as T
 
-open class OldDeepCopyIrTree : IrElementTransformerVoid() {
+open class DeepCopyIrTree : IrElementTransformerVoid() {
     protected open fun mapDeclarationOrigin(declarationOrigin: IrDeclarationOrigin) = declarationOrigin
     protected open fun mapStatementOrigin(statementOrigin: IrStatementOrigin?) = statementOrigin
     protected open fun mapFileEntry(fileEntry: SourceManager.FileEntry) = fileEntry
@@ -63,7 +63,7 @@ open class OldDeepCopyIrTree : IrElementTransformerVoid() {
     protected open fun mapClassifierReference(descriptor: ClassifierDescriptor) = descriptor
     protected open fun mapReturnTarget(descriptor: FunctionDescriptor) = mapCallee(descriptor)
 
-    private inline fun <reified T : IrElement> T.transform() = transform(this@OldDeepCopyIrTree, null) as T
+    private inline fun <reified T : IrElement> T.transform() = transform(this@DeepCopyIrTree, null) as T
 
     override fun visitElement(element: IrElement): IrElement =
             throw IllegalArgumentException("Unsupported element type: $element")
