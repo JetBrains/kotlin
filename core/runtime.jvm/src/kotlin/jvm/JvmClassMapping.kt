@@ -86,7 +86,7 @@ public val <T : Any> KClass<T>.javaObjectType: Class<T>
  */
 public val <T : Any> Class<T>.kotlin: KClass<T>
     @JvmName("getKotlinClass")
-    get() = Reflection.createKotlinClass(this) as KClass<T>
+    get() = Reflection.getOrCreateKotlinClass(this) as KClass<T>
 
 
 /**
