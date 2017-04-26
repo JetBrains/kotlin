@@ -71,8 +71,6 @@ abstract class AbstractIncrementalJpsTest(
         private val DEBUG_LOGGING_ENABLED = System.getProperty("debug.logging.enabled") == "true"
     }
 
-    protected open val enableExperimentalIncrementalCompilation = false
-
     protected lateinit var testDataDir: File
     protected lateinit var workDir: File
     protected lateinit var projectDescriptor: ProjectDescriptor
@@ -81,7 +79,7 @@ abstract class AbstractIncrementalJpsTest(
     protected var mapWorkingToOriginalFile: MutableMap<File, File> = hashMapOf()
 
     protected open val buildLogFinder: BuildLogFinder
-        get() = BuildLogFinder(isExperimentalEnabled = enableExperimentalIncrementalCompilation)
+        get() = BuildLogFinder(isExperimentalEnabled = true)
 
     private fun enableDebugLogging() {
         com.intellij.openapi.diagnostic.Logger.setFactory(TestLoggerFactory::class.java)
@@ -112,7 +110,7 @@ abstract class AbstractIncrementalJpsTest(
     override fun setUp() {
         super.setUp()
         lookupsDuringTest = hashSetOf()
-        IncrementalCompilation.setIsExperimental(enableExperimentalIncrementalCompilation)
+        IncrementalCompilation.setIsEnabled(true)
 
         if (DEBUG_LOGGING_ENABLED) {
             enableDebugLogging()
@@ -278,8 +276,6 @@ abstract class AbstractIncrementalJpsTest(
         else if (!allowNoBuildLogFileInTestData) {
             throw IllegalStateException("No build log file in $testDataDir")
         }
-
-        if (!enableExperimentalIncrementalCompilation && File(testDataDir, "dont-check-caches-in-non-experimental-ic.txt").exists()) return
 
         val lastMakeResult = otherMakeResults.last()
         rebuildAndCheckOutput(lastMakeResult)

@@ -92,7 +92,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     override fun buildStarted(context: CompileContext) {
         LOG.debug("==========================================")
         LOG.info("is Kotlin incremental compilation enabled: ${IncrementalCompilation.isEnabled()}")
-        LOG.info("is Kotlin experimental incremental compilation enabled: ${IncrementalCompilation.isExperimental()}")
         LOG.info("is Kotlin compiler daemon enabled: ${isDaemonEnabled()}")
 
         val historyLabel = context.getBuilderParameter("history label")
@@ -643,8 +642,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
             filesToCompile: MultiMap<ModuleBuildTarget, File>
     ) {
-        if (!IncrementalCompilation.isExperimental()) return
-
         if (lookupTracker !is LookupTrackerImpl) throw AssertionError("Lookup tracker is expected to be LookupTrackerImpl, got ${lookupTracker::class.java}")
 
         val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
@@ -845,7 +842,7 @@ private fun CompilationResult.processChangesUsingLookups(
 private fun getLookupTracker(project: JpsProject): LookupTracker {
     val testLookupTracker = project.testingContext?.lookupTracker ?: LookupTracker.DO_NOTHING
 
-    if (IncrementalCompilation.isExperimental()) return LookupTrackerImpl(testLookupTracker)
+    if (IncrementalCompilation.isEnabled()) return LookupTrackerImpl(testLookupTracker)
 
     return testLookupTracker
 }

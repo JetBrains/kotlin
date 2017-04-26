@@ -20,11 +20,6 @@ import org.jetbrains.annotations.TestOnly;
 
 public class IncrementalCompilation {
     private static final String INCREMENTAL_COMPILATION_PROPERTY = "kotlin.incremental.compilation";
-    private static final String IS_EXPERIMENTAL_PROPERTY = "kotlin.incremental.compilation.experimental";
-
-    public static boolean isExperimental() {
-        return isEnabled() && "true".equals(System.getProperty(IS_EXPERIMENTAL_PROPERTY));
-    }
 
     public static boolean isEnabled() {
         return !"false".equals(System.getProperty(INCREMENTAL_COMPILATION_PROPERTY));
@@ -33,10 +28,5 @@ public class IncrementalCompilation {
     @TestOnly
     public static void setIsEnabled(boolean value) {
         System.setProperty(INCREMENTAL_COMPILATION_PROPERTY, String.valueOf(value));
-    }
-
-    @TestOnly
-    public static void setIsExperimental(boolean value) {
-        System.setProperty(IS_EXPERIMENTAL_PROPERTY, String.valueOf(value));
     }
 }

@@ -165,7 +165,7 @@ open class IncrementalCacheImpl<Target>(
             sourceToClassesMap.add(it, className)
         }
 
-        if (IncrementalCompilation.isExperimental()) {
+        if (IncrementalCompilation.isEnabled()) {
             internalNameToSource[className.internalName] = sourceFiles
         }
 
@@ -290,7 +290,7 @@ open class IncrementalCacheImpl<Target>(
                                 .toList()
 
         val changes =
-                if (IncrementalCompilation.isExperimental())
+                if (IncrementalCompilation.isEnabled())
                     dirtyClasses.flatMap { computeChanges(it, ::Removed) }.asSequence()
                 else
                     emptySequence<ChangeInfo>()
@@ -416,7 +416,7 @@ open class IncrementalCacheImpl<Target>(
 
             if (oldData == null) {
                 val changes =
-                        if (IncrementalCompilation.isExperimental())
+                        if (IncrementalCompilation.isEnabled())
                             computeChanges(className, ::MembersChanged).asSequence()
                         else
                             emptySequence<ChangeInfo>()
@@ -492,7 +492,7 @@ open class IncrementalCacheImpl<Target>(
             }
 
             val changes =
-                    if (!IncrementalCompilation.isExperimental() ||
+                    if (!IncrementalCompilation.isEnabled() ||
                         constantsMap == null || constantsMap.isEmpty() ||
                         oldMap == null || oldMap.isEmpty()
                     ) {
@@ -617,7 +617,7 @@ open class IncrementalCacheImpl<Target>(
     }
 
     private fun addToClassStorage(kotlinClass: LocalFileKotlinClass, srcFile: File) {
-        if (!IncrementalCompilation.isExperimental()) return
+        if (!IncrementalCompilation.isEnabled()) return
 
         val classData = JvmProtoBufUtil.readClassDataFrom(kotlinClass.classHeader.data!!, kotlinClass.classHeader.strings!!)
         val supertypes = classData.classProto.supertypes(TypeTable(classData.classProto.typeTable))
@@ -636,7 +636,7 @@ open class IncrementalCacheImpl<Target>(
     }
 
     private fun removeAllFromClassStorage(removedClasses: Collection<JvmClassName>) {
-        if (!IncrementalCompilation.isExperimental() || removedClasses.isEmpty()) return
+        if (!IncrementalCompilation.isEnabled() || removedClasses.isEmpty()) return
 
         val removedFqNames = removedClasses.map { it.fqNameForClassNameWithoutDollars }.toSet()
 
@@ -738,7 +738,7 @@ open class IncrementalCacheImpl<Target>(
             }
 
             val changes =
-                    if (IncrementalCompilation.isExperimental()) {
+                    if (IncrementalCompilation.isEnabled()) {
                         val fqName = if (isPackage) className.packageFqName else className.fqNameForClassNameWithoutDollars
                         // TODO get name in better way instead of using substringBefore
                         (added.asSequence() + changed.asSequence()).map { ChangeInfo.MembersChanged(fqName, listOf(it.substringBefore("("))) }

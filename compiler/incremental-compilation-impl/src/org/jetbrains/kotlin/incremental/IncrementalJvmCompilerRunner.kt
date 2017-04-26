@@ -73,16 +73,13 @@ private object EmptyICReporter : ICReporter {
 
 inline fun <R> withIC(fn: ()->R): R {
     val isEnabledBackup = IncrementalCompilation.isEnabled()
-    val isExperimentalBackup = IncrementalCompilation.isExperimental()
     IncrementalCompilation.setIsEnabled(true)
-    IncrementalCompilation.setIsExperimental(true)
 
     try {
         return fn()
     }
     finally {
         IncrementalCompilation.setIsEnabled(isEnabledBackup)
-        IncrementalCompilation.setIsExperimental(isExperimentalBackup)
     }
 }
 
@@ -259,7 +256,6 @@ class IncrementalJvmCompilerRunner(
             messageCollector: MessageCollector
     ): ExitCode {
         assert(IncrementalCompilation.isEnabled()) { "Incremental compilation is not enabled" }
-        assert(IncrementalCompilation.isExperimental()) { "Experimental incremental compilation is not enabled" }
 
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
         val dirtySources: MutableList<File>

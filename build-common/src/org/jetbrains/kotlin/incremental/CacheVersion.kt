@@ -112,7 +112,7 @@ fun experimentalCacheVersion(dataRoot: File): CacheVersion =
                      whenVersionChanged = CacheVersion.Action.REBUILD_CHUNK,
                      whenTurnedOn = CacheVersion.Action.REBUILD_CHUNK,
                      whenTurnedOff = CacheVersion.Action.CLEAN_EXPERIMENTAL_CACHES,
-                     isEnabled = { IncrementalCompilation.isExperimental() })
+                     isEnabled = { IncrementalCompilation.isEnabled() })
 
 fun dataContainerCacheVersion(dataRoot: File): CacheVersion =
         CacheVersion(ownVersion = DATA_CONTAINER_VERSION,
@@ -120,4 +120,4 @@ fun dataContainerCacheVersion(dataRoot: File): CacheVersion =
                      whenVersionChanged = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                      whenTurnedOn = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                      whenTurnedOff = CacheVersion.Action.CLEAN_DATA_CONTAINER,
-                     isEnabled = { IncrementalCompilation.isExperimental() })
+                     isEnabled = { IncrementalCompilation.isEnabled() })
