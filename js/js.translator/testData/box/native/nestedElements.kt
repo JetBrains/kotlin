@@ -1,4 +1,5 @@
-// MINIFICATION_THRESHOLD: 539
+// SKIP_MINIFICATION
+// For some reason does not work in Rhino (though works in browser)
 package foo
 
 fun box(): String {
