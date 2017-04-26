@@ -20,12 +20,9 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 
-abstract class AbstractExperimentalIncrementalJpsTest : AbstractIncrementalJpsTest() {
-    override val enableExperimentalIncrementalCompilation = true
-}
+abstract class AbstractExperimentalIncrementalJpsTest : AbstractIncrementalJpsTest()
 
 abstract class AbstractExperimentalIncrementalLazyCachesTest : AbstractIncrementalLazyCachesTest() {
-    override val enableExperimentalIncrementalCompilation = true
 
     override val expectedCachesFileName: String
         get() = "experimental-expected-kotlin-caches.txt"
@@ -34,8 +31,6 @@ abstract class AbstractExperimentalIncrementalLazyCachesTest : AbstractIncrement
 abstract class AbstractExperimentalChangeIncrementalOptionTest : AbstractIncrementalLazyCachesTest()
 
 abstract class AbstractExperimentalIncrementalCacheVersionChangedTest : AbstractIncrementalCacheVersionChangedTest() {
-    override val enableExperimentalIncrementalCompilation = true
-
     override fun getVersions(cacheVersionProvider: CacheVersionProvider, targets: Iterable<ModuleBuildTarget>) =
             targets.map { cacheVersionProvider.experimentalVersion(it) }
 }

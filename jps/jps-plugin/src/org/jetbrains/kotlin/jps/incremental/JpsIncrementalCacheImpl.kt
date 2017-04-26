@@ -45,7 +45,7 @@ class JpsIncrementalCacheImpl(
     private val inlinedTo = registerMap(InlineFunctionsFilesMap(INLINED_TO.storageFile))
 
     override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
-        if (!IncrementalCompilation.isExperimental()) {
+        if (!IncrementalCompilation.isEnabled()) {
             inlinedTo.add(fromPath, jvmSignature, toPath)
         }
     }
