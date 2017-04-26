@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package templates
 
 import templates.Family.*
@@ -540,6 +556,67 @@ fun generators(): List<GenericFunction> {
             }
             return Pair(first$toString, second$toString)
             """
+        }
+    }
+
+    templates add f("pairwise(transform: (a: T, b: T) -> R)") {
+        since("1.2")
+        only(Iterables, Sequences, CharSequences)
+        typeParam("R")
+
+        returns("List<R>")
+        inline(true)
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return emptyList()
+            val result = mutableListOf<R>()
+            var current = iterator.next()
+            while (iterator.hasNext()) {
+                val next = iterator.next()
+                result.add(transform(current, next))
+                current = next
+            }
+            return result
+            """
+        }
+        body(CharSequences) { f ->
+            """
+            val size = ${if (f == CharSequences) "length" else "size" } - 1
+            if (size < 1) return emptyList()
+            val result = ArrayList<R>(size)
+            for (index in 0..size - 1) {
+                result.add(transform(this[index], this[index + 1]))
+            }
+            return result
+            """
+
+        }
+        inline(false, Sequences)
+        returns(Sequences) { "Sequence<R>" }
+        body(Sequences) {
+            """
+            return buildSequence result@ {
+                val iterator = iterator()
+                if (!iterator.hasNext()) return@result
+                var current = iterator.next()
+                while (iterator.hasNext()) {
+                    val next = iterator.next()
+                    yield(transform(current, next))
+                    current = next
+                }
+            }
+            """
+        }
+    }
+
+    templates add f("pairwise()") {
+        since("1.2")
+        only(Iterables, Sequences, CharSequences)
+        returns("List<Pair<T, T>>")
+        returns(Sequences) { "Sequence<Pair<T, T>>" }
+        body {
+            "return pairwise { a, b -> a to b }"
         }
     }
 

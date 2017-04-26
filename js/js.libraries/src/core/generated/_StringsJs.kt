@@ -1104,6 +1104,22 @@ public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
     return sum
 }
 
+@SinceKotlin("1.2")
+public fun CharSequence.pairwise(): List<Pair<Char, Char>> {
+    return pairwise { a, b -> a to b }
+}
+
+@SinceKotlin("1.2")
+public inline fun <R> CharSequence.pairwise(transform: (a: Char, b: Char) -> R): List<R> {
+    val size = length - 1
+    if (size < 1) return emptyList()
+    val result = ArrayList<R>(size)
+    for (index in 0..size - 1) {
+        result.add(transform(this[index], this[index + 1]))
+    }
+    return result
+}
+
 /**
  * Splits the original char sequence into pair of char sequences,
  * where *first* char sequence contains characters for which [predicate] yielded `true`,

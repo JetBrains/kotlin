@@ -1666,6 +1666,8 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun none (Ljava/lang/Iterable;)Z
 	public static final fun none (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun onEach (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/lang/Iterable;
+	public static final fun pairwise (Ljava/lang/Iterable;)Ljava/util/List;
+	public static final fun pairwise (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun partition (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Lkotlin/Pair;
 	public static final fun plus (Ljava/lang/Iterable;Ljava/lang/Iterable;)Ljava/util/List;
 	public static final fun plus (Ljava/lang/Iterable;Ljava/lang/Object;)Ljava/util/List;
@@ -3512,6 +3514,8 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun none (Lkotlin/sequences/Sequence;)Z
 	public static final fun none (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun onEach (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Lkotlin/sequences/Sequence;
+	public static final fun pairwise (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
+	public static final fun pairwise (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 	public static final fun partition (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Lkotlin/Pair;
 	public static final fun plus (Lkotlin/sequences/Sequence;Ljava/lang/Iterable;)Lkotlin/sequences/Sequence;
 	public static final fun plus (Lkotlin/sequences/Sequence;Ljava/lang/Object;)Lkotlin/sequences/Sequence;
@@ -3871,6 +3875,8 @@ public final class kotlin/text/StringsKt {
 	public static final fun padStart (Ljava/lang/String;IC)Ljava/lang/String;
 	public static synthetic fun padStart$default (Ljava/lang/CharSequence;ICILjava/lang/Object;)Ljava/lang/CharSequence;
 	public static synthetic fun padStart$default (Ljava/lang/String;ICILjava/lang/Object;)Ljava/lang/String;
+	public static final fun pairwise (Ljava/lang/CharSequence;)Ljava/util/List;
+	public static final fun pairwise (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun partition (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Lkotlin/Pair;
 	public static final fun partition (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lkotlin/Pair;
 	public static final fun prependIndent (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;

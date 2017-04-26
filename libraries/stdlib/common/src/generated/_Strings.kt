@@ -638,6 +638,12 @@ public header inline fun CharSequence.sumBy(selector: (Char) -> Int): Int
  */
 public header inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double
 
+@SinceKotlin("1.2")
+public header fun CharSequence.pairwise(): List<Pair<Char, Char>>
+
+@SinceKotlin("1.2")
+public header inline fun <R> CharSequence.pairwise(transform: (a: Char, b: Char) -> R): List<R>
+
 /**
  * Splits the original char sequence into pair of char sequences,
  * where *first* char sequence contains characters for which [predicate] yielded `true`,

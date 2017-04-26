@@ -1839,6 +1839,25 @@ public inline fun <T> Iterable<T>.minusElement(element: T): List<T> {
     return minus(element)
 }
 
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.pairwise(): List<Pair<T, T>> {
+    return pairwise { a, b -> a to b }
+}
+
+@SinceKotlin("1.2")
+public inline fun <T, R> Iterable<T>.pairwise(transform: (a: T, b: T) -> R): List<R> {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return emptyList()
+    val result = mutableListOf<R>()
+    var current = iterator.next()
+    while (iterator.hasNext()) {
+        val next = iterator.next()
+        result.add(transform(current, next))
+        current = next
+    }
+    return result
+}
+
 /**
  * Splits the original collection into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,

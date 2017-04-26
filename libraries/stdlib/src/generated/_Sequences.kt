@@ -1415,6 +1415,25 @@ public inline fun <T> Sequence<T>.minusElement(element: T): Sequence<T> {
     return minus(element)
 }
 
+@SinceKotlin("1.2")
+public fun <T> Sequence<T>.pairwise(): Sequence<Pair<T, T>> {
+    return pairwise { a, b -> a to b }
+}
+
+@SinceKotlin("1.2")
+public fun <T, R> Sequence<T>.pairwise(transform: (a: T, b: T) -> R): Sequence<R> {
+    return buildSequence result@ {
+        val iterator = iterator()
+        if (!iterator.hasNext()) return@result
+        var current = iterator.next()
+        while (iterator.hasNext()) {
+            val next = iterator.next()
+            yield(transform(current, next))
+            current = next
+        }
+    }
+}
+
 /**
  * Splits the original sequence into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
