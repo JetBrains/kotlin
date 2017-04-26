@@ -32,7 +32,7 @@ class DefaultCallArgs(val size: Int) {
         bits.set(index)
     }
 
-    fun toInts(): List<Int> {
+    private fun toInts(): List<Int> {
         if (bits.isEmpty || size == 0) {
             return emptyList()
         }
@@ -56,11 +56,11 @@ class DefaultCallArgs(val size: Int) {
         val toInts = toInts()
         if (!toInts.isEmpty()) {
             for (mask in toInts) {
-                callGenerator.putValueIfNeeded(Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE))
+                callGenerator.putValueIfNeeded(Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE), ValueKind.DEFAULT_MASK)
             }
 
             val parameterType = if (isConstructor) AsmTypes.DEFAULT_CONSTRUCTOR_MARKER else AsmTypes.OBJECT_TYPE
-            callGenerator.putValueIfNeeded(parameterType, StackValue.constant(null, parameterType))
+            callGenerator.putValueIfNeeded(parameterType, StackValue.constant(null, parameterType), ValueKind.METHOD_HANDLE_IN_DEFAULT)
         }
         return toInts.isNotEmpty()
     }

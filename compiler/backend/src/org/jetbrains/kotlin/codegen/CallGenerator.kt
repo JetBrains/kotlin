@@ -21,6 +21,12 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 
+enum class ValueKind {
+    GENERAL,
+    DEFAULT_MASK,
+    METHOD_HANDLE_IN_DEFAULT
+}
+
 abstract class CallGenerator {
 
     internal class DefaultCallGenerator(private val codegen: ExpressionCodegen) : CallGenerator() {
@@ -67,8 +73,7 @@ abstract class CallGenerator {
             stackValue.put(stackValue.type, codegen.v)
         }
 
-        override fun putValueIfNeeded(
-                parameterType: Type, value: StackValue) {
+        override fun putValueIfNeeded(parameterType: Type, value: StackValue, kind: ValueKind) {
             value.put(value.type, codegen.v)
         }
 
@@ -117,9 +122,16 @@ abstract class CallGenerator {
             parameterType: Type,
             parameterIndex: Int)
 
+    fun putValueIfNeeded(
+            parameterType: Type,
+            value: StackValue) {
+        putValueIfNeeded(parameterType, value, ValueKind.GENERAL)
+    }
+
     abstract fun putValueIfNeeded(
             parameterType: Type,
-            value: StackValue)
+            value: StackValue,
+            kind: ValueKind)
 
     abstract fun putCapturedValueOnStack(
             stackValue: StackValue,

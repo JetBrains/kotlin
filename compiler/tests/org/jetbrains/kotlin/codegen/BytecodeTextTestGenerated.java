@@ -1090,6 +1090,18 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/defaultArguments/kt11962.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("maskElumination.kt")
+        public void testMaskElumination() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/defaultArguments/maskElumination.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodHandlerElumination.kt")
+        public void testMethodHandlerElumination() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/defaultArguments/methodHandlerElumination.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/directInvoke")

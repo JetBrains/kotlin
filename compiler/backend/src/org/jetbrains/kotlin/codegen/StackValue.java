@@ -741,9 +741,9 @@ public abstract class StackValue {
         }
     }
 
-    private static class Constant extends StackValue {
+    public static class Constant extends StackValue {
         @Nullable
-        private final Object value;
+        public final Object value;
 
         public Constant(@Nullable Object value, Type type) {
             super(type, false);

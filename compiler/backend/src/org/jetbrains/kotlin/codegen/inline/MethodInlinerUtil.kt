@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
+import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
+import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
 
@@ -88,3 +88,63 @@ private fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
 }
 
 fun SourceValue.singleOrNullInsn() = insns.singleOrNull()
+
+fun expandMaskConditions(node: MethodNode, maskStartIndex: Int, masks: List<Int>, methodHandlerIndex: Int) {
+    class Condition(mask: Int, constant: Int, val maskInstruction: VarInsnNode, val jumpInstruction: JumpInsnNode) {
+        val expandNotDelete = mask and constant != 0
+    }
+
+    val maskProcessingHeader = node.instructions.asSequence().takeWhile {
+        if (it is VarInsnNode) {
+            if (isMaskIndex(it, maskStartIndex, masks)) {
+                /*if slot for default mask is updated than we occurred in actual function body*/
+                return@takeWhile it.opcode == Opcodes.ILOAD
+            }
+            else if (isMethodHandleIndex(methodHandlerIndex, it)) {
+                return@takeWhile it.opcode == Opcodes.ALOAD
+            }
+        }
+        true
+    }
+
+    val conditions = maskProcessingHeader.filterIsInstance<VarInsnNode>().mapNotNull {
+        if (isMaskIndex(it, maskStartIndex, masks) &&
+            it.next?.next?.opcode == Opcodes.IAND &&
+            it.next.next.next?.opcode == Opcodes.IFEQ) {
+            Condition(
+                    masks[it.`var` - maskStartIndex],
+                    InlineCodegenUtil.getConstant(it.next),
+                    it,
+                    it.next?.next?.next as JumpInsnNode
+            )
+        }
+        else if (isMethodHandleIndex(methodHandlerIndex, it) &&
+                 it.next?.opcode == Opcodes.IFNULL &&
+                 it.next.next?.opcode == Opcodes.NEW) {
+            //Always delete method handle for now
+            //This logic should be updated when method handles would be supported
+            Condition(0, 0, it,it.next as JumpInsnNode)
+        }
+        else null
+    }
+
+    val toDelete = arrayListOf<AbstractInsnNode>()
+    conditions.forEach {
+        val jumpInstruction = it.jumpInstruction
+        InsnSequence(it.maskInstruction, (if (it.expandNotDelete) jumpInstruction.next else jumpInstruction.label)).forEach {
+            toDelete.add(it)
+        }
+    }
+
+    toDelete.forEach {
+        node.instructions.remove(it)
+    }
+}
+
+private fun isMethodHandleIndex(methodHandlerIndex: Int, it: VarInsnNode) = methodHandlerIndex == it.`var`
+
+private fun isMaskIndex(variable: VarInsnNode, maskStartIndex: Int, masks: List<Int>): Boolean {
+    val varIndex = variable.`var`
+    return maskStartIndex <= varIndex && varIndex < maskStartIndex + masks.size
+}
+
