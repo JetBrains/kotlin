@@ -284,10 +284,8 @@ class BodyGenerator(
 
         // Default enum entry constructor
         val enumClassConstructor =
-                enumClassDescriptor.constructors.singleOrNull {
-                    it.valueParameters.isEmpty() ||
-                    it.valueParameters.all { it.hasDefaultValue() }
-                } ?: throw AssertionError("Enum class $enumClassDescriptor should have a default constructor")
+                enumClassDescriptor.constructors.singleOrNull { it.valueParameters.all { it.hasDefaultValue() } } ?:
+                throw AssertionError("Enum class $enumClassDescriptor should have a default constructor")
         return IrEnumConstructorCallImpl(
                 ktEnumEntry.startOffset, ktEnumEntry.endOffset,
                 context.symbolTable.referenceConstructor(enumClassConstructor)
