@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
@@ -102,7 +101,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             environment: GradleCompilerEnvironment
     ): ExitCode {
         if (compilerArgs.version) {
-            project.logger.lifecycle("Kotlin version " + KotlinCompilerVersion.VERSION +
+            project.logger.lifecycle("Kotlin version " + loadCompilerVersion(environment.compilerJar) +
                     " (JRE " + System.getProperty("java.runtime.version") + ")")
             compilerArgs.version = false
         }
