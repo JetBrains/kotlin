@@ -193,7 +193,7 @@ open class IncrementalCacheImpl<Target>(
                 // As a workaround we can remove proto values for multifile facades.
                 val additionalChangeInfo = if (className in protoMap) {
                     val info = ChangeInfo.SignatureChanged(className.fqNameForClassNameWithoutDollars, areSubclassesAffected = true)
-                    CompilationResult(protoChanged = true, changes = sequenceOf(info))
+                    CompilationResult(changes = sequenceOf(info))
                 }
                 else CompilationResult.NO_CHANGES
                 protoMap.remove(className)
@@ -295,12 +295,7 @@ open class IncrementalCacheImpl<Target>(
                 else
                     emptySequence<ChangeInfo>()
 
-        val changesInfo = dirtyClasses.fold(CompilationResult(changes = changes)) { info, className ->
-            val newInfo = CompilationResult(protoChanged = className in protoMap,
-                                            constantsChanged = className in constantsMap)
-            newInfo.logIfSomethingChanged(className)
-            info + newInfo
-        }
+        val changesInfo = CompilationResult(changes = changes)
 
         val facadesWithRemovedParts = hashMapOf<JvmClassName, MutableSet<String>>()
         for (dirtyClass in dirtyClasses) {
@@ -398,7 +393,7 @@ open class IncrementalCacheImpl<Target>(
         // (also that would fail with exception).
         fun storeModuleMapping(className: JvmClassName, bytes: ByteArray): CompilationResult {
             storage[className.internalName] = ProtoMapValue(isPackageFacade = false, bytes = bytes, strings = emptyArray())
-            return CompilationResult(protoChanged = true)
+            return CompilationResult()
         }
 
         private fun put(
@@ -426,7 +421,7 @@ open class IncrementalCacheImpl<Target>(
                         else
                             emptySequence<ChangeInfo>()
 
-                return CompilationResult(protoChanged = true, changes = changes)
+                return CompilationResult(changes = changes)
             }
 
             val difference = difference(oldData, data)
@@ -441,7 +436,7 @@ open class IncrementalCacheImpl<Target>(
                 changeList.add(ChangeInfo.MembersChanged(fqName, difference.changedMembersNames))
             }
 
-            return CompilationResult(protoChanged = changeList.isNotEmpty(), changes = changeList.asSequence())
+            return CompilationResult(changes = changeList.asSequence())
         }
 
         operator fun contains(className: JvmClassName): Boolean =
@@ -512,7 +507,7 @@ open class IncrementalCacheImpl<Target>(
                         sequenceOf(ChangeInfo.MembersChanged(fqName, changedNames))
                     }
 
-            return CompilationResult(constantsChanged = true, changes = changes)
+            return CompilationResult(changes = changes)
         }
 
         fun remove(className: JvmClassName) {
@@ -753,9 +748,7 @@ open class IncrementalCacheImpl<Target>(
                     }
 
             processChangedInlineFunctions(className, changed)
-            return CompilationResult(inlineChanged = changed.isNotEmpty(),
-                                     inlineAdded = added.isNotEmpty(),
-                                     changes = changes)
+            return CompilationResult(changes = changes)
         }
 
         fun remove(className: JvmClassName) {
@@ -793,10 +786,6 @@ sealed class ChangeInfo(val fqName: FqName) {
 }
 
 data class CompilationResult(
-        val protoChanged: Boolean = false,
-        val constantsChanged: Boolean = false,
-        val inlineChanged: Boolean = false,
-        val inlineAdded: Boolean = false,
         val changes: Sequence<ChangeInfo> = emptySequence()
 ) {
     companion object {
@@ -804,11 +793,7 @@ data class CompilationResult(
     }
 
     operator fun plus(other: CompilationResult): CompilationResult =
-            CompilationResult(protoChanged || other.protoChanged,
-                              constantsChanged || other.constantsChanged,
-                              inlineChanged || other.inlineChanged,
-                              inlineAdded || other.inlineAdded,
-                              changes + other.changes)
+            CompilationResult(changes + other.changes)
 }
 
 fun ByteArray.md5(): Long {
