@@ -91,7 +91,7 @@ class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     companion object {
         private val ANDROID_JPS_UTIL_CLASS_FQNAME = "org.jetbrains.jps.android.AndroidJpsUtil"
 
-        private val JAR_FILE_NAME = "kotlin-android-extensions-compiler-plugin.jar"
+        private val JAR_FILE_NAME = "android-extensions-compiler.jar"
         private val ANDROID_COMPILER_PLUGIN_ID = "org.jetbrains.kotlin.android"
 
         private val VARIANT_OPTION_NAME = "variant"

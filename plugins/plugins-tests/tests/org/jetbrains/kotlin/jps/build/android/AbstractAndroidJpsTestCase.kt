@@ -28,7 +28,7 @@ import java.io.File
 
 abstract class AbstractAndroidJpsTestCase : BaseKotlinJpsBuildTestCase() {
 
-    private val SDK_NAME = "Android API 23 Platform"
+    private val SDK_NAME = "Android API 21 Platform"
 
     fun doTest(path: String) {
         addJdkAndAndroidSdk()
