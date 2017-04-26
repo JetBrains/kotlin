@@ -696,6 +696,11 @@ public class ClassContext extends Context {
             return fqcn;
         }
 
+        int index = fqcn.indexOf('<');
+        if(index != -1) {
+            fqcn = fqcn.substring(0, index);
+        }
+
         // If class name contains $, it's not an ambiguous inner class name.
         if (fqcn.indexOf('$') != -1) {
             return fqcn.replace('.', '/');

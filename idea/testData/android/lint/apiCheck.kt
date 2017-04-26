@@ -459,3 +459,21 @@ object O: Activity() {
         <error descr="Call requires API level 21 (current min is 1): android.content.Context#getDrawable">getDrawable</error>(0)
     }
 }
+
+fun testJava8() {
+    // Error, Api 24, Java8
+    mutableListOf(1, 2, 3).<error descr="Call requires API level 24 (current min is 1): java.util.Collection#removeIf">removeIf</error> {
+        true
+    }
+
+    // Ok, Kotlin
+    mutableListOf(1, 2, 3).removeAll {
+        true
+    }
+
+    // Error, Api 24, Java8
+    mapOf(1 to 2).<error descr="Call requires API level 24 (current min is 1): java.util.Map#forEach">forEach</error> { key, value -> key + value }
+
+    // Ok, Kotlin
+    mapOf(1 to 2).forEach { (key, value) -> key + value }
+}
