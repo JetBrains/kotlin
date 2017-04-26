@@ -66,8 +66,6 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
 
     override fun serializeConstructor(descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder) {
 
-        proto.setConstructorIndex(
-            inlineDescriptorTable.indexByValue(descriptor))
         val parentIndex = descriptor.parentFqNameIndex()
         if (parentIndex != null) proto.setExtension(KonanLinkData.constructorParent, parentIndex)
         
@@ -76,15 +74,11 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
 
     override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
 
-        proto.setClassIndex(
-            inlineDescriptorTable.indexByValue(descriptor))
         super.serializeClass(descriptor, proto)
     }
 
     override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
 
-        proto.setFunctionIndex(
-            inlineDescriptorTable.indexByValue(descriptor))
         val parentIndex = descriptor.parentFqNameIndex()
         if (parentIndex != null) proto.setExtension(KonanLinkData.functionParent, parentIndex)
         super.serializeFunction(descriptor, proto)
@@ -102,12 +96,6 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
         val variable = originalVariables[descriptor]
         if (variable != null) {
             proto.setExtension(KonanLinkData.usedAsVariable, true)
-            proto.setPropertyIndex(
-                inlineDescriptorTable.indexByValue(variable))
-
-        } else {
-            proto.setPropertyIndex(
-                inlineDescriptorTable.indexByValue(descriptor))
         }
 
         super.serializeProperty(descriptor, proto)

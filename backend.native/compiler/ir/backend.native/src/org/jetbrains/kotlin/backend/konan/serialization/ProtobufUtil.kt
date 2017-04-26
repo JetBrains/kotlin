@@ -6,30 +6,8 @@ import org.jetbrains.kotlin.serialization.KonanLinkData.*
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 
-fun newUniqId(index: Long): KonanLinkData.UniqId =
-   KonanLinkData.UniqId.newBuilder().setIndex(index).build() 
-
-val ProtoBuf.Function.functionIndex: Long
-    get() = this.getExtension(KonanLinkData.functionIndex).index
-
-val ProtoBuf.Constructor.constructorIndex: Long
-    get() = this.getExtension(KonanLinkData.constructorIndex).index
-
-val ProtoBuf.Property.propertyIndex: Long
-    get() = this.getExtension(KonanLinkData.propertyIndex).index
-
-
-fun ProtoBuf.Function.Builder.setFunctionIndex(index: Long)
-    = this.setExtension(KonanLinkData.functionIndex, newUniqId(index))
-
-fun ProtoBuf.Constructor.Builder.setConstructorIndex(index: Long)
-    = this.setExtension(KonanLinkData.constructorIndex, newUniqId(index))
-
-fun ProtoBuf.Property.Builder.setPropertyIndex(index: Long)
-    = this.setExtension(KonanLinkData.propertyIndex, newUniqId(index))
-
-fun ProtoBuf.Class.Builder.setClassIndex(index: Long)
-    = this.setExtension(KonanLinkData.classIndex, newUniqId(index))
+fun newUniqId(index: Long): KonanIr.UniqId =
+   KonanIr.UniqId.newBuilder().setIndex(index).build() 
 
 // -----------------------------------------------------------
 

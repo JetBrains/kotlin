@@ -79,11 +79,11 @@ internal class IrDescriptorDeserializer(val context: Context,
         context.log{"### deserialized Kotlin Type index=$index, text=$text:\t$realType"}
         return realType
     }
-    fun deserializeLocalDeclaration(proto: KonanLinkData.Descriptor): DeclarationDescriptor {
+    fun deserializeLocalDeclaration(irProto: KonanIr.KotlinDescriptor, proto: KonanLinkData.Descriptor): DeclarationDescriptor {
         when {
             proto.hasFunction() -> {
                 val functionProto = proto.function
-                val index = functionProto.functionIndex
+                val index = irProto.index
                 val descriptor = localDeserializer.deserializeFunction(functionProto)
                 descriptorIndex.put(index, descriptor)
                 return descriptor
@@ -91,7 +91,7 @@ internal class IrDescriptorDeserializer(val context: Context,
 
             proto.hasProperty() -> {
                 val propertyProto = proto.property
-                val index = propertyProto.propertyIndex
+                val index = irProto.index
                 val descriptor = localDeserializer.deserializeProperty(propertyProto)
                 descriptorIndex.put(index, descriptor)
                 return descriptor
@@ -136,7 +136,7 @@ internal class IrDescriptorDeserializer(val context: Context,
 
         val descriptor = if (proto.hasIrLocalDeclaration()) {
             val realDescriptor = proto.irLocalDeclaration.descriptor
-            deserializeLocalDeclaration(realDescriptor)
+            deserializeLocalDeclaration(proto, realDescriptor)
         } else 
             deserializeKnownDescriptor(proto)
         
@@ -345,8 +345,7 @@ internal class IrDescriptorDeserializer(val context: Context,
 
         val originalIndex = descriptorProto.originalIndex
         val match = functions.singleOrNull() {
-            val proto = (it as DeserializedSimpleFunctionDescriptor).proto
-            proto.functionIndex == originalIndex
+            it.uniqId == originalIndex
         } as? DeserializedSimpleFunctionDescriptor
         if (match != null) return match
 
@@ -370,8 +369,7 @@ internal class IrDescriptorDeserializer(val context: Context,
 
         val originalIndex = descriptorProto.originalIndex
         return constructors.single {
-            val proto = (it as DeserializedClassConstructorDescriptor).proto
-            proto.constructorIndex == originalIndex
+            it.uniqId == originalIndex
         } as DeserializedClassConstructorDescriptor
     }
 
@@ -389,7 +387,7 @@ internal class IrDescriptorDeserializer(val context: Context,
         val originalIndex = proto.originalIndex
         return functions.single {
             val property = (it as PropertyAccessorDescriptor).correspondingProperty as DeserializedPropertyDescriptor
-            property.proto.propertyIndex == originalIndex
+            property.uniqId == originalIndex
         } as PropertyAccessorDescriptor
     }
 

@@ -37,6 +37,10 @@ message KotlinDescriptor {
     optional LocalDeclaration ir_local_declaration = 12;
 }
 
+message UniqId {
+    required int64 index = 1;
+}
+
 message LocalDeclaration {
     // This is Descriptor message from KonanLinkData
     required Descriptor descriptor = 1;
