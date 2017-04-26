@@ -57,6 +57,8 @@
 
         <lang.foldingBuilder language="kotlin" implementationClass="org.jetbrains.kotlin.android.folding.ResourceFoldingBuilder" />
 
+        <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.android.AndroidResourceReferenceAnnotator" />
+
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">

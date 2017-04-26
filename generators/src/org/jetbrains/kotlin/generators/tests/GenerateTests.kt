@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.allopen.AbstractBytecodeListingTestForAllOpen
 import org.jetbrains.kotlin.android.*
+import org.jetbrains.kotlin.android.annotator.AbstractAndroidGutterIconTest
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.android.folding.AbstractAndroidResourceFoldingTest
 import org.jetbrains.kotlin.android.intention.AbstractAndroidIntentionTest
@@ -1259,6 +1260,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractAndroidResourceFoldingTest> {
             model("android/folding")
+        }
+
+        testClass<AbstractAndroidGutterIconTest> {
+            model("android/gutterIcon")
         }
     }
 
