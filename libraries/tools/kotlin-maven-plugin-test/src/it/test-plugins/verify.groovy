@@ -38,7 +38,7 @@ State state = buildLogFile.readLines().collect { it.replaceAll("\\u001b[^m]*m", 
                 replaceAll(/[0-9]+\s*ms/, "LLL ms").
                 trim().
                 replaceAll(/^\[[A-Z]+\]$/, "").
-                replaceAll(/version [0-9a-z-+\.]+/, "version @snapshot@")
+                replace(kotlinVersion, "@snapshot@")
 
         if (filtered != "") {
             acc.lines << filtered

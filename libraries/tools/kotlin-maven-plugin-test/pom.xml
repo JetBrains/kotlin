@@ -146,6 +146,9 @@
                             <postBuildHookScript>verify</postBuildHookScript>
                             <streamLogs>false</streamLogs>
                             <invokerPropertiesFile>invoker.properties</invokerPropertiesFile>
+                            <scriptVariables>
+                                <kotlinVersion>${project.version}</kotlinVersion>
+                            </scriptVariables>
                         </configuration>
                         <executions>
                             <execution>
