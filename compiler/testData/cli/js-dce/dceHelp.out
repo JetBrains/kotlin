@@ -1,6 +1,8 @@
 Usage: kotlin-dce-js <options> <source files>
 where possible options include:
   -output-dir <path>         Output directory
+  -keep <fully.qualified.name[,]>
+                             List of fully-qualified names of declarations that shouldn't be eliminated
   -help (-h)                 Print a synopsis of standard options
   -X                         Print a synopsis of advanced options
   -version                   Display compiler version

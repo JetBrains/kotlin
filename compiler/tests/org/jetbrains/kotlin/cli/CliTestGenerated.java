@@ -560,6 +560,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJsDceTest(fileName);
         }
 
+        @TestMetadata("includeDeclarations.args")
+        public void testIncludeDeclarations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/includeDeclarations.args");
+            doJsDceTest(fileName);
+        }
+
         @TestMetadata("jsExtraHelp.args")
         public void testJsExtraHelp() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js-dce/jsExtraHelp.args");
