@@ -924,6 +924,12 @@ public header operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T>
 @kotlin.internal.InlineOnly
 public header inline fun <T> Iterable<T>.minusElement(element: T): List<T>
 
+@SinceKotlin("1.2")
+public header fun <T> Iterable<T>.pairwise(): List<Pair<T, T>>
+
+@SinceKotlin("1.2")
+public header inline fun <T, R> Iterable<T>.pairwise(transform: (a: T, b: T) -> R): List<R>
+
 /**
  * Splits the original collection into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
