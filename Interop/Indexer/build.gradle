@@ -45,7 +45,7 @@ model {
             }
 
             binaries.withType(SharedLibraryBinarySpec) {
-                linker.args "-L$llvmDir/lib", "-lclang"
+                linker.args "$llvmDir/lib/${System.mapLibraryName("clang")}"
             }
         }
    }
