@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls;
 
 import kotlin.Pair;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
@@ -265,7 +266,7 @@ public class ArgumentTypeResolver {
 
         if (overloadResolutionResults == null) return null;
 
-        if (overloadResolutionResults.isSingleResult()) {
+        if (isSingleAndPossibleTransformToSuccess(overloadResolutionResults)) {
             ResolvedCall<?> resolvedCall =
                     OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context.contextDependency);
             if (resolvedCall == null) return null;
@@ -282,6 +283,12 @@ public class ArgumentTypeResolver {
         return FunctionTypesKt.createFunctionType(
                 builtIns, Annotations.Companion.getEMPTY(), null, Collections.emptyList(), null, TypeUtils.DONT_CARE
         );
+    }
+
+    private static boolean isSingleAndPossibleTransformToSuccess(@NotNull OverloadResolutionResults<?> overloadResolutionResults) {
+        if (!overloadResolutionResults.isSingleResult()) return false;
+        ResolvedCall<?> call = CollectionsKt.singleOrNull(overloadResolutionResults.getResultingCalls());
+        return call != null && call.getStatus().possibleTransformToSuccess();
     }
 
     @NotNull

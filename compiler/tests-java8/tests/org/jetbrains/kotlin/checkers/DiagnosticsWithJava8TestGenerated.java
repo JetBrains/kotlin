@@ -60,6 +60,12 @@ public class DiagnosticsWithJava8TestGenerated extends AbstractDiagnosticsWithFu
         doTest(fileName);
     }
 
+    @TestMetadata("patternCompileCallableReference.kt")
+    public void testPatternCompileCallableReference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/patternCompileCallableReference.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("samWithConsumer.kt")
     public void testSamWithConsumer() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/samWithConsumer.kt");
