@@ -16,29 +16,25 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPackageImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
-
-import javax.annotation.PostConstruct
 
 class JavaClassFinderImpl : AbstractJavaClassFinder() {
 
     private lateinit var javaFacade: KotlinJavaPsiFacade
 
-    @PostConstruct
-    fun initialize(trace: BindingTrace, codeAnalyzer: KotlinCodeAnalyzer) {
-        javaSearchScope = FilterOutKotlinSourceFilesScope(baseScope)
-        javaFacade = KotlinJavaPsiFacade.getInstance(proj)
-        CodeAnalyzerInitializer.getInstance(proj).initialize(trace, codeAnalyzer.moduleDescriptor, codeAnalyzer)
+
+    override fun initialize(trace: BindingTrace, codeAnalyzer: KotlinCodeAnalyzer) {
+        javaFacade = KotlinJavaPsiFacade.getInstance(project)
+        super.initialize(trace, codeAnalyzer)
     }
 
-
-    override fun findClass(classId: ClassId) = javaFacade.findClass(classId, javaSearchScope)
+    override fun findClass(classId: ClassId): JavaClass? = javaFacade.findClass(classId, javaSearchScope)
 
     override fun findPackage(fqName: FqName) = javaFacade.findPackage(fqName.asString(), javaSearchScope)?.let { JavaPackageImpl(it, javaSearchScope) }
 

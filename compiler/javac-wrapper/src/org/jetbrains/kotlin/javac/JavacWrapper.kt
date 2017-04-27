@@ -106,7 +106,7 @@ class JavacWrapper(javaFiles: Collection<File>,
             .associateBy(JavaClass::fqName)
 
     private val javaPackages = compilationUnits
-            .map { TreeBasedPackage(it.packageName.toString(), this) }
+            .mapNotNull { it.packageName?.toString()?.let { TreeBasedPackage(it, this) } }
             .associateBy(TreeBasedPackage::fqName)
 
     private val kotlinClassifiersCache = KotlinClassifiersCache(kotlinFiles, this)

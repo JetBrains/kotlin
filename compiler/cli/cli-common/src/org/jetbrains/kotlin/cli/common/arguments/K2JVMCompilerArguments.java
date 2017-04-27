@@ -138,7 +138,7 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     public String[] scriptResolverEnvironment;
 
     // Javac options
-    @Argument(value = "-Xuse-javac", description = "Use Javac analysis")
+    @Argument(value = "-Xuse-javac", description = "Use javac for Java source and class files analysis")
     public boolean useJavac;
 
     @Argument(

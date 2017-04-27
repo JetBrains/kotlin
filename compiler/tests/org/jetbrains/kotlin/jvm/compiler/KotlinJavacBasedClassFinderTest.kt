@@ -71,7 +71,10 @@ class KotlinJavacBasedClassFinderTest : KotlinTestWithEnvironmentManagement() {
     }
 
     private fun createClassFinder(project: Project) = JavacBasedClassFinder().apply {
-        setProject(project)
+        this::class.java.superclass.getDeclaredField("project")?.let {
+            it.isAccessible = true
+            it.set(this, project)
+        }
         setScope(GlobalSearchScope.allScope(project))
 
         val javacField = this::class.java.getDeclaredField("javac")

@@ -21,22 +21,29 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
+import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
+import javax.annotation.PostConstruct
 import javax.inject.Inject
 
 abstract class AbstractJavaClassFinder : JavaClassFinder {
 
-    protected lateinit var proj: Project
+    lateinit var project: Project
+        @Inject set
     protected lateinit var baseScope: GlobalSearchScope
     protected lateinit var javaSearchScope: GlobalSearchScope
 
-    @Inject
-    fun setProject(project: Project) {
-        this.proj = project
-    }
 
     @Inject
     fun setScope(scope: GlobalSearchScope) {
         this.baseScope = scope
+    }
+
+    @PostConstruct
+    open fun initialize(trace: BindingTrace, codeAnalyzer: KotlinCodeAnalyzer) {
+        javaSearchScope = FilterOutKotlinSourceFilesScope(baseScope)
+        CodeAnalyzerInitializer.getInstance(project).initialize(trace, codeAnalyzer.moduleDescriptor, codeAnalyzer)
     }
 
     inner class FilterOutKotlinSourceFilesScope(baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
@@ -46,7 +53,7 @@ abstract class AbstractJavaClassFinder : JavaClassFinder {
         val base: GlobalSearchScope = myBaseScope
 
         //NOTE: expected by class finder to be not null
-        override fun getProject() = proj
+        override fun getProject(): Project = project
 
         override fun toString() = "JCFI: $myBaseScope"
 

@@ -21,19 +21,15 @@ import org.jetbrains.kotlin.load.java.AbstractJavaClassFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
-import javax.annotation.PostConstruct
 
 class JavacBasedClassFinder : AbstractJavaClassFinder() {
 
     private lateinit var javac: JavacWrapper
 
-    @PostConstruct
-    fun initialize(trace: BindingTrace, codeAnalyzer: KotlinCodeAnalyzer) {
-        javaSearchScope = FilterOutKotlinSourceFilesScope(baseScope)
-        javac = JavacWrapper.getInstance(proj)
-        CodeAnalyzerInitializer.getInstance(proj).initialize(trace, codeAnalyzer.moduleDescriptor, codeAnalyzer)
+    override fun initialize(trace: BindingTrace, codeAnalyzer: KotlinCodeAnalyzer) {
+        javac = JavacWrapper.getInstance(project)
+        super.initialize(trace, codeAnalyzer)
     }
 
     override fun findClass(classId: ClassId) = javac.findClass(classId.asSingleFqName(), javaSearchScope)
@@ -42,8 +38,8 @@ class JavacBasedClassFinder : AbstractJavaClassFinder() {
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> = javac.findClassesFromPackage(packageFqName)
             .mapNotNullTo(hashSetOf()) {
-                it.fqName?.let {
-                    if (it.isRoot) it.asString() else it.shortName().asString()
+                it.fqName?.let { fqName ->
+                    if (fqName.isRoot) fqName.asString() else fqName.shortName().asString()
                 }
             }
 
