@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.util.xml.Convert
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -47,15 +48,8 @@ class ConvertLambdaToReferenceInspection : IntentionBasedInspection<KtLambdaExpr
     override fun inspectionTarget(element: KtLambdaExpression) = element.bodyExpression?.statements?.singleOrNull()
 }
 
-class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntention<KtLambdaExpression>(
-        KtLambdaExpression::class.java, "Convert lambda to reference"
-) {
-    private fun KtLambdaArgument.outerCalleeDescriptor(): FunctionDescriptor? {
-        val outerCallExpression = parent as? KtCallExpression ?: return null
-        val context = outerCallExpression.analyze()
-        val outerCallee = outerCallExpression.calleeExpression as? KtReferenceExpression ?: return null
-        return context[REFERENCE_TARGET, outerCallee] as? FunctionDescriptor
-    }
+class ConvertLambdaToReferenceIntention : ConvertLambdaToIntention("Convert lambda to reference") {
+    override fun buildReferenceText(element: KtLambdaExpression) = buildReferenceText(lambdaExpression = element, shortTypes = false)
 
     private fun isConvertibleCallInLambda(
             callableExpression: KtExpression,
@@ -159,57 +153,6 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
                                           lambdaExpression = element, lambdaMustReturnUnit = lambdaMustReturnUnit)
             }
             else -> false
-        }
-    }
-
-    override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
-        val referenceName = buildReferenceText(lambdaExpression = element, shortTypes = false) ?: return
-        val factory = KtPsiFactory(element)
-        val lambdaArgument = element.parent as? KtLambdaArgument
-        if (lambdaArgument == null) {
-            // Without lambda argument syntax, just replace lambda with reference
-            val callableReferenceExpr = factory.createCallableReferenceExpression(referenceName) ?: return
-            (element.replace(callableReferenceExpr) as? KtElement)?.let { ShortenReferences.RETAIN_COMPANION.process(it) }
-        }
-        else {
-            // Otherwise, replace the whole argument list for lambda argument-using call
-            val outerCallExpression = lambdaArgument.parent as? KtCallExpression ?: return
-            val outerCalleeDescriptor = lambdaArgument.outerCalleeDescriptor() ?: return
-            // Parameters with default value
-            val valueParameters = outerCalleeDescriptor.valueParameters
-            val arguments = outerCallExpression.valueArguments.filter { it !is KtLambdaArgument }
-            val useNamedArguments = valueParameters.any { it.hasDefaultValue() } || arguments.any { it.getArgumentName() != null }
-
-            if (useNamedArguments && arguments.size > valueParameters.size) return
-            val newArgumentList = factory.buildValueArgumentList {
-                appendFixedText("(")
-                arguments.forEachIndexed { i, argument ->
-                    if (useNamedArguments) {
-                        val argumentName = argument.getArgumentName()?.asName
-                        val name = argumentName ?: valueParameters[i].name
-                        appendName(name)
-                        appendFixedText(" = ")
-                    }
-                    appendExpression(argument.getArgumentExpression())
-                    appendFixedText(", ")
-                }
-                if (useNamedArguments) {
-                    appendName(valueParameters.last().name)
-                    appendFixedText(" = ")
-                }
-                appendFixedText(referenceName)
-                appendFixedText(")")
-            }
-            val argumentList = outerCallExpression.valueArgumentList
-            if (argumentList == null) {
-                (lambdaArgument.replace(newArgumentList) as? KtElement)?.let { ShortenReferences.RETAIN_COMPANION.process(it) }
-            }
-            else {
-                (argumentList.replace(newArgumentList) as? KtValueArgumentList)?.let {
-                    ShortenReferences.RETAIN_COMPANION.process(it.arguments.last())
-                }
-                lambdaArgument.delete()
-            }
         }
     }
 
