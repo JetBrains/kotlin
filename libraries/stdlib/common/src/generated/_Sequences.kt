@@ -803,6 +803,12 @@ public expect inline fun <T> Sequence<T>.sumByDouble(selector: (T) -> Double): D
  */
 public expect fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T>
 
+@SinceKotlin("1.2")
+public expect fun <T> Sequence<T>.chunked(size: Int): Sequence<List<T>>
+
+@SinceKotlin("1.2")
+public expect fun <T, R> Sequence<T>.chunked(size: Int, transform: (List<T>) -> R): Sequence<R>
+
 /**
  * Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element].
  *
@@ -907,6 +913,12 @@ public expect operator fun <T> Sequence<T>.plus(elements: Sequence<T>): Sequence
  */
 @kotlin.internal.InlineOnly
 public expect inline fun <T> Sequence<T>.plusElement(element: T): Sequence<T>
+
+@SinceKotlin("1.2")
+public expect fun <T> Sequence<T>.windowed(size: Int, step: Int): Sequence<List<T>>
+
+@SinceKotlin("1.2")
+public expect fun <T, R> Sequence<T>.windowed(size: Int, step: Int, transform: (List<T>) -> R): Sequence<R>
 
 /**
  * Returns a sequence of pairs built from elements of both sequences with same indexes.
