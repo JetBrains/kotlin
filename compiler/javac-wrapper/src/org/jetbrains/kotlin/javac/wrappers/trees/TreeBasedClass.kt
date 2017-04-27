@@ -62,10 +62,10 @@ class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
         get() = tree.typeParameters.map { TreeBasedTypeParameter(it, TreePath(treePath, it), javac) }
 
     override val fqName = treePath.reversed()
-            .joinToString(separator = ".") {
-                (it as? JCTree.JCCompilationUnit)?.packageName?.toString()
-                ?: (it as JCTree.JCClassDecl).name
-            }
+            .filterIsInstance<JCTree.JCClassDecl>()
+            .joinToString(separator = ".",
+                          prefix = "${treePath.compilationUnit.packageName}.",
+                          transform = JCTree.JCClassDecl::name)
             .let(::FqName)
 
     override val supertypes
