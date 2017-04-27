@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 internal class SuspendFunctionsLowering(val context: Context): DeclarationContainerLoweringPass {
@@ -827,6 +828,8 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                                     +irThrowIfNotNull(exceptionArgument)    // Coroutine might start with an exception.
                                     statements.forEach { +it }
                                 })
+                        if (irFunction.descriptor.returnType!!.isUnit())
+                            +irReturn(irUnit())                             // Insert explicit return for Unit functions.
                     }
                 }
             }
@@ -1039,7 +1042,11 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                                 +irGet(dataArgument)
                             })
                     tempStatements.add(irVar(currentSuspendResult, suspensionPoint))
-                    return irWrap(irCast(irGet(currentSuspendResult), suspendCall.type, suspendCall.type), tempStatements)
+                    val expressionResult = when {
+                        suspendCall.type.isUnit() -> IrCompositeImpl(startOffset, endOffset, suspendCall.type)
+                        else -> irCast(irGet(currentSuspendResult), suspendCall.type, suspendCall.type)
+                    }
+                    return irWrap(expressionResult, tempStatements)
                 }
 
             }
