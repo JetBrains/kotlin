@@ -20,10 +20,9 @@ import com.android.SdkConstants
 import com.android.resources.ResourceType.*
 import com.android.tools.idea.AndroidPsiUtils.ResourceReferenceType.FRAMEWORK
 import com.android.tools.idea.rendering.GutterIconRenderer
-import com.android.tools.idea.res.ResourceHelper
+import com.android.tools.idea.rendering.ResourceHelper
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.android.AndroidColorAnnotator
 import org.jetbrains.android.facet.AndroidFacet
