@@ -665,7 +665,7 @@ class DoubleColonExpressionResolver(
             resolutionResults.isNothing -> null
             else -> ResolutionResultsAndTraceCommitCallback(resolutionResults) {
                 checkReservedYield(reference, outerContext.trace)
-                if (resolutionMode != ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS || resolutionResults.isSingleResult) {
+                if (resolutionMode != ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS || resolutionResults.isSuccess) {
                     temporaryTrace.commit()
                 }
             }

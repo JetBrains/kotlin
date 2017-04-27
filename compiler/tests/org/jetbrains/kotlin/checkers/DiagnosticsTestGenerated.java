@@ -11722,6 +11722,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("callableReferencesStaticMemberClash.kt")
+            public void testCallableReferencesStaticMemberClash() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/callableReferencesStaticMemberClash.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("canDeclareIfSamAdapterIsInherited.kt")
             public void testCanDeclareIfSamAdapterIsInherited() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/canDeclareIfSamAdapterIsInherited.kt");
