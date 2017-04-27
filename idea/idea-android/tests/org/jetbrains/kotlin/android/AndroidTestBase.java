@@ -16,7 +16,7 @@
 package org.jetbrains.kotlin.android;
 
 import com.android.sdklib.IAndroidTarget;
-import com.android.tools.idea.res.ResourceHelper;
+import com.android.tools.idea.rendering.ResourceHelper;
 import com.android.tools.idea.startup.ExternalAnnotationsSupport;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.ex.PathManagerEx;
