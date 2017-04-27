@@ -24,5 +24,6 @@
     <orderEntry type="library" name="uast-java" level="project" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />
     <orderEntry type="module" module-name="light-classes" />
+    <orderEntry type="module" module-name="android-annotations" scope="TEST" />
   </component>
 </module>
