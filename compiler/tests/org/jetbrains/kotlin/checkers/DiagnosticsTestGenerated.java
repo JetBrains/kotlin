@@ -19867,6 +19867,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("varInInitNoPrimary.kt")
+            public void testVarInInitNoPrimary() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varInInitNoPrimary.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("varInInitializer.kt")
             public void testVarInInitializer() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varInInitializer.kt");

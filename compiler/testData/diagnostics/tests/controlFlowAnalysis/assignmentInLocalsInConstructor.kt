@@ -7,7 +7,7 @@ class Test {
         val t = object {
             fun some() {
                 // See KT-13597
-                a = "12"
+                <!CAPTURED_VAL_INITIALIZATION!>a<!> = "12"
             }
         }
 
@@ -41,8 +41,27 @@ class Test4 {
     init {
         exec {
             // See KT-14381
-            a = "12"
+            <!CAPTURED_VAL_INITIALIZATION!>a<!> = "12"
         }
         a = "34"
+    }
+}
+
+// Additional tests to prevent something broken
+
+class Test5 {
+
+    val y: Int
+
+    val z: String
+
+    init {
+        val x: String
+        x = ""
+        z = x
+    }
+
+    constructor(y: Int) {
+        this.y = y
     }
 }

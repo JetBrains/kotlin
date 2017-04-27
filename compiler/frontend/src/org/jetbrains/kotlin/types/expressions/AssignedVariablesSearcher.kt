@@ -35,12 +35,8 @@ abstract class AssignedVariablesSearcher: KtTreeVisitorVoid() {
 
     override fun visitDeclaration(declaration: KtDeclaration) {
         val previous = currentDeclaration
-        if (declaration is KtDeclarationWithBody || declaration is KtClassOrObject) {
+        if (declaration is KtDeclarationWithBody || declaration is KtClassOrObject || declaration is KtAnonymousInitializer) {
             currentDeclaration = declaration
-        }
-        else if (declaration is KtAnonymousInitializer) {
-            // Go to class declaration: init -> body -> class
-            currentDeclaration = declaration.parent.parent as KtDeclaration
         }
         super.visitDeclaration(declaration)
         currentDeclaration = previous

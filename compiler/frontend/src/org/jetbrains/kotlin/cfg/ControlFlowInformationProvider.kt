@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cfg
 
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiTreeUtil.getParentOfType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.TailRecursionKind.*
 import org.jetbrains.kotlin.cfg.VariableUseState.*
@@ -359,37 +359,34 @@ class ControlFlowInformationProvider private constructor(
         }
     }
 
-    private fun getDeclarationDescriptor(declaration: KtDeclaration?): DeclarationDescriptor? {
-        val descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
-        return if (descriptor is ClassDescriptor) {
-            // For a class primary constructor, we cannot directly get ConstructorDescriptor by KtClassInitializer,
-            // so we have to do additional conversion: KtClassInitializer -> KtClassOrObject -> ClassDescriptor -> ConstructorDescriptor
-            descriptor.unsubstitutedPrimaryConstructor
-        }
-        else {
-            descriptor
-        }
-    }
-
     private fun isCapturedWrite(
             variableDescriptor: VariableDescriptor,
             writeValueInstruction: WriteValueInstruction
     ): Boolean {
         val containingDeclarationDescriptor = variableDescriptor.containingDeclaration
-        // Do not consider member / top-level properties
-        if (containingDeclarationDescriptor is ClassOrPackageFragmentDescriptor) return false
+        // Do not consider top-level properties
+        if (containingDeclarationDescriptor is PackageFragmentDescriptor) return false
         var parentDeclaration = getElementParentDeclaration(writeValueInstruction.element)
         while (true) {
-            val parentDescriptor = getDeclarationDescriptor(parentDeclaration)
-            if (containingDeclarationDescriptor == parentDescriptor) {
+            val context = trace.bindingContext
+            val parentDescriptor = getDeclarationDescriptorIncludingConstructors(context, parentDeclaration)
+            if (parentDescriptor == containingDeclarationDescriptor) {
                 return false
             }
-            else if (parentDeclaration is KtObjectDeclaration) {
-                // anonymous object counts here the same as its owner
-                parentDeclaration = getElementParentDeclaration(parentDeclaration)
-            }
-            else {
-                return true
+            when (parentDeclaration) {
+                is KtObjectDeclaration, is KtClassInitializer -> {
+                    // anonymous objects / initializers count here the same as its owner
+                    parentDeclaration = getElementParentDeclaration(parentDeclaration)
+                }
+                is KtDeclarationWithBody -> {
+                    if (parentDeclaration is KtFunction && parentDeclaration.isLocal) return true
+                    // miss non-local function or accessor just once
+                    parentDeclaration = getElementParentDeclaration(parentDeclaration)
+                    return getDeclarationDescriptorIncludingConstructors(context, parentDeclaration) != containingDeclarationDescriptor
+                }
+                else -> {
+                    return true
+                }
             }
         }
     }
@@ -403,7 +400,7 @@ class ControlFlowInformationProvider private constructor(
         val variableDescriptor = ctxt.variableDescriptor
         val propertyDescriptor = variableDescriptor?.referencedProperty
         if (KtPsiUtil.isBackingFieldReference(variableDescriptor) && propertyDescriptor != null) {
-            val accessor = PsiTreeUtil.getParentOfType(expression, KtPropertyAccessor::class.java)
+            val accessor = getParentOfType(expression, KtPropertyAccessor::class.java)
             if (accessor != null) {
                 val accessorDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, accessor)
                 if (propertyDescriptor.getter === accessorDescriptor) {
@@ -936,7 +933,7 @@ class ControlFlowInformationProvider private constructor(
     }
 
     private fun isInsideTry(element: KtElement) =
-            PsiTreeUtil.getParentOfType(
+            getParentOfType(
                     element,
                     KtTryExpression::class.java, KtFunction::class.java, KtAnonymousInitializer::class.java
             ) is KtTryExpression
@@ -1043,9 +1040,23 @@ class ControlFlowInformationProvider private constructor(
 
     companion object {
 
-        // Should return KtDeclarationWithBody or KtClassOrObject
+        // Should return KtDeclarationWithBody, KtClassOrObject, or KtClassInitializer
         fun getElementParentDeclaration(element: KtElement) =
-                PsiTreeUtil.getParentOfType(element, KtDeclarationWithBody::class.java, KtClassOrObject::class.java)
+                getParentOfType(element, KtDeclarationWithBody::class.java, KtClassOrObject::class.java, KtClassInitializer::class.java)
+
+        fun getDeclarationDescriptorIncludingConstructors(context: BindingContext, declaration: KtDeclaration?): DeclarationDescriptor? {
+            val descriptor = context.get(DECLARATION_TO_DESCRIPTOR,
+                                       (declaration as? KtClassInitializer)?.containingDeclaration ?: declaration)
+            return if (descriptor is ClassDescriptor && declaration is KtClassInitializer) {
+                // For a class primary constructor, we cannot directly get ConstructorDescriptor by KtClassInitializer,
+                // so we have to do additional conversion: KtClassInitializer -> KtClassOrObject -> ClassDescriptor -> ConstructorDescriptor
+                descriptor.unsubstitutedPrimaryConstructor
+                ?: (descriptor as? ClassDescriptorWithResolutionScopes)?.scopeForInitializerResolution?.ownerDescriptor
+            }
+            else {
+                descriptor
+            }
+        }
 
         private fun isUsedAsResultOfLambda(usages: List<Instruction>): Boolean {
             for (usage in usages) {
