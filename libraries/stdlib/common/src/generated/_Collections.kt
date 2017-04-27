@@ -898,6 +898,12 @@ public header fun <T : Any> Iterable<T?>.requireNoNulls(): Iterable<T>
  */
 public header fun <T : Any> List<T?>.requireNoNulls(): List<T>
 
+@SinceKotlin("1.2")
+public header fun <T> Iterable<T>.chunked(size: Int): List<List<T>>
+
+@SinceKotlin("1.2")
+public header fun <T, R> Iterable<T>.chunked(size: Int, transform: (List<T>) -> R): List<R>
+
 /**
  * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
  */
@@ -988,6 +994,12 @@ public header inline fun <T> Iterable<T>.plusElement(element: T): List<T>
  */
 @kotlin.internal.InlineOnly
 public header inline fun <T> Collection<T>.plusElement(element: T): List<T>
+
+@SinceKotlin("1.2")
+public header fun <T> Iterable<T>.windowed(size: Int, step: Int): List<List<T>>
+
+@SinceKotlin("1.2")
+public header fun <T, R> Iterable<T>.windowed(size: Int, step: Int, transform: (List<T>) -> R): List<R>
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.

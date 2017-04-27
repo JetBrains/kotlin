@@ -639,6 +639,18 @@ public header inline fun CharSequence.sumBy(selector: (Char) -> Int): Int
 public header inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double
 
 @SinceKotlin("1.2")
+public header fun CharSequence.chunked(size: Int): List<String>
+
+@SinceKotlin("1.2")
+public header fun <R> CharSequence.chunked(size: Int, transform: (CharSequence) -> R): List<R>
+
+@SinceKotlin("1.2")
+public header fun CharSequence.chunkedSequence(size: Int): Sequence<String> 
+
+@SinceKotlin("1.2")
+public header fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence) -> R): Sequence<R> 
+
+@SinceKotlin("1.2")
 public header fun CharSequence.pairwise(): List<Pair<Char, Char>>
 
 @SinceKotlin("1.2")
@@ -657,6 +669,18 @@ public header inline fun CharSequence.partition(predicate: (Char) -> Boolean): P
  * while *second* string contains characters for which [predicate] yielded `false`.
  */
 public header inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, String>
+
+@SinceKotlin("1.2")
+public header fun CharSequence.windowed(size: Int, step: Int): List<String>
+
+@SinceKotlin("1.2")
+public header fun <R> CharSequence.windowed(size: Int, step: Int, transform: (CharSequence) -> R): List<R>
+
+@SinceKotlin("1.2")
+public header fun CharSequence.windowedSequence(size: Int, step: Int): Sequence<String> 
+
+@SinceKotlin("1.2")
+public header fun <R> CharSequence.windowedSequence(size: Int, step: Int, transform: (CharSequence) -> R): Sequence<R> 
 
 /**
  * Returns a list of pairs built from characters of both char sequences with same indexes. List has length of shortest char sequence.
