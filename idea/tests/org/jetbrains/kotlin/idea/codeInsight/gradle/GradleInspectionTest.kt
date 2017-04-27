@@ -16,20 +16,13 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
-import com.intellij.analysis.AnalysisScope
-import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemDescriptorBase
-import com.intellij.codeInspection.ex.InspectionManagerEx
-import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.InspectionTestUtil
-import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection
+import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.junit.Assert
 import org.junit.Test
 
@@ -163,18 +156,9 @@ class GradleInspectionTest : GradleImportingTestCase() {
     }
 
     fun getInspectionResult(tool: LocalInspectionTool, file: VirtualFile): List<String> {
-        val toolWrapper = LocalInspectionToolWrapper(tool)
-
-        val scope = AnalysisScope(myProject, listOf(file))
-        scope.invalidate()
-
-        val inspectionManager = (InspectionManager.getInstance(myProject) as InspectionManagerEx)
-        val globalContext = CodeInsightTestFixtureImpl.createGlobalContextForTool(scope, myProject, inspectionManager, toolWrapper)
-
         val resultRef = Ref<List<String>>()
         invokeTestRunnable {
-            InspectionTestUtil.runTool(toolWrapper, scope, globalContext)
-            val presentation = globalContext.getPresentation(toolWrapper)
+            val presentation = runInspection(tool, myProject, listOf(file))
 
             val foundProblems = presentation.problemElements
                     .values

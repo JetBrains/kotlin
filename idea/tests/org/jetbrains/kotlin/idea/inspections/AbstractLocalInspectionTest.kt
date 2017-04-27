@@ -17,14 +17,10 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.google.common.collect.Lists
-import com.intellij.analysis.AnalysisScope
 import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.PsiFile
-import com.intellij.testFramework.InspectionTestUtil
-import com.intellij.testFramework.createGlobalContextForTool
+import com.intellij.openapi.vfs.VirtualFile
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
@@ -36,7 +32,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.File
 
-abstract class AbstractLocalInspectionTest  : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCase() {
     protected open fun inspectionFileName(): String = ".inspection"
 
     protected open fun afterFileNameSuffix(): String = ".after"
@@ -74,8 +70,6 @@ abstract class AbstractLocalInspectionTest  : KotlinLightCodeInsightFixtureTestC
         val mainFile = File(path)
         val inspection = createInspection(mainFile)
 
-        val psiFile = myFixture.configureByFiles(mainFile.name).first()
-
         val fileText = FileUtil.loadFile(mainFile, true)
         TestCase.assertTrue("\"<caret>\" is missing in file \"$mainFile\"", fileText.contains("<caret>"))
 
@@ -86,27 +80,24 @@ abstract class AbstractLocalInspectionTest  : KotlinLightCodeInsightFixtureTestC
             DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
         }
 
-        doTestFor(mainFile.name, psiFile, inspection, fileText)
+        val psiFile = myFixture.configureByFiles(mainFile.name).first()
+
+        doTestFor(mainFile.name, psiFile.virtualFile!!, inspection, fileText)
 
         if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_AFTER")) {
             DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
         }
     }
 
-    private fun doTestFor(mainFilePath: String, psiFile: PsiFile, inspection: AbstractKotlinInspection, fileText: String) {
+    private fun doTestFor(mainFilePath: String, file: VirtualFile, inspection: AbstractKotlinInspection, fileText: String) {
         val problemExpectedString = InTextDirectivesUtils.findStringWithPrefixes(
                 fileText, "// ${expectedProblemDirectiveName()}: ")
         val problemExpected = problemExpectedString == null || problemExpectedString != "none"
 
-        val toolWrapper = LocalInspectionToolWrapper(inspection)
-        val scope = AnalysisScope(project, listOf(psiFile.virtualFile!!))
-        scope.invalidate()
-        val globalContext = createGlobalContextForTool(scope, project, listOf(toolWrapper))
-        InspectionTestUtil.runTool(toolWrapper, scope, globalContext)
-
-        val problemDescriptors = globalContext.getPresentation(toolWrapper).problemDescriptors
+        val presentation = runInspection(inspection, project, listOf(file))
+        val problemDescriptors = presentation.problemDescriptors
                 .filterIsInstance<ProblemDescriptor>()
-                .filter { editor.caretModel.offset in it.psiElement.textRange }
+                .filter { myFixture.caretOffset in it.psiElement.textRange }
         Assert.assertTrue(
                 if (!problemExpected)
                     "No problems should be detected at caret\n" +
@@ -144,7 +135,6 @@ abstract class AbstractLocalInspectionTest  : KotlinLightCodeInsightFixtureTestC
 
         project.executeWriteCommand(localFixAction!!.name, null) {
             localFixAction.applyFix(project, problemDescriptor)
-            null
         }
         val canonicalPathToExpectedFile = mainFilePath + afterFileNameSuffix()
         try {
