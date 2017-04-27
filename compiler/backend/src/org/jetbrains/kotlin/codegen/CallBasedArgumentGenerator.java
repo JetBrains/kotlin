@@ -64,7 +64,7 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
 
     @Override
     protected void generateDefault(int i, @NotNull DefaultValueArgument argument) {
-        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), createDefaulValue(valueParameterTypes.get(i)));
+        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), createDefaulValue(valueParameterTypes.get(i)), ValueKind.DEFAULT_PARAMETER);
     }
 
     @Override

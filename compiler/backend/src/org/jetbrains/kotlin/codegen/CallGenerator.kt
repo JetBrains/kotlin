@@ -23,8 +23,10 @@ import org.jetbrains.org.objectweb.asm.Type
 
 enum class ValueKind {
     GENERAL,
+    DEFAULT_PARAMETER,
     DEFAULT_MASK,
-    METHOD_HANDLE_IN_DEFAULT
+    METHOD_HANDLE_IN_DEFAULT,
+    CAPTURED
 }
 
 abstract class CallGenerator {

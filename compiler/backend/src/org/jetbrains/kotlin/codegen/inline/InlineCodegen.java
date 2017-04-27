@@ -414,7 +414,7 @@ public class InlineCodegen extends CallGenerator {
         defaultSourceMapper.setCallSiteMarker(new CallSiteMarker(codegen.getLastLineNumber()));
         MethodNode node = nodeAndSmap.getNode();
         if (callDefault) {
-            MethodInlinerUtilKt.expandMaskConditions(node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex);
+            MethodInlinerUtilKt.expandMaskConditionsAndUpdateVariableNodes(node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex);
         }
         ReifiedTypeParametersUsages reificationResult = reifiedTypeInliner.reifyInstructions(node);
         generateClosuresBodies();
@@ -674,11 +674,17 @@ public class InlineCodegen extends CallGenerator {
             @NotNull Type type,
             @NotNull StackValue stackValue,
             int capturedParamIndex,
-            int parameterIndex
+            int parameterIndex,
+            @NotNull ValueKind kind
     ) {
+        boolean isDefaultParameter = kind == ValueKind.DEFAULT_PARAMETER;
+        if (!isDefaultParameter && shouldPutGeneralValue(type, stackValue)) {
+            stackValue.put(type, codegen.v);
+        }
+
         if (!asFunctionInline && Type.VOID_TYPE != type) {
             //TODO remap only inlinable closure => otherwise we could get a lot of problem
-            boolean couldBeRemapped = !shouldPutGeneralValue(type, stackValue);
+            boolean couldBeRemapped = !shouldPutGeneralValue(type, stackValue) && kind != ValueKind.DEFAULT_PARAMETER;
             StackValue remappedValue = couldBeRemapped ? stackValue : null;
 
             ParameterInfo info;
@@ -691,7 +697,7 @@ public class InlineCodegen extends CallGenerator {
                 info = invocationParamBuilder.addNextValueParameter(type, false, remappedValue, parameterIndex);
             }
 
-            recordParameterValueInLocalVal(false, info);
+            recordParameterValueInLocalVal(false, isDefaultParameter, info);
         }
     }
 
@@ -725,7 +731,7 @@ public class InlineCodegen extends CallGenerator {
         return true;
     }
 
-    private Runnable recordParameterValueInLocalVal(boolean delayedWritingToLocals, @NotNull ParameterInfo... infos) {
+    private Runnable recordParameterValueInLocalVal(boolean delayedWritingToLocals, boolean skipStore, @NotNull ParameterInfo... infos) {
         int[] index = new int[infos.length];
         for (int i = 0; i < infos.length; i++) {
             ParameterInfo info = infos[i];
@@ -743,7 +749,9 @@ public class InlineCodegen extends CallGenerator {
                 if (!info.isSkippedOrRemapped()) {
                     Type type = info.type;
                     StackValue.Local local = StackValue.local(index[i], type);
-                    local.store(StackValue.onStack(type), codegen.v);
+                    if (!skipStore) {
+                        local.store(StackValue.onStack(type), codegen.v);
+                    }
                     if (info instanceof CapturedParamInfo) {
                         info.setRemapValue(local);
                         ((CapturedParamInfo) info).setSynthetic(true);
@@ -773,7 +781,7 @@ public class InlineCodegen extends CallGenerator {
         invocationParamBuilder.markValueParametersStart();
         List<ParameterInfo> hiddenParameters = invocationParamBuilder.buildParameters().getParameters();
 
-        delayedHiddenWriting = recordParameterValueInLocalVal(justProcess, hiddenParameters.toArray(new ParameterInfo[hiddenParameters.size()]));
+        delayedHiddenWriting = recordParameterValueInLocalVal(justProcess, false, hiddenParameters.toArray(new ParameterInfo[hiddenParameters.size()]));
     }
 
     private void leaveTemps() {
@@ -924,11 +932,7 @@ public class InlineCodegen extends CallGenerator {
 
         assert maskValues.isEmpty() : "Additional default call arguments should be last ones, but " + value;
 
-        if (shouldPutGeneralValue(parameterType, value)) {
-            value.put(parameterType, codegen.v);
-        }
-
-        putArgumentOrCapturedToLocalVal(parameterType, value, -1, index);
+        putArgumentOrCapturedToLocalVal(parameterType, value, -1, index, kind);
     }
 
     private boolean processDefaultMaskOrMethodHandler(@NotNull StackValue value, @NotNull ValueKind kind) {
@@ -953,10 +957,7 @@ public class InlineCodegen extends CallGenerator {
 
     @Override
     public void putCapturedValueOnStack(@NotNull StackValue stackValue, @NotNull Type valueType, int paramIndex) {
-        if (shouldPutGeneralValue(stackValue.type, stackValue)) {
-            stackValue.put(stackValue.type, codegen.v);
-        }
-        putArgumentOrCapturedToLocalVal(stackValue.type, stackValue, paramIndex, paramIndex);
+        putArgumentOrCapturedToLocalVal(stackValue.type, stackValue, paramIndex, paramIndex, ValueKind.CAPTURED);
     }
 
     private void generateAndInsertFinallyBlocks(

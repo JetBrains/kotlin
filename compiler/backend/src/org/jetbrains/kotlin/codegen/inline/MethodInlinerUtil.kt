@@ -89,14 +89,17 @@ private fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
 
 fun SourceValue.singleOrNullInsn() = insns.singleOrNull()
 
-fun expandMaskConditions(node: MethodNode, maskStartIndex: Int, masks: List<Int>, methodHandlerIndex: Int) {
-    class Condition(mask: Int, constant: Int, val maskInstruction: VarInsnNode, val jumpInstruction: JumpInsnNode) {
+fun expandMaskConditionsAndUpdateVariableNodes(node: MethodNode, maskStartIndex: Int, masks: List<Int>, methodHandlerIndex: Int) {
+    class Condition(mask: Int, constant: Int, val maskInstruction: VarInsnNode, val jumpInstruction: JumpInsnNode, val varIndex: Int) {
         val expandNotDelete = mask and constant != 0
+    }
+    fun isMaskIndex(varIndex: Int): Boolean {
+        return maskStartIndex <= varIndex && varIndex < maskStartIndex + masks.size
     }
 
     val maskProcessingHeader = node.instructions.asSequence().takeWhile {
         if (it is VarInsnNode) {
-            if (isMaskIndex(it, maskStartIndex, masks)) {
+            if (isMaskIndex(it.`var`)) {
                 /*if slot for default mask is updated than we occurred in actual function body*/
                 return@takeWhile it.opcode == Opcodes.ILOAD
             }
@@ -108,14 +111,16 @@ fun expandMaskConditions(node: MethodNode, maskStartIndex: Int, masks: List<Int>
     }
 
     val conditions = maskProcessingHeader.filterIsInstance<VarInsnNode>().mapNotNull {
-        if (isMaskIndex(it, maskStartIndex, masks) &&
+        if (isMaskIndex(it.`var`) &&
             it.next?.next?.opcode == Opcodes.IAND &&
             it.next.next.next?.opcode == Opcodes.IFEQ) {
+            val jumpInstruction = it.next?.next?.next as JumpInsnNode
             Condition(
                     masks[it.`var` - maskStartIndex],
                     InlineCodegenUtil.getConstant(it.next),
                     it,
-                    it.next?.next?.next as JumpInsnNode
+                    jumpInstruction,
+                    (jumpInstruction.label.previous as VarInsnNode).`var`
             )
         }
         else if (isMethodHandleIndex(methodHandlerIndex, it) &&
@@ -123,16 +128,22 @@ fun expandMaskConditions(node: MethodNode, maskStartIndex: Int, masks: List<Int>
                  it.next.next?.opcode == Opcodes.NEW) {
             //Always delete method handle for now
             //This logic should be updated when method handles would be supported
-            Condition(0, 0, it,it.next as JumpInsnNode)
+            Condition(0, 0, it,it.next as JumpInsnNode, -1)
         }
         else null
     }
 
+    val indexToVarNode = node.localVariables?.filter { it.index < maskStartIndex }?.associateBy { it.index } ?: emptyMap()
     val toDelete = arrayListOf<AbstractInsnNode>()
     conditions.forEach {
         val jumpInstruction = it.jumpInstruction
         InsnSequence(it.maskInstruction, (if (it.expandNotDelete) jumpInstruction.next else jumpInstruction.label)).forEach {
             toDelete.add(it)
+        }
+        if (it.expandNotDelete) {
+            indexToVarNode[it.varIndex]?.let { varNode ->
+               varNode.start = it.jumpInstruction.label
+            }
         }
     }
 
@@ -142,9 +153,3 @@ fun expandMaskConditions(node: MethodNode, maskStartIndex: Int, masks: List<Int>
 }
 
 private fun isMethodHandleIndex(methodHandlerIndex: Int, it: VarInsnNode) = methodHandlerIndex == it.`var`
-
-private fun isMaskIndex(variable: VarInsnNode, maskStartIndex: Int, masks: List<Int>): Boolean {
-    val varIndex = variable.`var`
-    return maskStartIndex <= varIndex && varIndex < maskStartIndex + masks.size
-}
-

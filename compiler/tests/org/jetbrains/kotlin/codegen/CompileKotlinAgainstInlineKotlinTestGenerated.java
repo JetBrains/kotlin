@@ -929,29 +929,29 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
-        @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElumination")
+        @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class MaskElumination extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        public static class MaskElimination extends AbstractCompileKotlinAgainstInlineKotlinTest {
             @TestMetadata("32Parameters.kt")
             public void test32Parameters() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElumination/32Parameters.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination/32Parameters.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("33Parameters.kt")
             public void test33Parameters() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElumination/33Parameters.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination/33Parameters.kt");
                 doTest(fileName);
             }
 
-            public void testAllFilesPresentInMaskElumination() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/maskElumination"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            public void testAllFilesPresentInMaskElimination() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/maskElimination"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElumination/simple.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination/simple.kt");
                 doTest(fileName);
             }
         }
