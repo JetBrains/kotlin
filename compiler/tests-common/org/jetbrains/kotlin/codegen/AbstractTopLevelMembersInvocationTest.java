@@ -61,7 +61,7 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
                 getTestRootDisposable(),
                 KotlinTestUtils.newConfiguration(
                         ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
-                        CollectionsKt.plus(classPath, KotlinTestUtils.getAnnotationsJar()), classPath
+                        CollectionsKt.plus(classPath, KotlinTestUtils.getAnnotationsJar()), Collections.emptyList()
                 ),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES);
 

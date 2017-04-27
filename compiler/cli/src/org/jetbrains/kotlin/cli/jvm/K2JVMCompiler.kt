@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.jvm
 
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -93,10 +94,15 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
         else if (arguments.module == null) {
             for (arg in arguments.freeArgs) {
-                configuration.addKotlinSourceRoot(arg)
                 val file = File(arg)
-                if (file.isDirectory) {
+                if (file.extension == JavaFileType.DEFAULT_EXTENSION) {
                     configuration.addJavaSourceRoot(file)
+                }
+                else {
+                    configuration.addKotlinSourceRoot(arg)
+                    if (file.isDirectory) {
+                        configuration.addJavaSourceRoot(file)
+                    }
                 }
             }
         }

@@ -346,7 +346,7 @@ object KotlinToJVMBytecodeCompiler {
             override fun analyze(): AnalysisResult {
                 val project = environment.project
                 val moduleOutputs = environment.configuration.get(JVMConfigurationKeys.MODULES)?.mapNotNull { module ->
-                    environment.findLocalDirectory(module.getOutputDirectory())
+                    environment.findLocalFile(module.getOutputDirectory())
                 }.orEmpty()
                 val sourcesOnly = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, environment.getSourceFiles())
                 // To support partial and incremental compilation, we add the scope which contains binaries from output directories

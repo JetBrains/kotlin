@@ -332,6 +332,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("singleJavaFileRoots.args")
+        public void testSingleJavaFileRoots() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/singleJavaFileRoots.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("suppressAllWarningsJvm.args")
         public void testSuppressAllWarningsJvm() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/suppressAllWarningsJvm.args");

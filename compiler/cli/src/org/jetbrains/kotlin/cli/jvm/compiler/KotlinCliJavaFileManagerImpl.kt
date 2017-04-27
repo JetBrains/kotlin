@@ -26,6 +26,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
+import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
@@ -36,21 +37,23 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.util.PerformanceCounter
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
-import kotlin.properties.Delegates
 
 // TODO: do not inherit from CoreJavaFileManager to avoid accidental usage of its methods which do not use caches/indices
 // Currently, the only relevant usage of this class as CoreJavaFileManager is at CoreJavaDirectoryService.getPackage,
 // which is indirectly invoked from PsiPackage.getSubPackages
 class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJavaFileManager(myPsiManager), KotlinCliJavaFileManager {
     private val perfCounter = PerformanceCounter.create("Find Java class")
-    private var index: JvmDependenciesIndex by Delegates.notNull()
+    private lateinit var index: JvmDependenciesIndex
+    private lateinit var singleJavaFileRootsIndex: SingleJavaFileRootsIndex
     private val topLevelClassesCache: MutableMap<FqName, VirtualFile?> = THashMap()
     private val allScope = GlobalSearchScope.allScope(myPsiManager.project)
     private var useFastClassFilesReading = false
 
-    fun initialize(packagesCache: JvmDependenciesIndex, useFastClassFilesReading: Boolean) {
-        this.index = packagesCache
+    fun initialize(index: JvmDependenciesIndex, singleJavaFileRootsIndex: SingleJavaFileRootsIndex, useFastClassFilesReading: Boolean) {
+        this.index = index
+        this.singleJavaFileRootsIndex = singleJavaFileRootsIndex
         this.useFastClassFilesReading = useFastClassFilesReading
     }
 
@@ -64,6 +67,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             index.findClass(classId) { dir, type ->
                 findVirtualFileGivenPackage(dir, relativeClassName, type)
             }
+            ?: singleJavaFileRootsIndex.findJavaSourceClass(classId)
         }?.takeIf { it in searchScope }
     }
 
@@ -153,6 +157,13 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 // traverse all
                 true
             }
+
+            result.addIfNotNull(
+                    singleJavaFileRootsIndex.findJavaSourceClass(classId)
+                            ?.takeIf { it in scope }
+                            ?.findPsiClassInVirtualFile(relativeClassName)
+            )
+
             if (result.isNotEmpty()) {
                 return@time result.toTypedArray()
             }
@@ -169,10 +180,10 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             //abort on first found
             false
         }
-        if (found) {
-            return PsiPackageImpl(myPsiManager, packageName)
+        if (!found) {
+            found = singleJavaFileRootsIndex.findJavaSourceClasses(packageFqName).isNotEmpty()
         }
-        return null
+        return if (found) PsiPackageImpl(myPsiManager, packageName) else null
     }
 
     private fun findVirtualFileGivenPackage(
@@ -215,6 +226,11 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
             true
         })
+
+        for (classId in singleJavaFileRootsIndex.findJavaSourceClasses(packageFqName)) {
+            assert(!classId.isNestedClass) { "ClassId of a single .java source class should not be nested: $classId" }
+            result.add(classId.shortClassName.asString())
+        }
 
         return result
     }

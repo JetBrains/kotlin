@@ -1,0 +1,11 @@
+$TESTDATA_DIR$/singleJavaFileRoots/test.kt
+$TESTDATA_DIR$/singleJavaFileRoots/DefaultPackage.java
+$TESTDATA_DIR$/singleJavaFileRoots/lib/A.java
+$TESTDATA_DIR$/singleJavaFileRoots/lib/B.java
+$TESTDATA_DIR$/singleJavaFileRoots/lib/ext/SeveralClasses.java
+$TESTDATA_DIR$/singleJavaFileRoots/lib/classKinds/ClassClass.java
+$TESTDATA_DIR$/singleJavaFileRoots/lib/classKinds/InterfaceClass.java
+$TESTDATA_DIR$/singleJavaFileRoots/lib/classKinds/EnumClass.java
+$TESTDATA_DIR$/singleJavaFileRoots/lib/classKinds/AnnotationClass.java
+-d
+$TEMP_DIR$
