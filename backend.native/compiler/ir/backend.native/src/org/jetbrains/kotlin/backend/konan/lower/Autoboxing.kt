@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.descriptors.*
@@ -25,7 +26,9 @@ import org.jetbrains.kotlin.backend.konan.notNullableIsRepresentedAs
 import org.jetbrains.kotlin.backend.konan.isRepresentedAs
 import org.jetbrains.kotlin.backend.konan.util.atMostOne
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
@@ -123,6 +126,23 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         }
     }
 
+    private var currentFunctionDescriptor: FunctionDescriptor? = null
+
+    override fun visitFunction(declaration: IrFunction): IrStatement {
+        currentFunctionDescriptor = declaration.descriptor
+        val result = super.visitFunction(declaration)
+        currentFunctionDescriptor = null
+        return result
+    }
+
+    override fun IrExpression.useAsReturnValue(returnTarget: CallableDescriptor): IrExpression {
+        if (returnTarget.isSuspend && returnTarget == currentFunctionDescriptor)
+            return this.useAs(context.builtIns.nullableAnyType)
+        val returnType = returnTarget.returnType
+                ?: return this
+        return this.useAs(returnType)
+    }
+
     override fun IrExpression.useAs(type: KotlinType): IrExpression {
         val interop = context.interopBuiltIns
         if (this.isNullConst() && interop.nullableInteropValueTypes.any { type.isRepresentedAs(it) }) {
@@ -130,7 +150,10 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         }
 
         val actualType = when (this) {
-            is IrCall -> this.descriptor.original.returnType ?: this.type
+            is IrCall -> {
+                if (this.descriptor.isSuspend) context.builtIns.nullableAnyType
+                else this.descriptor.original.returnType ?: this.type
+            }
             is IrGetField -> this.descriptor.original.type
 
             is IrTypeOperatorCall -> when (this.operator) {

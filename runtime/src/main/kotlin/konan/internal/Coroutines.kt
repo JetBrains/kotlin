@@ -3,6 +3,14 @@ package konan.internal
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
+@Intrinsic
+@PublishedApi
+internal fun <T> getContinuation(): Continuation<T> = throw AssertionError("Call to getContinuation should've been lowered")
+
+@Intrinsic
+@PublishedApi
+internal fun <T> returnIfSuspended(value: Any?): T = throw AssertionError("Call to returnIfSuspended should've been lowered")
+
 // Single-threaded continuation.
 class SafeContinuation<in T>
 constructor(
@@ -67,6 +75,7 @@ internal fun <T> interceptContinuationIfNeeded(
  * @suppress
  */
 @ExportForCompiler
+@PublishedApi
 internal fun <T> normalizeContinuation(continuation: Continuation<T>): Continuation<T> =
         (continuation as? CoroutineImpl)?.facade ?: continuation
 
@@ -80,7 +89,8 @@ abstract internal class CoroutineImpl(
 
     // label == -1 when coroutine cannot be started (it is just a factory object) or has already finished execution
     // label == 0 in initial part of the coroutine
-    protected var label: Int = if (completion != null) 0L else -1L
+    // TODO: use IntPtr.
+    protected var label: Long = if (completion != null) 0L else -1L
 
     private val _context: CoroutineContext? = completion?.context
 

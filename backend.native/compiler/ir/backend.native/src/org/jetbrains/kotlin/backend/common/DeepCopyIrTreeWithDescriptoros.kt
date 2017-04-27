@@ -200,6 +200,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
                     /* visibility                   = */ oldDescriptor.visibility
                 )
                 isTailrec             =  oldDescriptor.isTailrec
+                isSuspend             =  oldDescriptor.isSuspend
                 overriddenDescriptors += oldDescriptor.overriddenDescriptors
             }
         }

@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.backend.common.descriptors
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.coroutines.isSuspendLambda
+import org.jetbrains.kotlin.descriptors.*
+
+internal val CallableDescriptor.isSuspend: Boolean
+    get() = this is FunctionDescriptor && isSuspend
 
 /**
  * @return naturally-ordered list of all parameters available inside the function body.

@@ -19,8 +19,7 @@ package kotlin.coroutines.experimental.intrinsics
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.coroutines.experimental.processBareContinuationResume
-import konan.internal.interceptContinuationIfNeeded
-import konan.internal.CoroutineImpl
+import konan.internal.*
 
 /**
  * Obtains the current continuation instance inside suspend functions and either suspend
@@ -40,7 +39,8 @@ import konan.internal.CoroutineImpl
  * continuation instance.
  */
 @kotlin.internal.InlineOnly
-public inline suspend fun <T> suspendCoroutineOrReturn(crossinline block: (Continuation<T>) -> Any?): T = throw Error("Should've been intrinsified")
+public inline suspend fun <T> suspendCoroutineOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
+        returnIfSuspended<T>(block(normalizeContinuation<T>(getContinuation<T>())))
 
 /**
  * This value is used as a return value of [suspendCoroutineOrReturn] `block` argument to state that

@@ -51,15 +51,7 @@ fun ir2stringWhole(ir: IrElement?, withDescriptors: Boolean = false): String {
 internal fun DeclarationDescriptor.createFakeOverrideDescriptor(owner: ClassDescriptor): DeclarationDescriptor? {
     // We need to copy descriptors for vtable building, thus take only functions and properties.
     return when (this) {
-        is FunctionDescriptor ->
-            newCopyBuilder()
-                    .setOwner(owner)
-                    .setKind(CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
-                    .setCopyOverrides(true)
-                    .build()!!.apply {
-                overriddenDescriptors += this@createFakeOverrideDescriptor
-            }
-        is PropertyDescriptor ->
+        is CallableMemberDescriptor ->
             copy(
                     /* newOwner      = */ owner,
                     /* modality      = */ modality,
@@ -69,6 +61,17 @@ internal fun DeclarationDescriptor.createFakeOverrideDescriptor(owner: ClassDesc
                 overriddenDescriptors += this@createFakeOverrideDescriptor
             }
         else -> null
+    }
+}
+
+internal fun FunctionDescriptor.createOverriddenDescriptor(owner: ClassDescriptor, final: Boolean = true): FunctionDescriptor {
+    return this.newCopyBuilder()
+            .setOwner(owner)
+            .setCopyOverrides(true)
+            .setModality(if (final) Modality.FINAL else Modality.OPEN)
+            .setDispatchReceiverParameter(owner.thisAsReceiverParameter)
+            .build()!!.apply {
+        overriddenDescriptors += this@createOverriddenDescriptor
     }
 }
 

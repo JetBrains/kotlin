@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.konan.util.atMostOne
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.ir.IrElement
@@ -138,11 +139,17 @@ fun computeOverrides(current: ClassDescriptor, functionsFromCurrent: List<Callab
 
 class SimpleMemberScope(val members: List<DeclarationDescriptor>) : MemberScopeImpl() {
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = TODO()
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
+            members.filterIsInstance<ClassifierDescriptor>()
+                    .atMostOne { it.name == name }
 
-    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = TODO()
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> =
+            members.filterIsInstance<PropertyDescriptor>()
+                    .filter { it.name == name }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> = TODO()
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> =
+            members.filterIsInstance<SimpleFunctionDescriptor>()
+                    .filter { it.name == name }
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
                                            nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> =

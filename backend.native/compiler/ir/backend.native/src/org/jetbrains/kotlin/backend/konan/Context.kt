@@ -88,11 +88,11 @@ internal class SpecialDescriptorsFactory(val context: Context) {
         val bridgeDirections = overriddenFunctionDescriptor.bridgeDirections
         return bridgesDescriptors.getOrPut(descriptor to bridgeDirections) {
             SimpleFunctionDescriptorImpl.create(
-                    descriptor.containingDeclaration,
-                    Annotations.EMPTY,
-                    ("<bridge-" + bridgeDirections.toString() + ">" + descriptor.functionName).synthesizedName,
-                    CallableMemberDescriptor.Kind.DECLARATION,
-                    SourceElement.NO_SOURCE).apply {
+                    /* containingDeclaration = */ descriptor.containingDeclaration,
+                    /* annotations           = */ Annotations.EMPTY,
+                    /* name                  = */ "<bridge-$bridgeDirections>${descriptor.functionName}".synthesizedName,
+                    /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
+                    /* source                = */ SourceElement.NO_SOURCE).apply {
                 initializeBridgeDescriptor(this, descriptor, bridgeDirections.array)
             }
         }
@@ -120,31 +120,34 @@ internal class SpecialDescriptorsFactory(val context: Context) {
             BridgeDirection.FROM_VALUE_TYPE -> context.builtIns.anyType
         }
 
+        val valueParameters = descriptor.valueParameters.mapIndexed { index, valueParameterDescriptor ->
+            when (bridgeDirections[index + 2]) {
+                BridgeDirection.TO_VALUE_TYPE -> valueParameterDescriptor
+                BridgeDirection.NOT_NEEDED -> valueParameterDescriptor
+                BridgeDirection.FROM_VALUE_TYPE -> ValueParameterDescriptorImpl(
+                        containingDeclaration = valueParameterDescriptor.containingDeclaration,
+                        original              = null,
+                        index                 = index,
+                        annotations           = Annotations.EMPTY,
+                        name                  = valueParameterDescriptor.name,
+                        outType               = context.builtIns.anyType,
+                        declaresDefaultValue  = valueParameterDescriptor.declaresDefaultValue(),
+                        isCrossinline         = valueParameterDescriptor.isCrossinline,
+                        isNoinline            = valueParameterDescriptor.isNoinline,
+                        varargElementType     = valueParameterDescriptor.varargElementType,
+                        source                = SourceElement.NO_SOURCE)
+            }
+        }
         bridgeDescriptor.initialize(
-                extensionReceiverType,
-                descriptor.dispatchReceiverParameter,
-                descriptor.typeParameters,
-                descriptor.valueParameters.mapIndexed { index, valueParameterDescriptor ->
-                    when (bridgeDirections[index + 2]) {
-                        BridgeDirection.TO_VALUE_TYPE -> valueParameterDescriptor
-                        BridgeDirection.NOT_NEEDED -> valueParameterDescriptor
-                        BridgeDirection.FROM_VALUE_TYPE -> ValueParameterDescriptorImpl(
-                                valueParameterDescriptor.containingDeclaration,
-                                null,
-                                index,
-                                Annotations.EMPTY,
-                                valueParameterDescriptor.name,
-                                context.builtIns.anyType,
-                                valueParameterDescriptor.declaresDefaultValue(),
-                                valueParameterDescriptor.isCrossinline,
-                                valueParameterDescriptor.isNoinline,
-                                valueParameterDescriptor.varargElementType,
-                                SourceElement.NO_SOURCE)
-                    }
-                },
-                returnType,
-                descriptor.modality,
-                descriptor.visibility)
+                /* receiverParameterType        = */ extensionReceiverType,
+                /* dispatchReceiverParameter    = */ descriptor.dispatchReceiverParameter,
+                /* typeParameters               = */ descriptor.typeParameters,
+                /* unsubstitutedValueParameters = */ valueParameters,
+                /* unsubstitutedReturnType      = */ returnType,
+                /* modality                     = */ descriptor.modality,
+                /* visibility                   = */ descriptor.visibility).apply {
+            isSuspend                           =    descriptor.isSuspend
+        }
     }
 }
 

@@ -202,7 +202,7 @@ fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.moda
 
 internal fun FunctionDescriptor.hasValueTypeAt(index: Int): Boolean {
     when (index) {
-        0 -> return returnType.let { it != null && it.isValueType() }
+        0 -> return !isSuspend && returnType.let { it != null && it.isValueType() }
         1 -> return extensionReceiverParameter.let { it != null && it.type.isValueType() }
         else -> return this.valueParameters[index - 2].type.isValueType()
     }
@@ -210,7 +210,7 @@ internal fun FunctionDescriptor.hasValueTypeAt(index: Int): Boolean {
 
 internal fun FunctionDescriptor.hasReferenceAt(index: Int): Boolean {
     when (index) {
-        0 -> return returnType.let { it != null && !it.isValueType() }
+        0 -> return isSuspend || returnType.let { it != null && !it.isValueType() }
         1 -> return extensionReceiverParameter.let { it != null && !it.type.isValueType() }
         else -> return !this.valueParameters[index - 2].type.isValueType()
     }

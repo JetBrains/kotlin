@@ -410,6 +410,7 @@ private fun FunctionDescriptor.generateDefaultsDescription(context: Context): Fu
                 /* unsubstitutedReturnType       = */ returnType,
                 /* modality                      = */ Modality.FINAL,
                 /* visibility                    = */ this.visibility)
+        descriptor.isSuspend = this.isSuspend
         context.log{"adds to cache[$this] = $descriptor"}
         descriptor
     }
