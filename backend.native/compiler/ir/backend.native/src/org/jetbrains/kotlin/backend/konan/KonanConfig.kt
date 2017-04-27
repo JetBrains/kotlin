@@ -28,6 +28,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val moduleId: String
         get() = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
 
+    internal val targetManager = TargetManager(configuration)
     internal val distribution = Distribution(configuration)
 
     private val libraryNames: List<String>
@@ -39,15 +40,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             return fromCommandLine + distribution.stdlib
         }
 
-    internal val libraries: List<KonanLibrary> by lazy {
-        // Here we have chosen a particular .kt.bc KonanLibrary implementation
-        libraryNames.map{it -> KtBcLibrary(it, configuration)}
+    internal val libraries: List<KonanLibraryReader> by lazy {
+        // Here we have chosen a particular KonanLibraryReader implementation
+        libraryNames.map{it -> SplitLibraryReader(it, configuration)}
     }
 
     private val loadedDescriptors = loadLibMetadata()
 
     internal val nativeLibraries: List<String> = configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
-
 
     fun loadLibMetadata(): List<ModuleDescriptorImpl> {
 

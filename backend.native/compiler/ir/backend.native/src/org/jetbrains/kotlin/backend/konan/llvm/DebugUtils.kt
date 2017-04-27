@@ -22,6 +22,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.KonanVersion
+import org.jetbrains.kotlin.backend.konan.TargetManager
 import org.jetbrains.kotlin.backend.konan.util.File
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -94,7 +95,15 @@ internal fun String?.toFileAndFolder():FileAndFolder {
 
 internal fun generateDebugInfoHeader(context: Context) {
     if (context.shouldContainDebugInfo()) {
-        val path = context.config.configuration.get(KonanConfigKeys.BITCODE_FILE).toFileAndFolder()
+
+        val path = with(context.config.configuration) {
+            if (!getBoolean(KonanConfigKeys.NOLINK)) {
+                get(KonanConfigKeys.EXECUTABLE_FILE)!!
+            } else {
+                get(KonanConfigKeys.LIBRARY_NAME)!!
+            }
+        }.toFileAndFolder()
+
         context.debugInfo.module = DICreateModule(
                 builder = context.debugInfo.builder,
                 scope = context.llvmModule as DIScopeOpaqueRef,

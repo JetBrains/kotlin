@@ -22,9 +22,7 @@ import java.io.File
 class Distribution(val config: CompilerConfiguration) {
 
     val targetManager = TargetManager(config)
-    val target = 
-        if (!targetManager.crossCompile) "host" 
-        else targetManager.current.name.toLowerCase()
+    val target = targetManager.currentName
     val suffix = targetManager.currentSuffix()
     val hostSuffix = TargetManager.host.suffix
     init { if (!targetManager.crossCompile) assert(suffix == hostSuffix) }
@@ -40,16 +38,14 @@ class Distribution(val config: CompilerConfiguration) {
         ?: "$konanHome/konan/konan.properties"
     val properties = KonanProperties(propertyFile)
 
-    val lib = "$konanHome/lib/$target"
+    val klib = "$konanHome/klib"
 
     val dependenciesDir = "$konanHome/dependencies"
     val dependencies = properties.propertyList("dependencies.$suffix")
 
-    val stdlib = "$lib/stdlib.kt.bc"
-    val start = "$lib/start.kt.bc"
-    val launcher = "$lib/launcher.bc"
+    val stdlib = "$klib/stdlib"
     val runtime = config.get(KonanConfigKeys.RUNTIME_FILE) 
-        ?: "$lib/runtime.bc"
+        ?: "$stdlib/$target/native/runtime.bc"
 
     val llvmHome = "$dependenciesDir/${properties.propertyString("llvmHome.$hostSuffix")}"
     val sysRoot = "$dependenciesDir/${properties.propertyString("sysRoot.$hostSuffix")}"

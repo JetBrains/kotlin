@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.LinkData
 import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
 import org.jetbrains.kotlin.backend.konan.llvm.base64Encode
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
@@ -274,7 +275,9 @@ internal class KonanSerializationUtil(val context: Context) {
         }
         val libraryAsByteArray = libraryProto.build().toByteArray()
         val library = byteArrayToBase64(libraryAsByteArray)
-        return LinkData(library, fragments, fragmentNames)
+        val abiVersion = context.config.configuration.get(KonanConfigKeys.ABI_VERSION)!!
+        val moduleName = moduleDescriptor.name.asString()
+        return LinkData(abiVersion, library, moduleName, fragments, fragmentNames)
     }
 }
 

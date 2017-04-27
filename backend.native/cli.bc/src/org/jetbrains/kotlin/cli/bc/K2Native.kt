@@ -90,36 +90,38 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
                 put(NOSTDLIB, arguments.nostdlib)
                 put(NOLINK, arguments.nolink)
+                put(NOPACK, arguments.nopack)
                 put(NOMAIN, arguments.nomain)
                 put(LIBRARY_FILES,
                         arguments.libraries.toNonNullList())
 
                 put(LINKER_ARGS, arguments.linkerArguments.toNonNullList())
+                if (arguments.target != null)
+                    put(TARGET, arguments.target)
 
                 put(NATIVE_LIBRARY_FILES,
                         arguments.nativeLibraries.toNonNullList())
 
                 // TODO: Collect all the explicit file names into an object
                 // and teach the compiler to work with temporaries and -save-temps.
-                val bitcodeFile = if (arguments.nolink) {
-                    arguments.outputFile ?: "program.kt.bc"
-                } else {
-                    "${arguments.outputFile ?: "program"}.kt.bc"
+                val library = arguments.outputFile ?: "library"
+                if (arguments.nolink) 
+                    put(LIBRARY_NAME, library)
+                    put(LIBRARY_FILE, "${library}.klib")
+                val program = arguments.outputFile ?: "program"
+                if (!arguments.nolink) {
+                    put(PROGRAM_NAME,program)
+                    put(EXECUTABLE_FILE,"${program}.kexe")
                 }
-                put(BITCODE_FILE, bitcodeFile)
-
                 // This is a decision we could change
-                put(CommonConfigurationKeys.MODULE_NAME, bitcodeFile)
+                val module = if (arguments.nolink) library else program
+                put(CommonConfigurationKeys.MODULE_NAME, module)
                 put(ABI_VERSION, 1)
 
-                put(EXECUTABLE_FILE,
-                        arguments.outputFile ?: "program.kexe")
                 if (arguments.runtimeFile != null)
                     put(RUNTIME_FILE, arguments.runtimeFile)
                 if (arguments.propertyFile != null)
                     put(PROPERTY_FILE, arguments.propertyFile)
-                if (arguments.target != null)
-                    put(TARGET, arguments.target)
                 put(LIST_TARGETS, arguments.listTargets)
                 put(OPTIMIZATION, arguments.optimization)
                 put(DEBUG, arguments.debug)

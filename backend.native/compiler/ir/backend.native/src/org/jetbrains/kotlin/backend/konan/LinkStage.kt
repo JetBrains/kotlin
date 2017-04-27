@@ -147,9 +147,9 @@ internal class LinkStage(val context: Context) {
 
     val config = context.config.configuration
 
-    val targetManager = TargetManager(config)
+    val targetManager = context.config.targetManager
     private val distribution =
-        Distribution(context.config.configuration)
+        context.config.distribution
     private val properties = distribution.properties
 
     val platform = when (TargetManager.host) {
@@ -164,8 +164,8 @@ internal class LinkStage(val context: Context) {
     val suffix = targetManager.currentSuffix()
 
     val optimize = config.get(KonanConfigKeys.OPTIMIZATION) ?: false
-    val emitted = config.get(KonanConfigKeys.BITCODE_FILE)!!
     val nomain = config.get(KonanConfigKeys.NOMAIN) ?: false
+    val emitted = context.bitcodeFileName
     val libraries = context.config.libraries
 
     fun llvmLto(files: List<BitcodeFile>): ObjectFile {
@@ -265,8 +265,7 @@ internal class LinkStage(val context: Context) {
     fun linkStage() {
         context.log{"# Compiler root: ${distribution.konanHome}"}
 
-        val bitcodeFiles = listOf<BitcodeFile>(emitted, distribution.start, 
-            distribution.runtime, distribution.launcher) + 
+        val bitcodeFiles = listOf<BitcodeFile>(emitted) + 
             libraries.map{it -> it.bitcodePaths}.flatten()
 
         var objectFiles: List<String> = listOf()

@@ -55,11 +55,6 @@ import java.util.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
 
-internal class LinkData(
-    val module: String,
-    val fragments: List<String>,
-    val fragmentNames: List<String> )
-
 internal class SpecialDescriptorsFactory(val context: Context) {
     private val enumSpecialDescriptorsFactory by lazy { EnumSpecialDescriptorsFactory(context) }
     private val outerThisDescriptors = mutableMapOf<ClassDescriptor, PropertyDescriptor>()
@@ -270,6 +265,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     lateinit var llvm: Llvm
     lateinit var llvmDeclarations: LlvmDeclarations
+    lateinit var bitcodeFileName: String
+    lateinit var library: KonanLibraryWriter
 
     var phase: KonanPhase? = null
     var depth: Int = 0

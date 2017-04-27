@@ -178,16 +178,14 @@ class HelperNativeDep extends TgzNativeDep {
     }
 }
 
-
-task hostLibffi(type: HelperNativeDep) {
-    baseName = "libffi-3.2.1-2-$host"
-}
-
 task llvm(type: HelperNativeDep) {
     baseName = "clang-llvm-$llvmVersion-$host"
 }
 
 if (isLinux()) {
+    task linuxLibffi(type: HelperNativeDep) {
+        baseName = "libffi-3.2.1-2-$host"
+    }
     task gccToolchain(type: HelperNativeDep) {
         baseName = "target-gcc-toolchain-3-$host"
     }
@@ -198,7 +196,10 @@ if (isLinux()) {
         baseName = "libffi-3.2.1-2-raspberrypi"
     }
 } else {
-    task hostSysroot(type: HelperNativeDep) {
+    task macbookLibffi(type: HelperNativeDep) {
+        baseName = "libffi-3.2.1-2-$host"
+    }
+    task macbookSysroot(type: HelperNativeDep) {
         baseName = "target-sysroot-1-$host"
     }
     task iphoneSysroot(type: HelperNativeDep) {
@@ -207,11 +208,11 @@ if (isLinux()) {
     task iphoneLibffi(type: HelperNativeDep) {
         baseName = "libffi-3.2.1-2-darwin-ios"
     }
-// TODO: re-enable when we known how to bring the simulator
-// sysroot to dependencies.
-//    task iphoneSimSysroot(type: TgzNativeDep) {
-//       baseName = "target-sysroot-1-darwin-ios-sim"
-//  }
+    // TODO: re-enable when we known how to bring the simulator
+    // sysroot to dependencies.
+    //    task iphoneSimSysroot(type: TgzNativeDep) {
+    //       baseName = "target-sysroot-1-darwin-ios-sim"
+    //  }
 }
 
 

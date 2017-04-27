@@ -27,7 +27,7 @@ targetList.each { targetName ->
 }
 
 task build {
-    dependsOn hostHash
+    dependsOn "${host}Hash"
 }
 
 task clean << {

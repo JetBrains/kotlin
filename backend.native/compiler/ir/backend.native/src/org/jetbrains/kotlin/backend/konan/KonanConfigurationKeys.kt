@@ -25,8 +25,12 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("library file paths")
         val NATIVE_LIBRARY_FILES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("native library file paths")
-        val BITCODE_FILE: CompilerConfigurationKey<String> 
-                = CompilerConfigurationKey.create("emitted bitcode file path")
+        val LIBRARY_NAME: CompilerConfigurationKey<String> 
+                = CompilerConfigurationKey.create("library name")
+        val LIBRARY_FILE: CompilerConfigurationKey<String> 
+                = CompilerConfigurationKey.create("library file path")
+        val PROGRAM_NAME: CompilerConfigurationKey<String> 
+                = CompilerConfigurationKey.create("program name")
         val EXECUTABLE_FILE: CompilerConfigurationKey<String> 
                 = CompilerConfigurationKey.create("final executable file path")
         val RUNTIME_FILE: CompilerConfigurationKey<String?> 
@@ -43,6 +47,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("don't link with stdlib")
         val NOLINK: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("don't link, only produce a bitcode file ")
+        val NOPACK: CompilerConfigurationKey<Boolean> 
+                = CompilerConfigurationKey.create("don't the library into a klib file")
         val NOMAIN: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("assume 'main' entry point to be provided by external libraries")
         val LINKER_ARGS: CompilerConfigurationKey<List<String>>

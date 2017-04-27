@@ -77,6 +77,7 @@ object KonanPhases {
 
             // Don't serialize anything to a final executable.
             KonanPhase.SERIALIZER.enabled = getBoolean(NOLINK)
+            KonanPhase.METADATOR.enabled = getBoolean(NOLINK)
 
             val disabled = get(DISABLED_PHASES)
             disabled?.forEach { phases[known(it)]!!.enabled = false }

@@ -153,7 +153,7 @@ kotlinNativeInterop {
      compilerOpts '-fPIC'
      linkerOpts '-fPIC'
      linker 'clang++'
-     linkOutputs ':common:hostHash'
+     linkOutputs ":common:${host}Hash"
 
      headers fileTree('../common/src/hash/headers') {
        include '**/*.h'
@@ -194,8 +194,8 @@ build.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
 
 
 // These are just a couple of aliases
-task stdlib(dependsOn: 'hostStdlib') 
-task start(dependsOn: 'hostStart')
+task stdlib(dependsOn: "${host}Stdlib") 
+task start(dependsOn: "${host}Start")
 
 // These files are built before the 'dist' is complete,
 // so we provide custom values for
@@ -208,8 +208,8 @@ targetList.each { target ->
         jvmArgs "-ea", 
             "-Dkonan.home=${project.parent.file('dist')}",
             "-Djava.library.path=${project.buildDir}/nativelibs"
-        args('-output', project(':runtime').file("build/${target}/stdlib.kt.bc"), 
-            '-nolink', '-nostdlib', '-ea',
+        args('-output', project(':runtime').file("build/${target}Stdlib"), 
+            '-nolink', '-nopack', '-nostdlib','-ea',
             '-target', target,
             '-runtime', project(':runtime').file("build/${target}/runtime.bc"),
             '-properties', project(':backend.native').file('konan.properties'),
@@ -221,7 +221,7 @@ targetList.each { target ->
         inputs.dir(project(':runtime').file('src/main/kotlin'))
         inputs.dir(project(':Interop:Runtime').file('src/main/kotlin'))
         inputs.dir(project(':Interop:Runtime').file('src/native/kotlin'))
-        outputs.file(project(':runtime').file("build/${target}/stdlib.kt.bc"))
+        outputs.file(project(':runtime').file("build/${target}Stdlib"))
 
         dependsOn ":runtime:${target}Runtime"
     }
@@ -234,17 +234,17 @@ targetList.each { target ->
         jvmArgs "-ea", 
             "-Dkonan.home=${project.parent.file('dist')}",
             "-Djava.library.path=${project.buildDir}/nativelibs"
-        args('-output', project(':runtime').file("build/${target}/start.kt.bc"), 
-            '-nolink', '-nostdlib', '-ea',
+        args('-output', project(':runtime').file("build/${target}Start"), 
+            '-nolink', '-nopack', '-nostdlib', '-ea',
             '-target', target,
-            '-library', project(':runtime').file("build/${target}/stdlib.kt.bc"),
+            '-library', project(':runtime').file("build/${target}Stdlib"),
             '-runtime', project(':runtime').file("build/${target}/runtime.bc"),
             '-properties', project(':backend.native').file('konan.properties'),
         project(':runtime').file('src/launcher/kotlin'), 
         *project.globalBuildArgs)
 
         inputs.dir(project(':runtime').file('src/launcher/kotlin'))
-        outputs.file(project(':runtime').file("build/${target}/start.kt.bc"))
+        outputs.file(project(':runtime').file("build/${target}Start"))
 
         dependsOn ":runtime:${target}Runtime", "${target}Stdlib"
     }

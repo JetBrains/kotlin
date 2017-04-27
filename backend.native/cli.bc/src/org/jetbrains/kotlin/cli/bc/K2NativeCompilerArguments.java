@@ -38,6 +38,9 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "-nolink", description = "Don't link, just produce a bitcode file")
     public boolean nolink;
 
+    @Argument(value = "-nopack", description = "Don't pack the library into a klib file")
+    public boolean nopack;
+
     @Argument(value = "-nomain", description = "Assume 'main' entry point to be provided by external libraries")
     public boolean nomain;
 

@@ -48,7 +48,7 @@ public fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEn
 
     val config = konanConfig.configuration
 
-    val targets = TargetManager(config)
+    val targets = konanConfig.targetManager
     if (config.get(KonanConfigKeys.LIST_TARGETS) ?: false) {
         targets.list()
     }

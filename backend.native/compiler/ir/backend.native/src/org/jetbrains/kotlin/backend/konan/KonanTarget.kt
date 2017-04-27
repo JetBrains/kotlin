@@ -30,6 +30,8 @@ enum class KonanTarget(val suffix: String, var enabled: Boolean = false) {
 class TargetManager(val config: CompilerConfiguration) {
     val targets = KonanTarget.values().associate{ it.name.toLowerCase() to it }
     val current = determineCurrent()
+    val currentName
+        get() = current.name.toLowerCase()
 
     init {
         when (host) {
