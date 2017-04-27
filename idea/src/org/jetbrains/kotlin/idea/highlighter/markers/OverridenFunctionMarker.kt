@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeInsight.daemon.DaemonBundle
 import com.intellij.codeInsight.daemon.impl.GutterIconTooltipHelper
-import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.codeInsight.navigation.ListBackgroundUpdaterTask
 import com.intellij.ide.util.MethodCellRenderer
 import com.intellij.ide.util.PsiElementListCellRenderer
@@ -93,10 +92,12 @@ fun getOverriddenMethodTooltip(method: PsiMethod): String? {
     return GutterIconTooltipHelper.composeText(overridingJavaMethods, start, "&nbsp;&nbsp;&nbsp;&nbsp;{1}")
 }
 
-fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
+fun buildNavigateToOverriddenMethodPopup(e: MouseEvent?, element: PsiElement?): NavigationPopupDescriptor? {
+    val method = getPsiMethod(element) ?: return null
+
     if (DumbService.isDumb(method.project)) {
         DumbService.getInstance(method.project)?.showDumbModeNotification("Navigation to overriding classes is not possible during index update")
-        return
+        return null
     }
 
     val processor = PsiElementProcessor.CollectElementsWithLimit<PsiMethod>(2, THashSet<PsiMethod>())
@@ -105,11 +106,11 @@ fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
                 OverridingMethodsSearch.search(method, true).forEach(PsiElementProcessorAdapter(processor))
             },
             "Searching for overriding declarations", true, method.project, e?.component as JComponent?)) {
-        return
+        return null
     }
 
     var overridingJavaMethods = processor.collection.filter { !it.isMethodWithDeclarationInOtherClass() }
-    if (overridingJavaMethods.isEmpty()) return
+    if (overridingJavaMethods.isEmpty()) return null
 
     val showMethodNames = !PsiUtil.allMethodsHaveSameSignature(overridingJavaMethods.toTypedArray())
 
@@ -117,13 +118,11 @@ fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
     overridingJavaMethods = overridingJavaMethods.sortedWith(renderer.comparator)
 
     val methodsUpdater = OverridingMethodsUpdater(method, renderer)
-    PsiElementListNavigator.openTargets(
-            e,
-            overridingJavaMethods.toTypedArray(),
-            methodsUpdater.getCaption(overridingJavaMethods.size),
-            "Overriding declarations of " + method.name,
-            renderer,
-            methodsUpdater)
+    return NavigationPopupDescriptor(overridingJavaMethods,
+                                     methodsUpdater.getCaption(overridingJavaMethods.size),
+                                     "Overriding declarations of " + method.name,
+                                     renderer,
+                                     methodsUpdater)
 }
 
 private class OverridingMethodsUpdater(

@@ -8,3 +8,10 @@ open class <lineMarker>C</lineMarker>(
 class D : C("") {
     override val <lineMarker>s</lineMarker>: String get() = "q"
 }
+
+/*
+LINEMARKER: <html><body>Is overridden in <br/>&nbsp;&nbsp;&nbsp;&nbsp;D</body></html>
+TARGETS:
+PrimaryConstructorOpen.kt
+    override val <1>s: String get() = "q"
+*/

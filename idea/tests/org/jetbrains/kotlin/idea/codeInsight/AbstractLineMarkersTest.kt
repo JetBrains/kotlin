@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.ReferenceUtils
@@ -115,9 +114,7 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
 
             val handler = navigateMarker.navigationHandler
             if (handler is TestableLineMarkerNavigator) {
-                val element = navigateMarker.element as KtDeclaration
-
-                val navigateElements = handler.getTargetsPopupDescriptor(element)?.targets?.sortedBy { ReferenceUtils.renderAsGotoImplementation(it) }
+                val navigateElements = handler.getTargetsPopupDescriptor(navigateMarker.element)?.targets?.sortedBy { ReferenceUtils.renderAsGotoImplementation(it) }
                 val actualNavigationData = NavigationTestUtils.getNavigateElementsText(myFixture.project, navigateElements)
 
                 UsefulTestCase.assertSameLines(getExpectedNavigationText(navigationComment), actualNavigationData)

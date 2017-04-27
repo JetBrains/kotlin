@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeHighlighting.Pass
+import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.codeInsight.daemon.impl.LineMarkerNavigator
@@ -132,23 +133,47 @@ private val SUBCLASSED_CLASS = MarkerType(
             }
         })
 
-private val OVERRIDDEN_FUNCTION = MarkerType(
+private val OVERRIDDEN_FUNCTION = object : MarkerType(
         "OVERRIDDEN_FUNCTION",
         { getPsiMethod(it)?.let(::getOverriddenMethodTooltip) },
         object : LineMarkerNavigator() {
             override fun browse(e: MouseEvent?, element: PsiElement?) {
-                getPsiMethod(element)?.let { navigateToOverriddenMethod(e, it) }
+                buildNavigateToOverriddenMethodPopup(e, element)?.showPopup(e)
             }
-        })
+        }) {
 
-private val OVERRIDDEN_PROPERTY = MarkerType(
+    override fun getNavigationHandler(): GutterIconNavigationHandler<PsiElement> {
+        val superHandler = super.getNavigationHandler()
+        return object : GutterIconNavigationHandler<PsiElement>, TestableLineMarkerNavigator {
+            override fun navigate(e: MouseEvent?, elt: PsiElement?) {
+                superHandler.navigate(e, elt)
+            }
+
+            override fun getTargetsPopupDescriptor(element: PsiElement?) = buildNavigateToOverriddenMethodPopup(null, element)
+        }
+    }
+}
+
+private val OVERRIDDEN_PROPERTY = object : MarkerType(
         "OVERRIDDEN_PROPERTY",
         { it?.let { getOverriddenPropertyTooltip(it.parent as KtNamedDeclaration) } },
         object : LineMarkerNavigator() {
             override fun browse(e: MouseEvent?, element: PsiElement?) {
-                element?.let { navigateToPropertyOverriddenDeclarations(e, it.parent as KtProperty) }
+                buildNavigateToPropertyOverriddenDeclarationsPopup(e, element)?.showPopup(e)
             }
-        })
+        }) {
+
+    override fun getNavigationHandler(): GutterIconNavigationHandler<PsiElement> {
+        val superHandler = super.getNavigationHandler()
+        return object : GutterIconNavigationHandler<PsiElement>, TestableLineMarkerNavigator {
+            override fun navigate(e: MouseEvent?, elt: PsiElement?) {
+                superHandler.navigate(e, elt)
+            }
+
+            override fun getTargetsPopupDescriptor(element: PsiElement?) = buildNavigateToPropertyOverriddenDeclarationsPopup(null, element)
+        }
+    }
+}
 
 private val PLATFORM_IMPLEMENTATION = MarkerType(
         "PLATFORM_IMPLEMENTATION",
