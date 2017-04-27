@@ -181,6 +181,35 @@ public abstract class StackValue {
         }
     }
 
+    public static StackValue createDefaulValue(@NotNull Type type) {
+        if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
+            return constant(null, type);
+        }
+        else {
+            return createDefaultPrimitiveValue(type);
+        }
+    }
+
+    private static StackValue createDefaultPrimitiveValue(@NotNull Type type) {
+        assert Type.BOOLEAN <= type.getSort() && type.getSort() <= Type.DOUBLE :
+                "'createDefaultPrimitiveValue' method should be called only for primitive types, but " + type;
+        Object value = 0;
+        if (type.getSort() == Type.BOOLEAN) {
+            value = Boolean.FALSE;
+        }
+        else if (type.getSort() == Type.FLOAT) {
+            value = new Float(0.0);
+        }
+        else if (type.getSort() == Type.DOUBLE) {
+            value = new Double(0.0);
+        }
+        else if (type.getSort() == Type.LONG) {
+            value = new Long(0);
+        }
+
+        return constant(value, type);
+    }
+
     @NotNull
     public static StackValue cmp(@NotNull IElementType opToken, @NotNull Type type, StackValue left, StackValue right) {
         return BranchedValue.Companion.cmp(opToken, type, left, right);

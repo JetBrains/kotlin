@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.*;
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument;
 import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.pushDefaultValueOnStack;
+import static org.jetbrains.kotlin.codegen.StackValue.createDefaulValue;
 
 public class CallBasedArgumentGenerator extends ArgumentGenerator {
     private final ExpressionCodegen codegen;
@@ -64,19 +64,16 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
 
     @Override
     protected void generateDefault(int i, @NotNull DefaultValueArgument argument) {
-        Type type = valueParameterTypes.get(i);
-        pushDefaultValueOnStack(type, codegen.v);
-        callGenerator.afterParameterPut(type, null, i);
+        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), createDefaulValue(valueParameterTypes.get(i)));
     }
 
     @Override
     protected void generateVararg(int i, @NotNull VarargValueArgument argument) {
         ValueParameterDescriptor parameter = valueParameters.get(i);
-        Type type = valueParameterTypes.get(i);
         // Upper bound for type of vararg parameter should always have a form of 'Array<out T>',
         // while its lower bound may be Nothing-typed after approximation
-        codegen.genVarargs(argument, FlexibleTypesKt.upperIfFlexible(parameter.getType()));
-        callGenerator.afterParameterPut(type, null, i);
+        StackValue lazyVararg = codegen.genVarargs(argument, FlexibleTypesKt.upperIfFlexible(parameter.getType()));
+        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), lazyVararg);
     }
 
     @Override

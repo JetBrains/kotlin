@@ -46,7 +46,7 @@ abstract class CallGenerator {
 
         override fun afterParameterPut(
                 type: Type,
-                stackValue: StackValue?,
+                stackValue: StackValue,
                 parameterIndex: Int) {
 
         }
@@ -113,7 +113,7 @@ abstract class CallGenerator {
 
     abstract fun afterParameterPut(
             type: Type,
-            stackValue: StackValue?,
+            stackValue: StackValue,
             parameterIndex: Int)
 
     abstract fun genValueAndPut(

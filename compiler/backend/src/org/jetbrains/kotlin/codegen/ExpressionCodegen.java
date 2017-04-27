@@ -39,7 +39,8 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegen;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.coroutines.ResolvedCallWithRealDescriptor;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
-import org.jetbrains.kotlin.codegen.forLoop.*;
+import org.jetbrains.kotlin.codegen.forLoop.AbstractForLoopGenerator;
+import org.jetbrains.kotlin.codegen.forLoop.ForLoopGeneratorsKt;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.*;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
@@ -106,7 +107,8 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.addInlineMarker;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
-import static org.jetbrains.kotlin.resolve.BindingContextUtils.*;
+import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall;
+import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
@@ -2535,7 +2537,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
 
-    public void genVarargs(@NotNull VarargValueArgument valueArgument, @NotNull KotlinType outType) {
+    @NotNull
+    public StackValue genVarargs(@NotNull VarargValueArgument valueArgument, @NotNull KotlinType outType) {
         Type type = asmType(outType);
         assert type.getSort() == Type.ARRAY;
         Type elementType = correctElementType(type);
@@ -2553,17 +2556,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (hasSpread) {
             boolean arrayOfReferences = KotlinBuiltIns.isArray(outType);
             if (size == 1) {
-                // Arrays.copyOf(receiverValue, newLength)
-                ValueArgument argument = arguments.get(0);
-                Type arrayType = arrayOfReferences ? Type.getType("[Ljava/lang/Object;")
-                                                   : Type.getType("[" + elementType.getDescriptor());
-                gen(argument.getArgumentExpression(), type);
-                v.dup();
-                v.arraylength();
-                v.invokestatic("java/util/Arrays", "copyOf", Type.getMethodDescriptor(arrayType, arrayType, Type.INT_TYPE), false);
-                if (arrayOfReferences) {
-                    v.checkcast(type);
-                }
+                Type arrayType = getArrayType(arrayOfReferences ? AsmTypes.OBJECT_TYPE : elementType);
+                return StackValue.operation(type, adapter -> {
+                    gen(arguments.get(0).getArgumentExpression(), type);
+                    v.dup();
+                    v.arraylength();
+                    v.invokestatic("java/util/Arrays", "copyOf", Type.getMethodDescriptor(arrayType, arrayType, Type.INT_TYPE), false);
+                    if (arrayOfReferences) {
+                        v.checkcast(type);
+                    }
+                    return Unit.INSTANCE;
+                });
             }
             else {
                 String owner;
@@ -2580,42 +2583,49 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     addDescriptor = "(" + elementType.getDescriptor() + ")V";
                     toArrayDescriptor = "()" + type.getDescriptor();
                 }
-                v.anew(Type.getObjectType(owner));
-                v.dup();
-                v.iconst(size);
-                v.invokespecial(owner, "<init>", "(I)V", false);
-                for (int i = 0; i != size; ++i) {
+
+                return StackValue.operation(type, adapter -> {
+                    v.anew(Type.getObjectType(owner));
                     v.dup();
-                    ValueArgument argument = arguments.get(i);
-                    if (argument.getSpreadElement() != null) {
-                        gen(argument.getArgumentExpression(), OBJECT_TYPE);
-                        v.invokevirtual(owner, "addSpread", "(Ljava/lang/Object;)V", false);
+                    v.iconst(size);
+                    v.invokespecial(owner, "<init>", "(I)V", false);
+                    for (int i = 0; i != size; ++i) {
+                        v.dup();
+                        ValueArgument argument = arguments.get(i);
+                        if (argument.getSpreadElement() != null) {
+                            gen(argument.getArgumentExpression(), OBJECT_TYPE);
+                            v.invokevirtual(owner, "addSpread", "(Ljava/lang/Object;)V", false);
+                        }
+                        else {
+                            gen(argument.getArgumentExpression(), elementType);
+                            v.invokevirtual(owner, "add", addDescriptor, false);
+                        }
+                    }
+                    if (arrayOfReferences) {
+                        v.dup();
+                        v.invokevirtual(owner, "size", "()I", false);
+                        newArrayInstruction(outType);
+                        v.invokevirtual(owner, "toArray", toArrayDescriptor, false);
+                        v.checkcast(type);
                     }
                     else {
-                        gen(argument.getArgumentExpression(), elementType);
-                        v.invokevirtual(owner, "add", addDescriptor, false);
+                        v.invokevirtual(owner, "toArray", toArrayDescriptor, false);
                     }
-                }
-                if (arrayOfReferences) {
-                    v.dup();
-                    v.invokevirtual(owner, "size", "()I", false);
-                    newArrayInstruction(outType);
-                    v.invokevirtual(owner, "toArray", toArrayDescriptor, false);
-                    v.checkcast(type);
-                }
-                else {
-                    v.invokevirtual(owner, "toArray", toArrayDescriptor, false);
-                }
+                    return Unit.INSTANCE;
+                });
             }
         }
         else {
-            v.iconst(arguments.size());
-            newArrayInstruction(outType);
-            for (int i = 0; i != size; ++i) {
-                v.dup();
-                StackValue rightSide = gen(arguments.get(i).getArgumentExpression());
-                StackValue.arrayElement(elementType, StackValue.onStack(type), StackValue.constant(i, Type.INT_TYPE)).store(rightSide, v);
-            }
+            return StackValue.operation(type, adapter -> {
+                v.iconst(arguments.size());
+                newArrayInstruction(outType);
+                for (int i = 0; i != size; ++i) {
+                    v.dup();
+                    StackValue rightSide = gen(arguments.get(i).getArgumentExpression());
+                    StackValue.arrayElement(elementType, StackValue.onStack(type), StackValue.constant(i, Type.INT_TYPE)).store(rightSide, v);
+                }
+                return Unit.INSTANCE;
+            });
         }
     }
 

@@ -671,13 +671,13 @@ public class InlineCodegen extends CallGenerator {
     }
 
     @Override
-    public void afterParameterPut(@NotNull Type type, @Nullable StackValue stackValue, int parameterIndex) {
+    public void afterParameterPut(@NotNull Type type, @NotNull StackValue stackValue, int parameterIndex) {
         putArgumentOrCapturedToLocalVal(type, stackValue, -1, parameterIndex);
     }
 
     private void putArgumentOrCapturedToLocalVal(
             @NotNull Type type,
-            @Nullable StackValue stackValue,
+            @NotNull StackValue stackValue,
             int capturedParamIndex,
             int parameterIndex
     ) {
@@ -701,12 +701,7 @@ public class InlineCodegen extends CallGenerator {
     }
 
     /*descriptor is null for captured vars*/
-    private static boolean shouldPutGeneralValue(@NotNull Type type, @Nullable StackValue stackValue) {
-        if (stackValue == null) {
-            //default or vararg
-            return true;
-        }
-
+    private static boolean shouldPutGeneralValue(@NotNull Type type, @NotNull StackValue stackValue) {
         //remap only inline functions (and maybe non primitives)
         //TODO - clean asserion and remapping logic
         if (isPrimitive(type) != isPrimitive(stackValue.type)) {
