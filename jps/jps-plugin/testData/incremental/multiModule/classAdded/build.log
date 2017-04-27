@@ -8,7 +8,6 @@ Compiling files:
   module2/src/A.kt
 End of files
 Marked as dirty by Kotlin:
-  module1/src/A.kt
   module2/src/B.kt
   module2/src/createA.kt
   module2/src/createB.kt
@@ -39,13 +38,7 @@ Unresolved reference: foo
 ================ Step #2 =================
 
 Building module1
-Cleaning output files:
-  out/production/module1/foo/A.class
-End of files
-Compiling files:
-  module1/src/A.kt
-End of files
-Exit code: OK
+Exit code: NOTHING_DONE
 ------------------------------------------
 Building module2
 Cleaning output files:
