@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.typeBinding.TypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBinding
@@ -33,7 +35,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.checkTypePosition
-import org.jetbrains.kotlin.types.getAbbreviatedType
 
 class ManualVariance(val descriptor: TypeParameterDescriptor, val variance: Variance)
 
@@ -52,7 +53,7 @@ class VarianceConflictDiagnosticData(
 )
 
 class VarianceCheckerCore(
-        private val context: BindingContext,
+        val context: BindingContext,
         private val diagnosticSink: DiagnosticSink,
         private val manualVariance: ManualVariance? = null
 ) {
@@ -62,39 +63,15 @@ class VarianceCheckerCore(
         checkMembers(c)
     }
 
-    fun checkClassOrObject(klass: KtClassOrObject): Boolean {
-        if (klass is KtClass) {
-            if (!checkClassHeader(klass)) return false
-            if (klass.getSuperTypeList()?.anyDescendantOfType<KtClassOrObject> { !checkClassOrObject(it) } == true) return false
-        }
-        for (member in klass.declarations + klass.primaryConstructorParameters) {
-            val descriptor = when (member) {
-                is KtParameter -> context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, member)
-                is KtDeclaration -> context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, member)
-                else -> null
-            } as? MemberDescriptor ?: continue
-            when (member) {
-                is KtClassOrObject -> {
-                    if (!checkClassOrObject(member)) return false
-                }
-                is KtCallableDeclaration -> {
-                    if (descriptor is CallableMemberDescriptor && !checkMember(member, descriptor)) return false
-                    if (member.anyDescendantOfType<KtClassOrObject> { !checkClassOrObject(it) }) return false
-                }
-            }
-        }
-        return true
-    }
-
     private fun checkClasses(c: TopDownAnalysisContext) {
-        for (jetClassOrObject in c.declaredClasses!!.keys) {
-            if (jetClassOrObject is KtClass) {
-                checkClassHeader(jetClassOrObject)
+        for (classOrObject in c.declaredClasses!!.keys) {
+            if (classOrObject is KtClass) {
+                checkClassHeader(classOrObject)
             }
         }
     }
 
-    private fun checkClassHeader(klass: KtClass): Boolean {
+    fun checkClassHeader(klass: KtClass): Boolean {
         var noError = true
         for (specifier in klass.superTypeListEntries) {
             noError = noError and specifier.typeReference?.checkTypePosition(context, OUT_VARIANCE)
@@ -108,7 +85,7 @@ class VarianceCheckerCore(
         }
     }
 
-    private fun checkMember(member: KtCallableDeclaration, descriptor: CallableMemberDescriptor) =
+    fun checkMember(member: KtCallableDeclaration, descriptor: CallableMemberDescriptor) =
             Visibilities.isPrivate(descriptor.visibility) || checkCallableDeclaration(context, member, descriptor)
 
     private fun TypeParameterDescriptor.varianceWithManual() =
