@@ -98,11 +98,12 @@ class LocalDeclarationDeserializer(val rootDescriptor: DeserializedCallableMembe
     }
 
     private fun memberDeserializer(irProto: KonanIr.KotlinDescriptor): MemberDeserializer {
-        val containingFqName = irProto.classOrPackage
-        return if (containingFqName != null) {
-            memberDeserializerByParentFqNameIndex(containingFqName)
+        return if (irProto.hasClassOrPackage()) {
+            memberDeserializerByParentFqNameIndex(irProto.classOrPackage)
+        } else {
             // TODO: learn to take the containing IR declaration
-        } else this.memberDeserializer
+            this.memberDeserializer
+        }
     }
 
     fun deserializeFunction(irProto: KonanIr.KotlinDescriptor): FunctionDescriptor =
