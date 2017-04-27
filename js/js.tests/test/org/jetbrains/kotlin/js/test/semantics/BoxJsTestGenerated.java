@@ -4112,6 +4112,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/inlineEvaluationOrder"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
         }
 
+        @TestMetadata("alsoWithReassingment.kt")
+        public void testAlsoWithReassingment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineEvaluationOrder/alsoWithReassingment.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("argumentOfCall.kt")
         public void testArgumentOfCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineEvaluationOrder/argumentOfCall.kt");

@@ -44,4 +44,6 @@ class TemporaryVariableEliminationTest : BasicOptimizerTest("temporary-variable"
     @Test fun assignmentToNonLocal() = box()
 
     @Test fun removeUnusedAndSubstitute() = box()
+
+    @Test fun assignmentToOuterVar() = box()
 }
