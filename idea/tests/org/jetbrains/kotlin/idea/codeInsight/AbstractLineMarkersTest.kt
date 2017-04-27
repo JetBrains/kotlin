@@ -26,7 +26,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.highlighter.markers.SuperDeclarationMarkerNavigationHandler
+import org.jetbrains.kotlin.idea.highlighter.markers.TestableLineMarkerNavigator
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.test.ReferenceUtils
 import org.jetbrains.kotlin.test.TagsTestDataUtil
 import org.junit.Assert
 import java.io.File
-import java.util.*
 
 abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase() {
 
@@ -115,19 +114,10 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
                     navigateMarker)
 
             val handler = navigateMarker.navigationHandler
-            if (handler is SuperDeclarationMarkerNavigationHandler) {
+            if (handler is TestableLineMarkerNavigator) {
                 val element = navigateMarker.element as KtDeclaration
 
-                handler.navigate(null, element)
-                val navigateElements = handler.getNavigationElements()
-
-                Collections.sort(navigateElements) { first, second ->
-                    val elementFirstStr = ReferenceUtils.renderAsGotoImplementation(first)
-                    val elementSecondStr = ReferenceUtils.renderAsGotoImplementation(second)
-
-                    elementFirstStr.compareTo(elementSecondStr)
-                }
-
+                val navigateElements = handler.getTargetsPopupDescriptor(element)?.targets?.sortedBy { ReferenceUtils.renderAsGotoImplementation(it) }
                 val actualNavigationData = NavigationTestUtils.getNavigateElementsText(myFixture.project, navigateElements)
 
                 UsefulTestCase.assertSameLines(getExpectedNavigationText(navigationComment), actualNavigationData)

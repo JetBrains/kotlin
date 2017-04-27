@@ -21,17 +21,22 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.codeInsight.daemon.impl.LineMarkerNavigator
 import com.intellij.codeInsight.daemon.impl.MarkerType
+import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
+import com.intellij.codeInsight.navigation.ListBackgroundUpdaterTask
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
+import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
@@ -42,6 +47,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.Icon
+import javax.swing.ListCellRenderer
 
 class KotlinLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
@@ -100,6 +106,22 @@ private val OVERRIDING_MARK: Icon = AllIcons.Gutter.OverridingMethod
 private val IMPLEMENTING_MARK: Icon = AllIcons.Gutter.ImplementingMethod
 private val OVERRIDDEN_MARK: Icon = AllIcons.Gutter.OverridenMethod
 private val IMPLEMENTED_MARK: Icon = AllIcons.Gutter.ImplementedMethod
+
+data class NavigationPopupDescriptor(
+        val targets: Collection<NavigatablePsiElement>,
+        val title: String,
+        val findUsagesTitle: String,
+        val renderer: ListCellRenderer<*>,
+        val updater: ListBackgroundUpdaterTask? = null
+) {
+    fun showPopup(e: MouseEvent?) {
+        PsiElementListNavigator.openTargets(e, targets.toTypedArray(), title, findUsagesTitle, renderer, updater)
+    }
+}
+
+interface TestableLineMarkerNavigator {
+    fun getTargetsPopupDescriptor(element: PsiElement?): NavigationPopupDescriptor?
+}
 
 private val SUBCLASSED_CLASS = MarkerType(
         "SUBCLASSED_CLASS",
