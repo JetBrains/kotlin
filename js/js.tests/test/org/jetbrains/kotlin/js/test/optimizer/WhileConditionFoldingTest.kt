@@ -40,4 +40,6 @@ class WhileConditionFoldingTest : BasicOptimizerTest("while-condition-folding") 
     @Test fun doWhileWithNestedContinue() = box()
 
     @Test fun labeledContinueInNestedLoop() = box()
+
+    @Test fun labeledBreak() = box()
 }

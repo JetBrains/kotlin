@@ -105,7 +105,7 @@ class WhileConditionFolding(val body: JsBlock) {
                 // therefore for single `break` we should return `false`.
                 is JsBreak -> {
                     val target = statement.label?.name
-                    if (label == null || label == target) JsLiteral.FALSE else null
+                    if (label == target) JsLiteral.FALSE else null
                 }
 
                 // Code like this
