@@ -73,12 +73,6 @@ class KotlinVersionsTest : KtUsefulTestCase() {
         )
 
         versions.add(
-                loadValueFromPomXml("libraries/pom.xml", listOf("project", "properties", "kotlin.language.version"))
-                        ?.toVersion("kotlin.language.version in pom.xml")
-                ?: error("No kotlin.language.version in libraries/pom.xml")
-        )
-
-        versions.add(
                 loadValueFromPomXml("libraries/pom.xml", listOf("project", "version"))
                         ?.toVersion("version in pom.xml")
                 ?: error("No version in libraries/pom.xml")
