@@ -23,10 +23,9 @@ import com.android.ide.common.resources.ResourceRepository;
 import com.android.ide.common.resources.ResourceResolver;
 import com.android.resources.ResourceType;
 import com.android.tools.idea.configurations.Configuration;
-import com.android.tools.idea.res.AppResourceRepository;
-import com.android.tools.idea.res.LocalResourceRepository;
-import com.android.tools.idea.res.ResourceHelper;
-import com.android.tools.idea.ui.resourcechooser.ColorPicker;
+import com.android.tools.idea.rendering.AppResourceRepository;
+import com.android.tools.idea.rendering.LocalResourceRepository;
+import com.android.tools.idea.rendering.ResourceHelper;
 import com.android.utils.XmlUtils;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
@@ -47,8 +46,8 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ui.ColorIcon;
 import com.intellij.util.ui.EmptyIcon;
-import com.intellij.util.ui.JBUI;
 import org.jetbrains.android.facet.AndroidFacet;
+import org.jetbrains.android.uipreview.ColorPicker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
@@ -61,15 +60,14 @@ import java.awt.*;
 import java.io.File;
 
 import static com.android.SdkConstants.*;
-import static com.android.SdkConstants.ANDROID_URI;
-import static com.android.SdkConstants.ATTR_DRAWABLE;
-import static com.android.tools.idea.uibuilder.property.renderer.NlDefaultRenderer.ICON_SIZE;
 import static org.jetbrains.android.AndroidColorAnnotator.pickLayoutFile;
 
 /**
  *  Contains copied privates from AndroidColorAnnotator, so we could use them for Kotlin AndroidResourceReferenceAnnotator
  */
 public class ResourceReferenceAnnotatorUtil {
+    private static final int ICON_SIZE = 8;
+
     @Nullable
     public static File pickBitmapFromXml(@NotNull File file, @NotNull ResourceResolver resourceResolver, @NotNull Project project) {
         try {
@@ -195,8 +193,8 @@ public class ResourceReferenceAnnotatorUtil {
         @NotNull
         @Override
         public Icon getIcon() {
-            Color color = getCurrentColor();
-            return JBUI.scale(color == null ? EmptyIcon.create(ICON_SIZE) : new ColorIcon(ICON_SIZE, color));
+            final Color color = getCurrentColor();
+            return color == null ? EmptyIcon.create(ICON_SIZE) : new ColorIcon(ICON_SIZE, color);
         }
 
         @Nullable
