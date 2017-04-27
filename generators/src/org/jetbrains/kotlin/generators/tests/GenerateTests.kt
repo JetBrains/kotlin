@@ -1210,10 +1210,6 @@ fun main(args: Array<String>) {
             model("incremental/classHierarchyAffected", extension = null, excludeParentDirs = true)
         }
 
-        testClass<AbstractExperimentalIncrementalLazyCachesTest> {
-            model("incremental/lazyKotlinCaches", extension = null, excludeParentDirs = true)
-        }
-
         testClass<AbstractExperimentalIncrementalCacheVersionChangedTest> {
             model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
         }
