@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.serialization
 
-import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
+import org.jetbrains.kotlin.backend.konan.descriptors.needsSerializedIr
 import org.jetbrains.kotlin.backend.konan.serialization.IrAwareExtension
 import org.jetbrains.kotlin.backend.konan.util.onlyIf
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -228,11 +228,11 @@ class KonanDescriptorSerializer private constructor(
         extension.serializeProperty(descriptor, builder)
 
         if (extension is IrAwareExtension) {
-            descriptor.getter?.onlyIf({needsInlining}) {
+            descriptor.getter?.onlyIf({needsSerializedIr}) {
                 extension.addGetterIR(builder,
                     extension.serializeInlineBody(it, {it -> typeId(it)}))
             }
-            descriptor.setter?.onlyIf({needsInlining}) {
+            descriptor.setter?.onlyIf({needsSerializedIr}) {
                 extension.addSetterIR(builder,
                     extension.serializeInlineBody(it, {it -> typeId(it)}))
             }
@@ -296,7 +296,7 @@ class KonanDescriptorSerializer private constructor(
         extension.serializeFunction(descriptor, builder)
 
         if (extension is IrAwareExtension 
-            && descriptor.needsInlining) {
+            && descriptor.needsSerializedIr) {
             extension.addFunctionIR(builder, 
                 extension.serializeInlineBody(descriptor, {it -> typeId(it)}))
         }

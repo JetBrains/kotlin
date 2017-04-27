@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.konan.isRepresentedAs
 import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
+import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -303,4 +304,7 @@ internal fun DeclarationDescriptor.getMemberScope(): MemberScope {
 // since externals don't have IR bodies.
 internal val FunctionDescriptor.needsInlining: Boolean 
     get() = (this.isInline && !this.isExternal)
+
+internal val FunctionDescriptor.needsSerializedIr: Boolean 
+    get() = (this.needsInlining && this.isExported())
 

@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.backend.common.validateIrFunction
 internal class DeserializerDriver(val context: Context) {
 
     internal fun deserializeInlineBody(descriptor: FunctionDescriptor): IrDeclaration? {
-        if (!descriptor.needsInlining) return null
+        if (!descriptor.needsSerializedIr) return null
         if (!descriptor.isDeserializableCallable) return null
 
         var deserializedIr: IrDeclaration? = null
