@@ -144,6 +144,7 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.jps.incremental.AbstractProtoComparisonTest
+import org.jetbrains.kotlin.js.test.AbstractDceTest
 import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
@@ -1350,6 +1351,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractOutputPrefixPostfixTest> {
             model("outputPrefixPostfix/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractDceTest> {
+            model("dce/", pattern = "(.+)\\.js", targetBackend = TargetBackend.JS)
         }
     }
 
