@@ -7,7 +7,7 @@ End of files
 Compiling files:
   src/const.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
+Exit code: OK
 ------------------------------------------
 Cleaning output files:
   out/production/module/Usage.class
