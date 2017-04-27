@@ -1,7 +1,20 @@
 ================ Step #1 =================
 
 Building module1
-Actions after cache changed: [REBUILD_ALL_KOTLIN, REBUILD_CHUNK, DO_NOTHING]
+Actions after cache changed: [CLEAN_NORMAL_CACHES, CLEAN_DATA_CONTAINER]
+Exit code: NOTHING_DONE
+------------------------------------------
+Building module2
+Exit code: NOTHING_DONE
+------------------------------------------
+Building module3
+Exit code: NOTHING_DONE
+------------------------------------------
+
+================ Step #2 =================
+
+Building module1
+Actions after cache changed: [REBUILD_ALL_KOTLIN, REBUILD_CHUNK]
 Cleaning output files:
   out/production/module1/AKt.class
   out/production/module1/META-INF/module1.kotlin_module
