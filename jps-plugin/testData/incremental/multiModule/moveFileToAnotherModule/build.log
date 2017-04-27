@@ -25,9 +25,5 @@ Compiling files:
   module2/src/useClassB.kt
   module2/src/useFunB.kt
 End of files
-Marked as dirty by Kotlin:
-  module1/src/b.kt
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------

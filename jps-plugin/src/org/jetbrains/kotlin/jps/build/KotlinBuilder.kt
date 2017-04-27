@@ -826,7 +826,7 @@ private fun CompilationResult.processChangesUsingLookups(
     val (dirtyLookupSymbols, dirtyClassFqNames) = getDirtyData(allCaches, reporter)
     val dirtyFiles = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, reporter) +
                      mapClassesFqNamesToFiles(allCaches, dirtyClassFqNames, reporter)
-    fsOperations.markFiles(dirtyFiles.asIterable(), excludeFiles = compiledFiles)
+    fsOperations.markInChunkOrDependents(dirtyFiles.asIterable(), excludeFiles = compiledFiles)
 
     reporter.report { "End of processing changes" }
 }

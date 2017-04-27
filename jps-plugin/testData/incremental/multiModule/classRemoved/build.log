@@ -1,13 +1,7 @@
 ================ Step #1 =================
 
 Building module1
-Cleaning output files:
-  out/production/module1/foo/A.class
-End of files
-Compiling files:
-  module1/src/A.kt
-End of files
-Exit code: OK
+Exit code: NOTHING_DONE
 ------------------------------------------
 Cleaning output files:
   out/production/module2/foo/A.class
@@ -40,23 +34,13 @@ Compiling files:
   module2/src/createA.kt
   module2/src/useAfoo.kt
 End of files
-Marked as dirty by Kotlin:
-  module1/src/A.kt
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------
 
 ================ Step #3 =================
 
 Building module1
-Cleaning output files:
-  out/production/module1/foo/A.class
-End of files
-Compiling files:
-  module1/src/A.kt
-End of files
-Exit code: OK
+Exit code: NOTHING_DONE
 ------------------------------------------
 Building module2
 Compiling files:
