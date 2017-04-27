@@ -559,6 +559,110 @@ fun generators(): List<GenericFunction> {
         }
     }
 
+    templates add f("windowed(size: Int, step: Int, transform: (List<T>) -> R)") {
+        since("1.2")
+        only(Iterables, Sequences, CharSequences)
+        typeParam("R")
+
+        returns("List<R>")
+
+        body {
+            """
+            if (this is List) {
+                return windowIndices(this.size, size, step, dropTrailing = false).asIterable().map { transform(subList(it.start, it.endInclusive + 1)) }
+            }
+            return windowForwardOnlySequenceImpl(iterator(), size, step, dropTrailing = false).asIterable().map(transform)
+            """
+        }
+
+        customSignature(CharSequences) { "windowed(size: Int, step: Int, transform: (CharSequence) -> R)" }
+        body(CharSequences) {
+            """
+            return windowIndices(this.length, size, step, dropTrailing = false).asIterable().map { transform(subSequence(it)) }
+            """
+        }
+
+        returns(Sequences) { "Sequence<R>" }
+        body(Sequences) {
+            """
+            return Sequence { windowForwardOnlySequenceImpl(iterator(), size, step, dropTrailing = false).iterator() }.map(transform)
+            """
+        }
+    }
+
+    templates add f("windowed(size: Int, step: Int)") {
+        since("1.2")
+        only(Iterables, Sequences, CharSequences)
+        returns(Iterables) { "List<List<T>>" }
+        returns(Sequences) { "Sequence<List<T>>" }
+        returns(CharSequences) { "List<String>" }
+
+        body { "return windowed(size, step) { it.toList() }" }
+        body(CharSequences) { "return windowed(size, step) { it.toString() }" }
+    }
+
+    templates add f("windowedSequence(size: Int, step: Int, transform: (CharSequence) -> R)") {
+        since("1.2")
+        only(CharSequences)
+        typeParam("R")
+        returns { "Sequence<R> "}
+
+        body(CharSequences) {
+            """
+            return windowIndices(this.length, size, step, dropTrailing = false).map { transform(subSequence(it)) }
+            """
+        }
+    }
+
+    templates add f("windowedSequence(size: Int, step: Int)") {
+        since("1.2")
+        only(CharSequences)
+        returns { "Sequence<String> "}
+
+        body(CharSequences) { "return windowedSequence(size, step) { it.toString() }" }
+    }
+
+    templates add f("chunked(size: Int, transform: (List<T>) -> R)") {
+        since("1.2")
+        only(Iterables, Sequences, CharSequences)
+        typeParam("R")
+
+        returns("List<R>")
+
+        customSignature(CharSequences) { "chunked(size: Int, transform: (CharSequence) -> R)" }
+
+        returns(Sequences) { "Sequence<R>" }
+        body { "return windowed(size, size, transform)" }
+    }
+
+    templates add f("chunked(size: Int)") {
+        since("1.2")
+        only(Iterables, Sequences, CharSequences)
+        returns(Iterables) { "List<List<T>>" }
+        returns(Sequences) { "Sequence<List<T>>" }
+        returns(CharSequences) { "List<String>" }
+
+        body { "return chunked(size) { it.toList() }" }
+        body(CharSequences) { "return chunked(size) { it.toString() }" }
+    }
+
+    templates add f("chunkedSequence(size: Int, transform: (CharSequence) -> R)") {
+        since("1.2")
+        only(CharSequences)
+        typeParam("R")
+        returns { "Sequence<R> "}
+
+        body { "return windowedSequence(size, size, transform)" }
+    }
+
+    templates add f("chunkedSequence(size: Int)") {
+        since("1.2")
+        only(CharSequences)
+        returns { "Sequence<String> "}
+
+        body(CharSequences) { "return chunkedSequence(size) { it.toString() }" }
+    }
+
     templates add f("pairwise(transform: (a: T, b: T) -> R)") {
         since("1.2")
         only(Iterables, Sequences, CharSequences)

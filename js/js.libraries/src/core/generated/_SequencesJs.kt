@@ -1311,6 +1311,16 @@ public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
     return map { it ?: throw IllegalArgumentException("null element found in $this.") }
 }
 
+@SinceKotlin("1.2")
+public fun <T> Sequence<T>.chunked(size: Int): Sequence<List<T>> {
+    return chunked(size) { it.toList() }
+}
+
+@SinceKotlin("1.2")
+public fun <T, R> Sequence<T>.chunked(size: Int, transform: (List<T>) -> R): Sequence<R> {
+    return windowed(size, size, transform)
+}
+
 /**
  * Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element].
  *
@@ -1485,6 +1495,16 @@ public operator fun <T> Sequence<T>.plus(elements: Sequence<T>): Sequence<T> {
 @kotlin.internal.InlineOnly
 public inline fun <T> Sequence<T>.plusElement(element: T): Sequence<T> {
     return plus(element)
+}
+
+@SinceKotlin("1.2")
+public fun <T> Sequence<T>.windowed(size: Int, step: Int): Sequence<List<T>> {
+    return windowed(size, step) { it.toList() }
+}
+
+@SinceKotlin("1.2")
+public fun <T, R> Sequence<T>.windowed(size: Int, step: Int, transform: (List<T>) -> R): Sequence<R> {
+    return Sequence { windowForwardOnlySequenceImpl(iterator(), size, step, dropTrailing = false).iterator() }.map(transform)
 }
 
 /**

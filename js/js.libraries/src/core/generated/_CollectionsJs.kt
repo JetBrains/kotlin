@@ -1783,6 +1783,16 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
     return this as List<T>
 }
 
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.chunked(size: Int): List<List<T>> {
+    return chunked(size) { it.toList() }
+}
+
+@SinceKotlin("1.2")
+public fun <T, R> Iterable<T>.chunked(size: Int, transform: (List<T>) -> R): List<R> {
+    return windowed(size, size, transform)
+}
+
 /**
  * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
  */
@@ -1969,6 +1979,19 @@ public inline fun <T> Iterable<T>.plusElement(element: T): List<T> {
 @kotlin.internal.InlineOnly
 public inline fun <T> Collection<T>.plusElement(element: T): List<T> {
     return plus(element)
+}
+
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.windowed(size: Int, step: Int): List<List<T>> {
+    return windowed(size, step) { it.toList() }
+}
+
+@SinceKotlin("1.2")
+public fun <T, R> Iterable<T>.windowed(size: Int, step: Int, transform: (List<T>) -> R): List<R> {
+    if (this is List) {
+        return windowIndices(this.size, size, step, dropTrailing = false).asIterable().map { transform(subList(it.start, it.endInclusive + 1)) }
+    }
+    return windowForwardOnlySequenceImpl(iterator(), size, step, dropTrailing = false).asIterable().map(transform)
 }
 
 /**

@@ -1113,6 +1113,26 @@ public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
 }
 
 @SinceKotlin("1.2")
+public fun CharSequence.chunked(size: Int): List<String> {
+    return chunked(size) { it.toString() }
+}
+
+@SinceKotlin("1.2")
+public fun <R> CharSequence.chunked(size: Int, transform: (CharSequence) -> R): List<R> {
+    return windowed(size, size, transform)
+}
+
+@SinceKotlin("1.2")
+public fun CharSequence.chunkedSequence(size: Int): Sequence<String>  {
+    return chunkedSequence(size) { it.toString() }
+}
+
+@SinceKotlin("1.2")
+public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence) -> R): Sequence<R>  {
+    return windowedSequence(size, size, transform)
+}
+
+@SinceKotlin("1.2")
 public fun CharSequence.pairwise(): List<Pair<Char, Char>> {
     return pairwise { a, b -> a to b }
 }
@@ -1162,6 +1182,26 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
         }
     }
     return Pair(first.toString(), second.toString())
+}
+
+@SinceKotlin("1.2")
+public fun CharSequence.windowed(size: Int, step: Int): List<String> {
+    return windowed(size, step) { it.toString() }
+}
+
+@SinceKotlin("1.2")
+public fun <R> CharSequence.windowed(size: Int, step: Int, transform: (CharSequence) -> R): List<R> {
+    return windowIndices(this.length, size, step, dropTrailing = false).asIterable().map { transform(subSequence(it)) }
+}
+
+@SinceKotlin("1.2")
+public fun CharSequence.windowedSequence(size: Int, step: Int): Sequence<String>  {
+    return windowedSequence(size, step) { it.toString() }
+}
+
+@SinceKotlin("1.2")
+public fun <R> CharSequence.windowedSequence(size: Int, step: Int, transform: (CharSequence) -> R): Sequence<R>  {
+    return windowIndices(this.length, size, step, dropTrailing = false).map { transform(subSequence(it)) }
 }
 
 /**
