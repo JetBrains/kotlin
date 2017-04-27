@@ -44,13 +44,6 @@ abstract class CallGenerator {
             }
         }
 
-        override fun afterParameterPut(
-                type: Type,
-                stackValue: StackValue,
-                parameterIndex: Int) {
-
-        }
-
         override fun processAndPutHiddenParameters(justProcess: Boolean) {
 
         }
@@ -110,11 +103,6 @@ abstract class CallGenerator {
     }
 
     abstract fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen)
-
-    abstract fun afterParameterPut(
-            type: Type,
-            stackValue: StackValue,
-            parameterIndex: Int)
 
     abstract fun genValueAndPut(
             valueParameterDescriptor: ValueParameterDescriptor,

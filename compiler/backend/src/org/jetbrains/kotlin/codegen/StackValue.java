@@ -1087,8 +1087,7 @@ public abstract class StackValue {
             Type lastParameterType = ArraysKt.last(setter.getParameterTypes());
             coerce(topOfStackType, lastParameterType, v);
 
-            getCallGenerator().afterParameterPut(lastParameterType, StackValue.onStack(lastParameterType),
-                                                 CollectionsKt.getLastIndex(setter.getValueParameterTypes()));
+            getCallGenerator().putValueIfNeeded(lastParameterType, StackValue.onStack(lastParameterType));
 
             //Convention setter couldn't have default parameters, just getter can have it at last positions
             //We should remove default parameters of getter from stack*/

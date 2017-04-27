@@ -87,10 +87,6 @@ class InlineCodegenForDefaultBody(
         transformedMethod.accept(MethodBodyVisitor(codegen.v))
     }
 
-    override fun afterParameterPut(type: Type, stackValue: StackValue, parameterIndex: Int) {
-        throw UnsupportedOperationException("Shouldn't be called")
-    }
-
     override fun genValueAndPut(valueParameterDescriptor: ValueParameterDescriptor, argumentExpression: KtExpression, parameterType: Type, parameterIndex: Int) {
         throw UnsupportedOperationException("Shouldn't be called")
     }

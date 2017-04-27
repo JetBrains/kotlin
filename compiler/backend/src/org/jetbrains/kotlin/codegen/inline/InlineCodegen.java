@@ -670,11 +670,6 @@ public class InlineCodegen extends CallGenerator {
         }
     }
 
-    @Override
-    public void afterParameterPut(@NotNull Type type, @NotNull StackValue stackValue, int parameterIndex) {
-        putArgumentOrCapturedToLocalVal(type, stackValue, -1, parameterIndex);
-    }
-
     private void putArgumentOrCapturedToLocalVal(
             @NotNull Type type,
             @NotNull StackValue stackValue,
@@ -932,7 +927,8 @@ public class InlineCodegen extends CallGenerator {
         if (shouldPutGeneralValue(parameterType, value)) {
             value.put(parameterType, codegen.v);
         }
-        afterParameterPut(parameterType, value, index);
+
+        putArgumentOrCapturedToLocalVal(parameterType, value, -1, index);
     }
 
     private boolean processDefaultMaskOrMethodHandler(@NotNull StackValue value, @NotNull ValueKind kind) {
