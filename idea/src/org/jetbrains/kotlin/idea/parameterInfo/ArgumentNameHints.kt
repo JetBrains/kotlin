@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.parameterInfo
 
+/*
 import com.intellij.codeInsight.hints.InlayInfo
 import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
@@ -77,3 +78,4 @@ private fun KtExpression.isUnclearExpression() = when(this) {
     is KtPrefixExpression -> baseExpression is KtConstantExpression && (operationToken == KtTokens.PLUS || operationToken == KtTokens.MINUS)
     else -> false
 }
+*/
