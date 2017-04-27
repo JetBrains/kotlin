@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanIrDeserializationException
 import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
+import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.expressions.IrLoop
@@ -438,7 +439,7 @@ internal class IrDescriptorDeserializer(val context: Context,
 
     fun findInTheDescriptorTree(proto: KonanIr.KotlinDescriptor): DeclarationDescriptor? {
 
-        val matchingNames = matchNameInParentScope(proto)
+        val matchingNames = matchNameInParentScope(proto).filter{it.isExported()}
         if (matchingNames.size == 0) return null
 
         val originalDescriptor = selectAmongMatchingNames(matchingNames, proto)
