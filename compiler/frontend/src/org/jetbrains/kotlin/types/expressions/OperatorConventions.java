@@ -142,6 +142,20 @@ public class OperatorConventions {
         return null;
     }
 
+    @Nullable
+    public static KtToken getOperationSymbolForName(@NotNull Name name) {
+        if (!isConventionName(name)) return null;
+
+        KtToken token;
+        token = BINARY_OPERATION_NAMES.inverse().get(name);
+        if (token != null) return token;
+        token = UNARY_OPERATION_NAMES.inverse().get(name);
+        if (token != null) return token;
+        token = ASSIGNMENT_OPERATIONS.inverse().get(name);
+        if (token != null) return token;
+        return null;
+    }
+
     public static boolean isConventionName(@NotNull Name name) {
         return CONVENTION_NAMES.contains(name) || COMPONENT_REGEX.matches(name.asString());
     }

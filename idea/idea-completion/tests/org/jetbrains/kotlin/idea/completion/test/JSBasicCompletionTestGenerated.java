@@ -2021,6 +2021,33 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             }
         }
 
+        @TestMetadata("idea/idea-completion/testData/basic/common/operatorNames")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class OperatorNames extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInOperatorNames() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/operatorNames"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("NoOperatorNameForTopLevel.kt")
+            public void testNoOperatorNameForTopLevel() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/operatorNames/NoOperatorNameForTopLevel.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OperatorNameForExtension.kt")
+            public void testOperatorNameForExtension() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/operatorNames/OperatorNameForExtension.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OperatorNameForMember.kt")
+            public void testOperatorNameForMember() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/operatorNames/OperatorNameForMember.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/idea-completion/testData/basic/common/override")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
