@@ -5,7 +5,6 @@ kotlin-data-container
     id-to-file.tab
     lookups.tab
 Module 'module1' production
-    experimental-format-version.txt
     format-version.txt
     jvm-build-meta-info.txt
     internal-name-to-source.tab
@@ -14,7 +13,6 @@ Module 'module1' production
     source-to-classes.tab
 Module 'module1' tests
 Module 'module2' production
-    experimental-format-version.txt
     format-version.txt
     jvm-build-meta-info.txt
     internal-name-to-source.tab
@@ -23,7 +21,6 @@ Module 'module2' production
     source-to-classes.tab
 Module 'module2' tests
 Module 'module3' production
-    experimental-format-version.txt
     format-version.txt
     jvm-build-meta-info.txt
     internal-name-to-source.tab
