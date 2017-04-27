@@ -338,25 +338,6 @@ object KotlinCompilerClient {
         return null
     }
 
-    private fun DaemonReportingTargets.report(category: DaemonReportCategory, message: String, source: String = "daemon client") {
-        out?.println("[$source] ${category.name}: $message")
-        messages?.add(DaemonReportMessage(category, "[$source] $message"))
-        messageCollector?.let {
-            when (category) {
-                DaemonReportCategory.DEBUG -> it.report(CompilerMessageSeverity.LOGGING, message)
-                DaemonReportCategory.INFO -> it.report(CompilerMessageSeverity.INFO, message)
-                DaemonReportCategory.EXCEPTION -> it.report(CompilerMessageSeverity.EXCEPTION, message)
-            }
-        }
-        compilerServices?.let {
-            when (category) {
-                DaemonReportCategory.DEBUG -> it.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.DEBUG, message, source)
-                DaemonReportCategory.INFO -> it.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.INFO, message, source)
-                DaemonReportCategory.EXCEPTION -> it.report(ReportCategory.EXCEPTION, ReportSeverity.ERROR, message, source)
-            }
-        }
-    }
-
     private fun tryFindSuitableDaemonOrNewOpts(registryDir: File, compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, report: (DaemonReportCategory, String) -> Unit): Pair<CompileService?, DaemonJVMOptions> {
         registryDir.mkdirs()
         val timestampMarker = createTempFile("kotlin-daemon-client-tsmarker", directory = registryDir)
@@ -397,19 +378,7 @@ object KotlinCompilerClient {
         val processBuilder = ProcessBuilder(args)
         processBuilder.redirectErrorStream(true)
         // assuming daemon process is deaf and (mostly) silent, so do not handle streams
-        val daemon =
-                try {
-                    launchWithNativePlatformLauncher(processBuilder)
-                }
-                catch (e: IOException) {
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "Could not start daemon with native process launcher, falling back to ProcessBuilder#start (${e.cause})")
-                    null
-                }
-                catch (e: NoClassDefFoundError) {
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "net.rubygrapefruit.platform library is not in the classpath, falling back to ProcessBuilder#start")
-                    null
-                }
-                ?: processBuilder.start()
+        val daemon = launchProcessWithFallback(processBuilder, reportingTargets, "daemon client")
 
         val isEchoRead = Semaphore(1)
         isEchoRead.acquire()
@@ -478,6 +447,25 @@ class DaemonReportingTargets(val out: PrintStream? = null,
                              val messageCollector: MessageCollector? = null,
                              val compilerServices: CompilerServicesFacadeBase? = null)
 
+internal fun DaemonReportingTargets.report(category: DaemonReportCategory, message: String, source: String? = null) {
+    val sourceMessage: String by lazy { source?.let { "[$it] $message" } ?: message }
+    out?.println("${category.name}: $sourceMessage")
+    messages?.add(DaemonReportMessage(category, sourceMessage))
+    messageCollector?.let {
+        when (category) {
+            DaemonReportCategory.DEBUG -> it.report(CompilerMessageSeverity.LOGGING, sourceMessage)
+            DaemonReportCategory.INFO -> it.report(CompilerMessageSeverity.INFO, sourceMessage)
+            DaemonReportCategory.EXCEPTION -> it.report(CompilerMessageSeverity.EXCEPTION, sourceMessage)
+        }
+    }
+    compilerServices?.let {
+        when (category) {
+            DaemonReportCategory.DEBUG -> it.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.DEBUG, message, source)
+            DaemonReportCategory.INFO -> it.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.INFO, message, source)
+            DaemonReportCategory.EXCEPTION -> it.report(ReportCategory.EXCEPTION, ReportSeverity.ERROR, message, source)
+        }
+    }
+}
 
 internal fun isProcessAlive(process: Process) =
         try {
