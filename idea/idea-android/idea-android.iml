@@ -25,5 +25,6 @@
     <orderEntry type="library" name="kotlin-reflect" level="project" />
     <orderEntry type="module" module-name="light-classes" />
     <orderEntry type="library" scope="PROVIDED" name="dx-android" level="project" />
+    <orderEntry type="module" module-name="android-annotations" scope="TEST" />
   </component>
 </module>

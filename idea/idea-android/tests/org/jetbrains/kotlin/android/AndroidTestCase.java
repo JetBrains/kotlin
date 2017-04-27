@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.android;
 
 import com.android.SdkConstants;
-import com.android.tools.idea.rendering.RenderSecurityManager;
+import com.android.ide.common.rendering.RenderSecurityManager;
 import com.android.tools.idea.startup.AndroidCodeStyleSettingsModifier;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInspection.GlobalInspectionTool;
