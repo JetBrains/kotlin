@@ -1,7 +1,15 @@
 kotlin-data-container
+    data-container-format-version.txt
+    counters.tab
+    file-to-id.tab
+    id-to-file.tab
+    lookups.tab
 Module 'module' production
+    experimental-format-version.txt
     format-version.txt
     jvm-build-meta-info.txt
+    class-fq-name-to-source.tab
+    internal-name-to-source.tab
     proto.tab
     source-to-classes.tab
 Module 'module' tests

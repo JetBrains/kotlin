@@ -22,12 +22,6 @@ import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 
 abstract class AbstractExperimentalIncrementalJpsTest : AbstractIncrementalJpsTest()
 
-abstract class AbstractExperimentalIncrementalLazyCachesTest : AbstractIncrementalLazyCachesTest() {
-
-    override val expectedCachesFileName: String
-        get() = "experimental-expected-kotlin-caches.txt"
-}
-
 abstract class AbstractExperimentalChangeIncrementalOptionTest : AbstractIncrementalLazyCachesTest()
 
 abstract class AbstractExperimentalIncrementalCacheVersionChangedTest : AbstractIncrementalCacheVersionChangedTest() {
