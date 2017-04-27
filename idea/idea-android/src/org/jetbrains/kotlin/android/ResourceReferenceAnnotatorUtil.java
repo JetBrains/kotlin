@@ -196,7 +196,7 @@ public class ResourceReferenceAnnotatorUtil {
         @Override
         public Icon getIcon() {
             Color color = getCurrentColor();
-            return JBUI.scale(color == null ? EmptyIcon.create(ICON_SIZE) : new ColorIcon(ICON_SIZE, color));
+            return color == null ? EmptyIcon.create(ICON_SIZE) : new ColorIcon(ICON_SIZE, color);
         }
 
         @Nullable
