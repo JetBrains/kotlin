@@ -71,7 +71,7 @@ class AndroidResourceReferenceAnnotator : Annotator {
             val iconFile = AndroidColorAnnotator.pickBestBitmap(file)
             if (iconFile != null) {
                 val annotation = holder.createInfoAnnotation(element, null)
-                annotation.gutterIconRenderer = GutterIconRenderer(element, iconFile)
+                annotation.gutterIconRenderer = GutterIconRenderer(resourceResolver, element, iconFile)
             }
         }
     }
