@@ -84,7 +84,6 @@ internal class IrDescriptorDeserializer(val context: Context,
         val localDeclarationProto = irProto.irLocalDeclaration.descriptor
         when {
             localDeclarationProto.hasFunction() -> {
-                val functionProto = localDeclarationProto.function
                 val index = irProto.index
                 val descriptor = localDeserializer.deserializeFunction(irProto)
                 descriptorIndex.put(index, descriptor)
@@ -92,7 +91,6 @@ internal class IrDescriptorDeserializer(val context: Context,
             }
 
             localDeclarationProto.hasProperty() -> {
-                val propertyProto = localDeclarationProto.property
                 val index = irProto.index
                 val descriptor = localDeserializer.deserializeProperty(irProto)
                 descriptorIndex.put(index, descriptor)
@@ -174,16 +172,13 @@ internal class IrDescriptorDeserializer(val context: Context,
         proto: KonanIr.KotlinDescriptor, 
         functionDescriptor: FunctionDescriptor) {
 
-        //val functionProto = functionDescriptor.proto
         functionDescriptor.valueParameters.forEachIndexed { i, parameter ->
-            //val parameterProto = functionProto.getValueParameter(i)
             // Assume they are in the same order.
             val index = proto.getValueParameter(i).index
             descriptorIndex.put(index, parameter)
         }
 
         functionDescriptor.typeParameters.forEachIndexed {i, parameter ->
-            //val parameterProto = functionProto.getTypeParameter(i)
             // Assume they are in the same order too.
             val index = proto.getTypeParameter(i).index
             descriptorIndex.put(index, parameter)
