@@ -1,7 +1,7 @@
 ================ Step #1 =================
 
 Building module1
-Actions after cache changed: [CLEAN_NORMAL_CACHES, DO_NOTHING]
+Actions after cache changed: [CLEAN_NORMAL_CACHES, CLEAN_EXPERIMENTAL_CACHES, CLEAN_DATA_CONTAINER]
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building module2
@@ -26,13 +26,20 @@ Exit code: NOTHING_DONE
 ================ Step #2 =================
 
 Building module1
-Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
+Actions after cache changed: [REBUILD_ALL_KOTLIN, REBUILD_CHUNK]
 Cleaning output files:
   out/production/module1/foo/Z.class
 End of files
 Compiling files:
   module1/src/z.kt
 End of files
+Marked as dirty by Kotlin:
+  module1/src/z.kt
+  module2/src/a.kt
+  module2/src/b.kt
+  module2/src/c.kt
+  module3/src/d.kt
+  module4/src/e.kt
 Exit code: OK
 ------------------------------------------
 Building module2

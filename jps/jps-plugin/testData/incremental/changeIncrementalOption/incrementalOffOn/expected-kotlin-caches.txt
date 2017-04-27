@@ -1,28 +1,43 @@
 kotlin-data-container
+    data-container-format-version.txt
+    counters.tab
+    file-to-id.tab
+    id-to-file.tab
+    lookups.tab
 Module 'module1' production
+    experimental-format-version.txt
     format-version.txt
     jvm-build-meta-info.txt
+    class-fq-name-to-source.tab
+    internal-name-to-source.tab
     proto.tab
     source-to-classes.tab
 Module 'module1' tests
 Module 'module2' production
+    experimental-format-version.txt
     format-version.txt
     jvm-build-meta-info.txt
     inline-functions.tab
-    inlined-to.tab
+    internal-name-to-source.tab
     package-parts.tab
     proto.tab
     source-to-classes.tab
 Module 'module2' tests
 Module 'module3' production
+    experimental-format-version.txt
     format-version.txt
     jvm-build-meta-info.txt
+    class-fq-name-to-source.tab
+    internal-name-to-source.tab
     proto.tab
     source-to-classes.tab
 Module 'module3' tests
 Module 'module4' production
+    experimental-format-version.txt
     format-version.txt
     jvm-build-meta-info.txt
+    class-fq-name-to-source.tab
+    internal-name-to-source.tab
     proto.tab
     source-to-classes.tab
 Module 'module4' tests

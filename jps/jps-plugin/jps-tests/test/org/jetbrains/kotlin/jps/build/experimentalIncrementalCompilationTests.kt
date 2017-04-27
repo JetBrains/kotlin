@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 
 abstract class AbstractExperimentalIncrementalJpsTest : AbstractIncrementalJpsTest()
 
-abstract class AbstractExperimentalChangeIncrementalOptionTest : AbstractIncrementalLazyCachesTest()
-
 abstract class AbstractExperimentalIncrementalCacheVersionChangedTest : AbstractIncrementalCacheVersionChangedTest() {
     override fun getVersions(cacheVersionProvider: CacheVersionProvider, targets: Iterable<ModuleBuildTarget>) =
             targets.map { cacheVersionProvider.experimentalVersion(it) }
