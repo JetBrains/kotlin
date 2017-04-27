@@ -34,7 +34,9 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
     override fun shouldUseTypeTable(): Boolean = true
 
     override fun serializeType(type: KotlinType, proto: ProtoBuf.Type.Builder) {
-
+        // TODO: For debugging purpose we store the textual 
+        // representation of serialized types.
+        // To be removed for release 1.0.
         proto.setExtension(KonanLinkData.typeText, type.toString())
 
         super.serializeType(type, proto)
@@ -68,26 +70,16 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
         super.serializeFunction(descriptor, proto)
     }
 
-    private val backingFieldClass = 
-        context.builtIns.getKonanInternalClass("HasBackingField").getDefaultType()
-
-    private val backingFieldAnnotation = AnnotationDescriptorImpl(
-       backingFieldClass, emptyMap(), SourceElement.NO_SOURCE)
-
     override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
         val variable = originalVariables[descriptor]
         if (variable != null) {
             proto.setExtension(KonanLinkData.usedAsVariable, true)
         }
 
+        proto.setExtension(KonanLinkData.hasBackingField, 
+            context.ir.propertiesWithBackingFields.contains(descriptor))
+
         super.serializeProperty(descriptor, proto)
-
-        if (context.ir.propertiesWithBackingFields.contains(descriptor)) {
-            proto.addExtension(KonanLinkData.propertyAnnotation, 
-                annotationSerializer.serializeAnnotation(backingFieldAnnotation))
-
-            proto.flags = proto.flags or Flags.HAS_ANNOTATIONS.toFlags(true)
-        }
     }
 
     override fun addFunctionIR(proto: ProtoBuf.Function.Builder, serializedIR: String) 

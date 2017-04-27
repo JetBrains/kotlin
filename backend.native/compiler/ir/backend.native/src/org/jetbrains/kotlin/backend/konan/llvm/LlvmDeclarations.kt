@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -103,18 +104,13 @@ internal fun ContextUtils.getFields(classDescriptor: ClassDescriptor): List<Prop
 private fun ContextUtils.getDeclaredFields(classDescriptor: ClassDescriptor): List<PropertyDescriptor> {
     // TODO: Here's what is going on here:
     // The existence of a backing field for a property is only described in the IR,
-    // but not in the property descriptor.
-    // That works, while we process the IR, but not for deserialized descriptors.
+    // but not in the PropertyDescriptor.
     //
-    // So to have something in deserialized descriptors,
-    // while we still see the IR, we mark the property with an annotation.
-    //
-    // We could apply the annotation during IR rewite, but we still are not
-    // that far in the rewriting infrastructure. So we postpone
-    // the annotation until the serializer.
+    // We mark serialized properties with a Konan protobuf extension bit,
+    // so it is present in DeserializedPropertyDescriptor.
     //
     // In this function we check the presence of the backing filed
-    // two ways: first we check IR, then we check the annotation.
+    // two ways: first we check IR, then we check the protobuf extension.
 
     val irClass = context.ir.moduleIndexForCodegen.classes[classDescriptor]
     val fields = if (irClass != null) {
@@ -130,7 +126,7 @@ private fun ContextUtils.getDeclaredFields(classDescriptor: ClassDescriptor): Li
     } else {
         val properties = classDescriptor.unsubstitutedMemberScope.
                 getContributedDescriptors().
-                filterIsInstance<PropertyDescriptor>()
+                filterIsInstance<DeserializedPropertyDescriptor>()
 
         properties.mapNotNull { it.backingField }
     }

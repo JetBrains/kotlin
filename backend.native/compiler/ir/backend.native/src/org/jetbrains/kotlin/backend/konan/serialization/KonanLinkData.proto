@@ -29,15 +29,16 @@ extend Constructor {
 
 extend Function {
     repeated Annotation function_annotation = 170;
-    optional InlineIrBody inline_ir_body = 174;
+    optional InlineIrBody inline_ir_body = 171;
 }
 
 extend Property {
     repeated Annotation property_annotation = 170;
-    optional bool used_as_variable = 173;
-    optional Annotation.Argument.Value compile_time_value = 174;
-    optional InlineIrBody inline_getter_ir_body = 175;
-    optional InlineIrBody inline_setter_ir_body = 176;
+    optional bool has_backing_field = 171;
+    optional bool used_as_variable = 172;
+    optional Annotation.Argument.Value compile_time_value = 173;
+    optional InlineIrBody inline_getter_ir_body = 174;
+    optional InlineIrBody inline_setter_ir_body = 175;
 }
 
 extend EnumEntry {
