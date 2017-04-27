@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.parameterInfo
 
+/*
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 
@@ -173,3 +174,4 @@ annotation class ManyArgs(val name: String, val surname: String)
         """)
     }
 }
+*/

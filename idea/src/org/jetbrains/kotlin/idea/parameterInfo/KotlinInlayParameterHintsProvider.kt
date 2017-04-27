@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.parameterInfo
 
+/*
+
 import com.intellij.codeInsight.hints.HintInfo
 import com.intellij.codeInsight.hints.InlayInfo
 import com.intellij.codeInsight.hints.InlayParameterHintsProvider
@@ -158,4 +160,5 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
         return null
     }
 }
+*/
 
