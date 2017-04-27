@@ -37,6 +37,13 @@ import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import kotlin.reflect.KClass
 
+// This class was originally created to make possible switching inspection off and using intention instead.
+// Since IDEA 2017.1, it's possible to have inspection severity "No highlighting, only fix"
+// thus making the original purpose useless.
+// The class will probably not be deleted in the close future,
+// but do not use them in your new code.
+@Suppress("DEPRECATION")
+@Deprecated("Please do not use for new inspections. Use AbstractKotlinInspection as base class for them")
 abstract class IntentionBasedInspection<TElement : PsiElement>(
         val intentionInfos: List<IntentionBasedInspection.IntentionData<TElement>>,
         protected open val problemText: String?
