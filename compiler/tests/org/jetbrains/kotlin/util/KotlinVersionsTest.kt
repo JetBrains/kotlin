@@ -67,12 +67,6 @@ class KotlinVersionsTest : KtUsefulTestCase() {
         )
 
         versions.add(
-                Properties().apply { load(File("resources/kotlinManifest.properties").inputStream()) }
-                        .getProperty("manifest.impl.value.kotlin.version")?.toVersion("kotlinManifest.properties")
-                ?: error("No Kotlin-Version value in kotlinManifest.properties")
-        )
-
-        versions.add(
                 loadValueFromPomXml("libraries/pom.xml", listOf("project", "version"))
                         ?.toVersion("version in pom.xml")
                 ?: error("No version in libraries/pom.xml")
