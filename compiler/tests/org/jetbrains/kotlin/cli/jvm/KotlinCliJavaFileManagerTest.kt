@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
+import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
@@ -202,6 +203,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         val root = environment.contentRootToVirtualFile(JavaSourceRoot(javaFilesDir!!, null))!!
         coreJavaFileManager.initialize(
                 JvmDependenciesIndexImpl(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))),
+                SingleJavaFileRootsIndex(emptyList()),
                 useFastClassFilesReading = true
         )
 

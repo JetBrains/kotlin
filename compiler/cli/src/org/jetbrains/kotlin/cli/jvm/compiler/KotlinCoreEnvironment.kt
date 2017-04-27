@@ -72,10 +72,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.config.*
-import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
-import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
-import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
-import org.jetbrains.kotlin.cli.jvm.index.JvmUpdateableDependenciesIndexFactory
+import org.jetbrains.kotlin.cli.jvm.index.*
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleInfo
 import org.jetbrains.kotlin.cli.jvm.modules.ModuleGraph
@@ -207,11 +204,16 @@ class KotlinCoreEnvironment private constructor(
         // REPL and kapt2 update classpath dynamically
         val indexFactory = JvmUpdateableDependenciesIndexFactory()
 
-        rootsIndex = indexFactory.makeIndexFor(initialRoots)
+        val (roots, singleJavaFileRoots) =
+                initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+        rootsIndex = indexFactory.makeIndexFor(roots)
         updateClasspathFromRootsIndex(rootsIndex)
 
-        (ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl)
-                .initialize(rootsIndex, configuration.getBoolean(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING))
+        (ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl).initialize(
+                rootsIndex,
+                SingleJavaFileRootsIndex(singleJavaFileRoots),
+                configuration.getBoolean(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING)
+        )
 
         val finderFactory = CliVirtualFileFinderFactory(rootsIndex)
         project.registerService(MetadataFinderFactory::class.java, finderFactory)
@@ -230,7 +232,7 @@ class KotlinCoreEnvironment private constructor(
 
     private val allJavaFiles: List<File>
         get() = configuration.javaSourceRoots
-                .mapNotNull(this::findLocalDirectory)
+                .mapNotNull(this::findLocalFile)
                 .flatMap { it.javaFiles }
                 .map { File(it.canonicalPath) }
 
@@ -337,13 +339,9 @@ class KotlinCoreEnvironment private constructor(
     fun tryUpdateClasspath(files: Iterable<File>): List<File>? = updateClasspath(files.map(::JvmClasspathRoot))
 
     fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
-        when (root) {
-            is JvmClasspathRoot -> {
-                return if (root.file.isFile) findJarRoot(root) else findLocalDirectory(root)
-            }
-            is JavaSourceRoot -> {
-                return if (root.file.isDirectory) findLocalDirectory(root) else null
-            }
+        return when (root) {
+            is JvmClasspathRoot -> if (root.file.isFile) findJarRoot(root) else findLocalFile(root)
+            is JavaSourceRoot -> findLocalFile(root)
             else -> throw IllegalStateException("Unexpected root: $root")
         }
     }
@@ -352,18 +350,15 @@ class KotlinCoreEnvironment private constructor(
 
     fun findJarFile(path: String) = applicationEnvironment.jarFileSystem.findFileByPath(path)
 
-    private fun findLocalDirectory(root: JvmContentRoot): VirtualFile? {
+    private fun findLocalFile(root: JvmContentRoot): VirtualFile? {
         val path = root.file
-        val localFile = findLocalDirectory(path.absolutePath)
+        val localFile = findLocalFile(path.absolutePath)
         if (localFile == null) {
             report(STRONG_WARNING, "Classpath entry points to a non-existent location: $path")
             return null
         }
         return localFile
     }
-
-    internal fun findLocalDirectory(absolutePath: String): VirtualFile? =
-            applicationEnvironment.localFileSystem.findFileByPath(absolutePath)
 
     private fun findJarRoot(root: JvmClasspathRoot): VirtualFile? =
             applicationEnvironment.jarFileSystem.findFileByPath("${root.file}${URLUtil.JAR_SEPARATOR}")
