@@ -100,6 +100,7 @@ object Renderers {
             is PropertyGetterDescriptor -> "property getter "
             is PropertySetterDescriptor -> "property setter "
             is FunctionDescriptor -> "function "
+            is PropertyDescriptor -> "property "
             else -> throw AssertionError("Unexpected declaration kind: $it")
         }
         "$declarationKindWithSpace'${it.name.asString()}'"
