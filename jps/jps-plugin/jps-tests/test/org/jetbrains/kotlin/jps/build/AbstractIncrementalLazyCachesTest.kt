@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() {
-    protected open val expectedCachesFileName: String
+    private val expectedCachesFileName: String
         get() = "expected-kotlin-caches.txt"
 
     override fun doTest(testDataPath: String) {
