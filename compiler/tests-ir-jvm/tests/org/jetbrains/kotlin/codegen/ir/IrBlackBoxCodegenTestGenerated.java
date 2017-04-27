@@ -5362,6 +5362,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
 
+            @TestMetadata("labeledWhile.kt")
+            public void testLabeledWhile() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/labeledWhile.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("returnFromFinally.kt")
             public void testReturnFromFinally() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/returnFromFinally.kt");

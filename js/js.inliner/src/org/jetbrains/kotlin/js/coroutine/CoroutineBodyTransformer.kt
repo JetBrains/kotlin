@@ -93,7 +93,14 @@ class CoroutineBodyTransformer(private val program: JsProgram, private val conte
         when (inner) {
             is JsWhile,
             is JsDoWhile,
-            is JsFor -> inner.accept(this)
+            is JsFor -> {
+                if (x in nodesToSplit) {
+                    inner.accept(this)
+                }
+                else {
+                    currentStatements += x
+                }
+            }
 
             else -> splitIfNecessary(x) {
                 val successor = CoroutineBlock()
