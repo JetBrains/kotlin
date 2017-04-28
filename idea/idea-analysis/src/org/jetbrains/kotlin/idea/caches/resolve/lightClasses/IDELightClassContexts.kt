@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.idea.caches.resolve.lightClasses
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.config.JvmTarget
@@ -39,6 +41,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IDELightClassConstr
 import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IDELightClassConstructionContext.Mode.LIGHT
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
+import org.jetbrains.kotlin.idea.stubindex.KotlinOverridableInternalMembersShortNameIndex
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -140,14 +143,22 @@ object IDELightClassContexts {
     private fun isDummyResolveApplicable(classOrObject: KtClassOrObject): Boolean {
         if (classOrObject.hasLightClassMatchingErrors) return false
 
-        val hasDelegatedMembers = classOrObject.superTypeListEntries.any { it is KtDelegatedSuperTypeEntry }
-        val dataClassWithGeneratedMembersOverridden =
-                classOrObject.hasModifier(KtTokens.DATA_KEYWORD) &&
-                classOrObject.declarations.filterIsInstance<KtFunction>().any {
-                    isGeneratedForDataClass(it.nameAsSafeName)
-                }
-        return !hasDelegatedMembers && !dataClassWithGeneratedMembersOverridden
-               && classOrObject.declarations.filterIsInstance<KtClassOrObject>().all { isDummyResolveApplicable(it) }
+        if (hasDelegatedSupertypes(classOrObject)) return false
+
+        if (isDataClassWithGeneratedMembersOverridden(classOrObject)) return false
+
+        if (hasMembersOverridingInternalMembers(classOrObject)) return false
+
+        return classOrObject.declarations.filterIsInstance<KtClassOrObject>().all { isDummyResolveApplicable(it) }
+    }
+
+    private fun hasDelegatedSupertypes(classOrObject: KtClassOrObject) = classOrObject.superTypeListEntries.any { it is KtDelegatedSuperTypeEntry }
+
+    private fun isDataClassWithGeneratedMembersOverridden(classOrObject: KtClassOrObject): Boolean {
+        return classOrObject.hasModifier(KtTokens.DATA_KEYWORD) &&
+               classOrObject.declarations.filterIsInstance<KtFunction>().any {
+                   isGeneratedForDataClass(it.nameAsSafeName)
+               }
     }
 
     private fun isGeneratedForDataClass(name: Name): Boolean {
@@ -157,6 +168,30 @@ object IDELightClassContexts {
                name == DataClassDescriptorResolver.HASH_CODE_METHOD_NAME ||
                name == DataClassDescriptorResolver.TO_STRING_METHOD_NAME ||
                DataClassDescriptorResolver.isComponentLike(name)
+    }
+
+    private fun hasMembersOverridingInternalMembers(classOrObject: KtClassOrObject): Boolean {
+        return classOrObject.declarations.filterIsInstance<KtCallableDeclaration>().any {
+            possiblyOverridesInternalMember(it)
+        }
+    }
+
+    private fun possiblyOverridesInternalMember(declaration: KtCallableDeclaration): Boolean {
+        if (!declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
+
+        return declaration.name?.let { anyInternalMembersWithThisName(it, declaration.project) } ?: false
+    }
+
+    private fun anyInternalMembersWithThisName(name: String, project: Project): Boolean {
+        var result = false
+        StubIndex.getInstance().processElements(
+                KotlinOverridableInternalMembersShortNameIndex.Instance.key, name, project,
+                EverythingGlobalScope(project), KtCallableDeclaration::class.java
+        ) {
+            result = true
+            false // stop processing at first matching result
+        }
+        return result
     }
 
     fun lightContextForFacade(files: List<KtFile>): LightClassConstructionContext {

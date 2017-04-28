@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve.lightClasses
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
-import com.intellij.psi.search.EverythingGlobalScope
-import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -32,11 +29,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
-import org.jetbrains.kotlin.idea.stubindex.KotlinOverridableInternalMembersShortNameIndex
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 
 typealias ExactLightClassContextProvider = () -> LightClassConstructionContext
@@ -94,10 +87,6 @@ sealed class LazyLightClassDataHolder(
             return dummyDelegate!!.fields.map { dummyField ->
                 val fieldOrigin = KtLightFieldImpl.getOrigin(dummyField)!!
 
-                if (shouldRollbackOptimization(fieldOrigin)) {
-                    return@getOwnFields KtLightFieldImpl.fromClsFields(clsDelegate, containingClass)
-                }
-
                 val fieldName = dummyField.name!!
                 KtLightFieldImpl.lazy(dummyField, fieldOrigin, containingClass) {
                     clsDelegate.findFieldByName(fieldName, false).assertMatches(dummyField, containingClass)
@@ -110,10 +99,6 @@ sealed class LazyLightClassDataHolder(
 
             return dummyDelegate!!.methods.map { dummyMethod ->
                 val methodOrigin = KtLightMethodImpl.getOrigin(dummyMethod)
-
-                if (shouldRollbackOptimization(methodOrigin)) {
-                    return@getOwnMethods KtLightMethodImpl.fromClsMethods(clsDelegate, containingClass)
-                }
 
                 KtLightMethodImpl.lazy(dummyMethod, containingClass, methodOrigin) {
                     val dummyIndex = dummyMethod.memberIndex!!
@@ -144,28 +129,6 @@ sealed class LazyLightClassDataHolder(
 
         return this
     }
-}
-
-private fun shouldRollbackOptimization(origin: LightMemberOriginForDeclaration?): Boolean {
-    val kotlinDeclaration = origin?.originalElement as? KtNamedDeclaration ?: return false
-
-    if (!kotlinDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
-
-    val possiblyOverridesInternalMember = kotlinDeclaration.name?.let { anyInternalMembersWithThisName(it, kotlinDeclaration.project) } ?: false
-    return possiblyOverridesInternalMember
-}
-
-
-private fun anyInternalMembersWithThisName(name: String, project: Project): Boolean {
-    var result = false
-    StubIndex.getInstance().processElements(
-            KotlinOverridableInternalMembersShortNameIndex.Instance.key, name, project,
-            EverythingGlobalScope(project), KtCallableDeclaration::class.java
-    ) {
-        result = true
-        false // stop processing at first matching result
-    }
-    return result
 }
 
 private sealed class LazyLightClassMemberMatchingError(message: String, containingClass: KtLightClass)
