@@ -63,11 +63,22 @@ class IrTryImpl(startOffset: Int, endOffset: Int, type: KotlinType) :
     }
 }
 
-class IrCatchImpl(
-        startOffset: Int, endOffset: Int,
-        override var catchParameter: IrVariable,
-        override var result: IrExpression
-) : IrCatch, IrElementBase(startOffset, endOffset) {
+class IrCatchImpl(startOffset: Int, endOffset: Int)
+    : IrCatch, IrElementBase(startOffset, endOffset)
+{
+    constructor(startOffset: Int, endOffset: Int, catchParameter: IrVariable)
+            : this(startOffset, endOffset) {
+        this.catchParameter = catchParameter
+    }
+
+    constructor(startOffset: Int, endOffset: Int, catchParameter: IrVariable, result: IrExpression)
+            : this(startOffset, endOffset, catchParameter) {
+        this.result = result
+    }
+
+    override lateinit var catchParameter: IrVariable
+    override lateinit var result: IrExpression
+
     override val parameter: VariableDescriptor get() = catchParameter.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {

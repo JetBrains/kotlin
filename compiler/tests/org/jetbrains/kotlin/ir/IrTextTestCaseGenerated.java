@@ -551,6 +551,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("catchParameterAccess.kt")
+        public void testCatchParameterAccess() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/catchParameterAccess.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("chainOfSafeCalls.kt")
         public void testChainOfSafeCalls() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/chainOfSafeCalls.kt");
