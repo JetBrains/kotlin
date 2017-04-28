@@ -28,7 +28,7 @@ fun createScriptEngine(): ScriptEngine =
         NashornScriptEngineFactory().getScriptEngine("--language=es5", "--no-java", "--no-syntax-extensions")
 
 private fun ScriptEngine.loadFile(path: String) {
-    eval("load('$path');")
+    eval("load('${path.replace('\\', '/')}');")
 }
 
 private fun ScriptObjectMirror.toMapWithAllMembers(): Map<String, Any?> = getOwnKeys(true).associate { it to this[it] }

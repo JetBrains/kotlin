@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.test.semantics
 
 import com.google.common.collect.Lists
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.test.BasicBoxTest
 import org.jetbrains.kotlin.js.test.NashornJsTestChecker
@@ -45,7 +46,7 @@ abstract class AbstractWebDemoExamplesTest(relativePath: String) : BasicBoxTest(
     }
 
     protected fun runMainAndCheckOutputWithExpectedFile(testName: String, testId: String, vararg args: String) {
-        val expectedResult = File(pathToTestDir + testName + testId + ".out").readText()
+        val expectedResult = StringUtil.convertLineSeparators(File(pathToTestDir + testName + testId + ".out").readText())
         doTest(pathToTestDir + testName + ".kt", expectedResult, MainCallParameters.mainWithArguments(Lists.newArrayList(*args)))
     }
 }
