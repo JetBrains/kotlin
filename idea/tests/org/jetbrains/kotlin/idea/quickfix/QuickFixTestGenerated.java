@@ -10886,6 +10886,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("removeRedundantElse.kt")
+        public void testRemoveRedundantElse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/removeRedundantElse.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("twoElseBranchesInWhen.kt")
         public void testTwoElseBranchesInWhen() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/twoElseBranchesInWhen.kt");
