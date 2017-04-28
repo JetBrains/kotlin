@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
 @file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
@@ -6,6 +22,8 @@ package kotlin.text
 
 /**
  * Returns a string representation of this [Byte] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
@@ -14,6 +32,8 @@ public inline fun Byte.toString(radix: Int): String = this.toInt().toString(chec
 
 /**
  * Returns a string representation of this [Short] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
@@ -22,6 +42,8 @@ public inline fun Short.toString(radix: Int): String = this.toInt().toString(che
 
 /**
  * Returns a string representation of this [Int] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
@@ -30,6 +52,8 @@ public inline fun Int.toString(radix: Int): String = java.lang.Integer.toString(
 
 /**
  * Returns a string representation of this [Long] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
@@ -54,6 +78,7 @@ public inline fun String.toByte(): Byte = java.lang.Byte.parseByte(this)
 /**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
@@ -72,6 +97,7 @@ public inline fun String.toShort(): Short = java.lang.Short.parseShort(this)
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
@@ -89,6 +115,7 @@ public inline fun String.toInt(): Int = java.lang.Integer.parseInt(this)
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
@@ -106,6 +133,7 @@ public inline fun String.toLong(): Long = java.lang.Long.parseLong(this)
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
@@ -140,6 +168,8 @@ public fun String.toByteOrNull(): Byte? = toByteOrNull(radix = 10)
 /**
  * Parses the string as a signed [Byte] number and returns the result
  * or `null` if the string is not a valid representation of a number.
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.1")
 public fun String.toByteOrNull(radix: Int): Byte? {
@@ -158,6 +188,8 @@ public fun String.toShortOrNull(): Short? = toShortOrNull(radix = 10)
 /**
  * Parses the string as a [Short] number and returns the result
  * or `null` if the string is not a valid representation of a number.
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.1")
 public fun String.toShortOrNull(radix: Int): Short? {
@@ -176,6 +208,8 @@ public fun String.toIntOrNull(): Int? = toIntOrNull(radix = 10)
 /**
  * Parses the string as an [Int] number and returns the result
  * or `null` if the string is not a valid representation of a number.
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.1")
 public fun String.toIntOrNull(radix: Int): Int? {
@@ -237,6 +271,8 @@ public fun String.toLongOrNull(): Long? = toLongOrNull(radix = 10)
 /**
  * Parses the string as a [Long] number and returns the result
  * or `null` if the string is not a valid representation of a number.
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.1")
 public fun String.toLongOrNull(radix: Int): Long? {
