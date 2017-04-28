@@ -17,11 +17,78 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
+}
+
+apply plugin: 'com.jfrog.bintray'
+
+configurations {
+    kotlin_compiler_jar
+    kotlin_compiler_pom
+}
+
+repositories {
+    maven {
+        url 'http://oss.sonatype.org/content/repositories/snapshots'
+    }
+}
+
+dependencies {
+    kotlin_compiler_jar "$kotlinCompilerModule@jar"
+    kotlin_compiler_pom "$kotlinCompilerModule@pom"
+}
+
+// Hack kotlin-compiler pom-file to resolve the dependency correctly.
+task generatePom(type: DefaultTask) {
+    def originalPom = configurations.kotlin_compiler_pom.singleFile
+    inputs.file(originalPom)
+
+    def newPom = file("${temporaryDir.canonicalPath}/${originalPom.name}")
+    outputs.file(newPom)
+
+    doLast {
+        def xml = new XmlParser().parse(originalPom)
+        def parent = xml.parent // <parent> </parent> section, not the parent node.
+        def groupId = parent.groupId
+        def version = parent.version
+        xml.append(groupId)
+        xml.append(version)
+        xml.remove(parent)
+        new XmlNodePrinter(new PrintWriter(new FileWriter(newPom))).print(xml)
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key  = project.hasProperty('bintrayKey') ? project.property('bintrayKey') : System.getenv('BINTRAY_KEY')
+    pkg {
+        repo = 'kotlin-native-dependencies'
+        name = 'kotlin-compiler-builds'
+        userOrg = 'jetbrains'
+        publish = true
+        override = project.hasProperty("override")
+    }
+    filesSpec {
+        // kotlinCompilerModule@jar and @pom -> groupId/with/dots/replaced/by/slashes/artifactId/<major-version>-SNAPSHOT
+        // e.g. org.jetbrains.kotlin:kotlin-compiler:1.1-20170426.212805-507 -> org/jetbrains/kotlin/kotlin-compiler/1.1-SNAPSHOT
+        def (groupId, artifactId, version) = kotlinCompilerModule.tokenize(':')
+        def groupPath = groupId.replace('.', '/')
+        def artifactPath = artifactId
+        def versionPath =  "${version.tokenize('-')[0]}-SNAPSHOT"
+        from project.configurations.kotlin_compiler_jar.files
+        from generatePom.outputs.files
+        into "$groupPath/$artifactPath/$versionPath"
+    }
+}
+
+task update_kotlin_compiler(type: DefaultTask) {
+    dependsOn(bintrayUpload)
 }
 
 abstract class NativeDep extends DefaultTask {

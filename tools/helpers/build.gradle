@@ -34,7 +34,7 @@ buildscript {
 // Copied from backend.native project. =====
 repositories {
     maven {
-        url 'http://oss.sonatype.org/content/repositories/snapshots'
+        url 'http://dl.bintray.com/jetbrains/kotlin-native-dependencies'
     }
 }
 

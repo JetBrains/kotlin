@@ -25,7 +25,7 @@ apply plugin: 'com.jfrog.bintray'
 allprojects {
     repositories {
         maven {
-            url 'http://oss.sonatype.org/content/repositories/snapshots'
+            url 'http://dl.bintray.com/jetbrains/kotlin-native-dependencies'
         }
     }
 
