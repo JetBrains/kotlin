@@ -668,6 +668,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             doTest(fileName);
         }
 
+        @TestMetadata("recursiveType.kt")
+        public void testRecursiveType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/recursiveType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("return.kt")
         public void testReturn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/return.kt");
