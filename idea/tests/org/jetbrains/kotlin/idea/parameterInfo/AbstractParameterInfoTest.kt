@@ -21,12 +21,11 @@ import com.intellij.codeInsight.hint.ShowParameterInfoHandler
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -55,41 +54,53 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
         myFixture.configureByFile(fileName)
 
         val file = myFixture.file as KtFile
+        val isWithRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// WITH_RUNTIME") != null
 
-        val lastChild = file.allChildren.filter { it !is PsiWhiteSpace }.last()
-        val expectedResultText = when (lastChild.node.elementType) {
-            KtTokens.BLOCK_COMMENT -> lastChild.text.substring(2, lastChild.text.length - 2).trim()
-            KtTokens.EOL_COMMENT -> lastChild.text.substring(2).trim()
-            else -> error("Unexpected last file child")
+        try {
+            if (isWithRuntime) {
+                ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myFixture.module, PluginTestCaseBase.mockJdk())
+            }
+
+            val lastChild = file.allChildren.filter { it !is PsiWhiteSpace }.last()
+            val expectedResultText = when (lastChild.node.elementType) {
+                KtTokens.BLOCK_COMMENT -> lastChild.text.substring(2, lastChild.text.length - 2).trim()
+                KtTokens.EOL_COMMENT -> lastChild.text.substring(2).trim()
+                else -> error("Unexpected last file child")
+            }
+
+            val context = ShowParameterInfoContext(editor, project, file, editor.caretModel.offset, -1, true)
+
+            val handlers = ShowParameterInfoHandler.getHandlers(project, KotlinLanguage.INSTANCE)!!
+            val handler = handlers.firstOrNull { it.findElementForParameterInfo(context) != null }
+                          ?: error("Could not find parameter info handler")
+
+            val mockCreateParameterInfoContext = MockCreateParameterInfoContext(file, myFixture)
+            val parameterOwner = handler.findElementForParameterInfo(mockCreateParameterInfoContext) as PsiElement
+
+            val textToType = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// TYPE:")
+            if (textToType != null) {
+                myFixture.type(textToType)
+                PsiDocumentManager.getInstance(project).commitAllDocuments()
+            }
+
+            //to update current parameter index
+            val updateContext = MockUpdateParameterInfoContext(file, myFixture)
+            val elementForUpdating = handler.findElementForUpdatingParameterInfo(updateContext)
+            if (elementForUpdating != null) {
+                handler.updateParameterInfo(elementForUpdating, updateContext)
+            }
+
+            val parameterInfoUIContext = MockParameterInfoUIContext(parameterOwner, updateContext.currentParameter)
+
+            for (item in mockCreateParameterInfoContext.itemsToShow) {
+                handler.updateUI(item, parameterInfoUIContext)
+            }
+            Assert.assertEquals(expectedResultText, parameterInfoUIContext.resultText)
         }
-
-        val context = ShowParameterInfoContext(editor, project, file, editor.caretModel.offset, -1, true)
-
-        val handlers = ShowParameterInfoHandler.getHandlers(project, KotlinLanguage.INSTANCE)!!
-        val handler = handlers.firstOrNull { it.findElementForParameterInfo(context) != null }
-            ?: error("Could not find parameter info handler")
-
-        val mockCreateParameterInfoContext = MockCreateParameterInfoContext(file, myFixture)
-        val parameterOwner = handler.findElementForParameterInfo(mockCreateParameterInfoContext) as PsiElement
-
-        val textToType = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// TYPE:")
-        if (textToType != null) {
-            myFixture.type(textToType)
-            PsiDocumentManager.getInstance(project).commitAllDocuments()
+        finally {
+            if (isWithRuntime) {
+                ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myFixture.module, IdeaTestUtil.getMockJdk17())
+            }
         }
-
-        //to update current parameter index
-        val updateContext = MockUpdateParameterInfoContext(file, myFixture)
-        val elementForUpdating = handler.findElementForUpdatingParameterInfo(updateContext)
-        if (elementForUpdating != null) {
-            handler.updateParameterInfo(elementForUpdating, updateContext)
-        }
-
-        val parameterInfoUIContext = MockParameterInfoUIContext(parameterOwner, updateContext.currentParameter)
-
-        for (item in mockCreateParameterInfoContext.itemsToShow) {
-            handler.updateUI(item, parameterInfoUIContext)
-        }
-        Assert.assertEquals(expectedResultText, parameterInfoUIContext.resultText)
     }
 }

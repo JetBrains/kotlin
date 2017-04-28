@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // See KT-14484
 
 class C {
@@ -9,5 +10,6 @@ class C {
 }
 /*
 Text: (other: Any?), Disabled: true, Strikeout: false, Green: true
+Text: (other: String?, <highlight>ignoreCase: Boolean = ...</highlight>), Disabled: false, Strikeout: false, Green: false
 Text: (other: String?, <highlight>ignoreCase: Boolean = false</highlight>), Disabled: false, Strikeout: false, Green: false
 */
