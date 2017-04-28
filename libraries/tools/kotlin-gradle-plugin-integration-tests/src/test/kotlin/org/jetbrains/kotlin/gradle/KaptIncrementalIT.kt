@@ -149,8 +149,19 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
     @Test
     fun testRemoveSourceFile() {
         val project = getProject()
+        val kapt3IncDataPath = "build/tmp/kapt3/incrementalData/main"
+        val kapt3StubsPath = "build/tmp/kapt3/stubs/main"
+
         project.build("build") {
             assertSuccessful()
+            assertKapt3FullyExecuted()
+
+            if (useKapt3) {
+                assertFileExists("$kapt3IncDataPath/bar/B.class")
+                assertFileExists("$kapt3IncDataPath/bar/UseBKt.class")
+                assertFileExists("$kapt3StubsPath/bar/B.java")
+                assertFileExists("$kapt3StubsPath/bar/UseBKt.java")
+            }
         }
 
         with (project.projectDir) {
@@ -160,6 +171,13 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
 
         project.build("build") {
             assertFailed()
+
+            if (useKapt3) {
+                assertNoSuchFile("$kapt3IncDataPath/bar/B.class")
+                assertNoSuchFile("$kapt3IncDataPath/bar/UseBKt.class")
+                assertNoSuchFile("$kapt3StubsPath/bar/B.java")
+                assertNoSuchFile("$kapt3StubsPath/bar/UseBKt.java")
+            }
         }
 
         project.projectDir.getFileByName("JavaClass.java").delete()
