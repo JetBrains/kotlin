@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.VariableDescriptorWithInitializerImpl
+import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
@@ -86,6 +84,8 @@ class LocalVariableResolver(
                                                                   delegateExpression,
                                                                   typingContext.scope,
                                                                   typingContext.trace)
+                propertyDescriptor.getter?.updateAccessorFlagsFromResolvedCallForDelegatedProperty(typingContext.trace)
+                propertyDescriptor.setter?.updateAccessorFlagsFromResolvedCallForDelegatedProperty(typingContext.trace)
             }
         }
 
@@ -211,5 +211,14 @@ class LocalVariableResolver(
         )
         trace.record(BindingContext.VARIABLE, variable, variableDescriptor)
         return variableDescriptor
+    }
+
+    private fun VariableAccessorDescriptor.updateAccessorFlagsFromResolvedCallForDelegatedProperty(trace: BindingTrace) {
+        if (this is FunctionDescriptorImpl) {
+            val resultingDescriptor = trace.bindingContext.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, this)?.resultingDescriptor
+            if (resultingDescriptor != null) {
+                setSuspend(resultingDescriptor.isSuspend)
+            }
+        }
     }
 }
