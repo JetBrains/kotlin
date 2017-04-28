@@ -782,7 +782,7 @@ public final class StaticContext {
     }
 
     public void addInlineCall(@NotNull CallableDescriptor descriptor) {
-        String tag = Namer.getFunctionTag(descriptor);
+        String tag = Namer.getFunctionTag(descriptor, config);
         fragment.getInlineModuleMap().put(tag, getModuleExpressionFor(descriptor));
     }
 }

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.expression
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.translate.context.Namer
 
 private val METADATA_PROPERTIES_COUNT = 2
@@ -25,9 +26,9 @@ private val METADATA_PROPERTIES_COUNT = 2
 class InlineMetadata(val tag: JsStringLiteral, val function: JsFunction) {
     companion object {
         @JvmStatic
-        fun compose(function: JsFunction, descriptor: CallableDescriptor): InlineMetadata {
+        fun compose(function: JsFunction, descriptor: CallableDescriptor, config: JsConfig): InlineMetadata {
             val program = function.scope.program
-            val tag = program.getStringLiteral(Namer.getFunctionTag(descriptor))
+            val tag = program.getStringLiteral(Namer.getFunctionTag(descriptor, config))
             return InlineMetadata(tag, function)
         }
 

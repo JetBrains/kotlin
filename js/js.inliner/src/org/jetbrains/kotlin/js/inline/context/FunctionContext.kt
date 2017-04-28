@@ -19,11 +19,12 @@ package org.jetbrains.kotlin.js.inline.context
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isCallableReference
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
+import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.inline.FunctionReader
 import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 
-abstract class FunctionContext(private val functionReader: FunctionReader) {
+abstract class FunctionContext(private val functionReader: FunctionReader, private val config: JsConfig) {
     protected abstract fun lookUpStaticFunction(functionName: JsName?): JsFunction?
 
     protected abstract fun lookUpStaticFunctionByTag(functionTag: String): JsFunction?
@@ -70,7 +71,7 @@ abstract class FunctionContext(private val functionReader: FunctionReader) {
         val descriptor = call.descriptor
         if (descriptor != null) {
             if (descriptor in functionReader) return functionReader[descriptor]
-            lookUpStaticFunctionByTag(Namer.getFunctionTag(descriptor))?.let { return it }
+            lookUpStaticFunctionByTag(Namer.getFunctionTag(descriptor, config))?.let { return it }
         }
 
         /** remove ending `()` */

@@ -21,8 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -147,6 +149,9 @@ public final class JsDescriptorUtils {
     @NotNull
     public static String getModuleName(@NotNull DeclarationDescriptor descriptor) {
         ModuleDescriptor moduleDescriptor = DescriptorUtils.getContainingModule(findRealInlineDeclaration(descriptor));
+        if (DescriptorUtils.getContainingModule(descriptor) == moduleDescriptor.getBuiltIns().getBuiltInsModule()) {
+            return Namer.KOTLIN_LOWER_NAME;
+        }
         String moduleName = moduleDescriptor.getName().asString();
         return moduleName.substring(1, moduleName.length() - 1);
     }
@@ -179,7 +184,7 @@ public final class JsDescriptorUtils {
 
     public static boolean isImmediateSubtypeOfError(@NotNull ClassDescriptor descriptor) {
         if (!isExceptionClass(descriptor)) return false;
-        ClassDescriptor superClass = org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getSuperClassOrAny(descriptor);
+        ClassDescriptor superClass = DescriptorUtilsKt.getSuperClassOrAny(descriptor);
         return TypeUtilsKt.isThrowable(superClass.getDefaultType()) || AnnotationsUtils.isNativeObject(superClass);
     }
 

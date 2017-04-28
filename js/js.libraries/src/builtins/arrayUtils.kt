@@ -16,16 +16,17 @@
 
 // a package is omitted to get declarations directly under the module
 
-external private fun <T> Array(size: Int): Array<T>
+@PublishedApi
+external internal fun <T> Array(size: Int): Array<T>
 
 @JsName("newArray")
 fun <T> newArray(size: Int, initValue: T) = fillArrayVal(Array<T>(size), initValue)
 
 @JsName("newArrayF")
-fun <T> arrayWithFun(size: Int, init: (Int) -> T) = fillArrayFun(Array<T>(size), init)
+inline fun <T> arrayWithFun(size: Int, init: (Int) -> T) = fillArrayFun(Array<T>(size), init)
 
 @JsName("fillArray")
-fun <T> fillArrayFun(array: Array<T>, init: (Int) -> T): Array<T> {
+inline fun <T> fillArrayFun(array: Array<T>, init: (Int) -> T): Array<T> {
     for (i in 0..array.size - 1) {
         array[i] = init(i)
     }
@@ -43,6 +44,9 @@ fun booleanArray(size: Int, init: dynamic): Array<Boolean> {
     }
 }
 
+@JsName("booleanArrayF")
+inline fun booleanArrayWithFun(size: Int, init: (Int) -> Boolean): Array<Boolean> = fillArrayFun(booleanArray(size, false), init)
+
 @JsName("charArray")
 @Suppress("UNUSED_PARAMETER")
 fun charArray(size: Int, init: dynamic): Array<Char> {
@@ -54,6 +58,9 @@ fun charArray(size: Int, init: dynamic): Array<Char> {
     }
 }
 
+@JsName("charArrayF")
+inline fun charArrayWithFun(size: Int, init: (Int) -> Char): Array<Char> = fillArrayFun(charArray(size, null), init)
+
 @JsName("longArray")
 fun longArray(size: Int, init: dynamic): Array<Long> {
     val result: dynamic = Array<Long>(size)
@@ -64,6 +71,9 @@ fun longArray(size: Int, init: dynamic): Array<Long> {
         else -> fillArrayFun<Long>(result, init)
     }
 }
+
+@JsName("longArrayF")
+inline fun longArrayWithFun(size: Int, init: (Int) -> Long): Array<Long> = fillArrayFun(longArray(size, false), init)
 
 private fun <T> fillArrayVal(array: Array<T>, initValue: T): Array<T> {
     for (i in 0..array.size - 1) {

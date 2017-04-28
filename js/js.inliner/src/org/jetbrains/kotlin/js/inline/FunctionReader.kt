@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 import org.jetbrains.kotlin.js.parser.parseFunction
 import org.jetbrains.kotlin.js.translate.context.Namer
-import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
@@ -143,7 +142,7 @@ class FunctionReader(private val config: JsConfig, private val currentModuleName
 
     private fun readFunctionFromSource(descriptor: CallableDescriptor, info: ModuleInfo): JsFunction? {
         val source = info.fileContent
-        val tag = Namer.getFunctionTag(descriptor)
+        val tag = Namer.getFunctionTag(descriptor, config)
         val index = source.indexOf(tag)
         if (index < 0) return null
 
@@ -174,8 +173,6 @@ private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
     val offset = if (descriptor.isExtension) 1 else 0
 
     for ((i, param) in params.withIndex()) {
-        if (!CallExpressionTranslator.shouldBeInlined(descriptor)) continue
-
         val type = param.type
         if (!type.isFunctionTypeOrSubtype) continue
 

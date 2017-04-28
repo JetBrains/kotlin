@@ -1,6 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 fun testArray() {
     Array<String>(5) { i ->
         if (i == 3) return
@@ -17,8 +14,44 @@ fun testIntArray() {
     throw AssertionError()
 }
 
+fun testLongArray() {
+    LongArray(5) { i ->
+        if (i == 3) return
+        i.toLong()
+    }
+    throw AssertionError()
+}
+
+fun testBooleanArray() {
+    BooleanArray(5) { i ->
+        if (i == 3) return
+        i % 2 == 0
+    }
+    throw AssertionError()
+}
+
+fun testCharArray() {
+    CharArray(5) { i ->
+        if (i == 3) return
+        i.toChar()
+    }
+    throw AssertionError()
+}
+
+fun testFloatArray() {
+    FloatArray(5) { i ->
+        if (i == 3) return
+        i.toFloat()
+    }
+    throw AssertionError()
+}
+
 fun box(): String {
     testArray()
     testIntArray()
+    testLongArray()
+    testBooleanArray()
+    testCharArray()
+    testFloatArray()
     return "OK"
 }

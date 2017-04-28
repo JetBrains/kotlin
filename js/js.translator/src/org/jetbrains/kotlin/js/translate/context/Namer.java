@@ -30,9 +30,11 @@ import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.backend.ast.metadata.TypeCheck;
+import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.ArrayFIF;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.kotlin.name.FqName;
@@ -114,7 +116,10 @@ public final class Namer {
     public static final String ENUM_ORDINAL_FIELD = "ordinal$";
 
     @NotNull
-    public static String getFunctionTag(@NotNull CallableDescriptor functionDescriptor) {
+    public static String getFunctionTag(@NotNull CallableDescriptor functionDescriptor, @NotNull JsConfig config) {
+        String intrinsicTag = ArrayFIF.INSTANCE.getTag(functionDescriptor, config);
+        if (intrinsicTag != null) return intrinsicTag;
+
         functionDescriptor = (CallableDescriptor) JsDescriptorUtils.findRealInlineDeclaration(functionDescriptor);
         String moduleName = getModuleName(functionDescriptor);
         FqNameUnsafe fqNameParent = DescriptorUtils.getFqName(functionDescriptor).parent();

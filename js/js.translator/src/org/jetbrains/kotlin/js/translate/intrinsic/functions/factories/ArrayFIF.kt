@@ -20,33 +20,40 @@ import com.intellij.openapi.util.text.StringUtil.decapitalize
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.PrimitiveType.*
+import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
-import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
+import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
+import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.patterns.NamePredicate
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
+import org.jetbrains.kotlin.js.translate.callTranslator.CallInfo
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.BuiltInPropertyIntrinsic
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import java.util.*
 
 object ArrayFIF : CompositeFIF() {
     @JvmField
-    val GET_INTRINSIC = intrinsify { receiver, arguments, _ ->
+    val GET_INTRINSIC = intrinsify { callInfo, arguments, _ ->
         assert(arguments.size == 1) { "Array get expression must have one argument." }
         val (indexExpression) = arguments
-        JsArrayAccess(receiver!!, indexExpression)
+        JsArrayAccess(callInfo.dispatchReceiver, indexExpression)
     }
 
     @JvmField
-    val SET_INTRINSIC = intrinsify { receiver, arguments, _ ->
+    val SET_INTRINSIC = intrinsify { callInfo, arguments, _ ->
         assert(arguments.size == 2) { "Array set expression must have two arguments." }
         val (indexExpression, value) = arguments
-        val arrayAccess = JsArrayAccess(receiver!!, indexExpression)
+        val arrayAccess = JsArrayAccess(callInfo.dispatchReceiver, indexExpression)
         JsAstUtils.assignment(arrayAccess, value)
     }
 
@@ -54,10 +61,10 @@ object ArrayFIF : CompositeFIF() {
     val LENGTH_PROPERTY_INTRINSIC = BuiltInPropertyIntrinsic("length")
 
     @JvmStatic
-    fun typedArraysEnabled(ctx: TranslationContext) = ctx.config.configuration.getBoolean(JSConfigurationKeys.TYPED_ARRAYS_ENABLED)
+    fun typedArraysEnabled(config: JsConfig) = config.configuration.getBoolean(JSConfigurationKeys.TYPED_ARRAYS_ENABLED)
 
     fun castOrCreatePrimitiveArray(ctx: TranslationContext, type: PrimitiveType?, arg: JsArrayLiteral): JsExpression {
-        if (type == null || !typedArraysEnabled(ctx)) return arg
+        if (type == null || !typedArraysEnabled(ctx.config)) return arg
 
         if (type in TYPED_ARRAY_MAP) {
             return createTypedArray(type, arg)
@@ -81,6 +88,30 @@ object ArrayFIF : CompositeFIF() {
     private val PrimitiveType.lowerCaseName
         get() = typeName.asString().toLowerCase()
 
+    fun getTag(descriptor: CallableDescriptor, config: JsConfig): String? {
+        if (descriptor !is ConstructorDescriptor) return null
+        val constructedClass = descriptor.constructedClass
+        if (!KotlinBuiltIns.isArrayOrPrimitiveArray(constructedClass)) return null
+
+        if (descriptor.valueParameters.size != 2) return null
+        val (sizeParam, functionParam) = descriptor.valueParameters
+        if (!KotlinBuiltIns.isInt(sizeParam.type) || !functionParam.type.isBuiltinFunctionalType) return null
+        if (functionParam.type.getValueParameterTypesFromFunctionType().size != 1) return null
+
+        val primitiveType = KotlinBuiltIns.getPrimitiveArrayElementType(constructedClass.defaultType)
+        return if (typedArraysEnabled(config) && primitiveType != null) {
+            if (primitiveType in TYPED_ARRAY_MAP) {
+                "kotlin.fillArray"
+            }
+            else {
+                "kotlin.${primitiveType.lowerCaseName}ArrayF"
+            }
+        }
+        else {
+            "kotlin.newArrayF"
+        }
+    }
+
     init {
         val arrayName = KotlinBuiltIns.FQ_NAMES.array.shortName()
 
@@ -97,7 +128,7 @@ object ArrayFIF : CompositeFIF() {
                 assert(arguments.size == 1) { "Array <init>(Int) expression must have one argument." }
                 val (size) = arguments
 
-                if (typedArraysEnabled(context)) {
+                if (typedArraysEnabled(context.config)) {
                     if (type in TYPED_ARRAY_MAP) {
                         createTypedArray(type, size)
                     }
@@ -116,24 +147,11 @@ object ArrayFIF : CompositeFIF() {
                 }
             })
 
-            add(pattern(NamePredicate(type.arrayTypeName), "<init>(Int,Function1)"), intrinsify { _, arguments, context ->
-                assert(arguments.size == 2) { "Array <init>(Int,Function1) expression must have two arguments." }
-                val (size, fn) = arguments
-                if (typedArraysEnabled(context)) {
-                    if (type in TYPED_ARRAY_MAP) {
-                        JsAstUtils.invokeKotlinFunction("fillArray", createTypedArray(type, size), fn)
-                    }
-                    else {
-                        JsAstUtils.invokeKotlinFunction("${type.lowerCaseName}Array", size, fn)
-                    }
-                }
-                else {
-                    JsAstUtils.invokeKotlinFunction("newArrayF", size, fn)
-                }
-            })
+            add(pattern(NamePredicate(type.arrayTypeName), "<init>(Int,Function1)"), createConstructorIntrinsic(type))
 
-            add(pattern(NamePredicate(type.arrayTypeName), "iterator"), intrinsify { receiver, _, context ->
-                if (typedArraysEnabled(context)) {
+            add(pattern(NamePredicate(type.arrayTypeName), "iterator"), intrinsify { callInfo, _, context ->
+                val receiver = callInfo.dispatchReceiver
+                if (typedArraysEnabled(context.config)) {
                     JsAstUtils.invokeKotlinFunction("${type.lowerCaseName}ArrayIterator", receiver!!)
                 }
                 else {
@@ -143,7 +161,7 @@ object ArrayFIF : CompositeFIF() {
             })
         }
 
-        add(pattern(NamePredicate(arrayName), "<init>(Int,Function1)"), KotlinFunctionIntrinsic("newArrayF"))
+        add(pattern(NamePredicate(arrayName), "<init>(Int,Function1)"), createConstructorIntrinsic(null))
         add(pattern(NamePredicate(arrayName), "iterator"), KotlinFunctionIntrinsic("arrayIterator"))
 
         add(pattern(Namer.KOTLIN_LOWER_NAME, "arrayOfNulls"), KotlinFunctionIntrinsic("newArray", JsLiteral.NULL))
@@ -153,10 +171,33 @@ object ArrayFIF : CompositeFIF() {
         add(arrayFactoryMethods, intrinsify { _, arguments, _ -> arguments[0] })
     }
 
-    private fun intrinsify(f: (receiver: JsExpression?, arguments: List<JsExpression>, context: TranslationContext) -> JsExpression)
-        = object : FunctionIntrinsicWithReceiverComputed() {
-            override fun apply(receiver: JsExpression?, arguments: List<JsExpression>, context: TranslationContext): JsExpression {
-                return f(receiver, arguments, context)
+    private fun createConstructorIntrinsic(type: PrimitiveType?): FunctionIntrinsic {
+        return intrinsify { callInfo, arguments, context ->
+            assert(arguments.size == 2) { "Array <init>(Int,Function1) expression must have two arguments." }
+            val (size, fn) = arguments
+            val invocation = if (typedArraysEnabled(context.config) && type != null) {
+                if (type in TYPED_ARRAY_MAP) {
+                    JsAstUtils.invokeKotlinFunction("fillArray", createTypedArray(type, size), fn)
+                }
+                else {
+                    JsAstUtils.invokeKotlinFunction("${type.lowerCaseName}ArrayF", size, fn)
+                }
             }
+            else {
+                JsAstUtils.invokeKotlinFunction("newArrayF", size, fn)
+            }
+            invocation.inlineStrategy = InlineStrategy.IN_PLACE
+            val descriptor = callInfo.resolvedCall.resultingDescriptor.original
+            invocation.descriptor = descriptor
+            context.addInlineCall(descriptor)
+            invocation
         }
+    }
+
+    private fun intrinsify(f: (callInfo: CallInfo, arguments: List<JsExpression>, context: TranslationContext) -> JsExpression)
+        = object : FunctionIntrinsic() {
+        override fun apply(callInfo: CallInfo, arguments: List<JsExpression>, context: TranslationContext): JsExpression {
+            return f(callInfo, arguments, context)
+        }
+    }
 }

@@ -47,6 +47,7 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.flattenStatemen
 
 public class JsInliner extends JsVisitorWithContextImpl {
 
+    private final JsConfig config;
     private final Map<JsName, JsFunction> functions;
     private final Map<String, JsFunction> accessors;
     private final Stack<JsInliningContext> inliningContexts = new Stack<>();
@@ -76,7 +77,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
             accessorInvocationTransformer.accept(fragment.getInitializerBlock());
         }
         FunctionReader functionReader = new FunctionReader(config, currentModuleName, fragments);
-        JsInliner inliner = new JsInliner(functions, accessors, functionReader, trace);
+        JsInliner inliner = new JsInliner(config, functions, accessors, functionReader, trace);
         for (JsProgramFragment fragment : fragmentsToProcess) {
             inliner.inliningContexts.push(inliner.new JsInliningContext());
             inliner.accept(fragment.getDeclarationBlock());
@@ -92,11 +93,13 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     private JsInliner(
+            @NotNull JsConfig config,
             @NotNull Map<JsName, JsFunction> functions,
             @NotNull Map<String, JsFunction> accessors,
             @NotNull FunctionReader functionReader,
             @NotNull DiagnosticSink trace
     ) {
+        this.config = config;
         this.functions = functions;
         this.accessors = accessors;
         this.functionReader = functionReader;
@@ -285,7 +288,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         private final FunctionContext functionContext;
 
         JsInliningContext() {
-            functionContext = new FunctionContext(functionReader) {
+            functionContext = new FunctionContext(functionReader, config) {
                 @Nullable
                 @Override
                 protected JsFunction lookUpStaticFunction(@Nullable JsName functionName) {

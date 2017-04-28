@@ -417,13 +417,7 @@ public class JsTypedArraysBoxTestGenerated extends AbstractJsTypedArraysBoxTest 
     @TestMetadata("nonLocalReturnArrayConstructor.kt")
     public void testNonLocalReturnArrayConstructor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/nonLocalReturnArrayConstructor.kt");
-        try {
-            doTest(fileName);
-        }
-        catch (Throwable ignore) {
-            return;
-        }
-        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        doTest(fileName);
     }
 
     @TestMetadata("nonNullArray.kt")

@@ -110,7 +110,7 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
             function.body.statements += FunctionBodyTranslator.setDefaultValueForArguments(descriptor, innerContext)
         }
         innerContext.translateFunction(expression, function)
-        return innerContext.wrapWithInlineMetadata(function, descriptor)
+        return innerContext.wrapWithInlineMetadata(function, descriptor, context.config)
     }
 
     protected abstract fun addFunction(
