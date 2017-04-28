@@ -422,6 +422,11 @@ fun MemberDescriptor.isEffectivelyExternal(): Boolean {
         if (variableDescriptor.isEffectivelyExternal()) return true
     }
 
+    if (this is PropertyDescriptor) {
+        if (getter?.isExternal == true &&
+            (!isVar || setter?.isExternal == true)) return true
+    }
+
     val containingClass = getContainingClass(this)
     return containingClass != null && containingClass.isEffectivelyExternal()
 }

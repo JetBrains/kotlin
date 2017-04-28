@@ -254,6 +254,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ExternalAccessors.kt")
+        public void testExternalAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ExternalAccessors.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ExternalAndAbstract.kt")
         public void testExternalAndAbstract() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ExternalAndAbstract.kt");
