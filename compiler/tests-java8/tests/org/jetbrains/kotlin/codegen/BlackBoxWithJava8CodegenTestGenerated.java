@@ -674,6 +674,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             doTest(fileName);
         }
 
+        @TestMetadata("override.kt")
+        public void testOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/override.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("recursiveType.kt")
         public void testRecursiveType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/recursiveType.kt");
