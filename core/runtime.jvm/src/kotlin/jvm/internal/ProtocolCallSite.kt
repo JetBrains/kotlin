@@ -65,7 +65,7 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
 
     private fun resolveMethod(target: Class<*>): Method? {
         val protocolArgs = callableType.parameterArray()
-        val methods = target.declaredMethods
+        val methods = target.methods
 
         var candidate: Method? = null
         var bestDistance = IntArray(protocolArgs.size)
