@@ -6444,6 +6444,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeExtensionVaslJsRuntime.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("nativeGetterExtensionFunJsRuntime.kt")
+            public void testNativeGetterExtensionFunJsRuntime() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeGetterExtensionFunJsRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeInvokeExtensionFunJsRuntime.kt")
+            public void testNativeInvokeExtensionFunJsRuntime() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeInvokeExtensionFunJsRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeSetterExtensionFunJsRuntime.kt")
+            public void testNativeSetterExtensionFunJsRuntime() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeSetterExtensionFunJsRuntime.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/migration/missingConstructorKeyword")

@@ -1,0 +1,9 @@
+// "Fix with 'asDynamic'" "true"
+// JS
+
+external class B 
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun B.baz(a: B) {
+    asDynamic()(a)
+}
