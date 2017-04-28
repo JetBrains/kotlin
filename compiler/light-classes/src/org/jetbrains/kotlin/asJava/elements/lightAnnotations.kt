@@ -45,6 +45,8 @@ abstract class KtLightAbstractAnnotation(parent: PsiElement, computeDelegate: ()
     override fun getMetaData() = clsDelegate.metaData
 
     override fun getParameterList() = clsDelegate.parameterList
+
+    open fun fqNameMatches(fqName: String): Boolean = qualifiedName == fqName
 }
 
 class KtLightAnnotationForSourceEntry(
@@ -226,6 +228,12 @@ class KtLightNullabilityAnnotation(member: KtLightElement<*, PsiModifierListOwne
         isNullabilityAnnotation(it.qualifiedName)
     } ?: KtLightNonExistentAnnotation(member)
 }) {
+    override fun fqNameMatches(fqName: String): Boolean {
+        if (!isNullabilityAnnotation(fqName)) return false
+
+        return super.fqNameMatches(fqName)
+    }
+
     override val kotlinOrigin get() = null
     override fun <T : PsiAnnotationMemberValue?> setDeclaredAttributeValue(attributeName: String?, value: T?) = cannotModify()
 

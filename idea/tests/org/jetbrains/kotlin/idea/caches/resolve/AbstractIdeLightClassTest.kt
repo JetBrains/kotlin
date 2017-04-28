@@ -279,6 +279,7 @@ object LightClassLazinessChecker {
     )
 
     private fun classInfo(psiClass: PsiClass) = with(psiClass) {
+        checkModifierList(modifierList!!)
         ClassInfo(fields.names(), methods.names(), PsiModifier.MODIFIERS.asList().filter { modifierList!!.hasModifierProperty(it) })
     }
 
@@ -288,7 +289,7 @@ object LightClassLazinessChecker {
     )
 
     private fun fieldInfo(field: PsiField) = with(field) {
-        modifierList?.annotations // check getting annotations list doesn't trigger exact resolve
+        checkModifierList(modifierList!!)
 
         FieldInfo(
                 name!!, PsiModifier.MODIFIERS.asList().filter { modifierList!!.hasModifierProperty(it) }
@@ -304,7 +305,7 @@ object LightClassLazinessChecker {
     )
 
     private fun methodInfo(method: PsiMethod, lazinessMode: Mode) = with(method) {
-        modifierList.annotations // check getting annotations list doesn't trigger exact resolve
+        checkModifierList(method.modifierList)
 
         MethodInfo(
                 name, relevantModifiers(lazinessMode),
@@ -322,6 +323,19 @@ object LightClassLazinessChecker {
         // cannot compute visibility for overrides without proper resolve, we check consistency if laziness is turned off
         lazinessMode == Mode.NoLaziness || it !in visibilityModifiers
     }.filter { modifierList.hasModifierProperty(it) }
+
+    private fun checkModifierList(modifierList: PsiModifierList) {
+        // see org.jetbrains.kotlin.asJava.elements.KtLightNonSourceAnnotation
+        val isAnnotationClass = (modifierList.parent as? PsiClass)?.isAnnotationType ?: false
+
+        if (!isAnnotationClass) {
+            // check getting annotations list doesn't trigger exact resolve
+            modifierList.annotations
+
+            // check searching for non-existent annotation doesn't trigger exact resolve
+            modifierList.findAnnotation("some.package.MadeUpAnnotation")
+        }
+    }
 
     private fun Array<out PsiMember>.names() = mapTo(LinkedHashSet()) { it.name!! }
 }

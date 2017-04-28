@@ -49,7 +49,7 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
     override fun addAnnotation(qualifiedName: String) = clsDelegate.addAnnotation(qualifiedName)
     override fun getApplicableAnnotations(): Array<out PsiAnnotation> = annotations
     override fun getAnnotations(): Array<out PsiAnnotation> = _annotations.toTypedArray()
-    override fun findAnnotation(qualifiedName: String) = annotations.firstOrNull { it.qualifiedName == qualifiedName }
+    override fun findAnnotation(qualifiedName: String) = _annotations.firstOrNull { it.fqNameMatches(qualifiedName) }
     override fun getParent() = owner
     override fun getText(): String? = ""
     override fun getTextRange() = TextRange.EMPTY_RANGE
@@ -68,7 +68,7 @@ class KtLightSimpleModifierList(
     override fun copy() = KtLightSimpleModifierList(owner, modifiers)
 }
 
-private fun computeAnnotations(lightModifierList: KtLightModifierList<*>): List<PsiAnnotation> {
+private fun computeAnnotations(lightModifierList: KtLightModifierList<*>): List<KtLightAbstractAnnotation> {
     val annotationsForEntries = lightAnnotationsForEntries(lightModifierList)
     val modifierListOwner = lightModifierList.parent
     if (modifierListOwner is KtLightClassForSourceDeclaration && modifierListOwner.isAnnotationType) {
