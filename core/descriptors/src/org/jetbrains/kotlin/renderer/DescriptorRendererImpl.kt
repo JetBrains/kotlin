@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.types.*
@@ -396,7 +397,7 @@ internal class DescriptorRendererImpl(
 
         val sortedAnnotations = annotated.annotations.getAllAnnotations()
         for ((annotation, target) in sortedAnnotations) {
-            val annotationClass = annotation.type.constructor.declarationDescriptor as ClassDescriptor
+            val annotationClass = annotation.annotationClass!!
 
             if (!excluded.contains(DescriptorUtils.getFqNameSafe(annotationClass))) {
                 append(renderAnnotation(annotation, target)).append(" ")

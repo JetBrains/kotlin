@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getAnnotationClass;
+
 public final class AnnotationsUtils {
     private static final String JS_NAME = "kotlin.js.JsName";
     public static final FqName JS_MODULE_ANNOTATION = new FqName("kotlin.js.JsModule");
@@ -218,10 +220,10 @@ public final class AnnotationsUtils {
             @NotNull FqName annotationFqName
     ) {
         for (AnnotationDescriptor annotation : getContainingFileAnnotations(bindingContext, declaration)) {
-            DeclarationDescriptor annotationType = annotation.getType().getConstructor().getDeclarationDescriptor();
+            DeclarationDescriptor annotationType = getAnnotationClass(annotation);
             if (annotationType == null) continue;
 
-            FqNameUnsafe fqName = DescriptorUtils.getFqName(annotation.getType().getConstructor().getDeclarationDescriptor());
+            FqNameUnsafe fqName = DescriptorUtils.getFqName(annotationType);
             if (fqName.equals(annotationFqName.toUnsafe())) {
                 return extractSingleStringArgument(annotation);
             }
@@ -235,10 +237,10 @@ public final class AnnotationsUtils {
 
     public static boolean isFromNonModuleFile(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor declaration) {
         for (AnnotationDescriptor annotation : getContainingFileAnnotations(bindingContext, declaration)) {
-            DeclarationDescriptor annotationType = annotation.getType().getConstructor().getDeclarationDescriptor();
+            DeclarationDescriptor annotationType = getAnnotationClass(annotation);
             if (annotationType == null) continue;
 
-            DeclarationDescriptor annotationTypeDescriptor = annotation.getType().getConstructor().getDeclarationDescriptor();
+            DeclarationDescriptor annotationTypeDescriptor = getAnnotationClass(annotation);
             assert annotationTypeDescriptor != null : "Annotation type should have descriptor: " + annotation.getType();
 
             FqNameUnsafe fqName = DescriptorUtils.getFqName(annotationTypeDescriptor);

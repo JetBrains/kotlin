@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -408,3 +409,6 @@ fun DeclarationDescriptor.isAncestorOf(descriptor: DeclarationDescriptor, strict
 fun DeclarationDescriptor.isCompanionObject(): Boolean = DescriptorUtils.isCompanionObject(this)
 
 fun ClassDescriptor.isSubclassOf(superclass: ClassDescriptor): Boolean = DescriptorUtils.isSubclass(this, superclass)
+
+val AnnotationDescriptor.annotationClass: ClassDescriptor?
+    get() = type.constructor.declarationDescriptor as? ClassDescriptor

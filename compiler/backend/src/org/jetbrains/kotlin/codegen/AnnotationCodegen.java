@@ -37,6 +37,8 @@ import org.jetbrains.org.objectweb.asm.*;
 import java.lang.annotation.*;
 import java.util.*;
 
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getAnnotationClass;
+
 public abstract class AnnotationCodegen {
 
     public static final class JvmFlagAnnotation {
@@ -289,7 +291,7 @@ public abstract class AnnotationCodegen {
 
     @Nullable
     private String genAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {
-        ClassifierDescriptor classifierDescriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
+        ClassifierDescriptor classifierDescriptor = getAnnotationClass(annotationDescriptor);
         assert classifierDescriptor != null : "Annotation descriptor has no class: " + annotationDescriptor;
         RetentionPolicy rp = getRetentionPolicy(classifierDescriptor);
         if (rp == RetentionPolicy.SOURCE && !typeMapper.getClassBuilderMode().generateSourceRetentionAnnotations) {

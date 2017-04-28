@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceivers
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -79,10 +80,10 @@ private fun ReceiverValue.extractDslMarkerFqNames(): Set<FqName> {
 }
 
 private fun Annotations.extractDslMarkerFqNames() =
-        filter(AnnotationDescriptor::isDslMarker).map { it.type.constructor.declarationDescriptor!!.fqNameSafe  }
+        filter(AnnotationDescriptor::isDslMarker).map { it.annotationClass!!.fqNameSafe  }
 
 private fun AnnotationDescriptor.isDslMarker(): Boolean {
-    val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return false
+    val classDescriptor = annotationClass ?: return false
     return classDescriptor.annotations.hasAnnotation(DSL_MARKER_FQ_NAME)
 }
 

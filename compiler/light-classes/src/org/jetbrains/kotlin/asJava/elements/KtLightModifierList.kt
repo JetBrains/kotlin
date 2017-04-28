@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AnnotationChecker
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.source.getPsi
 
@@ -96,7 +97,7 @@ private fun lightAnnotationsForEntries(lightModifierList: KtLightModifierList<*>
 
     return getAnnotationDescriptors(annotatedKtDeclaration, lightModifierListOwner)
             .mapNotNull { descriptor ->
-                val fqName = descriptor.type.constructor.declarationDescriptor?.fqNameUnsafe?.asString() ?: return@mapNotNull null
+                val fqName = descriptor.annotationClass?.fqNameUnsafe?.asString() ?: return@mapNotNull null
                 val entry = descriptor.source.getPsi() as? KtAnnotationEntry ?: return@mapNotNull null
                 Pair(fqName, entry)
             }
@@ -111,6 +112,7 @@ private fun lightAnnotationsForEntries(lightModifierList: KtLightModifierList<*>
                 }
             }
 }
+
 private fun getAnnotationDescriptors(declaration: KtDeclaration?, annotatedLightElement: KtLightElement<*, *>): List<AnnotationDescriptor> {
     val descriptor = declaration?.let { LightClassGenerationSupport.getInstance(it.project).resolveToDescriptor(it) }
     val annotatedDescriptor = when {

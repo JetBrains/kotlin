@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
@@ -158,7 +159,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         }.forEach { checkDescriptor(it, callable) }
 
         callable.annotations.forEach {
-            val annotationClassDescriptor = it.type.constructor.declarationDescriptor as ClassDescriptor
+            val annotationClassDescriptor = it.annotationClass!!
             checkDescriptor(annotationClassDescriptor, callable)
 
             Assert.assertEquals(

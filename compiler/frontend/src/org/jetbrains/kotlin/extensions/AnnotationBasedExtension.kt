@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -44,7 +45,7 @@ interface AnnotationBasedExtension {
             visitedAnnotations: MutableSet<String> = hashSetOf(),
             allowMetaAnnotations: Boolean = true
     ): Boolean {
-        val annotationType = type.constructor.declarationDescriptor ?: return false
+        val annotationType = annotationClass ?: return false
         val annotationFqName = annotationType.fqNameSafe.asString()
         if (annotationFqName in visitedAnnotations) return false // Prevent infinite recursion
         if (annotationFqName in getAnnotationFqNames(modifierListOwner)) return true

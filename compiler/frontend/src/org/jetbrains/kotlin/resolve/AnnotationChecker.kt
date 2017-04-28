@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -135,7 +136,7 @@ class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnot
             if (KotlinTarget.FUNCTION !in applicableTargets) return
             val annotatedExpression = entry.parent as? KtAnnotatedExpression ?: return
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: return
-            val retention = descriptor.type.constructor.declarationDescriptor?.getAnnotationRetention()
+            val retention = descriptor.annotationClass?.getAnnotationRetention()
             if (retention == KotlinRetention.SOURCE) return
 
             val functionLiteralExpression = annotatedExpression.baseExpression as? KtLambdaExpression ?: return
@@ -173,7 +174,7 @@ class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnot
         }
 
         @JvmStatic fun applicableTargetSet(descriptor: AnnotationDescriptor): Set<KotlinTarget> {
-            val classDescriptor = descriptor.type.constructor.declarationDescriptor as? ClassDescriptor ?: return emptySet()
+            val classDescriptor = descriptor.annotationClass ?: return emptySet()
             return applicableTargetSet(classDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
         }
 

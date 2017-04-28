@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 
 interface Annotated {
     val annotations: Annotations
@@ -76,8 +76,8 @@ interface Annotations : Iterable<AnnotationDescriptor> {
 }
 
 fun checkAnnotationName(annotation: AnnotationDescriptor, fqName: FqName): Boolean {
-    val descriptor = annotation.type.constructor.declarationDescriptor
-    return descriptor is ClassDescriptor && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
+    val descriptor = annotation.annotationClass
+    return descriptor != null && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
 }
 
 class FilteredAnnotations(
@@ -108,7 +108,7 @@ class FilteredAnnotations(
     override fun iterator() = delegate.filter { shouldBeReturned(it) }.iterator()
 
     private fun shouldBeReturned(annotation: AnnotationDescriptor): Boolean {
-        val descriptor = annotation.type.constructor.declarationDescriptor
+        val descriptor = annotation.annotationClass
         return descriptor != null && DescriptorUtils.getFqName(descriptor).let { fqName ->
             fqName.isSafe && fqNameFilter(fqName.toSafe())
         }

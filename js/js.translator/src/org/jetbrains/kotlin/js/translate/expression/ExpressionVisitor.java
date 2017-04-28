@@ -65,6 +65,7 @@ import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translate
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt.getResolvedCallWithAssert;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getAnnotationClass;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
 
@@ -573,7 +574,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             AnnotationDescriptor descriptor = context.bindingContext().get(BindingContext.ANNOTATION, entry);
             if (descriptor == null) continue;
 
-            ClassifierDescriptor classifierDescriptor = descriptor.getType().getConstructor().getDeclarationDescriptor();
+            ClassifierDescriptor classifierDescriptor = getAnnotationClass(descriptor);
             if (classifierDescriptor == null) continue;
 
             KotlinRetention retention = DescriptorUtilsKt.getAnnotationRetention(classifierDescriptor);
