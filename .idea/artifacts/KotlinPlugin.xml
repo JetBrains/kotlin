@@ -67,10 +67,10 @@
           <element id="artifact" artifact-name="KotlinJpsPlugin" />
         </element>
         <element id="library" level="project" name="markdown" />
-        <element id="archive" name="kotlin-android-extensions-plugin.jar">
+        <element id="archive" name="android-extensions-ide.jar">
           <element id="module-output" name="android-extensions-idea" />
         </element>
-        <element id="archive" name="kotlin-android-extensions-compiler-plugin.jar">
+        <element id="archive" name="android-extensions-compiler.jar">
           <element id="module-output" name="android-extensions-compiler" />
         </element>
         <element id="archive" name="android-lint.jar">
