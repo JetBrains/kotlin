@@ -51,7 +51,7 @@ public class JUnitMembersSearcherTest extends AbstractSearcherTest {
     }
 
     private void doJUnit3test() throws IOException {
-        checkClassWithDirectives();
+        checkClassWithDirectives(getPathToFile());
     }
 
     private void doJUnit4test() throws IOException {
@@ -61,7 +61,7 @@ public class JUnitMembersSearcherTest extends AbstractSearcherTest {
         assertFalse("Specify ANNOTATION directive in test file", directives.isEmpty());
         String annotationClassName = directives.get(0);
         PsiClass psiClass = getPsiClass(annotationClassName);
-        checkResult(AnnotatedMembersSearch.search(psiClass, getProjectScope()));
+        checkResult(getPathToFile(), AnnotatedMembersSearch.search(psiClass, getProjectScope()));
     }
 
     @Override

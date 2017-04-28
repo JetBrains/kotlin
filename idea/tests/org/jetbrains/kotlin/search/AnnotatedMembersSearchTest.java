@@ -84,7 +84,7 @@ public class AnnotatedMembersSearchTest extends AbstractSearcherTest {
         PsiBasedClassResolver.Companion.getTrueHits().set(0);
         PsiBasedClassResolver.Companion.getFalseHits().set(0);
 
-        checkResult(AnnotatedMembersSearch.search(psiClass, getProjectScope()));
+        checkResult(getPathToFile(), AnnotatedMembersSearch.search(psiClass, getProjectScope()));
 
         Integer optimizedTrue = InTextDirectivesUtils.getPrefixedInt(fileText, "// OPTIMIZED_TRUE:");
         if (optimizedTrue != null) {

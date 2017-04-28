@@ -16,23 +16,15 @@
 
 package org.jetbrains.kotlin.search;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 import java.io.IOException;
 
-public class ClassInheritorsSearchTest extends AbstractSearcherTest {
-
-    public void testInheritanceFromKotlinClass() throws IOException {
-        doTest();
-    }
-
-    public void testInheritanceFromJavaClass() throws IOException {
-        doTest();
-    }
-
-    private void doTest() throws IOException {
-        checkClassWithDirectives();
+public abstract class AbstractInheritorsSearchTest extends AbstractSearcherTest {
+    public void doTest(@NotNull String path) throws IOException {
+        checkClassWithDirectives(path);
     }
 
     @Override

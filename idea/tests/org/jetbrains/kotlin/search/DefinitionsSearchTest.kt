@@ -34,10 +34,10 @@ class DefinitionsSearchTest : AbstractSearcherTest() {
         assertFalse("Specify CLASS directive in test file", directives.isEmpty())
         val superClassName = directives[0]
         val psiClass = getPsiClass(superClassName)
-        checkResult(DefinitionsScopedSearch.search(psiClass))
+        checkResult(getPathToFile(), DefinitionsScopedSearch.search(psiClass))
 
         val origin = (psiClass as? KtLightClass)?.kotlinOrigin!!
-        checkResult(DefinitionsScopedSearch.search(origin))
+        checkResult(getPathToFile(), DefinitionsScopedSearch.search(origin))
     }
 
     override fun getTestDataPath(): String {

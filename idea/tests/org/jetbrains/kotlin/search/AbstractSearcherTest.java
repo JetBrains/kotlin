@@ -59,8 +59,8 @@ public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCa
         return GlobalSearchScope.projectScope(getProject());
     }
 
-    protected void checkResult(Query<?> actual) throws IOException {
-        String text = FileUtil.loadFile(new File(getPathToFile()), true);
+    protected static void checkResult(@NotNull String path, Query<?> actual) throws IOException {
+        String text = FileUtil.loadFile(new File(path), true);
 
         List<String> classFqnFilters = InTextDirectivesUtils.findListWithPrefixes(text, "// IGNORE_CLASSES: ");
 
@@ -87,14 +87,14 @@ public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCa
         assertOrderedEquals(actualModified, expected);
     }
 
-    protected void checkClassWithDirectives() throws IOException {
-        myFixture.configureByFile(getFileName());
+    protected void checkClassWithDirectives(@NotNull String path) throws IOException {
+        myFixture.configureByFile(path);
         List<String> directives = InTextDirectivesUtils.findListWithPrefixes(
-                FileUtil.loadFile(new File(getPathToFile()), true), "// CLASS: ");
+                FileUtil.loadFile(new File(path), true), "// CLASS: ");
         assertFalse("Specify CLASS directive in test file", directives.isEmpty());
         String superClassName = directives.get(0);
         PsiClass psiClass = getPsiClass(superClassName);
-        checkResult(ClassInheritorsSearch.search(psiClass, getProjectScope(), false));
+        checkResult(path, ClassInheritorsSearch.search(psiClass, getProjectScope(), false));
     }
 
     private static String stringRepresentation(Object member) {
