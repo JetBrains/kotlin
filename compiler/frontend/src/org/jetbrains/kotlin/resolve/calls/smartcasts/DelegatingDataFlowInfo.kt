@@ -146,7 +146,7 @@ internal class DelegatingDataFlowInfo private constructor(
      */
     override fun clearValueInfo(value: DataFlowValue, languageVersionSettings: LanguageVersionSettings): DataFlowInfo {
         val builder = Maps.newHashMap<DataFlowValue, Nullability>()
-        putNullability(builder, value, Nullability.UNKNOWN, languageVersionSettings)
+        putNullability(builder, value, value.immanentNullability, languageVersionSettings)
         return create(this, ImmutableMap.copyOf(builder), EMPTY_TYPE_INFO, value)
     }
 

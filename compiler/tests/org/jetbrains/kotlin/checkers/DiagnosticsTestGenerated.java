@@ -19183,6 +19183,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/senselessComparison"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("noExplicitType.kt")
+            public void testNoExplicitType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/senselessComparison/noExplicitType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("parenthesized.kt")
             public void testParenthesized() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/senselessComparison/parenthesized.kt");
