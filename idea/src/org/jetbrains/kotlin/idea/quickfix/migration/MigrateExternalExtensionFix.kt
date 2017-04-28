@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -53,31 +54,48 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
         }
     }
 
-    private fun fixExtensionMemberDeclaration(declaration: KtNamedDeclaration, project: Project, editor: Editor?, file: KtFile) {
-        val name = declaration.nameAsSafeName
-        val annotationEntries = declaration.modifierList?.annotationEntries
-        val isGetter = annotationEntries?.any { it.isJsAnnotation(PredefinedAnnotation.NATIVE_GETTER) } ?: false
-        val isSetter = annotationEntries?.any { it.isJsAnnotation(PredefinedAnnotation.NATIVE_SETTER) } ?: false
-        val isInvoke = annotationEntries?.any { it.isJsAnnotation(PredefinedAnnotation.NATIVE_INVOKE) } ?: false
-        annotationEntries?.filter { it.isJsNativeAnnotation() }?.forEach { it.delete() }
-        declaration.addModifier(KtTokens.INLINE_KEYWORD)
-        declaration.removeModifier(KtTokens.EXTERNAL_KEYWORD)
-        if (declaration is KtFunction) {
-            declaration.addAnnotation(KotlinBuiltIns.FQ_NAMES.suppress.toSafe(), "\"NOTHING_TO_INLINE\"")
-            if (!declaration.hasDeclaredReturnType() && !isSetter && !isInvoke) {
-                SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, declaration, declaration.builtIns.unitType)
+    private data class JsNativeAnnotations(val annotations: List<KtAnnotationEntry>, val nativeAnnotation: KtAnnotationEntry?, val isGetter: Boolean, val isSetter: Boolean, val isInvoke: Boolean)
+
+    private fun fetchJsNativeAnnotations(declaration: KtNamedDeclaration) : JsNativeAnnotations {
+        var isGetter: Boolean = false
+        var isSetter: Boolean = false
+        var isInvoke: Boolean = false
+        var nativeAnnotation: KtAnnotationEntry? = null
+        val nativeAnnotations = ArrayList<KtAnnotationEntry>()
+
+        declaration.modifierList?.annotationEntries?.forEach {
+            if (it.isJsAnnotation(PredefinedAnnotation.NATIVE_GETTER)) {
+                isGetter = true
+                nativeAnnotations.add(it)
+            } else if (it.isJsAnnotation(PredefinedAnnotation.NATIVE_SETTER)) {
+                isSetter = true
+                nativeAnnotations.add(it)
+            } else if (it.isJsAnnotation(PredefinedAnnotation.NATIVE_INVOKE)) {
+                isInvoke = true
+                nativeAnnotations.add(it)
+            } else if (it.isJsAnnotation(PredefinedAnnotation.NATIVE)) {
+                nativeAnnotations.add(it)
+                nativeAnnotation = it
+
             }
         }
+        return JsNativeAnnotations(nativeAnnotations, nativeAnnotation, isGetter, isSetter, isInvoke)
+    }
+
+    private fun fixExtensionMemberDeclaration(declaration: KtNamedDeclaration, project: Project, editor: Editor?, file: KtFile) {
+        val name = declaration.nameAsSafeName
+        val annotations = fetchJsNativeAnnotations(declaration)
+        fixAnnotations(declaration, annotations, editor)
 
         val ktPsiFactory = KtPsiFactory(project)
         val body = ktPsiFactory.buildExpression {
             appendName(Name.identifier("asDynamic"))
-            if (isGetter) {
+            if (annotations.isGetter) {
                 appendFixedText("()")
                 if (declaration is KtNamedFunction) {
                     appendParameters(declaration, "[", "]")
                 }
-            } else if (isSetter) {
+            } else if (annotations.isSetter) {
                 appendFixedText("()")
                 if (declaration is KtNamedFunction) {
                     appendParameters(declaration, "[", "]", skipLast = true)
@@ -86,7 +104,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
                         appendName(it)
                     }
                 }
-            } else if (isInvoke) {
+            } else if (annotations.isInvoke) {
                 appendFixedText("()")
                 if (declaration is KtNamedFunction) {
                     appendParameters(declaration, "(", ")")
@@ -104,7 +122,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
             declaration.bodyExpression?.delete()
             declaration.equalsToken?.delete()
 
-            if (isSetter || isInvoke) {
+            if (annotations.isSetter || annotations.isInvoke) {
                 val blockBody = ktPsiFactory.createSingleStatementBlock(body)
                 declaration.add(blockBody)
             } else {
@@ -132,6 +150,26 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
                 block.statements.single().replace(setterBody)
                 declaration.add(setterStubProperty.setter!!)
             }
+        }
+    }
+
+    private fun fixAnnotations(declaration: KtNamedDeclaration, annotations: JsNativeAnnotations, editor: Editor?) {
+        annotations.annotations.forEach { it.delete() }
+
+        declaration.addModifier(KtTokens.INLINE_KEYWORD)
+        declaration.removeModifier(KtTokens.EXTERNAL_KEYWORD)
+
+
+        if (declaration is KtFunction) {
+            declaration.addAnnotation(KotlinBuiltIns.FQ_NAMES.suppress.toSafe(), "\"NOTHING_TO_INLINE\"")
+        }
+
+        if (annotations.nativeAnnotation != null && annotations.nativeAnnotation.valueArguments.isNotEmpty()) {
+            declaration.addAnnotation(FqName("JsName"), annotations.nativeAnnotation.valueArguments.joinToString { it.asElement().text})
+        }
+
+        if (declaration is KtFunction && !declaration.hasDeclaredReturnType() && !annotations.isSetter && !annotations.isInvoke) {
+            SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, declaration, declaration.builtIns.unitType)
         }
     }
 

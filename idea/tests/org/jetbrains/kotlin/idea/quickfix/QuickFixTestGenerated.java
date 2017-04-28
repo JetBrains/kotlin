@@ -6427,6 +6427,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("nativeExtensionFunJsName.kt")
+            public void testNativeExtensionFunJsName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeExtensionFunJsName.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nativeExtensionFunJsRuntime.kt")
             public void testNativeExtensionFunJsRuntime() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeExtensionFunJsRuntime.kt");
