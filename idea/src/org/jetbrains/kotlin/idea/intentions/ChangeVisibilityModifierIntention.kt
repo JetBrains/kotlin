@@ -119,5 +119,10 @@ open class ChangeVisibilityModifierIntention protected constructor(
         }
     }
 
-    class Internal : ChangeVisibilityModifierIntention(KtTokens.INTERNAL_KEYWORD)
+    class Internal : ChangeVisibilityModifierIntention(KtTokens.INTERNAL_KEYWORD) {
+        override fun applicabilityRange(element: KtDeclaration): TextRange? {
+            if (isAnnotationClassPrimaryConstructor(element)) return null
+            return super.applicabilityRange(element)
+        }
+    }
 }
