@@ -263,11 +263,6 @@ object WhenChecker {
                                                 WhenOnSealedExhaustivenessChecker)
 
     @JvmStatic
-    fun getNecessaryCases(expression: KtWhenExpression, context: BindingContext) =
-            if (expression.isUsedAsExpression(context)) getMissingCases(expression, context)
-            else listOf()
-
-    @JvmStatic
     fun isWhenByEnum(expression: KtWhenExpression, context: BindingContext) =
             getClassDescriptorOfTypeIfEnum(whenSubjectType(expression, context)) != null
 
