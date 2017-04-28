@@ -36,6 +36,12 @@ public class AnnotatedMembersSearchTestGenerated extends AbstractAnnotatedMember
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/search/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("annotationAliased.kt")
+    public void testAnnotationAliased() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/annotations/annotationAliased.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("testAmbiguousNestedNonAnnotationClass.kt")
     public void testTestAmbiguousNestedNonAnnotationClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/annotations/testAmbiguousNestedNonAnnotationClass.kt");
