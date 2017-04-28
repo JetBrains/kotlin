@@ -57,3 +57,19 @@ public inline fun <T> ReentrantReadWriteLock.write(action: () -> T): T {
         wl.unlock()
     }
 }
+
+
+/**
+ * Executes the given [action] under this semaphore acquired.
+ * @return the return value of the action.
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public inline fun <T> Semaphore.withAcquired(permits: Int = 1, action: () -> T): T {
+    acquire(permits)
+    try {
+        return action()
+    } finally {
+        release(permits)
+    }
+}
