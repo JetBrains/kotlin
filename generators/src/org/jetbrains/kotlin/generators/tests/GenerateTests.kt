@@ -166,6 +166,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.AbstractCompileTimeConsta
 import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverTest
+import org.jetbrains.kotlin.search.AbstractAnnotatedMembersSearchTest
 import org.jetbrains.kotlin.search.AbstractInheritorsSearchTest
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
@@ -554,6 +555,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractInheritorsSearchTest> {
             model("search/inheritance")
+        }
+
+        testClass<AbstractAnnotatedMembersSearchTest> {
+            model("search/annotations")
         }
 
         testClass<AbstractQuickFixMultiFileTest> {
