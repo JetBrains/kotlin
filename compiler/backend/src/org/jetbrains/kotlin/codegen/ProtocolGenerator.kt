@@ -46,7 +46,9 @@ abstract class ProtocolGenerator(protected val codegen: ExpressionCodegen, prote
 
     fun putInvokerAndGenerateIfNeeded(method: CallableMethod, call: ResolvedCall<*>) {
         val candidate = call.candidateDescriptor
-        val name = "proto$$last$${candidate.containingDeclaration.name}$${candidate.name}$${candidate.valueParameters.joinToString { it.type.toString() }}"
+        val declarationName = candidate.containingDeclaration.name.toString().filter { it.isLetterOrDigit() }
+        val params = candidate.valueParameters.joinToString { it.type.toString() }.filter { it.isLetterOrDigit() }
+        val name = "proto$$last$$declarationName$${candidate.name}$$params"
         ++last
 
         genProtocolCaller(method, call, name)
