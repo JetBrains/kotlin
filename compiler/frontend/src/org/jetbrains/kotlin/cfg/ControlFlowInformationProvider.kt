@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
@@ -778,25 +779,34 @@ class ControlFlowInformationProvider private constructor(
             for (element in instruction.owner.getValueElements(value)) {
                 if (element !is KtWhenExpression) continue
 
-                if (element.isUsedAsExpression(trace.bindingContext)) {
+                val usedAsExpression = element.isUsedAsExpression(trace.bindingContext)
+                if (usedAsExpression) {
                     checkImplicitCastOnConditionalExpression(element)
                 }
 
-                if (element.elseExpression != null) continue
-
                 val context = trace.bindingContext
-                val necessaryCases = WhenChecker.getNecessaryCases(element, context)
-                if (!necessaryCases.isEmpty()) {
-                    trace.report(NO_ELSE_IN_WHEN.on(element, necessaryCases))
+                val missingCases = WhenChecker.getMissingCases(element, context)
+
+                val elseEntry = element.entries.find { it.isElse }
+                val subjectExpression = element.subjectExpression
+                if (usedAsExpression && missingCases.isNotEmpty()) {
+                    if (elseEntry != null) continue
+                    trace.report(NO_ELSE_IN_WHEN.on(element, missingCases))
                 }
-                else {
-                    val subjectExpression = element.subjectExpression
-                    if (subjectExpression != null) {
-                        val enumClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfEnum(trace.getType(subjectExpression))
+                else if (subjectExpression != null) {
+                    val subjectType = trace.getType(subjectExpression)
+                    if (elseEntry != null) {
+                        if (missingCases.isEmpty() && subjectType != null && !subjectType.isFlexible()) {
+                            trace.report(REDUNDANT_ELSE_IN_WHEN.on(elseEntry))
+                        }
+                        continue
+                    }
+                    if (!usedAsExpression) {
+                        val enumClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfEnum(subjectType)
                         if (enumClassDescriptor != null) {
-                            val missingCases = WhenChecker.getEnumMissingCases(element, context, enumClassDescriptor)
-                            if (!missingCases.isEmpty()) {
-                                trace.report(NON_EXHAUSTIVE_WHEN.on(element, missingCases))
+                            val enumMissingCases = WhenChecker.getEnumMissingCases(element, context, enumClassDescriptor)
+                            if (!enumMissingCases.isEmpty()) {
+                                trace.report(NON_EXHAUSTIVE_WHEN.on(element, enumMissingCases))
                             }
                         }
                     }

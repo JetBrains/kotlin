@@ -23422,6 +23422,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("RedundantElse.kt")
+            public void testRedundantElse() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/RedundantElse.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ReservedExhaustiveWhen.kt")
             public void testReservedExhaustiveWhen() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ReservedExhaustiveWhen.kt");
