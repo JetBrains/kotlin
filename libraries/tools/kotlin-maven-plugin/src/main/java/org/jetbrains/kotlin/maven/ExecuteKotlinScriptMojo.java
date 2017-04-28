@@ -35,7 +35,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.ComponentDependency;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
-import org.jetbrains.kotlin.script.ReflectionUtilKt;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -50,13 +49,13 @@ import org.jetbrains.kotlin.config.KotlinSourceRoot;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtScript;
+import org.jetbrains.kotlin.script.ReflectionUtilKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -170,7 +169,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
 
             List<File> deps = new ArrayList<File>();
 
-            deps.addAll(PathUtil.getJdkClassesRoots());
+            deps.addAll(PathUtil.getJdkClassesRootsFromCurrentJre());
             deps.addAll(getDependenciesForScript());
 
             for (File item: deps) {
