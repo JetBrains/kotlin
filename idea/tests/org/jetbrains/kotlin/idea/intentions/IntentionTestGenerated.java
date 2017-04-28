@@ -2934,6 +2934,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("notForAnnotationClassPrimaryConstructor.kt")
+            public void testNotForAnnotationClassPrimaryConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/notForAnnotationClassPrimaryConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("notForLocal.kt")
             public void testNotForLocal() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/notForLocal.kt");

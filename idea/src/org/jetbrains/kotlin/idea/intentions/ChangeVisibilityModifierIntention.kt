@@ -102,10 +102,13 @@ open class ChangeVisibilityModifierIntention protected constructor(
         }
     }
 
+    protected fun isAnnotationClassPrimaryConstructor(element: KtDeclaration) = element is KtPrimaryConstructor && (element.parent as? KtClass)?.hasModifier(KtTokens.ANNOTATION_KEYWORD) ?: false
+
     class Public : ChangeVisibilityModifierIntention(KtTokens.PUBLIC_KEYWORD), HighPriorityAction
 
     class Private : ChangeVisibilityModifierIntention(KtTokens.PRIVATE_KEYWORD), HighPriorityAction {
         override fun applicabilityRange(element: KtDeclaration): TextRange? {
+            if (isAnnotationClassPrimaryConstructor(element)) return null
             return if (element.canBePrivate()) super.applicabilityRange(element) else null
         }
     }
