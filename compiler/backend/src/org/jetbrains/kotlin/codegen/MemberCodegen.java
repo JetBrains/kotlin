@@ -269,9 +269,14 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             return;
         }
 
+        if (descriptor.isProtocol()) {
+            return;
+        }
+
         if (descriptor.getName().equals(SpecialNames.NO_NAME_PROVIDED)) {
             badDescriptor(descriptor, state.getClassBuilderMode());
         }
+
         genClassOrObject(parentContext, aClass, state, parentCodegen, descriptor);
     }
 

@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.serialization.ClassData;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -117,8 +118,22 @@ public class JvmCodegenUtil {
         return false;
     }
 
+
     public static boolean isJvmInterface(KotlinType type) {
         return isJvmInterface(type.getConstructor().getDeclarationDescriptor());
+    }
+
+
+    public static boolean isProtocol(DeclarationDescriptor descriptor) {
+        if (descriptor instanceof ClassDescriptor) {
+            return ((ClassDescriptor) descriptor).isProtocol();
+        }
+
+        return false;
+    }
+
+    public static boolean isProtocol(KotlinType type) {
+        return isProtocol(type.getConstructor().getDeclarationDescriptor());
     }
 
     public static boolean isConst(@NotNull CalculatedClosure closure) {

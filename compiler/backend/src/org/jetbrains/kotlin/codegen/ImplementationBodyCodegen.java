@@ -229,7 +229,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     @Override
     protected void generateDefaultImplsIfNeeded() {
         if (isInterface(descriptor) && !isLocal && (!JvmCodegenUtil.isJvm8InterfaceWithDefaults(descriptor, state) || state.getGenerateDefaultImplsForJvm8())) {
-            Type defaultImplsType = state.getTypeMapper().mapDefaultImplsProto(descriptor);
+            Type defaultImplsType = state.getTypeMapper().mapDefaultImpls(descriptor);
             ClassBuilder defaultImplsBuilder =
                     state.getFactory().newVisitor(JvmDeclarationOriginKt.DefaultImpls(myClass.getPsiOrParent(), descriptor), defaultImplsType, myClass.getContainingKtFile());
 
@@ -306,9 +306,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Set<String> kotlinMarkerInterfaces = new LinkedHashSet<>();
 
         for (KotlinType supertype : descriptor.getTypeConstructor().getSupertypes()) {
-            if (isJvmInterface(supertype.getConstructor().getDeclarationDescriptor())) {
+            if (isJvmInterface(supertype.getConstructor().getDeclarationDescriptor()) && !isProtocol(supertype)) {
                 FqName kotlinInterfaceName = DescriptorUtils.getFqName(supertype.getConstructor().getDeclarationDescriptor()).toSafe();
-
                 sw.writeInterface();
                 Type jvmInterfaceType = typeMapper.mapSupertype(supertype, sw);
                 sw.writeInterfaceEnd();

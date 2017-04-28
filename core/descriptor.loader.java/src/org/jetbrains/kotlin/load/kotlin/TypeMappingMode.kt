@@ -25,7 +25,6 @@ class TypeMappingMode private constructor(
         // Here DeclarationSiteWildcards means wildcard generated because of declaration-site variance
         val skipDeclarationSiteWildcards: Boolean = false,
         val skipDeclarationSiteWildcardsIfPossible: Boolean = false,
-        val erasureProtocol: Boolean = true,
         private val genericArgumentMode: TypeMappingMode? = null,
         val kotlinCollectionsToJavaCollections: Boolean = true,
         private val genericContravariantArgumentMode: TypeMappingMode? = genericArgumentMode,
@@ -44,15 +43,12 @@ class TypeMappingMode private constructor(
         @JvmField
         val DEFAULT = TypeMappingMode(genericArgumentMode = GENERIC_ARGUMENT, needPrimitiveBoxing = false)
 
-        @JvmField
-        val KEEP_PROTOCOL = TypeMappingMode(genericArgumentMode = GENERIC_ARGUMENT, needPrimitiveBoxing = false, erasureProtocol = false)
-
         /**
          * kotlin.Int is mapped to Ljava/lang/Integer;
          * No projections allowed in immediate arguments
          */
         @JvmField
-        val SUPER_TYPE = TypeMappingMode(skipDeclarationSiteWildcards = true, genericArgumentMode = GENERIC_ARGUMENT, erasureProtocol = false)
+        val SUPER_TYPE = TypeMappingMode(skipDeclarationSiteWildcards = true, genericArgumentMode = GENERIC_ARGUMENT)
 
         @JvmField
         val SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS = TypeMappingMode(

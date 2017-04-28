@@ -44,7 +44,7 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
             return cached
         }
 
-        val method = lookup.unreflect(findAccessibleMethod(receiverClass))
+        val method = lookup.unreflect(resolveMethod(receiverClass))
         indyCache[receiverClass] = method
 
         return method
@@ -58,28 +58,12 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
             return cached
         }
 
-        val method = findAccessibleMethod(receiverClass)!!
+        val method = resolveMethod(receiverClass)!!
         reflectCache[receiverClass] = method
         return method
     }
 
-    private fun findAccessibleMethod(root: Class<*>): Method? {
-        val result = resolveAccessibleMethod(root) ?: findAccessibleMethod(root.superclass)
-        if (result != null) {
-            return result
-        }
-
-        for (i in root.interfaces) {
-            val item = findAccessibleMethod(i)
-            if (item != null) {
-                return item
-            }
-        }
-
-        return null
-    }
-
-    private fun resolveAccessibleMethod(target: Class<*>): Method? {
+    private fun resolveMethod(target: Class<*>): Method? {
         val protocolArgs = callableType.parameterArray()
         val methods = target.declaredMethods
 
@@ -87,7 +71,7 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
         var bestDistance = IntArray(protocolArgs.size)
 
         for (method in methods) {
-            if (method.name != callableName || method.parameterCount != protocolArgs.size || !method.isAccessible) {
+            if (method.name != callableName || method.parameterCount != protocolArgs.size) {
                 continue
             }
 

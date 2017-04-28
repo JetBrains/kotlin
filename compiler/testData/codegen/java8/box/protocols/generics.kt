@@ -2,14 +2,6 @@
 // WITH_RUNTIME
 // FULL_JDK
 
-/* Test ideas:
- * 1. P<out X> = C<out Y <: X>
- * 2. P<in X> = C<in Y :> X>
- * 3. P<X> = C<X>
- * 4. P<X> = C
- * 5. P = C<X>
- */
-
 protocol interface P {
     fun x()
 }

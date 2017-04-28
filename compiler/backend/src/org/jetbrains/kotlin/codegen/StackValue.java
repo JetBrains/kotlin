@@ -1198,15 +1198,13 @@ public abstract class StackValue {
             }
             else {
                 PropertyGetterDescriptor getterDescriptor = descriptor.getGetter();
-
                 assert getterDescriptor != null : "Getter descriptor should be not null for " + descriptor;
-
-                DeclarationDescriptor declaration = getterDescriptor.getContainingDeclaration();
                 if (resolvedCall != null && getterDescriptor.isInline()) {
                     CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, getterDescriptor);
                     callGenerator.processAndPutHiddenParameters(false);
                     callGenerator.genCall(getter, resolvedCall, false, codegen);
-                } else {
+                }
+                else {
                     getter.genInvokeInstruction(v);
                 }
 
@@ -1574,7 +1572,7 @@ public abstract class StackValue {
                 // all the needed information, for example there's no way to find out whether or not a smart cast was applied to the receiver.
                 DeclarationDescriptor container = descriptor.getContainingDeclaration();
                 if (container instanceof ClassDescriptor) {
-                    return typeMapper.mapClassForCall((ClassDescriptor) container);
+                    return typeMapper.mapClass((ClassDescriptor) container);
                 }
 
                 return typeMapper.mapType(dispatchReceiver);
@@ -1901,3 +1899,4 @@ public abstract class StackValue {
                 descriptor);
     }
 }
+
