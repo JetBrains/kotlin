@@ -3790,6 +3790,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("initializationInLocalViaExplicitThis.kt")
+            public void testInitializationInLocalViaExplicitThis() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLocalViaExplicitThis.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt1001.kt")
             public void testKt1001() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt1001.kt");
