@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 
@@ -38,12 +38,12 @@ object JsInheritanceChecker : SimpleDeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (descriptor is FunctionDescriptor && !DescriptorUtils.isEffectivelyExternal(descriptor) &&
+        if (descriptor is FunctionDescriptor && !descriptor.isEffectivelyExternal() &&
             isOverridingExternalWithOptionalParams(descriptor)
         ) {
             diagnosticHolder.report(ErrorsJs.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS.on(declaration))
         }
-        else if (descriptor is ClassDescriptor && !DescriptorUtils.isEffectivelyExternal(descriptor)) {
+        else if (descriptor is ClassDescriptor && !descriptor.isEffectivelyExternal()) {
             val fakeOverriddenMethod = findFakeMethodOverridingExternalWithOptionalParams(descriptor)
             if (fakeOverriddenMethod != null) {
                 diagnosticHolder.report(ErrorsJs.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE.on(
@@ -61,7 +61,7 @@ object JsInheritanceChecker : SimpleDeclarationChecker {
     private fun isOverridingExternalWithOptionalParams(function: FunctionDescriptor): Boolean {
         if (!function.kind.isReal && function.modality == Modality.ABSTRACT) return false
 
-        for (overriddenFunction in function.overriddenDescriptors.filter { DescriptorUtils.isEffectivelyExternal(it) }) {
+        for (overriddenFunction in function.overriddenDescriptors.filter { it.isEffectivelyExternal() }) {
             if (overriddenFunction.valueParameters.any { it.hasDefaultValue() }) return true
         }
 

@@ -145,7 +145,7 @@ object JsExternalChecker : SimpleDeclarationChecker {
     }
 
     private fun checkDelegation(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
-        if (descriptor !is MemberDescriptor || !DescriptorUtils.isEffectivelyExternal(descriptor)) return
+        if (descriptor !is MemberDescriptor || !descriptor.isEffectivelyExternal()) return
 
         if (declaration is KtClassOrObject) {
             for (superTypeEntry in declaration.superTypeListEntries) {

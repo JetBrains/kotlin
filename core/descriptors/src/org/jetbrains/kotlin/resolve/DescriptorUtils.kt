@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.getContainingClass
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -412,3 +413,15 @@ fun ClassDescriptor.isSubclassOf(superclass: ClassDescriptor): Boolean = Descrip
 
 val AnnotationDescriptor.annotationClass: ClassDescriptor?
     get() = type.constructor.declarationDescriptor as? ClassDescriptor
+
+fun MemberDescriptor.isEffectivelyExternal(): Boolean {
+    if (isExternal) return true
+
+    if (this is PropertyAccessorDescriptor) {
+        val variableDescriptor = correspondingProperty
+        if (variableDescriptor.isEffectivelyExternal()) return true
+    }
+
+    val containingClass = getContainingClass(this)
+    return containingClass != null && containingClass.isEffectivelyExternal()
+}
