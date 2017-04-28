@@ -491,5 +491,7 @@ class QuickFixRegistrar : QuickFixContributor {
         CONFLICTING_OVERLOADS.registerFactory(ChangeSuspendInHierarchyFix)
 
         MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(AddModifierFix.AddLateinitFactory)
+
+        RETURN_NOT_ALLOWED.registerFactory(ChangeToLabeledReturnFix)
     }
 }
