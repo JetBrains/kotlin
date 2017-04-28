@@ -155,9 +155,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             arguments.protocolsCacheSize.toIntOrNull()
         }
 
-        protocolsBackendType ?: messageCollector.report(CompilerMessageSeverity.ERROR, "Wrong type for protocols backend", CompilerMessageLocation.NO_LOCATION)
-        protocolsCacheType ?: messageCollector.report(CompilerMessageSeverity.ERROR, "Wrong cache type for protocols", CompilerMessageLocation.NO_LOCATION)
-        protocolsCacheSize ?: messageCollector.report(CompilerMessageSeverity.ERROR, "Incorrect cache size for protocols", CompilerMessageLocation.NO_LOCATION)
+        protocolsBackendType ?: messageCollector.report(CompilerMessageSeverity.ERROR, "Wrong type for protocols backend")
+        protocolsCacheType ?: messageCollector.report(CompilerMessageSeverity.ERROR, "Wrong cache type for protocols")
+        protocolsCacheSize ?: messageCollector.report(CompilerMessageSeverity.ERROR, "Incorrect cache size for protocols")
 
         configuration.put(JVMConfigurationKeys.PROTOCOLS_BACKEND, ProtocolsBackend(protocolsBackendType!!, protocolsCacheType!!, protocolsCacheSize!!))
         configuration.put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
