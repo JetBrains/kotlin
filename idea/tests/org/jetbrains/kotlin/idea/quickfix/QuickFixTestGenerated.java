@@ -1154,6 +1154,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     }
 
+    @TestMetadata("idea/testData/quickfix/changeToLabeledReturn")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ChangeToLabeledReturn extends AbstractQuickFixTest {
+        public void testAllFilesPresentInChangeToLabeledReturn() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeToLabeledReturn"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("multipleInner.kt")
+        public void testMultipleInner() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeToLabeledReturn/multipleInner.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleOuter.kt")
+        public void testMultipleOuter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeToLabeledReturn/multipleOuter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noCandidates.kt")
+        public void testNoCandidates() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeToLabeledReturn/noCandidates.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal.kt")
+        public void testNormal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeToLabeledReturn/normal.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/changeToUseSpreadOperator")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
