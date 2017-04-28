@@ -15928,6 +15928,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("defaults.kt")
+            public void testDefaults() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/protocols/defaults.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("fieldExists.kt")
             public void testFieldExists() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/protocols/fieldExists.kt");

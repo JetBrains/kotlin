@@ -614,12 +614,6 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             doTest(fileName);
         }
 
-        @TestMetadata("defaultImpl.kt")
-        public void testDefaultImpl() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/defaultImpl.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("downcast.kt")
         public void testDowncast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/downcast.kt");
