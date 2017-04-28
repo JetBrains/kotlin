@@ -37,9 +37,8 @@ apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 // (gets applied to this project and all its subprojects)
 allprojects {
     repositories {
-        maven {
-            url 'http://dl.bintray.com/jetbrains/kotlin-native-dependencies'
-        }
+        maven { url 'http://dl.bintray.com/jetbrains/kotlin-native-dependencies' }
+        maven { url 'http://oss.sonatype.org/content/repositories/snapshots' }
     }
 
     configurations.all {
