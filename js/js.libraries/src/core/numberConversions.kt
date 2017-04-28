@@ -27,6 +27,7 @@ public fun String.toByte(): Byte = toByteOrNull() ?: numberFormatError(this)
 /**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 public fun String.toByte(radix: Int): Byte = toByteOrNull(radix) ?: numberFormatError(this)
 
@@ -40,6 +41,7 @@ public fun String.toShort(): Short = toShortOrNull() ?: numberFormatError(this)
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 public fun String.toShort(radix: Int): Short = toShortOrNull(radix) ?: numberFormatError(this)
 
@@ -52,6 +54,7 @@ public fun String.toInt(): Int = toIntOrNull() ?: numberFormatError(this)
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 public fun String.toInt(radix: Int): Int = toIntOrNull(radix) ?: numberFormatError(this)
 
@@ -64,6 +67,7 @@ public fun String.toLong(): Long = toLongOrNull() ?: numberFormatError(this)
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 public fun String.toLong(radix: Int): Long = toLongOrNull(radix) ?: numberFormatError(this)
 
