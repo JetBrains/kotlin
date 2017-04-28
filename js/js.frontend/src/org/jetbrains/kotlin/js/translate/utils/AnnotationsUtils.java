@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getAnnotationClass;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.isEffectivelyExternal;
 
 public final class AnnotationsUtils {
     private static final String JS_NAME = "kotlin.js.JsName";
@@ -99,7 +100,7 @@ public final class AnnotationsUtils {
             return name != null ? name : descriptor.getName().asString();
         }
 
-        if (defaultJsName == null && isEffectivelyExternal(descriptor)) {
+        if (defaultJsName == null && isEffectivelyExternalMember(descriptor)) {
             return descriptor.getName().asString();
         }
 
@@ -121,7 +122,7 @@ public final class AnnotationsUtils {
     }
 
     public static boolean isNativeObject(@NotNull DeclarationDescriptor descriptor) {
-        if (hasAnnotationOrInsideAnnotatedClass(descriptor, PredefinedAnnotation.NATIVE) || isEffectivelyExternal(descriptor)) return true;
+        if (hasAnnotationOrInsideAnnotatedClass(descriptor, PredefinedAnnotation.NATIVE) || isEffectivelyExternalMember(descriptor)) return true;
 
         if (descriptor instanceof PropertyAccessorDescriptor) {
             PropertyAccessorDescriptor accessor = (PropertyAccessorDescriptor) descriptor;
@@ -135,8 +136,8 @@ public final class AnnotationsUtils {
         return isNativeObject(descriptor) && DescriptorUtils.isInterface(descriptor);
     }
 
-    private static boolean isEffectivelyExternal(@NotNull DeclarationDescriptor descriptor) {
-        return descriptor instanceof MemberDescriptor && DescriptorUtils.isEffectivelyExternal((MemberDescriptor) descriptor);
+    private static boolean isEffectivelyExternalMember(@NotNull DeclarationDescriptor descriptor) {
+        return descriptor instanceof MemberDescriptor && isEffectivelyExternal((MemberDescriptor) descriptor);
     }
 
     public static boolean isLibraryObject(@NotNull DeclarationDescriptor descriptor) {
@@ -164,7 +165,7 @@ public final class AnnotationsUtils {
 
     public static boolean isPredefinedObject(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof MemberDescriptor && ((MemberDescriptor) descriptor).isHeader()) return true;
-        if (isEffectivelyExternal(descriptor)) return true;
+        if (isEffectivelyExternalMember(descriptor)) return true;
 
         for (PredefinedAnnotation annotation : PredefinedAnnotation.values()) {
             if (hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {

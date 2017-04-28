@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getDispatchReceiverWi
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.hasThisOrNoDispatchReceiver
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
@@ -642,7 +643,7 @@ class ControlFlowInformationProvider private constructor(
                 val containingClass = owner.getContainingClassOrObject()
                 val containingClassDescriptor = trace.get(DECLARATION_TO_DESCRIPTOR, containingClass) as? ClassDescriptor
                 if (!DescriptorUtils.isAnnotationClass(containingClassDescriptor) && containingClassDescriptor?.isHeader == false &&
-                    !DescriptorUtils.isEffectivelyExternal(containingClassDescriptor)
+                    !containingClassDescriptor.isEffectivelyExternal()
                 ) {
                     report(UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
                 }
@@ -662,7 +663,7 @@ class ControlFlowInformationProvider private constructor(
                     || functionDescriptor.isOverridableOrOverrides
                     || owner.hasModifier(KtTokens.OVERRIDE_KEYWORD)
                     || functionDescriptor.isHeader || functionDescriptor.isImpl
-                    || DescriptorUtils.isEffectivelyExternal(functionDescriptor)
+                    || functionDescriptor.isEffectivelyExternal()
                     || OperatorNameConventions.GET_VALUE == functionName
                     || OperatorNameConventions.SET_VALUE == functionName
                     || OperatorNameConventions.PROVIDE_DELEGATE == functionName) {

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.inline.ReasonableInlineRule
 
 object ExtensionFunctionToExternalIsInlinable : ReasonableInlineRule {
@@ -31,6 +31,6 @@ object ExtensionFunctionToExternalIsInlinable : ReasonableInlineRule {
     ): Boolean {
         val receiverParameter = descriptor.extensionReceiverParameter ?: return false
         val receiverClass = receiverParameter.value.type.constructor.declarationDescriptor as? ClassDescriptor ?: return false
-        return DescriptorUtils.isEffectivelyExternal(receiverClass)
+        return receiverClass.isEffectivelyExternal()
     }
 }

@@ -573,18 +573,6 @@ public class DescriptorUtils {
         return scope.getContributedDescriptors(DescriptorKindFilter.ALL, MemberScope.Companion.getALL_NAME_FILTER());
     }
 
-    public static boolean isEffectivelyExternal(@NotNull MemberDescriptor descriptor) {
-        if (descriptor.isExternal()) return true;
-
-        if (descriptor instanceof PropertyAccessorDescriptor) {
-            PropertyDescriptor variableDescriptor = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();
-            if (isEffectivelyExternal(variableDescriptor)) return true;
-        }
-
-        ClassDescriptor containingClass = getContainingClass(descriptor);
-        return containingClass != null && isEffectivelyExternal(containingClass);
-    }
-
     @NotNull
     public static FunctionDescriptor getFunctionByName(@NotNull MemberScope scope, @NotNull Name name) {
         Collection<DeclarationDescriptor> functions = scope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS,
