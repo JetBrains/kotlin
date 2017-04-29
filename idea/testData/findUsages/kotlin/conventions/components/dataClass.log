@@ -41,7 +41,6 @@ Searched references to JavaClass2
 Searched references to JavaClass3
 Searched references to JavaClass4.NestedPrivate
 Searched references to JavaClass4.NestedPublic
-Searched references to JavaClass4.getNested() in non-Java files
 Searched references to a in non-Java files
 Searched references to f() in non-Java files
 Searched references to g() in non-Java files
@@ -51,6 +50,7 @@ Searched references to pack.A
 Searched references to pack.X
 Searched references to parameter p1 of test2(p1: JavaClass2, p2: JavaClass3) in non-Java files
 Searched references to parameter p2 of test2(p1: JavaClass2, p2: JavaClass3) in non-Java files
+Searched references to static member in non-Java files by request JavaClass4.getNested
 Used plain search of parameter n of A(val n: Int, val s: String, val o: Any) in LocalSearchScope:
     CLASS:A
     CLASS:X

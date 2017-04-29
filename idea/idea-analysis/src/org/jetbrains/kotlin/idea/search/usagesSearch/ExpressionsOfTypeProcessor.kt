@@ -21,13 +21,14 @@ import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import com.intellij.psi.search.FileTypeIndex
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.SearchScope
+import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
+import com.intellij.psi.search.*
+import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
 import org.jetbrains.annotations.TestOnly
@@ -271,10 +272,108 @@ class ExpressionsOfTypeProcessor(
                               })
     }
 
-    private fun addCallableDeclarationToProcess(declaration: PsiElement, scope: SearchScope, processor: ReferenceProcessor) {
-        data class ProcessCallableUsagesTask(val declaration: PsiElement, val processor: ReferenceProcessor) : Task {
+    private class StaticMemberRequestResultProcessor(val psiMember: PsiMember) : RequestResultProcessor(psiMember) {
+        override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<PsiReference>): Boolean {
+            if (element !is KtQualifiedExpression) return true
+
+            val selectorExpression = element.selectorExpression ?: return true
+            val selectorReference = element.findReferenceAt(selectorExpression.startOffsetInParent)
+
+            val references = when (selectorReference) {
+                is PsiMultiReference -> selectorReference.references.toList()
+                else -> listOf(selectorReference)
+            }.filterNotNull()
+
+            for (ref in references) {
+                ProgressManager.checkCanceled()
+
+                if (ref.isReferenceTo(psiMember)) {
+                    consumer.process(ref)
+                }
+            }
+
+            return true
+        }
+    }
+
+    private fun classUseScope(psiClass: PsiClass) = runReadAction {
+        if (!psiClass.isValid) {
+            throw ProcessCanceledException()
+        }
+
+        val file = psiClass.containingFile
+        (file ?: psiClass).useScope
+    }
+
+    private fun addStaticMemberToProcess(psiMember: PsiMember, scope: SearchScope, processor: ReferenceProcessor) {
+        val declarationClass = runReadAction { psiMember.containingClass } ?: return
+        val declarationName = runReadAction { psiMember.name } ?: return
+        if (declarationName.isEmpty()) return
+
+        data class ProcessStaticCallableUsagesTask(val member: PsiMember, val memberScope: SearchScope, val taskProcessor: ReferenceProcessor) : Task {
             override fun perform() {
-                testLog?.add("Searched references to ${logPresentation(declaration)} in non-Java files")
+                // This class will look through the whole hierarchy anyway, so shouldn't be a big overhead here
+                val inheritanceClasses = ClassInheritorsSearch.search(
+                        declarationClass,
+                        classUseScope(declarationClass),
+                        true, true, false).findAll()
+
+                val classes = (inheritanceClasses + declarationClass).filter {
+                    it !is KtLightClass
+                }
+
+                val searchRequestCollector = SearchRequestCollector(SearchSession())
+                val resultProcessor = StaticMemberRequestResultProcessor(member)
+
+                for (klass in classes) {
+                    val request = klass.name + "." + declarationName
+
+                    testLog?.add("Searched references to static member in non-Java files by request $request")
+
+                    searchRequestCollector.searchWord(
+                            request, classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor)
+                }
+
+                PsiSearchHelper.SERVICE.getInstance(project).processRequests(searchRequestCollector) { reference ->
+                    if (reference.element.parents.any { it is KtImportDirective }) {
+                        // Found declaration in import - process all file with an ordinal reference search
+                        val containingFile = reference.element.containingFile
+                        addCallableDeclarationToProcess(member, LocalSearchScope(containingFile), taskProcessor)
+
+                        true
+                    }
+                    else {
+                        val processed = taskProcessor.handler(this@ExpressionsOfTypeProcessor, reference)
+                        if (!processed) { // we don't know how to handle this reference and down-shift to plain search
+                            downShiftToPlainSearch(reference)
+                        }
+
+                        true
+                    }
+                }
+            }
+        }
+
+        addTask(ProcessStaticCallableUsagesTask(psiMember, scope, processor))
+        return
+    }
+
+    private fun addCallableDeclarationToProcess(declaration: PsiElement, scope: SearchScope, processor: ReferenceProcessor) {
+        if (scope !is LocalSearchScope && declaration is PsiMember && (declaration.modifierList?.hasModifierProperty(PsiModifier.STATIC) ?: false)) {
+            addStaticMemberToProcess(declaration, scope, processor)
+            return
+        }
+
+        @Suppress("NAME_SHADOWING")
+        data class ProcessCallableUsagesTask(val declaration: PsiElement, val processor: ReferenceProcessor, val scope: SearchScope) : Task {
+            override fun perform() {
+                if (scope is LocalSearchScope) {
+                    testLog?.add("Searched imported static member $declaration in ${scope.scope.toList()}")
+                }
+                else {
+                    testLog?.add("Searched references to ${logPresentation(declaration)} in non-Java files")
+                }
+
                 val searchParameters = KotlinReferencesSearchParameters(
                         declaration, scope, kotlinOptions = KotlinReferencesSearchOptions(searchNamedArguments = false))
                 searchReferences(searchParameters) { reference ->
@@ -286,7 +385,7 @@ class ExpressionsOfTypeProcessor(
                 }
             }
         }
-        addTask(ProcessCallableUsagesTask(declaration, processor))
+        addTask(ProcessCallableUsagesTask(declaration, processor, scope))
     }
 
     private fun addPsiMemberTask(member: PsiMember) {
@@ -542,7 +641,7 @@ class ExpressionsOfTypeProcessor(
                     break@ParentsLoop
                 }
 
-                //TODO: if Java parameter has Kotlin functional type then we should process method usages
+            //TODO: if Java parameter has Kotlin functional type then we should process method usages
                 is PsiParameter -> {
                     if (prev == parent.typeElement) { // usage in parameter type - check if the method is in SAM interface
                         processParameterInSamClass(parent)

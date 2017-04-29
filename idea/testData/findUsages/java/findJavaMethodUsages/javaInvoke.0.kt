@@ -1,8 +1,14 @@
-fun f(c: JavaClass) {
+fun f(c: JavaClassInvoke) {
     c()
 }
 
-fun foo(o: JavaClass.OtherJavaClass) {
+fun foo(o: JavaClassInvoke.OtherJavaClass) {
     o()
-    JavaClass.OtherJavaClass.OJC()
+    JavaClassInvoke.OtherJavaClass.OJC()
+}
+
+fun foo() {
+    JavaClassInvoke.INSTANCE()
+    JavaClassInvoke.AnotherOther.INSTANCE()
+    JavaClassInvoke.JavaOther.INSTANCE()
 }

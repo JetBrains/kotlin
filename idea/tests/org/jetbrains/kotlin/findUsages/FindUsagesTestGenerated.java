@@ -1639,6 +1639,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("javaInvokeWithStaticImport.0.java")
+            public void testJavaInvokeWithStaticImport() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/javaInvokeWithStaticImport.0.java");
+                doTest(fileName);
+            }
+
             @TestMetadata("JavaWithGroovyInvoke.0.java")
             public void testJavaWithGroovyInvoke() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/JavaWithGroovyInvoke.0.java");
