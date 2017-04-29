@@ -30,16 +30,15 @@ internal fun loadCompilerVersion(compilerJar: File): String {
     try {
         ZipFile(compilerJar).use { file ->
             val fileName = KotlinCompilerVersion::class.java.name.replace('.', '/') + ".class"
-            file.getInputStream(file.getEntry(fileName)).use { inputStream ->
-                ClassReader(inputStream).accept(object : ClassVisitor(Opcodes.ASM5) {
-                    override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor {
-                        if (name == KotlinCompilerVersion::VERSION.name && value is String) {
-                            result = value
-                        }
-                        return super.visitField(access, name, desc, signature, value)
+            val bytes = file.getInputStream(file.getEntry(fileName)).use { inputStream -> inputStream.readBytes() }
+            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
+                override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor {
+                    if (name == KotlinCompilerVersion::VERSION.name && value is String) {
+                        result = value
                     }
-                }, ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES or ClassReader.SKIP_DEBUG)
-            }
+                    return super.visitField(access, name, desc, signature, value)
+                }
+            }, ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES or ClassReader.SKIP_DEBUG)
         }
     }
     catch (e: Throwable) {}
