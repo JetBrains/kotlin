@@ -1766,6 +1766,30 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("isCondition.kt")
+            public void testIsCondition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/isCondition.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("isNotCondition.kt")
+            public void testIsNotCondition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/isNotCondition.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("isNotNullable.kt")
+            public void testIsNotNullable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/isNotNullable.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("isNullable.kt")
+            public void testIsNullable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/isNullable.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("lhsEqualsNull.kt")
             public void testLhsEqualsNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/lhsEqualsNull.kt");
