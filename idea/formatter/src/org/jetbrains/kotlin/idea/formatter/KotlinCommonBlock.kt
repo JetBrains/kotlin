@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.formatting.*
+import com.intellij.formatting.ChildAttributes.DELEGATE_TO_NEXT_CHILD
 import com.intellij.lang.ASTNode
 import com.intellij.psi.TokenType
 import com.intellij.psi.codeStyle.CodeStyleSettings
@@ -193,6 +194,11 @@ abstract class KotlinCommonBlock(
                     if (isIncomplete) {
                         return getSuperChildAttributes(newChildIndex)
                     }
+                }
+
+                if (blocks.size > newChildIndex) {
+                    val block = blocks[newChildIndex]
+                    return ChildAttributes(block.indent, block.alignment)
                 }
 
                 ChildAttributes(Indent.getNoneIndent(), null)

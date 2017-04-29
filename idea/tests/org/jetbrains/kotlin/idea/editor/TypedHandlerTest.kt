@@ -603,6 +603,42 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         )
     }
 
+    fun testIndentOnFinishedVariableEndAfterEquals() {
+        doCharTypeTest(
+                '\n',
+                """
+                |fun test() {
+                |    val a =<caret>
+                |    foo()
+                |}
+                """,
+                """
+                |fun test() {
+                |    val a =
+                |            <caret>
+                |    foo()
+                |}
+                """
+        )
+    }
+
+    fun testIndentNotFinishedVariableEndAfterEquals() {
+        doCharTypeTest(
+                '\n',
+                """
+                |fun test() {
+                |    val a =<caret>
+                |}
+                """,
+                """
+                |fun test() {
+                |    val a =
+                |            <caret>
+                |}
+                """
+        )
+    }
+
 
     fun testMoveThroughGT() {
         LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
