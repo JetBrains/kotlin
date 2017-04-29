@@ -72,22 +72,6 @@
     <description>Replace 'if' expression with safe access expression</description>
   </problem>
   <problem>
-    <file>emptyThenBlock.kt</file>
-    <line>7</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/src/emptyThenBlock.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
-    <description>Replace 'if' expression with safe access expression</description>
-  </problem>
-  <problem>
-    <file>emptyElseBlock.kt</file>
-    <line>7</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/src/emptyElseBlock.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
-    <description>Replace 'if' expression with safe access expression</description>
-  </problem>
-  <problem>
     <file>doesNotinlineValueOutsideOfScope.kt</file>
     <line>8</line>
     <module>light_idea_test_case</module>
@@ -108,6 +92,22 @@
     <line>3</line>
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="temp:///src/src/willNotInlineClassProperty.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>isCondition.kt</file>
+    <line>1</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/isCondition.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>isNotCondition.kt</file>
+    <line>1</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/isNotCondition.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
     <description>Replace 'if' expression with safe access expression</description>
   </problem>
