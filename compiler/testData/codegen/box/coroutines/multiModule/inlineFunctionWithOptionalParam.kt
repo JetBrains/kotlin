@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 // MODULE: lib
 // FILE: lib.kt
 inline fun foo(x: String = "OK"): String {

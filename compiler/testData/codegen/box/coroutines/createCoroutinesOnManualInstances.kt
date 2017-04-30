@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JS
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
 
