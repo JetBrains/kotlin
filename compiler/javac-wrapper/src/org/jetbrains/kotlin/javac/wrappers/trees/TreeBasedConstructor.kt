@@ -18,9 +18,12 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
+import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.Name
 
 class TreeBasedConstructor<out T : JCTree.JCMethodDecl>(tree: T,
@@ -28,25 +31,25 @@ class TreeBasedConstructor<out T : JCTree.JCMethodDecl>(tree: T,
                                                         containingClass: JavaClass,
                                                         javac: JavacWrapper) : TreeBasedMember<T>(tree, treePath, containingClass, javac), JavaConstructor {
 
-    override val name
+    override val name: Name
         get() = Name.identifier(tree.name.toString())
 
-    override val isAbstract
+    override val isAbstract: Boolean
         get() = false
 
-    override val isStatic
+    override val isStatic: Boolean
         get() = false
 
-    override val isFinal
+    override val isFinal: Boolean
         get() = true
 
-    override val visibility
+    override val visibility: Visibility
         get() = tree.modifiers.visibility
 
-    override val typeParameters
+    override val typeParameters: List<JavaTypeParameter>
         get() = tree.typeParameters.map { TreeBasedTypeParameter(it, TreePath(treePath, it), javac) }
 
-    override val valueParameters
+    override val valueParameters: List<JavaValueParameter>
         get() = tree.parameters
                 .map { TreeBasedValueParameter(it, TreePath(treePath, it), javac) }
 

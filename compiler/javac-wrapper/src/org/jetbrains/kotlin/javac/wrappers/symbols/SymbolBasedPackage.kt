@@ -22,20 +22,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.PackageElement
 
-class SymbolBasedPackage(val element: PackageElement, val javac: JavacWrapper) : JavaPackage {
+class SymbolBasedPackage(element: PackageElement, javac: JavacWrapper) : SymbolBasedElement<PackageElement>(element, javac), JavaPackage {
 
-    override val fqName
+    override val fqName: FqName
         get() = FqName(element.qualifiedName.toString())
 
-    override val subPackages
+    override val subPackages: Collection<JavaPackage>
         get() = javac.findSubPackages(FqName(element.qualifiedName.toString()))
 
     override fun getClasses(nameFilter: (Name) -> Boolean) = javac.findClassesFromPackage(fqName)
             .filter { nameFilter(it.name) }
-
-    override fun hashCode() = element.hashCode()
-
-    override fun equals(other: Any?) = (other as? SymbolBasedPackage)?.element == element
 
     override fun toString() = element.qualifiedName.toString()
 

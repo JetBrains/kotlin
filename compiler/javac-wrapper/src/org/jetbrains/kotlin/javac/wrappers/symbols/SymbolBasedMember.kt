@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaMember
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -26,33 +29,31 @@ import javax.lang.model.element.TypeElement
 abstract class SymbolBasedMember<out T : Element>(element: T,
                                                   javac: JavacWrapper) : SymbolBasedElement<T>(element, javac), JavaMember {
 
-    override val containingClass
+    override val containingClass: JavaClass
         get() = SymbolBasedClass((element.enclosingElement as TypeElement), javac)
 
-    override val annotations
+    override val annotations: Collection<JavaAnnotation>
         get() = element.annotationMirrors
                 .map { SymbolBasedAnnotation(it, javac) }
 
-    override fun findAnnotation(fqName: FqName) = element.annotationMirrors
-            .find { it.toString() == "@${fqName.asString()}" }
-            ?.let { SymbolBasedAnnotation(it, javac) }
+    override fun findAnnotation(fqName: FqName) = element.findAnnotation(fqName, javac)
 
-    override val visibility
+    override val visibility: Visibility
         get() = element.getVisibility()
 
-    override val name
+    override val name: Name
         get() = Name.identifier(element.simpleName.toString())
 
-    override val isDeprecatedInJavaDoc
+    override val isDeprecatedInJavaDoc: Boolean
         get() = javac.isDeprecated(element)
 
-    override val isAbstract
+    override val isAbstract: Boolean
         get() = element.isAbstract
 
-    override val isStatic
+    override val isStatic: Boolean
         get() = element.isStatic
 
-    override val isFinal
+    override val isFinal: Boolean
         get() = element.isFinal
 
 }

@@ -202,7 +202,7 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     }
 
-    private fun TreeBasedClass<JCTree.JCClassDecl>.withInnerClasses(): List<TreeBasedClass<JCTree.JCClassDecl>> = listOf(this) + innerClasses.flatMap { it.withInnerClasses() }
+    private fun TreeBasedClass<JCTree.JCClassDecl>.withInnerClasses(): List<TreeBasedClass<JCTree.JCClassDecl>> = listOf(this) + innerClasses.values.flatMap { it.withInnerClasses() }
 
 }
 

@@ -122,8 +122,7 @@ class TreePathResolverCache(private val javac: JavacWrapper) {
     }
 
     private fun TreePath.tryToResolveTypeParameter(javac: JavacWrapper) =
-            filter { it is JCTree.JCClassDecl || it is JCTree.JCMethodDecl }
-            .flatMap {
+            flatMap {
                 when (it) {
                     is JCTree.JCClassDecl -> it.typarams
                     is JCTree.JCMethodDecl -> it.typarams

@@ -20,21 +20,25 @@ import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaElement
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
 class TreeBasedAnnotation(val annotation: JCTree.JCAnnotation,
                           val treePath: TreePath,
                           val javac: JavacWrapper) : JavaElement, JavaAnnotation {
 
-    override val arguments
+    override val arguments: Collection<JavaAnnotationArgument>
         get() = annotation.arguments
-                .map { TreeBasedAnnotationArgument(it, FqName(it.toString()), javac) }
+                .map { TreeBasedAnnotationArgument(Name.identifier(it.toString())) }
 
-    override val classId
+    override val classId: ClassId?
         get() = resolve()?.computeClassId()
 
     override fun resolve() = javac.resolve(TreePath.getPath(treePath.compilationUnit, annotation.annotationType)) as? JavaClass
 
 }
+
+class TreeBasedAnnotationArgument(override val name: Name) : JavaAnnotationArgument, JavaElement

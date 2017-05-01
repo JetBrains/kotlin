@@ -17,17 +17,14 @@
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
-import org.jetbrains.kotlin.load.java.structure.JavaArrayAnnotationArgument
-import org.jetbrains.kotlin.load.java.structure.JavaElement
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror
 
-open class SymbolBasedAnnotationArgument(private val fqName: FqName,
+sealed class SymbolBasedAnnotationArgument(override val name: Name,
                                          val javac: JavacWrapper) : JavaAnnotationArgument, JavaElement {
 
     companion object {
@@ -46,7 +43,38 @@ open class SymbolBasedAnnotationArgument(private val fqName: FqName,
 
     }
 
-    override val name
-        get() = Name.identifier(fqName.shortName().asString())
+}
+
+class SymbolBasedAnnotationAsAnnotationArgument(val mirror: AnnotationMirror,
+                                                name: Name,
+                                                javac: JavacWrapper) : SymbolBasedAnnotationArgument(name, javac), JavaAnnotationAsAnnotationArgument {
+
+    override fun getAnnotation() = SymbolBasedAnnotation(mirror, javac)
 
 }
+
+class SymbolBasedReferenceAnnotationArgument(val element: VariableElement,
+                                             javac: JavacWrapper) : SymbolBasedAnnotationArgument(Name.identifier(element.simpleName.toString()), javac),
+        JavaEnumValueAnnotationArgument {
+
+    override fun resolve() = SymbolBasedField(element, javac)
+
+}
+
+class SymbolBasedClassObjectAnnotationArgument(val type: TypeMirror,
+                                               name : Name,
+                                               javac: JavacWrapper) : SymbolBasedAnnotationArgument(name, javac), JavaClassObjectAnnotationArgument {
+
+    override fun getReferencedType() = SymbolBasedType.create(type, javac)
+
+}
+
+class SymbolBasedArrayAnnotationArgument(val args : List<JavaAnnotationArgument>,
+                                         name : Name,
+                                         javac: JavacWrapper) : SymbolBasedAnnotationArgument(name, javac), JavaArrayAnnotationArgument {
+    override fun getElements() = args
+}
+
+class SymbolBasedLiteralAnnotationArgument(override val value : Any,
+                                           name : Name,
+                                           javac: JavacWrapper) : SymbolBasedAnnotationArgument(name, javac), JavaLiteralAnnotationArgument

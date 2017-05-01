@@ -17,18 +17,19 @@
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.TypeVariable
 
 class SymbolBasedTypeParameter<out T : TypeParameterElement>(element: T,
                                                              javac: JavacWrapper) : SymbolBasedClassifier<T>(element, javac), JavaTypeParameter {
 
-    override val name
-        get() = SpecialNames.safeIdentifier(element.simpleName.toString())
+    override val name: Name
+        get() = Name.identifier(element.simpleName.toString())
 
-    override val upperBounds
+    override val upperBounds: Collection<JavaClassifierType>
         get() = listOf(SymbolBasedClassifierType((element.asType() as TypeVariable).upperBound, javac))
 
 }

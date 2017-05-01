@@ -18,26 +18,28 @@ package org.jetbrains.kotlin.javac.wrappers.symbols
 
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaField
+import org.jetbrains.kotlin.load.java.structure.JavaType
 import javax.lang.model.element.ElementKind
+import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
+import javax.lang.model.type.DeclaredType
 
 class SymbolBasedField<out T : VariableElement>(element: T,
                                                 javac: JavacWrapper) : SymbolBasedMember<T>(element, javac), JavaField {
 
-    override val isEnumEntry
+    override val isEnumEntry: Boolean
         get() = element.kind == ElementKind.ENUM_CONSTANT
 
-    override val type
+    override val type: JavaType
         get() = SymbolBasedType.create(element.asType(), javac)
 
     override val initializerValue: Any?
         get() = element.constantValue
 
-    override val hasConstantNotNullInitializer
+    override val hasConstantNotNullInitializer: Boolean
         get() = element.constantValue?.let {
-            val typeMirror = type.typeMirror
-
-            (typeMirror.kind.isPrimitive || typeMirror.toString() == "java.lang.String")
+            element.asType().kind.isPrimitive ||
+            ((element.asType() as? DeclaredType)?.asElement() as? TypeElement)?.qualifiedName?.toString() == "java.lang.String"
         } ?: false
 
 }

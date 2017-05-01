@@ -21,7 +21,9 @@ import java.util.regex.Pattern
 
 object JavacOptionsMapper {
 
-    fun map(options: Options, arguments: List<String>) = arguments.forEach { options.putOption(it) }
+    fun map(options: Options, arguments: List<String>) {
+        arguments.forEach { options.putOption(it) }
+    }
 
     private val optionPattern by lazy { Pattern.compile("\\s+") }
 
@@ -32,7 +34,6 @@ object JavacOptionsMapper {
                 when(arg.size) {
                     1 -> put(arg[0], arg[0])
                     2 -> put(arg[0], arg[1])
-                    else -> null
                 }
             }
 

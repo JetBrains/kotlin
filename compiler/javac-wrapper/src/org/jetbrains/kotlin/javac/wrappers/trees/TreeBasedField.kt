@@ -20,9 +20,11 @@ import com.sun.source.util.TreePath
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaField
+import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.name.Name
 
 class TreeBasedField<out T : JCTree.JCVariableDecl>(tree: T,
@@ -30,40 +32,40 @@ class TreeBasedField<out T : JCTree.JCVariableDecl>(tree: T,
                                                     containingClass: JavaClass,
                                                     javac: JavacWrapper) : TreeBasedMember<T>(tree, treePath, containingClass, javac), JavaField {
 
-    override val name
+    override val name: Name
         get() = Name.identifier(tree.name.toString())
 
-    override val isAbstract
+    override val isAbstract: Boolean
         get() = tree.modifiers.isAbstract
 
-    override val isStatic
+    override val isStatic: Boolean
         get() = containingClass.isInterface || tree.modifiers.isStatic
 
-    override val isFinal
+    override val isFinal: Boolean
         get() = containingClass.isInterface || tree.modifiers.isFinal
 
-    override val visibility
+    override val visibility: Visibility
         get() = if (containingClass.isInterface) Visibilities.PUBLIC else tree.modifiers.visibility
 
-    override val isEnumEntry
+    override val isEnumEntry: Boolean
         get() = tree.modifiers.flags and Flags.ENUM.toLong() != 0L
 
-    override val type
+    override val type: JavaType
         get() = TreeBasedType.create(tree.getType(), treePath, javac)
 
-    override val initializerValue
+    override val initializerValue: Any?
         get() = tree.init?.let {
             if (hasConstantNotNullInitializer && it is JCTree.JCLiteral) {
                 it.value
             } else null
         }
 
-    override val hasConstantNotNullInitializer
+    override val hasConstantNotNullInitializer: Boolean
         get() = tree.init?.let {
             val type = this.type
 
             isFinal && ((type is TreeBasedPrimitiveType<*>) ||
-                        (type is TreeBasedClassifierTypeWithoutTypeArgument<*> &&
+                        (type is TreeBasedNonGenericClassifierType<*> &&
                          type.classifierQualifiedName == "java.lang.String"))
         } ?: false
 

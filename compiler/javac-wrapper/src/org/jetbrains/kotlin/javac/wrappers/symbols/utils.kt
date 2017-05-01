@@ -17,23 +17,26 @@
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import javax.lang.model.AnnotatedConstruct
 import javax.lang.model.element.*
 
-val Element.isAbstract
+internal val Element.isAbstract: Boolean
     get() = modifiers.contains(Modifier.ABSTRACT)
 
-val Element.isStatic
+internal val Element.isStatic: Boolean
     get() = modifiers.contains(Modifier.STATIC)
 
-val Element.isFinal
+internal val Element.isFinal: Boolean
     get() = modifiers.contains(Modifier.FINAL)
 
-fun Element.getVisibility() = when {
+internal fun Element.getVisibility(): Visibility = when {
     Modifier.PUBLIC in modifiers -> Visibilities.PUBLIC
     Modifier.PRIVATE in modifiers -> Visibilities.PRIVATE
     Modifier.PROTECTED in modifiers -> {
@@ -47,7 +50,7 @@ fun Element.getVisibility() = when {
     else -> JavaVisibilities.PACKAGE_VISIBILITY
 }
 
-fun TypeElement.computeClassId(): ClassId? {
+internal fun TypeElement.computeClassId(): ClassId? {
     if (enclosingElement.kind != ElementKind.PACKAGE) {
         val parentClassId = (enclosingElement as TypeElement).computeClassId() ?: return null
         return parentClassId.createNestedClassId(Name.identifier(simpleName.toString()))
@@ -56,6 +59,12 @@ fun TypeElement.computeClassId(): ClassId? {
     return ClassId.topLevel(FqName(qualifiedName.toString()))
 }
 
-fun ExecutableElement.valueParameters(javac: JavacWrapper) = parameters.mapIndexed { index, it ->
-    SymbolBasedValueParameter(it, it.simpleName.toString(), (index == parameters.size - 1) && isVarArgs, javac)
-}
+internal fun ExecutableElement.valueParameters(javac: JavacWrapper): List<JavaValueParameter> = parameters
+        .mapIndexed { index, it ->
+            SymbolBasedValueParameter(it, it.simpleName.toString(), (index == parameters.lastIndex) && isVarArgs, javac)
+        }
+
+internal fun AnnotatedConstruct.findAnnotation(fqName: FqName,
+                                               javac: JavacWrapper) = annotationMirrors
+        .find { (it.annotationType.asElement() as TypeElement).qualifiedName.toString() == fqName.asString() }
+        ?.let { SymbolBasedAnnotation(it, javac) }

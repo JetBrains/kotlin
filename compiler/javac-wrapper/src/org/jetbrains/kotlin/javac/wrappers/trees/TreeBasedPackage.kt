@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.name.Name
 
 class TreeBasedPackage(val name: String, val javac: JavacWrapper) : JavaPackage {
 
-    override val fqName
+    override val fqName: FqName
         get() = FqName(name)
 
-    override val subPackages
+    override val subPackages: Collection<JavaPackage>
         get() = javac.findSubPackages(fqName)
 
     override fun getClasses(nameFilter: (Name) -> Boolean) = javac.findClassesFromPackage(fqName)

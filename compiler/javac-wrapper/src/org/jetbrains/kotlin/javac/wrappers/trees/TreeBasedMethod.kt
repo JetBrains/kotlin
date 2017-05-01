@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.JavaMethod
+import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
 
 class TreeBasedMethod<out T : JCTree.JCMethodDecl>(tree: T,
@@ -29,31 +29,31 @@ class TreeBasedMethod<out T : JCTree.JCMethodDecl>(tree: T,
                                                    containingClass: JavaClass,
                                                    javac: JavacWrapper) : TreeBasedMember<T>(tree, treePath, containingClass, javac), JavaMethod {
 
-    override val name
+    override val name: Name
         get() = Name.identifier(tree.name.toString())
 
-    override val isAbstract
+    override val isAbstract: Boolean
         get() = if (containingClass.isInterface && !tree.modifiers.hasDefaultModifier) true else tree.modifiers.isAbstract
 
-    override val isStatic
+    override val isStatic: Boolean
         get() = tree.modifiers.isStatic
 
-    override val isFinal
+    override val isFinal: Boolean
         get() = tree.modifiers.isFinal
 
-    override val visibility
+    override val visibility: Visibility
         get() = if (containingClass.isInterface) Visibilities.PUBLIC else tree.modifiers.visibility
 
-    override val typeParameters
+    override val typeParameters: List<JavaTypeParameter>
         get() = tree.typeParameters.map { TreeBasedTypeParameter(it, TreePath(treePath, it), javac) }
 
-    override val valueParameters
+    override val valueParameters: List<JavaValueParameter>
         get() = tree.parameters
                 .map { TreeBasedValueParameter(it, TreePath(treePath, it), javac) }
 
-    override val returnType
+    override val returnType: JavaType
         get() = TreeBasedType.create(tree.returnType, treePath, javac)
 
-    override val hasAnnotationParameterDefaultValue
+    override val hasAnnotationParameterDefaultValue: Boolean
         get() = tree.defaultValue != null
 }

@@ -23,16 +23,16 @@ import javax.lang.model.element.ExecutableElement
 class SymbolBasedMethod<out T : ExecutableElement>(element: T,
                                                    javac: JavacWrapper) : SymbolBasedMember<T>(element, javac), JavaMethod {
 
-    override val typeParameters
+    override val typeParameters: List<JavaTypeParameter>
         get() = element.typeParameters.map { SymbolBasedTypeParameter(it, javac) }
 
-    override val valueParameters
+    override val valueParameters: List<JavaValueParameter>
         get() = element.valueParameters(javac)
 
     override val returnType: JavaType
         get() = SymbolBasedType.create(element.returnType, javac)
 
-    override val hasAnnotationParameterDefaultValue
+    override val hasAnnotationParameterDefaultValue: Boolean
         get() = element.defaultValue != null
 
 }

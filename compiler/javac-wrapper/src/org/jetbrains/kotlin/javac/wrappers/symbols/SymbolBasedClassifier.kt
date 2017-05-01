@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier
 import org.jetbrains.kotlin.name.FqName
@@ -25,15 +26,13 @@ import javax.lang.model.element.Element
 abstract class SymbolBasedClassifier<out T : Element>(element: T,
                                                       javac: JavacWrapper) : SymbolBasedElement<T>(element, javac), JavaClassifier, JavaAnnotationOwner {
 
-    override val annotations
+    override val annotations: Collection<JavaAnnotation>
         get() = element.annotationMirrors
                 .map { SymbolBasedAnnotation(it, javac) }
 
-    override fun findAnnotation(fqName: FqName) = element.annotationMirrors
-            .find { it.toString() == "@${fqName.asString()}" }
-            ?.let { SymbolBasedAnnotation(it, javac) }
+    override fun findAnnotation(fqName: FqName) = element.findAnnotation(fqName, javac)
 
-    override val isDeprecatedInJavaDoc
+    override val isDeprecatedInJavaDoc: Boolean
         get() = javac.isDeprecated(element)
 
 }

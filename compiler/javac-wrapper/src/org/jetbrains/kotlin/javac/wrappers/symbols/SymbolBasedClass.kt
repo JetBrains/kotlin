@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
 import com.intellij.psi.CommonClassNames
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
@@ -29,31 +29,31 @@ import javax.lang.model.element.VariableElement
 import javax.lang.model.type.NoType
 import javax.lang.model.type.TypeKind
 
-class SymbolBasedClass<T : TypeElement>(element: T,
-                                        javac: JavacWrapper) : SymbolBasedClassifier<TypeElement>(element, javac), JavaClass {
+class SymbolBasedClass(element: TypeElement,
+                       javac: JavacWrapper) : SymbolBasedClassifier<TypeElement>(element, javac), JavaClass {
 
-    override val name
-        get() = SpecialNames.safeIdentifier(element.simpleName.toString())
+    override val name: Name
+        get() = Name.identifier(element.simpleName.toString())
 
-    override val isAbstract
+    override val isAbstract: Boolean
         get() = element.isAbstract
 
-    override val isStatic
+    override val isStatic: Boolean
         get() = element.isStatic
 
-    override val isFinal
+    override val isFinal: Boolean
         get() = element.isFinal
 
-    override val visibility
+    override val visibility: Visibility
         get() = element.getVisibility()
 
-    override val typeParameters
+    override val typeParameters: List<JavaTypeParameter>
         get() = element.typeParameters.map { SymbolBasedTypeParameter(it, javac) }
 
-    override val fqName
+    override val fqName: FqName
         get() = FqName(element.qualifiedName.toString())
 
-    override val supertypes
+    override val supertypes: Collection<JavaClassifierType>
         get() = element.interfaces.toMutableList().apply {
             if (element.superclass !is NoType) {
                 add(element.superclass)
@@ -64,45 +64,47 @@ class SymbolBasedClass<T : TypeElement>(element: T,
             }
         }.map { SymbolBasedClassifierType(it, javac) }
 
-    val innerClasses
+    val innerClasses: Map<Name, JavaClass>
         get() = element.enclosedElements
                 .filterIsInstance(TypeElement::class.java)
                 .map { SymbolBasedClass(it, javac) }
+                .associateBy(JavaClass::name)
 
-    override val outerClass
+    override val outerClass: JavaClass?
         get() = element.enclosingElement?.let {
             if (it.asType().kind != TypeKind.DECLARED) null else SymbolBasedClass(it as TypeElement, javac)
         }
 
-    override val isInterface
+    override val isInterface: Boolean
         get() = element.kind == ElementKind.INTERFACE
 
-    override val isAnnotationType
+    override val isAnnotationType: Boolean
         get() = element.kind == ElementKind.ANNOTATION_TYPE
 
-    override val isEnum
+    override val isEnum: Boolean
         get() = element.kind == ElementKind.ENUM
 
-    override val lightClassOriginKind = null
+    override val lightClassOriginKind: LightClassOriginKind?
+        get() = null
 
-    override val methods
+    override val methods: Collection<JavaMethod>
         get() = element.enclosedElements
                 .filter { it.kind == ElementKind.METHOD }
                 .map { SymbolBasedMethod(it as ExecutableElement, javac) }
 
-    override val fields
+    override val fields: Collection<JavaField>
         get() = element.enclosedElements
                 .filter { it.kind.isField && Name.isValidIdentifier(it.simpleName.toString()) }
                 .map { SymbolBasedField(it as VariableElement, javac) }
 
-    override val constructors
+    override val constructors: Collection<JavaConstructor>
         get() = element.enclosedElements
                 .filter { it.kind == ElementKind.CONSTRUCTOR }
                 .map { SymbolBasedConstructor(it as ExecutableElement, javac) }
 
-    override val innerClassNames
-        get() = innerClasses.map(SymbolBasedClass<TypeElement>::name)
+    override val innerClassNames: Collection<Name>
+        get() = innerClasses.keys
 
-    override fun findInnerClass(name: Name) = innerClasses.find { it.name == name }
+    override fun findInnerClass(name: Name) = innerClasses[name]
 
 }
