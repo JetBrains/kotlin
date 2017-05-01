@@ -231,7 +231,7 @@ fun filtering(): List<GenericFunction> {
                 for (index in size - n .. size - 1)
                     list.add(this[index])
             } else {
-                for (item in listIterator(n))
+                for (item in listIterator(size - n))
                     list.add(item)
             }
             return list
