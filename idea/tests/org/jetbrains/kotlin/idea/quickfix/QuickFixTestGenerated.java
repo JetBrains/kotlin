@@ -6613,6 +6613,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("addLateinit.kt")
+        public void testAddLateinit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/addLateinit.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInModifiers() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
@@ -6668,6 +6674,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("noAbstractForObject.kt")
         public void testNoAbstractForObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/noAbstractForObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noLateinitOnNullable.kt")
+        public void testNoLateinitOnNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/noLateinitOnNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noLateinitOnPrimitive.kt")
+        public void testNoLateinitOnPrimitive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/noLateinitOnPrimitive.kt");
             doTest(fileName);
         }
 

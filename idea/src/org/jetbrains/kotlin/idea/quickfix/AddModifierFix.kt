@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,11 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNameIdentifierOwner
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
@@ -34,6 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.TypeUtils
 
 open class AddModifierFix(
         element: KtModifierListOwner,
@@ -114,6 +118,22 @@ open class AddModifierFix(
             if (!declaration.canRefactor()) return null
             if (declaration.isEnum()) return null
             return AddModifierFix(declaration, KtTokens.OPEN_KEYWORD)
+        }
+    }
+
+    object AddLateinitFactory : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val property = Errors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT.cast(diagnostic).psiElement
+            if (!property.isVar) return null
+
+            val context = property.analyze()
+            val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] ?: return null
+            val type = (descriptor as? PropertyDescriptor)?.type ?: return null
+
+            if (TypeUtils.isNullableType(type)) return null
+            if (KotlinBuiltIns.isPrimitiveType(type)) return null
+
+            return AddModifierFix(property, KtTokens.LATEINIT_KEYWORD)
         }
     }
 }
