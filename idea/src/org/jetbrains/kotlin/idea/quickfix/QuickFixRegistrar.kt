@@ -487,5 +487,7 @@ class QuickFixRegistrar : QuickFixContributor {
         INAPPLICABLE_JVM_FIELD.registerFactory(ReplaceJvmFieldWithConstFix)
 
         CONFLICTING_OVERLOADS.registerFactory(ChangeSuspendInHierarchyFix)
+
+        MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(AddModifierFix.AddLateinitFactory)
     }
 }
