@@ -579,6 +579,10 @@ class CollectionTest {
         assertEquals(coll, coll.takeLast(coll.size + 1))
 
         assertFails { coll.takeLast(-1) }
+
+        val collWithoutRandomAccess = object : List<String> by coll {}
+        assertEquals(listOf("abc"), collWithoutRandomAccess.takeLast(1))
+        assertEquals(listOf("bar", "abc"), collWithoutRandomAccess.takeLast(2))
     }
 
     @Test fun takeLastWhile() {
