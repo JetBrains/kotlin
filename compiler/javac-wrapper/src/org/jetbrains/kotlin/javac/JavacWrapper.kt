@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.javac
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFileSystem
-import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.psi.CommonClassNames
 import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
@@ -36,13 +34,14 @@ import com.sun.tools.javac.model.JavacElements
 import com.sun.tools.javac.model.JavacTypes
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.Context
+import com.sun.tools.javac.util.List as JavacList
 import com.sun.tools.javac.util.Names
 import com.sun.tools.javac.util.Options
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import com.sun.tools.javac.util.List as JavacList
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedClass
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedPackage
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -64,12 +63,8 @@ import javax.tools.StandardLocation
 
 class JavacWrapper(javaFiles: Collection<File>,
                    kotlinFiles: Collection<KtFile>,
-                   classPathRoots: List<File>,
-                   private val configuration: CompilerConfiguration,
-                   private val messageCollector: MessageCollector?,
                    arguments: Array<String>?,
-                   private val localFileSystem: CoreLocalFileSystem,
-                   private val jarFileSystem: VirtualFileSystem) : Closeable {
+                   private val environment: KotlinCoreEnvironment) : Closeable {
 
     companion object {
         fun getInstance(project: Project): JavacWrapper = ServiceManager.getService(project, JavacWrapper::class.java)
@@ -77,6 +72,7 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     val JAVA_LANG_OBJECT by lazy { findClassInSymbols(CommonClassNames.JAVA_LANG_OBJECT) }
 
+    private val messageCollector = environment.configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]
     private val context = Context()
 
     init {
@@ -92,7 +88,7 @@ class JavacWrapper(javaFiles: Collection<File>,
     init {
         // use rt.jar instead of lib/ct.sym
         fileManager.setSymbolFileEnabled(false)
-        fileManager.setLocation(StandardLocation.CLASS_PATH, classPathRoots)
+        fileManager.setLocation(StandardLocation.CLASS_PATH, environment.configuration.jvmClasspathRoots)
     }
 
     private val symbols = Symtab.instance(context)
@@ -183,9 +179,9 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     fun toVirtualFile(javaFileObject: JavaFileObject) = javaFileObject.toUri().let {
         if (it.scheme == "jar") {
-            jarFileSystem.findFileByPath(it.schemeSpecificPart.substring("file:".length))
+            environment.findJarFile(it.schemeSpecificPart.substring("file:".length))
         } else {
-            localFileSystem.findFileByPath(it.schemeSpecificPart)
+            environment.findLocalFile(it.schemeSpecificPart)
         }
     }
 
@@ -196,7 +192,7 @@ class JavacWrapper(javaFiles: Collection<File>,
     private fun findPackageInSymbols(fqName: String) = elements.getPackageElement(fqName)?.let { SymbolBasedPackage(it, this) }
 
     private fun JavacFileManager.setClassPathForCompilation(outDir: File?) = apply {
-        (outDir ?: configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY])?.let {
+        (outDir ?: environment.configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY])?.let {
             it.mkdirs()
             fileManager.setLocation(StandardLocation.CLASS_OUTPUT, listOf(it))
         }

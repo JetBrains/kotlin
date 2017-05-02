@@ -159,7 +159,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 val environment = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
                                   ?: return COMPILATION_ERROR
 
-                registerJavacIfNeeded(environment, arguments, messageCollector)
+                registerJavacIfNeeded(environment, arguments)
 
                 KotlinToJVMBytecodeCompiler.compileModules(environment, directory)
             }
@@ -186,7 +186,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 val environment = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
                                   ?: return COMPILATION_ERROR
 
-                registerJavacIfNeeded(environment, arguments, messageCollector)
+                registerJavacIfNeeded(environment, arguments)
 
                 if (environment.getSourceFiles().isEmpty()) {
                     if (arguments.version) {
@@ -221,12 +221,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     }
 
     private fun registerJavacIfNeeded(environment: KotlinCoreEnvironment,
-                                      arguments: K2JVMCompilerArguments,
-                                      messageCollector: MessageCollector) {
+                                      arguments: K2JVMCompilerArguments) {
         if (arguments.useJavac) {
             environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
-            environment.registerJavac(messageCollector = messageCollector,
-                                      arguments = arguments.javacArguments)
+            environment.registerJavac(arguments = arguments.javacArguments)
         }
     }
 

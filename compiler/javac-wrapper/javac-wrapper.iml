@@ -24,5 +24,6 @@
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="cli-common" />
+    <orderEntry type="module" module-name="cli" />
   </component>
 </module>

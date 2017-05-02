@@ -237,16 +237,8 @@ class KotlinCoreEnvironment private constructor(
 
     fun registerJavac(javaFiles: List<File> = allJavaFiles,
                       kotlinFiles: List<KtFile> = sourceFiles,
-                      messageCollector: MessageCollector? = null,
                       arguments: Array<String>? = null) {
-        projectEnvironment.project.registerService(JavacWrapper::class.java, JavacWrapper(javaFiles,
-                                                                                          kotlinFiles,
-                                                                                          configuration.jvmClasspathRoots,
-                                                                                          configuration,
-                                                                                          messageCollector,
-                                                                                          arguments,
-                                                                                          applicationEnvironment.localFileSystem,
-                                                                                          applicationEnvironment.jarFileSystem))
+        projectEnvironment.project.registerService(JavacWrapper::class.java, JavacWrapper(javaFiles, kotlinFiles, arguments, this))
     }
 
     private val applicationEnvironment: CoreApplicationEnvironment
@@ -356,6 +348,10 @@ class KotlinCoreEnvironment private constructor(
             else -> throw IllegalStateException("Unexpected root: $root")
         }
     }
+
+    fun findLocalFile(path: String) = applicationEnvironment.localFileSystem.findFileByPath(path)
+
+    fun findJarFile(path: String) = applicationEnvironment.jarFileSystem.findFileByPath(path)
 
     private fun findLocalDirectory(root: JvmContentRoot): VirtualFile? {
         val path = root.file
