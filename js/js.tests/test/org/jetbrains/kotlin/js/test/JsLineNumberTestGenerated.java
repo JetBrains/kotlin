@@ -48,6 +48,18 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("multipleReferences.kt")
+    public void testMultipleReferences() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/multipleReferences.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("optionalArgs.kt")
+    public void testOptionalArgs() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/optionalArgs.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/simple.kt");
