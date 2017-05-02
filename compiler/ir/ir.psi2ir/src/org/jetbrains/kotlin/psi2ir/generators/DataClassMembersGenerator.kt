@@ -41,9 +41,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.lang.AssertionError
 
-class DataClassMembersGenerator(
-        declarationGenerator: DeclarationGenerator
-) : DeclarationGeneratorExtension(declarationGenerator), Generator{
+class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
     fun generate(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
         MyDataClassMethodGenerator(ktClassOrObject, irClass).generate()
     }
