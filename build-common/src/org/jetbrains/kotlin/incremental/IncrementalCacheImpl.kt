@@ -106,9 +106,6 @@ open class IncrementalCacheImpl<Target>(
         result
     }
 
-    override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
-    }
-
     protected open fun debugLog(message: String) {}
 
     fun addDependentCache(cache: IncrementalCacheImpl<Target>) {
@@ -747,7 +744,6 @@ open class IncrementalCacheImpl<Target>(
                         emptySequence<ChangeInfo>()
                     }
 
-            processChangedInlineFunctions(className, changed)
             return CompilationResult(changes = changes)
         }
 
@@ -757,12 +753,6 @@ open class IncrementalCacheImpl<Target>(
 
         override fun dumpValue(value: Map<String, Long>): String =
                 value.dumpMap { java.lang.Long.toHexString(it) }
-    }
-
-    protected open fun processChangedInlineFunctions(
-            className: JvmClassName,
-            changedFunctions: Collection<String>
-    ) {
     }
 }
 

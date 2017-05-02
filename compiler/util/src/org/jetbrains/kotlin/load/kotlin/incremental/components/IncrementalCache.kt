@@ -31,8 +31,6 @@ interface IncrementalCache {
 
     fun getModuleMappingData(): ByteArray?
 
-    fun registerInline(fromPath: String, jvmSignature: String, toPath: String)
-
     fun getClassFilePath(internalClassName: String): String
 
     fun close()
