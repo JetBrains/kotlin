@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 import java.io.File
+import java.io.IOException
 
 abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
     @Throws(Exception::class)
@@ -115,7 +116,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     private fun applyAction(contents: String, testFullPath: String) {
-        val fileName = testFullPath.substringAfterLast("/", "")
+        val fileName = testFullPath.substringAfterLast(File.separatorChar, "")
         val actionHint = ActionHint.parse(myFixture.file, contents.replace("\${file}", fileName, ignoreCase = true))
         val intention = findActionWithText(actionHint.expectedText)
         if (actionHint.shouldPresent()) {
@@ -226,5 +227,18 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun checkForUnexpectedErrors() {
         DirectiveBasedActionUtils.checkForUnexpectedErrors(myFixture.file as KtFile)
+    }
+
+    override fun getTestDataPath(): String {
+        // Ensure full path is returned. Otherwise FileComparisonFailureException does not provide link to file diff
+        val testDataPath = super.getTestDataPath()
+        try {
+            return File(testDataPath).getCanonicalPath()
+        }
+        catch (e: IOException) {
+            e.printStackTrace()
+            return testDataPath
+        }
+
     }
 }
