@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 
 abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
-    private fun <T : IrElement> T.transformChildren() = apply { transformChildrenVoid(this@IrElementTransformerVoid) }
+    protected fun <T : IrElement> T.transformChildren() = apply { transformChildrenVoid() }
 
     open fun visitElement(element: IrElement): IrElement = element.transformChildren()
     override final fun visitElement(element: IrElement, data: Nothing?): IrElement = visitElement(element)
@@ -154,7 +154,7 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitFunctionAccess(expression: IrFunctionAccessExpression) = visitMemberAccess(expression)
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: Nothing?) = visitFunctionAccess(expression)
     
-    open fun visitCall(expression: IrCall) = visitMemberAccess(expression)
+    open fun visitCall(expression: IrCall) = visitFunctionAccess(expression)
     override final fun visitCall(expression: IrCall, data: Nothing?) = visitCall(expression)
 
     open fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitMemberAccess(expression)
@@ -209,7 +209,7 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitTry(aTry: IrTry) = visitExpression(aTry)
     override final fun visitTry(aTry: IrTry, data: Nothing?) = visitTry(aTry)
 
-    open fun visitCatch(aCatch: IrCatch): IrCatch = aCatch.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
+    open fun visitCatch(aCatch: IrCatch): IrCatch = aCatch.apply { transformChildrenVoid() }
     override final fun visitCatch(aCatch: IrCatch, data: Nothing?): IrCatch = visitCatch(aCatch)
 
     open fun visitBreakContinue(jump: IrBreakContinue) = visitExpression(jump)
@@ -235,6 +235,16 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
 
     open fun visitErrorCallExpression(expression: IrErrorCallExpression) = visitErrorExpression(expression)
     override final fun visitErrorCallExpression(expression: IrErrorCallExpression, data: Nothing?) = visitErrorCallExpression(expression)
+
+    protected inline fun <T : IrElement> T.transformPostfix(body: T.() -> Unit): T {
+        transformChildrenVoid()
+        this.body()
+        return this
+    }
+
+    protected fun IrElement.transformChildrenVoid() {
+        transformChildrenVoid(this@IrElementTransformerVoid)
+    }
 }
 
 fun IrElement.transformChildrenVoid(transformer: IrElementTransformerVoid) {

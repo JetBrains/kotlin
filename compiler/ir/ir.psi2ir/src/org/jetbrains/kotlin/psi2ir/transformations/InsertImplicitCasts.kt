@@ -39,17 +39,6 @@ fun insertImplicitCasts(builtIns: KotlinBuiltIns, element: IrElement) {
 }
 
 class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoid() {
-    private inline fun <T : IrElement> T.transformPostfix(body: T.() -> Unit): T {
-        transformChildrenVoid(this@InsertImplicitCasts)
-        this.body()
-        return this
-    }
-
-    override fun visitElement(element: IrElement): IrElement {
-        element.transformChildrenVoid(this)
-        return element
-    }
-
     override fun visitCallableReference(expression: IrCallableReference): IrExpression =
         expression.transformPostfix {
             transformReceiverArguments()
