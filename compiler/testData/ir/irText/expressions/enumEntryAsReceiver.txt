@@ -89,6 +89,7 @@ FILE /enumEntryAsReceiver.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<X>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): X
+      VALUE_PARAMETER value-parameter value: kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   FUN public fun box(): kotlin.String
     BLOCK_BODY

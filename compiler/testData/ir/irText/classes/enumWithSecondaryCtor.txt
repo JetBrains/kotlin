@@ -47,6 +47,7 @@ FILE /enumWithSecondaryCtor.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Test0>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test0
+      VALUE_PARAMETER value-parameter value: kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS Test1
     $this: VALUE_PARAMETER this@Test1: Test1
@@ -99,6 +100,7 @@ FILE /enumWithSecondaryCtor.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Test1>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test1
+      VALUE_PARAMETER value-parameter value: kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS Test2
     $this: VALUE_PARAMETER this@Test2: Test2
@@ -225,5 +227,6 @@ FILE /enumWithSecondaryCtor.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Test2>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test2
+      VALUE_PARAMETER value-parameter value: kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
 

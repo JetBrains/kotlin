@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrSyntheticBodyImpl
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
 
-class EnumClassMembersGenerator(override val context: GeneratorContext) : Generator {
+class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
     fun generateSpecialMembers(irClass: IrClass) {
         generateValues(irClass)
         generateValueOf(irClass)
@@ -42,8 +42,9 @@ class EnumClassMembersGenerator(override val context: GeneratorContext) : Genera
                         irClass.startOffset, irClass.endOffset,
                         IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
                         valuesFunction
-                ).apply {
-                    body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUES)
+                ).also { irFunction ->
+                    FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irFunction, null, null)
+                    irFunction.body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUES)
                 }
         )
     }
@@ -60,8 +61,9 @@ class EnumClassMembersGenerator(override val context: GeneratorContext) : Genera
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
                         valueOfFunction
-                ).apply {
-                    body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUEOF)
+                ).also { irFunction ->
+                    FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irFunction, null, null)
+                    irFunction.body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUEOF)
                 }
         )
     }

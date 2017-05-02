@@ -235,7 +235,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
     }
 
     private fun generateAdditionalMembersForEnumClass(irClass: IrClass) {
-        EnumClassMembersGenerator(context).generateSpecialMembers(irClass)
+        EnumClassMembersGenerator(declarationGenerator).generateSpecialMembers(irClass)
     }
 
     private fun generatePrimaryConstructor(irClass: IrClass, ktClassOrObject: KtClassOrObject): IrConstructor? {

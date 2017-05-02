@@ -45,6 +45,7 @@ FILE /objectAsCallable.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<En>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): En
+      VALUE_PARAMETER value-parameter value: kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   FUN public operator fun A.invoke(i: kotlin.Int): kotlin.Int
     $receiver: VALUE_PARAMETER this@invoke: A
@@ -78,4 +79,3 @@ FILE /objectAsCallable.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): Int'
           GET_FIELD 'test2: Int' type=kotlin.Int origin=null
-

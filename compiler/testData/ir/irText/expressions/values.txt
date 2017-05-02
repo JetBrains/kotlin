@@ -32,6 +32,7 @@ FILE /values.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Enum>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Enum
+      VALUE_PARAMETER value-parameter value: kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS OBJECT A
     $this: VALUE_PARAMETER this@A: A

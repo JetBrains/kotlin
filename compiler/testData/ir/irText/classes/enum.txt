@@ -34,6 +34,7 @@ FILE /enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnum1>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum1
+      VALUE_PARAMETER value-parameter value: kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum2
     $this: VALUE_PARAMETER this@TestEnum2: TestEnum2
@@ -86,6 +87,7 @@ FILE /enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnum2>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum2
+      VALUE_PARAMETER value-parameter value: kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum3
     $this: VALUE_PARAMETER this@TestEnum3: TestEnum3
@@ -155,6 +157,7 @@ FILE /enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnum3>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum3
+      VALUE_PARAMETER value-parameter value: kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum4
     $this: VALUE_PARAMETER this@TestEnum4: TestEnum4
@@ -292,6 +295,7 @@ FILE /enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnum4>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum4
+      VALUE_PARAMETER value-parameter value: kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum5
     $this: VALUE_PARAMETER this@TestEnum5: TestEnum5
@@ -344,5 +348,6 @@ FILE /enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnum5>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum5
+      VALUE_PARAMETER value-parameter value: kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
 
