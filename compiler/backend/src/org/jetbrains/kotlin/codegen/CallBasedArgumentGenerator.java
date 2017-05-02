@@ -64,7 +64,7 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
 
     @Override
     protected void generateDefault(int i, @NotNull DefaultValueArgument argument) {
-        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), createDefaulValue(valueParameterTypes.get(i)), ValueKind.DEFAULT_PARAMETER);
+        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), createDefaulValue(valueParameterTypes.get(i)), ValueKind.DEFAULT_PARAMETER, i);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         // Upper bound for type of vararg parameter should always have a form of 'Array<out T>',
         // while its lower bound may be Nothing-typed after approximation
         StackValue lazyVararg = codegen.genVarargs(argument, FlexibleTypesKt.upperIfFlexible(parameter.getType()));
-        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), lazyVararg);
+        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), lazyVararg, ValueKind.GENERAL_VARARG, i);
     }
 
     @Override

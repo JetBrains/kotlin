@@ -461,6 +461,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             doTest(fileName);
         }
 
+        @TestMetadata("defaultParametersAndLastVararg.kt")
+        public void testDefaultParametersAndLastVararg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/defaultParametersAndLastVararg.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("extension.kt")
         public void testExtension() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/extension.kt");
@@ -494,6 +500,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         @TestMetadata("simpleInClass.kt")
         public void testSimpleInClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/simpleInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varargAndDefaultParameters.kt")
+        public void testVarargAndDefaultParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/varargAndDefaultParameters.kt");
             doTest(fileName);
         }
     }
@@ -2729,6 +2741,33 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         @TestMetadata("tryCatchFinally.kt")
         public void testTryCatchFinally() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/tryCatchFinally/tryCatchFinally.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxInline/varargs")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Varargs extends AbstractBlackBoxInlineCodegenTest {
+        public void testAllFilesPresentInVarargs() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/varargs"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("kt17653.kt")
+        public void testKt17653() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/varargs/kt17653.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varargAndDefaultParameters.kt")
+        public void testVarargAndDefaultParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/varargs/varargAndDefaultParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varargAndDefaultParameters2.kt")
+        public void testVarargAndDefaultParameters2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/varargs/varargAndDefaultParameters2.kt");
             doTest(fileName);
         }
     }

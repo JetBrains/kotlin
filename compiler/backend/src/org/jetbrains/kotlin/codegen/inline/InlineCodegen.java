@@ -904,7 +904,7 @@ public class InlineCodegen extends CallGenerator {
         }
         else {
             StackValue value = codegen.gen(argumentExpression);
-            putValueIfNeeded(parameterType, value, valueParameterDescriptor.getIndex(), ValueKind.GENERAL);
+            putValueIfNeeded(parameterType, value, ValueKind.GENERAL, valueParameterDescriptor.getIndex());
         }
     }
 
@@ -923,16 +923,12 @@ public class InlineCodegen extends CallGenerator {
     }
 
     @Override
-    public void putValueIfNeeded(@NotNull Type parameterType, @NotNull StackValue value, @NotNull ValueKind kind) {
-        putValueIfNeeded(parameterType, value, -1, kind);
-    }
-
-    private void putValueIfNeeded(@NotNull Type parameterType, @NotNull StackValue value, int index, @NotNull ValueKind kind) {
+    public void putValueIfNeeded(@NotNull Type parameterType, @NotNull StackValue value, @NotNull ValueKind kind, int parameterIndex) {
         if (processDefaultMaskOrMethodHandler(value, kind)) return;
 
         assert maskValues.isEmpty() : "Additional default call arguments should be last ones, but " + value;
 
-        putArgumentOrCapturedToLocalVal(parameterType, value, -1, index, kind);
+        putArgumentOrCapturedToLocalVal(parameterType, value, -1, parameterIndex, kind);
     }
 
     private boolean processDefaultMaskOrMethodHandler(@NotNull StackValue value, @NotNull ValueKind kind) {

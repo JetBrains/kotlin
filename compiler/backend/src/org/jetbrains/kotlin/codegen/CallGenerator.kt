@@ -23,10 +23,11 @@ import org.jetbrains.org.objectweb.asm.Type
 
 enum class ValueKind {
     GENERAL,
+    GENERAL_VARARG,
     DEFAULT_PARAMETER,
     DEFAULT_MASK,
     METHOD_HANDLE_IN_DEFAULT,
-    CAPTURED
+    CAPTURED,
 }
 
 abstract class CallGenerator {
@@ -68,7 +69,7 @@ abstract class CallGenerator {
             stackValue.put(stackValue.type, codegen.v)
         }
 
-        override fun putValueIfNeeded(parameterType: Type, value: StackValue, kind: ValueKind) {
+        override fun putValueIfNeeded(parameterType: Type, value: StackValue, kind: ValueKind, parameterIndex: Int) {
             value.put(value.type, codegen.v)
         }
 
@@ -121,7 +122,8 @@ abstract class CallGenerator {
     abstract fun putValueIfNeeded(
             parameterType: Type,
             value: StackValue,
-            kind: ValueKind)
+            kind: ValueKind = ValueKind.GENERAL,
+            parameterIndex: Int = -1)
 
     abstract fun putCapturedValueOnStack(
             stackValue: StackValue,

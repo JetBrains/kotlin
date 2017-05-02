@@ -91,7 +91,7 @@ class InlineCodegenForDefaultBody(
         throw UnsupportedOperationException("Shouldn't be called")
     }
 
-    override fun putValueIfNeeded(parameterType: Type, value: StackValue, kind: ValueKind) {
+    override fun putValueIfNeeded(parameterType: Type, value: StackValue, kind: ValueKind, parameterIndex: Int) {
         //original method would be inlined directly into default impl body without any inline magic
         //so we no need to load variables on stack to further method call
     }
