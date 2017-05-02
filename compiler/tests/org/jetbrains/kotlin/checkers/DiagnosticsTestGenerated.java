@@ -12955,6 +12955,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("redundantElseInWhen.kt")
+            public void testRedundantElseInWhen() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multimodule/redundantElseInWhen.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("varargConflict.kt")
             public void testVarargConflict() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multimodule/varargConflict.kt");
