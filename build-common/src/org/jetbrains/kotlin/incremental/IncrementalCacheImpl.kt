@@ -73,12 +73,6 @@ open class IncrementalCacheImpl<Target>(
     }
 
     private val baseDir = File(targetDataRoot, KOTLIN_CACHE_DIRECTORY_NAME)
-    private val experimentalMaps = arrayListOf<BasicMap<*, *>>()
-
-    private fun <K, V, M : BasicMap<K, V>> registerExperimentalMap(map: M): M {
-        experimentalMaps.add(map)
-        return registerMap(map)
-    }
 
     protected val String.storageFile: File
         get() = File(baseDir, this + "." + CACHE_EXTENSION)
@@ -91,11 +85,11 @@ open class IncrementalCacheImpl<Target>(
     private val sourceToClassesMap = registerMap(SourceToClassesMap(SOURCE_TO_CLASSES.storageFile))
     private val dirtyOutputClassesMap = registerMap(DirtyOutputClassesMap(DIRTY_OUTPUT_CLASSES.storageFile))
     private val inlineFunctionsMap = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile))
-    private val subtypesMap = registerExperimentalMap(SubtypesMap(SUBTYPES.storageFile))
-    private val supertypesMap = registerExperimentalMap(SupertypesMap(SUPERTYPES.storageFile))
-    private val classFqNameToSourceMap = registerExperimentalMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile))
+    private val subtypesMap = registerMap(SubtypesMap(SUBTYPES.storageFile))
+    private val supertypesMap = registerMap(SupertypesMap(SUPERTYPES.storageFile))
+    private val classFqNameToSourceMap = registerMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile))
     // todo: try to use internal names only?
-    private val internalNameToSource = registerExperimentalMap(InternalNameToSourcesMap(INTERNAL_NAME_TO_SOURCE.storageFile))
+    private val internalNameToSource = registerMap(InternalNameToSourcesMap(INTERNAL_NAME_TO_SOURCE.storageFile))
 
     private val dependents = arrayListOf<IncrementalCacheImpl<Target>>()
     private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(targetOutputDir) { "Target is expected to have output directory: $target" } }
@@ -365,12 +359,6 @@ open class IncrementalCacheImpl<Target>(
     override fun clean() {
         super.clean()
         normalCacheVersion(targetDataRoot).clean()
-        experimentalCacheVersion(targetDataRoot).clean()
-    }
-
-    fun cleanExperimental() {
-        experimentalCacheVersion(targetDataRoot).clean()
-        experimentalMaps.forEach { it.clean() }
     }
 
     private inner class ProtoMap(storageFile: File) : BasicStringMap<ProtoMapValue>(storageFile, ProtoMapValueExternalizer) {

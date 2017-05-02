@@ -1,7 +1,7 @@
 ================ Step #1 =================
 
 Building module1
-Actions after cache changed: [CLEAN_NORMAL_CACHES, CLEAN_EXPERIMENTAL_CACHES, CLEAN_DATA_CONTAINER]
+Actions after cache changed: [CLEAN_NORMAL_CACHES, CLEAN_DATA_CONTAINER]
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building module2

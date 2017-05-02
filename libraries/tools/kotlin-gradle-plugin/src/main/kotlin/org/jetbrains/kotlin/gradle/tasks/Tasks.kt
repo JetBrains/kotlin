@@ -210,7 +210,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() }
     private val cacheVersions by lazy {
         listOf(normalCacheVersion(taskBuildDirectory),
-               experimentalCacheVersion(taskBuildDirectory),
                dataContainerCacheVersion(taskBuildDirectory),
                gradleCacheVersion(taskBuildDirectory))
     }
