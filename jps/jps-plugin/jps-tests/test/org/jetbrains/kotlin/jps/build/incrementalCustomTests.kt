@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.kotlin.incremental.testingUtils.Modification
 
-open class IncrementalRenameModuleTest : AbstractIncrementalJpsTest() {
+class IncrementalRenameModuleTest : AbstractIncrementalJpsTest() {
     fun testRenameModule() {
         doTest("jps-plugin/testData/incremental/custom/renameModule/")
     }
@@ -26,7 +26,4 @@ open class IncrementalRenameModuleTest : AbstractIncrementalJpsTest() {
     override fun performAdditionalModifications(modifications: List<Modification>) {
         projectDescriptor.project.modules.forEach { it.name += "Renamed" }
     }
-}
-
-class ExperimentalIncrementalRenameModuleTest : IncrementalRenameModuleTest() {
 }

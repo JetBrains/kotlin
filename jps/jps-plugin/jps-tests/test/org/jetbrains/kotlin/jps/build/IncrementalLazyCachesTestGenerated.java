@@ -85,7 +85,6 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/topLevelPropertyAccess/");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("jps-plugin/testData/incremental/changeIncrementalOption")
