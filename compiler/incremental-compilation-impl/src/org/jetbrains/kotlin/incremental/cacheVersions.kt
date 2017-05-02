@@ -35,5 +35,4 @@ fun customCacheVersion(version: Int, fileName: String, dataRoot: File, forceEnab
 
 fun commonCacheVersions(cachesDir: File): List<CacheVersion> =
         listOf(normalCacheVersion(cachesDir),
-               experimentalCacheVersion(cachesDir),
                dataContainerCacheVersion(cachesDir))
