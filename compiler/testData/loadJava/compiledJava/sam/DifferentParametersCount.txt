@@ -7,7 +7,6 @@ public final class DifferentParametersCount {
         public constructor A()
 
         // Static members
-        public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)!, /*1*/ p1: kotlin.Int): kotlin.Unit
         public open fun foo(/*0*/ p0: java.lang.Runnable!, /*1*/ p1: kotlin.Int): kotlin.Unit
     }
 
@@ -15,8 +14,6 @@ public final class DifferentParametersCount {
         public constructor B()
 
         // Static members
-        public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)!): kotlin.Unit
-        public final override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)!, /*1*/ p1: kotlin.Int): kotlin.Unit
         public open fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: java.lang.Runnable!, /*1*/ p1: kotlin.Int): kotlin.Unit
     }

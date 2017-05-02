@@ -15,7 +15,6 @@ public final class StaticOverrides {
 
         // Static members
         public open override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: (() -> kotlin.Unit!)!): kotlin.Unit
-        public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)!): kotlin.Unit
         public open fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
     }
 }

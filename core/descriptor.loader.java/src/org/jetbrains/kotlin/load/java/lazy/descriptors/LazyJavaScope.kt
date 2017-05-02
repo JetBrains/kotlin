@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
     protected abstract fun computeMemberIndex(): DeclaredMemberIndex
 
-    // Fake overrides, SAM constructors/adapters, values()/valueOf(), etc.
+    // Fake overrides, values()/valueOf(), etc.
     protected abstract fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name)
 
     protected abstract fun getDispatchReceiverParameter(): ReceiverParameterDescriptor?
@@ -82,9 +82,6 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
             c.components.javaResolverCache.recordMethod(method, descriptor)
             result.add(descriptor)
-            if (method.isStatic) {
-                result.addIfNotNull(c.components.samConversionResolver.resolveSamAdapter(descriptor))
-            }
         }
 
         result.retainMostSpecificInEachOverridableGroup()

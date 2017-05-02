@@ -1,0 +1,5 @@
+package
+
+package b {
+    public fun test(): kotlin.Unit
+}

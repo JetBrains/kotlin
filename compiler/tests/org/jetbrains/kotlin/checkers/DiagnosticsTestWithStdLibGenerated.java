@@ -1613,6 +1613,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("samAgainstFunctionalType.kt")
+        public void testSamAgainstFunctionalType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/samAgainstFunctionalType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("samConstructorVsFun.kt")
         public void testSamConstructorVsFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/samConstructorVsFun.kt");

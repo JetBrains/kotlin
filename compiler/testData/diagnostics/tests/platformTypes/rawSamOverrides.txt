@@ -33,13 +33,10 @@ public abstract class C {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
-        public final override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> aStaticMethod(/*0*/ x: T!, /*1*/ y: ((x: T!) -> kotlin.Unit)!): kotlin.Unit
-        public final /*synthesized*/ fun aStaticMethod(/*0*/ x: kotlin.Any!, /*1*/ y: ((x: kotlin.Any!) -> kotlin.Unit)!): kotlin.Unit
         public open fun aStaticMethod(/*0*/ x: kotlin.Any!, /*1*/ y: Fun<(raw) kotlin.Any!>!): kotlin.Unit
     }
 
     // Static members
-    public final /*synthesized*/ fun </*0*/ T : kotlin.Any!> aStaticMethod(/*0*/ x: T!, /*1*/ y: ((x: T!) -> kotlin.Unit)!): kotlin.Unit
     public open fun </*0*/ T : kotlin.Any!> aStaticMethod(/*0*/ x: T!, /*1*/ y: Fun<T!>!): kotlin.Unit
 }
 

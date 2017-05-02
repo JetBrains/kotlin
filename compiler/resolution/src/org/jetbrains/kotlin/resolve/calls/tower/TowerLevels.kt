@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -161,7 +161,11 @@ internal class QualifierScopeTowerLevel(scopeTower: ImplicitScopeTower, val qual
             }
 
     override fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?) = qualifier.staticScope
-            .getContributedFunctionsAndConstructors(name, location, scopeTower.syntheticConstructorsProvider).map {
+            .getContributedFunctionsAndConstructors(name,
+                                                    location,
+                                                    scopeTower.syntheticConstructorsProvider,
+                                                    scopeTower.syntheticScopes,
+                                                    qualifier.staticScope).map {
                 createCandidateDescriptor(it, dispatchReceiver = null)
             }
 }
@@ -185,7 +189,11 @@ internal open class ScopeBasedTowerLevel protected constructor(
             }
 
     override fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver>
-            = resolutionScope.getContributedFunctionsAndConstructors(name, location, scopeTower.syntheticConstructorsProvider).map {
+            = resolutionScope.getContributedFunctionsAndConstructors(name,
+                                                                     location,
+                                                                     scopeTower.syntheticConstructorsProvider,
+                                                                     scopeTower.syntheticScopes,
+                                                                     resolutionScope).map {
                 createCandidateDescriptor(it, dispatchReceiver = null)
             }
 }
@@ -263,7 +271,9 @@ private fun KotlinType?.getInnerConstructors(name: Name, location: LookupLocatio
 private fun ResolutionScope.getContributedFunctionsAndConstructors(
         name: Name,
         location: LookupLocation,
-        syntheticConstructorsProvider: SyntheticConstructorsProvider
+        syntheticConstructorsProvider: SyntheticConstructorsProvider,
+        syntheticScopes: SyntheticScopes,
+        scope: ResolutionScope
 ): Collection<FunctionDescriptor> {
     val result = ArrayList<FunctionDescriptor>(getContributedFunctions(name, location))
 
@@ -272,6 +282,8 @@ private fun ResolutionScope.getContributedFunctionsAndConstructors(
         classifier.getCallableConstructors().filterTo(result) { it.dispatchReceiverParameter == null }
         syntheticConstructorsProvider.getSyntheticConstructors(classifier, location).filterTo(result) { it.dispatchReceiverParameter == null }
     }
+
+    result.addAll(syntheticScopes.collectSyntheticStaticFunctions(scope, name, location))
 
     return result.toList()
 }

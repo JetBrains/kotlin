@@ -13,6 +13,5 @@ public open class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public final /*synthesized*/ fun invokeLater(/*0*/ doRun: (() -> kotlin.Unit)!): kotlin.Unit
     public open fun invokeLater(/*0*/ doRun: java.lang.Runnable!): kotlin.Unit
 }

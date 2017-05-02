@@ -1,0 +1,28 @@
+package test
+
+public final class FakeStaticOverrides {
+    public constructor FakeStaticOverrides()
+
+    public open class A {
+        public constructor A()
+
+        // Static members
+        public open fun foo(/*0*/ p0: (() -> kotlin.Unit!)!): kotlin.Unit
+    }
+
+    public open class B : test.FakeStaticOverrides.A {
+        public constructor B()
+
+        // Static members
+        public open override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: (() -> kotlin.Unit!)!): kotlin.Unit
+        public open fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
+    }
+
+    public open class C : test.FakeStaticOverrides.B {
+        public constructor C()
+
+        // Static members
+        public open override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: (() -> kotlin.Unit!)!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
+    }
+}

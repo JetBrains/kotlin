@@ -1357,6 +1357,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("FakeStaticOverrides.java")
+            public void testFakeStaticOverrides() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/FakeStaticOverrides.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("FilenameFilter.java")
             public void testFilenameFilter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/FilenameFilter.java");

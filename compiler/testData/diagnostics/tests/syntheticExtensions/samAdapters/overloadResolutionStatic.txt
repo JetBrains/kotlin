@@ -10,10 +10,8 @@ public open class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public final /*synthesized*/ fun bar(/*0*/ r: (() -> kotlin.Unit)!): kotlin.Int
     public open fun bar(/*0*/ r: java.lang.Runnable!): kotlin.Int
     public open fun bar(/*0*/ r: kotlin.CharSequence!): kotlin.String!
-    public final /*synthesized*/ fun foo(/*0*/ r: (() -> kotlin.Unit)!): kotlin.Int
     public open fun foo(/*0*/ r: java.lang.Runnable!): kotlin.Int
     public open fun foo(/*0*/ r: kotlin.Any!): kotlin.String!
 }

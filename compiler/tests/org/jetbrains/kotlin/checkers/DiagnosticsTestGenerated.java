@@ -12489,9 +12489,27 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("inheritedStaticSam.kt")
+                public void testInheritedStaticSam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/sam/inheritedStaticSam.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("samOnTypeParameter.kt")
                 public void testSamOnTypeParameter() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/sam/samOnTypeParameter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("staticSamFromImportWithStar.kt")
+                public void testStaticSamFromImportWithStar() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/sam/staticSamFromImportWithStar.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("staticSamWithExplicitImport.kt")
+                public void testStaticSamWithExplicitImport() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/sam/staticSamWithExplicitImport.kt");
                     doTest(fileName);
                 }
 
