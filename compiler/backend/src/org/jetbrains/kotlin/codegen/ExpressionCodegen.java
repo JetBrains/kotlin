@@ -2229,6 +2229,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         KotlinType returnType = descriptor.getReturnType();
 
+        if (state.getProtocolsBackend().getBackendType() == ProtocolsBackend.BackendType.REFLECTION && returnType != null) {
+            if (KotlinBuiltIns.isUnit(returnType)) {
+                v.pop();
+            } else {
+                StackValue.coerce(OBJECT_TYPE, asmType(returnType), v);
+            }
+        }
+
         if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
             v.aconst(null);
             v.athrow();
