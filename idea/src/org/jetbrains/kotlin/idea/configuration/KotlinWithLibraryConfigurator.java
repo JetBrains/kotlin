@@ -80,7 +80,8 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     protected static boolean isApplicable(@NotNull Module module) {
         return !KotlinPluginUtil.isAndroidGradleModule(module) &&
                !KotlinPluginUtil.isMavenModule(module) &&
-               !KotlinPluginUtil.isGradleModule(module);
+               !KotlinPluginUtil.isGradleModule(module) &&
+               !KotlinPluginUtil.isKobaltModule(module);
     }
 
     protected abstract boolean isConfigured(@NotNull Module module);

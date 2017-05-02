@@ -49,6 +49,10 @@ public class KotlinPluginUtil {
         return KotlinModuleTypeManager.getInstance().isGradleModule(module);
     }
 
+    public static boolean isKobaltModule(@NotNull Module module) {
+        return KotlinModuleTypeManager.getInstance().isKobaltModule(module);
+    }
+
     public static boolean isMavenModule(@NotNull Module module) {
         // This constant could be acquired from MavenProjectsManager, but we don't want to depend on the Maven plugin...
         // See MavenProjectsManager.isMavenizedModule()

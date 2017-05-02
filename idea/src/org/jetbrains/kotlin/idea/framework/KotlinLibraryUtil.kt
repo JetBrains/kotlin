@@ -38,10 +38,12 @@ fun <LP : LibraryProperties<out Any>> getLibraryProperties(provider: LibraryPres
 
 private val MAVEN_SYSTEM_ID = ProjectSystemId("MAVEN")
 val GRADLE_SYSTEM_ID = ProjectSystemId("GRADLE")
+val KOBALT_SYSTEM_ID = ProjectSystemId("KOBALT")
 
 private fun isExternalLibrary(library: Library): Boolean {
     return ExternalSystemApiUtil.isExternalSystemLibrary(library, ProjectSystemId.IDE) ||
            ExternalSystemApiUtil.isExternalSystemLibrary(library, GRADLE_SYSTEM_ID) ||
+           ExternalSystemApiUtil.isExternalSystemLibrary(library, KOBALT_SYSTEM_ID) ||
            ExternalSystemApiUtil.isExternalSystemLibrary(library, MAVEN_SYSTEM_ID)
 }
 

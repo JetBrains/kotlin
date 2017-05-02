@@ -43,4 +43,9 @@ public class KotlinModuleTypeManagerImpl extends KotlinModuleTypeManager {
     public boolean isGradleModule(@NotNull Module module) {
         return ExternalSystemApiUtil.isExternalSystemAwareModule(KotlinLibraryUtilKt.getGRADLE_SYSTEM_ID(), module);
     }
+
+    @Override
+    public boolean isKobaltModule(@NotNull Module module) {
+        return ExternalSystemApiUtil.isExternalSystemAwareModule(KotlinLibraryUtilKt.getKOBALT_SYSTEM_ID(), module);
+    }
 }
