@@ -107,7 +107,6 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         isSameModule = sourceCompiler.isCallInsideSameModuleAsDeclared(functionDescriptor)
 
         if (functionDescriptor !is FictitiousArrayConstructor) {
-            reportIncrementalInfo(functionDescriptor, sourceCompiler.compilationContextFunctionDescriptor.original, jvmSignature, state)
             val functionOrAccessorName = typeMapper.mapAsmMethod(function).name
             //track changes for property accessor and @JvmName inline functions/property accessors
             if (functionOrAccessorName != functionDescriptor.name.asString()) {
@@ -560,19 +559,6 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
 
         fun createNestedSourceMapper(nodeAndSmap: SMAPAndMethodNode, parent: SourceMapper): SourceMapper {
             return NestedSourceMapper(parent, nodeAndSmap.sortedRanges, nodeAndSmap.classSMAP.sourceInfo)
-        }
-
-        internal fun reportIncrementalInfo(
-                sourceDescriptor: FunctionDescriptor,
-                targetDescriptor: FunctionDescriptor,
-                jvmSignature: JvmMethodSignature,
-                state: GenerationState
-        ) {
-            val incrementalCache = state.incrementalCacheForThisTarget ?: return
-            val classFilePath = sourceDescriptor.getClassFilePath(state.typeMapper, incrementalCache)
-            val sourceFilePath = targetDescriptor.sourceFilePath
-            val method = jvmSignature.asmMethod
-            incrementalCache.registerInline(classFilePath, method.name + method.descriptor, sourceFilePath)
         }
     }
 }
