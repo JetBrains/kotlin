@@ -272,23 +272,42 @@ class ExpressionsOfTypeProcessor(
                               })
     }
 
-    private class StaticMemberRequestResultProcessor(val psiMember: PsiMember) : RequestResultProcessor(psiMember) {
+    private class StaticMemberRequestResultProcessor(val psiMember: PsiMember, classes: List<PsiClass>) : RequestResultProcessor(psiMember) {
+        val possibleClassesNames: Set<String> = runReadAction { classes.map { it.qualifiedName }.filterNotNullTo(HashSet()) }
+
         override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<PsiReference>): Boolean {
-            if (element !is KtQualifiedExpression) return true
+            when (element) {
+                is KtQualifiedExpression -> {
+                    val selectorExpression = element.selectorExpression ?: return true
+                    val selectorReference = element.findReferenceAt(selectorExpression.startOffsetInParent)
 
-            val selectorExpression = element.selectorExpression ?: return true
-            val selectorReference = element.findReferenceAt(selectorExpression.startOffsetInParent)
+                    val references = when (selectorReference) {
+                        is PsiMultiReference -> selectorReference.references.toList()
+                        else -> listOf(selectorReference)
+                    }.filterNotNull()
 
-            val references = when (selectorReference) {
-                is PsiMultiReference -> selectorReference.references.toList()
-                else -> listOf(selectorReference)
-            }.filterNotNull()
+                    for (ref in references) {
+                        ProgressManager.checkCanceled()
 
-            for (ref in references) {
-                ProgressManager.checkCanceled()
+                        if (ref.isReferenceTo(psiMember)) {
+                            consumer.process(ref)
+                        }
+                    }
+                }
 
-                if (ref.isReferenceTo(psiMember)) {
-                    consumer.process(ref)
+                is KtImportDirective -> {
+                    if (element.isAllUnder) {
+                        val fqName = element.importedFqName?.asString()
+                        if (fqName != null && fqName in possibleClassesNames) {
+                            val ref = element.importedReference
+                                    ?.getQualifiedElementSelector()
+                                    ?.references
+                                    ?.firstOrNull()
+                            if (ref != null) {
+                                consumer.process(ref)
+                            }
+                        }
+                    }
                 }
             }
 
@@ -323,15 +342,25 @@ class ExpressionsOfTypeProcessor(
                 }
 
                 val searchRequestCollector = SearchRequestCollector(SearchSession())
-                val resultProcessor = StaticMemberRequestResultProcessor(member)
+                val resultProcessor = StaticMemberRequestResultProcessor(member, classes)
 
                 for (klass in classes) {
                     val request = klass.name + "." + declarationName
 
-                    testLog?.add("Searched references to static member in non-Java files by request $request")
-
+                    testLog?.add("Searched references to static ${member.name} in non-Java files by request $request")
                     searchRequestCollector.searchWord(
-                            request, classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor)
+                            request,
+                            classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor)
+
+                    val qualifiedName = runReadAction { klass.qualifiedName }
+                    if (qualifiedName != null) {
+                        val importAllUnderRequest = qualifiedName + ".*"
+
+                        testLog?.add("Searched references to static ${member.name} in non-Java files by request $importAllUnderRequest")
+                        searchRequestCollector.searchWord(
+                                importAllUnderRequest,
+                                classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor)
+                    }
                 }
 
                 PsiSearchHelper.SERVICE.getInstance(project).processRequests(searchRequestCollector) { reference ->
