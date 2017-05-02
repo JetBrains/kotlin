@@ -1,0 +1,11 @@
+MODULE_FRAGMENT <built-ins module>
+  EXTERNAL_PACKAGE_FRAGMENT kotlin
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE Function1
+      TYPE_PARAMETER <in P1>
+      TYPE_PARAMETER <out R>
+      FUN IR_EXTERNAL_DECLARATION_STUB public abstract operator fun invoke(p1: P1): R
+        VALUE_PARAMETER value-parameter p1: P1
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String

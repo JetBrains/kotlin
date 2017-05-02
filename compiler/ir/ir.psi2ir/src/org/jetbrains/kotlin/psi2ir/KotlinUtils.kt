@@ -83,3 +83,5 @@ fun KotlinBuiltIns.findSingleFunction(name: Name): FunctionDescriptor =
 
 val PsiElement?.startOffsetOrUndefined get() = this?.startOffset ?: UNDEFINED_OFFSET
 val PsiElement?.endOffsetOrUndefined get() = this?.endOffset ?: UNDEFINED_OFFSET
+
+

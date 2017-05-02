@@ -28,16 +28,12 @@ import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
-import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
+import org.jetbrains.kotlin.psi2ir.StableDescriptorsComparator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.lang.AssertionError
-import java.util.*
 
 class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
     fun generateClass(ktClassOrObject: KtClassOrObject): IrClass {
@@ -84,31 +80,10 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
                         it?.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
                     }
                 }
-                .sortedWith(StableCallableMembersComparator)
+                .sortedWith(StableDescriptorsComparator)
                 .forEach { fakeOverride ->
                     irClass.addMember(declarationGenerator.generateFakeOverrideDeclaration(fakeOverride, ktClassOrObject))
                 }
-    }
-
-    private object StableCallableMembersComparator : Comparator<CallableMemberDescriptor> {
-        override fun compare(member1: CallableMemberDescriptor?, member2: CallableMemberDescriptor?): Int {
-            if (member1 == member2) return 0
-            if (member1 == null) return -1
-            if (member2 == null) return 1
-
-            val image1 = DESCRIPTOR_RENDERER.render(member1)
-            val image2 = DESCRIPTOR_RENDERER.render(member2)
-            return image1.compareTo(image2)
-        }
-
-        private val DESCRIPTOR_RENDERER = DescriptorRenderer.withOptions {
-            withDefinedIn = false
-            overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
-            includePropertyConstant = true
-            classifierNamePolicy = ClassifierNamePolicy.FULLY_QUALIFIED
-            verbose = true
-            modifiers = DescriptorRendererModifier.ALL
-        }
     }
 
     private fun generateMembersDeclaredInSupertypeList(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
@@ -117,7 +92,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
                     .getContributedDescriptors(DescriptorKindFilter.CALLABLES)
                     .filterIsInstance<CallableMemberDescriptor>()
                     .filter { it.kind == CallableMemberDescriptor.Kind.DELEGATION }
-                    .sortedWith(StableCallableMembersComparator)
+                    .sortedWith(StableDescriptorsComparator)
             if (delegatedMembers.isEmpty()) return
 
             for (ktEntry in ktSuperTypeList.entries) {

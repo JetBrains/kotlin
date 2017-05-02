@@ -629,6 +629,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("extFunInvokeAsFun.kt")
+        public void testExtFunInvokeAsFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/extFunInvokeAsFun.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("extensionPropertyGetterCall.kt")
         public void testExtensionPropertyGetterCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/extensionPropertyGetterCall.kt");
