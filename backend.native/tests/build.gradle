@@ -1707,6 +1707,11 @@ task inline24(type: RunKonanTest) {
     source = "codegen/inline/inline24.kt"
 }
 
+task inline25(type: RunKonanTest) {
+    goldValue = "Ok\nOk\n"
+    source = "codegen/inline/inline25.kt"
+}
+
 task deserialized_inline0(type: RunKonanTest) {
     source = "serialization/deserialized_inline0.kt"
 }

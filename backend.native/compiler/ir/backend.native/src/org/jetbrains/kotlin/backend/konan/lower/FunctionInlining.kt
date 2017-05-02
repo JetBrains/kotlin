@@ -262,15 +262,26 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
                 argumentExpression  = irCall.dispatchReceiver!!
             )
 
-        if (irCall.extensionReceiver != null &&                                             // Only if there are non null extension receivers both
-            functionDescriptor.extensionReceiverParameter != null)                          // on call site and in function declaration.
+        val valueArguments =
+                irCall.descriptor.valueParameters.map { irCall.getValueArgument(it) }.toMutableList()
+
+        if (functionDescriptor.extensionReceiverParameter != null) {
             parameterToArgument += ParameterToArgument(
-                parameterDescriptor = functionDescriptor.extensionReceiverParameter!!,
-                argumentExpression  = irCall.extensionReceiver!!
+                    parameterDescriptor = functionDescriptor.extensionReceiverParameter!!,
+                    argumentExpression = if (irCall.extensionReceiver != null) {
+                        irCall.extensionReceiver!!
+                    } else {
+                        // Special case: lambda with receiver is called as usual lambda:
+                        valueArguments.removeAt(0)!!
+                    }
             )
+        } else if (irCall.extensionReceiver != null) {
+            // Special case: usual lambda is called as lambda with receiver:
+            valueArguments.add(0, irCall.extensionReceiver!!)
+        }
 
         functionDescriptor.valueParameters.forEach { parameterDescriptor ->                 // Iterate value parameter descriptors.
-            val argument = irCall.getValueArgument(parameterDescriptor.index)               // Get appropriate argument from call site.
+            val argument = valueArguments[parameterDescriptor.index]                        // Get appropriate argument from call site.
             when {
                 argument != null -> {                                                       // Argument is good enough.
                     parameterToArgument += ParameterToArgument(                             // Associate current parameter with the argument.
