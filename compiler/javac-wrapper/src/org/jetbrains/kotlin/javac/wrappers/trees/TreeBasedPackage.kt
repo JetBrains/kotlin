@@ -16,18 +16,24 @@
 
 package org.jetbrains.kotlin.javac.wrappers.trees
 
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import javax.tools.JavaFileObject
 
-class TreeBasedPackage(val name: String, val javac: JavacWrapper) : JavaPackage {
+class TreeBasedPackage(val name: String, val javac: JavacWrapper, val file: JavaFileObject) : JavaPackage {
 
     override val fqName: FqName
         get() = FqName(name)
 
     override val subPackages: Collection<JavaPackage>
         get() = javac.findSubPackages(fqName)
+
+    val virtualFile: VirtualFile? by lazy {
+        javac.toVirtualFile(file)
+    }
 
     override fun getClasses(nameFilter: (Name) -> Boolean) = javac.findClassesFromPackage(fqName)
             .filter { nameFilter(it.fqName!!.shortName()) }

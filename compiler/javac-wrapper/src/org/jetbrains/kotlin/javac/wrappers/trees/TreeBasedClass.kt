@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.trees
 
+import com.intellij.openapi.vfs.VirtualFile
 import com.sun.source.tree.Tree
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.code.Flags
@@ -30,10 +31,12 @@ import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedType
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import javax.tools.JavaFileObject
 
 class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
                                                  treePath: TreePath,
-                                                 javac: JavacWrapper) : TreeBasedElement<T>(tree, treePath, javac), JavaClass {
+                                                 javac: JavacWrapper,
+                                                 val file: JavaFileObject) : TreeBasedElement<T>(tree, treePath, javac), JavaClass {
 
     override val name: Name
         get() = Name.identifier(tree.simpleName.toString())
@@ -92,12 +95,12 @@ class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
     val innerClasses: Map<Name, TreeBasedClass<JCTree.JCClassDecl>> by lazy {
         tree.members
                 .filterIsInstance(JCTree.JCClassDecl::class.java)
-                .map { TreeBasedClass(it, TreePath(treePath, it), javac) }
+                .map { TreeBasedClass(it, TreePath(treePath, it), javac, file) }
                 .associateBy(JavaClass::name)
     }
 
     override val outerClass: JavaClass? by lazy {
-        (treePath.parentPath.leaf as? JCTree.JCClassDecl)?.let { TreeBasedClass(it, treePath.parentPath, javac) }
+        (treePath.parentPath.leaf as? JCTree.JCClassDecl)?.let { TreeBasedClass(it, treePath.parentPath, javac, file) }
     }
 
     override val isInterface: Boolean
@@ -129,6 +132,10 @@ class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
 
     override val innerClassNames: Collection<Name>
         get() = innerClasses.keys
+
+    val virtualFile: VirtualFile? by lazy {
+        javac.toVirtualFile(file)
+    }
 
     override fun findInnerClass(name: Name) = innerClasses[name]
 

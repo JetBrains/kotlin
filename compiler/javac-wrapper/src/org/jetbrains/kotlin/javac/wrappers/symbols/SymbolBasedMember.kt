@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
+import com.sun.tools.javac.code.Symbol
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
@@ -24,13 +25,14 @@ import org.jetbrains.kotlin.load.java.structure.JavaMember
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.Element
-import javax.lang.model.element.TypeElement
 
 abstract class SymbolBasedMember<out T : Element>(element: T,
                                                   javac: JavacWrapper) : SymbolBasedElement<T>(element, javac), JavaMember {
 
     override val containingClass: JavaClass
-        get() = SymbolBasedClass((element.enclosingElement as TypeElement), javac)
+        get() = with(element.enclosingElement as Symbol.ClassSymbol) {
+            SymbolBasedClass(this, javac, classfile)
+        }
 
     override val annotations: Collection<JavaAnnotation>
         get() = element.annotationMirrors

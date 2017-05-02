@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.CommonClassNames
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -28,9 +29,11 @@ import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.NoType
 import javax.lang.model.type.TypeKind
+import javax.tools.JavaFileObject
 
 class SymbolBasedClass(element: TypeElement,
-                       javac: JavacWrapper) : SymbolBasedClassifier<TypeElement>(element, javac), JavaClass {
+                       javac: JavacWrapper,
+                       val file: JavaFileObject?) : SymbolBasedClassifier<TypeElement>(element, javac), JavaClass {
 
     override val name: Name
         get() = Name.identifier(element.simpleName.toString())
@@ -67,12 +70,12 @@ class SymbolBasedClass(element: TypeElement,
     val innerClasses: Map<Name, JavaClass>
         get() = element.enclosedElements
                 .filterIsInstance(TypeElement::class.java)
-                .map { SymbolBasedClass(it, javac) }
+                .map { SymbolBasedClass(it, javac, file) }
                 .associateBy(JavaClass::name)
 
     override val outerClass: JavaClass?
         get() = element.enclosingElement?.let {
-            if (it.asType().kind != TypeKind.DECLARED) null else SymbolBasedClass(it as TypeElement, javac)
+            if (it.asType().kind != TypeKind.DECLARED) null else SymbolBasedClass(it as TypeElement, javac, file)
         }
 
     override val isInterface: Boolean
@@ -104,6 +107,10 @@ class SymbolBasedClass(element: TypeElement,
 
     override val innerClassNames: Collection<Name>
         get() = innerClasses.keys
+
+    val virtualFile: VirtualFile? by lazy {
+        file?.let { javac.toVirtualFile(it) }
+    }
 
     override fun findInnerClass(name: Name) = innerClasses[name]
 

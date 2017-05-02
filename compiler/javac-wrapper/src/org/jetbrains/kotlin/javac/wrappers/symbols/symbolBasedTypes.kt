@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
+import com.sun.tools.javac.code.Symbol
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
@@ -67,7 +68,9 @@ class SymbolBasedClassifierType<out T : TypeMirror>(typeMirror: T,
 
     override val classifier: JavaClassifier?
         get() = when (typeMirror.kind) {
-            TypeKind.DECLARED -> SymbolBasedClass((typeMirror as DeclaredType).asElement() as TypeElement, javac)
+            TypeKind.DECLARED -> ((typeMirror as DeclaredType).asElement() as Symbol.ClassSymbol).let {
+                SymbolBasedClass(it, javac, it.classfile)
+            }
             TypeKind.TYPEVAR -> SymbolBasedTypeParameter((typeMirror as TypeVariable).asElement() as TypeParameterElement, javac)
             else -> null
         }

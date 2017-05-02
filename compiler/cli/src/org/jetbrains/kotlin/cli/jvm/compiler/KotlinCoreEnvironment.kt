@@ -244,7 +244,9 @@ class KotlinCoreEnvironment private constructor(
                                                                                           configuration.jvmClasspathRoots,
                                                                                           configuration,
                                                                                           messageCollector,
-                                                                                          arguments))
+                                                                                          arguments,
+                                                                                          applicationEnvironment.localFileSystem,
+                                                                                          applicationEnvironment.jarFileSystem))
     }
 
     private val applicationEnvironment: CoreApplicationEnvironment

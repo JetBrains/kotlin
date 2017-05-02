@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.javac
 
-import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.psi.CommonClassNames
 import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
@@ -54,10 +53,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.javac.wrappers.trees.TreeBasedClass
 import org.jetbrains.kotlin.javac.wrappers.trees.TreeBasedPackage
 import org.jetbrains.kotlin.javac.wrappers.trees.TreePathResolverCache
+import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import java.io.Closeable
 import java.io.File
 import javax.lang.model.element.Element
-import javax.lang.model.element.TypeElement
 import javax.lang.model.type.TypeMirror
 import javax.tools.JavaFileManager
 import javax.tools.JavaFileObject
@@ -68,7 +67,9 @@ class JavacWrapper(javaFiles: Collection<File>,
                    classPathRoots: List<File>,
                    private val configuration: CompilerConfiguration,
                    private val messageCollector: MessageCollector?,
-                   arguments: Array<String>?) : Closeable {
+                   arguments: Array<String>?,
+                   private val localFileSystem: CoreLocalFileSystem,
+                   private val jarFileSystem: VirtualFileSystem) : Closeable {
 
     companion object {
         fun getInstance(project: Project): JavacWrapper = ServiceManager.getService(project, JavacWrapper::class.java)
@@ -89,6 +90,8 @@ class JavacWrapper(javaFiles: Collection<File>,
     private val fileManager = context[JavaFileManager::class.java] as JavacFileManager
 
     init {
+        // use rt.jar instead of lib/ct.sym
+        fileManager.setSymbolFileEnabled(false)
         fileManager.setLocation(StandardLocation.CLASS_PATH, classPathRoots)
     }
 
@@ -101,12 +104,16 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     private val javaClasses = compilationUnits
             .flatMap { unit -> unit.typeDecls
-                    .flatMap { TreeBasedClass(it as JCTree.JCClassDecl, trees.getPath(unit, it), this).withInnerClasses() }
+                    .flatMap { TreeBasedClass(it as JCTree.JCClassDecl,
+                                              trees.getPath(unit, it),
+                                              this,
+                                              unit.sourceFile)
+                            .withInnerClasses() }
             }
             .associateBy(JavaClass::fqName)
 
     private val javaPackages = compilationUnits
-            .mapNotNull { it.packageName?.toString()?.let { TreeBasedPackage(it, this) } }
+            .mapNotNullTo(hashSetOf()) { unit -> unit.packageName?.toString()?.let { TreeBasedPackage(it, this, unit.sourcefile) } }
             .associateBy(TreeBasedPackage::fqName)
 
     private val kotlinClassifiersCache = KotlinClassifiersCache(kotlinFiles, this)
@@ -127,16 +134,24 @@ class JavacWrapper(javaFiles: Collection<File>,
         javac.close()
     }
 
-    fun findClass(fqName: FqName, scope: GlobalSearchScope = EverythingGlobalScope()) = when {
-        scope is EverythingGlobalScope -> javaClasses[fqName] ?: findClassInSymbols(fqName.asString())
-        AnyJavaSourceVirtualFile in scope -> javaClasses[fqName]
-        else -> findClassInSymbols(fqName.asString()) ?: javaClasses[fqName]
+    fun findClass(fqName: FqName, scope: GlobalSearchScope = EverythingGlobalScope()): JavaClass? {
+        javaClasses[fqName]?.let { javaClass ->
+            javaClass.virtualFile?.let { if (it in scope) return javaClass }
+        }
+
+        findClassInSymbols(fqName.asString())?.let { javaClass ->
+            javaClass.virtualFile?.let { if (it in scope) return javaClass }
+        }
+
+        return null
     }
 
-    fun findPackage(fqName: FqName, scope: GlobalSearchScope) = when {
-        scope is EverythingGlobalScope -> javaPackages[fqName] ?: findPackageInSymbols(fqName.asString())
-        AnyJavaSourceVirtualFile in scope -> javaPackages[fqName]
-        else -> findPackageInSymbols(fqName.asString()) ?: javaPackages[fqName]
+    fun findPackage(fqName: FqName, scope: GlobalSearchScope): JavaPackage? {
+        javaPackages[fqName]?.let { javaPackage ->
+            javaPackage.virtualFile?.let { if (it in scope) return javaPackage }
+        }
+
+        return findPackageInSymbols(fqName.asString())
     }
 
     fun findSubPackages(fqName: FqName) = symbols.packages
@@ -152,8 +167,8 @@ class JavacWrapper(javaFiles: Collection<File>,
                                                  elements.getPackageElement(fqName.asString())
                                                          ?.members()
                                                          ?.elements
-                                                         ?.filterIsInstance(TypeElement::class.java)
-                                                         ?.map { SymbolBasedClass(it, this) }
+                                                         ?.filterIsInstance(Symbol.ClassSymbol::class.java)
+                                                         ?.map { SymbolBasedClass(it, this, it.classfile) }
                                                          .orEmpty()
 
     fun getTreePath(tree: JCTree, compilationUnit: CompilationUnitTree): TreePath = trees.getPath(compilationUnit, tree)
@@ -166,9 +181,17 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     fun resolve(treePath: TreePath) = treePathResolverCache.resolve(treePath)
 
+    fun toVirtualFile(javaFileObject: JavaFileObject) = javaFileObject.toUri().let {
+        if (it.scheme == "jar") {
+            jarFileSystem.findFileByPath(it.schemeSpecificPart.substring("file:".length))
+        } else {
+            localFileSystem.findFileByPath(it.schemeSpecificPart)
+        }
+    }
+
     private inline fun <reified T> Iterable<T>.toJavacList() = JavacList.from(this)
 
-    private fun findClassInSymbols(fqName: String) = elements.getTypeElement(fqName)?.let { SymbolBasedClass(it, this) }
+    private fun findClassInSymbols(fqName: String) = elements.getTypeElement(fqName)?.let { SymbolBasedClass(it, this, it.classfile) }
 
     private fun findPackageInSymbols(fqName: String) = elements.getPackageElement(fqName)?.let { SymbolBasedPackage(it, this) }
 
@@ -204,40 +227,4 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     private fun TreeBasedClass<JCTree.JCClassDecl>.withInnerClasses(): List<TreeBasedClass<JCTree.JCClassDecl>> = listOf(this) + innerClasses.values.flatMap { it.withInnerClasses() }
 
-}
-
-private object AnyJavaSourceVirtualFile : VirtualFile() {
-    override fun refresh(asynchronous: Boolean, recursive: Boolean, postRunnable: Runnable?) {}
-
-    override fun getLength() = 0L
-
-    override fun getFileSystem() = throw UnsupportedOperationException("Should never be called")
-
-    override fun getPath() = ""
-
-    override fun isDirectory() = false
-
-    override fun getTimeStamp() = 0L
-
-    override fun getName() = ""
-
-    override fun contentsToByteArray() = throw UnsupportedOperationException("Should never be called")
-
-    override fun isValid() = true
-
-    override fun getInputStream() = throw UnsupportedOperationException("Should never be called")
-
-    override fun getParent() = throw UnsupportedOperationException("Should never be called")
-
-    override fun getChildren() = emptyArray<VirtualFile>()
-
-    override fun isWritable() = false
-
-    override fun getOutputStream(requestor: Any?, newModificationStamp: Long, newTimeStamp: Long) = throw UnsupportedOperationException("Should never be called")
-
-    override fun getExtension() = "java"
-
-    override fun getFileType(): FileType = JavaFileType.INSTANCE
-
-    override fun toString() = "Java Source"
 }

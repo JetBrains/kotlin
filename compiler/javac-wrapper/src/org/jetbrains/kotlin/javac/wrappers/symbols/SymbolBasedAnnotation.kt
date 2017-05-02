@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
+import com.sun.tools.javac.code.Symbol
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
@@ -35,6 +36,8 @@ open class SymbolBasedAnnotation(val annotationMirror: AnnotationMirror,
     override val classId: ClassId?
         get() = (annotationMirror.annotationType.asElement() as? TypeElement)?.computeClassId()
 
-    override fun resolve() = SymbolBasedClass(annotationMirror.annotationType.asElement() as TypeElement, javac)
+    override fun resolve() = with(annotationMirror.annotationType.asElement() as Symbol.ClassSymbol) {
+        SymbolBasedClass(this, javac, classfile)
+    }
 
 }
