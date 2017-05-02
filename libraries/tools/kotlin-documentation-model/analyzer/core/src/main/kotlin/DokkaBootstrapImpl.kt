@@ -1,14 +1,8 @@
 package org.jetbrains.dokka
 
-import java.io.File
+import ru.yole.jkid.deserialization.deserialize
 import java.util.function.BiConsumer
 
-fun parseSourceLinkDefinition(srcLink: String): SourceLinkDefinition {
-    val (path, urlAndLine) = srcLink.split('=')
-    return SourceLinkDefinition(File(path).absolutePath,
-            urlAndLine.substringBefore("#"),
-            urlAndLine.substringAfter("#", "").let { if (it.isEmpty()) null else "#" + it })
-}
 
 fun parsePerPackageOptions(arg: String): List<PackageOptions> {
     if (arg.isBlank()) return emptyList()
@@ -25,14 +19,9 @@ fun parsePerPackageOptions(arg: String): List<PackageOptions> {
     }
 }
 
-fun parseSourceRoot(sourceRoot: String): SourceRoot {
-    val components = sourceRoot.split("::", limit = 2)
-    return SourceRoot(components.last(), if (components.size == 1) listOf() else components[0].split(','))
-}
-
 class DokkaBootstrapImpl : DokkaBootstrap {
 
-    class DokkaProxyLogger(val consumer: BiConsumer<String, String>) : DokkaLogger {
+    private class DokkaProxyLogger(val consumer: BiConsumer<String, String>) : DokkaLogger {
         override fun info(message: String) {
             consumer.accept("info", message)
         }
@@ -48,26 +37,14 @@ class DokkaBootstrapImpl : DokkaBootstrap {
 
     lateinit var generator: DokkaGenerator
 
-    override fun configure(logger: BiConsumer<String, String>,
-                           moduleName: String,
-                           classpath: List<String>,
-                           sources: List<String>,
-                           samples: List<String>,
-                           includes: List<String>,
-                           outputDir: String,
-                           format: String,
-                           includeNonPublic: Boolean,
-                           includeRootPackage: Boolean,
-                           reportUndocumented: Boolean,
-                           skipEmptyPackages: Boolean,
-                           skipDeprecated: Boolean,
-                           jdkVersion: Int,
-                           generateIndexPages: Boolean,
-                           sourceLinks: List<String>) {
+    override fun configure(logger: BiConsumer<String, String>, serializedConfigurationJSON: String)
+            = configure(DokkaProxyLogger(logger), deserialize<DokkaConfigurationImpl>(serializedConfigurationJSON))
+
+    fun configure(logger: DokkaLogger, configuration: DokkaConfiguration) = with(configuration) {
         generator = DokkaGenerator(
-                DokkaProxyLogger(logger),
+                logger,
                 classpath,
-                sources.map(::parseSourceRoot),
+                sourceRoots,
                 samples,
                 includes,
                 moduleName,
@@ -81,10 +58,9 @@ class DokkaBootstrapImpl : DokkaBootstrap {
                         skipDeprecated,
                         jdkVersion,
                         generateIndexPages,
-                        sourceLinks.map(::parseSourceLinkDefinition)
+                        sourceLinks
                 )
         )
-
     }
 
     override fun generate() = generator.generate()
