@@ -497,10 +497,8 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(klass("kotlinProject", "foo.Bar")))
 
         checkWhen(del("src/main.kt"),
-                arrayOf("src/Bar.kt", "src/boo.kt"),
-                mergeArrays(packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"),
-                            packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"),
-                            arrayOf(klass("kotlinProject", "foo.Bar"))))
+                pathsToCompile = null,
+                pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
         assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
         assertFilesNotExistInOutput(module, "foo/MainKt.class")
 
@@ -523,11 +521,8 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                         module("kotlinProject")))
 
         checkWhen(del("src/main.kt"),
-                arrayOf("src/Bar.kt", "src/boo.kt"),
-                mergeArrays(packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"),
-                            packageClasses("kotlinProject", "src/Bar.kt", "foo.MainKt"),
-                            packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"),
-                            arrayOf(klass("kotlinProject", "foo.Bar"))))
+                  pathsToCompile = null,
+                  pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
         assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
 
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
