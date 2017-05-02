@@ -6,11 +6,11 @@
     <property name="ideaVersion" value="171-SNAPSHOT"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
-    <property name="android.studio.version" value="2.4.0.3"/>
-    <property name="android.studio.build.number" value="171.3870562"/>
+    <property name="android.studio.version" value="2.4.0.6"/>
+    <property name="android.studio.build.number" value="171.3934896"/>
 
     <!-- how to find this version: https://jetbrains.quip.com/4IQyAOhyghPb -->
-    <property name="android.studio.intellij-core.build.number" value="171.2455.10"/>
+    <property name="android.studio.intellij-core.build.number" value="171.4249.4"/>
 
     <property name="kotlin.bootstrap.branch" value=""/>
     <property name="kotlin.bootstrap.branch.locator" value=""/>
