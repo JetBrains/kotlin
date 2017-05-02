@@ -31,3 +31,4 @@ FILE /stringPlus.kt
               $this: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value='1'
           other: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
+

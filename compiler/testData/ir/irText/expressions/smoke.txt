@@ -37,3 +37,4 @@ FILE /smoke.kt
     FUN public fun <set-testVarWithAccessors>(v: kotlin.Int): kotlin.Unit
       VALUE_PARAMETER value-parameter v: kotlin.Int
       BLOCK_BODY
+

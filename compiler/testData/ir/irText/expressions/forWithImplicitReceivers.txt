@@ -6,8 +6,12 @@ FILE /forWithImplicitReceivers.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='FiveTimes'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS IntCell
     $this: VALUE_PARAMETER this@IntCell: IntCell
     CONSTRUCTOR public constructor IntCell(value: kotlin.Int)
@@ -33,8 +37,12 @@ FILE /forWithImplicitReceivers.kt
             receiver: GET_VAR 'this@IntCell: IntCell' type=IntCell origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS INTERFACE IReceiver
     $this: VALUE_PARAMETER this@IReceiver: IReceiver
     FUN public open operator fun FiveTimes.iterator(): IntCell
@@ -72,8 +80,12 @@ FILE /forWithImplicitReceivers.kt
                   $this: GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
               GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   FUN public fun IReceiver.test(): kotlin.Unit
     $receiver: VALUE_PARAMETER this@test: IReceiver
     BLOCK_BODY
@@ -94,3 +106,4 @@ FILE /forWithImplicitReceivers.kt
             BLOCK type=kotlin.Unit origin=null
               CALL 'println(Int): Unit' type=kotlin.Unit origin=null
                 message: GET_VAR 'i: Int' type=kotlin.Int origin=null
+

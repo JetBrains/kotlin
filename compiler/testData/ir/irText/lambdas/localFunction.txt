@@ -14,3 +14,4 @@ FILE /localFunction.kt
                   $this: GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
               GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
       CALL 'local(): Unit' type=kotlin.Unit origin=null
+

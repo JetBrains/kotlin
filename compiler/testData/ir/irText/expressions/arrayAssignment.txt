@@ -25,3 +25,4 @@ FILE /arrayAssignment.kt
             CONST Int type=kotlin.Int value='3'
         index: CALL 'foo(): Int' type=kotlin.Int origin=null
         value: CONST Int type=kotlin.Int value='1'
+

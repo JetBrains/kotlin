@@ -35,3 +35,4 @@ FILE /stringComparisons.kt
           arg0: CALL 'compareTo(String): Int' type=kotlin.Int origin=LTEQ
             $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
             other: GET_VAR 'value-parameter b: String' type=kotlin.String origin=null
+

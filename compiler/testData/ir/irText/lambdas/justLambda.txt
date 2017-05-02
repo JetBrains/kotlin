@@ -25,3 +25,4 @@ FILE /justLambda.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): () -> Unit'
           GET_FIELD 'test2: () -> Unit' type=() -> kotlin.Unit origin=null
+

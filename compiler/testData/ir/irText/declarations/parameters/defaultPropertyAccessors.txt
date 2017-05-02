@@ -54,8 +54,12 @@ FILE /defaultPropertyAccessors.kt
             receiver: GET_VAR 'this@Host: Host' type=Host origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS InPrimaryCtor
     $this: VALUE_PARAMETER this@InPrimaryCtor: InPrimaryCtor<T>
     TYPE_PARAMETER <T>
@@ -95,5 +99,10 @@ FILE /defaultPropertyAccessors.kt
             receiver: GET_VAR 'this@InPrimaryCtor: InPrimaryCtor<T>' type=InPrimaryCtor<T> origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

@@ -98,3 +98,4 @@ abc
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test9>(): String'
           GET_FIELD 'test9: String' type=kotlin.String origin=null
+

@@ -24,8 +24,12 @@ FILE /assignments.kt
             receiver: GET_VAR 'this@Ref: Ref' type=Ref origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   FUN public fun test1(): kotlin.Unit
     BLOCK_BODY
       VAR var x: kotlin.Int
@@ -42,3 +46,4 @@ FILE /assignments.kt
       CALL '<set-x>(Int): Unit' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'value-parameter r: Ref' type=Ref origin=null
         <set-?>: CONST Int type=kotlin.Int value='0'
+

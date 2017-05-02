@@ -9,8 +9,12 @@ FILE /reflectionLiterals.kt
       $this: VALUE_PARAMETER this@A: A
       BLOCK_BODY
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   FUN public fun bar(): kotlin.Unit
     BLOCK_BODY
   PROPERTY public val qux: kotlin.Int = 42
@@ -79,3 +83,4 @@ FILE /reflectionLiterals.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test7>(): KProperty0<Int>'
           GET_FIELD 'test7: KProperty0<Int>' type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
+

@@ -24,8 +24,12 @@ FILE /initVar.kt
             receiver: GET_VAR 'this@TestInitVarFromParameter: TestInitVarFromParameter' type=TestInitVarFromParameter origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS TestInitVarInClass
     $this: VALUE_PARAMETER this@TestInitVarInClass: TestInitVarInClass
     CONSTRUCTOR public constructor TestInitVarInClass()
@@ -50,8 +54,12 @@ FILE /initVar.kt
             receiver: GET_VAR 'this@TestInitVarInClass: TestInitVarInClass' type=TestInitVarInClass origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS TestInitVarInInitBlock
     $this: VALUE_PARAMETER this@TestInitVarInInitBlock: TestInitVarInInitBlock
     CONSTRUCTOR public constructor TestInitVarInInitBlock()
@@ -79,8 +87,12 @@ FILE /initVar.kt
           $this: GET_VAR 'this@TestInitVarInInitBlock: TestInitVarInInitBlock' type=TestInitVarInInitBlock origin=null
           <set-?>: CONST Int type=kotlin.Int value='0'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS TestInitVarWithCustomSetter
     $this: VALUE_PARAMETER this@TestInitVarWithCustomSetter: TestInitVarWithCustomSetter
     CONSTRUCTOR public constructor TestInitVarWithCustomSetter()
@@ -105,8 +117,12 @@ FILE /initVar.kt
             receiver: GET_VAR 'this@TestInitVarWithCustomSetter: TestInitVarWithCustomSetter' type=TestInitVarWithCustomSetter origin=null
             value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS TestInitVarWithCustomSetterWithExplicitCtor
     $this: VALUE_PARAMETER this@TestInitVarWithCustomSetterWithExplicitCtor: TestInitVarWithCustomSetterWithExplicitCtor
     PROPERTY public final var x: kotlin.Int
@@ -134,8 +150,12 @@ FILE /initVar.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarWithCustomSetterWithExplicitCtor'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS TestInitVarWithCustomSetterInCtor
     $this: VALUE_PARAMETER this@TestInitVarWithCustomSetterInCtor: TestInitVarWithCustomSetterInCtor
     PROPERTY public final var x: kotlin.Int
@@ -161,5 +181,10 @@ FILE /initVar.kt
           $this: GET_VAR 'this@TestInitVarWithCustomSetterInCtor: TestInitVarWithCustomSetterInCtor' type=TestInitVarWithCustomSetterInCtor origin=null
           value: CONST Int type=kotlin.Int value='42'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

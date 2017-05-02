@@ -17,8 +17,12 @@ FILE /abstractMembers.kt
         $this: VALUE_PARAMETER this@AbstractClass: AbstractClass
         VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS INTERFACE Interface
     $this: VALUE_PARAMETER this@Interface: Interface
     FUN public abstract fun abstractFun(): kotlin.Unit
@@ -33,5 +37,10 @@ FILE /abstractMembers.kt
         $this: VALUE_PARAMETER this@Interface: Interface
         VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

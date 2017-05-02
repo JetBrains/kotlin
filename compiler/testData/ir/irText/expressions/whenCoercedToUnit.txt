@@ -12,3 +12,4 @@ FILE /whenCoercedToUnit.kt
               arg1: CONST Int type=kotlin.Int value='0'
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               CONST Int type=kotlin.Int value='0'
+

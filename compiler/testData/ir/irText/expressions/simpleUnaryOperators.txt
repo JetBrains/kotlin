@@ -29,3 +29,4 @@ FILE /simpleUnaryOperators.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test6(): Boolean'
         CONST Boolean type=kotlin.Boolean value='false'
+

@@ -64,3 +64,4 @@ FILE /localDelegatedProperties.kt
           value: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
             $this: CALL '<get-x>(): Int' type=kotlin.Int origin=PLUSEQ
             other: CONST Int type=kotlin.Int value='1'
+

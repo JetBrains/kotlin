@@ -57,3 +57,4 @@ FILE /variableAsFunctionCall.kt
               if: CONST Boolean type=kotlin.Boolean value='true'
               then: CALL 'invoke(): String' type=kotlin.String origin=null
                 $this: GET_VAR 'tmp1_safe_receiver: (() -> String)?' type=(() -> kotlin.String)? origin=null
+

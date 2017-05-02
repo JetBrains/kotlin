@@ -2,13 +2,21 @@ FILE /smartCastsWithDestructuring.kt
   CLASS INTERFACE I1
     $this: VALUE_PARAMETER this@I1: I1
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS INTERFACE I2
     $this: VALUE_PARAMETER this@I2: I2
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   FUN public operator fun I1.component1(): kotlin.Int
     $receiver: VALUE_PARAMETER this@component1: I1
     BLOCK_BODY
@@ -38,3 +46,4 @@ FILE /smartCastsWithDestructuring.kt
           CALL 'component2() on I2: String' type=kotlin.String origin=COMPONENT_N(index=2)
             $receiver: TYPE_OP type=I2 origin=IMPLICIT_CAST typeOperand=I2
               GET_VAR 'tmp0_container: I1' type=I1 origin=null
+

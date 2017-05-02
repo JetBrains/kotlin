@@ -6,8 +6,12 @@ FILE /safeCallWithIncrementDecrement.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   PROPERTY public var test.C?.p: kotlin.Int
     FUN public fun test.C?.<get-p>(): kotlin.Int
       $receiver: VALUE_PARAMETER this@p: C?
@@ -105,3 +109,4 @@ FILE /safeCallWithIncrementDecrement.kt
             value: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
               $this: GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
           GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
+

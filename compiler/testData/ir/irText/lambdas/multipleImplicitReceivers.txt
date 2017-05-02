@@ -6,8 +6,12 @@ FILE /multipleImplicitReceivers.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS OBJECT B
     $this: VALUE_PARAMETER this@B: B
     CONSTRUCTOR private constructor B()
@@ -15,8 +19,12 @@ FILE /multipleImplicitReceivers.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='B'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS INTERFACE IFoo
     $this: VALUE_PARAMETER this@IFoo: IFoo
     PROPERTY public open val A.foo: B
@@ -27,8 +35,12 @@ FILE /multipleImplicitReceivers.kt
           RETURN type=kotlin.Nothing from='<get-foo>() on A: B'
             GET_OBJECT 'B' type=B
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS INTERFACE IInvoke
     $this: VALUE_PARAMETER this@IInvoke: IInvoke
     FUN public open operator fun B.invoke(): kotlin.Int
@@ -38,8 +50,12 @@ FILE /multipleImplicitReceivers.kt
         RETURN type=kotlin.Nothing from='invoke() on B: Int'
           CONST Int type=kotlin.Int value='42'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   FUN public fun test(fooImpl: IFoo, invokeImpl: IInvoke): kotlin.Unit
     VALUE_PARAMETER value-parameter fooImpl: IFoo
     VALUE_PARAMETER value-parameter invokeImpl: IInvoke
@@ -80,3 +96,4 @@ FILE /multipleImplicitReceivers.kt
                                 FUNCTION_REFERENCE '<anonymous>() on IInvoke: Int' type=IInvoke.() -> kotlin.Int origin=LAMBDA
                       FUNCTION_REFERENCE '<anonymous>() on IFoo: Int' type=IFoo.() -> kotlin.Int origin=LAMBDA
             FUNCTION_REFERENCE '<anonymous>() on A: Int' type=A.() -> kotlin.Int origin=LAMBDA
+

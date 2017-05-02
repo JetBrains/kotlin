@@ -18,8 +18,12 @@ FILE /delegatingConstructorCallToTypeAliasConstructor.kt
             GET_FIELD 'value: T' type=T origin=null
               receiver: GET_VAR 'this@Cell: Cell<T>' type=Cell<T> origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   TYPEALIAS typealias CT = Cell<T> type=Cell<T>
   TYPEALIAS typealias CStr = Cell<String> type=Cell<kotlin.String>
   CLASS CLASS C1
@@ -31,9 +35,14 @@ FILE /delegatingConstructorCallToTypeAliasConstructor.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='C1'
     PROPERTY FAKE_OVERRIDE public final override val value: kotlin.String
       FUN FAKE_OVERRIDE public final override fun <get-value>(): kotlin.String
+        $this: VALUE_PARAMETER this@Cell: Cell<String>
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS C2
     $this: VALUE_PARAMETER this@C2: C2
     CONSTRUCTOR public constructor C2()
@@ -43,6 +52,12 @@ FILE /delegatingConstructorCallToTypeAliasConstructor.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='C2'
     PROPERTY FAKE_OVERRIDE public final override val value: kotlin.String
       FUN FAKE_OVERRIDE public final override fun <get-value>(): kotlin.String
+        $this: VALUE_PARAMETER this@Cell: Cell<String>
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

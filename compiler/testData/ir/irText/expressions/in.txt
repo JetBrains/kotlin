@@ -35,3 +35,4 @@ FILE /in.kt
           arg0: CALL 'contains(T): Boolean' type=kotlin.Boolean origin=NOT_IN
             $this: GET_VAR 'value-parameter x: Collection<T>' type=kotlin.collections.Collection<T> origin=null
             element: GET_VAR 'value-parameter a: T' type=T origin=null
+

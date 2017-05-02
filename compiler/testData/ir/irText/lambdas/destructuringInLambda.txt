@@ -153,3 +153,4 @@ FILE /destructuringInLambda.kt
       BLOCK_BODY
         SET_FIELD 'fn: (A) -> Int' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: (A) -> Int' type=(A) -> kotlin.Int origin=null
+

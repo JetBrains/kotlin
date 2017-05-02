@@ -51,3 +51,4 @@ FILE /references.kt
       RETURN type=kotlin.Nothing from='test5() on String: String'
         CALL '<get-okext>() on String: String' type=kotlin.String origin=GET_PROPERTY
           $receiver: GET_VAR 'this@test5: String' type=kotlin.String origin=null
+

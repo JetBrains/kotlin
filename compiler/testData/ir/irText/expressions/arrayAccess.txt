@@ -26,3 +26,4 @@ FILE /arrayAccess.kt
           other: CALL 'get(Int): Int' type=kotlin.Int origin=GET_ARRAY_ELEMENT
             $this: GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray origin=null
             index: CALL 'foo(): Int' type=kotlin.Int origin=null
+

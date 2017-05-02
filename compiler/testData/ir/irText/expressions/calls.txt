@@ -43,3 +43,4 @@ FILE /calls.kt
           x: CALL 'ext1() on Int: Int' type=kotlin.Int origin=null
             $receiver: GET_VAR 'this@ext3: Int' type=kotlin.Int origin=null
           y: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
+

@@ -25,8 +25,12 @@ FILE /local.kt
           CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR 'this@Delegate: Delegate' type=Delegate origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS DelegateProvider
     $this: VALUE_PARAMETER this@DelegateProvider: DelegateProvider
     CONSTRUCTOR public constructor DelegateProvider(value: kotlin.String)
@@ -54,8 +58,12 @@ FILE /local.kt
             value: CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR 'this@DelegateProvider: DelegateProvider' type=DelegateProvider origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   FUN public fun foo(): kotlin.Unit
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY val testMember: kotlin.String
@@ -72,3 +80,4 @@ FILE /local.kt
                 $this: GET_VAR '`testMember$delegate`: Delegate' type=Delegate origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value='null'
                 property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testMember: String' delegate='`testMember$delegate`: Delegate' getter='<get-testMember>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+

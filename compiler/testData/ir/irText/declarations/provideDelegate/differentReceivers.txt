@@ -17,8 +17,12 @@ FILE /differentReceivers.kt
             GET_FIELD 'value: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@MyClass: MyClass' type=MyClass origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   FUN public operator fun MyClass.provideDelegate(host: kotlin.Any?, p: kotlin.Any): kotlin.String
     $receiver: VALUE_PARAMETER this@provideDelegate: MyClass
     VALUE_PARAMETER value-parameter host: kotlin.Any?
@@ -70,3 +74,4 @@ FILE /differentReceivers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testOK>(): String'
           GET_FIELD 'testOK: String' type=kotlin.String origin=null
+

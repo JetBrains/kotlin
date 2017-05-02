@@ -16,8 +16,12 @@ FILE /chainOfSafeCalls.kt
         RETURN type=kotlin.Nothing from='bar(): C?'
           GET_VAR 'this@C: C' type=C origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   FUN public fun test(nc: C?): C?
     VALUE_PARAMETER value-parameter nc: C?
     BLOCK_BODY
@@ -71,3 +75,4 @@ FILE /chainOfSafeCalls.kt
               if: CONST Boolean type=kotlin.Boolean value='true'
               then: CALL 'foo(): C' type=C origin=null
                 $this: GET_VAR 'tmp3_safe_receiver: C?' type=C? origin=null
+

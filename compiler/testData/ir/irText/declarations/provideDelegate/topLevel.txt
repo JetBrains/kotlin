@@ -25,8 +25,12 @@ FILE /topLevel.kt
           CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR 'this@Delegate: Delegate' type=Delegate origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS DelegateProvider
     $this: VALUE_PARAMETER this@DelegateProvider: DelegateProvider
     CONSTRUCTOR public constructor DelegateProvider(value: kotlin.String)
@@ -54,8 +58,12 @@ FILE /topLevel.kt
             value: CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR 'this@DelegateProvider: DelegateProvider' type=DelegateProvider origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   PROPERTY public val testTopLevel: kotlin.String
     FIELD DELEGATE val `testTopLevel$delegate`: Delegate
       EXPRESSION_BODY
@@ -71,3 +79,4 @@ FILE /topLevel.kt
             $this: GET_FIELD '`testTopLevel$delegate`: Delegate' type=Delegate origin=null
             thisRef: CONST Null type=kotlin.Nothing? value='null'
             property: PROPERTY_REFERENCE 'testTopLevel: String' field=null getter='<get-testTopLevel>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+

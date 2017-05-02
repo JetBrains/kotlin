@@ -104,5 +104,10 @@ FILE /primitivesImplicitConversions.kt
             GET_FIELD 'x: Long' type=kotlin.Long origin=null
               receiver: GET_VAR 'this@TestImplicitArguments: TestImplicitArguments' type=TestImplicitArguments origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

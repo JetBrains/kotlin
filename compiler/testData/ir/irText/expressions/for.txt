@@ -55,3 +55,4 @@ FILE /for.kt
                 message: GET_VAR 'i: Int' type=kotlin.Int origin=null
               CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
                 message: GET_VAR 's: String' type=kotlin.String origin=null
+

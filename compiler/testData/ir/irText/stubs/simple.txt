@@ -9,3 +9,4 @@ FILE /simple.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test>(): Int'
           GET_FIELD 'test: Int' type=kotlin.Int origin=null
+

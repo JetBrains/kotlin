@@ -30,3 +30,4 @@ FILE /badBreakContinue.kt
       WHILE label=null origin=WHILE_LOOP
         condition: ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
         body: BLOCK type=kotlin.Unit origin=null
+

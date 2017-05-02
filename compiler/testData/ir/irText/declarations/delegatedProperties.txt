@@ -84,8 +84,12 @@ FILE /delegatedProperties.kt
               property: PROPERTY_REFERENCE 'test3: Any' field=null getter='<get-test3>(): Any' setter='<set-test3>(Any): Unit' type=kotlin.reflect.KMutableProperty1<C, kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               value: GET_VAR 'value-parameter <set-?>: Any' type=kotlin.Any origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   PROPERTY public var test4: kotlin.Any
     FIELD DELEGATE val `test4$delegate`: kotlin.collections.HashMap<kotlin.String, kotlin.Any> /* = java.util.HashMap<kotlin.String, kotlin.Any> */
       EXPRESSION_BODY
@@ -110,3 +114,4 @@ FILE /delegatedProperties.kt
             thisRef: CONST Null type=kotlin.Nothing? value='null'
             property: PROPERTY_REFERENCE 'test4: Any' field=null getter='<get-test4>(): Any' setter='<set-test4>(Any): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
             value: GET_VAR 'value-parameter <set-?>: Any' type=kotlin.Any origin=null
+

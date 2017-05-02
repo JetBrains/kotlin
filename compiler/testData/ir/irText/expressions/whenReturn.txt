@@ -36,3 +36,4 @@ FILE /whenReturn.kt
               CONST String type=kotlin.String value='Failure'
       RETURN type=kotlin.Nothing from='toString(String): String'
         CONST String type=kotlin.String value='???'
+

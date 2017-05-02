@@ -24,8 +24,12 @@ FILE /safeCalls.kt
             receiver: GET_VAR 'this@Ref: Ref' type=Ref origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS INTERFACE IHost
     $this: VALUE_PARAMETER this@IHost: IHost
     FUN public open fun kotlin.String.extLength(): kotlin.Int
@@ -36,8 +40,12 @@ FILE /safeCalls.kt
           CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'this@extLength: String' type=kotlin.String origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   FUN public fun test1(x: kotlin.String?): kotlin.Int?
     VALUE_PARAMETER value-parameter x: kotlin.String?
     BLOCK_BODY
@@ -149,3 +157,4 @@ FILE /safeCalls.kt
               if: CONST Boolean type=kotlin.Boolean value='true'
               then: CALL 'foo() on Int: Int' type=kotlin.Int origin=null
                 $receiver: GET_VAR 'tmp0_safe_receiver: Int' type=kotlin.Int origin=null
+

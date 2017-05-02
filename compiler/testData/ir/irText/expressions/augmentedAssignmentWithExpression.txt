@@ -16,8 +16,12 @@ FILE /augmentedAssignmentWithExpression.kt
           $this: GET_VAR 'this@Host: Host' type=Host origin=PLUSEQ
           x: CONST Int type=kotlin.Int value='1'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   FUN public fun foo(): Host
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='foo(): Host'
@@ -40,3 +44,4 @@ FILE /augmentedAssignmentWithExpression.kt
         $this: CALL 'invoke(): Host' type=Host origin=INVOKE
           $this: GET_VAR 'value-parameter a: () -> Host' type=() -> Host origin=VARIABLE_AS_FUNCTION
         x: CONST Int type=kotlin.Int value='1'
+

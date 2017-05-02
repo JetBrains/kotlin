@@ -34,8 +34,12 @@ FILE /membersImportedFromObject.kt
           RETURN type=kotlin.Nothing from='<get-barExt>() on Int: Int'
             CONST Int type=kotlin.Int value='43'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   PROPERTY public val test1: kotlin.Int
     FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.Int
       EXPRESSION_BODY
@@ -74,3 +78,4 @@ FILE /membersImportedFromObject.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test4>(): Int'
           GET_FIELD 'test4: Int' type=kotlin.Int origin=null
+

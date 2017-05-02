@@ -14,3 +14,4 @@ FILE /genericPropertyCall.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test>(): String'
           GET_FIELD 'test: String' type=kotlin.String origin=null
+

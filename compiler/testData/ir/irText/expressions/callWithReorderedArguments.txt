@@ -40,3 +40,4 @@ FILE /callWithReorderedArguments.kt
         CALL 'foo(Int, Int): Unit' type=kotlin.Unit origin=null
           a: GET_VAR 'tmp3_a: Int' type=kotlin.Int origin=null
           b: GET_VAR 'tmp2_b: Int' type=kotlin.Int origin=null
+

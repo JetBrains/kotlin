@@ -24,11 +24,19 @@ FILE /multipleThisReferences.kt
               GET_FIELD 'x: Int' type=kotlin.Int origin=null
                 receiver: GET_VAR 'this@Inner: Inner' type=Outer.Inner origin=null
       FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        $this: VALUE_PARAMETER this@Any: Any
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
       FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+        $this: VALUE_PARAMETER this@Any: Any
       FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+        $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS Host
     $this: VALUE_PARAMETER this@Host: Host
     CONSTRUCTOR public constructor Host(y: kotlin.Int)
@@ -76,10 +84,20 @@ FILE /multipleThisReferences.kt
                         receiver: GET_VAR 'this@<no name provided>: <no name provided>' type=Host.test.<no name provided> origin=null
               PROPERTY FAKE_OVERRIDE public final override val x: kotlin.Int
                 FUN FAKE_OVERRIDE public final override fun <get-x>(): kotlin.Int
+                  $this: VALUE_PARAMETER this@Inner: Inner
               FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+                $this: VALUE_PARAMETER this@Any: Any
+                VALUE_PARAMETER value-parameter other: kotlin.Any?
               FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+                $this: VALUE_PARAMETER this@Any: Any
               FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+                $this: VALUE_PARAMETER this@Any: Any
             CALL 'constructor <no name provided>()' type=Host.test.<no name provided> origin=OBJECT_LITERAL
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

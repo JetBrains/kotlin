@@ -23,16 +23,27 @@ FILE /enumWithSecondaryCtor.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Test0(Int)'
           x: CONST Int type=kotlin.Int value='0'
     FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+      $this: VALUE_PARAMETER this@Enum: Enum<Test0>
     FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+      $this: VALUE_PARAMETER this@Enum: Enum<Test0>
     FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<Test0!>!
+      $this: VALUE_PARAMETER this@Enum: Enum<Test0>
     FUN FAKE_OVERRIDE public final override fun compareTo(other: Test0): kotlin.Int
+      $this: VALUE_PARAMETER this@Enum: Enum<Test0>
+      VALUE_PARAMETER value-parameter other: Test0
     FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Enum: Enum<Test0>
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Enum: Enum<Test0>
     PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
       FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+        $this: VALUE_PARAMETER this@Enum: Enum<Test0>
     PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
       FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+        $this: VALUE_PARAMETER this@Enum: Enum<Test0>
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Enum: Enum<Test0>
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Test0>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test0
@@ -64,16 +75,27 @@ FILE /enumWithSecondaryCtor.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Test1(Int)'
           x: CONST Int type=kotlin.Int value='0'
     FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+      $this: VALUE_PARAMETER this@Enum: Enum<Test1>
     FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+      $this: VALUE_PARAMETER this@Enum: Enum<Test1>
     FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<Test1!>!
+      $this: VALUE_PARAMETER this@Enum: Enum<Test1>
     FUN FAKE_OVERRIDE public final override fun compareTo(other: Test1): kotlin.Int
+      $this: VALUE_PARAMETER this@Enum: Enum<Test1>
+      VALUE_PARAMETER value-parameter other: Test1
     FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Enum: Enum<Test1>
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Enum: Enum<Test1>
     PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
       FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+        $this: VALUE_PARAMETER this@Enum: Enum<Test1>
     PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
       FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+        $this: VALUE_PARAMETER this@Enum: Enum<Test1>
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Enum: Enum<Test1>
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Test1>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test1
@@ -109,18 +131,30 @@ FILE /enumWithSecondaryCtor.kt
             CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
               message: CONST String type=kotlin.String value='ZERO'
         FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+          $this: VALUE_PARAMETER this@Enum: Enum<Test2>
         FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+          $this: VALUE_PARAMETER this@Enum: Enum<Test2>
         FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<Test2!>!
+          $this: VALUE_PARAMETER this@Enum: Enum<Test2>
         FUN FAKE_OVERRIDE public final override fun compareTo(other: Test2): kotlin.Int
+          $this: VALUE_PARAMETER this@Enum: Enum<Test2>
+          VALUE_PARAMETER value-parameter other: Test2
         FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+          $this: VALUE_PARAMETER this@Enum: Enum<Test2>
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
         FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+          $this: VALUE_PARAMETER this@Enum: Enum<Test2>
         PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
           FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+            $this: VALUE_PARAMETER this@Enum: Enum<Test2>
         PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
           FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+            $this: VALUE_PARAMETER this@Enum: Enum<Test2>
         PROPERTY FAKE_OVERRIDE public final override val x: kotlin.Int
           FUN FAKE_OVERRIDE public final override fun <get-x>(): kotlin.Int
+            $this: VALUE_PARAMETER this@Test2: Test2
         FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+          $this: VALUE_PARAMETER this@Enum: Enum<Test2>
     ENUM_ENTRY enum entry ONE
       init: ENUM_CONSTRUCTOR_CALL 'constructor ONE()'
       class: CLASS ENUM_ENTRY ONE
@@ -136,18 +170,30 @@ FILE /enumWithSecondaryCtor.kt
             CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
               message: CONST String type=kotlin.String value='ONE'
         FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+          $this: VALUE_PARAMETER this@Enum: Enum<Test2>
         FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+          $this: VALUE_PARAMETER this@Enum: Enum<Test2>
         FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<Test2!>!
+          $this: VALUE_PARAMETER this@Enum: Enum<Test2>
         FUN FAKE_OVERRIDE public final override fun compareTo(other: Test2): kotlin.Int
+          $this: VALUE_PARAMETER this@Enum: Enum<Test2>
+          VALUE_PARAMETER value-parameter other: Test2
         FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+          $this: VALUE_PARAMETER this@Enum: Enum<Test2>
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
         FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+          $this: VALUE_PARAMETER this@Enum: Enum<Test2>
         PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
           FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+            $this: VALUE_PARAMETER this@Enum: Enum<Test2>
         PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
           FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+            $this: VALUE_PARAMETER this@Enum: Enum<Test2>
         PROPERTY FAKE_OVERRIDE public final override val x: kotlin.Int
           FUN FAKE_OVERRIDE public final override fun <get-x>(): kotlin.Int
+            $this: VALUE_PARAMETER this@Test2: Test2
         FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+          $this: VALUE_PARAMETER this@Enum: Enum<Test2>
     CONSTRUCTOR private constructor Test2()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Test2(Int)'
@@ -155,17 +201,29 @@ FILE /enumWithSecondaryCtor.kt
     FUN public abstract fun foo(): kotlin.Unit
       $this: VALUE_PARAMETER this@Test2: Test2
     FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+      $this: VALUE_PARAMETER this@Enum: Enum<Test2>
     FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+      $this: VALUE_PARAMETER this@Enum: Enum<Test2>
     FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<Test2!>!
+      $this: VALUE_PARAMETER this@Enum: Enum<Test2>
     FUN FAKE_OVERRIDE public final override fun compareTo(other: Test2): kotlin.Int
+      $this: VALUE_PARAMETER this@Enum: Enum<Test2>
+      VALUE_PARAMETER value-parameter other: Test2
     FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Enum: Enum<Test2>
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Enum: Enum<Test2>
     PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
       FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+        $this: VALUE_PARAMETER this@Enum: Enum<Test2>
     PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
       FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+        $this: VALUE_PARAMETER this@Enum: Enum<Test2>
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Enum: Enum<Test2>
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Test2>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test2
       SYNTHETIC_BODY kind=ENUM_VALUEOF
+

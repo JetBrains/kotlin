@@ -12,3 +12,4 @@ FILE /catchParameterAccess.kt
             BLOCK type=kotlin.Nothing origin=null
               THROW type=kotlin.Nothing
                 GET_VAR 'e: Exception /* = Exception */' type=kotlin.Exception /* = java.lang.Exception */ origin=null
+

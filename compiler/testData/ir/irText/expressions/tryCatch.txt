@@ -26,3 +26,4 @@ FILE /tryCatch.kt
             BLOCK type=kotlin.Int origin=null
               CALL 'println(): Unit' type=kotlin.Unit origin=null
               CONST Int type=kotlin.Int value='555'
+

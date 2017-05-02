@@ -65,7 +65,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
 
             generateMembersDeclaredInClassBody(irClass, ktClassOrObject)
 
-            generateFakeOverrideMemberDeclarations(irClass)
+            generateFakeOverrideMemberDeclarations(irClass, ktClassOrObject)
 
             if (descriptor.isData) {
                 generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
@@ -77,7 +77,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         }
     }
 
-    private fun generateFakeOverrideMemberDeclarations(irClass: IrClass) {
+    private fun generateFakeOverrideMemberDeclarations(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
         irClass.descriptor.unsubstitutedMemberScope.getContributedDescriptors()
                 .mapNotNull {
                     it.safeAs<CallableMemberDescriptor>().takeIf {
@@ -86,7 +86,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
                 }
                 .sortedWith(StableCallableMembersComparator)
                 .forEach { fakeOverride ->
-                    irClass.addMember(declarationGenerator.generateFakeOverrideDeclaration(fakeOverride))
+                    irClass.addMember(declarationGenerator.generateFakeOverrideDeclaration(fakeOverride, ktClassOrObject))
                 }
     }
 

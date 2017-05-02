@@ -87,7 +87,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     fun generateInitializerBody(scopeOwnerSymbol: IrSymbol, ktBody: KtExpression): IrExpressionBody =
             createBodyGenerator(scopeOwnerSymbol).generateExpressionBody(ktBody)
 
-    fun generateFakeOverrideDeclaration(memberDescriptor: CallableMemberDescriptor, ktElement: KtElement? = null): IrDeclaration {
+    fun generateFakeOverrideDeclaration(memberDescriptor: CallableMemberDescriptor, ktElement: KtElement): IrDeclaration {
         assert(memberDescriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
             "Fake override expected: $memberDescriptor"
         }
@@ -101,7 +101,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         }
     }
 
-    private fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtElement?): IrProperty =
+    private fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtElement): IrProperty =
             IrPropertyImpl(
                     ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
                     IrDeclarationOrigin.FAKE_OVERRIDE,
@@ -117,12 +117,8 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                     propertyDescriptor.setter?.let { generateFakeOverrideFunction(it, ktElement) }
             )
 
-    private fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtElement?): IrFunction =
-            context.symbolTable.declareSimpleFunction(
-                    ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
-                    IrDeclarationOrigin.FAKE_OVERRIDE,
-                    functionDescriptor
-            )
+    private fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtElement): IrFunction =
+            FunctionGenerator(this).generateFakeOverrideFunction(functionDescriptor, ktElement)
 }
 
 abstract class DeclarationGeneratorExtension(val declarationGenerator: DeclarationGenerator) : Generator {

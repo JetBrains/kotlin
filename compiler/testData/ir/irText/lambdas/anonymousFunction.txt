@@ -11,3 +11,4 @@ FILE /anonymousFunction.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-anonymous>(): () -> Unit'
           GET_FIELD 'anonymous: () -> Unit' type=() -> kotlin.Unit origin=null
+

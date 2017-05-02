@@ -37,3 +37,4 @@ FILE /vararg.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test3>(): Array<String>'
           GET_FIELD 'test3: Array<String>' type=kotlin.Array<kotlin.String> origin=null
+

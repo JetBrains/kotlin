@@ -57,3 +57,4 @@ FILE /lambdas.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test4>(): (Int, Int) -> Unit'
           GET_FIELD 'test4: (Int, Int) -> Unit' type=(kotlin.Int, kotlin.Int) -> kotlin.Unit origin=null
+

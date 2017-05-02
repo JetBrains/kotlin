@@ -162,3 +162,4 @@ FILE /incrementDecrement.kt
             value: CALL 'dec(): Int' type=kotlin.Int origin=POSTFIX_DECR
               $this: GET_VAR 'tmp5: Int' type=kotlin.Int origin=null
           GET_VAR 'tmp5: Int' type=kotlin.Int origin=null
+

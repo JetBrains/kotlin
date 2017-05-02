@@ -54,6 +54,14 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 generateLambdaBody(ktFunction)
             }
 
+    fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtElement): IrFunction =
+            context.symbolTable.declareSimpleFunction(
+                    ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
+                    IrDeclarationOrigin.FAKE_OVERRIDE,
+                    functionDescriptor
+            ).buildWithScope { irFunction ->
+                generateFunctionParameterDeclarations(irFunction, ktElement, null)
+            }
 
     private inline fun declareSimpleFunction(
             ktFunction: KtFunction,
@@ -71,7 +79,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     fun generateFunctionParameterDeclarations(
             irFunction: IrFunction,
-            ktParameterOwner: KtElement,
+            ktParameterOwner: KtElement?,
             ktReceiverParameterElement: KtElement?
     ) {
         declarationGenerator.generateTypeParameterDeclarations(irFunction, irFunction.descriptor.typeParameters)

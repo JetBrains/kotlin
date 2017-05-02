@@ -43,3 +43,4 @@ FILE /bangbang.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value='true'
               then: GET_VAR 'tmp1_notnull: Int?' type=kotlin.Int? origin=null
+

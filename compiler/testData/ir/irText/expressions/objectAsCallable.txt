@@ -6,8 +6,12 @@ FILE /objectAsCallable.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS ENUM_CLASS En
     $this: VALUE_PARAMETER this@En: En
     CONSTRUCTOR private constructor En()
@@ -17,16 +21,27 @@ FILE /objectAsCallable.kt
     ENUM_ENTRY enum entry X
       init: ENUM_CONSTRUCTOR_CALL 'constructor En()'
     FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+      $this: VALUE_PARAMETER this@Enum: Enum<En>
     FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+      $this: VALUE_PARAMETER this@Enum: Enum<En>
     FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<En!>!
+      $this: VALUE_PARAMETER this@Enum: Enum<En>
     FUN FAKE_OVERRIDE public final override fun compareTo(other: En): kotlin.Int
+      $this: VALUE_PARAMETER this@Enum: Enum<En>
+      VALUE_PARAMETER value-parameter other: En
     FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Enum: Enum<En>
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Enum: Enum<En>
     PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
       FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+        $this: VALUE_PARAMETER this@Enum: Enum<En>
     PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
       FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+        $this: VALUE_PARAMETER this@Enum: Enum<En>
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Enum: Enum<En>
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<En>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): En
@@ -63,3 +78,4 @@ FILE /objectAsCallable.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): Int'
           GET_FIELD 'test2: Int' type=kotlin.Int origin=null
+

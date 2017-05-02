@@ -36,11 +36,19 @@ FILE /thisOfGenericOuterClass.kt
               GET_FIELD 'y: Int' type=kotlin.Int origin=null
                 receiver: GET_VAR 'this@Inner: Inner<T>' type=Outer<T>.Inner origin=null
       FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        $this: VALUE_PARAMETER this@Any: Any
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
       FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+        $this: VALUE_PARAMETER this@Any: Any
       FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+        $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   FUN public fun Outer<kotlin.Int>.test(): Outer<kotlin.Int>.Inner
     $receiver: VALUE_PARAMETER this@test: Outer<Int>
     BLOCK_BODY
@@ -70,7 +78,13 @@ FILE /thisOfGenericOuterClass.kt
                       receiver: GET_VAR 'this@<no name provided>: <no name provided>' type=test.<no name provided> origin=null
             PROPERTY FAKE_OVERRIDE public final override val y: kotlin.Int
               FUN FAKE_OVERRIDE public final override fun <get-y>(): kotlin.Int
+                $this: VALUE_PARAMETER this@Inner: Inner<Int>
             FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+              $this: VALUE_PARAMETER this@Any: Any
+              VALUE_PARAMETER value-parameter other: kotlin.Any?
             FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+              $this: VALUE_PARAMETER this@Any: Any
             FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+              $this: VALUE_PARAMETER this@Any: Any
           CALL 'constructor <no name provided>()' type=test.<no name provided> origin=OBJECT_LITERAL
+

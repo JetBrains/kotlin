@@ -12,3 +12,4 @@ FILE /samAdapter.kt
             FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
       CALL 'run(): Unit' type=kotlin.Unit origin=null
         $this: GET_VAR 'hello: Runnable' type=java.lang.Runnable origin=null
+

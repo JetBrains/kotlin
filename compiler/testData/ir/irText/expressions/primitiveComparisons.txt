@@ -215,3 +215,4 @@ FILE /primitiveComparisons.kt
           arg0: CALL 'compareTo(Double): Int' type=kotlin.Int origin=LTEQ
             $this: GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
             other: GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
+

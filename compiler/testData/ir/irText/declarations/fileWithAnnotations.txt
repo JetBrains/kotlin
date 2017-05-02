@@ -11,3 +11,4 @@ FILE /fileWithAnnotations.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-bar>(): Int'
           GET_FIELD 'bar: Int' type=kotlin.Int origin=null
+

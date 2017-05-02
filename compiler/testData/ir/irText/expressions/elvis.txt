@@ -108,3 +108,4 @@ FILE /elvis.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value='true'
               then: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
+

@@ -33,3 +33,4 @@ FILE /unresolvedReference.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test4>(): [ERROR : Type for 42 *]'
           GET_FIELD 'test4: [ERROR : Type for 42 *]' type=[ERROR : Type for 42 *] origin=null
+

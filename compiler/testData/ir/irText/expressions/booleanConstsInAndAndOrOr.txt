@@ -23,3 +23,4 @@ FILE /booleanConstsInAndAndOrOr.kt
             if: CONST Boolean type=kotlin.Boolean value='true'
             then: RETURN type=kotlin.Nothing from='test2(Boolean): Unit'
               GET_OBJECT 'Unit' type=kotlin.Unit
+

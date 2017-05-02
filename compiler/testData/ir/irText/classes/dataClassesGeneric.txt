@@ -98,3 +98,4 @@ FILE /dataClassesGeneric.kt
               CONST Boolean type=kotlin.Boolean value='false'
         RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
           CONST Boolean type=kotlin.Boolean value='true'
+

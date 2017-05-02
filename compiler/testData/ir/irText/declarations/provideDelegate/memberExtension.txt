@@ -33,8 +33,12 @@ FILE /memberExtension.kt
               other: CALL '<get-s>(): String' type=kotlin.String origin=GET_PROPERTY
                 $this: GET_VAR 'this@StringDelegate: StringDelegate' type=Host.StringDelegate origin=null
       FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        $this: VALUE_PARAMETER this@Any: Any
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
       FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+        $this: VALUE_PARAMETER this@Any: Any
       FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+        $this: VALUE_PARAMETER this@Any: Any
     FUN public final operator fun kotlin.String.provideDelegate(host: kotlin.Any?, p: kotlin.Any): Host.StringDelegate
       $this: VALUE_PARAMETER this@Host: Host
       $receiver: VALUE_PARAMETER this@provideDelegate: String
@@ -75,5 +79,10 @@ FILE /memberExtension.kt
             GET_FIELD 'ok: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@Host: Host' type=Host origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

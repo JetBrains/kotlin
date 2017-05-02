@@ -93,3 +93,4 @@ FILE /breakContinueInLoopHeader.kt
                 VAR val s: kotlin.String
                   CALL 'next(): String' type=kotlin.String origin=FOR_LOOP_NEXT
                     $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
+

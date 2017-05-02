@@ -6,8 +6,12 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Base'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS TestImplicitPrimaryConstructor
     $this: VALUE_PARAMETER this@TestImplicitPrimaryConstructor: TestImplicitPrimaryConstructor
     CONSTRUCTOR public constructor TestImplicitPrimaryConstructor()
@@ -15,8 +19,12 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestImplicitPrimaryConstructor'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS TestExplicitPrimaryConstructor
     $this: VALUE_PARAMETER this@TestExplicitPrimaryConstructor: TestExplicitPrimaryConstructor
     CONSTRUCTOR public constructor TestExplicitPrimaryConstructor()
@@ -24,8 +32,12 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestExplicitPrimaryConstructor'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS TestWithDelegatingConstructor
     $this: VALUE_PARAMETER this@TestWithDelegatingConstructor: TestWithDelegatingConstructor
     CONSTRUCTOR public constructor TestWithDelegatingConstructor(x: kotlin.Int, y: kotlin.Int)
@@ -61,5 +73,10 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
           x: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
           y: CONST Int type=kotlin.Int value='0'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

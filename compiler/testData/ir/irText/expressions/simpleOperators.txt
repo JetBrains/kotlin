@@ -87,3 +87,4 @@ FILE /simpleOperators.kt
         CALL 'mod(Int): Int' type=kotlin.Int origin=null
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
+

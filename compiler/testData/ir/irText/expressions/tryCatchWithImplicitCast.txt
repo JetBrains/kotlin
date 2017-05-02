@@ -17,3 +17,4 @@ FILE /tryCatchWithImplicitCast.kt
             VAR CATCH_PARAMETER val e: kotlin.Throwable
             BLOCK type=kotlin.String origin=null
               CONST String type=kotlin.String value=''
+

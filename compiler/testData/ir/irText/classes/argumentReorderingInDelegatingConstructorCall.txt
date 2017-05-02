@@ -28,8 +28,12 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Base: Base' type=Base origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS Test1
     $this: VALUE_PARAMETER this@Test1: Test1
     CONSTRUCTOR public constructor Test1(xx: kotlin.Int, yy: kotlin.Int)
@@ -47,11 +51,17 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
     PROPERTY FAKE_OVERRIDE public final override val x: kotlin.Int
       FUN FAKE_OVERRIDE public final override fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER this@Base: Base
     PROPERTY FAKE_OVERRIDE public final override val y: kotlin.Int
       FUN FAKE_OVERRIDE public final override fun <get-y>(): kotlin.Int
+        $this: VALUE_PARAMETER this@Base: Base
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
   CLASS CLASS Test2
     $this: VALUE_PARAMETER this@Test2: Test2
     CONSTRUCTOR public constructor Test2(xx: kotlin.Int, yy: kotlin.Int)
@@ -82,8 +92,15 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
             yy: GET_VAR 'tmp0_yy: Int' type=kotlin.Int origin=null
     PROPERTY FAKE_OVERRIDE public final override val x: kotlin.Int
       FUN FAKE_OVERRIDE public final override fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER this@Base: Base
     PROPERTY FAKE_OVERRIDE public final override val y: kotlin.Int
       FUN FAKE_OVERRIDE public final override fun <get-y>(): kotlin.Int
+        $this: VALUE_PARAMETER this@Base: Base
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any
+

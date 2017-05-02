@@ -40,30 +40,52 @@ FILE /enumEntryAsReceiver.kt
                 GET_FIELD 'value: () -> String' type=() -> kotlin.String origin=null
                   receiver: GET_VAR 'this@B: B' type=X.B origin=null
         FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+          $this: VALUE_PARAMETER this@Enum: Enum<X>
         FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+          $this: VALUE_PARAMETER this@Enum: Enum<X>
         FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<X!>!
+          $this: VALUE_PARAMETER this@Enum: Enum<X>
         FUN FAKE_OVERRIDE public final override fun compareTo(other: X): kotlin.Int
+          $this: VALUE_PARAMETER this@Enum: Enum<X>
+          VALUE_PARAMETER value-parameter other: X
         FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+          $this: VALUE_PARAMETER this@Enum: Enum<X>
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
         FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+          $this: VALUE_PARAMETER this@Enum: Enum<X>
         PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
           FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+            $this: VALUE_PARAMETER this@Enum: Enum<X>
         PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
           FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+            $this: VALUE_PARAMETER this@Enum: Enum<X>
         FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+          $this: VALUE_PARAMETER this@Enum: Enum<X>
     PROPERTY public abstract val value: () -> kotlin.String
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-value>(): () -> kotlin.String
         $this: VALUE_PARAMETER this@X: X
     FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+      $this: VALUE_PARAMETER this@Enum: Enum<X>
     FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+      $this: VALUE_PARAMETER this@Enum: Enum<X>
     FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<X!>!
+      $this: VALUE_PARAMETER this@Enum: Enum<X>
     FUN FAKE_OVERRIDE public final override fun compareTo(other: X): kotlin.Int
+      $this: VALUE_PARAMETER this@Enum: Enum<X>
+      VALUE_PARAMETER value-parameter other: X
     FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Enum: Enum<X>
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
     FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Enum: Enum<X>
     PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
       FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+        $this: VALUE_PARAMETER this@Enum: Enum<X>
     PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
       FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+        $this: VALUE_PARAMETER this@Enum: Enum<X>
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Enum: Enum<X>
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<X>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): X
@@ -74,3 +96,4 @@ FILE /enumEntryAsReceiver.kt
         CALL 'invoke(): String' type=kotlin.String origin=INVOKE
           $this: CALL '<get-value>(): () -> String' type=() -> kotlin.String origin=GET_PROPERTY
             $this: GET_ENUM 'B' type=X
+
