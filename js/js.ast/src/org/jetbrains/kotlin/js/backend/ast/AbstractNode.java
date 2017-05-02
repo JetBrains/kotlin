@@ -28,8 +28,12 @@ abstract class AbstractNode extends HasMetadata implements JsNode {
         return out.toString();
     }
 
-    protected <T extends HasMetadata> T withMetadataFrom(T other) {
+    protected <T extends HasMetadata & JsNode> T withMetadataFrom(T other) {
         this.copyMetadataFrom(other);
+        Object otherSource = other.getSource();
+        if (otherSource != null) {
+            source(otherSource);
+        }
         //noinspection unchecked
         return (T) this;
     }
