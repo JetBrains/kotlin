@@ -35,6 +35,7 @@ buildscript {
 repositories {
     maven { url 'http://dl.bintray.com/jetbrains/kotlin-native-dependencies' }
     maven { url 'http://oss.sonatype.org/content/repositories/snapshots' }
+    //maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
 }
 
 configurations.all {

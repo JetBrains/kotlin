@@ -36,6 +36,7 @@ configurations {
 repositories {
     maven { url 'http://dl.bintray.com/jetbrains/kotlin-native-dependencies' }
     maven { url 'http://oss.sonatype.org/content/repositories/snapshots' }
+    //maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
 }
 
 dependencies {
@@ -53,12 +54,14 @@ task generatePom(type: DefaultTask) {
 
     doLast {
         def xml = new XmlParser().parse(originalPom)
-        def parent = xml.parent // <parent> </parent> section, not the parent node.
-        def groupId = parent.groupId
-        def version = parent.version
-        xml.append(groupId)
-        xml.append(version)
-        xml.remove(parent)
+        def parent = xml.children().find() { it.name().localPart == 'parent' } // <parent> </parent> section, not the parent node.
+        if (parent != null) {
+            def groupId = parent.groupId
+            def version = parent.version
+            xml.append(groupId)
+            xml.append(version)
+            xml.remove(parent)
+        }
         new XmlNodePrinter(new PrintWriter(new FileWriter(newPom))).print(xml)
     }
 }
