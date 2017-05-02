@@ -1477,8 +1477,8 @@ public class KotlinTypeMapper {
 
         sw.writeParametersStart();
 
-        for (ScriptDescriptor importedScript : importedScripts) {
-            writeParameter(sw, importedScript.getDefaultType(), /* callableDescriptor = */ null);
+        if (importedScripts.size() > 0) {
+            writeParameter(sw, DescriptorUtilsKt.getModule(script).getBuiltIns().getArray().getDefaultType(), null);
         }
 
         for (ValueParameterDescriptor valueParameter : script.getUnsubstitutedPrimaryConstructor().getValueParameters()) {

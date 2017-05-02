@@ -74,10 +74,14 @@ open class GenericReplEvaluator(val baseClasspath: Iterable<File>,
             val useScriptArgs = currentScriptArgs?.scriptArgs
             val useScriptArgsTypes = currentScriptArgs?.scriptArgsTypes?.map { it.java }
 
-            val constructorParams: Array<Class<*>> = (historyActor.effectiveHistory.map { it.klass.java } +
-                                                      (useScriptArgs?.mapIndexed { i, it -> useScriptArgsTypes?.getOrNull(i) ?: it?.javaClass ?: Any::class.java } ?: emptyList())
-                                                     ).toTypedArray()
-            val constructorArgs: Array<Any?> = (historyActor.effectiveHistory.map { it.instance } + useScriptArgs.orEmpty()).toTypedArray()
+            val hasHistory = historyActor.effectiveHistory.isNotEmpty()
+
+            val constructorParams: Array<Class<*>> = (if (hasHistory) arrayOf<Class<*>>(Array<Any>::class.java) else emptyArray<Class<*>>()) +
+                                                     (useScriptArgs?.mapIndexed { i, it -> useScriptArgsTypes?.getOrNull(i) ?: it?.javaClass ?: Any::class.java } ?: emptyList())
+
+            val constructorArgs: Array<out Any?> = if (hasHistory) arrayOf(historyActor.effectiveHistory.map { it.instance }.takeIf { it.isNotEmpty() }?.toTypedArray(),
+                                                                           *(useScriptArgs.orEmpty()))
+                                                   else useScriptArgs.orEmpty()
 
             // TODO: try/catch ?
             val scriptInstanceConstructor = scriptClass.getConstructor(*constructorParams)
