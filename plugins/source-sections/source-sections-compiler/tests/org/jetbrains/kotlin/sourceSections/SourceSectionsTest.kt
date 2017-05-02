@@ -244,10 +244,13 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
     private fun verifyScriptOutput(scriptClass: Class<*>?, expectedOutput: File) {
         val scriptOut = captureOut {
             tryConstructClassFromStringArgs(scriptClass!!, emptyList())
-        }.first
-        val expected = expectedOutput.readText()
+        }.first.lines()
+                .map(String::trimEnd)
+                .dropLastWhile { it.isBlank() }
 
-        TestCase.assertEquals(expected, scriptOut)
+        val expected = expectedOutput.inputStream().trimmedLines(Charset.defaultCharset())
+
+        TestCase.assertEquals("Unexpected result on evaluating ${scriptClass?.name}", expected, scriptOut)
     }
 }
 
