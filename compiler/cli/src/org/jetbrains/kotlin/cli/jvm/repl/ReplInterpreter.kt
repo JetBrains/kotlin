@@ -51,7 +51,7 @@ class ReplInterpreter(
             hasErrors = false
         }
 
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
             val msg = messageRenderer.render(severity, message, location)
             with (replConfiguration.writer) {
                 when (severity) {

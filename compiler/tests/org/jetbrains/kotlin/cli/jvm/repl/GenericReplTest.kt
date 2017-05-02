@@ -146,15 +146,14 @@ class GenericReplTest : TestCase() {
         }
     }
 
-// #KT-10060, TODO: fix and uncomment/rename
-//    @Test
-    fun ignored_test256Evals() {
+    @Test
+    fun test256Evals() {
         TestRepl().use { repl ->
             val state = repl.createState()
 
             repl.compileAndEval(state, ReplCodeLine(0, 0, "val x0 = 0"))
 
-            val evals = 255
+            val evals = 256
             for (i in 1..evals) {
                 repl.compileAndEval(state, ReplCodeLine(i, 0, "val x$i = x${i-1} + 1"))
             }
