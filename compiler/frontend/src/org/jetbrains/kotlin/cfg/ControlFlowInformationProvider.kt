@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.hasThisOrNoDispatchRe
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
@@ -797,7 +798,14 @@ class ControlFlowInformationProvider private constructor(
                     val subjectType = trace.getType(subjectExpression)
                     if (elseEntry != null) {
                         if (missingCases.isEmpty() && subjectType != null && !subjectType.isFlexible()) {
-                            trace.report(REDUNDANT_ELSE_IN_WHEN.on(elseEntry))
+                            val subjectClass = subjectType.constructor.declarationDescriptor as? ClassDescriptor
+                            val pseudocodeElement = instruction.owner.correspondingElement
+                            val pseudocodeDescriptor = trace[DECLARATION_TO_DESCRIPTOR, pseudocodeElement]
+                            if (subjectClass == null ||
+                                KotlinBuiltIns.isBooleanOrNullableBoolean(subjectType) ||
+                                subjectClass.module == pseudocodeDescriptor?.module) {
+                                trace.report(REDUNDANT_ELSE_IN_WHEN.on(elseEntry))
+                            }
                         }
                         continue
                     }
