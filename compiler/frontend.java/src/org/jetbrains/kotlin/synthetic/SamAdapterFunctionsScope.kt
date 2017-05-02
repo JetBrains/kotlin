@@ -122,6 +122,10 @@ class SamAdapterFunctionsScope(
         return scope.getContributedFunctions(name, location).mapNotNull { samAdapterForStaticFunction(it) }
     }
 
+    override fun getSyntheticStaticFunctions(scope: ResolutionScope): Collection<FunctionDescriptor> {
+        return scope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS).mapNotNull { samAdapterForStaticFunction(it) }
+    }
+
     private class MyFunctionDescriptor(
             containingDeclaration: DeclarationDescriptor,
             original: SimpleFunctionDescriptor?,

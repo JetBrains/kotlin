@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.collectSyntheticStaticMembers
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -76,9 +77,14 @@ class StaticMembersCompletion(
                 .toSet()
 
         val result = ArrayList<DeclarationDescriptor>()
+
+        val kindFilter = DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions
+        val nameFilter = prefixMatcher.asNameFilter()
         for (container in containers) {
             val memberScope = if (container.kind == ClassKind.OBJECT) container.unsubstitutedMemberScope else container.staticScope
-            val members = memberScope.getDescriptorsFiltered(DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions, prefixMatcher.asNameFilter())
+            val members =
+                    memberScope.getDescriptorsFiltered(kindFilter, nameFilter) +
+                    memberScope.collectSyntheticStaticMembers(resolutionFacade, kindFilter, nameFilter)
             members.filterTo(result) { it is CallableDescriptor && it !in alreadyAdded }
         }
         return result

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,8 @@ import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
+import org.jetbrains.kotlin.resolve.scopes.collectSyntheticStaticFunctions
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -441,7 +443,8 @@ class KotlinIndicesHelper(
                     processor(descriptor)
 
                     // SAM-adapter
-                    container.staticScope.getContributedFunctions(descriptor.name, NoLookupLocation.FROM_IDE)
+                    val syntheticScopes = resolutionFacade.getFrontendService(SyntheticScopes::class.java)
+                    syntheticScopes.collectSyntheticStaticFunctions(container.staticScope, descriptor.name, NoLookupLocation.FROM_IDE)
                             .filterIsInstance<SamAdapterDescriptor<*>>()
                             .firstOrNull { it.baseDescriptorForSynthetic.original == descriptor.original }
                             ?.let { processor(it) }

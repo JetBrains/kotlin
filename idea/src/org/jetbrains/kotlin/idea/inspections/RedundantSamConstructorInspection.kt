@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.collectSyntheticMemberFunctions
+import org.jetbrains.kotlin.resolve.scopes.collectSyntheticStaticFunctions
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
@@ -181,9 +182,10 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             val originalFunctionDescriptor = functionResolvedCall.resultingDescriptor.original as? FunctionDescriptor ?: return emptyList()
             val containingClass = originalFunctionDescriptor.containingDeclaration as? ClassDescriptor ?: return emptyList()
 
+            val syntheticScopes = functionCall.getResolutionFacade().getFrontendService(SyntheticScopes::class.java)
+
             // SAM adapters for static functions
-            val contributedFunctions = containingClass.staticScope.getContributedFunctions(
-                    functionResolvedCall.resultingDescriptor.name, NoLookupLocation.FROM_IDE)
+            val contributedFunctions = syntheticScopes.collectSyntheticStaticFunctions(containingClass.staticScope)
             for (staticFunWithSameName in contributedFunctions) {
                 if (staticFunWithSameName is SamAdapterDescriptor<*>) {
                     if (isSamAdapterSuitableForCall(staticFunWithSameName, originalFunctionDescriptor, samConstructorCallArgumentMap.size)) {
@@ -193,7 +195,6 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             }
 
             // SAM adapters for member functions
-            val syntheticScopes = functionCall.getResolutionFacade().getFrontendService(SyntheticScopes::class.java)
             val syntheticExtensions = syntheticScopes.collectSyntheticMemberFunctions(
                     listOf(containingClass.defaultType),
                     functionResolvedCall.resultingDescriptor.name,

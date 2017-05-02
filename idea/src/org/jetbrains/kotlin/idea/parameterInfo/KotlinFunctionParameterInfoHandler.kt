@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -390,6 +391,13 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
     // we should not compare descriptors directly because partial resolve is involved
     private fun descriptorsEqual(descriptor1: FunctionDescriptor, descriptor2: FunctionDescriptor): Boolean {
         if (descriptor1.original == descriptor2.original) return true
+        val isSamDescriptor1 = descriptor1 is SamAdapterDescriptor<*>
+        val isSamDescriptor2 = descriptor2 is SamAdapterDescriptor<*>
+
+        // Previously it worked because of different order
+        // If descriptor1 is SamAdapter and descriptor2 isn't, this function shouldn't return `true` because of equal declaration
+        if (isSamDescriptor1 xor isSamDescriptor2) return false
+
         val declaration1 = DescriptorToSourceUtils.descriptorToDeclaration(descriptor1) ?: return false
         val declaration2 = DescriptorToSourceUtils.descriptorToDeclaration(descriptor2)
         return declaration1 == declaration2
