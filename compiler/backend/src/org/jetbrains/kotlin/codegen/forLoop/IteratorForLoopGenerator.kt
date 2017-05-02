@@ -83,5 +83,5 @@ class IteratorForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForE
         StackValue.local(loopParameterVar, loopParameterType).store(value, v)
     }
 
-    override fun increment(loopExit: Label) {}
+    override fun checkPostConditionAndIncrement(loopExit: Label) {}
 }

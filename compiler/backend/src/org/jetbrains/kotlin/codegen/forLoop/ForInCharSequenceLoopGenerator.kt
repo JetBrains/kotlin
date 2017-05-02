@@ -67,7 +67,7 @@ class ForInCharSequenceLoopGenerator(codegen: ExpressionCodegen, forExpression: 
         v.store(loopParameterVar, asmElementType)
     }
 
-    override fun increment(loopExit: Label) {
+    override fun checkPostConditionAndIncrement(loopExit: Label) {
         v.iinc(indexVar, 1)
     }
 

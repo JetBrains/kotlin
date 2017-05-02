@@ -116,7 +116,7 @@ abstract class AbstractForLoopGenerator(
 
     protected abstract fun assignToLoopParameter()
 
-    protected abstract fun increment(loopExit: Label)
+    protected abstract fun checkPostConditionAndIncrement(loopExit: Label)
 
     fun body() {
         codegen.generateLoopBody(forExpression.body)
@@ -135,7 +135,7 @@ abstract class AbstractForLoopGenerator(
     fun afterBody(loopExit: Label) {
         codegen.markStartLineNumber(forExpression)
 
-        increment(loopExit)
+        checkPostConditionAndIncrement(loopExit)
 
         v.mark(bodyEnd)
     }

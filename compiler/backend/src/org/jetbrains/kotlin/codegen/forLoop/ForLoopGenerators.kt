@@ -68,6 +68,8 @@ private fun ExpressionCodegen.createOptimizedForLoopGeneratorOrNull(
             ForInRangeLiteralLoopGenerator(this, forExpression, loopRangeCall)
         RangeCodegenUtil.isPrimitiveNumberDownTo(loopRangeCallee) ->
             ForInDownToProgressionLoopGenerator(this, forExpression, loopRangeCall)
+        RangeCodegenUtil.isPrimitiveNumberUntil(loopRangeCallee) ->
+            ForInUntilRangeLoopGenerator(this, forExpression, loopRangeCall)
         RangeCodegenUtil.isArrayOrPrimitiveArrayIndices(loopRangeCallee) ->
             ForInArrayIndicesRangeLoopGenerator(this, forExpression, loopRangeCall)
         RangeCodegenUtil.isCollectionIndices(loopRangeCallee) ->

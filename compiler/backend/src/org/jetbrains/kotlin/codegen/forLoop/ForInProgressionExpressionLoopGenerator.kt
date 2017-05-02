@@ -92,7 +92,7 @@ class ForInProgressionExpressionLoopGenerator(codegen: ExpressionCodegen, forExp
 
     override fun assignToLoopParameter() {}
 
-    override fun increment(loopExit: Label) {
+    override fun checkPostConditionAndIncrement(loopExit: Label) {
         checkPostCondition(loopExit)
 
         val loopParameter = loopParameter()

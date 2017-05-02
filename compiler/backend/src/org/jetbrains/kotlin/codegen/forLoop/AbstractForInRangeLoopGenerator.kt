@@ -66,9 +66,13 @@ abstract class AbstractForInRangeLoopGenerator : AbstractForInProgressionOrRange
 
     override fun assignToLoopParameter() {}
 
-    override fun increment(loopExit: Label) {
+    override fun checkPostConditionAndIncrement(loopExit: Label) {
         checkPostCondition(loopExit)
 
+        incrementLoopVariable()
+    }
+
+    protected fun incrementLoopVariable() {
         if (loopParameterType === Type.INT_TYPE) {
             v.iinc(loopParameterVar, step)
         }
