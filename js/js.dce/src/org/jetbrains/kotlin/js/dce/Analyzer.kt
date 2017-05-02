@@ -24,12 +24,13 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 class Analyzer(private val context: Context) : JsVisitor() {
     private val processedFunctions = mutableSetOf<JsFunction>()
     private val postponedFunctions = mutableMapOf<JsName, JsFunction>()
+    val moduleMapping = mutableMapOf<JsStatement, String>()
+
     private val nodeMap = mutableMapOf<JsNode, Node>()
     private val astNodesToEliminate = mutableSetOf<JsNode>()
     private val astNodesToSkip = mutableSetOf<JsNode>()
-    private val invocationsToSkip = mutableSetOf<JsInvocation>()
-    val moduleMapping = mutableMapOf<JsStatement, String>()
     private val functionsToEnter = mutableSetOf<JsFunction>()
+    private val invocationsToSkip = mutableSetOf<JsInvocation>()
 
     val analysisResult = object : AnalysisResult {
         override val nodeMap: Map<JsNode, Node> get() = this@Analyzer.nodeMap

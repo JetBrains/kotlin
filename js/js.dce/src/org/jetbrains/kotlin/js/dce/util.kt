@@ -50,6 +50,7 @@ fun Context.isTopLevelFunction(function: JsExpression, name: String): Boolean {
     return function.ident == name && function.name !in nodes.keys
 }
 
+// How can it ever succeed??
 fun JsNode.extractLocation(): JsLocation? {
     return when (this) {
         is SourceInfoAwareJsNode -> source as? JsLocation
@@ -59,8 +60,8 @@ fun JsNode.extractLocation(): JsLocation? {
 }
 
 fun JsLocation.asString(): String {
-    val simpleFileName = file?.substring(file!!.lastIndexOf("/") + 1)
-    return "${simpleFileName ?: "<unknown file>"}:${startLine + 1}"
+    val simpleFileName = file.substring(file.lastIndexOf("/") + 1)
+    return "$simpleFileName:${startLine + 1}"
 }
 
 fun Set<Node>.extractRoots(): Set<Node> {

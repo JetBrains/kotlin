@@ -50,12 +50,12 @@ abstract class BasicOptimizerTest(private var basePath: String) {
 
         runScript(unoptimizedName, unoptimizedCode)
         runScript(optimizedName, optimizedCode)
-        checkOptimizer(unoptimizedCode, optimizedCode)
+        checkOptimizer(unoptimizedCode, optimizedCode, unoptimizedName, optimizedName)
     }
 
-    private fun checkOptimizer(unoptimizedCode: String, optimizedCode: String) {
+    private fun checkOptimizer(unoptimizedCode: String, optimizedCode: String, unoptimizedName: String, optimizedName: String) {
         val parserScope = JsFunctionScope(JsRootScope(JsProgram()), "<js fun>")
-        val unoptimizedAst = parse(unoptimizedCode, errorReporter, parserScope)
+        val unoptimizedAst = parse(unoptimizedCode, errorReporter, parserScope, unoptimizedName)
 
         updateMetadata(unoptimizedCode, unoptimizedAst)
 
@@ -63,7 +63,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
             process(statement)
         }
 
-        val optimizedAst = parse(optimizedCode, errorReporter, parserScope)
+        val optimizedAst = parse(optimizedCode, errorReporter, parserScope, optimizedName)
         Assert.assertEquals(astToString(optimizedAst), astToString(unoptimizedAst))
     }
 

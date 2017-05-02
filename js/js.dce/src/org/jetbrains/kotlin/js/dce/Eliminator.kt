@@ -46,5 +46,6 @@ class Eliminator(private val analysisResult: AnalysisResult) : JsVisitorWithCont
         }
     }
 
+    // inline?
     private fun isUsed(node: Context.Node?): Boolean = node == null || node.declarationReachable
 }

@@ -29,7 +29,7 @@ import java.util.*
 
 private val FAKE_SOURCE_INFO = SourceInfoImpl(null, 0, 0, 0, 0)
 
-fun parse(code: String, reporter: ErrorReporter, scope: JsScope, fileName: String? = null): List<JsStatement> {
+fun parse(code: String, reporter: ErrorReporter, scope: JsScope, fileName: String): List<JsStatement> {
         val insideFunction = scope is JsFunctionScope
         val node = parse(code, 0, reporter, insideFunction, Parser::parse)
         return node.toJsAst(scope) {

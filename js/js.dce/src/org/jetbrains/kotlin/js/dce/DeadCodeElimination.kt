@@ -29,21 +29,9 @@ import org.jetbrains.kotlin.js.inline.util.fixForwardNameReferences
 import org.jetbrains.kotlin.js.parser.parse
 import java.io.File
 
-class DeadCodeElimination(val logConsumer: (String) -> Unit) {
-    val moduleMapping = mutableMapOf<JsBlock, String>()
-    val reachableNames = mutableSetOf<String>()
-
-    var reachableNodes = setOf<Node>()
-        get
-        private set
-
-    lateinit var globalScope: Node
-        get
-        private set
-
-    fun apply(root: JsNode) {
+object DeadCodeElimination {
+    fun dce(root: JsNode, logConsumer: (String) -> Unit, reachableNames: Set<String>, moduleMapping: Map<JsBlock, String>): Set<Node> {
         val context = Context()
-        globalScope = context.globalScope
 
         val topLevelVars = collectDefinedNames(root)
         context.addLocalVars(topLevelVars)
@@ -63,59 +51,48 @@ class DeadCodeElimination(val logConsumer: (String) -> Unit) {
             val node = path.fold(context.globalScope) { node, part -> node.member(part) }
             usageFinder.reach(node)
         }
-        reachableNodes = usageFinder.reachableNodes
 
         Eliminator(analyzer.analysisResult).accept(root)
+
+        return usageFinder.reachableNodes
     }
 
-    companion object {
-        fun run(
-                inputFiles: Collection<InputFile>,
-                rootReachableNames: Set<String>,
-                logConsumer: (String) -> Unit
-        ): DeadCodeEliminationResult {
-            val resolvedFiles = resolveFiles(inputFiles)
 
-            val codeList = resolvedFiles.map { FileUtil.loadFile(File(it.name)) }
-            val program = JsProgram()
-            val dce = DeadCodeElimination(logConsumer)
+    fun run(
+            inputFiles: Collection<InputFile>,
+            rootReachableNames: Set<String>,
+            logConsumer: (String) -> Unit
+    ): DeadCodeEliminationResult {
+        val program = JsProgram()
+        val moduleMapping = mutableMapOf<JsBlock, String>()
 
-            val blocks = resolvedFiles.zip(codeList).map { (file, code) ->
-                val block = JsGlobalBlock()
-                block.statements += parse(code, reporter, program.scope, file.name)
-                dce.moduleMapping[block] = file.moduleName
-                block
-            }
-            program.globalBlock.statements += blocks
-            program.globalBlock.fixForwardNameReferences()
-
-            dce.reachableNames += rootReachableNames
-            dce.apply(program.globalBlock)
-
-            for ((file, block) in resolvedFiles.zip(blocks)) {
-                FileUtil.writeToFile(File(file.outputName), block.toString())
-            }
-
-            return DeadCodeEliminationResult(dce.reachableNodes)
+        val blocks = inputFiles.map { file ->
+            val code = FileUtil.loadFile(File(file.name))
+            val block = JsGlobalBlock()
+            block.statements += parse(code, reporter, program.scope, file.name)
+            moduleMapping[block] = file.moduleName
+            block
         }
 
-        private fun resolveFiles(inputFiles: Collection<InputFile>): Collection<ResolvedInputFile> = inputFiles.map { inputFile ->
-            val file = File(inputFile.name)
-            val outputFile = inputFile.outputName?.let { File(it) } ?: File(file.parentFile, file.nameWithoutExtension + ".min.js")
-            val moduleName = inputFile.moduleName ?: file.nameWithoutExtension
-            ResolvedInputFile(inputFile.name, outputFile.path, moduleName)
+        program.globalBlock.statements += blocks
+        program.globalBlock.fixForwardNameReferences()
+
+        val result = dce(program.globalBlock, logConsumer, rootReachableNames, moduleMapping)
+
+        for ((file, block) in inputFiles.zip(blocks)) {
+            FileUtil.writeToFile(File(file.outputName), block.toString())
         }
 
-        private val reporter = object : ErrorReporter {
-            override fun warning(message: String, startPosition: CodePosition, endPosition: CodePosition) {
-                println("[WARN] at ${startPosition.line}, ${startPosition.offset}: $message")
-            }
-
-            override fun error(message: String, startPosition: CodePosition, endPosition: CodePosition) {
-                println("[ERRO] at ${startPosition.line}, ${startPosition.offset}: $message")
-            }
-        }
+        return DeadCodeEliminationResult(result)
     }
 
-    internal class ResolvedInputFile(val name: String, val outputName: String, val moduleName: String)
+    private val reporter = object : ErrorReporter {
+        override fun warning(message: String, startPosition: CodePosition, endPosition: CodePosition) {
+            println("[WARN] at ${startPosition.line}, ${startPosition.offset}: $message")
+        }
+
+        override fun error(message: String, startPosition: CodePosition, endPosition: CodePosition) {
+            println("[ERRO] at ${startPosition.line}, ${startPosition.offset}: $message")
+        }
+    }
 }

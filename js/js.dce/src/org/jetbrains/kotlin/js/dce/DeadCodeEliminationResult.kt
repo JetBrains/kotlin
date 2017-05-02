@@ -16,4 +16,5 @@
 
 package org.jetbrains.kotlin.js.dce
 
+// Doesn't seem to be needed
 class DeadCodeEliminationResult(val reachableNodes: Set<Context.Node>)

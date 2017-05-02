@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.backend.ast
 
 data class JsLocation(
-        val file: String?,
+        val file: String,
         val startLine: Int,
         val startChar: Int
 )

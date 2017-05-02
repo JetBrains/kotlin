@@ -20,11 +20,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 
 fun JsNode.fixForwardNameReferences() {
     accept(object : RecursiveJsVisitor() {
-        val currentScope = mutableMapOf<String, JsName>()
-
-        init {
-            currentScope += collectDefinedNames(this@fixForwardNameReferences).associateBy { it.ident }
-        }
+        val currentScope = collectDefinedNames(this@fixForwardNameReferences).associateBy { it.ident }.toMutableMap()
 
         override fun visitFunction(x: JsFunction) {
             val scopeBackup = mutableMapOf<String, JsName?>()

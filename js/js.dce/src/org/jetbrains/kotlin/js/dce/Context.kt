@@ -88,18 +88,29 @@ class Context {
         private val dependenciesImpl = mutableSetOf<Node>()
         private val expressionsImpl = mutableSetOf<JsExpression>()
         private val functionsImpl = mutableSetOf<JsFunction>()
+        private val usedByAstNodesImpl = mutableSetOf<JsNode>()
+
+        val dependencies: MutableSet<Node> get() = original.dependenciesImpl
+        val expressions: MutableSet<JsExpression> get() = original.expressionsImpl
+        val functions: MutableSet<JsFunction> get() = original.functionsImpl
+        val usedByAstNodes: MutableSet<JsNode> get() = original.usedByAstNodesImpl
+
+        var original: Node = this
+            get() {
+                if (field != this) {
+                    field = field.original
+                }
+                return field
+            }
+            private set
+
         private var hasSideEffectsImpl = false
         private var reachableImpl = false
         private var declarationReachableImpl = false
+
         private val membersImpl = mutableMapOf<String, Node>()
-        private val usedByAstNodesImpl = mutableSetOf<JsNode>()
+
         private var rank = 0
-
-        val dependencies: MutableSet<Node> get() = original.dependenciesImpl
-
-        val expressions: MutableSet<JsExpression> get() = original.expressionsImpl
-
-        val functions: MutableSet<JsFunction> get() = original.functionsImpl
 
         var hasSideEffects: Boolean
             get() = original.hasSideEffectsImpl
@@ -123,20 +134,9 @@ class Context {
             get
             private set
 
-        val usedByAstNodes: MutableSet<JsNode> get() = original.usedByAstNodesImpl
-
         val memberNames: MutableSet<String> get() = original.membersImpl.keys
 
         constructor(localName: JsName? = null) : this(localName, null)
-
-        var original: Node = this
-            get() {
-                if (field != this) {
-                    field = field.original
-                }
-                return field
-            }
-            private set
 
         val members: Map<String, Node> get() = original.membersImpl
 
@@ -154,6 +154,7 @@ class Context {
                 if (b.root() == a) a.makeDependencies(b) else b.evacuateFrom(a)
             }
             else if (b.qualifier == null) {
+                // b.make..(a) ?
                 if (a.root() == b) a.makeDependencies(b) else a.evacuateFrom(b)
             }
             else {
@@ -182,14 +183,16 @@ class Context {
             other.membersImpl.clear()
 
             hasSideEffectsImpl = hasSideEffectsImpl || other.hasSideEffectsImpl
+            dependenciesImpl += other.dependenciesImpl
+
             expressionsImpl += other.expressionsImpl
             functionsImpl += other.functionsImpl
-            dependenciesImpl += other.dependenciesImpl
             usedByAstNodesImpl += other.usedByAstNodesImpl
+
+            other.dependenciesImpl.clear()
 
             other.expressionsImpl.clear()
             other.functionsImpl.clear()
-            other.dependenciesImpl.clear()
             other.usedByAstNodesImpl.clear()
         }
 
