@@ -106,7 +106,7 @@ object J2KPostProcessingRegistrar {
         }
 
         registerDiagnosticBasedProcessingFactory(
-                Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION
+                Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
         ) {
             element: KtSimpleNameExpression, _: Diagnostic ->
             val property = element.mainReference.resolve() as? KtProperty

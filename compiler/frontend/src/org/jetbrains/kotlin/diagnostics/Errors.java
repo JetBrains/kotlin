@@ -762,6 +762,7 @@ public interface Errors {
 
     DiagnosticFactory1<KtExpression, DeclarationDescriptor> VAL_REASSIGNMENT = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtExpression, DeclarationDescriptor> CAPTURED_VAL_INITIALIZATION = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtExpression, DeclarationDescriptor> CAPTURED_MEMBER_VAL_INITIALIZATION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtExpression, DeclarationDescriptor> SETTER_PROJECTED_OUT = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<KtExpression, DeclarationDescriptor> INITIALIZATION_BEFORE_DECLARATION = DiagnosticFactory1.create(ERROR);

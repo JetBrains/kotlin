@@ -300,6 +300,7 @@ public class DefaultErrorMessages {
 
         MAP.put(VAL_REASSIGNMENT, "Val cannot be reassigned", NAME);
         MAP.put(CAPTURED_VAL_INITIALIZATION, "Captured values initialization is forbidden due to possible reassignment", NAME);
+        MAP.put(CAPTURED_MEMBER_VAL_INITIALIZATION, "Captured member values initialization is forbidden due to possible reassignment", NAME);
         MAP.put(SETTER_PROJECTED_OUT, "Setter for ''{0}'' is removed by type projection", NAME);
         MAP.put(INVISIBLE_SETTER, "Cannot assign to ''{0}'': the setter is {1} in {2}", NAME, VISIBILITY, NAME_OF_PARENT_OR_FILE);
         MAP.put(INITIALIZATION_BEFORE_DECLARATION, "Variable cannot be initialized before declaration", NAME);

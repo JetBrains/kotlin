@@ -194,6 +194,7 @@ class QuickFixRegistrar : QuickFixContributor {
         VAL_REASSIGNMENT.registerFactory(ChangeVariableMutabilityFix.VAL_REASSIGNMENT_FACTORY)
         VAL_REASSIGNMENT.registerFactory(LiftAssignmentOutOfTryFix)
         CAPTURED_VAL_INITIALIZATION.registerFactory(ChangeVariableMutabilityFix.CAPTURED_VAL_INITIALIZATION_FACTORY)
+        CAPTURED_MEMBER_VAL_INITIALIZATION.registerFactory(ChangeVariableMutabilityFix.CAPTURED_MEMBER_VAL_INITIALIZATION_FACTORY)
         VAR_OVERRIDDEN_BY_VAL.registerFactory(ChangeVariableMutabilityFix.VAR_OVERRIDDEN_BY_VAL_FACTORY)
         VAR_ANNOTATION_PARAMETER.registerFactory(ChangeVariableMutabilityFix.VAR_ANNOTATION_PARAMETER_FACTORY)
 

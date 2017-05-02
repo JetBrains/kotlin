@@ -1,0 +1,16 @@
+// "Make variable mutable" "true"
+
+class Test {
+    var a: String
+
+    init {
+        val t = object {
+            fun some() {
+                a = "12"
+            }
+        }
+
+        a = "2"
+        t.some()
+    }
+}

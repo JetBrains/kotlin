@@ -459,7 +459,12 @@ class ControlFlowInformationProvider private constructor(
             if (!hasReassignMethodReturningUnit) {
                 if (!isThisOrNoDispatchReceiver || !varWithValReassignErrorGenerated.contains(variableDescriptor)) {
                     if (captured && !mayBeInitializedNotHere && hasBackingField && isThisOrNoDispatchReceiver) {
-                        report(Errors.CAPTURED_VAL_INITIALIZATION.on(expression, variableDescriptor), ctxt)
+                        if (variableDescriptor.containingDeclaration is ClassDescriptor) {
+                            report(Errors.CAPTURED_MEMBER_VAL_INITIALIZATION.on(expression, variableDescriptor), ctxt)
+                        }
+                        else {
+                            report(Errors.CAPTURED_VAL_INITIALIZATION.on(expression, variableDescriptor), ctxt)
+                        }
                     }
                     else {
                         report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor), ctxt)

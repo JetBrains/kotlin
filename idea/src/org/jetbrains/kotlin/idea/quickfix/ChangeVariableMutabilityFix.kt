@@ -68,6 +68,8 @@ class ChangeVariableMutabilityFix(element: KtValVarKeywordOwner, private val mak
 
         val CAPTURED_VAL_INITIALIZATION_FACTORY = ReassignmentActionFactory(Errors.CAPTURED_VAL_INITIALIZATION)
 
+        val CAPTURED_MEMBER_VAL_INITIALIZATION_FACTORY = ReassignmentActionFactory(Errors.CAPTURED_MEMBER_VAL_INITIALIZATION)
+
         val VAR_OVERRIDDEN_BY_VAL_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                 val element = diagnostic.psiElement
