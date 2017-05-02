@@ -1701,6 +1701,12 @@ task inline23(type: RunKonanTest) {
     source = "codegen/inline/inline23.kt"
 }
 
+task inline24(type: RunKonanTest) {
+    disabled = true
+    goldValue = "bar\nfoo\n"
+    source = "codegen/inline/inline24.kt"
+}
+
 task deserialized_inline0(type: RunKonanTest) {
     source = "serialization/deserialized_inline0.kt"
 }
