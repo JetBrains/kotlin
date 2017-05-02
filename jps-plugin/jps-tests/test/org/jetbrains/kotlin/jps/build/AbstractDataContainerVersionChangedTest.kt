@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,7 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 
-abstract class AbstractExperimentalIncrementalJpsTest : AbstractIncrementalJpsTest()
-
-abstract class AbstractExperimentalIncrementalCacheVersionChangedTest : AbstractIncrementalCacheVersionChangedTest() {
-}
-
-abstract class AbstractDataContainerVersionChangedTest : AbstractExperimentalIncrementalCacheVersionChangedTest() {
+abstract class AbstractDataContainerVersionChangedTest : AbstractIncrementalCacheVersionChangedTest() {
     override val buildLogFinder: BuildLogFinder
         get() = BuildLogFinder(isDataContainerBuildLogEnabled = true)
 

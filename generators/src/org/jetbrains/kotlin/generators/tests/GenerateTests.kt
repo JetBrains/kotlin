@@ -1187,7 +1187,9 @@ fun main(args: Array<String>) {
             model("incremental/pureKotlin", extension = null, recursive = false)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
             model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
+            model("incremental/classHierarchyAffected", extension = null, excludeParentDirs = true)
         }
+
         testClass<AbstractLookupTrackerTest> {
             model("incremental/lookupTracker", extension = null, recursive = false)
         }
@@ -1198,20 +1200,6 @@ fun main(args: Array<String>) {
         }
 
         testClass(AbstractIncrementalCacheVersionChangedTest::class.java) {
-            model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
-        }
-    }
-
-    testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
-        testClass<AbstractExperimentalIncrementalJpsTest> {
-            model("incremental/multiModule", extension = null, excludeParentDirs = true)
-            model("incremental/pureKotlin", extension = null, recursive = false)
-            model("incremental/withJava", extension = null, excludeParentDirs = true)
-            model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
-            model("incremental/classHierarchyAffected", extension = null, excludeParentDirs = true)
-        }
-
-        testClass<AbstractExperimentalIncrementalCacheVersionChangedTest> {
             model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
         }
 
