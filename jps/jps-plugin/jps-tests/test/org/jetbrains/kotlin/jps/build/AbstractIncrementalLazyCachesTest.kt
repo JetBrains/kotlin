@@ -82,7 +82,6 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
             val jvmMetaBuildInfo = jvmBuildMetaInfoFile(target, dataManager)
             dumpCachesForTarget(p, paths, target,
                                 versions.normalVersion(target).formatVersionFile,
-                                versions.experimentalVersion(target).formatVersionFile,
                                 jvmMetaBuildInfo,
                                 subdirectory = KOTLIN_CACHE_DIRECTORY_NAME)
         }

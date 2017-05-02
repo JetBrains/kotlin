@@ -21,7 +21,6 @@ import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.dataContainerCacheVersion
-import org.jetbrains.kotlin.incremental.experimentalCacheVersion
 import org.jetbrains.kotlin.incremental.normalCacheVersion
 import java.io.File
 
@@ -32,8 +31,6 @@ class CacheVersionProvider(private val paths: BuildDataPaths) {
 
     fun normalVersion(target: ModuleBuildTarget): CacheVersion = normalCacheVersion(target.dataRoot)
 
-    fun experimentalVersion(target: ModuleBuildTarget): CacheVersion = experimentalCacheVersion(target.dataRoot)
-
     fun dataContainerVersion(): CacheVersion = dataContainerCacheVersion(KotlinDataContainerTarget.dataRoot)
 
     fun allVersions(targets: Iterable<ModuleBuildTarget>): Iterable<CacheVersion> {
@@ -42,7 +39,6 @@ class CacheVersionProvider(private val paths: BuildDataPaths) {
 
         for (dataRoot in targets.map { it.dataRoot }) {
             versions.add(normalCacheVersion(dataRoot))
-            versions.add(experimentalCacheVersion(dataRoot))
         }
 
         return versions

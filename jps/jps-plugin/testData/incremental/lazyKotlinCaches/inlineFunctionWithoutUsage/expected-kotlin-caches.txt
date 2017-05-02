@@ -5,7 +5,6 @@ kotlin-data-container
     id-to-file.tab
     lookups.tab
 Module 'module' production
-    experimental-format-version.txt
     format-version.txt
     jvm-build-meta-info.txt
     inline-functions.tab
