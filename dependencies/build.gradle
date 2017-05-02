@@ -35,9 +35,7 @@ configurations {
 
 // TODO: Check if we really need the our bintray mirror and delete the uploading code below if we don't.
 repositories {
-    //maven { url 'http://dl.bintray.com/jetbrains/kotlin-native-dependencies' }
-    //maven { url 'http://oss.sonatype.org/content/repositories/snapshots' }
-    maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
+    maven { url kotlinCompilerRepo }
 }
 
 dependencies {
