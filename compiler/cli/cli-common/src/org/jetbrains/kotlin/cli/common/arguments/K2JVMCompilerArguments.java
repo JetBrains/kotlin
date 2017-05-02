@@ -137,9 +137,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     )
     public String[] scriptResolverEnvironment;
 
-    @Argument(value = "protocols-backend", description = "Protocols backend type")
-    public String protocolsBackend;
-
     // Javac options
     @Argument(value = "-Xuse-javac", description = "Use javac for Java source and class files analysis")
     public boolean useJavac;
@@ -150,10 +147,16 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
             description = "Java compiler arguments")
     public String[] javacArguments;
 
+    // Protocols options
+    @Argument(value = "-protocols-backend", description = "Protocols backend type")
+    public String protocolsBackend;
+
+    @Argument(value = "-protocols-cache", description = "Protocols cache type")
+
     @Argument(value = "protocols-cache", description = "Protocols cache type")
     public String protocolsCacheType;
 
-    @Argument(value = "protocols-cache-size", description = "Protocols cache size")
+    @Argument(value = "-protocols-cache-size", description = "Protocols cache size")
     public String protocolsCacheSize;
 
     // Paths to output directories for friend modules.

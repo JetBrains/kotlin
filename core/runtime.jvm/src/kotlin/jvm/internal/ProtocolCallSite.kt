@@ -18,11 +18,9 @@
 
 package kotlin.jvm.internal
 
-import java.lang.Exception
 import java.lang.invoke.*
 import java.lang.reflect.Method
 import kotlin.jvm.internal.cache.Cache.Companion.makeCache
-import kotlin.jvm.internal.cache.SmallArrayCache
 
 class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, type: MethodType, private val callableName: String, private val callableType: MethodType, cacheType: Int, cacheSize: Int) {
     private val indyCache = makeCache<Class<*>, MethodHandle>(cacheType, cacheSize)
