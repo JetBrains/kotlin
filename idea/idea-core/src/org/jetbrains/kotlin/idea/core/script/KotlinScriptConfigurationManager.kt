@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.Extensions
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
-import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.script.makeScriptDefsFromTemplatesProviderExtensions
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -109,7 +109,7 @@ class KotlinScriptConfigurationManager(
             rootsChangesRunnable.invoke()
         }
         else {
-            application.invokeLater(rootsChangesRunnable)
+            application.invokeLater(rootsChangesRunnable, ModalityState.defaultModalityState())
         }
     }
 
