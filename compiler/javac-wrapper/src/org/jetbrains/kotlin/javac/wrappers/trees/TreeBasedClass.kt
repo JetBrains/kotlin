@@ -82,6 +82,10 @@ class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
                 (javac.findClass(FqName("java.lang.Enum")) as? SymbolBasedClass)
                         ?.let { SymbolBasedType.create(it.element.asType(), javac) as? JavaClassifierType }
                         ?.let { add(it) }
+            } else if (isAnnotationType) {
+                (javac.findClass(FqName("java.lang.annotation.Annotation")) as? SymbolBasedClass)
+                        ?.let { SymbolBasedType.create(it.element.asType(), javac) as? JavaClassifierType }
+                        ?.let { add(it) }
             }
 
             tree.implementing?.mapNotNull { it.mapToJavaClassifierType() }?.let(this::addAll)

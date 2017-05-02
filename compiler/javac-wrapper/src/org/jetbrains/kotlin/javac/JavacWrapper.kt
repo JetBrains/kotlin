@@ -114,6 +114,8 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     private val kotlinClassifiersCache = KotlinClassifiersCache(kotlinFiles, this)
     private val treePathResolverCache = TreePathResolverCache(this)
+    private val symbolBasedClassesCache = hashMapOf<String, SymbolBasedClass?>()
+    private val symbolBasedPackagesCache = hashMapOf<String, SymbolBasedPackage?>()
 
     fun compile(outDir: File? = null) = with(javac) {
         if (errorCount() > 0) return false
@@ -167,6 +169,14 @@ class JavacWrapper(javaFiles: Collection<File>,
                                                          ?.map { SymbolBasedClass(it, this, it.classfile) }
                                                          .orEmpty()
 
+    fun knownClassNamesInPackage(fqName: FqName) = javaClasses.filterKeys { it?.parentOrNull() == fqName }
+                                                           .mapTo(hashSetOf()) { it.value.name.asString() } +
+                                                   elements.getPackageElement(fqName.asString())
+                                                           ?.members()
+                                                           ?.elements
+                                                           ?.filterIsInstance<Symbol.ClassSymbol>()
+                                                           ?.map { it.name.toString() }.orEmpty()
+
     fun getTreePath(tree: JCTree, compilationUnit: CompilationUnitTree): TreePath = trees.getPath(compilationUnit, tree)
 
     fun getKotlinClassifier(fqName: FqName) = kotlinClassifiersCache.getKotlinClassifier(fqName)
@@ -187,9 +197,25 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     private inline fun <reified T> Iterable<T>.toJavacList() = JavacList.from(this)
 
-    private fun findClassInSymbols(fqName: String) = elements.getTypeElement(fqName)?.let { SymbolBasedClass(it, this, it.classfile) }
+    private fun findClassInSymbols(fqName: String): SymbolBasedClass? {
+        if (symbolBasedClassesCache.containsKey(fqName)) return symbolBasedClassesCache[fqName]
 
-    private fun findPackageInSymbols(fqName: String) = elements.getPackageElement(fqName)?.let { SymbolBasedPackage(it, this) }
+        elements.getTypeElement(fqName)?.let { SymbolBasedClass(it, this, it.classfile) }
+                .let { symbol ->
+                    symbolBasedClassesCache[fqName] = symbol
+                    return symbol
+                }
+    }
+
+    private fun findPackageInSymbols(fqName: String): SymbolBasedPackage? {
+        if (symbolBasedPackagesCache.containsKey(fqName)) return symbolBasedPackagesCache[fqName]
+
+        elements.getPackageElement(fqName)?.let { SymbolBasedPackage(it, this) }
+                .let { symbol ->
+                    symbolBasedPackagesCache[fqName] = symbol
+                    return symbol
+                }
+    }
 
     private fun JavacFileManager.setClassPathForCompilation(outDir: File?) = apply {
         (outDir ?: environment.configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY])?.let {
