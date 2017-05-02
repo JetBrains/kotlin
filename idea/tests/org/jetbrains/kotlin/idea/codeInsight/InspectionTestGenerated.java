@@ -173,6 +173,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("copyWithoutNamedArguments/inspectionData/inspections.test")
+        public void testCopyWithoutNamedArguments_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/copyWithoutNamedArguments/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("dataClassPrivateConstructor/inspectionData/inspections.test")
         public void testDataClassPrivateConstructor_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/dataClassPrivateConstructor/inspectionData/inspections.test");
