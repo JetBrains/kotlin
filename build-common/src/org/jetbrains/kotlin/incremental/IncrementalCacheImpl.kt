@@ -24,7 +24,6 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.GeneratedJvmClass
-import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.ChangeInfo.MembersChanged
 import org.jetbrains.kotlin.incremental.ChangeInfo.Removed
 import org.jetbrains.kotlin.incremental.storage.*
@@ -156,9 +155,7 @@ open class IncrementalCacheImpl<Target>(
             sourceToClassesMap.add(it, className)
         }
 
-        if (IncrementalCompilation.isEnabled()) {
-            internalNameToSource[className.internalName] = sourceFiles
-        }
+        internalNameToSource[className.internalName] = sourceFiles
 
         if (kotlinClass.classId.isLocal) {
             return CompilationResult.NO_CHANGES
@@ -280,12 +277,7 @@ open class IncrementalCacheImpl<Target>(
                                 .map(JvmClassName::byInternalName)
                                 .toList()
 
-        val changes =
-                if (IncrementalCompilation.isEnabled())
-                    dirtyClasses.flatMap { computeChanges(it, ::Removed) }.asSequence()
-                else
-                    emptySequence<ChangeInfo>()
-
+        val changes = dirtyClasses.flatMap { computeChanges(it, ::Removed) }.asSequence()
         val changesInfo = CompilationResult(changes = changes)
 
         val facadesWithRemovedParts = hashMapOf<JvmClassName, MutableSet<String>>()
@@ -400,12 +392,7 @@ open class IncrementalCacheImpl<Target>(
             }
 
             if (oldData == null) {
-                val changes =
-                        if (IncrementalCompilation.isEnabled())
-                            computeChanges(className, ::MembersChanged).asSequence()
-                        else
-                            emptySequence<ChangeInfo>()
-
+                val changes = computeChanges(className, ::MembersChanged).asSequence()
                 return CompilationResult(changes = changes)
             }
 
@@ -477,8 +464,7 @@ open class IncrementalCacheImpl<Target>(
             }
 
             val changes =
-                    if (!IncrementalCompilation.isEnabled() ||
-                        constantsMap == null || constantsMap.isEmpty() ||
+                    if (constantsMap == null || constantsMap.isEmpty() ||
                         oldMap == null || oldMap.isEmpty()
                     ) {
                         emptySequence<ChangeInfo>()
@@ -602,8 +588,6 @@ open class IncrementalCacheImpl<Target>(
     }
 
     private fun addToClassStorage(kotlinClass: LocalFileKotlinClass, srcFile: File) {
-        if (!IncrementalCompilation.isEnabled()) return
-
         val classData = JvmProtoBufUtil.readClassDataFrom(kotlinClass.classHeader.data!!, kotlinClass.classHeader.strings!!)
         val supertypes = classData.classProto.supertypes(TypeTable(classData.classProto.typeTable))
         val parents = supertypes.map { classData.nameResolver.getClassId(it.className).asSingleFqName() }
@@ -621,7 +605,7 @@ open class IncrementalCacheImpl<Target>(
     }
 
     private fun removeAllFromClassStorage(removedClasses: Collection<JvmClassName>) {
-        if (!IncrementalCompilation.isEnabled() || removedClasses.isEmpty()) return
+        if (removedClasses.isEmpty()) return
 
         val removedFqNames = removedClasses.map { it.fqNameForClassNameWithoutDollars }.toSet()
 
@@ -722,16 +706,9 @@ open class IncrementalCacheImpl<Target>(
                 else -> storage.remove(internalName)
             }
 
-            val changes =
-                    if (IncrementalCompilation.isEnabled()) {
-                        val fqName = if (isPackage) className.packageFqName else className.fqNameForClassNameWithoutDollars
-                        // TODO get name in better way instead of using substringBefore
-                        (added.asSequence() + changed.asSequence()).map { ChangeInfo.MembersChanged(fqName, listOf(it.substringBefore("("))) }
-                    }
-                    else {
-                        emptySequence<ChangeInfo>()
-                    }
-
+            val fqName = if (isPackage) className.packageFqName else className.fqNameForClassNameWithoutDollars
+            // TODO get name in better way instead of using substringBefore
+            val changes =  (added.asSequence() + changed.asSequence()).map { ChangeInfo.MembersChanged(fqName, listOf(it.substringBefore("("))) }
             return CompilationResult(changes = changes)
         }
 
