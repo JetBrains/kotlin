@@ -78,7 +78,7 @@ object Renderers {
 
     @JvmField val PLATFORM = Renderer<ModuleDescriptor> {
         val platform = it.getMultiTargetPlatform()
-        " ${it.getCapability(ModuleInfo.Capability)?.displayedName ?: "<Unknown Name>"}" + when (platform) {
+        " ${it.getCapability(ModuleInfo.Capability)?.displayedName ?: ""}" + when (platform) {
             MultiTargetPlatform.Common -> ""
             is MultiTargetPlatform.Specific -> " for " + platform.platform
             null -> ""
