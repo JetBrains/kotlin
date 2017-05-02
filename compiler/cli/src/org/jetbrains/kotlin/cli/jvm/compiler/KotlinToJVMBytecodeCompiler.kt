@@ -33,8 +33,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
@@ -166,9 +165,16 @@ object KotlinToJVMBytecodeCompiler {
                 writeOutput(state.configuration, state.factory, null)
             }
 
-            if (chunk.size == 1 && projectConfiguration.getBoolean(JVMConfigurationKeys.USE_JAVAC)) {
-                return JavacWrapper.getInstance(environment.project).use {
-                    it.compile(File(chunk.first().getOutputDirectory()))
+            if (projectConfiguration.getBoolean(JVMConfigurationKeys.USE_JAVAC)) {
+                if (chunk.size == 1) {
+                    return JavacWrapper.getInstance(environment.project).use {
+                        it.compile(File(chunk.first().getOutputDirectory()))
+                    }
+                } else {
+                    projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).let {
+                        it.report(WARNING, "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). -Xuse-javac option couldn't be used to compile java files")
+                    }
+                    JavacWrapper.getInstance(environment.project).close()
                 }
             }
 

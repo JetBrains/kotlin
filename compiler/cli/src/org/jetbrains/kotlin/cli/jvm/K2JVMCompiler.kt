@@ -227,8 +227,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
             environment.registerJavac(messageCollector = messageCollector,
                                       arguments = arguments.javacArguments)
-        } else {
-            environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, false)
         }
     }
 
