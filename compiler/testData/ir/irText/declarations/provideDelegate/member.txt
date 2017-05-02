@@ -1,6 +1,6 @@
 FILE /member.kt
   CLASS CLASS Delegate
-    $new: VALUE_PARAMETER this@Delegate: Delegate
+    $this: VALUE_PARAMETER this@Delegate: Delegate
     CONSTRUCTOR public constructor Delegate(value: kotlin.String)
       VALUE_PARAMETER value-parameter value: kotlin.String
       BLOCK_BODY
@@ -28,7 +28,7 @@ FILE /member.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS DelegateProvider
-    $new: VALUE_PARAMETER this@DelegateProvider: DelegateProvider
+    $this: VALUE_PARAMETER this@DelegateProvider: DelegateProvider
     CONSTRUCTOR public constructor DelegateProvider(value: kotlin.String)
       VALUE_PARAMETER value-parameter value: kotlin.String
       BLOCK_BODY
@@ -57,7 +57,7 @@ FILE /member.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Host
-    $new: VALUE_PARAMETER this@Host: Host
+    $this: VALUE_PARAMETER this@Host: Host
     CONSTRUCTOR public constructor Host()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

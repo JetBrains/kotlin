@@ -1,5 +1,6 @@
 FILE /fakeOverrides.kt
   CLASS INTERFACE IFooStr
+    $this: VALUE_PARAMETER this@IFooStr: IFooStr
     FUN public abstract fun foo(x: kotlin.String): kotlin.Unit
       $this: VALUE_PARAMETER this@IFooStr: IFooStr
       VALUE_PARAMETER value-parameter x: kotlin.String
@@ -7,6 +8,7 @@ FILE /fakeOverrides.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IBar
+    $this: VALUE_PARAMETER this@IBar: IBar
     PROPERTY public abstract val bar: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-bar>(): kotlin.Int
         $this: VALUE_PARAMETER this@IBar: IBar
@@ -14,7 +16,7 @@ FILE /fakeOverrides.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS CFoo
-    $new: VALUE_PARAMETER this@CFoo: CFoo<T>
+    $this: VALUE_PARAMETER this@CFoo: CFoo<T>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor CFoo<T>()
       BLOCK_BODY
@@ -28,7 +30,7 @@ FILE /fakeOverrides.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test1
-    $new: VALUE_PARAMETER this@Test1: Test1
+    $this: VALUE_PARAMETER this@Test1: Test1
     CONSTRUCTOR public constructor Test1()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor CFoo()'

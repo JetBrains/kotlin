@@ -1,6 +1,6 @@
 FILE /objectAsCallable.kt
   CLASS OBJECT A
-    $new: VALUE_PARAMETER this@A: A
+    $this: VALUE_PARAMETER this@A: A
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -9,7 +9,7 @@ FILE /objectAsCallable.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS ENUM_CLASS En
-    $new: VALUE_PARAMETER this@En: En
+    $this: VALUE_PARAMETER this@En: En
     CONSTRUCTOR private constructor En()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'

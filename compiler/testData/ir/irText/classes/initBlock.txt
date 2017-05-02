@@ -1,6 +1,6 @@
 FILE /initBlock.kt
   CLASS CLASS Test1
-    $new: VALUE_PARAMETER this@Test1: Test1
+    $this: VALUE_PARAMETER this@Test1: Test1
     CONSTRUCTOR public constructor Test1()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -12,7 +12,7 @@ FILE /initBlock.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test2
-    $new: VALUE_PARAMETER this@Test2: Test2
+    $this: VALUE_PARAMETER this@Test2: Test2
     CONSTRUCTOR public constructor Test2(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
@@ -35,7 +35,7 @@ FILE /initBlock.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test3
-    $new: VALUE_PARAMETER this@Test3: Test3
+    $this: VALUE_PARAMETER this@Test3: Test3
     ANONYMOUS_INITIALIZER Test3
       BLOCK_BODY
         CALL 'println(): Unit' type=kotlin.Unit origin=null
@@ -47,7 +47,7 @@ FILE /initBlock.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test4
-    $new: VALUE_PARAMETER this@Test4: Test4
+    $this: VALUE_PARAMETER this@Test4: Test4
     ANONYMOUS_INITIALIZER Test4
       BLOCK_BODY
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
@@ -64,7 +64,7 @@ FILE /initBlock.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test5
-    $new: VALUE_PARAMETER this@Test5: Test5
+    $this: VALUE_PARAMETER this@Test5: Test5
     CONSTRUCTOR public constructor Test5()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -74,7 +74,7 @@ FILE /initBlock.kt
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value='1'
     CLASS CLASS TestInner
-      $new: VALUE_PARAMETER this@TestInner: TestInner
+      $this: VALUE_PARAMETER this@TestInner: TestInner
       CONSTRUCTOR public constructor TestInner()
         $outer: VALUE_PARAMETER this@Test5: Test5
         BLOCK_BODY

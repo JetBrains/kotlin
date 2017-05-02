@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.SmartList
-import java.util.*
 import kotlin.collections.ArrayList
 
 class IrClassImpl(
@@ -49,7 +48,7 @@ class IrClassImpl(
 
     override val descriptor: ClassDescriptor get() = symbol.descriptor
 
-    override var newInstanceReceiver: IrValueParameter? = null
+    override var thisReceiver: IrValueParameter? = null
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
@@ -59,13 +58,13 @@ class IrClassImpl(
             visitor.visitClass(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        newInstanceReceiver?.accept(visitor, data)
+        thisReceiver?.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
         declarations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        newInstanceReceiver = newInstanceReceiver?.transform(transformer, data)
+        thisReceiver = thisReceiver?.transform(transformer, data)
         typeParameters.transform { it.transform(transformer, data) }
         declarations.transform { it.transform(transformer, data) }
     }

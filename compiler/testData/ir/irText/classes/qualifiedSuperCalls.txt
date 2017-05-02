@@ -1,5 +1,6 @@
 FILE /qualifiedSuperCalls.kt
   CLASS INTERFACE ILeft
+    $this: VALUE_PARAMETER this@ILeft: ILeft
     FUN public open fun foo(): kotlin.Unit
       $this: VALUE_PARAMETER this@ILeft: ILeft
       BLOCK_BODY
@@ -13,6 +14,7 @@ FILE /qualifiedSuperCalls.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IRight
+    $this: VALUE_PARAMETER this@IRight: IRight
     FUN public open fun foo(): kotlin.Unit
       $this: VALUE_PARAMETER this@IRight: IRight
       BLOCK_BODY
@@ -26,7 +28,7 @@ FILE /qualifiedSuperCalls.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS CBoth
-    $new: VALUE_PARAMETER this@CBoth: CBoth
+    $this: VALUE_PARAMETER this@CBoth: CBoth
     CONSTRUCTOR public constructor CBoth()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

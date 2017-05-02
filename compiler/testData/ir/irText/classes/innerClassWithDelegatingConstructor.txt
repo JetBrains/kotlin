@@ -1,12 +1,12 @@
 FILE /innerClassWithDelegatingConstructor.kt
   CLASS CLASS Outer
-    $new: VALUE_PARAMETER this@Outer: Outer
+    $this: VALUE_PARAMETER this@Outer: Outer
     CONSTRUCTOR public constructor Outer()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
     CLASS CLASS Inner
-      $new: VALUE_PARAMETER this@Inner: Inner
+      $this: VALUE_PARAMETER this@Inner: Inner
       CONSTRUCTOR public constructor Inner(x: kotlin.Int)
         $outer: VALUE_PARAMETER this@Outer: Outer
         VALUE_PARAMETER value-parameter x: kotlin.Int

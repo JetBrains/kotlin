@@ -1,6 +1,6 @@
 FILE /enum.kt
   CLASS ENUM_CLASS TestEnum1
-    $new: VALUE_PARAMETER this@TestEnum1: TestEnum1
+    $this: VALUE_PARAMETER this@TestEnum1: TestEnum1
     CONSTRUCTOR private constructor TestEnum1()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -25,7 +25,7 @@ FILE /enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum1
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum2
-    $new: VALUE_PARAMETER this@TestEnum2: TestEnum2
+    $this: VALUE_PARAMETER this@TestEnum2: TestEnum2
     CONSTRUCTOR private constructor TestEnum2(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
@@ -66,7 +66,7 @@ FILE /enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum2
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum3
-    $new: VALUE_PARAMETER this@TestEnum3: TestEnum3
+    $this: VALUE_PARAMETER this@TestEnum3: TestEnum3
     CONSTRUCTOR private constructor TestEnum3()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -74,7 +74,7 @@ FILE /enum.kt
     ENUM_ENTRY enum entry TEST
       init: ENUM_CONSTRUCTOR_CALL 'constructor TEST()'
       class: CLASS ENUM_ENTRY TEST
-        $new: VALUE_PARAMETER this@TEST: TEST
+        $this: VALUE_PARAMETER this@TEST: TEST
         CONSTRUCTOR private constructor TEST()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor TestEnum3()'
@@ -113,7 +113,7 @@ FILE /enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum3
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum4
-    $new: VALUE_PARAMETER this@TestEnum4: TestEnum4
+    $this: VALUE_PARAMETER this@TestEnum4: TestEnum4
     CONSTRUCTOR private constructor TestEnum4(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
@@ -132,7 +132,7 @@ FILE /enum.kt
     ENUM_ENTRY enum entry TEST1
       init: ENUM_CONSTRUCTOR_CALL 'constructor TEST1()'
       class: CLASS ENUM_ENTRY TEST1
-        $new: VALUE_PARAMETER this@TEST1: TEST1
+        $this: VALUE_PARAMETER this@TEST1: TEST1
         CONSTRUCTOR private constructor TEST1()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor TestEnum4(Int)'
@@ -159,7 +159,7 @@ FILE /enum.kt
     ENUM_ENTRY enum entry TEST2
       init: ENUM_CONSTRUCTOR_CALL 'constructor TEST2()'
       class: CLASS ENUM_ENTRY TEST2
-        $new: VALUE_PARAMETER this@TEST2: TEST2
+        $this: VALUE_PARAMETER this@TEST2: TEST2
         CONSTRUCTOR private constructor TEST2()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor TestEnum4(Int)'
@@ -215,7 +215,7 @@ FILE /enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum4
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum5
-    $new: VALUE_PARAMETER this@TestEnum5: TestEnum5
+    $this: VALUE_PARAMETER this@TestEnum5: TestEnum5
     CONSTRUCTOR private constructor TestEnum5(x: kotlin.Int = ...)
       VALUE_PARAMETER value-parameter x: kotlin.Int = ...
         EXPRESSION_BODY

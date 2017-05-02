@@ -1,6 +1,6 @@
 FILE /primaryConstructorWithSuperConstructorCall.kt
   CLASS CLASS Base
-    $new: VALUE_PARAMETER this@Base: Base
+    $this: VALUE_PARAMETER this@Base: Base
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -9,7 +9,7 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestImplicitPrimaryConstructor
-    $new: VALUE_PARAMETER this@TestImplicitPrimaryConstructor: TestImplicitPrimaryConstructor
+    $this: VALUE_PARAMETER this@TestImplicitPrimaryConstructor: TestImplicitPrimaryConstructor
     CONSTRUCTOR public constructor TestImplicitPrimaryConstructor()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
@@ -18,7 +18,7 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestExplicitPrimaryConstructor
-    $new: VALUE_PARAMETER this@TestExplicitPrimaryConstructor: TestExplicitPrimaryConstructor
+    $this: VALUE_PARAMETER this@TestExplicitPrimaryConstructor: TestExplicitPrimaryConstructor
     CONSTRUCTOR public constructor TestExplicitPrimaryConstructor()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
@@ -27,7 +27,7 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestWithDelegatingConstructor
-    $new: VALUE_PARAMETER this@TestWithDelegatingConstructor: TestWithDelegatingConstructor
+    $this: VALUE_PARAMETER this@TestWithDelegatingConstructor: TestWithDelegatingConstructor
     CONSTRUCTOR public constructor TestWithDelegatingConstructor(x: kotlin.Int, y: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int

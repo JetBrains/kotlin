@@ -1,6 +1,6 @@
 FILE /forWithImplicitReceivers.kt
   CLASS OBJECT FiveTimes
-    $new: VALUE_PARAMETER this@FiveTimes: FiveTimes
+    $this: VALUE_PARAMETER this@FiveTimes: FiveTimes
     CONSTRUCTOR private constructor FiveTimes()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -9,7 +9,7 @@ FILE /forWithImplicitReceivers.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS IntCell
-    $new: VALUE_PARAMETER this@IntCell: IntCell
+    $this: VALUE_PARAMETER this@IntCell: IntCell
     CONSTRUCTOR public constructor IntCell(value: kotlin.Int)
       VALUE_PARAMETER value-parameter value: kotlin.Int
       BLOCK_BODY
@@ -36,6 +36,7 @@ FILE /forWithImplicitReceivers.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IReceiver
+    $this: VALUE_PARAMETER this@IReceiver: IReceiver
     FUN public open operator fun FiveTimes.iterator(): IntCell
       $this: VALUE_PARAMETER this@IReceiver: IReceiver
       $receiver: VALUE_PARAMETER this@iterator: FiveTimes

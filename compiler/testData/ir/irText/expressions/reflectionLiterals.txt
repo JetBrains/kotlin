@@ -1,6 +1,6 @@
 FILE /reflectionLiterals.kt
   CLASS CLASS A
-    $new: VALUE_PARAMETER this@A: A
+    $this: VALUE_PARAMETER this@A: A
     CONSTRUCTOR public constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

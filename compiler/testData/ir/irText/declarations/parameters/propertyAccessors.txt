@@ -45,7 +45,7 @@ FILE /propertyAccessors.kt
       VALUE_PARAMETER value-parameter value: kotlin.Int
       BLOCK_BODY
   CLASS CLASS Host
-    $new: VALUE_PARAMETER this@Host: Host<T>
+    $this: VALUE_PARAMETER this@Host: Host<T>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Host<T>()
       BLOCK_BODY

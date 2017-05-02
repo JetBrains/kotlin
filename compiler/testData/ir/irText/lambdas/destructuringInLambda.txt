@@ -1,6 +1,6 @@
 FILE /destructuringInLambda.kt
   CLASS CLASS A
-    $new: VALUE_PARAMETER this@A: A
+    $this: VALUE_PARAMETER this@A: A
     CONSTRUCTOR public constructor A(x: kotlin.Int, y: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int

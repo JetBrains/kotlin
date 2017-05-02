@@ -1,5 +1,6 @@
 FILE /integerCoercionToT.kt
   CLASS INTERFACE CPointed
+    $this: VALUE_PARAMETER this@CPointed: CPointed
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
@@ -10,7 +11,7 @@ FILE /integerCoercionToT.kt
       RETURN type=kotlin.Nothing from='reinterpret() on CPointed: T'
         CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
   CLASS CLASS CInt32VarX
-    $new: VALUE_PARAMETER this@CInt32VarX: CInt32VarX<T>
+    $this: VALUE_PARAMETER this@CInt32VarX: CInt32VarX<T>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor CInt32VarX<T>()
       BLOCK_BODY
@@ -31,7 +32,7 @@ FILE /integerCoercionToT.kt
       VALUE_PARAMETER value-parameter value: T_INT
       BLOCK_BODY
   CLASS CLASS IdType
-    $new: VALUE_PARAMETER this@IdType: IdType
+    $this: VALUE_PARAMETER this@IdType: IdType
     CONSTRUCTOR public constructor IdType(value: kotlin.Int)
       VALUE_PARAMETER value-parameter value: kotlin.Int
       BLOCK_BODY

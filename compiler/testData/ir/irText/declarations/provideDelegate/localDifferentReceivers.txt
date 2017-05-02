@@ -1,6 +1,6 @@
 FILE /localDifferentReceivers.kt
   CLASS CLASS MyClass
-    $new: VALUE_PARAMETER this@MyClass: MyClass
+    $this: VALUE_PARAMETER this@MyClass: MyClass
     CONSTRUCTOR public constructor MyClass(value: kotlin.String)
       VALUE_PARAMETER value-parameter value: kotlin.String
       BLOCK_BODY

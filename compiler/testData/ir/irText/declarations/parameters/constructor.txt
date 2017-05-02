@@ -1,6 +1,6 @@
 FILE /constructor.kt
   CLASS CLASS Test1
-    $new: VALUE_PARAMETER this@Test1: Test1<T1, T2>
+    $this: VALUE_PARAMETER this@Test1: Test1<T1, T2>
     TYPE_PARAMETER <T1>
     TYPE_PARAMETER <T2>
     CONSTRUCTOR public constructor Test1<T1, T2>(x: T1, y: T2)
@@ -33,7 +33,7 @@ FILE /constructor.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test2
-    $new: VALUE_PARAMETER this@Test2: Test2
+    $this: VALUE_PARAMETER this@Test2: Test2
     CONSTRUCTOR public constructor Test2(x: kotlin.Int, y: kotlin.String)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.String
@@ -51,7 +51,7 @@ FILE /constructor.kt
             GET_FIELD 'y: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@Test2: Test2' type=Test2 origin=null
     CLASS CLASS TestInner
-      $new: VALUE_PARAMETER this@TestInner: TestInner<Z>
+      $this: VALUE_PARAMETER this@TestInner: TestInner<Z>
       TYPE_PARAMETER <Z>
       CONSTRUCTOR public constructor TestInner<Z>(z: Z)
         $outer: VALUE_PARAMETER this@Test2: Test2
@@ -85,7 +85,7 @@ FILE /constructor.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test3
-    $new: VALUE_PARAMETER this@Test3: Test3
+    $this: VALUE_PARAMETER this@Test3: Test3
     CONSTRUCTOR public constructor Test3(x: kotlin.Int, y: kotlin.String = ...)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.String = ...
@@ -118,7 +118,7 @@ FILE /constructor.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test4
-    $new: VALUE_PARAMETER this@Test4: Test4<T>
+    $this: VALUE_PARAMETER this@Test4: Test4<T>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Test4<T>(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int

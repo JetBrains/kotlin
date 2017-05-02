@@ -1,5 +1,6 @@
 FILE /delegatedImplementation.kt
   CLASS INTERFACE IBase
+    $this: VALUE_PARAMETER this@IBase: IBase
     FUN public abstract fun foo(x: kotlin.Int, s: kotlin.String): kotlin.Unit
       $this: VALUE_PARAMETER this@IBase: IBase
       VALUE_PARAMETER value-parameter x: kotlin.Int
@@ -13,7 +14,7 @@ FILE /delegatedImplementation.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT BaseImpl
-    $new: VALUE_PARAMETER this@BaseImpl: BaseImpl
+    $this: VALUE_PARAMETER this@BaseImpl: BaseImpl
     CONSTRUCTOR private constructor BaseImpl()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -36,6 +37,7 @@ FILE /delegatedImplementation.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IOther
+    $this: VALUE_PARAMETER this@IOther: IOther
     PROPERTY public abstract val x: kotlin.String
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-x>(): kotlin.String
         $this: VALUE_PARAMETER this@IOther: IOther
@@ -67,7 +69,7 @@ FILE /delegatedImplementation.kt
       RETURN type=kotlin.Nothing from='otherImpl(String, Int): IOther'
         BLOCK type=otherImpl.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS <no name provided>
-            $new: VALUE_PARAMETER this@<no name provided>: <no name provided>
+            $this: VALUE_PARAMETER this@<no name provided>: <no name provided>
             CONSTRUCTOR public constructor <no name provided>()
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -123,7 +125,7 @@ FILE /delegatedImplementation.kt
             FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
           CALL 'constructor <no name provided>()' type=otherImpl.<no name provided> origin=OBJECT_LITERAL
   CLASS CLASS Test1
-    $new: VALUE_PARAMETER this@Test1: Test1
+    $this: VALUE_PARAMETER this@Test1: Test1
     CONSTRUCTOR public constructor Test1()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -160,7 +162,7 @@ FILE /delegatedImplementation.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test2
-    $new: VALUE_PARAMETER this@Test2: Test2
+    $this: VALUE_PARAMETER this@Test2: Test2
     CONSTRUCTOR public constructor Test2()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

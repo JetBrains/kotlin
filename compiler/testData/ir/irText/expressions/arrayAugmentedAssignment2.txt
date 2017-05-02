@@ -1,5 +1,6 @@
 FILE /arrayAugmentedAssignment2.kt
   CLASS INTERFACE IA
+    $this: VALUE_PARAMETER this@IA: IA
     FUN public abstract operator fun get(index: kotlin.String): kotlin.Int
       $this: VALUE_PARAMETER this@IA: IA
       VALUE_PARAMETER value-parameter index: kotlin.String
@@ -7,6 +8,7 @@ FILE /arrayAugmentedAssignment2.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IB
+    $this: VALUE_PARAMETER this@IB: IB
     FUN public abstract operator fun IA.set(index: kotlin.String, value: kotlin.Int): kotlin.Unit
       $this: VALUE_PARAMETER this@IB: IB
       $receiver: VALUE_PARAMETER this@set: IA

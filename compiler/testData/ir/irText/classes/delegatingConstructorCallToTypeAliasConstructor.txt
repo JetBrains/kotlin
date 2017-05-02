@@ -1,6 +1,6 @@
 FILE /delegatingConstructorCallToTypeAliasConstructor.kt
   CLASS CLASS Cell
-    $new: VALUE_PARAMETER this@Cell: Cell<T>
+    $this: VALUE_PARAMETER this@Cell: Cell<T>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Cell<T>(value: T)
       VALUE_PARAMETER value-parameter value: T
@@ -23,7 +23,7 @@ FILE /delegatingConstructorCallToTypeAliasConstructor.kt
   TYPEALIAS typealias CT = Cell<T> type=Cell<T>
   TYPEALIAS typealias CStr = Cell<String> type=Cell<kotlin.String>
   CLASS CLASS C1
-    $new: VALUE_PARAMETER this@C1: C1
+    $this: VALUE_PARAMETER this@C1: C1
     CONSTRUCTOR public constructor C1()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
@@ -35,7 +35,7 @@ FILE /delegatingConstructorCallToTypeAliasConstructor.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS C2
-    $new: VALUE_PARAMETER this@C2: C2
+    $this: VALUE_PARAMETER this@C2: C2
     CONSTRUCTOR public constructor C2()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'

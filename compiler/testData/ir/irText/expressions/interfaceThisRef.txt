@@ -1,0 +1,13 @@
+FILE /interfaceThisRef.kt
+  CLASS INTERFACE IFoo
+    $this: VALUE_PARAMETER this@IFoo: IFoo
+    FUN public abstract fun foo(): kotlin.Unit
+      $this: VALUE_PARAMETER this@IFoo: IFoo
+    FUN public open fun bar(): kotlin.Unit
+      $this: VALUE_PARAMETER this@IFoo: IFoo
+      BLOCK_BODY
+        CALL 'foo(): Unit' type=kotlin.Unit origin=null
+          $this: GET_VAR 'this@IFoo: IFoo' type=IFoo origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

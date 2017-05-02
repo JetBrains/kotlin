@@ -1,6 +1,6 @@
 FILE /typeAliasCtorForGenericClass.kt
   CLASS CLASS A
-    $new: VALUE_PARAMETER this@A: A<Q>
+    $this: VALUE_PARAMETER this@A: A<Q>
     TYPE_PARAMETER <Q>
     CONSTRUCTOR public constructor A<Q>(q: Q)
       VALUE_PARAMETER value-parameter q: Q

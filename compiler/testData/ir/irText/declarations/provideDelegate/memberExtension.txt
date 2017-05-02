@@ -1,12 +1,12 @@
 FILE /memberExtension.kt
   CLASS OBJECT Host
-    $new: VALUE_PARAMETER this@Host: Host
+    $this: VALUE_PARAMETER this@Host: Host
     CONSTRUCTOR private constructor Host()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
     CLASS CLASS StringDelegate
-      $new: VALUE_PARAMETER this@StringDelegate: StringDelegate
+      $this: VALUE_PARAMETER this@StringDelegate: StringDelegate
       CONSTRUCTOR public constructor StringDelegate(s: kotlin.String)
         VALUE_PARAMETER value-parameter s: kotlin.String
         BLOCK_BODY

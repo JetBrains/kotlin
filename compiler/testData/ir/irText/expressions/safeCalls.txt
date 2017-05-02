@@ -1,6 +1,6 @@
 FILE /safeCalls.kt
   CLASS CLASS Ref
-    $new: VALUE_PARAMETER this@Ref: Ref
+    $this: VALUE_PARAMETER this@Ref: Ref
     CONSTRUCTOR public constructor Ref(value: kotlin.Int)
       VALUE_PARAMETER value-parameter value: kotlin.Int
       BLOCK_BODY
@@ -27,6 +27,7 @@ FILE /safeCalls.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IHost
+    $this: VALUE_PARAMETER this@IHost: IHost
     FUN public open fun kotlin.String.extLength(): kotlin.Int
       $this: VALUE_PARAMETER this@IHost: IHost
       $receiver: VALUE_PARAMETER this@extLength: String

@@ -1,6 +1,6 @@
 FILE /classMembers.kt
   CLASS CLASS C
-    $new: VALUE_PARAMETER this@C: C
+    $this: VALUE_PARAMETER this@C: C
     CONSTRUCTOR public constructor C(x: kotlin.Int, y: kotlin.Int, z: kotlin.Int = ...)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int
@@ -85,7 +85,7 @@ FILE /classMembers.kt
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value='2'
     CLASS CLASS NestedClass
-      $new: VALUE_PARAMETER this@NestedClass: NestedClass
+      $this: VALUE_PARAMETER this@NestedClass: NestedClass
       CONSTRUCTOR public constructor NestedClass()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -105,6 +105,7 @@ FILE /classMembers.kt
       FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
       FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS INTERFACE NestedInterface
+      $this: VALUE_PARAMETER this@NestedInterface: NestedInterface
       FUN public abstract fun foo(): kotlin.Unit
         $this: VALUE_PARAMETER this@NestedInterface: NestedInterface
       FUN public open fun bar(): kotlin.Unit
@@ -117,7 +118,7 @@ FILE /classMembers.kt
       FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
       FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS OBJECT companion object of C
-      $new: VALUE_PARAMETER this@Companion: Companion
+      $this: VALUE_PARAMETER this@Companion: Companion
       CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

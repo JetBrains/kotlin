@@ -1,6 +1,6 @@
 FILE /secondaryConstructorWithInitializersFromClassBody.kt
   CLASS CLASS Base
-    $new: VALUE_PARAMETER this@Base: Base
+    $this: VALUE_PARAMETER this@Base: Base
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -9,7 +9,7 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestProperty
-    $new: VALUE_PARAMETER this@TestProperty: TestProperty
+    $this: VALUE_PARAMETER this@TestProperty: TestProperty
     PROPERTY public final val x: kotlin.Int = 0
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int = 0
         EXPRESSION_BODY
@@ -28,7 +28,7 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitBlock
-    $new: VALUE_PARAMETER this@TestInitBlock: TestInitBlock
+    $this: VALUE_PARAMETER this@TestInitBlock: TestInitBlock
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int

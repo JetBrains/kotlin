@@ -1,9 +1,11 @@
 FILE /smartCastsWithDestructuring.kt
   CLASS INTERFACE I1
+    $this: VALUE_PARAMETER this@I1: I1
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE I2
+    $this: VALUE_PARAMETER this@I2: I2
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

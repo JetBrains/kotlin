@@ -27,7 +27,7 @@ interface IrClass : IrSymbolDeclaration<IrClassSymbol>, IrDeclarationContainer, 
 
     override val descriptor: ClassDescriptor
 
-    var newInstanceReceiver: IrValueParameter?
+    var thisReceiver: IrValueParameter?
 }
 
 fun IrClass.addMember(member: IrDeclaration) {

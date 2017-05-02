@@ -77,7 +77,7 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
 
     override fun visitClass(declaration: IrClass, data: String) {
         declaration.dumpLabeledElementWith(data) {
-            declaration.newInstanceReceiver?.accept(this, "\$new")
+            declaration.thisReceiver?.accept(this, "\$this")
             declaration.typeParameters.dumpElements()
             declaration.declarations.dumpElements()
         }

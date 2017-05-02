@@ -1,5 +1,6 @@
 FILE /interfaceProperties.kt
   CLASS INTERFACE C
+    $this: VALUE_PARAMETER this@C: C
     PROPERTY public abstract val test1: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-test1>(): kotlin.Int
         $this: VALUE_PARAMETER this@C: C

@@ -1,6 +1,6 @@
 FILE /dataClassesGeneric.kt
   CLASS CLASS Test1
-    $new: VALUE_PARAMETER this@Test1: Test1<T>
+    $this: VALUE_PARAMETER this@Test1: Test1<T>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Test1<T>(x: T)
       VALUE_PARAMETER value-parameter x: T

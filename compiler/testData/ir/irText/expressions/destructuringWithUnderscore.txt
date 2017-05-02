@@ -1,6 +1,6 @@
 FILE /destructuringWithUnderscore.kt
   CLASS OBJECT A
-    $new: VALUE_PARAMETER this@A: A
+    $this: VALUE_PARAMETER this@A: A
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -9,7 +9,7 @@ FILE /destructuringWithUnderscore.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT B
-    $new: VALUE_PARAMETER this@B: B
+    $this: VALUE_PARAMETER this@B: B
     CONSTRUCTOR private constructor B()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

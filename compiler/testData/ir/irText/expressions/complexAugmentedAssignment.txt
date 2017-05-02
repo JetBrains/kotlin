@@ -1,6 +1,6 @@
 FILE /complexAugmentedAssignment.kt
   CLASS OBJECT X1
-    $new: VALUE_PARAMETER this@X1: X1
+    $this: VALUE_PARAMETER this@X1: X1
     CONSTRUCTOR private constructor X1()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -23,7 +23,7 @@ FILE /complexAugmentedAssignment.kt
             receiver: GET_VAR 'this@X1: X1' type=X1 origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     CLASS OBJECT X2
-      $new: VALUE_PARAMETER this@X2: X2
+      $this: VALUE_PARAMETER this@X2: X2
       CONSTRUCTOR private constructor X2()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -46,7 +46,7 @@ FILE /complexAugmentedAssignment.kt
               receiver: GET_VAR 'this@X2: X2' type=X1.X2 origin=null
               value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
       CLASS OBJECT X3
-        $new: VALUE_PARAMETER this@X3: X3
+        $this: VALUE_PARAMETER this@X3: X3
         CONSTRUCTOR private constructor X3()
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -146,7 +146,7 @@ FILE /complexAugmentedAssignment.kt
                 $this: GET_VAR 'tmp5: Int' type=kotlin.Int origin=null
             GET_VAR 'tmp5: Int' type=kotlin.Int origin=null
   CLASS CLASS B
-    $new: VALUE_PARAMETER this@B: B
+    $this: VALUE_PARAMETER this@B: B
     CONSTRUCTOR public constructor B(s: kotlin.Int = ...)
       VALUE_PARAMETER value-parameter s: kotlin.Int = ...
         EXPRESSION_BODY
@@ -175,7 +175,7 @@ FILE /complexAugmentedAssignment.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT Host
-    $new: VALUE_PARAMETER this@Host: Host
+    $this: VALUE_PARAMETER this@Host: Host
     CONSTRUCTOR private constructor Host()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

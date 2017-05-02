@@ -1,12 +1,12 @@
 FILE /sealedClasses.kt
   CLASS CLASS Expr
-    $new: VALUE_PARAMETER this@Expr: Expr
+    $this: VALUE_PARAMETER this@Expr: Expr
     CONSTRUCTOR private constructor Expr()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Expr'
     CLASS CLASS Const
-      $new: VALUE_PARAMETER this@Const: Const
+      $this: VALUE_PARAMETER this@Const: Const
       CONSTRUCTOR public constructor Const(number: kotlin.Double)
         VALUE_PARAMETER value-parameter number: kotlin.Double
         BLOCK_BODY
@@ -26,7 +26,7 @@ FILE /sealedClasses.kt
       FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
       FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS CLASS Sum
-      $new: VALUE_PARAMETER this@Sum: Sum
+      $this: VALUE_PARAMETER this@Sum: Sum
       CONSTRUCTOR public constructor Sum(e1: Expr, e2: Expr)
         VALUE_PARAMETER value-parameter e1: Expr
         VALUE_PARAMETER value-parameter e2: Expr
@@ -57,7 +57,7 @@ FILE /sealedClasses.kt
       FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
       FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS OBJECT NotANumber
-      $new: VALUE_PARAMETER this@NotANumber: NotANumber
+      $this: VALUE_PARAMETER this@NotANumber: NotANumber
       CONSTRUCTOR private constructor NotANumber()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'

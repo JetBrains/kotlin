@@ -48,13 +48,11 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
                 IrDeclarationOrigin.DEFINED,
                 descriptor
         ).buildWithScope { irClass ->
-            if (irClass.descriptor.canHaveInitializersWithInstanceReference()) {
-                irClass.newInstanceReceiver = context.symbolTable.declareValueParameter(
-                        ktClassOrObject.startOffset, ktClassOrObject.endOffset,
-                        IrDeclarationOrigin.NEW_INSTANCE_RECEIVER,
-                        irClass.descriptor.thisAsReceiverParameter
-                )
-            }
+            irClass.thisReceiver = context.symbolTable.declareValueParameter(
+                    ktClassOrObject.startOffset, ktClassOrObject.endOffset,
+                    IrDeclarationOrigin.NEW_INSTANCE_RECEIVER,
+                    irClass.descriptor.thisAsReceiverParameter
+            )
 
             declarationGenerator.generateTypeParameterDeclarations(irClass, descriptor.declaredTypeParameters)
 
@@ -78,9 +76,6 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
             }
         }
     }
-
-    private fun ClassDescriptor.canHaveInitializersWithInstanceReference(): Boolean =
-            kind != ClassKind.INTERFACE
 
     private fun generateFakeOverrideMemberDeclarations(irClass: IrClass) {
         irClass.descriptor.unsubstitutedMemberScope.getContributedDescriptors()

@@ -1,9 +1,11 @@
 FILE /conventionComparisons.kt
   CLASS INTERFACE IA
+    $this: VALUE_PARAMETER this@IA: IA
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IB
+    $this: VALUE_PARAMETER this@IB: IB
     FUN public abstract operator fun IA.compareTo(other: IA): kotlin.Int
       $this: VALUE_PARAMETER this@IB: IB
       $receiver: VALUE_PARAMETER this@compareTo: IA

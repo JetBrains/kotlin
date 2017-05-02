@@ -87,7 +87,7 @@ class DeepCopyIrTreeWithSymbols(private val symbolsRemapper: DeepCopySymbolsRema
                     mapDeclarationOrigin(declaration.origin),
                     symbolsRemapper.getDeclaredClass(declaration.symbol)
             ).apply {
-                newInstanceReceiver = declaration.newInstanceReceiver?.transform()
+                thisReceiver = declaration.thisReceiver?.transform()
                 declaration.typeParameters.transformTo(typeParameters)
                 declaration.transformDeclarationsTo(this)
             }

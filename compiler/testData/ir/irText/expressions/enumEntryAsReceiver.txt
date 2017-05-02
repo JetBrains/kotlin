@@ -1,6 +1,6 @@
 FILE /enumEntryAsReceiver.kt
   CLASS ENUM_CLASS X
-    $new: VALUE_PARAMETER this@X: X
+    $this: VALUE_PARAMETER this@X: X
     CONSTRUCTOR private constructor X()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -8,7 +8,7 @@ FILE /enumEntryAsReceiver.kt
     ENUM_ENTRY enum entry B
       init: ENUM_CONSTRUCTOR_CALL 'constructor B()'
       class: CLASS ENUM_ENTRY B
-        $new: VALUE_PARAMETER this@B: B
+        $this: VALUE_PARAMETER this@B: B
         CONSTRUCTOR private constructor B()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor X()'

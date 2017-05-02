@@ -1,6 +1,6 @@
 FILE /kt16904.kt
   CLASS CLASS A
-    $new: VALUE_PARAMETER this@A: A
+    $this: VALUE_PARAMETER this@A: A
     CONSTRUCTOR public constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -36,7 +36,7 @@ FILE /kt16904.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS B
-    $new: VALUE_PARAMETER this@B: B
+    $this: VALUE_PARAMETER this@B: B
     CONSTRUCTOR public constructor B()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -49,7 +49,7 @@ FILE /kt16904.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test1
-    $new: VALUE_PARAMETER this@Test1: Test1
+    $this: VALUE_PARAMETER this@Test1: Test1
     CONSTRUCTOR public constructor Test1()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor A()'
@@ -79,7 +79,7 @@ FILE /kt16904.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test2
-    $new: VALUE_PARAMETER this@Test2: Test2
+    $this: VALUE_PARAMETER this@Test2: Test2
     CONSTRUCTOR public constructor Test2()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor J()'
