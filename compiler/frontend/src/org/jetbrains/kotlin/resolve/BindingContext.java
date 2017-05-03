@@ -131,7 +131,6 @@ public interface BindingContext {
 
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_HAS_NEXT_RESOLVED_CALL = Slices.createSimpleSlice();
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_NEXT_RESOLVED_CALL = Slices.createSimpleSlice();
-    WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> RETURN_HANDLE_RESULT_RESOLVED_CALL = Slices.createSimpleSlice();
 
     WritableSlice<Call, FunctionDescriptor> ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL = Slices.createSimpleSlice();
     WritableSlice<FunctionDescriptor, Boolean> CONTAINS_NON_TAIL_SUSPEND_CALLS = Slices.createSimpleSetSlice();
