@@ -46,7 +46,7 @@ class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
         get() = false
 
     override val isAbstract: Boolean
-        get() = tree.modifiers.isAbstract
+        get() = tree.modifiers.isAbstract || (isAnnotationType && methods.any { it.isAbstract })
 
     override val isStatic: Boolean
         get() = (outerClass?.isInterface ?: false) || tree.modifiers.isStatic

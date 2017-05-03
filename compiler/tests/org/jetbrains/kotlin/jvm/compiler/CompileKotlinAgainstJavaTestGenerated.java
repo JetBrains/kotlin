@@ -38,6 +38,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("AbstractEnum.kt")
+    public void testAbstractEnum() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/AbstractEnum.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInCompileKotlinAgainstJava() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstJava"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
