@@ -346,28 +346,24 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         private fun setupJdkClasspathRoots(arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration, messageCollector: MessageCollector): ExitCode {
             try {
-                if (arguments.noJdk) {
+                if (!arguments.noJdk) {
                     if (arguments.jdkHome != null) {
-                        messageCollector.report(STRONG_WARNING, "The '-jdk-home' option is ignored because '-no-jdk' is specified")
+                        messageCollector.report(LOGGING, "Using JDK home directory ${arguments.jdkHome}")
+                        val classesRoots = PathUtil.getJdkClassesRoots(File(arguments.jdkHome))
+                        if (classesRoots.isEmpty()) {
+                            messageCollector.report(ERROR, "No class roots are found in the JDK path: ${arguments.jdkHome}")
+                            return COMPILATION_ERROR
+                        }
+                        configuration.addJvmClasspathRoots(classesRoots)
                     }
-                    return OK
-                }
-
-                if (arguments.jdkHome != null) {
-                    val jdkHome = File(arguments.jdkHome)
-                    configuration.put(JVMConfigurationKeys.JDK_HOME, jdkHome)
-                    val classesRoots = PathUtil.getJdkClassesRoots(jdkHome)
-                    configuration.addJvmClasspathRoots(classesRoots)
-
-                    messageCollector.report(LOGGING, "Using JDK home directory $jdkHome")
-                    if (classesRoots.isEmpty()) {
-                        messageCollector.report(ERROR, "No class roots are found in the JDK path: $jdkHome")
-                        return COMPILATION_ERROR
+                    else {
+                        configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRootsFromCurrentJre())
                     }
                 }
                 else {
-                    configuration.put(JVMConfigurationKeys.JDK_HOME, File(System.getProperty("java.home")))
-                    configuration.addJvmClasspathRoots(PathUtil.getJdkClassesRootsFromCurrentJre())
+                    if (arguments.jdkHome != null) {
+                        messageCollector.report(STRONG_WARNING, "The '-jdk-home' option is ignored because '-no-jdk' is specified")
+                    }
                 }
             }
             catch (t: Throwable) {

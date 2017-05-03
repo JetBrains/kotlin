@@ -39,9 +39,6 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> INCLUDE_RUNTIME =
             CompilerConfigurationKey.create("include runtime to the resulting .jar");
 
-    public static final CompilerConfigurationKey<File> JDK_HOME =
-            CompilerConfigurationKey.create("jdk home");
-
     public static final CompilerConfigurationKey<List<KotlinScriptDefinition>> SCRIPT_DEFINITIONS =
             CompilerConfigurationKey.create("script definitions");
 
