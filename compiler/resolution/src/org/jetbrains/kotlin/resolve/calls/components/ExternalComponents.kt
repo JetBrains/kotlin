@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.types.UnwrappedType
 
 interface IsDescriptorFromSourcePredicate: (CallableDescriptor) -> Boolean
 
-interface CommonSupertypeCalculator: (Collection<UnwrappedType>) -> UnwrappedType
-
 // This components hold state (trace). Work with this carefully.
 interface KotlinResolutionCallbacks {
     fun analyzeAndGetLambdaResultArguments(
