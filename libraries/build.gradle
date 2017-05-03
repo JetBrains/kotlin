@@ -1,7 +1,5 @@
 buildscript {
-    ext.kotlin_version = findProperty("deployVersion") ?: "1.1-SNAPSHOT"
-    ext.kotlin_language_version = "1.1"
-    ext.kotlin_gradle_plugin_version = findProperty("kotlinGradlePluginVersion") ?: "1.1.2"
+    apply from: 'versions.gradle'
 
     repositories {
         mavenCentral()
@@ -12,15 +10,6 @@ buildscript {
 }
 
 apply from: 'commonConfiguration.gradle'
-
-ext {
-    JDK_16 = jdkPath("1.6")
-    JDK_17 = jdkPath("1.7")
-    JDK_18 = jdkPath("1.8")
-    distDir = file("${rootDir}/../dist")
-    distLibDir = file("${rootDir}/../dist/kotlinc/lib")
-    bootstrapCompilerFile = file("$distDir/kotlin-compiler-for-maven.jar")
-}
 
 allprojects {
     group = 'org.jetbrains.kotlin'
