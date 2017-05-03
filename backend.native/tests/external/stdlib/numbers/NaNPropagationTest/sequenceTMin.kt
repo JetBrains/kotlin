@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: NATIVE
 import kotlin.test.*
 import kotlin.test.assertTrue
 import kotlin.comparisons.*
