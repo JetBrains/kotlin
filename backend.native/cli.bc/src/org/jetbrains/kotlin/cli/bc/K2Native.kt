@@ -154,6 +154,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         return K2NativeCompilerArguments()
     }
 
+    override fun executableScriptFileName() = "kotlinc-native"
+
     companion object {
         @JvmStatic fun main(args: Array<String>) {
             profile("Total compiler main()") {
