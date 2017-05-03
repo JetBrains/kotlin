@@ -120,20 +120,20 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                     declaration.body!!.transform()
             ).transformParameters(declaration)
 
-    private fun <T : IrTypeParametersContainer> T.transformTypeParameters(original: T, myTypeParameters: List<TypeParameterDescriptor>): T =
+    protected fun <T : IrTypeParametersContainer> T.transformTypeParameters(original: T, myTypeParameters: List<TypeParameterDescriptor>): T =
             apply {
                 original.typeParameters.mapTo(typeParameters) { originalTypeParameter ->
                     copyTypeParameter(originalTypeParameter, myTypeParameters[originalTypeParameter.descriptor.index])
                 }
             }
 
-    private fun <T : IrFunction> T.transformParameters(original: T): T =
+    protected fun <T : IrFunction> T.transformParameters(original: T): T =
             apply {
                 transformTypeParameters(original, descriptor.typeParameters)
                 transformValueParameters(original)
             }
 
-    private fun <T : IrFunction> T.transformValueParameters(original: T) =
+    protected fun <T : IrFunction> T.transformValueParameters(original: T) =
             apply {
                 dispatchReceiverParameter = original.dispatchReceiverParameter?.let {
                     copyValueParameter(it, descriptor.dispatchReceiverParameter ?: throw AssertionError("No dispatch receiver in $descriptor"))
@@ -148,7 +148,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                 }
             }
 
-    private fun copyTypeParameter(
+    protected fun copyTypeParameter(
             originalTypeParameter: IrTypeParameter,
             newTypeParameterDescriptor: TypeParameterDescriptor
     ): IrTypeParameterImpl =
@@ -158,7 +158,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                     newTypeParameterDescriptor
             )
 
-    private fun copyValueParameter(
+    protected fun copyValueParameter(
             originalValueParameter: IrValueParameter,
             newParameterDescriptor: ParameterDescriptor
     ): IrValueParameterImpl =
