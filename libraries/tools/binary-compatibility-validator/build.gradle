@@ -37,6 +37,7 @@ test {
     dependsOn cleanCompileTestKotlin
     dependsOn configurations.testArtifacts
 
-    systemProperties['overwrite.output'] = System.getProperty("overwrite.output", "false")
+    systemProperty 'overwrite.output', System.getProperty("overwrite.output", "false")
+    systemProperty 'kotlinVersion', project.version
     jvmArgs '-ea'
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ class RuntimePublicAPITest {
 
     private fun snapshotAPIAndCompare(basePath: String, jarPattern: String, kotlinJvmMappingsPath: List<String>, publicPackages: List<String> = emptyList(), nonPublicPackages: List<String> = emptyList()) {
         val base = File(basePath).absoluteFile.normalize()
-        val jarFile = getJarPath(base, jarPattern)
+        val jarFile = getJarPath(base, jarPattern, System.getProperty("kotlinVersion"))
         val kotlinJvmMappingsFiles = kotlinJvmMappingsPath.map(base::resolve)
 
         println("Reading kotlin visibilities from $kotlinJvmMappingsFiles")
@@ -75,15 +75,16 @@ class RuntimePublicAPITest {
         api.dumpAndCompareWith(target)
     }
 
-    private fun getJarPath(base: File, jarPattern: String): File {
-        val regex = Regex("$jarPattern.+\\.jar")
+    private fun getJarPath(base: File, jarPattern: String, kotlinVersion: String?): File {
+        val versionPattern = kotlinVersion?.let { "-" + Regex.escape(it) } ?: ".+"
+        val regex = Regex(jarPattern + versionPattern + "\\.jar")
         val files = (base.listFiles() ?: throw Exception("Cannot list files in $base"))
             .filter { it.name.let {
                     it matches regex
                     && !it.endsWith("-sources.jar")
-                    && !it.endsWith("-javadoc.jar") }}
+                    && !it.endsWith("-javadoc.jar") } }
 
-        return files.singleOrNull() ?: throw Exception("No single file matching $jarPattern in $base: $files")
+        return files.singleOrNull() ?: throw Exception("No single file matching $regex in $base:\n${files.joinToString("\n")}")
     }
 
 }
