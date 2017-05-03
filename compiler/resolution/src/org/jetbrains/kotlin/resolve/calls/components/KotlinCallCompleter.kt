@@ -63,15 +63,15 @@ class KotlinCallCompleter(
         fun getBuilder(): ConstraintSystemBuilder
     }
 
-    fun transformWhenAmbiguity(candidate: KotlinResolutionCandidate, lambdaAnalyzer: LambdaAnalyzer): ResolvedKotlinCall =
-            toCompletedBaseResolvedCall(candidate.lastCall.constraintSystem.asCallCompleterContext(), candidate, lambdaAnalyzer)
+    fun transformWhenAmbiguity(candidate: KotlinResolutionCandidate, resolutionCallbacks: KotlinResolutionCallbacks): ResolvedKotlinCall =
+            toCompletedBaseResolvedCall(candidate.lastCall.constraintSystem.asCallCompleterContext(), candidate, resolutionCallbacks)
 
     fun completeCallIfNecessary(
             candidate: KotlinResolutionCandidate,
             expectedType: UnwrappedType?,
-            lambdaAnalyzer: LambdaAnalyzer
+            resolutionCallbacks: KotlinResolutionCallbacks
     ): ResolvedKotlinCall {
-        lambdaAnalyzer.bindStubResolvedCallForCandidate(candidate)
+        resolutionCallbacks.bindStubResolvedCallForCandidate(candidate)
         val topLevelCall =
                 when (candidate) {
                     is VariableAsFunctionKotlinResolutionCandidate -> candidate.invokeCandidate
@@ -81,8 +81,8 @@ class KotlinCallCompleter(
         if (topLevelCall.prepareForCompletion(expectedType)) {
             val c = candidate.lastCall.constraintSystem.asCallCompleterContext()
 
-            topLevelCall.competeCall(c, lambdaAnalyzer)
-            return toCompletedBaseResolvedCall(c, candidate, lambdaAnalyzer)
+            topLevelCall.competeCall(c, resolutionCallbacks)
+            return toCompletedBaseResolvedCall(c, candidate, resolutionCallbacks)
         }
 
         return ResolvedKotlinCall.OnlyResolvedKotlinCall(candidate)
@@ -91,7 +91,7 @@ class KotlinCallCompleter(
     private fun toCompletedBaseResolvedCall(
             c: Context,
             candidate: KotlinResolutionCandidate,
-            lambdaAnalyzer: LambdaAnalyzer
+            resolutionCallbacks: KotlinResolutionCallbacks
     ): ResolvedKotlinCall.CompletedResolvedKotlinCall {
         val currentSubstitutor = c.buildResultingSubstitutor()
         val completedCall = candidate.toCompletedCall(currentSubstitutor)
@@ -99,7 +99,7 @@ class KotlinCallCompleter(
             it.candidate.toCompletedCall(currentSubstitutor)
         }
         c.lambdaArguments.forEach {
-            lambdaAnalyzer.completeLambdaReturnType(it, currentSubstitutor.safeSubstitute(it.returnType))
+            resolutionCallbacks.completeLambdaReturnType(it, currentSubstitutor.safeSubstitute(it.returnType))
         }
         return ResolvedKotlinCall.CompletedResolvedKotlinCall(completedCall, competedCalls)
     }
@@ -199,19 +199,19 @@ class KotlinCallCompleter(
         return expectedType != null || csBuilder.isProperType(returnType)
     }
 
-    private fun SimpleKotlinResolutionCandidate.competeCall(c: Context, lambdaAnalyzer: LambdaAnalyzer) {
-        while (!oneStepToEndOrLambda(c, lambdaAnalyzer)) {
+    private fun SimpleKotlinResolutionCandidate.competeCall(c: Context, resolutionCallbacks: KotlinResolutionCallbacks) {
+        while (!oneStepToEndOrLambda(c, resolutionCallbacks)) {
             // do nothing -- be happy
         }
     }
 
     // true if it is the end (happy or not)
-    private fun SimpleKotlinResolutionCandidate.oneStepToEndOrLambda(c: Context, lambdaAnalyzer: LambdaAnalyzer): Boolean {
+    private fun SimpleKotlinResolutionCandidate.oneStepToEndOrLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks): Boolean {
         if (c.hasContradiction) return true
 
         val lambda = c.lambdaArguments.find { canWeAnalyzeIt(c, it) }
         if (lambda != null) {
-            analyzeLambda(c, lambdaAnalyzer, callContext, kotlinCall, lambda)
+            analyzeLambda(c, resolutionCallbacks, callContext, kotlinCall, lambda)
             return false
         }
 
@@ -230,7 +230,7 @@ class KotlinCallCompleter(
             if (variable is LambdaTypeVariable) {
                 val resolvedLambda = c.lambdaArguments.find { it.argument == variable.lambdaArgument } ?: return true
                 if (canWeAnalyzeIt(c, resolvedLambda)) {
-                    analyzeLambda(c, lambdaAnalyzer, callContext, kotlinCall, resolvedLambda)
+                    analyzeLambda(c, resolutionCallbacks, callContext, kotlinCall, resolvedLambda)
                     return false
                 }
             }
@@ -238,7 +238,7 @@ class KotlinCallCompleter(
         return true
     }
 
-    private fun analyzeLambda(c: Context, lambdaAnalyzer: LambdaAnalyzer, topLevelCallContext: KotlinCallContext, topLevelCall: KotlinCall, lambda: ResolvedLambdaArgument) {
+    private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, topLevelCallContext: KotlinCallContext, topLevelCall: KotlinCall, lambda: ResolvedLambdaArgument) {
         val currentSubstitutor = c.buildCurrentSubstitutor()
         fun substitute(type: UnwrappedType) = currentSubstitutor.safeSubstitute(type)
 
@@ -246,7 +246,7 @@ class KotlinCallCompleter(
         val parameters = lambda.parameters.map(::substitute)
         val expectedType = lambda.returnType.takeIf { c.canBeProper(it) }?.let(::substitute)
         lambda.analyzed = true
-        lambda.resultArguments = lambdaAnalyzer.analyzeAndGetLambdaResultArguments(topLevelCall, lambda.argument, receiver, parameters, expectedType)
+        lambda.resultArguments = resolutionCallbacks.analyzeAndGetLambdaResultArguments(topLevelCall, lambda.argument, receiver, parameters, expectedType)
 
         for (innerCall in lambda.resultArguments) {
             // todo strange code -- why top-level kotlinCall? may be it isn't right outer call

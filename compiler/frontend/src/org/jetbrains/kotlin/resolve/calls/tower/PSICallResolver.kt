@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.components.ArgumentsToParametersMapper
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
-import org.jetbrains.kotlin.resolve.calls.components.LambdaAnalyzer
+import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
@@ -128,7 +128,7 @@ class PSICallResolver(
     }
 
     private fun createLambdaAnalyzer(context: BasicCallResolutionContext) =
-            LambdaAnalyzerImpl(expressionTypingServices, context.trace, typeApproximator, kotlinToResolvedCallTransformer, argumentTypeResolver)
+            KotlinResolutionCallbacksImpl(expressionTypingServices, context.trace, typeApproximator, kotlinToResolvedCallTransformer, argumentTypeResolver)
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {
         val expectedType = context.expectedType.unwrap()
@@ -144,8 +144,8 @@ class PSICallResolver(
         }
     }
 
-    private fun createCallContext(scopeTower: ASTScopeTower, lambdaAnalyzer: LambdaAnalyzer) =
-            KotlinCallContext(scopeTower, lambdaAnalyzer, argumentsToParametersMapper, typeArgumentsToParametersMapper, resultTypeResolver,
+    private fun createCallContext(scopeTower: ASTScopeTower, resolutionCallbacks: KotlinResolutionCallbacks) =
+            KotlinCallContext(scopeTower, resolutionCallbacks, argumentsToParametersMapper, typeArgumentsToParametersMapper, resultTypeResolver,
                               callableReferenceResolver, constraintInjector)
 
     private fun <D : CallableDescriptor> convertToOverloadResolutionResults(

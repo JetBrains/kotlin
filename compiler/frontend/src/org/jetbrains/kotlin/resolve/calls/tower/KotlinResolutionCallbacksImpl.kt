@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
-import org.jetbrains.kotlin.resolve.calls.components.LambdaAnalyzer
+import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
@@ -37,13 +37,13 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 
-class LambdaAnalyzerImpl(
+class KotlinResolutionCallbacksImpl(
         val expressionTypingServices: ExpressionTypingServices,
         val trace: BindingTrace,
         val typeApproximator: TypeApproximator,
         val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
         val argumentTypeResolver: ArgumentTypeResolver
-): LambdaAnalyzer {
+): KotlinResolutionCallbacks {
 
     override fun analyzeAndGetLambdaResultArguments(
             topLevelCall: KotlinCall,
