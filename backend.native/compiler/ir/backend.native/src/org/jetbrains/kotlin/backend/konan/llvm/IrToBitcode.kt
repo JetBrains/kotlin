@@ -431,16 +431,16 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private inner class VariableScope : InnerScopeImpl() {
 
         override fun genDeclareVariable(descriptor: VariableDescriptor, value: LLVMValueRef?): Int {
-            return codegen.vars.createVariable(descriptor to this, value)
+            return codegen.vars.createVariable(descriptor, value)
         }
 
         override fun getDeclaredVariable(descriptor: VariableDescriptor): Int {
-            val index = codegen.vars.indexOf(descriptor to this)
+            val index = codegen.vars.indexOf(descriptor)
             return if (index < 0) super.getDeclaredVariable(descriptor) else return index
         }
 
         override fun genGetValue(descriptor: ValueDescriptor): LLVMValueRef {
-            val index = codegen.vars.indexOf(descriptor to this)
+            val index = codegen.vars.indexOf(descriptor)
             if (index < 0) {
                 return super.genGetValue(descriptor)
             } else {
@@ -460,13 +460,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         init {
             parameters.map { (descriptor, value) ->
-                codegen.vars.createImmutable(descriptor to this, value)
+                codegen.vars.createImmutable(descriptor, value)
             }
 
         }
 
         override fun genGetValue(descriptor: ValueDescriptor): LLVMValueRef {
-            val index = codegen.vars.indexOf(descriptor to this)
+            val index = codegen.vars.indexOf(descriptor)
             if (index < 0) {
                 return super.genGetValue(descriptor)
             } else {

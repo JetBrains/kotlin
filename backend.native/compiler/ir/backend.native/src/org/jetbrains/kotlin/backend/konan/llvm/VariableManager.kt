@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.*
 
 
 internal class VariableManager(val codegen: CodeGenerator) {
@@ -43,13 +42,8 @@ internal class VariableManager(val codegen: CodeGenerator) {
         override fun toString() = "value of ${value} from ${name}"
     }
 
-    data class ScopedVariable private constructor(val descriptor: ValueDescriptor, val context: CodeContext)
-    {
-        constructor(scoped: Pair<ValueDescriptor, CodeContext>) : this(scoped.first, scoped.second)
-    }
-
     val variables: ArrayList<Record> = arrayListOf()
-    val contextVariablesToIndex: HashMap<ScopedVariable, Int> = hashMapOf()
+    val contextVariablesToIndex: HashMap<ValueDescriptor, Int> = hashMapOf()
 
     // Clears inner state of variable manager.
     fun clear() {
@@ -57,31 +51,28 @@ internal class VariableManager(val codegen: CodeGenerator) {
         contextVariablesToIndex.clear()
     }
 
-    fun createVariable(scoped: Pair<VariableDescriptor, CodeContext>, value: LLVMValueRef? = null) : Int {
+    fun createVariable(descriptor: VariableDescriptor, value: LLVMValueRef? = null) : Int {
         // Note that we always create slot for object references for memory management.
-        val descriptor = scoped.first
         if (!descriptor.isVar && value != null)
-            return createImmutable(scoped, value)
+            return createImmutable(descriptor, value)
         else
             // Unfortunately, we have to create mutable slots here,
             // as even vals can be assigned on multiple paths. However, we use varness
             // knowledge, as anonymous slots are created only for true vars (for vals
             // their single assigner already have slot).
-            return createMutable(scoped, descriptor.isVar, value)
+            return createMutable(descriptor, descriptor.isVar, value)
     }
 
-    fun createMutable(scoped: Pair<VariableDescriptor, CodeContext>,
+    fun createMutable(descriptor: VariableDescriptor,
                       isVar: Boolean, value: LLVMValueRef? = null) : Int {
-        val descriptor = scoped.first
-        val scopedVariable = ScopedVariable(scoped)
-        assert(!contextVariablesToIndex.contains(scopedVariable))
+        assert(!contextVariablesToIndex.contains(descriptor))
         val index = variables.size
         val type = codegen.getLLVMType(descriptor.type)
-        val slot = codegen.alloca(type, scopedVariable.descriptor.name.asString())
+        val slot = codegen.alloca(type, descriptor.name.asString())
         if (value != null)
             codegen.storeAnyLocal(value, slot)
         variables.add(SlotRecord(slot, codegen.isObjectType(type), isVar))
-        contextVariablesToIndex[scopedVariable] = index
+        contextVariablesToIndex[descriptor] = index
         return index
     }
 
@@ -101,18 +92,17 @@ internal class VariableManager(val codegen: CodeGenerator) {
         return index
     }
 
-    fun createImmutable(scoped: Pair<ValueDescriptor, CodeContext>, value: LLVMValueRef) : Int {
-        val scopedVariable = ScopedVariable(scoped)
-        if (contextVariablesToIndex.containsKey(scopedVariable))
-            throw Error("${scopedVariable.descriptor} is already defined")
+    fun createImmutable(descriptor: ValueDescriptor, value: LLVMValueRef) : Int {
+        if (contextVariablesToIndex.containsKey(descriptor))
+            throw Error("$descriptor is already defined")
         val index = variables.size
-        variables.add(ValueRecord(value, scopedVariable.descriptor.name))
-        contextVariablesToIndex[scopedVariable] = index
+        variables.add(ValueRecord(value, descriptor.name))
+        contextVariablesToIndex[descriptor] = index
         return index
     }
 
-    fun indexOf(scoped: Pair<ValueDescriptor, CodeContext>) : Int {
-        return contextVariablesToIndex.getOrElse(ScopedVariable(scoped)) { -1 }
+    fun indexOf(descriptor: ValueDescriptor) : Int {
+        return contextVariablesToIndex.getOrElse(descriptor) { -1 }
     }
 
     fun addressOf(index: Int): LLVMValueRef {
