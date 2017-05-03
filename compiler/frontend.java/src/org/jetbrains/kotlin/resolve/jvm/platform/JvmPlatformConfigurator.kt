@@ -75,7 +75,7 @@ object JvmPlatformConfigurator : PlatformConfigurator(
 
         overloadFilter = JvmOverloadFilter,
 
-        platformToKotlinClassMap = JavaToKotlinClassMap.INSTANCE,
+        platformToKotlinClassMap = JavaToKotlinClassMap,
 
         delegationFilter = JvmDelegationFilter,
 

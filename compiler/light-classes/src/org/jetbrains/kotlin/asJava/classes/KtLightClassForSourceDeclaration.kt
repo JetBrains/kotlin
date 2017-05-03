@@ -390,7 +390,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
             val fqName = FqNameUnsafe(qualifiedName)
             val mappedQName =
                     if (fqName.isSafe)
-                        JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(fqName.toSafe())?.asSingleFqName()?.asString()
+                        JavaToKotlinClassMap.mapJavaToKotlin(fqName.toSafe())?.asSingleFqName()?.asString()
                     else null
             if (qualifiedName == mappedQName) return true
 

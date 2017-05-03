@@ -209,7 +209,7 @@ private fun <T : Any> mapBuiltInType(
         return typeFactory.createFromString("[" + JvmPrimitiveType.get(arrayElementType).desc)
     }
 
-    val classId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName)
+    val classId = JavaToKotlinClassMap.mapKotlinToJava(fqName)
     if (classId != null) {
         return typeFactory.createObjectType(JvmClassName.byClassId(classId, typeMappingConfiguration).internalName)
     }

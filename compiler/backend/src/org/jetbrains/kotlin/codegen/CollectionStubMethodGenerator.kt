@@ -351,7 +351,7 @@ private val READ_ONLY_ARE_EQUAL_TO_MUTABLE_TYPE_CHECKER = KotlinTypeCheckerImpl.
     val firstClass = x.declarationDescriptor as? ClassDescriptor ?: return@withAxioms x == y
     val secondClass = y.declarationDescriptor as? ClassDescriptor ?: return@withAxioms x == y
 
-    val j2k = JavaToKotlinClassMap.INSTANCE
+    val j2k = JavaToKotlinClassMap
     val firstReadOnly = if (j2k.isMutable(firstClass)) j2k.convertMutableToReadOnly(firstClass) else firstClass
     val secondReadOnly = if (j2k.isMutable(secondClass)) j2k.convertMutableToReadOnly(secondClass) else secondClass
     firstReadOnly.typeConstructor == secondReadOnly.typeConstructor

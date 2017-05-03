@@ -60,7 +60,7 @@ private fun Converter.convertImport(fqName: FqName, ref: PsiJavaCodeReferenceEle
         if (annotationConverter.isImportNotRequired(fqName)) return emptyList()
 
 
-        val mapped = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(fqName)
+        val mapped = JavaToKotlinClassMap.mapJavaToKotlin(fqName)
         mapped?.let {
             // If imported class has a kotlin analog, drop the import if it is not nested
             if (!it.isNestedClass) return emptyList()

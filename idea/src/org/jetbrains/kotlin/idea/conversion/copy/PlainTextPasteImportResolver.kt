@@ -122,7 +122,7 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
                     .map { it to it.resolveToDescriptor(resolutionFacade) }
                     .filter { canBeImported(it.second) }
 
-            classes.find { (_, descriptor) -> JavaToKotlinClassMap.INSTANCE.mapPlatformClass(descriptor!!).isNotEmpty() }
+            classes.find { (_, descriptor) -> JavaToKotlinClassMap.mapPlatformClass(descriptor!!).isNotEmpty() }
                     ?.let { (psiClass, _) -> addImport(psiElementFactory.createImportStatement(psiClass)) }
             if (reference.resolve() != null) return true
 
