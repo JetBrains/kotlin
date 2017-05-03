@@ -42,7 +42,8 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.*
+import com.intellij.openapi.vfs.PersistentFSConstants
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.psi.FileContextProvider
 import com.intellij.psi.PsiElementFinder
@@ -66,7 +67,8 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.index.*
@@ -183,7 +185,7 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        val initialRoots = convertClasspathRoots(configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS))
+        val initialRoots = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).classpathRoots()
 
         if (!configuration.getBoolean(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK)) {
             val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -227,64 +229,33 @@ class KotlinCoreEnvironment private constructor(
     val sourceLinesOfCode: Int by lazy { countLinesOfCode(sourceFiles) }
 
     fun countLinesOfCode(sourceFiles: List<KtFile>): Int  =
-            sourceFiles.sumBy { sourceFile ->
-                val text = sourceFile.text
-                StringUtil.getLineBreakCount(text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
+            sourceFiles.sumBy {
+                val text = it.text
+                StringUtil.getLineBreakCount(it.text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
             }
 
-    private fun convertClasspathRoots(roots: Iterable<ContentRoot>): List<JavaRoot> {
-        val result = mutableListOf<JavaRoot>()
+    private fun Iterable<ContentRoot>.classpathRoots(): List<JavaRoot> =
+            filterIsInstance(JvmContentRoot::class.java).mapNotNull { javaRoot ->
+                contentRootToVirtualFile(javaRoot)?.let { virtualFile ->
+                    val prefixPackageFqName = (javaRoot as? JavaSourceRoot)?.packagePrefix?.let {
+                        if (isValidJavaFqName(it)) {
+                            FqName(it)
+                        }
+                        else {
+                            report(STRONG_WARNING, "Invalid package prefix name is ignored: $it")
+                            null
+                        }
+                    }
 
-        for (javaRoot in roots) {
-            if (javaRoot !is JvmContentRoot) continue
-            val virtualFile = contentRootToVirtualFile(javaRoot) ?: continue
+                    val rootType = when (javaRoot) {
+                        is JavaSourceRoot -> JavaRoot.RootType.SOURCE
+                        is JvmClasspathRoot -> JavaRoot.RootType.BINARY
+                        else -> throw IllegalStateException()
+                    }
 
-            val prefixPackageFqName = (javaRoot as? JavaSourceRoot)?.packagePrefix?.let { prefix ->
-                if (isValidJavaFqName(prefix)) FqName(prefix)
-                else null.also {
-                    report(STRONG_WARNING, "Invalid package prefix name is ignored: $prefix")
+                    JavaRoot(virtualFile, rootType, prefixPackageFqName)
                 }
             }
-
-            val rootType = when (javaRoot) {
-                is JavaSourceRoot -> JavaRoot.RootType.SOURCE
-                is JvmClasspathRoot -> JavaRoot.RootType.BINARY
-                else -> error("Unknown root type: $javaRoot")
-            }
-
-            result.add(JavaRoot(virtualFile, rootType, prefixPackageFqName))
-        }
-
-        val jrtFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL)
-        if (jrtFileSystem != null) {
-            addModularJdkRoots(jrtFileSystem, result)
-        }
-
-        return result
-    }
-
-    private fun addModularJdkRoots(fileSystem: VirtualFileSystem, result: MutableList<JavaRoot>) {
-        val graph = ModuleGraph { moduleName ->
-            fileSystem.findFileByPath("/modules/$moduleName/module-info.class")?.let((JavaModuleInfo)::read) ?: run {
-                report(ERROR, "Module $moduleName cannot be found in the Java runtime image")
-                JavaModuleInfo(moduleName, emptyList(), emptyList())
-            }
-        }
-
-        val allReachableModules = graph.getAllReachable(listOf("java.base", "java.se")).also { modules ->
-            report(LOGGING, "Loading modules exported by java.se: $modules")
-        }
-
-        for (moduleName in allReachableModules) {
-            val root = fileSystem.findFileByPath("/modules/$moduleName")
-            if (root == null) {
-                report(ERROR, "Module $moduleName cannot be found in the module graph")
-            }
-            else {
-                result.add(JavaRoot(root, JavaRoot.RootType.BINARY))
-            }
-        }
-    }
 
     private fun updateClasspathFromRootsIndex(index: JvmDependenciesIndex) {
         index.indexedRoots.forEach {
@@ -301,10 +272,10 @@ class KotlinCoreEnvironment private constructor(
     }
 
     fun updateClasspath(roots: List<ContentRoot>): List<File>? {
-        return rootsIndex.addNewIndexForRoots(convertClasspathRoots(roots))?.let { newIndex ->
-            updateClasspathFromRootsIndex(newIndex)
-            newIndex.indexedRoots.mapNotNull { (file) -> File(file.path.substringBefore(URLUtil.JAR_SEPARATOR)) }.toList()
-        }.orEmpty()
+        return rootsIndex.addNewIndexForRoots(roots.classpathRoots())?.let {
+            updateClasspathFromRootsIndex(it)
+            it.indexedRoots.mapNotNull { File(it.file.path.substringBefore(URLUtil.JAR_SEPARATOR)) }.toList()
+        } ?: emptyList()
     }
 
     @Suppress("unused") // used externally
@@ -435,12 +406,7 @@ class KotlinCoreEnvironment private constructor(
         private fun createApplicationEnvironment(parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>): JavaCoreApplicationEnvironment {
             Extensions.cleanRootArea(parentDisposable)
             registerAppExtensionPoints()
-            val applicationEnvironment = object : JavaCoreApplicationEnvironment(parentDisposable) {
-                override fun createJrtFileSystem(): VirtualFileSystem? {
-                    val jdkHome = configuration[JVMConfigurationKeys.JDK_HOME] ?: return null
-                    return CoreJrtFileSystem.create(jdkHome)
-                }
-            }
+            val applicationEnvironment = JavaCoreApplicationEnvironment(parentDisposable)
 
             for (configPath in configFilePaths) {
                 registerApplicationExtensionPointsAndExtensionsFrom(configuration, configPath)

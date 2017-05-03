@@ -49,10 +49,6 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
@@ -432,30 +428,6 @@ public class KotlinTestUtils {
     public static CompilerConfiguration newConfiguration() {
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME);
-
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, new MessageCollector() {
-            @Override
-            public void clear() {
-            }
-
-            @Override
-            public void report(
-                    @NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location
-            ) {
-                if (severity == CompilerMessageSeverity.ERROR) {
-                    String prefix = location == null
-                                  ? ""
-                                  : "(" + location.getPath() + ":" + location.getLine() + ":" + location.getColumn() + ") ";
-                    throw new AssertionError(prefix + message);
-                }
-            }
-
-            @Override
-            public boolean hasErrors() {
-                return false;
-            }
-        });
-
         return configuration;
     }
 
@@ -492,9 +464,12 @@ public class KotlinTestUtils {
             JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRootsFromJre(getJreHome(jdk6)));
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_9) {
-            File home = getJre9HomeIfPossible();
-            if (home != null) {
-                configuration.put(JVMConfigurationKeys.JDK_HOME, home);
+            String jdk9 = System.getenv("JDK_9");
+            if (jdk9 != null) {
+                JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRootsFromJre(getJreHome(jdk9)));
+            }
+            else {
+                System.err.println("Environment variable JDK_9 is not set, the test will be skipped");
             }
         }
         else {
@@ -517,17 +492,6 @@ public class KotlinTestUtils {
         JvmContentRootsKt.addJvmClasspathRoots(configuration, classpath);
 
         return configuration;
-    }
-
-    @Nullable
-    public static File getJre9HomeIfPossible() {
-        String jdk9 = System.getenv("JDK_19");
-        if (jdk9 == null) {
-            // TODO: replace this with a failure as soon as Java 9 is installed on all TeamCity agents
-            System.err.println("Environment variable JDK_19 is not set, the test will be skipped");
-            return null;
-        }
-        return new File(jdk9);
     }
 
     @NotNull
