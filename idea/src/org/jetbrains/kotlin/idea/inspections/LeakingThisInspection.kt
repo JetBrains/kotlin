@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 import com.intellij.codeInspection.ProblemHighlightType.WEAK_WARNING
@@ -25,8 +26,8 @@ import com.intellij.psi.search.searches.DefinitionsScopedSearch
 import org.jetbrains.kotlin.cfg.LeakingThisDescriptor.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext.LEAKING_THIS
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -57,7 +58,7 @@ class LeakingThisInspection : AbstractKotlinInspection() {
                 val memberFix = memberDescriptorToFix?.let {
                     if (it.modality == Modality.OPEN) {
                         val modifierListOwner = DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration
-                        MakeFinalFix.create(modifierListOwner, it.name)
+                        createMakeFinalFix(modifierListOwner)
                     }
                     else null
                 }
@@ -65,7 +66,7 @@ class LeakingThisInspection : AbstractKotlinInspection() {
                 val klass = leakingThisDescriptor.classOrObject as? KtClass
                 val classFix =
                         if (klass != null && klass.hasModifier(KtTokens.OPEN_KEYWORD)) {
-                            MakeFinalFix.create(klass, klass.nameAsSafeName)
+                            createMakeFinalFix(klass)
                         }
                         else null
 
@@ -81,16 +82,13 @@ class LeakingThisInspection : AbstractKotlinInspection() {
         }
     }
 
-    class MakeFinalFix private constructor(modifierListOwner: KtModifierListOwner, name: Name) :
-            AddModifierFix(modifierListOwner, KtTokens.FINAL_KEYWORD, "Make '$name' final") {
 
-        companion object {
-            fun create(declaration: KtDeclaration?, name: Name): MakeFinalFix? {
-                declaration ?: return null
-                val useScope = declaration.useScope
-                if (DefinitionsScopedSearch.search(declaration, useScope).findFirst() != null) return null
-                return MakeFinalFix(declaration, name)
-            }
+    companion object {
+        private fun createMakeFinalFix(declaration: KtDeclaration?): IntentionWrapper? {
+            declaration ?: return null
+            val useScope = declaration.useScope
+            if (DefinitionsScopedSearch.search(declaration, useScope).findFirst() != null) return null
+            return IntentionWrapper(AddModifierFix(declaration, KtTokens.FINAL_KEYWORD), declaration.containingFile)
         }
     }
 }
