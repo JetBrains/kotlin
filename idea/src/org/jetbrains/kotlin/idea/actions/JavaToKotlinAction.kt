@@ -95,7 +95,9 @@ class JavaToKotlinAction : AnAction() {
             return result
         }
 
-        fun convertFiles(javaFiles: List<PsiJavaFile>, project: Project, enableExternalCodeProcessing: Boolean = true): List<KtFile> {
+        fun convertFiles(javaFiles: List<PsiJavaFile>, project: Project,
+                         enableExternalCodeProcessing: Boolean = true,
+                         askExternalCodeProcessing: Boolean = true): List<KtFile> {
             ApplicationManager.getApplication().saveAll()
 
             var converterResult: JavaToKotlinConverter.FilesResult? = null
@@ -116,7 +118,7 @@ class JavaToKotlinAction : AnAction() {
 
             if (enableExternalCodeProcessing && converterResult!!.externalCodeProcessing != null) {
                 val question = "Some code in the rest of your project may require corrections after performing this conversion. Do you want to find such code and correct it too?"
-                if (Messages.showOkCancelDialog(project, question, title, Messages.getQuestionIcon()) == Messages.OK) {
+                if (!askExternalCodeProcessing || (Messages.showOkCancelDialog(project, question, title, Messages.getQuestionIcon()) == Messages.OK)) {
                     ProgressManager.getInstance().runProcessWithProgressSynchronously(
                             {
                                 runReadAction {
