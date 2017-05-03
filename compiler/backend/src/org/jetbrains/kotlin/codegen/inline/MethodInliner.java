@@ -548,12 +548,7 @@ public class MethodInliner {
 
         //clean dead try/catch blocks
         List<TryCatchBlockNode> blocks = node.tryCatchBlocks;
-        for (Iterator<TryCatchBlockNode> iterator = blocks.iterator(); iterator.hasNext(); ) {
-            TryCatchBlockNode block = iterator.next();
-            if (isEmptyTryInterval(block)) {
-                iterator.remove();
-            }
-        }
+        blocks.removeIf(MethodInliner::isEmptyTryInterval);
 
         return node;
     }
