@@ -698,6 +698,39 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("idea/testData/formatter/constructor")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Constructor extends AbstractFormatterTest {
+            public void testAllFilesPresentInConstructor() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter/constructor"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("ParameterListChopAsNeeded.after.kt")
+            public void testParameterListChopAsNeeded() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/constructor/ParameterListChopAsNeeded.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterListDoNotWrap.after.kt")
+            public void testParameterListDoNotWrap() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/constructor/ParameterListDoNotWrap.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterListWrapAlways.after.kt")
+            public void testParameterListWrapAlways() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/constructor/ParameterListWrapAlways.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterListWrapAsNeeded.after.kt")
+            public void testParameterListWrapAsNeeded() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/constructor/ParameterListWrapAsNeeded.after.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/formatter/fileAnnotations")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
