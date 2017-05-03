@@ -51,6 +51,10 @@ messages/**)
 -dontwarn org.w3c.dom.ElementTraversal
 -dontwarn javaslang.match.annotation.Unapply
 -dontwarn javaslang.match.annotation.Patterns
+-dontwarn com.google.errorprone.**
+-dontwarn com.google.j2objc.**
+-dontwarn javax.crypto.**
+-dontwarn java.lang.invoke.MethodHandle
 
 -libraryjars '<rtjar>'
 -libraryjars '<jssejar>'
