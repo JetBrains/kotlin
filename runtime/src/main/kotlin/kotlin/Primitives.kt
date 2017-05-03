@@ -951,12 +951,12 @@ public final class Float : Number(), Comparable<Float> {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
          */
-        public const val MIN_VALUE: Float = 1.17549435E-38f
+        public const val MIN_VALUE: Float = 1.40129846432481707e-45f
 
         /**
          * A constant holding the largest positive finite value of Float.
          */
-        public const val MAX_VALUE: Float = 3.4028235E+38f
+        public const val MAX_VALUE: Float = 3.40282346638528860e+38f
 
         /**
          * A constant holding the positive infinity value of Float.
