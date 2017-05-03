@@ -1,8 +1,17 @@
-ext.jdkPath = { String version ->
+String jdkPath(String version) {
     String varName = "JDK_${version.replace('.', '')}"
     String path = System.getenv(varName)
     if (path == null) throw new GradleException("Please set environment variable $varName to point to JDK $version installation")
     return path
+}
+
+ext {
+    JDK_16 = jdkPath("1.6")
+    JDK_17 = jdkPath("1.7")
+    JDK_18 = jdkPath("1.8")
+    distDir = file("${rootDir}/../dist")
+    distLibDir = file("${rootDir}/../dist/kotlinc/lib")
+    bootstrapCompilerFile = file("$distDir/kotlin-compiler-for-maven.jar")
 }
 
 ext.configureJvmProject = { Project project ->
@@ -16,7 +25,7 @@ ext.configureJvmProject = { Project project ->
             sourceCompatibility = 1.6
             targetCompatibility = 1.6
             options.fork = true
-            options.forkOptions.executable = "${JDK_16}/bin/javac"
+            options.forkOptions.javaHome = file(JDK_16)
         }
 
         tasks.withType(project.compileKotlin.class) {
