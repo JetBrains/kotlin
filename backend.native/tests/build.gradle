@@ -821,30 +821,39 @@ task coroutines_controlFlow_if2(type: RunKonanTest) {
     source = "codegen/coroutines/controlFlow_if2.kt"
 }
 
-// Enable after finally blocks lowering.
-
 task coroutines_controlFlow_finally1(type: RunKonanTest) {
-    disabled = true
     goldValue = "f1\ns1\n117\n"
     source = "codegen/coroutines/controlFlow_finally1.kt"
 }
 
 task coroutines_controlFlow_finally2(type: RunKonanTest) {
-    disabled = true
     goldValue = "f1\ns1\n117\n"
     source = "codegen/coroutines/controlFlow_finally2.kt"
 }
 
 task coroutines_controlFlow_finally3(type: RunKonanTest) {
-    disabled = true
     goldValue = "f1\ns1\n117\n"
     source = "codegen/coroutines/controlFlow_finally3.kt"
 }
 
 task coroutines_controlFlow_finally4(type: RunKonanTest) {
-    disabled = true
-    goldValue = "s1\nfinally\n117\n"
+    goldValue = "s1\nfinally\n42\n"
     source = "codegen/coroutines/controlFlow_finally4.kt"
+}
+
+task coroutines_controlFlow_finally5(type: RunKonanTest) {
+    goldValue = "s1\nf2\nfinally\n1\n"
+    source = "codegen/coroutines/controlFlow_finally5.kt"
+}
+
+task coroutines_controlFlow_finally6(type: RunKonanTest) {
+    goldValue = "s1\nfinally\nerror\n0\n"
+    source = "codegen/coroutines/controlFlow_finally6.kt"
+}
+
+task coroutines_controlFlow_finally7(type: RunKonanTest) {
+    goldValue = "s1\nf2\nfinally1\ns2\nfinally2\n42\n"
+    source = "codegen/coroutines/controlFlow_finally7.kt"
 }
 
 task coroutines_controlFlow_inline1(type: RunKonanTest) {
