@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.implicitModality
+import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
@@ -47,7 +48,8 @@ class RedundantModalityModifierInspection : AbstractKotlinInspection(), CleanupL
                 holder.registerProblem(modalityModifier,
                                        "Redundant modality modifier",
                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                       RemoveModifierFix("Remove redundant modality modifier"))
+                                       IntentionWrapper(RemoveModifierFix(declaration, implicitModality, isRedundant = true),
+                                                        declaration.containingFile))
             }
         }
     }

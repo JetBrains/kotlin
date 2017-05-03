@@ -1,4 +1,4 @@
-// "Remove redundant modality modifier" "true"
+// "Remove redundant 'final' modifier" "true"
 open class C {
     fun foo(){}
 }

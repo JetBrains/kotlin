@@ -1,3 +1,3 @@
-// "Remove redundant visibility modifier" "true"
+// "Remove redundant 'public' modifier" "true"
 <caret>public class C {
 }
