@@ -1,7 +1,7 @@
 buildscript {
     ext.kotlin_version = findProperty("deployVersion") ?: "1.1-SNAPSHOT"
     ext.kotlin_language_version = "1.1"
-    ext.kotlin_gradle_plugin_version = findProperty("kotlinGradlePluginVersion") ?: "1.1.2"
+    ext.kotlin_gradle_plugin_version = findProperty("kotlinGradlePluginVersion") ?: "1.1.1"
 
     repositories {
         mavenCentral()
@@ -11,14 +11,16 @@ buildscript {
     }
 }
 
-apply from: 'commonConfiguration.gradle'
+ext.kotlin_root = findProperty("kotlinRoot") ?: "${rootProject.projectDir}/../../.."
+
+apply from: "${kotlin_root}/libraries/commonConfiguration.gradle"
 
 ext {
     JDK_16 = jdkPath("1.6")
     JDK_17 = jdkPath("1.7")
     JDK_18 = jdkPath("1.8")
-    distDir = file("${rootDir}/../dist")
-    distLibDir = file("${rootDir}/../dist/kotlinc/lib")
+    distDir = file("${kotlin_root}/dist")
+    distLibDir = file("${kotlin_root}/dist/kotlinc/lib")
     bootstrapCompilerFile = file("$distDir/kotlin-compiler-for-maven.jar")
 }
 
@@ -28,18 +30,8 @@ allprojects {
 }
 
 subprojects {
-
     repositories {
         mavenCentral()
-    }
-
-    configurations {
-        scriptCompile
-        scriptRuntime.extendsFrom(scriptCompile)
-    }
-
-    dependencies {
-        scriptCompile "org.jetbrains.kotlin:kotlin-compiler-embeddable:${kotlin_gradle_plugin_version}"
     }
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile) {
@@ -49,16 +41,10 @@ subprojects {
     task javadocJar(type: Jar) {
         classifier = 'javadoc'
     }
-
 }
 
 task clean {
     doLast {
         delete "${buildDir}/repo"
     }
-}
-
-if (isSonatypeRelease) {
-    println 'Applying configuration for sonatype release'
-    apply from: 'prepareSonatypeStaging.gradle'
 }

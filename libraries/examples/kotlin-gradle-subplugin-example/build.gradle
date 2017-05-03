@@ -1,0 +1,20 @@
+apply plugin: 'kotlin'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url 'http://repository.jetbrains.com/utils/' }
+}
+
+dependencies {
+    compile project(':kotlin-gradle-plugin-api')
+    // Use this dependency instead when building apart from the other modules:
+    // compile "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlin_version"
+
+    compile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compileOnly "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlin_version"
+    
+    compileOnly "org.jetbrains.kotlin:gradle-api:1.6"
+}
