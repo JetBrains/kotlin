@@ -58,8 +58,6 @@ interface CandidateWithBoundDispatchReceiver {
     val diagnostics: List<ResolutionDiagnostic>
 
     val dispatchReceiver: ReceiverValueWithSmartCastInfo?
-
-    fun copy(newDescriptor: CallableDescriptor): CandidateWithBoundDispatchReceiver
 }
 
 data class ResolutionCandidateStatus(val diagnostics: List<KotlinCallDiagnostic>) {
