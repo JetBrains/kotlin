@@ -95,14 +95,14 @@ class KotlinCallResolver(
                 isDebuggerContext = callContext.scopeTower.isDebuggerContext)
 
         val singleResult = maximallySpecificCandidates.singleOrNull()?.let {
-            kotlinCallCompleter.completeCallIfNecessary(it, expectedType, callContext.lambdaAnalyzer)
+            kotlinCallCompleter.completeCallIfNecessary(it, expectedType, callContext.resolutionCallbacks)
         }
         if (singleResult != null) {
             return listOf(singleResult)
         }
 
         return maximallySpecificCandidates.map {
-            kotlinCallCompleter.transformWhenAmbiguity(it, callContext.lambdaAnalyzer)
+            kotlinCallCompleter.transformWhenAmbiguity(it, callContext.resolutionCallbacks)
         }
     }
 }

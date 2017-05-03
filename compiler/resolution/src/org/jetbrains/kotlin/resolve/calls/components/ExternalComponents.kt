@@ -25,7 +25,8 @@ interface IsDescriptorFromSourcePredicate: (CallableDescriptor) -> Boolean
 
 interface CommonSupertypeCalculator: (Collection<UnwrappedType>) -> UnwrappedType
 
-interface LambdaAnalyzer {
+// This components hold state (trace). Work with this carefully.
+interface KotlinResolutionCallbacks {
     fun analyzeAndGetLambdaResultArguments(
             topLevelCall: KotlinCall,
             lambdaArgument: LambdaKotlinCallArgument,

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.CheckArguments
-import org.jetbrains.kotlin.resolve.calls.components.LambdaAnalyzer
+import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 
 class KotlinCallContext(
         val scopeTower: ImplicitScopeTower,
-        val lambdaAnalyzer: LambdaAnalyzer,
+        val resolutionCallbacks: KotlinResolutionCallbacks,
         val argumentsToParametersMapper: ArgumentsToParametersMapper,
         val typeArgumentsToParametersMapper: TypeArgumentsToParametersMapper,
         val resultTypeResolver: ResultTypeResolver,
