@@ -27,6 +27,7 @@ public class KotlinEditorOptionsConfigurable extends BeanConfigurable<KotlinEdit
         super(KotlinEditorOptions.getInstance());
         checkBox("enableJavaToKotlinConversion", "Convert pasted Java code to Kotlin");
         checkBox("donTShowConversionDialog", "Don't show Java to Kotlin conversion dialog on paste");
+        checkBox("enableSmartEditing", "Enable smart editing of Kotlin files");
     }
 
     @Override
