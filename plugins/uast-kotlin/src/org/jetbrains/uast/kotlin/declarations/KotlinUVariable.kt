@@ -130,6 +130,12 @@ open class KotlinUField(
     override fun getNameIdentifier(): PsiIdentifier {
         return super.getNameIdentifier()
     }
+
+    override fun isPhysical(): Boolean {
+        return true
+    }
+
+    override fun getContainingFile(): PsiFile? = (psi as? KtLightElement<*, *>)?.kotlinOrigin?.containingFile ?: psi.containingFile
 }
 
 open class KotlinULocalVariable(
