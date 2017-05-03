@@ -359,7 +359,7 @@
                 <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
                 <zipfileset src="${basedir}/ideaSDK/core/annotations.jar"/>
                 <zipfileset src="${basedir}/ideaSDK/core/asm-all.jar"/>
-                <zipfileset src="${basedir}/ideaSDK/core/guava-19.0.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/guava-21.0.jar"/>
                 <zipfileset src="${basedir}/ideaSDK/core/intellij-core.jar"/>
                 <zipfileset src="${basedir}/ideaSDK/core/jdom.jar"/>
                 <zipfileset src="${basedir}/ideaSDK/core/jna.jar"/>
