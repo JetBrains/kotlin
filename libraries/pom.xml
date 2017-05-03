@@ -93,16 +93,12 @@
         <module>tools/idl2k</module>
         <module>tools/kotlin-annotation-processing</module>
         <module>tools/kotlin-annotation-processing-maven</module>
-        <module>tools/kotlin-allopen</module>
         <module>tools/kotlin-maven-allopen</module>
-        <module>tools/kotlin-noarg</module>
         <module>tools/kotlin-maven-noarg</module>
         <module>tools/kotlin-sam-with-receiver-compiler-plugin</module>
         <module>tools/kotlin-source-sections-compiler-plugin</module>
 
         <module>tools/kotlin-script-util</module>
-        <module>tools/kotlin-gradle-plugin</module>
-        <module>tools/kotlin-gradle-plugin-api</module>
         <module>tools/kotlin-android-extensions</module>
         <module>tools/kotlin-maven-plugin-test</module>
 
@@ -110,13 +106,17 @@
         <module>examples/kotlin-java-example</module>
         <module>examples/js-example</module>
         <module>examples/kotlin-js-library-example</module>
-        <module>examples/kotlin-gradle-subplugin-example</module>
         <module>examples/browser-example</module>
         <module>examples/browser-example-with-library</module>
         <module>examples/kotlin-jsr223-local-example</module>
         <module>examples/kotlin-jsr223-daemon-local-eval-example</module>
 
-        <module>tools/kotlin-gradle-plugin-integration-tests</module>
+        <!-- <module>tools/kotlin-allopen</module> -->
+        <!-- <module>tools/kotlin-noarg</module> -->
+        <!-- <module>tools/kotlin-gradle-plugin</module> -->
+        <!-- <module>tools/kotlin-gradle-plugin-api</module> -->
+        <!-- <module>examples/kotlin-gradle-subplugin-example</module> -->
+        <!-- <module>tools/kotlin-gradle-plugin-integration-tests</module> -->
     </modules>
 
     <dependencies>
