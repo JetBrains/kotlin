@@ -60,7 +60,6 @@ import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 class ControlFlowInformationProvider private constructor(
@@ -878,23 +877,6 @@ class ControlFlowInformationProvider private constructor(
 
         if (containsNonTailCalls) {
             trace.record(BindingContext.CONTAINS_NON_TAIL_SUSPEND_CALLS, currentFunction.original)
-        }
-        else {
-            val tailInstructionDetector = TailInstructionDetector(subroutine)
-            traverseFollowingInstructions(
-                    pseudocode.sinkInstruction,
-                    order = TraversalOrder.BACKWARD
-            ) { instruction ->
-
-                instruction.safeAs<KtElementInstruction>()?.element?.safeAs<KtExpression>()?.let { expression ->
-                    trace.record(BindingContext.IS_TAIL_EXPRESSION_IN_SUSPEND_FUNCTION, expression)
-                }
-
-                if (instruction.accept(tailInstructionDetector))
-                    TraverseInstructionResult.CONTINUE
-                else
-                    TraverseInstructionResult.SKIP
-            }
         }
     }
 

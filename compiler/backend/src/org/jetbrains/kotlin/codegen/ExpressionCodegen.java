@@ -429,16 +429,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private Type expressionTypeForBranchingOperation(@Nullable KtExpression expression) {
-        if (context.getFunctionDescriptor().isSuspend() &&
-            !CoroutineCodegenUtilKt.isStateMachineNeeded(context.getFunctionDescriptor(), bindingContext) &&
-            Boolean.TRUE.equals(bindingContext.get(IS_TAIL_EXPRESSION_IN_SUSPEND_FUNCTION, expression))) {
-            return AsmTypes.OBJECT_TYPE;
-        }
-        return expressionType(expression);
-    }
-
-    @NotNull
     public Type expressionType(@Nullable KtExpression expression) {
         return CodegenUtilKt.asmType(expression, typeMapper, bindingContext);
     }
@@ -478,7 +468,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     /* package */ StackValue generateIfExpression(@NotNull KtIfExpression expression, boolean isStatement) {
-        Type asmType = isStatement ? Type.VOID_TYPE : expressionTypeForBranchingOperation(expression);
+        Type asmType = isStatement ? Type.VOID_TYPE : expressionType(expression);
         StackValue condition = gen(expression.getCondition());
 
         KtExpression thenExpression = expression.getThen();
@@ -3767,7 +3757,7 @@ The "returned" value of try expression with no finally is either the last expres
 (or blocks).
          */
 
-        Type expectedAsmType = isStatement ? Type.VOID_TYPE : expressionTypeForBranchingOperation(expression);
+        Type expectedAsmType = isStatement ? Type.VOID_TYPE : expressionType(expression);
 
         return StackValue.operation(expectedAsmType, v -> {
             KtFinallySection finallyBlock = expression.getFinallyBlock();
@@ -4034,7 +4024,7 @@ The "returned" value of try expression with no finally is either the last expres
         KtExpression expr = expression.getSubjectExpression();
         Type subjectType = expressionType(expr);
 
-        Type resultType = isStatement ? Type.VOID_TYPE : expressionTypeForBranchingOperation(expression);
+        Type resultType = isStatement ? Type.VOID_TYPE : expressionType(expression);
 
         return StackValue.operation(resultType, v -> {
             SwitchCodegen switchCodegen = SwitchCodegenUtil.buildAppropriateSwitchCodegenIfPossible(
