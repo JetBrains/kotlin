@@ -32,7 +32,7 @@ class JavacBasedClassFinder : AbstractJavaClassFinder() {
         super.initialize(trace, codeAnalyzer)
     }
 
-    override fun findClass(classId: ClassId) = javac.findClass(classId.asSingleFqName(), javaSearchScope)
+    override fun findClass(classId: ClassId) = javac.findClass(classId, javaSearchScope)
 
     override fun findPackage(fqName: FqName) = javac.findPackage(fqName, javaSearchScope)
 

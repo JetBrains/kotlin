@@ -53,7 +53,9 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.javac.wrappers.trees.TreeBasedClass
 import org.jetbrains.kotlin.javac.wrappers.trees.TreeBasedPackage
 import org.jetbrains.kotlin.javac.wrappers.trees.TreePathResolverCache
+import org.jetbrains.kotlin.javac.wrappers.trees.computeClassId
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.name.ClassId
 import java.io.Closeable
 import java.io.File
 import javax.lang.model.element.Element
@@ -103,6 +105,7 @@ class JavacWrapper(javaFiles: Collection<File>,
         fileManager.setLocation(StandardLocation.CLASS_PATH, environment.configuration.jvmClasspathRoots)
     }
 
+    private val names = Names.instance(context)
     private val symbols = Symtab.instance(context)
     private val trees = JavacTrees.instance(context)
     private val elements = JavacElements.instance(context)
@@ -119,6 +122,8 @@ class JavacWrapper(javaFiles: Collection<File>,
                             .withInnerClasses() }
             }
             .associateBy(JavaClass::fqName)
+
+    private val javaClassesAssociatedByClassId = javaClasses.values.associateBy { it.computeClassId() }
 
     private val javaPackages = compilationUnits
             .mapNotNullTo(hashSetOf()) { unit -> unit.packageName?.toString()?.let { TreeBasedPackage(it, this, unit.sourcefile) } }
@@ -156,6 +161,21 @@ class JavacWrapper(javaFiles: Collection<File>,
         return null
     }
 
+    fun findClass(classId: ClassId, scope: GlobalSearchScope = EverythingGlobalScope()): JavaClass? {
+        javaClassesAssociatedByClassId[classId]?.let { javaClass ->
+            javaClass.virtualFile?.let { if (it in scope) return javaClass }
+        }
+
+        findPackageInSymbols(classId.packageFqName.asString())?.let {
+            (it.element as Symbol.PackageSymbol).findClass(classId.relativeClassName.asString())?.let { javaClass ->
+                javaClass.virtualFile?.let { if (it in scope) return javaClass }
+            }
+
+        }
+
+        return null
+    }
+
     fun findPackage(fqName: FqName, scope: GlobalSearchScope): JavaPackage? {
         javaPackages[fqName]?.let { javaPackage ->
             javaPackage.virtualFile?.let { if (it in scope) return javaPackage }
@@ -184,7 +204,7 @@ class JavacWrapper(javaFiles: Collection<File>,
     fun knownClassNamesInPackage(fqName: FqName) = javaClasses.filterKeys { it?.parentOrNull() == fqName }
                                                            .mapTo(hashSetOf()) { it.value.name.asString() } +
                                                    elements.getPackageElement(fqName.asString())
-                                                           ?.members()
+                                                           ?.members_field
                                                            ?.elements
                                                            ?.filterIsInstance<Symbol.ClassSymbol>()
                                                            ?.map { it.name.toString() }.orEmpty()
@@ -260,5 +280,20 @@ class JavacWrapper(javaFiles: Collection<File>,
     }
 
     private fun TreeBasedClass<JCTree.JCClassDecl>.withInnerClasses(): List<TreeBasedClass<JCTree.JCClassDecl>> = listOf(this) + innerClasses.values.flatMap { it.withInnerClasses() }
+
+    private fun Symbol.PackageSymbol.findClass(name: String): SymbolBasedClass? {
+        val nameParts = name.replace("$", ".").split(".")
+        var symbol = members_field.getElementsByName(names.fromString(nameParts[0]))
+                             ?.firstOrNull() as? Symbol.ClassSymbol ?: return null
+        if (nameParts.size > 1) {
+            symbol.complete()
+            for (it in nameParts.drop(1)) {
+                symbol = symbol.members_field?.getElementsByName(names.fromString(it))?.firstOrNull() as? Symbol.ClassSymbol ?: return null
+                symbol.complete()
+            }
+        }
+
+        return symbol?.let { SymbolBasedClass(it, this@JavacWrapper, it.classfile) }
+    }
 
 }
