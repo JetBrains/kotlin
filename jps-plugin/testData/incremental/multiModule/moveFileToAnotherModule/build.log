@@ -4,17 +4,12 @@ Building module1
 Compiling files:
   module1/src/b.kt
 End of files
+Marked as dirty by Kotlin:
+  module2/src/useClassB.kt
+  module2/src/useFunB.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
-Cleaning output files:
-  out/production/module1/META-INF/module1.kotlin_module
-  out/production/module1/a/A.class
-  out/production/module1/a/AKt.class
-End of files
-Compiling files:
-  module1/src/a.kt
-End of files
-Exit code: OK
+Exit code: NOTHING_DONE
 ------------------------------------------
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
@@ -30,16 +25,9 @@ Compiling files:
   module2/src/useClassB.kt
   module2/src/useFunB.kt
 End of files
+Marked as dirty by Kotlin:
+  module1/src/b.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
-Cleaning output files:
-  out/production/module2/META-INF/module2.kotlin_module
-  out/production/module2/usage/UseClassAKt.class
-  out/production/module2/usage/UseFunAKt.class
-End of files
-Compiling files:
-  module2/src/useClassA.kt
-  module2/src/useFunA.kt
-End of files
-Exit code: OK
+Exit code: NOTHING_DONE
 ------------------------------------------

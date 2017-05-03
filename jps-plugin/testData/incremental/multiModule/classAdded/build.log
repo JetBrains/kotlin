@@ -7,12 +7,18 @@ Building module2
 Compiling files:
   module2/src/A.kt
 End of files
+Marked as dirty by Kotlin:
+  module1/src/A.kt
+  module2/src/B.kt
+  module2/src/createA.kt
+  module2/src/createB.kt
+  module2/src/useAfoo.kt
+  module2/src/useBbar.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/foo/B.class
-  out/production/module2/other/OtherKt.class
   out/production/module2/use/CreateAKt.class
   out/production/module2/use/CreateBKt.class
   out/production/module2/use/UseAfooKt.class
@@ -22,7 +28,6 @@ Compiling files:
   module2/src/B.kt
   module2/src/createA.kt
   module2/src/createB.kt
-  module2/src/other.kt
   module2/src/useAfoo.kt
   module2/src/useBbar.kt
 End of files
@@ -34,7 +39,13 @@ Unresolved reference: foo
 ================ Step #2 =================
 
 Building module1
-Exit code: NOTHING_DONE
+Cleaning output files:
+  out/production/module1/foo/A.class
+End of files
+Compiling files:
+  module1/src/A.kt
+End of files
+Exit code: OK
 ------------------------------------------
 Building module2
 Cleaning output files:
@@ -45,7 +56,6 @@ Compiling files:
   module2/src/B.kt
   module2/src/createA.kt
   module2/src/createB.kt
-  module2/src/other.kt
   module2/src/useAfoo.kt
   module2/src/useBbar.kt
 End of files

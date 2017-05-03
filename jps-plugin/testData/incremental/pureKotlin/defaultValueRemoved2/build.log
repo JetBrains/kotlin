@@ -7,17 +7,19 @@ End of files
 Compiling files:
   src/fun.kt
 End of files
+Marked as dirty by Kotlin:
+  src/useDefault1.kt
+  src/useDefault2.kt
+  src/useNonDefault.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
-  out/production/module/other/OtherKt.class
   out/production/module/test/UseDefault1Kt.class
   out/production/module/test/UseDefault2Kt.class
   out/production/module/test/UseNonDefaultKt.class
 End of files
 Compiling files:
-  src/other.kt
   src/useDefault1.kt
   src/useDefault2.kt
   src/useNonDefault.kt
@@ -35,7 +37,6 @@ Cleaning output files:
 End of files
 Compiling files:
   src/fun.kt
-  src/other.kt
   src/useDefault1.kt
   src/useDefault2.kt
   src/useNonDefault.kt
