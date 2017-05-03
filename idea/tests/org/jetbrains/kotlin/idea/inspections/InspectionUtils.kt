@@ -28,7 +28,6 @@ import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl.createGlobalContextForTool
 import com.intellij.util.xml.highlighting.DomElementsInspection
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
-import org.jetbrains.kotlin.idea.maven.inspections.DifferentKotlinMavenVersionInspection
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
 
 fun runInspection(
@@ -39,7 +38,6 @@ fun runInspection(
     val tool = wrapper.tool
     if (tool is DomElementsInspection<*> || tool is GradleBaseInspection) {
         when (tool) {
-            is DifferentKotlinMavenVersionInspection -> tool.testVersionMessage = "\$PLUGIN_VERSION"
             is DifferentKotlinGradleVersionInspection -> tool.testVersionMessage = "\$PLUGIN_VERSION"
         }
     }
