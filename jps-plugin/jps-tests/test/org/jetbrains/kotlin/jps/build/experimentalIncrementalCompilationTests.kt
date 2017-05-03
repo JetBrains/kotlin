@@ -37,7 +37,7 @@ abstract class AbstractExperimentalIncrementalCacheVersionChangedTest : Abstract
 
 abstract class AbstractDataContainerVersionChangedTest : AbstractExperimentalIncrementalCacheVersionChangedTest() {
     override val buildLogFinder: BuildLogFinder
-        get() = BuildLogFinder(isExperimentalEnabled = true, isDataContainerBuildLogEnabled = true)
+        get() = BuildLogFinder(isDataContainerBuildLogEnabled = true)
 
     override fun getVersions(cacheVersionProvider: CacheVersionProvider, targets: Iterable<ModuleBuildTarget>) =
             listOf(cacheVersionProvider.dataContainerVersion())

@@ -79,7 +79,7 @@ abstract class AbstractIncrementalJpsTest(
     protected var mapWorkingToOriginalFile: MutableMap<File, File> = hashMapOf()
 
     protected open val buildLogFinder: BuildLogFinder
-        get() = BuildLogFinder(isExperimentalEnabled = true)
+        get() = BuildLogFinder()
 
     private fun enableDebugLogging() {
         com.intellij.openapi.diagnostic.Logger.setFactory(TestLoggerFactory::class.java)
