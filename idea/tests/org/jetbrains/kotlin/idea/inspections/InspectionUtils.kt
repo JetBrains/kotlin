@@ -24,6 +24,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.createGlobalContextForTool
+import com.intellij.util.xml.highlighting.DomElementsInspection
+import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
+import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
 
 fun runInspection(
         inspection: LocalInspectionTool, project: Project, files: List<VirtualFile>? = null, withTestDir: String? = null
