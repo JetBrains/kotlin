@@ -6463,6 +6463,66 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("nativeMemberAll01.kt")
+            public void testNativeMemberAll01() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeMemberAll01.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeMemberAll02.kt")
+            public void testNativeMemberAll02() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeMemberAll02.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeMemberAll03.kt")
+            public void testNativeMemberAll03() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeMemberAll03.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeMemberGetter.kt")
+            public void testNativeMemberGetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeMemberGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeMemberInvoke.kt")
+            public void testNativeMemberInvoke() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeMemberInvoke.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeMemberInvokeGenericClass.kt")
+            public void testNativeMemberInvokeGenericClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeMemberInvokeGenericClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeMemberInvokeGenericClassAndFun.kt")
+            public void testNativeMemberInvokeGenericClassAndFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeMemberInvokeGenericClassAndFun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeMemberInvokeGenericFun.kt")
+            public void testNativeMemberInvokeGenericFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeMemberInvokeGenericFun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeMemberNative.kt")
+            public void testNativeMemberNative() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeMemberNative.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeMemberSetter.kt")
+            public void testNativeMemberSetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeMemberSetter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nativeSetterExtensionFunJsRuntime.kt")
             public void testNativeSetterExtensionFunJsRuntime() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeSetterExtensionFunJsRuntime.kt");

@@ -1,0 +1,7 @@
+// "Fix with 'asDynamic'" "true"
+// JS
+
+external class B {
+    @JsName("xx")
+    fun aaaa() // remove @native
+}

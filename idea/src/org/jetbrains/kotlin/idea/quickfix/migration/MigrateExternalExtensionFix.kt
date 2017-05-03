@@ -21,15 +21,19 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.checkAnnotationName
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.setReceiverType
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
@@ -37,6 +41,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -48,10 +53,93 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val declaration = element ?: return
-        if (isExternalMemberDeclaration(declaration)) {
-            fixExtensionMemberDeclaration(declaration, project, editor, file)
-            return
+
+        when {
+            isExternalMemberDeclaration(declaration) -> fixExtensionMemberDeclaration(declaration, project, editor, file)
+            isMemberDeclaration(declaration) -> {
+                val containingClass = declaration.containingClassOrObject
+                if (containingClass != null) {
+                    fixNativeClass(containingClass, project, editor, file)
+                }
+            }
+            declaration is KtClassOrObject -> fixNativeClass(declaration, project, editor, file)
         }
+    }
+
+    private fun fixNativeClass(containingClass: KtClassOrObject, project: Project, editor: Editor?, file: KtFile) {
+        val membersToFix = containingClass.declarations.filterIsInstance<KtNamedDeclaration>().filter { isMemberDeclaration(it) }. map {
+             it to fetchJsNativeAnnotations(it)
+        }.filter {
+            it.second.annotations.isNotEmpty()
+        }
+
+        var anchor: PsiElement = containingClass
+        membersToFix.forEach { (memberDeclaration, annotations) ->
+            if (annotations.nativeAnnotation != null && !annotations.isGetter && !annotations.isSetter && !annotations.isInvoke) {
+                convertNativeAnnotationToJsName(memberDeclaration, annotations)
+                annotations.nativeAnnotation.delete()
+            } else {
+                // TODO: find references
+                createExtensionDeclaration(memberDeclaration, project, anchor)?.let { externalDeclaration ->
+                    memberDeclaration.delete()
+                    fixExtensionMemberDeclaration(externalDeclaration, project, null, file)
+                    anchor = externalDeclaration
+                }
+            }
+        }
+
+        // make class external
+        val classAnnotations = fetchJsNativeAnnotations(containingClass)
+        fixAnnotations(containingClass, classAnnotations, null)
+    }
+
+    private fun createExtensionDeclaration(declaration: KtNamedDeclaration, project: Project, anchor: PsiElement): KtNamedDeclaration? {
+        val containingClass = declaration.containingClassOrObject ?: return null
+        val builder = KtPsiFactory.CallableBuilder(if (declaration is KtNamedFunction) KtPsiFactory.CallableBuilder.Target.FUNCTION else KtPsiFactory.CallableBuilder.Target.READ_ONLY_PROPERTY)
+
+        // modifiers
+        declaration.annotationEntries.forEach {
+            builder.modifier(it.text)
+        }
+
+        // type parameters
+        builder.typeParams(containingClass.typeParameters.union((declaration as? KtTypeParameterListOwner)?.typeParameters ?: emptyList()).map { it.text })
+
+        // receiver
+        builder.receiver(containingClass.name ?: "XXX")
+
+        // name
+        builder.name(declaration.nameAsSafeName.identifier)
+
+        // parameters
+        (declaration as? KtCallableDeclaration)?.valueParameters?.forEach {
+            builder.param(it.nameAsSafeName.identifier, it.typeReference?.text ?: "XXX", it.defaultValue?.text)
+        }
+
+        // return type
+        val returnTypeReference = declaration.getReturnTypeReference()
+        if (returnTypeReference != null)
+            builder.returnType(returnTypeReference.text)
+        else
+            builder.noReturnType()
+
+        // body
+        (declaration as? KtDeclarationWithBody)?.bodyExpression?.let {
+            builder.blockBody(it.text)
+        }
+
+        // Create function etc
+        var newFunctionText = builder.asString()
+        val psiFactory = KtPsiFactory(project)
+        val newFunction = psiFactory.createFunction(newFunctionText)
+
+        val parent = anchor.parent
+        val result = parent.addAfter(newFunction, anchor) as KtCallableDeclaration
+        parent.addBefore(psiFactory.createNewLine(2), result)
+
+        // fix receiver type
+        result.setReceiverType((containingClass.resolveToDescriptor(BodyResolveMode.PARTIAL) as ClassDescriptor).defaultType)
+        return result
     }
 
     private data class JsNativeAnnotations(val annotations: List<KtAnnotationEntry>, val nativeAnnotation: KtAnnotationEntry?, val isGetter: Boolean, val isSetter: Boolean, val isInvoke: Boolean)
@@ -156,20 +244,28 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
     private fun fixAnnotations(declaration: KtNamedDeclaration, annotations: JsNativeAnnotations, editor: Editor?) {
         annotations.annotations.forEach { it.delete() }
 
-        declaration.addModifier(KtTokens.INLINE_KEYWORD)
-        declaration.removeModifier(KtTokens.EXTERNAL_KEYWORD)
-
+        if (declaration is KtClassOrObject) {
+            declaration.addModifier(KtTokens.EXTERNAL_KEYWORD)
+        } else {
+            declaration.addModifier(KtTokens.INLINE_KEYWORD)
+            declaration.removeModifier(KtTokens.EXTERNAL_KEYWORD)
+        }
 
         if (declaration is KtFunction) {
             declaration.addAnnotation(KotlinBuiltIns.FQ_NAMES.suppress.toSafe(), "\"NOTHING_TO_INLINE\"")
         }
 
-        if (annotations.nativeAnnotation != null && annotations.nativeAnnotation.valueArguments.isNotEmpty()) {
-            declaration.addAnnotation(FqName("JsName"), annotations.nativeAnnotation.valueArguments.joinToString { it.asElement().text})
-        }
+        convertNativeAnnotationToJsName(declaration, annotations)
 
-        if (declaration is KtFunction && !declaration.hasDeclaredReturnType() && !annotations.isSetter && !annotations.isInvoke) {
+        if (declaration is KtFunction && !declaration.hasDeclaredReturnType() && !annotations.isSetter && !annotations.isInvoke && editor != null) {
             SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, declaration, declaration.builtIns.unitType)
+        }
+    }
+
+    private fun convertNativeAnnotationToJsName(declaration: KtNamedDeclaration, annotations: JsNativeAnnotations) {
+        val nativeAnnotation = annotations.nativeAnnotation
+        if (nativeAnnotation != null && nativeAnnotation.valueArguments.isNotEmpty()) {
+            declaration.addAnnotation(FqName("JsName"), nativeAnnotation.valueArguments.joinToString { it.asElement().text })
         }
     }
 
@@ -200,6 +296,11 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
         private fun isExternalMemberDeclaration(psiElement: PsiElement): Boolean {
             return (psiElement is KtNamedFunction && psiElement.receiverTypeReference != null) ||
                    (psiElement is KtProperty && psiElement.receiverTypeReference != null)
+        }
+
+        private fun isMemberDeclaration(psiElement: PsiElement): Boolean {
+            return (psiElement is KtNamedFunction && psiElement.receiverTypeReference == null) ||
+                   (psiElement is KtProperty && psiElement.receiverTypeReference == null)
         }
 
         private inline fun<reified T: PsiElement> getContainingElement(e: PsiElement): T? {
