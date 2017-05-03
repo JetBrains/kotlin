@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
+import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
+import org.jetbrains.kotlin.backend.konan.descriptors.isSuspendFunctionInvoke
+import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.util.atMostOne
 import org.jetbrains.kotlin.descriptors.*
@@ -1131,7 +1134,9 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                             continue
                         }
                         first = false
-                        if (!transformedChild.isPure() && hasSuspendCallInTail[index]) {
+                        if (transformedChild.isPure() || !hasSuspendCallInTail[index])
+                            newChildren[index] = transformedChild
+                        else {
                             // Save to temporary in order to save execution order.
                             val tmp = IrTemporaryVariableDescriptorImpl(
                                     containingDeclaration = irFunction.descriptor,
@@ -1140,27 +1145,24 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                             tempStatements += irVar(tmp, transformedChild)
                             newChildren[index] = irGet(tmp)
                         }
-                        else newChildren[index] = transformedChild
                     }
 
                     var calledSaveState = false
                     if (expression.isSuspendCall) {
                         val lastChild = newChildren.last()
                         if (lastChild != null) {
-                            // Save state at late as possible.
+                            // Save state as late as possible.
                             calledSaveState = true
                             newChildren[numberOfChildren - 1] =
-                                    if (lastChild.isPure())
-                                        irBlock(lastChild) {
+                                    irBlock(lastChild) {
+                                        if (lastChild.isPure()) {
                                             +irCall(saveStateDescriptor)
                                             +lastChild
-                                        }
-                                    else {
-                                        val tmp = IrTemporaryVariableDescriptorImpl(
-                                                containingDeclaration = irFunction.descriptor,
-                                                name                  = "tmp${tempIndex++}".synthesizedName,
-                                                outType               = lastChild.type)
-                                        irBlock(lastChild) {
+                                        } else {
+                                            val tmp = IrTemporaryVariableDescriptorImpl(
+                                                    containingDeclaration = irFunction.descriptor,
+                                                    name                  = "tmp${tempIndex++}".synthesizedName,
+                                                    outType               = lastChild.type)
                                             +irVar(tmp, lastChild)
                                             +irCall(saveStateDescriptor)
                                             +irGet(tmp)
@@ -1233,9 +1235,11 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
             private val IrExpression.isSuspendCall: Boolean
                 get() = this is IrCall && this.descriptor.isSuspend
 
-            private object STATEMENT_ORIGIN_COROUTINE_IMPL: IrStatementOriginImpl("COROUTINE_IMPL")
+            private object STATEMENT_ORIGIN_COROUTINE_IMPL :
+                    IrStatementOriginImpl("COROUTINE_IMPL")
 
-            private fun IrElement.isSpecialBlock() = this is IrBlock && this.origin == STATEMENT_ORIGIN_COROUTINE_IMPL
+            private fun IrElement.isSpecialBlock()
+                    = this is IrBlock && this.origin == STATEMENT_ORIGIN_COROUTINE_IMPL
 
             private fun IrElement.hasSuspendCalls(): Boolean {
                 var hasSuspendCalls = false
@@ -1257,7 +1261,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                 return when (this) {
                     is IrConst<*> -> true
                     is IrCall -> false // TODO: skip builtin operators.
-                    is IrTypeOperatorCall -> this.argument.isPure()
+                    is IrTypeOperatorCall -> this.argument.isPure() && this.operator != IrTypeOperator.CAST
                     is IrGetValue -> !this.descriptor.let { it is VariableDescriptor && it.isVar }
                     else -> false
                 }
@@ -1315,34 +1319,4 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
             scopeStack.peek()!!.add(declaration.descriptor)
         }
     }
-
-    fun IrBuilderWithScope.irUnit() =
-            IrGetObjectValueImpl(startOffset, endOffset, context.builtIns.unitType, context.builtIns.unit)
-
-    fun IrBuilderWithScope.irIfThen(condition: IrExpression, thenPart: IrExpression) =
-            IrIfThenElseImpl(startOffset, endOffset, context.builtIns.unitType, condition, thenPart, null)
-
-    fun IrBuilderWithScope.irGet(descriptor: PropertyDescriptor) =
-            IrGetterCallImpl(startOffset, endOffset, descriptor.getter!!, null)
-
-    fun IrBuilderWithScope.irSet(receiver: IrExpression, descriptor: PropertyDescriptor, arg: IrExpression) =
-            IrSetterCallImpl(startOffset, endOffset, descriptor.setter!!, null, receiver, null, arg)
-
-    fun IrBuilderWithScope.irNot(arg: IrExpression) =
-            primitiveOp1(startOffset, endOffset, context.irBuiltIns.booleanNot, IrStatementOrigin.EXCL, arg)
-
-    fun IrBuilderWithScope.irThrow(arg: IrExpression) =
-            IrThrowImpl(startOffset, endOffset, arg.type, arg)
-
-    fun IrBuilderWithScope.irCast(arg: IrExpression, type: KotlinType, typeOperand: KotlinType) =
-            IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.CAST, typeOperand, arg)
-
-    fun IrBuilderWithScope.irImplicitCoercionToUnit(arg: IrExpression) =
-            IrTypeOperatorCallImpl(startOffset, endOffset, context.builtIns.unitType, IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.builtIns.unitType, arg)
-
-    fun IrBuilderWithScope.irGetField(receiver: IrExpression, descriptor: PropertyDescriptor) =
-            IrGetFieldImpl(startOffset, endOffset, descriptor, receiver)
-
-    fun IrBuilderWithScope.irSetField(receiver: IrExpression, descriptor: PropertyDescriptor, value: IrExpression) =
-            IrSetFieldImpl(startOffset, endOffset, descriptor, receiver, value)
 }
