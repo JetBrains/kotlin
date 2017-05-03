@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedClass
+import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedClassifierType
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedPackage
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.FqName
@@ -70,7 +71,18 @@ class JavacWrapper(javaFiles: Collection<File>,
         fun getInstance(project: Project): JavacWrapper = ServiceManager.getService(project, JavacWrapper::class.java)
     }
 
-    val JAVA_LANG_OBJECT by lazy { findClassInSymbols(CommonClassNames.JAVA_LANG_OBJECT) }
+    val JAVA_LANG_OBJECT by lazy {
+        findClassInSymbols(CommonClassNames.JAVA_LANG_OBJECT)
+                ?.let { SymbolBasedClassifierType(it.element.asType(), this) }
+    }
+    val JAVA_LANG_ENUM by lazy {
+        findClassInSymbols(CommonClassNames.JAVA_LANG_ENUM)
+                ?.let { SymbolBasedClassifierType(it.element.asType(), this) }
+    }
+    val JAVA_LANG_ANNOTATION_ANNOTATION by lazy {
+        findClassInSymbols(CommonClassNames.JAVA_LANG_ANNOTATION_ANNOTATION)
+                ?.let { SymbolBasedClassifierType(it.element.asType(), this) }
+    }
 
     private val messageCollector = environment.configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]
     private val context = Context()

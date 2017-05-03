@@ -25,9 +25,6 @@ import com.sun.tools.javac.tree.TreeInfo
 import org.jetbrains.kotlin.descriptors.Visibilities.PUBLIC
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedClass
-import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedClassifierType
-import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedType
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -79,20 +76,16 @@ class TreeBasedClass<out T : JCTree.JCClassDecl>(tree: T,
             }
 
             if (isEnum) {
-                (javac.findClass(FqName("java.lang.Enum")) as? SymbolBasedClass)
-                        ?.let { SymbolBasedType.create(it.element.asType(), javac) as? JavaClassifierType }
-                        ?.let { add(it) }
+                javac.JAVA_LANG_ENUM?.let(this::add)
             } else if (isAnnotationType) {
-                (javac.findClass(FqName("java.lang.annotation.Annotation")) as? SymbolBasedClass)
-                        ?.let { SymbolBasedType.create(it.element.asType(), javac) as? JavaClassifierType }
-                        ?.let { add(it) }
+                javac.JAVA_LANG_ANNOTATION_ANNOTATION?.let(this::add)
             }
 
             tree.implementing?.mapNotNull { it.mapToJavaClassifierType() }?.let(this::addAll)
             tree.extending?.let { it.mapToJavaClassifierType()?.let(this::add) }
 
             if (isEmpty()) {
-                javac.JAVA_LANG_OBJECT?.let { add(SymbolBasedClassifierType(it.element.asType(), javac)) }
+                javac.JAVA_LANG_OBJECT?.let(this::add)
             }
         }
 

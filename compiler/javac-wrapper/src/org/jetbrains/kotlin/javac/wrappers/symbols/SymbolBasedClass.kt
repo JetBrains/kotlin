@@ -57,15 +57,16 @@ class SymbolBasedClass(element: TypeElement,
         get() = FqName(element.qualifiedName.toString())
 
     override val supertypes: Collection<JavaClassifierType>
-        get() = element.interfaces.toMutableList().apply {
-            if (element.superclass !is NoType) {
-                add(element.superclass)
-            } else {
-                if (isEmpty() && element.toString() != CommonClassNames.JAVA_LANG_OBJECT) {
-                    javac.JAVA_LANG_OBJECT?.let { add(it.element.asType()) }
+        get() = element.interfaces.toMutableList()
+                .apply {
+                    element.superclass.takeIf { it !is NoType }?.let(this::add)
                 }
-            }
-        }.map { SymbolBasedClassifierType(it, javac) }
+                .mapTo(arrayListOf()) { SymbolBasedClassifierType(it, javac) }
+                .apply {
+                    if (isEmpty() && element.qualifiedName.toString() != CommonClassNames.JAVA_LANG_OBJECT) {
+                        javac.JAVA_LANG_OBJECT?.let { add(it) }
+                    }
+                }
 
     val innerClasses: Map<Name, JavaClass>
         get() = element.enclosedElements
