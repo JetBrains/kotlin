@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import com.intellij.openapi.util.io.FileUtil;
+import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
@@ -23,22 +25,69 @@ import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.psi.KtProperty;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.TestUtilsKt.clearReflectionCache;
-import static org.jetbrains.kotlin.codegen.TestUtilsKt.getBoxMethodOrNull;
-import static org.jetbrains.kotlin.codegen.TestUtilsKt.getGeneratedClass;
+import static org.jetbrains.kotlin.codegen.TestUtilsKt.*;
+import static org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
     @Override
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
-        compile(files, javaFilesDir);
-        blackBox();
+        try {
+            compile(files, javaFilesDir);
+            blackBox();
+        }
+        catch (Throwable t) {
+            try {
+                // To create .txt file in case of failure
+                doBytecodeListingTest(wholeFile);
+            }
+            catch (Throwable ignored) {
+            }
+
+            throw t;
+        }
+
+        doBytecodeListingTest(wholeFile);
+    }
+
+    private void doBytecodeListingTest(@NotNull File wholeFile) throws Exception {
+        if (!InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "CHECK_BYTECODE_LISTING")) return;
+
+        File expectedFile = new File(wholeFile.getParent(), FilesKt.getNameWithoutExtension(wholeFile) + ".txt");
+        String text =
+                BytecodeListingTextCollectingVisitor.Companion.getText(
+                        classFileFactory,
+                        new BytecodeListingTextCollectingVisitor.Filter() {
+                            @Override
+                            public boolean shouldWriteClass(int access, @NotNull String name) {
+                                return !name.startsWith("helpers/");
+                            }
+
+                            @Override
+                            public boolean shouldWriteMethod(int access, @NotNull String name, @NotNull String desc) {
+                                return true;
+                            }
+
+                            @Override
+                            public boolean shouldWriteField(int access, @NotNull String name, @NotNull String desc) {
+                                return true;
+                            }
+
+                            @Override
+                            public boolean shouldWriteInnerClass(@NotNull String name) {
+                                return true;
+                            }
+                        }
+                );
+
+        assertEqualsToFile(expectedFile, text);
     }
 
     protected void blackBox() {

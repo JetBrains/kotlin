@@ -32,6 +32,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
 
 class BytecodeListingTextCollectingVisitor(val filter: Filter) : ClassVisitor(ASM5) {
     companion object {
+        @JvmOverloads
         fun getText(factory: ClassFileFactory, filter: Filter = Filter.EMPTY, replaceHash: Boolean = true) = factory
                 .getClassFiles()
                 .sortedBy { it.relativePath }
