@@ -40,15 +40,15 @@ class FixVariableConstraintPosition(val variable: NewTypeVariable) : ConstraintP
     override fun toString() = "Fix variable $variable"
 }
 
-class IncorporationConstraintPosition(val from: ConstraintPosition) : ConstraintPosition() {
-    override fun toString() = "Incorporate $from"
+class IncorporationConstraintPosition(val from: ConstraintPosition, val initialConstraint: InitialConstraint) : ConstraintPosition() {
+    override fun toString() = "Incorporate $initialConstraint from position $from"
 }
 
 @Deprecated("Should be used only in SimpleConstraintSystemImpl")
 object SimpleConstraintSystemConstraintPosition : ConstraintPosition()
 
 
-class NewConstraintError(val lowerType: UnwrappedType, val upperType: UnwrappedType, val position: ConstraintPosition):
+class NewConstraintError(val lowerType: UnwrappedType, val upperType: UnwrappedType, val position: IncorporationConstraintPosition):
         KotlinCallDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.constraintError(this)
 }

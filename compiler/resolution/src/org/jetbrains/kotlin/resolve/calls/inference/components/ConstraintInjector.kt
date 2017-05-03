@@ -40,25 +40,28 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
     }
 
     fun addInitialSubtypeConstraint(c: Context, lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition) {
-        c.addInitialConstraint(InitialConstraint(lowerType, upperType, ConstraintKind.UPPER, position))
+        val initialConstraint = InitialConstraint(lowerType, upperType, ConstraintKind.UPPER, position)
+        val incorporationPosition = IncorporationConstraintPosition(position, initialConstraint)
+        c.addInitialConstraint(initialConstraint)
         updateAllowedTypeDepth(c, lowerType)
         updateAllowedTypeDepth(c, upperType)
-        addSubTypeConstraintAndIncorporateIt(c, lowerType, upperType, position)
+        addSubTypeConstraintAndIncorporateIt(c, lowerType, upperType, incorporationPosition)
     }
 
     fun addInitialEqualityConstraint(c: Context, a: UnwrappedType, b: UnwrappedType, position: ConstraintPosition) {
-        c.addInitialConstraint(InitialConstraint(a, b, ConstraintKind.EQUALITY, position))
+        val initialConstraint = InitialConstraint(a, b, ConstraintKind.EQUALITY, position)
+        val incorporationPosition = IncorporationConstraintPosition(position, initialConstraint)
+        c.addInitialConstraint(initialConstraint)
         updateAllowedTypeDepth(c, a)
         updateAllowedTypeDepth(c, b)
-        addSubTypeConstraintAndIncorporateIt(c, a, b, position)
-        addSubTypeConstraintAndIncorporateIt(c, b, a, position)
+        addSubTypeConstraintAndIncorporateIt(c, a, b, incorporationPosition)
+        addSubTypeConstraintAndIncorporateIt(c, b, a, incorporationPosition)
     }
 
 
-    private fun addSubTypeConstraintAndIncorporateIt(c: Context, lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition) {
-        val incorporatePosition = IncorporationConstraintPosition(position)
+    private fun addSubTypeConstraintAndIncorporateIt(c: Context, lowerType: UnwrappedType, upperType: UnwrappedType, incorporatePosition: IncorporationConstraintPosition) {
         val possibleNewConstraints = Stack<Pair<NewTypeVariable, Constraint>>()
-        val typeCheckerContext = TypeCheckerContext(c, position, lowerType, upperType, possibleNewConstraints)
+        val typeCheckerContext = TypeCheckerContext(c, incorporatePosition, lowerType, upperType, possibleNewConstraints)
         typeCheckerContext.runIsSubtypeOf(lowerType, upperType)
 
         while (possibleNewConstraints.isNotEmpty()) {
@@ -67,7 +70,7 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
 
             // it is important, that we add constraint here(not inside TypeCheckerContext), because inside incorporation we read constraints
             constraints.addConstraint(constraint)?.let {
-                constraintIncorporator.incorporate(typeCheckerContext, typeVariable, it, incorporatePosition)
+                constraintIncorporator.incorporate(typeCheckerContext, typeVariable, it)
             }
         }
     }
@@ -94,7 +97,7 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
 
     private inner class TypeCheckerContext(
             val c: Context,
-            val position: ConstraintPosition,
+            val position: IncorporationConstraintPosition,
             val baseLowerType: UnwrappedType,
             val baseUpperType: UnwrappedType,
             val possibleNewConstraints: MutableList<Pair<NewTypeVariable, Constraint>> = ArrayList()
@@ -159,7 +162,7 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
         }
 
         // from ConstraintIncorporator.Context
-        override fun addNewIncorporatedConstraint(lowerType: UnwrappedType, upperType: UnwrappedType, position: IncorporationConstraintPosition) {
+        override fun addNewIncorporatedConstraint(lowerType: UnwrappedType, upperType: UnwrappedType) {
             if (c.isAllowedType(lowerType) && c.isAllowedType(upperType)) {
                 runIsSubtypeOf(lowerType, upperType)
             }
