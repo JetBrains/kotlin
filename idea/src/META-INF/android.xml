@@ -103,20 +103,11 @@
         <highlighterExtension implementation="org.jetbrains.kotlin.android.AndroidHighlighterExtension"/>
     </extensions>
 
+    <extensions defaultExtensionNs="com.android.tools.idea">
+        <npw.template.convertJavaToKotlinProvider implementation="org.jetbrains.kotlin.android.ConvertJavaToKotlinProviderImpl"/>
+    </extensions>
+
     <extensions defaultExtensionNs="org.jetbrains.android">
         <androidLintQuickFixProvider implementation="org.jetbrains.kotlin.android.quickfix.KotlinAndroidQuickFixProvider" />
     </extensions>
-
-    <project-components>
-        <component>
-            <interface-class>org.jetbrains.kotlin.android.facet.KotlinAndroidStartupManager</interface-class>
-            <implementation-class>org.jetbrains.kotlin.android.facet.KotlinAndroidStartupManager</implementation-class>
-        </component>
-    </project-components>
-
-    <actions>
-        <action id="Kotlin.new.activity" class="org.jetbrains.kotlin.android.actions.NewKotlinActivityAction">
-            <add-to-group group-id="NewGroup" anchor="after" relative-to-action="Kotlin.NewFile"/>
-        </action>
-    </actions>
 </idea-plugin>

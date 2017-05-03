@@ -103,14 +103,19 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         dialog.show()
         if (!dialog.isOK) return
 
-        project.executeCommand("Configure Kotlin") {
+        val collector = configureSilently(project, dialog.modulesToConfigure, dialog.kotlinVersion)
+        collector.showNotification()
+    }
+
+    fun configureSilently(project: Project, modules: List<Module>, version: String): NotificationMessageCollector {
+        return project.executeCommand("Configure Kotlin") {
             val collector = createConfigureKotlinNotificationCollector(project)
-            val changedFiles = configureWithVersion(project, dialog.modulesToConfigure, dialog.kotlinVersion, collector)
+            val changedFiles = configureWithVersion(project, modules, version, collector)
 
             for (file in changedFiles) {
                 OpenFileAction.openFile(file.virtualFile, project)
             }
-            collector.showNotification()
+            collector
         }
     }
 
