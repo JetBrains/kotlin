@@ -146,7 +146,7 @@ private fun readClassFileImpl(project: Project,
     fun readFromOutput(isForTestClasses: Boolean): ByteArray? {
         if (!ProjectRootsUtil.isProjectSourceFile(project, file)) return null
 
-        val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file)
+        val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file) ?: return null
         val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ isForTestClasses) ?: return null
 
         val className = fqNameWithInners.asString().replace('.', '$')
