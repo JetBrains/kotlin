@@ -1,6 +1,5 @@
 package
 
-public /*synthesized*/ fun A(/*0*/ function: () -> kotlin.Int): A
 public fun </*0*/ T : B> foo(/*0*/ t: T): kotlin.Unit
 
 public interface A {

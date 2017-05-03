@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.utils.alwaysTrue
@@ -153,17 +151,10 @@ class LazyJavaPackageScope(
     }
 
     override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> {
-        // optimization: only SAM-constructors may exist in java package
-        if (kindFilter.excludes.contains(SamConstructorDescriptorKindExclude)) return emptySet()
-
-        // For SAM-constructors
-        return computeClassNames(DescriptorKindFilter.CLASSIFIERS, nameFilter)
+        return emptySet()
     }
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
-        c.components.samConversionResolver.resolveSamConstructor(ownerDescriptor) {
-            getContributedClassifier(name, NoLookupLocation.FOR_ALREADY_TRACKED)
-        }?.let { result.add(it) }
     }
 
     override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) = emptySet<Name>()

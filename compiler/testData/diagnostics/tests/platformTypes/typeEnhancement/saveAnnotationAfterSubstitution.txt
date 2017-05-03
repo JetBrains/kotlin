@@ -1,10 +1,5 @@
 package
 
-public /*synthesized*/ fun </*0*/ T : kotlin.Any!> A(/*0*/ function: (x: T, y: T?) -> kotlin.Unit): A<T>
-public /*synthesized*/ fun B1(/*0*/ function: (x: kotlin.String, y: kotlin.String?) -> kotlin.Unit): B1
-public /*synthesized*/ fun B2(/*0*/ function: (x: kotlin.String, y: kotlin.String?) -> kotlin.Unit): B2
-public /*synthesized*/ fun B3(/*0*/ function: (x: kotlin.String!, y: kotlin.String!) -> kotlin.Unit): B3
-
 public interface A</*0*/ T : kotlin.Any!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(/*0*/ @org.jetbrains.annotations.NotNull x: T, /*1*/ @org.jetbrains.annotations.Nullable y: T?): kotlin.Unit

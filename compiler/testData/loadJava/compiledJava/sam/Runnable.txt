@@ -1,7 +1,5 @@
 package test
 
-public /*synthesized*/ fun Runnable(/*0*/ function: () -> kotlin.Unit): test.Runnable
-
 public interface Runnable {
     public abstract fun run(): kotlin.Unit
 }

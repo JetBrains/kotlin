@@ -1,6 +1,5 @@
 package test
 
-public /*synthesized*/ fun SamInterface(/*0*/ function: () -> kotlin.Unit): test.SamInterface
 public fun topLevelFunction(): kotlin.Unit
 
 public open class JavaClass {

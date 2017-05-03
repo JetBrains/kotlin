@@ -1,6 +1,5 @@
 package
 
-public /*synthesized*/ fun Sam(/*0*/ function: (a: kotlin.String!, b: kotlin.String!) -> kotlin.String!): Sam
 public fun test(): kotlin.Unit
 
 public interface Sam {

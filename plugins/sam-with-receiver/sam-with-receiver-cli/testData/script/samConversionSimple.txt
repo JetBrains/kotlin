@@ -1,7 +1,5 @@
 package
 
-@SamWithReceiver1 public /*synthesized*/ fun Sam(/*0*/ function: (a: kotlin.String!) -> kotlin.Unit): Sam
-
 public open class Exec {
     public constructor Exec()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

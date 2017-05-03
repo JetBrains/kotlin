@@ -1,7 +1,5 @@
 package test
 
-public /*synthesized*/ fun NullInAnnotation(/*0*/ function: () -> kotlin.Unit): test.NullInAnnotation
-
 public interface NullInAnnotation {
     @test.NullInAnnotation.Ann(a = null, b = {null}) public abstract fun foo(): kotlin.Unit
 

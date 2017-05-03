@@ -1,7 +1,5 @@
 package test
 
-public /*synthesized*/ fun </*0*/ T : kotlin.Any!> Comparator(/*0*/ function: (T!, T!) -> kotlin.Int): test.Comparator<T>
-
 public interface Comparator</*0*/ T : kotlin.Any!> {
     public abstract fun compare(/*0*/ p0: T!, /*1*/ p1: T!): kotlin.Int
 }

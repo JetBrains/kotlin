@@ -15,7 +15,4 @@ public open class FormFieldValidatorPresenterTest</*0*/ V : kotlin.String!> {
         public abstract fun onValidityChanged(/*0*/ valid: kotlin.Boolean): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-
-    // Static members
-    public final /*synthesized*/ fun ValidationListenerTest(/*0*/ function: (valid: kotlin.Boolean) -> kotlin.Unit): FormFieldValidatorPresenterTest.ValidationListenerTest
 }

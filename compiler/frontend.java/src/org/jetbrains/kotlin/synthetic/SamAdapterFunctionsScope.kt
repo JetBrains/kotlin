@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
@@ -56,6 +58,11 @@ class SamAdapterFunctionsScope(
                 samAdapterForFunctionNotCached(function)
             }
 
+    private val samConstructorForClassifier =
+            storageManager.createMemoizedFunctionWithNullableValues<ClassifierDescriptor, SamConstructorDescriptor> { classifier ->
+                samConstructorForClassifierNotCached(classifier)
+            }
+
     private fun extensionForFunctionNotCached(function: FunctionDescriptor): FunctionDescriptor? {
         if (!function.visibility.isVisibleOutside()) return null
         if (!function.hasJavaOriginInHierarchy()) return null //TODO: should we go into base at all?
@@ -70,6 +77,13 @@ class SamAdapterFunctionsScope(
         if (function.dispatchReceiverParameter != null) return null // consider only statics
         if (!SingleAbstractMethodUtils.isSamAdapterNecessary(function)) return null
         return SingleAbstractMethodUtils.createSamAdapterFunction(function)
+    }
+
+    private fun samConstructorForClassifierNotCached(classifier: ClassifierDescriptor): SamConstructorDescriptor? {
+        return if (classifier is LazyJavaClassDescriptor && classifier.functionTypeForSamInterface != null) {
+            SingleAbstractMethodUtils.createSamConstructorFunction(classifier.containingDeclaration, classifier)
+        }
+        else null
     }
 
     override fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
@@ -119,7 +133,8 @@ class SamAdapterFunctionsScope(
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> = emptyList()
 
     override fun getSyntheticStaticFunctions(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-        return scope.getContributedFunctions(name, location).mapNotNull { samAdapterForStaticFunction(it) }
+        val samConstructor = scope.getContributedClassifier(name, location)?.let { samConstructorForClassifier(it) }
+        return scope.getContributedFunctions(name, location).mapNotNull { samAdapterForStaticFunction(it) } + listOfNotNull(samConstructor)
     }
 
     override fun getSyntheticStaticFunctions(scope: ResolutionScope): Collection<FunctionDescriptor> {

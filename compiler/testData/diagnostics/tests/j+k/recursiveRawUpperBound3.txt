@@ -1,6 +1,5 @@
 package
 
-public /*synthesized*/ fun </*0*/ X : Y!, /*1*/ Y : [ERROR : Cyclic upper bounds], /*2*/ Z : [ERROR : Cyclic upper bounds]> XYZ(/*0*/ function: () -> XYZ<(raw) [ERROR : Cyclic upper bounds], (raw) [ERROR : Cyclic upper bounds], (raw) [ERROR : Cyclic upper bounds]>!): XYZ<X, Y, Z>
 public fun main(/*0*/ xyz: XYZ<*, *, *>): XYZ<(raw) [ERROR : Cyclic upper bounds], (raw) [ERROR : Cyclic upper bounds], (raw) [ERROR : Cyclic upper bounds]>!
 
 public interface XYZ</*0*/ X : Y!, /*1*/ Y : [ERROR : Cyclic upper bounds], /*2*/ Z : [ERROR : Cyclic upper bounds]> {

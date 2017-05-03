@@ -10,7 +10,4 @@ public interface AdapterDoesntOverrideDeclaration {
     public interface Super {
         public abstract fun foo(/*0*/ p0: (() -> kotlin.Unit!)!): kotlin.Unit
     }
-
-    // Static members
-    public final /*synthesized*/ fun Super(/*0*/ function: ((() -> kotlin.Unit!)!) -> kotlin.Unit): test.AdapterDoesntOverrideDeclaration.Super
 }

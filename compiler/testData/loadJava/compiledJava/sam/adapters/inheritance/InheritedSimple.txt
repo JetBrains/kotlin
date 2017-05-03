@@ -9,8 +9,4 @@ public interface InheritedSimple {
     public interface Super {
         public abstract fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
     }
-
-    // Static members
-    public final /*synthesized*/ fun Sub(/*0*/ function: (java.lang.Runnable!) -> kotlin.Unit): test.InheritedSimple.Sub
-    public final /*synthesized*/ fun Super(/*0*/ function: (java.lang.Runnable!) -> kotlin.Unit): test.InheritedSimple.Super
 }

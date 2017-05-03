@@ -13,9 +13,4 @@ public interface SamSubinterfaceOfTwo {
     public interface Super2</*0*/ T : kotlin.Any!> {
         public abstract fun f(): T!
     }
-
-    // Static members
-    public final /*synthesized*/ fun Sub(/*0*/ function: () -> kotlin.String!): test.SamSubinterfaceOfTwo.Sub
-    public final /*synthesized*/ fun Super1(/*0*/ function: () -> kotlin.CharSequence!): test.SamSubinterfaceOfTwo.Super1
-    public final /*synthesized*/ fun </*0*/ T : kotlin.Any!> Super2(/*0*/ function: () -> T!): test.SamSubinterfaceOfTwo.Super2<T>
 }

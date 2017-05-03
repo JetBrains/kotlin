@@ -32,11 +32,6 @@ public open class JHost {
         public abstract fun run(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-
-    // Static members
-    public final /*synthesized*/ fun </*0*/ T : kotlin.Any!> Consumer(/*0*/ function: (x: T!) -> kotlin.Unit): JHost.Consumer<T>
-    public final /*synthesized*/ fun </*0*/ T1 : kotlin.Any!, /*1*/ T2 : kotlin.Any!> Consumer2(/*0*/ function: (x1: T1!, x2: T2!) -> kotlin.Unit): JHost.Consumer2<T1, T2>
-    public final /*synthesized*/ fun Runnable(/*0*/ function: () -> kotlin.Unit): JHost.Runnable
 }
 public typealias C</*0*/ T>  = JHost.Consumer<T>
 public typealias C2</*0*/ T>  = JHost.Consumer2<T, T>

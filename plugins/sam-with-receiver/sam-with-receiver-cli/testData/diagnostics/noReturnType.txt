@@ -1,6 +1,5 @@
 package
 
-@SamWithReceiver public /*synthesized*/ fun Sam(/*0*/ function: kotlin.String!.(b: kotlin.String!) -> kotlin.Unit): Sam
 public fun test(): kotlin.Unit
 
 @SamWithReceiver public interface Sam {

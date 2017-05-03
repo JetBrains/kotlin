@@ -15,15 +15,9 @@ public interface Nested {
         public interface Runnable {
             public abstract fun run(): kotlin.Unit
         }
-
-        // Static members
-        public final /*synthesized*/ fun Runnable(/*0*/ function: () -> kotlin.Unit): test.Nested.Deeper2.Runnable
     }
 
     public interface Runnable {
         public abstract fun run(): kotlin.Unit
     }
-
-    // Static members
-    public final /*synthesized*/ fun Runnable(/*0*/ function: () -> kotlin.Unit): test.Nested.Runnable
 }

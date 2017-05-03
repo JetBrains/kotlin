@@ -1,8 +1,5 @@
 package
 
-public /*synthesized*/ fun </*0*/ T : IBase!> JFooWithUpperBound(/*0*/ function: () -> T!): JFooWithUpperBound<T>
-public /*synthesized*/ fun </*0*/ T : IBase!> JFooWithUpperBoundDerived(/*0*/ function: () -> T!): JFooWithUpperBoundDerived<T>
-
 public interface IBase {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

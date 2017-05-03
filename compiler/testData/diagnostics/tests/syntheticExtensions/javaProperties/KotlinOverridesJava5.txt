@@ -1,6 +1,5 @@
 package
 
-public /*synthesized*/ fun JavaInterface1(/*0*/ function: () -> kotlin.String!): JavaInterface1
 public fun foo(/*0*/ k: KotlinClass): kotlin.Unit
 public fun useString(/*0*/ i: kotlin.String): kotlin.Unit
 

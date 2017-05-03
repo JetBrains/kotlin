@@ -1,7 +1,5 @@
 package
 
-public /*synthesized*/ fun My(/*0*/ function: (arg: kotlin.String!) -> kotlin.String!): My
-
 public interface My {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(/*0*/ arg: kotlin.String!): kotlin.String!

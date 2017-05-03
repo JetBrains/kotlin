@@ -1,6 +1,5 @@
 package
 
-public /*synthesized*/ fun JavaInterface(/*0*/ function: (s: kotlin.String, runnable: java.lang.Runnable) -> kotlin.Unit): JavaInterface
 public fun foo(/*0*/ javaInterface: JavaInterface): kotlin.Unit
 
 public interface JavaInterface {

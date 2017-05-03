@@ -1,6 +1,5 @@
 package
 
-public /*synthesized*/ fun </*0*/ E : kotlin.Any!> EventListener(/*0*/ function: (e: E!) -> kotlin.Unit): EventListener<E>
 public fun main(): kotlin.Unit
 
 public open class A {

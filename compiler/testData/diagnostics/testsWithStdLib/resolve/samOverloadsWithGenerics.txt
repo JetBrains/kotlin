@@ -18,7 +18,4 @@ public/*package*/ open class Foo {
         public abstract operator fun invoke(/*0*/ i: T!): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-
-    // Static members
-    public/*package*/ final /*synthesized*/ fun </*0*/ T : kotlin.Any!> FObject(/*0*/ function: (i: T!) -> kotlin.Unit): Foo.FObject<T>
 }

@@ -1,8 +1,5 @@
 package
 
-public/*package*/ /*synthesized*/ fun A(/*0*/ function: () -> kotlin.Unit): A
-public/*package*/ /*synthesized*/ fun C(/*0*/ function: () -> kotlin.Unit): C
-
 public/*package*/ interface A {
     public abstract fun foo(): kotlin.Unit
 }

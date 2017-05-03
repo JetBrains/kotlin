@@ -99,8 +99,4 @@ public open class TestNN {
         public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
     }
-
-    // Static members
-    public final /*synthesized*/ fun JNotNull(/*0*/ function: () -> kotlin.Any): TestNN.JNotNull
-    public final /*synthesized*/ fun JNull(/*0*/ function: () -> kotlin.Any?): TestNN.JNull
 }

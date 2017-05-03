@@ -1,7 +1,5 @@
 package
 
-public /*synthesized*/ fun JavaInterface(/*0*/ function: () -> kotlin.Int): JavaInterface
-public /*synthesized*/ fun JavaInterface2(/*0*/ function: () -> kotlin.Int): JavaInterface2
 public fun foo(/*0*/ o: JavaInterface2): kotlin.Int
 
 public abstract class BaseClass : JavaInterface {

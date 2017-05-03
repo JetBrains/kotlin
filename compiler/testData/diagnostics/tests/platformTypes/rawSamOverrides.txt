@@ -1,9 +1,5 @@
 package
 
-public /*synthesized*/ fun </*0*/ T : kotlin.Any!> A(/*0*/ function: (x: T!, y: Fun<out T!>!) -> kotlin.Unit): A<T>
-public /*synthesized*/ fun B(/*0*/ function: (x: kotlin.Any!, y: Fun<(raw) kotlin.Any!>!) -> kotlin.Unit): B
-public /*synthesized*/ fun </*0*/ T : kotlin.Any!> Fun(/*0*/ function: (x: T!) -> kotlin.Unit): Fun<T>
-
 public interface A</*0*/ T : kotlin.Any!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(/*0*/ x: T!, /*1*/ y: Fun<out T!>!): kotlin.Unit

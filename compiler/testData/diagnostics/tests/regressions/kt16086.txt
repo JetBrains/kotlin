@@ -5,7 +5,6 @@ package com {
     package com.winterbe {
 
         package com.winterbe.domain {
-            public /*synthesized*/ fun IEntity(/*0*/ function: () -> com.winterbe.observer.ObserverSupport<(raw) com.winterbe.domain.IEntity>!): com.winterbe.domain.IEntity
 
             public interface IEntity {
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

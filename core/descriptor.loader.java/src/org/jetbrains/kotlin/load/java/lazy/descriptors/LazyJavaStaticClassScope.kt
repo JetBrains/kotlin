@@ -64,10 +64,6 @@ class LazyJavaStaticClassScope(
     }
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
-        c.components.samConversionResolver.resolveSamConstructor(ownerDescriptor) {
-            ownerDescriptor.unsubstitutedInnerClassesScope.getContributedClassifier(name, NoLookupLocation.FOR_ALREADY_TRACKED)
-        }?.let { result.add(it) }
-
         val functionsFromSupertypes = getStaticFunctionsFromJavaSuperClasses(name, ownerDescriptor)
         result.addAll(resolveOverridesForStaticMembers(name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter))
 
