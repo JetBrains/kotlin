@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection
 import org.jetbrains.kotlin.idea.inspections.runInspection
+import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
 import org.junit.Assert
 import org.junit.Test
 
