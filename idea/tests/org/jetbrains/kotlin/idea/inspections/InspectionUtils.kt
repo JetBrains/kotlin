@@ -17,16 +17,17 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.analysis.AnalysisScope
+import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.codeInspection.ui.InspectionToolPresentation
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.InspectionTestUtil
-import com.intellij.testFramework.createGlobalContextForTool
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl.createGlobalContextForTool
 import com.intellij.util.xml.highlighting.DomElementsInspection
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
-import org.jetbrains.kotlin.idea.maven.inspections.DifferentKotlinMavenVersionInspection
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
 
 fun runInspection(
@@ -37,14 +38,13 @@ fun runInspection(
     val tool = wrapper.tool
     if (tool is DomElementsInspection<*> || tool is GradleBaseInspection) {
         when (tool) {
-            is DifferentKotlinMavenVersionInspection -> tool.testVersionMessage = "\$PLUGIN_VERSION"
             is DifferentKotlinGradleVersionInspection -> tool.testVersionMessage = "\$PLUGIN_VERSION"
         }
     }
 
     val scope = if (files != null) AnalysisScope(project, files) else AnalysisScope(project)
     scope.invalidate()
-    val globalContext = createGlobalContextForTool(scope, project, listOf(wrapper))
+    val globalContext = createGlobalContextForTool(scope, project, InspectionManager.getInstance(project) as InspectionManagerEx, wrapper)
     InspectionTestUtil.runTool(wrapper, scope, globalContext)
     if (withTestDir != null) {
         InspectionTestUtil.compareToolResults(globalContext, wrapper, false, withTestDir)

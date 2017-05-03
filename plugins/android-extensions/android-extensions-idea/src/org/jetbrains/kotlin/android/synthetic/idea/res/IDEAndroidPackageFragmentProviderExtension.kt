@@ -48,8 +48,8 @@ class IDEAndroidPackageFragmentProviderExtension(val project: Project) : Android
         // Android Extensions should be always enabled for Android/JPS
         if (isLegacyIdeaAndroidModule(module)) return true
 
-        val androidGradleFacet = AndroidGradleFacet.getInstance(module) ?: return false
-        val buildFile = androidGradleFacet.gradleModel?.buildFile ?: return false
+        val androidGradleFacet = GradleFacet.getInstance(module) ?: return false
+        val buildFile = androidGradleFacet.gradleModuleModel?.buildFile ?: return false
         val buildGroovyFile = psiManager.findFile(buildFile) as? GroovyFile ?: return false
         return GradleBuildFile.getPlugins(buildGroovyFile).contains("kotlin-android-extensions")
     }
