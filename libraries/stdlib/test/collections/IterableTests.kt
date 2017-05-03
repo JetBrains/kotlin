@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ import kotlin.test.*
 fun <T> iterableOf(vararg items: T): Iterable<T> = Iterable { items.iterator() }
 fun <T> Iterable<T>.toIterable(): Iterable<T> = Iterable { this.iterator() }
 
-class IterableTest : OrderedIterableTests<Iterable<String>>(iterableOf("foo", "bar"), iterableOf<String>())
-class SetTest : IterableTests<Set<String>>(setOf("foo", "bar"), setOf<String>())
-class LinkedSetTest : IterableTests<LinkedHashSet<String>>(linkedSetOf("foo", "bar"), linkedSetOf<String>())
-class ListTest : OrderedIterableTests<List<String>>(listOf("foo", "bar"), listOf<String>())
-class ArrayListTest : OrderedIterableTests<ArrayList<String>>(arrayListOf("foo", "bar"), arrayListOf<String>())
+class IterableTest : OrderedIterableTests<Iterable<String>>({ iterableOf(*it) }, iterableOf<String>())
+class SetTest : IterableTests<Set<String>>({ setOf(*it) }, setOf())
+class LinkedSetTest : OrderedIterableTests<LinkedHashSet<String>>({ linkedSetOf(*it) }, linkedSetOf())
+class ListTest : OrderedIterableTests<List<String>>( { listOf(*it) }, listOf<String>())
+class ArrayListTest : OrderedIterableTests<ArrayList<String>>({ arrayListOf(*it) }, arrayListOf<String>())
 
-abstract class OrderedIterableTests<T : Iterable<String>>(data: T, empty: T) : IterableTests<T>(data, empty) {
+abstract class OrderedIterableTests<T : Iterable<String>>(createFrom: (Array<out String>) -> T, empty: T) : IterableTests<T>(createFrom, empty) {
     @Test
     fun indexOf() {
         expect(0) { data.indexOf("foo") }
@@ -118,7 +118,11 @@ abstract class OrderedIterableTests<T : Iterable<String>>(data: T, empty: T) : I
     }
 }
 
-abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
+abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out String>) -> T, val empty: T) {
+    fun createFrom(vararg items: String): T = createFrom(items)
+
+    val data = createFrom("foo", "bar")
+
     @Test
     fun any() {
         expect(true) { data.any() }
