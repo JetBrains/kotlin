@@ -46,7 +46,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         ).buildWithScope { irClass ->
             irClass.thisReceiver = context.symbolTable.declareValueParameter(
                     ktClassOrObject.startOffset, ktClassOrObject.endOffset,
-                    IrDeclarationOrigin.NEW_INSTANCE_RECEIVER,
+                    IrDeclarationOrigin.INSTANCE_RECEIVER,
                     irClass.descriptor.thisAsReceiverParameter
             )
 
