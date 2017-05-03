@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.DeepCopyIrTreeWithDeclarations
 import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockImpl
@@ -25,12 +26,6 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass {
-
-    private fun <E> MutableList<E>.push(element: E) = this.add(element)
-
-    private fun <E> MutableList<E>.pop() = this.removeAt(size - 1)
-
-    private fun <E> MutableList<E>.peek(): E? = if (size == 0) null else this[size - 1]
 
     private interface HighLevelJump {
         fun toIr(context: Context, startOffset: Int, endOffset: Int, value: IrExpression): IrExpression

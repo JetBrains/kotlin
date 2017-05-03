@@ -41,3 +41,10 @@ fun BackendContext.reportWarning(message: String, irFile: IrFile, irElement: IrE
     val location = irElement.getCompilerMessageLocation(irFile)
     this.messageCollector.report(CompilerMessageSeverity.WARNING, message, location)
 }
+
+fun <E> MutableList<E>.push(element: E) = this.add(element)
+
+fun <E> MutableList<E>.pop() = this.removeAt(size - 1)
+
+fun <E> MutableList<E>.peek(): E? = if (size == 0) null else this[size - 1]
+

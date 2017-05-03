@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
@@ -1287,12 +1288,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
     }
 
     private open class VariablesScopeTracker: IrElementVisitorVoid {
-
-        private fun <E> MutableList<E>.push(element: E) = this.add(element)
-
-        private fun <E> MutableList<E>.pop() = this.removeAt(size - 1)
-
-        private fun <E> MutableList<E>.peek(): E? = if (size == 0) null else this[size - 1]
 
         protected val scopeStack = mutableListOf<MutableSet<VariableDescriptor>>(mutableSetOf())
 

@@ -24,12 +24,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.descriptors.*
 
-private fun <E> MutableList<E>.push(element: E) = this.add(element)
-
-private fun <E> MutableList<E>.pop() = this.removeAt(size - 1)
-
-private fun <E> MutableList<E>.peek(): E? = if (size == 0) null else this[size - 1]
-
 internal class ScopeWithIr(val scope: Scope, val irElement: IrElement)
 
 abstract internal class IrElementTransformerVoidWithContext : IrElementTransformerVoid() {
