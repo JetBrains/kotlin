@@ -45,12 +45,13 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.keysToMap
-import org.jetbrains.plugins.groovy.lang.psi.impl.stringValue
 import org.junit.Assert
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+
+fun PsiAnnotationMemberValue?.stringValue() = (this as? PsiLiteral)?.value as? String
 
 abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(testDataPath: String) {
