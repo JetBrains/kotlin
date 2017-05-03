@@ -1,0 +1,13 @@
+include ':kotlin-gradle-plugin-api',
+        ':kotlin-gradle-plugin', 
+        ':kotlin-gradle-plugin-integration-tests', 
+        ':kotlin-allopen', 
+        ':kotlin-noarg',
+        ':kotlin-gradle-subplugin-example'
+
+project(':kotlin-gradle-plugin-api').projectDir = file("../kotlin-gradle-plugin-api")
+project(':kotlin-gradle-plugin').projectDir = file("../kotlin-gradle-plugin")
+project(':kotlin-gradle-plugin-integration-tests').projectDir = file("../kotlin-gradle-plugin-integration-tests")
+project(':kotlin-allopen').projectDir = file("../kotlin-allopen")
+project(':kotlin-noarg').projectDir = file("../kotlin-noarg")
+project(':kotlin-gradle-subplugin-example').projectDir = file("../../examples/kotlin-gradle-subplugin-example")

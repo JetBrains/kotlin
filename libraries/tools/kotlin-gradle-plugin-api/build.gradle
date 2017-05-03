@@ -1,0 +1,17 @@
+apply plugin: 'kotlin'
+apply plugin: 'maven'
+
+configureJvmProject(project)
+configurePublishing(project)
+
+repositories {
+    mavenLocal()
+    maven { url 'http://repository.jetbrains.com/utils/' }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    
+    compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
+    compileOnly 'com.android.tools.build:gradle:0.4.2'
+}
