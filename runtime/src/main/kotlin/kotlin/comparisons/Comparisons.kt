@@ -321,10 +321,12 @@ private object ReverseOrderComparator: Comparator<Comparable<Any>> {
 }
 
 // From _Comparisions.kt.
+
 /**
  * Returns the greater of two values.
  * If values are equal, returns the first one.
  */
+@SinceKotlin("1.1")
 public fun <T: Comparable<T>> maxOf(a: T, b: T): T {
     return if (a >= b) a else b
 }
@@ -332,9 +334,145 @@ public fun <T: Comparable<T>> maxOf(a: T, b: T): T {
 /**
  * Returns the greater of two values.
  */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun maxOf(a: Byte, b: Byte): Byte {
+    return maxOf(a.toInt(), b.toInt()).toByte()
+}
+
+/**
+ * Returns the greater of two values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun maxOf(a: Short, b: Short): Short {
+    return maxOf(a.toInt(), b.toInt()).toShort()
+}
+
+/**
+ * Returns the greater of two values.
+ */
+@SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun maxOf(a: Int, b: Int): Int {
     return if (a >= b) a else b
+}
+
+/**
+ * Returns the greater of two values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun maxOf(a: Long, b: Long): Long {
+    return if (a >= b) a else b
+}
+
+/**
+ * Returns the greater of two values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun maxOf(a: Float, b: Float): Float {
+    // According to http://docs.oracle.com/javase/8/docs/api/java/lang/Math.html#max-float-float-
+    // return NaN if one of the args is NaN.
+    // TODO: Check +/-0.0
+    return when {
+        a.isNaN() -> a
+        b.isNaN() -> b
+        else -> if (a >= b) a else b
+    }
+}
+
+/**
+ * Returns the greater of two values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun maxOf(a: Double, b: Double): Double {
+    return when {
+        a.isNaN() -> a
+        b.isNaN() -> b
+        else -> if (a >= b) a else b
+    }
+}
+
+/**
+ * Returns the greater of three values.
+ */
+@SinceKotlin("1.1")
+public fun <T: Comparable<T>> maxOf(a: T, b: T, c: T): T {
+    return maxOf(a, maxOf(b, c))
+}
+
+/**
+ * Returns the greater of three values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun maxOf(a: Byte, b: Byte, c: Byte): Byte {
+    return maxOf(a.toInt(), maxOf(b.toInt(), c.toInt())).toByte()
+}
+
+/**
+ * Returns the greater of three values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun maxOf(a: Short, b: Short, c: Short): Short {
+    return maxOf(a.toInt(), maxOf(b.toInt(), c.toInt())).toShort()
+}
+
+/**
+ * Returns the greater of three values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun maxOf(a: Int, b: Int, c: Int): Int {
+    return maxOf(a, maxOf(b, c))
+}
+
+/**
+ * Returns the greater of three values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun maxOf(a: Long, b: Long, c: Long): Long {
+    return maxOf(a, maxOf(b, c))
+}
+
+/**
+ * Returns the greater of three values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun maxOf(a: Float, b: Float, c: Float): Float {
+    return maxOf(a, maxOf(b, c))
+}
+
+/**
+ * Returns the greater of three values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun maxOf(a: Double, b: Double, c: Double): Double {
+    return maxOf(a, maxOf(b, c))
+}
+
+/**
+ * Returns the greater of three values according to the order specified by the given [comparator].
+ */
+@SinceKotlin("1.1")
+public fun <T> maxOf(a: T, b: T, c: T, comparator: Comparator<in T>): T {
+    return maxOf(a, maxOf(b, c, comparator), comparator)
+}
+
+/**
+ * Returns the greater of two values according to the order specified by the given [comparator].
+ * If values are equal, returns the first one.
+ */
+@SinceKotlin("1.1")
+public fun <T> maxOf(a: T, b: T, comparator: Comparator<in T>): T {
+    return if (comparator.compare(a, b) >= 0) a else b
 }
 
 /**
@@ -349,7 +487,142 @@ public fun <T: Comparable<T>> minOf(a: T, b: T): T {
 /**
  * Returns the smaller of two values.
  */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun minOf(a: Byte, b: Byte): Byte {
+    return minOf(a.toInt(), b.toInt()).toByte()
+}
+
+/**
+ * Returns the smaller of two values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun minOf(a: Short, b: Short): Short {
+    return minOf(a.toInt(), b.toInt()).toShort()
+}
+
+/**
+ * Returns the smaller of two values.
+ */
+@SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun minOf(a: Int, b: Int): Int {
     return if (a <= b) a else b
+}
+
+/**
+ * Returns the smaller of two values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun minOf(a: Long, b: Long): Long {
+    return if (a <= b) a else b
+}
+
+/**
+ * Returns the smaller of two values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun minOf(a: Float, b: Float): Float {
+    // According to http://docs.oracle.com/javase/8/docs/api/java/lang/Math.html#min-float-float-
+    // return NaN if one of the args is NaN.
+    return when {
+        a.isNaN() -> a
+        b.isNaN() -> b
+        else -> if (a <= b) a else b
+    }
+}
+
+/**
+ * Returns the smaller of two values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun minOf(a: Double, b: Double): Double {
+    return when {
+        a.isNaN() -> a
+        b.isNaN() -> b
+        else -> if (a <= b) a else b
+    }
+}
+
+/**
+ * Returns the smaller of three values.
+ */
+@SinceKotlin("1.1")
+public fun <T: Comparable<T>> minOf(a: T, b: T, c: T): T {
+    return minOf(a, minOf(b, c))
+}
+
+/**
+ * Returns the smaller of three values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun minOf(a: Byte, b: Byte, c: Byte): Byte {
+    return minOf(a.toInt(), minOf(b.toInt(), c.toInt())).toByte()
+}
+
+/**
+ * Returns the smaller of three values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun minOf(a: Short, b: Short, c: Short): Short {
+    return minOf(a.toInt(), minOf(b.toInt(), c.toInt())).toShort()
+}
+
+/**
+ * Returns the smaller of three values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun minOf(a: Int, b: Int, c: Int): Int {
+    return minOf(a, minOf(b, c))
+}
+
+/**
+ * Returns the smaller of three values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun minOf(a: Long, b: Long, c: Long): Long {
+    return minOf(a, minOf(b, c))
+}
+
+/**
+ * Returns the smaller of three values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun minOf(a: Float, b: Float, c: Float): Float {
+    return minOf(a, minOf(b, c))
+}
+
+/**
+ * Returns the smaller of three values.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun minOf(a: Double, b: Double, c: Double): Double {
+    return minOf(a, minOf(b, c))
+}
+
+/**
+ * Returns the smaller of three values according to the order specified by the given [comparator].
+ */
+@SinceKotlin("1.1")
+public fun <T> minOf(a: T, b: T, c: T, comparator: Comparator<in T>): T {
+    return minOf(a, minOf(b, c, comparator), comparator)
+}
+
+/**
+ * Returns the smaller of two values according to the order specified by the given [comparator].
+ * If values are equal, returns the first one.
+ */
+@SinceKotlin("1.1")
+public fun <T> minOf(a: T, b: T, comparator: Comparator<in T>): T {
+    return if (comparator.compare(a, b) <= 0) a else b
 }
