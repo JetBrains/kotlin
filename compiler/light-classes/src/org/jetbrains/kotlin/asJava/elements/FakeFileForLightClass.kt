@@ -79,4 +79,6 @@ open class FakeFileForLightClass(
             super.setPackageName(packageName)
         }
     }
+
+    override fun isPhysical() = false
 }
