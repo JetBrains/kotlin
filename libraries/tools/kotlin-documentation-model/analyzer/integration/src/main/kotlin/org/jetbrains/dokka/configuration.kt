@@ -17,16 +17,25 @@ interface DokkaConfiguration {
     val jdkVersion: Int
     val generateIndexPages: Boolean
     val sourceLinks: List<SourceLinkDefinition>
+    val impliedPlatforms: List<String>
+    val perPackageOptions: List<PackageOptions>
 
     interface SourceRoot {
         val path: String
-        val defaultPlatforms: List<String>
+        val platforms: List<String>
     }
 
     interface SourceLinkDefinition {
         val path: String
         val url: String
         val lineSuffix: String?
+    }
+
+    interface PackageOptions {
+        val prefix: String
+        val includeNonPublic: Boolean
+        val reportUndocumented: Boolean
+        val skipDeprecated: Boolean
     }
 }
 
@@ -44,4 +53,6 @@ data class SerializeOnlyDokkaConfiguration(override val moduleName: String,
                                            override val skipDeprecated: Boolean,
                                            override val jdkVersion: Int,
                                            override val generateIndexPages: Boolean,
-                                           override val sourceLinks: List<DokkaConfiguration.SourceLinkDefinition>) : DokkaConfiguration
+                                           override val sourceLinks: List<DokkaConfiguration.SourceLinkDefinition>,
+                                           override val impliedPlatforms: List<String>,
+                                           override val perPackageOptions: List<DokkaConfiguration.PackageOptions>) : DokkaConfiguration
