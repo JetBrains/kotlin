@@ -218,6 +218,7 @@ class CompileServiceImpl(
     override fun registerClient(aliveFlagPath: String?): CompileService.CallResult<Nothing> = ifAlive {
         synchronized(state.clientProxies) {
             state.clientProxies.add(ClientOrSessionProxy(aliveFlagPath))
+            log.info("Registered a client alive file: $aliveFlagPath")
         }
         CompileService.CallResult.Ok()
     }
@@ -232,7 +233,7 @@ class CompileServiceImpl(
     override fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
         CompileService.CallResult.Good(
                 state.sessions.leaseSession(ClientOrSessionProxy<Any>(aliveFlagPath)).apply {
-                    log.info("leased a new session $this, client alive file: $aliveFlagPath")
+                    log.info("leased a new session $this, session alive file: $aliveFlagPath")
                 })
     }
 
