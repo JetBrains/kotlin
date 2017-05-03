@@ -8,8 +8,6 @@ repositories {
     maven { url 'http://repository.jetbrains.com/utils/' }
 }
 
-def kotlinVersion = project.version
-
 dependencies {
     testCompile project(':kotlin-gradle-plugin')
     testCompile project(':kotlin-gradle-plugin').sourceSets.test.output
@@ -30,7 +28,11 @@ processResources {
 tasks.withType(Test) {
     onlyIf { !project.hasProperty("noTest") }
 
-    exclude '**/KotlinAndroid*'
+    if (!project.hasProperty("android")) {
+        exclude '**/KotlinAndroid*'
+    }
+
+    executable = "${JDK_18}/bin/java"
 
     testLogging {
         // set options for log level LIFECYCLE
