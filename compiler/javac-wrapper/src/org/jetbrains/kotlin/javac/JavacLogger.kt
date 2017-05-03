@@ -51,9 +51,9 @@ private class MessageCollectorAdapter(private val messageCollector: MessageColle
                                       private val severity: CompilerMessageSeverity) : Writer() {
 
     override fun write(buffer: CharArray, offset: Int, length: Int) {
-        if (length > 1) {
-            messageCollector.report(severity, String(buffer, offset, length))
-        }
+        if (length == 1 && buffer[0] == '\n') return
+
+        messageCollector.report(severity, String(buffer, offset, length))
     }
 
     override fun flush() {
