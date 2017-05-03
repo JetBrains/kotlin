@@ -74,12 +74,14 @@ public class AliasingContext {
     public JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         // these aliases cannot be shared and applicable only in current context
         JsExpression alias = aliasesForDescriptors != null ? aliasesForDescriptors.get(descriptor.getOriginal()) : null;
-        return alias != null || parent == null ? alias : parent.getAliasForDescriptor(descriptor);
+        JsExpression result = alias != null || parent == null ? alias : parent.getAliasForDescriptor(descriptor);
+        return result != null ? result.deepCopy() : null;
     }
 
     @Nullable
     public JsExpression getAliasForExpression(@NotNull KtExpression element) {
         JsExpression alias = aliasesForExpressions != null ? aliasesForExpressions.get(element) : null;
-        return alias != null || parent == null ? alias : parent.getAliasForExpression(element);
+        JsExpression result = alias != null || parent == null ? alias : parent.getAliasForExpression(element);
+        return result != null ? result.deepCopy() : null;
     }
 }

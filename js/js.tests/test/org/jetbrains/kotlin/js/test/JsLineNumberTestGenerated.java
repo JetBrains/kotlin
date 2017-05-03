@@ -65,4 +65,10 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/simple.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("syntheticCodeInConstructors.kt")
+    public void testSyntheticCodeInConstructors() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/syntheticCodeInConstructors.kt");
+        doTest(fileName);
+    }
 }

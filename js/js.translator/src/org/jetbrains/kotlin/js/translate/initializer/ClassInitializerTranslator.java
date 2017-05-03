@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.initializer;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.ArrayList;
@@ -173,14 +175,14 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
     private void mayBeAddCallToSuperMethod(JsFunction initializer) {
         if (classDeclaration.hasModifier(KtTokens.ENUM_KEYWORD)) {
-            addCallToSuperMethod(Collections.emptyList(), initializer);
+            addCallToSuperMethod(Collections.emptyList(), initializer, classDeclaration);
         }
         else if (hasAncestorClass(bindingContext(), classDeclaration)) {
             ResolvedCall<FunctionDescriptor> superCall = getSuperCall(bindingContext(), classDeclaration);
 
             if (superCall == null) {
                 if (DescriptorUtils.isEnumEntry(classDescriptor)) {
-                    addCallToSuperMethod(getAdditionalArgumentsForEnumConstructor(), initializer);
+                    addCallToSuperMethod(getAdditionalArgumentsForEnumConstructor(), initializer, classDeclaration);
                 }
                 return;
             }
@@ -234,7 +236,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                 }
 
                 if (superDescriptor.isPrimary()) {
-                    addCallToSuperMethod(arguments, initializer);
+                    addCallToSuperMethod(arguments, initializer, superCall.getCall().getCallElement());
                 }
                 else {
                     int maxValueArgumentIndex = 0;
@@ -325,7 +327,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         return additionalArguments;
     }
 
-    private void addCallToSuperMethod(@NotNull List<JsExpression> arguments, @NotNull JsFunction initializer) {
+    private void addCallToSuperMethod(@NotNull List<JsExpression> arguments, @NotNull JsFunction initializer, @NotNull PsiElement psi) {
         if (initializer.getName() == null) {
             JsName ref = context().scope().declareName(Namer.CALLEE_NAME);
             initializer.setName(ref);
@@ -334,6 +336,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         ClassDescriptor superclassDescriptor = DescriptorUtilsKt.getSuperClassOrAny(classDescriptor);
         JsExpression superConstructorRef = context().getInnerReference(superclassDescriptor);
         JsInvocation call = new JsInvocation(Namer.getFunctionCallRef(superConstructorRef));
+        call.setSource(psi);
         call.getArguments().add(JsLiteral.THIS);
         call.getArguments().addAll(arguments);
         initFunction.getBody().getStatements().add(call.makeStmt());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,7 +158,8 @@ class ClassTranslator private constructor(
         val function = context().createRootScopedFunction(descriptor)
         function.name = JsScope.declareTemporaryName(StaticContext.getSuggestedName(descriptor) + "_initFields")
         val emptyFunction = context().createRootScopedFunction(descriptor)
-        function.body.statements += JsAstUtils.assignment(JsAstUtils.pureFqn(function.name, null), emptyFunction).makeStmt()
+        function.body.statements += JsAstUtils.assignment(JsAstUtils.pureFqn(function.name, null), emptyFunction)
+                .source(classDeclaration).makeStmt()
         context().addDeclarationStatement(function.makeStmt())
         return function
     }
@@ -229,7 +230,8 @@ class ClassTranslator private constructor(
         superCallGenerators += { it += FunctionBodyTranslator.setDefaultValueForArguments(constructorDescriptor, context) }
 
         val createInstance = Namer.createObjectWithPrototypeFrom(referenceToClass)
-        val instanceVar = JsAstUtils.assignment(thisNameRef, JsAstUtils.or(thisNameRef, createInstance)).makeStmt()
+        val instanceVar = JsAstUtils.assignment(thisNameRef.deepCopy(), JsAstUtils.or(thisNameRef.deepCopy(), createInstance))
+                .source(constructor).makeStmt()
         superCallGenerators += { it += instanceVar }
 
         // Add parameter for outer instance
@@ -265,8 +267,10 @@ class ClassTranslator private constructor(
                 superCallGenerators += {
                     val delegationConstructor = resolvedCall.resultingDescriptor
                     val innerContext = context.innerBlock()
-                    val statement = CallTranslator.translate(innerContext, resolvedCall)
-                            .toInvocationWith(leadingArgs, delegationConstructor.valueParameters.size, thisNameRef).makeStmt()
+                    val statement = CallTranslator.translate(innerContext, resolvedCall).toInvocationWith(
+                            leadingArgs, delegationConstructor.valueParameters.size, thisNameRef.deepCopy())
+                            .source(resolvedCall.call.callElement)
+                            .makeStmt()
                     it += innerContext.currentBlock.statements
                     it += statement
                 }
@@ -280,11 +284,14 @@ class ClassTranslator private constructor(
                 val closure = context.getClassOrConstructorClosure(classDescriptor).orEmpty().map {
                     usageTracker.getNameForCapturedDescriptor(it)!!.makeRef()
                 }
-                it += JsInvocation(Namer.getFunctionCallRef(referenceToClass), listOf(thisNameRef) + closure + leadingArgs).makeStmt()
+                it += JsInvocation(Namer.getFunctionCallRef(referenceToClass), listOf(thisNameRef.deepCopy()) + closure + leadingArgs)
+                        .source(classDeclaration).makeStmt()
             }
         }
 
-        constructorInitializer.body.statements += JsReturn(thisNameRef)
+        constructorInitializer.body.statements += JsReturn(thisNameRef.deepCopy()).apply {
+            source = constructor
+        }
 
         val compositeSuperCallGenerator: () -> Unit = {
             val additionalStatements = mutableListOf<JsStatement>()
@@ -310,8 +317,9 @@ class ClassTranslator private constructor(
         val constructorMap = allConstructors.map { it.descriptor to it }.toMap()
 
         val callSiteMap = callSites.groupBy {
-            val constructor =  it.constructor
-            if (constructor.isPrimary) constructor.containingDeclaration else constructor
+            val constructor = it.constructor
+            val result: DeclarationDescriptor = if (constructor.isPrimary) constructor.containingDeclaration else constructor
+            result
         }
 
         val thisCalls = secondaryConstructors.map {
@@ -437,7 +445,7 @@ class ClassTranslator private constructor(
 
     private fun addObjectCache(statements: MutableList<JsStatement>) {
         cachedInstanceName = JsScope.declareTemporaryName(StaticContext.getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_VAR_SUFFIX)
-        statements += JsAstUtils.assignment(cachedInstanceName.makeRef(), JsObjectLiteral.THIS).makeStmt()
+        statements += JsAstUtils.assignment(cachedInstanceName.makeRef(), JsObjectLiteral.THIS).source(classDeclaration).makeStmt()
     }
 
     private fun addObjectMethods() {
