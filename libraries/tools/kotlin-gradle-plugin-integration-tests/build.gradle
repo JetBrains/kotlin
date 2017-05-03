@@ -1,0 +1,60 @@
+apply plugin: 'kotlin'
+
+configureJvmProject(project)
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url 'http://repository.jetbrains.com/utils/' }
+}
+
+def kotlinVersion = project.version
+
+dependencies {
+    testCompile project(':kotlin-gradle-plugin')
+    testCompile project(':kotlin-gradle-plugin').sourceSets.test.output
+    testCompile project(':kotlin-gradle-subplugin-example')
+    testCompile project(':kotlin-allopen')
+
+    testCompile "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+    testCompile "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
+    testCompile "org.jetbrains.kotlin:kotlin-build-common-test:$kotlin_version"
+
+    testCompile 'org.jetbrains.kotlin:gradle-api:2.2'
+}
+
+processResources {
+    expand(project.properties)
+}
+
+tasks.withType(Test) {
+    onlyIf { !project.hasProperty("noTest") }
+
+    exclude '**/KotlinAndroid*'
+
+    testLogging {
+        // set options for log level LIFECYCLE
+        events "passed", "skipped", "failed", "standardOut"
+        showExceptions true
+        exceptionFormat "full"
+        showCauses true
+        showStackTraces true
+
+        // set options for log level DEBUG and INFO
+        debug {
+            events "started", "passed", "skipped", "failed", "standardOut", "standardError"
+            exceptionFormat "full"
+        }
+        info.events = debug.events
+        info.exceptionFormat = debug.exceptionFormat
+
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
+    }
+}
