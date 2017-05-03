@@ -22,13 +22,14 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.signature2Descriptor
 import org.jetbrains.kotlin.ir.builders.irLetSequence
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrSymbolDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -74,12 +75,12 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
     private val defaultAppendFunction =
             classStringBuilder.signature2Descriptor(nameAppend, arrayOf(builtIns.nullableAnyType))!!
 
-    private val appendFunctions: Map<KotlinType, CallableDescriptor?> =
+    private val appendFunctions: Map<KotlinType, FunctionDescriptor?> =
             typesWithSpecialAppendFunction.map {
                 it to classStringBuilder.signature2Descriptor(nameAppend, arrayOf(it))
             }.toMap()
 
-    private fun typeToAppendFunction(type : KotlinType) : CallableDescriptor {
+    private fun typeToAppendFunction(type : KotlinType) : FunctionDescriptor {
         return appendFunctions[type]?:defaultAppendFunction
     }
 
@@ -107,9 +108,13 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
     }
 
     override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+        if (declaration !is IrSymbolDeclaration<*>) {
+            return super.visitDeclaration(declaration)
+        }
+
         with(declaration) {
             buildersStack.add(
-                    context.createIrBuilder(declaration.descriptor, startOffset, endOffset)
+                    context.createIrBuilder(declaration.symbol, startOffset, endOffset)
             )
             transformChildrenVoid(this@StringConcatenationTransformer)
             buildersStack.removeAt(buildersStack.lastIndex)

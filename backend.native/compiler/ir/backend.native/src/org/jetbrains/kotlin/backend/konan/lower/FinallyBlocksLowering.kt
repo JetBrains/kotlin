@@ -31,9 +31,9 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
         fun toIr(context: Context, startOffset: Int, endOffset: Int, value: IrExpression): IrExpression
     }
 
-    private data class Return(val callableDescriptor: CallableDescriptor): HighLevelJump {
+    private data class Return(val functionDescriptor: FunctionDescriptor): HighLevelJump {
         override fun toIr(context: Context, startOffset: Int, endOffset: Int, value: IrExpression)
-                = IrReturnImpl(startOffset, endOffset, callableDescriptor, value)
+                = IrReturnImpl(startOffset, endOffset, functionDescriptor, value)
     }
 
     private data class Break(val loop: IrLoop): HighLevelJump {
@@ -178,7 +178,7 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
                         return IrReturnImpl(
                                 startOffset  = startOffset,
                                 endOffset    = endOffset,
-                                returnTarget = it,
+                                returnTargetDescriptor = it,
                                 value        = value)
                     }
                 }
@@ -282,7 +282,7 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
     private fun IrBuilderWithScope.irVar(descriptor: VariableDescriptor, initializer: IrExpression?) =
             IrVariableImpl(startOffset, endOffset, DECLARATION_ORIGIN_FINALLY_BLOCK, descriptor, initializer)
 
-    fun IrBuilderWithScope.irReturn(target: CallableDescriptor, value: IrExpression) =
+    fun IrBuilderWithScope.irReturn(target: FunctionDescriptor, value: IrExpression) =
             IrReturnImpl(startOffset, endOffset, target, value)
 
     inline fun IrBuilderWithScope.irReturnableBlock(descriptor: FunctionDescriptor, body: IrBlockBuilder.() -> Unit) =

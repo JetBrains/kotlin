@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.serialization.KonanIr.IrConst.ValueCase.*
 import org.jetbrains.kotlin.serialization.KonanIr.IrOperation.OperationCase.*
@@ -496,14 +498,17 @@ internal class IrSerializer(val context: Context,
         val proto = KonanIr.IrClass.newBuilder()
         val declarations = clazz.declarations
         declarations.forEach {
-            proto.addMember(serializeDeclaration(it))
+            val descriptor = it.descriptor
+            if (descriptor !is CallableMemberDescriptor || descriptor.kind.isReal) {
+                proto.addMember(serializeDeclaration(it))
+            }
         }
         return proto.build()
     }
 
     fun serializeIrEnumEntry(enumEntry: IrEnumEntry): KonanIr.IrEnumEntry {
         val proto = KonanIr.IrEnumEntry.newBuilder()
-        val initializer = enumEntry.initializerExpression
+        val initializer = enumEntry.initializerExpression!!
         proto.setInitializer(serializeExpression(initializer))
         val correspondingClass = enumEntry.correspondingClass
         if (correspondingClass != null) {
@@ -626,9 +631,10 @@ internal class IrDeserializer(val context: Context,
 
     fun deserializeCatch(proto: KonanIr.IrCatch, start: Int, end: Int): IrCatch {
         val parameter = deserializeDescriptor(proto.getParameter()) as VariableDescriptor
+        val catchParameter = IrVariableImpl(start, end, IrDeclarationOrigin.CATCH_PARAMETER, parameter)
         val result = deserializeExpression(proto.getResult())
 
-        return IrCatchImpl(start, end, parameter, result)
+        return IrCatchImpl(start, end, catchParameter, result)
     }
 
     fun deserializeStatement(proto: KonanIr.IrStatement): IrElement {
@@ -685,7 +691,7 @@ internal class IrDeserializer(val context: Context,
     }
 
     fun deserializeCall(proto: KonanIr.IrCall, start: Int, end: Int, type: KotlinType): IrCall {
-        val descriptor = deserializeDescriptor(proto.getDescriptor()) as CallableDescriptor
+        val descriptor = deserializeDescriptor(proto.getDescriptor()) as FunctionDescriptor
 
         val superDescriptor = if (proto.hasSuper()) {
             deserializeDescriptor(proto.getSuper()) as ClassDescriptor
@@ -697,7 +703,7 @@ internal class IrDeserializer(val context: Context,
                 // TODO: implement the last three args here.
                 IrCallImpl(start, end, type, descriptor, typeArgs , null, superDescriptor)
             KonanIr.IrCall.Primitive.NULLARY ->
-                IrNullaryPrimitiveImpl(start, end, null, descriptor)
+                IrNullaryPrimitiveImpl(start, end, null, createFunctionSymbol(descriptor))
             KonanIr.IrCall.Primitive.UNARY ->
                 IrUnaryPrimitiveImpl(start, end, null, descriptor)
             KonanIr.IrCall.Primitive.BINARY ->
@@ -713,7 +719,10 @@ internal class IrDeserializer(val context: Context,
 
         val descriptor = deserializeDescriptor(proto.getDescriptor()) as CallableDescriptor
         val typeMap = deserializeTypeMap(descriptor, proto.typeMap)
-        val callable = IrCallableReferenceImpl(start, end, type, descriptor, typeMap, null)
+        val callable = when (descriptor) {
+            is FunctionDescriptor -> IrFunctionReferenceImpl(start, end, type, descriptor, typeMap, null)
+            else -> TODO()
+        }
         return callable
     }
 
@@ -761,7 +770,7 @@ internal class IrDeserializer(val context: Context,
 
     fun deserializeReturn(proto: KonanIr.IrReturn, start: Int, end: Int, type: KotlinType): IrReturn {
         val descriptor = 
-            deserializeDescriptor(proto.getReturnTarget()) as CallableDescriptor
+            deserializeDescriptor(proto.getReturnTarget()) as FunctionDescriptor
         val value = deserializeExpression(proto.getValue())
         return IrReturnImpl(start, end, type, descriptor, value)
     }
@@ -769,9 +778,7 @@ internal class IrDeserializer(val context: Context,
     fun deserializeSetVariable(proto: KonanIr.IrSetVariable, start: Int, end: Int, type: KotlinType): IrSetVariable {
         val descriptor = deserializeDescriptor(proto.getDescriptor()) as VariableDescriptor
         val value = deserializeExpression(proto.getValue())
-        val setVar = IrSetVariableImpl(start, end, descriptor, null)
-        setVar.value = value
-        return setVar
+        return IrSetVariableImpl(start, end, descriptor, value, null)
     }
 
     fun deserializeStringConcat(proto: KonanIr.IrStringConcat, start: Int, end: Int, type: KotlinType): IrStringConcatenation {
@@ -972,6 +979,9 @@ internal class IrDeserializer(val context: Context,
         }
 
         val clazz = IrClassImpl(start, end, origin, descriptor, members)
+
+        clazz.createParameterDeclarations()
+
         return clazz
 
     }
@@ -982,6 +992,8 @@ internal class IrDeserializer(val context: Context,
         val body = deserializeStatement(proto.getBody())
         val function = IrFunctionImpl(start, end, origin, 
             descriptor, body as IrBody)
+
+        function.createParameterDeclarations()
 
         proto.defaultArgumentList.forEach {
             val expr = deserializeExpression(it.value)
@@ -1024,7 +1036,7 @@ internal class IrDeserializer(val context: Context,
         val origin = DEFINED // TODO: retore the real origins
         val declarator = proto.getDeclarator()
 
-        val declaration = when {
+        val declaration: IrDeclaration = when {
             declarator.hasIrClass()
                 -> deserializeIrClass(declarator.irClass,
                     descriptor as ClassDescriptor, start, end, origin)

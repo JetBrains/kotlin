@@ -17,10 +17,19 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
 /**
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
@@ -93,3 +102,51 @@ fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessag
             lineContent = null // TODO: retrieve the line content.
     )
 }
+
+fun IrFunction.createParameterDeclarations() {
+    fun ParameterDescriptor.irValueParameter() = IrValueParameterImpl(
+            innerStartOffset(this), innerEndOffset(this),
+            IrDeclarationOrigin.DEFINED,
+            this
+    )
+
+    dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.irValueParameter()
+    extensionReceiverParameter = descriptor.extensionReceiverParameter?.irValueParameter()
+
+    assert(valueParameters.isEmpty())
+    descriptor.valueParameters.mapTo(valueParameters) { it.irValueParameter() }
+
+    assert(typeParameters.isEmpty())
+    descriptor.typeParameters.mapTo(typeParameters) {
+        IrTypeParameterImpl(
+                innerStartOffset(it), innerEndOffset(it),
+                IrDeclarationOrigin.DEFINED,
+                it
+        )
+    }
+}
+
+fun IrClass.createParameterDeclarations() {
+    descriptor.thisAsReceiverParameter.let {
+        thisReceiver = IrValueParameterImpl(
+                innerStartOffset(it), innerEndOffset(it),
+                IrDeclarationOrigin.INSTANCE_RECEIVER,
+                it
+        )
+    }
+
+    assert(typeParameters.isEmpty())
+    descriptor.declaredTypeParameters.mapTo(typeParameters) {
+        IrTypeParameterImpl(
+                innerStartOffset(it), innerEndOffset(it),
+                IrDeclarationOrigin.DEFINED,
+                it
+        )
+    }
+}
+
+private fun IrElement.innerStartOffset(descriptor: DeclarationDescriptorWithSource): Int =
+        (descriptor.source as? PsiSourceElement)?.psi?.startOffset ?: this.startOffset
+
+private fun IrElement.innerEndOffset(descriptor: DeclarationDescriptorWithSource): Int =
+        (descriptor.source as? PsiSourceElement)?.psi?.endOffset ?: this.endOffset

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.*
@@ -131,7 +132,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                     return IrCallImpl(
                             startOffset = expression.startOffset,
                             endOffset = expression.endOffset,
-                            descriptor = invokeFunctionDescriptor
+                            calleeDescriptor = invokeFunctionDescriptor
                     ).apply {
                         dispatchReceiver = expression.dispatchReceiver
                         putValueArgument(0, expression.extensionReceiver)
@@ -164,7 +165,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
             }
 
             SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
-                val coroutine = buildCoroutine(irFunction, callableReference)   // Coroutine implementation.
+                val coroutine: IrDeclaration = buildCoroutine(irFunction, callableReference)   // Coroutine implementation.
                 if (suspendLambdas.contains(irFunction.descriptor))             // Suspend lambdas are called through factory method <create>,
                     listOf(coroutine)                                           // thus we can eliminate original body.
                 else
@@ -450,6 +451,9 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                     descriptor  = coroutineClassDescriptor,
                     members     = coroutineMembers
             )
+
+            coroutineClass.createParameterDeclarations()
+
             return BuiltCoroutine(
                     coroutineClass                 = coroutineClass,
                     coroutineConstructorDescriptor = coroutineFactoryConstructorBuilder?.descriptor
@@ -496,6 +500,9 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
                         descriptor  = descriptor).apply {
+
+                    createParameterDeclarations()
+
                     body = irBuilder.irBlockBody {
                         val completionParameter = descriptor.valueParameters.last()
                         +IrDelegatingConstructorCallImpl(startOffset, endOffset, coroutineImplConstructorDescriptor).apply {
@@ -561,6 +568,9 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
                         descriptor  = descriptor).apply {
+
+                    createParameterDeclarations()
+
                     body = irBuilder.irBlockBody {
                         +IrDelegatingConstructorCallImpl(startOffset, endOffset, coroutineImplConstructorDescriptor).apply {
                             putValueArgument(0, irNull()) // Completion.
@@ -619,6 +629,9 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
                         descriptor  = descriptor).apply {
+
+                    createParameterDeclarations()
+
                     body = irBuilder.irBlockBody(startOffset, endOffset) {
                         +irReturn(
                                 irCall(coroutineConstructorDescriptor).apply {
@@ -684,6 +697,9 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
                         descriptor  = this.descriptor).apply {
+
+                    createParameterDeclarations()
+
                     body = irBuilder.irBlockBody(startOffset, endOffset) {
                         +irReturn(
                                 irCall(doResumeFunctionDescriptor).apply {
@@ -731,6 +747,9 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                     endOffset   = irFunction.endOffset,
                     origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
                     descriptor  = descriptor).apply {
+
+                createParameterDeclarations()
+
                 body = context.createIrBuilder(descriptor, startOffset, endOffset).irBlockBody {
                     +irReturn(irGetField(irThis(), propertyDescriptor))
                 }
@@ -780,6 +799,9 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                     endOffset   = irFunction.endOffset,
                     origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
                     descriptor  = descriptor).apply {
+
+                createParameterDeclarations()
+
                 body = context.createIrBuilder(descriptor, startOffset, endOffset).irBlockBody {
                     +irSetField(irThis(), propertyDescriptor, irGet(valueParameterDescriptor))
                 }
@@ -871,6 +893,8 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
                         descriptor  = descriptor).apply {
+
+                    createParameterDeclarations()
 
                     body = irBuilder.irBlockBody(startOffset, endOffset) {
 
@@ -1020,20 +1044,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                             origin      = declaration.origin,
                             descriptor  = newVariable,
                             initializer = declaration.initializer)
-                }
-
-                override fun visitCatch(aCatch: IrCatch): IrCatch {
-                    aCatch.transformChildrenVoid(this)
-
-                    val newVariable = variablesMap[aCatch.parameter]
-                            ?: return aCatch
-
-                    return IrCatchImpl(
-                            startOffset = aCatch.startOffset,
-                            endOffset   = aCatch.endOffset,
-                            parameter   = newVariable,
-                            result      = aCatch.result
-                    )
                 }
             })
         }

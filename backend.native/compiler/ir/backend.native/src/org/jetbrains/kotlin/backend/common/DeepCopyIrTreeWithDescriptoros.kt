@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallableReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
@@ -383,19 +382,18 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
         override fun mapLocalPropertyDeclaration    (descriptor: VariableDescriptorWithAccessors) = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as VariableDescriptorWithAccessors
         override fun mapEnumEntryDeclaration        (descriptor: ClassDescriptor)                 = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ClassDescriptor
         override fun mapVariableDeclaration         (descriptor: VariableDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as VariableDescriptor
-        override fun mapCatchParameterDeclaration   (descriptor: VariableDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as VariableDescriptor
         override fun mapErrorDeclaration            (descriptor: DeclarationDescriptor)           = descriptorSubstituteMap.getOrDefault(descriptor, descriptor)
 
         override fun mapClassReference              (descriptor: ClassDescriptor)                 = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ClassDescriptor
         override fun mapValueReference              (descriptor: ValueDescriptor)                 = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ValueDescriptor
         override fun mapVariableReference           (descriptor: VariableDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as VariableDescriptor
         override fun mapPropertyReference           (descriptor: PropertyDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as PropertyDescriptor
-        override fun mapCallee                      (descriptor: CallableDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as CallableDescriptor
+        override fun mapCallee                      (descriptor: FunctionDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as FunctionDescriptor
         override fun mapDelegatedConstructorCallee  (descriptor: ClassConstructorDescriptor)      = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ClassConstructorDescriptor
         override fun mapEnumConstructorCallee       (descriptor: ClassConstructorDescriptor)      = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ClassConstructorDescriptor
-        override fun mapCallableReference           (descriptor: CallableDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as CallableDescriptor
+        override fun mapLocalPropertyReference      (descriptor: VariableDescriptorWithAccessors) = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as VariableDescriptorWithAccessors
         override fun mapClassifierReference         (descriptor: ClassifierDescriptor)            = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as ClassifierDescriptor
-        override fun mapReturnTarget                (descriptor: CallableDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as CallableDescriptor
+        override fun mapReturnTarget                (descriptor: FunctionDescriptor)              = descriptorSubstituteMap.getOrDefault(descriptor, descriptor) as FunctionDescriptor
 
         //---------------------------------------------------------------------//
 
@@ -413,10 +411,10 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
                 startOffset    = expression.startOffset,
                 endOffset      = expression.endOffset,
                 type           = newDescriptor.returnType!!,
-                descriptor     = newDescriptor,
-                typeArguments  = substituteTypeArguments(expression.getTypeArgumentsMap()),
+                calleeDescriptor = newDescriptor,
+                typeArguments  = substituteTypeArguments(expression.transformTypeArguments(newDescriptor)),
                 origin         = expression.origin,
-                superQualifier = mapSuperQualifier(expression.superQualifier)
+                superQualifierDescriptor = mapSuperQualifier(expression.superQualifier)
             ).transformValueArguments(expression)
         }
 
@@ -429,7 +427,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
                 origin      = mapDeclarationOrigin(declaration.origin),
                 descriptor  = mapFunctionDeclaration(declaration.descriptor),
                 body        = declaration.body?.transform(this, null)
-            ).transformDefaults(declaration)
+            ).transformParameters(declaration)
 
         //---------------------------------------------------------------------//
 
@@ -441,20 +439,6 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
                 }
             }
             return this
-        }
-
-        //---------------------------------------------------------------------//
-
-        override fun visitCallableReference(expression: IrCallableReference): IrCallableReference {
-            val newDescriptor = mapCallableReference(expression.descriptor)
-            return IrCallableReferenceImpl(
-                startOffset   = expression.startOffset,
-                endOffset     = expression.endOffset,
-                type          = expression.type,
-                descriptor    = newDescriptor,
-                typeArguments = expression.getTypeArgumentsMap(),
-                origin        = mapStatementOrigin(expression.origin)
-            ).transformValueArguments(expression)
         }
 
         //---------------------------------------------------------------------//
@@ -494,7 +478,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
                 startOffset  = expression.startOffset,
                 endOffset    = expression.endOffset,
                 type         = substituteType(expression.type)!!,
-                returnTarget = mapReturnTarget(expression.returnTarget),
+                returnTargetDescriptor = mapReturnTarget(expression.returnTarget),
                 value        = expression.value.transform(this, null)
             )
 
@@ -594,10 +578,10 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
             startOffset    = oldExpression.startOffset,
             endOffset      = oldExpression.endOffset,
             type           = substituteType(oldExpression.type)!!,
-            descriptor     = newDescriptor,
+            calleeDescriptor = newDescriptor,
             typeArguments  = substituteTypeArguments(oldExpression.typeArguments),
             origin         = oldExpression.origin,
-            superQualifier = newSuperQualifier
+            superQualifierDescriptor = newSuperQualifier
         ).apply {
             oldExpression.descriptor.valueParameters.forEach {
                 val valueArgument = oldExpression.getValueArgument(it)

@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.getDefault
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -60,7 +62,7 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
     irFunction.body = builder.irBlockBody {
         // Define variables containing current values of parameters:
         val parameterToVariable = parameters.associate {
-            it to defineTemporaryVar(irGet(it), nameHint = it.suggestVariableName())
+            it to irTemporaryVar(irGet(it), nameHint = it.suggestVariableName()).symbol
         }
         // (these variables are to be updated on any tail call).
 
@@ -93,7 +95,7 @@ private class BodyTransformer(
         val irFunction: IrFunction,
         val loop: IrLoop,
         val parameterToNew: Map<ParameterDescriptor, ValueDescriptor>,
-        val parameterToVariable: Map<ParameterDescriptor, VariableDescriptor>,
+        val parameterToVariable: Map<ParameterDescriptor, IrVariableSymbol>,
         val tailRecursionCalls: Set<IrCall>
 ) : IrElementTransformerVoid() {
 
@@ -139,7 +141,7 @@ private class BodyTransformer(
             // Copy default value, mapping parameters to variables containing freshly computed arguments:
             val defaultValue = originalDefaultValue.transform(object : DeepCopyIrTreeWithDeclarations() {
                 override fun mapValueReference(descriptor: ValueDescriptor): ValueDescriptor {
-                    return parameterToVariable[descriptor] ?: super.mapValueReference(descriptor)
+                    return parameterToVariable[descriptor]?.descriptor ?: super.mapValueReference(descriptor)
                 }
             }, data = null)
 

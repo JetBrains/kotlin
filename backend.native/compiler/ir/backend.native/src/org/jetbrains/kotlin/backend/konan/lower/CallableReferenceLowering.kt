@@ -33,10 +33,12 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallableReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.util.addArguments
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -115,7 +117,7 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
         return declaration
     }
 
-    override fun visitCallableReference(expression: IrCallableReference): IrExpression {
+    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         expression.transformChildrenVoid(this)
         if (!expression.type.isFunctionOrKFunctionType) {
             // Not a subject of this lowering.
@@ -142,7 +144,7 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
 
         // Create the call to constructor and its arguments:
 
-        val unboundRef = IrCallableReferenceImpl(startOffset, endOffset,
+        val unboundRef = IrFunctionReferenceImpl(startOffset, endOffset,
                 unboundCallableReferenceType, newFunction.descriptor, null)
         val simpleFunctionImplClassConstructor = simpleFunctionImplClass.unsubstitutedPrimaryConstructor!!
 
@@ -164,7 +166,7 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
      * For given function [descriptor] creates the function which calls [descriptor] but
      * takes all [boundParams] packed into `SimpleFunctionImpl` (and all [unboundParams] as is).
      */
-    private fun createSimpleFunctionImplTarget(descriptor: CallableDescriptor,
+    private fun createSimpleFunctionImplTarget(descriptor: FunctionDescriptor,
                                                unboundParams: List<ParameterDescriptor>,
                                                boundParams: List<ParameterDescriptor>,
                                                startOffset: Int, endOffset: Int): IrFunctionImpl {
@@ -211,6 +213,8 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
                 newDescriptor,
                 blockBody
         )
+
+        newFunction.createParameterDeclarations()
 
         return newFunction
     }

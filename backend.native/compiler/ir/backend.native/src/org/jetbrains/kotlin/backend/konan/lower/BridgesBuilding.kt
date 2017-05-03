@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
@@ -54,7 +55,8 @@ internal class DirectBridgesCallsLowering(val context: Context) : BodyLoweringPa
 
                 return IrCallImpl(expression.startOffset, expression.endOffset,
                         target, remapTypeArguments(expression, target), expression.origin,
-                        superQualifier = target.containingDeclaration as ClassDescriptor /* Call non-virtually */).apply {
+                        superQualifierDescriptor = target.containingDeclaration as ClassDescriptor /* Call non-virtually */
+                ).apply {
                     dispatchReceiver = expression.dispatchReceiver
                     extensionReceiver = expression.extensionReceiver
                     mapValueParameters { expression.getValueArgument(it)!! }
@@ -114,7 +116,8 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
         val target = descriptor.descriptor.target
 
         val delegatingCall = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target,
-                superQualifier = target.containingDeclaration as ClassDescriptor /* Call non-virtually */).apply {
+                superQualifierDescriptor = target.containingDeclaration as ClassDescriptor /* Call non-virtually */
+        ).apply {
             val dispatchReceiverParameter = bridgeDescriptor.dispatchReceiverParameter
             if (dispatchReceiverParameter != null)
                 dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, dispatchReceiverParameter)
@@ -130,7 +133,10 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
             IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridgeDescriptor, delegatingCall)
         else
             delegatingCall
-        irClass.declarations.add(IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, DECLARATION_ORIGIN_BRIDGE_METHOD,
-                bridgeDescriptor, IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(bridgeBody))))
+        irClass.declarations.add(
+                IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, DECLARATION_ORIGIN_BRIDGE_METHOD,
+                        bridgeDescriptor, IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(bridgeBody))
+                ).apply { createParameterDeclarations() }
+        )
     }
 }

@@ -25,11 +25,13 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -44,21 +46,44 @@ import org.jetbrains.kotlin.utils.Printer
 
 class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContext(backendContext.irBuiltIns)
 
-class DeclarationIrBuilder(backendContext: BackendContext,
-                           declarationDescriptor: DeclarationDescriptor,
-                           startOffset : Int = UNDEFINED_OFFSET,
-                           endOffset : Int = UNDEFINED_OFFSET) :
-        IrBuilderWithScope(
-                IrLoweringContext(backendContext),
-                Scope(declarationDescriptor),
-                startOffset,
-                endOffset
-        )
+class DeclarationIrBuilder : IrBuilderWithScope {
 
+    constructor(
+            backendContext: BackendContext,
+            symbol: IrSymbol,
+            startOffset: Int = UNDEFINED_OFFSET,
+            endOffset: Int = UNDEFINED_OFFSET
+    ) : super(
+            IrLoweringContext(backendContext),
+            Scope(symbol),
+            startOffset,
+            endOffset
+    )
+
+    @Deprecated("Creates unbound symbol")
+    constructor(
+            backendContext: BackendContext,
+            declarationDescriptor: DeclarationDescriptor,
+            startOffset: Int = UNDEFINED_OFFSET,
+            endOffset: Int = UNDEFINED_OFFSET
+    ) : super(
+            IrLoweringContext(backendContext),
+            Scope(declarationDescriptor),
+            startOffset,
+            endOffset
+    )
+}
+
+@Deprecated("Creates unbound symbol")
 fun BackendContext.createIrBuilder(declarationDescriptor: DeclarationDescriptor,
                                    startOffset : Int = UNDEFINED_OFFSET,
                                    endOffset : Int = UNDEFINED_OFFSET) =
         DeclarationIrBuilder(this, declarationDescriptor, startOffset, endOffset)
+
+fun BackendContext.createIrBuilder(symbol: IrSymbol,
+                                   startOffset : Int = UNDEFINED_OFFSET,
+                                   endOffset : Int = UNDEFINED_OFFSET) =
+        DeclarationIrBuilder(this, symbol, startOffset, endOffset)
 
 
 fun <T : IrBuilder> T.at(element: IrElement) = this.at(element.startOffset, element.endOffset)
@@ -75,26 +100,36 @@ inline fun IrGeneratorWithScope.irBlockBody(irElement: IrElement, body: IrBlockB
         this.irBlockBody(irElement.startOffset, irElement.endOffset, body)
 
 
+@Deprecated("Creates unbound symbol")
 fun IrBuilderWithScope.irUnit() =
         IrGetObjectValueImpl(startOffset, endOffset, context.builtIns.unitType, context.builtIns.unit)
 
 fun IrBuilderWithScope.irIfThen(condition: IrExpression, thenPart: IrExpression) =
         IrIfThenElseImpl(startOffset, endOffset, context.builtIns.unitType, condition, thenPart, null)
 
+@Deprecated("Creates unbound symbol")
 fun IrBuilderWithScope.irGet(descriptor: PropertyDescriptor) =
-        IrGetterCallImpl(startOffset, endOffset, descriptor.getter!!, null)
+        IrCallImpl(startOffset, endOffset, descriptor.getter!!)
 
+@Deprecated("Creates unbound symbol")
 fun IrBuilderWithScope.irSet(receiver: IrExpression, descriptor: PropertyDescriptor, arg: IrExpression) =
-        IrSetterCallImpl(startOffset, endOffset, descriptor.setter!!, null, receiver, null, arg)
+        IrCallImpl(startOffset, endOffset, descriptor.setter!!).apply {
+            dispatchReceiver = receiver
+            putValueArgument(0, arg)
+        }
 
 fun IrBuilderWithScope.irNot(arg: IrExpression) =
-        primitiveOp1(startOffset, endOffset, context.irBuiltIns.booleanNot, IrStatementOrigin.EXCL, arg)
+        primitiveOp1(startOffset, endOffset, context.irBuiltIns.booleanNotSymbol, IrStatementOrigin.EXCL, arg)
 
 fun IrBuilderWithScope.irThrow(arg: IrExpression) =
         IrThrowImpl(startOffset, endOffset, context.builtIns.nothingType, arg)
 
 fun IrBuilderWithScope.irCatch(parameter: VariableDescriptor, result: IrExpression) =
-        IrCatchImpl(startOffset, endOffset, parameter, result)
+        IrCatchImpl(
+                startOffset, endOffset,
+                IrVariableImpl(startOffset, endOffset, IrDeclarationOrigin.CATCH_PARAMETER, parameter),
+                result
+        )
 
 fun IrBuilderWithScope.irCast(arg: IrExpression, type: KotlinType, typeOperand: KotlinType) =
         IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.CAST, typeOperand, arg)
@@ -103,12 +138,15 @@ fun IrBuilderWithScope.irImplicitCoercionToUnit(arg: IrExpression) =
         IrTypeOperatorCallImpl(startOffset, endOffset, context.builtIns.unitType,
                 IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.builtIns.unitType, arg)
 
+@Deprecated("Creates unbound symbol")
 fun IrBuilderWithScope.irGetField(receiver: IrExpression, descriptor: PropertyDescriptor) =
         IrGetFieldImpl(startOffset, endOffset, descriptor, receiver)
 
+@Deprecated("Creates unbound symbol")
 fun IrBuilderWithScope.irSetField(receiver: IrExpression, descriptor: PropertyDescriptor, value: IrExpression) =
         IrSetFieldImpl(startOffset, endOffset, descriptor, receiver, value)
 
+@Deprecated("Creates unbound symbol")
 open class IrBuildingTransformer(private val context: BackendContext) : IrElementTransformerVoid() {
     private var currentBuilder: IrBuilderWithScope? = null
 

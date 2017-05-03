@@ -162,12 +162,6 @@ private class Declarations {
         declarations.add(createKey(declaration))
     }
 
-    fun addParameterOf(aCatch: IrCatch) {
-        val kind = IrDeclarationKind.VARIABLE
-        val key = DeclarationKey(aCatch.parameter, kind)
-        declarations.add(key)
-    }
-
     fun isAlreadyDeclared(declaration: IrDeclaration): Boolean {
         return createKey(declaration) in declarations
     }
@@ -209,7 +203,10 @@ private class IrValidator(val context: BackendContext, performHeavyValidations: 
 
     private fun recordDeclaration(declaration: IrDeclaration) {
         if (foundDeclarations.isAlreadyDeclared(declaration)) {
-            error(declaration, "redeclaration")
+            if (declaration.descriptor !is ReceiverParameterDescriptor && declaration !is IrTypeParameter) {
+                // TODO: remove the check.
+                error(declaration, "redeclaration")
+            }
         } else {
             foundDeclarations.add(declaration)
         }
@@ -223,10 +220,5 @@ private class IrValidator(val context: BackendContext, performHeavyValidations: 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
         // Do not treat anonymous initializers as declarations, because they are not unique.
         super.visitDeclaration(declaration)
-    }
-
-    override fun visitCatch(aCatch: IrCatch) {
-        foundDeclarations.addParameterOf(aCatch)
-        super.visitCatch(aCatch)
     }
 }

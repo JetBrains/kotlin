@@ -278,6 +278,6 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
 
 private fun IrBuilderWithScope.irConstInt(value: Int): IrConst<Int> = IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, value)
 private fun IrBuilderWithScope.irBlock(type: KotlinType): IrBlock = IrBlockImpl(startOffset, endOffset, type)
-private fun IrBuilderWithScope.irCall(descriptor: CallableDescriptor, typeArguments: Map<TypeParameterDescriptor, KotlinType>?): IrCall = IrCallImpl(startOffset, endOffset, descriptor, typeArguments)
+private fun IrBuilderWithScope.irCall(descriptor: FunctionDescriptor, typeArguments: Map<TypeParameterDescriptor, KotlinType>?): IrCall = IrCallImpl(startOffset, endOffset, descriptor, typeArguments)
 private val IrBuilderWithScope.kIntZero get() = irConstInt(0)
 private val IrBuilderWithScope.kIntOne get() = irConstInt(1)

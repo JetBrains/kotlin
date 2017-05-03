@@ -178,7 +178,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                         receiverType = receiverTypes.firstOrNull(),
                         parameterTypes = if (receiverTypes.size < 2) listOf() else listOf(receiverTypes[1]),
                         returnType = returnType)
-                IrCallableReferenceImpl(startOffset, endOffset, getterKFunctionType, getter, null).apply {
+                IrFunctionReferenceImpl(startOffset, endOffset, getterKFunctionType, getter, null).apply {
                     dispatchReceiver = expression.dispatchReceiver
                     extensionReceiver = expression.extensionReceiver
                 }
@@ -193,7 +193,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                         receiverType = receiverTypes.firstOrNull(),
                         parameterTypes = if (receiverTypes.size < 2) listOf(returnType) else listOf(receiverTypes[1], returnType),
                         returnType = context.builtIns.unitType)
-                IrCallableReferenceImpl(startOffset, endOffset, setterKFunctionType, it, null).apply {
+                IrFunctionReferenceImpl(startOffset, endOffset, setterKFunctionType, it, null).apply {
                     dispatchReceiver = expression.dispatchReceiver
                     extensionReceiver = expression.extensionReceiver
                 }

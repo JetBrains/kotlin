@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.getDefault
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid

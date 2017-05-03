@@ -586,7 +586,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
         using(ClassScope(declaration)) {
             debugClassDeclaration(declaration) {
-                declaration.acceptChildrenVoid(this)
+                declaration.declarations.forEach {
+                    it.acceptVoid(this)
+                }
             }
         }
     }

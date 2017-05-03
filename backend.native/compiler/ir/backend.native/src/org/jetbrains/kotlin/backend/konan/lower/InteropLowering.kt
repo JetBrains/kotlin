@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallableReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -309,7 +309,7 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                     }
                 }
 
-                IrCallableReferenceImpl(
+                IrFunctionReferenceImpl(
                         builder.startOffset, builder.endOffset,
                         expression.type,
                         target,
@@ -387,8 +387,8 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
         reportError("Type $this is not supported in callback signature")
     }
 
-    private fun unwrapStaticFunctionArgument(argument: IrExpression): IrCallableReference? {
-        if (argument is IrCallableReference) {
+    private fun unwrapStaticFunctionArgument(argument: IrExpression): IrFunctionReference? {
+        if (argument is IrFunctionReference) {
             return argument
         }
 
@@ -413,7 +413,7 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
 
         // 3. Second statement is IrCallableReference:
 
-        return argument.statements.last() as? IrCallableReference
+        return argument.statements.last() as? IrFunctionReference
     }
 
     private fun IrCall.getSingleTypeArgument(): KotlinType {

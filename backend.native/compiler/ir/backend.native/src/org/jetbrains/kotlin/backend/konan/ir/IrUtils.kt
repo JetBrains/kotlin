@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
@@ -104,7 +105,9 @@ internal fun ClassDescriptor.createSimpleDelegatingConstructor(superConstructorD
                     IrInstanceInitializerCallImpl(startOffset, endOffset, this)
             )
     )
-    return IrConstructorImpl(startOffset, endOffset, origin, constructorDescriptor, body)
+    return IrConstructorImpl(startOffset, endOffset, origin, constructorDescriptor, body).apply {
+        createParameterDeclarations()
+    }
 }
 
 internal fun Context.createArrayOfExpression(arrayElementType: KotlinType,

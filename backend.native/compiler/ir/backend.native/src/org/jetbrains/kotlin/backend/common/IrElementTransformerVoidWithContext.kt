@@ -31,7 +31,7 @@ abstract internal class IrElementTransformerVoidWithContext : IrElementTransform
     private val scopeStack = mutableListOf<ScopeWithIr>()
 
     override final fun visitFile(declaration: IrFile): IrFile {
-        scopeStack.push(ScopeWithIr(Scope(declaration.packageFragmentDescriptor), declaration))
+        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
         val result = visitFileNew(declaration)
         scopeStack.pop()
         return result

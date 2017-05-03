@@ -264,7 +264,7 @@ class DumpIrTreeWithDescriptorsVisitor(out: Appendable): IrElementVisitor<Unit, 
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: String) {
         declaration.dumpLabeledElementWith(data) {
-            declaration.initializerExpression.accept(this, "init")
+            declaration.initializerExpression?.accept(this, "init")
             declaration.correspondingClass?.accept(this, "class")
         }
     }

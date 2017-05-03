@@ -35,16 +35,14 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -141,7 +139,7 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
                     + IrDelegatingConstructorCallImpl(
                             startOffset = irFunction.startOffset,
                             endOffset   = irFunction.endOffset,
-                            descriptor  = functionDescriptor
+                            constructorDescriptor = functionDescriptor
                     ).apply {
                         params.forEachIndexed { i, variable ->
                             putValueArgument(i, irGet(variable))
@@ -164,12 +162,9 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
                     })
                 }
             }
-            // Replace default argument initializers with empty composites.
-            functionDescriptor.valueParameters.forEach {
-                if (it.declaresDefaultValue()) {
-                    irFunction.putDefault(it, IrExpressionBodyImpl(irFunction.startOffset, irFunction.endOffset,
-                            IrCompositeImpl(irFunction.startOffset, irFunction.startOffset, it.type)))
-                }
+            // Remove default argument initializers.
+            irFunction.valueParameters.forEach {
+                it.defaultValue = null
             }
             return if (functionDescriptor is ClassConstructorDescriptor)
                       listOf(irFunction, IrConstructorImpl(
@@ -177,14 +172,14 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
                               endOffset   = irFunction.endOffset,
                               descriptor  = descriptor as ClassConstructorDescriptor,
                               origin      = DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER,
-                              body        = body))
+                              body        = body).apply { createParameterDeclarations() })
                    else
                       listOf(irFunction, IrFunctionImpl(
                               startOffset = irFunction.startOffset,
                               endOffset   = irFunction.endOffset,
                               descriptor  = descriptor,
                               origin      = DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER,
-                              body        = body))
+                              body        = body).apply { createParameterDeclarations() })
         }
         return listOf(irFunction)
     }
@@ -246,7 +241,7 @@ class DefaultParameterInjector internal constructor(val context: Context): BodyL
                 return IrDelegatingConstructorCallImpl(
                         startOffset = expression.startOffset,
                         endOffset   = expression.endOffset,
-                        descriptor  = descriptorForCall as ClassConstructorDescriptor)
+                        constructorDescriptor = descriptorForCall as ClassConstructorDescriptor)
                             .apply {
                                 params.forEach {
                                     log("call::params@${it.first.index}/${it.first.name.asString()}: ${ir2string(it.second)}")
@@ -273,7 +268,7 @@ class DefaultParameterInjector internal constructor(val context: Context): BodyL
                 return IrCallImpl(
                         startOffset   = expression.startOffset,
                         endOffset     = expression.endOffset,
-                        descriptor    = descriptor,
+                        calleeDescriptor = descriptor,
                         typeArguments = expression.descriptor.typeParameters.map{it to (expression.getTypeArgument(it) ?: it.defaultType) }.toMap())
                         .apply {
                             params.forEach {

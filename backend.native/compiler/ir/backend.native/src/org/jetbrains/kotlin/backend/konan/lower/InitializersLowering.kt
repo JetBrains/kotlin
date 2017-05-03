@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -112,6 +113,9 @@ internal class InitializersLowering(val context: Context) : ClassLoweringPass {
             val endOffset = irClass.endOffset
             val initializer = IrFunctionImpl(startOffset, endOffset, DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER,
                     initializerMethodDescriptor, IrBlockBodyImpl(startOffset, endOffset, initializers))
+
+            initializer.createParameterDeclarations()
+
             irClass.declarations.add(initializer)
 
             return initializerMethodDescriptor
