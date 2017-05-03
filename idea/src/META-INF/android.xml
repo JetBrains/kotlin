@@ -102,6 +102,10 @@
         <highlighterExtension implementation="org.jetbrains.kotlin.android.AndroidHighlighterExtension"/>
     </extensions>
 
+    <extensions defaultExtensionNs="com.android.tools.idea">
+        <npw.template.convertJavaToKotlinProvider implementation="org.jetbrains.kotlin.android.ConvertJavaToKotlinProviderImpl"/>
+    </extensions>
+
     <extensions defaultExtensionNs="org.jetbrains.android">
         <androidLintQuickFixProvider implementation="org.jetbrains.kotlin.android.quickfix.KotlinAndroidQuickFixProvider" />
     </extensions>
