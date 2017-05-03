@@ -19,9 +19,9 @@ FILE /variableAsFunctionCall.kt
     VALUE_PARAMETER value-parameter f: kotlin.String.() -> kotlin.Unit
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(String.() -> Unit): Unit'
-        CALL 'invoke() on String: Unit' type=kotlin.Unit origin=INVOKE
+        CALL 'invoke(String): Unit' type=kotlin.Unit origin=INVOKE
           $this: GET_VAR 'value-parameter f: String.() -> Unit' type=kotlin.String.() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
-          $receiver: CONST String type=kotlin.String value='hello'
+          p1: CONST String type=kotlin.String value='hello'
   FUN public fun test3(): kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(): String'

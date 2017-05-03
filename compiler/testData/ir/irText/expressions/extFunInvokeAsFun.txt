@@ -12,6 +12,6 @@ FILE /extFunInvokeAsFun.kt
     VALUE_PARAMETER value-parameter block: kotlin.Any?.() -> kotlin.Unit
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='with2(Any?, Any?.() -> Unit): Unit'
-        CALL 'invoke() on Any?: Unit' type=kotlin.Unit origin=INVOKE
+        CALL 'invoke(Any?): Unit' type=kotlin.Unit origin=INVOKE
           $this: GET_VAR 'value-parameter block: Any?.() -> Unit' type=kotlin.Any?.() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
-          $receiver: GET_VAR 'value-parameter receiver: Any?' type=kotlin.Any? origin=null
+          p1: GET_VAR 'value-parameter receiver: Any?' type=kotlin.Any? origin=null

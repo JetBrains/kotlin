@@ -27,16 +27,19 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class CallBuilder(
         val original: ResolvedCall<*>,
-        val descriptor: CallableDescriptor
+        val descriptor: CallableDescriptor,
+        val isExtensionInvokeCall: Boolean = false
 ) {
     var superQualifier: ClassDescriptor? = null
 
     lateinit var callReceiver: CallReceiver
 
+    private val parametersOffset = if (isExtensionInvokeCall) 1 else 0
+
     val irValueArgumentsByIndex = arrayOfNulls<IrExpression>(descriptor.valueParameters.size)
 
     fun getValueArgument(valueParameterDescriptor: ValueParameterDescriptor) =
-            irValueArgumentsByIndex[valueParameterDescriptor.index]
+            irValueArgumentsByIndex[valueParameterDescriptor.index + parametersOffset]
 }
 
 val CallBuilder.argumentsCount: Int get() =

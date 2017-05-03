@@ -16,12 +16,11 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.lang.AssertionError
 
 fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, receiver: ReceiverValue?): IntermediateValue? =
@@ -46,7 +46,7 @@ fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, recei
 fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: ReceiverValue): IntermediateValue =
         generateReceiver(ktDefaultElement.startOffset, ktDefaultElement.endOffset, receiver)
 
-fun StatementGenerator.generateReceiver(startOffset: Int, endOffset: Int, receiver: ReceiverValue): IntermediateValue =
+fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffset: Int, receiver: ReceiverValue): IntermediateValue =
         if (receiver is TransientReceiver)
             TransientReceiverValue(receiver.type)
         else generateDelegatedValue(receiver.type) {
@@ -54,9 +54,9 @@ fun StatementGenerator.generateReceiver(startOffset: Int, endOffset: Int, receiv
                 is ImplicitClassReceiver -> {
                     val receiverClassDescriptor = receiver.classDescriptor
                     if (shouldGenerateReceiverAsSingletonReference(receiverClassDescriptor))
-                        generateSingletonReference(receiverClassDescriptor, startOffset, endOffset, receiver.type)
+                        generateSingletonReference(receiverClassDescriptor, defaultStartOffset, defaultEndOffset, receiver.type)
                     else
-                        IrGetValueImpl(startOffset, endOffset,
+                        IrGetValueImpl(defaultStartOffset, defaultEndOffset,
                                        context.symbolTable.referenceValueParameter(receiverClassDescriptor.thisAsReceiverParameter))
                 }
                 is ThisClassReceiver ->
@@ -69,7 +69,7 @@ fun StatementGenerator.generateReceiver(startOffset: Int, endOffset: Int, receiv
                     IrGetObjectValueImpl(receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
                                          context.symbolTable.referenceClass(receiver.classQualifier.descriptor as ClassDescriptor))
                 is ExtensionReceiver ->
-                    IrGetValueImpl(startOffset, startOffset,
+                    IrGetValueImpl(defaultStartOffset, defaultStartOffset,
                                    context.symbolTable.referenceValueParameter(receiver.declarationDescriptor.extensionReceiverParameter!!))
                 else ->
                     TODO("Receiver: ${receiver::class.java.simpleName}")
@@ -228,9 +228,70 @@ fun Generator.getSuperQualifier(resolvedCall: ResolvedCall<*>): ClassDescriptor?
 }
 
 fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): CallBuilder {
+    if (resolvedCall.isExtensionInvokeCall()) {
+        return pregenerateExtensionInvokeCall(resolvedCall)
+    }
+
     val call = pregenerateCallWithReceivers(resolvedCall)
     pregenerateValueArguments(call, resolvedCall)
     return call
+}
+
+fun StatementGenerator.pregenerateExtensionInvokeCall(resolvedCall: ResolvedCall<*>): CallBuilder {
+    val extensionInvoke = resolvedCall.resultingDescriptor
+    val functionNClass = extensionInvoke.containingDeclaration as? ClassDescriptor ?:
+                         throw AssertionError("'invoke' should be a class member: $extensionInvoke")
+    val unsubstitutedPlainInvokes = functionNClass.unsubstitutedMemberScope.getContributedFunctions(extensionInvoke.name, NoLookupLocation.FROM_BACKEND)
+    val unsubstitutedPlainInvoke = unsubstitutedPlainInvokes.singleOrNull() ?:
+                                   throw AssertionError("There should be a single 'invoke' in FunctionN class: $unsubstitutedPlainInvokes")
+
+    val expectedValueParametersCount = extensionInvoke.valueParameters.size + 1
+    assert(unsubstitutedPlainInvoke.valueParameters.size == expectedValueParametersCount) {
+        "Plain 'invoke' should have $expectedValueParametersCount value parameters, got ${unsubstitutedPlainInvoke.valueParameters}"
+    }
+
+    val functionNType = extensionInvoke.dispatchReceiverParameter!!.type
+    val plainInvoke = unsubstitutedPlainInvoke.substitute(TypeSubstitutor.create(functionNType)) ?:
+                      throw AssertionError("Substitution failed for $unsubstitutedPlainInvoke, type=$functionNType")
+
+    val ktCallElement = resolvedCall.call.callElement
+
+    val call = CallBuilder(resolvedCall, plainInvoke, isExtensionInvokeCall = true)
+
+    val functionReceiverValue = run {
+        val dispatchReceiver = resolvedCall.dispatchReceiver ?:
+                               throw AssertionError("Extension 'invoke' call should have a dispatch receiver")
+        generateReceiver(ktCallElement, dispatchReceiver)
+    }
+
+    val extensionInvokeReceiverValue = run {
+        val extensionReceiver = resolvedCall.extensionReceiver ?:
+                                throw AssertionError("Extension 'invoke' call should have an extension receiver")
+        generateReceiver(ktCallElement, extensionReceiver)
+    }
+
+    call.callReceiver =
+            if (resolvedCall.call.isSafeCall())
+                SafeExtensionInvokeCallReceiver(this, ktCallElement.startOffset, ktCallElement.endOffset,
+                                                call, functionReceiverValue, extensionInvokeReceiverValue)
+            else
+                ExtensionInvokeCallReceiver(call, functionReceiverValue, extensionInvokeReceiverValue)
+
+    call.irValueArgumentsByIndex[0] = null
+    resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, valueArgument ->
+        val valueParameter = call.descriptor.valueParameters[index]
+        call.irValueArgumentsByIndex[index + 1] = generateValueArgument(valueArgument, valueParameter)
+    }
+
+    return call
+}
+
+private fun ResolvedCall<*>.isExtensionInvokeCall(): Boolean {
+    val callee = resultingDescriptor as? SimpleFunctionDescriptor ?: return false
+    if (callee.name.asString() != "invoke") return false
+    val dispatchReceiverType = callee.dispatchReceiverParameter?.type ?: return false
+    if (!dispatchReceiverType.isBuiltinFunctionalType) return false
+    return extensionReceiver != null
 }
 
 fun getTypeArguments(resolvedCall: ResolvedCall<*>?): Map<TypeParameterDescriptor, KotlinType>? {
