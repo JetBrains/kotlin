@@ -81,7 +81,7 @@ fun <T : Any> mapType(
         )
     }
 
-    mapBuiltInType(kotlinType, factory, typeMappingConfiguration)?.let { builtInType ->
+    mapBuiltInType(kotlinType, factory, mode, typeMappingConfiguration)?.let { builtInType ->
         val jvmType = factory.boxTypeIfNeeded(builtInType, mode.needPrimitiveBoxing)
         writeGenericType(kotlinType, jvmType, mode)
         return jvmType
@@ -186,6 +186,7 @@ fun hasVoidReturnType(descriptor: CallableDescriptor): Boolean {
 private fun <T : Any> mapBuiltInType(
         type: KotlinType,
         typeFactory: JvmTypeFactory<T>,
+        mode: TypeMappingMode,
         typeMappingConfiguration: TypeMappingConfiguration<T>
 ): T? {
     val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
@@ -211,6 +212,8 @@ private fun <T : Any> mapBuiltInType(
 
     val classId = JavaToKotlinClassMap.mapKotlinToJava(fqName)
     if (classId != null) {
+        if (!mode.kotlinCollectionsToJavaCollections && JavaToKotlinClassMap.mutabilityMappings.any { it.javaClass == classId }) return null
+
         return typeFactory.createObjectType(JvmClassName.byClassId(classId, typeMappingConfiguration).internalName)
     }
 

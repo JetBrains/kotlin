@@ -236,6 +236,18 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/ideRegression"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("ImplementingMap.kt")
+        public void testImplementingMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/ideRegression/ImplementingMap.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImplementingMutableSet.kt")
+        public void testImplementingMutableSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/ideRegression/ImplementingMutableSet.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InheritingInterfaceDefaultImpls.kt")
         public void testInheritingInterfaceDefaultImpls() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/ideRegression/InheritingInterfaceDefaultImpls.kt");

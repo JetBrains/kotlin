@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.ClassFileViewProvider
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
+import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsClassImpl
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.search.GlobalSearchScope
@@ -30,18 +27,12 @@ import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
-import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.ClsJavaStubByVirtualFileCache
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IDELightClassContexts
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.LazyLightClassDataHolder
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.*
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
 import org.jetbrains.kotlin.idea.stubindex.*
@@ -162,11 +153,15 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         }
     }
 
-    override fun getMultifilePartClasses(partFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        if (partFqName.isRoot) return emptyList()
+    override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
+        if (fqName.isRoot) return emptyList()
 
-        val facadeKtFiles = StaticFacadeIndexUtil.getMultifileClassForPart(partFqName, scope, project)
-        val partShortName = partFqName.shortName().asString()
+        return findPackageParts(fqName, scope) + findPlatformWrapper(fqName, scope)
+    }
+
+    private fun findPackageParts(fqName: FqName, scope: GlobalSearchScope): List<KtLightClassForDecompiledDeclaration> {
+        val facadeKtFiles = StaticFacadeIndexUtil.getMultifileClassForPart(fqName, scope, project)
+        val partShortName = fqName.shortName().asString()
         val partClassFileShortName = partShortName + ".class"
 
         return facadeKtFiles.mapNotNull { facadeKtFile ->
@@ -180,6 +175,10 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                 null
             }
         }
+    }
+
+    private fun findPlatformWrapper(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
+        return platformMutabilityWrapper(fqName) { JavaPsiFacade.getInstance(project).findClass(it, scope) }?.let { listOf(it) }.orEmpty()
     }
 
     fun createLightClassForFileFacade(

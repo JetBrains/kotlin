@@ -26,6 +26,7 @@ class TypeMappingMode private constructor(
         val skipDeclarationSiteWildcards: Boolean = false,
         val skipDeclarationSiteWildcardsIfPossible: Boolean = false,
         private val genericArgumentMode: TypeMappingMode? = null,
+        val kotlinCollectionsToJavaCollections: Boolean = true,
         private val genericContravariantArgumentMode: TypeMappingMode? = genericArgumentMode,
         private val genericInvariantArgumentMode: TypeMappingMode? = genericArgumentMode
 ) {
@@ -48,6 +49,13 @@ class TypeMappingMode private constructor(
          */
         @JvmField
         val SUPER_TYPE = TypeMappingMode(skipDeclarationSiteWildcards = true, genericArgumentMode = GENERIC_ARGUMENT)
+
+        @JvmField
+        val SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS = TypeMappingMode(
+                skipDeclarationSiteWildcards = true,
+                genericArgumentMode = GENERIC_ARGUMENT,
+                kotlinCollectionsToJavaCollections = false
+        )
 
         /**
          * kotlin.reflect.KClass mapped to java.lang.Class

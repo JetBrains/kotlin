@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -306,15 +307,24 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         for (KotlinType supertype : descriptor.getTypeConstructor().getSupertypes()) {
             if (isJvmInterface(supertype.getConstructor().getDeclarationDescriptor())) {
+                FqName kotlinInterfaceName = DescriptorUtils.getFqName(supertype.getConstructor().getDeclarationDescriptor()).toSafe();
+
                 sw.writeInterface();
                 Type jvmInterfaceType = typeMapper.mapSupertype(supertype, sw);
                 sw.writeInterfaceEnd();
                 String jvmInterfaceInternalName = jvmInterfaceType.getInternalName();
+
                 superInterfaces.add(jvmInterfaceInternalName);
 
-                FqName kotlinInterfaceName = DescriptorUtils.getFqName(supertype.getConstructor().getDeclarationDescriptor()).toSafe();
                 String kotlinMarkerInterfaceInternalName = KOTLIN_MARKER_INTERFACES.get(kotlinInterfaceName);
                 if (kotlinMarkerInterfaceInternalName != null) {
+                    if (typeMapper.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) {
+                        sw.writeInterface();
+                        Type kotlinCollectionType = typeMapper.mapType(supertype, sw, TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS);
+                        sw.writeInterfaceEnd();
+                        superInterfaces.add(kotlinCollectionType.getInternalName());
+                    }
+
                     kotlinMarkerInterfaces.add(kotlinMarkerInterfaceInternalName);
                 }
             }
@@ -357,9 +367,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateFunctionsForDataClasses();
 
-        new CollectionStubMethodGenerator(typeMapper, descriptor).generate(functionCodegen, v);
+        if (state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
+            new CollectionStubMethodGenerator(typeMapper, descriptor).generate(functionCodegen, v);
 
-        generateToArray();
+            generateToArray();
+        }
+
 
         if (context.closure != null)
             genClosureFields(context.closure, v, typeMapper);
