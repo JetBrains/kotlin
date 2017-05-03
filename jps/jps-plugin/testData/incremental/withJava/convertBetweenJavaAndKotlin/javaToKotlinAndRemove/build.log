@@ -6,15 +6,6 @@ End of files
 Compiling files:
   src/TheClass.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Cleaning output files:
-  out/production/module/META-INF/module.kotlin_module
-  out/production/module/other/OtherKt.class
-End of files
-Compiling files:
-  src/other.kt
-End of files
 Exit code: OK
 ------------------------------------------
 
@@ -24,15 +15,6 @@ Cleaning output files:
   out/production/module/TheClass.class
 End of files
 Compiling files:
-End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Cleaning output files:
-  out/production/module/META-INF/module.kotlin_module
-  out/production/module/other/OtherKt.class
-End of files
-Compiling files:
-  src/other.kt
 End of files
 Exit code: OK
 ------------------------------------------
