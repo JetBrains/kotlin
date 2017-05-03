@@ -50,7 +50,7 @@ private fun String.method(name: String, parameters: String, returnType: String) 
                 SignatureBuildingComponents.signature(this@method, "$name($parameters)$returnType"))
 
 object BuiltinSpecialProperties {
-    private val PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP = mapOf(
+    val PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP = mapOf(
             BUILTIN_NAMES._enum.childSafe("name") to Name.identifier("name"),
             BUILTIN_NAMES._enum.childSafe("ordinal") to Name.identifier("ordinal"),
             BUILTIN_NAMES.collection.child("size") to Name.identifier("size"),
@@ -99,6 +99,7 @@ object BuiltinMethodsWithSpecialGenericSignature {
     ).map { "java/util/Collection".method(it, "Ljava/util/Collection;", JvmPrimitiveType.BOOLEAN.desc) }
 
     private val ERASED_COLLECTION_PARAMETER_SIGNATURES = ERASED_COLLECTION_PARAMETER_NAME_AND_SIGNATURES.map { it.signature }
+    val ERASED_COLLECTION_PARAMETER_NAMES = ERASED_COLLECTION_PARAMETER_NAME_AND_SIGNATURES.map { it.name.asString() }
 
     enum class TypeSafeBarrierDescription(val defaultValue: Any?) {
         NULL(null), INDEX(-1), FALSE(false),
@@ -144,7 +145,7 @@ object BuiltinMethodsWithSpecialGenericSignature {
 
     private val SIGNATURE_TO_DEFAULT_VALUES_MAP = GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP.mapKeys { it.key.signature }
     private val ERASED_VALUE_PARAMETERS_SHORT_NAMES: Set<Name>
-    private val ERASED_VALUE_PARAMETERS_SIGNATURES: Set<String>
+    val ERASED_VALUE_PARAMETERS_SIGNATURES: Set<String>
 
     init {
         val allMethods = GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP.keys + ERASED_COLLECTION_PARAMETER_NAME_AND_SIGNATURES

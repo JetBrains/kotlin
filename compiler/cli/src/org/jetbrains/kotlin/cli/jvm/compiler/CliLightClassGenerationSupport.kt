@@ -163,7 +163,7 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
                 KtLightClassForFacade.createForFacade(psiManager, facadeFqName, scope, filesForFacade))
     }
 
-    override fun getMultifilePartClasses(partFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
+    override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
         //
         return emptyList()
     }

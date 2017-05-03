@@ -69,7 +69,7 @@ abstract class LightClassGenerationSupport {
 
     abstract fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
 
-    abstract fun getMultifilePartClasses(partFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
+    abstract fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
 
     abstract fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
 

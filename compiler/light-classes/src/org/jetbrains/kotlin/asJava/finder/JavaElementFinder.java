@@ -92,7 +92,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         findClassesAndObjects(qualifiedName, scope, answer);
 
         answer.addAll(lightClassGenerationSupport.getFacadeClasses(qualifiedName, scope));
-        answer.addAll(lightClassGenerationSupport.getMultifilePartClasses(qualifiedName, scope));
+        answer.addAll(lightClassGenerationSupport.getKotlinInternalClasses(qualifiedName, scope));
 
         return sortByClasspath(answer, scope).toArray(new PsiClass[answer.size()]);
     }

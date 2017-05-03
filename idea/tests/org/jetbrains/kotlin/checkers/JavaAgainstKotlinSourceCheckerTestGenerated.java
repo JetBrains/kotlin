@@ -92,6 +92,18 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
             doTest(fileName);
         }
 
+        @TestMetadata("ExtendingMutableInterfaces.kt")
+        public void testExtendingMutableInterfaces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendingMutableInterfaces.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtendingReadOnlyInterfaces.kt")
+        public void testExtendingReadOnlyInterfaces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendingReadOnlyInterfaces.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("FunctionInNestedClassInDataFlowInspection.kt")
         public void testFunctionInNestedClassInDataFlowInspection() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/FunctionInNestedClassInDataFlowInspection.kt");
@@ -179,6 +191,18 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
         @TestMetadata("UsingKotlinPackageDeclarations.kt")
         public void testUsingKotlinPackageDeclarations() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/UsingKotlinPackageDeclarations.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("UsingMutableInterfaces.kt")
+        public void testUsingMutableInterfaces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/UsingMutableInterfaces.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("UsingReadOnlyInterfaces.kt")
+        public void testUsingReadOnlyInterfaces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/UsingReadOnlyInterfaces.kt");
             doTest(fileName);
         }
     }
