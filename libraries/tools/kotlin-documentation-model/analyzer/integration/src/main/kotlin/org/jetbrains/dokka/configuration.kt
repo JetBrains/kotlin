@@ -1,5 +1,7 @@
 package org.jetbrains.dokka
 
+import java.net.URL
+
 
 interface DokkaConfiguration {
     val moduleName: String
@@ -36,6 +38,11 @@ interface DokkaConfiguration {
         val includeNonPublic: Boolean
         val reportUndocumented: Boolean
         val skipDeprecated: Boolean
+    }
+
+    interface ExternalDocumentationLink {
+        val url: URL
+        val packageListUrl: URL
     }
 }
 
