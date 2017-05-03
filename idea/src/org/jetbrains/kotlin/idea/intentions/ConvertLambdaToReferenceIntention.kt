@@ -40,12 +40,7 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-class ConvertLambdaToReferenceInspection : IntentionBasedInspection<KtLambdaExpression>(
-        ConvertLambdaToReferenceIntention::class,
-        { it -> ConvertLambdaToReferenceIntention.shouldSuggestToConvert(it) }
-) {
-    override fun inspectionTarget(element: KtLambdaExpression) = element.bodyExpression?.statements?.singleOrNull()
-}
+class ConvertLambdaToReferenceInspection : IntentionBasedInspection<KtLambdaExpression>(ConvertLambdaToReferenceIntention::class)
 
 open class ConvertLambdaToReferenceIntention(text: String) :
         SelfTargetingOffsetIndependentIntention<KtLambdaExpression>(KtLambdaExpression::class.java, text) {
@@ -219,10 +214,6 @@ open class ConvertLambdaToReferenceIntention(text: String) :
     }
 
     companion object {
-        internal fun shouldSuggestToConvert(element: KtLambdaExpression): Boolean {
-            val referenceName = buildReferenceText(lambdaExpression = element, shortTypes = true) ?: return false
-            return referenceName.length < element.text.length
-        }
 
         private fun buildReferenceText(lambdaExpression: KtLambdaExpression, shortTypes: Boolean): String? {
             val singleStatement = lambdaExpression.singleStatementOrNull()
