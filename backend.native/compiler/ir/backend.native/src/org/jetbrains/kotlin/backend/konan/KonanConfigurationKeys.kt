@@ -37,6 +37,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("enable backend phases")
         val ENTRY: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("fully qualified main() name")
+        val GENERATE_TEST_RUNNER: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("generate test runner") 
         val INCLUDED_BINARY_FILES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("included binary file paths")
         val LIBRARY_FILES: CompilerConfigurationKey<List<String>> 

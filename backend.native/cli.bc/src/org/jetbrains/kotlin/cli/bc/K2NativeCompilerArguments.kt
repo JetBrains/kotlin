@@ -24,11 +24,14 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     // Prepend them with a single dash.
     // Keep the list lexically sorted.
 
+    @Argument(value = "-enable_assertions", shortName = "-ea", description = "Enable runtime assertions in generated code")
+    var enableAssertions: Boolean = false
+
     @Argument(value = "-g", description = "Enable emitting debug information")
     var debug: Boolean = false
 
-    @Argument(value = "-enable_assertions", shortName = "-ea", description = "Enable runtime assertions in generated code")
-    var enableAssertions: Boolean = false
+    @Argument(value = "-generate_test_runner", shortName = "-tr", description = "Produce a runner for unit tests")
+    var generateTestRunner: Boolean = false
 
     @Argument(value = "-includeBinary", shortName = "-ib", valueDescription = "<path>", description = "Pack external binary within the klib")
     var includeBinaries: Array<String>? = null

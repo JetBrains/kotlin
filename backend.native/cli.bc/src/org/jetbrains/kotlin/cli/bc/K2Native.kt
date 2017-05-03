@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -132,6 +133,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(TIME_PHASES, arguments.timePhases)
 
                 put(ENABLE_ASSERTIONS, arguments.enableAssertions)
+
+                put(GENERATE_TEST_RUNNER, arguments.generateTestRunner)
 
                 // We need to download dependencies only if we use them ( = there are files to compile).
                 put(CHECK_DEPENDENCIES, if (configuration.kotlinSourceRoots.isNotEmpty()) {

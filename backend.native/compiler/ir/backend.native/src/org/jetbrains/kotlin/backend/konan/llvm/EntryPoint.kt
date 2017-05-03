@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
+import org.jetbrains.kotlin.backend.konan.report
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -36,7 +38,18 @@ internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
     val config = context.config.configuration
     if (config.get(KonanConfigKeys.PRODUCE) != CompilerOutputKind.PROGRAM) return null
 
-    val entryPoint = FqName(config.get(KonanConfigKeys.ENTRY) ?: defaultEntryName)
+    val userEntryName = config.get(KonanConfigKeys.ENTRY)
+    val entryPoint: FqName
+    if (config.getBoolean(KonanConfigKeys.GENERATE_TEST_RUNNER)) {
+        entryPoint = FqName(testEntryName)
+        if (userEntryName != null) {
+            config.report(CompilerMessageSeverity.WARNING,
+                    "Custom entry point is ignored if test runner is generated"
+            )
+        }
+    } else {
+        entryPoint = FqName(userEntryName ?: defaultEntryName)
+    }
 
     val entryName = entryPoint.shortName()
     val packageName = entryPoint.parent()
@@ -57,6 +70,7 @@ internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
 }
 
 private val defaultEntryName = "main"
+private val testEntryName = "konan.test.main"
 
 private val defaultEntryPackage = FqName.ROOT
 

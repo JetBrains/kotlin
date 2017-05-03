@@ -28,6 +28,7 @@ enum class KonanPhase(val description: String,
     /* */ SERIALIZER("Serialize descriptor tree and inline IR bodies"),
     /* */ BACKEND("All backend"),
     /* ... */ LOWER("IR Lowering"),
+    /* ... ... */ TEST_PROCESSOR("Unit test processor"), // TODO: It is not a lowering. Move into a separate phase before lowering?
     /* ... ... */ LOWER_SPECIAL_CALLS("Special calls processing before inlining"),
     /* ... ... */ LOWER_INLINE_CONSTRUCTORS("Inline constructors transformation", LOWER_SPECIAL_CALLS),
     /* ... ... */ LOWER_INLINE("Functions inlining", LOWER_INLINE_CONSTRUCTORS, LOWER_SPECIAL_CALLS),

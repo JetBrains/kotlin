@@ -1950,6 +1950,11 @@ task deserialized_members(type: LinkKonanTest) {
     source = "serialization/deserialize_members.kt"
 }
 
+task testing_smoke(type: RunKonanTest) {
+    source = "testing/smoke.kt"
+    flags = [] // TODO: Add flag to generate test-runner
+}
+
 // Just check that the driver is able to produce runnable binaries.
 task driver0(type: RunDriverKonanTest) {
     goldValue = "Hello, world!\n"
@@ -2121,3 +2126,4 @@ if (isMac()) {
         }
     }
 }
+
