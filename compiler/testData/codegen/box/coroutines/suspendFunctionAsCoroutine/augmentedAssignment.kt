@@ -1,6 +1,7 @@
 // IGNORE_BACKEND: JVM
 // WITH_RUNTIME
 // WITH_COROUTINES
+import helpers.*
 
 // TODO: looks like this is a bug in JVM backend
 import kotlin.coroutines.experimental.*

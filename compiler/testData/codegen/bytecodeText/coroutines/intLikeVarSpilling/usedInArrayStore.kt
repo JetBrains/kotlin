@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+import helpers.*
 // TREAT_AS_ONE_FILE
 // TARGET_BACKEND: JVM
 import kotlin.coroutines.experimental.*

@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+import helpers.*
 // TREAT_AS_ONE_FILE
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
@@ -21,6 +22,6 @@ fun box(): String {
 }
 
 // 2 GETSTATIC kotlin/Unit.INSTANCE
-// 1 GETSTATIC EmptyContinuation.Companion
+// 1 GETSTATIC helpers/EmptyContinuation.Companion
 // 3 GETSTATIC kotlin\/coroutines\/experimental\/EmptyCoroutineContext.INSTANCE
 // 6 GETSTATIC

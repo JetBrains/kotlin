@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+import helpers.*
 // FULL_JDK
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*

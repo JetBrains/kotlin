@@ -1,6 +1,7 @@
 // IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // WITH_COROUTINES
+import helpers.*
 // WITH_REFLECT
 // CHECK_NOT_CALLED: suspendInline_61zpoe$
 // CHECK_NOT_CALLED: suspendInline_6r51u9$

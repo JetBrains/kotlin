@@ -1,8 +1,9 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// MODULE: controller
+// MODULE: controller(support)
 // FILE: controller.kt
 package lib
+import helpers.*
 
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
@@ -17,6 +18,7 @@ class Controller {
 // MODULE: main(controller, support)
 // FILE: main.kt
 import lib.*
+import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 

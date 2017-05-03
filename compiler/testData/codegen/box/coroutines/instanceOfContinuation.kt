@@ -1,6 +1,7 @@
 // IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // WITH_COROUTINES
+import helpers.*
 // WITH_REFLECT
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*

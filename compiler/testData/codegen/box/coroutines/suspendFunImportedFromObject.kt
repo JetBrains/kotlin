@@ -3,6 +3,7 @@
 
 // FILE: stuff.kt
 package stuff
+import helpers.*
 
 import kotlin.coroutines.experimental.intrinsics.*
 
@@ -15,6 +16,7 @@ object Host {
 
 
 // FILE: test.kt
+import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 import stuff.Host.suspendHere
