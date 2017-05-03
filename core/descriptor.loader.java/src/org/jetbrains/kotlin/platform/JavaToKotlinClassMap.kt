@@ -38,6 +38,31 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
     private val mutableToReadOnly = HashMap<FqNameUnsafe, FqName>()
     private val readOnlyToMutable = HashMap<FqNameUnsafe, FqName>()
 
+    // describes mapping for a java class that has separate readOnly and mutable equivalents in Kotlin
+    data class PlatformMutabilityMapping(
+            val javaClass: ClassId,
+            val kotlinReadOnly: ClassId,
+            val kotlinMutable: ClassId
+    )
+
+    private inline fun <reified T> mutabilityMapping(kotlinReadOnly: ClassId, kotlinMutable: FqName): PlatformMutabilityMapping {
+        val mutableClassId = ClassId(kotlinReadOnly.packageFqName, kotlinMutable.tail(kotlinReadOnly.packageFqName), false)
+        return PlatformMutabilityMapping(classId(T::class.java), kotlinReadOnly, mutableClassId)
+    }
+
+    val mutabilityMappings = listOf(
+            mutabilityMapping<Iterable<*>>(ClassId.topLevel(FQ_NAMES.iterable), FQ_NAMES.mutableIterable),
+            mutabilityMapping<Iterator<*>>(ClassId.topLevel(FQ_NAMES.iterator), FQ_NAMES.mutableIterator),
+            mutabilityMapping<Collection<*>>(ClassId.topLevel(FQ_NAMES.collection), FQ_NAMES.mutableCollection),
+            mutabilityMapping<List<*>>(ClassId.topLevel(FQ_NAMES.list), FQ_NAMES.mutableList),
+            mutabilityMapping<Set<*>>(ClassId.topLevel(FQ_NAMES.set), FQ_NAMES.mutableSet),
+            mutabilityMapping<ListIterator<*>>(ClassId.topLevel(FQ_NAMES.listIterator), FQ_NAMES.mutableListIterator),
+            mutabilityMapping<Map<*, *>>(ClassId.topLevel(FQ_NAMES.map), FQ_NAMES.mutableMap),
+            mutabilityMapping<Map.Entry<*, *>>(
+                    ClassId.topLevel(FQ_NAMES.map).createNestedClassId(FQ_NAMES.mapEntry.shortName()), FQ_NAMES.mutableMapEntry
+            )
+    )
+
     init {
         addTopLevel(Any::class.java, FQ_NAMES.any)
         addTopLevel(String::class.java, FQ_NAMES.string)
@@ -49,16 +74,9 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         addTopLevel(Enum::class.java, FQ_NAMES._enum)
         addTopLevel(Annotation::class.java, FQ_NAMES.annotation)
 
-        addMutableReadOnlyPair(Iterable::class.java, ClassId.topLevel(FQ_NAMES.iterable), FQ_NAMES.mutableIterable)
-        addMutableReadOnlyPair(Iterator::class.java, ClassId.topLevel(FQ_NAMES.iterator), FQ_NAMES.mutableIterator)
-        addMutableReadOnlyPair(Collection::class.java, ClassId.topLevel(FQ_NAMES.collection), FQ_NAMES.mutableCollection)
-        addMutableReadOnlyPair(List::class.java, ClassId.topLevel(FQ_NAMES.list), FQ_NAMES.mutableList)
-        addMutableReadOnlyPair(Set::class.java, ClassId.topLevel(FQ_NAMES.set), FQ_NAMES.mutableSet)
-        addMutableReadOnlyPair(ListIterator::class.java, ClassId.topLevel(FQ_NAMES.listIterator), FQ_NAMES.mutableListIterator)
-
-        val mapClassId = ClassId.topLevel(FQ_NAMES.map)
-        addMutableReadOnlyPair(Map::class.java, mapClassId, FQ_NAMES.mutableMap)
-        addMutableReadOnlyPair(Map.Entry::class.java, mapClassId.createNestedClassId(FQ_NAMES.mapEntry.shortName()), FQ_NAMES.mutableMapEntry)
+        for (platformCollection in mutabilityMappings) {
+            addMapping(platformCollection)
+        }
 
         for (jvmType in JvmPrimitiveType.values()) {
             add(ClassId.topLevel(jvmType.wrapperFqName),
@@ -115,19 +133,15 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         return kotlinToJava[kotlinFqName]
     }
 
-    private fun addMutableReadOnlyPair(
-            javaClass: Class<*>,
-            kotlinReadOnlyClassId: ClassId,
-            kotlinMutableFqName: FqName
-    ) {
-        val javaClassId = classId(javaClass)
+    private fun addMapping(platformMutabilityMapping: PlatformMutabilityMapping) {
+        val (javaClassId, readOnlyClassId, mutableClassId) = platformMutabilityMapping
+        add(javaClassId, readOnlyClassId)
+        addKotlinToJava(mutableClassId.asSingleFqName(), javaClassId)
 
-        add(javaClassId, kotlinReadOnlyClassId)
-        addKotlinToJava(kotlinMutableFqName, javaClassId)
-
-        val kotlinReadOnlyFqName = kotlinReadOnlyClassId.asSingleFqName()
-        mutableToReadOnly.put(kotlinMutableFqName.toUnsafe(), kotlinReadOnlyFqName)
-        readOnlyToMutable.put(kotlinReadOnlyFqName.toUnsafe(), kotlinMutableFqName)
+        val readOnlyFqName = readOnlyClassId.asSingleFqName()
+        val mutableFqName = mutableClassId.asSingleFqName()
+        mutableToReadOnly.put(mutableClassId.asSingleFqName().toUnsafe(), readOnlyFqName)
+        readOnlyToMutable.put(readOnlyFqName.toUnsafe(), mutableFqName)
     }
 
     private fun add(javaClassId: ClassId, kotlinClassId: ClassId) {
