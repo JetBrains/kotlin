@@ -55,7 +55,7 @@ object JvmOverridesBackwardCompatibilityHelper : OverridesBackwardCompatibilityH
                         val containingClass = DescriptorUtils.getContainingClass(overriddenDescriptor)
                                               ?: return false
 
-                        if (JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(containingClass.fqNameUnsafe) != null) return true
+                        if (JavaToKotlinClassMap.mapKotlinToJava(containingClass.fqNameUnsafe) != null) return true
                         if (overriddenDescriptor.overriddenDescriptors.isEmpty()) return false
 
                         return isOverridingOnlyDescriptorsThatCanBeImplicitlyOverridden(overriddenDescriptor, visitedDescriptors)

@@ -155,7 +155,7 @@ private fun ClassifierDescriptor.enhanceMutability(qualifiers: JavaTypeQualifier
     if (!position.shouldEnhance()) return this.noChange()
     if (this !is ClassDescriptor) return this.noChange() // mutability is not applicable for type parameters
 
-    val mapping = JavaToKotlinClassMap.INSTANCE
+    val mapping = JavaToKotlinClassMap
 
     when (qualifiers.mutability) {
         READ_ONLY -> {

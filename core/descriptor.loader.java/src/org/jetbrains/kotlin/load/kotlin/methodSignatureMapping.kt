@@ -80,7 +80,7 @@ internal fun CallableDescriptor.computeJvmSignature(): String? = signatures {
 
 internal val ClassDescriptor.internalName: String
     get() {
-        JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqNameSafe.toUnsafe())?.let {
+        JavaToKotlinClassMap.mapKotlinToJava(fqNameSafe.toUnsafe())?.let {
             return JvmClassName.byClassId(it).internalName
         }
 
@@ -89,7 +89,7 @@ internal val ClassDescriptor.internalName: String
 
 internal val ClassId.internalName: String
     get() {
-        return JvmClassName.byClassId(JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(asSingleFqName().toUnsafe()) ?: this).internalName
+        return JvmClassName.byClassId(JavaToKotlinClassMap.mapKotlinToJava(asSingleFqName().toUnsafe()) ?: this).internalName
     }
 
 private fun StringBuilder.appendErasedType(type: KotlinType) {

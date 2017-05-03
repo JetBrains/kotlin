@@ -215,7 +215,7 @@ object SourceNavigationHelper {
     fun getOriginalPsiClassOrCreateLightClass(classOrObject: KtClassOrObject): PsiClass? {
         val fqName = classOrObject.fqName
         if (fqName != null) {
-            val javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName.toUnsafe())
+            val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())
             if (javaClassId != null) {
                 return JavaPsiFacade.getInstance(classOrObject.project).findClass(
                         javaClassId.asSingleFqName().asString(),

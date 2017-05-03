@@ -552,7 +552,7 @@ fun Type.getClassDescriptor(scope: GlobalSearchScope): ClassDescriptor? {
     val jvmName = JvmClassName.byInternalName(internalName).fqNameForClassNameWithoutDollars
 
     // TODO: use the correct built-ins from the module instead of DefaultBuiltIns here
-    JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(jvmName)?.let(
+    JavaToKotlinClassMap.mapJavaToKotlin(jvmName)?.let(
             DefaultBuiltIns.Instance.builtInsModule::findClassAcrossModuleDependencies
     )?.let { return it }
 

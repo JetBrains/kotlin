@@ -55,7 +55,7 @@ private fun KotlinType.extractQualifiers(): JavaTypeQualifiers {
                 asFlexibleType().let { Pair(it.lowerBound, it.upperBound) }
             else Pair(this, this)
 
-    val mapping = JavaToKotlinClassMap.INSTANCE
+    val mapping = JavaToKotlinClassMap
     return JavaTypeQualifiers(
             if (lower.isMarkedNullable) NULLABLE else if (!upper.isMarkedNullable) NOT_NULL else null,
             if (mapping.isReadOnly(lower)) READ_ONLY else if (mapping.isMutable(upper)) MUTABLE else null,

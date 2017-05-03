@@ -56,7 +56,7 @@ open class JvmBuiltInsSettings(
         deferredOwnerModuleDescriptor: () -> ModuleDescriptor,
         isAdditionalBuiltInsFeatureSupported: () -> Boolean
 ) : AdditionalClassPartsProvider, PlatformDependentDeclarationFilter {
-    private val j2kClassMap = JavaToKotlinClassMap.INSTANCE
+    private val j2kClassMap = JavaToKotlinClassMap
 
     private val ownerModuleDescriptor: ModuleDescriptor by lazy(deferredOwnerModuleDescriptor)
     private val isAdditionalBuiltInsFeatureSupported: Boolean by lazy(isAdditionalBuiltInsFeatureSupported)
@@ -326,7 +326,7 @@ open class JvmBuiltInsSettings(
             if (isArrayOrPrimitiveArray(fqName)) {
                 return true
             }
-            val javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName) ?: return false
+            val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(fqName) ?: return false
             val classViaReflection = try {
                 Class.forName(javaClassId.asSingleFqName().asString())
             }
