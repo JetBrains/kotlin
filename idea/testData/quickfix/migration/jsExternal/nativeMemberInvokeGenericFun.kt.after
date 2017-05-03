@@ -5,6 +5,6 @@ external class B {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun <T> B.exp(t: T) {
+inline fun<T> B.exp(t: T) {
     asDynamic()(t)
 }

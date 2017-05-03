@@ -54,6 +54,27 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
     //TODO: local class
 
     override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
+        val (extension, bodyToSelect) = createExtensionCallableAndPrepareBodyToSelect(element)
+
+        editor?.apply {
+            unblockDocument()
+
+            if (bodyToSelect != null) {
+                val range = bodyToSelect!!.textRange
+                moveCaret(range.startOffset, ScrollType.CENTER)
+                selectionModel.setSelection(range.startOffset, range.endOffset)
+            }
+            else {
+                moveCaret(extension.textOffset, ScrollType.CENTER)
+            }
+        }
+    }
+
+    fun convert(element: KtCallableDeclaration): KtCallableDeclaration {
+        return createExtensionCallableAndPrepareBodyToSelect(element).first
+    }
+
+    private fun createExtensionCallableAndPrepareBodyToSelect(element: KtCallableDeclaration): Pair<KtCallableDeclaration, KtExpression?> {
         val descriptor = element.resolveToDescriptor()
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
 
@@ -179,18 +200,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
             }
         }
 
-        editor?.apply {
-            unblockDocument()
-
-            if (bodyToSelect != null) {
-                val range = bodyToSelect!!.textRange
-                moveCaret(range.startOffset, ScrollType.CENTER)
-                selectionModel.setSelection(range.startOffset, range.endOffset)
-            }
-            else {
-                moveCaret(extension.textOffset, ScrollType.CENTER)
-            }
-        }
+        return extension to bodyToSelect
     }
 
     private fun newTypeParameterList(member: KtCallableDeclaration): KtTypeParameterList? {

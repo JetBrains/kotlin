@@ -21,19 +21,16 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.checkAnnotationName
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.core.setReceiverType
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
+import org.jetbrains.kotlin.idea.intentions.declarations.ConvertMemberToExtensionIntention
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
@@ -67,79 +64,25 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
     }
 
     private fun fixNativeClass(containingClass: KtClassOrObject, project: Project, editor: Editor?, file: KtFile) {
-        val membersToFix = containingClass.declarations.filterIsInstance<KtNamedDeclaration>().filter { isMemberDeclaration(it) }. map {
+        val membersToFix = containingClass.declarations.filterIsInstance<KtCallableDeclaration>().filter { isMemberDeclaration(it) }. map {
              it to fetchJsNativeAnnotations(it)
         }.filter {
             it.second.annotations.isNotEmpty()
         }
 
-        var anchor: PsiElement = containingClass
-        membersToFix.forEach { (memberDeclaration, annotations) ->
+        membersToFix.asReversed().forEach { (memberDeclaration, annotations) ->
             if (annotations.nativeAnnotation != null && !annotations.isGetter && !annotations.isSetter && !annotations.isInvoke) {
                 convertNativeAnnotationToJsName(memberDeclaration, annotations)
                 annotations.nativeAnnotation.delete()
             } else {
-                // TODO: find references
-                createExtensionDeclaration(memberDeclaration, project, anchor)?.let { externalDeclaration ->
-                    memberDeclaration.delete()
-                    fixExtensionMemberDeclaration(externalDeclaration, project, null, file)
-                    anchor = externalDeclaration
-                }
+                val externalDeclaration = ConvertMemberToExtensionIntention().convert(memberDeclaration)
+                fixExtensionMemberDeclaration(externalDeclaration, project, null, file)
             }
         }
 
         // make class external
         val classAnnotations = fetchJsNativeAnnotations(containingClass)
         fixAnnotations(containingClass, classAnnotations, null)
-    }
-
-    private fun createExtensionDeclaration(declaration: KtNamedDeclaration, project: Project, anchor: PsiElement): KtNamedDeclaration? {
-        val containingClass = declaration.containingClassOrObject ?: return null
-        val builder = KtPsiFactory.CallableBuilder(if (declaration is KtNamedFunction) KtPsiFactory.CallableBuilder.Target.FUNCTION else KtPsiFactory.CallableBuilder.Target.READ_ONLY_PROPERTY)
-
-        // modifiers
-        declaration.annotationEntries.forEach {
-            builder.modifier(it.text)
-        }
-
-        // type parameters
-        builder.typeParams(containingClass.typeParameters.union((declaration as? KtTypeParameterListOwner)?.typeParameters ?: emptyList()).map { it.text })
-
-        // receiver
-        builder.receiver(containingClass.name ?: "XXX")
-
-        // name
-        builder.name(declaration.nameAsSafeName.identifier)
-
-        // parameters
-        (declaration as? KtCallableDeclaration)?.valueParameters?.forEach {
-            builder.param(it.nameAsSafeName.identifier, it.typeReference?.text ?: "XXX", it.defaultValue?.text)
-        }
-
-        // return type
-        val returnTypeReference = declaration.getReturnTypeReference()
-        if (returnTypeReference != null)
-            builder.returnType(returnTypeReference.text)
-        else
-            builder.noReturnType()
-
-        // body
-        (declaration as? KtDeclarationWithBody)?.bodyExpression?.let {
-            builder.blockBody(it.text)
-        }
-
-        // Create function etc
-        var newFunctionText = builder.asString()
-        val psiFactory = KtPsiFactory(project)
-        val newFunction = psiFactory.createFunction(newFunctionText)
-
-        val parent = anchor.parent
-        val result = parent.addAfter(newFunction, anchor) as KtCallableDeclaration
-        parent.addBefore(psiFactory.createNewLine(2), result)
-
-        // fix receiver type
-        result.setReceiverType((containingClass.resolveToDescriptor(BodyResolveMode.PARTIAL) as ClassDescriptor).defaultType)
-        return result
     }
 
     private data class JsNativeAnnotations(val annotations: List<KtAnnotationEntry>, val nativeAnnotation: KtAnnotationEntry?, val isGetter: Boolean, val isSetter: Boolean, val isInvoke: Boolean)
