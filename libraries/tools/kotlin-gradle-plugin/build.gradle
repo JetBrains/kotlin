@@ -41,6 +41,10 @@ dependencies {
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 }
 
+tasks.withType(project.compileKotlin.class) {
+    kotlinOptions.jdkHome = JDK_18
+}
+
 compileKotlin.dependsOn compileGroovy
 compileGroovy.dependsOn.remove("compileJava")
 
@@ -48,6 +52,7 @@ def groovyClassesDir = file("${buildDir}/mainGroovyClasses")
 compileGroovy.destinationDir = groovyClassesDir
 sourceSets.main.compileClasspath += files(groovyClassesDir)
 compileGroovy.classpath = sourceSets.main.compileClasspath - files(groovyClassesDir)
+sourceSets.main.java.srcDirs += sourceSets.main.kotlin.srcDirs
 
 processResources {
     expand(project.properties)
