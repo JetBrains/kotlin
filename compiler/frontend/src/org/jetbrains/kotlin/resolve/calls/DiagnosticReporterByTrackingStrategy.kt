@@ -150,12 +150,13 @@ class DiagnosticReporterByTrackingStrategy(
         when (diagnostic.javaClass) {
             NewConstraintError::class.java -> {
                 val constraintError = diagnostic as NewConstraintError
-                (constraintError.position as? ArgumentConstraintPosition)?.let {
+                val position = constraintError.position.from
+                (position as? ArgumentConstraintPosition)?.let {
                     val expression = it.argument.psiExpression ?: return
                     if (reportConstantTypeMismatch(constraintError, expression)) return
                     trace.report(Errors.TYPE_MISMATCH.on(expression, constraintError.upperType, constraintError.lowerType))
                 }
-                (constraintError.position as? ExplicitTypeParameterConstraintPosition)?.let {
+                (position as? ExplicitTypeParameterConstraintPosition)?.let {
                     val typeArgumentReference = (it.typeArgument as SimpleTypeArgumentImpl).typeReference
                     trace.report(UPPER_BOUND_VIOLATED.on(typeArgumentReference, constraintError.upperType, constraintError.lowerType))
                 }

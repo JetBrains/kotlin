@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.types.TypeApproximator
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.CaptureStatus
@@ -40,26 +38,26 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
 
         fun getConstraintsForVariable(typeVariable: NewTypeVariable): Collection<Constraint>
 
-        fun addNewIncorporatedConstraint(lowerType: UnwrappedType, upperType: UnwrappedType, position: IncorporationConstraintPosition)
+        fun addNewIncorporatedConstraint(lowerType: UnwrappedType, upperType: UnwrappedType)
     }
 
     // \alpha is typeVariable, \beta -- other type variable registered in ConstraintStorage
-    fun incorporate(c: Context, typeVariable: NewTypeVariable, constraint: Constraint, position: IncorporationConstraintPosition) {
+    fun incorporate(c: Context, typeVariable: NewTypeVariable, constraint: Constraint) {
         // we shouldn't incorporate recursive constraint -- It is too dangerous
         if (constraint.type.contains { it.constructor == typeVariable.freshTypeConstructor }) return
 
-        directWithVariable(c, typeVariable, constraint, position)
-        otherInsideMyConstraint(c, typeVariable, constraint, position)
-        insideOtherConstraint(c, typeVariable, constraint, position)
+        directWithVariable(c, typeVariable, constraint)
+        otherInsideMyConstraint(c, typeVariable, constraint)
+        insideOtherConstraint(c, typeVariable, constraint)
     }
 
     // A <:(=) \alpha <:(=) B => A <: B
-    private fun directWithVariable(c: Context, typeVariable: NewTypeVariable, constraint: Constraint, position: IncorporationConstraintPosition) {
+    private fun directWithVariable(c: Context, typeVariable: NewTypeVariable, constraint: Constraint) {
         // \alpha <: constraint.type
         if (constraint.kind != ConstraintKind.LOWER) {
             c.getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.UPPER) {
-                    c.addNewIncorporatedConstraint(it.type, constraint.type, position)
+                    c.addNewIncorporatedConstraint(it.type, constraint.type)
                 }
             }
         }
@@ -68,14 +66,14 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
         if (constraint.kind != ConstraintKind.UPPER) {
             c.getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.LOWER) {
-                    c.addNewIncorporatedConstraint(constraint.type, it.type, position)
+                    c.addNewIncorporatedConstraint(constraint.type, it.type)
                 }
             }
         }
     }
 
     // \alpha <: Inv<\beta>, \beta <: Number => \alpha <: Inv<out Number>
-    private fun otherInsideMyConstraint(c: Context, typeVariable: NewTypeVariable, constraint: Constraint, position: IncorporationConstraintPosition) {
+    private fun otherInsideMyConstraint(c: Context, typeVariable: NewTypeVariable, constraint: Constraint) {
         val otherInMyConstraint = SmartSet.create<NewTypeVariable>()
         constraint.type.contains {
             otherInMyConstraint.addIfNotNull(c.getTypeVariable(it.constructor))
@@ -86,19 +84,19 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
             // to avoid ConcurrentModificationException
             val otherConstraints = ArrayList(c.getConstraintsForVariable(otherTypeVariable))
             for (otherConstraint in otherConstraints) {
-                generateNewConstraint(c, typeVariable, constraint, otherTypeVariable, otherConstraint, position)
+                generateNewConstraint(c, typeVariable, constraint, otherTypeVariable, otherConstraint)
             }
         }
     }
 
     // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
-    private fun insideOtherConstraint(c: Context, typeVariable: NewTypeVariable, constraint: Constraint, position: IncorporationConstraintPosition) {
+    private fun insideOtherConstraint(c: Context, typeVariable: NewTypeVariable, constraint: Constraint) {
         for (typeVariableWithConstraint in c.allTypeVariablesWithConstraints) {
             val constraintsWhichConstraintMyVariable = typeVariableWithConstraint.constraints.filter {
                 it.type.contains { it.constructor == typeVariable.freshTypeConstructor }
             }
             constraintsWhichConstraintMyVariable.forEach {
-                generateNewConstraint(c, typeVariableWithConstraint.typeVariable, it, typeVariable, constraint, position)
+                generateNewConstraint(c, typeVariableWithConstraint.typeVariable, it, typeVariable, constraint)
             }
         }
     }
@@ -108,8 +106,7 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
             targetVariable: NewTypeVariable,
             baseConstraint: Constraint,
             otherVariable: NewTypeVariable,
-            otherConstraint: Constraint,
-            position: IncorporationConstraintPosition
+            otherConstraint: Constraint
     ) {
         val typeForApproximation = when (otherConstraint.kind) {
             ConstraintKind.EQUALITY -> {
@@ -134,10 +131,10 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
         }
 
         if (baseConstraint.kind != ConstraintKind.UPPER) {
-            c.addNewIncorporatedConstraint(approximateCapturedTypes(typeForApproximation, toSuper = false), targetVariable.defaultType, position)
+            c.addNewIncorporatedConstraint(approximateCapturedTypes(typeForApproximation, toSuper = false), targetVariable.defaultType)
         }
         if (baseConstraint.kind != ConstraintKind.LOWER) {
-            c.addNewIncorporatedConstraint(targetVariable.defaultType, approximateCapturedTypes(typeForApproximation, toSuper = true), position)
+            c.addNewIncorporatedConstraint(targetVariable.defaultType, approximateCapturedTypes(typeForApproximation, toSuper = true))
         }
     }
 

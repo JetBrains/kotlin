@@ -78,7 +78,7 @@ enum class ConstraintKind {
 class Constraint(
         val kind: ConstraintKind,
         val type: UnwrappedType, // flexible types here is allowed
-        val position: ConstraintPosition,
+        val position: IncorporationConstraintPosition,
         val typeHashCode: Int = type.hashCode()
 ) {
     override fun equals(other: Any?): Boolean {
