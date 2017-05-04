@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.android.folding.AbstractAndroidResourceFoldingTest
 import org.jetbrains.kotlin.android.intention.AbstractAndroidIntentionTest
 import org.jetbrains.kotlin.android.intention.AbstractAndroidResourceIntentionTest
-import org.jetbrains.kotlin.android.lint.AbstractKotlinLintTest
 import org.jetbrains.kotlin.android.parcel.AbstractParcelBytecodeListingTest
 import org.jetbrains.kotlin.android.quickfix.AbstractAndroidLintQuickfixTest
 import org.jetbrains.kotlin.android.quickfix.AbstractAndroidQuickFixMultiFileTest
@@ -1063,10 +1062,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractAndroidQuickFixMultiFileTest> {
             model("android/quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
-        }
-
-        testClass<AbstractKotlinLintTest> {
-            model("android/lint", excludeParentDirs = true)
         }
 
         testClass<AbstractAndroidLintQuickfixTest> {
