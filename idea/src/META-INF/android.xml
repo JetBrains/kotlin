@@ -89,6 +89,10 @@
         <androidDexer implementation="org.jetbrains.kotlin.android.debugger.AndroidDexerImpl"/>
     </extensions>
 
+    <extensions defaultExtensionNs="org.jetbrains.android">
+        <androidLintQuickFixProvider implementation="org.jetbrains.kotlin.android.quickfix.KotlinAndroidQuickFixProvider" />
+    </extensions>
+
     <project-components>
         <component>
             <interface-class>org.jetbrains.kotlin.android.facet.KotlinAndroidStartupManager</interface-class>
