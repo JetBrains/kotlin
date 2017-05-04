@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,21 @@
 package org.jetbrains.kotlin.noarg
 
 import com.intellij.openapi.extensions.Extensions
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.AbstractBytecodeListingTest
+import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor.Companion.registerExtension
+import org.jetbrains.kotlin.noarg.AbstractBytecodeListingTestForNoArg.Companion.NOARG_ANNOTATIONS
 import org.jetbrains.kotlin.noarg.diagnostic.DefaultErrorMessagesNoArg
 
-abstract class AbstractBytecodeListingTestForNoArg : AbstractBytecodeListingTest() {
-    internal companion object {
-        val NOARG_ANNOTATIONS = listOf("NoArg", "NoArg2", "test.NoArg")
-    }
-
-    override fun setupEnvironment(environment: KotlinCoreEnvironment) {
+abstract class AbstractBlackBoxCodegenTestForNoArg : AbstractBlackBoxCodegenTest() {
+    override fun loadMultiFiles(files: MutableList<TestFile>) {
         Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesNoArg())
 
-        val project = environment.project
-        StorageComponentContainerContributor.registerExtension(project, CliNoArgComponentContainerContributor(NOARG_ANNOTATIONS))
+        val project = myEnvironment.project
+        registerExtension(project, CliNoArgComponentContainerContributor(NOARG_ANNOTATIONS))
         ExpressionCodegenExtension.registerExtension(project, NoArgExpressionCodegenExtension())
+
+        super.loadMultiFiles(files)
     }
 }

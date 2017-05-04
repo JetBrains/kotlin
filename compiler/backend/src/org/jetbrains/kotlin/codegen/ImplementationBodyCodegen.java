@@ -1047,7 +1047,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private void generateInitializers(@NotNull ExpressionCodegen codegen) {
+    public void generateInitializers(@NotNull ExpressionCodegen codegen) {
         generateInitializers(() -> codegen);
     }
 
