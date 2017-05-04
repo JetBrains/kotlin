@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExplicitTypeParameterConstraintPosition
@@ -108,26 +109,8 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
             descriptorWithFreshTypes = candidateDescriptor
             return emptyList()
         }
-        val typeParameters = candidateDescriptor.typeParameters
-
-        val freshTypeVariables = typeParameters.map { TypeVariableFromCallableDescriptor(kotlinCall, it) }
-        typeVariablesForFreshTypeParameters = freshTypeVariables
-
-        val toFreshVariables = FreshVariableNewTypeSubstitutor(freshTypeVariables)
-
-        for (freshVariable in freshTypeVariables) {
-            csBuilder.registerVariable(freshVariable)
-        }
-
-        for (index in typeParameters.indices) {
-            val typeParameter = typeParameters[index]
-            val freshVariable = freshTypeVariables[index]
-            val position = DeclaredUpperBoundConstraintPosition(typeParameter)
-
-            for (upperBound in typeParameter.upperBounds) {
-                csBuilder.addSubtypeConstraint(freshVariable.defaultType, toFreshVariables.safeSubstitute(upperBound.unwrap()), position)
-            }
-        }
+        val toFreshVariables = createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, csBuilder, kotlinCall)
+        typeVariablesForFreshTypeParameters = toFreshVariables.freshVariables
 
         // bad function -- error on declaration side
         if (csBuilder.hasContradiction) {
@@ -142,12 +125,13 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
             return emptyList()
         }
 
+        val typeParameters = candidateDescriptor.typeParameters
         for (index in typeParameters.indices) {
             val typeParameter = typeParameters[index]
             val typeArgument = typeArgumentMappingByOriginal.getTypeArgument(typeParameter)
 
             if (typeArgument is SimpleTypeArgument) {
-                val freshVariable = freshTypeVariables[index]
+                val freshVariable = toFreshVariables.freshVariables[index]
                 csBuilder.addEqualityConstraint(freshVariable.defaultType, typeArgument.type, ExplicitTypeParameterConstraintPosition(typeArgument))
             }
             else {
@@ -169,6 +153,33 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
         descriptorWithFreshTypes = candidateDescriptor.substitute(toFreshVariables).substitute(toFixedTypeParameters)
 
         return emptyList()
+    }
+
+    fun createToFreshVariableSubstitutorAndAddInitialConstraints(
+            candidateDescriptor: CallableDescriptor,
+            csBuilder: ConstraintSystemOperation,
+            kotlinCall: KotlinCall?
+    ): FreshVariableNewTypeSubstitutor {
+        val typeParameters = candidateDescriptor.typeParameters
+
+        val freshTypeVariables = typeParameters.map { TypeVariableFromCallableDescriptor(it, kotlinCall) }
+
+        val toFreshVariables = FreshVariableNewTypeSubstitutor(freshTypeVariables)
+
+        for (freshVariable in freshTypeVariables) {
+            csBuilder.registerVariable(freshVariable)
+        }
+
+        for (index in typeParameters.indices) {
+            val typeParameter = typeParameters[index]
+            val freshVariable = freshTypeVariables[index]
+            val position = DeclaredUpperBoundConstraintPosition(typeParameter)
+
+            for (upperBound in typeParameter.upperBounds) {
+                csBuilder.addSubtypeConstraint(freshVariable.defaultType, toFreshVariables.safeSubstitute(upperBound.unwrap()), position)
+            }
+        }
+        return toFreshVariables
     }
 }
 
