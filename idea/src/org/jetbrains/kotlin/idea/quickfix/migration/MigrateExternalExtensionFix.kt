@@ -52,18 +52,18 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
         val declaration = element ?: return
 
         when {
-            isExternalMemberDeclaration(declaration) -> fixExtensionMemberDeclaration(declaration, project, editor, file)
+            isExternalMemberDeclaration(declaration) -> fixExtensionMemberDeclaration(declaration, editor)
             isMemberDeclaration(declaration) -> {
                 val containingClass = declaration.containingClassOrObject
                 if (containingClass != null) {
-                    fixNativeClass(containingClass, project, editor, file)
+                    fixNativeClass(containingClass)
                 }
             }
-            declaration is KtClassOrObject -> fixNativeClass(declaration, project, editor, file)
+            declaration is KtClassOrObject -> fixNativeClass(declaration)
         }
     }
 
-    private fun fixNativeClass(containingClass: KtClassOrObject, project: Project, editor: Editor?, file: KtFile) {
+    private fun fixNativeClass(containingClass: KtClassOrObject) {
         val membersToFix = containingClass.declarations.filterIsInstance<KtCallableDeclaration>().filter { isMemberDeclaration(it) }. map {
              it to fetchJsNativeAnnotations(it)
         }.filter {
@@ -76,7 +76,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
                 annotations.nativeAnnotation.delete()
             } else {
                 val externalDeclaration = ConvertMemberToExtensionIntention().convert(memberDeclaration)
-                fixExtensionMemberDeclaration(externalDeclaration, project, null, file)
+                fixExtensionMemberDeclaration(externalDeclaration, null)
             }
         }
 
@@ -113,12 +113,12 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
         return JsNativeAnnotations(nativeAnnotations, nativeAnnotation, isGetter, isSetter, isInvoke)
     }
 
-    private fun fixExtensionMemberDeclaration(declaration: KtNamedDeclaration, project: Project, editor: Editor?, file: KtFile) {
+    private fun fixExtensionMemberDeclaration(declaration: KtNamedDeclaration, editor: Editor?) {
         val name = declaration.nameAsSafeName
         val annotations = fetchJsNativeAnnotations(declaration)
         fixAnnotations(declaration, annotations, editor)
 
-        val ktPsiFactory = KtPsiFactory(project)
+        val ktPsiFactory = KtPsiFactory(declaration)
         val body = ktPsiFactory.buildExpression {
             appendName(Name.identifier("asDynamic"))
             if (annotations.isGetter) {
