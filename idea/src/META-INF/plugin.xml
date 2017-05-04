@@ -2186,7 +2186,7 @@
 
     <storageComponentContainerContributor implementation="org.jetbrains.kotlin.samWithReceiver.ide.IdeSamWithReceiverComponentContributor"/>
 
-    <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.noarg.NoArgClassBuilderInterceptorExtension"/>
+    <expressionCodegenExtension implementation="org.jetbrains.kotlin.noarg.NoArgExpressionCodegenExtension"/>
     <storageComponentContainerContributor implementation="org.jetbrains.kotlin.noarg.ide.IdeNoArgComponentContainerContributor"/>
     <defaultErrorMessages implementation="org.jetbrains.kotlin.noarg.diagnostic.DefaultErrorMessagesNoArg"/>
     <versionInfoProvider implementation="org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProviderByModuleDependencies"/>

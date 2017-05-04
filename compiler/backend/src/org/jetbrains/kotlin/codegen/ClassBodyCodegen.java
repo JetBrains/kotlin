@@ -35,8 +35,13 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 
 public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject> {
+    @NotNull
     public final KtPureClassOrObject myClass;
+
+    @NotNull
     public final OwnerKind kind;
+
+    @NotNull
     public final ClassDescriptor descriptor;
 
     protected ClassBodyCodegen(

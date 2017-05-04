@@ -87,7 +87,7 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
     }
 
     @Nullable
-    private ReceiverParameterDescriptor calculateDispatchReceiverParameter() {
+    public ReceiverParameterDescriptor calculateDispatchReceiverParameter() {
         ClassDescriptor classDescriptor = getContainingDeclaration();
         if (classDescriptor.isInner()) {
             DeclarationDescriptor classContainer = classDescriptor.getContainingDeclaration();

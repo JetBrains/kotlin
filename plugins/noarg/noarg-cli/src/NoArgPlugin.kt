@@ -20,6 +20,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.Extensions
 import org.jetbrains.kotlin.noarg.diagnostic.DefaultErrorMessagesNoArg
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
+import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
@@ -78,7 +79,7 @@ class NoArgComponentRegistrar : ComponentRegistrar {
         Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesNoArg())
         StorageComponentContainerContributor.registerExtension(project, CliNoArgComponentContainerContributor(annotations))
 
-        ClassBuilderInterceptorExtension.registerExtension(project, NoArgClassBuilderInterceptorExtension())
+        ExpressionCodegenExtension.registerExtension(project, NoArgExpressionCodegenExtension())
     }
 }
 
