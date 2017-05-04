@@ -30,6 +30,7 @@ class IrFunctionReferenceImpl(
         endOffset: Int,
         type: KotlinType,
         override val symbol: IrFunctionSymbol,
+        override val descriptor: FunctionDescriptor,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin? = null
 ) : IrFunctionReference,
@@ -48,9 +49,7 @@ class IrFunctionReferenceImpl(
             descriptor: FunctionDescriptor,
             typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
             origin: IrStatementOrigin? = null
-    ) : this(startOffset, endOffset, type, createFunctionSymbol(descriptor), typeArguments, origin)
-
-    override val descriptor: FunctionDescriptor get() = symbol.descriptor
+    ) : this(startOffset, endOffset, type, createFunctionSymbol(descriptor.original), descriptor, typeArguments, origin)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitFunctionReference(this, data)

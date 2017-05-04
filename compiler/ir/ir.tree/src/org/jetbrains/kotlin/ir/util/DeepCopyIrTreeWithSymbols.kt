@@ -378,6 +378,7 @@ class DeepCopyIrTreeWithSymbols(private val symbolsRemapper: DeepCopySymbolsRema
                     expression.startOffset, expression.endOffset,
                     expression.type,
                     symbolsRemapper.getReferencedFunction(expression.symbol),
+                    expression.descriptor, // TODO substitute referenced descriptor
                     expression.getTypeArgumentsMap(),
                     mapStatementOrigin(expression.origin)
             ).transformValueArguments(expression)

@@ -545,6 +545,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("callableRefToGenericMember.kt")
+        public void testCallableRefToGenericMember() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/callableRefToGenericMember.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("calls.kt")
         public void testCalls() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/calls.kt");

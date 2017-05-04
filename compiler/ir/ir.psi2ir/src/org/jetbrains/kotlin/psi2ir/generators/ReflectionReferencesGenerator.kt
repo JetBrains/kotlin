@@ -42,7 +42,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         }
         else {
             val typeConstructorDeclaration = lhs.type.constructor.declarationDescriptor
-            val typeClass = typeConstructorDeclaration as? ClassifierDescriptor ?:
+            val typeClass = typeConstructorDeclaration ?:
                             throw AssertionError("Unexpected type constructor for ${lhs.type}: $typeConstructorDeclaration")
             IrClassReferenceImpl(ktClassLiteral.startOffset, ktClassLiteral.endOffset, resultType,
                                  context.symbolTable.referenceClassifier(typeClass))
@@ -83,7 +83,8 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 is FunctionDescriptor ->
                     generateFunctionReference(
                             startOffset, endOffset, type,
-                            context.symbolTable.referenceFunction(callableDescriptor),
+                            context.symbolTable.referenceFunction(callableDescriptor.original),
+                            callableDescriptor,
                             typeArguments,
                             origin
                     )
@@ -128,8 +129,8 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         val setterDescriptor = propertyDescriptor.setter
 
         val fieldSymbol = if (getterDescriptor == null) context.symbolTable.referenceField(propertyDescriptor) else null
-        val getterSymbol = getterDescriptor?.let { context.symbolTable.referenceFunction(it) }
-        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceFunction(it) }
+        val getterSymbol = getterDescriptor?.let { context.symbolTable.referenceFunction(it.original) }
+        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceFunction(it.original) }
 
         return IrPropertyReferenceImpl(
                 startOffset, endOffset, type,
@@ -145,12 +146,13 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             endOffset: Int,
             type: KotlinType,
             symbol: IrFunctionSymbol,
+            descriptor: FunctionDescriptor,
             typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
             origin: IrStatementOrigin?
     ): IrFunctionReference =
             IrFunctionReferenceImpl(
                     startOffset, endOffset, type,
-                    symbol,
+                    symbol, descriptor,
                     typeArguments,
                     origin
             )

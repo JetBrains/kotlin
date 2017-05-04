@@ -409,7 +409,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
         return IrFunctionReferenceImpl(
                 expression.startOffset, expression.endOffset,
                 expression.type,
-                newCallee,
+                newCallee.original,
                 expression.transformTypeArguments(newCallee),
                 mapStatementOrigin(expression.origin)
         ).transformValueArguments(expression)
@@ -418,8 +418,8 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
     override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
         val newProperty = mapPropertyReference(expression.descriptor)
         val newFieldSymbol = if (newProperty.getter == null) IrFieldSymbolImpl(newProperty) else null
-        val newGetterSymbol = newProperty.getter?.let { IrSimpleFunctionSymbolImpl(it) }
-        val newSetterSymbol = newProperty.setter?.let { IrSimpleFunctionSymbolImpl(it) }
+        val newGetterSymbol = newProperty.getter?.let { IrSimpleFunctionSymbolImpl(it.original) }
+        val newSetterSymbol = newProperty.setter?.let { IrSimpleFunctionSymbolImpl(it.original) }
         return IrPropertyReferenceImpl(
                 expression.startOffset, expression.endOffset, expression.type,
                 newProperty, newFieldSymbol, newGetterSymbol, newSetterSymbol,
@@ -432,8 +432,8 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
         val newLocalDelegatedProperty = mapLocalPropertyReference(expression.descriptor)
         val newDelegateDescriptor = mapVariableReference(expression.delegate.descriptor)
         val newDelegateSymbol = IrVariableSymbolImpl(newDelegateDescriptor)
-        val newGetterSymbol = newLocalDelegatedProperty.getter!!.let { IrSimpleFunctionSymbolImpl(it) }
-        val newSetterSymbol = newLocalDelegatedProperty.setter?.let { IrSimpleFunctionSymbolImpl(it) }
+        val newGetterSymbol = newLocalDelegatedProperty.getter!!.let { IrSimpleFunctionSymbolImpl(it.original) }
+        val newSetterSymbol = newLocalDelegatedProperty.setter?.let { IrSimpleFunctionSymbolImpl(it.original) }
         return IrLocalDelegatedPropertyReferenceImpl(
                 expression.startOffset, expression.endOffset, expression.type,
                 newLocalDelegatedProperty,
