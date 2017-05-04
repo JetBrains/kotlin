@@ -313,8 +313,8 @@ internal fun DeclarationDescriptor.getMemberScope(): MemberScope {
 // but it doesn't have much sense for native,
 // since externals don't have IR bodies.
 
-// Enforce inlining of some constructors (ByteArray, IntArray, ...)
-val mustInlineFunctions = setOf(
+// Enforce inlining of some constructors
+private val mustInlineFunctions = setOf(
     "kotlin.DoubleArray.<init>",
     "kotlin.FloatArray.<init>",
     "kotlin.ByteArray.<init>",
@@ -326,7 +326,7 @@ val mustInlineFunctions = setOf(
 )
 
 internal val FunctionDescriptor.needsInlining: Boolean
-    get(): Boolean {
+    get() {
         val needs = this.isInline && !this.isExternal
         if (valueParameters.size != 2)                           return needs               // Constructor must have two parameters.
         if (mustInlineFunctions.contains(fqNameSafe.toString())) return true
