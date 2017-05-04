@@ -329,6 +329,11 @@ public class KotlinTestUtils {
     }
 
     @NotNull
+    public static KotlinCoreEnvironment createEnvironmentWithFullJdkAndIdeaAnnotations(Disposable disposable) {
+        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
+    }
+
+    @NotNull
     public static String getTestDataPathBase() {
         return getHomeDirectory() + "/compiler/testData";
     }
@@ -593,7 +598,7 @@ public class KotlinTestUtils {
             @Nullable File javaErrorFile
     ) throws IOException {
         if (!ktFiles.isEmpty()) {
-            KotlinCoreEnvironment environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable);
+            KotlinCoreEnvironment environment = createEnvironmentWithFullJdkAndIdeaAnnotations(disposable);
             LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment);
         }
         else {
