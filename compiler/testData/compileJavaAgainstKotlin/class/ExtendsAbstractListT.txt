@@ -15,6 +15,7 @@ public abstract class Mine</*0*/ T> : java.util.AbstractList<T> {
     public open /*fake_override*/ fun clear(): kotlin.Unit
     public open /*fake_override*/ fun contains(/*0*/ T!): kotlin.Boolean
     public open /*fake_override*/ fun containsAll(/*0*/ kotlin.collections.Collection<T!>): kotlin.Boolean
+    public open /*fake_override*/ fun forEach(/*0*/ java.util.function.Consumer<in T!>!): kotlin.Unit
     public abstract /*fake_override*/ fun get(/*0*/ kotlin.Int): T!
     public open /*fake_override*/ fun indexOf(/*0*/ T!): kotlin.Int
     public open /*fake_override*/ fun isEmpty(): kotlin.Boolean
@@ -23,13 +24,19 @@ public abstract class Mine</*0*/ T> : java.util.AbstractList<T> {
     public open /*fake_override*/ fun listIterator(): kotlin.collections.MutableListIterator<T!>
     public open /*fake_override*/ fun listIterator(/*0*/ kotlin.Int): kotlin.collections.MutableListIterator<T!>
     invisible_fake open /*fake_override*/ fun outOfBoundsMsg(/*0*/ kotlin.Int): kotlin.String!
+    public open /*fake_override*/ fun parallelStream(): java.util.stream.Stream<T!>
     invisible_fake open /*fake_override*/ fun rangeCheckForAdd(/*0*/ kotlin.Int): kotlin.Unit
     public open /*fake_override*/ fun remove(/*0*/ T!): kotlin.Boolean
     public open /*fake_override*/ fun removeAll(/*0*/ kotlin.collections.Collection<T!>): kotlin.Boolean
     public open /*fake_override*/ fun removeAt(/*0*/ kotlin.Int): T!
+    public open /*fake_override*/ fun removeIf(/*0*/ java.util.function.Predicate<in T!>): kotlin.Boolean
     protected/*protected and package*/ open /*fake_override*/ fun removeRange(/*0*/ kotlin.Int, /*1*/ kotlin.Int): kotlin.Unit
+    public open /*fake_override*/ fun replaceAll(/*0*/ java.util.function.UnaryOperator<T!>): kotlin.Unit
     public open /*fake_override*/ fun retainAll(/*0*/ kotlin.collections.Collection<T!>): kotlin.Boolean
     public open /*fake_override*/ fun set(/*0*/ kotlin.Int, /*1*/ T!): T!
+    public open /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun sort(/*0*/ java.util.Comparator<in T!>!): kotlin.Unit
+    public open /*fake_override*/ fun spliterator(): java.util.Spliterator<T!>
+    public open /*fake_override*/ fun stream(): java.util.stream.Stream<T!>
     public open /*fake_override*/ fun subList(/*0*/ kotlin.Int, /*1*/ kotlin.Int): kotlin.collections.MutableList<T!>
     public open /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
     public open /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!

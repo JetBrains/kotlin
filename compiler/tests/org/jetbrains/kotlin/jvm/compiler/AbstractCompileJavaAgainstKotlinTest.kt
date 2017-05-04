@@ -50,7 +50,7 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
 
         val environment = KotlinCoreEnvironment.createForTests(
                 testRootDisposable,
-                newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, getAnnotationsJar(), out),
+                newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK, getAnnotationsJar(), out),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
 
