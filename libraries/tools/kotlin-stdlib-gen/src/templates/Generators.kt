@@ -568,25 +568,46 @@ fun generators(): List<GenericFunction> {
 
         body {
             """
-            if (this is List) {
-                return windowIndices(this.size, size, step, dropTrailing = false).asIterable().map { transform(subList(it.start, it.endInclusive + 1)) }
+            checkWindowSizeStep(size, step)
+            if (this is RandomAccess && this is List) {
+                val thisSize = this.size
+                val result = ArrayList<R>((thisSize + step - 1) / step)
+                val window = MovingSubList(this)
+                var index = 0
+                while (index < thisSize) {
+                    window.move(index, (index + size).coerceAtMost(thisSize))
+                    result.add(transform(window))
+                    index += step
+                }
+                return result
             }
-            return windowForwardOnlySequenceImpl(iterator(), size, step, dropTrailing = false).asIterable().map(transform)
+            val result = ArrayList<R>()
+            windowedIterator(iterator(), size, step, dropTrailing = false, reuseBuffer = true).forEach {
+                result.add(transform(it))
+            }
+            return result
             """
         }
 
         customSignature(CharSequences) { "windowed(size: Int, step: Int, transform: (CharSequence) -> R)" }
         body(CharSequences) {
             """
-            return windowIndices(this.length, size, step, dropTrailing = false).asIterable().map { transform(subSequence(it)) }
+            checkWindowSizeStep(size, step)
+            val thisSize = this.length
+            val result = ArrayList<R>((thisSize + step - 1) / step)
+            var index = 0
+            while (index < thisSize) {
+                result.add(transform(subSequence(index, (index + size).coerceAtMost(thisSize))))
+                index += step
+            }
+            return result
             """
         }
 
         returns(Sequences) { "Sequence<R>" }
         body(Sequences) {
             """
-            require(size > 0 && step > 0) { "size ${"$"}size and step ${"$"}step both must be greater than zero" }
-            return Sequence { windowForwardOnlySequenceImpl(iterator(), size, step, dropTrailing = false).iterator() }.map(transform)
+            return windowedSequence(size, step, dropTrailing = false, reuseBuffer = true).map(transform)
             """
         }
     }
@@ -598,8 +619,33 @@ fun generators(): List<GenericFunction> {
         returns(Sequences) { "Sequence<List<T>>" }
         returns(CharSequences) { "List<String>" }
 
-        body { "return windowed(size, step) { it.toList() }" }
+
+        body {
+            """
+            checkWindowSizeStep(size, step)
+            if (this is RandomAccess && this is List) {
+                val thisSize = this.size
+                val result = ArrayList<List<T>>((thisSize + step - 1) / step)
+                var index = 0
+                while (index < thisSize) {
+                    result.add(List(size.coerceAtMost(thisSize - index)) { this[it + index] })
+                    index += step
+                }
+                return result
+            }
+            val result = ArrayList<List<T>>()
+            windowedIterator(iterator(), size, step, dropTrailing = false, reuseBuffer = false).forEach {
+                result.add(it)
+            }
+            return result
+            """
+        }
         body(CharSequences) { "return windowed(size, step) { it.toString() }" }
+        body(Sequences) {
+            """
+            return windowedSequence(size, step, dropTrailing = false, reuseBuffer = false)
+            """
+        }
     }
 
     templates add f("windowedSequence(size: Int, step: Int, transform: (CharSequence) -> R)") {
@@ -608,9 +654,10 @@ fun generators(): List<GenericFunction> {
         typeParam("R")
         returns { "Sequence<R> "}
 
-        body(CharSequences) {
+        body {
             """
-            return windowIndices(this.length, size, step, dropTrailing = false).map { transform(subSequence(it)) }
+            checkWindowSizeStep(size, step)
+            return (indices step step).asSequence().map { index -> transform(subSequence(index, (index + size).coerceAtMost(length))) }
             """
         }
     }
@@ -643,8 +690,7 @@ fun generators(): List<GenericFunction> {
         returns(Sequences) { "Sequence<List<T>>" }
         returns(CharSequences) { "List<String>" }
 
-        body { "return chunked(size) { it.toList() }" }
-        body(CharSequences) { "return chunked(size) { it.toString() }" }
+        body { "return windowed(size, size)" }
     }
 
     templates add f("chunkedSequence(size: Int, transform: (CharSequence) -> R)") {
@@ -653,7 +699,11 @@ fun generators(): List<GenericFunction> {
         typeParam("R")
         returns { "Sequence<R> "}
 
-        body { "return windowedSequence(size, size, transform)" }
+        body {
+            """
+            return windowedSequence(size, size, transform)
+            """
+        }
     }
 
     templates add f("chunkedSequence(size: Int)") {
