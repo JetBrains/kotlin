@@ -575,7 +575,8 @@ public class InlineCodegen extends CallGenerator {
                 Type asmType = state.getTypeMapper().mapClass(lambdaInfo.getClassDescriptor());
                 PropertyReferenceInfo info = lambdaInfo.getPropertyReferenceInfo();
                 strategy = new PropertyReferenceCodegen.PropertyReferenceGenerationStrategy(
-                        true, info.getGetFunction(), info.getTarget(), asmType, receiverType, lambdaInfo.expression, state, true);
+                        true, info.getGetFunction(), info.getTarget(), asmType, receiverType,
+                        lambdaInfo.getFunctionWithBodyOrCallableReference(), state, true);
             }
             else {
                 strategy = new FunctionReferenceGenerationStrategy(

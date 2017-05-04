@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
 
-internal class Parameters(val parameters: List<ParameterInfo>) : Iterable<ParameterInfo> {
+class Parameters(val parameters: List<ParameterInfo>) : Iterable<ParameterInfo> {
 
     private val actualDeclShifts: Array<ParameterInfo?>
     private val paramToDeclByteCodeIndex: HashMap<ParameterInfo, Int> = hashMapOf()
