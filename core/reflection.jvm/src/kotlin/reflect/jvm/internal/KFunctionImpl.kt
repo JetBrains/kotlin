@@ -19,7 +19,7 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.annotations.isInlineOnlyOrReifiable
+import org.jetbrains.kotlin.descriptors.annotations.isEffectivelyInlineOnly
 import java.lang.reflect.Constructor
 import java.lang.reflect.Member
 import java.lang.reflect.Method
@@ -60,7 +60,7 @@ internal class KFunctionImpl private constructor(
 
     private fun isPrivateInBytecode(): Boolean =
             Visibilities.isPrivate(descriptor.visibility) ||
-            descriptor.isInlineOnlyOrReifiable()
+            descriptor.isEffectivelyInlineOnly()
 
     private fun isDeclared(): Boolean = isPrivateInBytecode()
 

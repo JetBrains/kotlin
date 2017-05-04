@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.translate.context
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.isInlineOnlyOrReifiable
+import org.jetbrains.kotlin.descriptors.annotations.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.exportedPackage
 import org.jetbrains.kotlin.js.backend.ast.metadata.exportedTag
@@ -44,7 +44,7 @@ internal class DeclarationExporter(val context: StaticContext) {
         if (exportedDeclarations.contains(descriptor)) return
         if (descriptor is ConstructorDescriptor && descriptor.isPrimary) return
         if (isNativeObject(descriptor) || isLibraryObject(descriptor)) return
-        if (descriptor.isInlineOnlyOrReifiable()) return
+        if (descriptor.isEffectivelyInlineOnly()) return
 
         val suggestedName = context.nameSuggestion.suggest(descriptor) ?: return
 

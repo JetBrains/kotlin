@@ -26,6 +26,6 @@ public final class InlineWithStateMachineKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
     public final static @org.jetbrains.annotations.Nullable method mainSuspend(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
-    public final static @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
-    public final static @org.jetbrains.annotations.Nullable method suspendThere(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    private final static method suspendHere(p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    private final static method suspendThere(p0: java.lang.String, p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
 }

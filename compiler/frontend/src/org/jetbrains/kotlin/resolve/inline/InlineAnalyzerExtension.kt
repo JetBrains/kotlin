@@ -139,9 +139,7 @@ class InlineAnalyzerExtension(private val reasonableInlineRules: Iterable<Reason
             if (checkInlinableParameter(descriptor, parameter, functionDescriptor, trace)) return
         }
 
-        if (InlineUtil.containsReifiedTypeParameters(functionDescriptor) ||
-            functionDescriptor.isInlineOnlyOrReifiable() ||
-            functionDescriptor.isHeader) return
+        if (functionDescriptor.isInlineOnlyOrReifiable() || functionDescriptor.isHeader) return
 
         if (reasonableInlineRules.any { it.isInlineReasonable(functionDescriptor, function, trace.bindingContext) }) return
 
