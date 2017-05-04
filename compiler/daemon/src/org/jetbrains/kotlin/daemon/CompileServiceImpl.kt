@@ -107,6 +107,8 @@ class CompileServiceImpl(
         val onShutdown: () -> Unit
 ) : CompileService {
 
+    private val log by lazy { Logger.getLogger("compiler") }
+
     init {
         System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
     }
@@ -184,8 +186,6 @@ class CompileServiceImpl(
     @Volatile private var _lastUsedSeconds = nowSeconds()
     val lastUsedSeconds: Long get() = if (rwlock.isWriteLocked || rwlock.readLockCount - rwlock.readHoldCount > 0) nowSeconds() else _lastUsedSeconds
 
-    private val log by lazy { Logger.getLogger("compiler") }
-
     private val rwlock = ReentrantReadWriteLock()
 
     private var runFile: File
@@ -212,6 +212,8 @@ class CompileServiceImpl(
     }
 
     override fun getDaemonJVMOptions(): CompileService.CallResult<DaemonJVMOptions> = ifAlive {
+        log.info("getDaemonJVMOptions: $daemonJVMOptions")// + daemonJVMOptions.mappers.flatMap { it.toArgs("-") })
+
         CompileService.CallResult.Good(daemonJVMOptions)
     }
 

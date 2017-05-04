@@ -91,8 +91,10 @@ object KotlinCompileDaemon {
     fun main(args: Array<String>) {
         ensureServerHostnameIsSetUp()
 
+        val jvmArguments = ManagementFactory.getRuntimeMXBean().inputArguments
+
         log.info("Kotlin compiler daemon version " + (loadVersionFromResource() ?: "<unknown>"))
-        log.info("daemon JVM args: " + ManagementFactory.getRuntimeMXBean().inputArguments.joinToString(" "))
+        log.info("daemon JVM args: " + jvmArguments.joinToString(" "))
         log.info("daemon args: " + args.joinToString(" "))
 
         setIdeaIoUseFallback()
@@ -101,7 +103,9 @@ object KotlinCompileDaemon {
         val daemonOptions = DaemonOptions()
 
         try {
-            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
+            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true,
+                                                             inheritOtherJvmOptions = true,
+                                                             inheritAdditionalProperties = true)
 
             val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
 

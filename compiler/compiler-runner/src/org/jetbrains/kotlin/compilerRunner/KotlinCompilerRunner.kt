@@ -60,7 +60,7 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
             environment: Env,
             daemonOptions: DaemonOptions = configureDaemonOptions()
     ): CompileServiceSession? {
-        val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
+        val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true)
 
         val daemonReportMessages = ArrayList<DaemonReportMessage>()
         val daemonReportingTargets = DaemonReportingTargets(messages = daemonReportMessages)

@@ -196,7 +196,7 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
         withFlagFile("sourceSections", ".alive") { aliveFile ->
 
             val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath, verbose = true, reportPerf = true)
-            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false)
+            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
             val messageCollector = TestMessageCollector()
 
             val daemonWithSession = KotlinCompilerClient.connectAndLease(compilerId, aliveFile, daemonJVMOptions, daemonOptions,
