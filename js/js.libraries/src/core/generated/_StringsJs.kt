@@ -1106,7 +1106,7 @@ public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
 
 @SinceKotlin("1.2")
 public fun CharSequence.chunked(size: Int): List<String> {
-    return chunked(size) { it.toString() }
+    return windowed(size, size)
 }
 
 @SinceKotlin("1.2")
@@ -1183,7 +1183,15 @@ public fun CharSequence.windowed(size: Int, step: Int): List<String> {
 
 @SinceKotlin("1.2")
 public fun <R> CharSequence.windowed(size: Int, step: Int, transform: (CharSequence) -> R): List<R> {
-    return windowIndices(this.length, size, step, dropTrailing = false).asIterable().map { transform(subSequence(it)) }
+    checkWindowSizeStep(size, step)
+    val thisSize = this.length
+    val result = ArrayList<R>((thisSize + step - 1) / step)
+    var index = 0
+    while (index < thisSize) {
+        result.add(transform(subSequence(index, (index + size).coerceAtMost(thisSize))))
+        index += step
+    }
+    return result
 }
 
 @SinceKotlin("1.2")
@@ -1193,7 +1201,8 @@ public fun CharSequence.windowedSequence(size: Int, step: Int): Sequence<String>
 
 @SinceKotlin("1.2")
 public fun <R> CharSequence.windowedSequence(size: Int, step: Int, transform: (CharSequence) -> R): Sequence<R>  {
-    return windowIndices(this.length, size, step, dropTrailing = false).map { transform(subSequence(it)) }
+    checkWindowSizeStep(size, step)
+    return (indices step step).asSequence().map { index -> transform(subSequence(index, (index + size).coerceAtMost(length))) }
 }
 
 /**

@@ -1785,7 +1785,7 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
 
 @SinceKotlin("1.2")
 public fun <T> Iterable<T>.chunked(size: Int): List<List<T>> {
-    return chunked(size) { it.toList() }
+    return windowed(size, size)
 }
 
 @SinceKotlin("1.2")
@@ -1983,15 +1983,44 @@ public inline fun <T> Collection<T>.plusElement(element: T): List<T> {
 
 @SinceKotlin("1.2")
 public fun <T> Iterable<T>.windowed(size: Int, step: Int): List<List<T>> {
-    return windowed(size, step) { it.toList() }
+    checkWindowSizeStep(size, step)
+    if (this is RandomAccess && this is List) {
+        val thisSize = this.size
+        val result = ArrayList<List<T>>((thisSize + step - 1) / step)
+        var index = 0
+        while (index < thisSize) {
+            result.add(List(size.coerceAtMost(thisSize - index)) { this[it + index] })
+            index += step
+        }
+        return result
+    }
+    val result = ArrayList<List<T>>()
+    windowedIterator(iterator(), size, step, dropTrailing = false, reuseBuffer = false).forEach {
+        result.add(it)
+    }
+    return result
 }
 
 @SinceKotlin("1.2")
 public fun <T, R> Iterable<T>.windowed(size: Int, step: Int, transform: (List<T>) -> R): List<R> {
-    if (this is List) {
-        return windowIndices(this.size, size, step, dropTrailing = false).asIterable().map { transform(subList(it.start, it.endInclusive + 1)) }
+    checkWindowSizeStep(size, step)
+    if (this is RandomAccess && this is List) {
+        val thisSize = this.size
+        val result = ArrayList<R>((thisSize + step - 1) / step)
+        val window = MovingSubList(this)
+        var index = 0
+        while (index < thisSize) {
+            window.move(index, (index + size).coerceAtMost(thisSize))
+            result.add(transform(window))
+            index += step
+        }
+        return result
     }
-    return windowForwardOnlySequenceImpl(iterator(), size, step, dropTrailing = false).asIterable().map(transform)
+    val result = ArrayList<R>()
+    windowedIterator(iterator(), size, step, dropTrailing = false, reuseBuffer = true).forEach {
+        result.add(transform(it))
+    }
+    return result
 }
 
 /**
