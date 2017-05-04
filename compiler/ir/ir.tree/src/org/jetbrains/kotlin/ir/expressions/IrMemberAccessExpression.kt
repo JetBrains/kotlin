@@ -35,6 +35,9 @@ interface IrMemberAccessExpression : IrExpression {
     fun removeValueArgument(index: Int)
 }
 
+fun IrMemberAccessExpression.getTypeArgumentOrDefault(typeParameterDescriptor: TypeParameterDescriptor) =
+        getTypeArgument(typeParameterDescriptor) ?: typeParameterDescriptor.defaultType
+
 interface IrFunctionAccessExpression : IrMemberAccessExpression, IrDeclarationReference {
     override val descriptor: FunctionDescriptor
     override val symbol: IrFunctionSymbol
