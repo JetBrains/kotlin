@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.uast.UDeclaration
 
 
-class KotlinCommonModifications : JvmCommonIntentionActionsFactory() {
+class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
     override fun createChangeModifierAction(declaration: UDeclaration, modifier: String, shouldPresent: Boolean): IntentionAction? {
         val kModifierOwner = (declaration.psi as? KtLightElement<*, *>?)?.kotlinOrigin as? KtModifierListOwner?
                              ?: throw IllegalArgumentException("$declaration is expected to contain KtLightElement with KtModifierListOwner")

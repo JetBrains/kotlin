@@ -28,7 +28,7 @@ import org.jetbrains.uast.convert
 import org.junit.Assert
 
 
-class CommonModificationsTest : LightPlatformCodeInsightFixtureTestCase() {
+class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
     fun testMakeNotFinal() {
         myFixture.configureByText("foo.kt", """
