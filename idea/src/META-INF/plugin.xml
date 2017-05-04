@@ -1386,11 +1386,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ConvertReferenceToLambdaIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.RemoveSingleExpressionStringTemplateIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -1956,8 +1951,8 @@
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertReferenceToLambdaInspection"
                      displayName="Can be replaced with lambda"
                      groupName="Kotlin"
-                     enabledByDefault="false"
-                     level="INFO"
+                     enabledByDefault="true"
+                     level="INFORMATION"
                      language="kotlin"
     />
 

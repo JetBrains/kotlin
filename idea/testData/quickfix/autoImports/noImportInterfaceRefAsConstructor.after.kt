@@ -1,6 +1,5 @@
 // "Import" "false"
 // ERROR: Unresolved reference: Some
-// ACTION: Convert reference to lambda
 // ACTION: Convert to expression body
 // ACTION: Create function 'Some'
 // ACTION: Rename reference
