@@ -1,12 +1,12 @@
 package test
 
-open class KotlinClass : KotlinInterface.KotlinInner2() {
+private open class KotlinClass : KotlinInterface.KotlinInner2() {
 
     inner class KotlinInner
 
 }
 
-interface KotlinInterface {
+private interface KotlinInterface {
     open class KotlinInner2 : JavaClass2() {
         class KotlinInner3
     }
