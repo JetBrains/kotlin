@@ -54,6 +54,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("AnnotationWithField.kt")
+    public void testAnnotationWithField() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/AnnotationWithField.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AsteriskInImport.kt")
     public void testAsteriskInImport() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/AsteriskInImport.kt");

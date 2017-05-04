@@ -1,0 +1,13 @@
+package test
+
+public final annotation class AnnotationWithField : kotlin.Annotation {
+    public constructor AnnotationWithField(/*0*/ kotlin.String)
+    public final val text: kotlin.String
+
+    // Static members
+    public const final val ANSWER: kotlin.Int
+}
+
+@test.AnnotationWithField(text = "desc") public final class SomeClass {
+    public constructor SomeClass()
+}
