@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
+import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
@@ -26,13 +27,12 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.IMPOSSIBLE_TO_GENERATE
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.RUNTIME_ERROR
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
-import org.jetbrains.kotlin.types.IndexedParametersSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
@@ -112,8 +112,8 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
 
         val freshTypeVariables = typeParameters.map { TypeVariableFromCallableDescriptor(kotlinCall, it) }
         typeVariablesForFreshTypeParameters = freshTypeVariables
-        val toFreshVariables = IndexedParametersSubstitution(typeParameters,
-                                                             freshTypeVariables.map { it.defaultType.asTypeProjection() }).buildSubstitutor()
+
+        val toFreshVariables = FreshVariableNewTypeSubstitutor(freshTypeVariables)
 
         for (freshVariable in freshTypeVariables) {
             csBuilder.registerVariable(freshVariable)
@@ -125,7 +125,7 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
             val position = DeclaredUpperBoundConstraintPosition(typeParameter)
 
             for (upperBound in typeParameter.upperBounds) {
-                csBuilder.addSubtypeConstraint(freshVariable.defaultType, upperBound.unwrap().substitute(toFreshVariables), position)
+                csBuilder.addSubtypeConstraint(freshVariable.defaultType, toFreshVariables.safeSubstitute(upperBound.unwrap()), position)
             }
         }
 
@@ -137,7 +137,7 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
 
         // optimization
         if (typeArgumentMappingByOriginal == NoExplicitArguments) {
-            descriptorWithFreshTypes = candidateDescriptor.safeSubstitute(toFreshVariables)
+            descriptorWithFreshTypes = candidateDescriptor.substitute(toFreshVariables)!!
             csBuilder.simplify().let { assert(it.isEmpty) { "Substitutor should be empty: $it, call: $kotlinCall" } }
             return emptyList()
         }
