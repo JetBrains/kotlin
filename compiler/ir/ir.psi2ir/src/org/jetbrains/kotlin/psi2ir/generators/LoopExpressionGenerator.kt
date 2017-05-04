@@ -30,38 +30,46 @@ import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class LoopExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator){
-    fun generateWhileLoop(ktWhile: KtWhileExpression): IrExpression =
-            generateConditionalLoop(ktWhile,
-                                    IrWhileLoopImpl(ktWhile.startOffset, ktWhile.endOffset,
-                                                    context.builtIns.unitType, IrStatementOrigin.WHILE_LOOP))
+    fun generateWhileLoop(ktWhile: KtWhileExpression): IrExpression {
+        val irLoop = IrWhileLoopImpl(ktWhile.startOffset, ktWhile.endOffset,
+                                     context.builtIns.unitType, IrStatementOrigin.WHILE_LOOP)
 
-    fun generateDoWhileLoop(ktDoWhile: KtDoWhileExpression): IrExpression =
-            generateConditionalLoop(ktDoWhile,
-                                    IrDoWhileLoopImpl(ktDoWhile.startOffset, ktDoWhile.endOffset,
-                                                      context.builtIns.unitType, IrStatementOrigin.DO_WHILE_LOOP))
+        irLoop.condition = statementGenerator.generateExpression(ktWhile.condition!!)
 
-    private fun generateConditionalLoop(ktLoop: KtWhileExpressionBase, irLoop: IrLoopBase): IrExpression {
-        irLoop.condition = statementGenerator.generateExpression(ktLoop.condition!!)
-        statementGenerator.bodyGenerator.putLoop(ktLoop, irLoop)
-        irLoop.body = ktLoop.body?.let { ktLoopBody ->
-            if (ktLoopBody is KtBlockExpression) {
-                if (ktLoop is KtDoWhileExpression)
-                    generateDoWhileLoopBody(ktLoopBody)
-                else
-                    generateWhileLoopBody(ktLoopBody)
-            }
+        statementGenerator.bodyGenerator.putLoop(ktWhile, irLoop)
+
+        irLoop.body = ktWhile.body?.let { ktLoopBody ->
+            if (ktLoopBody is KtBlockExpression)
+                generateWhileLoopBody(ktLoopBody)
             else
                 statementGenerator.generateExpression(ktLoopBody)
         }
-        irLoop.label = getLoopLabel(ktLoop)
 
-        return if (ktLoop is KtDoWhileExpression) {
-            IrBlockImpl(ktLoop.startOffset, ktLoop.endOffset, context.builtIns.unitType).apply {
-                statements.add(irLoop)
-            }
+        irLoop.label = getLoopLabel(ktWhile)
+
+        return irLoop
+    }
+
+    fun generateDoWhileLoop(ktDoWhile: KtDoWhileExpression): IrExpression {
+        val irLoop = IrDoWhileLoopImpl(ktDoWhile.startOffset, ktDoWhile.endOffset,
+                                       context.builtIns.unitType, IrStatementOrigin.DO_WHILE_LOOP)
+
+        statementGenerator.bodyGenerator.putLoop(ktDoWhile, irLoop)
+
+        irLoop.body = ktDoWhile.body?.let { ktLoopBody ->
+            if (ktLoopBody is KtBlockExpression)
+                generateDoWhileLoopBody(ktLoopBody)
+            else
+                statementGenerator.generateExpression(ktLoopBody)
         }
-        else
-            irLoop
+
+        irLoop.condition = statementGenerator.generateExpression(ktDoWhile.condition!!)
+
+        irLoop.label = getLoopLabel(ktDoWhile)
+
+        return IrBlockImpl(ktDoWhile.startOffset, ktDoWhile.endOffset, context.builtIns.unitType).apply {
+            statements.add(irLoop)
+        }
     }
 
     private fun generateWhileLoopBody(ktLoopBody: KtBlockExpression): IrExpression =

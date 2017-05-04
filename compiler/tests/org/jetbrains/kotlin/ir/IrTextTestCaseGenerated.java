@@ -275,6 +275,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("localVarInDoWhile.kt")
+        public void testLocalVarInDoWhile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/localVarInDoWhile.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("packageLevelProperties.kt")
         public void testPackageLevelProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/packageLevelProperties.kt");
