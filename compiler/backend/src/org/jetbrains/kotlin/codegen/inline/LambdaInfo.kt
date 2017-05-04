@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.*
@@ -34,36 +32,96 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
-import java.util.*
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-class LambdaInfo(
+abstract class LambdaInfo(@JvmField val isCrossInline: Boolean, @JvmField val isBoundCallableReference: Boolean) : LabelOwner {
+
+    abstract val lambdaClassType: Type
+
+    abstract val invokeMethod: Method
+
+    abstract val invokeMethodDescriptor: FunctionDescriptor
+
+    abstract val capturedVars: List<CapturedParamDesc>
+
+    lateinit var node: SMAPAndMethodNode
+
+    abstract fun generateLambdaBody(codegen: ExpressionCodegen)
+
+    fun addAllParameters(remapper: FieldRemapper): Parameters {
+        val builder = ParametersBuilder.initializeBuilderFrom(AsmTypes.OBJECT_TYPE, invokeMethod.descriptor, this)
+
+        for (info in capturedVars) {
+            val field = remapper.findField(FieldInsnNode(0, info.containingLambdaName, info.fieldName, "")) ?:
+                        error("Captured field not found: " + info.containingLambdaName + "." + info.fieldName)
+            builder.addCapturedParam(field, info.fieldName)
+        }
+
+        return builder.buildParameters()
+    }
+
+
+    companion object {
+        fun LambdaInfo.getCapturedParamInfo(descriptor: EnclosedValueDescriptor): CapturedParamDesc {
+            return CapturedParamDesc(lambdaClassType, descriptor.fieldName, descriptor.type)
+        }
+    }
+}
+
+
+class DefaultLambda(override val lambdaClassType: Type, lambdaArgs: Array<Type>) : LambdaInfo(false, false) {
+    override val invokeMethod: Method
+        get() = TODO("not implemented")
+
+    override val invokeMethodDescriptor: FunctionDescriptor
+        get() = TODO("not implemented")
+
+    override val capturedVars: List<CapturedParamDesc>
+        get() = TODO("not implemented")
+
+    override fun isMyLabel(name: String): Boolean = false
+
+    override fun generateLambdaBody(codegen: ExpressionCodegen) {
+        TODO("not implemented")
+    }
+}
+
+class ExpressionLambda(
         expression: KtExpression,
         private val typeMapper: KotlinTypeMapper,
-        @JvmField val isCrossInline: Boolean,
-        val isBoundCallableReference: Boolean
-) : LabelOwner {
+        isCrossInline: Boolean,
+        isBoundCallableReference: Boolean
+) : LambdaInfo(isCrossInline, isBoundCallableReference) {
+
+    override val lambdaClassType: Type
+
+    override val invokeMethod: Method
+
+    override val invokeMethodDescriptor: FunctionDescriptor
+
+    val classDescriptor: ClassDescriptor
+
+    val propertyReferenceInfo: PropertyReferenceInfo?
+
     val functionWithBodyOrCallableReference: KtExpression = (expression as? KtLambdaExpression)?.functionLiteral ?: expression
 
-    val labels: Set<String>
-    private lateinit var closure: CalculatedClosure
-    val functionDescriptor: FunctionDescriptor
-    val classDescriptor: ClassDescriptor
-    val lambdaClassType: Type
+    private val labels: Set<String>
 
-    var node: SMAPAndMethodNode? = null
-    val propertyReferenceInfo: PropertyReferenceInfo?
+    private lateinit var closure: CalculatedClosure
 
     init {
         val bindingContext = typeMapper.bindingContext
-        val function = bindingContext.get<PsiElement, SimpleFunctionDescriptor>(BindingContext.FUNCTION, this.functionWithBodyOrCallableReference)
+        val function = bindingContext.get<PsiElement, SimpleFunctionDescriptor>(BindingContext.FUNCTION, functionWithBodyOrCallableReference)
         if (function == null && expression is KtCallableReferenceExpression) {
-            val variableDescriptor = bindingContext.get<PsiElement, VariableDescriptor>(BindingContext.VARIABLE, this.functionWithBodyOrCallableReference)
-            assert(variableDescriptor is VariableDescriptorWithAccessors) { "Reference expression not resolved to variable descriptor with accessors: " + expression.getText() }
+            val variableDescriptor =
+                    bindingContext.get(BindingContext.VARIABLE, functionWithBodyOrCallableReference) as? VariableDescriptorWithAccessors ?:
+                    throw AssertionError("""Reference expression not resolved to variable descriptor with accessors: ${expression.getText()}""")
             classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor!!)
             lambdaClassType = typeMapper.mapClass(classDescriptor)
             val getFunction = PropertyReferenceCodegen.findGetFunction(variableDescriptor)
-            functionDescriptor = PropertyReferenceCodegen.createFakeOpenDescriptor(getFunction, classDescriptor)
+            invokeMethodDescriptor = PropertyReferenceCodegen.createFakeOpenDescriptor(getFunction, classDescriptor)
             val resolvedCall = expression.callableReference.getResolvedCallWithAssert(bindingContext)
             propertyReferenceInfo = PropertyReferenceInfo(
                     resolvedCall.resultingDescriptor as VariableDescriptor, getFunction
@@ -71,10 +129,9 @@ class LambdaInfo(
         }
         else {
             propertyReferenceInfo = null
-            assert(function != null) { "Function is not resolved to descriptor: " + expression.text }
-            functionDescriptor = function!!
-            classDescriptor = anonymousClassForCallable(bindingContext, functionDescriptor)
-            lambdaClassType = asmTypeForAnonymousClass(bindingContext, functionDescriptor)
+            invokeMethodDescriptor = function ?: throw AssertionError("Function is not resolved to descriptor: " + expression.text)
+            classDescriptor = anonymousClassForCallable(bindingContext, invokeMethodDescriptor)
+            lambdaClassType = asmTypeForAnonymousClass(bindingContext, invokeMethodDescriptor)
         }
 
         bindingContext.get<ClassDescriptor, MutableClosure>(CLOSURE, classDescriptor).let {
@@ -82,10 +139,11 @@ class LambdaInfo(
             closure = it!!
         }
 
-        labels = InlineCodegen.getDeclarationLabels(expression, functionDescriptor)
+        labels = InlineCodegen.getDeclarationLabels(expression, invokeMethodDescriptor)
+        invokeMethod = typeMapper.mapAsmMethod(invokeMethodDescriptor)
     }
 
-    val capturedVars: List<CapturedParamDesc> by lazy {
+    override val capturedVars: List<CapturedParamDesc> by lazy {
         arrayListOf<CapturedParamDesc>().apply {
             if (closure.captureThis != null) {
                 val type = typeMapper.mapType(closure.captureThis!!)
@@ -108,28 +166,10 @@ class LambdaInfo(
             }
 
             closure.captureVariables.values.forEach {
-                descriptor -> add(getCapturedParamInfo(descriptor))
+                descriptor ->
+                add(getCapturedParamInfo(descriptor))
             }
         }
-    }
-
-    private fun getCapturedParamInfo(descriptor: EnclosedValueDescriptor): CapturedParamDesc {
-        return CapturedParamDesc(lambdaClassType, descriptor.fieldName, descriptor.type)
-    }
-
-    val invokeParamsWithoutCaptured: List<Type>
-        get() = Arrays.asList(*typeMapper.mapAsmMethod(functionDescriptor).argumentTypes)
-
-    fun addAllParameters(remapper: FieldRemapper): Parameters {
-        val asmMethod = typeMapper.mapAsmMethod(functionDescriptor)
-        val builder = ParametersBuilder.initializeBuilderFrom(AsmTypes.OBJECT_TYPE, asmMethod.descriptor, this)
-
-        for (info in capturedVars) {
-            val field = remapper.findField(FieldInsnNode(0, info.containingLambdaName, info.fieldName, "")) ?: error("Captured field not found: " + info.containingLambdaName + "." + info.fieldName)
-            builder.addCapturedParam(field, info.fieldName)
-        }
-
-        return builder.buildParameters()
     }
 
     override fun isMyLabel(name: String): Boolean {
@@ -138,4 +178,28 @@ class LambdaInfo(
 
     val isPropertyReference: Boolean
         get() = propertyReferenceInfo != null
+
+    override fun generateLambdaBody(codegen: ExpressionCodegen) {
+        val closureContext =
+                if (isPropertyReference)
+                    codegen.getContext().intoAnonymousClass(classDescriptor, codegen, OwnerKind.IMPLEMENTATION)
+                else
+                    codegen.getContext().intoClosure(invokeMethodDescriptor, codegen, typeMapper)
+        val context = closureContext.intoInlinedLambda(invokeMethodDescriptor, isCrossInline, isPropertyReference)
+
+        val jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor)
+        val asmMethod = jvmMethodSignature.asmMethod
+        val methodNode = MethodNode(
+                InlineCodegenUtil.API, AsmUtil.getMethodAsmFlags(invokeMethodDescriptor, context.contextKind, codegen.state),
+                asmMethod.name, asmMethod.descriptor, null, null
+        )
+
+        node = InlineCodegenUtil.wrapWithMaxLocalCalc(methodNode).let { adapter ->
+            val smap = InlineCodegen.generateMethodBody(
+                    adapter, invokeMethodDescriptor, context, functionWithBodyOrCallableReference, jvmMethodSignature, codegen, this
+            )
+            adapter.visitMaxs(-1, -1)
+            SMAPAndMethodNode(methodNode, smap)
+        }
+    }
 }

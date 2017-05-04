@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.org.objectweb.asm.Type;
 
-class ParameterInfo {
+public class ParameterInfo {
     private final int index;
     public final int declarationIndex;
     public final Type type;

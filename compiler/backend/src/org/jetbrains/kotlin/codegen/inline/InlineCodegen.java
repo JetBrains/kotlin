@@ -514,43 +514,19 @@ public class InlineCodegen extends CallGenerator {
 
     private void generateClosuresBodies() {
         for (LambdaInfo info : expressionMap.values()) {
-            info.setNode(generateLambdaBody(info));
+            info.generateLambdaBody(codegen);
         }
     }
 
     @NotNull
-    private SMAPAndMethodNode generateLambdaBody(@NotNull LambdaInfo info) {
-        KtExpression declaration = info.getFunctionWithBodyOrCallableReference();
-        FunctionDescriptor descriptor = info.getFunctionDescriptor();
-
-        ClassContext closureContext = info.isPropertyReference()
-                                        ? codegen.getContext().intoAnonymousClass(info.getClassDescriptor(), codegen, OwnerKind.IMPLEMENTATION)
-                                        : codegen.getContext().intoClosure(descriptor, codegen, typeMapper);
-        MethodContext context = closureContext.intoInlinedLambda(descriptor, info.isCrossInline, info.isPropertyReference());
-
-        JvmMethodSignature jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(descriptor);
-        Method asmMethod = jvmMethodSignature.getAsmMethod();
-        MethodNode methodNode = new MethodNode(
-                InlineCodegenUtil.API, getMethodAsmFlags(descriptor, context.getContextKind(), state),
-                asmMethod.getName(), asmMethod.getDescriptor(), null, null
-        );
-
-        MethodVisitor adapter = InlineCodegenUtil.wrapWithMaxLocalCalc(methodNode);
-
-        SMAP smap = generateMethodBody(adapter, descriptor, context, declaration, jvmMethodSignature, codegen, info);
-        adapter.visitMaxs(-1, -1);
-        return new SMAPAndMethodNode(methodNode, smap);
-    }
-
-    @NotNull
-    private static SMAP generateMethodBody(
+    public static SMAP generateMethodBody(
             @NotNull MethodVisitor adapter,
             @NotNull FunctionDescriptor descriptor,
             @NotNull MethodContext context,
             @NotNull KtExpression expression,
             @NotNull JvmMethodSignature jvmMethodSignature,
             @NotNull ExpressionCodegen codegen,
-            @Nullable LambdaInfo lambdaInfo
+            @Nullable ExpressionLambda lambdaInfo
     ) {
         boolean isLambda = lambdaInfo != null;
         GenerationState state = codegen.getState();
@@ -806,7 +782,7 @@ public class InlineCodegen extends CallGenerator {
         assert isInlinableParameterExpression(lambda) : "Couldn't find inline expression in " + expression.getText();
 
         LambdaInfo info =
-                new LambdaInfo(lambda, typeMapper, parameter.isCrossinline(), getBoundCallableReferenceReceiver(expression) != null);
+                new ExpressionLambda(lambda, typeMapper, parameter.isCrossinline(), getBoundCallableReferenceReceiver(expression) != null);
 
         ParameterInfo closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.getIndex());
         closureInfo.setLambda(info);
@@ -837,14 +813,19 @@ public class InlineCodegen extends CallGenerator {
     private void putClosureParametersOnStack() {
         for (LambdaInfo next : expressionMap.values()) {
             //closure parameters for bounded callable references are generated inplace
-            if (next.isBoundCallableReference()) continue;
+            if (next.isBoundCallableReference) continue;
             putClosureParametersOnStack(next, null);
         }
     }
 
     private void putClosureParametersOnStack(@NotNull LambdaInfo next, @Nullable StackValue functionReferenceReceiver) {
         activeLambda = next;
-        codegen.pushClosureOnStack(next.getClassDescriptor(), true, this, functionReferenceReceiver);
+        if (next instanceof ExpressionLambda) {
+            codegen.pushClosureOnStack(((ExpressionLambda) next).getClassDescriptor(), true, this, functionReferenceReceiver);
+        }
+        else {
+            //TODO
+        }
         activeLambda = null;
     }
 
