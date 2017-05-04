@@ -885,21 +885,31 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                                    private val success: ContinuationBlock) : CatchingScope() {
 
         override fun genHandler(exception: LLVMValueRef) {
-            // TODO: optimize for `Throwable` clause.
-            catches.forEach {
-                val isInstance = genInstanceOf(exception, it.parameter.type)
-                val nextCheck = codegen.basicBlock("catchCheck")
-                val body = codegen.basicBlock("catch")
-                codegen.condBr(isInstance, body, nextCheck)
 
-                codegen.appendingTo(body) {
+            for (catch in catches) {
+                fun genCatchBlock() {
                     using(VariableScope()) {
-                        currentCodeContext.genDeclareVariable(it.parameter, exception)
-                        evaluateExpressionAndJump(it.result, success)
+                        currentCodeContext.genDeclareVariable(catch.parameter, exception)
+                        evaluateExpressionAndJump(catch.result, success)
                     }
                 }
 
-                codegen.positionAtEnd(nextCheck)
+                if (catch.parameter.type == context.builtIns.throwable.defaultType) {
+                    genCatchBlock()
+                    return      // Remaining catch clauses are unreachable.
+                } else {
+                    val isInstance = genInstanceOf(exception, catch.parameter.type)
+                    val body = codegen.basicBlock("catch")
+                    val nextCheck = codegen.basicBlock("catchCheck")
+                    codegen.condBr(isInstance, body, nextCheck)
+
+                    codegen.appendingTo(body) {
+                        genCatchBlock()
+                    }
+
+                    codegen.positionAtEnd(nextCheck)
+
+                }
             }
             // rethrow the exception if no clause can handle it.
             outerContext.genThrow(exception)
