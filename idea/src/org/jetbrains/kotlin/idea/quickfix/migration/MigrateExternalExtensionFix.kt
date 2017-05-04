@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -246,16 +247,6 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
                    (psiElement is KtProperty && psiElement.receiverTypeReference == null)
         }
 
-        private inline fun<reified T: PsiElement> getContainingElement(e: PsiElement): T? {
-            var element: PsiElement? = e
-            while (element != null) {
-                if (element is T)
-                    return element
-
-                element = element.parent
-            }
-            return null
-        }
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val e = diagnostic.psiElement
             when (diagnostic.factory) {
@@ -265,8 +256,8 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
                     }
                 }
                 Errors.DEPRECATION_ERROR, Errors.DEPRECATION -> {
-                    if (getContainingElement<KtAnnotationEntry>(e)?.isJsNativeAnnotation() == true) {
-                        getContainingElement<KtNamedDeclaration>(e)?.let {
+                    if (e.getParentOfType<KtAnnotationEntry>(false)?.isJsNativeAnnotation() == true) {
+                        e.getParentOfType<KtNamedDeclaration>(false)?.let {
                             return MigrateExternalExtensionFix(it)
                         }
                     }
