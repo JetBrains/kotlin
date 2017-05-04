@@ -16,18 +16,18 @@ suspend fun third() : Int? {
 }
 
 // One line suspend with doResume
-suspend fun second(): Int = third()?.let { return it } ?: 0        // 4 5 (FIX IT)
+suspend fun second(): Int = third()?.let { return it } ?: 0        // 4 (FIX IT)
 
 // Multiline suspend with doResume
 suspend fun first(): Int {
-    second()                                                       // 6
+    second()                                                       // 5
     return 12
-}                                                                  // 7 (FIX IT)
+}
 
 fun main(args: Array<String>) {
     builder {
-        first()                                                    // 8
+        first()                                                    // 6
     }
 }
 
-// STEP_OUT: 7
+// STEP_OUT: 5

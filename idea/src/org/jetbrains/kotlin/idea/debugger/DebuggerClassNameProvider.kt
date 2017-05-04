@@ -24,18 +24,15 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.ReferenceType
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding.*
-import org.jetbrains.kotlin.codegen.coroutines.containsNonTailSuspensionCalls
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.fileClasses.getFileClassInternalName
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.Companion.EMPTY
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.Companion.getOrComputeClassNames
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.Companion.Cached
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.Companion.EMPTY
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.Companion.NonCached
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -187,12 +184,11 @@ class DebuggerClassNameProvider(
             }
             is KtNamedFunction -> {
                 val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(element)
-                val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
 
                 val classNamesOfContainingDeclaration = getOuterClassNamesForElement(element.relevantParentInReadAction)
 
                 val nonInlineClasses: ComputedClassNames
-                if (runReadAction { element.name == null || element.isLocal } || isFunctionWithSuspendStateMachine(descriptor, typeMapper.bindingContext)) {
+                if (runReadAction { element.name == null || element.isLocal }) {
                     nonInlineClasses = classNamesOfContainingDeclaration + ComputedClassNames.Cached(
                             asmTypeForAnonymousClass(typeMapper.bindingContext, element).internalName.toJdiName())
                 }
@@ -244,10 +240,6 @@ class DebuggerClassNameProvider(
         }
 
         return type.className
-    }
-
-    private fun isFunctionWithSuspendStateMachine(descriptor: DeclarationDescriptor?, bindingContext: BindingContext): Boolean {
-        return descriptor is SimpleFunctionDescriptor && descriptor.isSuspend && descriptor.containsNonTailSuspensionCalls(bindingContext)
     }
 
     private val KtDeclaration.isInlineInReadAction: Boolean
