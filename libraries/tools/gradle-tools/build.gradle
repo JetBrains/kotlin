@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_root = findProperty("kotlinRoot") ?: "${rootProject.projectDir}/../../.."
+    ext.kotlin_root = "$rootDir/../../.."
     apply from: "${kotlin_root}/libraries/versions.gradle"
 
     repositories {
