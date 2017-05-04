@@ -128,7 +128,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             val logFile = createTempFile("kotlin-daemon-test.", ".log")
 
             val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
-                                                             inheritMemoryLimits = false, inheritAdditionalProperties = false)
+                                                             inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
             val jar = tmpdir.absolutePath + File.separator + "hello.jar"
 
             try {
@@ -169,7 +169,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             val logFile = createTempFile("kotlin-daemon-test.", ".log")
 
             val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
-                                                             inheritMemoryLimits = false, inheritAdditionalProperties = false)
+                                                             inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
             try {
                 val (code, outputs) = compileOnDaemon(
                         flagFile, compilerId, daemonJVMOptions, daemonOptions, TestMessageCollector(),
@@ -203,3 +203,10 @@ class TestMessageCollector : MessageCollector {
 
     override fun hasErrors(): Boolean = messages.any { it.severity == CompilerMessageSeverity.EXCEPTION || it.severity == CompilerMessageSeverity.ERROR }
 }
+
+fun TestMessageCollector.assertHasMessage(msg: String) {
+    assert(messages.any { it.message.contains(msg) }) {
+        "Expecting message \"$msg\", actual:\n${messages.joinToString("\n") { it.message }}"
+    }
+}
+

@@ -102,7 +102,7 @@ object KotlinCompilerClient {
                         autostart: Boolean,
                         leaseSession: Boolean,
                         sessionAliveFlagFile: File? = null
-    ): CompileServiceSession? = connectLoop(reportingTargets) {
+    ): CompileServiceSession? = connectLoop(reportingTargets, autostart) { isLastAttempt ->
         ensureServerHostnameIsSetUp()
         val (service, newJVMOptions) = tryFindSuitableDaemonOrNewOpts(File(daemonOptions.runFilesPath), compilerId, daemonJVMOptions, { cat, msg -> reportingTargets.report(cat, msg) })
         if (service != null) {
@@ -119,7 +119,7 @@ object KotlinCompilerClient {
             }
         } else {
             reportingTargets.report(DaemonReportCategory.DEBUG, "no suitable daemon found")
-            if (autostart) {
+            if (!isLastAttempt && autostart) {
                 startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)
                 reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
             }
@@ -236,7 +236,7 @@ object KotlinCompilerClient {
     fun main(vararg args: String) {
         val compilerId = CompilerId()
         val daemonOptions = configureDaemonOptions()
-        val daemonLaunchingOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
+        val daemonLaunchingOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true)
         val clientOptions = configureClientOptions()
         val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, daemonLaunchingOptions, clientOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
 
@@ -311,24 +311,26 @@ object KotlinCompilerClient {
     // --- Implementation ---------------------------------------
 
     @Synchronized
-    private inline fun <R> connectLoop(reportingTargets: DaemonReportingTargets, body: () -> R?): R? {
+    private inline fun <R> connectLoop(reportingTargets: DaemonReportingTargets, autostart: Boolean, body: (Boolean) -> R?): R? {
         try {
-            var attempts = 0
-            while (attempts < DAEMON_CONNECT_CYCLE_ATTEMPTS) {
-                attempts += 1
+            var attempts = 1
+            while (true) {
                 val (res, err) = try {
-                    body() to null
+                    body(attempts >= DAEMON_CONNECT_CYCLE_ATTEMPTS) to null
                 }
                 catch (e: SocketException) { null to e }
                 catch (e: ConnectException) { null to e }
                 catch (e: ConnectIOException) { null to e }
                 catch (e: UnmarshalException) { null to e }
 
-                when {
-                    res != null -> return res
-                    err != null && attempts >= DAEMON_CONNECT_CYCLE_ATTEMPTS -> throw err
-                    err != null ->
-                        reportingTargets.report(DaemonReportCategory.INFO, "retrying($attempts) on: " + err.toString())
+                if (res != null) return res
+
+                reportingTargets.report(DaemonReportCategory.INFO,
+                                        (if (attempts >= DAEMON_CONNECT_CYCLE_ATTEMPTS || !autostart) "no more retries on: " else "retrying($attempts) on: ")
+                                        + err?.toString())
+
+                if (attempts++ > DAEMON_CONNECT_CYCLE_ATTEMPTS || !autostart) {
+                    return null
                 }
             }
         }

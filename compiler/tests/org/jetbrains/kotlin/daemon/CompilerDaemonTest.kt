@@ -97,7 +97,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 baseOpts,
                 *additionalArgs.toTypedArray(),
                 inheritMemoryLimits = xmx > 0,
-                inheritAdditionalProperties = false)
+                inheritAdditionalProperties = false,
+                inheritOtherJvmOptions = false)
     }
 
     fun testHelloApp() {
@@ -144,14 +145,14 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val backupJvmOptions = System.getProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)
         try {
             System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, "-aaa,-bbb\\,ccc,-ddd,-Xmx200m,-XX:MaxPermSize=10k,-XX:ReservedCodeCacheSize=100,-xxx\\,yyy")
-            val opts = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false)
+            val opts = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false, inheritOtherJvmOptions = false)
             assertEquals("200m", opts.maxMemory)
             assertEquals("10k", opts.maxPermSize)
             assertEquals("100", opts.reservedCodeCacheSize)
             assertEquals(arrayListOf("aaa", "bbb,ccc", "ddd", "xxx,yyy"), opts.jvmParams)
 
             System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, "-Xmx300m,-XX:MaxPermSize=10k,-XX:ReservedCodeCacheSize=100")
-            val opts2 = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false)
+            val opts2 = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false, inheritOtherJvmOptions = false)
             assertEquals("300m", opts2.maxMemory)
             assertEquals( -1, DaemonJVMOptionsMemoryComparator().compare(opts, opts2))
             assertEquals("300m", listOf(opts, opts2).maxWith(DaemonJVMOptionsMemoryComparator())?.maxMemory)
@@ -161,6 +162,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             val myXmxVal = myXmxParam.substring(4)
             System.clearProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)
             val opts3 = configureDaemonJVMOptions(inheritMemoryLimits = true,
+                                                  inheritOtherJvmOptions = true,
                                                   inheritAdditionalProperties = false)
             assertEquals(myXmxVal, opts3.maxMemory)
         }
@@ -229,7 +231,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
 
-            val daemonJVMOptions = configureDaemonJVMOptions("-abracadabra", inheritMemoryLimits = false, inheritAdditionalProperties = false)
+            val daemonJVMOptions = configureDaemonJVMOptions("-abracadabra", inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
 
             val messageCollector = TestMessageCollector()
 
@@ -238,8 +240,30 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             assertNull(daemon)
 
-            assertTrue("Expecting error message, actual:\n${messageCollector.messages.joinToString("\n") { it.message }}",
-                       messageCollector.messages.any { it.message == "Unrecognized option: --abracadabra" })
+            messageCollector.assertHasMessage("Unrecognized option: --abracadabra")
+        }
+    }
+
+    // TODO: find out how to reliably cause the retry
+    fun ignore_testDaemonStartRetry() {
+        withFlagFile(getTestName(true), ".alive") { flagFile ->
+            val daemonOptions = DaemonOptions(shutdownDelayMilliseconds = 1, verbose = true, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+
+            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+
+            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
+
+            val messageCollector = TestMessageCollector()
+
+            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                                                                      DaemonReportingTargets(messageCollector = messageCollector), autostart = true)
+
+            assertNull(daemon)
+
+            messageCollector.assertHasMessage("retrying(0) on:")
+            messageCollector.assertHasMessage("retrying(1) on:")
+            // TODO: messageCollector.assertHasNoMessage("retrying(2) on:")
+            messageCollector.assertHasMessage("no more retries on:")
         }
     }
 
