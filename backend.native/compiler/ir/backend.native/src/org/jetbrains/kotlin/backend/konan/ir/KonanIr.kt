@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlock
@@ -30,9 +30,15 @@ import org.jetbrains.kotlin.types.KotlinType
 
 //-----------------------------------------------------------------------------//
 
-class IrInlineFunctionBody(startOffset: Int, endOffset: Int, type: KotlinType, val descriptor: FunctionDescriptor, origin: IrStatementOrigin? = null):
-    IrContainerExpressionBase(startOffset, endOffset, type, origin), IrBlock {
-    constructor(startOffset: Int, endOffset: Int, type: KotlinType, descriptor: FunctionDescriptor, origin: IrStatementOrigin?, statements: List<IrStatement>) :
+interface IrReturnableBlock: IrBlock {
+    val descriptor: CallableDescriptor
+}
+
+class IrReturnableBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType,
+                            override val descriptor: CallableDescriptor, origin: IrStatementOrigin? = null)
+    : IrContainerExpressionBase(startOffset, endOffset, type, origin), IrReturnableBlock {
+    constructor(startOffset: Int, endOffset: Int, type: KotlinType,
+                descriptor: CallableDescriptor, origin: IrStatementOrigin?, statements: List<IrStatement>) :
         this(startOffset, endOffset, type, descriptor, origin) {
         this.statements.addAll(statements)
     }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
-import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
+import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -97,7 +97,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
     //-------------------------------------------------------------------------//
 
     fun inline(irCall             : IrCall,                                                 // Call to be substituted.
-               functionDeclaration: IrFunction): IrInlineFunctionBody {                     // Function to substitute.
+               functionDeclaration: IrFunction): IrReturnableBlockImpl {                    // Function to substitute.
 
         val inlineFunctionBody = inlineFunction(irCall, functionDeclaration)
         val descriptorSubstitutor = copyIrElement.descriptorSubstitutorForExternalScope
@@ -108,7 +108,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
     //-------------------------------------------------------------------------//
 
     private fun inlineFunction(irCall             : IrCall,                                 // Call to be substituted.
-                               functionDeclaration: IrFunction): IrInlineFunctionBody {     // Function to substitute.
+                               functionDeclaration: IrFunction): IrReturnableBlockImpl {    // Function to substitute.
 
         val argumentEvaluationResult = evaluateArguments(irCall, functionDeclaration)       // Evaluate expressions passed as arguments.
         val parameterSubstituteMap   = argumentEvaluationResult.parameterSubstituteMap      // As a result we get parameter -> argument map
@@ -121,7 +121,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
         val statements = (copyFunctionDeclaration.body as IrBlockBody).statements           // IR statements from function copy.
         val returnType = copyFunctionDeclaration.descriptor.returnType!!                    // Substituted return type.
-        val inlineFunctionBody = IrInlineFunctionBody(                                      // Create new IR element to replace "call".
+        val inlineFunctionBody = IrReturnableBlockImpl(                                     // Create new IR element to replace "call".
             startOffset = copyFunctionDeclaration.startOffset,
             endOffset   = copyFunctionDeclaration.endOffset,
             type        = returnType,

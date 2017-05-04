@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
+import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
@@ -61,7 +61,7 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
 
     private abstract class Scope
 
-    private class FunctionScope(val descriptor: FunctionDescriptor): Scope()
+    private class ReturnableScope(val descriptor: CallableDescriptor): Scope()
 
     private class LoopScope(val loop: IrLoop): Scope()
 
@@ -84,14 +84,14 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
 
     override fun lower(irFunction: IrFunction) {
         val functionDescriptor = irFunction.descriptor
-        using(FunctionScope(functionDescriptor)) {
+        using(ReturnableScope(functionDescriptor)) {
             irFunction.transformChildrenVoid(object : IrElementTransformerVoid() {
 
                 override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-                    if (expression !is IrInlineFunctionBody)
+                    if (expression !is IrReturnableBlockImpl)
                         return super.visitContainerExpression(expression)
 
-                    using(FunctionScope(expression.descriptor)) {
+                    using(ReturnableScope(expression.descriptor)) {
                         return super.visitContainerExpression(expression)
                     }
                 }
@@ -132,7 +132,7 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
                     expression.transformChildrenVoid(this)
 
                     return performHighLevelJump(
-                            targetScopePredicate = { it is FunctionScope && it.descriptor == expression.returnTarget },
+                            targetScopePredicate = { it is ReturnableScope && it.descriptor == expression.returnTarget },
                             jump                 = Return(expression.returnTarget),
                             startOffset          = expression.startOffset,
                             endOffset            = expression.endOffset,
@@ -242,7 +242,7 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
                     val returnType = descriptor.returnType!!
                     return when {
                         returnType.isUnit() || returnType.isNothing() -> irBlock(value, null, returnType) {
-                            +irInlineFunctionBody(descriptor) {
+                            +irReturnableBlock(descriptor) {
                                 +value
                             }
                             +finallyExpression.copy()
@@ -253,7 +253,7 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
                                     "tmp${tempIndex++}".synthesizedName,
                                     returnType
                             )
-                            +irVar(tmp, irInlineFunctionBody(descriptor) {
+                            +irVar(tmp, irReturnableBlock(descriptor) {
                                 +irReturn(descriptor, value)
                             })
                             +finallyExpression.copy()
@@ -290,8 +290,8 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
     fun IrBuilderWithScope.irReturn(target: CallableDescriptor, value: IrExpression) =
             IrReturnImpl(startOffset, endOffset, target, value)
 
-    inline fun IrBuilderWithScope.irInlineFunctionBody(descriptor: FunctionDescriptor, body: IrBlockBuilder.() -> Unit) =
-            IrInlineFunctionBody(startOffset, endOffset, descriptor.returnType!!, descriptor, null,
+    inline fun IrBuilderWithScope.irReturnableBlock(descriptor: FunctionDescriptor, body: IrBlockBuilder.() -> Unit) =
+            IrReturnableBlockImpl(startOffset, endOffset, descriptor.returnType!!, descriptor, null,
                     IrBlockBuilder(context, scope, startOffset, endOffset, null, descriptor.returnType!!)
                             .block(body).statements)
 }

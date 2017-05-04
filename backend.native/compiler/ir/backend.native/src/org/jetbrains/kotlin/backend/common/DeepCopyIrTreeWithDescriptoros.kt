@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.lower.SimpleMemberScope
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
+import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlock
+import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -484,8 +485,8 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
         //---------------------------------------------------------------------//
 
         override fun visitBlock(expression: IrBlock): IrBlock {
-            return if (expression is IrInlineFunctionBody) {
-                IrInlineFunctionBody(
+            return if (expression is IrReturnableBlock) {
+                IrReturnableBlockImpl(
                     startOffset = expression.startOffset,
                     endOffset   = expression.endOffset,
                     type        = expression.type,

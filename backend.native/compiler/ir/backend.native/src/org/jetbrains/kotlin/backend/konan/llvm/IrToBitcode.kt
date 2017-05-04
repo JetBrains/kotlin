@@ -632,7 +632,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is IrWhen                -> return evaluateWhen                   (value)
             is IrThrow               -> return evaluateThrow                  (value)
             is IrTry                 -> return evaluateTry                    (value)
-            is IrInlineFunctionBody  -> return evaluateInlineFunction         (value)
+            is IrReturnableBlockImpl -> return evaluateReturnableBlock        (value)
             is IrContainerExpression -> return evaluateContainerExpression    (value)
             is IrWhileLoop           -> return evaluateWhileLoop              (value)
             is IrDoWhileLoop         -> return evaluateDoWhileLoop            (value)
@@ -1343,13 +1343,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private inner class InlinedFunctionScope(val inlineBody: IrInlineFunctionBody) : InnerScopeImpl() {
+    private inner class ReturnableBlockScope(val returnableBlock: IrReturnableBlockImpl) : InnerScopeImpl() {
 
         var bbExit : LLVMBasicBlockRef? = null
         var resultPhi : LLVMValueRef? = null
 
         private fun getExit(): LLVMBasicBlockRef {
-            if (bbExit == null) bbExit = codegen.basicBlock("inline_body_exit")
+            if (bbExit == null) bbExit = codegen.basicBlock("returnable_block_exit")
             return bbExit!!
         }
 
@@ -1357,14 +1357,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             if (resultPhi == null) {
                 val bbCurrent = codegen.currentBlock
                 codegen.positionAtEnd(getExit())
-                resultPhi = codegen.phi(codegen.getLLVMType(inlineBody.type))
+                resultPhi = codegen.phi(codegen.getLLVMType(returnableBlock.type))
                 codegen.positionAtEnd(bbCurrent)
             }
             return resultPhi!!
         }
 
         override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) {
-            if (target != inlineBody.descriptor) {                              // It is not our "local return".
+            if (target != returnableBlock.descriptor) {                         // It is not our "local return".
                 super.genReturn(target, value)
                 return
             }
@@ -1385,11 +1385,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateInlineFunction(value: IrInlineFunctionBody): LLVMValueRef {
-        context.log{"evaluateInlineFunction         : ${value.statements.forEach { ir2string(it) }}"}
+    private fun evaluateReturnableBlock(value: IrReturnableBlockImpl): LLVMValueRef {
+        context.log{"evaluateReturnableBlock         : ${value.statements.forEach { ir2string(it) }}"}
 
-        val inlinedFunctionScope = InlinedFunctionScope(value)
-        using(inlinedFunctionScope) {
+        val returnableBlockScope = ReturnableBlockScope(value)
+        using(returnableBlockScope) {
             using(VariableScope()) {
                 value.statements.forEach {
                     generateStatement(it)
@@ -1397,10 +1397,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             }
         }
 
-        val bbExit = inlinedFunctionScope.bbExit
+        val bbExit = returnableBlockScope.bbExit
         if (bbExit != null) {
             if (!codegen.isAfterTerminator()) {                 // TODO should we solve this problem once and for all
-                if (inlinedFunctionScope.resultPhi != null) {
+                if (returnableBlockScope.resultPhi != null) {
                     codegen.unreachable()
                 } else {
                     codegen.br(bbExit)
@@ -1409,7 +1409,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             codegen.positionAtEnd(bbExit)
         }
 
-        return inlinedFunctionScope.resultPhi ?: codegen.theUnitInstanceRef.llvm
+        return returnableBlockScope.resultPhi ?: codegen.theUnitInstanceRef.llvm
     }
 
     //-------------------------------------------------------------------------//

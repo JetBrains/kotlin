@@ -230,8 +230,8 @@ class DumpIrTreeWithDescriptorsVisitor(out: Appendable): IrElementVisitor<Unit, 
     }
 
     override fun visitBlock(expression: IrBlock, data: String) {
-        if (expression is IrInlineFunctionBody) {
-            printer.println("INLINE FUNCTION BODY " + expression.descriptor)
+        if (expression is IrReturnableBlockImpl) {
+            printer.println("RETURNABLE BLOCK " + expression.descriptor)
             indented { super.visitBlock(expression, data) }
             return
         }
