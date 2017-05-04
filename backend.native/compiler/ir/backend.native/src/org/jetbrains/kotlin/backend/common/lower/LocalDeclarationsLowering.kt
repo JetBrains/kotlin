@@ -402,13 +402,13 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                     )
 
         private fun remapTypeArguments(oldExpression: IrMemberAccessExpression, newCallee: CallableDescriptor): Map<TypeParameterDescriptor, KotlinType>? {
-            val oldCallee = oldExpression.descriptor
+            val oldCallee = oldExpression.descriptor.original
 
             return if (oldCallee.typeParameters.isEmpty())
                 null
             else oldCallee.typeParameters.associateBy(
                     { newCallee.typeParameters[it.index] },
-                    { oldExpression.getTypeArgument(it)!! }
+                    { oldExpression.getTypeArgumentOrDefault(it) }
             )
         }
 
