@@ -35,5 +35,6 @@
     <orderEntry type="module" module-name="uast-kotlin" scope="TEST" />
     <orderEntry type="module" module-name="generators" />
     <orderEntry type="module" module-name="source-sections-compiler" scope="TEST" />
+    <orderEntry type="module" module-name="kapt3" scope="TEST" />
   </component>
 </module>
