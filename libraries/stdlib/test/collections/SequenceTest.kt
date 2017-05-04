@@ -216,6 +216,79 @@ public class SequenceTest {
         ensureIsIntermediate(source = sequenceOf(1, 2)) { it.pairwise() }
     }
 
+    @Test
+    fun chunked() {
+        val infiniteSeq = generateSequence(0) { it + 1 }
+        val result = infiniteSeq.chunked(4)
+        assertEquals(listOf(
+                listOf(0, 1, 2, 3),
+                listOf(4, 5, 6, 7)
+        ), result.take(2).toList())
+
+        val size = 7
+        val seq = infiniteSeq.take(7)
+
+        val result2 = seq.chunked(3) { it.joinToString("") }
+        assertEquals(listOf("012", "345", "6"), result2.toList())
+
+        seq.toList().let { expectedSingleChunk ->
+            assertEquals(expectedSingleChunk, seq.chunked(size).single())
+            assertEquals(expectedSingleChunk, seq.chunked(size + 3).single())
+        }
+
+        assertTrue(emptySequence<String>().chunked(3).none())
+
+        for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
+            assertFailsWith<IllegalArgumentException>("size $illegalValue") { infiniteSeq.chunked(illegalValue) }
+        }
+
+        ensureIsIntermediate(source = sequenceOf(1, 2, 3)) { it.chunked(2) }
+    }
+
+
+    @Test
+    fun windowed() {
+        val infiniteSeq = generateSequence(0) { it + 1 }
+        val result = infiniteSeq.windowed(5, 3)
+        result.take(10).forEachIndexed { windowIndex, window ->
+            val startElement = windowIndex * 3
+            assertEquals((startElement until startElement + 5).toList(), window)
+        }
+
+        val size = 7
+        val seq = infiniteSeq.take(7)
+
+        val result1 = seq.windowed(4, 2)
+        assertEquals(listOf(
+                listOf(0, 1, 2, 3),
+                listOf(2, 3, 4, 5),
+                listOf(4, 5, 6),
+                listOf(6)
+        ), result1.toList())
+
+        val result2 = seq.windowed(2, 3) { it.joinToString("") }
+        assertEquals(listOf("01", "34", "6"), result2.toList())
+
+        assertEquals(seq.chunked(2).toList(), seq.windowed(2, 2).toList())
+
+        assertEquals(seq.take(2).toList(), seq.windowed(2, size).single())
+        assertEquals(seq.take(3).toList(), seq.windowed(3, size + 3).single())
+
+        val result3 = seq.windowed(size, 1)
+        result3.forEachIndexed { index, window ->
+            assertEquals(size - index, window.size, "size of window#$index")
+        }
+
+        assertTrue(emptySequence<String>().windowed(3, 2).none())
+
+        for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
+            assertFailsWith<IllegalArgumentException>("size $illegalValue") { seq.windowed(illegalValue, 1) }
+            assertFailsWith<IllegalArgumentException>("step $illegalValue") { seq.windowed(1, illegalValue) }
+        }
+
+        ensureIsIntermediate(source = sequenceOf(1, 2, 3)) { it.windowed(2, 1) }
+    }
+
     @Test fun zip() {
         expect(listOf("ab", "bc", "cd")) {
             sequenceOf("a", "b", "c").zip(sequenceOf("b", "c", "d")) { a, b -> a + b }.toList()

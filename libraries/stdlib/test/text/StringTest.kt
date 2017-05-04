@@ -19,6 +19,8 @@ package test.text
 import kotlin.test.*
 import test.*
 import org.junit.Test
+import test.collections.behaviors.iteratorBehavior
+import test.collections.compare
 
 
 fun createString(content: String): CharSequence = content
@@ -847,6 +849,67 @@ class StringTest {
         assertEquals(listOf('a' to 'b', 'b' to 'c'), arg1("abc").pairwise())
         assertTrue(arg1("").pairwise().isEmpty())
         assertTrue(arg1("a").pairwise().isEmpty())
+    }
+
+
+    @Test
+    fun chunked() = withOneCharSequenceArg { arg1 ->
+        val size = 7
+        val data = arg1("abcdefg")
+        val result = data.chunked(4)
+        assertEquals(listOf("abcd", "efg"), result)
+
+        val result2 = data.chunked(3) { it.reversed().toString() }
+        assertEquals(listOf("cba", "fed", "g"), result2)
+
+        data.toString().let { expectedSingleChunk ->
+            assertEquals(expectedSingleChunk, data.chunked(size).single())
+            assertEquals(expectedSingleChunk, data.chunked(size + 3).single())
+        }
+
+        assertTrue(arg1("").chunked(3).isEmpty())
+
+        for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
+            assertFailsWith<IllegalArgumentException>("size $illegalValue") { data.chunked(illegalValue) }
+        }
+
+        for (chunkSize in 1..size + 1) {
+            compare(data.chunked(chunkSize).iterator(), data.chunkedSequence(chunkSize).iterator()) { iteratorBehavior() }
+        }
+    }
+
+
+    @Test
+    fun windowed() = withOneCharSequenceArg { arg1 ->
+        val size = 7
+        val data = arg1("abcdefg")
+        val result = data.windowed(4, 2)
+        assertEquals(listOf("abcd", "cdef", "efg", "g"), result)
+
+        val result2 = data.windowed(2, 3) { it.reversed().toString() }
+        assertEquals(listOf("ba", "ed", "g"), result2)
+
+        assertEquals(data.chunked(2), data.windowed(2, 2))
+
+        assertEquals(data.take(2), data.windowed(2, size).single())
+        assertEquals(data.take(3), data.windowed(3, size + 3).single())
+
+        val result3 = data.windowed(size, 1)
+        result3.forEachIndexed { index, window ->
+            assertEquals(size - index, window.length, "size of window#$index")
+        }
+
+        assertTrue(arg1("").windowed(3, 2).isEmpty())
+
+        for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
+            assertFailsWith<IllegalArgumentException>("size $illegalValue") { data.windowed(illegalValue, 1) }
+            assertFailsWith<IllegalArgumentException>("step $illegalValue") { data.windowed(1, illegalValue) }
+        }
+
+        for (window in 1..size + 1) {
+            for (step in 1..size + 1)
+            compare(data.windowed(window, step).iterator(), data.windowedSequence(window, step).iterator()) { iteratorBehavior() }
+        }
     }
 
     @Test fun map() = withOneCharSequenceArg { arg1 ->
