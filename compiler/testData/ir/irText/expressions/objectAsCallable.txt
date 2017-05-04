@@ -17,6 +17,7 @@ FILE /objectAsCallable.kt
     CONSTRUCTOR private constructor En()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+          <E : Enum<E>>: null
         INSTANCE_INITIALIZER_CALL classDescriptor='En'
     ENUM_ENTRY enum entry X
       init: ENUM_CONSTRUCTOR_CALL 'constructor En()'

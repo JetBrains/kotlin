@@ -5,6 +5,7 @@ FILE /enumWithSecondaryCtor.kt
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+          <E : Enum<E>>: null
         INSTANCE_INITIALIZER_CALL classDescriptor='Test0'
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
@@ -55,6 +56,7 @@ FILE /enumWithSecondaryCtor.kt
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+          <E : Enum<E>>: null
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
@@ -108,6 +110,7 @@ FILE /enumWithSecondaryCtor.kt
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+          <E : Enum<E>>: null
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int

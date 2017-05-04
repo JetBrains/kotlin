@@ -32,6 +32,7 @@ FILE /dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='copy(T = ...): Test1<T>'
           CALL 'constructor Test1(T)' type=Test1<T> origin=null
+            <T>: null
             x: GET_VAR 'value-parameter x: T = ...' type=T origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
       $this: VALUE_PARAMETER this@Test1: Test1<T>

@@ -55,6 +55,7 @@ FILE /dataClassMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='copy(T = ..., String = ...): Test<T>'
           CALL 'constructor Test(T, String = ...)' type=Test<T> origin=null
+            <T>: null
             x: GET_VAR 'value-parameter x: T = ...' type=T origin=null
             y: GET_VAR 'value-parameter y: String = ...' type=kotlin.String origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String

@@ -4,6 +4,7 @@ FILE /enum.kt
     CONSTRUCTOR private constructor TestEnum1()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+          <E : Enum<E>>: null
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum1'
     ENUM_ENTRY enum entry TEST1
       init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum1()'
@@ -42,6 +43,7 @@ FILE /enum.kt
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+          <E : Enum<E>>: null
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum2'
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
@@ -94,6 +96,7 @@ FILE /enum.kt
     CONSTRUCTOR private constructor TestEnum3()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+          <E : Enum<E>>: null
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum3'
     ENUM_ENTRY enum entry TEST
       init: ENUM_CONSTRUCTOR_CALL 'constructor TEST()'
@@ -165,6 +168,7 @@ FILE /enum.kt
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+          <E : Enum<E>>: null
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum4'
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
@@ -305,6 +309,7 @@ FILE /enum.kt
           CONST Int type=kotlin.Int value='0'
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+          <E : Enum<E>>: null
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum5'
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int

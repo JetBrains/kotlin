@@ -4,6 +4,7 @@ FILE /enumEntry.kt
     CONSTRUCTOR private constructor Z()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+          <E : Enum<E>>: null
         INSTANCE_INITIALIZER_CALL classDescriptor='Z'
     ENUM_ENTRY enum entry ENTRY
       init: ENUM_CONSTRUCTOR_CALL 'constructor ENTRY()'

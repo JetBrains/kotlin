@@ -132,7 +132,6 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
     override fun visitMemberAccess(expression: IrMemberAccessExpression, data: String) {
         expression.dumpLabeledElementWith(data) {
             dumpTypeArguments(expression)
-
             expression.dispatchReceiver?.accept(this, "\$this")
             expression.extensionReceiver?.accept(this, "\$receiver")
             for (valueParameter in expression.descriptor.valueParameters) {
@@ -143,9 +142,11 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
 
     private fun dumpTypeArguments(expression: IrMemberAccessExpression) {
         for (typeParameter in expression.descriptor.original.typeParameters) {
-            val typeArgument = expression.getTypeArgument(typeParameter) ?: continue
             val renderedParameter = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(typeParameter)
-            val renderedType = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.renderType(typeArgument)
+            val typeArgument = expression.getTypeArgument(typeParameter)
+            val renderedType = typeArgument?.let {
+                DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.renderType(typeArgument)
+            } ?: "null"
             printer.println("$renderedParameter: $renderedType")
         }
     }

@@ -48,6 +48,7 @@ FILE /classes.kt
     CONSTRUCTOR private constructor TestEnumClass()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+          <E : Enum<E>>: null
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnumClass'
     FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
       $this: VALUE_PARAMETER this@Enum: Enum<TestEnumClass>

@@ -4,6 +4,7 @@ FILE /enumEntryAsReceiver.kt
     CONSTRUCTOR private constructor X()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+          <E : Enum<E>>: null
         INSTANCE_INITIALIZER_CALL classDescriptor='X'
     ENUM_ENTRY enum entry B
       init: ENUM_CONSTRUCTOR_CALL 'constructor B()'
