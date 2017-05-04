@@ -310,10 +310,28 @@ internal fun DeclarationDescriptor.getMemberScope(): MemberScope {
 }
 
 // It is possible to declare "external inline fun",
-// but it doesn't have much sence for native, 
+// but it doesn't have much sense for native,
 // since externals don't have IR bodies.
-internal val FunctionDescriptor.needsInlining: Boolean 
-    get() = (this.isInline && !this.isExternal)
+
+// Enforce inlining of some constructors (ByteArray, IntArray, ...)
+val mustInlineFunctions = setOf(
+    "kotlin.DoubleArray.<init>",
+    "kotlin.FloatArray.<init>",
+    "kotlin.ByteArray.<init>",
+    "kotlin.ShortArray.<init>",
+    "kotlin.IntArray.<init>",
+    "kotlin.LongArray.<init>",
+    "kotlin.CharArray.<init>",
+    "kotlin.BooleanArray.<init>"
+)
+
+internal val FunctionDescriptor.needsInlining: Boolean
+    get(): Boolean {
+        val needs = this.isInline && !this.isExternal
+        if (valueParameters.size != 2)                           return needs               // Constructor must have two parameters.
+        if (mustInlineFunctions.contains(fqNameSafe.toString())) return true
+        return needs
+    }
 
 internal val FunctionDescriptor.needsSerializedIr: Boolean 
     get() = (this.needsInlining && this.isExported())
