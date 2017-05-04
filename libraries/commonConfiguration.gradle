@@ -9,8 +9,8 @@ ext {
     JDK_16 = jdkPath("1.6")
     JDK_17 = jdkPath("1.7")
     JDK_18 = jdkPath("1.8")
-    distDir = file("${rootDir}/../dist")
-    distLibDir = file("${rootDir}/../dist/kotlinc/lib")
+    distDir = file("$kotlin_root/dist")
+    distLibDir = file("$kotlin_root/dist/kotlinc/lib")
     bootstrapCompilerFile = file("$distDir/kotlin-compiler-for-maven.jar")
 }
 
