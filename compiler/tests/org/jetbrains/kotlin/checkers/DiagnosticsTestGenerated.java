@@ -5652,6 +5652,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("lastDestructuringDeclarationInBlock.kt")
+                public void testLastDestructuringDeclarationInBlock() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/lastDestructuringDeclarationInBlock.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("RedeclarationInForLoop.kt")
                 public void testRedeclarationInForLoop() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/RedeclarationInForLoop.kt");

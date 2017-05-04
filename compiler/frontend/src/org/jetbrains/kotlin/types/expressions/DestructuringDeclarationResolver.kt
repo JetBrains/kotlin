@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.LocalVariableResolver
 import org.jetbrains.kotlin.resolve.TypeResolver
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -84,8 +85,9 @@ class DestructuringDeclarationResolver(
         if (receiver == null) return errorType()
 
         val expectedType = getExpectedTypeForComponent(context, entry)
+        val newContext = context.replaceExpectedType(expectedType).replaceContextDependency(ContextDependency.INDEPENDENT)
         val results = fakeCallResolver.resolveFakeCall(
-                context.replaceExpectedType(expectedType), receiver, componentName,
+                newContext, receiver, componentName,
                 entry, initializer ?: entry, FakeCallKind.COMPONENT, emptyList()
         )
 
