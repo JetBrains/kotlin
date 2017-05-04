@@ -179,7 +179,7 @@ fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(function: D, bind
     bindingContext?.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, function)?.let { return it as D }
 
     val continuationParameter = ValueParameterDescriptorImpl(
-            function, null, function.valueParameters.size, Annotations.EMPTY, Name.identifier("\$continuation"),
+            function, null, function.valueParameters.size, Annotations.EMPTY, Name.identifier("continuation"),
             // Add j.l.Object to invoke(), because that is the type of parameters we have in FunctionN+1
             if (function.containingDeclaration.safeAs<ClassDescriptor>()?.defaultType?.isBuiltinFunctionalType == true)
                 function.builtIns.nullableAnyType
