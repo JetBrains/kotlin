@@ -497,6 +497,10 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
                 super.visitBlock(expression)
             }
         }
+
+        override fun getNonTransformedLoop(irLoop: IrLoop): IrLoop {
+            return irLoop
+        }
     }
 
     //-------------------------------------------------------------------------//

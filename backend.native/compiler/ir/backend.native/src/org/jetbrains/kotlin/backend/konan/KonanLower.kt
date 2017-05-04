@@ -68,6 +68,9 @@ internal class KonanLower(val context: Context) {
         phaser.phase(KonanPhase.LOWER_TAILREC) {
             TailrecLowering(context).runOnFilePostfix(irFile)
         }
+        phaser.phase(KonanPhase.LOWER_FINALLY) {
+            FinallyBlocksLowering(context).runOnFilePostfix(irFile)
+        }
         phaser.phase(KonanPhase.LOWER_DEFAULT_PARAMETER_EXTENT) {
             DefaultArgumentStubGenerator(context).runOnFilePostfix(irFile)
             DefaultParameterInjector(context).runOnFilePostfix(irFile)

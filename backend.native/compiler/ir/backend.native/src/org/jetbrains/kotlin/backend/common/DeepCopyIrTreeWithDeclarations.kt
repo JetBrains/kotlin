@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 
 /**
@@ -72,4 +75,23 @@ open class DeepCopyIrTreeWithDeclarations : DeepCopyIrTree() {
 
     override fun mapVariableReference(descriptor: VariableDescriptor) =
             copiedVariables[descriptor] ?: descriptor
+
+    override fun visitBlock(expression: IrBlock): IrBlock {
+        return if (expression is IrInlineFunctionBody) {
+            IrInlineFunctionBody(
+                    startOffset = expression.startOffset,
+                    endOffset   = expression.endOffset,
+                    type        = expression.type,
+                    descriptor  = expression.descriptor,
+                    origin      = mapStatementOrigin(expression.origin),
+                    statements  = expression.statements.map { it.transform(this, null) }
+            )
+        } else {
+            super.visitBlock(expression)
+        }
+    }
+
+    override fun getNonTransformedLoop(irLoop: IrLoop): IrLoop {
+        return irLoop
+    }
 }
