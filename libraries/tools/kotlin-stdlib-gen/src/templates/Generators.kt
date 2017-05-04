@@ -585,6 +585,7 @@ fun generators(): List<GenericFunction> {
         returns(Sequences) { "Sequence<R>" }
         body(Sequences) {
             """
+            require(size > 0 && step > 0) { "size ${"$"}size and step ${"$"}step both must be greater than zero" }
             return Sequence { windowForwardOnlySequenceImpl(iterator(), size, step, dropTrailing = false).iterator() }.map(transform)
             """
         }

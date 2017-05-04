@@ -18,8 +18,7 @@ package kotlin.collections
 
 
 internal fun windowIndices(sourceSize: Int, size: Int, step: Int, dropTrailing: Boolean): Sequence<IntRange> {
-    require(size >= 0) { "size should not be negative" }
-    require(step != 0) { "step shouldn't be zero" }
+    require(size > 0 && step > 0) { "size $size and step $step both must be greater than zero" }
 
     if (sourceSize == 0 || (size > sourceSize && dropTrailing)) {
         return emptySequence()
@@ -54,8 +53,7 @@ internal fun windowIndices(sourceSize: Int, size: Int, step: Int, dropTrailing: 
 }
 
 internal fun <T> windowForwardOnlySequenceImpl(iterator: Iterator<T>, size: Int, step: Int, dropTrailing: Boolean): Sequence<List<T>> {
-    require(size >= 0) { "size should not be negative" }
-    require(step > 0) { "step should be positive non zero" }
+    require(size > 0 && step > 0) { "size $size and step $step both must be greater than zero" }
 
     return if (step >= size) {
         windowForwardWithGap(iterator, size, step, dropTrailing)
@@ -278,8 +276,9 @@ internal class RingBuffer<T>(val capacity: Int): Iterable<T> {
         return if (this < n) (this - n + capacity) else this - n
     }
 
+    // TODO: replace with Array.fill from stdlib when available in common
     private fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
-        for (idx in fromIndex .. toIndex) {
+        for (idx in fromIndex .. toIndex-1) {
             this[idx] = element
         }
     }

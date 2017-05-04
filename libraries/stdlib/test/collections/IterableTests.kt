@@ -135,6 +135,67 @@ abstract class OrderedIterableTests<T : Iterable<String>>(createFrom: (Array<out
         assertEquals(listOf("a" to "b"), createFrom("a", "b").pairwise())
         assertEquals(listOf("a" to "b", "b" to "c"), createFrom("a", "b", "c").pairwise())
     }
+
+    @Test
+    fun chunked() {
+        val size = 7
+        val data = createFrom(Array(size) { "$it" })
+        val result = data.chunked(4)
+        assertEquals(listOf(
+                listOf("0", "1", "2", "3"),
+                listOf("4", "5", "6")
+        ), result)
+
+        val result2 = data.chunked(3) { it.joinToString("") }
+        assertEquals(listOf("012", "345", "6"), result2)
+
+        data.toList().let { expectedSingleChunk ->
+            assertEquals(expectedSingleChunk, data.chunked(size).single())
+            assertEquals(expectedSingleChunk, data.chunked(size + 3).single())
+        }
+
+        assertTrue(empty.chunked(3).isEmpty())
+
+        for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
+            assertFailsWith<IllegalArgumentException>("size $illegalValue") { data.chunked(illegalValue) }
+        }
+    }
+
+
+    @Test
+    fun windowed() {
+        val size = 7
+        val data = createFrom(Array(size) { "$it" })
+        val result = data.windowed(4, 2)
+        assertEquals(listOf(
+                listOf("0", "1", "2", "3"),
+                listOf("2", "3", "4", "5"),
+                listOf("4", "5", "6"),
+                listOf("6")
+        ), result)
+
+        val result2 = data.windowed(2, 3) { it.joinToString("") }
+        assertEquals(listOf("01", "34", "6"), result2)
+
+        assertEquals(data.chunked(2), data.windowed(2, 2))
+
+        assertEquals(data.take(2), data.windowed(2, size).single())
+        assertEquals(data.take(3), data.windowed(3, size + 3).single())
+
+        val result3 = data.windowed(size, 1)
+        result3.forEachIndexed { index, window ->
+            assertEquals(size - index, window.size, "size of window#$index")
+        }
+
+        assertTrue(empty.windowed(3, 2).isEmpty())
+
+        for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
+            assertFailsWith<IllegalArgumentException>("size $illegalValue") { data.windowed(illegalValue, 1) }
+            assertFailsWith<IllegalArgumentException>("step $illegalValue") { data.windowed(1, illegalValue) }
+        }
+    }
+
+
 }
 
 abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out String>) -> T, val empty: T) {

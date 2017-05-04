@@ -1504,6 +1504,7 @@ public fun <T> Sequence<T>.windowed(size: Int, step: Int): Sequence<List<T>> {
 
 @SinceKotlin("1.2")
 public fun <T, R> Sequence<T>.windowed(size: Int, step: Int, transform: (List<T>) -> R): Sequence<R> {
+    require(size > 0 && step > 0) { "size $size and step $step both must be greater than zero" }
     return Sequence { windowForwardOnlySequenceImpl(iterator(), size, step, dropTrailing = false).iterator() }.map(transform)
 }
 
