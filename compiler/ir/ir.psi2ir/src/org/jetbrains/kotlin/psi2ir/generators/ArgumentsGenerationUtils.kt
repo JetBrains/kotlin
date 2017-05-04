@@ -232,7 +232,7 @@ fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): CallBuild
         return pregenerateExtensionInvokeCall(resolvedCall)
     }
 
-    val call = pregenerateCallWithReceivers(resolvedCall)
+    val call = pregenerateCallReceivers(resolvedCall)
     pregenerateValueArguments(call, resolvedCall)
     return call
 }
@@ -310,7 +310,7 @@ private fun StatementGenerator.pregenerateValueArguments(call: CallBuilder, reso
     }
 }
 
-fun StatementGenerator.pregenerateCallWithReceivers(resolvedCall: ResolvedCall<*>): CallBuilder {
+fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): CallBuilder {
     val call = CallBuilder(resolvedCall, unwrapCallableDescriptor(resolvedCall.resultingDescriptor))
 
     call.callReceiver = generateCallReceiver(resolvedCall.call.callElement,

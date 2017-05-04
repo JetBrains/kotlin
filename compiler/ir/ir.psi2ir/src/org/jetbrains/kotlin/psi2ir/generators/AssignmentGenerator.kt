@@ -50,7 +50,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, origin)
 
         return irAssignmentReceiver.assign { irLValue ->
-            val opCall = statementGenerator.pregenerateCall(opResolvedCall)
+            val opCall = statementGenerator.pregenerateCallReceivers(opResolvedCall)
             opCall.setExplicitReceiverValue(irLValue)
             opCall.irValueArgumentsByIndex[0] = statementGenerator.generateExpression(ktRight)
             val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, origin)
@@ -239,10 +239,10 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         val irIndexExpressions = ktLeft.indexExpressions.map { statementGenerator.generateExpression(it) }
 
         val indexedGetResolvedCall = get(BindingContext.INDEXED_LVALUE_GET, ktLeft)
-        val indexedGetCall = indexedGetResolvedCall?.let { statementGenerator.pregenerateCallWithReceivers(it) }
+        val indexedGetCall = indexedGetResolvedCall?.let { statementGenerator.pregenerateCallReceivers(it) }
 
         val indexedSetResolvedCall = get(BindingContext.INDEXED_LVALUE_SET, ktLeft)
-        val indexedSetCall = indexedSetResolvedCall?.let { statementGenerator.pregenerateCallWithReceivers(it) }
+        val indexedSetCall = indexedSetResolvedCall?.let { statementGenerator.pregenerateCallReceivers(it) }
 
         return ArrayAccessAssignmentReceiver(irArray, irIndexExpressions, indexedGetCall, indexedSetCall,
                                              CallGenerator(statementGenerator),

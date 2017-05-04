@@ -737,6 +737,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("lambdaInCAO.kt")
+        public void testLambdaInCAO() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/lambdaInCAO.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("literals.kt")
         public void testLiterals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/literals.kt");
