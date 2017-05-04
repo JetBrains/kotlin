@@ -76,6 +76,10 @@
         <projectConfigurator implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidGradleModuleConfigurator"/>
     </extensions>
 
+    <extensions defaultExtensionNs="org.jetbrains.android">
+        <androidLintQuickFixProvider implementation="org.jetbrains.kotlin.android.quickfix.KotlinAndroidQuickFixProvider" />
+    </extensions>
+
     <project-components>
         <component>
             <interface-class>org.jetbrains.kotlin.android.facet.KotlinAndroidStartupManager</interface-class>
