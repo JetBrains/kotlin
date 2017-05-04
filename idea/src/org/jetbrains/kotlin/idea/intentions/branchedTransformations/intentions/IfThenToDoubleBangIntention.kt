@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -49,10 +50,16 @@ class IfThenToDoubleBangIntention : SelfTargetingRangeIntention<KtIfExpression>(
         return TextRange(element.startOffset, rParen.endOffset)
     }
 
+    override fun startInWriteAction() = false
+
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
         val (_, _, receiverExpression) = element.buildSelectTransformationData() ?: return
-        val result = element.replace(KtPsiFactory(element).createExpressionByPattern("$0!!", receiverExpression)) as KtPostfixExpression
+        val result = runWriteAction {
+            element.replace(KtPsiFactory(element).createExpressionByPattern("$0!!", receiverExpression)) as KtPostfixExpression
+        }
 
-        result.inlineBaseExpressionIfApplicableWithPrompt(editor)
+        if (editor != null) {
+            result.inlineBaseExpressionIfApplicableWithPrompt(editor)
+        }
     }
 }
