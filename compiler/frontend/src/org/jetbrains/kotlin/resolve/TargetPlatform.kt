@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.*
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
-import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
@@ -70,7 +69,6 @@ abstract class TargetPlatform(val platformName: String) {
                 ) {
                     override fun configureModuleComponents(container: StorageComponentContainer) {
                         container.useInstance(SyntheticScopes.Empty)
-                        container.useInstance(SyntheticConstructorsProvider.Empty)
                         container.useInstance(TypeSpecificityComparator.NONE)
                     }
                 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.DeferredType
@@ -66,7 +65,6 @@ class NewResolutionOldInference(
         private val resolutionResultsHandler: ResolutionResultsHandler,
         private val dynamicCallableDescriptors: DynamicCallableDescriptors,
         private val syntheticScopes: SyntheticScopes,
-        private val syntheticConstructorsProvider: SyntheticConstructorsProvider,
         private val languageVersionSettings: LanguageVersionSettings,
         private val coroutineInferenceSupport: CoroutineInferenceSupport
 ) {
@@ -156,7 +154,7 @@ class NewResolutionOldInference(
         }
 
         val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
-        val scopeTower = ImplicitScopeTowerImpl(context, dynamicScope, syntheticScopes, syntheticConstructorsProvider, context.call.createLookupLocation())
+        val scopeTower = ImplicitScopeTowerImpl(context, dynamicScope, syntheticScopes, context.call.createLookupLocation())
 
         val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
         val isBinaryRemOperator = isBinaryRemOperator(context.call)
@@ -303,7 +301,6 @@ class NewResolutionOldInference(
             val resolutionContext: ResolutionContext<*>,
             override val dynamicScope: MemberScope,
             override val syntheticScopes: SyntheticScopes,
-            override val syntheticConstructorsProvider: SyntheticConstructorsProvider,
             override val location: LookupLocation
     ): ImplicitScopeTower {
         private val cache = HashMap<ReceiverValue, ReceiverValueWithSmartCastInfo>()

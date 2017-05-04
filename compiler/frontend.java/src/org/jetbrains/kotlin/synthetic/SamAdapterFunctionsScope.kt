@@ -133,12 +133,33 @@ class SamAdapterFunctionsScope(
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> = emptyList()
 
     override fun getSyntheticStaticFunctions(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-        val samConstructor = scope.getContributedClassifier(name, location)?.let { samConstructorForClassifier(it) }
+        val classifier = scope.getContributedClassifier(name, location)
+        val samConstructor = classifier?.let { getSamConstructor(it) }
+
         return scope.getContributedFunctions(name, location).mapNotNull { samAdapterForStaticFunction(it) } + listOfNotNull(samConstructor)
     }
 
     override fun getSyntheticStaticFunctions(scope: ResolutionScope): Collection<FunctionDescriptor> {
-        return scope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS).mapNotNull { samAdapterForStaticFunction(it) }
+        val samConstructors =
+                scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)
+                        .filterIsInstance<ClassifierDescriptor>()
+                        .mapNotNull{ getSamConstructor(it) }
+
+        return scope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS).mapNotNull { samAdapterForStaticFunction(it) } +
+               samConstructors
+    }
+
+    private fun getSamConstructor(classifier: ClassifierDescriptor): SamConstructorDescriptor? {
+        return when (classifier) {
+            is TypeAliasDescriptor -> getTypeAliasSamConstructor(classifier)
+            else -> samConstructorForClassifier(classifier)
+        }
+    }
+
+    private fun getTypeAliasSamConstructor(classifier: TypeAliasDescriptor): SamConstructorDescriptor? {
+        val classDescriptor = classifier.classDescriptor ?: return null
+        val samConstructor = samConstructorForClassifier(classDescriptor) ?: return null
+        return SingleAbstractMethodUtils.createTypeAliasSamConstructorFunction(classifier, samConstructor)
     }
 
     private class MyFunctionDescriptor(

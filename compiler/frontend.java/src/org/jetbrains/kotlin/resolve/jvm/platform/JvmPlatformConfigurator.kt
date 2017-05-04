@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitut
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
 import org.jetbrains.kotlin.resolve.jvm.*
 import org.jetbrains.kotlin.resolve.jvm.checkers.*
-import org.jetbrains.kotlin.synthetic.JavaSyntheticConstructorsProvider
 import org.jetbrains.kotlin.synthetic.JavaSyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
@@ -86,7 +85,6 @@ object JvmPlatformConfigurator : PlatformConfigurator(
         container.useImpl<JavaSyntheticScopes>()
         container.useImpl<InterfaceDefaultMethodCallChecker>()
         container.useImpl<InlinePlatformCompatibilityChecker>()
-        container.useInstance(JavaSyntheticConstructorsProvider)
         container.useInstance(JvmTypeSpecificityComparator)
     }
 }

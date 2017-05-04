@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.codeInsight.collectSyntheticStaticMembers
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
@@ -42,14 +43,13 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.SamTypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
-import org.jetbrains.kotlin.synthetic.JavaSyntheticConstructorsProvider
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.util.constructors
 import org.jetbrains.kotlin.util.kind
@@ -305,19 +305,14 @@ class TypeInstantiationItems(
                                       classDescriptor: ClassDescriptor?,
                                       tail: Tail?) {
         if (classDescriptor?.kind == ClassKind.INTERFACE) {
-            val samConstructor = if (classifier is TypeAliasDescriptor) {
-                JavaSyntheticConstructorsProvider.getSyntheticConstructors(classifier, NoLookupLocation.FROM_IDE)
-                        .filterIsInstance<SamTypeAliasConstructorDescriptor>()
-                        .singleOrNull() ?: return
-            }
-            else {
+            val samConstructor = run {
                 val container = classifier.containingDeclaration
                 val scope = when (container) {
                     is PackageFragmentDescriptor -> container.getMemberScope()
-                    is ClassDescriptor -> container.staticScope
+                    is ClassDescriptor -> container.unsubstitutedMemberScope
                     else -> return
                 }
-                scope.getContributedFunctions(classifier.name, NoLookupLocation.FROM_IDE)
+                scope.collectSyntheticStaticMembers(resolutionFacade, DescriptorKindFilter.FUNCTIONS, { classifier.name == it })
                         .filterIsInstance<SamConstructorDescriptor>()
                         .singleOrNull() ?: return
             }

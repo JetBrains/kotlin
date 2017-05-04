@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
-import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
@@ -60,7 +59,6 @@ object JsPlatformConfigurator : PlatformConfigurator(
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useImpl<JsCallChecker>()
         container.useInstance(SyntheticScopes.Empty)
-        container.useInstance(SyntheticConstructorsProvider.Empty)
         container.useInstance(JsTypeSpecificityComparator)
         container.useInstance(JsNameClashChecker())
         container.useInstance(JsNameCharsChecker())
