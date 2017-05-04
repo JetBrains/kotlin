@@ -111,4 +111,28 @@
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
     <description>Replace 'if' expression with safe access expression</description>
   </problem>
+  <problem>
+    <file>nullCheckWithSelectorCallChain.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/nullCheckWithSelectorCallChain.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>isCheckWithSelectorChain.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/isCheckWithSelectorChain.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>isCheckSimple.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/isCheckSimple.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
 </problems>

@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
+import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -31,8 +33,11 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 
 fun KtBinaryExpression.expressionComparedToNull(): KtExpression? {
@@ -62,8 +67,7 @@ fun KtExpression?.isNullExpression(): Boolean = this?.unwrapBlockOrParenthesis()
 fun KtExpression?.isNullExpressionOrEmptyBlock(): Boolean = this.isNullExpression() || this is KtBlockExpression && this.statements.isEmpty()
 
 fun KtThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
-    val thrownExpression = this.thrownExpression
-    if (thrownExpression !is KtCallExpression) return false
+    val thrownExpression = this.thrownExpression as? KtCallExpression ?: return false
 
     val context = this.analyze(BodyResolveMode.PARTIAL)
     val nameExpression = thrownExpression.calleeExpression as? KtNameReferenceExpression ?: return false
@@ -134,4 +138,90 @@ fun KtExpression.isStableVariable(context: BindingContext = this.analyze()): Boo
     val descriptor = BindingContextUtils.extractVariableDescriptorFromReference(context, this)
     return descriptor is VariableDescriptor &&
            DataFlowValueFactory.isStableValue(descriptor, DescriptorUtils.getContainingModule(descriptor))
+}
+
+data class IfThenToSelectData(
+        val context: BindingContext,
+        val condition: KtOperationExpression,
+        val receiverExpression: KtExpression,
+        val baseClause: KtExpression?,
+        val negatedClause: KtExpression?
+) {
+    internal fun replacedBaseClause(factory: KtPsiFactory): KtExpression {
+        baseClause ?: error("Base clause must be not-null here")
+        val newReceiver = (condition as? KtIsExpression)?.let {
+            factory.createExpressionByPattern("$0 as? $1",
+                                              (baseClause as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: baseClause,
+                                              it.typeReference!!)
+        }
+        return if (baseClause.evaluatesTo(receiverExpression)) {
+            if (condition is KtIsExpression) newReceiver!! else baseClause
+        }
+        else {
+            if (condition is KtIsExpression) {
+                (baseClause as KtDotQualifiedExpression).replaceFirstReceiver(
+                        factory, newReceiver!!, safeAccess = true)
+            }
+            else {
+                baseClause.insertSafeCalls(factory)
+            }
+        }
+    }
+}
+
+internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData? {
+    val context = analyze()
+
+    val condition = condition as? KtOperationExpression ?: return null
+    val thenClause = then?.unwrapBlockOrParenthesis()
+    val elseClause = `else`?.unwrapBlockOrParenthesis()
+    val receiverExpression = condition.checkedExpression() ?: return null
+
+    val (baseClause, negatedClause) = when (condition) {
+        is KtBinaryExpression -> when (condition.operationToken) {
+            KtTokens.EQEQ -> elseClause to thenClause
+            KtTokens.EXCLEQ -> thenClause to elseClause
+            else -> return null
+        }
+        is KtIsExpression -> {
+            val targetType = context[BindingContext.TYPE, condition.typeReference] ?: return null
+            if (TypeUtils.isNullableType(targetType)) return null
+            // TODO: the following check can be removed after fix of KT-14576
+            val originalType = receiverExpression.getType(context) ?: return null
+            if (!targetType.isSubtypeOf(originalType)) return null
+
+            when (condition.isNegated) {
+                true -> elseClause to thenClause
+                false -> thenClause to elseClause
+                else -> return null
+            }
+        }
+        else -> return null
+    }
+    return IfThenToSelectData(context, condition, receiverExpression, baseClause, negatedClause)
+}
+
+private fun KtExpression.checkedExpression() = when (this) {
+    is KtBinaryExpression -> expressionComparedToNull()
+    is KtIsExpression -> leftHandSide
+    else -> null
+}
+
+internal fun KtExpression.hasNullableType(context: BindingContext): Boolean {
+    val type = getType(context) ?: return true
+    return TypeUtils.isNullableType(type)
+}
+
+internal fun KtExpression.hasFirstReceiverOf(receiver: KtExpression): Boolean {
+    val actualReceiver = (this as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: return false
+    return actualReceiver.evaluatesTo(receiver)
+}
+
+private fun KtExpression.insertSafeCalls(factory: KtPsiFactory): KtExpression {
+    if (this !is KtQualifiedExpression) return this
+    val replaced = (if (this is KtDotQualifiedExpression) {
+        this.replaced(factory.createExpressionByPattern("$0?.$1", receiverExpression, selectorExpression!!))
+    } else this) as KtQualifiedExpression
+    replaced.receiverExpression.let { it.replace(it.insertSafeCalls(factory)) }
+    return replaced
 }

@@ -17,18 +17,12 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class IfThenToSafeAccessInspection : IntentionBasedInspection<KtIfExpression>(IfThenToSafeAccessIntention::class)
 
@@ -37,83 +31,32 @@ class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIf
 ) {
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
-        val condition = element.condition
-        val thenClause = element.then
-        val elseClause = element.`else`
-        return when (condition) {
-            is KtBinaryExpression -> {
-                val receiverExpression = condition.expressionComparedToNull() ?: return false
-                if (!receiverExpression.isStableVariable()) return false
-                when (condition.operationToken) {
-                    KtTokens.EQEQ -> canBeReplacedWithSafeCall(receiverExpression, thenClause, elseClause)
-                    KtTokens.EXCLEQ -> canBeReplacedWithSafeCall(receiverExpression, elseClause, thenClause)
-                    else -> false
-                }
-            }
-            is KtIsExpression -> {
-                val context = element.analyze()
-                val receiverExpression = condition.leftHandSide
-                if (!receiverExpression.isStableVariable(context)) return false
-                val targetType = context[BindingContext.TYPE, condition.typeReference] ?: return false
-                if (TypeUtils.isNullableType(targetType)) return false
-                val originalType = receiverExpression.getType(context) ?: return false
-                if (!targetType.isSubtypeOf(originalType)) return false
-                when(condition.isNegated) {
-                    true -> canBeReplacedWithSafeCall(receiverExpression, thenClause, elseClause)
-                    false -> canBeReplacedWithSafeCall(receiverExpression, elseClause, thenClause)
-                }
-            }
-            else -> false
-        }
+        val ifThenToSelectData = element.buildSelectTransformationData() ?: return false
+        if (!ifThenToSelectData.receiverExpression.isStableVariable(ifThenToSelectData.context)) return false
+
+        return ifThenToSelectData.clausesReplaceableBySafeCall()
     }
 
     override fun startInWriteAction() = false
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        val condition = element.condition
-        val newExpr = when (condition) {
-            is KtBinaryExpression -> {
-                val receiverExpression = condition.expressionComparedToNull()!!
+        val ifThenToSelectData = element.buildSelectTransformationData() ?: return
 
-                val selectorExpression =
-                        when(condition.operationToken) {
-                            KtTokens.EQEQ -> findSelectorExpressionInClause(element.`else`!!, receiverExpression)!!
-                            KtTokens.EXCLEQ -> findSelectorExpressionInClause(element.then!!, receiverExpression)!!
-                            else -> throw IllegalArgumentException()
-                        }
-
-                KtPsiFactory(element).createExpressionByPattern("$0?.$1", receiverExpression, selectorExpression) as KtSafeQualifiedExpression
-            }
-            is KtIsExpression -> {
-                val typeRef = condition.typeReference!!
-                val lhs = condition.leftHandSide
-                val selector = if (condition.isNegated) element.`else`!! else element.then!!
-                val selectorExpression = findSelectorExpressionInClause(selector, lhs)!!
-                KtPsiFactory(element).createExpressionByPattern("($0 as? $1)?.$2", lhs, typeRef, selectorExpression) as KtSafeQualifiedExpression
-            }
-            else -> null
+        val factory = KtPsiFactory(element)
+        val resultExpr = runWriteAction {
+            val replacedBaseClause = ifThenToSelectData.replacedBaseClause(factory)
+            val newExpr = element.replaced(replacedBaseClause)
+            KtPsiUtil.deparenthesize(newExpr)
         }
 
-        if (newExpr != null) {
-            val safeAccessExpr = runWriteAction { element.replaced(newExpr) }
-            if (editor != null) {
-                safeAccessExpr.inlineReceiverIfApplicableWithPrompt(editor)
-            }
+        if (editor != null) {
+            (resultExpr as? KtSafeQualifiedExpression)?.inlineReceiverIfApplicableWithPrompt(editor)
         }
     }
 
-    private fun canBeReplacedWithSafeCall(receiver: KtExpression, nullClause: KtExpression?, notNullClause: KtExpression?) =
-            nullClause?.isNullExpression() ?: true &&
-            notNullClause != null && clauseContainsAppropriateDotQualifiedExpression(notNullClause, receiver)
-
-    private fun clauseContainsAppropriateDotQualifiedExpression(clause: KtExpression, receiverExpression: KtExpression)
-            = findSelectorExpressionInClause(clause, receiverExpression) != null
-
-    private fun findSelectorExpressionInClause(clause: KtExpression, receiverExpression: KtExpression): KtExpression? {
-        val expression = clause.unwrapBlockOrParenthesis() as? KtDotQualifiedExpression ?: return null
-
-        if (expression.receiverExpression.text != receiverExpression.text) return null
-
-        return expression.selectorExpression
+    private fun IfThenToSelectData.clausesReplaceableBySafeCall(): Boolean {
+        if (baseClause == null || negatedClause != null && !negatedClause.isNullExpression()) return false
+        return baseClause.evaluatesTo(receiverExpression) && condition !is KtBinaryExpression ||
+               baseClause.hasFirstReceiverOf(receiverExpression) && !baseClause.hasNullableType(context)
     }
 }
