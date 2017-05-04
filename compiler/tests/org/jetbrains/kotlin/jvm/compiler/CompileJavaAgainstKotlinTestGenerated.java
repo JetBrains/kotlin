@@ -49,7 +49,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("GenericSignature.kt")
             public void testGenericSignature() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/callableReference/GenericSignature.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
         }
 
@@ -64,79 +64,79 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("ClassObject.kt")
             public void testClassObject() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/ClassObject.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("DefaultConstructor.kt")
             public void testDefaultConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/DefaultConstructor.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("DefaultConstructorWithTwoArgs.kt")
             public void testDefaultConstructorWithTwoArgs() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/DefaultConstructorWithTwoArgs.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("ExtendsAbstractListT.kt")
             public void testExtendsAbstractListT() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/ExtendsAbstractListT.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("ImplementsListString.kt")
             public void testImplementsListString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/ImplementsListString.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("ImplementsMapPP.kt")
             public void testImplementsMapPP() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/ImplementsMapPP.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("InnerClass.kt")
             public void testInnerClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/InnerClass.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("InnerClassConstructors.kt")
             public void testInnerClassConstructors() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/InnerClassConstructors.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("InnerClassOfGeneric.kt")
             public void testInnerClassOfGeneric() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/InnerClassOfGeneric.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("kt3561.kt")
             public void testKt3561() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/kt3561.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("kt4050.kt")
             public void testKt4050() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/kt4050.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("Simple.kt")
             public void testSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/Simple.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("StarProjection.kt")
             public void testStarProjection() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/StarProjection.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
         }
 
@@ -151,7 +151,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("DefaultArgumentInEnumConstructor.kt")
             public void testDefaultArgumentInEnumConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/enum/DefaultArgumentInEnumConstructor.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
         }
 
@@ -166,25 +166,25 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("simpleCompanionObject.kt")
             public void testSimpleCompanionObject() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/jvmStatic/simpleCompanionObject.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("simpleCompanionObjectProperty.kt")
             public void testSimpleCompanionObjectProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/jvmStatic/simpleCompanionObjectProperty.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("simpleObject.kt")
             public void testSimpleObject() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/jvmStatic/simpleObject.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("simpleObjectProperty.kt")
             public void testSimpleObjectProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/jvmStatic/simpleObjectProperty.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
         }
 
@@ -195,7 +195,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("AccessorGenericSignature.kt")
             public void testAccessorGenericSignature() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/AccessorGenericSignature.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             public void testAllFilesPresentInMethod() throws Exception {
@@ -205,133 +205,133 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("Any.kt")
             public void testAny() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Any.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("ArrayOfIntArray.kt")
             public void testArrayOfIntArray() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/ArrayOfIntArray.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("ArrayOfIntegerArray.kt")
             public void testArrayOfIntegerArray() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/ArrayOfIntegerArray.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("ClashingSignaturesWithoutReturnType.kt")
             public void testClashingSignaturesWithoutReturnType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/ClashingSignaturesWithoutReturnType.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("Delegation.kt")
             public void testDelegation() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Delegation.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("Extensions.kt")
             public void testExtensions() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Extensions.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("GenericArray.kt")
             public void testGenericArray() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/GenericArray.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("Hello.kt")
             public void testHello() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Hello.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("Int.kt")
             public void testInt() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Int.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("IntArray.kt")
             public void testIntArray() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/IntArray.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("IntWithDefault.kt")
             public void testIntWithDefault() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/IntWithDefault.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("IntegerArray.kt")
             public void testIntegerArray() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/IntegerArray.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("ListOfInt.kt")
             public void testListOfInt() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/ListOfInt.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("ListOfString.kt")
             public void testListOfString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/ListOfString.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("ListOfT.kt")
             public void testListOfT() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/ListOfT.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("MapOfKString.kt")
             public void testMapOfKString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/MapOfKString.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("MapOfStringIntQ.kt")
             public void testMapOfStringIntQ() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/MapOfStringIntQ.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("QExtendsListString.kt")
             public void testQExtendsListString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/QExtendsListString.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("QExtendsString.kt")
             public void testQExtendsString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/QExtendsString.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("TraitImpl.kt")
             public void testTraitImpl() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/TraitImpl.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("Vararg.kt")
             public void testVararg() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Vararg.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("Void.kt")
             public void testVoid() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Void.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/platformName")
@@ -345,7 +345,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 @TestMetadata("PlatformName.kt")
                 public void testPlatformName() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/platformName/PlatformName.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
             }
 
@@ -360,67 +360,67 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 @TestMetadata("ByteOverridesObject.kt")
                 public void testByteOverridesObject() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/ByteOverridesObject.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("CallFinalNotInSubclass.kt")
                 public void testCallFinalNotInSubclass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/CallFinalNotInSubclass.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("CallNotInSubclass.kt")
                 public void testCallNotInSubclass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/CallNotInSubclass.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("CovariantReturnTypeOverride.kt")
                 public void testCovariantReturnTypeOverride() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/CovariantReturnTypeOverride.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("FinalOverride.kt")
                 public void testFinalOverride() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/FinalOverride.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("IntOverridesComparable.kt")
                 public void testIntOverridesComparable() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/IntOverridesComparable.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("IntOverridesNumber.kt")
                 public void testIntOverridesNumber() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/IntOverridesNumber.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("IntOverridesObject.kt")
                 public void testIntOverridesObject() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/IntOverridesObject.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("ManyClassesHierarchy.kt")
                 public void testManyClassesHierarchy() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/ManyClassesHierarchy.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("NullableIntOverridesObject.kt")
                 public void testNullableIntOverridesObject() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/NullableIntOverridesObject.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("OverrideInJava.kt")
                 public void testOverrideInJava() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/OverrideInJava.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
             }
 
@@ -435,43 +435,43 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 @TestMetadata("ClassMembers.kt")
                 public void testClassMembers() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/ClassMembers.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("Constructor.kt")
                 public void testConstructor() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/Constructor.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("DefaultArgs.kt")
                 public void testDefaultArgs() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/DefaultArgs.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("Delegation.kt")
                 public void testDelegation() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/Delegation.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("GenericSubstitution.kt")
                 public void testGenericSubstitution() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/GenericSubstitution.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("TopLevel.kt")
                 public void testTopLevel() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/TopLevel.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
 
                 @TestMetadata("TraitMembers.kt")
                 public void testTraitMembers() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/TraitMembers.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
             }
         }
@@ -487,19 +487,19 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("ConstVal.kt")
             public void testConstVal() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/property/ConstVal.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("Extensions.kt")
             public void testExtensions() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/property/Extensions.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("GenericProperty.kt")
             public void testGenericProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/property/GenericProperty.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("compiler/testData/compileJavaAgainstKotlin/property/platformName")
@@ -513,7 +513,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 @TestMetadata("PlatformName.kt")
                 public void testPlatformName() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/property/platformName/PlatformName.kt");
-                    doTest(fileName);
+                    doTestWithoutJavac(fileName);
                 }
             }
         }
@@ -529,13 +529,13 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("Derived.kt")
             public void testDerived() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/sealed/Derived.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("Instance.kt")
             public void testInstance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/sealed/Instance.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
         }
 
@@ -550,31 +550,31 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("AnnotationClass.kt")
             public void testAnnotationClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/staticFields/AnnotationClass.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("AnnotationTrait.kt")
             public void testAnnotationTrait() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/staticFields/AnnotationTrait.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("kt3698.kt")
             public void testKt3698() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/staticFields/kt3698.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("staticClassProperty.kt")
             public void testStaticClassProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/staticFields/staticClassProperty.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("staticTraitProperty.kt")
             public void testStaticTraitProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/staticFields/staticTraitProperty.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
         }
 
@@ -589,79 +589,79 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("annotation.kt")
             public void testAnnotation() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/annotation.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("base.kt")
             public void testBase() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/base.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("classifier.kt")
             public void testClassifier() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/classifier.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("constructor.kt")
             public void testConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/constructor.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("empty.kt")
             public void testEmpty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/empty.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("field.kt")
             public void testField() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/field.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("function.kt")
             public void testFunction() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/function.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("getter.kt")
             public void testGetter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/getter.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("local.kt")
             public void testLocal() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/local.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("multiple.kt")
             public void testMultiple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/multiple.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("parameter.kt")
             public void testParameter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/parameter.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("property.kt")
             public void testProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/property.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
 
             @TestMetadata("setter.kt")
             public void testSetter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/setter.kt");
-                doTest(fileName);
+                doTestWithoutJavac(fileName);
             }
         }
     }
@@ -685,7 +685,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("GenericSignature.kt")
             public void testGenericSignature() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/callableReference/GenericSignature.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
         }
 
@@ -700,79 +700,79 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("ClassObject.kt")
             public void testClassObject() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/ClassObject.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("DefaultConstructor.kt")
             public void testDefaultConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/DefaultConstructor.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("DefaultConstructorWithTwoArgs.kt")
             public void testDefaultConstructorWithTwoArgs() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/DefaultConstructorWithTwoArgs.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("ExtendsAbstractListT.kt")
             public void testExtendsAbstractListT() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/ExtendsAbstractListT.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("ImplementsListString.kt")
             public void testImplementsListString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/ImplementsListString.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("ImplementsMapPP.kt")
             public void testImplementsMapPP() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/ImplementsMapPP.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("InnerClass.kt")
             public void testInnerClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/InnerClass.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("InnerClassConstructors.kt")
             public void testInnerClassConstructors() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/InnerClassConstructors.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("InnerClassOfGeneric.kt")
             public void testInnerClassOfGeneric() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/InnerClassOfGeneric.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("kt3561.kt")
             public void testKt3561() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/kt3561.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("kt4050.kt")
             public void testKt4050() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/kt4050.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("Simple.kt")
             public void testSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/Simple.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("StarProjection.kt")
             public void testStarProjection() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/StarProjection.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
         }
 
@@ -787,7 +787,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("DefaultArgumentInEnumConstructor.kt")
             public void testDefaultArgumentInEnumConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/enum/DefaultArgumentInEnumConstructor.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
         }
 
@@ -802,25 +802,25 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("simpleCompanionObject.kt")
             public void testSimpleCompanionObject() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/jvmStatic/simpleCompanionObject.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("simpleCompanionObjectProperty.kt")
             public void testSimpleCompanionObjectProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/jvmStatic/simpleCompanionObjectProperty.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("simpleObject.kt")
             public void testSimpleObject() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/jvmStatic/simpleObject.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("simpleObjectProperty.kt")
             public void testSimpleObjectProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/jvmStatic/simpleObjectProperty.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
         }
 
@@ -831,7 +831,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("AccessorGenericSignature.kt")
             public void testAccessorGenericSignature() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/AccessorGenericSignature.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             public void testAllFilesPresentInMethod() throws Exception {
@@ -841,133 +841,133 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("Any.kt")
             public void testAny() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Any.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("ArrayOfIntArray.kt")
             public void testArrayOfIntArray() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/ArrayOfIntArray.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("ArrayOfIntegerArray.kt")
             public void testArrayOfIntegerArray() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/ArrayOfIntegerArray.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("ClashingSignaturesWithoutReturnType.kt")
             public void testClashingSignaturesWithoutReturnType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/ClashingSignaturesWithoutReturnType.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("Delegation.kt")
             public void testDelegation() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Delegation.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("Extensions.kt")
             public void testExtensions() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Extensions.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("GenericArray.kt")
             public void testGenericArray() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/GenericArray.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("Hello.kt")
             public void testHello() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Hello.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("Int.kt")
             public void testInt() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Int.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("IntArray.kt")
             public void testIntArray() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/IntArray.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("IntWithDefault.kt")
             public void testIntWithDefault() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/IntWithDefault.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("IntegerArray.kt")
             public void testIntegerArray() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/IntegerArray.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("ListOfInt.kt")
             public void testListOfInt() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/ListOfInt.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("ListOfString.kt")
             public void testListOfString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/ListOfString.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("ListOfT.kt")
             public void testListOfT() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/ListOfT.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("MapOfKString.kt")
             public void testMapOfKString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/MapOfKString.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("MapOfStringIntQ.kt")
             public void testMapOfStringIntQ() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/MapOfStringIntQ.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("QExtendsListString.kt")
             public void testQExtendsListString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/QExtendsListString.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("QExtendsString.kt")
             public void testQExtendsString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/QExtendsString.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("TraitImpl.kt")
             public void testTraitImpl() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/TraitImpl.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("Vararg.kt")
             public void testVararg() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Vararg.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("Void.kt")
             public void testVoid() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/Void.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/platformName")
@@ -981,7 +981,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 @TestMetadata("PlatformName.kt")
                 public void testPlatformName() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/platformName/PlatformName.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
             }
 
@@ -996,67 +996,67 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 @TestMetadata("ByteOverridesObject.kt")
                 public void testByteOverridesObject() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/ByteOverridesObject.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("CallFinalNotInSubclass.kt")
                 public void testCallFinalNotInSubclass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/CallFinalNotInSubclass.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("CallNotInSubclass.kt")
                 public void testCallNotInSubclass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/CallNotInSubclass.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("CovariantReturnTypeOverride.kt")
                 public void testCovariantReturnTypeOverride() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/CovariantReturnTypeOverride.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("FinalOverride.kt")
                 public void testFinalOverride() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/FinalOverride.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("IntOverridesComparable.kt")
                 public void testIntOverridesComparable() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/IntOverridesComparable.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("IntOverridesNumber.kt")
                 public void testIntOverridesNumber() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/IntOverridesNumber.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("IntOverridesObject.kt")
                 public void testIntOverridesObject() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/IntOverridesObject.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("ManyClassesHierarchy.kt")
                 public void testManyClassesHierarchy() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/ManyClassesHierarchy.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("NullableIntOverridesObject.kt")
                 public void testNullableIntOverridesObject() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/NullableIntOverridesObject.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("OverrideInJava.kt")
                 public void testOverrideInJava() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/OverrideInJava.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
             }
 
@@ -1071,43 +1071,43 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 @TestMetadata("ClassMembers.kt")
                 public void testClassMembers() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/ClassMembers.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("Constructor.kt")
                 public void testConstructor() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/Constructor.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("DefaultArgs.kt")
                 public void testDefaultArgs() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/DefaultArgs.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("Delegation.kt")
                 public void testDelegation() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/Delegation.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("GenericSubstitution.kt")
                 public void testGenericSubstitution() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/GenericSubstitution.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("TopLevel.kt")
                 public void testTopLevel() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/TopLevel.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
 
                 @TestMetadata("TraitMembers.kt")
                 public void testTraitMembers() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/TraitMembers.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
             }
         }
@@ -1123,19 +1123,19 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("ConstVal.kt")
             public void testConstVal() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/property/ConstVal.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("Extensions.kt")
             public void testExtensions() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/property/Extensions.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("GenericProperty.kt")
             public void testGenericProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/property/GenericProperty.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("compiler/testData/compileJavaAgainstKotlin/property/platformName")
@@ -1149,7 +1149,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 @TestMetadata("PlatformName.kt")
                 public void testPlatformName() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/property/platformName/PlatformName.kt");
-                    doTest(fileName);
+                    doTestWithJavac(fileName);
                 }
             }
         }
@@ -1165,13 +1165,13 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("Derived.kt")
             public void testDerived() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/sealed/Derived.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("Instance.kt")
             public void testInstance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/sealed/Instance.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
         }
 
@@ -1186,31 +1186,31 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("AnnotationClass.kt")
             public void testAnnotationClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/staticFields/AnnotationClass.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("AnnotationTrait.kt")
             public void testAnnotationTrait() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/staticFields/AnnotationTrait.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("kt3698.kt")
             public void testKt3698() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/staticFields/kt3698.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("staticClassProperty.kt")
             public void testStaticClassProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/staticFields/staticClassProperty.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("staticTraitProperty.kt")
             public void testStaticTraitProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/staticFields/staticTraitProperty.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
         }
 
@@ -1225,79 +1225,79 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("annotation.kt")
             public void testAnnotation() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/annotation.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("base.kt")
             public void testBase() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/base.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("classifier.kt")
             public void testClassifier() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/classifier.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("constructor.kt")
             public void testConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/constructor.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("empty.kt")
             public void testEmpty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/empty.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("field.kt")
             public void testField() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/field.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("function.kt")
             public void testFunction() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/function.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("getter.kt")
             public void testGetter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/getter.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("local.kt")
             public void testLocal() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/local.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("multiple.kt")
             public void testMultiple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/multiple.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("parameter.kt")
             public void testParameter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/parameter.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("property.kt")
             public void testProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/property.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
 
             @TestMetadata("setter.kt")
             public void testSetter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/targets/setter.kt");
-                doTest(fileName);
+                doTestWithJavac(fileName);
             }
         }
     }

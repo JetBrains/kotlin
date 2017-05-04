@@ -40,7 +40,17 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndC
 abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
 
     @Throws(IOException::class)
-    protected fun doTest(ktFilePath: String) {
+    protected fun doTestWithJavac(ktFilePath: String) {
+        doTest(ktFilePath, true)
+    }
+
+    @Throws(IOException::class)
+    protected fun doTestWithoutJavac(ktFilePath: String) {
+        doTest(ktFilePath, false)
+    }
+
+    @Throws(IOException::class)
+    protected fun doTest(ktFilePath: String, useJavac: Boolean) {
         Assert.assertTrue(ktFilePath.endsWith(".kt"))
         val ktFile = File(ktFilePath)
         val javaFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".java"))
@@ -48,8 +58,6 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
         val javaErrorFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".javaerr.txt"))
 
         val out = File(tmpdir, "out")
-
-        val useJavac = this::class.java.name.contains("WithJavac")
 
         val compiledSuccessfully = if (useJavac) {
             compileKotlinWithJava(listOf(javaFile),
