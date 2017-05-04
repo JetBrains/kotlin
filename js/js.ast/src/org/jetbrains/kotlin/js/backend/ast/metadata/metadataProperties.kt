@@ -114,7 +114,8 @@ data class CoroutineMetadata(
         val baseClassRef: JsExpression,
         val suspendObjectRef: JsExpression,
         val hasController: Boolean,
-        val hasReceiver: Boolean
+        val hasReceiver: Boolean,
+        val psiElement: PsiElement?
 )
 
 enum class TypeCheck {

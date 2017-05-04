@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.coroutine
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
@@ -57,6 +58,8 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
             statements: MutableList<JsStatement>,
             globalCatchBlockIndex: Int
     ) {
+        val psiElement = context.metadata.psiElement
+
         val constructor = JsFunction(function.scope.parent, JsBlock(), "Continuation")
         constructor.name = className
         if (context.metadata.hasReceiver) {
@@ -80,17 +83,17 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
 
         constructor.body.statements.run {
             val baseClass = context.metadata.baseClassRef.deepCopy()
-            this += JsInvocation(Namer.getFunctionCallRef(baseClass), JsLiteral.THIS, interceptorRef).makeStmt()
+            this += JsInvocation(Namer.getFunctionCallRef(baseClass), JsLiteral.THIS, interceptorRef).source(psiElement).makeStmt()
             if (controllerName != null) {
-                assignToField(context.controllerFieldName, controllerName.makeRef())
+                assignToField(context.controllerFieldName, controllerName.makeRef(), psiElement)
             }
-            assignToField(context.metadata.exceptionStateName, program.getNumberLiteral(globalCatchBlockIndex))
+            assignToField(context.metadata.exceptionStateName, program.getNumberLiteral(globalCatchBlockIndex), psiElement)
             if (context.metadata.hasReceiver) {
-                assignToField(context.receiverFieldName, context.receiverFieldName.makeRef())
+                assignToField(context.receiverFieldName, context.receiverFieldName.makeRef(), psiElement)
             }
             for (localVariable in localVariables) {
                 val value = if (localVariable !in parameterNames) Namer.getUndefinedExpression() else localVariable.makeRef()
-                assignToField(context.getFieldName(localVariable), value)
+                assignToField(context.getFieldName(localVariable), value, psiElement)
             }
         }
 
@@ -144,7 +147,8 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
     }
 
     private fun generateCoroutineInstantiation(context: CoroutineTransformationContext) {
-        val instantiation = JsNew(className.makeRef())
+        val psiElement = context.metadata.psiElement
+        val instantiation = JsNew(className.makeRef()).apply { source = psiElement }
         if (context.metadata.hasReceiver) {
             instantiation.arguments += JsLiteral.THIS
         }
@@ -163,9 +167,13 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
         val instanceName = JsScope.declareTemporaryName("instance")
         functionWithBody.body.statements += JsAstUtils.newVar(instanceName, instantiation)
 
-        val invokeResume = JsReturn(JsInvocation(JsNameRef(context.metadata.doResumeName, instanceName.makeRef()), JsLiteral.NULL))
+        val invokeResume = JsReturn(JsInvocation(JsNameRef(context.metadata.doResumeName, instanceName.makeRef()), JsLiteral.NULL)
+                                            .source(psiElement))
 
-        functionWithBody.body.statements += JsIf(suspendedName.makeRef(), JsReturn(instanceName.makeRef()), invokeResume)
+        functionWithBody.body.statements += JsIf(
+                suspendedName.makeRef().source(psiElement),
+                JsReturn(instanceName.makeRef().source(psiElement)),
+                invokeResume)
     }
 
     private fun generateCoroutineBody(
@@ -208,8 +216,8 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
         })
     }
 
-    private fun MutableList<JsStatement>.assignToField(fieldName: JsName, value: JsExpression) {
-        this += JsAstUtils.assignment(JsNameRef(fieldName, JsLiteral.THIS), value).makeStmt()
+    private fun MutableList<JsStatement>.assignToField(fieldName: JsName, value: JsExpression, psiElement: PsiElement?) {
+        this += JsAstUtils.assignment(JsNameRef(fieldName, JsLiteral.THIS), value).source(psiElement).makeStmt()
     }
 
     private fun MutableList<JsStatement>.assignToPrototype(fieldName: JsName, value: JsExpression) {

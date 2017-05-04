@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,7 +122,7 @@ fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransf
             if (target != null) {
                 val lhs = JsNameRef(context.metadata.stateName, JsAstUtils.stateMachineReceiver())
                 val rhs = program.getNumberLiteral(blockIndexes[target]!!)
-                ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs)).apply {
+                ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs).source(x.source)).apply {
                     targetBlock = true
                 })
             }
@@ -131,7 +131,7 @@ fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransf
             if (exceptionTarget != null) {
                 val lhs = JsNameRef(context.metadata.exceptionStateName, JsAstUtils.stateMachineReceiver())
                 val rhs = program.getNumberLiteral(blockIndexes[exceptionTarget]!!)
-                ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs)).apply {
+                ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs).source(x.source)).apply {
                     targetExceptionBlock = true
                 })
             }
@@ -141,7 +141,7 @@ fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransf
                 if (finallyPath.isNotEmpty()) {
                     val lhs = JsNameRef(context.metadata.finallyPathName, JsAstUtils.stateMachineReceiver())
                     val rhs = JsArrayLiteral(finallyPath.map { program.getNumberLiteral(blockIndexes[it]!!) })
-                    ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs)).apply {
+                    ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs).source(x.source)).apply {
                         this.finallyPath = true
                     })
                 }
@@ -222,12 +222,14 @@ fun JsBlock.replaceSpecialReferences(context: CoroutineTransformationContext) {
 
                 x.coroutineController -> {
                     ctx.replaceMe(JsNameRef(context.controllerFieldName, x.qualifier).apply {
+                        source = x.source
                         sideEffects = SideEffectKind.PURE
                     })
                 }
 
                 x.coroutineResult -> {
                     ctx.replaceMe(JsNameRef(context.metadata.resultName, x.qualifier).apply {
+                        source = x.source
                         sideEffects = SideEffectKind.DEPENDS_ON_STATE
                     })
                 }
@@ -262,7 +264,7 @@ fun JsBlock.replaceLocalVariables(context: CoroutineTransformationContext, local
         override fun endVisit(x: JsNameRef, ctx: JsContext<in JsNode>) {
             if (x.qualifier == null && x.name in localVariables) {
                 val fieldName = context.getFieldName(x.name!!)
-                ctx.replaceMe(JsNameRef(fieldName, JsLiteral.THIS))
+                ctx.replaceMe(JsNameRef(fieldName, JsLiteral.THIS).source(x.source))
             }
         }
 
