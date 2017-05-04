@@ -403,38 +403,38 @@ internal class GradleMessageCollector(val logger: Logger) : MessageCollector {
     }
 
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
-        val text = buildString {
-            append(when (severity) {
-                in CompilerMessageSeverity.VERBOSE -> "v"
-                in CompilerMessageSeverity.ERRORS -> {
-                    hasErrors = true
-                    "e"
-                }
-                CompilerMessageSeverity.INFO -> "i"
-                CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING -> "w"
-                else -> throw IllegalArgumentException("Unknown CompilerMessageSeverity: $severity")
-            })
-            append(": ")
+        fun formatMsg(prefix: String) =
+            buildString {
+                append("$prefix: ")
 
-            if (location != null) {
-                val (path, line, column) = location
-                if (path != null) {
-                    append(path)
-                    append(": ")
+                location?.apply {
+                    append("$path: ")
                     if (line > 0 && column > 0) {
                         append("($line, $column): ")
                     }
                 }
+
+                append(message)
             }
 
-            append(message)
-        }
         when (severity) {
-            in CompilerMessageSeverity.VERBOSE -> logger.debug(text)
-            in CompilerMessageSeverity.ERRORS -> logger.error(text)
-            CompilerMessageSeverity.INFO -> logger.info(text)
-            CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING -> logger.warn(text)
-            else -> throw IllegalArgumentException("Unknown CompilerMessageSeverity: $severity")
-        }
+            CompilerMessageSeverity.ERROR,
+            CompilerMessageSeverity.EXCEPTION ->  {
+                hasErrors = true
+                logger.error(formatMsg("e"))
+            }
+
+            CompilerMessageSeverity.WARNING,
+            CompilerMessageSeverity.STRONG_WARNING -> {
+                logger.warn(formatMsg("w"))
+            }
+            CompilerMessageSeverity.INFO -> {
+                logger.info(formatMsg("i"))
+            }
+            CompilerMessageSeverity.LOGGING,
+            CompilerMessageSeverity.OUTPUT -> {
+                logger.debug(formatMsg("v"))
+            }
+        }!! // !! is used to force compile-time exhaustiveness
     }
 }
