@@ -52,7 +52,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
         val declaration = element ?: return
 
         when {
-            isExternalMemberDeclaration(declaration) -> fixExtensionMemberDeclaration(declaration, editor)
+            isMemberExtensionDeclaration(declaration) -> fixExtensionMemberDeclaration(declaration, editor)
             isMemberDeclaration(declaration) -> {
                 val containingClass = declaration.containingClassOrObject
                 if (containingClass != null) {
@@ -76,7 +76,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
                 annotations.nativeAnnotation.delete()
             } else {
                 val externalDeclaration = ConvertMemberToExtensionIntention.convert(memberDeclaration)
-                fixExtensionMemberDeclaration(externalDeclaration, null)
+                fixExtensionMemberDeclaration(externalDeclaration, null) // editor is null as we are not going to open any live templates
             }
         }
 
@@ -227,7 +227,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
 
     companion object : KotlinSingleIntentionActionFactory() {
         private fun KtAnnotationEntry.isJsAnnotation(vararg predefinedAnnotations: PredefinedAnnotation): Boolean {
-            val bindingContext = analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+            val bindingContext = analyze(BodyResolveMode.PARTIAL)
             val annotationDescriptor = bindingContext[BindingContext.ANNOTATION, this]
             return annotationDescriptor != null && predefinedAnnotations.any { checkAnnotationName(annotationDescriptor, it.fqName) }
         }
@@ -236,7 +236,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
             return isJsAnnotation(PredefinedAnnotation.NATIVE, PredefinedAnnotation.NATIVE_GETTER, PredefinedAnnotation.NATIVE_SETTER, PredefinedAnnotation.NATIVE_INVOKE )
         }
 
-        private fun isExternalMemberDeclaration(psiElement: PsiElement): Boolean {
+        private fun isMemberExtensionDeclaration(psiElement: PsiElement): Boolean {
             return (psiElement is KtNamedFunction && psiElement.receiverTypeReference != null) ||
                    (psiElement is KtProperty && psiElement.receiverTypeReference != null)
         }
@@ -260,7 +260,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
             val e = diagnostic.psiElement
             when (diagnostic.factory) {
                 ErrorsJs.WRONG_EXTERNAL_DECLARATION -> {
-                    if (isExternalMemberDeclaration(e)) {
+                    if (isMemberExtensionDeclaration(e)) {
                         return MigrateExternalExtensionFix(e as KtNamedDeclaration)
                     }
                 }
