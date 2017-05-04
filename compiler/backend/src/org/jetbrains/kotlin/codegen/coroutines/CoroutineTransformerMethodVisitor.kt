@@ -64,6 +64,9 @@ class CoroutineTransformerMethodVisitor(
     override fun performTransformations(methodNode: MethodNode) {
         val suspensionPoints = collectSuspensionPoints(methodNode)
 
+        // First instruction in the method node may change in case of named function
+        val actualCoroutineStart = methodNode.instructions.first
+
         if (isForNamedFunction) {
             if (allSuspensionPointsAreTailCalls(containingClassInternalName, methodNode, suspensionPoints)) {
                 dropSuspensionMarkers(methodNode, suspensionPoints)
@@ -74,16 +77,6 @@ class CoroutineTransformerMethodVisitor(
             exceptionIndex = methodNode.maxLocals++
 
             prepareMethodNodePreludeForNamedFunction(methodNode)
-        }
-
-        val customCoroutineStart = run {
-            val customCoroutineStartMarker = methodNode.instructions.toArray().filterIsInstance<MethodInsnNode>().firstOrNull {
-                it.owner == COROUTINE_MARKER_OWNER && it.name == ACTUAL_COROUTINE_START_MARKER_NAME
-            }
-
-            customCoroutineStartMarker?.next?.also {
-                methodNode.instructions.remove(customCoroutineStartMarker)
-            }
         }
 
         for (suspensionPoint in suspensionPoints) {
@@ -110,7 +103,7 @@ class CoroutineTransformerMethodVisitor(
         methodNode.instructions.apply {
             val startLabel = LabelNode()
             val defaultLabel = LabelNode()
-            val firstToInsertBefore = customCoroutineStart ?: first
+            val firstToInsertBefore = actualCoroutineStart
             // tableswitch(this.label)
             insertBefore(firstToInsertBefore,
                          insnListOf(
@@ -221,8 +214,6 @@ class CoroutineTransformerMethodVisitor(
             checkcast(objectTypeForState)
             getfield(COROUTINE_IMPL_FOR_NAMED_ASM_TYPE.internalName, "exception", AsmTypes.JAVA_THROWABLE_TYPE.descriptor)
             visitVarInsn(Opcodes.ASTORE, exceptionIndex)
-
-            invokestatic(COROUTINE_MARKER_OWNER, ACTUAL_COROUTINE_START_MARKER_NAME, "()V", false)
         })
     }
 

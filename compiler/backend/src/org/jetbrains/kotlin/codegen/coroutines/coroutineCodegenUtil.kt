@@ -55,7 +55,6 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 const val COROUTINE_MARKER_OWNER = "kotlin/coroutines/Markers"
 const val BEFORE_SUSPENSION_POINT_MARKER_NAME = "beforeSuspensionPoint"
 const val AFTER_SUSPENSION_POINT_MARKER_NAME = "afterSuspensionPoint"
-const val ACTUAL_COROUTINE_START_MARKER_NAME = "actualCoroutineStart"
 
 const val COROUTINE_LABEL_FIELD_NAME = "label"
 const val SUSPEND_FUNCTION_CREATE_METHOD_NAME = "create"
