@@ -22,11 +22,10 @@ import com.intellij.psi.LiteralTextEscaper;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 
 public class KtStringTemplateExpression extends KtExpressionImpl implements PsiLanguageInjectionHost {
-    private static final TokenSet TOKENS_SUITABLE_FOR_INJECTION = TokenSet.create(KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY, KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY);
+    private static final TokenSet CLOSE_QUOTE_TOKEN_SET = TokenSet.create(KtTokens.CLOSING_QUOTE);
 
     public KtStringTemplateExpression(@NotNull ASTNode node) {
         super(node);
@@ -44,14 +43,7 @@ public class KtStringTemplateExpression extends KtExpressionImpl implements PsiL
 
     @Override
     public boolean isValidHost() {
-        ASTNode node = getNode();
-        ASTNode child = node.getFirstChildNode().getTreeNext();
-        while (child != null) {
-            if (child.getElementType() == KtTokens.CLOSING_QUOTE) return true;
-            if (!TOKENS_SUITABLE_FOR_INJECTION.contains(child.getElementType())) return false;
-            child = child.getTreeNext();
-        }
-        return false;
+        return getNode().getChildren(CLOSE_QUOTE_TOKEN_SET).length != 0;
     }
 
     @Override

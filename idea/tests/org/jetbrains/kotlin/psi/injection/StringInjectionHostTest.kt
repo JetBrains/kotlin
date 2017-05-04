@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
 class StringInjectionHostTest : KotlinTestWithEnvironment() {
@@ -40,6 +41,11 @@ class StringInjectionHostTest : KotlinTestWithEnvironment() {
             assertOneLine()
         }
     }
+
+    fun testInterpolation1(): Unit = checkAllRanges("a \$b c")
+    fun testInterpolation2(): Unit = checkAllRanges("a \${b} c")
+    fun testInterpolation3(): Unit = checkAllRanges("a\${b}c")
+    fun testInterpolation4(): Unit = checkAllRanges("a \${b.foo()} c")
 
     fun testUnclosedSimpleLiteral() {
         assertFalse(stringExpression("\"").isValidHost)
@@ -124,6 +130,13 @@ class StringInjectionHostTest : KotlinTestWithEnvironment() {
         assertFalse(createLiteralTextEscaper().isOneLine)
     }
 
+    private fun checkAllRanges(str: String) {
+        with (quoted(str)) {
+            checkInjection(str, (0..str.length).keysToMap { it + 1 })
+            assertOneLine()
+        }
+    }
+
     private fun KtStringTemplateExpression.checkInjection(
             decoded: String, targetToSourceOffsets: Map<Int, Int>, rangeInHost: TextRange? = null
     ) {
@@ -132,8 +145,10 @@ class StringInjectionHostTest : KotlinTestWithEnvironment() {
             val escaper = createLiteralTextEscaper()
             val chars = StringBuilder(prefix)
             val range = rangeInHost ?: escaper.relevantTextRange
+
             assertTrue(escaper.decode(range, chars))
             assertEquals(decoded, chars.substring(prefix.length))
+
             val extendedOffsets = HashMap(targetToSourceOffsets)
             val beforeStart = targetToSourceOffsets.keys.min()!! - 1
             if (beforeStart >= 0) {
