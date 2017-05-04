@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
@@ -29,6 +27,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
 class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val resultTypeResolver: ResultTypeResolver):
@@ -39,11 +38,13 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         KotlinCallCompleter.Context,
         FixationOrderCalculator.Context
 {
-    val storage = MutableConstraintStorage()
+    private val storage = MutableConstraintStorage()
     private var state = State.BUILDING
+    private val typeVariablesTransaction: MutableList<NewTypeVariable> = SmartList()
 
     private enum class State {
         BUILDING,
+        TRANSACTION,
         FREEZED,
         COMPLETION
     }
@@ -73,42 +74,70 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         return this
     }
 
-    // ConstraintSystemBuilder
+    // ConstraintSystemOperation
     override fun registerVariable(variable: NewTypeVariable) {
-        checkState(State.BUILDING, State.COMPLETION)
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
 
+        transactionRegisterVariable(variable)
         storage.allTypeVariables[variable.freshTypeConstructor] = variable
         storage.notFixedTypeVariables[variable.freshTypeConstructor] = MutableVariableWithConstraints(variable)
     }
 
     override fun addSubtypeConstraint(lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition) =
-            constraintInjector.addInitialSubtypeConstraint(apply { checkState(State.BUILDING, State.COMPLETION) }, lowerType, upperType, position)
+            constraintInjector.addInitialSubtypeConstraint(apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) }, lowerType, upperType, position)
 
     override fun addEqualityConstraint(a: UnwrappedType, b: UnwrappedType, position: ConstraintPosition) =
-            constraintInjector.addInitialEqualityConstraint(apply { checkState(State.BUILDING, State.COMPLETION) }, a, b, position)
+            constraintInjector.addInitialEqualityConstraint(apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) }, a, b, position)
 
-    override fun addLambdaArgument(resolvedLambdaArgument: ResolvedLambdaArgument) {
-        checkState(State.BUILDING, State.COMPLETION)
-        storage.lambdaArguments.add(resolvedLambdaArgument)
+    // ConstraintSystemBuilder
+    private fun transactionRegisterVariable(variable: NewTypeVariable) {
+        if (state != State.TRANSACTION) return
+        typeVariablesTransaction.add(variable)
     }
 
-    override fun addSubtypeConstraintIfCompatible(lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition): Boolean {
+    private fun closeTransaction(beforeState: State) {
+        checkState(State.TRANSACTION)
+        typeVariablesTransaction.clear()
+        state = beforeState
+    }
+
+    override fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean {
         checkState(State.BUILDING, State.COMPLETION)
+        val beforeState = state
+        val beforeInitialConstraintCount = storage.initialConstraints.size
+        val beforeErrorsCount = storage.errors.size
+        val beforeMaxTypeDepthFromInitialConstraints = storage.maxTypeDepthFromInitialConstraints
 
-        if (hasContradiction) return false
-        addSubtypeConstraint(lowerType, upperType, position)
-        if (!hasContradiction) return true
+        state = State.TRANSACTION
+        // typeVariablesTransaction is clear
+        if (runOperations()) {
+            closeTransaction(beforeState)
+            return true
+        }
 
-        val shouldRemove = { c: Constraint -> c.position === position ||
-                                              (c.position is IncorporationConstraintPosition && c.position.from === position) }
+        for (addedTypeVariable in typeVariablesTransaction) {
+            storage.allTypeVariables.remove(addedTypeVariable.freshTypeConstructor)
+            storage.notFixedTypeVariables.remove(addedTypeVariable.freshTypeConstructor)
+        }
+        storage.maxTypeDepthFromInitialConstraints = beforeMaxTypeDepthFromInitialConstraints
+        storage.errors.trimToSize(beforeErrorsCount)
+
+        val addedInitialConstraints = storage.initialConstraints.subList(beforeInitialConstraintCount, storage.initialConstraints.size)
+
+        val shouldRemove = { c: Constraint -> addedInitialConstraints.contains(c.position.initialConstraint) }
 
         for (variableWithConstraint in storage.notFixedTypeVariables.values) {
             variableWithConstraint.removeLastConstraints(shouldRemove)
         }
-        storage.errors.clear()
-        storage.initialConstraints.removeAt(storage.initialConstraints.lastIndex)
 
+        addedInitialConstraints.clear() // remove constraint from storage.initialConstraints
+        closeTransaction(beforeState)
         return false
+    }
+
+    override fun addLambdaArgument(resolvedLambdaArgument: ResolvedLambdaArgument) {
+        checkState(State.BUILDING, State.COMPLETION)
+        storage.lambdaArguments.add(resolvedLambdaArgument)
     }
 
     private fun getVariablesForFixation(): Map<NewTypeVariable, UnwrappedType> {
@@ -140,7 +169,7 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
 
     // ConstraintSystemBuilder, KotlinCallCompleter.Context
     override val hasContradiction: Boolean
-        get() = diagnostics.any { !it.candidateApplicability.isSuccess }.apply { checkState(State.BUILDING, State.COMPLETION) }
+        get() = diagnostics.any { !it.candidateApplicability.isSuccess }.apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) }
 
     override fun addInnerCall(innerCall: ResolvedKotlinCall.OnlyResolvedKotlinCall) {
         checkState(State.BUILDING, State.COMPLETION)
@@ -162,7 +191,7 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
 
     // ResultTypeResolver.Context, ConstraintSystemBuilder
     override fun isProperType(type: UnwrappedType): Boolean {
-        checkState(State.BUILDING, State.COMPLETION)
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         return !type.contains {
             storage.allTypeVariables.containsKey(it.constructor)
         }
@@ -170,31 +199,31 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
 
     // ConstraintInjector.Context
     override val allTypeVariables: Map<TypeConstructor, NewTypeVariable> get() {
-        checkState(State.BUILDING, State.COMPLETION)
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         return storage.allTypeVariables
     }
 
     override var maxTypeDepthFromInitialConstraints: Int
         get() = storage.maxTypeDepthFromInitialConstraints
         set(value) {
-            checkState(State.BUILDING, State.COMPLETION)
+            checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
             storage.maxTypeDepthFromInitialConstraints = value
         }
 
     override fun addInitialConstraint(initialConstraint: InitialConstraint) {
-        checkState(State.BUILDING, State.COMPLETION)
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         storage.initialConstraints.add(initialConstraint)
     }
 
     // ConstraintInjector.Context, FixationOrderCalculator.Context
     override val notFixedTypeVariables: MutableMap<TypeConstructor, MutableVariableWithConstraints> get() {
-        checkState(State.BUILDING, State.COMPLETION)
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         return storage.notFixedTypeVariables
     }
 
     // ConstraintInjector.Context, KotlinCallCompleter.Context
     override fun addError(error: KotlinCallDiagnostic) {
-        checkState(State.BUILDING, State.COMPLETION)
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         storage.errors.add(error)
     }
 

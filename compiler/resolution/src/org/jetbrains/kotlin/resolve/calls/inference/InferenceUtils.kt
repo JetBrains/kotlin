@@ -57,3 +57,5 @@ fun CallableDescriptor.substituteAndApproximateCapturedTypes(substitutor: NewTyp
 
     return substitute(TypeSubstitutor.create(wrappedSubstitution))
 }
+
+fun <E> MutableList<E>.trimToSize(newSize: Int) = subList(newSize, size).clear()
