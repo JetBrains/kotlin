@@ -75,7 +75,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
                 convertNativeAnnotationToJsName(memberDeclaration, annotations)
                 annotations.nativeAnnotation.delete()
             } else {
-                val externalDeclaration = ConvertMemberToExtensionIntention().convert(memberDeclaration)
+                val externalDeclaration = ConvertMemberToExtensionIntention.convert(memberDeclaration)
                 fixExtensionMemberDeclaration(externalDeclaration, null)
             }
         }

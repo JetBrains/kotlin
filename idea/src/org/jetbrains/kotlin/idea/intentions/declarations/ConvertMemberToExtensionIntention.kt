@@ -70,10 +70,6 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         }
     }
 
-    fun convert(element: KtCallableDeclaration): KtCallableDeclaration {
-        return createExtensionCallableAndPrepareBodyToSelect(element).first
-    }
-
     private fun createExtensionCallableAndPrepareBodyToSelect(element: KtCallableDeclaration): Pair<KtCallableDeclaration, KtExpression?> {
         val descriptor = element.resolveToDescriptor()
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
@@ -210,5 +206,11 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         val allTypeParameters = classParams + member.typeParameters
         val text = allTypeParameters.map { it.text }.joinToString(",", "<", ">")
         return KtPsiFactory(member).createDeclaration<KtFunction>("fun $text foo()").typeParameterList
+    }
+
+    companion object {
+        fun convert(element: KtCallableDeclaration): KtCallableDeclaration {
+            return ConvertMemberToExtensionIntention().createExtensionCallableAndPrepareBodyToSelect(element).first
+        }
     }
 }
