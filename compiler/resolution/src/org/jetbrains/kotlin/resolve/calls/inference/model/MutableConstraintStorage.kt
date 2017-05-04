@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
+import org.jetbrains.kotlin.resolve.calls.inference.trimToSize
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MutableVariableWithConstraints(
@@ -29,7 +31,7 @@ class MutableVariableWithConstraints(
         constraints: Collection<Constraint> = emptyList()
 ) : VariableWithConstraints {
     override val constraints: List<Constraint> get() = mutableConstraints
-    private val mutableConstraints = MyArrayList(constraints)
+    private val mutableConstraints = ArrayList(constraints)
 
     // return new actual constraint, if this constraint is new
     fun addConstraint(constraint: Constraint): Constraint? {
@@ -50,15 +52,15 @@ class MutableVariableWithConstraints(
         return actualConstraint
     }
 
-    fun removeLastConstraints(shouldRemove: (Constraint) -> Boolean) {
-        mutableConstraints.removeLast(shouldRemove)
+    // This method should be used only for transaction in constraint system
+    // shouldRemove should give true only for tail elements
+    internal fun removeLastConstraints(shouldRemove: (Constraint) -> Boolean) {
+        mutableConstraints.trimToSize(mutableConstraints.indexOfLast { !shouldRemove(it) } + 1)
     }
 
-    // todo optimize it!
-    fun removeConstrains(shouldRemove: (Constraint) -> Boolean) {
-        val newConstraints = mutableConstraints.filter { !shouldRemove(it) }
-        mutableConstraints.clear()
-        mutableConstraints.addAll(newConstraints)
+    // This method should be used only when constraint system has state COMPLETION
+    internal fun removeConstrains(shouldRemove: (Constraint) -> Boolean) {
+        mutableConstraints.removeAll(shouldRemove)
     }
 
     private fun newConstraintIsUseless(oldKind: ConstraintKind, newKind: ConstraintKind) =
@@ -68,24 +70,13 @@ class MutableVariableWithConstraints(
                 ConstraintKind.UPPER -> newKind == ConstraintKind.UPPER
             }
 
-    private class MyArrayList<E>(c: Collection<E>): ArrayList<E>(c) {
-        fun removeLast(predicate: (E) -> Boolean) {
-            val newSize = indexOfLast { !predicate(it) } + 1
-
-            if (newSize != size) {
-                removeRange(newSize, size)
-            }
-        }
-    }
-
     override fun toString(): String {
         return "Constraints for $typeVariable"
     }
-
 }
 
 
-class MutableConstraintStorage : ConstraintStorage {
+internal class MutableConstraintStorage : ConstraintStorage {
     override val allTypeVariables: MutableMap<TypeConstructor, NewTypeVariable> = LinkedHashMap()
     override val notFixedTypeVariables: MutableMap<TypeConstructor, MutableVariableWithConstraints> = LinkedHashMap()
     override val initialConstraints: MutableList<InitialConstraint> = ArrayList()

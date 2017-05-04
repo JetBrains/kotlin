@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
+import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*

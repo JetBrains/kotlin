@@ -23,21 +23,22 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
 import org.jetbrains.kotlin.types.UnwrappedType
 
-
-interface ConstraintSystemBuilder {
+interface ConstraintSystemOperation {
     val hasContradiction: Boolean
-
     fun registerVariable(variable: NewTypeVariable)
 
     fun addSubtypeConstraint(lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition)
     fun addEqualityConstraint(a: UnwrappedType, b: UnwrappedType, position: ConstraintPosition)
 
+    fun isProperType(type: UnwrappedType): Boolean
+}
+
+interface ConstraintSystemBuilder : ConstraintSystemOperation {
     fun addInnerCall(innerCall: ResolvedKotlinCall.OnlyResolvedKotlinCall)
     fun addLambdaArgument(resolvedLambdaArgument: ResolvedLambdaArgument)
 
-    fun addSubtypeConstraintIfCompatible(lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition): Boolean
-
-    fun isProperType(type: UnwrappedType): Boolean
+    // if runOperations return true, then this operation will be applied, and function return true
+    fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean
 
     /**
      * This function removes variables for which we know exact type.
@@ -45,3 +46,9 @@ interface ConstraintSystemBuilder {
      */
     fun simplify(): NewTypeSubstitutor
 }
+
+fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition) =
+        runTransaction {
+            if (!hasContradiction) addSubtypeConstraint(lowerType, upperType, position)
+            !hasContradiction
+        }
