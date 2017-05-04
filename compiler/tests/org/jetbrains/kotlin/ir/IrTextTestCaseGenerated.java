@@ -227,6 +227,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/declarations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("catchParameterInTopLevelProperty.kt")
+        public void testCatchParameterInTopLevelProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/catchParameterInTopLevelProperty.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("classLevelProperties.kt")
         public void testClassLevelProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/classLevelProperties.kt");

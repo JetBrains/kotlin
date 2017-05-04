@@ -97,8 +97,8 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                     ktProperty.startOffset, ktProperty.endOffset,
                     IrDeclarationOrigin.DEFINED, false,
                     propertyDescriptor
-            ).apply {
-                backingField =
+            ).buildWithScope { irProperty ->
+                irProperty.backingField =
                         if (propertyDescriptor.hasBackingField())
                             generatePropertyBackingField(ktProperty, propertyDescriptor) { irField ->
                                 ktProperty.initializer?.let { ktInitializer ->
@@ -108,9 +108,9 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                         else
                             null
 
-                getter = generateGetterIfRequired(ktProperty, propertyDescriptor)
+                irProperty.getter = generateGetterIfRequired(ktProperty, propertyDescriptor)
 
-                setter = generateSetterIfRequired(ktProperty, propertyDescriptor)
+                irProperty.setter = generateSetterIfRequired(ktProperty, propertyDescriptor)
             }
 
     private fun PropertyDescriptor.hasBackingField(): Boolean =
