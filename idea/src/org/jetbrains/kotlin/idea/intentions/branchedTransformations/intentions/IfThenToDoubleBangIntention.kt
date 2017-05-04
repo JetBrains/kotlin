@@ -18,43 +18,26 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-class IfThenToDoubleBangIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with '!!' expression") {
+class IfThenToDoubleBangIntention : SelfTargetingRangeIntention<KtIfExpression>(
+        KtIfExpression::class.java, "Replace 'if' expression with '!!' expression"
+) {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
-        val condition = element.condition as? KtBinaryExpression ?: return null
-        val thenClause = element.then ?: return null
-        val elseClause = element.`else`
+        val (context, condition, receiverExpression, baseClause, negatedClause) = element.buildSelectTransformationData() ?: return null
+        // TODO: here "Replace with as" can be supported
+        if (condition is KtIsExpression) return null
 
-        val expression = condition.expressionComparedToNull() ?: return null
+        val throwExpression = negatedClause as? KtThrowExpression ?: return null
 
-        val token = condition.operationToken
-
-        val throwExpression: KtThrowExpression
-        val matchingClause: KtExpression?
-        when (token) {
-            KtTokens.EQEQ -> {
-                throwExpression = thenClause.unwrapBlockOrParenthesis() as? KtThrowExpression ?: return null
-                matchingClause = elseClause
-            }
-
-            KtTokens.EXCLEQ -> {
-                matchingClause = thenClause
-                throwExpression = elseClause?.unwrapBlockOrParenthesis() as? KtThrowExpression ?: return null
-            }
-
-            else -> throw IllegalStateException()
-        }
-
-        val matchesAsStatement = element.isUsedAsStatement(element.analyze()) && (matchingClause?.isNullExpressionOrEmptyBlock() ?: true)
-        if (!matchesAsStatement && !(matchingClause?.evaluatesTo(expression) ?: false && expression.isStableVariable())) return null
+        val matchesAsStatement = element.isUsedAsStatement(context) && (baseClause?.isNullExpressionOrEmptyBlock() ?: true)
+        if (!matchesAsStatement &&
+            !(baseClause?.evaluatesTo(receiverExpression) ?: false && receiverExpression.isStableVariable())) return null
 
         var text = "Replace 'if' expression with '!!' expression"
         if (!throwExpression.throwsNullPointerExceptionWithNoArguments()) {
@@ -67,9 +50,8 @@ class IfThenToDoubleBangIntention : SelfTargetingRangeIntention<KtIfExpression>(
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        val condition = element.condition as KtBinaryExpression
-        val expression = condition.expressionComparedToNull()!!
-        val result = element.replace(KtPsiFactory(element).createExpressionByPattern("$0!!", expression)) as KtPostfixExpression
+        val (_, _, receiverExpression) = element.buildSelectTransformationData() ?: return
+        val result = element.replace(KtPsiFactory(element).createExpressionByPattern("$0!!", receiverExpression)) as KtPostfixExpression
 
         result.inlineBaseExpressionIfApplicableWithPrompt(editor)
     }

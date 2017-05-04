@@ -1766,6 +1766,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("isCheckSimple.kt")
+            public void testIsCheckSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/isCheckSimple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("isCheckWithSelectorChain.kt")
+            public void testIsCheckWithSelectorChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/isCheckWithSelectorChain.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("isCondition.kt")
             public void testIsCondition() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/isCondition.kt");
@@ -1853,6 +1865,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("notApplicableForLocalVar.kt")
             public void testNotApplicableForLocalVar() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/notApplicableForLocalVar.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullCheckSimple.kt")
+            public void testNullCheckSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/nullCheckSimple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullCheckWithSelectorCallChain.kt")
+            public void testNullCheckWithSelectorCallChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/nullCheckWithSelectorCallChain.kt");
                 doTest(fileName);
             }
 

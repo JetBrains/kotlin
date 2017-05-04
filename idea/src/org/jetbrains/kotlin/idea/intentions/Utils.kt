@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -248,19 +249,19 @@ fun KtDotQualifiedExpression.replaceFirstReceiver(
         newReceiver: KtExpression,
         safeAccess: Boolean = false
 ): KtExpression {
-    val receiver = receiverExpression
-    if (safeAccess) {
-        operationTokenNode.psi.replace(factory.createSafeCallNode().psi)
-    }
+    val replaced = (if (safeAccess) {
+        this.replaced(factory.createExpressionByPattern("$0?.$1", receiverExpression, selectorExpression!!))
+    } else this) as KtQualifiedExpression
+    val receiver = replaced.receiverExpression
     when (receiver) {
         is KtDotQualifiedExpression -> {
-            receiver.replaceFirstReceiver(factory, newReceiver, safeAccess)
+            receiver.replace(receiver.replaceFirstReceiver(factory, newReceiver, safeAccess))
         }
         else -> {
             receiver.replace(newReceiver)
         }
     }
-    return this
+    return replaced
 }
 
 fun KtDotQualifiedExpression.deleteFirstReceiver(): KtExpression {

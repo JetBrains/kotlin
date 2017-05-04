@@ -24,17 +24,11 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
-import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
-import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(
         IfThenToElvisIntention::class,
@@ -46,49 +40,21 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
         "Replace 'if' expression with elvis expression"
 ) {
 
-    private fun KtExpression.clausesReplaceableByElvis(firstClause: KtExpression, secondClause: KtExpression, context: BindingContext) =
-            !firstClause.isNullOrBlockExpression() &&
-            (secondClause.evaluatesTo(this) || secondClause.hasFirstReceiverOf(this) && !secondClause.hasNullableType(context)) &&
-            !(firstClause is KtThrowExpression && firstClause.throwsNullPointerExceptionWithNoArguments())
-
-    private fun KtExpression.checkedExpression() = when (this) {
-        is KtBinaryExpression -> expressionComparedToNull()
-        is KtIsExpression -> leftHandSide
-        else -> null
-    }
+    private fun IfThenToSelectData.clausesReplaceableByElvis() =
+            baseClause != null && negatedClause != null &&
+            !negatedClause.isNullOrBlockExpression() &&
+            (baseClause.evaluatesTo(receiverExpression) ||
+             baseClause.hasFirstReceiverOf(receiverExpression) && !baseClause.hasNullableType(context)) &&
+            !(negatedClause is KtThrowExpression && negatedClause.throwsNullPointerExceptionWithNoArguments())
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
-        val context = element.analyze()
-        val type = element.getType(context) ?: return false
+        val ifThenToSelectData = element.buildSelectTransformationData() ?: return false
+        if (!ifThenToSelectData.receiverExpression.isStableVariable(ifThenToSelectData.context)) return false
+
+        val type = element.getType(ifThenToSelectData.context) ?: return false
         if (KotlinBuiltIns.isUnit(type)) return false
 
-        val condition = element.condition as? KtOperationExpression ?: return false
-        val thenClause = element.then ?: return false
-        val elseClause = element.`else` ?: return false
-
-        val checkedExpression = condition.checkedExpression() ?: return false
-        if (!checkedExpression.isStableVariable(context)) return false
-
-        return when (condition) {
-            is KtBinaryExpression -> when (condition.operationToken) {
-                KtTokens.EQEQ -> checkedExpression.clausesReplaceableByElvis(thenClause, elseClause, context)
-                KtTokens.EXCLEQ -> checkedExpression.clausesReplaceableByElvis(elseClause, thenClause, context)
-                else -> false
-            }
-            is KtIsExpression -> {
-                val targetType = context[BindingContext.TYPE, condition.typeReference] ?: return false
-                if (TypeUtils.isNullableType(targetType)) return false
-                // The following check can be removed after fix of KT-14576
-                val originalType = condition.leftHandSide.getType(context) ?: return false
-                if (!targetType.isSubtypeOf(originalType)) return false
-
-                when (condition.isNegated) {
-                    true -> checkedExpression.clausesReplaceableByElvis(thenClause, elseClause, context)
-                    false -> checkedExpression.clausesReplaceableByElvis(elseClause, thenClause, context)
-                }
-            }
-            else -> false
-        }
+        return ifThenToSelectData.clausesReplaceableByElvis()
     }
 
     private fun KtExpression.isNullOrBlockExpression(): Boolean {
@@ -96,69 +62,17 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
         return innerExpression is KtBlockExpression || innerExpression.node.elementType == KtNodeTypes.NULL
     }
 
-    private fun KtExpression.hasNullableType(context: BindingContext): Boolean {
-        val type = getType(context) ?: return true
-        return TypeUtils.isNullableType(type)
-    }
-
-    private fun KtExpression.hasFirstReceiverOf(receiver: KtExpression): Boolean {
-        val actualReceiver = (unwrapBlockOrParenthesis() as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: return false
-        return actualReceiver.evaluatesTo(receiver)
-    }
-
-    private fun KtExpression.insertSafeCalls(factory: KtPsiFactory): KtExpression {
-        if (this !is KtQualifiedExpression) return this
-        if (this is KtDotQualifiedExpression) {
-            operationTokenNode.psi.replace(factory.createSafeCallNode().psi)
-        }
-        receiverExpression.insertSafeCalls(factory)
-        return this
-    }
-
     override fun startInWriteAction() = false
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        val condition = element.condition as KtOperationExpression
-
-        val thenClause = element.then!!
-        val elseClause = element.`else`!!
-        val thenExpression = thenClause.unwrapBlockOrParenthesis()
-        val elseExpression = elseClause.unwrapBlockOrParenthesis()
-
-        val (left, right) = when (condition) {
-            is KtBinaryExpression -> when (condition.operationToken) {
-                KtTokens.EQEQ -> Pair(elseExpression, thenExpression)
-                KtTokens.EXCLEQ -> Pair(thenExpression, elseExpression)
-                else -> throw IllegalArgumentException()
-            }
-            is KtIsExpression -> when (condition.isNegated) {
-                true -> Pair(elseExpression, thenExpression)
-                false -> Pair(thenExpression, elseExpression)
-            }
-            else -> throw IllegalArgumentException()
-        }
+        val ifThenToSelectData = element.buildSelectTransformationData() ?: return
 
         val factory = KtPsiFactory(element)
-        val newReceiver = (condition as? KtIsExpression)?.let {
-            factory.createExpressionByPattern("$0 as? $1",
-                                              (left as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: left,
-                                              it.typeReference!!)
-        }
-        val checkedExpression = condition.checkedExpression()!!
         val elvis = runWriteAction {
-            val replacedLeft = if (left.evaluatesTo(checkedExpression)) {
-                if (condition is KtIsExpression) newReceiver!! else left
-            }
-            else {
-                if (condition is KtIsExpression) {
-                    (left as KtDotQualifiedExpression).replaceFirstReceiver(
-                            factory, newReceiver!!, safeAccess = true)
-                }
-                else {
-                    left.insertSafeCalls(factory)
-                }
-            }
-            val newExpr = element.replaced(factory.createExpressionByPattern("$0 ?: $1", replacedLeft, right))
+            val replacedBaseClause = ifThenToSelectData.replacedBaseClause(factory)
+            val newExpr = element.replaced(factory.createExpressionByPattern("$0 ?: $1",
+                                                                             replacedBaseClause,
+                                                                             ifThenToSelectData.negatedClause!!))
             KtPsiUtil.deparenthesize(newExpr) as KtBinaryExpression
         }
 
