@@ -150,6 +150,22 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
             super.visitVariable(declaration)
         }
 
+        //---------------------------------------------------------------------//
+
+        override fun visitCatch(aCatch: IrCatch) {
+            val oldDescriptor = aCatch.parameter
+            val oldContainingDeclaration = oldDescriptor.containingDeclaration
+            val newContainingDeclaration = descriptorSubstituteMap.getOrDefault(oldContainingDeclaration, oldContainingDeclaration)
+            val newDescriptor = IrTemporaryVariableDescriptorImpl(
+                    containingDeclaration = newContainingDeclaration,
+                    name                  = generateCopyName(oldDescriptor.name),
+                    outType               = substituteType(oldDescriptor.type)!!,
+                    isMutable             = oldDescriptor.isVar)
+            descriptorSubstituteMap[oldDescriptor] = newDescriptor
+
+            super.visitCatch(aCatch)
+        }
+
         //--- Copy descriptors ------------------------------------------------//
 
         private fun generateCopyName(name: Name): Name {
