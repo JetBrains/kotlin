@@ -16,111 +16,82 @@
 
 package kotlin.collections
 
+import kotlin.coroutines.experimental.buildIterator
 
-internal fun windowIndices(sourceSize: Int, size: Int, step: Int, dropTrailing: Boolean): Sequence<IntRange> {
-    require(size > 0 && step > 0) { "size $size and step $step both must be greater than zero" }
-
-    if (sourceSize == 0 || (size > sourceSize && dropTrailing)) {
-        return emptySequence()
-    }
-    if (size == 0) {
-        return when {
-            step > 0 -> (0 .. sourceSize - 1 step step)
-            else -> (sourceSize - 1 downTo 0 step -step)
-        }.asSequence().map { it .. it - 1 } // empty ranges with valid start
-    }
-
-    var currentIndex = when {
-        step > 0 -> 0
-        else -> sourceSize - size
-    }
-
-    return generateSequence {
-        val startIndex = currentIndex
-        val endExclusive = currentIndex + size
-
-        when {
-            startIndex >= sourceSize -> null
-            endExclusive > sourceSize && dropTrailing -> null
-            startIndex < 0 && dropTrailing -> null
-            step < 0 && endExclusive <= 0 -> null
-            else -> {
-                currentIndex += step
-                startIndex.coerceAtLeast(0) .. endExclusive.coerceAtMost(sourceSize) - 1
-            }
-        }
+internal fun checkWindowSizeStep(size: Int, step: Int) {
+    require(size > 0 && step > 0) {
+        if (size != step)
+            "Both size $size and step $step must be greater than zero."
+        else
+            "size $size must be greater than zero."
     }
 }
 
-internal fun <T> windowForwardOnlySequenceImpl(iterator: Iterator<T>, size: Int, step: Int, dropTrailing: Boolean): Sequence<List<T>> {
-    require(size > 0 && step > 0) { "size $size and step $step both must be greater than zero" }
-
-    return if (step >= size) {
-        windowForwardWithGap(iterator, size, step, dropTrailing)
-    } else {
-        windowForwardWithOverlap(iterator, size, step, dropTrailing)
-    }
+internal fun <T> Sequence<T>.windowedSequence(size: Int, step: Int, dropTrailing: Boolean, reuseBuffer: Boolean): Sequence<List<T>> {
+    checkWindowSizeStep(size, step)
+    return Sequence { windowedIterator(iterator(), size, step, dropTrailing, reuseBuffer) }
 }
 
-private fun <T> windowForwardWithGap(iterator: Iterator<T>, size: Int, step: Int, dropTrailing: Boolean): Sequence<List<T>> {
-    require(step >= size)
-    var first = true
-    val gap = step - size
-
-    fun skipGap() {
-        for (skip in 1..gap) {
-            if (!iterator.hasNext()) {
-                break
+internal fun <T> windowedIterator(iterator: Iterator<T>, size: Int, step: Int, dropTrailing: Boolean, reuseBuffer: Boolean): Iterator<List<T>> {
+    if (!iterator.hasNext()) return EmptyIterator
+    return buildIterator<List<T>> {
+        val gap = step - size
+        if (gap >= 0) {
+            var buffer = ArrayList<T>(size)
+            var skip = 0
+            for (e in iterator) {
+                if (skip > 0) { skip -= 1; continue }
+                buffer.add(e)
+                if (buffer.size == size) {
+                    yield(buffer)
+                    if (reuseBuffer) buffer.clear() else buffer = ArrayList(size)
+                    skip = gap
+                }
             }
-            iterator.next()
-        }
-    }
-
-    return generateSequence {
-        if (first) {
-            first = false
+            if (buffer.isNotEmpty()) {
+                if (!dropTrailing || buffer.size == size) yield(buffer)
+            }
         } else {
-            skipGap()
-        }
-
-        val buffer = ArrayList<T>(size)
-        for (i in 1..size) {
-            if (!iterator.hasNext()) {
-                break
+            val buffer = RingBuffer<T>(size)
+            for (e in iterator) {
+                buffer.add(e)
+                if (buffer.isFull()) {
+                    yield(if (reuseBuffer) buffer else ArrayList(buffer))
+                    buffer.removeFirst(step)
+                }
             }
-            buffer.add(iterator.next())
-        }
-
-        when {
-            buffer.isEmpty() && !iterator.hasNext() -> null
-            buffer.size < size && dropTrailing -> null
-            else -> buffer
-        }
-    }
-}
-
-private fun <T> windowForwardWithOverlap(iterator: Iterator<T>, size: Int, step: Int, dropTrailing: Boolean): Sequence<List<T>> {
-    require(step < size)
-
-    val buffer = RingBuffer<T>(size)
-
-    return generateSequence {
-        if (!buffer.isEmpty()) {
-            buffer.removeFirst(minOf(step, buffer.size))
-        }
-
-        while (!buffer.isFull() && iterator.hasNext()) {
-            buffer.add(iterator.next())
-        }
-
-        @Suppress("UNCHECKED_CAST")
-        when {
-            buffer.isEmpty() && !iterator.hasNext() -> null
-            !buffer.isFull() && dropTrailing -> null
-            else -> buffer.toArray().asList() as List<T>
+            if (dropTrailing) {
+                if (buffer.size == size) yield(buffer)
+            } else {
+                while (buffer.size > step) {
+                    yield(if (reuseBuffer) buffer else ArrayList(buffer))
+                    buffer.removeFirst(step)
+                }
+                if (buffer.isNotEmpty()) yield(buffer)
+            }
         }
     }
 }
+
+internal class MovingSubList<out E>(private val list: List<E>) : AbstractList<E>(), RandomAccess {
+    private var fromIndex: Int = 0
+    private var _size: Int = 0
+
+    fun move(fromIndex: Int, toIndex: Int) {
+        checkRangeIndexes(fromIndex, toIndex, list.size)
+        this.fromIndex = fromIndex
+        this._size = toIndex - fromIndex
+    }
+
+    override fun get(index: Int): E {
+        checkElementIndex(index, _size)
+
+        return list[fromIndex + index]
+    }
+
+    override val size: Int get() = _size
+}
+
 
 /**
  * Provides ring buffer implementation.
@@ -128,7 +99,7 @@ private fun <T> windowForwardWithOverlap(iterator: Iterator<T>, size: Int, step:
  * Buffer overflow is not allowed so [add] doesn't overwrite tail but raises an exception while [offer] returns `false`
  * If it is going to be public API perhaps this behaviour could be customizable
  */
-internal class RingBuffer<T>(val capacity: Int): Iterable<T> {
+private class RingBuffer<T>(val capacity: Int): AbstractList<T>(), RandomAccess {
     init {
         require(capacity >= 0) { "ring buffer capacity should not be negative but it is $capacity" }
     }
@@ -136,31 +107,32 @@ internal class RingBuffer<T>(val capacity: Int): Iterable<T> {
     private val buffer = arrayOfNulls<Any?>(capacity)
     private var writePosition = 0
 
-    var size: Int = 0
+    override var size: Int = 0
         private set
 
-    fun isEmpty() = size == 0
+    override fun get(index: Int): T {
+        checkElementIndex(index, size)
+        return getAtUnsafe(writePosition.backward(size - index))
+    }
+
     fun isFull() = size == capacity
 
-    override fun iterator(): Iterator<T> = when {
-        isEmpty() -> EmptyIterator
-        else -> object : AbstractIterator<T>() {
+    override fun iterator(): Iterator<T> = object : AbstractIterator<T>() {
             private var count = size
-            private var idx = writePosition.backward(count)
+            private var index = writePosition.backward(size)
 
             override fun computeNext() {
                 if (count == 0) {
                     done()
                 } else {
-                    setNext(getAtUnsafe(idx))
-                    idx = idx.forward()
+                    setNext(getAtUnsafe(index))
+                    index = index.forward(1)
                     count--
                 }
             }
-        }
     }
 
-    fun toArray(): Array<out Any?> {
+    override fun toArray(): Array<Any?> {
         val size = this.size
         val result = arrayOfNulls<Any?>(size)
         var widx = 0
@@ -187,7 +159,7 @@ internal class RingBuffer<T>(val capacity: Int): Iterable<T> {
      */
     fun add(element: T) {
         if (!offer(element)) {
-            throw IllegalStateException("ring buffer is full")
+            throw IllegalStateException("Ring buffer is full.")
         }
     }
 
@@ -200,27 +172,9 @@ internal class RingBuffer<T>(val capacity: Int): Iterable<T> {
         }
 
         buffer[writePosition] = element
-        writePosition = writePosition.forward()
+        writePosition = writePosition.forward(1)
         size++
         return true
-    }
-
-    /**
-     * Takes first element from the buffer or fails with [NoSuchElementException] if the buffer is empty
-     */
-    fun get(): T {
-        if (isEmpty()) {
-            throw NoSuchElementException("ring buffer is empty")
-        }
-
-        val readPosition = writePosition.backward(size)
-
-        val result = getAtUnsafe(readPosition)
-        buffer[readPosition] = null
-
-        size--
-
-        return result
     }
 
     /**
@@ -234,9 +188,6 @@ internal class RingBuffer<T>(val capacity: Int): Iterable<T> {
             val start = writePosition.backward(size)
             val end = start.forward(n - 1)
 
-            for (i in start .. end) {
-                buffer[i] = null
-            }
             if (start > end) {
                 buffer.fill(null, start, capacity)
                 buffer.fill(null, 0, end + 1)
@@ -248,33 +199,15 @@ internal class RingBuffer<T>(val capacity: Int): Iterable<T> {
         }
     }
 
-    /**
-     * Removes all elements from the buffer
-     */
-    fun clear() {
-        size = 0
-        buffer.fill(null)
-    }
 
     @Suppress("NOTHING_TO_INLINE", "UNCHECKED_CAST")
     private inline fun getAtUnsafe(idx: Int): T = buffer[idx] as T
 
     @Suppress("NOTHING_TO_INLINE")
-    private inline fun Int.forward(n: Int = 1): Int {
-        require(n >= 0)
-        require(n <= capacity)
-
-        val result = this + n
-        return if (result >= capacity) result - capacity else result
-    }
+    private inline fun Int.forward(n: Int): Int = (this + n) % capacity
 
     @Suppress("NOTHING_TO_INLINE")
-    private inline fun Int.backward(n: Int = 1): Int {
-        require(n >= 0)
-        require(n <= capacity)
-
-        return if (this < n) (this - n + capacity) else this - n
-    }
+    private inline fun Int.backward(n: Int): Int = ((this - n) % capacity + capacity) % capacity
 
     // TODO: replace with Array.fill from stdlib when available in common
     private fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
