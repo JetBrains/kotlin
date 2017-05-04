@@ -19,3 +19,5 @@ Compile:
 Run:
 
     ./HelloTensorflow.kexe
+
+You may need to specify `LD_LIBRARY_PATH` or `DYLD_LIBRARY_PATH` to `/opt/local/lib` if TensorFlow dynamic library cannot be found.

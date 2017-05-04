@@ -31,7 +31,8 @@ the following platforms:
 
  ## Compatibility and features ##
 
-To run _Kotlin/Native_ JDK8 or later for the host platform has to be installed.
+To run _Kotlin/Native_ JDK8 for the host platform has to be installed.
+Note that Java 9 not yet supported.
 
 The language and library version supported by this EAP release mostly match Kotlin 1.1.
 However, there are certain limitations, see section [Known Limitations](#limitations).
@@ -67,12 +68,8 @@ for benchmarking and competitive analysis of any kind.
 
 ### Standard Library ###
 
-  The standard library in _Kotlin/Native_ is known to be incomplete and doesn't include
-certain methods available in standard library of Kotlin.
-
-### Coroutines ###
-
-Coroutines are not yet supported with this release.
+  The standard library in _Kotlin/Native_ is known to be incomplete and may not include
+few methods available in standard library of Kotlin (notably, regular expression-related).
 
 ### Reflection ###
 
