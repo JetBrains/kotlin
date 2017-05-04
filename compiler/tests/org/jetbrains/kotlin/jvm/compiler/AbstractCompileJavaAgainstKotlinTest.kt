@@ -77,25 +77,9 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
 
-        if (useJavac) {
-            environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
-            environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, out)
-            environment.registerJavac(emptyList<File>())
-        }
-
         val analysisResult = JvmResolveUtil.analyze(environment)
         val packageView = analysisResult.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
         assertFalse("Nothing found in package ${LoadDescriptorUtil.TEST_PACKAGE_FQNAME}", packageView.isEmpty())
-
-        if (useJavac) {
-            File("${ktFilePath.substringBefore(".kt")}2.txt").let {
-                if (it.exists()) {
-                    validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, it)
-                    return
-                }
-            }
-
-        }
 
         val expectedFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".txt"))
         validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile)
