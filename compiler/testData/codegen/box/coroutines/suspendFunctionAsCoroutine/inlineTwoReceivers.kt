@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.experimental.*
