@@ -17,19 +17,16 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
-import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
-import java.lang.UnsupportedOperationException
 
 
 class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, resultTypeResolver: ResultTypeResolver) : SimpleConstraintSystem {
@@ -37,7 +34,7 @@ class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, resultT
 
     override fun registerTypeVariables(typeParameters: Collection<TypeParameterDescriptor>): TypeSubstitutor {
         val substitutionMap = typeParameters.associate {
-            val variable = TypeVariableFromCallableDescriptor(ThrowableKotlinCall, it)
+            val variable = TypeVariableFromCallableDescriptor(it)
             csBuilder.registerVariable(variable)
 
             it.defaultType.constructor to variable.defaultType.asTypeProjection()
@@ -57,16 +54,4 @@ class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, resultT
 
     override fun hasContradiction() = csBuilder.hasContradiction
     override val captureFromArgument get() = true
-
-    private object ThrowableKotlinCall : KotlinCall {
-        override val callKind: KotlinCallKind get() = throw UnsupportedOperationException()
-        override val explicitReceiver: ReceiverKotlinCallArgument? get() = throw UnsupportedOperationException()
-        override val name: Name get() = throw UnsupportedOperationException()
-        override val typeArguments: List<TypeArgument> get() = throw UnsupportedOperationException()
-        override val argumentsInParenthesis: List<KotlinCallArgument> get() = throw UnsupportedOperationException()
-        override val externalArgument: KotlinCallArgument? get() = throw UnsupportedOperationException()
-        override val isInfixCall: Boolean get() = throw UnsupportedOperationException()
-        override val isOperatorCall: Boolean get() = throw UnsupportedOperationException()
-        override val isSuperOrDelegatingConstructorCall: Boolean get() = throw UnsupportedOperationException()
-    }
 }

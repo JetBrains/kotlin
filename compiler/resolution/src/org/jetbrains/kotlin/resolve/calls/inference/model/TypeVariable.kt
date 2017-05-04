@@ -50,8 +50,8 @@ sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String) {
 }
 
 class TypeVariableFromCallableDescriptor(
-        val call: KotlinCall,
-        val originalTypeParameter: TypeParameterDescriptor
+        val originalTypeParameter: TypeParameterDescriptor,
+        val call: KotlinCall? = null
 ) : NewTypeVariable(originalTypeParameter.builtIns, originalTypeParameter.name.identifier)
 
 class LambdaTypeVariable(
