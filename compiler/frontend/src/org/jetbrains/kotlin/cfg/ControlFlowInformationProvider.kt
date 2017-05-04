@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.referencedProperty
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -401,18 +400,6 @@ class ControlFlowInformationProvider private constructor(
             varWithValReassignErrorGenerated: MutableCollection<VariableDescriptor>
     ): Boolean {
         val variableDescriptor = ctxt.variableDescriptor
-        val propertyDescriptor = variableDescriptor?.referencedProperty
-        if (KtPsiUtil.isBackingFieldReference(variableDescriptor) && propertyDescriptor != null) {
-            val accessor = getParentOfType(expression, KtPropertyAccessor::class.java)
-            if (accessor != null) {
-                val accessorDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, accessor)
-                if (propertyDescriptor.getter === accessorDescriptor) {
-                    //val can be reassigned through backing field inside its own getter
-                    return false
-                }
-            }
-        }
-
         val mayBeInitializedNotHere = ctxt.enterInitState?.mayBeInitialized() ?: false
         val hasBackingField = (variableDescriptor as? PropertyDescriptor)?.let {
             trace.get(BindingContext.BACKING_FIELD_REQUIRED, it)
@@ -470,7 +457,12 @@ class ControlFlowInformationProvider private constructor(
                         }
                     }
                     else {
-                        report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor), ctxt)
+                        if (KtPsiUtil.isBackingFieldReference(variableDescriptor)) {
+                            report(Errors.VAL_REASSIGNMENT_VIA_BACKING_FIELD.on(expression, variableDescriptor), ctxt)
+                        }
+                        else {
+                            report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor), ctxt)
+                        }
                     }
                 }
                 if (isThisOrNoDispatchReceiver) {
