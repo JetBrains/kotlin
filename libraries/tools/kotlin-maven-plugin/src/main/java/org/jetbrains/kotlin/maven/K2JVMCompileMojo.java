@@ -40,7 +40,7 @@ import static org.jetbrains.kotlin.maven.Util.filterClassPath;
  *
  * @noinspection UnusedDeclaration
  */
-@Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = false)
+@Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArguments> {
     /**
      * Project classpath.
