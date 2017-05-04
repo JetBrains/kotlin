@@ -94,8 +94,12 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                     mapClassDeclaration(declaration.descriptor),
                     declaration.declarations.map { it.transform() }
             ).apply {
+                thisReceiver = declaration.thisReceiver?.withDescriptor(descriptor.thisAsReceiverParameter)
                 transformTypeParameters(declaration, descriptor.declaredTypeParameters)
             }
+
+    private fun IrValueParameter.withDescriptor(newDescriptor: ParameterDescriptor) =
+            IrValueParameterImpl(startOffset, endOffset, origin, newDescriptor, defaultValue?.transform())
 
     override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
             IrTypeAliasImpl(
@@ -421,7 +425,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                 newProperty, newFieldSymbol, newGetterSymbol, newSetterSymbol,
                 expression.transformTypeArguments(newProperty),
                 mapStatementOrigin(expression.origin)
-        )
+        ).transformValueArguments(expression)
     }
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {

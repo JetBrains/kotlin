@@ -53,7 +53,8 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
     private fun doTestIrModuleDependencies(wholeFile: File, irModule: IrModuleFragment) {
         irModule.dependencyModules.forEach { irDependencyModule ->
             val actual = irDependencyModule.dump()
-            val expectedFileName = wholeFile.absolutePath.replace(".kt", "__${irDependencyModule.descriptor.name.asString()}.txt")
+            val sanitizedModuleName = StringUtil.sanitizeJavaIdentifier(irDependencyModule.descriptor.name.asString())
+            val expectedFileName = wholeFile.absolutePath.replace(".kt", "__$sanitizedModuleName.txt")
             KotlinTestUtils.assertEqualsToFile(File(expectedFileName), actual)
         }
     }
@@ -83,7 +84,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
             val irFileCopyOld = irFile.deepCopyOld()
             val copiedTreesOld = irFileCopyOld.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber)
-            TestCase.assertEquals("IR dump mismatch after old deep copy", actualTrees, copiedTrees)
+            TestCase.assertEquals("IR dump mismatch after old deep copy", actualTrees, copiedTreesOld)
         }
 
         try {
