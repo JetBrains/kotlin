@@ -5708,6 +5708,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TailCallOptimizations extends AbstractIrBlackBoxCodegenTest {
+            public void testAllFilesPresentInTailCallOptimizations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("inlineWithStateMachine.kt")
+            public void testInlineWithStateMachine() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/inlineWithStateMachine.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineWithoutStateMachine.kt")
+            public void testInlineWithoutStateMachine() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/inlineWithoutStateMachine.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/simple.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/coroutines/tailOperations")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.topLevelClassAsmType
 import org.jetbrains.kotlin.codegen.topLevelClassInternalName
-import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -156,18 +155,11 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
     return ResolvedCallWithRealDescriptor(newCall, thisExpression)
 }
 
-fun ResolvedCall<*>.isSuspensionPointInStateMachine(bindingContext: BindingContext): Boolean {
-    if (resultingDescriptor.safeAs<FunctionDescriptor>()?.isSuspend != true) return false
-    val enclosingSuspendFunction = bindingContext[BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, call] ?: return false
-
-    return enclosingSuspendFunction.isStateMachineNeeded(bindingContext)
-}
-
-fun FunctionDescriptor.isStateMachineNeeded(bindingContext: BindingContext) =
-        isSuspendLambda || containsNonTailSuspensionCalls(bindingContext)
-
-fun FunctionDescriptor.containsNonTailSuspensionCalls(bindingContext: BindingContext) =
-        bindingContext[BindingContext.CONTAINS_NON_TAIL_SUSPEND_CALLS, original] == true
+fun ResolvedCall<*>.isSuspendNoInlineCall() =
+        resultingDescriptor.safeAs<FunctionDescriptor>()
+                ?.let {
+                    it.isSuspend && (!it.isInline || it.isBuiltInSuspendCoroutineOrReturnInJvm())
+                } == true
 
 fun CallableDescriptor.isSuspendFunctionNotSuspensionView(): Boolean {
     if (this !is FunctionDescriptor) return false

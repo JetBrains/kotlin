@@ -1,17 +1,19 @@
 @kotlin.Metadata
 final class Controller$multipleSuspensions$1 {
+    field L$0: java.lang.Object
     synthetic final field this$0: Controller
     inner class Controller$multipleSuspensions$1
     method <init>(p0: Controller, p1: kotlin.coroutines.experimental.Continuation): void
-    public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method doResume(): java.lang.Object
 }
 
 @kotlin.Metadata
 final class Controller$nonTailCall$1 {
+    field L$0: java.lang.Object
     synthetic final field this$0: Controller
     inner class Controller$nonTailCall$1
     method <init>(p0: Controller, p1: kotlin.coroutines.experimental.Continuation): void
-    public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method doResume(): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -28,9 +30,9 @@ public final class Controller {
 @kotlin.Metadata
 final class CoroutineFieldsKt$box$1 {
     synthetic final field $result: kotlin.jvm.internal.Ref$ObjectRef
-    private field J$0: long
-    private field L$0: java.lang.Object
-    private field L$1: java.lang.Object
+    field J$0: long
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
     private field p$: Controller
     inner class CoroutineFieldsKt$box$1
     method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.coroutines.experimental.Continuation): void

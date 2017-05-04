@@ -1184,7 +1184,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Nullable
     private StackValue genCoroutineInstanceForSuspendLambda(@NotNull FunctionDescriptor suspendFunction) {
-        if (!CoroutineCodegenUtilKt.isStateMachineNeeded(suspendFunction, bindingContext)) return null;
         if (!(suspendFunction instanceof AnonymousFunctionDescriptor)) return null;
 
         ClassDescriptor suspendLambdaClassDescriptor = bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, suspendFunction);
@@ -2138,9 +2137,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull CallGenerator callGenerator,
             @NotNull ArgumentGenerator argumentGenerator
     ) {
-        boolean isSuspensionPoint = CoroutineCodegenUtilKt.isSuspensionPointInStateMachine(resolvedCall, bindingContext);
+        boolean isSuspendCall = CoroutineCodegenUtilKt.isSuspendNoInlineCall(resolvedCall);
         boolean isConstructor = resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor;
-        putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspensionPoint, isConstructor);
+        putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspendCall, isConstructor);
 
         callGenerator.processAndPutHiddenParameters(false);
 
@@ -2171,7 +2170,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         }
 
-        if (isSuspensionPoint) {
+        if (isSuspendCall) {
             v.invokestatic(
                     CoroutineCodegenUtilKt.COROUTINE_MARKER_OWNER,
                     CoroutineCodegenUtilKt.BEFORE_SUSPENSION_POINT_MARKER_NAME,
@@ -2181,7 +2180,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
 
-        if (isSuspensionPoint) {
+        if (isSuspendCall) {
             v.invokestatic(
                     CoroutineCodegenUtilKt.COROUTINE_MARKER_OWNER,
                     CoroutineCodegenUtilKt.AFTER_SUSPENSION_POINT_MARKER_NAME, "()V", false);
@@ -2199,12 +2198,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull Callable callableMethod,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull StackValue receiver,
-            boolean isSuspensionPoint,
+            boolean isSuspendCall,
             boolean isConstructor
     ) {
         boolean isSafeCallOrOnStack = receiver instanceof StackValue.SafeCall || receiver instanceof StackValue.OnStack;
 
-        if (isSuspensionPoint && !isSafeCallOrOnStack) {
+        if (isSuspendCall && !isSafeCallOrOnStack) {
             // Inline markers are used to spill the stack before coroutine suspension
             addInlineMarker(v, true);
         }
@@ -2231,7 +2230,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             // The problem is that the stack before the call is not restored in case of null receiver.
             // The solution is to spill stack just after receiver is loaded (after IFNULL) in case of safe call.
             // But the problem is that we should leave the receiver itself on the stack, so we store it in a temporary variable.
-            if (isSuspensionPoint && isSafeCallOrOnStack) {
+            if (isSuspendCall && isSafeCallOrOnStack) {
                 boolean bothReceivers =
                         receiver instanceof StackValue.CallReceiver
                         && ((StackValue.CallReceiver) receiver).getDispatchReceiver().type.getSort() != Type.VOID

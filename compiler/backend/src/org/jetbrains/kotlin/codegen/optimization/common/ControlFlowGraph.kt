@@ -25,7 +25,8 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 class ControlFlowGraph private constructor(private val insns: InsnList) {
     private val edges: Array<MutableList<Int>> = Array(insns.size()) { arrayListOf<Int>() }
 
-    fun getSuccessorsIndices(insn: AbstractInsnNode): List<Int> = edges[insns.indexOf(insn)]
+    fun getSuccessorsIndices(insn: AbstractInsnNode): List<Int> = getSuccessorsIndices(insns.indexOf(insn))
+    fun getSuccessorsIndices(index: Int): List<Int> = edges[index]
 
     companion object {
         @JvmStatic

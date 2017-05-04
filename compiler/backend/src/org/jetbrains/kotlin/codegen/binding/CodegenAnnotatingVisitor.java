@@ -104,6 +104,20 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     }
 
     @NotNull
+    private ClassDescriptor recordClassForFunction(
+            @NotNull KtElement element,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull String name,
+            @Nullable DeclarationDescriptor customContainer
+    ) {
+        return recordClassForCallable(
+                element, functionDescriptor,
+                runtimeTypes.getSupertypesForClosure(functionDescriptor),
+                name, customContainer
+        );
+    }
+
+    @NotNull
     private ClassDescriptor recordClassForCallable(
             @NotNull KtElement element,
             @NotNull CallableDescriptor callableDescriptor,
@@ -454,18 +468,23 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                     jvmSuspendFunctionView
             );
 
-            if (CoroutineCodegenUtilKt.containsNonTailSuspensionCalls(functionDescriptor, bindingContext)) {
-                if (nameForClassOrPackageMember != null) {
-                    nameStack.push(nameForClassOrPackageMember);
-                }
-
-                processNamedFunctionWithClosure(function, functionDescriptor, functionDescriptor).setSuspend(true);
-
-                if (nameForClassOrPackageMember != null) {
-                    nameStack.pop();
-                }
-                return;
+            if (nameForClassOrPackageMember != null) {
+                nameStack.push(nameForClassOrPackageMember);
             }
+
+            String name = inventAnonymousClassName();
+            ClassDescriptor classDescriptor =
+                    recordClassForFunction(function, functionDescriptor, name, functionDescriptor);
+            MutableClosure closure = recordClosure(classDescriptor, name);
+            closure.setSuspend(true);
+
+            super.visitNamedFunction(function);
+
+            if (nameForClassOrPackageMember != null) {
+                nameStack.pop();
+            }
+
+            return;
         }
 
         if (nameForClassOrPackageMember != null) {
@@ -474,27 +493,16 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             nameStack.pop();
         }
         else {
-            processNamedFunctionWithClosure(function, functionDescriptor, null);
+            String name = inventAnonymousClassName();
+            ClassDescriptor classDescriptor = recordClassForFunction(function, functionDescriptor, name, null);
+            recordClosure(classDescriptor, name);
+
+            classStack.push(classDescriptor);
+            nameStack.push(name);
+            super.visitNamedFunction(function);
+            nameStack.pop();
+            classStack.pop();
         }
-    }
-
-    private MutableClosure processNamedFunctionWithClosure(
-            @NotNull KtNamedFunction function,
-            @NotNull FunctionDescriptor functionDescriptor,
-            @Nullable DeclarationDescriptor customContainer
-    ) {
-        String name = inventAnonymousClassName();
-        Collection<KotlinType> supertypes = runtimeTypes.getSupertypesForClosure(functionDescriptor);
-        ClassDescriptor classDescriptor = recordClassForCallable(function, functionDescriptor, supertypes, name, customContainer);
-        MutableClosure closure = recordClosure(classDescriptor, name);
-
-        classStack.push(classDescriptor);
-        nameStack.push(name);
-        super.visitNamedFunction(function);
-        nameStack.pop();
-        classStack.pop();
-
-        return closure;
     }
 
     @Nullable

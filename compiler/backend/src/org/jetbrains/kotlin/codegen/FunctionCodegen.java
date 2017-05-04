@@ -131,7 +131,7 @@ public class FunctionCodegen {
 
         if (owner.getContextKind() != OwnerKind.DEFAULT_IMPLS || function.hasBody()) {
             FunctionGenerationStrategy strategy;
-            if (functionDescriptor.isSuspend()) {
+            if (functionDescriptor.isSuspend() && !functionDescriptor.isInline()) {
                 strategy = new SuspendFunctionGenerationStrategy(
                         state,
                         CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),

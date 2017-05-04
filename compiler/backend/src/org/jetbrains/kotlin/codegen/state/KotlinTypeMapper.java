@@ -787,7 +787,8 @@ public class KotlinTypeMapper {
                     isInterfaceMember = true;
                 }
                 else {
-                    boolean isPrivateFunInvocation = Visibilities.isPrivate(functionDescriptor.getVisibility());
+                    boolean isPrivateFunInvocation =
+                            Visibilities.isPrivate(functionDescriptor.getVisibility()) && !functionDescriptor.isSuspend();
                     invokeOpcode = superCall || isPrivateFunInvocation ? INVOKESPECIAL : INVOKEVIRTUAL;
                     isInterfaceMember = superCall && currentIsInterface;
                 }
