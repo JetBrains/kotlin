@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import javax.lang.model.element.ExecutableElement
 
-class SymbolBasedConstructor<out T : ExecutableElement>(element: T,
-                                                        javac: JavacWrapper) : SymbolBasedMember<T>(element, javac), JavaConstructor {
+class SymbolBasedConstructor(element: ExecutableElement,
+                             javac: JavacWrapper) : SymbolBasedMember<ExecutableElement>(element, javac), JavaConstructor {
 
     override val typeParameters: List<JavaTypeParameter>
         get() = element.typeParameters.map { SymbolBasedTypeParameter(it, javac) }

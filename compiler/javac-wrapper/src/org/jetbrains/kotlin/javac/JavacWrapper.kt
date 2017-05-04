@@ -279,11 +279,11 @@ class JavacWrapper(javaFiles: Collection<File>,
 
     }
 
-    private fun TreeBasedClass<JCTree.JCClassDecl>.withInnerClasses(): List<TreeBasedClass<JCTree.JCClassDecl>> = listOf(this) + innerClasses.values.flatMap { it.withInnerClasses() }
+    private fun TreeBasedClass.withInnerClasses(): List<TreeBasedClass> = listOf(this) + innerClasses.values.flatMap { it.withInnerClasses() }
 
     private fun Symbol.PackageSymbol.findClass(name: String): SymbolBasedClass? {
         val nameParts = name.replace("$", ".").split(".")
-        var symbol = members_field.getElementsByName(names.fromString(nameParts[0]))
+        var symbol = members_field.getElementsByName(names.fromString(nameParts.first()))
                              ?.firstOrNull() as? Symbol.ClassSymbol ?: return null
         if (nameParts.size > 1) {
             symbol.complete()

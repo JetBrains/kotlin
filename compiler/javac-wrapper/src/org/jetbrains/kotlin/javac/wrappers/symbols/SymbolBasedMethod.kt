@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
 import javax.lang.model.element.ExecutableElement
 
-class SymbolBasedMethod<out T : ExecutableElement>(element: T,
-                                                   javac: JavacWrapper) : SymbolBasedMember<T>(element, javac), JavaMethod {
+class SymbolBasedMethod(element: ExecutableElement,
+                        javac: JavacWrapper) : SymbolBasedMember<ExecutableElement>(element, javac), JavaMethod {
 
     override val typeParameters: List<JavaTypeParameter>
         get() = element.typeParameters.map { SymbolBasedTypeParameter(it, javac) }

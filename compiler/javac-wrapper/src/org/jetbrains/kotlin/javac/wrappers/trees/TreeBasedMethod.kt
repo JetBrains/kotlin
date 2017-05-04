@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
 
-class TreeBasedMethod<out T : JCTree.JCMethodDecl>(tree: T,
-                                                   treePath: TreePath,
-                                                   containingClass: JavaClass,
-                                                   javac: JavacWrapper) : TreeBasedMember<T>(tree, treePath, containingClass, javac), JavaMethod {
+class TreeBasedMethod(tree: JCTree.JCMethodDecl,
+                      treePath: TreePath,
+                      containingClass: JavaClass,
+                      javac: JavacWrapper) : TreeBasedMember<JCTree.JCMethodDecl>(tree, treePath, containingClass, javac), JavaMethod {
 
     override val name: Name
         get() = Name.identifier(tree.name.toString())

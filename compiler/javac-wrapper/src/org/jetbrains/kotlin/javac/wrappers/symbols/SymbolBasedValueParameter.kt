@@ -24,9 +24,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.VariableElement
 
-class SymbolBasedValueParameter<out T : VariableElement>(element: T, private val elementName : String,
-                                                         override val isVararg : Boolean,
-                                                         javac: JavacWrapper) : SymbolBasedElement<T>(element, javac), JavaValueParameter {
+class SymbolBasedValueParameter(element: VariableElement,
+                                private val elementName : String,
+                                override val isVararg : Boolean,
+                                javac: JavacWrapper) : SymbolBasedElement<VariableElement>(element, javac), JavaValueParameter {
 
     override val annotations: Collection<JavaAnnotation>
         get() = element.annotationMirrors.map { SymbolBasedAnnotation(it, javac) }

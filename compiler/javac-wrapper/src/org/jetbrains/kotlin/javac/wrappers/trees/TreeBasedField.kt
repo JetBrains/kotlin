@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.name.Name
 
-class TreeBasedField<out T : JCTree.JCVariableDecl>(tree: T,
-                                                    treePath: TreePath,
-                                                    containingClass: JavaClass,
-                                                    javac: JavacWrapper) : TreeBasedMember<T>(tree, treePath, containingClass, javac), JavaField {
+class TreeBasedField(tree: JCTree.JCVariableDecl,
+                     treePath: TreePath,
+                     containingClass: JavaClass,
+                     javac: JavacWrapper) : TreeBasedMember<JCTree.JCVariableDecl>(tree, treePath, containingClass, javac), JavaField {
 
     override val name: Name
         get() = Name.identifier(tree.name.toString())
@@ -64,8 +64,8 @@ class TreeBasedField<out T : JCTree.JCVariableDecl>(tree: T,
         get() = tree.init?.let {
             val type = this.type
 
-            isFinal && ((type is TreeBasedPrimitiveType<*>) ||
-                        (type is TreeBasedNonGenericClassifierType<*> &&
+            isFinal && ((type is TreeBasedPrimitiveType) ||
+                        (type is TreeBasedNonGenericClassifierType &&
                          type.classifierQualifiedName == "java.lang.String"))
         } ?: false
 

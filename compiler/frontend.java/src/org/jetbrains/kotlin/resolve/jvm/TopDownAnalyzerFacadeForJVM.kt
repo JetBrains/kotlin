@@ -248,7 +248,7 @@ object TopDownAnalyzerFacadeForJVM {
 
         override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
             val resolver = if (javaClass is JavaClassImpl && javaClass.psi.containingFile.virtualFile in sourceScope
-                               || javaClass is TreeBasedClass<*> || javaClass is MockKotlinClassifier)
+                               || javaClass is TreeBasedClass || javaClass is MockKotlinClassifier)
                 sourceCodeResolver
             else
                 compiledCodeResolver

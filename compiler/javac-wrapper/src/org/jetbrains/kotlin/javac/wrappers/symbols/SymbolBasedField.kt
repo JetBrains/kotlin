@@ -24,8 +24,8 @@ import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.DeclaredType
 
-class SymbolBasedField<out T : VariableElement>(element: T,
-                                                javac: JavacWrapper) : SymbolBasedMember<T>(element, javac), JavaField {
+class SymbolBasedField(element: VariableElement,
+                       javac: JavacWrapper) : SymbolBasedMember<VariableElement>(element, javac), JavaField {
 
     override val isEnumEntry: Boolean
         get() = element.kind == ElementKind.ENUM_CONSTANT

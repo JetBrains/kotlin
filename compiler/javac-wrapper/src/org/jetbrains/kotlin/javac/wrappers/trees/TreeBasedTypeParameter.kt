@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class TreeBasedTypeParameter<out T : JCTree.JCTypeParameter>(tree: T,
-                                                             treePath: TreePath,
-                                                             javac: JavacWrapper) : TreeBasedElement<T>(tree, treePath, javac), JavaTypeParameter {
+class TreeBasedTypeParameter(tree: JCTree.JCTypeParameter,
+                             treePath: TreePath,
+                             javac: JavacWrapper) : TreeBasedElement<JCTree.JCTypeParameter>(tree, treePath, javac), JavaTypeParameter {
 
     override val name: Name
         get() = Name.identifier(tree.name.toString())

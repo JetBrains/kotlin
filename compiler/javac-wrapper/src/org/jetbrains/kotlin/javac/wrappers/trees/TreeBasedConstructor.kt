@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.Name
 
-class TreeBasedConstructor<out T : JCTree.JCMethodDecl>(tree: T,
-                                                        treePath: TreePath,
-                                                        containingClass: JavaClass,
-                                                        javac: JavacWrapper) : TreeBasedMember<T>(tree, treePath, containingClass, javac), JavaConstructor {
+class TreeBasedConstructor(tree: JCTree.JCMethodDecl,
+                           treePath: TreePath,
+                           containingClass: JavaClass,
+                           javac: JavacWrapper) : TreeBasedMember<JCTree.JCMethodDecl>(tree, treePath, containingClass, javac), JavaConstructor {
 
     override val name: Name
         get() = Name.identifier(tree.name.toString())

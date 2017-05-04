@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class TreeBasedValueParameter<out T : JCTree.JCVariableDecl>(tree: T,
-                                                             treePath: TreePath,
-                                                             javac: JavacWrapper) : TreeBasedElement<T>(tree, treePath, javac), JavaValueParameter {
+class TreeBasedValueParameter(tree: JCTree.JCVariableDecl,
+                              treePath: TreePath,
+                              javac: JavacWrapper) : TreeBasedElement<JCTree.JCVariableDecl>(tree, treePath, javac), JavaValueParameter {
 
     override val annotations: Collection<JavaAnnotation> by lazy { tree.annotations().map { TreeBasedAnnotation(it, treePath, javac) } }
 
