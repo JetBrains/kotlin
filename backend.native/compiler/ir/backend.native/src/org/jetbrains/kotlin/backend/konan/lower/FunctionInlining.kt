@@ -56,7 +56,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
         val irCall = super.visitCall(expression) as IrCall
         val functionDescriptor = irCall.descriptor as FunctionDescriptor
-        if (!functionDescriptor.needsInlining) return irCall                                // This call does not need inlining.
+        if (!needsInlining(functionDescriptor)) return irCall                               // This call does not need inlining.
 
         val functionDeclaration = getFunctionDeclaration(irCall)                            // Get declaration of the function to be inlined.
         if (functionDeclaration == null) {                                                  // We failed to get the declaration.
@@ -81,6 +81,28 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
             context.ir.originalModuleIndex.functions[originalDescriptor] ?:                 // If function is declared in the current module.
                 deserializer.deserializeInlineBody(originalDescriptor)                      // Function is declared in another module.
         return functionDeclaration as IrFunction?
+    }
+
+    //-------------------------------------------------------------------------//
+    // Enforce inlining of some constructors (ByteArray, IntArray, ...)
+
+    private fun needsInlining(functionDescriptor: FunctionDescriptor): Boolean {
+
+        val needsInlining = functionDescriptor.needsInlining
+        val functionName = functionDescriptor.name.toString()
+        if (functionName != "<init>")                     return needsInlining              // This is not constructor.
+        if (functionDescriptor.valueParameters.size != 2) return needsInlining              // Constructor must have two parameters.
+
+        val returnType = functionDescriptor.returnType.toString()
+        if (returnType == "DoubleArray") return true
+        if (returnType == "FloatArray" ) return true
+        if (returnType == "ByteArray"  ) return true
+        if (returnType == "ShortArray" ) return true
+        if (returnType == "IntArray"   ) return true
+        if (returnType == "LongArray"  ) return true
+        if (returnType == "CharArray"  ) return true
+
+        return needsInlining
     }
 
     //-------------------------------------------------------------------------//
@@ -356,6 +378,8 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
         return ParameterEvaluationResult(parameterToArgumentNew, evaluationStatements)
     }
 }
+
+//-------------------------------------------------------------------------//
 
 
 
