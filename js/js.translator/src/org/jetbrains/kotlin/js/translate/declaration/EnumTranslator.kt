@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.declaration
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -29,7 +30,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 class EnumTranslator(
         context: TranslationContext,
         val descriptor: ClassDescriptor,
-        val entries: List<ClassDescriptor>
+        val entries: List<ClassDescriptor>,
+        private val psi: PsiElement
 ) : AbstractTranslator(context) {
     fun generateStandardMethods() {
         generateValuesFunction()
@@ -39,7 +41,9 @@ class EnumTranslator(
     private fun generateValuesFunction() {
         val function = createFunction(DescriptorUtils.getFunctionByName(descriptor.staticScope, DescriptorUtils.ENUM_VALUES))
 
-        val values = entries.map { JsInvocation(JsAstUtils.pureFqn(context().getNameForObjectInstance(it), null)) }
+        val values = entries.map {
+            JsInvocation(JsAstUtils.pureFqn(context().getNameForObjectInstance(it), null)).source(psi)
+        }
         function.body.statements += JsReturn(JsArrayLiteral(values))
     }
 
@@ -52,18 +56,19 @@ class EnumTranslator(
         val clauses = entries.map { entry ->
             JsCase().apply {
                 caseExpression = context().program().getStringLiteral(entry.name.asString())
-                statements += JsReturn(JsInvocation(JsAstUtils.pureFqn(context().getNameForObjectInstance(entry), null)))
+                statements += JsReturn(JsInvocation(JsAstUtils.pureFqn(context().getNameForObjectInstance(entry), null)).source(psi))
+                source = psi
             }
         }
 
         val message = JsBinaryOperation(JsBinaryOperator.ADD,
                 context().program().getStringLiteral("No enum constant ${descriptor.fqNameSafe}."),
                 nameParam.makeRef())
-        val throwStatement = JsExpressionStatement(JsInvocation(Namer.throwIllegalStateExceptionFunRef(), message))
+        val throwStatement = JsExpressionStatement(JsInvocation(Namer.throwIllegalStateExceptionFunRef(), message).source(psi))
 
         if (clauses.isNotEmpty()) {
             val defaultCase = JsDefault().apply { statements += throwStatement }
-            function.body.statements += JsSwitch(nameParam.makeRef(), clauses + defaultCase)
+            function.body.statements += JsSwitch(nameParam.makeRef().source(psi), clauses + defaultCase)
         }
         else {
             function.body.statements += throwStatement

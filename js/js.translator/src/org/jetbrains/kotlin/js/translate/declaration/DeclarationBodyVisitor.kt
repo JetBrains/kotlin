@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,8 @@ class DeclarationBodyVisitor(
         if (classOrObject is KtObjectDeclaration) {
             if (classOrObject.isCompanion() && containingClass.kind != ClassKind.ENUM_CLASS) {
                 val descriptor = BindingUtils.getDescriptorForElement(context.bindingContext(), classOrObject) as ClassDescriptor
-                addInitializerStatement(JsInvocation(context.getNameForObjectInstance(descriptor).makeRef()).makeStmt())
+                addInitializerStatement(JsInvocation(context.getNameForObjectInstance(descriptor).makeRef())
+                                                .source(classOrObject).makeStmt())
             }
         }
     }
@@ -62,7 +63,7 @@ class DeclarationBodyVisitor(
 
         if (enumEntry.getBody() != null || supertypes.size > 1) {
             ClassTranslator.translate(enumEntry, context, enumInitializer.name, enumEntryOrdinal)
-            enumInitializer.body.statements += JsNew(context.getInnerReference(descriptor)).makeStmt()
+            enumInitializer.body.statements += JsNew(context.getInnerReference(descriptor)).source(enumEntry).makeStmt()
         }
         else {
             val enumName = context.getInnerNameForDescriptor(descriptor)
@@ -77,8 +78,8 @@ class DeclarationBodyVisitor(
             enumInstanceFunction.name = context.getNameForObjectInstance(descriptor)
             context.addDeclarationStatement(enumInstanceFunction.makeStmt())
 
-            enumInstanceFunction.body.statements += JsInvocation(pureFqn(enumInitializer.name, null)).makeStmt()
-            enumInstanceFunction.body.statements += JsReturn(enumInstanceName.makeRef())
+            enumInstanceFunction.body.statements += JsInvocation(pureFqn(enumInitializer.name, null)).source(enumEntry).makeStmt()
+            enumInstanceFunction.body.statements += JsReturn(enumInstanceName.makeRef().source(enumEntry))
         }
 
         context.export(descriptor)

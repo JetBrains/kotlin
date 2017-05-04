@@ -473,7 +473,7 @@ class ClassTranslator private constructor(
     }
 
     private fun generateEnumStandardMethods(entries: List<ClassDescriptor>) {
-        EnumTranslator(context(), descriptor, entries).generateStandardMethods()
+        EnumTranslator(context(), descriptor, entries, classDeclaration).generateStandardMethods()
     }
 
     private fun mayBeAddThrowableProperties(context: TranslationContext) {

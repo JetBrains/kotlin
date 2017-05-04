@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.ArrayList;
@@ -113,7 +112,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
             // Initialize enum 'name' and 'ordinal' before translating property initializers.
             if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-                addEnumClassParameters(initFunction);
+                addEnumClassParameters(initFunction, classDeclaration);
             }
         }
 
@@ -123,13 +122,17 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         new InitializerVisitor().traverseContainer(classDeclaration, context().innerBlock(initFunction.getBody()));
     }
 
-    private static void addEnumClassParameters(JsFunction constructorFunction) {
+    private static void addEnumClassParameters(JsFunction constructorFunction, PsiElement psiElement) {
         JsName nameParamName = constructorFunction.getScope().declareFreshName("name");
         JsName ordinalParamName = constructorFunction.getScope().declareFreshName("ordinal");
         constructorFunction.getParameters().addAll(0, Arrays.asList(new JsParameter(nameParamName), new JsParameter(ordinalParamName)));
 
-        constructorFunction.getBody().getStatements().add(JsAstUtils.assignmentToThisField(Namer.ENUM_NAME_FIELD, nameParamName.makeRef()));
-        constructorFunction.getBody().getStatements().add(JsAstUtils.assignmentToThisField(Namer.ENUM_ORDINAL_FIELD, ordinalParamName.makeRef()));
+        JsStatement nameAssignment = JsAstUtils.assignmentToThisField(Namer.ENUM_NAME_FIELD, nameParamName.makeRef().source(psiElement));
+        constructorFunction.getBody().getStatements().add(nameAssignment);
+
+        JsStatement ordinalAssignment = JsAstUtils.assignmentToThisField(
+                Namer.ENUM_ORDINAL_FIELD, ordinalParamName.makeRef().source(psiElement));
+        constructorFunction.getBody().getStatements().add(ordinalAssignment);
     }
 
     private void addOuterClassReference(ClassDescriptor classDescriptor) {
@@ -170,7 +173,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             invocation.getArguments().addAll(0, additionalArgs);
         }
 
-        return call;
+        return call.source(enumEntry);
     }
 
     private void mayBeAddCallToSuperMethod(JsFunction initializer) {
