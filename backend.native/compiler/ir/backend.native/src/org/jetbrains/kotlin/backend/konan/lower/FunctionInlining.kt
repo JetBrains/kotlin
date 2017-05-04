@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
+import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
 import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockImpl
 import org.jetbrains.kotlin.descriptors.*
@@ -77,7 +78,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
     private fun getFunctionDeclaration(irCall: IrCall): IrFunction? {
 
         val functionDescriptor = irCall.descriptor as FunctionDescriptor
-        val originalDescriptor = functionDescriptor.original
+        val originalDescriptor = functionDescriptor.resolveFakeOverride().original
         val functionDeclaration =
             context.ir.originalModuleIndex.functions[originalDescriptor] ?:                 // If function is declared in the current module.
                 deserializer.deserializeInlineBody(originalDescriptor)                      // Function is declared in another module.
