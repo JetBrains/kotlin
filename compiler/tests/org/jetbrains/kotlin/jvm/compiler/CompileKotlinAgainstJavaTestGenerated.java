@@ -84,6 +84,12 @@ public class CompileKotlinAgainstJavaTestGenerated extends AbstractCompileKotlin
         doTest(fileName);
     }
 
+    @TestMetadata("ClassWithNestedEnum.kt")
+    public void testClassWithNestedEnum() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/ClassWithNestedEnum.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassWithTypeParameter.kt")
     public void testClassWithTypeParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstJava/ClassWithTypeParameter.kt");

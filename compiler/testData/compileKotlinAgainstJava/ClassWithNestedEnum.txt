@@ -1,0 +1,29 @@
+package test
+
+public fun test(): test.ClassWithNestedEnum.NestedEnum
+
+public open class ClassWithNestedEnum {
+    public constructor ClassWithNestedEnum()
+
+    public final enum class NestedEnum : kotlin.Enum<test.ClassWithNestedEnum.NestedEnum!> {
+        enum entry ONE
+
+        enum entry TWO
+
+        enum entry THREE
+
+        private constructor NestedEnum()
+        public final /*fake_override*/ val name: kotlin.String
+        public final /*fake_override*/ val ordinal: kotlin.Int
+        protected final /*fake_override*/ fun clone(): kotlin.Any
+        public final /*fake_override*/ fun compareTo(/*0*/ test.ClassWithNestedEnum.NestedEnum!): kotlin.Int
+        protected/*protected and package*/ final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+        public final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.ClassWithNestedEnum.NestedEnum!>!
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.ClassWithNestedEnum.NestedEnum
+        public open fun valueOf(/*0*/ kotlin.String!): test.ClassWithNestedEnum.NestedEnum!
+        public open fun values(): kotlin.Array<(out) test.ClassWithNestedEnum.NestedEnum!>!
+        public final /*synthesized*/ fun values(): kotlin.Array<test.ClassWithNestedEnum.NestedEnum>
+    }
+}
