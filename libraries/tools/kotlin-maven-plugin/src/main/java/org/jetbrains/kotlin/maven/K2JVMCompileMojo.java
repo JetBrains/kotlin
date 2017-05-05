@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.maven;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
@@ -30,6 +32,8 @@ import org.jetbrains.kotlin.maven.incremental.MavenICReporter;
 import org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 
 import static com.intellij.openapi.util.text.StringUtil.join;
@@ -171,6 +175,20 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
     }
 
     @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        if (args != null && args.contains("-Xuse-javac")) {
+            try {
+                URL toolsJar = getJdkToolsJarURL();
+                if (toolsJar != null) {
+                    project.getClassRealm().addURL(toolsJar);
+                }
+            } catch (IOException ex) {}
+        }
+
+        super.execute();
+    }
+
+    @Override
     protected ExitCode execCompiler(
             CLICompiler<K2JVMCompilerArguments> compiler,
             MessageCollector messageCollector,
@@ -215,4 +233,28 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             return ExitCode.OK;
         }
     }
+
+    @Nullable
+    private URL getJdkToolsJarURL() throws IOException {
+        String javaHomePath = System.getProperty("java.home");
+        if (javaHomePath == null || javaHomePath.isEmpty()) {
+            return null;
+        }
+        File javaHome = new File(javaHomePath);
+        File toolsJar = new File(javaHome, "lib/tools.jar");
+        if (toolsJar.exists()) {
+            return toolsJar.getCanonicalFile().toURI().toURL();
+        }
+
+        // We might be inside jre.
+        if (javaHome.getName().equals("jre")) {
+            toolsJar = new File(javaHome.getParent(), "lib/tools.jar");
+            if (toolsJar.exists()) {
+                return toolsJar.getCanonicalFile().toURI().toURL();
+            }
+        }
+
+        return null;
+    }
+
 }
