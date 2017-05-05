@@ -382,7 +382,6 @@
                 <zipfileset src="${dependencies}/jline.jar"/>
                 <zipfileset src="${dependencies}/javaslang-2.0.6.jar"/>
                 <zipfileset src="${protobuf.jar}"/>
-                <zipfileset src="${tools.jar}"/>
 
                 <manifest>
                     <attribute name="Built-By" value="${manifest.impl.vendor}"/>
