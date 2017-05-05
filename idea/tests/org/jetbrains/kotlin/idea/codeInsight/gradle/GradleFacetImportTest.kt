@@ -77,7 +77,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], targetPlatformKind)
             Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-Xdump-declarations-to tmp -Xsingle-module",
+            Assert.assertEquals("-Xdump-declarations-to=tmp -Xsingle-module",
                                 compilerSettings!!.additionalArguments)
         }
         with (testFacetSettings) {
@@ -85,7 +85,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], targetPlatformKind)
             Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-Xdump-declarations-to tmpTest",
+            Assert.assertEquals("-Xdump-declarations-to=tmpTest",
                                 compilerSettings!!.additionalArguments)
         }
     }
@@ -146,7 +146,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], targetPlatformKind)
             Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-Xdump-declarations-to tmp -Xsingle-module",
+            Assert.assertEquals("-Xdump-declarations-to=tmp -Xsingle-module",
                                 compilerSettings!!.additionalArguments)
         }
         with (facetSettings("project_myTest")) {
@@ -154,7 +154,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], targetPlatformKind)
             Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-Xdump-declarations-to tmpTest",
+            Assert.assertEquals("-Xdump-declarations-to=tmpTest",
                                 compilerSettings!!.additionalArguments)
         }
     }
