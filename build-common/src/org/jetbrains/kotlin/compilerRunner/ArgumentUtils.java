@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.compilerRunner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.Argument;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt;
 import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.lang.reflect.Field;
@@ -74,7 +75,12 @@ public class ArgumentUtils {
 
             if (fieldType == boolean.class || fieldType == Boolean.class) continue;
 
-            result.add(value.toString());
+            if (ParseCommandLineArgumentsKt.isAdvanced(argument)) {
+                result.set(result.size() - 1, argument.value() + "=" + value.toString());
+            }
+            else {
+                result.add(value.toString());
+            }
         }
 
         Class<?> superClazz = clazz.getSuperclass();
