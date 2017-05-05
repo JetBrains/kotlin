@@ -87,7 +87,7 @@ import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.javac.JavacWrapperRegistrar
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -228,7 +228,7 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-    private val allJavaFiles
+    private val allJavaFiles: List<File>
         get() = configuration.javaSourceRoots
                 .mapNotNull(this::findLocalDirectory)
                 .flatMap { it.javaFiles }
@@ -236,8 +236,8 @@ class KotlinCoreEnvironment private constructor(
 
     fun registerJavac(javaFiles: List<File> = allJavaFiles,
                       kotlinFiles: List<KtFile> = sourceFiles,
-                      arguments: Array<String>? = null) {
-        projectEnvironment.project.registerService(JavacWrapper::class.java, JavacWrapper(javaFiles, kotlinFiles, arguments, this))
+                      arguments: Array<String>? = null): Boolean {
+        return JavacWrapperRegistrar.registerJavac(this, javaFiles, kotlinFiles, arguments)
     }
 
     private val applicationEnvironment: CoreApplicationEnvironment
