@@ -1,0 +1,2 @@
+headers = sys/socket.h sys/errno.h sys/select.h fcntl.h netdb.h stdio.h string.h unistd.h stdlib.h netinet/in.h
+excludeDependentModules.osx = true

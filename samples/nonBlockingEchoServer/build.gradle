@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url  "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.1"
+    }
+}
+
+apply plugin: 'konan'
+
+konanInterop {
+    sockets {
+        defFile "sockets.def"
+    }
+}
+
+konanArtifacts {
+    EchoServer {
+        inputFiles project.file("EchoServer.kt")
+        useInterop "sockets"
+    }
+}
+
+build {
+    doLast {
+        copy {
+            from compileKonanEchoServer.artifactPath
+            into projectDir.canonicalPath
+        }
+    }
+}
