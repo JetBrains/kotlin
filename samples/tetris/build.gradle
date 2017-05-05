@@ -14,7 +14,7 @@ buildscript {
 apply plugin: 'konan'
 
 konanInterop {
-    sdlOSX {
+    sdlOsx {
         defFile 'sdl.def'
         includeDirs '/Library/Frameworks/SDL2.framework/Headers', "${System.getProperty("user.home")}/Library/Frameworks/SDL2.framework/Headers"
 
@@ -27,7 +27,7 @@ konanInterop {
         target 'linux'
     }
 
-    sdlIOS {
+    sdlIos {
         defFile 'sdl.def'
         includeDirs "${project.property("konan.home")}/dependencies/target-sysroot-2-darwin-ios/System/Library/Frameworks/SDL2.framework/Headers"
         target 'ios'
@@ -41,9 +41,9 @@ konanInterop {
 }
 
 konanArtifacts {
-    TetrisOSX {
+    TetrisOsx {
         inputFiles project.file('Tetris.kt')
-        useInterop 'sdlOSX'
+        useInterop 'sdlOsx'
         linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -F /Library/Frameworks -framework SDL2"
         // Use this line instead of the previous one if you've got a 'No SDL-framework' error.
         //linkerOpts "-L/opt/local/lib -L/usr/local/lib -lSDL2"
@@ -58,10 +58,10 @@ konanArtifacts {
         target 'linux'
     }
 
-    TetrisIOS {
+    TetrisIos {
 
         inputFiles project.file('Tetris.kt')
-        useInterop 'sdlIOS'
+        useInterop 'sdlIos'
 
         linkerOpts '-framework SDL2 -framework AVFoundation -framework CoreGraphics -framework CoreMotion ' +
                    '-framework Foundation -framework GameController -framework AudioToolbox -framework OpenGLES ' +
