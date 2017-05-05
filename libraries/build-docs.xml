@@ -4,7 +4,7 @@
     <property name="dokka.path" value="../dependencies/dokka" />
     <property name="js.stdlib.src.path" value="../dependencies/js-stdlib-src" />
     <property name="docs.output" value="${basedir}/doc" />
-    <property name="dokka.format" value="kotlin-website-samples"/>
+    <property name="dokka.format" value="kotlin-website-html"/>
 
     <typedef resource="dokka-antlib.xml">
         <classpath>
@@ -31,27 +31,34 @@
 
     <target name="document" depends="clean,build-js-stdlib-sources">
         <dokka samples="stdlib/samples/test" outputDir="${docs.output}/jre8" moduleName="kotlin-stdlib" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS"
-               include="stdlib/src/Module.md">
+               include="stdlib/src/Module.md" noStdlibLink="true">
 
             <sourceRoot path="stdlib/src" platforms="JVM"/>
             <sourceRoot path="stdlib/jre7/src" platforms="JVM,JRE7"/>
             <sourceRoot path="stdlib/jre8/src" platforms="JVM,JRE8"/>
             <sourceRoot path="../core/builtins" platforms="JVM"/>
             <sourceRoot path="../core/reflection.jvm" platforms="JVM"/>
-            <sourceRoot path="../core/runtime.jvm/src/kotlin" platforms="JVM"/>
+            <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/annotations" platforms="JVM"/>
+            <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/JvmClassMapping.kt" platforms="JVM"/>
+            <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/PurelyImplements.kt" platforms="JVM"/>
+            <sourceRoot path="../core/runtime.jvm/src/kotlin/TypeAliases.kt" platforms="JVM"/>
+            <sourceRoot path="../core/runtime.jvm/src/kotlin/text/TypeAliases.kt" platforms="JVM"/>
+
 
             <sourceRoot path="../core/builtins" platforms="JS"/>
             <sourceRoot path="${js.stdlib.src.path}" platforms="JS"/>
 
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
         </dokka>
-        <dokka outputDir="${docs.output}/jre8" moduleName="kotlin-test" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS">
+        <dokka outputDir="${docs.output}/jre8" moduleName="kotlin-test" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS"
+               noStdlibLink="true">
 
             <sourceRoot path="kotlin.test/common/src/main/kotlin" platforms="JVM,JS"/>
             <sourceRoot path="kotlin.test/jvm/src/main/kotlin" platforms="JVM"/>
             <sourceRoot path="kotlin.test/js/src/main/kotlin" platforms="JS"/>
 
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
+            <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="file://${docs.output}/jre8/kotlin-stdlib/package-list" />
         </dokka>
     </target>
 
