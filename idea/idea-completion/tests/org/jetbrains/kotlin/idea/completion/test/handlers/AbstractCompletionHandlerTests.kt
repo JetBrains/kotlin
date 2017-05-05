@@ -40,7 +40,7 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
 
         val settingManager = CodeStyleSettingsManager.getInstance()
         val tempSettings = settingManager.currentSettings.clone()
-        settingManager.temporarySettings = tempSettings
+        settingManager.setTemporarySettings(tempSettings)
         try {
             val fileText = FileUtil.loadFile(File(testPath))
             assertTrue("\"<caret>\" is missing in file \"$testPath\"", fileText.contains("<caret>"));
