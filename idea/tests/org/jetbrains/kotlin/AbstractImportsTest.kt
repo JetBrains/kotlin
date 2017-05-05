@@ -36,7 +36,7 @@ abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
     protected fun doTest(testPath: String) {
         val settingManager = CodeStyleSettingsManager.getInstance()
         val tempSettings = settingManager.currentSettings.clone()
-        settingManager.temporarySettings = tempSettings
+        settingManager.setTemporarySettings(tempSettings)
 
         val codeStyleSettings = KotlinCodeStyleSettings.getInstance(project)
 
