@@ -136,7 +136,7 @@ class KonanPlugin: Plugin<ProjectInternal> {
     private fun String.isSupported(): Boolean {
         val os = CompilerDownloadTask.simpleOsName()
         return when (os) {
-            "macos" -> this == "macbook" || this == "iphone"
+            "macos" -> this == "osx" || this == "ios"
             "linux" -> this == "linux" || this == "raspberrypi"
             else -> false
         }
