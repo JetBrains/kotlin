@@ -456,19 +456,20 @@ class ClassTranslator private constructor(
         instanceFun.name = context().getNameForObjectInstance(descriptor)
 
         if (enumInitializerName != null) {
-            instanceFun.body.statements += JsInvocation(pureFqn(enumInitializerName, null)).makeStmt()
+            instanceFun.body.statements += JsInvocation(pureFqn(enumInitializerName, null)).source(classDeclaration).makeStmt()
         }
         if (descriptor.kind != ClassKind.ENUM_ENTRY) {
             val instanceCreatedCondition = JsAstUtils.equality(cachedInstanceName.makeRef(), JsNullLiteral())
+                    .source(classDeclaration)
             val instanceCreationBlock = JsBlock()
             val instanceCreatedGuard = JsIf(instanceCreatedCondition, instanceCreationBlock)
             instanceFun.body.statements += instanceCreatedGuard
 
             val objectRef = context().getInnerReference(descriptor)
-            instanceCreationBlock.statements += JsNew(objectRef).makeStmt()
+            instanceCreationBlock.statements += JsNew(objectRef).source(classDeclaration).makeStmt()
         }
 
-        instanceFun.body.statements += JsReturn(cachedInstanceName.makeRef())
+        instanceFun.body.statements += JsReturn(cachedInstanceName.makeRef().source(classDeclaration))
 
         context().addDeclarationStatement(instanceFun.makeStmt())
     }
