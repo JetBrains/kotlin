@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,11 +49,11 @@ class ReturnReplacingVisitor(
             if (returnExpression != null && returnExpression.isTailCallSuspend) {
                 returnReplacement.isSuspend = true
             }
-            ctx.addNext(JsExpressionStatement(returnReplacement))
+            ctx.addNext(JsExpressionStatement(returnReplacement.apply { source = x.source }))
         }
 
         if (breakLabel != null) {
-            ctx.addNext(JsBreak(breakLabel))
+            ctx.addNext(JsBreak(breakLabel).apply { source = x.source })
         }
     }
 

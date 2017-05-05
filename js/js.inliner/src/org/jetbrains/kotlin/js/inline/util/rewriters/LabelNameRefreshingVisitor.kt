@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ class LabelNameRefreshingVisitor(val functionScope: JsFunctionScope) : JsVisitor
     override fun endVisit(x: JsBreak, ctx: JsContext<JsNode>) {
         val label = x.label?.name
         if (label != null) {
-            ctx.replaceMe(JsBreak(getSubstitution(label).makeRef()))
+            ctx.replaceMe(JsBreak(getSubstitution(label).makeRef()).source(x.source))
         }
         super.endVisit(x, ctx)
     }
@@ -35,7 +35,7 @@ class LabelNameRefreshingVisitor(val functionScope: JsFunctionScope) : JsVisitor
     override fun endVisit(x: JsContinue, ctx: JsContext<JsNode>) {
         val label = x.label?.name
         if (label != null) {
-            ctx.replaceMe(JsContinue(getSubstitution(label).makeRef()))
+            ctx.replaceMe(JsContinue(getSubstitution(label).makeRef()).source(x.source))
         }
         super.endVisit(x, ctx)
     }
