@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,14 @@ class NameReplacingVisitor(private val replaceMap: Map<JsName, JsExpression>) : 
 
     override fun endVisit(x: JsNameRef, ctx: JsContext<JsNode>) {
         val replacement = replaceMap[x.name] ?: return
-        ctx.replaceMe(replacement.deepCopy())
+        ctx.replaceMe(replacement.deepCopy().source(x.source))
     }
 
     override fun endVisit(x: JsVars.JsVar, ctx: JsContext<JsNode>) {
         val replacement = replaceMap[x.name]
         if (replacement is HasName) {
             val replacementVar = JsVars.JsVar(replacement.name, x.initExpression)
-            ctx.replaceMe(replacementVar)
+            ctx.replaceMe(replacementVar.source(x.source))
         }
     }
 
