@@ -185,8 +185,6 @@ class SplitLibraryWriter(override val libDir: File, override val target: String?
 
     override fun commit() {
         if (!nopack) {
-            // This is no-op for the Split library.
-            // Or should we zip the directory?
             libDir.zipDirAs(klibFile)
             libDir.deleteRecursively()
         }

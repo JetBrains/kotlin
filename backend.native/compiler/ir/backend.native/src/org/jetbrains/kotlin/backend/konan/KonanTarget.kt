@@ -29,7 +29,8 @@ enum class KonanTarget(val suffix: String, var enabled: Boolean = false) {
     RASPBERRYPI("raspberrypi")
 }
 
-class TargetManager(val config: CompilerConfiguration) {
+class TargetManager(val userRequest: String? = null) {
+    constructor(config: CompilerConfiguration) : this(config.get(KonanConfigKeys.TARGET))
     val targets = KonanTarget.values().associate{ it.name.toLowerCase() to it }
     val current = determineCurrent()
     val currentName
@@ -79,7 +80,6 @@ class TargetManager(val config: CompilerConfiguration) {
     }
 
     fun determineCurrent(): KonanTarget {
-        val userRequest = config.get(KonanConfigKeys.TARGET)
         return if (userRequest == null || userRequest == "host") {
             host
         } else {

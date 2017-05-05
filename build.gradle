@@ -28,6 +28,9 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            url kotlinCompilerRepo
+        }
     }
 
     loadCommandLineProperties()
@@ -250,6 +253,7 @@ task distCompiler(type: Copy) {
     dependsOn ':backend.native:jars'
     dependsOn ':tools:helpers:jar'
     dependsOn ':utilities:jar'
+    dependsOn ':klib:jar'
 
     destinationDir file('dist')
 
@@ -290,6 +294,10 @@ task distCompiler(type: Copy) {
     }
 
     from(project(':utilities').file('build/libs')) {
+        into('konan/lib')
+    }
+
+    from(project(':klib').file('build/libs')) {
         into('konan/lib')
     }
 

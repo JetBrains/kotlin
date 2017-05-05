@@ -44,7 +44,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
 
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES) ?: emptyList()
-    private val resolver = KonanLibrarySearchPathResolver(repositories, distribution)
+    private val resolver = KonanLibrarySearchPathResolver(repositories, distribution.klib, distribution.localKonanDir)
     private val librariesFound: List<File> by lazy {
         libraryNames.map{it -> resolver.resolve(it)}
     }

@@ -110,7 +110,7 @@ fun Path.recursiveCopyTo(destPath: Path) {
     }
 }
 
-fun File.copyTo(destination: File) {
-    Files.copy(this.toPath(), destination.toPath()) 
+fun File.copyTo(destination: File, vararg options: StandardCopyOption) {
+    Files.copy(this.toPath(), destination.toPath(), *options) 
 }
 

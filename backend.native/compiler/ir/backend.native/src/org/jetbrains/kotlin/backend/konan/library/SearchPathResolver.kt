@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.backend.konan.library
 
-import org.jetbrains.kotlin.backend.konan.Distribution
-import org.jetbrains.kotlin.backend.konan.KonanProperties
 import org.jetbrains.kotlin.backend.konan.util.File
 import org.jetbrains.kotlin.backend.konan.util.suffixIfNot
 import org.jetbrains.kotlin.backend.konan.util.removeSuffixIfPresent
@@ -28,14 +26,13 @@ interface SearchPathResolver {
 }
 
 class KonanLibrarySearchPathResolver(repositories: List<String>,
-    val distribution: Distribution): SearchPathResolver {
+    val distributionKlib: String, val localKonanDir: String): SearchPathResolver {
 
-    private val properties = distribution.properties
     val localHead: File
-        get() = File(distribution.localKonanDir).klib
+        get() = File(localKonanDir).klib
 
     val distHead: File
-        get() = File(distribution.klib)
+        get() = File(distributionKlib)
 
     val currentDirHead: File
         get() = File.userDir
