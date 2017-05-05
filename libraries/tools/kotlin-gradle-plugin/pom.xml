@@ -149,7 +149,7 @@
                         <configuration>
                             <sources>
                                 <fileset>
-                                    <directory>${project.basedir}/src/main/kotlin</directory>
+                                    <directory>${project.basedir}/src/main/groovy</directory>
                                     <includes>
                                         <include>**/*.groovy</include>
                                     </includes>
