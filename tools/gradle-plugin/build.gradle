@@ -68,7 +68,7 @@ publishing {
             artifact jar
             groupId 'org.jetbrains.kotlin'
             artifactId 'kotlin-native-gradle-plugin'
-            version '0.1'
+            version '0.2'
             pom.withXml { XmlProvider xml ->
                 def stdlibDep = xml.asNode().appendNode("dependencies").appendNode("dependency")
                 stdlibDep.appendNode("groupId", "org.jetbrains.kotlin")
@@ -87,12 +87,11 @@ bintray {
         repo = 'kotlin-native-dependencies'
         name = 'kotlin-native-gradle-plugin'
         userOrg = 'jetbrains'
-        // TODO: Specify license and github path
-        //licenses = ['Apache-2.0']
-        //vcsUrl = 'https://github.com/...'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/JetBrains/kotlin-native'
         version {
-            name = '0.1'
-            desc = 'Kotlin Native Gradle plugin 0.1'
+            name = '0.2'
+            desc = 'Kotlin Native Gradle plugin 0.2'
         }
         publish = true // project.hasProperty("publish")
         override = project.hasProperty("override")
