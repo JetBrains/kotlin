@@ -23,9 +23,11 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 
-class RemoveEmptySecondaryConstructorBodyInspection : IntentionBasedInspection<KtBlockExpression>(RemoveEmptySecondaryConstructorBodyIntention::class), CleanupLocalInspectionTool {
-    override val problemHighlightType: ProblemHighlightType
-        get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
+class RemoveEmptySecondaryConstructorBodyInspection : IntentionBasedInspection<KtBlockExpression>(
+        RemoveEmptySecondaryConstructorBodyIntention::class
+), CleanupLocalInspectionTool {
+    override fun problemHighlightType(element: KtBlockExpression): ProblemHighlightType =
+            ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
 class RemoveEmptySecondaryConstructorBodyIntention : SelfTargetingOffsetIndependentIntention<KtBlockExpression>(KtBlockExpression::class.java, "Remove empty constructor body") {

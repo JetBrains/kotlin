@@ -35,8 +35,7 @@ class RemoveForLoopIndicesInspection : IntentionBasedInspection<KtForExpression>
         RemoveForLoopIndicesIntention::class,
         "Index is not used in the loop body"
 ) {
-    override val problemHighlightType: ProblemHighlightType
-        get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
+    override fun problemHighlightType(element: KtForExpression): ProblemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
 class RemoveForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(KtForExpression::class.java, "Remove indices in 'for' loop") {

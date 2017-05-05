@@ -124,15 +124,15 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
                     additionalFixes(targetElement)?.let { allFixes.addAll(it) }
                     if (!allFixes.isEmpty()) {
                         holder.registerProblem(targetElement, problemText ?: allFixes.first().name,
-                                               problemHighlightType, range, *allFixes.toTypedArray())
+                                               problemHighlightType(targetElement), range, *allFixes.toTypedArray())
                     }
                 }
             }
         }
     }
 
-    protected open val problemHighlightType: ProblemHighlightType
-        get() = ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+    protected open fun problemHighlightType(element: TElement): ProblemHighlightType =
+            ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 
     private fun createQuickFix(
             intention: SelfTargetingRangeIntention<TElement>,

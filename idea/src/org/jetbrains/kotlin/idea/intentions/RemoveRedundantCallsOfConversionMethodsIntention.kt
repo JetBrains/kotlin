@@ -28,8 +28,10 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.types.isFlexible
 
-class RemoveRedundantCallsOfConversionMethodsInspection : IntentionBasedInspection<KtQualifiedExpression>(RemoveRedundantCallsOfConversionMethodsIntention::class) {
-    override val problemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
+class RemoveRedundantCallsOfConversionMethodsInspection : IntentionBasedInspection<KtQualifiedExpression>(
+        RemoveRedundantCallsOfConversionMethodsIntention::class
+) {
+    override fun problemHighlightType(element: KtQualifiedExpression) = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
 class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeIntention<KtQualifiedExpression>(KtQualifiedExpression::class.java, "Remove redundant calls of the conversion method") {
