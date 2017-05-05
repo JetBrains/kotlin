@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -86,8 +87,17 @@ class AddExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement) {
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
 
         val modifiedExpression = getExpressionForIntroduceCall() ?: return
-        val exclExclExpression = KtPsiFactory(project).createExpressionByPattern("$0!!", modifiedExpression)
-        modifiedExpression.replace(exclExclExpression)
+        when (element) {
+            is KtNameReferenceExpression -> {
+                val targetExpression = modifiedExpression.parent as? KtCallExpression ?: modifiedExpression
+                val exclExclExpression = KtPsiFactory(project).createExpressionByPattern("this!!.$0", targetExpression)
+                targetExpression.replace(exclExclExpression)
+            }
+            else -> {
+                val exclExclExpression = KtPsiFactory(project).createExpressionByPattern("$0!!", modifiedExpression)
+                modifiedExpression.replace(exclExclExpression)
+            }
+        }
     }
 
     private fun getExpressionForIntroduceCall(): KtExpression? {
