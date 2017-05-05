@@ -142,18 +142,18 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
             checkTypeParameters(functionDescriptor, declaration, functionDescriptor.typeParameters)
 
-            declaration.dispatchReceiverParameter?.descriptor.let { dispatchReceiverDescriptor ->
-                if (dispatchReceiverDescriptor != functionDescriptor.dispatchReceiverParameter) {
-                    error("$functionDescriptor: Dispatch receiver parameter mismatch: " +
-                          "$dispatchReceiverDescriptor != ${functionDescriptor.dispatchReceiverParameter}")
-                }
+            val expectedDispatchReceiver = functionDescriptor.dispatchReceiverParameter
+            val actualDispatchReceiver = declaration.dispatchReceiverParameter?.descriptor
+            if (expectedDispatchReceiver != actualDispatchReceiver) {
+                error("$functionDescriptor: Dispatch receiver parameter mismatch: " +
+                      "expected $expectedDispatchReceiver, actual $actualDispatchReceiver")
             }
 
-            declaration.extensionReceiverParameter?.descriptor.let { extensionReceiverDescriptor ->
-                if (extensionReceiverDescriptor != functionDescriptor.extensionReceiverParameter) {
-                    error("$functionDescriptor: Extension receiver parameter mismatch: " +
-                          "$extensionReceiverDescriptor != ${functionDescriptor.extensionReceiverParameter}")
-                }
+            val expectedExtensionReceiver  = functionDescriptor.extensionReceiverParameter
+            val actualExtensionReceiver = declaration.extensionReceiverParameter?.descriptor
+            if (expectedExtensionReceiver != actualExtensionReceiver) {
+                error("$functionDescriptor: Extension receiver parameter mismatch: " +
+                      "expected $expectedExtensionReceiver, actual $actualExtensionReceiver")
             }
 
             val declaredValueParameters = declaration.valueParameters.map { it.descriptor }
