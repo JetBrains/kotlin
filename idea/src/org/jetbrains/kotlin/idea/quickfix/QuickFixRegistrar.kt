@@ -489,5 +489,7 @@ class QuickFixRegistrar : QuickFixContributor {
         INAPPLICABLE_JVM_FIELD.registerFactory(ReplaceJvmFieldWithConstFix)
 
         CONFLICTING_OVERLOADS.registerFactory(ChangeSuspendInHierarchyFix)
+
+        RETURN_NOT_ALLOWED.registerFactory(ChangeToLabeledReturnFix)
     }
 }
