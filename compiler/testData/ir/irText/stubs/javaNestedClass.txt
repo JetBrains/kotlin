@@ -1,0 +1,7 @@
+FILE /javaNestedClass.kt
+  FUN public fun test(jj: J.JJ): kotlin.Unit
+    VALUE_PARAMETER value-parameter jj: J.JJ
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test(J.JJ): Unit'
+        CALL 'foo(): Unit' type=kotlin.Unit origin=null
+          $this: GET_VAR 'value-parameter jj: J.JJ' type=J.JJ origin=null

@@ -1,0 +1,7 @@
+FILE /kotlinInnerClass.kt
+  FUN public fun test(inner: Outer.Inner): kotlin.Unit
+    VALUE_PARAMETER value-parameter inner: Outer.Inner
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test(Outer.Inner): Unit'
+        CALL 'foo(): Unit' type=kotlin.Unit origin=null
+          $this: GET_VAR 'value-parameter inner: Outer.Inner' type=Outer.Inner origin=null

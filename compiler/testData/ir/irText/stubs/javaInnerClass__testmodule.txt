@@ -1,0 +1,20 @@
+MODULE_FRAGMENT <test-module>
+  EXTERNAL_PACKAGE_FRAGMENT <root>
+    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS J
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor J()
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB public final var x: kotlin.Int
+        FIELD IR_EXTERNAL_DECLARATION_STUB public final var x: kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public open fun bar(): kotlin.Unit
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS JInner
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor JInner()
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB public final var z: kotlin.Int
+          FIELD IR_EXTERNAL_DECLARATION_STUB public final var z: kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open fun foo(): kotlin.Unit
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String

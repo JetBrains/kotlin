@@ -1,0 +1,16 @@
+MODULE_FRAGMENT <test-module>
+  EXTERNAL_PACKAGE_FRAGMENT <root>
+    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS Outer
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor Outer()
+      FUN IR_EXTERNAL_DECLARATION_STUB public final fun bar(): kotlin.Unit
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS Inner
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB public constructor Inner()
+        FUN IR_EXTERNAL_DECLARATION_STUB public final fun foo(): kotlin.Unit
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+          VALUE_PARAMETER value-parameter other: kotlin.Any?
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+        FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        VALUE_PARAMETER value-parameter other: kotlin.Any?
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun hashCode(): kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB public open override fun toString(): kotlin.String

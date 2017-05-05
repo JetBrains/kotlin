@@ -1,0 +1,29 @@
+FILE /javaInnerClass.kt
+  CLASS CLASS Test1
+    $this: VALUE_PARAMETER this@Test1: Test1
+    CONSTRUCTOR public constructor Test1()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor J()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
+    PROPERTY public final val test: J.JInner
+      FIELD PROPERTY_BACKING_FIELD public final val test: J.JInner
+        EXPRESSION_BODY
+          CALL 'constructor JInner()' type=J.JInner origin=null
+            $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test>(): J.JInner
+        $this: VALUE_PARAMETER this@Test1: Test1
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-test>(): J.JInner'
+            GET_FIELD 'test: J.JInner' type=J.JInner origin=null
+              receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
+    PROPERTY FAKE_OVERRIDE public final override var x: kotlin.Int
+      FIELD FAKE_OVERRIDE public final override var x: kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun bar(): kotlin.Unit
+      $this: VALUE_PARAMETER this@J: J
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@Any: Any
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@Any: Any
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@Any: Any

@@ -1103,6 +1103,30 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/stubs"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("javaEnum.kt")
+        public void testJavaEnum() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stubs/javaEnum.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaInnerClass.kt")
+        public void testJavaInnerClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stubs/javaInnerClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaNestedClass.kt")
+        public void testJavaNestedClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stubs/javaNestedClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kotlinInnerClass.kt")
+        public void testKotlinInnerClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stubs/kotlinInnerClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/stubs/simple.kt");

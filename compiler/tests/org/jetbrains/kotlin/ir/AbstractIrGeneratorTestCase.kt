@@ -66,7 +66,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
             addReflect -> ConfigurationKind.ALL
             addRuntime -> ConfigurationKind.NO_KOTLIN_REFLECT
             else -> ConfigurationKind.JDK_ONLY
-        };
+        }
 
         val configuration = createConfiguration(
                 configurationKind, jdkKind,
@@ -80,10 +80,10 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
 
     protected abstract fun doTest(wholeFile: File, testFiles: List<TestFile>)
 
-    protected fun generateIrModule(ignoreErrors: Boolean = false): IrModuleFragment {
+    protected fun generateIrModule(ignoreErrors: Boolean = false, shouldGenerate: (KtFile) -> Boolean = { true }): IrModuleFragment {
         assert(myFiles != null) { "myFiles not initialized" }
         assert(myEnvironment != null) { "myEnvironment not initialized" }
-        return generateIrModule(myFiles.psiFiles, myEnvironment, Psi2IrTranslator(Psi2IrConfiguration(ignoreErrors)))
+        return generateIrModule(myFiles.psiFiles, myEnvironment, Psi2IrTranslator(Psi2IrConfiguration(ignoreErrors)), shouldGenerate)
     }
 
     protected fun generateIrFilesAsSingleModule(testFiles: List<TestFile>, ignoreErrors: Boolean = false): Map<TestFile, IrFile> {
@@ -109,13 +109,19 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
             return textFile
         }
 
-        fun generateIrModule(ktFiles: List<KtFile>, environment: KotlinCoreEnvironment, psi2ir: Psi2IrTranslator): IrModuleFragment {
-            val analysisResult = JvmResolveUtil.analyze(ktFiles, environment)
+        fun generateIrModule(
+                ktFilesToAnalyze: List<KtFile>,
+                environment: KotlinCoreEnvironment,
+                psi2ir: Psi2IrTranslator,
+                shouldGenerate: (KtFile) -> Boolean
+        ): IrModuleFragment {
+            val analysisResult = JvmResolveUtil.analyze(ktFilesToAnalyze, environment)
             if (!psi2ir.configuration.ignoreErrors) {
                 analysisResult.throwIfError()
                 AnalyzingUtils.throwExceptionOnErrors(analysisResult.bindingContext)
             }
-            return generateIrModule(ktFiles, analysisResult.moduleDescriptor, analysisResult.bindingContext, psi2ir)
+            val fileToGenerate = ktFilesToAnalyze.filter { shouldGenerate(it) }
+            return generateIrModule(fileToGenerate, analysisResult.moduleDescriptor, analysisResult.bindingContext, psi2ir)
         }
 
         fun generateIrModule(ktFiles: List<KtFile>, moduleDescriptor: ModuleDescriptor, bindingContext: BindingContext, ignoreErrors: Boolean = false) =
