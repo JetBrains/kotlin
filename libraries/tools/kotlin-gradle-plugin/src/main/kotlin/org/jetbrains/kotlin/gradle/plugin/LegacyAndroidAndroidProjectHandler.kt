@@ -1,0 +1,82 @@
+package org.jetbrains.kotlin.gradle.plugin
+
+import com.android.build.gradle.BasePlugin
+import com.android.build.gradle.internal.variant.BaseVariantData
+import com.android.build.gradle.internal.variant.BaseVariantOutputData
+import com.android.build.gradle.internal.variant.TestVariantData
+import com.android.builder.model.SourceProvider
+import org.gradle.api.Project
+import org.gradle.api.ProjectConfigurationException
+import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
+import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProviderAndroidWrapper
+import java.io.File
+
+internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools)
+    : AbstractAndroidProjectHandler<BaseVariantData<out BaseVariantOutputData>>(kotlinConfigurationTools) {
+
+    override fun getSourceProviders(variantData: BaseVariantData<out BaseVariantOutputData>): Iterable<SourceProvider> =
+            variantData.sourceProviders
+
+    override fun getAllJavaSources(variantData: BaseVariantData<out BaseVariantOutputData>): Iterable<File> =
+            AndroidGradleWrapper.getJavaSources(variantData)
+
+    override fun forEachVariant(project: Project, action: (BaseVariantData<out BaseVariantOutputData>) -> Unit) {
+        val plugin = (project.plugins.findPlugin("android")
+                      ?: project.plugins.findPlugin("android-library")
+                      ?: project.plugins.findPlugin("com.android.test")) as BasePlugin
+        val variantManager = AndroidGradleWrapper.getVariantDataManager(plugin)
+        variantManager.variantDataList.forEach(action)
+    }
+
+    override fun getVariantName(variant: BaseVariantData<out BaseVariantOutputData>): String = variant.name
+
+    override fun checkVariant(variant: BaseVariantData<out BaseVariantOutputData>): Unit {
+        if (AndroidGradleWrapper.isJackEnabled(variant)) {
+            throw ProjectConfigurationException(
+                    "Kotlin Gradle plugin does not support the deprecated Jack toolchain.\n" +
+                    "Disable Jack or revert to Kotlin Gradle plugin version 1.1.1.", null)
+        }
+    }
+
+    override fun getJavaTask(variantData: BaseVariantData<out BaseVariantOutputData>): AbstractCompile? =
+            AndroidGradleWrapper.getJavaTask(variantData)
+
+
+    override fun addJavaSourceDirectoryToVariantModel(variantData: BaseVariantData<out BaseVariantOutputData>,
+                                                      javaSourceDirectory: File) =
+            variantData.addJavaSourceFoldersToModel(javaSourceDirectory)
+
+    override fun configureMultiProjectIc(project: Project, variantData: BaseVariantData<out BaseVariantOutputData>, javaTask: AbstractCompile, kotlinTask: KotlinCompile, kotlinAfterJavaTask: KotlinCompile?) {
+        if ((kotlinAfterJavaTask ?: kotlinTask).incremental) {
+            val artifactFile = project.tryGetSingleArtifact(variantData)
+            val artifactDifferenceRegistryProvider = ArtifactDifferenceRegistryProviderAndroidWrapper(
+                    artifactDifferenceRegistryProvider,
+                    { AndroidGradleWrapper.getJarToAarMapping(variantData) }
+            )
+            configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask,
+                                                        artifactDifferenceRegistryProvider, artifactFile)
+        }
+    }
+
+    override fun getTestedVariantData(variantData: BaseVariantData<*>): BaseVariantData<*>? =
+            ((variantData as? TestVariantData)?.testedVariantData as? BaseVariantData<*>)
+
+    private fun Project.tryGetSingleArtifact(variantData: BaseVariantData<*>): File? {
+        val log = logger
+        log.kotlinDebug { "Trying to determine single artifact for project $path" }
+
+        val outputs = variantData.outputs
+        if (outputs.size != 1) {
+            log.kotlinDebug { "Output count != 1 for variant: ${outputs.map { it.outputFile.relativeTo(rootDir).path }.joinToString()}" }
+            return null
+        }
+
+        return variantData.outputs.first().outputFile
+    }
+
+    private val BaseVariantData<*>.sourceProviders: List<SourceProvider>
+        get() = variantConfiguration.sortedSourceProviders
+}
