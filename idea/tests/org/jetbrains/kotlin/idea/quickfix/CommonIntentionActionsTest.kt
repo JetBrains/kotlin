@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.JvmCommonIntentionActionsFactory
 import com.intellij.lang.Language
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.PsiModifier
+import com.intellij.psi.PsiType
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import org.jetbrains.uast.UDeclaration
-import org.jetbrains.uast.UastContext
-import org.jetbrains.uast.convert
+import org.jetbrains.uast.*
 import org.junit.Assert
 
 
@@ -37,7 +35,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         }
         """)
 
-        myFixture.launchAction(codeModifications.createChangeModifierAction(uastElementAtCaret(myFixture), PsiModifier.FINAL, false )!!)
+        myFixture.launchAction(codeModifications.createChangeModifierAction(atCaret<UDeclaration>(myFixture), PsiModifier.FINAL, false)!!)
         myFixture.checkResult("""
         class Foo {
             open fun bar(){}
@@ -52,7 +50,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         }
         """)
 
-        myFixture.launchAction(codeModifications.createChangeModifierAction(uastElementAtCaret(myFixture), PsiModifier.PRIVATE, true )!!)
+        myFixture.launchAction(codeModifications.createChangeModifierAction(atCaret<UDeclaration>(myFixture), PsiModifier.PRIVATE, true)!!)
         myFixture.checkResult("""
         private class Foo {
             fun bar(){}
@@ -67,7 +65,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         }
         """.trim())
 
-        myFixture.launchAction(codeModifications.createChangeModifierAction(uastElementAtCaret(myFixture), PsiModifier.PRIVATE, false )!!)
+        myFixture.launchAction(codeModifications.createChangeModifierAction(atCaret<UDeclaration>(myFixture), PsiModifier.PRIVATE, false)!!)
         myFixture.checkResult("""
         class Foo {
             fun bar(){}
@@ -81,14 +79,46 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
             fun bar<caret>(){}
         }
         """.trim())
-        Assert.assertNull(codeModifications.createChangeModifierAction(uastElementAtCaret(myFixture), PsiModifier.FINAL, false))
+        Assert.assertNull(codeModifications.createChangeModifierAction(atCaret<UDeclaration>(myFixture), PsiModifier.FINAL, false))
     }
 
-    private fun uastElementAtCaret(myFixture: CodeInsightTestFixture): UDeclaration {
-        val elementAtCaret = myFixture.elementAtCaret
-        val uastContext = ServiceManager.getService(elementAtCaret.project, UastContext::class.java) ?: error("UastContext not found")
-        val uastLanguagePlugin = uastContext.findPlugin(elementAtCaret) ?: error("Language plugin was not found for $this (${this.javaClass.name})")
-        return uastLanguagePlugin.convert<UDeclaration>(elementAtCaret, null)
+    fun testAddVoidVoidMethod() {
+        myFixture.configureByText("foo.kt", """
+        |class Foo<caret> {
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin())
+
+        myFixture.launchAction(codeModifications.createAddMethodAction(
+                atCaret<UClass>(myFixture), "baz", PsiModifier.PRIVATE, PsiType.VOID)!!)
+        myFixture.checkResult("""
+        |class Foo {
+        |    fun bar() {}
+        |    private fun baz() {}
+        |}
+        """.trim().trimMargin(), true)
+    }
+
+    fun testAddIntIntMethod() {
+        myFixture.configureByText("foo.kt", """
+        |class Foo<caret> {
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin())
+
+        myFixture.launchAction(codeModifications.createAddMethodAction(
+                atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.INT, PsiType.INT)!!)
+        myFixture.checkResult("""
+        |class Foo {
+        |    fun bar() {}
+        |    fun baz(arg1: Int): Int {}
+        |}
+        """.trim().trimMargin(), true)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : UElement> atCaret(myFixture: CodeInsightTestFixture): T {
+        return myFixture.elementAtCaret.toUElement() as T
     }
 
     private val codeModifications: JvmCommonIntentionActionsFactory
