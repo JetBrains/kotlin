@@ -13,14 +13,19 @@ a build script (see projects in `samples` directory):
        }
 
        dependencies {
-           classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.1"
+           classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.2"
        }
     }
 
     apply plugin: 'konan'
 
-The plugin downloads the compiler during its first run. If you already downloaded the compiler manually you may specify
-the path to it using `konan.home` project property (e.g. in `gradle.properties`):
+The plugin downloads the compiler during its first run. You may specify a version of the compiler using `konan.version`
+project property:
+
+    konan.version=0.2
+
+If you already downloaded the compiler manually you may specify the path to it using `konan.home` project property (e.g.
+ in `gradle.properties`). Note: the plugin ignores the `konan.version` property in this case.
 
     konan.home=/path/to/already/downloaded/compiler
 
@@ -96,7 +101,7 @@ cinterop execution (see the `dumpParameters` task in `samles/csvparser/build.gra
              // Arguments to be passed to a linker.
              linkerOpts 'Some linker opts'
 
-             // Target platform. Available values: "macbook", "linux", "iphone", "raspberrypi".
+             // Target platform. Available values: "osx", "linux", "ios", "raspberrypi".
              target 'macbook'
 
              // Language and API version.
