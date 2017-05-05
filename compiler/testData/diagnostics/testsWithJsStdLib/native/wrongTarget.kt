@@ -5,7 +5,7 @@ val x: Int
 
 class B
 
-val B.x: Int
+<!WRONG_EXTERNAL_DECLARATION!>val B.x: Int<!>
     <!WRONG_EXTERNAL_DECLARATION!>external get()<!> = definedExternally
 
 class C {
