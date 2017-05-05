@@ -21,48 +21,57 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 abstract class ReplaceCallFix(
-        expression: KtQualifiedExpression,
-        private val operation: String
-) : KotlinQuickFixAction<KtQualifiedExpression>(expression) {
+        expression: KtExpression,
+        private val receiver: String,
+        private val operation: String,
+        private val selector: String
+) : KotlinQuickFixAction<KtExpression>(expression) {
 
     override fun getFamilyName() = text
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        val element = element ?: return false
-        return super.isAvailable(project, editor, file) && element.selectorExpression != null
-    }
-
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val newExpression = KtPsiFactory(element).createExpressionByPattern("$0$operation$1",
-                                                                            element.receiverExpression, element.selectorExpression!!)
+        val newExpression = KtPsiFactory(element).createExpressionByPattern("$0$operation$1", receiver, selector)
         element.replace(newExpression)
     }
 }
 
-class ReplaceWithSafeCallFix(expression: KtDotQualifiedExpression): ReplaceCallFix(expression, "?.") {
+class ReplaceWithSafeCallFix(expression: KtExpression, receiver: String, selector: String) : ReplaceCallFix(expression, receiver, "?.", selector) {
 
     override fun getText() = "Replace with safe (?.) call"
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val qualifiedExpression = diagnostic.psiElement.getParentOfType<KtDotQualifiedExpression>(strict = false) ?: return null
-            return ReplaceWithSafeCallFix(qualifiedExpression)
+            val element = diagnostic.psiElement
+            return when(element) {
+                is KtNameReferenceExpression -> {
+                    // handling method call and property access
+                    val targetElement: KtExpression = element.parent as? KtCallExpression ?: element
+                    ReplaceWithSafeCallFix(targetElement, KtTokens.THIS_KEYWORD.value, targetElement.text)
+                }
+                else -> {
+                    val qualifiedExpression = element.getParentOfType<KtDotQualifiedExpression>(strict = false) ?: return null
+                    val selector = qualifiedExpression.selectorExpression?.text ?: return null
+                    ReplaceWithSafeCallFix(qualifiedExpression, qualifiedExpression.receiverExpression.text, selector)
+                }
+            }
         }
     }
 }
 
-class ReplaceWithDotCallFix(expression: KtSafeQualifiedExpression): ReplaceCallFix(expression, "."), CleanupFix {
+class ReplaceWithDotCallFix(expression: KtSafeQualifiedExpression, receiver: String, selector: String) : ReplaceCallFix(expression, receiver, ".", selector), CleanupFix {
     override fun getText() = "Replace with dot call"
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val qualifiedExpression = diagnostic.psiElement.getParentOfType<KtSafeQualifiedExpression>(strict = false) ?: return null
-            return ReplaceWithDotCallFix(qualifiedExpression)
+            val selector = qualifiedExpression.selectorExpression?.text ?: return null
+            return ReplaceWithDotCallFix(qualifiedExpression, qualifiedExpression.receiverExpression.text, selector)
         }
     }
 }
