@@ -234,6 +234,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addExclExclCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddExclExclCall extends AbstractQuickFixTest {
+        public void testAllFilesPresentInAddExclExclCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addExclExclCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("implicit.kt")
+        public void testImplicit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addExclExclCall/implicit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implicitFunctionCall.kt")
+        public void testImplicitFunctionCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addExclExclCall/implicitFunctionCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal.kt")
+        public void testNormal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addExclExclCall/normal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal2.kt")
+        public void testNormal2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addExclExclCall/normal2.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addGenericUpperBound")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
