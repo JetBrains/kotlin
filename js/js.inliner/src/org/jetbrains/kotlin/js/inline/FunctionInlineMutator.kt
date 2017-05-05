@@ -97,7 +97,7 @@ private constructor(
         if (!hasThisReference(block)) return
 
         var thisReplacement = getThisReplacement(call)
-        if (thisReplacement == null || thisReplacement is JsLiteral.JsThisRef) return
+        if (thisReplacement == null || thisReplacement is JsThisRef) return
 
         val thisName = JsScope.declareTemporaryName(getThisAlias())
         namingContext.newVar(thisName, thisReplacement)
@@ -195,7 +195,7 @@ private constructor(
         }
 
         private fun hasThisReference(body: JsBlock): Boolean {
-            val thisRefs = collectInstances(JsLiteral.JsThisRef::class.java, body)
+            val thisRefs = collectInstances(JsThisRef::class.java, body)
             return !thisRefs.isEmpty()
         }
     }

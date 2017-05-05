@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,14 +53,14 @@ fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: Tr
     if (!conditionBlock.isEmpty) {
         val breakIfConditionIsFalseStatement = JsIf(not(jsCondition), JsBreak())
         val bodyBlock = convertToBlock(bodyStatement)
-        jsCondition = JsLiteral.TRUE
+        jsCondition = JsBooleanLiteral(true)
 
         if (doWhile) {
             // translate to: tmpSecondRun = false;
             // do { if(tmpSecondRun) { <expr> if(!tmpExprVar) break; } else tmpSecondRun=true; <body> } while(true)
-            val secondRun = context.defineTemporary(JsLiteral.FALSE)
+            val secondRun = context.defineTemporary(JsBooleanLiteral(false))
             conditionBlock.statements.add(breakIfConditionIsFalseStatement)
-            val ifStatement = JsIf(secondRun, conditionBlock, assignment(secondRun, JsLiteral.TRUE).makeStmt())
+            val ifStatement = JsIf(secondRun, conditionBlock, assignment(secondRun, JsBooleanLiteral(true)).makeStmt())
             bodyBlock.statements.add(0, ifStatement)
         }
         else {
@@ -172,11 +172,11 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         val rangeExpression = context.defineTemporary(Translation.translateAsExpression(loopRange, context))
         val length = ArrayFIF.LENGTH_PROPERTY_INTRINSIC.apply(rangeExpression, listOf<JsExpression>(), context)
         val end = context.defineTemporary(length)
-        val index = context.declareTemporary(context.program().getNumberLiteral(0))
+        val index = context.declareTemporary(JsIntLiteral(0))
 
         val arrayAccess = JsArrayAccess(rangeExpression, index.reference())
         val body = translateBody(arrayAccess)
-        val initExpression = assignment(index.reference(), context.program().getNumberLiteral(0))
+        val initExpression = assignment(index.reference(), JsIntLiteral(0))
         val conditionExpression = inequality(index.reference(), end)
         val incrementExpression = JsPrefixOperation(JsUnaryOperator.INC, index.reference())
 
@@ -217,7 +217,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         else {
             bodyStatements += hasNextBlock.statements
             bodyStatements += JsIf(notOptimized(hasNextInvocation), JsBreak())
-            JsLiteral.TRUE
+            JsBooleanLiteral(true)
         }
         bodyStatements += nextBlock.statements
         bodyStatements += translateBody(nextInvoke)?.let(::flattenStatement).orEmpty()

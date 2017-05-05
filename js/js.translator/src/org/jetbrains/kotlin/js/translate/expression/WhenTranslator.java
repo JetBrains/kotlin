@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ public final class WhenTranslator extends AbstractTranslator {
             currentIf.setElseStatement(JsAstUtils.asSyntheticStatement(noWhenMatchedInvocation));
         }
 
-        return resultIf != null ? resultIf : JsLiteral.NULL;
+        return resultIf != null ? resultIf : new JsNullLiteral();
     }
 
     private boolean isExhaustive() {
@@ -145,7 +145,7 @@ public final class WhenTranslator extends AbstractTranslator {
         } else {
             assert rightExpression instanceof JsNameRef : "expected JsNameRef, but: " + rightExpression;
             JsNameRef result = (JsNameRef) rightExpression;
-            JsIf ifStatement = JsAstUtils.newJsIf(leftExpression, JsAstUtils.assignment(result, JsLiteral.TRUE).makeStmt(),
+            JsIf ifStatement = JsAstUtils.newJsIf(leftExpression, JsAstUtils.assignment(result, new JsBooleanLiteral(true)).makeStmt(),
                                                   rightContext.getCurrentBlock());
             context.addStatementToCurrentBlock(ifStatement);
             return result;
@@ -190,7 +190,7 @@ public final class WhenTranslator extends AbstractTranslator {
         assert expressionToMatchNonTranslated != null : "expressionToMatch != null => expressionToMatchNonTranslated != null: " +
                                                         PsiUtilsKt.getTextWithLocation(conditionIsPattern);
         JsExpression result = Translation.patternTranslator(context).translateIsCheck(expressionToMatch, typeReference);
-        return result != null ? result : JsLiteral.TRUE;
+        return result != null ? result : new JsBooleanLiteral(true);
     }
 
     @NotNull

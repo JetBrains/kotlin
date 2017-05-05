@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public class JsSourceGenerationVisitor extends JsToStringGenerationVisitor imple
 
     @Override
     public void accept(JsNode node) {
-        if (!(node instanceof JsNameRef) && !(node instanceof JsLiteral.JsThisRef)) {
+        if (!(node instanceof JsNameRef) && !(node instanceof JsThisRef)) {
             mapSource(node);
         }
         super.accept(node);

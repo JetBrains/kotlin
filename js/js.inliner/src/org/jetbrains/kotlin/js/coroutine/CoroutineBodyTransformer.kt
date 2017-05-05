@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.js.inline.util.collectBreakContinueTargets
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.utils.DFS
 
-class CoroutineBodyTransformer(private val program: JsProgram, private val context: CoroutineTransformationContext) : RecursiveJsVisitor() {
+class CoroutineBodyTransformer(private val context: CoroutineTransformationContext) : RecursiveJsVisitor() {
     private val entryBlock = context.entryBlock
     private val globalCatchBlock = context.globalCatchBlock
     private var currentBlock = entryBlock
@@ -55,7 +55,7 @@ class CoroutineBodyTransformer(private val program: JsProgram, private val conte
         currentBlock.statements += JsReturn()
         val graph = entryBlock.buildGraph(globalCatchBlock)
         val orderedBlocks = DFS.topologicalOrder(listOf(entryBlock)) { graph[it].orEmpty() }
-        orderedBlocks.replaceCoroutineFlowStatements(context, program)
+        orderedBlocks.replaceCoroutineFlowStatements(context)
         return orderedBlocks
     }
 
@@ -121,7 +121,7 @@ class CoroutineBodyTransformer(private val program: JsProgram, private val conte
         currentStatements += stateAndJump(bodyEntryBlock, x)
 
         currentBlock = bodyEntryBlock
-        if (x.condition != JsLiteral.TRUE) {
+        if (!JsLiteral.isTrueBoolean(x.condition)) {
             currentStatements += JsIf(JsAstUtils.notOptimized(x.condition), JsBlock(stateAndJump(successor, x))).apply { source = x.source }
         }
 
@@ -143,7 +143,7 @@ class CoroutineBodyTransformer(private val program: JsProgram, private val conte
             x.body.accept(this)
         }
 
-        if (x.condition != JsLiteral.TRUE) {
+        if (!JsLiteral.isTrueBoolean(x.condition)) {
             val jsIf = JsIf(JsAstUtils.notOptimized(x.condition), JsBlock(stateAndJump(successor, x))).apply { source = x.source }
             currentStatements.add(jsIf)
         }
@@ -168,7 +168,7 @@ class CoroutineBodyTransformer(private val program: JsProgram, private val conte
         currentStatements += stateAndJump(bodyEntryBlock, x)
 
         currentBlock = bodyEntryBlock
-        if (x.condition != null && x.condition != JsLiteral.TRUE) {
+        if (x.condition != null && !JsLiteral.isTrueBoolean(x.condition)) {
             currentStatements += JsIf(JsAstUtils.notOptimized(x.condition), JsBlock(stateAndJump(successor, x))).apply { source = x.source }
         }
 

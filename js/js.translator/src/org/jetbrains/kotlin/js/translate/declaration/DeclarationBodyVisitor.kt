@@ -120,7 +120,7 @@ class DeclarationBodyVisitor(
                         .innerBlock(caller.body)
 
                 val callbackName = JsScope.declareTemporaryName("callback" + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)
-                val callee = JsNameRef(bodyName, JsLiteral.THIS)
+                val callee = JsNameRef(bodyName, JsThisRef())
 
                 val defaultInvocation = JsInvocation(callee, listOf<JsExpression>())
                 val callbackInvocation = JsInvocation(callbackName.makeRef())
@@ -148,9 +148,9 @@ class DeclarationBodyVisitor(
     override fun addProperty(descriptor: PropertyDescriptor, getter: JsExpression, setter: JsExpression?) {
         if (!JsDescriptorUtils.isSimpleFinalProperty(descriptor)) {
             val literal = JsObjectLiteral(true)
-            literal.propertyInitializers += JsPropertyInitializer(context.program().getStringLiteral("get"), getter)
+            literal.propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), getter)
             if (setter != null) {
-                literal.propertyInitializers += JsPropertyInitializer(context.program().getStringLiteral("set"), setter)
+                literal.propertyInitializers += JsPropertyInitializer(JsStringLiteral("set"), setter)
             }
             context.addAccessorsToPrototype(containingClass, descriptor, literal)
         }

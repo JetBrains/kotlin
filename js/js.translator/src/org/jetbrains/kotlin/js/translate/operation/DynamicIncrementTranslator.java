@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public class DynamicIncrementTranslator extends IncrementTranslator {
 
     @NotNull
     private JsBinaryOperation unaryAsBinary(@NotNull JsExpression leftExpression) {
-        JsNumberLiteral oneLiteral = program().getNumberLiteral(1);
+        JsNumberLiteral oneLiteral = new JsIntLiteral(1);
         KtToken token = getOperationToken(expression);
         if (token.equals(KtTokens.PLUSPLUS)) {
             return new JsBinaryOperation(JsBinaryOperator.ADD, leftExpression, oneLiteral);

@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.serialization.js.ast
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.protobuf.CodedInputStream
-import org.jetbrains.kotlin.resolve.inline.InlineStrategy as KotlinInlineStrategy
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.ExpressionCase
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement.StatementCase
 import java.io.InputStream
 import java.util.*
+import org.jetbrains.kotlin.resolve.inline.InlineStrategy as KotlinInlineStrategy
 
-class JsAstDeserializer(private val program: JsProgram) {
+class JsAstDeserializer(program: JsProgram) {
     private val scope = JsRootScope(program)
     private val stringTable = mutableListOf<String>()
     private val nameTable = mutableListOf<Name>()
@@ -263,13 +263,13 @@ class JsAstDeserializer(private val program: JsProgram) {
     }
 
     private fun deserializeNoMetadata(proto: Expression): JsExpression = when (proto.expressionCase) {
-        ExpressionCase.THIS_LITERAL -> JsLiteral.THIS
-        ExpressionCase.NULL_LITERAL -> JsLiteral.NULL
-        ExpressionCase.TRUE_LITERAL -> JsLiteral.TRUE
-        ExpressionCase.FALSE_LITERAL -> JsLiteral.FALSE
-        ExpressionCase.STRING_LITERAL -> program.getStringLiteral(deserializeString(proto.stringLiteral))
-        ExpressionCase.INT_LITERAL -> program.getNumberLiteral(proto.intLiteral)
-        ExpressionCase.DOUBLE_LITERAL -> program.getNumberLiteral(proto.doubleLiteral)
+        ExpressionCase.THIS_LITERAL -> JsThisRef()
+        ExpressionCase.NULL_LITERAL -> JsNullLiteral()
+        ExpressionCase.TRUE_LITERAL -> JsBooleanLiteral(true)
+        ExpressionCase.FALSE_LITERAL -> JsBooleanLiteral(false)
+        ExpressionCase.STRING_LITERAL -> JsStringLiteral(deserializeString(proto.stringLiteral))
+        ExpressionCase.INT_LITERAL -> JsIntLiteral(proto.intLiteral)
+        ExpressionCase.DOUBLE_LITERAL -> JsDoubleLiteral(proto.doubleLiteral)
         ExpressionCase.SIMPLE_NAME_REFERENCE -> JsNameRef(deserializeName(proto.simpleNameReference))
 
         ExpressionCase.REG_EXP_LITERAL -> {
@@ -510,9 +510,7 @@ class JsAstDeserializer(private val program: JsProgram) {
         }
         val node = action()
         if (deserializedLocation != null) {
-            if (node !is JsLiteral.JsBooleanLiteral && node !is JsLiteral.JsThisRef && node !is JsNullLiteral) {
-                node.source = deserializedLocation
-            }
+            node.source = deserializedLocation
         }
         if (shouldUpdateFile) {
             fileStack.pop()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,7 +132,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
         ) {
             assert receiver != null;
             assert arguments.size() == 0;
-            return new JsBinaryOperation(JsBinaryOperator.ADD, receiver, context.program().getNumberLiteral(1));
+            return new JsBinaryOperation(JsBinaryOperator.ADD, receiver, new JsIntLiteral(1));
         }
     };
 
@@ -147,7 +147,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
         ) {
             assert receiver != null;
             assert arguments.size() == 0;
-            return new JsBinaryOperation(JsBinaryOperator.SUB, receiver, context.program().getNumberLiteral(1));
+            return new JsBinaryOperation(JsBinaryOperator.SUB, receiver, new JsIntLiteral(1));
         }
     };
 

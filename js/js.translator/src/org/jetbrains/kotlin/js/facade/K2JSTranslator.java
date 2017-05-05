@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,7 +127,7 @@ public final class K2JSTranslator {
 
         LabeledBlockToDoWhileTransformation.INSTANCE.apply(newFragments);
 
-        CoroutineTransformer coroutineTransformer = new CoroutineTransformer(translationResult.getProgram());
+        CoroutineTransformer coroutineTransformer = new CoroutineTransformer();
         for (JsProgramFragment fragment : newFragments) {
             coroutineTransformer.accept(fragment.getDeclarationBlock());
             coroutineTransformer.accept(fragment.getInitializerBlock());

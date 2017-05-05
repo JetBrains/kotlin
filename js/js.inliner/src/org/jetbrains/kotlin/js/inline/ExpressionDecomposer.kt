@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -139,7 +139,7 @@ internal class ExpressionDecomposer private constructor(
             }
 
             body = additionalStatements.toStatement()
-            test = JsLiteral.TRUE
+            test = JsBooleanLiteral(true)
         }
     }
 
@@ -404,8 +404,8 @@ internal open class JsExpressionVisitor() : JsVisitorWithContextImpl() {
     override fun visit(x: JsCase, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsDefault, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsEmpty, ctx: JsContext<JsNode>): Boolean = false
-    override fun visit(x: JsLiteral.JsBooleanLiteral, ctx: JsContext<JsNode>): Boolean = false
-    override fun visit(x: JsLiteral.JsThisRef, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsBooleanLiteral, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsThisRef, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsNullLiteral, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsNumberLiteral, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsRegExp, ctx: JsContext<JsNode>): Boolean = false

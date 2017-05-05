@@ -55,15 +55,15 @@ class EnumTranslator(
 
         val clauses = entries.map { entry ->
             JsCase().apply {
-                caseExpression = context().program().getStringLiteral(entry.name.asString())
+                caseExpression = JsStringLiteral(entry.name.asString())
                 statements += JsReturn(JsInvocation(JsAstUtils.pureFqn(context().getNameForObjectInstance(entry), null)).source(psi))
                 source = psi
             }
         }
 
         val message = JsBinaryOperation(JsBinaryOperator.ADD,
-                context().program().getStringLiteral("No enum constant ${descriptor.fqNameSafe}."),
-                nameParam.makeRef())
+                                        JsStringLiteral("No enum constant ${descriptor.fqNameSafe}."),
+                                        nameParam.makeRef())
         val throwStatement = JsExpressionStatement(JsInvocation(Namer.throwIllegalStateExceptionFunRef(), message).source(psi))
 
         if (clauses.isNotEmpty()) {

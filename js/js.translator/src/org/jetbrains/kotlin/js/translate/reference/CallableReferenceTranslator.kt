@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ object CallableReferenceTranslator {
         function.body.statements += JsReturn(invocation)
 
         val rawCallableRef = bindIfNecessary(function, receiver)
-        return wrapFunctionCallableRef(context, expression.callableReference.getReferencedName(), rawCallableRef)
+        return wrapFunctionCallableRef(expression.callableReference.getReferencedName(), rawCallableRef)
     }
 
     private fun translateForProperty(
@@ -138,7 +138,7 @@ object CallableReferenceTranslator {
             null
         }
 
-        return wrapPropertyCallableRef(context, receiver, descriptor, expression.callableReference.getReferencedName(), getter, setter)
+        return wrapPropertyCallableRef(receiver, descriptor, expression.callableReference.getReferencedName(), getter, setter)
     }
 
     private fun isSetterVisible(descriptor: PropertyDescriptor, context: TranslationContext): Boolean {
@@ -176,7 +176,7 @@ object CallableReferenceTranslator {
             name.makeRef()
         }
         else {
-            JsLiteral.NULL
+            JsNullLiteral()
         }
 
         val accessorResult = translator(accessorContext, call, valueParam, receiverParam)
@@ -186,7 +186,7 @@ object CallableReferenceTranslator {
 
     private fun bindIfNecessary(function: JsFunction, receiver: JsExpression?): JsExpression {
         return if (receiver != null) {
-            JsInvocation(JsNameRef("bind", function), JsLiteral.NULL, receiver)
+            JsInvocation(JsNameRef("bind", function), JsNullLiteral(), receiver)
         }
         else {
             function
@@ -194,7 +194,6 @@ object CallableReferenceTranslator {
     }
 
     private fun wrapPropertyCallableRef(
-            context: TranslationContext,
             receiver: JsExpression?,
             descriptor: PropertyDescriptor,
             name: String,
@@ -205,8 +204,8 @@ object CallableReferenceTranslator {
         if (receiver != null) {
             argCount--
         }
-        val nameLiteral = context.program().getStringLiteral(name)
-        val argCountLiteral = context.program().getNumberLiteral(argCount)
+        val nameLiteral = JsStringLiteral(name)
+        val argCountLiteral = JsIntLiteral(argCount)
         val invokeFun = JsNameRef(Namer.PROPERTY_CALLABLE_REF, Namer.kotlinObject())
         val invocation = JsInvocation(invokeFun, nameLiteral, argCountLiteral, getter)
         if (setter != null) {
@@ -216,11 +215,10 @@ object CallableReferenceTranslator {
     }
 
     private fun wrapFunctionCallableRef(
-            context: TranslationContext,
             name: String,
             function: JsExpression
     ): JsExpression {
-        val nameLiteral = context.program().getStringLiteral(name)
+        val nameLiteral = JsStringLiteral(name)
         val invokeName = Namer.FUNCTION_CALLABLE_REF
         val invokeFun = JsNameRef(invokeName, Namer.kotlinObject())
         invokeFun.sideEffects = SideEffectKind.PURE

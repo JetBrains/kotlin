@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ internal class DeclarationExporter(val context: StaticContext) {
 
     private fun exportObject(declaration: ClassDescriptor, qualifier: JsExpression) {
         val name = context.getNameForDescriptor(declaration)
-        val expression = JsAstUtils.defineGetter(context.program, qualifier, name.ident,
+        val expression = JsAstUtils.defineGetter(qualifier, name.ident,
                                                  context.getNameForObjectInstance(declaration).makeRef())
         statements += expression.exportStatement(declaration)
     }
@@ -128,7 +128,7 @@ internal class DeclarationExporter(val context: StaticContext) {
             propertyLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef("set"), setterBody)
         }
 
-        statements += JsAstUtils.defineProperty(qualifier, name, propertyLiteral, context.program).exportStatement(declaration)
+        statements += JsAstUtils.defineProperty(qualifier, name, propertyLiteral).exportStatement(declaration)
     }
 
     private fun getLocalPackageReference(packageName: FqName): JsExpression {

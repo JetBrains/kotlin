@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,7 +151,7 @@ class DefaultPropertyTranslator(
             function.addParameter(getReceiverParameterName(), 0).name.makeRef()
         }
         else {
-            JsLiteral.THIS
+            JsThisRef()
         }
     }
 }
@@ -163,7 +163,7 @@ fun TranslationContext.translateDelegateOrInitializerExpression(expression: KtPr
     val initializer = Translation.translateAsExpression(expressionPsi, this)
     val provideDelegateCall = bindingContext()[BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, propertyDescriptor]
     return if (provideDelegateCall != null) {
-        val innerContext = this.contextWithPropertyMetadataCreationIntrinsified(provideDelegateCall, propertyDescriptor, JsLiteral.THIS)
+        val innerContext = this.contextWithPropertyMetadataCreationIntrinsified(provideDelegateCall, propertyDescriptor, JsThisRef())
         CallTranslator.translate(innerContext, provideDelegateCall, initializer)
     }
     else {
@@ -176,7 +176,7 @@ fun TranslationContext.contextWithPropertyMetadataCreationIntrinsified(
         property: VariableDescriptorWithAccessors,
         host: JsExpression
 ): TranslationContext {
-    val propertyNameLiteral = program().getStringLiteral(property.name.asString())
+    val propertyNameLiteral = JsStringLiteral(property.name.asString())
     // 0th argument is instance, 1st is KProperty, 2nd (for setter) is value
     val hostExpression =
             (delegatedCall.valueArgumentsByIndex!![0] as ExpressionValueArgument).valueArgument!!.getArgumentExpression()

@@ -271,7 +271,7 @@ class JsAstSerializer {
         val visitor = object : JsVisitor() {
             val builder = Expression.newBuilder()
 
-            override fun visitThis(x: JsLiteral.JsThisRef) {
+            override fun visitThis(x: JsThisRef) {
                 builder.thisLiteral = ThisLiteral.newBuilder().build()
             }
 
@@ -279,7 +279,7 @@ class JsAstSerializer {
                 builder.nullLiteral = NullLiteral.newBuilder().build()
             }
 
-            override fun visitBoolean(x: JsLiteral.JsBooleanLiteral) {
+            override fun visitBoolean(x: JsBooleanLiteral) {
                 if (x.value) {
                     builder.trueLiteral = TrueLiteral.newBuilder().build()
                 }
@@ -299,11 +299,11 @@ class JsAstSerializer {
                 builder.regExpLiteral = regExpBuilder.build()
             }
 
-            override fun visitInt(x: JsNumberLiteral.JsIntLiteral) {
+            override fun visitInt(x: JsIntLiteral) {
                 builder.intLiteral = x.value
             }
 
-            override fun visitDouble(x: JsNumberLiteral.JsDoubleLiteral) {
+            override fun visitDouble(x: JsDoubleLiteral) {
                 builder.doubleLiteral = x.value
             }
 

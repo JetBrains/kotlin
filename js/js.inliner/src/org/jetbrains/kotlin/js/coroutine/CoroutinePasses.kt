@@ -113,7 +113,7 @@ fun JsNode.collectNodesToSplit(breakContinueTargets: Map<JsContinue, JsStatement
     return nodes
 }
 
-fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransformationContext, program: JsProgram) {
+fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransformationContext) {
     val blockIndexes = withIndex().associate { (index, block) -> Pair(block, index) }
 
     val blockReplacementVisitor = object : JsVisitorWithContextImpl() {
@@ -121,7 +121,7 @@ fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransf
             val target = x.targetBlock
             if (target != null) {
                 val lhs = JsNameRef(context.metadata.stateName, JsAstUtils.stateMachineReceiver())
-                val rhs = program.getNumberLiteral(blockIndexes[target]!!)
+                val rhs = JsIntLiteral(blockIndexes[target]!!)
                 ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs).source(x.source)).apply {
                     targetBlock = true
                 })
@@ -130,7 +130,7 @@ fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransf
             val exceptionTarget = x.targetExceptionBlock
             if (exceptionTarget != null) {
                 val lhs = JsNameRef(context.metadata.exceptionStateName, JsAstUtils.stateMachineReceiver())
-                val rhs = program.getNumberLiteral(blockIndexes[exceptionTarget]!!)
+                val rhs = JsIntLiteral(blockIndexes[exceptionTarget]!!)
                 ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs).source(x.source)).apply {
                     targetExceptionBlock = true
                 })
@@ -140,7 +140,7 @@ fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransf
             if (finallyPath != null) {
                 if (finallyPath.isNotEmpty()) {
                     val lhs = JsNameRef(context.metadata.finallyPathName, JsAstUtils.stateMachineReceiver())
-                    val rhs = JsArrayLiteral(finallyPath.map { program.getNumberLiteral(blockIndexes[it]!!) })
+                    val rhs = JsArrayLiteral(finallyPath.map { JsIntLiteral(blockIndexes[it]!!) })
                     ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs).source(x.source)).apply {
                         this.finallyPath = true
                     })
@@ -208,8 +208,8 @@ private fun CoroutineBlock.collectFinallyPaths(): List<List<CoroutineBlock>> {
 
 fun JsBlock.replaceSpecialReferences(context: CoroutineTransformationContext) {
     val visitor = object : JsVisitorWithContextImpl() {
-        override fun endVisit(x: JsLiteral.JsThisRef, ctx: JsContext<in JsNode>) {
-            ctx.replaceMe(JsNameRef(context.receiverFieldName, JsLiteral.THIS))
+        override fun endVisit(x: JsThisRef, ctx: JsContext<in JsNode>) {
+            ctx.replaceMe(JsNameRef(context.receiverFieldName, JsThisRef()))
         }
 
         override fun visit(x: JsFunction, ctx: JsContext<*>) = false
@@ -217,7 +217,7 @@ fun JsBlock.replaceSpecialReferences(context: CoroutineTransformationContext) {
         override fun endVisit(x: JsNameRef, ctx: JsContext<in JsNode>) {
             when {
                 x.coroutineReceiver -> {
-                    ctx.replaceMe(JsLiteral.THIS)
+                    ctx.replaceMe(JsThisRef())
                 }
 
                 x.coroutineController -> {
@@ -254,7 +254,7 @@ fun JsBlock.replaceLocalVariables(context: CoroutineTransformationContext, local
                 val nameMap = freeVars.associate { it to JsScope.declareTemporaryName(it.ident) }
                 for (freeVar in freeVars) {
                     wrapperFunction.parameters += JsParameter(nameMap[freeVar]!!)
-                    wrapperInvocation.arguments += JsNameRef(context.getFieldName(freeVar), JsLiteral.THIS)
+                    wrapperInvocation.arguments += JsNameRef(context.getFieldName(freeVar), JsThisRef())
                 }
                 x.body = replaceNames(x.body, nameMap.mapValues { it.value.makeRef() })
                 ctx.replaceMe(wrapperInvocation)
@@ -264,7 +264,7 @@ fun JsBlock.replaceLocalVariables(context: CoroutineTransformationContext, local
         override fun endVisit(x: JsNameRef, ctx: JsContext<in JsNode>) {
             if (x.qualifier == null && x.name in localVariables) {
                 val fieldName = context.getFieldName(x.name!!)
-                ctx.replaceMe(JsNameRef(fieldName, JsLiteral.THIS).source(x.source))
+                ctx.replaceMe(JsNameRef(fieldName, JsThisRef()).source(x.source))
             }
         }
 
@@ -273,7 +273,7 @@ fun JsBlock.replaceLocalVariables(context: CoroutineTransformationContext, local
                 val fieldName = context.getFieldName(it.name)
                 val initExpression = it.initExpression
                 if (initExpression != null) {
-                    JsAstUtils.assignment(JsNameRef(fieldName, JsLiteral.THIS), it.initExpression)
+                    JsAstUtils.assignment(JsNameRef(fieldName, JsThisRef()), it.initExpression)
                 }
                 else {
                     null

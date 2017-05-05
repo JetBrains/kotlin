@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.inline.util.rewriters
+package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.annotations.NotNull;
 
-class ThisReplacingVisitor(private val thisReplacement: JsExpression) : JsVisitorWithContextImpl() {
-    override fun endVisit(x: JsThisRef, ctx: JsContext<JsNode>) {
-        ctx.replaceMe(thisReplacement)
+public final class JsThisRef extends JsLiteral.JsValueLiteral {
+    @Override
+    public void accept(JsVisitor v) {
+        v.visitThis(this);
     }
 
-    override fun visit(x: JsFunction, ctx: JsContext<JsNode>) = false
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        v.visit(this, ctx);
+        v.endVisit(this, ctx);
+    }
 
-    override fun visit(x: JsObjectLiteral, ctx: JsContext<JsNode>) = false
+    @NotNull
+    @Override
+    public JsThisRef deepCopy() {
+        return new JsThisRef().withMetadataFrom(this);
+    }
 }

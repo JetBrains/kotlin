@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,7 @@ class InlineMetadata(val tag: JsStringLiteral, val function: JsFunction) {
     companion object {
         @JvmStatic
         fun compose(function: JsFunction, descriptor: CallableDescriptor, config: JsConfig): InlineMetadata {
-            val program = function.scope.program
-            val tag = program.getStringLiteral(Namer.getFunctionTag(descriptor, config))
+            val tag = JsStringLiteral(Namer.getFunctionTag(descriptor, config))
             return InlineMetadata(tag, function)
         }
 

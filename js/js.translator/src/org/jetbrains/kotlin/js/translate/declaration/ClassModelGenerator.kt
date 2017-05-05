@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -192,7 +192,7 @@ class ClassModelGenerator(val context: StaticContext) {
             val sourceName = context.getNameForDescriptor(key).ident
             val targetName = context.getNameForDescriptor(value).ident
             if (sourceName != targetName) {
-                val statement = generateDelegateCall(descriptor, key, value, JsLiteral.THIS, translationContext, false)
+                val statement = generateDelegateCall(descriptor, key, value, JsThisRef(), translationContext, false)
                 model.postDeclarationBlock.statements += statement
             }
         }
@@ -228,7 +228,7 @@ class ClassModelGenerator(val context: StaticContext) {
         }
 
         val translationContext = TranslationContext.rootContext(context)
-        model.postDeclarationBlock.statements += generateDelegateCall(descriptor, fromDescriptor, toDescriptor, JsLiteral.THIS,
+        model.postDeclarationBlock.statements += generateDelegateCall(descriptor, fromDescriptor, toDescriptor, JsThisRef(),
                                                                       translationContext, false)
     }
 
@@ -258,10 +258,10 @@ class ClassModelGenerator(val context: StaticContext) {
 
         val targetPrototype = prototypeOf(pureFqn(context.getInnerNameForDescriptor(targetDescriptor), null))
         val sourcePrototype = prototypeOf(pureFqn(context.getInnerNameForDescriptor(sourceDescriptor), null))
-        val nameLiteral = context.program.getStringLiteral(name)
+        val nameLiteral = JsStringLiteral(name)
 
         val getPropertyDescriptor = JsInvocation(JsNameRef("getOwnPropertyDescriptor", "Object"), sourcePrototype, nameLiteral)
-        val defineProperty = JsAstUtils.defineProperty(targetPrototype, name, getPropertyDescriptor, context.program)
+        val defineProperty = JsAstUtils.defineProperty(targetPrototype, name, getPropertyDescriptor)
 
         block.statements += defineProperty.makeStmt()
     }

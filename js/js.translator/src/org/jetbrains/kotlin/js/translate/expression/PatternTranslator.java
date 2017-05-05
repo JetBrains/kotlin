@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.js.backend.ast.JsConditional;
-import org.jetbrains.kotlin.js.backend.ast.JsExpression;
-import org.jetbrains.kotlin.js.backend.ast.JsInvocation;
-import org.jetbrains.kotlin.js.backend.ast.JsLiteral;
+import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.patterns.typePredicates.TypePredicatesKt;
 import org.jetbrains.kotlin.js.translate.context.Namer;
@@ -97,7 +94,7 @@ public final class PatternTranslator extends AbstractTranslator {
         JsExpression onFail;
 
         if (isSafeCast(expression)) {
-            onFail = JsLiteral.NULL;
+            onFail = new JsNullLiteral();
         }
         else {
             JsExpression throwCCEFunRef = Namer.throwClassCastExceptionFunRef();
@@ -127,7 +124,7 @@ public final class PatternTranslator extends AbstractTranslator {
         KtTypeReference typeReference = expression.getTypeReference();
         assert typeReference != null;
         JsExpression result = translateIsCheck(expressionToCheck, typeReference);
-        if (result == null) return JsLiteral.getBoolean(!expression.isNegated());
+        if (result == null) return new JsBooleanLiteral(!expression.isNegated());
 
         if (expression.isNegated()) {
             return not(result);
@@ -207,7 +204,7 @@ public final class PatternTranslator extends AbstractTranslator {
     @Nullable
     private JsExpression getIsTypeCheckCallableForBuiltin(@NotNull KotlinType type) {
         if (isFunctionTypeOrSubtype(type) && !ReflectionTypes.isNumberedKPropertyOrKMutablePropertyType(type)) {
-            return namer().isTypeOf(program().getStringLiteral("function"));
+            return namer().isTypeOf(new JsStringLiteral("function"));
         }
 
         if (isArray(type)) {
@@ -232,11 +229,11 @@ public final class PatternTranslator extends AbstractTranslator {
         Name typeName = getNameIfStandardType(type);
 
         if (NamePredicate.STRING.test(typeName)) {
-            return namer().isTypeOf(program().getStringLiteral("string"));
+            return namer().isTypeOf(new JsStringLiteral("string"));
         }
 
         if (NamePredicate.BOOLEAN.test(typeName)) {
-            return namer().isTypeOf(program().getStringLiteral("boolean"));
+            return namer().isTypeOf(new JsStringLiteral("boolean"));
         }
 
         if (NamePredicate.LONG.test(typeName)) {
@@ -252,7 +249,7 @@ public final class PatternTranslator extends AbstractTranslator {
         }
 
         if (NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS.test(typeName)) {
-            return namer().isTypeOf(program().getStringLiteral("number"));
+            return namer().isTypeOf(new JsStringLiteral("number"));
         }
 
         if (ArrayFIF.typedArraysEnabled(context().getConfig())) {
@@ -294,7 +291,7 @@ public final class PatternTranslator extends AbstractTranslator {
         if (matchEquality == EqualityType.PRIMITIVE && patternEquality == EqualityType.PRIMITIVE) {
             return equality(expressionToMatch, expressionToMatchAgainst);
         }
-        else if (expressionToMatchAgainst == JsLiteral.NULL) {
+        else if (expressionToMatchAgainst instanceof JsNullLiteral) {
             return TranslationUtils.nullCheck(expressionToMatch, false);
         }
         else {

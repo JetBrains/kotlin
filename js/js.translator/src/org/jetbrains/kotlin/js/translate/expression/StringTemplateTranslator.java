@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,8 +88,8 @@ public final class StringTemplateTranslator extends AbstractTranslator {
             if (type != null && KotlinBuiltIns.isCharOrNullableChar(type)) {
                 if (type.isMarkedNullable()) {
                     TemporaryVariable tmp = context().declareTemporary(translatedExpression);
-                    append(new JsConditional(JsAstUtils.equality(tmp.assignmentExpression(), JsLiteral.NULL),
-                                             JsLiteral.NULL,
+                    append(new JsConditional(JsAstUtils.equality(tmp.assignmentExpression(), new JsNullLiteral()),
+                                             new JsNullLiteral(),
                                              JsAstUtils.charToString(tmp.reference())));
                 }
                 else {
@@ -97,7 +97,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
                 }
             }
             else if (translatedExpression instanceof JsNumberLiteral) {
-                append(context().program().getStringLiteral(translatedExpression.toString()));
+                append(new JsStringLiteral(translatedExpression.toString()));
             }
             else if (type == null || type.isMarkedNullable()) {
                 append(TopLevelFIF.TO_STRING.apply((JsExpression) null, new SmartList<>(translatedExpression), context()));
@@ -135,7 +135,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
         }
 
         private void appendText(@NotNull String text) {
-            append(program().getStringLiteral(text));
+            append(new JsStringLiteral(text));
         }
 
         @NotNull

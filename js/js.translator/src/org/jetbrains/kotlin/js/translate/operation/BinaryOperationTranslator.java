@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,7 +148,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
             ifStatement = JsAstUtils.newJsIf(testExpression, rightBlock);
         }
         else {
-            result = JsLiteral.NULL;
+            result = new JsNullLiteral();
             JsExpression testExpression = TranslationUtils.isNullCheck(leftExpression);
             ifStatement = JsAstUtils.newJsIf(testExpression, rightBlock);
         }
@@ -201,7 +201,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
         assert operationToken.equals(KtTokens.ANDAND) || operationToken.equals(KtTokens.OROR) : "Unsupported binary operation: " + expression.getText();
         boolean isOror = operationToken.equals(KtTokens.OROR);
-        JsExpression literalResult = isOror ? JsLiteral.TRUE : JsLiteral.FALSE;
+        JsExpression literalResult = new JsBooleanLiteral(isOror);
         leftExpression = isOror ? not(leftExpression) : leftExpression;
 
         JsIf ifStatement;
@@ -219,7 +219,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         }
         else {
             ifStatement = JsAstUtils.newJsIf(leftExpression, rightBlock);
-            result = JsLiteral.NULL;
+            result = new JsNullLiteral();
         }
         context().addStatementToCurrentBlock(ifStatement);
         return result;
@@ -233,7 +233,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         JsExpression left = Translation.translateAsExpression(leftKtExpression, context());
         JsExpression right = Translation.translateAsExpression(rightKtExpression, context());
 
-        if (left == JsLiteral.NULL || right == JsLiteral.NULL) {
+        if (left instanceof JsNullLiteral || right instanceof JsNullLiteral) {
             JsBinaryOperator operator = operationToken == KtTokens.EXCLEQ ? JsBinaryOperator.NEQ : JsBinaryOperator.EQ;
             return new JsBinaryOperation(operator, left, right);
         }

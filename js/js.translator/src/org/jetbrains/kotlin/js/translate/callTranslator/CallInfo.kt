@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.js.backend.ast.JsBlock
-import org.jetbrains.kotlin.js.backend.ast.JsConditional
-import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.js.backend.ast.JsLiteral
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
@@ -143,11 +140,11 @@ private fun TranslationContext.createCallInfo(
     if (resolvedCall.call.isSafeCall()) {
         when (resolvedCall.explicitReceiverKind) {
             BOTH_RECEIVERS, EXTENSION_RECEIVER -> {
-                notNullConditional = TranslationUtils.notNullConditional(extensionReceiver!!, JsLiteral.NULL, this)
+                notNullConditional = TranslationUtils.notNullConditional(extensionReceiver!!, JsNullLiteral(), this)
                 extensionReceiver = notNullConditional.thenExpression
             }
             else -> {
-                notNullConditional = TranslationUtils.notNullConditional(dispatchReceiver!!, JsLiteral.NULL, this)
+                notNullConditional = TranslationUtils.notNullConditional(dispatchReceiver!!, JsNullLiteral(), this)
                 dispatchReceiver = notNullConditional.thenExpression
             }
         }

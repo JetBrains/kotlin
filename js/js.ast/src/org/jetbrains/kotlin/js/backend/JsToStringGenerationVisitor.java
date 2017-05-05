@@ -5,8 +5,8 @@
 package org.jetbrains.kotlin.js.backend;
 
 import org.jetbrains.kotlin.js.backend.ast.*;
-import org.jetbrains.kotlin.js.backend.ast.JsNumberLiteral.JsDoubleLiteral;
-import org.jetbrains.kotlin.js.backend.ast.JsNumberLiteral.JsIntLiteral;
+import org.jetbrains.kotlin.js.backend.ast.JsDoubleLiteral;
+import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral;
 import org.jetbrains.kotlin.js.backend.ast.JsVars.JsVar;
 import org.jetbrains.kotlin.js.util.TextOutput;
 import gnu.trove.THashSet;
@@ -258,7 +258,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitBoolean(@NotNull JsLiteral.JsBooleanLiteral x) {
+    public void visitBoolean(@NotNull JsBooleanLiteral x) {
         if (x.getValue()) {
             p.print(CHARS_TRUE);
         }
@@ -773,7 +773,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitThis(@NotNull JsLiteral.JsThisRef x) {
+    public void visitThis(@NotNull JsThisRef x) {
         p.print(CHARS_THIS);
     }
 

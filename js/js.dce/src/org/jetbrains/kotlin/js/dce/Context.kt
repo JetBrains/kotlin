@@ -63,7 +63,7 @@ class Context {
                 val index = expression.index
                 if (index is JsStringLiteral) extractNodeImpl(expression.array)?.member(index.value) else null
             }
-            is JsLiteral.JsThisRef -> {
+            is JsThisRef -> {
                 thisNode
             }
             is JsInvocation -> {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.translate.context.Namer;
-import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
@@ -33,16 +32,15 @@ import java.util.List;
 
 public final class JsAstUtils {
     private static final JsNameRef DEFINE_PROPERTY = pureFqn("defineProperty", null);
-    private static final JsNameRef CREATE_OBJECT = pureFqn("create", null);
 
     private static final JsNameRef VALUE = new JsNameRef("value");
-    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(pureFqn("writable", null), JsLiteral.TRUE);
-    private static final JsPropertyInitializer ENUMERABLE = new JsPropertyInitializer(pureFqn("enumerable", null), JsLiteral.TRUE);
+    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(pureFqn("writable", null), new JsBooleanLiteral(true));
+    private static final JsPropertyInitializer ENUMERABLE = new JsPropertyInitializer(pureFqn("enumerable", null),
+                                                                                      new JsBooleanLiteral(false));
 
     static {
         JsNameRef globalObjectReference = new JsNameRef("Object");
         DEFINE_PROPERTY.setQualifier(globalObjectReference);
-        CREATE_OBJECT.setQualifier(globalObjectReference);
     }
 
     private JsAstUtils() {
@@ -132,7 +130,7 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsExpression toInt32(@NotNull JsExpression expression) {
-        return new JsBinaryOperation(JsBinaryOperator.BIT_OR, expression, JsNumberLiteral.ZERO);
+        return new JsBinaryOperation(JsBinaryOperator.BIT_OR, expression, new JsIntLiteral(0));
     }
 
     @Nullable
@@ -142,8 +140,8 @@ public final class JsAstUtils {
         JsBinaryOperation binary = (JsBinaryOperation) expression;
         if (binary.getOperator() != JsBinaryOperator.BIT_OR) return null;
 
-        if (!(binary.getArg2() instanceof JsNumberLiteral.JsIntLiteral)) return null;
-        JsNumberLiteral.JsIntLiteral arg2 = (JsNumberLiteral.JsIntLiteral) binary.getArg2();
+        if (!(binary.getArg2() instanceof JsIntLiteral)) return null;
+        JsIntLiteral arg2 = (JsIntLiteral) binary.getArg2();
         return arg2.value == 0 ? binary.getArg1() : null;
     }
 
@@ -211,13 +209,13 @@ public final class JsAstUtils {
         return invokeKotlinFunction(Namer.PRIMITIVE_COMPARE_TO, left, right);
     }
 
-    public static JsExpression newLong(long value, @NotNull TranslationContext context) {
+    public static JsExpression newLong(long value) {
         if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
             int low = (int) value;
             int high = (int) (value >> 32);
             List<JsExpression> args = new SmartList<>();
-            args.add(context.program().getNumberLiteral(low));
-            args.add(context.program().getNumberLiteral(high));
+            args.add(new JsIntLiteral(low));
+            args.add(new JsIntLiteral(high));
             return new JsNew(Namer.kotlinLong(), args);
         }
         else {
@@ -230,7 +228,7 @@ public final class JsAstUtils {
             else if (value == -1) {
                 return new JsNameRef(Namer.LONG_NEG_ONE, Namer.kotlinLong());
             }
-            return longFromInt(context.program().getNumberLiteral((int) value));
+            return longFromInt(new JsIntLiteral((int) value));
         }
     }
 
@@ -352,7 +350,7 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsStatement assignmentToThisField(@NotNull String fieldName, @NotNull JsExpression right) {
-        return assignment(new JsNameRef(fieldName, JsLiteral.THIS), right).makeStmt();
+        return assignment(new JsNameRef(fieldName, new JsThisRef()), right).makeStmt();
     }
 
     public static JsStatement asSyntheticStatement(@NotNull JsExpression expression) {
@@ -446,14 +444,14 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static List<JsExpression> toStringLiteralList(@NotNull List<String> strings, @NotNull JsProgram program) {
+    public static List<JsExpression> toStringLiteralList(@NotNull List<String> strings) {
         if (strings.isEmpty()) {
             return Collections.emptyList();
         }
 
         List<JsExpression> result = new SmartList<>();
         for (String str : strings) {
-            result.add(program.getStringLiteral(str));
+            result.add(new JsStringLiteral(str));
         }
         return result;
     }
@@ -462,26 +460,25 @@ public final class JsAstUtils {
     public static JsInvocation defineProperty(
             @NotNull JsExpression receiver,
             @NotNull String name,
-            @NotNull JsExpression value,
-            @NotNull JsProgram program
+            @NotNull JsExpression value
     ) {
-        return new JsInvocation(DEFINE_PROPERTY.deepCopy(), receiver, program.getStringLiteral(name), value);
+        return new JsInvocation(DEFINE_PROPERTY.deepCopy(), receiver, new JsStringLiteral(name), value);
     }
 
     @NotNull
     public static JsStatement defineSimpleProperty(@NotNull String name, @NotNull JsExpression value) {
-        return assignment(new JsNameRef(name, JsLiteral.THIS), value).makeStmt();
+        return assignment(new JsNameRef(name, new JsThisRef()), value).makeStmt();
     }
 
     @NotNull
     public static JsObjectLiteral createDataDescriptor(@NotNull JsExpression value, boolean writable, boolean enumerable) {
         JsObjectLiteral dataDescriptor = new JsObjectLiteral();
-        dataDescriptor.getPropertyInitializers().add(new JsPropertyInitializer(VALUE, value));
+        dataDescriptor.getPropertyInitializers().add(new JsPropertyInitializer(VALUE.deepCopy(), value));
         if (writable) {
-            dataDescriptor.getPropertyInitializers().add(WRITABLE);
+            dataDescriptor.getPropertyInitializers().add(WRITABLE.deepCopy());
         }
         if (enumerable) {
-            dataDescriptor.getPropertyInitializers().add(ENUMERABLE);
+            dataDescriptor.getPropertyInitializers().add(ENUMERABLE.deepCopy());
         }
         return dataDescriptor;
     }
@@ -548,14 +545,13 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsExpression defineGetter(
-            @NotNull JsProgram program,
             @NotNull JsExpression receiver,
             @NotNull String name,
             @NotNull JsExpression body
     ) {
         JsObjectLiteral propertyLiteral = new JsObjectLiteral(true);
         propertyLiteral.getPropertyInitializers().add(new JsPropertyInitializer(new JsNameRef("get"), body));
-        return defineProperty(receiver, name, propertyLiteral, program);
+        return defineProperty(receiver, name, propertyLiteral);
     }
 
     @NotNull

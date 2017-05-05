@@ -151,7 +151,7 @@ fun TranslationContext.addAccessorsToPrototype(
 ) {
     val prototypeRef = JsAstUtils.prototypeOf(getInnerReference(containingClass))
     val propertyName = getNameForDescriptor(propertyDescriptor)
-    val defineProperty = JsAstUtils.defineProperty(prototypeRef, propertyName.ident, literal, program())
+    val defineProperty = JsAstUtils.defineProperty(prototypeRef, propertyName.ident, literal)
     addDeclarationStatement(defineProperty.makeStmt())
 }
 

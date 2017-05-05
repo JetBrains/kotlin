@@ -188,7 +188,7 @@ class ClassTranslator private constructor(
 
         val simpleName = descriptor.name
         if (!simpleName.isSpecial) {
-            val simpleNameProp = JsPropertyInitializer(JsNameRef(Namer.METADATA_SIMPLE_NAME), program().getStringLiteral(simpleName.identifier))
+            val simpleNameProp = JsPropertyInitializer(JsNameRef(Namer.METADATA_SIMPLE_NAME), JsStringLiteral(simpleName.identifier))
             metadataLiteral.propertyInitializers += simpleNameProp
         }
     }
@@ -445,11 +445,11 @@ class ClassTranslator private constructor(
 
     private fun addObjectCache(statements: MutableList<JsStatement>) {
         cachedInstanceName = JsScope.declareTemporaryName(StaticContext.getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_VAR_SUFFIX)
-        statements += JsAstUtils.assignment(cachedInstanceName.makeRef(), JsObjectLiteral.THIS).source(classDeclaration).makeStmt()
+        statements += JsAstUtils.assignment(cachedInstanceName.makeRef(), JsThisRef()).source(classDeclaration).makeStmt()
     }
 
     private fun addObjectMethods() {
-        context().addDeclarationStatement(JsAstUtils.newVar(cachedInstanceName, JsLiteral.NULL))
+        context().addDeclarationStatement(JsAstUtils.newVar(cachedInstanceName, JsNullLiteral()))
 
         val instanceFun = context().createRootScopedFunction("Instance function: " + descriptor)
         instanceFun.name = context().getNameForObjectInstance(descriptor)
@@ -458,7 +458,7 @@ class ClassTranslator private constructor(
             instanceFun.body.statements += JsInvocation(pureFqn(enumInitializerName, null)).makeStmt()
         }
         if (descriptor.kind != ClassKind.ENUM_ENTRY) {
-            val instanceCreatedCondition = JsAstUtils.equality(cachedInstanceName.makeRef(), JsLiteral.NULL)
+            val instanceCreatedCondition = JsAstUtils.equality(cachedInstanceName.makeRef(), JsNullLiteral())
             val instanceCreationBlock = JsBlock()
             val instanceCreatedGuard = JsIf(instanceCreatedCondition, instanceCreationBlock)
             instanceFun.body.statements += instanceCreatedGuard
@@ -484,11 +484,11 @@ class ClassTranslator private constructor(
                 .map { DescriptorUtils.getPropertyByName(descriptor.unsubstitutedMemberScope, it) }
                 .filter { !it.kind.isReal }
         for (property in properties) {
-            val propertyTranslator = DefaultPropertyTranslator(property, context, JsLiteral.NULL)
+            val propertyTranslator = DefaultPropertyTranslator(property, context, JsNullLiteral())
             val literal = JsObjectLiteral(true)
             val getterFunction = context.getFunctionObject(property.getter!!)
             propertyTranslator.generateDefaultGetterFunction(property.getter!!, getterFunction)
-            literal.propertyInitializers += JsPropertyInitializer(context.program().getStringLiteral("get"), getterFunction)
+            literal.propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), getterFunction)
             context.addAccessorsToPrototype(descriptor, property, literal)
         }
     }

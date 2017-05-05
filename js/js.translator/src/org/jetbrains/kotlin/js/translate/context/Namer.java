@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -162,7 +162,7 @@ public final class Namer {
 
     @NotNull
     public static JsNameRef getDelegateNameRef(String propertyName) {
-        return new JsNameRef(getDelegateName(propertyName), JsLiteral.THIS);
+        return new JsNameRef(getDelegateName(propertyName), new JsThisRef());
     }
 
     @NotNull
@@ -331,7 +331,7 @@ public final class Namer {
 
     @NotNull
     public static JsExpression getUndefinedExpression() {
-        return new JsPrefixOperation(JsUnaryOperator.VOID, JsNumberLiteral.ZERO);
+        return new JsPrefixOperation(JsUnaryOperator.VOID, new JsIntLiteral(0));
     }
 
     @NotNull

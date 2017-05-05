@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public final class TranslationUtils {
             return translateExtensionFunctionAsEcma5DataDescriptor(functionExpression, descriptor, context);
         }
         else {
-            JsStringLiteral getOrSet = context.program().getStringLiteral(getAccessorFunctionName(descriptor));
+            JsStringLiteral getOrSet = new JsStringLiteral(getAccessorFunctionName(descriptor));
             return new JsPropertyInitializer(getOrSet, functionExpression);
         }
     }
@@ -136,7 +136,7 @@ public final class TranslationUtils {
     @NotNull
     public static JsBinaryOperation nullCheck(@NotNull JsExpression expressionToCheck, boolean isNegated) {
         JsBinaryOperator operator = isNegated ? JsBinaryOperator.NEQ : JsBinaryOperator.EQ;
-        return new JsBinaryOperation(operator, expressionToCheck, JsLiteral.NULL);
+        return new JsBinaryOperation(operator, expressionToCheck, new JsNullLiteral());
     }
 
     @NotNull

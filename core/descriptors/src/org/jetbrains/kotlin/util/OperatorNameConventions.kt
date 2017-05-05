@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ object OperatorNameConventions {
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well
 
     @JvmField
-    internal val UNARY_OPERATION_NAMES = setOf(INC, DEC, UNARY_PLUS, UNARY_MINUS, NOT)
+    val UNARY_OPERATION_NAMES = setOf(INC, DEC, UNARY_PLUS, UNARY_MINUS, NOT)
 
     @JvmField
     internal val SIMPLE_UNARY_OPERATION_NAMES = setOf(UNARY_PLUS, UNARY_MINUS, NOT)

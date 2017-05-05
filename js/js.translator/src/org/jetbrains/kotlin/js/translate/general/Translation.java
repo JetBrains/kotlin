@@ -123,14 +123,14 @@ public final class Translation {
         KotlinType expectedType = context.bindingContext().getType(expression);
         ConstantValue<?> constant = compileTimeValue.toConstantValue(expectedType != null ? expectedType : TypeUtils.NO_EXPECTED_TYPE);
         if (constant instanceof NullValue) {
-            return JsLiteral.NULL;
+            return new JsNullLiteral();
         }
         Object value = constant.getValue();
         if (value instanceof Integer || value instanceof Short || value instanceof Byte) {
-            return context.program().getNumberLiteral(((Number) value).intValue());
+            return new JsIntLiteral(((Number) value).intValue());
         }
         else if (value instanceof Long) {
-            return JsAstUtils.newLong((Long) value, context);
+            return JsAstUtils.newLong((Long) value);
         }
         else if (value instanceof Float) {
             float floatValue = (Float) value;
@@ -141,21 +141,21 @@ public final class Translation {
             else {
                 doubleValue = Double.parseDouble(Float.toString(floatValue));
             }
-            return context.program().getNumberLiteral(doubleValue);
+            return new JsDoubleLiteral(doubleValue);
         }
         else if (value instanceof Number) {
-            return context.program().getNumberLiteral(((Number) value).doubleValue());
+            return new JsDoubleLiteral(((Number) value).doubleValue());
         }
         else if (value instanceof Boolean) {
-            return JsLiteral.getBoolean((Boolean) value);
+            return new JsBooleanLiteral((Boolean) value);
         }
 
         //TODO: test
         if (value instanceof String) {
-            return context.program().getStringLiteral((String) value);
+            return new JsStringLiteral((String) value);
         }
         if (value instanceof Character) {
-            return context.program().getNumberLiteral(((Character) value).charValue());
+            return new JsIntLiteral(((Character) value).charValue());
         }
 
         return null;
@@ -200,7 +200,7 @@ public final class Translation {
         }
 
         block.getStatements().add(convertToStatement(jsNode));
-        return JsLiteral.NULL;
+        return new JsNullLiteral();
     }
 
     @NotNull
@@ -318,7 +318,7 @@ public final class Translation {
 
         List<JsStatement> statements = rootBlock.getStatements();
 
-        statements.add(0, program.getStringLiteral("use strict").makeStmt());
+        statements.add(0, new JsStringLiteral("use strict").makeStmt());
         if (!isBuiltinModule(fragments)) {
             defineModule(program, statements, config.getModuleId());
         }
@@ -380,7 +380,7 @@ public final class Translation {
         JsName rootPackageName = program.getScope().findName(Namer.getRootPackageName());
         if (rootPackageName != null) {
             Namer namer = Namer.newInstance(program.getScope());
-            statements.add(new JsInvocation(namer.kotlin("defineModule"), program.getStringLiteral(moduleId),
+            statements.add(new JsInvocation(namer.kotlin("defineModule"), new JsStringLiteral(moduleId),
                                             rootPackageName.makeRef()).makeStmt());
         }
     }
@@ -411,7 +411,7 @@ public final class Translation {
         if (functionDescriptor == null) {
             return null;
         }
-        JsArrayLiteral argument = new JsArrayLiteral(toStringLiteralList(arguments, context.program()));
+        JsArrayLiteral argument = new JsArrayLiteral(toStringLiteralList(arguments));
         JsExpression call = CallTranslator.INSTANCE.buildCall(context, functionDescriptor, Collections.singletonList(argument), null);
         context.addTopLevelStatement(call.makeStmt());
         return staticContext.getFragment();

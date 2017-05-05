@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.js.backend.ast.JsNumberLiteral
+import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -60,7 +60,7 @@ object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             val compareInvocation = compareForObject(toLeft(left), toRight(right))
-            return JsBinaryOperation(operator, compareInvocation, JsNumberLiteral.ZERO)
+            return JsBinaryOperation(operator, compareInvocation, JsIntLiteral(0))
         }
     }
 

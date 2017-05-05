@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,8 +76,8 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         }
 
         private boolean isSafeConstant(@NotNull JsExpression expression) {
-            if (!(expression instanceof JsNumberLiteral.JsIntLiteral)) return false;
-            int value = ((JsNumberLiteral.JsIntLiteral) expression).value;
+            if (!(expression instanceof JsIntLiteral)) return false;
+            int value = ((JsIntLiteral) expression).value;
             return Math.abs(value) < SAFE_THRESHOLD;
         }
     };

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ class DelegationTranslator(
                 val context = context().innerBlock()
                 val delegateInitExpr = Translation.translateAsExpression(expression, context)
                 statements += context.dynamicContext().jsBlock().statements
-                val lhs = JsAstUtils.pureFqn(field.name, JsLiteral.THIS)
+                val lhs = JsAstUtils.pureFqn(field.name, JsThisRef())
                 statements += JsAstUtils.assignment(lhs, delegateInitExpr).makeStmt()
             }
         }
@@ -111,7 +111,7 @@ class DelegationTranslator(
         val propertyName: String = descriptor.name.asString()
 
         fun generateDelegateGetterFunction(getterDescriptor: PropertyGetterDescriptor): JsFunction {
-            val delegateRef = JsNameRef(delegateName, JsLiteral.THIS)
+            val delegateRef = JsNameRef(delegateName, JsThisRef())
 
             val returnExpression: JsExpression = if (DescriptorUtils.isExtension(descriptor)) {
                 val getterName = context().getNameForDescriptor(getterDescriptor)
@@ -138,7 +138,7 @@ class DelegationTranslator(
             val defaultParameter = JsParameter(JsScope.declareTemporary())
             val defaultParameterRef = defaultParameter.name.makeRef()
 
-            val delegateRef = JsNameRef(delegateName, JsLiteral.THIS)
+            val delegateRef = JsNameRef(delegateName, JsThisRef())
 
             // TODO: remove explicit type annotation when Kotlin compiler works this out
             val setExpression: JsExpression = if (DescriptorUtils.isExtension(descriptor)) {
@@ -195,7 +195,7 @@ class DelegationTranslator(
             overriddenDescriptor: FunctionDescriptor,
             delegateName: JsName
     ) {
-        val delegateRef = JsNameRef(delegateName, JsLiteral.THIS)
+        val delegateRef = JsNameRef(delegateName, JsThisRef())
         val statement = generateDelegateCall(classDescriptor, descriptor, overriddenDescriptor, delegateRef, context(), true)
         context().addDeclarationStatement(statement)
     }

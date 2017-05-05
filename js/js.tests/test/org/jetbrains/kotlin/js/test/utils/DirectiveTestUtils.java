@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -243,7 +243,7 @@ public class DirectiveTestUtils {
 
             if (name.getIdent().equals(nameToSearch)) {
                 hasReferences = true;
-                if (!(nameRef.getQualifier() instanceof JsLiteral.JsThisRef)) {
+                if (!(nameRef.getQualifier() instanceof JsThisRef)) {
                     allReferencesQualifiedByThis = false;
                 }
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.js.translate.intrinsic.operation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
-import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator
-import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.js.backend.ast.JsLiteral
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF
@@ -51,8 +48,8 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val isNegated = expression.isNegated()
-            if (right == JsLiteral.NULL || left == JsLiteral.NULL) {
-                return TranslationUtils.nullCheck(if (right == JsLiteral.NULL) left else right, isNegated)
+            if (right is JsNullLiteral || left is JsNullLiteral) {
+                return TranslationUtils.nullCheck(if (right is JsNullLiteral) left else right, isNegated)
             }
 
             val ktLeft = checkNotNull(expression.left) { "No left-hand side: " + expression.text }

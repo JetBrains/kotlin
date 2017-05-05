@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,8 +66,8 @@ class WhileConditionFolding(val body: JsBlock) {
                     if (condition != null) {
                         statement.body = remove(statement.body)
                         val existingCondition = statement.condition
-                        statement.condition = when (existingCondition) {
-                            JsLiteral.TRUE -> condition
+                        statement.condition = when {
+                            JsLiteral.isTrueBoolean(existingCondition) -> condition
                             else -> combine(existingCondition, condition)
                         }
                         changed = true
@@ -105,7 +105,7 @@ class WhileConditionFolding(val body: JsBlock) {
                 // therefore for single `break` we should return `false`.
                 is JsBreak -> {
                     val target = statement.label?.name
-                    if (label == target) JsLiteral.FALSE else null
+                    if (label == target) JsBooleanLiteral(false) else null
                 }
 
                 // Code like this
@@ -138,11 +138,11 @@ class WhileConditionFolding(val body: JsBlock) {
                     val then = statement.thenStatement
                     if (statement.elseStatement == null) {
                         val nextCondition = extractCondition(then, label)
-                        val result: JsExpression? = when (nextCondition) {
+                        val result: JsExpression? = when {
                             // Just a little optimization. When inner statement is a single `break`, `nextCondition` would be false.
                             // However, `A || false` can be rewritten as simply `A`
-                            JsLiteral.FALSE -> JsAstUtils.notOptimized(statement.ifExpression)
-                            null -> null
+                            nextCondition == null -> null
+                            JsLiteral.isFalseBoolean(nextCondition) -> JsAstUtils.notOptimized(statement.ifExpression)
                             else -> JsAstUtils.or(JsAstUtils.notOptimized(statement.ifExpression), nextCondition)
                         }
                         result
