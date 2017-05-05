@@ -48,6 +48,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("delegateMemberVal.kt")
+    public void testDelegateMemberVal() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/delegateMemberVal.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inlining.kt")
     public void testInlining() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/inlining.kt");
@@ -93,6 +99,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
     @TestMetadata("syntheticCodeInEnums.kt")
     public void testSyntheticCodeInEnums() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/syntheticCodeInEnums.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("valParameter.kt")
+    public void testValParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/valParameter.kt");
         doTest(fileName);
     }
 }

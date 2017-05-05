@@ -20,10 +20,12 @@ import com.intellij.util.SmartList;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.translate.context.Namer;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
@@ -466,8 +468,12 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsStatement defineSimpleProperty(@NotNull String name, @NotNull JsExpression value) {
-        return assignment(new JsNameRef(name, new JsThisRef()), value).makeStmt();
+    public static JsStatement defineSimpleProperty(@NotNull String name, @NotNull JsExpression value, @Nullable SourceElement source) {
+        JsExpression assignment = assignment(new JsNameRef(name, new JsThisRef()), value);
+        if (source != null) {
+            assignment.setSource(KotlinSourceElementKt.getPsi(source));
+        }
+        return assignment.makeStmt();
     }
 
     @NotNull
