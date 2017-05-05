@@ -120,7 +120,12 @@ internal class KotlinGradleBuildServices private constructor(gradle: Gradle): Bu
             }
         }
 
-        buildCacheStorage.flush(memoryCachesOnly = false)
+
+        if (workingDir.exists()) {
+            // The working directory may have been removed by the clean task.
+            // https://youtrack.jetbrains.com/issue/KT-16298
+            buildCacheStorage.flush(memoryCachesOnly = false)
+        }
         buildCacheStorage.close()
 
         gradle.removeListener(this)
