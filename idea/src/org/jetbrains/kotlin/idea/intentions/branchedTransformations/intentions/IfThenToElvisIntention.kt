@@ -33,7 +33,9 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(
         IfThenToElvisIntention::class,
         { it -> it.isUsedAsExpression(it.analyze(BodyResolveMode.PARTIAL)) }
-)
+) {
+    override fun inspectionTarget(element: KtIfExpression) = element.ifKeyword
+}
 
 class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(
         KtIfExpression::class.java,
