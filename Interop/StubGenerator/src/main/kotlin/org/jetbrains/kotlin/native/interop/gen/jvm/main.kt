@@ -189,9 +189,6 @@ private fun Properties.defaultCompilerOpts(target: String, dependencies: String)
 
     val llvmVersion = this.getProperty("llvmVersion")!!
 
-    val dependencyList = getOsSpecific("dependencies", target)?.split(' ') ?: listOf<String>()
-    maybeExecuteHelper(dependencies, this, dependencyList)
-
     // StubGenerator passes the arguments to libclang which 
     // works not exactly the same way as the clang binary and 
     // (in particular) uses different default header search path.
@@ -251,6 +248,11 @@ Following flags are supported:
 """)
 }
 
+private fun downloadDependencies(dependenciesRoot: String, target: String, konanProperties: Properties) {
+    val dependencyList = konanProperties.getOsSpecific("dependencies", target)?.split(' ') ?: listOf<String>()
+    maybeExecuteHelper(dependenciesRoot, konanProperties, dependencyList)
+}
+
 private fun processLib(konanHome: String,
                        substitutions: Map<String, String>,
                        args: Map<String, List<String>>) {
@@ -274,10 +276,11 @@ private fun processLib(konanHome: String,
         "${konanHome}/konan/konan.properties"
     val konanFile = File(konanFileName)
     val konanProperties = loadProperties(konanFile, mapOf())
+    val dependencies =  "$konanHome/dependencies"
+    downloadDependencies(dependencies, target, konanProperties)
 
     // TODO: We can provide a set of flags to find the components in the absence of 'dist' or 'dist/dependencies'.
     val llvmHome = konanProperties.getOsSpecific("llvmHome")!!
-    val dependencies =  "$konanHome/dependencies"
     val llvmInstallPath = "$dependencies/$llvmHome"
     val additionalHeaders = args["-h"].orEmpty()
     val additionalCompilerOpts = args["-copt"].orEmpty()
