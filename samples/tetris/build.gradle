@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.2"
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:+"
     }
 }
 
