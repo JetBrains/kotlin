@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.replaced
@@ -27,6 +28,9 @@ import org.jetbrains.kotlin.psi.*
 
 class IfThenToSafeAccessInspection : IntentionBasedInspection<KtIfExpression>(IfThenToSafeAccessIntention::class) {
     override fun inspectionTarget(element: KtIfExpression) = element.ifKeyword
+
+    override fun problemHighlightType(element: KtIfExpression): ProblemHighlightType =
+            if (element.shouldBeTransformed()) ProblemHighlightType.WEAK_WARNING else ProblemHighlightType.INFORMATION
 }
 
 class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
 import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
+import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -199,6 +200,21 @@ internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData?
         else -> return null
     }
     return IfThenToSelectData(context, condition, receiverExpression, baseClause, negatedClause)
+}
+
+internal fun KtIfExpression.shouldBeTransformed(): Boolean {
+    val condition = condition
+    return when (condition) {
+        is KtBinaryExpression -> true
+        is KtIsExpression -> {
+            if (!isMultiLine()) true
+            else {
+                val baseClause = (if (condition.isNegated) `else` else then)?.unwrapBlockOrParenthesis()
+                baseClause !is KtDotQualifiedExpression
+            }
+        }
+        else -> false
+    }
 }
 
 private fun KtExpression.checkedExpression() = when (this) {

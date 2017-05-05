@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -35,6 +36,9 @@ class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(
         { it -> it.isUsedAsExpression(it.analyze(BodyResolveMode.PARTIAL)) }
 ) {
     override fun inspectionTarget(element: KtIfExpression) = element.ifKeyword
+
+    override fun problemHighlightType(element: KtIfExpression): ProblemHighlightType =
+            if (element.shouldBeTransformed()) ProblemHighlightType.WEAK_WARNING else super.problemHighlightType(element)
 }
 
 class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(
