@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
@@ -54,12 +55,12 @@ class SamAdapterFunctionsScope(
     }
 
     private val samAdapterForStaticFunction =
-            storageManager.createMemoizedFunctionWithNullableValues<DeclarationDescriptor, SamAdapterDescriptor<JavaMethodDescriptor>> { function ->
-                samAdapterForFunctionNotCached(function)
+            storageManager.createMemoizedFunction<JavaMethodDescriptor, SamAdapterDescriptor<JavaMethodDescriptor>> { function ->
+                SingleAbstractMethodUtils.createSamAdapterFunction(function)
             }
 
     private val samConstructorForClassifier =
-            storageManager.createMemoizedFunctionWithNullableValues<ClassifierDescriptor, SamConstructorDescriptor> { classifier ->
+            storageManager.createMemoizedFunction<JavaClassDescriptor, SamConstructorDescriptor> { classifier ->
                 samConstructorForClassifierNotCached(classifier)
             }
 
@@ -72,18 +73,8 @@ class SamAdapterFunctionsScope(
         return MyFunctionDescriptor.create(function)
     }
 
-    private fun samAdapterForFunctionNotCached(function: DeclarationDescriptor): SamAdapterDescriptor<JavaMethodDescriptor>? {
-        if (function !is JavaMethodDescriptor) return null
-        if (function.dispatchReceiverParameter != null) return null // consider only statics
-        if (!SingleAbstractMethodUtils.isSamAdapterNecessary(function)) return null
-        return SingleAbstractMethodUtils.createSamAdapterFunction(function)
-    }
-
-    private fun samConstructorForClassifierNotCached(classifier: ClassifierDescriptor): SamConstructorDescriptor? {
-        return if (classifier is LazyJavaClassDescriptor && classifier.functionTypeForSamInterface != null) {
-            SingleAbstractMethodUtils.createSamConstructorFunction(classifier.containingDeclaration, classifier)
-        }
-        else null
+    private fun samConstructorForClassifierNotCached(classifier: JavaClassDescriptor): SamConstructorDescriptor {
+        return SingleAbstractMethodUtils.createSamConstructorFunction(classifier.containingDeclaration, classifier)
     }
 
     override fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
@@ -135,8 +126,7 @@ class SamAdapterFunctionsScope(
     override fun getSyntheticStaticFunctions(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         val classifier = scope.getContributedClassifier(name, location)
         val samConstructor = classifier?.let { getSamConstructor(it) }
-
-        return scope.getContributedFunctions(name, location).mapNotNull { samAdapterForStaticFunction(it) } + listOfNotNull(samConstructor)
+        return getSamFunctions(scope.getContributedFunctions(name, location)) + listOfNotNull(samConstructor)
     }
 
     override fun getSyntheticStaticFunctions(scope: ResolutionScope): Collection<FunctionDescriptor> {
@@ -145,21 +135,33 @@ class SamAdapterFunctionsScope(
                         .filterIsInstance<ClassifierDescriptor>()
                         .mapNotNull{ getSamConstructor(it) }
 
-        return scope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS).mapNotNull { samAdapterForStaticFunction(it) } +
-               samConstructors
+        return getSamFunctions(scope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)) + samConstructors
+    }
+
+    private fun getSamFunctions(functions: Collection<DeclarationDescriptor>): List<SamAdapterDescriptor<JavaMethodDescriptor>> {
+        return functions.mapNotNull { function ->
+            if (function !is JavaMethodDescriptor) return@mapNotNull null
+            if (function.dispatchReceiverParameter != null) return@mapNotNull null // consider only statics
+            if (!SingleAbstractMethodUtils.isSamAdapterNecessary(function)) return@mapNotNull null
+
+            samAdapterForStaticFunction(function)
+        }
     }
 
     private fun getSamConstructor(classifier: ClassifierDescriptor): SamConstructorDescriptor? {
-        return when (classifier) {
-            is TypeAliasDescriptor -> getTypeAliasSamConstructor(classifier)
-            else -> samConstructorForClassifier(classifier)
+        if (classifier is TypeAliasDescriptor) {
+            return getTypeAliasSamConstructor(classifier)
         }
+
+        if (classifier !is LazyJavaClassDescriptor || classifier.functionTypeForSamInterface == null) return null
+        return samConstructorForClassifier(classifier)
     }
 
     private fun getTypeAliasSamConstructor(classifier: TypeAliasDescriptor): SamConstructorDescriptor? {
         val classDescriptor = classifier.classDescriptor ?: return null
-        val samConstructor = samConstructorForClassifier(classDescriptor) ?: return null
-        return SingleAbstractMethodUtils.createTypeAliasSamConstructorFunction(classifier, samConstructor)
+        if (classDescriptor !is LazyJavaClassDescriptor || classDescriptor.functionTypeForSamInterface == null) return null
+
+        return SingleAbstractMethodUtils.createTypeAliasSamConstructorFunction(classifier, samConstructorForClassifier(classDescriptor))
     }
 
     private class MyFunctionDescriptor(
