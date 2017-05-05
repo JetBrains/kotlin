@@ -29,6 +29,14 @@ subprojects {
     task javadocJar(type: Jar) {
         classifier = 'javadoc'
     }
+    
+    afterEvaluate {
+        jar {
+            manifestAttributes(manifest, project)
+        }
+
+        compileKotlin.kotlinOptions.freeCompilerArgs += ["-module-name", "${project.name}"]
+    }
 }
 
 task clean {
