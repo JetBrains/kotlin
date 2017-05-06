@@ -42,7 +42,7 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
 ) {
     override fun isApplicableTo(element: KtPrimaryConstructor, caretOffset: Int): Boolean {
         val containingClass = element.containingClassOrObject as? KtClass ?: return false
-        if (containingClass.isAnnotation()) return false;
+        if (containingClass.isAnnotation() || containingClass.isData()) return false;
         return element.valueParameters.all { !it.hasValOrVar() || it.annotationEntries.isEmpty() }
     }
 
