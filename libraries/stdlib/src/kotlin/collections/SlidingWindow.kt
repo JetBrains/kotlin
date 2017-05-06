@@ -60,9 +60,7 @@ internal fun <T> windowedIterator(iterator: Iterator<T>, size: Int, step: Int, d
                     buffer.removeFirst(step)
                 }
             }
-            if (dropTrailing) {
-                if (buffer.size == size) yield(buffer)
-            } else {
+            if (!dropTrailing) {
                 while (buffer.size > step) {
                     yield(if (reuseBuffer) buffer else ArrayList(buffer))
                     buffer.removeFirst(step)
@@ -96,8 +94,7 @@ internal class MovingSubList<out E>(private val list: List<E>) : AbstractList<E>
 /**
  * Provides ring buffer implementation.
  *
- * Buffer overflow is not allowed so [add] doesn't overwrite tail but raises an exception while [offer] returns `false`
- * If it is going to be public API perhaps this behaviour could be customizable
+ * Buffer overflow is not allowed so [add] doesn't overwrite tail but raises an exception.
  */
 private class RingBuffer<T>(val capacity: Int): AbstractList<T>(), RandomAccess {
     init {
@@ -105,76 +102,76 @@ private class RingBuffer<T>(val capacity: Int): AbstractList<T>(), RandomAccess 
     }
 
     private val buffer = arrayOfNulls<Any?>(capacity)
-    private var writePosition = 0
+    private var startIndex: Int = 0
 
     override var size: Int = 0
         private set
 
     override fun get(index: Int): T {
         checkElementIndex(index, size)
-        return getAtUnsafe(writePosition.backward(size - index))
+        @Suppress("UNCHECKED_CAST")
+        return buffer[startIndex.forward(index)] as T
     }
 
     fun isFull() = size == capacity
 
     override fun iterator(): Iterator<T> = object : AbstractIterator<T>() {
             private var count = size
-            private var index = writePosition.backward(size)
+            private var index = startIndex
 
             override fun computeNext() {
                 if (count == 0) {
                     done()
                 } else {
-                    setNext(getAtUnsafe(index))
+                    @Suppress("UNCHECKED_CAST")
+                    setNext(buffer[index] as T)
                     index = index.forward(1)
                     count--
                 }
             }
     }
 
-    override fun toArray(): Array<Any?> {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> toArray(array: Array<T>): Array<T> {
+        val result: Array<T?> =
+                if (array.size < this.size) array.copyOf(this.size) else array as Array<T?>
+
         val size = this.size
-        val result = arrayOfNulls<Any?>(size)
+
         var widx = 0
-        var idx = writePosition.backward(size)
+        var idx = startIndex
 
         while (widx < size && idx < capacity) {
-            result[widx] = buffer[idx]
+            result[widx] = buffer[idx] as T
             widx++
             idx++
         }
 
         idx = 0
         while (widx < size) {
-            result[widx] = buffer[idx]
+            result[widx] = buffer[idx] as T
             widx++
             idx++
         }
+        if (result.size > this.size) result[this.size] = null
 
-        return result
+        return result as Array<T>
+    }
+
+    override fun toArray(): Array<Any?> {
+        return toArray(arrayOfNulls(size))
     }
 
     /**
      * Add [element] to the buffer or fail with [IllegalStateException] if no free space available in the buffer
      */
     fun add(element: T) {
-        if (!offer(element)) {
-            throw IllegalStateException("Ring buffer is full.")
-        }
-    }
-
-    /**
-     * Offers [element] to the buffer and return `true` if it was added or `false` when there is no free space available in the buffer
-     */
-    fun offer(element: T): Boolean {
         if (isFull()) {
-            return false
+            throw IllegalStateException("ring buffer is full")
         }
 
-        buffer[writePosition] = element
-        writePosition = writePosition.forward(1)
+        buffer[startIndex.forward(size)] = element
         size++
-        return true
     }
 
     /**
@@ -185,29 +182,24 @@ private class RingBuffer<T>(val capacity: Int): AbstractList<T>(), RandomAccess 
         require(n <= size) { "n shouldn't be greater than the buffer size: n = $n, size = $size" }
 
         if (n > 0) {
-            val start = writePosition.backward(size)
-            val end = start.forward(n - 1)
+            val start = startIndex
+            val end = start.forward(n)
 
             if (start > end) {
                 buffer.fill(null, start, capacity)
-                buffer.fill(null, 0, end + 1)
+                buffer.fill(null, 0, end)
             } else {
-                buffer.fill(null, start, end + 1)
+                buffer.fill(null, start, end)
             }
 
+            startIndex = end
             size -= n
         }
     }
 
 
-    @Suppress("NOTHING_TO_INLINE", "UNCHECKED_CAST")
-    private inline fun getAtUnsafe(idx: Int): T = buffer[idx] as T
-
     @Suppress("NOTHING_TO_INLINE")
     private inline fun Int.forward(n: Int): Int = (this + n) % capacity
-
-    @Suppress("NOTHING_TO_INLINE")
-    private inline fun Int.backward(n: Int): Int = ((this - n) % capacity + capacity) % capacity
 
     // TODO: replace with Array.fill from stdlib when available in common
     private fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
