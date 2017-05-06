@@ -25,6 +25,8 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtImportList
+import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 
 class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
@@ -46,7 +48,13 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
     private fun isRedundant(semicolon: PsiElement): Boolean {
         val nextLeaf = semicolon.nextLeaf { it !is PsiWhiteSpace && it !is PsiComment || it.isLineBreak()  }
         val isAtEndOfLine = nextLeaf == null || nextLeaf.isLineBreak()
-        if (!isAtEndOfLine) return false
+        if (!isAtEndOfLine) {
+            //when there is no imports parser generates empty import list with no spaces
+            if (semicolon.parent is KtPackageDirective && (nextLeaf as? KtImportList)?.imports?.isEmpty() ?: false) {
+                return true
+            }
+            return false
+        }
 
         if (semicolon.parent is KtEnumEntry) return false
 
