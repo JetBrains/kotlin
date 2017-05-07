@@ -8,6 +8,8 @@ import com.android.build.gradle.api.UnitTestVariant
 import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
+import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
 
@@ -36,6 +38,45 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
                 testVariants.all(action)
                 unitTestVariants.all(action)
             }
+        }
+    }
+
+    override fun wireKotlinTasks(project: Project,
+                                 androidPlugin: BasePlugin,
+                                 androidExt: BaseExtension,
+                                 variantData: BaseVariant,
+                                 javaTask: AbstractCompile,
+                                 kotlinTask: KotlinCompile,
+                                 kotlinAfterJavaTask: KotlinCompile?) {
+
+        val preJavaKotlinOutput =
+                (if (kotlinAfterJavaTask == null)
+                    // Add Kapt3 output as well, since there's no SyncOutputTask with the new API
+                    project.files(kotlinTask.destinationDir, Kapt3KotlinGradleSubplugin.getKaptClasssesDir(project, getVariantName(variantData)))
+                else
+                    // Don't register the output, but add the task to the pipeline
+                    project.files()
+                ).builtBy(kotlinTask)
+
+        val preJavaClasspathKey = variantData.registerPreJavacGeneratedBytecode(preJavaKotlinOutput)
+        val kotlinClasspath = variantData.getCompileClasspath(preJavaClasspathKey)
+
+        kotlinTask.conventionMapping.map("classpath") {
+            kotlinClasspath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
+        }
+
+        kotlinTask.setJavaOutput(javaTask.destinationDir)
+        kotlinAfterJavaTask?.setJavaOutput(javaTask.destinationDir)
+
+        // Use kapt1 annotations file for up-to-date check since annotation processing is done with javac
+        kotlinTask.annotationsFile?.let { javaTask.inputs.file(it) }
+
+        val kotlinAfterJavaOutput = project.files(kotlinAfterJavaTask).builtBy(kotlinAfterJavaTask)
+        variantData.registerPostJavacGeneratedBytecode(kotlinAfterJavaOutput)
+
+        if (kotlinAfterJavaTask != null) {
+            // Then don't register kotlinTask output, but only use it for Java compilation
+            javaTask.appendClasspath(kotlinTask.destinationDir)
         }
     }
 

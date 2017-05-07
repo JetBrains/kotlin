@@ -21,7 +21,7 @@ repositories {
     maven { url 'http://repository.jetbrains.com/utils/' }
 
     // todo: remove this once the AGP artifacts get published
-    maven { url project.property("googlePreviewRepositoryPath") } // path to the local unpacked preview repo
+    maven { url (project.findProperty("googlePreviewRepositoryPath") ?: System.getProperty("googlePreviewRepositoryPath")) }
 }
 
 configurations {
@@ -57,6 +57,7 @@ tasks.withType(project.compileKotlin.class) {
 }
 
 compileKotlin.dependsOn compileGroovy
+compileAgp25Kotlin.dependsOn compileGroovy
 compileGroovy.dependsOn.remove("compileJava")
 
 def groovyClassesDir = file("${buildDir}/mainGroovyClasses")
@@ -68,6 +69,7 @@ sourceSets.main.java.srcDirs += sourceSets.main.kotlin.srcDirs
 sourceSets {
     agp25 {
         compileClasspath += configurations.compile + configurations.agp25CompileOnly + sourceSets.main.output
+        compileClasspath += files(groovyClassesDir)
     }
 }
 
