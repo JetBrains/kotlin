@@ -23,6 +23,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectUtil
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.EmptyRunnable
@@ -37,7 +39,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
@@ -67,8 +68,14 @@ class KotlinScriptConfigurationManager(
         }
 
         project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
+
+            val projectFileIndex = ProjectRootManager.getInstance(project).fileIndex
+
             override fun after(events: List<VFileEvent>) {
-                if (updateExternalImportsCache(events.mapNotNull { it.file })) {
+                if (updateExternalImportsCache(events.mapNotNull {
+                        // The check is partly taken from the BuildManager.java
+                        it.file?.takeIf { projectFileIndex.isInContent(it) && !ProjectUtil.isProjectOrWorkspaceFile(it) } }))
+                {
                     invalidateLocalCaches()
                     notifyRootsChanged()
                 }
@@ -130,7 +137,7 @@ class KotlinScriptConfigurationManager(
         scriptDefinitionProvider.setScriptDefinitions(def)
     }
 
-    private fun cacheAllScriptsExtraImports(): Boolean = runReadAction {
+    private fun cacheAllScriptsExtraImports(): Boolean =
         scriptExternalImportsProvider.run {
             invalidateCaches()
             cacheExternalImports(
@@ -138,7 +145,6 @@ class KotlinScriptConfigurationManager(
                             .flatMap { FileTypeIndex.getFiles(it, GlobalSearchScope.allScope(project)) }
             ).any()
         }
-    }
 
     private fun updateExternalImportsCache(files: Iterable<VirtualFile>) = scriptExternalImportsProvider.updateExternalImportsCache(files).any()
 
