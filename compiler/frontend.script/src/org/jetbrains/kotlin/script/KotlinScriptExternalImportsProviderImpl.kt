@@ -20,6 +20,8 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import java.io.File
+import java.lang.management.ManagementFactory
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -63,69 +65,88 @@ class KotlinScriptExternalImportsProviderImpl(
     // optimized for initial caching, additional handling of possible duplicates to save a call to distinct
     // returns list of cached files
     override fun <TF: Any> cacheExternalImports(files: Iterable<TF>): Iterable<TF> = cacheLock.write {
-        val uncached = hashSetOf<String>()
-        files.mapNotNull { file ->
-            val path = getFilePath(file)
-            if (isValidFile(file) && !cache.containsKey(path) && !uncached.contains(path)) {
-                val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
-                if (scriptDef != null) {
-                    val deps = scriptDef.getDependenciesFor(file, project, null)
-                    if (deps != null) {
-                        log.info("[kts] cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
+        var filesCount = 0
+        var additionsCount = 0
+        val (res, time) = measureThreadTimeMillis {
+            val uncached = hashSetOf<String>()
+            files.mapNotNull { file ->
+                filesCount += 1
+                val path = getFilePath(file)
+                if (isValidFile(file) && !cache.containsKey(path) && !uncached.contains(path)) {
+                    val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
+                    if (scriptDef != null) {
+                        val deps = scriptDef.getDependenciesFor(file, project, null)
+                        if (deps != null) {
+                            log.info("[kts] cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
+                        }
+                        cache.put(path, deps)
+                        additionsCount += 1
+                        file
                     }
-                    cache.put(path, deps)
-                    file
+                    else {
+                        uncached.add(path)
+                        null
+                    }
                 }
-                else {
-                    uncached.add(path)
-                    null
-                }
+                else null
             }
-            else null
         }
+        log.info("[kts] cache creation: $filesCount checked, $additionsCount added (in ${time}ms)")
+        res
     }
 
     // optimized for update, no special duplicates handling
     // returns files with valid script definition (or deleted from cache - which in fact should have script def too)
     // TODO: this is the badly designed contract, since it mixes the entities, but these files are needed on the calling site now. Find out other solution
     override fun <TF: Any> updateExternalImportsCache(files: Iterable<TF>): Iterable<TF> = cacheLock.write {
-        files.mapNotNull { file ->
-            val path = getFilePath(file)
-            if (!isValidFile(file)) {
-                if (cache.remove(path) != null) {
-                    log.debug("[kts] removed deps for file $path")
-                    file
-                } // cleared
-                else {
-                    null // unknown
-                }
-            }
-            else {
-                val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
-                if (scriptDef != null) {
-                    val oldDeps = cache[path]
-                    val deps = scriptDef.getDependenciesFor(file, project, oldDeps)
-                    when {
-                        deps != null && (oldDeps == null ||
-                                         !deps.classpath.isSamePathListAs(oldDeps.classpath) || !deps.sources.isSamePathListAs(oldDeps.sources)) -> {
-                            // changed or new
-                            log.info("[kts] updated/new cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
-                            cache.put(path, deps)
-                        }
-                        deps != null -> {
-                            // same as before
-                        }
-                        else -> {
-                            if (cache.remove(path) != null) {
-                                log.debug("[kts] removed deps for $path")
-                            } // cleared
-                        }
+        var filesCount = 0
+        var updatesCount = 0
+        val (res, time) = measureThreadTimeMillis {
+            files.mapNotNull { file ->
+                filesCount += 1
+                val path = getFilePath(file)
+                if (!isValidFile(file)) {
+                    if (cache.remove(path) != null) {
+                        log.debug("[kts] removed deps for file $path")
+                        updatesCount += 1
+                        file
+                    } // cleared
+                    else {
+                        null // unknown
                     }
-                    file
                 }
-                else null // not a script
+                else {
+                    val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
+                    if (scriptDef != null) {
+                        val oldDeps = cache[path]
+                        val deps = scriptDef.getDependenciesFor(file, project, oldDeps)
+                        when {
+                            deps != null && (oldDeps == null ||
+                                             !deps.classpath.isSamePathListAs(oldDeps.classpath) || !deps.sources.isSamePathListAs(oldDeps.sources)) -> {
+                                // changed or new
+                                log.info("[kts] updated/new cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
+                                cache.put(path, deps)
+                            }
+                            deps != null -> {
+                                // same as before
+                            }
+                            else -> {
+                                if (cache.remove(path) != null) {
+                                    log.debug("[kts] removed deps for $path")
+                                } // cleared
+                            }
+                        }
+                        updatesCount += 1
+                        file
+                    }
+                    else null // not a script
+                }
             }
         }
+        if (updatesCount > 0) {
+            log.info("[kts] cache update check: $filesCount checked, $updatesCount updated (in ${time}ms)")
+        }
+        res
     }
 
     override fun invalidateCaches() {
@@ -160,3 +181,10 @@ private fun Iterable<File>.isSamePathListAs(other: Iterable<File>): Boolean =
             }
             !(first.hasNext() || second.hasNext())
         }
+
+private inline fun<T> measureThreadTimeMillis(body: () -> T): Pair<T, Long> {
+    val mxBeans = ManagementFactory.getThreadMXBean()
+    val startTime = mxBeans.currentThreadCpuTime
+    val res = body()
+    return res to TimeUnit.NANOSECONDS.toMillis(mxBeans.currentThreadCpuTime - startTime)
+}
