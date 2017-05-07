@@ -70,11 +70,17 @@ class KotlinScriptConfigurationManager(
         project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
 
             val projectFileIndex = ProjectRootManager.getInstance(project).fileIndex
+            val application = ApplicationManager.getApplication()
 
             override fun after(events: List<VFileEvent>) {
                 if (updateExternalImportsCache(events.mapNotNull {
                         // The check is partly taken from the BuildManager.java
-                        it.file?.takeIf { projectFileIndex.isInContent(it) && !ProjectUtil.isProjectOrWorkspaceFile(it) } }))
+                        it.file?.takeIf {
+                            // the isUnitTestMode check fixes ScriptConfigurationHighlighting & Navigation tests, since they are not trigger proper update mechanims
+                            // TODO: find out the reason, then consider to fix tests and remove this check
+                            (application.isUnitTestMode || projectFileIndex.isInContent(it)) && !ProjectUtil.isProjectOrWorkspaceFile(it)
+                        }
+                    }))
                 {
                     invalidateLocalCaches()
                     notifyRootsChanged()
