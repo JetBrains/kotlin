@@ -68,25 +68,22 @@ class KotlinScriptExternalImportsProviderImpl(
         var filesCount = 0
         var additionsCount = 0
         val (res, time) = measureThreadTimeMillis {
-            val uncached = hashSetOf<String>()
             files.mapNotNull { file ->
                 filesCount += 1
-                val path = getFilePath(file)
-                if (isValidFile(file) && !cache.containsKey(path) && !uncached.contains(path)) {
-                    val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
-                    if (scriptDef != null) {
+                val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
+                if (scriptDef != null) {
+                    val path = getFilePath(file)
+                    if (isValidFile(file) && !cache.containsKey(path)) {
                         val deps = scriptDef.getDependenciesFor(file, project, null)
+                        cache.put(path, deps)
                         if (deps != null) {
                             log.info("[kts] cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
+                            additionsCount += 1
+                            file
                         }
-                        cache.put(path, deps)
-                        additionsCount += 1
-                        file
+                        else null
                     }
-                    else {
-                        uncached.add(path)
-                        null
-                    }
+                    else null
                 }
                 else null
             }
@@ -104,20 +101,18 @@ class KotlinScriptExternalImportsProviderImpl(
         val (res, time) = measureThreadTimeMillis {
             files.mapNotNull { file ->
                 filesCount += 1
-                val path = getFilePath(file)
-                if (!isValidFile(file)) {
-                    if (cache.remove(path) != null) {
-                        log.debug("[kts] removed deps for file $path")
-                        updatesCount += 1
-                        file
-                    } // cleared
-                    else {
-                        null // unknown
+                val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
+                if (scriptDef != null) {
+                    val path = getFilePath(file)
+                    if (!isValidFile(file)) {
+                        if (cache.remove(path) != null) {
+                            log.debug("[kts] removed deps for file $path")
+                            updatesCount += 1
+                            file
+                        } // cleared
+                        else null // unknown
                     }
-                }
-                else {
-                    val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
-                    if (scriptDef != null) {
+                    else {
                         val oldDeps = cache[path]
                         val deps = scriptDef.getDependenciesFor(file, project, oldDeps)
                         when {
@@ -126,21 +121,23 @@ class KotlinScriptExternalImportsProviderImpl(
                                 // changed or new
                                 log.info("[kts] updated/new cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
                                 cache.put(path, deps)
+                                updatesCount += 1
+                                file
                             }
                             deps != null -> {
                                 // same as before
+                                null
                             }
-                            else -> {
-                                if (cache.remove(path) != null) {
-                                    log.debug("[kts] removed deps for $path")
-                                } // cleared
+                            cache.remove(path) != null -> {
+                                log.debug("[kts] removed deps for $path")
+                                updatesCount += 1
+                                file
                             }
+                            else -> null // unknown
                         }
-                        updatesCount += 1
-                        file
                     }
-                    else null // not a script
                 }
+                else null // not a script
             }
         }
         if (updatesCount > 0) {
