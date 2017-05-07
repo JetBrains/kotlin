@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle.plugin
 
+import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.internal.variant.BaseVariantData
 import com.android.build.gradle.internal.variant.BaseVariantOutputData
@@ -31,6 +32,30 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
         variantManager.variantDataList.forEach(action)
     }
 
+    override fun wireKotlinTasks(project: Project,
+                                 androidPlugin: BasePlugin,
+                                 androidExt: BaseExtension,
+                                 variantData: BaseVariantData<out BaseVariantOutputData>,
+                                 javaTask: AbstractCompile,
+                                 kotlinTask: KotlinCompile,
+                                 kotlinAfterJavaTask: KotlinCompile?) {
+
+        kotlinTask.setDependsOn(javaTask.dependsOn)
+
+        kotlinTask.mapClasspath {
+            javaTask.classpath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
+        }
+
+        getTestedVariantData(variantData)?.let { testedVariantData ->
+            // Android Gradle plugin bypasses the Gradle finalizedBy for its tasks in some cases, and
+            // the Kotlin classes may not be copied for the tested variant. Make sure they are.
+            kotlinTask.dependsOn(syncOutputTaskName(getVariantName(testedVariantData)))
+        }
+
+        configureJavaTask(kotlinTask, javaTask, logger)
+        createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, getVariantName(variantData))
+    }
+
     override fun getVariantName(variant: BaseVariantData<out BaseVariantOutputData>): String = variant.name
 
     override fun checkVariant(variant: BaseVariantData<out BaseVariantOutputData>): Unit {
@@ -43,7 +68,6 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
 
     override fun getJavaTask(variantData: BaseVariantData<out BaseVariantOutputData>): AbstractCompile? =
             AndroidGradleWrapper.getJavaTask(variantData)
-
 
     override fun addJavaSourceDirectoryToVariantModel(variantData: BaseVariantData<out BaseVariantOutputData>,
                                                       javaSourceDirectory: File) =

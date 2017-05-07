@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.AndroidSourceSet
-import com.android.build.gradle.internal.variant.BaseVariantData
 import com.android.builder.model.SourceProvider
 import groovy.lang.Closure
 import org.apache.tools.ant.util.ReflectUtil.newInstance
@@ -21,13 +20,13 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil.compareVersionNumbers
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.internal.AnnotationProcessingManager
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.getKaptClasssesDir
 import org.jetbrains.kotlin.gradle.internal.initKapt
-import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
@@ -375,22 +374,13 @@ class KotlinConfigurationTools internal constructor(val kotlinSourceSetProvider:
 abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationTools: KotlinConfigurationTools) {
 
     protected val artifactDifferenceRegistryProvider get() =
-    kotlinConfigurationTools.kotlinGradleBuildServices.artifactDifferenceRegistryProvider
+            kotlinConfigurationTools.kotlinGradleBuildServices.artifactDifferenceRegistryProvider
 
-    private val logger = Logging.getLogger(this.javaClass)
+    protected val KotlinCompile.annotationsFile: File? get() = kaptOptions.annotationsFile
+    protected fun KotlinCompile.setJavaOutput(file: File) { javaOutputDir = file }
+    protected fun AbstractCompile.appendClasspath(file: File) = appendClasspathDynamically(file)
 
-    private fun Project.tryGetSingleArtifact(variantData: BaseVariantData<*>): File? {
-        val log = logger
-        log.kotlinDebug { "Trying to determine single artifact for project $path" }
-
-        val outputs = variantData.outputs
-        if (outputs.size != 1) {
-            log.kotlinDebug { "Output count != 1 for variant: ${outputs.map { it.outputFile.relativeTo(rootDir).path }.joinToString()}" }
-            return null
-        }
-
-        return variantData.outputs.first().outputFile
-    }
+    protected val logger = Logging.getLogger(this.javaClass)
 
     protected abstract fun forEachVariant(project: Project, action: (V) -> Unit): Unit
 
@@ -401,6 +391,14 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
     protected abstract fun getTestedVariantData(variantData: V): V?
     protected abstract fun getJavaTask(variantData: V): AbstractCompile?
     protected abstract fun addJavaSourceDirectoryToVariantModel(variantData: V, javaSourceDirectory: File): Unit
+
+    protected abstract fun wireKotlinTasks(project: Project,
+                                           androidPlugin: BasePlugin,
+                                           androidExt: BaseExtension,
+                                           variantData: V,
+                                           javaTask: AbstractCompile,
+                                           kotlinTask: KotlinCompile,
+                                           kotlinAfterJavaTask: KotlinCompile?): Unit
 
     protected abstract fun configureMultiProjectIc(project: Project,
                                                    variantData: V,
@@ -455,10 +453,6 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         val variantDataName = getVariantName(variantData)
         logger.kotlinDebug("Process variant [$variantDataName]")
 
-        val testedVariantData = getTestedVariantData(variantData)
-        val isAndroidTestVariant = variantDataName.endsWith("androidTest", ignoreCase = true) &&
-                                   testedVariantData != null
-
         val javaTask = getJavaTask(variantData)
 
         if (javaTask == null) {
@@ -474,7 +468,6 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         // store kotlin classes in separate directory. They will serve as class-path to java compiler
         kotlinTask.destinationDir = File(project.buildDir, "tmp/kotlin-classes/$variantDataName")
         kotlinTask.description = "Compiles the $variantDataName kotlin."
-        kotlinTask.setDependsOn(javaTask.dependsOn)
 
         val isKapt3Enabled = Kapt3GradleSubplugin.isEnabled(project)
 
@@ -502,10 +495,6 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
                 project, kotlinTask, javaTask, variantData, null)
 
-        kotlinTask.mapClasspath {
-            javaTask.classpath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
-        }
-
         var kotlinAfterJavaTask: KotlinCompile? = null
 
         if (javaTask is JavaCompile && aptFiles.isNotEmpty() && !isKapt3Enabled) {
@@ -524,18 +513,11 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
             configureSources(task, variantData)
         }
 
-        if (isAndroidTestVariant) {
-            // Android Gradle plugin bypasses the Gradle finalizedBy for its tasks in some cases, and
-            // the Kotlin classes may not be copied for the tested variant. Make sure they are.
-            kotlinTask.dependsOn(syncOutputTaskName(getVariantName(testedVariantData!!)))
-        }
-
         appliedPlugins.flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
                 .forEach { configureSources(it, variantData) }
 
-        //todo Wire tasks and classpaths with the new API
-        configureJavaTask(kotlinTask, javaTask, logger)
-        createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, variantDataName)
+        wireKotlinTasks(project, androidPlugin, androidExt, variantData, javaTask,
+                kotlinTask, kotlinAfterJavaTask)
 
         configureMultiProjectIc(project, variantData, javaTask, kotlinTask, kotlinAfterJavaTask)
     }
@@ -555,7 +537,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
     }
 }
 
-private fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompile, logger: Logger) {
+internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompile, logger: Logger) {
     // Gradle Java IC in older Gradle versions (before 2.14) cannot check .class directories updates.
     // To make it work, reset the up-to-date status of compileJava with this flag.
     kotlinTask.anyClassesCompiled = false
@@ -587,9 +569,9 @@ private fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompi
     javaTask.appendClasspathDynamically(kotlinTask.destinationDir!!)
 }
 
-private fun syncOutputTaskName(variantName: String) = "copy${variantName.capitalize()}KotlinClasses"
+internal fun syncOutputTaskName(variantName: String) = "copy${variantName.capitalize()}KotlinClasses"
 
-private fun createSyncOutputTask(
+internal fun createSyncOutputTask(
         project: Project,
         kotlinTask: KotlinCompile,
         javaTask: AbstractCompile,
