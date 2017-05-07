@@ -7098,9 +7098,45 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("charInt.kt")
+        public void testCharInt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/charInt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("compareToComparableSameType.kt")
+        public void testCompareToComparableSameType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/compareToComparableSameType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("compareToDifferentTypes.kt")
+        public void testCompareToDifferentTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/compareToDifferentTypes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("compareToSameType.kt")
+        public void testCompareToSameType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/compareToSameType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("double.kt")
         public void testDouble() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/double.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("doubleToInt1.kt")
+        public void testDoubleToInt1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/doubleToInt1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("doubleToInt2.kt")
+        public void testDoubleToInt2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/doubleToInt2.kt");
             doTest(fileName);
         }
 
