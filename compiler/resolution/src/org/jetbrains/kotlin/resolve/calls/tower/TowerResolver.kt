@@ -64,6 +64,12 @@ interface ScopeTowerProcessor<out C> {
     fun process(data: TowerData): List<Collection<C>>
 }
 
+interface SimpleScopeTowerProcessor<out C> : ScopeTowerProcessor<C> {
+    fun simpleProcess(data: TowerData): Collection<C>
+
+    override fun process(data: TowerData): List<Collection<C>> = listOfNotNull(simpleProcess(data).takeIf { it.isNotEmpty() })
+}
+
 class TowerResolver {
     fun <C: Candidate> runResolve(
             scopeTower: ImplicitScopeTower,
