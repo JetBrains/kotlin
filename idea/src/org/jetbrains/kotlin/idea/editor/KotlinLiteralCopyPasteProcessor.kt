@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.editor.fixers.range
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -73,6 +74,9 @@ private fun deduceBlockSelectionWidth(startOffsets: IntArray, endOffsets: IntArr
 
 class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
     override fun preprocessOnCopy(file: PsiFile, startOffsets: IntArray, endOffsets: IntArray, text: String): String? {
+        if (file !is KtFile){
+            return null
+        }
         val buffer = StringBuilder()
         var changed = false
         val fileText = file.text
@@ -124,6 +128,9 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
     }
 
     override fun preprocessOnPaste(project: Project, file: PsiFile, editor: Editor, text: String, rawText: RawText?): String {
+        if (file !is KtFile){
+            return text
+        }
         PsiDocumentManager.getInstance(project).commitDocument(editor.document)
         val selectionModel = editor.selectionModel
         val beginTp = file.getTemplateIfAtLiteral(selectionModel.selectionStart) ?: return text
