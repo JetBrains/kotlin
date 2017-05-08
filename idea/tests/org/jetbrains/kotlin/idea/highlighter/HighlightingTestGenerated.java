@@ -158,6 +158,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Constructor.kt")
+        public void testConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Constructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ExtensionFunction.kt")
         public void testExtensionFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/ExtensionFunction.kt");
