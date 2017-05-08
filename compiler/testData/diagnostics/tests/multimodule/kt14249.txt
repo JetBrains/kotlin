@@ -1,0 +1,291 @@
+// -- Module: <m1> --
+package
+
+package org {
+
+    package org.intellij {
+
+        package org.intellij.lang {
+
+            package org.intellij.lang.annotations {
+
+                @org.intellij.lang.annotations.Pattern(value = "\p{javaJavaIdentifierStart}\p{javaJavaIdentifierPart}*") public final annotation class Identifier : kotlin.Annotation {
+                    public constructor Identifier()
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+
+                @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.ANNOTATION_CLASS}) public final annotation class Language : kotlin.Annotation {
+                    public constructor Language(/*0*/ value: kotlin.String, /*1*/ prefix: kotlin.String = ..., /*2*/ suffix: kotlin.String = ...)
+                    public final val prefix: kotlin.String
+                    public final val suffix: kotlin.String
+                    public final val value: kotlin.String
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+
+                @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.ANNOTATION_CLASS}) public final annotation class Pattern : kotlin.Annotation {
+                    public constructor Pattern(/*0*/ value: kotlin.String)
+                    @org.intellij.lang.annotations.Language(value = "RegExp") public final val value: kotlin.String
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+
+                @org.intellij.lang.annotations.Pattern(value = "(?:[^%]|%%|(?:%(?:\d+\$)?(?:[-#+ 0,(<]*)?(?:\d+)?(?:\.\d+)?(?:[tT])?(?:[a-zA-Z%])))*") public final annotation class PrintFormat : kotlin.Annotation {
+                    public constructor PrintFormat()
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+
+                public/*package*/ open class PrintFormatPattern {
+                    public/*package*/ constructor PrintFormatPattern()
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+                    // Static members
+                    @org.intellij.lang.annotations.Language(value = "RegExp") private const final val ARG_INDEX: kotlin.String = "(?:\d+\$)?"
+                    @org.intellij.lang.annotations.Language(value = "RegExp") private const final val CONVERSION: kotlin.String = "(?:[tT])?(?:[a-zA-Z%])"
+                    @org.intellij.lang.annotations.Language(value = "RegExp") private const final val FLAGS: kotlin.String = "(?:[-#+ 0,(<]*)?"
+                    @org.intellij.lang.annotations.Language(value = "RegExp") private const final val PRECISION: kotlin.String = "(?:\.\d+)?"
+                    @org.intellij.lang.annotations.Language(value = "RegExp") public/*package*/ const final val PRINT_FORMAT: kotlin.String = "(?:[^%]|%%|(?:%(?:\d+\$)?(?:[-#+ 0,(<]*)?(?:\d+)?(?:\.\d+)?(?:[tT])?(?:[a-zA-Z%])))*"
+                    @org.intellij.lang.annotations.Language(value = "RegExp") private const final val TEXT: kotlin.String = "[^%]|%%"
+                    @org.intellij.lang.annotations.Language(value = "RegExp") private const final val WIDTH: kotlin.String = "(?:\d+)?"
+                }
+
+                @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.ANNOTATION_CLASS}) @org.intellij.lang.annotations.Language(value = "RegExp") public final annotation class RegExp : kotlin.Annotation {
+                    public constructor RegExp(/*0*/ prefix: kotlin.String = ..., /*1*/ suffix: kotlin.String = ...)
+                    public final val prefix: kotlin.String
+                    public final val suffix: kotlin.String
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+
+                public final annotation class Subst : kotlin.Annotation {
+                    public constructor Subst(/*0*/ value: kotlin.String)
+                    public final val value: kotlin.String
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+            }
+        }
+    }
+
+    package org.jetbrains {
+
+        package org.jetbrains.annotations {
+
+            @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.CLASS, AnnotationTarget.FILE}) public final annotation class Nls : kotlin.Annotation {
+                public constructor Nls()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.CLASS, AnnotationTarget.FILE}) public final annotation class NonNls : kotlin.Annotation {
+                public constructor NonNls()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE}) public final annotation class NotNull : kotlin.Annotation {
+                public constructor NotNull(/*0*/ value: kotlin.String = ...)
+                public final val value: kotlin.String
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE}) public final annotation class Nullable : kotlin.Annotation {
+                public constructor Nullable(/*0*/ value: kotlin.String = ...)
+                public final val value: kotlin.String
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE}) public final annotation class PropertyKey : kotlin.Annotation {
+                public constructor PropertyKey(/*0*/ resourceBundle: kotlin.String)
+                public final val resourceBundle: kotlin.String
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.CONSTRUCTOR}) public final annotation class TestOnly : kotlin.Annotation {
+                public constructor TestOnly()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+    }
+
+    package org.test {
+
+        public/*package*/ open class Foo {
+            public/*package*/ constructor Foo()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public/*package*/ open fun takeFoo(/*0*/ f: org.test.Foo!): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            // Static members
+            public/*package*/ open fun create(): org.test.Foo!
+        }
+    }
+}
+
+
+// -- Module: <m2> --
+package
+
+package org {
+
+    package org.intellij {
+
+        package org.intellij.lang {
+
+            package org.intellij.lang.annotations {
+
+                @org.intellij.lang.annotations.Pattern(value = "\p{javaJavaIdentifierStart}\p{javaJavaIdentifierPart}*") public final annotation class Identifier : kotlin.Annotation {
+                    public constructor Identifier()
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+
+                @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.ANNOTATION_CLASS}) public final annotation class Language : kotlin.Annotation {
+                    public constructor Language(/*0*/ value: kotlin.String, /*1*/ prefix: kotlin.String = ..., /*2*/ suffix: kotlin.String = ...)
+                    public final val prefix: kotlin.String
+                    public final val suffix: kotlin.String
+                    public final val value: kotlin.String
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+
+                @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.ANNOTATION_CLASS}) public final annotation class Pattern : kotlin.Annotation {
+                    public constructor Pattern(/*0*/ value: kotlin.String)
+                    @org.intellij.lang.annotations.Language(value = "RegExp") public final val value: kotlin.String
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+
+                @org.intellij.lang.annotations.Pattern(value = "(?:[^%]|%%|(?:%(?:\d+\$)?(?:[-#+ 0,(<]*)?(?:\d+)?(?:\.\d+)?(?:[tT])?(?:[a-zA-Z%])))*") public final annotation class PrintFormat : kotlin.Annotation {
+                    public constructor PrintFormat()
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+
+                public/*package*/ open class PrintFormatPattern {
+                    public/*package*/ constructor PrintFormatPattern()
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+                    // Static members
+                    @org.intellij.lang.annotations.Language(value = "RegExp") private const final val ARG_INDEX: kotlin.String = "(?:\d+\$)?"
+                    @org.intellij.lang.annotations.Language(value = "RegExp") private const final val CONVERSION: kotlin.String = "(?:[tT])?(?:[a-zA-Z%])"
+                    @org.intellij.lang.annotations.Language(value = "RegExp") private const final val FLAGS: kotlin.String = "(?:[-#+ 0,(<]*)?"
+                    @org.intellij.lang.annotations.Language(value = "RegExp") private const final val PRECISION: kotlin.String = "(?:\.\d+)?"
+                    @org.intellij.lang.annotations.Language(value = "RegExp") public/*package*/ const final val PRINT_FORMAT: kotlin.String = "(?:[^%]|%%|(?:%(?:\d+\$)?(?:[-#+ 0,(<]*)?(?:\d+)?(?:\.\d+)?(?:[tT])?(?:[a-zA-Z%])))*"
+                    @org.intellij.lang.annotations.Language(value = "RegExp") private const final val TEXT: kotlin.String = "[^%]|%%"
+                    @org.intellij.lang.annotations.Language(value = "RegExp") private const final val WIDTH: kotlin.String = "(?:\d+)?"
+                }
+
+                @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.ANNOTATION_CLASS}) @org.intellij.lang.annotations.Language(value = "RegExp") public final annotation class RegExp : kotlin.Annotation {
+                    public constructor RegExp(/*0*/ prefix: kotlin.String = ..., /*1*/ suffix: kotlin.String = ...)
+                    public final val prefix: kotlin.String
+                    public final val suffix: kotlin.String
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+
+                public final annotation class Subst : kotlin.Annotation {
+                    public constructor Subst(/*0*/ value: kotlin.String)
+                    public final val value: kotlin.String
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+            }
+        }
+    }
+
+    package org.jetbrains {
+
+        package org.jetbrains.annotations {
+
+            @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.CLASS, AnnotationTarget.FILE}) public final annotation class Nls : kotlin.Annotation {
+                public constructor Nls()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.CLASS, AnnotationTarget.FILE}) public final annotation class NonNls : kotlin.Annotation {
+                public constructor NonNls()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE}) public final annotation class NotNull : kotlin.Annotation {
+                public constructor NotNull(/*0*/ value: kotlin.String = ...)
+                public final val value: kotlin.String
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE}) public final annotation class Nullable : kotlin.Annotation {
+                public constructor Nullable(/*0*/ value: kotlin.String = ...)
+                public final val value: kotlin.String
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.LOCAL_VARIABLE}) public final annotation class PropertyKey : kotlin.Annotation {
+                public constructor PropertyKey(/*0*/ resourceBundle: kotlin.String)
+                public final val resourceBundle: kotlin.String
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.CONSTRUCTOR}) public final annotation class TestOnly : kotlin.Annotation {
+                public constructor TestOnly()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+    }
+
+    package org.test {
+        public fun test(): kotlin.Unit
+
+        public/*package*/ open class Foo {
+            public/*package*/ constructor Foo()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public/*package*/ open fun takeFoo(/*0*/ f: org.test.Foo!): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            // Static members
+            public/*package*/ open fun create(): org.test.Foo!
+        }
+    }
+}

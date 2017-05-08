@@ -1,0 +1,59 @@
+package
+
+package anotherpackage {
+
+    public interface IInterfaceInput</*0*/ in T> {
+        public abstract fun doSomething(/*0*/ input: T): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface IInterfaceOutput</*0*/ out T> {
+        public abstract fun doSomething(): T?
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package mypackage {
+
+    package mypackage.nestedpackage {
+
+        public final class Bar : anotherpackage.IInterfaceInput<mypackage.nestedpackage.Baz>, anotherpackage.IInterfaceOutput<mypackage.nestedpackage.Baz> {
+            public constructor Bar()
+            public open override /*1*/ fun doSomething(): mypackage.nestedpackage.Baz
+            public open override /*1*/ fun doSomething(/*0*/ input: mypackage.nestedpackage.Baz): kotlin.Unit
+            public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final data class Baz {
+            public constructor Baz(/*0*/ myField: kotlin.Int)
+            public final val myField: kotlin.Int
+            public final operator /*synthesized*/ fun component1(): kotlin.Int
+            public final /*synthesized*/ fun copy(/*0*/ myField: kotlin.Int = ...): mypackage.nestedpackage.Baz
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
+
+        public final class Foo {
+            public constructor Foo()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public final class FooNest {
+                public constructor FooNest()
+                public final val bar: mypackage.nestedpackage.Bar
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public final fun myFun(): kotlin.collections.List<mypackage.nestedpackage.Baz>
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+    }
+}
