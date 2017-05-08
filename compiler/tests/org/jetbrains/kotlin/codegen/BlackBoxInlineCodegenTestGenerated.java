@@ -941,6 +941,93 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             doTest(fileName);
         }
 
+        @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LambdaInlining extends AbstractBlackBoxInlineCodegenTest {
+            public void testAllFilesPresentInLambdaInlining() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("defaultLambdaInNoInline.kt")
+            public void testDefaultLambdaInNoInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultLambdaInNoInline.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionReference.kt")
+            public void testFunctionReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/functionReference.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionReferenceFromClass.kt")
+            public void testFunctionReferenceFromClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/functionReferenceFromClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("instanceCapuredInClass.kt")
+            public void testInstanceCapuredInClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapuredInClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("instanceCapuredInInterface.kt")
+            public void testInstanceCapuredInInterface() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapuredInInterface.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmStaticDefault.kt")
+            public void testJvmStaticDefault() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/jvmStaticDefault.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noInline.kt")
+            public void testNoInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/noInline.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nonDefaultInlineInNoInline.kt")
+            public void testNonDefaultInlineInNoInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/nonDefaultInlineInNoInline.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleErased.kt")
+            public void testSimpleErased() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleErased.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleErasedStaticInstance.kt")
+            public void testSimpleErasedStaticInstance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleErasedStaticInstance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleGeneric.kt")
+            public void testSimpleGeneric() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleGeneric.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleStaticInstance.kt")
+            public void testSimpleStaticInstance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleStaticInstance.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

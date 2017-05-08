@@ -28,6 +28,7 @@ enum class ValueKind {
     DEFAULT_MASK,
     METHOD_HANDLE_IN_DEFAULT,
     CAPTURED,
+    DEFAULT_LAMBDA_CAPTURED_PARAMETER
 }
 
 abstract class CallGenerator {

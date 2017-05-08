@@ -84,6 +84,8 @@ class DefaultLambda(
         val offset: Int
 ) : LambdaInfo(parameterDescriptor.isCrossinline, false) {
 
+    val parameterOffsetsInDefault: MutableList<Int> = arrayListOf()
+
     override lateinit var invokeMethod: Method
         private set
 

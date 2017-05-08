@@ -76,6 +76,7 @@ public class LocalVarRemapper {
         }
         else {
             //captured params are not used directly in this inlined method, they are used in closure
+            //except captured ones for default lambdas, they are generated in default body
             remappedIndex = actualParamsSize - params.getArgsSizeOnStack() + index;
         }
 

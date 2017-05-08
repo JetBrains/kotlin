@@ -332,6 +332,22 @@ class MethodInliner(
                 }
             }
 
+            override fun visitMethodInsn(opcode: Int, owner: String, name: String, desc: String, itf: Boolean) {
+                if (InlineCodegenUtil.DEFAULT_LAMBDA_FAKE_CALL == owner) {
+                    val index = name.substringAfter(InlineCodegenUtil.DEFAULT_LAMBDA_FAKE_CALL).toInt()
+                    val lambda = getLambdaIfExists(index) as DefaultLambda
+                    lambda.parameterOffsetsInDefault.zip(lambda.capturedVars).asReversed().forEach {
+                        (_, captured) ->
+                        super.visitFieldInsn(
+                                Opcodes.PUTSTATIC, captured.containingLambdaName, "$$$" + captured.fieldName, captured.type.descriptor
+                        )
+                    }
+                }
+                else {
+                    super.visitMethodInsn(opcode, owner, name, desc, itf)
+                }
+            }
+
             override fun visitLocalVariable(
                     name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
             ) {

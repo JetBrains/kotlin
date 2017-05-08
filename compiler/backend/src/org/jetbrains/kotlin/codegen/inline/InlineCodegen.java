@@ -417,6 +417,11 @@ public class InlineCodegen extends CallGenerator {
                     node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex,
                     DefaultMethodUtilKt.extractDefaultLambdaOffsetAndDescriptor(jvmSignature, functionDescriptor)
             );
+            for (DefaultLambda lambda : defaultLambdas) {
+                invocationParamBuilder.buildParameters().getParameterByDeclarationSlot(lambda.getOffset()).setLambda(lambda);
+                LambdaInfo prev = expressionMap.put(lambda.getOffset(), lambda);
+                assert prev == null : "Lambda with offset " + lambda.getOffset() + " already exists: " + prev;
+            }
         }
         ReifiedTypeParametersUsages reificationResult = reifiedTypeInliner.reifyInstructions(node);
         generateClosuresBodies();
@@ -668,7 +673,11 @@ public class InlineCodegen extends CallGenerator {
                 info = invocationParamBuilder.addNextValueParameter(type, false, remappedValue, parameterIndex);
             }
 
-            recordParameterValueInLocalVal(false, isDefaultParameter, info);
+            recordParameterValueInLocalVal(
+                    false,
+                    isDefaultParameter || kind == ValueKind.DEFAULT_LAMBDA_CAPTURED_PARAMETER,
+                    info
+            );
         }
     }
 
@@ -826,10 +835,32 @@ public class InlineCodegen extends CallGenerator {
         if (next instanceof ExpressionLambda) {
             codegen.pushClosureOnStack(((ExpressionLambda) next).getClassDescriptor(), true, this, functionReferenceReceiver);
         }
+        else if (next instanceof DefaultLambda) {
+            rememberCapturedForDefaultLambda((DefaultLambda) next);
+        }
         else {
-            //TODO
+            throw new RuntimeException("Unknown lambda: " + next);
         }
         activeLambda = null;
+    }
+
+    private void rememberCapturedForDefaultLambda(@NotNull DefaultLambda defaultLambda) {
+        List<CapturedParamDesc> vars = defaultLambda.getCapturedVars();
+        int paramIndex = 0;
+        for (CapturedParamDesc captured : vars) {
+            putArgumentOrCapturedToLocalVal(
+                    captured.getType(),
+                    //HACK: actually parameter would be placed on stack in default function
+                    // also see ValueKind.DEFAULT_LAMBDA_CAPTURED_PARAMETER check
+                    StackValue.onStack(captured.getType()),
+                    paramIndex,
+                    paramIndex,
+                    ValueKind.DEFAULT_LAMBDA_CAPTURED_PARAMETER
+            );
+
+            paramIndex++;
+            defaultLambda.getParameterOffsetsInDefault().add(invocationParamBuilder.getNextParameterOffset());
+        }
     }
 
     @NotNull
