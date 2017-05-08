@@ -18,11 +18,12 @@ package org.jetbrains.kotlin.idea.structureView
 
 import com.intellij.ide.structureView.StructureViewModelBase
 import com.intellij.ide.util.treeView.smartTree.*
+import com.intellij.openapi.editor.Editor
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
-class KotlinStructureViewModel(ktFile: KtFile) : StructureViewModelBase(ktFile, KotlinStructureViewElement(ktFile, false)) {
+class KotlinStructureViewModel(ktFile: KtFile, editor: Editor?) : StructureViewModelBase(ktFile, editor, KotlinStructureViewElement(ktFile, false)) {
 
     init {
         withSuitableClasses(KtDeclaration::class.java)
