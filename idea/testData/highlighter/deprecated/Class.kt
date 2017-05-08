@@ -2,7 +2,9 @@ package test
 
 import java.util.ArrayList
 
-@Deprecated("Use A instead") open class MyClass {}
+@Deprecated("Use A instead") open class MyClass {
+    val test = this
+}
 
 fun test() {
     val a : <warning descr="[DEPRECATION] 'MyClass' is deprecated. Use A instead">MyClass</warning>? = null
