@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_IMPL_ASM_TYPE
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.isThis0
+import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
 import org.jetbrains.org.objectweb.asm.*
@@ -42,7 +43,7 @@ class AnonymousObjectTransformer(
     private var constructor: MethodNode? = null
     private var sourceInfo: String? = null
     private var debugInfo: String? = null
-    private var sourceMapper: SourceMapper? = null
+    private lateinit var sourceMapper: SourceMapper
 
     override fun doTransform(parentRemapper: FieldRemapper): InlineResult {
         val innerClassNodes = ArrayList<InnerClassNode>()
@@ -143,11 +144,12 @@ class AnonymousObjectTransformer(
             method.visitEnd()
         }
 
-        SourceMapper.flushToClassBuilder(sourceMapper!!, classBuilder)
+        SourceMapper.flushToClassBuilder(sourceMapper, classBuilder)
 
         val visitor = classBuilder.visitor
         innerClassNodes.forEach {
-            node -> visitor.visitInnerClass(node.name, node.outerName, node.innerName, node.access)
+            node ->
+            visitor.visitInnerClass(node.name, node.outerName, node.innerName, node.access)
         }
 
         writeOuterInfo(visitor)
@@ -197,7 +199,7 @@ class AnonymousObjectTransformer(
                 remapper,
                 isSameModule,
                 "Transformer for " + transformationInfo.oldClassName,
-                sourceMapper!!,
+                sourceMapper,
                 InlineCallSiteInfo(
                         transformationInfo.oldClassName,
                         sourceNode.name,
@@ -341,60 +343,40 @@ class AnonymousObjectTransformer(
         val indexToLambda = transformationInfo.lambdasToInline
         val capturedParams = HashSet<Int>()
 
-        //load captured parameters and patch instruction list (NB: there is also could be object fields)
-        var cur: AbstractInsnNode? = constructor.instructions.first
-        while (cur != null) {
-            if (cur is FieldInsnNode) {
-                val fieldNode = cur as FieldInsnNode?
-                val fieldName = fieldNode!!.name
-                if (fieldNode.opcode == Opcodes.PUTFIELD && InlineCodegenUtil.isCapturedFieldName(fieldName)) {
-                    val isPrevVarNode = fieldNode.previous is VarInsnNode
-                    val isPrevPrevVarNode = isPrevVarNode && fieldNode.previous.previous is VarInsnNode
-
-                    if (isPrevPrevVarNode) {
-                        val node = fieldNode.previous.previous as VarInsnNode
-                        if (node.`var` == 0) {
-                            val previous = fieldNode.previous as VarInsnNode
-                            val varIndex = previous.`var`
-                            val lambdaInfo = indexToLambda[varIndex]
-                            val newFieldName = if (isThis0(fieldName) && shouldRenameThis0(parentFieldRemapper, indexToLambda.values))
-                                getNewFieldName(fieldName, true)
-                            else
-                                fieldName
-                            val info = capturedParamBuilder.addCapturedParam(
-                                    Type.getObjectType(transformationInfo.oldClassName), fieldName, newFieldName,
-                                    Type.getType(fieldNode.desc), lambdaInfo != null, null
-                            )
-                            if (lambdaInfo != null) {
-                                info.lambda = lambdaInfo
-                                capturedLambdas.add(lambdaInfo)
-                            }
-                            constructorAdditionalFakeParams.add(info)
-                            capturedParams.add(varIndex)
-
-                            constructor.instructions.remove(previous.previous)
-                            constructor.instructions.remove(previous)
-                            val temp = cur
-                            cur = cur.next
-                            constructor.instructions.remove(temp)
-                            continue
-                        }
+        //load captured parameters and patch instruction list
+        //  NB: there is also could be object fields
+        val toDelete = arrayListOf<AbstractInsnNode>()
+        constructor.findCapturedFieldAssignmentInstructions().
+                forEach { fieldNode ->
+                    val fieldName = fieldNode.name
+                    val parameterAload = fieldNode.previous as VarInsnNode
+                    val varIndex = parameterAload.`var`
+                    val lambdaInfo = indexToLambda[varIndex]
+                    val newFieldName = if (isThis0(fieldName) && shouldRenameThis0(parentFieldRemapper, indexToLambda.values))
+                        getNewFieldName(fieldName, true)
+                    else
+                        fieldName
+                    val info = capturedParamBuilder.addCapturedParam(
+                            Type.getObjectType(transformationInfo.oldClassName), fieldName, newFieldName,
+                            Type.getType(fieldNode.desc), lambdaInfo != null, null
+                    )
+                    if (lambdaInfo != null) {
+                        info.lambda = lambdaInfo
+                        capturedLambdas.add(lambdaInfo)
                     }
+                    constructorAdditionalFakeParams.add(info)
+                    capturedParams.add(varIndex)
+
+                    toDelete.add(parameterAload.previous)
+                    toDelete.add(parameterAload)
+                    toDelete.add(fieldNode)
                 }
-            }
-            cur = cur.next
-        }
+        constructor.remove(toDelete)
 
         constructorParamBuilder.addThis(oldObjectType, false)
-        var constructorDesc = transformationInfo.constructorDesc
 
-        if (constructorDesc == null) {
-            // in case of anonymous object with empty closure
-            constructorDesc = Type.getMethodDescriptor(Type.VOID_TYPE)
-        }
-
-        val types = Type.getArgumentTypes(constructorDesc!!)
-        for (type in types) {
+        val paramTypes = transformationInfo.constructorDesc?.let { Type.getArgumentTypes(it) } ?: emptyArray()
+        for (type in paramTypes) {
             val info = indexToLambda[constructorParamBuilder.nextParameterOffset]
             val parameterInfo = constructorParamBuilder.addNextParameter(type, info != null)
             parameterInfo.lambda = info

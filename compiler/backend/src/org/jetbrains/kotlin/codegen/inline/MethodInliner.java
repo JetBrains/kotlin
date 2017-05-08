@@ -541,9 +541,7 @@ public class MethodInliner {
             }
         }
 
-        for (AbstractInsnNode insnNode : toDelete) {
-            instructions.remove(insnNode);
-        }
+        MethodInlinerUtilKt.remove(node, toDelete);
 
         //clean dead try/catch blocks
         List<TryCatchBlockNode> blocks = node.tryCatchBlocks;

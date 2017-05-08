@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
+import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
 
@@ -44,6 +43,8 @@ fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
         toDelete.addAll(toDeleteInner)
     }
 }
+
+private fun SourceValue.singleOrNullInsn() = insns.singleOrNull()
 
 private fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
         insnNode: AbstractInsnNode?,
@@ -88,8 +89,6 @@ private fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
     return null
 }
 
-fun SourceValue.singleOrNullInsn() = insns.singleOrNull()
-
 fun parameterOffsets(valueParameters: List<JvmMethodParameterSignature>): Array<Int> {
     var offset = 0
     return Array(valueParameters.size) { index ->
@@ -100,4 +99,26 @@ fun parameterOffsets(valueParameters: List<JvmMethodParameterSignature>): Array<
             offset += valueParameters[index - 1].asmType.size
         }
     }
+}
+
+fun MethodNode.remove(instructions: Collection<AbstractInsnNode>) {
+    instructions.forEach {
+        this@remove.instructions.remove(it)
+    }
+}
+
+fun MethodNode.findCapturedFieldAssignmentInstructions(): Sequence<FieldInsnNode> {
+    return InsnSequence(instructions).filterIsInstance<FieldInsnNode>().
+            filter { fieldNode ->
+                //filter captured field assignment
+                //  aload 0
+                //  aload x
+                //  PUTFIELD $fieldName
+
+                val prevPrev = fieldNode.previous?.previous as? VarInsnNode
+
+                fieldNode.opcode == Opcodes.PUTFIELD &&
+                InlineCodegenUtil.isCapturedFieldName(fieldNode.name) &&
+                fieldNode.previous is VarInsnNode && prevPrev != null && prevPrev.`var` == 0
+            }
 }
