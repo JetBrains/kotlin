@@ -58,7 +58,6 @@ object JsLibraryUtils {
                 )
                 jsFile?.runIfFileExists(action)
             }
-            else -> throw IllegalArgumentException("Unknown library format (directory, zip or js file expected): $lib")
         }
     }
 
