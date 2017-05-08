@@ -32,14 +32,10 @@ abstract class AbstractLiteralTextToKotlinCopyPasteTest : AbstractCopyPasteTest(
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
 
-
-
-
     fun doTest(path: String) {
         myFixture.testDataPath = BASE_PATH
         val testName = getTestName(false)
         myFixture.configureByFiles(testName + ".txt")
-
         val fileText = myFixture.editor.document.text
 
         myFixture.editor.selectionModel.setSelection(0, fileText.length)

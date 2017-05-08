@@ -26,6 +26,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.editor.fixers.range
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -198,7 +199,7 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
                 else if (lexer.tokenType == KtTokens.LONG_TEMPLATE_ENTRY_END) {
                     depth--
                     if (depth == 0) {
-                        return from + lexer.currentPosition.offset - 1
+                        return from + lexer.currentPosition.offset
                     }
                 }
                 lexer.advance()
@@ -259,5 +260,16 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
     }
 
     override fun iterator(): Iterator<TemplateChunk> = iterTemplateChunks()
+}
+
+@TestOnly
+internal fun createTemplateSequenceTokenString(input:String):String{
+    return TemplateTokenSequence(input).map {
+        when (it){
+            is LiteralChunk -> "LITERAL_CHUNK(${it.text})"
+            is EntryChunk -> "ENTRY_CHUNK(${it.text})"
+            is NewLineChunk -> "NEW_LINE()"
+        }
+    }.joinToString (separator = "")
 }
 
