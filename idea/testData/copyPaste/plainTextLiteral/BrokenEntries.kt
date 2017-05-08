@@ -1,0 +1,1 @@
+val a = """a<caret>"""
