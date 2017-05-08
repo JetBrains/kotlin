@@ -32,9 +32,6 @@ abstract class AbstractLiteralKotlinToKotlinCopyPasteTest : AbstractCopyPasteTes
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
 
-
-
-
     fun doTest(path: String) {
         myFixture.testDataPath = BASE_PATH
         val testName = getTestName(false)
