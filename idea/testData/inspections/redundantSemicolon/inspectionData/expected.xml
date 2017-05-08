@@ -61,4 +61,13 @@
         <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>
         <description>Redundant semicolon</description>
     </problem>
+
+    <problem>
+        <file>BeforeEmptyImports.kt</file>
+        <line>1</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="BeforeEmptyImports.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>
+        <description>Redundant semicolon</description>
+    </problem>
 </problems>
