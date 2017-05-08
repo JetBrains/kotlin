@@ -15616,4 +15616,55 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/intentions/valToObject")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ValToObject extends AbstractIntentionTest {
+        public void testAllFilesPresentInValToObject() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/valToObject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("annotations.kt")
+        public void testAnnotations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/valToObject/annotations.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("callableReference.kt")
+        public void testCallableReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/valToObject/callableReference.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("getter.kt")
+        public void testGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/valToObject/getter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonTopLevel.kt")
+        public void testNonTopLevel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/valToObject/nonTopLevel.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/valToObject/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("var.kt")
+        public void testVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/valToObject/var.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withJavaUsage.kt")
+        public void testWithJavaUsage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/valToObject/withJavaUsage.kt");
+            doTest(fileName);
+        }
+    }
 }
