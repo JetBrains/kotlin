@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallableReferenceArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
@@ -140,6 +141,11 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         storage.lambdaArguments.add(resolvedLambdaArgument)
     }
 
+    override fun addCallableReferenceArgument(resolvedCallableReferenceArgument: ResolvedCallableReferenceArgument) {
+        checkState(State.BUILDING, State.COMPLETION)
+        storage.callableReferenceArguments.add(resolvedCallableReferenceArgument)
+    }
+
     private fun getVariablesForFixation(): Map<NewTypeVariable, UnwrappedType> {
         val fixedVariables = LinkedHashMap<NewTypeVariable, UnwrappedType>()
 
@@ -185,6 +191,7 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         storage.errors.addAll(otherSystem.errors)
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
         storage.lambdaArguments.addAll(otherSystem.lambdaArguments)
+        storage.callableReferenceArguments.addAll(otherSystem.callableReferenceArguments)
         storage.innerCalls.addAll(otherSystem.innerCalls)
     }
 

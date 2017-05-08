@@ -75,7 +75,7 @@ sealed class DoubleColonLHS(val type: KotlinType) {
      *     (Obj)::class       // not an object qualifier (can only be treated as an expression, not as a type)
      *     { Obj }()::class   // not an object qualifier
      */
-    class Expression(typeInfo: KotlinTypeInfo, val isObjectQualifier: Boolean) : DoubleColonLHS(typeInfo.type!!) {
+    class Expression(val typeInfo: KotlinTypeInfo, val isObjectQualifier: Boolean) : DoubleColonLHS(typeInfo.type!!) {
         val dataFlowInfo: DataFlowInfo = typeInfo.dataFlowInfo
     }
 

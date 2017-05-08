@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.resolve.calls.inference.trimToSize
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallableReferenceArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -84,5 +85,6 @@ internal class MutableConstraintStorage : ConstraintStorage {
     override val errors: MutableList<KotlinCallDiagnostic> = ArrayList()
     override val fixedTypeVariables: MutableMap<TypeConstructor, UnwrappedType> = LinkedHashMap()
     override val lambdaArguments: MutableList<ResolvedLambdaArgument> = ArrayList()
+    override val callableReferenceArguments: MutableList<ResolvedCallableReferenceArgument> = ArrayList()
     override val innerCalls: MutableList<ResolvedKotlinCall.OnlyResolvedKotlinCall> = ArrayList()
 }

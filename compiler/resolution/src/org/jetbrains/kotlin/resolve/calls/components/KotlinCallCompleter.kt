@@ -77,6 +77,7 @@ class KotlinCallCompleter(
                     is VariableAsFunctionKotlinResolutionCandidate -> candidate.invokeCandidate
                     else -> candidate as SimpleKotlinResolutionCandidate
                 }
+        resolveCallableReferenceArguments(topLevelCall)
 
         if (topLevelCall.prepareForCompletion(expectedType)) {
             val c = candidate.lastCall.constraintSystem.asCallCompleterContext()
@@ -86,6 +87,14 @@ class KotlinCallCompleter(
         }
 
         return ResolvedKotlinCall.OnlyResolvedKotlinCall(candidate)
+    }
+
+    private fun resolveCallableReferenceArguments(candidate: SimpleKotlinResolutionCandidate) {
+        for (callableReferenceArgument in candidate.postponeCallableReferenceArguments) {
+            CheckArguments.processCallableReferenceArgument(candidate.callContext, candidate.kotlinCall, candidate.csBuilder,
+                                                            callableReferenceArgument.argument, callableReferenceArgument.expectedType)
+        }
+        candidate.postponeCallableReferenceArguments.clear()
     }
 
     private fun toCompletedBaseResolvedCall(

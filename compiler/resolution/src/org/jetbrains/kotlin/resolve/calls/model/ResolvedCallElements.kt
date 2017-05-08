@@ -18,12 +18,9 @@ package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.resolve.calls.components.ArgumentsToParametersMapper
+import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
@@ -55,45 +52,12 @@ class ResolvedLambdaArgument(
     lateinit var resultArguments: List<KotlinCallArgument>
 }
 
-
-class ResolvedPropertyReference(
-        val outerCall: KotlinCall,
-        val argument: ChosenCallableReferenceDescriptor,
-        val reflectionType: UnwrappedType
-) {
-    val boundDispatchReceiver: ReceiverValue? get() = argument.candidate.dispatchReceiver?.receiverValue?.takeIf { it !is MockReceiverForCallableReference }
-    val boundExtensionReceiver: ReceiverValue? get() = argument.extensionReceiver?.receiverValue?.takeIf { it !is MockReceiverForCallableReference }
+class ResolvedCallableReferenceArgument(
+        override val outerCall: KotlinCall,
+        override val argument: CallableReferenceKotlinCallArgument,
+        override val myTypeVariables: Collection<NewTypeVariable>,
+        val callableResolutionCandidate: CallableReferenceCandidate
+) : ArgumentWithPostponeResolution() {
+    override val inputType: Collection<UnwrappedType> get() = emptyList()
+    override val outputType: UnwrappedType? = null
 }
-
-class ResolvedFunctionReference(
-        val outerCall: KotlinCall,
-        val argument: ChosenCallableReferenceDescriptor,
-        val reflectionType: UnwrappedType,
-        val argumentsMapping: ArgumentsToParametersMapper.ArgumentMapping?
-) {
-    val boundDispatchReceiver: ReceiverValue? get() = argument.candidate.dispatchReceiver?.receiverValue?.takeIf { it !is MockReceiverForCallableReference }
-    val boundExtensionReceiver: ReceiverValue? get() = argument.extensionReceiver?.receiverValue?.takeIf { it !is MockReceiverForCallableReference }
-}
-
-
-fun KotlinCall.getExplicitDispatchReceiver(explicitReceiverKind: ExplicitReceiverKind) = when (explicitReceiverKind) {
-    ExplicitReceiverKind.DISPATCH_RECEIVER -> explicitReceiver
-    ExplicitReceiverKind.BOTH_RECEIVERS -> dispatchReceiverForInvokeExtension
-    else -> null
-}
-
-fun KotlinCall.getExplicitExtensionReceiver(explicitReceiverKind: ExplicitReceiverKind) = when (explicitReceiverKind) {
-    ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> explicitReceiver
-    else -> null
-}
-
-class MockReceiverForCallableReference(val lhsOrDeclaredType: UnwrappedType) : ReceiverValue {
-    override fun getType() = lhsOrDeclaredType
-    override fun replaceType(newType: KotlinType) = MockReceiverForCallableReference(newType.unwrap())
-}
-
-val ChosenCallableReferenceDescriptor.dispatchNotBoundReceiver : UnwrappedType?
-    get() = (candidate.dispatchReceiver?.receiverValue as? MockReceiverForCallableReference)?.lhsOrDeclaredType
-
-val ChosenCallableReferenceDescriptor.extensionNotBoundReceiver : UnwrappedType?
-    get() = (extensionReceiver as? MockReceiverForCallableReference)?.lhsOrDeclaredType

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallableReferenceArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -36,6 +37,7 @@ interface ConstraintSystemOperation {
 interface ConstraintSystemBuilder : ConstraintSystemOperation {
     fun addInnerCall(innerCall: ResolvedKotlinCall.OnlyResolvedKotlinCall)
     fun addLambdaArgument(resolvedLambdaArgument: ResolvedLambdaArgument)
+    fun addCallableReferenceArgument(resolvedCallableReferenceArgument: ResolvedCallableReferenceArgument)
 
     // if runOperations return true, then this operation will be applied, and function return true
     fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean

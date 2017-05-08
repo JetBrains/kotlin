@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallableReferenceArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -55,6 +56,7 @@ interface ConstraintStorage {
     val errors: List<KotlinCallDiagnostic>
     val fixedTypeVariables: Map<TypeConstructor, UnwrappedType>
     val lambdaArguments: List<ResolvedLambdaArgument>
+    val callableReferenceArguments: List<ResolvedCallableReferenceArgument>
     val innerCalls: List<ResolvedKotlinCall.OnlyResolvedKotlinCall>
 
     object Empty : ConstraintStorage {
@@ -65,6 +67,7 @@ interface ConstraintStorage {
         override val errors: List<KotlinCallDiagnostic> get() = emptyList()
         override val fixedTypeVariables: Map<TypeConstructor, UnwrappedType> get() = emptyMap()
         override val lambdaArguments: List<ResolvedLambdaArgument> get() = emptyList()
+        override val callableReferenceArguments: List<ResolvedCallableReferenceArgument> get() = emptyList()
         override val innerCalls: List<ResolvedKotlinCall.OnlyResolvedKotlinCall> get() = emptyList()
     }
 }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.model
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.calls.components.PostponeCallableReferenceArgument
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.Candidate
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
 
@@ -112,6 +114,7 @@ open class SimpleKotlinResolutionCandidate(
         initialDiagnostics: Collection<KotlinCallDiagnostic>
 ) : AbstractSimpleKotlinResolutionCandidate(NewConstraintSystemImpl(callContext.constraintInjector, callContext.resultTypeResolver), initialDiagnostics) {
     val csBuilder: ConstraintSystemBuilder get() = constraintSystem.getBuilder()
+    val postponeCallableReferenceArguments = SmartList<PostponeCallableReferenceArgument>()
 
     lateinit var typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
     lateinit var argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>

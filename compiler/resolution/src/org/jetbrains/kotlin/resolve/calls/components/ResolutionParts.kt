@@ -262,6 +262,13 @@ class MissingReceiver(val functionExpression: FunctionExpression) : KotlinCallDi
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(functionExpression, this)
 }
 
-class ErrorCallableMapping(val functionReference: ResolvedFunctionReference) : KotlinCallDiagnostic(IMPOSSIBLE_TO_GENERATE) {
-    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(functionReference.argument, this)
+class NoneCallableReferenceCandidates(val argument: CallableReferenceKotlinCallArgument) : KotlinCallDiagnostic(IMPOSSIBLE_TO_GENERATE) {
+    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
+}
+
+class CallableReferenceCandidatesAmbiguity(
+        val argument: CallableReferenceKotlinCallArgument,
+        val candidates: Collection<CallableReferenceCandidate>
+) : KotlinCallDiagnostic(IMPOSSIBLE_TO_GENERATE) {
+    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
 }
