@@ -19,16 +19,18 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.lang.ExpressionTypeProvider
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -36,6 +38,14 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
     private val typeRenderer = DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptions {
         textFormat = RenderingFormat.HTML
+        classifierNamePolicy = object : ClassifierNamePolicy {
+            override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
+                if (DescriptorUtils.isAnonymousObject(classifier)) {
+                    return "&lt;anonymous object&gt;"
+                }
+                return ClassifierNamePolicy.SHORT.renderClassifier(classifier, renderer)
+            }
+        }
     }
 
     override fun getExpressionsAt(elementAt: PsiElement): List<KtExpression> {
