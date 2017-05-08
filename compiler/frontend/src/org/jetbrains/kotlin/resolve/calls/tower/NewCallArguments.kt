@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.model.LambdaKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -110,8 +110,8 @@ class CallableReferenceKotlinCallArgumentImpl(
         override val dataFlowInfoAfterThisArgument: DataFlowInfo,
         val ktCallableReferenceExpression: KtCallableReferenceExpression,
         override val argumentName: Name?,
-        override val lhsType: UnwrappedType?,
-        override val constraintStorage: ConstraintStorage
+        override val lhsResult: LHSResult,
+        override val rhsName: Name
 ) : CallableReferenceKotlinCallArgument, PSIKotlinCallArgument()
 
 class SubKotlinCallArgumentImpl(
@@ -135,6 +135,16 @@ class ExpressionKotlinCallArgumentImpl(
     override val isSpread: Boolean get() = valueArgument.getSpreadElement() != null
     override val argumentName: Name? get() = valueArgument.getArgumentName()?.asName
     override val isSafeCall: Boolean get() = false
+}
+
+class FakeValueArgumentForLeftCallableReference(val ktExpression: KtCallableReferenceExpression): ValueArgument {
+    override fun getArgumentExpression() = ktExpression.receiverExpression
+
+    override fun getArgumentName(): ValueArgumentName? = null
+    override fun isNamed(): Boolean = false
+    override fun asElement(): KtElement = getArgumentExpression() ?: ktExpression
+    override fun getSpreadElement(): LeafPsiElement? = null
+    override fun isExternal(): Boolean = false
 }
 
 internal fun createSimplePSICallArgument(

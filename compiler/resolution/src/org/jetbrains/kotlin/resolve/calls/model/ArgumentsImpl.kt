@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.types.checker.prepareArgumentTypeRegardingCaptureTyp
 
 
 class FakeKotlinCallArgumentForCallableReference(
-        val callableReference: ChosenCallableReferenceDescriptor,
         val index: Int
 ) : KotlinCallArgument {
     override val isSpread: Boolean get() = false

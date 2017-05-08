@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.CheckArguments
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
@@ -38,7 +39,8 @@ class KotlinCallContext(
         val typeArgumentsToParametersMapper: TypeArgumentsToParametersMapper,
         val resultTypeResolver: ResultTypeResolver,
         val callableReferenceResolver: CallableReferenceResolver,
-        val constraintInjector: ConstraintInjector
+        val constraintInjector: ConstraintInjector,
+        val reflectionTypes: ReflectionTypes
 )
 
 class SimpleCandidateFactory(val callContext: KotlinCallContext, val kotlinCall: KotlinCall): CandidateFactory<SimpleKotlinResolutionCandidate> {
@@ -50,6 +52,17 @@ class SimpleCandidateFactory(val callContext: KotlinCallContext, val kotlinCall:
     ): SimpleKotlinCallArgument? =
             explicitReceiver as? SimpleKotlinCallArgument ?: // qualifier receiver cannot be safe
             fromResolution?.let { ReceiverExpressionKotlinCallArgument(it, isSafeCall = false) } // todo smartcast implicit this
+
+    private fun KotlinCall.getExplicitDispatchReceiver(explicitReceiverKind: ExplicitReceiverKind) = when (explicitReceiverKind) {
+        ExplicitReceiverKind.DISPATCH_RECEIVER -> explicitReceiver
+        ExplicitReceiverKind.BOTH_RECEIVERS -> dispatchReceiverForInvokeExtension
+        else -> null
+    }
+
+    private fun KotlinCall.getExplicitExtensionReceiver(explicitReceiverKind: ExplicitReceiverKind) = when (explicitReceiverKind) {
+        ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> explicitReceiver
+        else -> null
+    }
 
     override fun createCandidate(
             towerCandidate: CandidateWithBoundDispatchReceiver,

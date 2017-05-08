@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -28,9 +30,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ModifierCheckerCore
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.TypeResolver
-import org.jetbrains.kotlin.resolve.calls.*
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
+import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.components.ArgumentsToParametersMapper
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
@@ -40,7 +43,6 @@ import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -75,6 +77,7 @@ class PSICallResolver(
         val resultTypeResolver: ResultTypeResolver,
         val callableReferenceResolver: CallableReferenceResolver,
         val constraintInjector: ConstraintInjector,
+        val reflectionTypes: ReflectionTypes,
         private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
         private val kotlinCallResolver: KotlinCallResolver,
         private val typeApproximator: TypeApproximator,
@@ -146,7 +149,7 @@ class PSICallResolver(
 
     private fun createCallContext(scopeTower: ASTScopeTower, resolutionCallbacks: KotlinResolutionCallbacks) =
             KotlinCallContext(scopeTower, resolutionCallbacks, argumentsToParametersMapper, typeArgumentsToParametersMapper, resultTypeResolver,
-                              callableReferenceResolver, constraintInjector)
+                              callableReferenceResolver, constraintInjector, reflectionTypes)
 
     private fun <D : CallableDescriptor> convertToOverloadResolutionResults(
             context: BasicCallResolutionContext,
@@ -456,17 +459,44 @@ class PSICallResolver(
         if (ktExpression is KtCallableReferenceExpression) {
             checkNoSpread(outerCallContext, valueArgument)
 
-            // todo analyze left expression and get constraint system
-            val (lhsResult, rightResults) = doubleColonExpressionResolver.resolveCallableReference(
-                    ktExpression, ExpressionTypingContext.newContext(context), ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS)
-
+            val expressionTypingContext = ExpressionTypingContext.newContext(context)
+            val lhsResult = if (ktExpression.isEmptyLHS) null else doubleColonExpressionResolver.resolveDoubleColonLHS(ktExpression, expressionTypingContext)
             val newDataFlowInfo = (lhsResult as? DoubleColonLHS.Expression)?.dataFlowInfo ?: startDataFlowInfo
+            val name = ktExpression.callableReference.getReferencedNameAsName()
 
-            // todo ChosenCallableReferenceDescriptor
+            val lhsNewResult = when (lhsResult) {
+                null -> LHSResult.Empty
+                is DoubleColonLHS.Expression -> {
+                    if (lhsResult.isObjectQualifier) {
+                        val classifier = lhsResult.type.constructor.declarationDescriptor
+                        val calleeExpression = ktExpression.receiverExpression?.getCalleeExpressionIfAny()
+                        if (calleeExpression is KtSimpleNameExpression && classifier is ClassDescriptor) {
+                            LHSResult.Object(ClassQualifier(calleeExpression, classifier))
+                        }
+                        else {
+                            LHSResult.Empty // this is error case actually
+                        }
+                    }
+                    else {
+                        val fakeArgument = FakeValueArgumentForLeftCallableReference(ktExpression)
+
+                        val kotlinCallArgument = createSimplePSICallArgument(context, fakeArgument, lhsResult.typeInfo)
+                        kotlinCallArgument?.let { LHSResult.Expression(it as SimpleKotlinCallArgument) } ?: LHSResult.Empty
+                    }
+                }
+                is DoubleColonLHS.Type -> {
+                    val qualifier = expressionTypingContext.trace.get(BindingContext.QUALIFIER, ktExpression.receiverExpression!!)
+                    if (qualifier is ClassQualifier) {
+                        LHSResult.Type(qualifier)
+                    }
+                    else {
+                        LHSResult.Empty // this is error case actually
+                    }
+                }
+            }
 
             return CallableReferenceKotlinCallArgumentImpl(valueArgument, startDataFlowInfo, newDataFlowInfo,
-                                                           ktExpression, argumentName, (lhsResult as? DoubleColonLHS.Type)?.type?.unwrap(),
-                                                           ConstraintStorage.Empty)
+                                                           ktExpression, argumentName, lhsNewResult, name)
         }
 
         // valueArgument.getArgumentExpression()!! instead of ktExpression is hack -- type info should be stored also for parenthesized expression
