@@ -41,8 +41,7 @@ import kotlin.coroutines.experimental.buildIterator
 
 private fun PsiElement.findContainingTemplate(): PsiElement {
     val parent = this.parent
-    @Suppress("IfThenToElvis")
-    return if (parent is KtStringTemplateEntry) parent.parent else parent
+    @Suppress("IfThenToElvis") return if (parent is KtStringTemplateEntry) parent.parent else parent
 }
 
 private fun PsiFile.getTemplateIfAtLiteral(offset: Int): KtStringTemplateExpression? {
@@ -51,7 +50,6 @@ private fun PsiFile.getTemplateIfAtLiteral(offset: Int): KtStringTemplateExpress
         KtTokens.REGULAR_STRING_PART, KtTokens.ESCAPE_SEQUENCE, KtTokens.LONG_TEMPLATE_ENTRY_START, KtTokens.SHORT_TEMPLATE_ENTRY_START -> at.parent.parent as? KtStringTemplateExpression
         KtTokens.CLOSING_QUOTE -> if (offset == at.startOffset) at.parent as? KtStringTemplateExpression else null
         else -> null
-
     }
 }
 
@@ -74,7 +72,7 @@ private fun deduceBlockSelectionWidth(startOffsets: IntArray, endOffsets: IntArr
 
 class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
     override fun preprocessOnCopy(file: PsiFile, startOffsets: IntArray, endOffsets: IntArray, text: String): String? {
-        if (file !is KtFile){
+        if (file !is KtFile) {
             return null
         }
         val buffer = StringBuilder()
@@ -86,9 +84,7 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
             if (i > 0) {
                 buffer.append('\n') // LF is added for block selection
             }
-
             val fileRange = TextRange(startOffsets[i], endOffsets[i])
-
             var givenTextOffset = fileRange.startOffset
             while (givenTextOffset < fileRange.endOffset) {
                 val element: PsiElement? = file.findElementAt(givenTextOffset)
@@ -115,20 +111,18 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
                     buffer.append(fileText.substring(inter.startOffset, inter.endOffset))
                     givenTextOffset = inter.endOffset
                 }
-
             }
             val blockSelectionPadding = deducedBlockSelectionWidth - fileRange.length
             for (j in 0..blockSelectionPadding - 1) {
                 buffer.append(' ')
             }
-
         }
 
         return if (changed) buffer.toString() else null
     }
 
     override fun preprocessOnPaste(project: Project, file: PsiFile, editor: Editor, text: String, rawText: RawText?): String {
-        if (file !is KtFile){
+        if (file !is KtFile) {
             return text
         }
         PsiDocumentManager.getInstance(project).commitDocument(editor.document)
@@ -139,68 +133,63 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
             return text
         }
 
-
         return if (beginTp.isSingleQuoted()) {
-            TemplateTokenizer(text).map {
+            val res = StringBuilder()
+            TemplateTokenSequence(text).forEach {
                 when (it) {
-                    is LiteralChunk -> StringUtil.escaper(true, "\$\"").`fun`(it.text)
-                    is EntryChunk -> it.text
-                    is NewLineChunk -> "\\n\"+\n \""
-
+                    is LiteralChunk -> StringUtil.escapeStringCharacters(it.text.length, it.text, "\$\"", res)
+                    is EntryChunk -> res.append(it.text)
+                    is NewLineChunk -> res.append("\\n\"+\n \"")
                 }
-            }.joinToString(separator = "")
+            }
+            res.toString()
         }
         else {
             val tripleQuoteRe = Regex("[\"]{3,}")
-            TemplateTokenizer(text).map { chunk ->
+            TemplateTokenSequence(text).map { chunk ->
                 when (chunk) {
                     is LiteralChunk -> chunk.text.replace("\$", "\${'$'}").let { escapedDollar ->
                         tripleQuoteRe.replace(escapedDollar) { "\"\"" + "\${'\"'}".repeat(it.value.count() - 2) }
                     }
-
                     is EntryChunk -> chunk.text
                     is NewLineChunk -> "\n"
-
                 }
             }.joinToString(separator = "")
         }
-
     }
-
-
 }
 
 private sealed class TemplateChunk
 private data class LiteralChunk(val text: String) : TemplateChunk()
 private data class EntryChunk(val text: String) : TemplateChunk()
-private class NewLineChunk : TemplateChunk()
+private object NewLineChunk : TemplateChunk()
 
-private class TemplateTokenizer(private val inputString: String) : Sequence<TemplateChunk> {
+private class TemplateTokenSequence(private val inputString: String) : Sequence<TemplateChunk> {
+    private fun String.guessIsTemplateEntryStart(): Boolean = if (this.startsWith("\${")) {
+        true
+    }
+    else if (this.length > 1 && this[0] == '$') {
+        val guessedIdentifier = substring(1)
+        KotlinLexer().apply { start(guessedIdentifier) }.tokenType == KtTokens.IDENTIFIER
+    }
+    else {
+        false
+    }
 
-    private fun String.guessIsTemplateEntryStart(): Boolean =
-            if (this.startsWith("\${")) {
-                true
-            }
-            else if (this.length > 1 && this[0] == '$'){
-                KotlinLexer().apply { start(this@guessIsTemplateEntryStart.substring(1)) }.tokenType == KtTokens.IDENTIFIER
-            }
-            else {
-                false
-            }
-
-    private fun findTemplateEntryEnd(input: String, from: Int): Int{
+    private fun findTemplateEntryEnd(input: String, from: Int): Int {
         val wrapped = '"' + input.substring(from) + '"'
         val lexer = KotlinLexer().apply { start(wrapped) }.apply { advance() }
 
-        if (lexer.tokenType == KtTokens.SHORT_TEMPLATE_ENTRY_START){
+        if (lexer.tokenType == KtTokens.SHORT_TEMPLATE_ENTRY_START) {
             lexer.advance()
-            return if (lexer.tokenType == KtTokens.IDENTIFIER){
-                from + lexer.tokenEnd -1
-            } else{
+            return if (lexer.tokenType == KtTokens.IDENTIFIER) {
+                from + lexer.tokenEnd - 1
+            }
+            else {
                 -1
             }
         }
-        else if(lexer.tokenType == KtTokens.LONG_TEMPLATE_ENTRY_START) {
+        else if (lexer.tokenType == KtTokens.LONG_TEMPLATE_ENTRY_START) {
             var depth = 0
             while (lexer.tokenType != null) {
                 if (lexer.tokenType == KtTokens.LONG_TEMPLATE_ENTRY_START) {
@@ -222,15 +211,13 @@ private class TemplateTokenizer(private val inputString: String) : Sequence<Temp
     }
 
     private suspend fun SequenceBuilder<TemplateChunk>.yieldLiteral(chunk: String) {
-
-            val splitLines = LineTokenizer.tokenize(chunk, false, true)
-            for (i in 0..splitLines.size - 1) {
-                if (i != 0) {
-                    yield(NewLineChunk())
-                }
-                splitLines[i].takeIf { !it.isEmpty() }?.let { yield(LiteralChunk(it)) }
+        val splitLines = LineTokenizer.tokenize(chunk, false, true)
+        for (i in 0..splitLines.size - 1) {
+            if (i != 0) {
+                yield(NewLineChunk)
             }
-
+            splitLines[i].takeIf { !it.isEmpty() }?.let { yield(LiteralChunk(it)) }
+        }
     }
 
     private fun iterTemplateChunks(): Iterator<TemplateChunk> {
@@ -244,35 +231,26 @@ private class TemplateTokenizer(private val inputString: String) : Sequence<Temp
                 val c = inputString[to]
                 if (c == '\\') {
                     to += 1
-                    if (to < inputString.length)
-                        to += 1
+                    if (to < inputString.length) to += 1
                     continue
-
                 }
-                when (c) {
-                    '$' -> {
-                        if (inputString.substring(to).guessIsTemplateEntryStart()) {
-                            if (from < to)
-                                yieldLiteral(inputString.substring(from until to))
-                            from = to
-                            to = findTemplateEntryEnd(inputString, from)
-                            if (to != -1){
-                                yield(EntryChunk(inputString.substring(from until to)))
-                            } else{
-                                to = inputString.length
-                                yieldLiteral(inputString.substring(from until to))
-                            }
-                            from = to
-
+                else if (c == '$') {
+                    if (inputString.substring(to).guessIsTemplateEntryStart()) {
+                        if (from < to) yieldLiteral(inputString.substring(from until to))
+                        from = to
+                        to = findTemplateEntryEnd(inputString, from)
+                        if (to != -1) {
+                            yield(EntryChunk(inputString.substring(from until to)))
                         }
                         else {
-                            to++
+                            to = inputString.length
+                            yieldLiteral(inputString.substring(from until to))
                         }
-
+                        from = to
+                        continue
                     }
-                    else -> to++
-
                 }
+                to++
             }
             if (from < to) {
                 yieldLiteral(inputString.substring(from until to))
