@@ -3,7 +3,7 @@ interface B {
 }
 
 
-<spot>object A : B</spot> {
+<spot>object a : B</spot> {
     override fun c() {
     }
 }
