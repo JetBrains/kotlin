@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
+import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.utils.SmartSet
@@ -121,4 +122,12 @@ fun MethodNode.findCapturedFieldAssignmentInstructions(): Sequence<FieldInsnNode
                 InlineCodegenUtil.isCapturedFieldName(fieldNode.name) &&
                 fieldNode.previous is VarInsnNode && prevPrev != null && prevPrev.`var` == 0
             }
+}
+
+fun AbstractInsnNode.getNextMeaningful(): AbstractInsnNode? {
+    var result: AbstractInsnNode? = next
+    while (result != null && !result.isMeaningful) {
+        result = result.next
+    }
+    return result
 }

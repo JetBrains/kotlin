@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import com.google.common.collect.Lists
-import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.ClosureCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.*
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
+import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
+import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
@@ -84,7 +84,7 @@ class MethodInliner(
 
         val resultNode = MethodNode(
                 InlineCodegenUtil.API, transformedNode.access, transformedNode.name, transformedNode.desc,
-                transformedNode.signature, ArrayUtil.toStringArray(transformedNode.exceptions)
+                transformedNode.signature, transformedNode.exceptions?.toTypedArray()
         )
         val visitor = RemapVisitor(resultNode, remapper, nodeRemapper)
         try {
@@ -187,7 +187,7 @@ class MethodInliner(
                     }
 
                     val valueParamShift = Math.max(nextLocalIndex, markerShift)//NB: don't inline cause it changes
-                    putStackValuesIntoLocals(Arrays.asList(*info.invokeMethod.argumentTypes), valueParamShift, this, desc)
+                    putStackValuesIntoLocals(listOf(*info.invokeMethod.argumentTypes), valueParamShift, this, desc)
 
 
                     if (invokeCall.lambdaInfo.invokeMethodDescriptor.getValueParameters().isEmpty()) {
@@ -297,17 +297,15 @@ class MethodInliner(
     }
 
     private fun prepareNode(node: MethodNode, finallyDeepShift: Int): MethodNode {
+        node.instructions.resetLabels()
+
         val capturedParamsSize = parameters.capturedParametersSizeOnStack
         val realParametersSize = parameters.realParametersSizeOnStack
-        val types = Type.getArgumentTypes(node.desc)
-        val returnType = Type.getReturnType(node.desc)
 
-        val capturedTypes = parameters.capturedTypes
-        val allTypes = ArrayUtil.mergeArrays(types, capturedTypes.toTypedArray())
-
-        node.instructions.resetLabels()
         val transformedNode = object : MethodNode(
-                InlineCodegenUtil.API, node.access, node.name, Type.getMethodDescriptor(returnType, *allTypes), node.signature, null
+                InlineCodegenUtil.API, node.access, node.name,
+                Type.getMethodDescriptor(Type.getReturnType(node.desc), *(Type.getArgumentTypes(node.desc) + parameters.capturedTypes)),
+                node.signature, node.exceptions?.toTypedArray()
         ) {
             private val GENERATE_DEBUG_INFO = InlineCodegenUtil.GENERATE_SMAP && inlineOnlySmapSkipper == null
 
@@ -365,13 +363,12 @@ class MethodInliner(
 
         val toDelete = SmartSet.create<AbstractInsnNode>()
         val instructions = processingNode.instructions
-        var cur: AbstractInsnNode? = instructions.first
 
         var awaitClassReification = false
         var currentFinallyDeep = 0
 
-        while (cur != null) {
-            val frame: Frame<SourceValue>? = sources[instructions.indexOf(cur)]
+        InsnSequence(instructions).forEach { cur ->
+            val frame = sources[instructions.indexOf(cur)]
 
             if (frame != null) {
                 if (ReifiedTypeInliner.isNeedClassReificationMarker(cur)) {
@@ -391,10 +388,7 @@ class MethodInliner(
                     val firstParameterIndex = frame.stackSize - paramCount
                     if (isInvokeOnLambda(owner, name) /*&& methodInsnNode.owner.equals(INLINE_RUNTIME)*/) {
                         val sourceValue = frame.getStack(firstParameterIndex)
-
-                        val lambdaInfo = getLambdaIfExistsAndMarkInstructions(sourceValue, true, instructions, sources, toDelete
-                        )
-
+                        val lambdaInfo = getLambdaIfExistsAndMarkInstructions(sourceValue, true, instructions, sources, toDelete)
                         invokeCalls.add(InvokeCall(lambdaInfo, currentFinallyDeep))
                     }
                     else if (isAnonymousConstructorCall(owner, name)) {
@@ -450,26 +444,21 @@ class MethodInliner(
                     }
                 }
                 else if (cur.opcode == Opcodes.POP) {
-                    val top = frame.top()!!
-                    val lambdaInfo = getLambdaIfExistsAndMarkInstructions(top, true, instructions, sources, toDelete)
-                    if (lambdaInfo != null) {
+                    getLambdaIfExistsAndMarkInstructions(frame.top()!!, true, instructions, sources, toDelete)?.let {
                         toDelete.add(cur)
                     }
                 }
             }
-            val prevNode = cur
-            cur = cur.next
-
-            //given frame is <tt>null</tt> if and only if the corresponding instruction cannot be reached (dead code).
-            if (frame == null) {
+            else {
+                //given frame is <tt>null</tt> if and only if the corresponding instruction cannot be reached (dead code).
                 //clean dead code otherwise there is problems in unreachable finally block, don't touch label it cause try/catch/finally problems
-                if (prevNode.type == AbstractInsnNode.LABEL) {
+                if (cur.type == AbstractInsnNode.LABEL) {
                     //NB: Cause we generate exception table for default handler using gaps (see ExpressionCodegen.visitTryExpression)
                     //it may occurs that interval for default handler starts before catch start label, so this label seems as dead,
                     //but as result all this labels will be merged into one (see KT-5863)
                 }
                 else {
-                    toDelete.add(prevNode)
+                    toDelete.add(cur)
                 }
             }
         }
@@ -477,8 +466,7 @@ class MethodInliner(
         processingNode.remove(toDelete)
 
         //clean dead try/catch blocks
-        val blocks = processingNode.tryCatchBlocks
-        blocks.removeIf{ isEmptyTryInterval(it) }
+        processingNode.tryCatchBlocks.removeIf { it.isMeaningless() }
 
         return processingNode
     }
@@ -488,14 +476,11 @@ class MethodInliner(
 
         val localReturnsNormalizer = LocalReturnsNormalizer()
 
-        val instructions = node.instructions.toArray()
-
-        for (i in instructions.indices) {
-            val frame = frames[i] ?: continue
+        for ((index, insnNode) in node.instructions.toArray().withIndex()) {
+            val frame = frames[index] ?: continue
             // Don't care about dead code, it will be eliminated
 
-            val insnNode = instructions[i]
-            if (!InlineCodegenUtil.isReturnOpcode(insnNode.opcode)) continue
+            if (!isReturnOpcode(insnNode.opcode)) continue
 
             var insertBeforeInsn = insnNode
 
@@ -558,24 +543,15 @@ class MethodInliner(
         return inliningContext.typeRemapper.hasNoAdditionalMapping(owner)
     }
 
-    internal fun getLambdaIfExists(insnNode: AbstractInsnNode?): LambdaInfo? {
-        if (insnNode == null) {
-            return null
+    internal fun getLambdaIfExists(insnNode: AbstractInsnNode): LambdaInfo? {
+        return when {
+            insnNode.opcode == Opcodes.ALOAD ->
+                getLambdaIfExists((insnNode as VarInsnNode).`var`)
+            insnNode is FieldInsnNode && insnNode.name.startsWith("$$$") ->
+                findCapturedField(insnNode, nodeRemapper).lambda
+            else ->
+                null
         }
-
-        if (insnNode.opcode == Opcodes.ALOAD) {
-            val varIndex = (insnNode as VarInsnNode).`var`
-            return getLambdaIfExists(varIndex)
-        }
-
-        if (insnNode is FieldInsnNode) {
-            val fieldInsnNode = insnNode as FieldInsnNode?
-            if (fieldInsnNode!!.name.startsWith("$$$")) {
-                return findCapturedField(fieldInsnNode, nodeRemapper).lambda
-            }
-        }
-
-        return null
     }
 
     private fun getLambdaIfExists(varIndex: Int): LambdaInfo? {
@@ -590,8 +566,13 @@ class MethodInliner(
             return
         }
 
-        //Fold all captured variable chain - ALOAD 0 ALOAD this$0 GETFIELD $captured - to GETFIELD $$$$captured
-        //On future decoding this field could be inline or unfolded in another field access chain (it can differ in some missed this$0)
+        // Fold all captured variables access chains
+        //          ALOAD 0
+        //          [ALOAD this$0]*
+        //          GETFIELD $captured
+        //  to GETFIELD $$$$captured
+        // On future decoding this field could be inlined or unfolded to another field access chain
+        // (this chain could differ cause some of this$0 could be inlined)
         var cur: AbstractInsnNode? = node.instructions.first
         while (cur != null) {
             if (cur is VarInsnNode && cur.opcode == Opcodes.ALOAD) {
@@ -610,10 +591,10 @@ class MethodInliner(
 
     private fun wrapException(originalException: Throwable, node: MethodNode, errorSuffix: String): RuntimeException {
         if (originalException is InlineException) {
-            return InlineException(errorPrefix + ": " + errorSuffix, originalException)
+            return InlineException("$errorPrefix: $errorSuffix", originalException)
         }
         else {
-            return InlineException(errorPrefix + ": " + errorSuffix + "\nCause: " + getNodeText(node), originalException)
+            return InlineException("$errorPrefix: $errorSuffix\nCause: ${getNodeText(node)}", originalException)
         }
     }
 
@@ -733,36 +714,27 @@ class MethodInliner(
 
         }
 
-        private fun isEmptyTryInterval(tryCatchBlockNode: TryCatchBlockNode): Boolean {
-            val start = tryCatchBlockNode.start
-            var end: AbstractInsnNode = tryCatchBlockNode.end
-            while (end !== start && end is LabelNode) {
-                end = end.getPrevious()
-            }
-            return start === end
-        }
-
+        //remove next template:
+        //      aload x
+        //      LDC paramName
+        //      INTRINSICS_CLASS_NAME.checkParameterIsNotNull(...)
         private fun removeClosureAssertions(node: MethodNode) {
-            var cur: AbstractInsnNode? = node.instructions.first
-            while (cur != null && cur.next != null) {
-                var next = cur.next
-                if (next.type == AbstractInsnNode.METHOD_INSN) {
-                    val methodInsnNode = next as MethodInsnNode
-                    if (methodInsnNode.name == "checkParameterIsNotNull" && methodInsnNode.owner == IntrinsicMethods.INTRINSICS_CLASS_NAME) {
-                        val prev = cur.previous
+            val toDelete = arrayListOf<AbstractInsnNode>()
+            InsnSequence(node.instructions).filterIsInstance<MethodInsnNode>().forEach {
+                methodInsnNode ->
+                if (methodInsnNode.name == "checkParameterIsNotNull" && methodInsnNode.owner == IntrinsicMethods.INTRINSICS_CLASS_NAME) {
+                    val prev = methodInsnNode.previous
+                    assert(Opcodes.LDC == prev?.opcode) { "'checkParameterIsNotNull' should go after LDC but $prev" }
+                    val prevPev = methodInsnNode.previous.previous
+                    assert(Opcodes.ALOAD == prevPev?.opcode) { "'checkParameterIsNotNull' should be invoked on local var, but $prev" }
 
-                        assert(cur.opcode == Opcodes.LDC) { "checkParameterIsNotNull should go after LDC but " + cur!! }
-                        assert(prev.opcode == Opcodes.ALOAD) { "checkParameterIsNotNull should be invoked on local var but " + prev }
-
-                        node.instructions.remove(prev)
-                        node.instructions.remove(cur)
-                        cur = next.getNext()
-                        node.instructions.remove(next)
-                        next = cur
-                    }
+                    toDelete.add(prevPev)
+                    toDelete.add(prev)
+                    toDelete.add(methodInsnNode)
                 }
-                cur = next
             }
+
+            node.remove(toDelete)
         }
 
         private fun transformFinallyDeepIndex(node: MethodNode, finallyDeepShift: Int) {
@@ -783,48 +755,38 @@ class MethodInliner(
         }
 
         private fun getCapturedFieldAccessChain(aload0: VarInsnNode): List<AbstractInsnNode> {
-            val fieldAccessChain = ArrayList<AbstractInsnNode>()
-            fieldAccessChain.add(aload0)
-            var next: AbstractInsnNode? = aload0.next
-            while (next != null && next is FieldInsnNode || next is LabelNode) {
-                if (next is LabelNode) {
-                    next = next.next
-                    continue //it will be delete on transformation
-                }
-                fieldAccessChain.add(next)
-                if ("this$0" == (next as FieldInsnNode).name) {
-                    next = next.next
-                }
-                else {
-                    break
-                }
+            val lambdaAccessChain = mutableListOf<AbstractInsnNode>(aload0).apply {
+                addAll(InsnSequence(aload0.next, null).filter { it.isMeaningful }.takeWhile {
+                    insnNode ->
+                    insnNode is FieldInsnNode && "this$0" == insnNode.name
+                }.toList())
             }
 
-            return fieldAccessChain
+            return lambdaAccessChain.apply {
+                last().getNextMeaningful().takeIf { insn -> insn is FieldInsnNode }?.also {
+                    //captured field access
+                    insn -> add(insn)
+                }
+            }
         }
 
         private fun putStackValuesIntoLocals(
                 directOrder: List<Type>, shift: Int, iv: InstructionAdapter, descriptor: String
         ) {
-            var shift = shift
             val actualParams = Type.getArgumentTypes(descriptor)
-            assert(actualParams.size == directOrder.size) { "Number of expected and actual params should be equals!" }
-
-            var size = 0
-            for (next in directOrder) {
-                size += next.size
+            assert(actualParams.size == directOrder.size) {
+                "Number of expected and actual params should be equals, but ${actualParams.size} != ${directOrder.size}}!"
             }
 
-            shift += size
-            var index = directOrder.size
+            var currentShift = shift + directOrder.sumBy { it.size }
 
-            for (next in Lists.reverse(directOrder)) {
-                shift -= next.size
-                val typeOnStack = actualParams[--index]
-                if (typeOnStack != next) {
-                    StackValue.onStack(typeOnStack).put(next, iv)
+            directOrder.asReversed().forEachIndexed { index, type ->
+                currentShift -= type.size
+                val typeOnStack = actualParams[index]
+                if (typeOnStack != type) {
+                    StackValue.onStack(typeOnStack).put(type, iv)
                 }
-                iv.store(shift, next)
+                iv.store(currentShift, type)
             }
         }
 

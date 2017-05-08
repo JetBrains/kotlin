@@ -35,6 +35,7 @@ import java.io.StringWriter;
 import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.*;
+import static org.jetbrains.kotlin.codegen.inline.MethodInlinerUtilKt.getNextMeaningful;
 
 public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
@@ -515,15 +516,6 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                     result.add(info);
                 }
             }
-        }
-        return result;
-    }
-
-    @Nullable
-    private static AbstractInsnNode getNextMeaningful(@NotNull AbstractInsnNode node) {
-        AbstractInsnNode result = node.getNext();
-        while (result != null && !UtilKt.isMeaningful(result)) {
-            result = result.getNext();
         }
         return result;
     }

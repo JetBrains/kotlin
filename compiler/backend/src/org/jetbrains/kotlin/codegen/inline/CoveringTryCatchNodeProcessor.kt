@@ -145,7 +145,9 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
             if (isOpen) intervalStarts.get(curIns) else intervalEnds.get(curIns)
 }
 
-private fun Interval.isMeaningless(): Boolean {
+fun TryCatchBlockNode.isMeaningless() = SimpleInterval(start, end).isMeaningless()
+
+fun Interval.isMeaningless(): Boolean {
     val start = this.startLabel
     var end: AbstractInsnNode = this.endLabel
     while (end != start && !end.isMeaningful) {
