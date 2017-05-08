@@ -15946,6 +15946,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/qualifiedExpression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("calleeExpressionAsCallExpression.kt")
+            public void testCalleeExpressionAsCallExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/calleeExpressionAsCallExpression.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("GenericClassVsPackage.kt")
             public void testGenericClassVsPackage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/GenericClassVsPackage.kt");
@@ -15955,6 +15961,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("JavaQualifier.kt")
             public void testJavaQualifier() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/JavaQualifier.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullCalleeExpression.kt")
+            public void testNullCalleeExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/nullCalleeExpression.kt");
                 doTest(fileName);
             }
 
