@@ -93,8 +93,10 @@ class KotlinRainbowVisitor : RainbowVisitor() {
         addInfo(getInfo(context, rainbowElement, rainbowElement.text, attributesKeyToUse))
     }
 
-    private fun PsiElement?.isRainbowDeclaration() =
-            (this is KtProperty && isLocal) || (this is KtParameter && getStrictParentOfType<KtPrimaryConstructor>() == null)
+    private fun PsiElement?.isRainbowDeclaration(): Boolean =
+            (this is KtProperty && isLocal) ||
+            (this is KtParameter && getStrictParentOfType<KtPrimaryConstructor>() == null) ||
+            this is KtDestructuringDeclarationEntry
 }
 
 private fun PsiElement.isAnonymousFunction(): Boolean = this is KtNamedFunction && nameIdentifier == null

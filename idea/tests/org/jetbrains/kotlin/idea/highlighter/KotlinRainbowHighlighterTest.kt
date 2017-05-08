@@ -70,7 +70,17 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
                   System.out.println(<rainbow color='ff000004'>foo</rainbow>)
              }
         """)
+    }
 
+    fun testDestructuring() {
+        checkRainbow("""
+            fun foo() {
+                val (<rainbow color='ff000003'>a</rainbow>, <rainbow color='ff000004'>b</rainbow>) = 1 to 2
+
+                println(<rainbow color='ff000003'>a</rainbow>)
+                println(<rainbow color='ff000004'>b</rainbow>)
+            }
+        """)
     }
 
     private fun checkRainbow(code: String) {
