@@ -930,9 +930,24 @@ public expect operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T>
 @kotlin.internal.InlineOnly
 public expect inline fun <T> Iterable<T>.minusElement(element: T): List<T>
 
+/**
+ * Returns a list of pairs of each two adjacent elements in this collection.
+ * 
+ * The returned list is empty if this collection contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.pairwise
+ */
 @SinceKotlin("1.2")
 public expect fun <T> Iterable<T>.pairwise(): List<Pair<T, T>>
 
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to an each pair of two adjacent elements in this collection.
+ * 
+ * The returned list is empty if this collection contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.pairwiseToFindDeltas
+ */
 @SinceKotlin("1.2")
 public expect inline fun <T, R> Iterable<T>.pairwise(transform: (a: T, b: T) -> R): List<R>
 

@@ -854,9 +854,28 @@ public expect operator fun <T> Sequence<T>.minus(elements: Sequence<T>): Sequenc
 @kotlin.internal.InlineOnly
 public expect inline fun <T> Sequence<T>.minusElement(element: T): Sequence<T>
 
+/**
+ * Returns a sequence of pairs of each two adjacent elements in this sequence.
+ * 
+ * The returned sequence is empty if this sequence contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.pairwise
+ *
+ * The operation is _intermediate_ and _stateless_.
+ */
 @SinceKotlin("1.2")
 public expect fun <T> Sequence<T>.pairwise(): Sequence<Pair<T, T>>
 
+/**
+ * Returns a sequence containing the results of applying the given [transform] function
+ * to an each pair of two adjacent elements in this sequence.
+ * 
+ * The returned sequence is empty if this sequence contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.pairwiseToFindDeltas
+ *
+ * The operation is _intermediate_ and _stateless_.
+ */
 @SinceKotlin("1.2")
 public expect fun <T, R> Sequence<T>.pairwise(transform: (a: T, b: T) -> R): Sequence<R>
 

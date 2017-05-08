@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,6 +69,23 @@ class Collections {
             val moreWords = "eleven twelve".split(' ')
             val moreFrequencies = moreWords.groupingBy { it.first() }.eachCountTo(frequenciesByFirstChar.toMutableMap())
             assertPrints(moreFrequencies, "{o=1, t=4, f=2, s=2, e=2, n=1}")
+        }
+
+        @Sample
+        fun pairwise() {
+            val letters = ('a'..'f').toList()
+            val pairs = letters.pairwise()
+
+            assertPrints(letters, "[a, b, c, d, e, f]")
+            assertPrints(pairs, "[(a, b), (b, c), (c, d), (d, e), (e, f)]")
+        }
+
+        @Sample
+        fun pairwiseToFindDeltas() {
+            val values = listOf(1, 4, 9, 16, 25, 36)
+            val deltas = values.pairwise { a, b -> b - a }
+
+            assertPrints(deltas, "[3, 5, 7, 9, 11]")
         }
     }
 
