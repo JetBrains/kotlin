@@ -718,7 +718,16 @@ fun generators(): List<GenericFunction> {
         since("1.2")
         only(Iterables, Sequences, CharSequences)
         typeParam("R")
+        doc { f ->
+            """
+            Returns a ${f.mapResult} containing the results of applying the given [transform] function
+            to an each pair of two adjacent ${f.element.pluralize()} in this ${f.collection}.
 
+            The returned ${f.mapResult} is empty if this ${f.collection} contains less than two ${f.element.pluralize()}.
+
+            @sample samples.collections.Collections.Transformations.pairwiseToFindDeltas
+            """
+        }
         returns("List<R>")
         inline(true)
         body {
@@ -748,6 +757,7 @@ fun generators(): List<GenericFunction> {
 
         }
         inline(false, Sequences)
+        sequenceClassification(intermediate, stateless)
         returns(Sequences) { "Sequence<R>" }
         body(Sequences) {
             """
@@ -769,6 +779,16 @@ fun generators(): List<GenericFunction> {
         since("1.2")
         only(Iterables, Sequences, CharSequences)
         returns("List<Pair<T, T>>")
+        doc { f ->
+            """
+            Returns a ${f.mapResult} of pairs of each two adjacent ${f.element.pluralize()} in this ${f.collection}.
+
+            The returned ${f.mapResult} is empty if this ${f.collection} contains less than two ${f.element.pluralize()}.
+
+            @sample samples.collections.Collections.Transformations.pairwise
+            """
+        }
+        sequenceClassification(intermediate, stateless)
         returns(Sequences) { "Sequence<Pair<T, T>>" }
         body {
             "return pairwise { a, b -> a to b }"

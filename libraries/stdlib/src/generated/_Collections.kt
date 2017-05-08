@@ -1849,11 +1849,26 @@ public inline fun <T> Iterable<T>.minusElement(element: T): List<T> {
     return minus(element)
 }
 
+/**
+ * Returns a list of pairs of each two adjacent elements in this collection.
+ * 
+ * The returned list is empty if this collection contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.pairwise
+ */
 @SinceKotlin("1.2")
 public fun <T> Iterable<T>.pairwise(): List<Pair<T, T>> {
     return pairwise { a, b -> a to b }
 }
 
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to an each pair of two adjacent elements in this collection.
+ * 
+ * The returned list is empty if this collection contains less than two elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.pairwiseToFindDeltas
+ */
 @SinceKotlin("1.2")
 public inline fun <T, R> Iterable<T>.pairwise(transform: (a: T, b: T) -> R): List<R> {
     val iterator = iterator()

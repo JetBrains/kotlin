@@ -1132,11 +1132,26 @@ public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence)
     return windowedSequence(size, size, transform)
 }
 
+/**
+ * Returns a list of pairs of each two adjacent characters in this char sequence.
+ * 
+ * The returned list is empty if this char sequence contains less than two characters.
+ * 
+ * @sample samples.collections.Collections.Transformations.pairwise
+ */
 @SinceKotlin("1.2")
 public fun CharSequence.pairwise(): List<Pair<Char, Char>> {
     return pairwise { a, b -> a to b }
 }
 
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to an each pair of two adjacent characters in this char sequence.
+ * 
+ * The returned list is empty if this char sequence contains less than two characters.
+ * 
+ * @sample samples.collections.Collections.Transformations.pairwiseToFindDeltas
+ */
 @SinceKotlin("1.2")
 public inline fun <R> CharSequence.pairwise(transform: (a: Char, b: Char) -> R): List<R> {
     val size = length - 1
