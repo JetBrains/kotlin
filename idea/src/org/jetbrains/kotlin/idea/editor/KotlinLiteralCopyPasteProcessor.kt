@@ -199,7 +199,7 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
                 else if (lexer.tokenType == KtTokens.LONG_TEMPLATE_ENTRY_END) {
                     depth--
                     if (depth == 0) {
-                        return from + lexer.currentPosition.offset - 1
+                        return from + lexer.currentPosition.offset
                     }
                 }
                 lexer.advance()
