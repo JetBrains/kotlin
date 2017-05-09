@@ -340,5 +340,11 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/suspendCall/suspendCall.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("suspendIteration.kt")
+        public void testSuspendIteration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/suspendCall/suspendIteration.kt");
+            doTest(fileName);
+        }
     }
 }
