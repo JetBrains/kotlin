@@ -75,7 +75,7 @@ class KotlinIndicesHelper(
     }
 
     fun getTopLevelCallablesByName(name: String): Collection<CallableDescriptor> {
-        val declarations = LinkedHashSet<KtCallableDeclaration>()
+        val declarations = LinkedHashSet<KtNamedDeclaration>()
         declarations.addTopLevelNonExtensionCallablesByName(KotlinFunctionShortNameIndex.getInstance(), name)
         declarations.addTopLevelNonExtensionCallablesByName(KotlinPropertyShortNameIndex.getInstance(), name)
         return declarations
@@ -83,11 +83,11 @@ class KotlinIndicesHelper(
                 .filter { descriptorFilter(it) }
     }
 
-    private fun MutableSet<KtCallableDeclaration>.addTopLevelNonExtensionCallablesByName(
-            index: StringStubIndexExtension<out KtCallableDeclaration>,
+    private fun MutableSet<KtNamedDeclaration>.addTopLevelNonExtensionCallablesByName(
+            index: StringStubIndexExtension<out KtNamedDeclaration>,
             name: String
     ) {
-        index.get(name, project, scope).filterTo(this) { it.parent is KtFile && it.receiverTypeReference == null }
+        index.get(name, project, scope).filterTo(this) { it.parent is KtFile && it is KtCallableDeclaration && it.receiverTypeReference == null }
     }
 
     fun getTopLevelExtensionOperatorsByName(name: String): Collection<FunctionDescriptor> {
@@ -336,11 +336,11 @@ class KotlinIndicesHelper(
 
     fun processKotlinCallablesByName(
             name: String,
-            filter: (KtCallableDeclaration) -> Boolean,
+            filter: (KtNamedDeclaration) -> Boolean,
             processor: (CallableDescriptor) -> Unit
     ) {
         val functions: Sequence<KtCallableDeclaration> = KotlinFunctionShortNameIndex.getInstance().get(name, project, scope).asSequence()
-        val properties: Sequence<KtCallableDeclaration> = KotlinPropertyShortNameIndex.getInstance().get(name, project, scope).asSequence()
+        val properties: Sequence<KtNamedDeclaration> = KotlinPropertyShortNameIndex.getInstance().get(name, project, scope).asSequence()
         val processed = HashSet<CallableDescriptor>()
         for (declaration in functions + properties) {
             ProgressManager.checkCanceled()
@@ -390,10 +390,10 @@ class KotlinIndicesHelper(
     fun processObjectMembers(
             descriptorKindFilter: DescriptorKindFilter,
             nameFilter: (String) -> Boolean,
-            filter: (KtCallableDeclaration, KtObjectDeclaration) -> Boolean,
+            filter: (KtNamedDeclaration, KtObjectDeclaration) -> Boolean,
             processor: (DeclarationDescriptor) -> Unit
     ) {
-        fun processIndex(index: StringStubIndexExtension<out KtCallableDeclaration>) {
+        fun processIndex(index: StringStubIndexExtension<out KtNamedDeclaration>) {
             for (name in index.getAllKeys(project)) {
                 ProgressManager.checkCanceled()
                 if (!nameFilter(name)) continue

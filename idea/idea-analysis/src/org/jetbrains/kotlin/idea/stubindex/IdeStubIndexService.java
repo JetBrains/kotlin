@@ -215,6 +215,14 @@ public class IdeStubIndexService extends StubIndexService {
     }
 
     @Override
+    public void indexParameter(@NotNull KotlinParameterStub stub, @NotNull IndexSink sink) {
+        String name = stub.getName();
+        if (name != null && stub.hasValOrVar()) {
+            sink.occurrence(KotlinPropertyShortNameIndex.getInstance().getKey(), name);
+        }
+    }
+
+    @Override
     public void indexAnnotation(KotlinAnnotationEntryStub stub, IndexSink sink) {
         sink.occurrence(KotlinAnnotationsIndex.getInstance().getKey(), stub.getShortName());
 

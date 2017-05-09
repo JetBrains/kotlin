@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
@@ -99,7 +99,7 @@ class StaticMembersCompletion(
         val descriptorKindFilter = DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions
         val nameFilter: (String) -> Boolean = { prefixMatcher.prefixMatches(it) }
 
-        val filter = { declaration: KtCallableDeclaration, objectDeclaration: KtObjectDeclaration ->
+        val filter = { declaration: KtNamedDeclaration, objectDeclaration: KtObjectDeclaration ->
             !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) && objectDeclaration.isTopLevelOrCompanion()
         }
         indicesHelper.processObjectMembers(descriptorKindFilter, nameFilter, filter) {

@@ -247,3 +247,11 @@ object LightClassUtil {
         override fun iterator(): Iterator<PsiMethod> = allMethods.iterator()
     }
 }
+
+fun KtNamedDeclaration.getAccessorLightMethods(): LightClassUtil.PropertyAccessorsPsiMethods {
+    return when (this) {
+        is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this)
+        is KtParameter -> LightClassUtil.getLightClassPropertyMethods(this)
+        else -> throw IllegalStateException("Unexpected property type: ${this}")
+    }
+}
