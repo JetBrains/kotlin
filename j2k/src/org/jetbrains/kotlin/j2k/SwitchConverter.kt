@@ -17,8 +17,13 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
+import com.intellij.psi.controlFlow.ControlFlowFactory
+import com.intellij.psi.controlFlow.ControlFlowUtil
 import org.jetbrains.kotlin.j2k.ast.*
 import java.util.*
+import com.intellij.psi.controlFlow.LocalsOrMyInstanceFieldsControlFlowPolicy
+
+
 
 class SwitchConverter(private val codeConverter: CodeConverter) {
     fun convert(statement: PsiSwitchStatement): WhenStatement
@@ -95,7 +100,7 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
         else {
             val block = case.statements.singleOrNull() as? PsiBlockStatement
             val statements = block?.codeBlock?.statements?.toList() ?: case.statements
-            !statements.any { it is PsiBreakStatement || it is PsiContinueStatement || it is PsiReturnStatement || it is PsiThrowStatement }
+            statements.fallsThrough()
         }
         return if (fallsThrough) // we fall through into the next case
             convertCaseStatements(case.statements, allowBlock = false) + convertCaseStatements(cases, caseIndex + 1, allowBlock = false)
@@ -112,4 +117,25 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
     }
 
     private fun isSwitchBreak(statement: PsiStatement) = statement is PsiBreakStatement && statement.labelIdentifier == null
+
+    private fun List<PsiStatement>.fallsThrough(): Boolean {
+        for (statement in this) {
+            when (statement) {
+                is PsiBreakStatement -> return false
+                is PsiContinueStatement -> return false
+                is PsiReturnStatement -> return false
+                is PsiThrowStatement -> return false
+                is PsiSwitchStatement -> if (!statement.canCompleteNormally()) return false
+                is PsiIfStatement -> if (!statement.canCompleteNormally()) return false
+            }
+        }
+        return true
+    }
+
+    private fun PsiElement.canCompleteNormally(): Boolean {
+        val controlFlow = ControlFlowFactory.getInstance(project).getControlFlow(this, LocalsOrMyInstanceFieldsControlFlowPolicy.getInstance())
+        val startOffset = controlFlow.getStartOffset(this)
+        val endOffset = controlFlow.getEndOffset(this)
+        return startOffset == -1 || endOffset == -1 || ControlFlowUtil.canCompleteNormally(controlFlow, startOffset, endOffset)
+    }
 }
