@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.highlighter.allImplementingCompatibleModules
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isInheritable
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import java.awt.event.MouseEvent
 import java.util.*
@@ -227,8 +228,7 @@ private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: M
 }
 
 private fun collectInheritedClassMarker(element: KtClass, result: MutableCollection<LineMarkerInfo<*>>) {
-    val isTrait = element.isInterface()
-    if (!(isTrait || element.hasModifier(KtTokens.OPEN_KEYWORD) || element.hasModifier(KtTokens.ABSTRACT_KEYWORD))) {
+    if (!element.isInheritable()) {
         return
     }
 
@@ -241,7 +241,7 @@ private fun collectInheritedClassMarker(element: KtClass, result: MutableCollect
     result.add(LineMarkerInfo(
             anchor,
             anchor.textRange,
-            if (isTrait) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
+            if (element.isInterface()) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
             Pass.LINE_MARKERS,
             SUBCLASSED_CLASS.tooltip,
             SUBCLASSED_CLASS.navigationHandler,
