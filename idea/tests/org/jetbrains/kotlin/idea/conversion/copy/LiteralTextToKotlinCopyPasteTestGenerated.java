@@ -48,9 +48,9 @@ public class LiteralTextToKotlinCopyPasteTestGenerated extends AbstractLiteralTe
         doTest(fileName);
     }
 
-    @TestMetadata("MultiLinetoTripleQuote.txt")
-    public void testMultiLinetoTripleQuote() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextLiteral/MultiLinetoTripleQuote.txt");
+    @TestMetadata("MultiLineToTripleQuotes.txt")
+    public void testMultiLineToTripleQuotes() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextLiteral/MultiLineToTripleQuotes.txt");
         doTest(fileName);
     }
 
