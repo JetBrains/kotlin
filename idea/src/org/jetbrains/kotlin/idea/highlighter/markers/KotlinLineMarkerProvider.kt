@@ -34,6 +34,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.getAccessorLightMethods
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
@@ -321,14 +322,6 @@ private fun collectHeaderMarkers(declaration: KtNamedDeclaration,
             HEADER_DECLARATION.navigationHandler,
             GutterIconRenderer.Alignment.RIGHT
     ))
-}
-
-fun KtNamedDeclaration.getAccessorLightMethods(): LightClassUtil.PropertyAccessorsPsiMethods {
-    return when (this) {
-        is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this)
-        is KtParameter -> LightClassUtil.getLightClassPropertyMethods(this)
-        else -> throw IllegalStateException("Unexpected property type: ${this}")
-    }
 }
 
 private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, result: MutableCollection<LineMarkerInfo<*>>) {

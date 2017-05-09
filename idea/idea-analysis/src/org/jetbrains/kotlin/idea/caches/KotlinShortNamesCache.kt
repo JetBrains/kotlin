@@ -28,6 +28,7 @@ import com.intellij.util.containers.HashSet
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.defaultImplsChild
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.asJava.getAccessorLightMethods
 import org.jetbrains.kotlin.asJava.getAccessorNamesCandidatesByPropertyName
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.stubindex.*
@@ -103,7 +104,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         val propertyAccessorsPsi = sequenceOfLazyValues({ getPropertyNamesCandidatesByAccessorName(Name.identifier(name)) })
                 .flatMap { it.asSequence() }
                 .flatMap { propertiesIndex.get(it.asString(), project, scope).asSequence() }
-                .flatMap { LightClassUtil.getLightClassPropertyMethods(it).allDeclarations.asSequence() }
+                .flatMap { it.getAccessorLightMethods().allDeclarations.asSequence() }
                 .filter { it.name == name }
                 .map { it as? PsiMethod }
 
