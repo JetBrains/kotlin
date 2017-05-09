@@ -66,6 +66,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("InvokeCall.kt")
+    public void testInvokeCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/InvokeCall.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaTypes.kt")
     public void testJavaTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/JavaTypes.kt");

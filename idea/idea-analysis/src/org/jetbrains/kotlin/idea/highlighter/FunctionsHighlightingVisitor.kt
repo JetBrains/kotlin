@@ -63,7 +63,7 @@ internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingCon
     override fun visitCallExpression(expression: KtCallExpression) {
         val callee = expression.calleeExpression
         val resolvedCall = expression.getResolvedCall(bindingContext)
-        if (callee is KtReferenceExpression && resolvedCall != null) {
+        if (callee is KtReferenceExpression && callee !is KtCallExpression && resolvedCall != null) {
             highlightCall(callee, resolvedCall)
         }
 
