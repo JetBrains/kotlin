@@ -24,9 +24,15 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
+import org.jetbrains.kotlin.types.typeUtil.isConstructedFromClassWithGivenFqName
+import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 class ConvertTwoComparisonsToRangeCheckInspection : IntentionBasedInspection<KtBinaryExpression>(
         ConvertTwoComparisonsToRangeCheckIntention::class
@@ -102,8 +108,7 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
     private fun generateRangeExpressionData(
             value: KtExpression, min: KtExpression, max: KtExpression, incrementMinByOne: Boolean, decrementMaxByOne: Boolean
     ): RangeExpressionData? {
-        fun KtExpression.getChangeBy(number: Int): String? {
-            val context = analyze()
+        fun KtExpression.getChangeBy(context: BindingContext, number: Int): String? {
             val type = getType(context) ?: return null
             if (!type.isValidTypeForIncrementDecrementByOne()) return null
 
@@ -124,21 +129,64 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
         // To avoid possible side effects
         if (!min.isSimple() || !max.isSimple()) return null
 
-        if (incrementMinByOne || decrementMaxByOne) {
-            if (!value.getType(value.analyze()).isValidTypeForIncrementDecrementByOne()) return null
+        val context = value.analyze()
+        val valType = value.getType(context)
+        val minType = min.getType(context)
+        val maxType = max.getType(context)
+
+        if (valType == null || minType == null || maxType == null) return null
+
+        if (!valType.isComparable()) return null
+
+        var minVal = min
+        var maxVal = max
+
+        if (minType != valType || maxType != valType) {
+            //numbers can be compared to numbers of different types
+            if (valType.isPrimitiveNumberType() && minType.isPrimitiveNumberType() && maxType.isPrimitiveNumberType()) {
+                //char is comparable to chars only
+                if (KotlinBuiltIns.isChar(valType) || KotlinBuiltIns.isChar(minType) || KotlinBuiltIns.isChar(maxType)) return null
+
+                if (valType.isFloatingPoint()) {
+                    if (minType.isInteger())
+                        minVal = KtPsiFactory(minVal).createExpression(getDoubleConstant(min, minType, context) ?: return null)
+                    if (maxType.isInteger())
+                        maxVal = KtPsiFactory(maxVal).createExpression(getDoubleConstant(max, maxType, context) ?: return null)
+                }
+            } else {
+                return null
+            }
         }
 
-        val minText = if (incrementMinByOne) min.getChangeBy(1) else min.text
-        val maxText = if (decrementMaxByOne) max.getChangeBy(-1) else max.text
+        if (incrementMinByOne || decrementMaxByOne) {
+            if (!valType.isValidTypeForIncrementDecrementByOne()) return null
+        }
+
+        val minText = if (incrementMinByOne) minVal.getChangeBy(context, 1) else minVal.text
+        val maxText = if (decrementMaxByOne) maxVal.getChangeBy(context, -1) else maxVal.text
         return RangeExpressionData(value, minText ?: return null, maxText ?: return null)
+    }
+
+    private fun getDoubleConstant(intExpr: KtExpression, type: KotlinType, context: BindingContext): String? {
+        val intConst = ConstantExpressionEvaluator.getConstant(intExpr, context)?.getValue(type) ?: return null
+        return (intConst as? Number)?.toDouble()?.toString()
+    }
+
+    private fun KotlinType.isComparable() = DescriptorUtils.isSubtypeOfClass(this, this.builtIns.getComparable())
+
+    private fun KotlinType.isFloatingPoint(): Boolean {
+        return KotlinBuiltIns.isFloat(this) || KotlinBuiltIns.isDouble(this)
+    }
+
+    private fun KotlinType.isInteger(): Boolean {
+        return KotlinBuiltIns.isInt(this) ||
+               KotlinBuiltIns.isLong(this) ||
+               KotlinBuiltIns.isShort(this) ||
+               KotlinBuiltIns.isByte(this)
     }
 
     private fun KotlinType?.isValidTypeForIncrementDecrementByOne(): Boolean {
         this ?: return false
-        return KotlinBuiltIns.isInt(this) ||
-               KotlinBuiltIns.isLong(this) ||
-               KotlinBuiltIns.isShort(this) ||
-               KotlinBuiltIns.isByte(this) ||
-               KotlinBuiltIns.isChar(this)
+        return this.isInteger()|| KotlinBuiltIns.isChar(this)
     }
 }
