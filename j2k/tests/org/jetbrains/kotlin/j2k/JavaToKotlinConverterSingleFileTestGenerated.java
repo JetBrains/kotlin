@@ -4430,6 +4430,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/strings"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("escapedBackslash.java")
+        public void testEscapedBackslash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/strings/escapedBackslash.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("escapedDollar.java")
         public void testEscapedDollar() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/strings/escapedDollar.java");

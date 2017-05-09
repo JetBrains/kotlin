@@ -310,12 +310,21 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 val toIntIsNeeded = value != null && value.toString().toInt() < 0 && !isLongField(expression.parent)
                 text = if (value != null && !isHexLiteral(text)) value.toString() else text + (if (toIntIsNeeded) ".toInt()" else "")
             }
-            if (typeStr == "java.lang.String" || typeStr == "char")
+            if (typeStr == "char") {
                 text = text.replace("\\\\([0-3]?[0-7]{1,2})".toRegex()) {
                     String.format("\\u%04x", Integer.parseInt(it.groupValues[1], 8))
                 }
+            }
 
             if (typeStr == "java.lang.String") {
+                text = text.replace("((?:\\\\)*)\\\\([0-3]?[0-7]{1,2})".toRegex()) {
+                    val leadingBackslashes = it.groupValues[1]
+                    if (leadingBackslashes.length % 2 == 0) {
+                        String.format("%s\\u%04x", leadingBackslashes, Integer.parseInt(it.groupValues[2], 8))
+                    } else {
+                        it.value
+                    }
+                }
                 text = text.replace("\\$([A-Za-z]+|\\{)".toRegex(), "\\\\$0")
             }
         }
