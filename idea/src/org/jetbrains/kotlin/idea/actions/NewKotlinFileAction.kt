@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.actions
 
 import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
+import com.intellij.ide.actions.CreateFromTemplateAction
 import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.ide.fileTemplates.actions.AttributesDefaults
@@ -25,6 +26,8 @@ import com.intellij.ide.fileTemplates.ui.CreateFromTemplateDialog
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.intellij.openapi.editor.LogicalPosition
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbService
@@ -36,6 +39,8 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIfNeeded
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.*
 
 class NewKotlinFileAction
@@ -50,6 +55,19 @@ class NewKotlinFileAction
         val module = ModuleUtilCore.findModuleForPsiElement(createdElement!!)
         if (module != null) {
             showConfigureKotlinNotificationIfNeeded(module)
+        }
+
+        if (createdElement is KtFile) {
+            val ktClass = createdElement.declarations.singleOrNull() as? KtNamedDeclaration
+            if (ktClass != null) {
+                CreateFromTemplateAction.moveCaretAfterNameIdentifier(ktClass)
+            }
+            else {
+                val editor = FileEditorManager.getInstance(createdElement.project).selectedTextEditor ?: return
+                if (editor.document == createdElement.viewProvider.document) {
+                    editor.caretModel.moveToLogicalPosition(LogicalPosition(editor.document.lineCount-1, 0))
+                }
+            }
         }
     }
 
