@@ -124,6 +124,28 @@ excludeDependentModules = true
 When both `excludeDependentModules` and `headerFilter` are used, they are
 applied as intersection.
 
+### Adding custom declarations ###
+
+Sometimes it is required to add custom C declarations to the library before
+generating bindings (e.g. for [macros](#macros)). Instead of creating
+additional header file with these declarations, you can include them directly
+to the end of the `.def` file, after separating line, containing only the
+separator sequence `---`:
+
+```
+headers = errno.h
+
+---
+
+static inline int getErrno() {
+    return errno;
+}
+```
+
+Note that this part of the `.def` file is treated as part of the header file, so
+functions with body should be declared as `static`.
+The declarations are parsed after including the files from `headers` list.
+
 ## Using bindings ##
 
 ### Basic interop types ###
@@ -365,6 +387,24 @@ stablePtr.dispose()
 After that it becomes invalid, so `voidPtr` can't be unwrapped anymore.
 
 See `samples/libcurl` for more details.
+
+### Macros ###
+
+Every C macro that expands to a constant is represented as Kotlin property.
+Other macros are not supported. However they can be exposed manually by
+wrapping with supported declarations. E.g. function-like macro `FOO` can be
+exposed as function `foo` by
+[adding the custom declaration](#adding-custom-declarations) to the library:
+
+```
+headers = library/base.h
+
+---
+
+static inline int foo(int arg) {
+    return FOO(arg);
+}
+```
 
 ### Definition file hints ###
 

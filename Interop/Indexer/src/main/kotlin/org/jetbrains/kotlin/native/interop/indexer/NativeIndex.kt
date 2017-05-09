@@ -21,6 +21,7 @@ enum class Language {
 }
 
 data class NativeLibrary(val includes: List<String>,
+                         val additionalPreambleLines: List<String>,
                          val compilerArgs: List<String>,
                          val language: Language,
                          val excludeSystemLibs: Boolean, // TODO: drop?

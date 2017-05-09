@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.native.interop.gen.jvm
 
 import org.jetbrains.kotlin.native.interop.indexer.*
 import java.io.File
+import java.io.StringReader
 import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.reflect.KFunction
@@ -234,6 +235,36 @@ private fun loadProperties(file: File?, substitutions: Map<String, String>): Pro
     return result
 }
 
+private fun parseDefFile(file: File?, substitutions: Map<String, String>): Pair<Properties, List<String>> {
+    val properties = Properties()
+
+    if (file == null) {
+        return properties to emptyList()
+    }
+
+    val lines = file.readLines()
+
+    val separator = "---"
+    val separatorIndex = lines.indexOf(separator)
+
+    val propertyLines: List<String>
+    val headerLines: List<String>
+
+    if (separatorIndex != -1) {
+        propertyLines = lines.subList(0, separatorIndex)
+        headerLines = lines.subList(separatorIndex + 1, lines.size)
+    } else {
+        propertyLines = lines
+        headerLines = emptyList()
+    }
+
+    val propertiesReader = StringReader(propertyLines.joinToString(System.lineSeparator()))
+    properties.load(propertiesReader)
+    substitute(properties, substitutions)
+
+    return properties to headerLines
+}
+
 private fun usage() {
     println("""
 Run interop tool with -def <def_file_for_lib>.def
@@ -270,7 +301,7 @@ private fun processLib(konanHome: String,
         return
     }
 
-    val config = loadProperties(defFile, substitutions)
+    val (config, defHeaderLines) = parseDefFile(defFile, substitutions)
 
     val konanFileName = args["-properties"]?.single() ?:
         "${konanHome}/konan/konan.properties"
@@ -329,6 +360,7 @@ private fun processLib(konanHome: String,
 
     val library = NativeLibrary(
             includes = headerFiles,
+            additionalPreambleLines = defHeaderLines,
             compilerArgs = compilerOpts,
             language = language,
             excludeSystemLibs = excludeSystemLibs,

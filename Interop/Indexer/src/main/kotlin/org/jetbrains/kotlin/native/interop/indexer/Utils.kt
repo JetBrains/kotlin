@@ -164,7 +164,7 @@ internal fun List<String>.toNativeStringArray(placement: NativePlacement): CArra
 }
 
 val NativeLibrary.preambleLines: List<String>
-    get() = this.includes.map { "#include <$it>" }
+    get() = this.includes.map { "#include <$it>" } + this.additionalPreambleLines
 
 internal fun Appendable.appendPreamble(library: NativeLibrary) = this.apply {
     library.preambleLines.forEach {
@@ -213,6 +213,7 @@ internal fun NativeLibrary.precompileHeaders(): NativeLibrary {
 
     return this.copy(
             includes = emptyList(),
+            additionalPreambleLines = emptyList(),
             compilerArgs = this.compilerArgs + listOf("-include-pch", precompiledHeader.absolutePath)
     )
 }
@@ -298,6 +299,11 @@ fun List<List<String>>.mapFragmentIsCompilable(originalLibrary: NativeLibrary): 
 
 internal interface Indexer {
     /**
+     * Called when entered main file.
+     */
+    fun enteredMainFile(file: CXFile) {}
+
+    /**
      * Called when a file gets #included/#imported.
      */
     fun ppIncludedFile(info: CXIdxIncludedFileInfo) {}
@@ -316,7 +322,12 @@ internal fun indexTranslationUnit(index: CXIndex, translationUnit: CXTranslation
             val indexerCallbacks = alloc<IndexerCallbacks>().apply {
                 abortQuery = null
                 diagnostic = null
-                enteredMainFile = null
+                enteredMainFile = staticCFunction { clientData, mainFile, reserved ->
+                    @Suppress("NAME_SHADOWING")
+                    val indexer = StableObjPtr.fromValue(clientData!!).get() as Indexer
+                    indexer.enteredMainFile(mainFile!!)
+                    null as CXIdxClientFile?
+                }
                 ppIncludedFile = staticCFunction { clientData, info ->
                     @Suppress("NAME_SHADOWING")
                     val indexer = StableObjPtr.fromValue(clientData!!).get() as Indexer
@@ -402,10 +413,15 @@ internal class ModulesMap(
 internal fun getFilteredHeaders(library: NativeLibrary, index: CXIndex, translationUnit: CXTranslationUnit): Set<CXFile> {
     val result = mutableSetOf<CXFile>()
     val topLevelFiles = mutableListOf<CXFile>()
+    var mainFile: CXFile? = null
 
     indexTranslationUnit(index, translationUnit, 0, object : Indexer {
         val headerToName = mutableMapOf<CXFile, String>()
         // The *name* of the header here is the path relative to the include path element., e.g. `curl/curl.h`.
+
+        override fun enteredMainFile(file: CXFile) {
+            mainFile = file
+        }
 
         override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
             val includeLocation = clang_indexLoc_getCXSourceLocation(info.hashLoc.readValue())
@@ -457,6 +473,9 @@ internal fun getFilteredHeaders(library: NativeLibrary, index: CXIndex, translat
             // then all non-modular headers are included.
         }
     }
+
+
+    result.add(mainFile!!)
 
     return result
 }

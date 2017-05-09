@@ -1,1 +1,7 @@
 headers = stdio.h
+
+---
+
+static inline FILE* getStdout() {
+    return stdout;
+}
