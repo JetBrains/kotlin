@@ -44,7 +44,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         }
         val imports = root.importDirectives
         if (imports.size > 1) {
-            val importKeyword = imports.get(0).firstChild
+            val importKeyword = imports[0].firstChild
             val startOffset = importKeyword.endOffset + 1
 
             val importList = root.importList
@@ -52,7 +52,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
                 val endOffset = importList.endOffset
 
                 val range = TextRange(startOffset, endOffset)
-                descriptors.add(FoldingDescriptor(importList, range))
+                descriptors.add(FoldingDescriptor(importList, range).apply { setCanBeRemovedWhenCollapsed(true) })
             }
         }
 
