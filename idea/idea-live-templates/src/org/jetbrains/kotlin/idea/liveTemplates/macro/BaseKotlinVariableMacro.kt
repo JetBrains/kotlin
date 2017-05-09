@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.idea.liveTemplates.macro
 
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.template.*
+import com.intellij.codeInsight.template.Expression
+import com.intellij.codeInsight.template.ExpressionContext
+import com.intellij.codeInsight.template.Result
+import com.intellij.codeInsight.template.TextResult
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -39,7 +42,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
-abstract class BaseKotlinVariableMacro<TState> : Macro() {
+abstract class BaseKotlinVariableMacro<TState> : KotlinMacro() {
     private fun getVariables(params: Array<Expression>, context: ExpressionContext): Collection<VariableDescriptor> {
         if (params.size != 0) return emptyList()
 

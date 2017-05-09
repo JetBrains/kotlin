@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.jetbrains.kotlin.idea.liveTemplates.macro
 
-import com.intellij.codeInsight.template.*
-import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType
+import com.intellij.codeInsight.template.Expression
+import com.intellij.codeInsight.template.ExpressionContext
+import com.intellij.codeInsight.template.Result
+import com.intellij.codeInsight.template.TextResult
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
-class KotlinClassNameMacro : Macro() {
+class KotlinClassNameMacro : KotlinMacro() {
     override fun getName() = "kotlinClassName"
     override fun getPresentableName() = "kotlinClassName()"
 
@@ -29,6 +31,4 @@ class KotlinClassNameMacro : Macro() {
         val element = context.psiElementAtStartOffset?.parentsWithSelf?.firstOrNull { it is KtClassOrObject && it.name != null } ?: return null
         return TextResult((element as KtClassOrObject).name!!)
     }
-
-    override fun isAcceptableInContext(context: TemplateContextType?): Boolean = context is KotlinTemplateContextType
 }
