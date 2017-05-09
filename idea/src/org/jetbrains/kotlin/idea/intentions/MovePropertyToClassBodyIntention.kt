@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 
 class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(KtParameter::class.java, "Move to class body") {
-    override fun isApplicableTo(element: KtParameter, caretOffset: Int): Boolean = element.isPropertyParameter()
+    override fun isApplicableTo(element: KtParameter, caretOffset: Int): Boolean {
+        return element.isPropertyParameter() && (element.ownerFunction as KtPrimaryConstructor).isNotContainedInAnnotation()
+    }
 
     override fun applyTo(element: KtParameter, editor: Editor?) {
         val parentClass = PsiTreeUtil.getParentOfType(element, KtClass::class.java) ?: return
@@ -97,4 +99,6 @@ class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(KtP
         nextSibling?.delete() // ':' symbol after use site
         delete()
     }
+
+    fun KtPrimaryConstructor.isNotContainedInAnnotation() = !getContainingClassOrObject().isAnnotation()
 }
