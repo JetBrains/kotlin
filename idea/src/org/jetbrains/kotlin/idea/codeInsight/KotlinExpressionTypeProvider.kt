@@ -17,6 +17,10 @@
 package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.lang.ExpressionTypeProvider
+import com.intellij.openapi.editor.ex.util.EditorUtil
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.TextEditor
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -50,7 +54,14 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
 
     override fun getExpressionsAt(elementAt: PsiElement): List<KtExpression> {
         val candidates = elementAt.parentsWithSelf.filterIsInstance<KtExpression>().filter { it.shouldShowType() }.toList()
-        return candidates.takeWhile { it.textRange.startOffset == candidates.first().textRange.startOffset }
+        val fileEditor = elementAt.containingFile?.virtualFile?.let { FileEditorManager.getInstance(elementAt.project).getSelectedEditor(it) }
+        val selectionTextRange = if (fileEditor is TextEditor) {
+            EditorUtil.getSelectionInAnyMode(fileEditor.editor)
+        } else {
+            TextRange.EMPTY_RANGE
+        }
+        val anchor = candidates.firstOrNull { selectionTextRange.isEmpty || it.textRange.contains(selectionTextRange) } ?: return emptyList()
+        return candidates.filter { it.textRange.startOffset == anchor.textRange.startOffset }
     }
 
     private fun KtExpression.shouldShowType() = when (this) {
