@@ -69,7 +69,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 %eof}
 
 %xstate STRING RAW_STRING SHORT_TEMPLATE_ENTRY BLOCK_COMMENT DOC_COMMENT
-%state LONG_TEMPLATE_ENTRY
+%state LONG_TEMPLATE_ENTRY UNMATCHED_BACKTICK
 
 DIGIT=[0-9]
 DIGIT_OR_UNDERSCORE = [_0-9]
@@ -119,6 +119,7 @@ REGULAR_STRING_PART=[^\\\"\n\$]+
 SHORT_TEMPLATE_ENTRY=\${IDENTIFIER}
 LONELY_DOLLAR=\$
 LONG_TEMPLATE_ENTRY_START=\$\{
+LONELY_BACKTICK=`
 
 %%
 
@@ -317,6 +318,8 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 ","          { return KtTokens.COMMA     ; }
 "#"          { return KtTokens.HASH      ; }
 "@"          { return KtTokens.AT        ; }
+
+{LONELY_BACKTICK} { pushState(UNMATCHED_BACKTICK); return TokenType.BAD_CHARACTER; }
 
 // error fallback
 .            { return TokenType.BAD_CHARACTER; }
