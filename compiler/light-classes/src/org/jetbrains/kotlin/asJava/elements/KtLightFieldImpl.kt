@@ -18,13 +18,12 @@ package org.jetbrains.kotlin.asJava.elements
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiVariableEx
-import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForEnumEntry
+import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -41,8 +40,7 @@ sealed class KtLightFieldImpl<D : PsiField>(
         @Suppress("UNCHECKED_CAST")
         get() = super.clsDelegate as D
 
-    @Throws(IncorrectOperationException::class)
-    override fun setInitializer(initializer: PsiExpression?) = throw IncorrectOperationException("Not supported")
+    override fun setInitializer(initializer: PsiExpression?) = cannotModify()
 
     override fun getType() = clsDelegate.type
 
@@ -52,8 +50,7 @@ sealed class KtLightFieldImpl<D : PsiField>(
 
     override fun hasInitializer() = clsDelegate.hasInitializer()
 
-    @Throws(IncorrectOperationException::class)
-    override fun normalizeDeclaration() = throw IncorrectOperationException("Not supported")
+    override fun normalizeDeclaration() = cannotModify()
 
     override fun computeConstantValue() = clsDelegate.computeConstantValue()
 
