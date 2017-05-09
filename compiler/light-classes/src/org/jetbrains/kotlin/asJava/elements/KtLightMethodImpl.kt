@@ -20,10 +20,13 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.*
-import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.builder.*
+import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
+import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
+import org.jetbrains.kotlin.asJava.builder.MemberIndex
+import org.jetbrains.kotlin.asJava.builder.memberIndex
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.propertyNameByAccessor
 import org.jetbrains.kotlin.asJava.unwrapped
@@ -93,7 +96,7 @@ class KtLightMethodImpl private constructor(
             nameExpression.replace(KtPsiFactory(this).createStringTemplate(name))
         }
         else {
-            val toRename = kotlinOrigin as? PsiNamedElement ?: throwCanNotModify()
+            val toRename = kotlinOrigin as? PsiNamedElement ?: cannotModify()
             toRename.setName(newNameForOrigin)
         }
         return this
@@ -104,11 +107,8 @@ class KtLightMethodImpl private constructor(
             if (it.isValid) {
                 it.delete()
             }
-        } ?: throwCanNotModify()
+        } ?: cannotModify()
     }
-
-    // TODO: add message
-    private fun throwCanNotModify(): Nothing = throw IncorrectOperationException()
 
     override fun getModifierList(): PsiModifierList {
         if (calculatingReturnType.get() == true) {

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry

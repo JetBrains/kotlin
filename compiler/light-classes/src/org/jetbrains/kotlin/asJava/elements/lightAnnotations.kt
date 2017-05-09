@@ -22,6 +22,7 @@ import com.intellij.psi.*
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
@@ -187,8 +188,7 @@ class KtLightAnnotationForSourceEntry(
 
     override fun hashCode() = kotlinOrigin.hashCode()
 
-    override fun <T : PsiAnnotationMemberValue?> setDeclaredAttributeValue(attributeName: String?, value: T?): T
-            = clsDelegate.setDeclaredAttributeValue(attributeName, value)
+    override fun <T : PsiAnnotationMemberValue?> setDeclaredAttributeValue(attributeName: String?, value: T?) = cannotModify()
 }
 
 class KtLightNonSourceAnnotation(
@@ -196,8 +196,7 @@ class KtLightNonSourceAnnotation(
 ): KtLightAbstractAnnotation(parent, { clsDelegate }) {
     override val kotlinOrigin: KtAnnotationEntry? get() = null
     override fun getQualifiedName() = clsDelegate.qualifiedName
-    override fun <T : PsiAnnotationMemberValue?> setDeclaredAttributeValue(attributeName: String?, value: T?)
-            = clsDelegate.setDeclaredAttributeValue(attributeName, value)
+    override fun <T : PsiAnnotationMemberValue?> setDeclaredAttributeValue(attributeName: String?, value: T?) = cannotModify()
     override fun findAttributeValue(attributeName: String?) = clsDelegate.findAttributeValue(attributeName)
     override fun findDeclaredAttributeValue(attributeName: String?) = clsDelegate.findDeclaredAttributeValue(attributeName)
 }
@@ -243,8 +242,6 @@ class KtLightNullabilityAnnotation(member: KtLightElement<*, PsiModifierListOwne
 
     override fun findDeclaredAttributeValue(attributeName: String?) = null
 }
-
-private fun cannotModify(): Nothing = error("Cannot modify") // TODO: meaningful message?
 
 internal fun isNullabilityAnnotation(qualifiedName: String?) = qualifiedName in backendNullabilityAnnotations
 
