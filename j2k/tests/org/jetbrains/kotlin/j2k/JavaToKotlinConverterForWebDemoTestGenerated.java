@@ -4538,6 +4538,30 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("nestedIf.java")
+        public void testNestedIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/nestedIf.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedIfFallback.java")
+        public void testNestedIfFallback() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/nestedIfFallback.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedSwitch.java")
+        public void testNestedSwitch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/nestedSwitch.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedSwitchFallback.java")
+        public void testNestedSwitchFallback() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/nestedSwitchFallback.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("nondefault.java")
         public void testNondefault() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/nondefault.java");
