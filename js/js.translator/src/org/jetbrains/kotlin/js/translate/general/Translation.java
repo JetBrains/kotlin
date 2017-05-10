@@ -101,7 +101,7 @@ public final class Translation {
             if (type != null) {
                 if (KotlinBuiltIns.isLong(type) || (KotlinBuiltIns.isInt(type) && expression instanceof KtUnaryExpression)) {
                     JsExpression constantResult = translateConstant(compileTimeValue, expression, context);
-                    if (constantResult != null) return constantResult;
+                    if (constantResult != null) return constantResult.source(expression);
                 }
             }
         }
@@ -186,7 +186,7 @@ public final class Translation {
             @NotNull JsBlock block
     ) {
         JsNode jsNode = translateExpression(expression, context, block);
-        if (jsNode instanceof  JsExpression) {
+        if (jsNode instanceof JsExpression) {
             KotlinType expressionType = context.bindingContext().getType(expression);
             return unboxIfNeeded((JsExpression) jsNode, expressionType != null && KotlinBuiltIns.isCharOrNullableChar(expressionType));
         }
@@ -200,7 +200,7 @@ public final class Translation {
         }
 
         block.getStatements().add(convertToStatement(jsNode));
-        return new JsNullLiteral();
+        return new JsNullLiteral().source(expression);
     }
 
     @NotNull
