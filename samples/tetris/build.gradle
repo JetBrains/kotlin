@@ -16,7 +16,10 @@ apply plugin: 'konan'
 konanInterop {
     sdlMacbook {
         defFile 'sdl.def'
-        includeDirs '/Library/Frameworks/SDL2.framework/Headers', "${System.getProperty("user.home")}/Library/Frameworks/SDL2.framework/Headers"
+        includeDirs '/Library/Frameworks/SDL2.framework/Headers',
+                "${System.getProperty("user.home")}/Library/Frameworks/SDL2.framework/Headers",
+                '/opt/local/include/SDL2',
+                '/usr/local/include/SDL2'
 
         target 'macbook'
     }

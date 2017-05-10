@@ -101,7 +101,7 @@ cinterop execution (see the `dumpParameters` task in `samles/csvparser/build.gra
              // Arguments to be passed to a linker.
              linkerOpts 'Some linker opts'
 
-             // Target platform. Available values: "osx", "linux", "ios", "raspberrypi".
+             // Target platform. Available values: "macbook", "linux", "iphone", "raspberrypi".
              target 'macbook'
 
              // Language and API version.
