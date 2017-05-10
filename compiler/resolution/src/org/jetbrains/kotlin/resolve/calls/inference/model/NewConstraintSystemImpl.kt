@@ -90,6 +90,16 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
     override fun addEqualityConstraint(a: UnwrappedType, b: UnwrappedType, position: ConstraintPosition) =
             constraintInjector.addInitialEqualityConstraint(apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) }, a, b, position)
 
+    override fun getProperSuperTypeConstructors(type: UnwrappedType): List<TypeConstructor> {
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+        val variableWithConstraints = notFixedTypeVariables[type.constructor] ?: return listOf(type.constructor)
+
+        return variableWithConstraints.constraints.mapNotNull {
+            if (it.kind == ConstraintKind.LOWER) return@mapNotNull null
+            it.type.constructor.takeUnless { allTypeVariables.containsKey(it) }
+        }
+    }
+
     // ConstraintSystemBuilder
     private fun transactionRegisterVariable(variable: NewTypeVariable) {
         if (state != State.TRANSACTION) return

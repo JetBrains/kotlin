@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallableReferenceArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
+import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 
 interface ConstraintSystemOperation {
@@ -32,6 +33,8 @@ interface ConstraintSystemOperation {
     fun addEqualityConstraint(a: UnwrappedType, b: UnwrappedType, position: ConstraintPosition)
 
     fun isProperType(type: UnwrappedType): Boolean
+
+    fun getProperSuperTypeConstructors(type: UnwrappedType): List<TypeConstructor>
 }
 
 interface ConstraintSystemBuilder : ConstraintSystemOperation {

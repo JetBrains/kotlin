@@ -149,5 +149,26 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
             return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kPropertyClass,
                                                        listOf(StarProjectionImpl(kPropertyClass.typeConstructor.parameters.single())))
         }
+
+        fun isPossibleExpectedCallableType(typeConstructor: TypeConstructor): Boolean {
+            val descriptor = typeConstructor.declarationDescriptor as? ClassDescriptor ?: return false
+            if (KotlinBuiltIns.isAny(descriptor)) return true
+
+            val shortName = descriptor.name.asString()
+
+            val packageName = DescriptorUtils.getFqName(descriptor).parent().toSafe()
+            if (packageName == KOTLIN_REFLECT_FQ_NAME) {
+                return shortName.startsWith("KFunction") // KFunctionN, KFunction
+                       || shortName.startsWith("KProperty") // KPropertyN, KProperty
+                       || shortName.startsWith("KMutableProperty") // KMutablePropertyN, KMutableProperty
+                       || shortName == "KCallable" || shortName == "KAnnotatedElement"
+
+            }
+            if (packageName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) {
+                return shortName.startsWith("Function") // FunctionN, Function
+            }
+
+            return false
+        }
     }
 }
