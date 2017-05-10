@@ -102,7 +102,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
     val copyIrElement = DeepCopyIrTreeWithDescriptors(currentScope.scope.scopeOwner, context) // Create DeepCopy for current scope.
     val substituteMap = mutableMapOf<ValueDescriptor, IrExpression>()
-    var isInlineConstructor  = false
+    var isInlineConstructor = false
 
     //-------------------------------------------------------------------------//
 
@@ -358,7 +358,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
     //-------------------------------------------------------------------------//
 
-    private fun replaceDelegatingConstructorCall(statements: MutableList<IrStatement>): MutableList<IrStatement> {
+    private fun replaceDelegatingConstructorCall(statements: List<IrStatement>): List<IrStatement> {
 
         return statements.map { statement ->
             if (statement is IrDelegatingConstructorCallImpl) generateIrCall(statement)

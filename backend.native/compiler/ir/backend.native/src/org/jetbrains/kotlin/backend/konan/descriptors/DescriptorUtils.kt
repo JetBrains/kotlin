@@ -312,11 +312,13 @@ internal fun DeclarationDescriptor.getMemberScope(): MemberScope {
 // It is possible to declare "external inline fun",
 // but it doesn't have much sense for native,
 // since externals don't have IR bodies.
-// Enforce inlining of some constructors.
+// Enforce inlining of constructors annotated with @InlineConstructor.
+
+private val inlineConstructor = FqName("konan.internal.InlineConstructor")
 
 internal val FunctionDescriptor.needsInlining: Boolean
     get() {
-        val inlineConstructor = annotations.hasAnnotation(FqName("konan.internal.InlineConstructor"))
+        val inlineConstructor = annotations.hasAnnotation(inlineConstructor)
         if (inlineConstructor) return true
         return (this.isInline && !this.isExternal)
     }
