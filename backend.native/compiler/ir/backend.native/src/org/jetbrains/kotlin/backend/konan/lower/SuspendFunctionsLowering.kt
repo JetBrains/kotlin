@@ -180,7 +180,11 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
     private fun getSuspendFunctionKind(irFunction: IrFunction): SuspendFunctionKind {
         if (suspendLambdas.contains(irFunction.descriptor))
             return SuspendFunctionKind.NEEDS_STATE_MACHINE            // Suspend lambdas always need coroutine implementation.
-        val body = irFunction.body!!
+
+        val body = irFunction.body
+        if (body == null)
+            return SuspendFunctionKind.NO_SUSPEND_CALLS
+
         var numberOfSuspendCalls = 0
         body.acceptVoid(object: IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
@@ -197,6 +201,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
         // It is important to optimize the case where there is only one suspend call and it is the last statement
         // because we don't need to build a fat coroutine class in that case.
         // This happens a lot in practise because of suspend functions with default arguments.
+        // TODO: use TailRecursionCallsCollector.
         val lastStatement = (body as IrBlockBody).statements.lastOrNull()
         val lastCall = when (lastStatement) {
             is IrCall -> lastStatement
