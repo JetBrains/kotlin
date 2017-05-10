@@ -36,6 +36,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/lineNumbers"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
     }
 
+    @TestMetadata("chainedCall.kt")
+    public void testChainedCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/chainedCall.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("closure.kt")
     public void testClosure() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/closure.kt");

@@ -44,7 +44,7 @@ object CallTranslator {
                   resolvedCall: ResolvedCall<out FunctionDescriptor>,
                   extensionOrDispatchReceiver: JsExpression? = null
     ): JsExpression {
-        return translateCall(context, resolvedCall, ExplicitReceivers(extensionOrDispatchReceiver))
+        return translateCall(context, resolvedCall, ExplicitReceivers(extensionOrDispatchReceiver)).source(resolvedCall.call.callElement)
     }
 
     fun translateGet(context: TranslationContext,
@@ -52,7 +52,7 @@ object CallTranslator {
                      extensionOrDispatchReceiver: JsExpression? = null
     ): JsExpression {
         val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, extensionOrDispatchReceiver), null)
-        return variableAccessInfo.translateVariableAccess()
+        return variableAccessInfo.translateVariableAccess().source(resolvedCall.call.callElement)
     }
 
     fun translateSet(context: TranslationContext,
@@ -61,7 +61,7 @@ object CallTranslator {
                      extensionOrDispatchReceiver: JsExpression? = null
     ): JsExpression {
         val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, extensionOrDispatchReceiver), value)
-        return variableAccessInfo.translateVariableAccess()
+        return variableAccessInfo.translateVariableAccess().source(resolvedCall.call.callElement)
     }
 
     fun buildCall(context: TranslationContext,
