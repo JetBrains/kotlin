@@ -190,7 +190,7 @@ public final class WhenTranslator extends AbstractTranslator {
         assert expressionToMatchNonTranslated != null : "expressionToMatch != null => expressionToMatchNonTranslated != null: " +
                                                         PsiUtilsKt.getTextWithLocation(conditionIsPattern);
         JsExpression result = Translation.patternTranslator(context).translateIsCheck(expressionToMatch, typeReference);
-        return result != null ? result : new JsBooleanLiteral(true);
+        return (result != null ? result : new JsBooleanLiteral(true)).source(conditionIsPattern);
     }
 
     @NotNull
@@ -226,7 +226,7 @@ public final class WhenTranslator extends AbstractTranslator {
         TranslationContext callContext = context.innerContextWithAliasesForExpressions(subjectAliases);
         boolean negated = condition.getOperationReference().getReferencedNameElementType() == KtTokens.NOT_IN;
         return new InOperationTranslator(callContext, expressionToMatch, condition.getRangeExpression(), condition.getOperationReference(),
-                                         negated).translate();
+                                         negated).translate().source(condition);
     }
 
     @Nullable

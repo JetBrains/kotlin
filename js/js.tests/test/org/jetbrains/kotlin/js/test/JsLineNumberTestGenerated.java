@@ -155,4 +155,16 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/valParameter.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("whenIn.kt")
+    public void testWhenIn() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/whenIn.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("whenIs.kt")
+    public void testWhenIs() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/whenIs.kt");
+        doTest(fileName);
+    }
 }
