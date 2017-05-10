@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JS
-// see KT-17700
-
 // WITH_RUNTIME
 
 import kotlin.test.assertEquals
