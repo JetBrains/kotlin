@@ -25,7 +25,6 @@ import kotlin.internal.PureReifiable
 import kotlin.util.sortArrayComparable
 import kotlin.util.sortArrayWith
 import kotlin.util.sortArray
-import konan.internal.InlineConstructor
 // TODO: make all iterator() methods inline.
 
 /**
