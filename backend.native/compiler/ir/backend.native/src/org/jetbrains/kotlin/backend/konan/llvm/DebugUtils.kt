@@ -58,7 +58,7 @@ internal class DebugInfo internal constructor(override val context: Context):Con
             context.builtIns.booleanType to LLVMInt1Type()!!,
             context.builtIns.floatType   to LLVMFloatType()!!,
             context.builtIns.doubleType  to LLVMDoubleType()!!)
-    val intTypes = listOf<KotlinType>(context.builtIns.byteType, context.builtIns.shortType, context.builtIns.longType)
+    val intTypes = listOf<KotlinType>(context.builtIns.byteType, context.builtIns.shortType, context.builtIns.intType, context.builtIns.longType)
     val realTypes = listOf<KotlinType>(context.builtIns.floatType, context.builtIns.doubleType)
     val llvmTypeSizes = llvmTypes.map { it.key to LLVMSizeOfTypeInBits(llvmTargetData, it.value) }.toMap()
     val llvmTypeAlignments = llvmTypes.map {it.key to LLVMPreferredAlignmentOfType(llvmTargetData, it.value)}.toMap()
