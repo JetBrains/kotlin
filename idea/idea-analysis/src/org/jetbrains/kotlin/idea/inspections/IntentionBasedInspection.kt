@@ -147,8 +147,8 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
     }
 
     /* we implement IntentionAction to provide isAvailable which will be used to hide outdated items and make sure we never call 'invoke' for such item */
-    private open inner class IntentionBasedQuickFix(
-            private val intention: SelfTargetingRangeIntention<TElement>,
+    internal open inner class IntentionBasedQuickFix(
+            val intention: SelfTargetingRangeIntention<TElement>,
             private val additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
             targetElement: TElement
     ) : LocalQuickFixOnPsiElement(targetElement), IntentionAction {
