@@ -363,7 +363,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
         return statements.map { statement ->
             if (statement is IrDelegatingConstructorCallImpl) generateIrCall(statement)
             else statement
-        }.toMutableList()
+        }
     }
 
     //-------------------------------------------------------------------------//

@@ -19,8 +19,8 @@
 
 package kotlin
 
+import konan.internal.InlineConstructor
 import kotlin.collections.*
-import kotlin.comparisons.*
 import kotlin.internal.PureReifiable
 import kotlin.util.sortArrayComparable
 import kotlin.util.sortArrayWith
