@@ -32,15 +32,12 @@ class ChangePackageToMatchDirectoryIntention : SelfTargetingOffsetIndependentInt
         if (file.isInjectedFragment || file.packageMatchesDirectory()) return false
 
         val fqNameByDirectory = file.getFqNameByDirectory()
-        if (!fqNameByDirectory.hasIdentifiersOnly()) {
-            if (isIntentionBaseInspectionEnabled(file.project, element)) {
-                text = "File package doesn't match directory"
-                return true
-            }
-            return false
+        text = if (!fqNameByDirectory.hasIdentifiersOnly()) {
+            "File package doesn't match directory (cannot fix)"
         }
-
-        text = "Change file's package to '${fqNameByDirectory.asString()}'"
+        else {
+            "Change file's package to '${fqNameByDirectory.asString()}'"
+        }
         return true
     }
 
