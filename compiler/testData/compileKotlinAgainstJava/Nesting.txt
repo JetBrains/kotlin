@@ -20,9 +20,6 @@ public open class Nesting {
                 public constructor FourthImpl()
                 public open fun isImplemented(): kotlin.Boolean
             }
-
-            // Static members
-            public final /*synthesized*/ fun Fourth(/*0*/ () -> kotlin.Boolean): test.Nesting.Second.Third.Fourth
         }
     }
 }

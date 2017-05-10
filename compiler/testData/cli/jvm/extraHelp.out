@@ -15,7 +15,7 @@ where advanced options include:
   -Xscript-resolver-environment=<key=value[,]>
                              Script resolver environment in key-value pairs (the value could be quoted and escaped)
   -Xuse-javac                Use javac for Java source and class files analysis
-  -Xjavac-arguments <option[,]> Java compiler arguments
+  -Xjavac-arguments=<option[,]> Java compiler arguments
   -Xno-inline                Disable method inlining
   -Xrepeat=<count>           Repeat compilation (for performance analysis)
   -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)

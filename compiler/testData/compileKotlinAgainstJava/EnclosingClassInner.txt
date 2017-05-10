@@ -29,9 +29,6 @@ public/*package*/ interface Interface {
         public open fun values(): kotlin.Array<(out) test.Interface.Kind!>!
         public final /*synthesized*/ fun values(): kotlin.Array<test.Interface.Kind>
     }
-
-    // Static members
-    public final /*synthesized*/ fun Builder(/*0*/ (arg0: test.Interface.Kind!) -> test.Interface.Builder!): test.Interface.Builder
 }
 
 public/*package*/ open class InterfaceImpl : test.Interface {
@@ -41,7 +38,4 @@ public/*package*/ open class InterfaceImpl : test.Interface {
     public/*package*/ interface BuilderImpl : test.Interface.Builder {
         public abstract fun setKind(/*0*/ test.Interface.Kind!): test.Interface.Builder!
     }
-
-    // Static members
-    public/*package*/ final /*synthesized*/ fun BuilderImpl(/*0*/ (arg0: test.Interface.Kind!) -> test.Interface.Builder!): test.InterfaceImpl.BuilderImpl
 }
