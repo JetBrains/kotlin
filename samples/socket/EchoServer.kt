@@ -64,24 +64,21 @@ fun main(args: Array<String>) {
     }
 }
 
-// Not available through interop because declared as macro:
-fun htons(value: Short) = ((value.toInt() ushr 8) or (value.toInt() shl 8)).toShort()
+val errno: Int
+    get() = interop_errno()
 
-fun throwUnixError(): Nothing {
-    perror(null) // TODO: store error message to exception instead.
-    throw Error("UNIX call failed")
-}
+fun htons(value: Short) = interop_htons(value.toInt()).toShort()
 
 inline fun Int.ensureUnixCallResult(predicate: (Int) -> Boolean): Int {
     if (!predicate(this)) {
-        throwUnixError()
+        throw Error(strerror(errno)!!.toKString())
     }
     return this
 }
 
 inline fun Long.ensureUnixCallResult(predicate: (Long) -> Boolean): Long {
     if (!predicate(this)) {
-        throwUnixError()
+        throw Error(strerror(errno)!!.toKString())
     }
     return this
 }

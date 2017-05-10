@@ -203,22 +203,15 @@ class IOException: RuntimeException {
 }
 
 val errno: Int
-    get() = __error()!!.pointed.value
+    get() = interop_errno()
 
-fun FD_ZERO(set: fd_set) {
-    memset(set.fds_bits, 0, sizeOf<fd_set>())
-}
+fun FD_ZERO(set: fd_set): Unit = interop_FD_ZERO(set.ptr)
 
-fun FD_SET(bit: Int, set: fd_set) {
-    set.fds_bits[bit / 32] = set.fds_bits[bit / 32] or (1 shl (bit % 32))
-}
+fun FD_SET(bit: Int, set: fd_set): Unit = interop_FD_SET(bit, set.ptr)
 
-fun FD_ISSET(bit: Int, set: fd_set): Boolean {
-    return set.fds_bits[bit / 32] and (1 shl (bit % 32)) != 0
-}
+fun FD_ISSET(bit: Int, set: fd_set) = interop_FD_ISSET(bit, set.ptr) != 0
 
-// Not available through interop because declared as macro:
-fun htons(value: Short) = ((value.toInt() ushr 8) or (value.toInt() shl 8)).toShort()
+fun htons(value: Short) = interop_htons(value.toInt()).toShort()
 
 fun getUnixError() = strerror(errno)!!.toKString()
 
