@@ -21,12 +21,12 @@ import com.android.tools.lint.checks.ApiDetector
 import com.android.tools.lint.checks.CommentDetector
 import com.android.tools.lint.checks.ParcelDetector
 import com.android.tools.lint.detector.api.Issue
-import com.android.tools.lint.detector.api.TextFormat
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.android.inspections.lint.AndroidLintQuickFix
 import org.jetbrains.android.inspections.lint.AndroidLintQuickFixProvider
+import java.util.regex.Pattern
 
 
 class KotlinAndroidQuickFixProvider : AndroidLintQuickFixProvider {
@@ -51,7 +51,7 @@ class KotlinAndroidQuickFixProvider : AndroidLintQuickFixProvider {
     }
 
     fun getApiQuickFixes(issue: Issue, element: PsiElement, message: String): Array<AndroidLintQuickFix> {
-        val api = ApiDetector.getRequiredVersion(issue, message, TextFormat.RAW)
+        val api = getRequiredVersion(message)
         if (api == -1) {
             return AndroidLintQuickFix.EMPTY_ARRAY
         }
@@ -62,6 +62,16 @@ class KotlinAndroidQuickFixProvider : AndroidLintQuickFixProvider {
         }
 
         return arrayOf(AddTargetApiQuickFix(api, false), AddTargetVersionCheckQuickFix(api))
+    }
+
+    private fun getRequiredVersion(errorMessage: String): Int {
+        val pattern = Pattern.compile("\\s(\\d+)\\s")
+        val matcher = pattern.matcher(errorMessage)
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1))
+        }
+
+        return -1
     }
 
     companion object {
