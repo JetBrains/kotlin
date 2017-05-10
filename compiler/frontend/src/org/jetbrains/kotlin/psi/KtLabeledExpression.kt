@@ -14,59 +14,28 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.psi.search.LocalSearchScope;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNameIdentifierOwner
+import com.intellij.psi.search.LocalSearchScope
 
-public class KtLabeledExpression extends KtExpressionWithLabel implements PsiNameIdentifierOwner {
-    public KtLabeledExpression(@NotNull ASTNode node) {
-        super(node);
+class KtLabeledExpression(node: ASTNode) : KtExpressionWithLabel(node), PsiNameIdentifierOwner {
+    @get:IfNotParsed
+    val baseExpression: KtExpression?
+        get() = findChildByClass(KtExpression::class.java)
+
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitLabeledExpression(this, data)
+
+    override fun getName() = getLabelName()
+
+    override fun setName(name: String): PsiElement {
+        getTargetLabel()?.replace(KtPsiFactory(project).createLabeledExpression(name).getTargetLabel()!!)
+        return this
     }
 
-    @Nullable @IfNotParsed
-    public KtExpression getBaseExpression() {
-        return findChildByClass(KtExpression.class);
-    }
+    override fun getNameIdentifier() = getTargetLabel()?.getIdentifier()
 
-    @Override
-    public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitLabeledExpression(this, data);
-    }
-
-    @Override
-    public String getName() {
-        return getLabelName();
-    }
-
-    @Override
-    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
-        KtSimpleNameExpression currentLabel = getTargetLabel();
-        if (currentLabel != null) {
-            KtSimpleNameExpression newLabel = new KtPsiFactory(getProject()).createLabeledExpression(name).getTargetLabel();
-            //noinspection ConstantConditions
-            currentLabel.replace(newLabel);
-        }
-        return this;
-    }
-
-    @Nullable
-    @Override
-    public PsiElement getNameIdentifier() {
-        KtSimpleNameExpression targetLabel = getTargetLabel();
-        if (targetLabel == null) return null;
-        return targetLabel.getIdentifier();
-    }
-
-    @NotNull
-    @Override
-    public SearchScope getUseScope() {
-        return new LocalSearchScope(this);
-    }
+    override fun getUseScope() = LocalSearchScope(this)
 }
