@@ -22,18 +22,26 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 
 class KotlinClassBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtClassOrObject) return
-        if (psiElement.getBody() != null) return
 
-        val doc = editor.document
-        val endOffset = psiElement.range.end
+        val body = psiElement.getBody()
+        if (!body?.text.isNullOrBlank()) return
 
-        editor.caretModel.moveToOffset(psiElement.endOffset - 1)
+        var endOffset = psiElement.range.end
+
+        if (body != null) {
+            body.getPrevSiblingIgnoringWhitespaceAndComments()?.let {
+                endOffset = it.endOffset
+            }
+        }
+
+        editor.caretModel.moveToOffset(endOffset - 1)
 
         // Insert '\n' to force a multiline body, otherwise there will be an empty body on one line and a caret on the next one.
-        doc.insertString(endOffset, "{\n}")
+        editor.document.insertString(endOffset, "{\n}")
     }
 }

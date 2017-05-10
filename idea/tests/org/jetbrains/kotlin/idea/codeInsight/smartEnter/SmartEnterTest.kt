@@ -1380,6 +1380,38 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             """
     )
 
+    fun testObjectExpressionBody1() = doFileTest(
+            """
+            interface I
+            val a = object : I<caret>
+            """
+            ,
+            """
+            interface I
+            val a = object : I {
+                <caret>
+            }
+            """
+    )
+
+    fun testObjectExpressionBody2() = doFileTest(
+            """
+            interface I
+            val a = object : I<caret>
+
+            val b = ""
+            """
+            ,
+            """
+            interface I
+            val a = object : I {
+                <caret>
+            }
+
+            val b = ""
+            """
+    )
+
     fun doFunTest(before: String, after: String) {
         fun String.withFunContext(): String {
             val bodyText = "//----\n${this.trimIndent()}\n//----"
