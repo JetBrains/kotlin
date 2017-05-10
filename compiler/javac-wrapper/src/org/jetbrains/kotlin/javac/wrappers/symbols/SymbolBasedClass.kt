@@ -21,6 +21,7 @@ import com.intellij.psi.CommonClassNames
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.ElementKind
@@ -33,7 +34,7 @@ import javax.tools.JavaFileObject
 
 class SymbolBasedClass(element: TypeElement,
                        javac: JavacWrapper,
-                       val file: JavaFileObject?) : SymbolBasedClassifier<TypeElement>(element, javac), JavaClass {
+                       val file: JavaFileObject?) : SymbolBasedClassifier<TypeElement>(element, javac), VirtualFileBoundJavaClass {
 
     override val name: Name
         get() = Name.identifier(element.simpleName.toString())
@@ -109,7 +110,7 @@ class SymbolBasedClass(element: TypeElement,
     override val innerClassNames: Collection<Name>
         get() = innerClasses.keys
 
-    val virtualFile: VirtualFile? by lazy {
+    override val virtualFile: VirtualFile? by lazy {
         file?.let { javac.toVirtualFile(it) }
     }
 
