@@ -9,6 +9,8 @@ import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
+import org.jetbrains.kotlin.gradle.internal.KaptTask
+import org.jetbrains.kotlin.gradle.internal.WrappedVariantData
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
@@ -58,10 +60,12 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
                     project.files()
                 ).builtBy(kotlinTask)
 
+
         val preJavaClasspathKey = variantData.registerPreJavacGeneratedBytecode(preJavaKotlinOutput)
-        val kotlinClasspath = variantData.getCompileClasspath(preJavaClasspathKey)
+        kotlinTask.dependsOn(variantData.getSourceFolders(SourceKind.JAVA))
 
         kotlinTask.conventionMapping.map("classpath") {
+            val kotlinClasspath = variantData.getCompileClasspath(preJavaClasspathKey)
             kotlinClasspath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
         }
 
@@ -71,12 +75,12 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         // Use kapt1 annotations file for up-to-date check since annotation processing is done with javac
         kotlinTask.annotationsFile?.let { javaTask.inputs.file(it) }
 
-        val kotlinAfterJavaOutput = project.files(kotlinAfterJavaTask).builtBy(kotlinAfterJavaTask)
-        variantData.registerPostJavacGeneratedBytecode(kotlinAfterJavaOutput)
-
         if (kotlinAfterJavaTask != null) {
+            val kotlinAfterJavaOutput = project.files(kotlinAfterJavaTask.destinationDir).builtBy(kotlinAfterJavaTask)
+            variantData.registerPostJavacGeneratedBytecode(kotlinAfterJavaOutput)
+
             // Then don't register kotlinTask output, but only use it for Java compilation
-            javaTask.appendClasspath(kotlinTask.destinationDir)
+            javaTask.classpath = project.files(kotlinTask.destinationDir).from(javaTask.classpath)
         }
     }
 
@@ -112,4 +116,21 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         // Though it is affordable not to implement this for the first previews, because the impact is tolerable
         // to some degree -- the dependent projects will rebuild non-incrementally when a library project changes
     }
+
+    private inner class WrappedVariant(variantData: BaseVariant) : org.jetbrains.kotlin.gradle.internal.WrappedVariantData<BaseVariant>(variantData) {
+        override val name: String = getVariantName(variantData)
+        override val sourceProviders: Iterable<SourceProvider> = getSourceProviders(variantData)
+        override fun addJavaSourceFoldersToModel(generatedFilesDir: File) = addJavaSourceDirectoryToVariantModel(variantData, generatedFilesDir)
+
+        override val annotationProcessorOptions: Map<String, String>? = variantData.javaCompileOptions.annotationProcessorOptions.arguments
+
+        override fun wireKaptTask(project: Project, task: KaptTask, kotlinTask: KotlinCompile, javaTask: AbstractCompile) {
+            task.dependsOn(kotlinTask.dependsOn.minus(task))
+
+            val kaptSourceOutput = project.fileTree(task.destinationDir).builtBy(task)
+            variantData.registerExternalAptJavaOutput(kaptSourceOutput)
+        }
+    }
+
+    override fun wrapVariantData(variantData: BaseVariant): WrappedVariantData<BaseVariant> = WrappedVariant(variantData)
 }

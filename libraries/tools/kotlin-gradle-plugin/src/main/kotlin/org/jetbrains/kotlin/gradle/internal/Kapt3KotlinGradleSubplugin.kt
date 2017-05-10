@@ -27,7 +27,6 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -41,6 +40,14 @@ class Kapt3GradleSubplugin : Plugin<Project> {
     }
 
     override fun apply(project: Project) {}
+}
+
+abstract class WrappedVariantData<T>(val variantData: T) {
+    abstract val name: String
+    abstract val sourceProviders: Iterable<SourceProvider>
+    abstract fun addJavaSourceFoldersToModel(generatedFilesDir: File)
+    abstract val annotationProcessorOptions: Map<String, String>?
+    abstract fun wireKaptTask(project: Project, task: KaptTask, kotlinTask: KotlinCompile, javaTask: AbstractCompile)
 }
 
 // Subplugin for the Kotlin Gradle plugin
@@ -122,7 +129,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         val sourceSetName = if (variantData != null) {
-            for (provider in (variantData as BaseVariantData<*>).sourceProviders) {
+            for (provider in (variantData as WrappedVariantData<*>).sourceProviders) {
                 handleSourceSet((provider as AndroidSourceSet).name)
             }
 
@@ -156,7 +163,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         val generatedFilesDir = getKaptGeneratedDir(project, sourceSetName)
         if (variantData != null) {
-            (variantData as BaseVariantData<*>).addJavaSourceFoldersToModel(generatedFilesDir)
+            (variantData as WrappedVariantData<*>).addJavaSourceFoldersToModel(generatedFilesDir)
         }
 
         pluginOptions += SubpluginOption("aptOnly", "true")
@@ -182,15 +189,17 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         val androidOptions = if (variantData != null)
-            AndroidGradleWrapper.getAnnotationProcessorOptionsFromAndroidVariant(variantData) ?: emptyMap()
+            (variantData as WrappedVariantData<*>).annotationProcessorOptions ?: emptyMap()
         else
             emptyMap()
 
         kotlinSourcesOutputDir.mkdirs()
 
-        val apOptions = kaptExtension.getAdditionalArguments(project, variantData, androidPlugin) +
-                androidOptions +
-                mapOf("kapt.kotlin.generated" to kotlinSourcesOutputDir.absolutePath)
+        val apOptions = kaptExtension.getAdditionalArguments(
+                project,
+                (variantData as WrappedVariantData<*>).variantData,
+                androidPlugin
+        ) + androidOptions + mapOf("kapt.kotlin.generated" to kotlinSourcesOutputDir.absolutePath)
 
         pluginOptions += SubpluginOption("apoptions", encodeOptions(apOptions))
 
@@ -246,12 +255,11 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.mapClasspath { kotlinCompile.classpath }
         kaptTask.destinationDir = sourcesOutputDir
         kaptTask.classesDir = classesOutputDir
-        kaptTask.dependsOn(*(javaCompile.dependsOn.filter { it !== kotlinCompile }.toTypedArray()))
-        kotlinCompile.dependsOn(kaptTask)
 
-        // Add generated source dir as a source root for kotlinCompile and javaCompile
+        kotlinCompile.dependsOn(kaptTask)
+        (variantData as WrappedVariantData<*>).wireKaptTask(project, kaptTask, kotlinCompile, javaCompile)
+
         kotlinCompile.source(sourcesOutputDir, kotlinSourcesOutputDir)
-        javaCompile.source(sourcesOutputDir)
 
         val pluginOptions = kaptTask.pluginOptions
         val compilerPluginId = getCompilerPluginId()

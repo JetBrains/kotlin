@@ -44,7 +44,7 @@ dependencies {
     compileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
     compileOnly 'org.jetbrains.kotlin:gradle-api:2.2'
 
-    agp25CompileOnly 'com.android.tools.build:gradle:2.4.0-dev'
+    agp25CompileOnly 'com.android.tools.build:gradle:3.0.0-dev'
     agp25CompileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
     agp25CompileOnly gradleApi()
 
@@ -57,7 +57,6 @@ tasks.withType(project.compileKotlin.class) {
 }
 
 compileKotlin.dependsOn compileGroovy
-compileAgp25Kotlin.dependsOn compileGroovy
 compileGroovy.dependsOn.remove("compileJava")
 
 def groovyClassesDir = file("${buildDir}/mainGroovyClasses")
@@ -72,6 +71,8 @@ sourceSets {
         compileClasspath += files(groovyClassesDir)
     }
 }
+
+compileAgp25Kotlin.dependsOn compileGroovy
 
 processResources {
     expand(project.properties)
