@@ -839,7 +839,7 @@ public class FunctionCodegen {
                 if (!isThereOverriddenInKotlinClass(descriptor)) {
                     Method method = typeMapper.mapAsmMethod(descriptor);
                     int flags = ACC_ABSTRACT | getVisibilityAccessFlag(descriptor);
-                    v.newMethod(JvmDeclarationOriginKt.OtherOrigin(overridden), flags, method.getName(), method.getDescriptor(), null, null);
+                    v.newMethod(JvmDeclarationOriginKt.AugmentedBuiltInApi(overridden), flags, method.getName(), method.getDescriptor(), null, null);
                 }
             }
         }

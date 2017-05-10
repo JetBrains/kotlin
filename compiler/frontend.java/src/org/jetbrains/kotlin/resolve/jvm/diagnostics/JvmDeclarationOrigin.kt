@@ -39,7 +39,9 @@ enum class JvmDeclarationOriginKind {
     BRIDGE,
     MULTIFILE_CLASS,
     MULTIFILE_CLASS_PART,
-    SYNTHETIC // this means that there's no proper descriptor for this jvm declaration
+    SYNTHETIC, // this means that there's no proper descriptor for this jvm declaration,
+    COLLECTION_STUB,
+    AUGMENTED_BUILTIN_API
 }
 
 class JvmDeclarationOrigin(
@@ -91,3 +93,7 @@ fun Delegation(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclara
 fun SamDelegation(descriptor: FunctionDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(SAM_DELEGATION, null, descriptor)
 
 fun Synthetic(element: PsiElement?, descriptor: CallableMemberDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(SYNTHETIC, element, descriptor)
+
+val CollectionStub = JvmDeclarationOrigin(COLLECTION_STUB, null, null)
+
+fun AugmentedBuiltInApi(descriptor: CallableDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(AUGMENTED_BUILTIN_API, null, descriptor)
