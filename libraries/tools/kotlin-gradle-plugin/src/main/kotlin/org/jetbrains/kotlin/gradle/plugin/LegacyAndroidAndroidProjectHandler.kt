@@ -9,6 +9,8 @@ import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.internal.KaptTask
+import org.jetbrains.kotlin.gradle.internal.WrappedVariantData
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
@@ -103,4 +105,25 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
 
     private val BaseVariantData<*>.sourceProviders: List<SourceProvider>
         get() = variantConfiguration.sortedSourceProviders
+
+    private inner class WrappedLegacyVariantData(variantData: BaseVariantData<out BaseVariantOutputData>)
+        : WrappedVariantData<BaseVariantData<out BaseVariantOutputData>>(variantData) {
+
+        override val name: String = variantData.name
+        override val sourceProviders: Iterable<SourceProvider> = getSourceProviders(variantData)
+        override fun addJavaSourceFoldersToModel(generatedFilesDir: File) =
+                addJavaSourceDirectoryToVariantModel(variantData, generatedFilesDir)
+
+        override val annotationProcessorOptions: Map<String, String>? =
+                AndroidGradleWrapper.getAnnotationProcessorOptionsFromAndroidVariant(variantData)
+
+        override fun wireKaptTask(project: Project, task: KaptTask, kotlinTask: KotlinCompile, javaTask: AbstractCompile) {
+            task.dependsOn(*(javaTask.dependsOn.filter { it !== kotlinTask }.toTypedArray()))
+            javaTask.source(task.destinationDir)
+        }
+    }
+
+    override fun wrapVariantData(variantData: BaseVariantData<out BaseVariantOutputData>)
+            : WrappedVariantData<BaseVariantData<out BaseVariantOutputData>> =
+            WrappedLegacyVariantData(variantData)
 }
