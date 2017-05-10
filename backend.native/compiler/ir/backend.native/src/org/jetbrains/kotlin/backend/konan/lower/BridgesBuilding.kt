@@ -93,8 +93,9 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
 
         irClass.descriptor.contributedMethods.forEach { functions.add(it) }
 
-        functions.forEach {
-            it?.let { function ->
+        functions.filterNotNull()
+                .filterNot { it.modality == Modality.ABSTRACT }
+                .forEach { function ->
                 function.allOverriddenDescriptors
                         .map { OverriddenFunctionDescriptor(function, it) }
                         .filter { !it.bridgeDirections.allNotNeeded() }
@@ -104,7 +105,6 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
                         .forEach {
                             buildBridge(it, irClass)
                         }
-            }
         }
     }
 

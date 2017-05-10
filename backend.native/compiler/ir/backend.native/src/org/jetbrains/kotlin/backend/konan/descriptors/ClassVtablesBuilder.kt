@@ -29,10 +29,7 @@ internal class OverriddenFunctionDescriptor(val descriptor: FunctionDescriptor, 
     val overriddenDescriptor = overriddenDescriptor.original
 
     val needBridge: Boolean
-        get() {
-            if (descriptor.modality == Modality.ABSTRACT) return false
-            return descriptor.target.needBridgeTo(overriddenDescriptor)
-        }
+        get() = descriptor.target.needBridgeTo(overriddenDescriptor)
 
     val bridgeDirections: BridgeDirections
         get() = descriptor.target.bridgeDirectionsTo(overriddenDescriptor)
@@ -43,11 +40,9 @@ internal class OverriddenFunctionDescriptor(val descriptor: FunctionDescriptor, 
                 || DescriptorUtils.getAllOverriddenDeclarations(overriddenDescriptor).any { it.isOverridable }
 
     val inheritsBridge: Boolean
-        get() {
-            return !descriptor.kind.isReal
-                    && OverridingUtil.overrides(descriptor.target, overriddenDescriptor)
-                    && descriptor.bridgeDirectionsTo(overriddenDescriptor).allNotNeeded()
-        }
+        get() = !descriptor.kind.isReal
+                && OverridingUtil.overrides(descriptor.target, overriddenDescriptor)
+                && descriptor.bridgeDirectionsTo(overriddenDescriptor).allNotNeeded()
 
     override fun toString(): String {
         return "(descriptor=$descriptor, overriddenDescriptor=$overriddenDescriptor)"

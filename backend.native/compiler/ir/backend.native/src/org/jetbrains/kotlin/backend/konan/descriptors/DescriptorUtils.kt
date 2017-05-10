@@ -283,13 +283,11 @@ internal class BridgeDirections(val array: Array<BridgeDirection>) {
 
 internal fun FunctionDescriptor.bridgeDirectionsTo(overriddenDescriptor: FunctionDescriptor): BridgeDirections {
     val ourDirections = BridgeDirections(this.valueParameters.size)
-    if (modality == Modality.ABSTRACT)
-        return ourDirections
     for (index in ourDirections.array.indices)
         ourDirections.array[index] = this.bridgeDirectionToAt(overriddenDescriptor, index)
 
     val target = this.target
-    if (!kind.isReal
+    if (!kind.isReal && modality != Modality.ABSTRACT
             && OverridingUtil.overrides(target, overriddenDescriptor)
             && ourDirections == target.bridgeDirectionsTo(overriddenDescriptor)) {
         // Bridge is inherited from superclass.
