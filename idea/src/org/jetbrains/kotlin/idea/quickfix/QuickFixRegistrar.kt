@@ -405,7 +405,7 @@ class QuickFixRegistrar : QuickFixContributor {
         OPERATOR_MODIFIER_REQUIRED.registerFactory(ImportForMissingOperatorFactory)
 
         INFIX_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(KtTokens.INFIX_KEYWORD))
-        INFIX_MODIFIER_REQUIRED.registerFactory(InfixCallFix)
+        INFIX_MODIFIER_REQUIRED.registerFactory(InfixCallFixActionFactory)
 
         UNDERSCORE_IS_RESERVED.registerFactory(RenameUnderscoreFix)
 
