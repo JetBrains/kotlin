@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import java.io.File
 
@@ -213,8 +213,10 @@ class GenerationState @JvmOverloads constructor(
     }
 
     private fun shouldOnlyCollectSignatures(origin: JvmDeclarationOrigin)
-            = classBuilderMode == ClassBuilderMode.LIGHT_CLASSES && origin.originKind == CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL
+            = classBuilderMode == ClassBuilderMode.LIGHT_CLASSES && origin.originKind in doNotGenerateInLightClassMode
 }
+
+private val doNotGenerateInLightClassMode = setOf(CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL, BRIDGE, COLLECTION_STUB, AUGMENTED_BUILTIN_API)
 
 private class LazyJvmDiagnostics(compute: () -> Diagnostics): Diagnostics {
     private val delegate by lazy(LazyThreadSafetyMode.SYNCHRONIZED, compute)
