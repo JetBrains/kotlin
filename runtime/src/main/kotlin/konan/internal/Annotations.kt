@@ -41,3 +41,11 @@ annotation class Intrinsic
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 annotation class ExportForCompiler
+
+/**
+ * Annotated constructor will be inlined.
+ */
+@Target(AnnotationTarget.CONSTRUCTOR)
+@Retention(AnnotationRetention.BINARY)
+annotation class InlineConstructor
+

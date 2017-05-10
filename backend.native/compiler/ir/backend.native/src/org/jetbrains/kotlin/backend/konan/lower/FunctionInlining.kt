@@ -40,10 +40,13 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
+
+private val inlineConstructor = FqName("konan.internal.InlineConstructor")
 
 //-----------------------------------------------------------------------------//
 
@@ -99,12 +102,14 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
     val copyIrElement = DeepCopyIrTreeWithDescriptors(currentScope.scope.scopeOwner, context) // Create DeepCopy for current scope.
     val substituteMap = mutableMapOf<ValueDescriptor, IrExpression>()
+    var isInlineConstructor  = false
 
     //-------------------------------------------------------------------------//
 
     fun inline(irCall             : IrCall,                                                 // Call to be substituted.
                functionDeclaration: IrFunction): IrReturnableBlockImpl {                    // Function to substitute.
 
+        isInlineConstructor = irCall.descriptor.annotations.hasAnnotation(inlineConstructor)
         val inlineFunctionBody = inlineFunction(irCall, functionDeclaration)
         val descriptorSubstitutor = copyIrElement.descriptorSubstitutorForExternalScope
         currentScope.irElement.transformChildrenVoid(descriptorSubstitutor)                 // Transform calls to object that might be returned from inline function call.
@@ -365,15 +370,15 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
     fun generateIrCall(expression: IrDelegatingConstructorCallImpl): IrStatement {
 
-        if (!expression.descriptor.fqNameSafe.toString().contains("kotlin.IntArray.<init>")) return expression
+        if (!isInlineConstructor) return expression
 
         val newExpression = IrCallImpl(
-            startOffset    = expression.startOffset,
-            endOffset      = expression.endOffset,
-            type           = expression.descriptor.returnType,
-            descriptor     = expression.descriptor,
-            typeArguments  = expression.typeArguments,
-            origin         = expression.origin
+            expression.startOffset,
+            expression.endOffset,
+            expression.descriptor.returnType,
+            expression.descriptor,
+            expression.typeArguments,
+            expression.origin
         ).apply {
             expression.descriptor.valueParameters.forEach {
                 val valueArgument = expression.getValueArgument(it)

@@ -16,12 +16,14 @@
 
 package kotlin
 import konan.internal.ExportForCompiler
+import konan.internal.InlineConstructor
 
 // TODO: remove that, as RTTI shall be per instantiation.
 @ExportTypeInfo("theArrayTypeInfo")
 public final class Array<T> {
     // Constructors are handled with compiler magic.
-    public constructor(size: Int, init: (Int) -> T) {
+    @InlineConstructor
+    public constructor(size: Int, init: (Int) -> T): this(size) {
         var index = 0
         while (index < size) {
             this[index] = init(index)
