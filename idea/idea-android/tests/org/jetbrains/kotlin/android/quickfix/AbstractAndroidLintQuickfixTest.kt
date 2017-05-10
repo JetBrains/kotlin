@@ -20,7 +20,7 @@ import com.android.SdkConstants
 import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.PathUtil
-import org.jetbrains.android.inspections.klint.AndroidLintInspectionBase
+import org.jetbrains.android.inspections.lint.AndroidLintInspectionBase
 import org.jetbrains.kotlin.android.KotlinAndroidTestCase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
