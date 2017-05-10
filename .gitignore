@@ -1,5 +1,6 @@
 .DS_Store
 .idea/shelf
+*.iml
 /dependencies/all
 dist
 kotlin-native-*.tar.gz
