@@ -410,6 +410,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("charElvis.kt")
+        public void testCharElvis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/char/charElvis.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("charEquals.kt")
         public void testCharEquals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/char/charEquals.kt");

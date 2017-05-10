@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.translate.callTranslator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsBlock
 import org.jetbrains.kotlin.js.backend.ast.JsConditional
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.js.backend.ast.JsLiteral
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForReceiver
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -105,11 +103,7 @@ fun TranslationContext.getCallInfo(
 }
 
 private fun boxIfNeedeed(v: ReceiverValue?, d: ReceiverParameterDescriptor?, r: JsExpression?): JsExpression? {
-    if (r != null && v != null && KotlinBuiltIns.isCharOrNullableChar(v.type) &&
-        (d == null || !KotlinBuiltIns.isCharOrNullableChar(d.type))) {
-        return JsAstUtils.charToBoxedChar(r)
-    }
-    return r
+    return r?.let { TranslationUtils.boxCastIfNeeded(it, v?.type, d?.type) }
 }
 
 private fun TranslationContext.getDispatchReceiver(receiverValue: ReceiverValue): JsExpression {

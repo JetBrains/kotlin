@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.translate.reference
 
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineOrReturn
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -183,19 +184,18 @@ class CallArgumentTranslator private constructor(
             val parenthisedArgumentExpression = arg.getArgumentExpression()
 
             val param = argsToParameters[arg]!!.original
-            val parameterType = param.varargElementType ?: param.type
+            val parameterType = if (resolvedCall.call.callType == Call.CallType.INVOKE) {
+                DefaultBuiltIns.Instance.anyType
+            }
+            else {
+                param.varargElementType ?: param.type
+            }
+
             val argType = context.bindingContext().getType(parenthisedArgumentExpression!!)
 
             val argJs = Translation.translateAsExpression(parenthisedArgumentExpression, argumentContext)
-            val jsExpr = if (argType != null && KotlinBuiltIns.isCharOrNullableChar(argType) &&
-                             (!KotlinBuiltIns.isCharOrNullableChar(parameterType) || resolvedCall.call.callType == Call.CallType.INVOKE)) {
-                JsAstUtils.charToBoxedChar(argJs)
-            }
-            else {
-                argJs
-            }
 
-            arg to jsExpr
+            arg to TranslationUtils.boxCastIfNeeded(argJs, argType, parameterType)
         }
 
         val resolvedOrder = resolvedCall.valueArgumentsByIndex.orEmpty()

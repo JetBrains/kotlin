@@ -200,9 +200,7 @@ public final class TranslationUtils {
             KotlinType propertyType = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.VARIABLE, declaration).getType();
             KotlinType initType = context.bindingContext().getType(initializer);
 
-            if (initType != null && KotlinBuiltIns.isCharOrNullableChar(initType) && !KotlinBuiltIns.isCharOrNullableChar(propertyType)) {
-                jsInitExpression = JsAstUtils.charToBoxedChar(jsInitExpression);
-            }
+            jsInitExpression = boxCastIfNeeded(jsInitExpression, initType, propertyType);
         }
         return jsInitExpression;
     }
@@ -401,5 +399,15 @@ public final class TranslationUtils {
 
     public static boolean shouldBoxReturnValue(CallableDescriptor c) {
         return overridesReturnAny(c) || c instanceof CallableMemberDescriptor && ModalityKt.isOverridable((CallableMemberDescriptor)c);
+    }
+
+    @NotNull
+    public static JsExpression boxCastIfNeeded(@NotNull JsExpression e, @Nullable KotlinType castFrom, @Nullable KotlinType castTo) {
+        if (castFrom != null && KotlinBuiltIns.isCharOrNullableChar(castFrom) &&
+            castTo != null && !KotlinBuiltIns.isCharOrNullableChar(castTo)
+        ) {
+            return JsAstUtils.charToBoxedChar(e);
+        }
+        return e;
     }
 }

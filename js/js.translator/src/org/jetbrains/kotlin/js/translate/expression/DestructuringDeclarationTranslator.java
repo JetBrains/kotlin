@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.translate.expression;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
@@ -29,12 +28,12 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration;
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,10 +84,7 @@ public class DestructuringDeclarationTranslator extends AbstractTranslator {
                 setInlineCallMetadata(entryInitializer, entry, entryInitCall, context());
             }
 
-            KotlinType returnType = candidateDescriptor.getReturnType();
-            if (returnType != null && KotlinBuiltIns.isCharOrNullableChar(returnType) && !KotlinBuiltIns.isCharOrNullableChar(descriptor.getType())) {
-                entryInitializer = JsAstUtils.charToBoxedChar(entryInitializer);
-            }
+            entryInitializer = TranslationUtils.boxCastIfNeeded(entryInitializer, candidateDescriptor.getReturnType(), descriptor.getType());
 
             JsName name = context().getNameForDescriptor(descriptor);
             if (isVarCapturedInClosure(context().bindingContext(), descriptor)) {
