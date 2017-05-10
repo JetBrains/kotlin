@@ -53,7 +53,7 @@ abstract class AbstractJavaClassFinder : JavaClassFinder {
         val base: GlobalSearchScope = myBaseScope
 
         //NOTE: expected by class finder to be not null
-        override fun getProject(): Project = project
+        override fun getProject(): Project = this@AbstractJavaClassFinder.project
 
         override fun toString() = "JCFI: $myBaseScope"
 
