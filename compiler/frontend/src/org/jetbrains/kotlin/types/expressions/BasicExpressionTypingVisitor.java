@@ -79,8 +79,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.builtins.FunctionTypesKt.isExtensionFunctionType;
-import static org.jetbrains.kotlin.builtins.FunctionTypesKt.isFunctionType;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
@@ -377,7 +375,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         KotlinTypeChecker typeChecker = KotlinTypeChecker.DEFAULT;
-        if (castIsUseless(expression, context, targetType, actualType, typeChecker)) {
+        if (CastDiagnosticsUtil.INSTANCE.castIsUseless(expression, context, targetType, actualType, typeChecker)) {
             context.trace.report(USELESS_CAST.on(expression));
             return;
         }
@@ -385,77 +383,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (CastDiagnosticsUtil.isCastErased(actualType, targetType, typeChecker)) {
             context.trace.report(UNCHECKED_CAST.on(expression, actualType, targetType));
         }
-    }
-
-    private static boolean castIsUseless(
-            @NotNull KtBinaryExpressionWithTypeRHS expression,
-            @NotNull ExpressionTypingContext context,
-            @NotNull KotlinType targetType,
-            @NotNull KotlinType actualType,
-            @NotNull KotlinTypeChecker typeChecker
-    ) {
-        // Here: x as? Type <=> x as Type?
-        KotlinType refinedTargetType = KtPsiUtil.isSafeCast(expression) ? TypeUtils.makeNullable(targetType) : targetType;
-
-        Collection<KotlinType> possibleTypes = DataFlowAnalyzer.getAllPossibleTypes(expression.getLeft(), actualType, context);
-        KotlinType intersectedType = TypeIntersector.intersectTypes(typeChecker, possibleTypes);
-        if (intersectedType == null) return false;
-
-        return shouldCheckForExactType(expression, context.expectedType)
-               ? isExactTypeCast(intersectedType, refinedTargetType)
-               : isUpcast(intersectedType, refinedTargetType, typeChecker);
-    }
-
-    private static boolean shouldCheckForExactType(KtBinaryExpressionWithTypeRHS expression, KotlinType expectedType) {
-        if (TypeUtils.noExpectedType(expectedType)) {
-            return checkExactTypeForUselessCast(expression);
-        }
-
-        // If expected type is parameterized, then cast has an effect on inference, therefore it isn't a useless cast
-        // Otherwise, we are interested in situation like: `a: Any? = 1 as Int?`
-        return TypeUtils.isDontCarePlaceholder(expectedType);
-    }
-
-    private static boolean isExactTypeCast(KotlinType candidateType, KotlinType targetType) {
-        return candidateType.equals(targetType) && isExtensionFunctionType(candidateType) == isExtensionFunctionType(targetType);
-    }
-
-    private static boolean isUpcast(KotlinType candidateType, KotlinType targetType, KotlinTypeChecker typeChecker) {
-        if (!typeChecker.isSubtypeOf(candidateType, targetType)) return false;
-
-        if (isFunctionType(candidateType) && isFunctionType(targetType)) {
-            return isExtensionFunctionType(candidateType) == isExtensionFunctionType(targetType);
-        }
-
-        return true;
-    }
-
-    // Casting an argument or a receiver to a supertype may be useful to select an exact overload of a method.
-    // Casting to a supertype in other contexts is unlikely to be useful.
-    private static boolean checkExactTypeForUselessCast(KtBinaryExpressionWithTypeRHS expression) {
-        PsiElement parent = expression.getParent();
-        while (parent instanceof KtParenthesizedExpression ||
-               parent instanceof KtLabeledExpression ||
-               parent instanceof KtAnnotatedExpression) {
-            parent = parent.getParent();
-        }
-        if (parent instanceof KtValueArgument) {
-            return true;
-        }
-        if (parent instanceof KtQualifiedExpression) {
-            KtExpression receiver = ((KtQualifiedExpression) parent).getReceiverExpression();
-            return PsiTreeUtil.isAncestor(receiver, expression, false);
-        }
-        // in binary expression, left argument can be a receiver and right an argument
-        // in unary expression, left argument can be a receiver
-        if (parent instanceof KtBinaryExpression || parent instanceof KtUnaryExpression) {
-            return true;
-        }
-        // Previously we've checked that there is no expected type, therefore cast in property has an effect on inference
-        if (parent instanceof KtProperty || parent instanceof KtPropertyAccessor) {
-            return true;
-        }
-        return false;
     }
 
     @Override

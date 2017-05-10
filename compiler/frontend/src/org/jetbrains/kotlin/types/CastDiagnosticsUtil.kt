@@ -17,13 +17,19 @@
 package org.jetbrains.kotlin.types
 
 import com.google.common.collect.Maps
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
+import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 object CastDiagnosticsUtil {
@@ -193,4 +199,84 @@ object CastDiagnosticsUtil {
     }
 
     private fun allParametersReified(subtype: KotlinType) = subtype.constructor.parameters.all { it.isReified }
+
+    fun castIsUseless(
+            expression: KtBinaryExpressionWithTypeRHS,
+            context: ExpressionTypingContext,
+            targetType: KotlinType,
+            actualType: KotlinType,
+            typeChecker: KotlinTypeChecker
+    ): Boolean {
+        // Here: x as? Type <=> x as Type?
+        val refinedTargetType = if (KtPsiUtil.isSafeCast(expression)) TypeUtils.makeNullable(targetType) else targetType
+        val possibleTypes = DataFlowAnalyzer.getAllPossibleTypes(expression.left, actualType, context)
+        return isRefinementUseless(possibleTypes, refinedTargetType, typeChecker, shouldCheckForExactType(expression, context.expectedType))
+    }
+
+    fun isRefinementUseless(
+            possibleTypes: Collection<KotlinType>,
+            targetType: KotlinType,
+            typeChecker: KotlinTypeChecker,
+            shouldCheckForExactType: Boolean
+    ): Boolean {
+        val intersectedType = TypeIntersector.intersectTypes(typeChecker, possibleTypes) ?: return false
+
+        return if (shouldCheckForExactType)
+            isExactTypeCast(intersectedType, targetType)
+        else
+            isUpcast(intersectedType, targetType, typeChecker)
+    }
+
+    private fun shouldCheckForExactType(expression: KtBinaryExpressionWithTypeRHS, expectedType: KotlinType): Boolean {
+        if (TypeUtils.noExpectedType(expectedType)) {
+            return checkExactTypeForUselessCast(expression)
+        }
+
+        // If expected type is parameterized, then cast has an effect on inference, therefore it isn't a useless cast
+        // Otherwise, we are interested in situation like: `a: Any? = 1 as Int?`
+        return TypeUtils.isDontCarePlaceholder(expectedType)
+    }
+
+    private fun isExactTypeCast(candidateType: KotlinType, targetType: KotlinType): Boolean {
+        return candidateType == targetType && candidateType.isExtensionFunctionType == targetType.isExtensionFunctionType
+    }
+
+    private fun isUpcast(candidateType: KotlinType, targetType: KotlinType, typeChecker: KotlinTypeChecker): Boolean {
+        if (!typeChecker.isSubtypeOf(candidateType, targetType)) return false
+
+        if (candidateType.isFunctionType && targetType.isFunctionType) {
+            return candidateType.isExtensionFunctionType == targetType.isExtensionFunctionType
+        }
+
+        return true
+    }
+
+    // Casting an argument or a receiver to a supertype may be useful to select an exact overload of a method.
+    // Casting to a supertype in other contexts is unlikely to be useful.
+    private fun checkExactTypeForUselessCast(expression: KtBinaryExpressionWithTypeRHS): Boolean {
+        var parent = expression.parent
+        while (parent is KtParenthesizedExpression ||
+               parent is KtLabeledExpression ||
+               parent is KtAnnotatedExpression) {
+            parent = parent.parent
+        }
+
+        return when (parent) {
+            is KtValueArgument -> true
+
+            is KtQualifiedExpression -> {
+                val receiver = parent.receiverExpression
+                PsiTreeUtil.isAncestor(receiver, expression, false)
+            }
+
+            // in binary expression, left argument can be a receiver and right an argument
+            // in unary expression, left argument can be a receiver
+            is KtBinaryExpression, is KtUnaryExpression -> true
+
+            // Previously we've checked that there is no expected type, therefore cast in property has an effect on inference
+            is KtProperty, is KtPropertyAccessor -> true
+
+            else -> false
+        }
+    }
 }
