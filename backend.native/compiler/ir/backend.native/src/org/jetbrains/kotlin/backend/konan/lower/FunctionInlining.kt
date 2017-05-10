@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
 import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockImpl
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -63,7 +66,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         val functionDeclaration = getFunctionDeclaration(irCall)                            // Get declaration of the function to be inlined.
         if (functionDeclaration == null) {                                                  // We failed to get the declaration.
             val message = "Inliner failed to obtain function declaration: " +
-                          functionDescriptor.name.toString()
+                          functionDescriptor.fqNameSafe.toString()
             context.reportWarning(message, currentFile, irCall)                             // Report warning.
             return irCall
         }
@@ -94,7 +97,8 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
 private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
-    val copyIrElement = DeepCopyIrTreeWithDescriptors(currentScope.scope.scopeOwner, context)                // Create DeepCopy for current scope.
+    val copyIrElement = DeepCopyIrTreeWithDescriptors(currentScope.scope.scopeOwner, context) // Create DeepCopy for current scope.
+    val substituteMap = mutableMapOf<ValueDescriptor, IrExpression>()
 
     //-------------------------------------------------------------------------//
 
@@ -112,17 +116,16 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
     private fun inlineFunction(irCall             : IrCall,                                 // Call to be substituted.
                                functionDeclaration: IrFunction): IrReturnableBlockImpl {    // Function to substitute.
 
-        val argumentEvaluationResult = evaluateArguments(irCall, functionDeclaration)       // Evaluate expressions passed as arguments.
-        val parameterSubstituteMap   = argumentEvaluationResult.parameterSubstituteMap      // As a result we get parameter -> argument map
-        val evaluationStatements     = argumentEvaluationResult.evaluationStatements        // And list of evaluation statements.
+        val evaluationStatements = evaluateArguments(irCall, functionDeclaration)           // And list of evaluation statements.
 
         val copyFunctionDeclaration = copyIrElement.copy(                                   // Create copy of original function.
             irElement       = functionDeclaration,                                          // Descriptors declared inside the function will be copied.
             typeSubstitutor = createTypeSubstitutor(irCall)                                 // Type parameters will be substituted with type arguments.
         ) as IrFunction
 
-        val statements = (copyFunctionDeclaration.body as IrBlockBody).statements           // IR statements from function copy.
-        val returnType = copyFunctionDeclaration.descriptor.returnType!!                    // Substituted return type.
+        val copyStatements = (copyFunctionDeclaration.body as IrBlockBody).statements       // IR statements from function copy.
+        val statements     = replaceDelegatingConstructorCall(copyStatements)
+        val returnType     = copyFunctionDeclaration.descriptor.returnType!!                // Substituted return type.
         val inlineFunctionBody = IrReturnableBlockImpl(                                     // Create new IR element to replace "call".
             startOffset = copyFunctionDeclaration.startOffset,
             endOffset   = copyFunctionDeclaration.endOffset,
@@ -132,7 +135,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
             statements  = statements
         )
 
-        val transformer = ParameterSubstitutor(parameterSubstituteMap)
+        val transformer = ParameterSubstitutor()
         inlineFunctionBody.transformChildrenVoid(transformer)                               // Replace value parameters with arguments.
         inlineFunctionBody.statements.addAll(0, evaluationStatements)                       // Insert evaluation statements.
         return inlineFunctionBody                                                           // Replace call site with InlineFunctionBody.
@@ -140,14 +143,12 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
     //---------------------------------------------------------------------//
 
-    private inner class ParameterSubstitutor(
-        val parameterSubstituteMap: MutableMap <ValueDescriptor, IrExpression>
-    ): IrElementTransformerVoid() {
+    private inner class ParameterSubstitutor: IrElementTransformerVoid() {
 
         override fun visitGetValue(expression: IrGetValue): IrExpression {
             val newExpression = super.visitGetValue(expression) as IrGetValue
             val descriptor = newExpression.descriptor
-            val argument = parameterSubstituteMap[descriptor]                               // Find expression to replace this parameter.
+            val argument = substituteMap[descriptor]                                        // Find expression to replace this parameter.
             if (argument == null) return newExpression                                      // If there is no such expression - do nothing.
 
             return copyIrElement.copy(                                                      // Make copy of argument expression.
@@ -163,7 +164,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
             if (!isLambdaCall(expression)) return super.visitCall(expression)               // If it is not lambda call - return.
 
             val dispatchReceiver = expression.dispatchReceiver as IrGetValue                // Here we can have only GetValue as dispatch receiver.
-            val functionArgument = parameterSubstituteMap[dispatchReceiver.descriptor]      // Try to find lambda representation.   // TODO original?
+            val functionArgument = substituteMap[dispatchReceiver.descriptor]               // Try to find lambda representation.   // TODO original?
             if (functionArgument == null)     return super.visitCall(expression)            // It is not call of argument lambda - nothing to substitute.
             if (functionArgument !is IrBlock) return super.visitCall(expression)
 
@@ -239,13 +240,6 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
     private class ParameterToArgument(
         val parameterDescriptor: ValueDescriptor,
         val argumentExpression : IrExpression
-    )
-
-    //-------------------------------------------------------------------------//
-
-    private class ParameterEvaluationResult(
-        val parameterSubstituteMap: MutableMap<ValueDescriptor, IrExpression>,
-        val evaluationStatements  : MutableList<IrStatement>
     )
 
     //-------------------------------------------------------------------------//
@@ -327,17 +321,16 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
     private fun evaluateArguments(irCall             : IrCall,                              // Call site.
                                   functionDeclaration: IrFunction                           // Function to be called.
-        ): ParameterEvaluationResult {
+        ): List<IrStatement> {
 
         val parameterToArgumentOld = buildParameterToArgument(irCall, functionDeclaration)  // Create map parameter_descriptor -> original_argument_expression.
-        val parameterToArgumentNew = mutableMapOf<ValueDescriptor, IrExpression> ()         // Result map parameter_descriptor -> evaluated_argument_expression.
         val evaluationStatements   = mutableListOf<IrStatement>()                           // List of evaluation statements.
         parameterToArgumentOld.forEach {
             val parameterDescriptor = it.parameterDescriptor
             val argumentExpression  = it.argumentExpression
 
             if (!argumentNeedsEvaluation(argumentExpression)) {                             // If argument does not need evaluation
-                parameterToArgumentNew[parameterDescriptor] = argumentExpression            // Copy parameterDescriptor -> argumentExpression to new map.
+                substituteMap[parameterDescriptor] = argumentExpression                     // Copy parameterDescriptor -> argumentExpression to new map.
                 return@forEach
             }
 
@@ -353,13 +346,60 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
                 endOffset   = currentScope.irElement.endOffset,
                 descriptor  = newVariable.descriptor
             )
-            parameterToArgumentNew[parameterDescriptor] = getVal                            // Parameter will be replaced with the new variable.
+            substituteMap[parameterDescriptor] = getVal                                     // Parameter will be replaced with the new variable.
         }
-        return ParameterEvaluationResult(parameterToArgumentNew, evaluationStatements)
+        return evaluationStatements
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun replaceDelegatingConstructorCall(statements: MutableList<IrStatement>): MutableList<IrStatement> {
+
+        return statements.map { statement ->
+            if (statement is IrDelegatingConstructorCallImpl) generateIrCall(statement)
+            else statement
+        }.toMutableList()
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun generateIrCall(expression: IrDelegatingConstructorCallImpl): IrStatement {
+
+        if (!expression.descriptor.fqNameSafe.toString().contains("kotlin.IntArray.<init>")) return expression
+
+        val newExpression = IrCallImpl(
+            startOffset    = expression.startOffset,
+            endOffset      = expression.endOffset,
+            type           = expression.descriptor.returnType,
+            descriptor     = expression.descriptor,
+            typeArguments  = expression.typeArguments,
+            origin         = expression.origin
+        ).apply {
+            expression.descriptor.valueParameters.forEach {
+                val valueArgument = expression.getValueArgument(it)
+                putValueArgument(it.index, valueArgument)
+            }
+        }
+
+        val newVariable = currentScope.scope.createTemporaryVariable(                      // Create new variable and init it with constructor call.
+            irExpression = newExpression,
+            nameHint     = newExpression.descriptor.fqNameSafe.toString() + ".this",
+            isMutable    = false)
+
+        val newThis = IrGetValueImpl(                                                       // Create new expression, representing access the new variable.
+            startOffset = currentScope.irElement.startOffset,
+            endOffset   = currentScope.irElement.endOffset,
+            descriptor  = newVariable.descriptor
+        )
+
+        val classDescriptor = expression.descriptor.constructedClass
+        val oldThis = classDescriptor.thisAsReceiverParameter
+        substituteMap[oldThis] = newThis
+
+        return newVariable
     }
 }
 
-//-------------------------------------------------------------------------//
 
 
 
