@@ -22,11 +22,8 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil.compareVersionNumbers
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.internal.AnnotationProcessingManager
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
-import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
+import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.getKaptClasssesDir
-import org.jetbrains.kotlin.gradle.internal.initKapt
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
@@ -378,7 +375,6 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
 
     protected val KotlinCompile.annotationsFile: File? get() = kaptOptions.annotationsFile
     protected fun KotlinCompile.setJavaOutput(file: File) { javaOutputDir = file }
-    protected fun AbstractCompile.appendClasspath(file: File) = appendClasspathDynamically(file)
 
     protected val logger = Logging.getLogger(this.javaClass)
 
@@ -405,6 +401,8 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
                                                    javaTask: AbstractCompile,
                                                    kotlinTask: KotlinCompile,
                                                    kotlinAfterJavaTask: KotlinCompile?)
+
+    protected abstract fun wrapVariantData(variantData: V): WrappedVariantData<V>
 
     fun handleProject(project: Project) {
         val ext = project.extensions.getByName("android") as BaseExtension
@@ -492,9 +490,6 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
             removeAnnotationProcessingPluginClasspathEntry(kotlinTask)
         }
 
-        val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
-                project, kotlinTask, javaTask, variantData, null)
-
         var kotlinAfterJavaTask: KotlinCompile? = null
 
         if (javaTask is JavaCompile && aptFiles.isNotEmpty() && !isKapt3Enabled) {
@@ -513,13 +508,16 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
             configureSources(task, variantData)
         }
 
-        appliedPlugins.flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
-                .forEach { configureSources(it, variantData) }
-
         wireKotlinTasks(project, androidPlugin, androidExt, variantData, javaTask,
                 kotlinTask, kotlinAfterJavaTask)
 
         configureMultiProjectIc(project, variantData, javaTask, kotlinTask, kotlinAfterJavaTask)
+
+        val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
+                project, kotlinTask, javaTask, wrapVariantData(variantData), null)
+
+        appliedPlugins.flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
+                .forEach { configureSources(it, variantData) }
     }
 
     private fun configureSources(compileTask: AbstractCompile, variantData: V) {
