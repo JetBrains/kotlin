@@ -36,21 +36,10 @@ class ConvertJavaToKotlinProviderImpl : ConvertJavaToKotlinProvider {
     }
 
     override fun getKotlinVersion(): String {
-        return bundledRuntimeVersion()
+        return "1.1.2-4"
     }
 
     override fun convertToKotlin(project: Project, files: List<PsiJavaFile>): List<PsiFile> {
-        for (file in files) {
-            val module = ModuleUtilCore.findModuleForPsiElement(file)
-            if (module == null) {
-                println("File outside of module")
-                continue
-            }
-            val orderEntries = ModuleRootManager.getInstance(module).orderEntries
-            for (i in orderEntries) {
-                println(i)
-            }
-        }
         return JavaToKotlinAction.convertFiles(files, project, askExternalCodeProcessing = false)
     }
 }
