@@ -320,7 +320,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitStringTemplateExpression(@NotNull KtStringTemplateExpression expression, @NotNull TranslationContext context) {
         JsStringLiteral stringLiteral = resolveAsStringConstant(expression, context);
         if (stringLiteral != null) {
-            return stringLiteral;
+            return stringLiteral.source(expression);
         }
         return resolveAsTemplate(expression, context).source(expression);
     }
