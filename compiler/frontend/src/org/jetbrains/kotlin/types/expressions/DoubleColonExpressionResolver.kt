@@ -546,7 +546,7 @@ class DoubleColonExpressionResolver(
         return type
     }
 
-    private fun checkReferenceIsToAllowedMember(
+    internal fun checkReferenceIsToAllowedMember(
             descriptor: CallableDescriptor, trace: BindingTrace, expression: KtCallableReferenceExpression
     ) {
         val simpleName = expression.callableReference
@@ -570,7 +570,7 @@ class DoubleColonExpressionResolver(
         return original.extensionReceiverParameter != null && original.dispatchReceiverParameter != null
     }
 
-    private fun bindFunctionReference(expression: KtCallableReferenceExpression, type: KotlinType, context: ResolutionContext<*>) {
+    internal fun bindFunctionReference(expression: KtCallableReferenceExpression, type: KotlinType, context: ResolutionContext<*>) {
         val functionDescriptor = AnonymousFunctionDescriptor(
                 context.scope.ownerDescriptor,
                 Annotations.EMPTY,
@@ -590,7 +590,7 @@ class DoubleColonExpressionResolver(
         context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor)
     }
 
-    private fun bindPropertyReference(expression: KtCallableReferenceExpression, referenceType: KotlinType, context: ResolutionContext<*>) {
+    internal fun bindPropertyReference(expression: KtCallableReferenceExpression, referenceType: KotlinType, context: ResolutionContext<*>) {
         val localVariable = LocalVariableDescriptor(
                 context.scope.ownerDescriptor, Annotations.EMPTY, Name.special("<anonymous>"), referenceType, /* mutable = */ false,
                 /* isDelegated = */ false, expression.toSourceElement()

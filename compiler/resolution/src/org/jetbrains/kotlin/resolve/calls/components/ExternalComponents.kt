@@ -38,4 +38,7 @@ interface KotlinResolutionCallbacks {
 
     fun completeLambdaReturnType(lambdaArgument: ResolvedLambdaArgument, returnType: KotlinType)
 
+    fun completeCallableReference(callableReferenceArgument: ResolvedCallableReferenceArgument,
+                                  resultTypeParameters: List<UnwrappedType>)
+
 }
