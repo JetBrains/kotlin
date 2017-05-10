@@ -104,15 +104,19 @@ private fun acyclicTypeMangler(visited: MutableSet<TypeParameterDescriptor>, typ
                 if (bound == "kotlin.Any?") "" else "_$bound"
             }.joinToString("")
         }
-        return "GENERIC" + upperBounds
+        return "#GENERIC" + upperBounds
     }
 
     var hashString = TypeUtils.getClassDescriptor(type)!!.fqNameSafe.asString()
     if (!type.arguments.isEmpty()) {
         hashString += "<${type.arguments.map {
-            val variance = it.projectionKind.label
-            val projection = if (variance == "") "" else "${variance}_" 
-            projection + acyclicTypeMangler(visited, it.type)
+            if (it.isStarProjection()) {
+                "#STAR" 
+            } else {
+                val variance = it.projectionKind.label
+                val projection = if (variance == "") "" else "${variance}_" 
+                projection + acyclicTypeMangler(visited, it.type)
+            }
         }.joinToString(",")}>"
     }
 
