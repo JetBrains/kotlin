@@ -97,7 +97,7 @@ class DeclarationBodyVisitor(
         initializerStatements.add(statement)
     }
 
-    override fun addFunction(descriptor: FunctionDescriptor, expression: JsExpression?) {
+    override fun addFunction(descriptor: FunctionDescriptor, expression: JsExpression?, psi: KtElement) {
         if (!descriptor.hasOrInheritsParametersWithDefaultValue() || !descriptor.isOverridableOrOverrides) {
             if (expression != null) {
                 context.addDeclarationStatement(context.addFunctionToPrototype(containingClass, descriptor, expression))
@@ -120,11 +120,11 @@ class DeclarationBodyVisitor(
                         .innerBlock(caller.body)
 
                 val callbackName = JsScope.declareTemporaryName("callback" + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)
-                val callee = JsNameRef(bodyName, JsThisRef())
+                val callee = JsNameRef(bodyName, JsThisRef()).source(psi)
 
-                val defaultInvocation = JsInvocation(callee, listOf<JsExpression>())
-                val callbackInvocation = JsInvocation(callbackName.makeRef())
-                val chosenInvocation = JsConditional(callbackName.makeRef(), callbackInvocation, defaultInvocation)
+                val defaultInvocation = JsInvocation(callee, listOf<JsExpression>()).apply { source = psi }
+                val callbackInvocation = JsInvocation(callbackName.makeRef()).apply { source = psi }
+                val chosenInvocation = JsConditional(callbackName.makeRef(), callbackInvocation, defaultInvocation).source(psi)
                 defaultInvocation.arguments += caller.parameters.map { it.name.makeRef() }
                 callbackInvocation.arguments += defaultInvocation.arguments.map { it.deepCopy() }
                 caller.parameters.add(JsParameter(callbackName))
