@@ -683,6 +683,11 @@ task bridges_test16(type: RunKonanTest) {
     source = "codegen/bridges/test16.kt"
 }
 
+task bridges_test17(type: RunKonanTest) {
+    goldValue = "42\n42\n42\n42\n"
+    source = "codegen/bridges/test17.kt"
+}
+
 task bridges_linkTest(type: LinkKonanTest) {
     goldValue = "42\n42\n42\n"
     source = "codegen/bridges/linkTest_main.kt"
