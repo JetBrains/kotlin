@@ -88,12 +88,14 @@ public class InlineCodegenUtil {
     public static final String INLINE_FUN_THIS_0_SUFFIX = "$inline_fun";
     public static final String INLINE_FUN_VAR_SUFFIX = "$iv";
 
+    public static final String DEFAULT_LAMBDA_FAKE_CALL = "$$$DEFAULT_LAMBDA_FAKE_CALL$$$";
+
     @Nullable
     public static SMAPAndMethodNode getMethodNode(
             byte[] classData,
-            String methodName,
-            String methodDescriptor,
-            ClassId classId
+            @NotNull String methodName,
+            @NotNull String methodDescriptor,
+            @NotNull String classInternalName
     ) {
         ClassReader cr = new ClassReader(classData);
         MethodNode[] node = new MethodNode[1];
@@ -138,12 +140,12 @@ public class InlineCodegenUtil {
             return null;
         }
 
-        if (classId.equals(IntrinsicArrayConstructorsKt.getClassId())) {
+        if (IntrinsicArrayConstructorsKt.getClassId().asString().equals(classInternalName)) {
             // Don't load source map for intrinsic array constructors
             debugInfo[0] = null;
         }
 
-        SMAP smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classId.asString(), lines[0], lines[1]);
+        SMAP smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classInternalName, lines[0], lines[1]);
         return new SMAPAndMethodNode(node[0], smap);
     }
 
@@ -169,7 +171,7 @@ public class InlineCodegenUtil {
     }
 
     @Nullable
-    private static VirtualFile findVirtualFileImprecise(@NotNull GenerationState state, @NotNull String internalClassName) {
+    public static VirtualFile findVirtualFileImprecise(@NotNull GenerationState state, @NotNull String internalClassName) {
         FqName packageFqName = JvmClassName.byInternalName(internalClassName).getPackageFqName();
         String classNameWithDollars = StringsKt.substringAfterLast(internalClassName, "/", internalClassName);
         //TODO: we cannot construct proper classId at this point, we need to read InnerClasses info from class file
@@ -444,7 +446,6 @@ public class InlineCodegenUtil {
 
     public static int getConstant(@NotNull AbstractInsnNode ins) {
         int opcode = ins.getOpcode();
-        Integer value;
         if (opcode >= Opcodes.ICONST_0 && opcode <= Opcodes.ICONST_5) {
             return opcode - Opcodes.ICONST_0;
         }

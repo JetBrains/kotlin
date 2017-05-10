@@ -270,9 +270,9 @@ val IrFunction.OtherOrigin: JvmDeclarationOrigin
     get() = OtherOrigin(descriptor.psiElement, this.descriptor)
 
 fun DeclarationDescriptor.getMemberOwnerKind(): OwnerKind = when (this) {
-    is FileClassDescriptor ->
+    is FileClassDescriptor,
+    is PackageFragmentDescriptor ->
         OwnerKind.PACKAGE
-    is PackageFragmentDescriptor,
     is ClassDescriptor ->
         OwnerKind.IMPLEMENTATION
     else ->

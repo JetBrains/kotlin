@@ -25,15 +25,16 @@ import org.jetbrains.kotlin.codegen.binding.MutableClosure
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
@@ -66,7 +67,11 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean, @JvmField val is
 
     companion object {
         fun LambdaInfo.getCapturedParamInfo(descriptor: EnclosedValueDescriptor): CapturedParamDesc {
-            return CapturedParamDesc(lambdaClassType, descriptor.fieldName, descriptor.type)
+            return capturedParamDesc(descriptor.fieldName, descriptor.type)
+        }
+
+        fun LambdaInfo.capturedParamDesc(fieldName: String, fieldType: Type): CapturedParamDesc {
+            return CapturedParamDesc(lambdaClassType, fieldName, fieldType)
         }
     }
 }
@@ -76,22 +81,52 @@ class DefaultLambda(
         override val lambdaClassType: Type,
         val capturedArgs: Array<Type>,
         val parameterDescriptor: ValueParameterDescriptor,
-        val initInstuctions: List<AbstractInsnNode>,
         val offset: Int
-) : LambdaInfo(false, false) {
-    override val invokeMethod: Method
-        get() = TODO("not implemented")
+) : LambdaInfo(parameterDescriptor.isCrossinline, false) {
 
-    override val invokeMethodDescriptor: FunctionDescriptor
-        get() = TODO("not implemented")
+    override lateinit var invokeMethod: Method
+        private set
 
-    override val capturedVars: List<CapturedParamDesc>
-        get() = TODO("not implemented")
+
+    override val invokeMethodDescriptor: FunctionDescriptor =
+            parameterDescriptor.type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).single()
+
+
+    override lateinit var capturedVars: List<CapturedParamDesc>
+        private set
 
     override fun isMyLabel(name: String): Boolean = false
 
     override fun generateLambdaBody(codegen: ExpressionCodegen) {
-        TODO("not implemented")
+        val classReader = InlineCodegenUtil.buildClassReaderByInternalName(codegen.state, lambdaClassType.internalName)
+
+        val descriptor = Type.getMethodDescriptor(Type.VOID_TYPE, *capturedArgs)
+        val constructor = InlineCodegenUtil.getMethodNode(
+                classReader.b,
+                "<init>",
+                descriptor,
+                lambdaClassType.internalName)?.node
+
+        assert(constructor != null || capturedArgs.isEmpty()) {
+            "Can't find non-default constructor <init>$descriptor for default lambda $lambdaClassType"
+        }
+
+        capturedVars = constructor?.findCapturedFieldAssignmentInstructions()?.map {
+            fieldNode ->
+            capturedParamDesc(fieldNode.name, Type.getType(fieldNode.desc))
+        }?.toList() ?: emptyList()
+
+
+        invokeMethod = Method(
+                OperatorNameConventions.INVOKE.asString(),
+                codegen.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod.descriptor
+        )
+
+        node = InlineCodegenUtil.getMethodNode(
+                classReader.b,
+                invokeMethod.name,
+                invokeMethod.descriptor,
+                lambdaClassType.internalName)!!
     }
 }
 

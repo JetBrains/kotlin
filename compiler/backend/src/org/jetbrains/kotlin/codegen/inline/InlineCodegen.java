@@ -316,7 +316,7 @@ public class InlineCodegen extends CallGenerator {
             ClassId classId = IntrinsicArrayConstructorsKt.getClassId();
             byte[] bytes =
                     InlineCacheKt.getOrPut(state.getInlineCache().getClassBytes(), classId, IntrinsicArrayConstructorsKt::getBytecode);
-            return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), classId);
+            return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), classId.asString());
         }
 
         assert callableDescriptor instanceof DeserializedCallableMemberDescriptor : "Not a deserialized function or proper: " + callableDescriptor;
@@ -339,7 +339,7 @@ public class InlineCodegen extends CallGenerator {
             }
         });
 
-        return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), containerId);
+        return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), containerId.asString());
     }
 
     @NotNull
