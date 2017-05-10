@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.DISPATCH_RE
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.EXTENSION_RECEIVER
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -39,21 +42,15 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.utils.SmartList
 
-sealed class CallableReceiver {
-    class UnboundReference(val qualifier: QualifierReceiver) : CallableReceiver()
-    class BoundValueReference(val qualifier: QualifierReceiver) : CallableReceiver()
-    class ScopeReceiver(val receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver()
-    class ExplicitValueReceiver(val receiver: SimpleKotlinCallArgument) : CallableReceiver()
+sealed class CallableReceiver(val receiver: ReceiverValueWithSmartCastInfo) {
+    class UnboundReference(val qualifier: QualifierReceiver, receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
+    class BoundValueReference(val qualifier: QualifierReceiver, receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
+    class ScopeReceiver(receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
+    class ExplicitValueReceiver(val lhsArgument: SimpleKotlinCallArgument, receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
 }
 
 private val CallableReceiver.asReceiverValueForVisibilityChecks: ReceiverValue
-    get() = when(this) {
-        is CallableReceiver.ScopeReceiver -> receiver.receiverValue
-        is CallableReceiver.ExplicitValueReceiver -> receiver.receiver.receiverValue
-        is CallableReceiver.BoundValueReference -> qualifier.classValueReceiver ?: Visibilities.ALWAYS_SUITABLE_RECEIVER
-        is CallableReceiver.UnboundReference -> (qualifier.descriptor as? ClassDescriptor)?.defaultType?.let(::TransientReceiver)
-                                                ?: Visibilities.ALWAYS_SUITABLE_RECEIVER
-    }
+    get() = receiver.receiverValue
 
 /**
  * Suppose we have class A with staticM, memberM, memberExtM.
@@ -67,6 +64,7 @@ class CallableReferenceCandidate(
         val candidate: CallableDescriptor,
         val dispatchReceiver: CallableReceiver?,
         val extensionReceiver: CallableReceiver?,
+        val explicitReceiverKind: ExplicitReceiverKind,
         val reflectionCandidateType: UnwrappedType,
         val numDefaults: Int,
         override val status: ResolutionCandidateStatus
@@ -137,10 +135,11 @@ class CallableReferencesCandidateFactory(
         if (candidateDescriptor !is CallableMemberDescriptor) {
             val status = ResolutionCandidateStatus(listOf(NotCallableMemberReference(argument, candidateDescriptor)))
             return CallableReferenceCandidate(candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
-                                              reflectionCandidateType, defaults, status)
+                                              explicitReceiverKind, reflectionCandidateType, defaults, status)
         }
 
         val diagnostics = SmartList<KotlinCallDiagnostic>()
+        diagnostics.addAll(towerCandidate.diagnostics)
         val invisibleMember = Visibilities.findInvisibleMember(dispatchCallableReceiver?.asReceiverValueForVisibilityChecks,
                                                                candidateDescriptor, outerCallContext.scopeTower.lexicalScope.ownerDescriptor)
         if (invisibleMember != null) {
@@ -159,7 +158,7 @@ class CallableReferencesCandidateFactory(
         }
 
         return CallableReferenceCandidate(candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
-                                          reflectionCandidateType, defaults, ResolutionCandidateStatus(diagnostics))
+                                          explicitReceiverKind, reflectionCandidateType, defaults, ResolutionCandidateStatus(diagnostics))
     }
 
     private fun getArgumentAndReturnTypeUseMappingByExpectedType(
@@ -273,16 +272,16 @@ class CallableReferencesCandidateFactory(
 
         val lhsResult = argument.lhsResult
         return when (lhsResult) {
-            is LHSResult.Expression -> CallableReceiver.ExplicitValueReceiver(lhsResult.lshCallArgument)
+            is LHSResult.Expression -> CallableReceiver.ExplicitValueReceiver(lhsResult.lshCallArgument, receiver)
             is LHSResult.Type -> {
                 if (lhsResult.qualifier.classValueReceiver?.type == receiver.receiverValue.type) {
-                    CallableReceiver.BoundValueReference(lhsResult.qualifier)
+                    CallableReceiver.BoundValueReference(lhsResult.qualifier, receiver)
                 }
                 else {
-                    CallableReceiver.UnboundReference(lhsResult.qualifier)
+                    CallableReceiver.UnboundReference(lhsResult.qualifier, receiver)
                 }
             }
-            is LHSResult.Object -> CallableReceiver.BoundValueReference(lhsResult.qualifier)
+            is LHSResult.Object -> CallableReceiver.BoundValueReference(lhsResult.qualifier, receiver)
             else -> throw IllegalStateException("Unsupported kind of lhsResult: $lhsResult")
         }
     }

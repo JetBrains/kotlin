@@ -131,7 +131,7 @@ class PSICallResolver(
     }
 
     private fun createLambdaAnalyzer(context: BasicCallResolutionContext) =
-            KotlinResolutionCallbacksImpl(expressionTypingServices, context.trace, typeApproximator, kotlinToResolvedCallTransformer, argumentTypeResolver)
+            KotlinResolutionCallbacksImpl(context, expressionTypingServices, typeApproximator, kotlinToResolvedCallTransformer, argumentTypeResolver, doubleColonExpressionResolver)
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {
         val expectedType = context.expectedType.unwrap()

@@ -250,6 +250,12 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         return storage.lambdaArguments
     }
 
+    override val callableReferenceArguments: List<ResolvedCallableReferenceArgument>
+        get() {
+            checkState(State.COMPLETION)
+            return storage.callableReferenceArguments
+        }
+
     // KotlinCallCompleter.Context
     override fun asResultTypeResolverContext() = apply { checkState(State.COMPLETION) }
 

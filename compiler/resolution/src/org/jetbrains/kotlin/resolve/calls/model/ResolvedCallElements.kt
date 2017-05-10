@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.builtins.createFunctionType
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaTypeVariable
@@ -55,7 +56,7 @@ class ResolvedLambdaArgument(
 class ResolvedCallableReferenceArgument(
         override val outerCall: KotlinCall,
         override val argument: CallableReferenceKotlinCallArgument,
-        override val myTypeVariables: Collection<NewTypeVariable>,
+        override val myTypeVariables: List<NewTypeVariable>,
         val callableResolutionCandidate: CallableReferenceCandidate
 ) : ArgumentWithPostponeResolution() {
     override val inputType: Collection<UnwrappedType> get() = emptyList()

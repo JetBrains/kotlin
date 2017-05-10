@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.psi.KtExpression
@@ -27,23 +29,32 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
 class KotlinResolutionCallbacksImpl(
+        val topLevelCallContext: BasicCallResolutionContext,
         val expressionTypingServices: ExpressionTypingServices,
-        val trace: BindingTrace,
         val typeApproximator: TypeApproximator,
         val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
-        val argumentTypeResolver: ArgumentTypeResolver
+        val argumentTypeResolver: ArgumentTypeResolver,
+        val doubleColonExpressionResolver: DoubleColonExpressionResolver
 ): KotlinResolutionCallbacks {
+    val trace: BindingTrace = topLevelCallContext.trace
 
     override fun analyzeAndGetLambdaResultArguments(
             topLevelCall: KotlinCall,
@@ -116,5 +127,54 @@ class KotlinResolutionCallbacksImpl(
                 argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(trace, expressionTypingServices.statementFilter, returnType, deparenthesized)
             }
         }
+    }
+
+    override fun completeCallableReference(
+            callableReferenceArgument: ResolvedCallableReferenceArgument,
+            resultTypeParameters: List<UnwrappedType>
+    ) {
+        val callableCandidate = callableReferenceArgument.callableResolutionCandidate
+        val psiCallArgument = callableReferenceArgument.argument.psiCallArgument as CallableReferenceKotlinCallArgumentImpl
+        val callableReferenceExpression = psiCallArgument.ktCallableReferenceExpression
+        val resultSubstitutor = IndexedParametersSubstitution(callableCandidate.candidate.typeParameters, resultTypeParameters.map { it.asTypeProjection() }).buildSubstitutor()
+
+
+        // write down type for callable reference expression
+        val resultType = resultSubstitutor.safeSubstitute(callableCandidate.reflectionCandidateType, Variance.INVARIANT)
+        argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(trace, expressionTypingServices.statementFilter,
+                                                                    resultType,
+                                                                    callableReferenceExpression)
+        val reference = callableReferenceExpression.callableReference
+
+        val explicitCallableReceiver = when (callableCandidate.explicitReceiverKind) {
+            ExplicitReceiverKind.DISPATCH_RECEIVER -> callableCandidate.dispatchReceiver
+            ExplicitReceiverKind.EXTENSION_RECEIVER -> callableCandidate.extensionReceiver
+            else -> null
+        }
+
+        val explicitReceiver = explicitCallableReceiver?.receiver
+        val psiCall = CallMaker.makeCall(reference, explicitReceiver?.receiverValue, null, reference, emptyList())
+
+        val tracing = TracingStrategyImpl.create(reference, psiCall)
+        val temporaryTrace = TemporaryBindingTrace.create(trace, "callable reference fake call")
+
+        val resolvedCall = ResolvedCallImpl(psiCall, callableCandidate.candidate, callableCandidate.dispatchReceiver?.receiver?.receiverValue,
+                         callableCandidate.extensionReceiver?.receiver?.receiverValue, callableCandidate.explicitReceiverKind,
+                         null, temporaryTrace, tracing, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY))
+        resolvedCall.setResultingSubstitutor(resultSubstitutor)
+
+        tracing.bindCall(trace, psiCall)
+        tracing.bindReference(trace, resolvedCall)
+        tracing.bindResolvedCall(trace, resolvedCall)
+
+        resolvedCall.setStatusToSuccess()
+        resolvedCall.markCallAsCompleted()
+
+        when (callableCandidate.candidate) {
+            is FunctionDescriptor -> doubleColonExpressionResolver.bindFunctionReference(callableReferenceExpression, resultType, topLevelCallContext)
+            is PropertyDescriptor -> doubleColonExpressionResolver.bindPropertyReference(callableReferenceExpression, resultType, topLevelCallContext)
+        }
+
+        doubleColonExpressionResolver.checkReferenceIsToAllowedMember(callableCandidate.candidate, topLevelCallContext.trace, callableReferenceExpression)
     }
 }
