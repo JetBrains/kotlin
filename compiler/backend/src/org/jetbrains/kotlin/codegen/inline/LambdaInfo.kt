@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
@@ -71,7 +72,13 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean, @JvmField val is
 }
 
 
-class DefaultLambda(override val lambdaClassType: Type, lambdaArgs: Array<Type>) : LambdaInfo(false, false) {
+class DefaultLambda(
+        override val lambdaClassType: Type,
+        val capturedArgs: Array<Type>,
+        val parameterDescriptor: ValueParameterDescriptor,
+        val initInstuctions: List<AbstractInsnNode>,
+        val offset: Int
+) : LambdaInfo(false, false) {
     override val invokeMethod: Method
         get() = TODO("not implemented")
 

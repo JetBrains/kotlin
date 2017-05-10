@@ -87,7 +87,7 @@ public class InlineCodegen extends CallGenerator {
     private final boolean isSameModule;
 
     private final ParametersBuilder invocationParamBuilder = ParametersBuilder.newBuilder();
-    private final Map<Integer, LambdaInfo> expressionMap = new HashMap<>();
+    private final Map<Integer, LambdaInfo> expressionMap = new LinkedHashMap<>();
 
     private final ReifiedTypeInliner reifiedTypeInliner;
 
@@ -413,7 +413,10 @@ public class InlineCodegen extends CallGenerator {
         defaultSourceMapper.setCallSiteMarker(new CallSiteMarker(codegen.getLastLineNumber()));
         MethodNode node = nodeAndSmap.getNode();
         if (callDefault) {
-            MethodInlinerUtilKt.expandMaskConditionsAndUpdateVariableNodes(node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex);
+            List<DefaultLambda> defaultLambdas = DefaultMethodUtilKt.expandMaskConditionsAndUpdateVariableNodes(
+                    node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex,
+                    DefaultMethodUtilKt.extractDefaultLambdaOffsetAndDescriptor(jvmSignature, functionDescriptor)
+            );
         }
         ReifiedTypeParametersUsages reificationResult = reifiedTypeInliner.reifyInstructions(node);
         generateClosuresBodies();
