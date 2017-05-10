@@ -436,26 +436,37 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         if (targetDescriptor != null && DescriptorUtils.isEnumEntry(targetDescriptor)) {
             context.trace.report(IS_ENUM_ENTRY.on(typeReferenceAfterIs))
         }
-        val subjectTypeHasError = subjectType.containsError()
-        if (!subjectTypeHasError && !TypeUtils.isNullableType(subjectType) && targetType.isMarkedNullable) {
+        if (!subjectType.containsError() && !TypeUtils.isNullableType(subjectType) && targetType.isMarkedNullable) {
             val element = typeReferenceAfterIs.typeElement
             assert(element is KtNullableType) { "element must be instance of " + KtNullableType::class.java.name }
             context.trace.report(Errors.USELESS_NULLABLE_CHECK.on(element as KtNullableType))
         }
         checkTypeCompatibility(context, targetType, subjectType, typeReferenceAfterIs)
-        if (!subjectTypeHasError && !targetType.containsError()) {
-            val possibleTypes = hashSetOf(subjectType)
-            possibleTypes.addAll(context.dataFlowInfo.getStableTypes(subjectDataFlowValue))
-            val intersection = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, possibleTypes.map { it.upperIfFlexible() })
-            if (intersection?.isSubtypeOf(targetType) ?: false) {
-                context.trace.report(Errors.USELESS_IS_CHECK.on(isCheck, !negated))
-            }
-        }
+
+        detectRedundantIs(context, subjectType, targetType, isCheck, negated, subjectDataFlowValue)
+
         if (CastDiagnosticsUtil.isCastErased(subjectType, targetType, KotlinTypeChecker.DEFAULT)) {
             context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(typeReferenceAfterIs, targetType))
         }
         return context.dataFlowInfo.let {
             ConditionalDataFlowInfo(it.establishSubtyping(subjectDataFlowValue, targetType, components.languageVersionSettings), it)
+        }
+    }
+
+    private fun detectRedundantIs(
+            context: ExpressionTypingContext,
+            subjectType: KotlinType,
+            targetType: KotlinType,
+            isCheck: KtElement,
+            negated: Boolean,
+            subjectDataFlowValue: DataFlowValue
+    ) {
+        if (subjectType.containsError() || targetType.containsError()) return
+
+        val possibleTypes = DataFlowAnalyzer.getAllPossibleTypes(subjectType, context, subjectDataFlowValue)
+        val intersection = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, possibleTypes.map { it.upperIfFlexible() })
+        if (intersection?.isSubtypeOf(targetType) ?: false) {
+            context.trace.report(Errors.USELESS_IS_CHECK.on(isCheck, !negated))
         }
     }
 

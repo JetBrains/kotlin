@@ -350,6 +350,15 @@ public class DataFlowAnalyzer {
             @NotNull ResolutionContext c
     ) {
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, c);
+        return getAllPossibleTypes(type, c, dataFlowValue);
+    }
+
+    @NotNull
+    public static Collection<KotlinType> getAllPossibleTypes(
+            @NotNull KotlinType type,
+            @NotNull ResolutionContext c,
+            @NotNull DataFlowValue dataFlowValue
+    ) {
         Collection<KotlinType> possibleTypes = Sets.newHashSet(type);
         possibleTypes.addAll(c.dataFlowInfo.getStableTypes(dataFlowValue));
         return possibleTypes;
