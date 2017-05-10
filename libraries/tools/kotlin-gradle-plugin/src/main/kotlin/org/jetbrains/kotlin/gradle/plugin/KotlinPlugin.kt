@@ -347,7 +347,7 @@ internal open class KotlinAndroidPlugin(
                 kotlinPluginVersion,
                 kotlinGradleBuildServices)
 
-        val legacyVersionThreshold = "2.4.0"
+        val legacyVersionThreshold = "2.5.0"
 
         val variantProcessor = if (compareVersionNumbers(version, legacyVersionThreshold) < 0)
             LegacyAndroidAndroidProjectHandler(kotlinTools)
