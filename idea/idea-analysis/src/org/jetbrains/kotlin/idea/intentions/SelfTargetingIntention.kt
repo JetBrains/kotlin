@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.daemon.HighlightDisplayKey
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.LocalInspectionEP
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
@@ -31,7 +31,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
 import kotlin.reflect.KClass
 
+@Suppress("EqualsOrHashCode")
 abstract class SelfTargetingIntention<TElement : PsiElement>(
         val elementType: Class<TElement>,
         private var text: String,
@@ -117,6 +117,14 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
     override fun startInWriteAction() = true
 
     override fun toString(): String = getText()
+
+    override fun equals(other: Any?): Boolean {
+        // Nasty code because IntentionWrapper itself does not override equals
+        if (other is IntentionWrapper) return this == other.action
+        return other is SelfTargetingIntention<*> && javaClass == other.javaClass && text == other.text
+    }
+
+    // Intentionally missed hashCode (IntentionWrapper does not override it)
 
     companion object {
         private val intentionBasedInspections = HashMap<KClass<out SelfTargetingIntention<*>>, IntentionBasedInspection<*>?>()
