@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -77,7 +78,7 @@ internal object CheckArguments : ResolutionPart {
                 else {
                     // callable reference resolution will be run after choosing single descriptor
                     postponeCallableReferenceArguments.add(PostponeCallableReferenceArgument(argument, expectedType))
-                    null
+                    checkCallableExpectedType(csBuilder, argument, expectedType)
                 }
             }
             else -> error("Incorrect argument type: $argument, ${argument.javaClass.canonicalName}.")
@@ -161,6 +162,15 @@ internal object CheckArguments : ResolutionPart {
         csBuilder.addLambdaArgument(resolvedArgument)
 
         return null
+    }
+
+    fun checkCallableExpectedType(
+            csBuilder: ConstraintSystemBuilder,
+            argument: CallableReferenceKotlinCallArgument,
+            expectedType: UnwrappedType
+    ): KotlinCallDiagnostic? {
+        val notCallableTypeConstructor = csBuilder.getProperSuperTypeConstructors(expectedType).firstOrNull { !ReflectionTypes.isPossibleExpectedCallableType(it) }
+        return notCallableTypeConstructor?.let { NotCallableExpectedType(argument, expectedType, notCallableTypeConstructor) }
     }
 
     fun processCallableReferenceArgument(

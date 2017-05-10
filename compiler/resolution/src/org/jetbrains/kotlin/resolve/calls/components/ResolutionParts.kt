@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.IMPOSSIBLE_TO_GENERATE
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.RUNTIME_ERROR
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
+import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.Variance
@@ -250,25 +250,33 @@ class ExpectedLambdaParametersCountMismatch(
         val lambdaArgument: LambdaKotlinCallArgument,
         val expected: Int,
         val actual: Int
-) : KotlinCallDiagnostic(IMPOSSIBLE_TO_GENERATE) {
+) : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(lambdaArgument, this)
 }
 
-class UnexpectedReceiver(val functionExpression: FunctionExpression) : KotlinCallDiagnostic(IMPOSSIBLE_TO_GENERATE) {
+class UnexpectedReceiver(val functionExpression: FunctionExpression) : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(functionExpression, this)
 }
 
-class MissingReceiver(val functionExpression: FunctionExpression) : KotlinCallDiagnostic(IMPOSSIBLE_TO_GENERATE) {
+class MissingReceiver(val functionExpression: FunctionExpression) : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(functionExpression, this)
 }
 
-class NoneCallableReferenceCandidates(val argument: CallableReferenceKotlinCallArgument) : KotlinCallDiagnostic(IMPOSSIBLE_TO_GENERATE) {
+class NoneCallableReferenceCandidates(val argument: CallableReferenceKotlinCallArgument) : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
 }
 
 class CallableReferenceCandidatesAmbiguity(
         val argument: CallableReferenceKotlinCallArgument,
         val candidates: Collection<CallableReferenceCandidate>
-) : KotlinCallDiagnostic(IMPOSSIBLE_TO_GENERATE) {
+) : KotlinCallDiagnostic(INAPPLICABLE) {
+    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
+}
+
+class NotCallableExpectedType(
+        val argument: CallableReferenceKotlinCallArgument,
+        val expectedType: UnwrappedType,
+        val notCallableTypeConstructor: TypeConstructor
+) : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
 }
