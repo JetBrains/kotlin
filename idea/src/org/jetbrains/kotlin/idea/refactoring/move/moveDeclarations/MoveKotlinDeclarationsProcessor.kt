@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
 import com.intellij.ide.util.EditorHelper
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -30,7 +29,6 @@ import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveMultipleElementsViewDescriptor
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassHandler
 import com.intellij.refactoring.rename.RenameUtil
-import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.NonCodeUsageInfo
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.refactoring.util.TextOccurrencesUtil
@@ -51,7 +49,6 @@ import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinClassHandler
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -82,8 +79,6 @@ interface Mover : (KtNamedDeclaration, KtElement) -> KtNamedDeclaration {
         override fun invoke(originalElement: KtNamedDeclaration, targetContainer: KtElement) = originalElement
     }
 }
-
-internal var KtSimpleNameExpression.internalUsageInfo: UsageInfo? by CopyableUserDataProperty(Key.create("INTERNAL_USAGE_INFO"))
 
 class MoveDeclarationsDescriptor @JvmOverloads constructor(
         val project: Project,
@@ -245,7 +240,7 @@ class MoveKotlinDeclarationsProcessor(
         val (oldInternalUsages, externalUsages) = usages.partition { it is KotlinMoveUsage && it.isInternal }
         val newInternalUsages = ArrayList<UsageInfo>()
 
-        oldInternalUsages.forEach { (it.element as? KtSimpleNameExpression)?.internalUsageInfo = it }
+        markInternalUsages(oldInternalUsages)
 
         val usagesToProcess = ArrayList(externalUsages)
 
@@ -281,16 +276,7 @@ class MoveKotlinDeclarationsProcessor(
                 }
             }
 
-            newDeclarations.forEach { newDeclaration ->
-                newInternalUsages += newDeclaration.collectDescendantsOfType<KtSimpleNameExpression>().mapNotNull {
-                    val usageInfo = it.internalUsageInfo
-                    if (usageInfo?.element != null) return@mapNotNull usageInfo
-                    val referencedElement = (usageInfo as? MoveRenameUsageInfo)?.referencedElement ?: return@mapNotNull null
-                    val newReferencedElement = mapToNewOrThis(referencedElement, oldToNewElementsMapping)
-                    if (!newReferencedElement.isValid) return@mapNotNull null
-                    (usageInfo as? KotlinMoveUsage)?.refresh(it, newReferencedElement)
-                }
-            }
+            newDeclarations.forEach { newInternalUsages += restoreInternalUsages(it, oldToNewElementsMapping) }
 
             usagesToProcess += newInternalUsages
 
@@ -301,9 +287,7 @@ class MoveKotlinDeclarationsProcessor(
             RefactoringUIUtil.processIncorrectOperation(myProject, e)
         }
         finally {
-            (newInternalUsages + oldInternalUsages).forEach {
-                (it.element as? KtSimpleNameExpression)?.internalUsageInfo = null
-            }
+            cleanUpInternalUsages(newInternalUsages + oldInternalUsages)
         }
     }
 

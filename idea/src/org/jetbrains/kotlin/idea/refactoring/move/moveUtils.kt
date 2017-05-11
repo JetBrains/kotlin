@@ -181,6 +181,31 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
     }
 }
 
+internal var KtSimpleNameExpression.internalUsageInfo: UsageInfo? by CopyableUserDataProperty(Key.create("INTERNAL_USAGE_INFO"))
+
+internal fun markInternalUsages(usages: Collection<UsageInfo>) {
+    usages.forEach { (it.element as? KtSimpleNameExpression)?.internalUsageInfo = it }
+}
+
+internal fun restoreInternalUsages(
+        scope: KtElement,
+        oldToNewElementsMapping: Map<PsiElement, PsiElement>,
+        forcedRestore: Boolean = false
+): List<UsageInfo> {
+    return scope.collectDescendantsOfType<KtSimpleNameExpression>().mapNotNull {
+        val usageInfo = it.internalUsageInfo
+        if (!forcedRestore && usageInfo?.element != null) return@mapNotNull usageInfo
+        val referencedElement = (usageInfo as? MoveRenameUsageInfo)?.referencedElement ?: return@mapNotNull null
+        val newReferencedElement = mapToNewOrThis(referencedElement, oldToNewElementsMapping)
+        if (!newReferencedElement.isValid) return@mapNotNull null
+        (usageInfo as? KotlinMoveUsage)?.refresh(it, newReferencedElement)
+    }
+}
+
+internal fun cleanUpInternalUsages(usages: Collection<UsageInfo>) {
+    usages.forEach { (it.element as? KtSimpleNameExpression)?.internalUsageInfo = null }
+}
+
 class ImplicitCompanionAsDispatchReceiverUsageInfo(
         callee: KtSimpleNameExpression,
         val companionDescriptor: ClassDescriptor

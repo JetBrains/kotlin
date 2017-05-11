@@ -115,6 +115,7 @@ import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
 import org.jetbrains.kotlin.idea.refactoring.AbstractNameSuggestionProviderTest
+import org.jetbrains.kotlin.idea.refactoring.copy.AbstractCopyTest
 import org.jetbrains.kotlin.idea.refactoring.inline.AbstractInlineTest
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractExtractionTest
 import org.jetbrains.kotlin.idea.refactoring.move.AbstractMoveTest
@@ -743,6 +744,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractMoveTest> {
             model("refactoring/move", extension = "test", singleClass = true)
+        }
+
+        testClass<AbstractCopyTest> {
+            model("refactoring/copy", extension = "test", singleClass = true)
         }
 
         testClass<AbstractMultiModuleMoveTest> {

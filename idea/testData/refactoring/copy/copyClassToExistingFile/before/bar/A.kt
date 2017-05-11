@@ -1,0 +1,5 @@
+package bar
+
+fun foo() {
+
+}
