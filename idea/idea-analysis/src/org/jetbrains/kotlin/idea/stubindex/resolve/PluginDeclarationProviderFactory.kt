@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.stubindex.resolve
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
@@ -55,7 +56,7 @@ class PluginDeclarationProviderFactory(
 
     private fun packageExists(name: FqName): Boolean {
         return if (moduleInfo is ModuleSourceInfo)
-            PerModulePackageCacheService.packageExists(name, moduleInfo, project)
+            project.service<PerModulePackageCacheService>().packageExists(name, moduleInfo)
         else
             PackageIndexUtil.packageExists(name, indexedFilesScope, project)
     }
