@@ -23,7 +23,7 @@ interface ReferenceValueDescriptor {
     fun onUseAsTainted()
 }
 
-abstract class TrackedReferenceValue(type: Type): StrictBasicValue(type) {
+sealed class TrackedReferenceValue(type: Type): StrictBasicValue(type) {
     abstract val descriptors: Set<ReferenceValueDescriptor>
 }
 
@@ -42,6 +42,20 @@ class ProperTrackedReferenceValue(type: Type, val descriptor: ReferenceValueDesc
             "[$descriptor]"
 }
 
+
+class MergedTrackedReferenceValue(type: Type, override val descriptors: Set<ReferenceValueDescriptor>) : TrackedReferenceValue(type) {
+    override fun equals(other: Any?): Boolean =
+            other === this ||
+            other is MergedTrackedReferenceValue && other.descriptors == this.descriptors
+
+    override fun hashCode(): Int =
+            descriptors.hashCode()
+
+    override fun toString(): String =
+            descriptors.toString()
+}
+
+
 class TaintedTrackedReferenceValue(type: Type, override val descriptors: Set<ReferenceValueDescriptor>) : TrackedReferenceValue(type) {
     override fun equals(other: Any?): Boolean =
             other === this ||
@@ -49,7 +63,6 @@ class TaintedTrackedReferenceValue(type: Type, override val descriptors: Set<Ref
 
     override fun hashCode(): Int =
             descriptors.hashCode()
-
     override fun toString(): String =
             "!$descriptors"
 }

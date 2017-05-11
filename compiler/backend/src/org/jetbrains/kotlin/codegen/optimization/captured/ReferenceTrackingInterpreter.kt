@@ -29,25 +29,42 @@ abstract class ReferenceTrackingInterpreter : OptimizationBasicInterpreter() {
                     if (v.descriptor == w.descriptor)
                         v
                     else
-                        TaintedTrackedReferenceValue(
-                                getTaintedValueType(v.type, w.type),
-                                setOf(v.descriptor, w.descriptor)
-                        )
+                        createTaintedValue(v, w)
+
+                v is TrackedReferenceValue && w is TrackedReferenceValue ->
+                    createPossiblyMergedValue(v, w)
 
                 v is TrackedReferenceValue || w is TrackedReferenceValue ->
-                    TaintedTrackedReferenceValue(
-                            getTaintedValueType(v.type, w.type),
-                            v.referenceValueDescriptors + w.referenceValueDescriptors
-                    )
+                    createTaintedValue(v, w)
 
                 else ->
                     super.merge(v, w)
             }
 
+    protected fun createTaintedValue(v: BasicValue, w: BasicValue) : TrackedReferenceValue =
+            TaintedTrackedReferenceValue(
+                    getMergedValueType(v.type, w.type),
+                    mergeDescriptors(v, w).also {
+                        assert(it.isNotEmpty()) { "At least one of ($v, $w) should be a tracked reference" }
+                    }
+            )
+
+    protected fun createMergedValue(v: TrackedReferenceValue, w: TrackedReferenceValue): TrackedReferenceValue =
+            if (v is TaintedTrackedReferenceValue || w is TaintedTrackedReferenceValue)
+                createTaintedValue(v, w)
+            else
+                MergedTrackedReferenceValue(getMergedValueType(v.type, w.type), mergeDescriptors(v, w))
+
+    protected open fun createPossiblyMergedValue(v: TrackedReferenceValue, w: TrackedReferenceValue): TrackedReferenceValue =
+            createTaintedValue(v, w)
+
+    private fun mergeDescriptors(v: BasicValue, w: BasicValue) =
+            v.referenceValueDescriptors + w.referenceValueDescriptors
+
     private val BasicValue.referenceValueDescriptors: Set<ReferenceValueDescriptor>
         get() = if (this is TrackedReferenceValue) this.descriptors else emptySet()
 
-    private fun getTaintedValueType(type1: Type?, type2: Type?): Type =
+    protected fun getMergedValueType(type1: Type?, type2: Type?): Type =
             when {
                 type1 == null || type2 == null -> AsmTypes.OBJECT_TYPE
                 type1 == type2 -> type1
