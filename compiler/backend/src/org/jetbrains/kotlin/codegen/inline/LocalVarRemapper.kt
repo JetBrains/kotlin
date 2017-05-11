@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.codegen.inline.LocalVarRemapper.RemapStatus.*
 
 class LocalVarRemapper(private val params: Parameters, private val additionalShift: Int) {
     private val actualParamsSize: Int
-    private val remapValues: Array<StackValue?> = arrayOfNulls(params.argsSizeOnStack)
+    private val remapValues = arrayOfNulls<StackValue?>(params.argsSizeOnStack)
 
     init {
         var realSize = 0
@@ -58,7 +58,7 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
                 return RemapInfo(info)
             }
             if (info.isRemapped) {
-                return RemapInfo(remapped, info, REMAPPED)
+                return RemapInfo(info, remapped, REMAPPED)
             }
             else {
                 remappedIndex = (remapped as StackValue.Local).index
@@ -70,13 +70,13 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
             remappedIndex = actualParamsSize - params.argsSizeOnStack + index
         }
 
-        return RemapInfo(StackValue.local(remappedIndex + additionalShift, AsmTypes.OBJECT_TYPE), null, SHIFT)
+        return RemapInfo(null, StackValue.local(remappedIndex + additionalShift, AsmTypes.OBJECT_TYPE), SHIFT)
     }
 
     fun remap(index: Int): RemapInfo {
         val info = doRemap(index)
         if (FAIL == info.status) {
-            assert(info.parameterInfo != null) { "Parameter info should be not null" }
+            assert(info.parameterInfo != null) { "Parameter info for $index variable should be not null" }
             throw RuntimeException("Trying to access skipped parameter: " + info.parameterInfo!!.type + " at " + index)
         }
         return info
@@ -84,19 +84,13 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
 
     fun visitIincInsn(`var`: Int, increment: Int, mv: MethodVisitor) {
         val remap = remap(`var`)
-        assert(remap.value is StackValue.Local) { "Remapped value should be a local: " + remap.value!! }
-        mv.visitIincInsn((remap.value as StackValue.Local).index, increment)
+        if (remap.value !is StackValue.Local) {
+            throw AssertionError("Remapped value should be a local: ${remap.value}")
+        }
+        mv.visitIincInsn(remap.value.index, increment)
     }
 
-    fun visitLocalVariable(
-            name: String,
-            desc: String,
-            signature: String?,
-            start: Label,
-            end: Label,
-            index: Int,
-            mv: MethodVisitor
-    ) {
+    fun visitLocalVariable(name: String, desc: String, signature: String?, start: Label, end: Label, index: Int, mv: MethodVisitor) {
         val info = doRemap(index)
         //add entries only for shifted vars
         if (SHIFT == info.status) {
@@ -134,26 +128,9 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
         FAIL
     }
 
-    class RemapInfo {
-        @JvmField
-        val value: StackValue?
-
-        @JvmField
-        val parameterInfo: ParameterInfo?
-
-        @JvmField
-        val status: RemapStatus
-
-        constructor(value: StackValue, parameterInfo: ParameterInfo?, remapStatus: RemapStatus) {
-            this.value = value
-            this.parameterInfo = parameterInfo
-            this.status = remapStatus
-        }
-
-        constructor(parameterInfo: ParameterInfo) {
-            this.value = null
-            this.parameterInfo = parameterInfo
-            this.status = FAIL
-        }
-    }
+    class RemapInfo(
+            @JvmField val parameterInfo: ParameterInfo?,
+            @JvmField val value: StackValue? = null,
+            @JvmField val status: RemapStatus = FAIL
+    )
 }
