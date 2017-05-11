@@ -322,6 +322,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.LibraryDependenciesCache"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.LibraryDependenciesCacheImpl"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"/>
+
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>

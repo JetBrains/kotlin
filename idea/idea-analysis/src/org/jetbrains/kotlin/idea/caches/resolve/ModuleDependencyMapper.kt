@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
@@ -84,7 +85,8 @@ fun createModuleResolverProvider(
                 modulesContent, jvmPlatformParameters, IdeaEnvironment, builtInsProvider,
                 delegateResolver, { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
                 sdk?.let { SdkInfo(project, it) },
-                modulePlatforms = { module -> module.platform?.multiTargetPlatform }
+                modulePlatforms = { module -> module.platform?.multiTargetPlatform },
+                packageOracleFactory = project.service<IdePackageOracleFactory>()
         )
     }
 
