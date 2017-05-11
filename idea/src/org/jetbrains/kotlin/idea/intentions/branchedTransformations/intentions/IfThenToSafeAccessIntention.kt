@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 
 class IfThenToSafeAccessInspection : IntentionBasedInspection<KtIfExpression>(IfThenToSafeAccessIntention::class) {
     override fun inspectionTarget(element: KtIfExpression) = element.ifKeyword
@@ -70,7 +70,9 @@ class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIf
     }
 
     private fun IfThenToSelectData.clausesReplaceableBySafeCall(): Boolean {
-        if (baseClause == null || negatedClause != null && !negatedClause.isNullExpression()) return false
+        if (baseClause == null) return false
+        if (negatedClause == null && baseClause.isUsedAsExpression(context)) return false
+        if (negatedClause != null && !negatedClause.isNullExpression()) return false
         return baseClause.evaluatesTo(receiverExpression) ||
                baseClause.hasFirstReceiverOf(receiverExpression) && !baseClause.hasNullableType(context)
     }
