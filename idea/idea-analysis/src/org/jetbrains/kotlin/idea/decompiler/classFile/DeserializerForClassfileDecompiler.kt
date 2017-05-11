@@ -43,8 +43,8 @@ import java.io.InputStream
 
 fun DeserializerForClassfileDecompiler(classFile: VirtualFile): DeserializerForClassfileDecompiler {
     val kotlinClassHeaderInfo = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
-    assert(kotlinClassHeaderInfo != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val packageFqName = kotlinClassHeaderInfo!!.classId.packageFqName
+                                ?: error("Decompiled data factory shouldn't be called on an unsupported file: " + classFile)
+    val packageFqName = kotlinClassHeaderInfo.classId.packageFqName
     return DeserializerForClassfileDecompiler(classFile.parent!!, packageFqName)
 }
 
