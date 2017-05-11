@@ -111,4 +111,20 @@
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
     <description>Replace 'if' expression with safe access expression</description>
   </problem>
+  <problem>
+    <file>isCondition.kt</file>
+    <line>1</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/isCondition.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>isNotCondition.kt</file>
+    <line>1</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/isNotCondition.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
 </problems>
