@@ -85,7 +85,9 @@ class CatchTranslator(
             initialCatchParameterRef: JsNameRef,
             catches: Iterator<KtCatchClause>
     ): JsStatement {
-        if (!catches.hasNext()) return JsThrow(initialCatchParameterRef)
+        if (!catches.hasNext()) {
+            return JsThrow(initialCatchParameterRef)
+        }
 
         var nextContext = context
 
@@ -117,7 +119,7 @@ class CatchTranslator(
         }!!
 
         val elseBlock = translateCatches(context, initialCatchParameterRef, catches)
-        return JsIf(typeCheck, thenBlock, elseBlock)
+        return JsIf(typeCheck.source(catch), thenBlock, elseBlock).apply { source = catch }
     }
 
     private fun translateCatchBody(context: TranslationContext, catchClause: KtCatchClause): JsBlock {
