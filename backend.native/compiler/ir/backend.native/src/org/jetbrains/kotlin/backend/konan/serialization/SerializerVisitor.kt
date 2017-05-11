@@ -53,7 +53,7 @@ internal class DeserializerDriver(val context: Context) {
                 context.log{"IR deserialization SUCCESS:\t$descriptor"}
             } catch(e: Throwable) {
                 context.log{"IR deserialization FAILURE:\t$descriptor"}
-                e.printStackTrace()
+                if (context.phase!!.verbose) e.printStackTrace()
             }
         }
         return deserializedIr
