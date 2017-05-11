@@ -11,7 +11,7 @@ public external object Math {
     public fun acos(value: Double): Double
     public fun asin(value: Double): Double
     public fun atan(value: Double): Double
-    public fun atan2(x: Double, y: Double): Double
+    public fun atan2(y: Double, x: Double): Double
     public fun cos(value: Double): Double
     public fun sin(value: Double): Double
     public fun exp(value: Double): Double
