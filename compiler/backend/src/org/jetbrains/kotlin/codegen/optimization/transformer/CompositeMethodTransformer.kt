@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.optimization
+package org.jetbrains.kotlin.codegen.optimization.transformer
 
-import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.transformer.CompositeMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-class FixStackWithLabelNormalizationMethodTransformer : CompositeMethodTransformer(
-        LabelNormalizationMethodTransformer(),
-        FixStackMethodTransformer()
-)
+open class CompositeMethodTransformer(vararg val transformers: MethodTransformer) : MethodTransformer() {
+    override fun transform(internalClassName: String, methodNode: MethodNode) {
+        transformers.forEach { it.transform(internalClassName, methodNode) }
+    }
+}

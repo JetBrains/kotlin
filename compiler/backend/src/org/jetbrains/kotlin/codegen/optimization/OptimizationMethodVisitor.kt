@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantCoercionToUnitT
 import org.jetbrains.kotlin.codegen.optimization.captured.CapturedVarsOptimizationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.prepareForEmitting
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.RedundantNullCheckV2MethodTransformer
+import org.jetbrains.kotlin.codegen.optimization.transformer.CompositeMethodTransformer
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
@@ -38,9 +39,7 @@ class OptimizationMethodVisitor(
     override fun performTransformations(methodNode: MethodNode) {
         MANDATORY_METHOD_TRANSFORMER.transform("fake", methodNode)
         if (canBeOptimized(methodNode) && !disableOptimization) {
-            for (transformer in OPTIMIZATION_TRANSFORMERS) {
-                transformer.transform("fake", methodNode)
-            }
+            OPTIMIZATION_TRANSFORMER.transform("fake", methodNode)
         }
         methodNode.prepareForEmitting()
     }
@@ -50,7 +49,7 @@ class OptimizationMethodVisitor(
 
         private val MANDATORY_METHOD_TRANSFORMER = FixStackWithLabelNormalizationMethodTransformer()
 
-        private val OPTIMIZATION_TRANSFORMERS = arrayOf(
+        private val OPTIMIZATION_TRANSFORMER = CompositeMethodTransformer(
                 CapturedVarsOptimizationMethodTransformer(),
                 RedundantNullCheckV2MethodTransformer(),
                 RedundantCheckCastEliminationMethodTransformer(),
