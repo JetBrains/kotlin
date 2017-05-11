@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantBoxingMethodTra
 import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantCoercionToUnitTransformer
 import org.jetbrains.kotlin.codegen.optimization.captured.CapturedVarsOptimizationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.prepareForEmitting
-import org.jetbrains.kotlin.codegen.optimization.nullCheck.RedundantNullCheckV2MethodTransformer
+import org.jetbrains.kotlin.codegen.optimization.nullCheck.RedundantNullCheckMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.transformer.CompositeMethodTransformer
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -51,7 +51,7 @@ class OptimizationMethodVisitor(
 
         private val OPTIMIZATION_TRANSFORMER = CompositeMethodTransformer(
                 CapturedVarsOptimizationMethodTransformer(),
-                RedundantNullCheckV2MethodTransformer(),
+                RedundantNullCheckMethodTransformer(),
                 RedundantCheckCastEliminationMethodTransformer(),
                 RedundantBoxingMethodTransformer(),
                 RedundantCoercionToUnitTransformer(),
