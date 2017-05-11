@@ -918,7 +918,7 @@ class ExpressionsOfTypeProcessor(
     }
 
     private fun KotlinType.containsTypeOrDerivedInside(type: FuzzyType): Boolean {
-        return type.checkIsSuperTypeOf(this) != null || arguments.any { it.type.containsTypeOrDerivedInside(type) }
+        return type.checkIsSuperTypeOf(this) != null || arguments.any { !it.isStarProjection && it.type.containsTypeOrDerivedInside(type) }
     }
 
     private fun isImplicitlyTyped(declaration: KtDeclaration): Boolean {
