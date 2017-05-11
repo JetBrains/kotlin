@@ -276,6 +276,11 @@ object WhenChecker {
     }
 
     @JvmStatic
+    fun getClassDescriptorOfTypeIfSealed(type: KotlinType?): ClassDescriptor?
+            = type?.let { TypeUtils.getClassDescriptor(it) }?.takeIf { DescriptorUtils.isSealedClass(it) }
+
+
+    @JvmStatic
     fun whenSubjectType(expression: KtWhenExpression, context: BindingContext) =
             expression.subjectExpression?.let { context.get(SMARTCAST, it)?.defaultType ?: context.getType(it) }
 
@@ -285,6 +290,11 @@ object WhenChecker {
             context: BindingContext,
             enumClassDescriptor: ClassDescriptor
     ) = WhenOnEnumExhaustivenessChecker.getMissingCases(expression, context, enumClassDescriptor, false)
+
+    @JvmStatic
+    fun getSealedMissingCases(expression: KtWhenExpression,
+                              context: BindingContext,
+                              sealedlassDescriptor: ClassDescriptor) = WhenOnSealedExhaustivenessChecker.getMissingCases(expression, context, sealedlassDescriptor, false)
 
     fun getMissingCases(expression: KtWhenExpression, context: BindingContext): List<WhenMissingCase> {
         val type = whenSubjectType(expression, context) ?: return listOf(UnknownMissingCase)

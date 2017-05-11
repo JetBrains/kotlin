@@ -808,6 +808,13 @@ class ControlFlowInformationProvider private constructor(
                                 trace.report(NON_EXHAUSTIVE_WHEN.on(element, enumMissingCases))
                             }
                         }
+                        val sealedClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfSealed(subjectType)
+                        if (sealedClassDescriptor != null) {
+                            val sealedMissingCases = WhenChecker.getSealedMissingCases(element, context, sealedClassDescriptor)
+                            if (!sealedMissingCases.isEmpty()) {
+                                trace.report(NON_EXHAUSTIVE_WHEN.on(element, sealedMissingCases))
+                            }
+                        }
                     }
                 }
             }

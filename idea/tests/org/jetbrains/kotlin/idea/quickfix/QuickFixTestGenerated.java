@@ -10957,6 +10957,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("addRemainingBranchesSealedStatement.kt")
+        public void testAddRemainingBranchesSealedStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesSealedStatement.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInWhen() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/when"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
