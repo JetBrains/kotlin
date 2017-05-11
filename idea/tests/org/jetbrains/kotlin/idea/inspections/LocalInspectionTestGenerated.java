@@ -131,4 +131,67 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceArrayOfWithLiteral extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInReplaceArrayOfWithLiteral() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("base.kt")
+        public void testBase() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral/base.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("default.kt")
+        public void testDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral/default.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultNotAnnotation.kt")
+        public void testDefaultNotAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral/defaultNotAnnotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("empty.kt")
+        public void testEmpty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral/empty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("intArray.kt")
+        public void testIntArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral/intArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noAnnotation.kt")
+        public void testNoAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral/noAnnotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noArray.kt")
+        public void testNoArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral/noArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unnamed.kt")
+        public void testUnnamed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral/unnamed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral/vararg.kt");
+            doTest(fileName);
+        }
+    }
 }

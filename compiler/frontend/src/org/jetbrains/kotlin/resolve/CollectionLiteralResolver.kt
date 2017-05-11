@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 
 object CollectionLiteralResolver {
-    private val PRIMITIVE_TYPE_TO_ARRAY: Map<PrimitiveType, Name> = hashMapOf(
+    val PRIMITIVE_TYPE_TO_ARRAY: Map<PrimitiveType, Name> = hashMapOf(
             PrimitiveType.BOOLEAN to Name.identifier("booleanArrayOf"),
             PrimitiveType.CHAR to Name.identifier("charArrayOf"),
             PrimitiveType.INT to Name.identifier("intArrayOf"),
@@ -51,7 +51,7 @@ object CollectionLiteralResolver {
             PrimitiveType.DOUBLE to Name.identifier("doubleArrayOf")
     )
 
-    private val ARRAY_OF_FUNCTION = Name.identifier("arrayOf")
+    val ARRAY_OF_FUNCTION = Name.identifier("arrayOf")
 
     fun resolveCollectionLiteral(collectionLiteralExpression: KtCollectionLiteralExpression,
                                  context: ExpressionTypingContext,
