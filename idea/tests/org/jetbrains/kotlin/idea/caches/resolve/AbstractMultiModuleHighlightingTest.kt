@@ -56,10 +56,10 @@ abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTe
         checkHighlightingInAllFiles()
     }
 
-    protected fun checkHighlightingInAllFiles() {
+    protected fun checkHighlightingInAllFiles(nameFilter: (fileName: String) -> Boolean = { true }) {
         var atLeastOneFile = false
         PluginJetFilesProvider.allFilesInProject(myProject!!).forEach { file ->
-            if (!file.text.contains("// !CHECK_HIGHLIGHTING")) {
+            if (nameFilter(file.name) && !file.text.contains("// !CHECK_HIGHLIGHTING")) {
                 atLeastOneFile = true
                 configureByExistingFile(file.virtualFile!!)
                 checkHighlighting(myEditor, true, false)

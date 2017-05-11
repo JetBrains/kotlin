@@ -16,12 +16,23 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.DependencyScope
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ResolverForModuleComputationTracker
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
+import org.jetbrains.kotlin.test.KotlinTestUtils
 
 class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
+    override fun setUp() {
+        super.setUp()
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+    }
+
     fun testVisibility() {
         val module1 = module("m1")
         val module2 = module("m2")
@@ -48,6 +59,40 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module4.addDependency(module3)
 
         checkHighlightingInAllFiles()
+    }
+
+    fun testLazyResolvers() {
+        val resolversComputed = mutableSetOf<Module>()
+
+        val resolversTracker = object : ResolverForModuleComputationTracker {
+            override fun onResolverComputed(moduleInfo: ModuleInfo) {
+                (moduleInfo as IdeaModuleInfo).let {
+                    if (it is ModuleSourceInfo) {
+                        val module = it.module
+                        resolversComputed.add(module)
+                    }
+                }
+            }
+        }
+
+        project.withServiceRegistered<ResolverForModuleComputationTracker, Unit>(resolversTracker) {
+            val module1 = module("m1")
+            val module2 = module("m2")
+            val module3 = module("m3")
+
+            module3.addDependency(module2)
+            module3.addDependency(module1)
+
+            assertTrue(module1 !in resolversComputed)
+            assertTrue(module2 !in resolversComputed)
+            assertTrue(module3 !in resolversComputed)
+
+            checkHighlightingInAllFiles { "m3" in it }
+
+            assertTrue(module1 in resolversComputed)
+            assertTrue(module2 !in resolversComputed)
+            assertTrue(module3 in resolversComputed)
+        }
     }
 
     fun testTestRoot() {
