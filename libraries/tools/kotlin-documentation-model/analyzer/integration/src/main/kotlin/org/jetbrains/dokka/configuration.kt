@@ -21,6 +21,7 @@ interface DokkaConfiguration {
     val sourceLinks: List<SourceLinkDefinition>
     val impliedPlatforms: List<String>
     val perPackageOptions: List<PackageOptions>
+    val externalDocumentationLinks: List<DokkaConfiguration.ExternalDocumentationLink>
 
     interface SourceRoot {
         val path: String
@@ -43,6 +44,20 @@ interface DokkaConfiguration {
     interface ExternalDocumentationLink {
         val url: URL
         val packageListUrl: URL
+
+        open class Builder(open var url: URL? = null,
+                           open var packageListUrl: URL? = null) {
+
+            constructor(root: String) : this(URL(root), null)
+
+            fun build(): DokkaConfiguration.ExternalDocumentationLink =
+                    if (packageListUrl != null && url != null)
+                        ExternalDocumentationLinkImpl(url!!, packageListUrl!!)
+                    else if (url != null)
+                        ExternalDocumentationLinkImpl(url!!, URL(url!!, "package-list"))
+                    else
+                        throw IllegalArgumentException("url or url && packageListUrl must not be null for external documentation link")
+        }
     }
 }
 
@@ -62,4 +77,9 @@ data class SerializeOnlyDokkaConfiguration(override val moduleName: String,
                                            override val generateIndexPages: Boolean,
                                            override val sourceLinks: List<DokkaConfiguration.SourceLinkDefinition>,
                                            override val impliedPlatforms: List<String>,
-                                           override val perPackageOptions: List<DokkaConfiguration.PackageOptions>) : DokkaConfiguration
+                                           override val perPackageOptions: List<DokkaConfiguration.PackageOptions>,
+                                           override val externalDocumentationLinks: List<DokkaConfiguration.ExternalDocumentationLink>) : DokkaConfiguration
+
+
+data class ExternalDocumentationLinkImpl internal constructor(override val url: URL,
+                                                              override val packageListUrl: URL) : DokkaConfiguration.ExternalDocumentationLink
