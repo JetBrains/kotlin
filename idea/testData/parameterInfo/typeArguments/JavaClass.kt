@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import java.util.*
 
 fun foo() {
