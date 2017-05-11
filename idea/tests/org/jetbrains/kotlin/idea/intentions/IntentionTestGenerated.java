@@ -1838,6 +1838,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noElseBlockAsExpression.kt")
+            public void testNoElseBlockAsExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/noElseBlockAsExpression.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noNullInCondition.kt")
             public void testNoNullInCondition() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/noNullInCondition.kt");
