@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import java.io.File
 
 val file = File(<caret>)
