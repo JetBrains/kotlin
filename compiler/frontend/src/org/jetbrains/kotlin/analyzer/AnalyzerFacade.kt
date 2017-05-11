@@ -213,6 +213,8 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             for (module in modules) {
                 val descriptor = resolverForProject.descriptorForModule(module)
                 val computeResolverForModule = storageManager.createLazyValue {
+                    ResolverForModuleComputationTracker.getInstance(projectContext.project)?.onResolverComputed(module)
+
                     val content = modulesContent(module)
                     analyzerFacade(module).createResolverForModule(
                             module, descriptor, projectContext.withModule(descriptor), modulesContent(module),
@@ -270,5 +272,14 @@ interface LanguageSettingsProvider {
 
     companion object {
         fun getInstance(project: Project) = ServiceManager.getService(project, LanguageSettingsProvider::class.java) ?: Default
+    }
+}
+
+interface ResolverForModuleComputationTracker {
+
+    fun onResolverComputed(moduleInfo: ModuleInfo)
+
+    companion object {
+        fun getInstance(project: Project): ResolverForModuleComputationTracker? = ServiceManager.getService(project, ResolverForModuleComputationTracker::class.java) ?: null
     }
 }
