@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.optimization.captured
+package org.jetbrains.kotlin.codegen.optimization.common
 
-import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.org.objectweb.asm.Type
 
 interface ReferenceValueDescriptor {

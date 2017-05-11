@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.optimization.captured
+package org.jetbrains.kotlin.codegen.optimization.common
 
-import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode

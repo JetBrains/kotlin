@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen.optimization
 import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
 import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantBoxingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantCoercionToUnitTransformer
-import org.jetbrains.kotlin.codegen.optimization.captured.CapturedVarsOptimizationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.prepareForEmitting
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.RedundantNullCheckMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.transformer.CompositeMethodTransformer

@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.optimization.captured
+package org.jetbrains.kotlin.codegen.optimization
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.codegen.optimization.common.ProperTrackedReferenceValue
+import org.jetbrains.kotlin.codegen.optimization.common.ReferenceTrackingInterpreter
+import org.jetbrains.kotlin.codegen.optimization.common.ReferenceValueDescriptor
+import org.jetbrains.kotlin.codegen.optimization.common.TrackedReferenceValue
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.removeEmptyCatchBlocks
 import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
