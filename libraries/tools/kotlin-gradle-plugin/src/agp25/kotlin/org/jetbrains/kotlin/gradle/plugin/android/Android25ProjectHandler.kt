@@ -8,6 +8,7 @@ import com.android.build.gradle.api.UnitTestVariant
 import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptTask
 import org.jetbrains.kotlin.gradle.internal.WrappedVariantData
@@ -53,8 +54,13 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
 
         val preJavaKotlinOutput =
                 (if (kotlinAfterJavaTask == null)
-                    // Add Kapt3 output as well, since there's no SyncOutputTask with the new API
-                    project.files(kotlinTask.destinationDir, Kapt3KotlinGradleSubplugin.getKaptClasssesDir(project, getVariantName(variantData)))
+                    project.files(kotlinTask.destinationDir).let { kotlinOutput ->
+                        if (Kapt3GradleSubplugin.isEnabled(project))
+                            // Add Kapt3 output as well, since there's no SyncOutputTask with the new API
+                            kotlinOutput.from(Kapt3KotlinGradleSubplugin.getKaptClasssesDir(project, getVariantName(variantData)))
+                        else
+                            kotlinOutput
+                    }
                 else
                     // Don't register the output, but add the task to the pipeline
                     project.files()
