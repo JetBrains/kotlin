@@ -891,7 +891,8 @@ class StubGenerator(
             val returnValueMirror = mirror(func.returnType)
             block(header) {
                 val resultPtr = if (!func.returnsVoid()) {
-                    out("val resultVar = alloc<${returnValueMirror.pointedTypeName}>()")
+                    val returnType = returnValueMirror.pointedTypeName
+                    out("val resultVar = allocFfiReturnValueBuffer<$returnType>($returnType)")
                     "resultVar.rawPtr"
                 } else {
                     "nativeNullPtr"

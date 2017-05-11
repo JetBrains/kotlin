@@ -69,6 +69,24 @@ private tailrec fun convertArgument(
     else -> throw Error("unsupported argument: $argument")
 }
 
+inline fun <reified T  : CVariable> NativePlacement.allocFfiReturnValueBuffer(type: CVariable.Type): T {
+    var size = type.size
+    var align = type.align
+
+    // libffi requires return value buffer to be no smaller than system register size;
+    // TODO: system register size is not exactly the same as pointer size.
+
+    if (size < pointerSize) {
+        size = pointerSize.toLong()
+    }
+
+    if (align < pointerSize) {
+        align = pointerSize
+    }
+
+    return this.alloc(size, align).reinterpret<T>()
+}
+
 fun callWithVarargs(codePtr: NativePtr, returnValuePtr: NativePtr, returnTypeKind: FfiTypeKind,
                     fixedArguments: Array<out Any?>, variadicArguments: Array<out Any?>,
                     argumentsPlacement: NativePlacement) {
