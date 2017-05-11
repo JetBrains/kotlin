@@ -41,7 +41,12 @@ class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIf
         val ifThenToSelectData = element.buildSelectTransformationData() ?: return false
         if (!ifThenToSelectData.receiverExpression.isStableVariable(ifThenToSelectData.context)) return false
         if (ifThenToSelectData.baseClause !is KtDotQualifiedExpression) {
-            text = "Replace 'if' expression with safe cast expression"
+            if (ifThenToSelectData.condition is KtIsExpression) {
+                text = "Replace 'if' expression with safe cast expression"
+            }
+            else {
+                text = "Remove redundant 'if' expression"
+            }
         }
 
         return ifThenToSelectData.clausesReplaceableBySafeCall()
@@ -66,7 +71,7 @@ class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIf
 
     private fun IfThenToSelectData.clausesReplaceableBySafeCall(): Boolean {
         if (baseClause == null || negatedClause != null && !negatedClause.isNullExpression()) return false
-        return baseClause.evaluatesTo(receiverExpression) && condition !is KtBinaryExpression ||
+        return baseClause.evaluatesTo(receiverExpression) ||
                baseClause.hasFirstReceiverOf(receiverExpression) && !baseClause.hasNullableType(context)
     }
 }
