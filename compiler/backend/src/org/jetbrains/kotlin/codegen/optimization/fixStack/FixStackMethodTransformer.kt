@@ -105,14 +105,14 @@ class FixStackMethodTransformer : MethodTransformer() {
                 }
                 val actualStackContent = analyzer.getActualStack(gotoNode)
                                          ?: throw AssertionError("Jump at $gotoIndex should be alive")
-                actions.add({ replaceMarkerWithPops(methodNode, gotoNode.previous, expectedStackSize, actualStackContent) })
+                actions.add { replaceMarkerWithPops(methodNode, gotoNode.previous, expectedStackSize, actualStackContent) }
             }
             else if (actualStackSize >= 0 && expectedStackSize < 0) {
                 throw AssertionError("Live jump $gotoIndex to dead label $labelIndex")
             }
             else {
                 val marker = gotoNode.previous
-                actions.add({ methodNode.instructions.remove(marker) })
+                actions.add { methodNode.instructions.remove(marker) }
             }
         }
     }
@@ -149,12 +149,12 @@ class FixStackMethodTransformer : MethodTransformer() {
         val savedStackValues = analyzer.getStackToSpill(marker)
         if (savedStackValues != null) {
             val savedStackDescriptor = localVariablesManager.allocateVariablesForSaveStackMarker(marker, savedStackValues)
-            actions.add({ saveStack(methodNode, marker, savedStackDescriptor, false) })
+            actions.add { saveStack(methodNode, marker, savedStackDescriptor, false) }
         }
         else {
             // marker is dead code
             localVariablesManager.allocateVariablesForSaveStackMarker(marker, emptyList())
-            actions.add({ methodNode.instructions.remove(marker) })
+            actions.add { methodNode.instructions.remove(marker) }
         }
     }
 
@@ -165,7 +165,7 @@ class FixStackMethodTransformer : MethodTransformer() {
             localVariablesManager: LocalVariablesManager
     ) {
         val savedStackDescriptor = localVariablesManager.getSavedStackDescriptor(marker)
-        actions.add({ restoreStack(methodNode, marker, savedStackDescriptor) })
+        actions.add { restoreStack(methodNode, marker, savedStackDescriptor) }
         localVariablesManager.markRestoreStackMarkerEmitted(marker)
     }
 
@@ -183,20 +183,21 @@ class FixStackMethodTransformer : MethodTransformer() {
                 1 -> {
                     val returnValue = stackContentAfterInline.last()
                     val returnValueLocalVarIndex = localVariablesManager.createReturnValueVariable(returnValue)
-                    actions.add({
-                                    restoreStackWithReturnValue(methodNode, inlineMarker, savedStackDescriptor,
-                                                                returnValue, returnValueLocalVarIndex)
-                                })
+                    actions.add {
+                        restoreStackWithReturnValue(methodNode, inlineMarker, savedStackDescriptor,
+                                                    returnValue, returnValueLocalVarIndex
+                        )
+                    }
                 }
                 0 ->
-                    actions.add({ restoreStack(methodNode, inlineMarker, savedStackDescriptor) })
+                    actions.add { restoreStack(methodNode, inlineMarker, savedStackDescriptor) }
                 else ->
                     throw AssertionError("Inline method should not leave more than 1 value on stack")
             }
         }
         else {
             // after inline marker is dead code
-            actions.add({ methodNode.instructions.remove(inlineMarker) })
+            actions.add { methodNode.instructions.remove(inlineMarker) }
         }
         localVariablesManager.markAfterInlineMarkerEmitted(inlineMarker)
     }
@@ -211,12 +212,12 @@ class FixStackMethodTransformer : MethodTransformer() {
         val savedStackValues = analyzer.getStackToSpill(inlineMarker)
         if (savedStackValues != null) {
             val savedStackDescriptor = localVariablesManager.allocateVariablesForBeforeInlineMarker(inlineMarker, savedStackValues)
-            actions.add({ saveStack(methodNode, inlineMarker, savedStackDescriptor, false) })
+            actions.add { saveStack(methodNode, inlineMarker, savedStackDescriptor, false) }
         }
         else {
             // before inline marker is dead code
             localVariablesManager.allocateVariablesForBeforeInlineMarker(inlineMarker, emptyList())
-            actions.add({ methodNode.instructions.remove(inlineMarker) })
+            actions.add { methodNode.instructions.remove(inlineMarker) }
         }
     }
 
