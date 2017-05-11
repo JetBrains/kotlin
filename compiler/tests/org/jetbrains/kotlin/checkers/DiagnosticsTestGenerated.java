@@ -23458,6 +23458,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("NonExhaustiveWarningForSealedClass.kt")
+            public void testNonExhaustiveWarningForSealedClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/NonExhaustiveWarningForSealedClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NonExhaustiveWarningNull.kt")
             public void testNonExhaustiveWarningNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/NonExhaustiveWarningNull.kt");
