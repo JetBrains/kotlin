@@ -66,7 +66,7 @@ class FriendPathsTest : TestCaseWithTmpdir() {
     private class ThrowingMessageCollector : MessageCollector {
         override fun clear() {}
 
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
             if (severity.isError) {
                 Assert.fail("${severity.presentableName}: $message at $location")
             }
