@@ -17,10 +17,14 @@
 package org.jetbrains.kotlin.idea.injection
 
 import com.intellij.codeInsight.AnnotationUtil
+import com.intellij.lang.injection.MultiHostInjector
+import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
+import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiReference
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
@@ -40,7 +44,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 import kotlin.collections.ArrayList
 
-class KotlinLanguageInjector : LanguageInjector {
+class KotlinLanguageInjector : MultiHostInjector {
     companion object {
         private val STRING_LITERALS_REGEXP = "\"([^\"]*)\"".toRegex()
     }
@@ -49,16 +53,22 @@ class KotlinLanguageInjector : LanguageInjector {
         ArrayList(InjectorUtils.getActiveInjectionSupports()).filterIsInstance(KotlinLanguageInjectionSupport::class.java).firstOrNull()
     }
 
-    override fun getLanguagesToInject(host: PsiLanguageInjectionHost, injectionPlacesRegistrar: InjectedLanguagePlaces) {
-        if (!host.isValidHost) return
-        val ktHost: KtElement = host as? KtElement ?: return
+    override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
+        val ktHost: KtStringTemplateExpression = context as? KtStringTemplateExpression ?: return
+        if (!context.isValidHost) return
+
+        val support = kotlinSupport ?: return
 
         if (!ProjectRootsUtil.isInProjectOrLibSource(ktHost)) return
 
-        val injectionInfo = findInjectionInfo(host) ?: return
+        val injectionInfo = findInjectionInfo(context) ?: return
+        InjectorUtils.getLanguageByString(injectionInfo.languageId) ?: return
 
-        val language = InjectorUtils.getLanguageByString(injectionInfo.languageId) ?: return
-        injectionPlacesRegistrar.addPlace(language, TextRange.from(0, ktHost.textLength), injectionInfo.prefix, injectionInfo.suffix)
+        InjectorUtils.registerInjectionSimple(ktHost, injectionInfo.toBaseInjection(support)!!, support, registrar)
+    }
+
+    override fun elementsToInjectIn(): List<Class<out PsiElement>> {
+        return listOf(KtStringTemplateExpression::class.java)
     }
 
     private fun findInjectionInfo(place: KtElement, originalHost: Boolean = true): InjectionInfo? {
@@ -226,7 +236,24 @@ class KotlinLanguageInjector : LanguageInjector {
         return Configuration.getProjectInstance(project).advancedConfiguration.dfaOption == Configuration.DfaOption.OFF
     }
 
-    private class InjectionInfo(val languageId: String?, val prefix: String?, val suffix: String?)
+    private class InjectionInfo(val languageId: String?, val prefix: String?, val suffix: String?) {
+        fun toBaseInjection(injectionSupport: KotlinLanguageInjectionSupport): BaseInjection? {
+            if (languageId == null) return null
+
+            val baseInjection = BaseInjection(injectionSupport.id)
+            baseInjection.injectedLanguageId = languageId
+
+            if (prefix != null) {
+                baseInjection.prefix = prefix
+            }
+
+            if (suffix != null) {
+                baseInjection.suffix = suffix
+            }
+
+            return baseInjection
+        }
+    }
 
     private fun processAnnotationInjectionInner(annotations: Array<PsiAnnotation>): InjectionInfo? {
         val id = AnnotationUtilEx.calcAnnotationValue(annotations, "value")

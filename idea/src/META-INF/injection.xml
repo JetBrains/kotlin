@@ -1,6 +1,6 @@
 <idea-plugin>
     <extensions defaultExtensionNs="com.intellij">
-        <languageInjector implementation="org.jetbrains.kotlin.idea.injection.KotlinLanguageInjector"/>
+        <multiHostInjector implementation="org.jetbrains.kotlin.idea.injection.KotlinLanguageInjector"/>
 
         <regExpLanguageHost forClass="org.jetbrains.kotlin.psi.KtStringTemplateExpression"
                             implementationClass="com.intellij.psi.impl.JavaRegExpHost"/>
