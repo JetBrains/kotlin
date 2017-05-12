@@ -41,13 +41,13 @@ class SavedStackDescriptor(
     fun isNotEmpty(): Boolean = savedValues.isNotEmpty()
 }
 
-fun saveStack(methodNode: MethodNode, nodeToReplace: AbstractInsnNode, savedStackDescriptor: SavedStackDescriptor,
-              restoreImmediately: Boolean) {
+fun saveStack(
+        methodNode: MethodNode,
+        nodeToReplace: AbstractInsnNode,
+        savedStackDescriptor: SavedStackDescriptor
+) {
     with(methodNode.instructions) {
         generateStoreInstructions(methodNode, nodeToReplace, savedStackDescriptor)
-        if (restoreImmediately) {
-            generateLoadInstructions(methodNode, nodeToReplace, savedStackDescriptor)
-        }
         remove(nodeToReplace)
     }
 }

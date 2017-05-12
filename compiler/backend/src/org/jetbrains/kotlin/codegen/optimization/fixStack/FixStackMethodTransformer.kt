@@ -149,7 +149,7 @@ class FixStackMethodTransformer : MethodTransformer() {
         val savedStackValues = analyzer.getStackToSpill(marker)
         if (savedStackValues != null) {
             val savedStackDescriptor = localVariablesManager.allocateVariablesForSaveStackMarker(marker, savedStackValues)
-            actions.add { saveStack(methodNode, marker, savedStackDescriptor, false) }
+            actions.add { saveStack(methodNode, marker, savedStackDescriptor) }
         }
         else {
             // marker is dead code
@@ -212,7 +212,7 @@ class FixStackMethodTransformer : MethodTransformer() {
         val savedStackValues = analyzer.getStackToSpill(inlineMarker)
         if (savedStackValues != null) {
             val savedStackDescriptor = localVariablesManager.allocateVariablesForBeforeInlineMarker(inlineMarker, savedStackValues)
-            actions.add { saveStack(methodNode, inlineMarker, savedStackDescriptor, false) }
+            actions.add { saveStack(methodNode, inlineMarker, savedStackDescriptor) }
         }
         else {
             // before inline marker is dead code
