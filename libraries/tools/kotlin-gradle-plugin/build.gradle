@@ -50,6 +50,7 @@ dependencies {
 
     testCompile "org.jetbrains.kotlin:kotlin-build-common-test:$kotlin_version"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testCompile "junit:junit:4.12"
 }
 
 tasks.withType(project.compileKotlin.class) {
