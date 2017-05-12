@@ -77,27 +77,29 @@ class DelegationTranslator(
                 val delegateInitExpr = Translation.translateAsExpression(expression, context)
                 statements += context.dynamicContext().jsBlock().statements
                 val lhs = JsAstUtils.pureFqn(field.name, JsThisRef())
-                statements += JsAstUtils.assignment(lhs, delegateInitExpr).makeStmt()
+                statements += JsAstUtils.assignment(lhs, delegateInitExpr)
+                        .apply { source = specifier }
+                        .makeStmt()
             }
         }
     }
 
     fun generateDelegated() {
         for (specifier in delegationBySpecifiers) {
-            generateDelegates(getSuperClass(specifier), fields[specifier]!!)
+            generateDelegates(specifier, getSuperClass(specifier), fields[specifier]!!)
         }
     }
 
     private fun getSuperClass(specifier: KtSuperTypeListEntry): ClassDescriptor =
             CodegenUtil.getSuperClassBySuperTypeListEntry(specifier, bindingContext())
 
-    private fun generateDelegates(toClass: ClassDescriptor, field: Field) {
+    private fun generateDelegates(specifier: KtSuperTypeListEntry, toClass: ClassDescriptor, field: Field) {
         for ((descriptor, overriddenDescriptor) in DelegationResolver.getDelegates(classDescriptor, toClass)) {
             when (descriptor) {
                 is PropertyDescriptor ->
-                    generateDelegateCallForPropertyMember(descriptor, field.name)
+                    generateDelegateCallForPropertyMember(specifier, descriptor, field.name)
                 is FunctionDescriptor ->
-                    generateDelegateCallForFunctionMember(descriptor, overriddenDescriptor as FunctionDescriptor, field.name)
+                    generateDelegateCallForFunctionMember(specifier, descriptor, overriddenDescriptor as FunctionDescriptor, field.name)
                 else ->
                     throw IllegalArgumentException("Expected property or function $descriptor")
             }
@@ -105,6 +107,7 @@ class DelegationTranslator(
     }
 
     private fun generateDelegateCallForPropertyMember(
+            specifier: KtSuperTypeListEntry,
             descriptor: PropertyDescriptor,
             delegateName: JsName
     ) {
@@ -121,6 +124,8 @@ class DelegationTranslator(
             else {
                 JsNameRef(propertyName, delegateRef)
             }
+
+            returnExpression.source(specifier)
 
             val jsFunction = simpleReturnFunction(context().getScopeForDescriptor(getterDescriptor.containingDeclaration), returnExpression)
             if (DescriptorUtils.isExtension(descriptor)) {
@@ -154,7 +159,7 @@ class DelegationTranslator(
             }
 
             jsFunction.parameters.add(defaultParameter)
-            jsFunction.body = JsBlock(setExpression.makeStmt())
+            jsFunction.body = JsBlock(setExpression.apply { source = specifier }.makeStmt())
             return jsFunction
         }
 
@@ -191,12 +196,13 @@ class DelegationTranslator(
 
 
     private fun generateDelegateCallForFunctionMember(
+            specifier: KtSuperTypeListEntry,
             descriptor: FunctionDescriptor,
             overriddenDescriptor: FunctionDescriptor,
             delegateName: JsName
     ) {
         val delegateRef = JsNameRef(delegateName, JsThisRef())
-        val statement = generateDelegateCall(classDescriptor, descriptor, overriddenDescriptor, delegateRef, context(), true)
+        val statement = generateDelegateCall(classDescriptor, descriptor, overriddenDescriptor, delegateRef, context(), true, specifier)
         context().addDeclarationStatement(statement)
     }
 }

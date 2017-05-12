@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.utils
 
+import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.backend.common.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
@@ -45,7 +46,8 @@ fun generateDelegateCall(
         toDescriptor: FunctionDescriptor,
         thisObject: JsExpression,
         context: TranslationContext,
-        detectDefaultParameters: Boolean
+        detectDefaultParameters: Boolean,
+        source: PsiElement?
 ): JsStatement {
     fun FunctionDescriptor.getNameForFunctionWithPossibleDefaultParam() =
             if (detectDefaultParameters && hasOrInheritsParametersWithDefaultValue()) {
@@ -81,6 +83,8 @@ fun generateDelegateCall(
     else {
         JsInvocation(overriddenMemberFunctionRef, args)
     }
+
+    invocation.source = source
 
     val functionObject = simpleReturnFunction(context.scope(), invocation)
     functionObject.parameters.addAll(parameters)

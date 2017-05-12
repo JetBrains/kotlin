@@ -42,6 +42,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("backingField.kt")
+    public void testBackingField() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/backingField.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("catch.kt")
     public void testCatch() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/catch.kt");
@@ -75,6 +81,18 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
     @TestMetadata("delegateMemberVal.kt")
     public void testDelegateMemberVal() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/delegateMemberVal.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("delegatedProperty.kt")
+    public void testDelegatedProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/delegatedProperty.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("delegation.kt")
+    public void testDelegation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/delegation.kt");
         doTest(fileName);
     }
 

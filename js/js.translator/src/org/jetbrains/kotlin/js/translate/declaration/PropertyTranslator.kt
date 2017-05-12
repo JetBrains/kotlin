@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.source.getPsi
 
 /**
  * Translates single property /w accessors.
@@ -92,7 +93,7 @@ class DefaultPropertyTranslator(
         assert(!descriptor.isExtension) { "Unexpected extension property $descriptor}" }
         assert(descriptor is PropertyDescriptor) { "Property descriptor expected: $descriptor" }
         val result = backingFieldReference(context(), descriptor as PropertyDescriptor)
-        function.body.statements += JsReturn(result)
+        function.body.statements += JsReturn(result).apply { source = descriptor.source.getPsi() }
     }
 
     private fun generateDelegatedGetterFunction(
@@ -105,7 +106,9 @@ class DefaultPropertyTranslator(
                 .newDeclarationIfNecessary(getterDescriptor, function)
                 .contextWithPropertyMetadataCreationIntrinsified(delegatedCall, descriptor, host)
 
-        val delegatedJsCall = CallTranslator.translate(delegateContext, delegatedCall, delegateReference)
+        val delegatedJsCall = CallTranslator.translate(delegateContext, delegatedCall, delegateReference).apply {
+            source = getterDescriptor.source.getPsi()
+        }
 
         val returnResult = JsReturn(delegatedJsCall)
         function.addStatement(returnResult)
@@ -123,14 +126,16 @@ class DefaultPropertyTranslator(
             val delegateContext = withAliased
                     .newDeclarationIfNecessary(setterDescriptor, function)
                     .contextWithPropertyMetadataCreationIntrinsified(delegatedCall, descriptor, host)
-            val delegatedJsCall = CallTranslator.translate(delegateContext, delegatedCall, delegateReference)
+            val delegatedJsCall = CallTranslator.translate(delegateContext, delegatedCall, delegateReference).apply {
+                source = setterDescriptor.source.getPsi()
+            }
             function.addStatement(delegatedJsCall.makeStmt())
         }
         else {
             assert(!descriptor.isExtension) { "Unexpected extension property $descriptor}" }
             assert(descriptor is PropertyDescriptor) { "Property descriptor expected: $descriptor" }
             val assignment = assignmentToBackingField(withAliased, descriptor as PropertyDescriptor, valueParameter.makeRef())
-            function.addStatement(assignment.makeStmt())
+            function.addStatement(assignment.apply { source = descriptor.source.getPsi() }.makeStmt())
         }
     }
 
