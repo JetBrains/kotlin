@@ -145,16 +145,17 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         val rangeEnd = context.defineTemporary(rightExpression)
 
         val body = translateBody(null)
-        val conditionExpression = lessThanEq(parameterName.makeRef(), rangeEnd)
-        val incrementExpression = JsPostfixOperation(JsUnaryOperator.INC, parameterName.makeRef())
+        val conditionExpression = lessThanEq(parameterName.makeRef(), rangeEnd).source(expression)
+        val incrementExpression = JsPostfixOperation(JsUnaryOperator.INC, parameterName.makeRef()).source(expression)
+        val initVars = newVar(parameterName, rangeStart).apply { source = expression }
 
-        return JsFor(newVar(parameterName, rangeStart), conditionExpression, incrementExpression, body)
+        return JsFor(initVars, conditionExpression, incrementExpression, body)
     }
 
     fun translateForOverRange(): JsStatement {
         val rangeExpression = context.defineTemporary(Translation.translateAsExpression(loopRange, context))
 
-        fun getProperty(funName: String): JsExpression = JsNameRef(funName, rangeExpression)
+        fun getProperty(funName: String): JsExpression = JsNameRef(funName, rangeExpression).source(loopRange)
 
         val start = context.defineTemporary(getProperty("first"))
         val end = context.defineTemporary(getProperty("last"))
@@ -162,10 +163,11 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
 
         val body = translateBody(null)
 
-        val conditionExpression = lessThanEq(parameterName.makeRef(), end)
-        val incrementExpression = addAssign(parameterName.makeRef(), increment)
+        val conditionExpression = lessThanEq(parameterName.makeRef(), end).source(expression)
+        val incrementExpression = addAssign(parameterName.makeRef(), increment).source(expression)
+        val initVars = newVar(parameterName, start).apply { source = expression }
 
-        return JsFor(newVar(parameterName, start), conditionExpression, incrementExpression, body)
+        return JsFor(initVars, conditionExpression, incrementExpression, body)
     }
 
     fun translateForOverArray(): JsStatement {
@@ -174,11 +176,11 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         val end = context.defineTemporary(length)
         val index = context.declareTemporary(JsIntLiteral(0))
 
-        val arrayAccess = JsArrayAccess(rangeExpression, index.reference())
+        val arrayAccess = JsArrayAccess(rangeExpression, index.reference()).source(expression)
         val body = translateBody(arrayAccess)
-        val initExpression = assignment(index.reference(), JsIntLiteral(0))
-        val conditionExpression = inequality(index.reference(), end)
-        val incrementExpression = JsPrefixOperation(JsUnaryOperator.INC, index.reference())
+        val initExpression = assignment(index.reference(), JsIntLiteral(0)).source(expression)
+        val conditionExpression = inequality(index.reference(), end).source(expression)
+        val incrementExpression = JsPrefixOperation(JsUnaryOperator.INC, index.reference()).source(expression)
 
         return JsFor(initExpression, conditionExpression, incrementExpression, body)
     }
@@ -216,7 +218,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         }
         else {
             bodyStatements += hasNextBlock.statements
-            bodyStatements += JsIf(notOptimized(hasNextInvocation), JsBreak())
+            bodyStatements += JsIf(notOptimized(hasNextInvocation), JsBreak().apply { source = expression }).apply { source = expression }
             JsBooleanLiteral(true)
         }
         bodyStatements += nextBlock.statements
@@ -224,7 +226,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         return JsWhile(exitCondition, bodyStatements.singleOrNull() ?: JsBlock(bodyStatements))
     }
 
-    return when {
+    val result = when {
         isForOverRangeLiteral() ->
             translateForOverLiteralRange()
 
@@ -237,4 +239,6 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         else ->
             translateForOverIterator()
     }
+
+    return result.apply { source = expression }
 }

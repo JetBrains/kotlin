@@ -66,6 +66,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("for.kt")
+    public void testFor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/for.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("increment.kt")
     public void testIncrement() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/increment.kt");
@@ -96,9 +102,21 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("lambdaWithClosure.kt")
+    public void testLambdaWithClosure() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/lambdaWithClosure.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("literals.kt")
     public void testLiterals() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/literals.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("longLiteral.kt")
+    public void testLongLiteral() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/longLiteral.kt");
         doTest(fileName);
     }
 
