@@ -29,6 +29,8 @@ abstract class KotlinAbstractUElement : UElement {
 
         return this.psi == other.psi
     }
+
+    override fun hashCode() = psi?.hashCode() ?: 0
 }
 
 abstract class KotlinAbstractUExpression : KotlinAbstractUElement(), UExpression {
