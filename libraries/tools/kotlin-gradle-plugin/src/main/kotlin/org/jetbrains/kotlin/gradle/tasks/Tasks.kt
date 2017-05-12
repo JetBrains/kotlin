@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.kotlinInfo
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
-import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistry
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
+import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import java.util.*
@@ -116,6 +116,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     internal var sourceSetName: String by Delegates.notNull()
     internal val moduleName: String
             get() = "${project.name}_$sourceSetName"
+
+    // In case the friend classpath entries are known at the task configuration time, they will be set
+    internal var friendClasspathEntries: Lazy<List<String>?> = lazyOf(null)
 
     override fun compile() {
         assert(false, { "unexpected call to compile()" })
@@ -223,7 +226,9 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
     internal fun addFriendPathForTestTask(friendKotlinTaskName: String, args: K2JVMCompilerArguments) {
         val friendTask = project.getTasksByName(friendKotlinTaskName, /* recursive = */false).firstOrNull() as? KotlinCompile ?: return
-        args.friendPaths = arrayOf(friendTask.javaOutputDir!!.absolutePath)
+        args.friendPaths = arrayOf(
+                friendTask.javaOutputDir!!.absolutePath,
+                *friendClasspathEntries.value.orEmpty().toTypedArray())
         args.moduleName = friendTask.moduleName
         logger.kotlinDebug("java destination directory for production = ${friendTask.javaOutputDir}")
     }
