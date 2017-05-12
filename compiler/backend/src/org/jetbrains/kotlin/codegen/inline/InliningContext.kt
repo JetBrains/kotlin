@@ -14,81 +14,51 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.inline;
+package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import java.util.*
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+open class InliningContext(
+        val parent: InliningContext?,
+        private val expressionMap: Map<Int, LambdaInfo>,
+        val state: GenerationState,
+        val nameGenerator: NameGenerator,
+        val typeRemapper: TypeRemapper,
+        val reifiedTypeInliner: ReifiedTypeInliner,
+        val isInliningLambda: Boolean,
+        val classRegeneration: Boolean
+) {
+    val internalNameToAnonymousObjectTransformationInfo: MutableMap<String, AnonymousObjectTransformationInfo> = HashMap()
 
-public class InliningContext {
-    @Nullable
-    private final InliningContext parent;
+    var isContinuation: Boolean = false
 
-    private final Map<Integer, LambdaInfo> expressionMap;
-    public final GenerationState state;
-    public final NameGenerator nameGenerator;
-    public final TypeRemapper typeRemapper;
-    public final ReifiedTypeInliner reifiedTypeInliner;
-    public final boolean isInliningLambda;
-    public final boolean classRegeneration;
-    public final Map<String, AnonymousObjectTransformationInfo> internalNameToAnonymousObjectTransformationInfo = new HashMap<>();
-
-    private boolean isContinuation;
-
-    public InliningContext(
-            @Nullable InliningContext parent,
-            @NotNull Map<Integer, LambdaInfo> expressionMap,
-            @NotNull GenerationState state,
-            @NotNull NameGenerator nameGenerator,
-            @NotNull TypeRemapper typeRemapper,
-            @NotNull ReifiedTypeInliner reifiedTypeInliner,
-            boolean isInliningLambda,
-            boolean classRegeneration
-    ) {
-        this.parent = parent;
-        this.expressionMap = expressionMap;
-        this.state = state;
-        this.nameGenerator = nameGenerator;
-        this.typeRemapper = typeRemapper;
-        this.reifiedTypeInliner = reifiedTypeInliner;
-        this.isInliningLambda = isInliningLambda;
-        this.classRegeneration = classRegeneration;
+    fun subInline(generator: NameGenerator): InliningContext {
+        return subInline(generator, emptyMap(), isInliningLambda)
     }
 
-    @NotNull
-    public InliningContext subInline(@NotNull NameGenerator generator) {
-        return subInline(generator, Collections.emptyMap(), isInliningLambda);
+    fun subInlineLambda(lambdaInfo: LambdaInfo): InliningContext {
+        val map = HashMap<String, String?>()
+        map.put(lambdaInfo.lambdaClassType.internalName, null) //mark lambda inlined
+        return subInline(nameGenerator.subGenerator("lambda"), map, true)
     }
 
-    @NotNull
-    public InliningContext subInlineLambda(@NotNull LambdaInfo lambdaInfo) {
-        Map<String, String> map = new HashMap<>();
-        map.put(lambdaInfo.getLambdaClassType().getInternalName(), null); //mark lambda inlined
-        return subInline(nameGenerator.subGenerator("lambda"), map, true);
-    }
-
-    @NotNull
-    public InliningContext subInlineWithClassRegeneration(
-            @NotNull NameGenerator generator,
-            @NotNull Map<String, String> newTypeMappings,
-            @NotNull InlineCallSiteInfo callSiteInfo
-    ) {
-        return new RegeneratedClassContext(
+    fun subInlineWithClassRegeneration(
+            generator: NameGenerator,
+            newTypeMappings: MutableMap<String, String>,
+            callSiteInfo: InlineCallSiteInfo
+    ): InliningContext {
+        return RegeneratedClassContext(
                 this, expressionMap, state, generator, TypeRemapper.createFrom(typeRemapper, newTypeMappings),
                 reifiedTypeInliner, isInliningLambda, callSiteInfo
-        );
+        )
     }
 
-    @NotNull
-    private InliningContext subInline(
-            @NotNull NameGenerator generator, @NotNull Map<String, String> additionalTypeMappings, boolean isInliningLambda
-    ) {
+    private fun subInline(
+            generator: NameGenerator, additionalTypeMappings: Map<String, String?>, isInliningLambda: Boolean
+    ): InliningContext {
         //isInliningLambda && !this.isInliningLambda for root inline lambda
-        return new InliningContext(
+        return InliningContext(
                 this, expressionMap, state, generator,
                 TypeRemapper.createFrom(
                         typeRemapper,
@@ -97,44 +67,26 @@ public class InliningContext {
                         isInliningLambda && !this.isInliningLambda
                 ),
                 reifiedTypeInliner, isInliningLambda, classRegeneration
-        );
+        )
     }
 
-    public boolean isRoot() {
-        return parent == null;
-    }
+    val isRoot: Boolean
+        get() = parent == null
 
-    @NotNull
-    public RootInliningContext getRoot() {
-        //noinspection ConstantConditions
-        return isRoot() ? (RootInliningContext) this : parent.getRoot();
-    }
+    val root: RootInliningContext
+        get() = if (isRoot) this as RootInliningContext else parent!!.root
 
-    @Nullable
-    public InliningContext getParent() {
-        return parent;
-    }
-
-    @NotNull
-    public InlineCallSiteInfo getCallSiteInfo() {
-        assert parent != null : "At least root context should return proper value";
-        return parent.getCallSiteInfo();
-    }
-
-    @Nullable
-    public AnonymousObjectTransformationInfo findAnonymousObjectTransformationInfo(@NotNull String internalName) {
-        if (getRoot().internalNameToAnonymousObjectTransformationInfo.containsKey(internalName)) {
-            return getRoot().internalNameToAnonymousObjectTransformationInfo.get(internalName);
+    open val callSiteInfo: InlineCallSiteInfo
+        get() {
+            assert(parent != null) { "At least root context should return proper value" }
+            return parent!!.callSiteInfo
         }
 
-        return null;
-    }
+    fun findAnonymousObjectTransformationInfo(internalName: String): AnonymousObjectTransformationInfo? {
+        if (root.internalNameToAnonymousObjectTransformationInfo.containsKey(internalName)) {
+            return root.internalNameToAnonymousObjectTransformationInfo[internalName]
+        }
 
-    public boolean isContinuation() {
-        return isContinuation;
-    }
-
-    public void setContinuation(boolean continuation) {
-        isContinuation = continuation;
+        return null
     }
 }

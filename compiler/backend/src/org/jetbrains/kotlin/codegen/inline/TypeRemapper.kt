@@ -79,11 +79,11 @@ class TypeRemapper private constructor(
 
         @JvmStatic
         @JvmOverloads
-        fun createFrom(remapper: TypeRemapper, mappings: MutableMap<String, String>, isInlineLambda: Boolean = false): TypeRemapper {
+        fun createFrom(remapper: TypeRemapper, mappings: Map<String, String?>, isInlineLambda: Boolean = false): TypeRemapper {
             return TypeRemapper(createNewAndMerge(remapper, mappings), remapper, isInlineLambda)
         }
 
-        private fun createNewAndMerge(remapper: TypeRemapper, additionalTypeMappings: Map<String, String>): MutableMap<String, String> {
+        private fun createNewAndMerge(remapper: TypeRemapper, additionalTypeMappings: Map<String, String?>): MutableMap<String, String> {
             return HashMap(remapper.typeMapping).apply {
                 this += additionalTypeMappings
             }
