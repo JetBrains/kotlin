@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.idea.core.util
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlin.coroutines.experimental.AbstractCoroutineContextElement
 import kotlin.coroutines.experimental.CoroutineContext
 
 
@@ -27,6 +29,11 @@ public object EDT : CoroutineDispatcher() {
     }
 
     override fun dispatch(context: CoroutineContext, block: Runnable) {
-        ApplicationManager.getApplication().invokeLater(block)
+        val modalityState = context[ModalityStateElement.Key]?.modalityState ?: ModalityState.defaultModalityState()
+        ApplicationManager.getApplication().invokeLater(block, modalityState)
+    }
+
+    class ModalityStateElement(val modalityState: ModalityState) : AbstractCoroutineContextElement(Key) {
+        companion object Key : CoroutineContext.Key<ModalityStateElement>
     }
 }
