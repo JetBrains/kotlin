@@ -657,7 +657,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     @NotNull
     public DefaultSourceMapper getOrCreateSourceMapper() {
         if (sourceMapper == null) {
-            // note: this is used for in InlineCodegen and the element is always physical (KtElement) there
+            // note: this is used in InlineCodegen and the element is always physical (KtElement) there
             sourceMapper = new DefaultSourceMapper(SourceInfo.Companion.createInfo((KtElement)element, getClassName()));
         }
         return sourceMapper;
