@@ -38,10 +38,11 @@ internal val Project.konanHome: String
         return extensions.extraProperties.get(KonanPlugin.KONAN_HOME_PROPERTY_NAME).toString()
     }
 
-internal val Project.konanBuildRoot             get() = "${buildDir.canonicalPath}/konan"
-internal val Project.konanCompilerOutputDir     get() = "${konanBuildRoot}/bin"
-internal val Project.konanInteropStubsOutputDir get() = "${konanBuildRoot}/interopStubs"
-internal val Project.konanInteropLibsOutputDir  get() = "${konanBuildRoot}/nativelibs"
+internal val Project.konanBuildRoot               get() = "${buildDir.canonicalPath}/konan"
+internal val Project.konanCompilerOutputDir       get() = "${konanBuildRoot}/bin"
+internal val Project.konanInteropStubsOutputDir   get() = "${konanBuildRoot}/interopStubs"
+internal val Project.konanInteropCompiledStubsDir get() = "${konanBuildRoot}/interopCompiledStubs"
+internal val Project.konanInteropLibsOutputDir    get() = "${konanBuildRoot}/nativelibs"
 
 internal val Project.konanArtifactsContainer: KonanArtifactsContainer
     get() = extensions.getByName(KonanPlugin.COMPILER_EXTENSION_NAME) as KonanArtifactsContainer

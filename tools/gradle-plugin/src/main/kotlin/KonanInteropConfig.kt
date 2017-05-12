@@ -59,7 +59,7 @@ open class KonanInteropConfig(
     // Config and task to compile *.kt stubs in a *.bc library
     internal val compileStubsConfig = KonanCompilerConfig("${name}InteropStubs", project, "compile").apply {
         compilationTask.dependsOn(generateStubsTask)
-        outputDir(generateStubsTask.stubsDir.absolutePath)
+        outputDir("${project.konanInteropCompiledStubsDir}/$name")
         noLink()
         inputFiles(project.fileTree(generateStubsTask.stubsDir).apply { builtBy(generateStubsTask) })
     }

@@ -99,8 +99,8 @@ open class KonanCompilerConfig(
     }
 
     fun useInterop(interopConfig: KonanInteropConfig) {
-        var generateStubsTask = interopConfig.generateStubsTask
-        var compileStubsTask  = interopConfig.compileStubsTask
+        val generateStubsTask = interopConfig.generateStubsTask
+        val compileStubsTask  = interopConfig.compileStubsTask
 
         compilationTask.dependsOn(compileStubsTask)
         compilationTask.dependsOn(generateStubsTask)
