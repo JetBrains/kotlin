@@ -293,7 +293,7 @@ class JavacWrapper(javaFiles: Collection<File>,
             }
         }
 
-        return symbol?.let { SymbolBasedClass(it, this@JavacWrapper, it.classfile) }
+        return symbol.let { SymbolBasedClass(it, this@JavacWrapper, it.classfile) }
     }
 
 }

@@ -28,28 +28,30 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class CompilerRunnerUtil {
 
-    private static SoftReference<ClassLoader> ourClassLoaderRef = new SoftReference<ClassLoader>(null);
+    private static SoftReference<ClassLoader> ourClassLoaderRef = new SoftReference<>(null);
 
     @NotNull
     private static synchronized ClassLoader getOrCreateClassLoader(
             @NotNull JpsCompilerEnvironment environment,
-            @NotNull File libPath
+            @NotNull List<File> paths
     ) throws IOException {
         ClassLoader classLoader = ourClassLoaderRef.get();
         if (classLoader == null) {
             classLoader = ClassPreloadingUtils.preloadClasses(
-                    Collections.singletonList(new File(libPath, "kotlin-compiler.jar")),
+                    paths,
                     Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE,
                     CompilerRunnerUtil.class.getClassLoader(),
                     environment.getClassesToLoadByParent()
             );
-            ourClassLoaderRef = new SoftReference<ClassLoader>(classLoader);
+            ourClassLoaderRef = new SoftReference<>(classLoader);
         }
         return classLoader;
     }
@@ -78,7 +80,17 @@ public class CompilerRunnerUtil {
         File libPath = getLibPath(environment.getKotlinPaths(), environment.getMessageCollector());
         if (libPath == null) return null;
 
-        ClassLoader classLoader = getOrCreateClassLoader(environment, libPath);
+        List<File> paths = new ArrayList<>();
+        paths.add(new File(libPath, "kotlin-compiler.jar"));
+
+        if (Arrays.asList(arguments).contains("-Xuse-javac")) {
+            File toolsJar = getJdkToolsJar();
+            if (toolsJar != null) {
+                paths.add(toolsJar);
+            }
+        }
+
+        ClassLoader classLoader = getOrCreateClassLoader(environment, paths);
 
         Class<?> kompiler = Class.forName(compilerClassName, true, classLoader);
         Method exec = kompiler.getMethod(
@@ -90,4 +102,28 @@ public class CompilerRunnerUtil {
 
         return exec.invoke(kompiler.newInstance(), out, environment.getServices(), arguments);
     }
+
+    @Nullable
+    static File getJdkToolsJar() throws IOException {
+        String javaHomePath = System.getProperty("java.home");
+        if (javaHomePath == null || javaHomePath.isEmpty()) {
+            return null;
+        }
+        File javaHome = new File(javaHomePath);
+        File toolsJar = new File(javaHome, "lib/tools.jar");
+        if (toolsJar.exists()) {
+            return toolsJar.getCanonicalFile();
+        }
+
+        // We might be inside jre.
+        if (javaHome.getName().equals("jre")) {
+            toolsJar = new File(javaHome.getParent(), "lib/tools.jar");
+            if (toolsJar.exists()) {
+                return toolsJar.getCanonicalFile();
+            }
+        }
+
+        return null;
+    }
+
 }
