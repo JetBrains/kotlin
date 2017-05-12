@@ -55,6 +55,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             when (memberDeclaration) {
                 is IrFunction -> LocalDeclarationsTransformer(memberDeclaration).lowerLocalDeclarations()
                 is IrProperty -> LocalDeclarationsTransformer(memberDeclaration).lowerLocalDeclarations()
+                is IrField -> LocalDeclarationsTransformer(memberDeclaration).lowerLocalDeclarations()
                 is IrAnonymousInitializer -> LocalDeclarationsTransformer(memberDeclaration).lowerLocalDeclarations()
                 else -> null
             }

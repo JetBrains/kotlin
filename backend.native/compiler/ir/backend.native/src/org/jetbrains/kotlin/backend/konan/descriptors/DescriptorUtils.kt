@@ -137,8 +137,6 @@ internal fun KonanBuiltIns.getKonanInternalFunctions(name: String): List<Functio
     return konanInternal.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).toList()
 }
 
-internal fun KotlinType.isUnboundCallableReference() = this.isRepresentedAs(ValueType.UNBOUND_CALLABLE_REFERENCE)
-
 internal val KotlinType.isFunctionOrKFunctionType: Boolean
     get() {
         val kind = constructor.declarationDescriptor?.getFunctionalClassKind()

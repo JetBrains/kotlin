@@ -33,7 +33,6 @@ private val valueTypes = ValueType.values().associate {
         ValueType.FLOAT -> LLVMFloatType()
         ValueType.DOUBLE -> LLVMDoubleType()
 
-        ValueType.UNBOUND_CALLABLE_REFERENCE,
         ValueType.NATIVE_PTR, ValueType.NATIVE_POINTED, ValueType.C_POINTER -> int8TypePtr
     }!!
 }

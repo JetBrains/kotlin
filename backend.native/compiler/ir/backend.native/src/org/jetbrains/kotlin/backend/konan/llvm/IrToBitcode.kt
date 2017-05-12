@@ -689,7 +689,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is IrBreak               -> return evaluateBreak                  (value)
             is IrContinue            -> return evaluateContinue               (value)
             is IrGetObjectValue      -> return evaluateGetObjectValue         (value)
-            is IrCallableReference   -> return evaluateCallableReference      (value)
+            is IrFunctionReference   -> return evaluateFunctionReference      (value)
             is IrSuspendableExpression ->
                                         return evaluateSuspendableExpression  (value)
             is IrSuspensionPoint     -> return evaluateSuspensionPoint        (value)
@@ -1744,17 +1744,16 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateCallableReference(expression: IrCallableReference): LLVMValueRef {
+    private fun evaluateFunctionReference(expression: IrFunctionReference): LLVMValueRef {
         // TODO: consider creating separate IR element for pointer to function.
-        assert (expression.type.isUnboundCallableReference() ||
-                TypeUtils.getClassDescriptor(expression.type) == context.interopBuiltIns.cPointer)
+        assert (TypeUtils.getClassDescriptor(expression.type) == context.interopBuiltIns.cPointer)
 
         assert (expression.getArguments().isEmpty())
 
         val descriptor = expression.descriptor
         assert (descriptor.dispatchReceiverParameter == null)
 
-        val entry = codegen.functionEntryPointAddress(descriptor as FunctionDescriptor)
+        val entry = codegen.functionEntryPointAddress(descriptor)
         return entry
     }
 
@@ -1822,10 +1821,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val argsWithContinuationIfNeeded = if (descriptor.isSuspend)
                                                args + getContinuation()
                                            else args
-        if (descriptor.isFunctionInvoke) {
-            return evaluateFunctionInvoke(descriptor, argsWithContinuationIfNeeded, resultLifetime)
-        }
-
         if (descriptor.isIntrinsic) {
             return evaluateIntrinsicCall(callee, argsWithContinuationIfNeeded)
         }
@@ -1836,40 +1831,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             else                               -> return evaluateSimpleFunctionCall(
                     descriptor, argsWithContinuationIfNeeded, resultLifetime, callee.superQualifier)
         }
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private val functionImplUnboundRefGetter by lazy {
-        context.builtIns.getKonanInternalClass("FunctionImpl")
-                .unsubstitutedMemberScope.getContributedDescriptors()
-                .filterIsInstance<PropertyDescriptor>()
-                .single { it.name.asString() == "unboundRef" }
-                .getter!!
-    }
-
-    private fun evaluateFunctionInvoke(descriptor: FunctionDescriptor,
-                                       args: List<LLVMValueRef>, resultLifetime: Lifetime): LLVMValueRef {
-
-        // Note: the whole function code below is written in the assumption that
-        // `invoke` method receiver is passed as first argument.
-
-        val functionImpl = args[0] // Instance of `konan.internal.FunctionImpl`.
-
-        // `functionImpl.unboundRef` is the pointer to (static) function of type
-        // `(FunctionImpl, Arg_1, ..., Arg_n): Ret`. See [CallableReferenceLowering] for details.
-        // LLVM type for such function is equal to type for `FunctionImpl.invoke(Arg_1, ..., Arg_n): Ret`.
-        // So we can use the latter for simplicity:
-        val unboundRefType = codegen.getLlvmFunctionType(descriptor)
-
-        // Get `functionImpl.unboundRef`:
-        val unboundRef = evaluateSimpleFunctionCall(functionImplUnboundRefGetter,
-                listOf(functionImpl), Lifetime.IRRELEVANT /* unboundRef isn't managed reference */)
-
-        // Cast `functionImpl.unboundRef` to pointer to function:
-        val entryPtr = codegen.bitcast(pointerType(unboundRefType), unboundRef, "entry")
-
-        return call(descriptor, entryPtr, args, resultLifetime)
     }
 
     //-------------------------------------------------------------------------//

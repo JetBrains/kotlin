@@ -65,11 +65,11 @@ public interface KProperty<out R> : KCallable<R> {
 
 //
 @FixmeReflection
-public interface KProperty0<out R> : kotlin.reflect.KProperty<R>/* TODO , (T) -> R*/ {
+public interface KProperty0<out R> : kotlin.reflect.KProperty<R>, () -> R {
 //    public abstract val getter: kotlin.reflect.KProperty1.Getter<T, R>
 
     public abstract fun get(): R
-    public abstract operator fun invoke(): R
+    public override abstract operator fun invoke(): R
 
 //    @kotlin.SinceKotlin public abstract fun getDelegate(receiver: T): kotlin.Any?
 //
@@ -78,11 +78,11 @@ public interface KProperty0<out R> : kotlin.reflect.KProperty<R>/* TODO , (T) ->
 }
 
 @FixmeReflection
-public interface KProperty1<T, out R> : kotlin.reflect.KProperty<R>/* TODO , (T) -> R*/ {
+public interface KProperty1<T, out R> : kotlin.reflect.KProperty<R>, (T) -> R {
 //    public abstract val getter: kotlin.reflect.KProperty1.Getter<T, R>
 
     public abstract fun get(receiver: T): R
-    public abstract operator fun invoke(receiver: T): R
+    public override abstract operator fun invoke(receiver: T): R
 
 //    @kotlin.SinceKotlin public abstract fun getDelegate(receiver: T): kotlin.Any?
 //
@@ -91,11 +91,11 @@ public interface KProperty1<T, out R> : kotlin.reflect.KProperty<R>/* TODO , (T)
 }
 
 @FixmeReflection
-public interface KProperty2<T1, T2, out R> : kotlin.reflect.KProperty<R>/* TODO , (T) -> R*/ {
+public interface KProperty2<T1, T2, out R> : kotlin.reflect.KProperty<R>, (T1, T2) -> R {
 //    public abstract val getter: kotlin.reflect.KProperty1.Getter<T, R>
 
     public abstract fun get(receiver1: T1, receiver2: T2): R
-    public abstract operator fun invoke(receiver1: T1, receiver2: T2): R
+    public override abstract operator fun invoke(receiver1: T1, receiver2: T2): R
 
 //    @kotlin.SinceKotlin public abstract fun getDelegate(receiver: T): kotlin.Any?
 //
