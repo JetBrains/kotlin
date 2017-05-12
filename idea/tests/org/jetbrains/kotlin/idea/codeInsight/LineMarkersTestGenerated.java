@@ -281,6 +281,12 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
             doTest(fileName);
         }
 
+        @TestMetadata("propertyAccessors.kt")
+        public void testPropertyAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/propertyAccessors.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("severalCallsInOneLine.kt")
         public void testSeveralCallsInOneLine() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/severalCallsInOneLine.kt");
