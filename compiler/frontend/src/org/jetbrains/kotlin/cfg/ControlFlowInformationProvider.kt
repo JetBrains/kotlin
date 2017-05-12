@@ -812,7 +812,7 @@ class ControlFlowInformationProvider private constructor(
                         if (sealedClassDescriptor != null) {
                             val sealedMissingCases = WhenChecker.getSealedMissingCases(element, context, sealedClassDescriptor)
                             if (!sealedMissingCases.isEmpty()) {
-                                trace.report(NON_EXHAUSTIVE_WHEN.on(element, sealedMissingCases))
+                                trace.report(NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS.on(element, sealedMissingCases))
                             }
                         }
                     }

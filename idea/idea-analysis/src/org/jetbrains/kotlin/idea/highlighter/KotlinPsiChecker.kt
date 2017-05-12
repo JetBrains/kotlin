@@ -250,7 +250,7 @@ private class ElementAnnotator(private val element: PsiElement,
                         }
                 )
             }
-            Severity.INFO -> return // Do nothing
+            Severity.INFO -> AnnotationPresentationInfo(ranges, highlightType = ProblemHighlightType.INFORMATION)
         }
 
         setUpAnnotations(diagnostics, presentationInfo)
@@ -298,7 +298,7 @@ private class AnnotationPresentationInfo(
                     holder.createWarningAnnotation(range, defaultMessage)
                 }
             }
-            else -> throw IllegalArgumentException("Only ERROR and WARNING diagnostics are supported")
+            Severity.INFO -> holder.createInfoAnnotation(range, defaultMessage)
         }
 
         annotation.tooltip = getMessage(diagnostic)
