@@ -17,7 +17,37 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.psi.KtElement
 import java.util.*
+
+
+
+class RootInliningContext(
+        expressionMap: Map<Int, LambdaInfo>,
+        state: GenerationState,
+        nameGenerator: NameGenerator,
+        val callElement: KtElement,
+        override val callSiteInfo: InlineCallSiteInfo,
+        inliner: ReifiedTypeInliner,
+        val typeParameterMappings: TypeParameterMappings
+) : InliningContext(
+        null, expressionMap, state, nameGenerator, TypeRemapper.createRoot(typeParameterMappings), inliner, null, false
+)
+
+class RegeneratedClassContext(
+        parent: InliningContext,
+        expressionMap: Map<Int, LambdaInfo>,
+        state: GenerationState,
+        nameGenerator: NameGenerator,
+        typeRemapper: TypeRemapper,
+        reifiedTypeInliner: ReifiedTypeInliner,
+        lambdaInfo: LambdaInfo?,
+        override val callSiteInfo: InlineCallSiteInfo
+) : InliningContext(
+        parent, expressionMap, state, nameGenerator, typeRemapper, reifiedTypeInliner, lambdaInfo, true
+)
+
+
 
 open class InliningContext(
         val parent: InliningContext?,
@@ -56,7 +86,7 @@ open class InliningContext(
     ): InliningContext {
         return RegeneratedClassContext(
                 this, expressionMap, state, generator, TypeRemapper.createFrom(typeRemapper, newTypeMappings),
-                reifiedTypeInliner, isInliningLambda, callSiteInfo
+                reifiedTypeInliner, lambdaInfo, callSiteInfo
         )
     }
 
