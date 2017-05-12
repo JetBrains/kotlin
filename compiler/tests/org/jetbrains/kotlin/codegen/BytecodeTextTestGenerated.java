@@ -885,6 +885,39 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/constantConditions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConstantConditions extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInConstantConditions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constantConditions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("cmpIntWith0.kt")
+        public void testCmpIntWith0() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constantConditions/cmpIntWith0.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("constantFlag.kt")
+        public void testConstantFlag() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constantConditions/constantFlag.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("constantInt.kt")
+        public void testConstantInt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constantConditions/constantInt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt3098.kt")
+        public void testKt3098() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constantConditions/kt3098.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/constants")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

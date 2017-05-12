@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
+import org.jetbrains.kotlin.codegen.optimization.common.isLoadOperation
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.removeNodeGetNext
@@ -63,7 +64,7 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
         private val frames by lazy { analyzeMethodBody() }
 
         fun transform() {
-            if (!insns.any { it.isUnitInstanceOrNull() }) return
+            if (!insns.any { it.isPurePush() }) return
 
             computeTransformations()
             for ((insn, transformation) in transformations.entries) {
@@ -87,7 +88,7 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
                     }
 
                     override fun unaryOperation(insn: AbstractInsnNode, value: SourceValue): SourceValue {
-                        if (insn.opcode != Opcodes.CHECKCAST) {
+                        if (insn.opcode != Opcodes.CHECKCAST && !insn.isPrimitiveTypeConversion()) {
                             value.insns.markAsDontTouch()
                         }
                         return super.unaryOperation(insn, value)
@@ -158,8 +159,20 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
                     transformations[insn] = replaceWithPopTransformation(boxedValueSize)
                 }
 
-                insn.isUnitInstanceOrNull() -> {
+                insn.isPurePush() -> {
                     transformations[insn] = replaceWithNopTransformation()
+                }
+
+                insn.isPrimitiveTypeConversion() -> {
+                    val inputTop = getInputTop(insn)
+                    val sources = inputTop.insns
+                    if (sources.all { !isDontTouch(it) }) {
+                        transformations[insn] = replaceWithNopTransformation()
+                        sources.forEach { propagatePopBackwards(it, inputTop.size) }
+                    }
+                    else {
+                        transformations[insn] = replaceWithPopTransformation(poppedValueSize)
+                    }
                 }
 
                 else -> {
@@ -232,7 +245,7 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
                 it.isPrimitiveBoxing() && (it as MethodInsnNode).owner == resultType
 
         private fun isTransformablePopOperand(insn: AbstractInsnNode) =
-                insn.opcode == Opcodes.CHECKCAST || insn.isPrimitiveBoxing() || insn.isUnitInstanceOrNull()
+                insn.opcode == Opcodes.CHECKCAST || insn.isPrimitiveBoxing() || insn.isPurePush()
 
         private fun isDontTouch(insn: AbstractInsnNode) =
                 dontTouchInsnIndices[insnList.indexOf(insn)]
@@ -240,9 +253,14 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
 
 }
 
-fun AbstractInsnNode.isUnitInstanceOrNull() =
-        opcode == Opcodes.ACONST_NULL || isUnitInstance()
+fun AbstractInsnNode.isPurePush() =
+        isLoadOperation() ||
+        opcode in Opcodes.ACONST_NULL .. Opcodes.LDC + 2 ||
+        isUnitInstance()
 
 fun AbstractInsnNode.isUnitInstance() =
         opcode == Opcodes.GETSTATIC &&
         this is FieldInsnNode && owner == "kotlin/Unit" && name == "INSTANCE"
+
+fun AbstractInsnNode.isPrimitiveTypeConversion() =
+        opcode in Opcodes.I2L .. Opcodes.I2S

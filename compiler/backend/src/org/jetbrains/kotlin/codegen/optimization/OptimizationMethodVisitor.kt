@@ -52,6 +52,7 @@ class OptimizationMethodVisitor(
                 CapturedVarsOptimizationMethodTransformer(),
                 RedundantNullCheckMethodTransformer(),
                 RedundantCheckCastEliminationMethodTransformer(),
+                ConstantConditionEliminationMethodTransformer(),
                 RedundantBoxingMethodTransformer(),
                 RedundantCoercionToUnitTransformer(),
                 DeadCodeEliminationMethodTransformer(),
