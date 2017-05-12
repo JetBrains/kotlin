@@ -6,14 +6,14 @@ interface KotlinCommonOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToo
 
     /**
      * Allow to use declarations only from the specified version of bundled libraries
-     * Possible values: "1.0", "1.1", "1.2 (EXPERIMENTAL)"
+     * Possible values: "1.0", "1.1", "1.2"
      * Default value: null
      */
      var apiVersion: kotlin.String?
 
     /**
      * Provide source compatibility with specified language version
-     * Possible values: "1.0", "1.1", "1.2 (EXPERIMENTAL)"
+     * Possible values: "1.0", "1.1", "1.2"
      * Default value: null
      */
      var languageVersion: kotlin.String?
