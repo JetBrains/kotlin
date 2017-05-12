@@ -26,9 +26,12 @@ open class InliningContext(
         val nameGenerator: NameGenerator,
         val typeRemapper: TypeRemapper,
         val reifiedTypeInliner: ReifiedTypeInliner,
-        val isInliningLambda: Boolean,
+        val lambdaInfo: LambdaInfo?,
         val classRegeneration: Boolean
 ) {
+
+    val isInliningLambda = lambdaInfo != null
+
     val internalNameToAnonymousObjectTransformationInfo = hashMapOf<String, AnonymousObjectTransformationInfo>()
 
     var isContinuation: Boolean = false
@@ -38,15 +41,13 @@ open class InliningContext(
     val root: RootInliningContext
         get() = if (isRoot) this as RootInliningContext else parent!!.root
 
-    fun subInline(generator: NameGenerator): InliningContext {
-        return subInline(generator, emptyMap(), isInliningLambda)
-    }
-
-    fun subInlineLambda(lambdaInfo: LambdaInfo): InliningContext {
-        val map = HashMap<String, String?>()
-        map.put(lambdaInfo.lambdaClassType.internalName, null) //mark lambda inlined
-        return subInline(nameGenerator.subGenerator("lambda"), map, true)
-    }
+    fun subInlineLambda(lambdaInfo: LambdaInfo): InliningContext =
+            subInline(
+                    nameGenerator.subGenerator("lambda"),
+                    //mark lambda inlined
+                    hashMapOf(lambdaInfo.lambdaClassType.internalName to null),
+                    lambdaInfo
+            )
 
     fun subInlineWithClassRegeneration(
             generator: NameGenerator,
@@ -59,10 +60,14 @@ open class InliningContext(
         )
     }
 
-    private fun subInline(
-            generator: NameGenerator, additionalTypeMappings: Map<String, String?>, isInliningLambda: Boolean
+    @JvmOverloads
+    fun subInline(
+            generator: NameGenerator,
+            additionalTypeMappings: Map<String, String?> = emptyMap(),
+            lambdaInfo: LambdaInfo? = this.lambdaInfo
     ): InliningContext {
         //isInliningLambda && !this.isInliningLambda for root inline lambda
+        val isInliningLambda = lambdaInfo != null
         return InliningContext(
                 this, expressionMap, state, generator,
                 TypeRemapper.createFrom(
@@ -71,20 +76,16 @@ open class InliningContext(
                         //root inline lambda
                         isInliningLambda && !this.isInliningLambda
                 ),
-                reifiedTypeInliner, isInliningLambda, classRegeneration
+                reifiedTypeInliner, lambdaInfo, classRegeneration
         )
     }
 
     open val callSiteInfo: InlineCallSiteInfo
         get() {
-            return parent?.callSiteInfo ?: throw AssertionError("At least root context should return proper value")
+            return parent!!.callSiteInfo
         }
 
     fun findAnonymousObjectTransformationInfo(internalName: String): AnonymousObjectTransformationInfo? {
-        if (root.internalNameToAnonymousObjectTransformationInfo.containsKey(internalName)) {
-            return root.internalNameToAnonymousObjectTransformationInfo[internalName]
-        }
-
-        return null
+        return root.internalNameToAnonymousObjectTransformationInfo[internalName]
     }
 }

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_IMPL_ASM_TYPE
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.isThis0
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
 import org.jetbrains.org.objectweb.asm.*
