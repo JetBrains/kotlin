@@ -18,11 +18,11 @@ class MyColor(val x: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>, y: Color.<!ENUM_ENTRY_A
         fun local(arg: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>): Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = arg
         val temp: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = <!TYPE_MISMATCH!>Color.RED<!>
         temp <!USELESS_CAST!>as? Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!>
-        if (temp is <!IS_ENUM_ENTRY!>Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!>) {
+        if (<!USELESS_IS_CHECK!>temp is <!IS_ENUM_ENTRY!>Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!><!>) {
         return temp <!USELESS_CAST!>as Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!>
     }
         val obj = object : Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> {}
-        if (obj is <!IS_ENUM_ENTRY!>Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!>) {
+        if (<!USELESS_IS_CHECK!>obj is <!IS_ENUM_ENTRY!>Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!><!>) {
         return obj
     }
         return <!TYPE_MISMATCH!>Color.RED<!>

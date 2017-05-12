@@ -826,6 +826,8 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> ALWAYS_NULL = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<KtNullableType> USELESS_NULLABLE_CHECK = DiagnosticFactory0.create(WARNING, NULLABLE_TYPE);
+    DiagnosticFactory1<KtElement, Boolean> USELESS_IS_CHECK = DiagnosticFactory1.create(WARNING);
+
 
     // Properties / locals
 

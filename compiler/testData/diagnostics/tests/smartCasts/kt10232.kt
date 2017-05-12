@@ -6,7 +6,7 @@ interface B<T> : A<T>
 fun <T> foo(b: A<T>) = b
 
 fun <T> test(a: A<T>) {
-    if (a is Any) {
+    if (<!USELESS_IS_CHECK!>a is Any<!>) {
         // Error:(9, 9) Kotlin: Type inference failed: fun <T> foo(b: A<T>): kotlin.Unit
         // cannot be applied to (A<T>)
         foo(a)

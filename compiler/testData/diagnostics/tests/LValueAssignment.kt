@@ -46,7 +46,7 @@ fun cannotBe() {
     <!VARIABLE_EXPECTED!>foo()<!> = Unit;
 
     (<!VARIABLE_EXPECTED!>i <!USELESS_CAST!>as Int<!><!>) = 34
-    (<!VARIABLE_EXPECTED!>i is Int<!>) = false
+    (<!USELESS_IS_CHECK, VARIABLE_EXPECTED!>i is Int<!>) = false
     <!VARIABLE_EXPECTED!>A()<!> = A()
     <!VARIABLE_EXPECTED!>5<!> = 34
 }

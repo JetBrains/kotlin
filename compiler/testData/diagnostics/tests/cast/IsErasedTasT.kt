@@ -1,1 +1,1 @@
-fun <T> testing(a: T) = a is T
+fun <T> testing(a: T) = <!USELESS_IS_CHECK!>a is T<!>
