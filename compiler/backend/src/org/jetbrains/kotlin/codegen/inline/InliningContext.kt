@@ -18,9 +18,6 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.psi.KtElement
-import java.util.*
-
-
 
 class RootInliningContext(
         expressionMap: Map<Int, LambdaInfo>,
@@ -28,10 +25,10 @@ class RootInliningContext(
         nameGenerator: NameGenerator,
         val callElement: KtElement,
         override val callSiteInfo: InlineCallSiteInfo,
-        inliner: ReifiedTypeInliner,
+        val reifiedTypeInliner: ReifiedTypeInliner,
         val typeParameterMappings: TypeParameterMappings
 ) : InliningContext(
-        null, expressionMap, state, nameGenerator, TypeRemapper.createRoot(typeParameterMappings), inliner, null, false
+        null, expressionMap, state, nameGenerator, TypeRemapper.createRoot(typeParameterMappings), null, false
 )
 
 class RegeneratedClassContext(
@@ -40,14 +37,11 @@ class RegeneratedClassContext(
         state: GenerationState,
         nameGenerator: NameGenerator,
         typeRemapper: TypeRemapper,
-        reifiedTypeInliner: ReifiedTypeInliner,
         lambdaInfo: LambdaInfo?,
         override val callSiteInfo: InlineCallSiteInfo
 ) : InliningContext(
-        parent, expressionMap, state, nameGenerator, typeRemapper, reifiedTypeInliner, lambdaInfo, true
+        parent, expressionMap, state, nameGenerator, typeRemapper, lambdaInfo, true
 )
-
-
 
 open class InliningContext(
         val parent: InliningContext?,
@@ -55,7 +49,6 @@ open class InliningContext(
         val state: GenerationState,
         val nameGenerator: NameGenerator,
         val typeRemapper: TypeRemapper,
-        val reifiedTypeInliner: ReifiedTypeInliner,
         val lambdaInfo: LambdaInfo?,
         val classRegeneration: Boolean
 ) {
@@ -86,7 +79,7 @@ open class InliningContext(
     ): InliningContext {
         return RegeneratedClassContext(
                 this, expressionMap, state, generator, TypeRemapper.createFrom(typeRemapper, newTypeMappings),
-                reifiedTypeInliner, lambdaInfo, callSiteInfo
+                lambdaInfo, callSiteInfo
         )
     }
 
@@ -106,7 +99,7 @@ open class InliningContext(
                         //root inline lambda
                         isInliningLambda && !this.isInliningLambda
                 ),
-                reifiedTypeInliner, lambdaInfo, classRegeneration
+                lambdaInfo, classRegeneration
         )
     }
 
