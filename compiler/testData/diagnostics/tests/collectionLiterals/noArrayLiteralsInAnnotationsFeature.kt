@@ -1,3 +1,4 @@
+// !LANGUAGE: -ArrayLiteralsInAnnotations
 annotation class Foo(
         val a: IntArray = <!UNSUPPORTED_FEATURE!>[]<!>,
         val b: FloatArray = <!UNSUPPORTED_FEATURE!>[1f, 2f]<!>,
