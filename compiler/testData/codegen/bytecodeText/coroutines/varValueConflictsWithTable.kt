@@ -12,11 +12,13 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
+val nonConstOne = 1
+
 fun box(): String {
     var result = "fail 1"
     builder {
         // Initialize var with Int value
-        for (i in 1..1) {
+        for (i in 1..nonConstOne) {
             if ("".length > 0) continue
         }
 

@@ -2,9 +2,9 @@
 
 // FILE: test.kt
 
-fun test1() {
+fun test1(): String {
     val u = Unit
-    u.mapNullable({ "X1" }, { "X2" })
+    return u.mapNullable({ "X1" }, { "X2" })
 }
 
 // @TestKt.class:
@@ -14,5 +14,5 @@ fun test1() {
 // 0 X2
 
 // FILE: inline.kt
-inline fun <T : Any, R> T?.mapNullable(ifNotNull: (T) -> R, ifNull: () -> R) =
+inline fun <T : Any, R> T?.mapNullable(ifNotNull: (T) -> R, ifNull: () -> R): R =
         if (this == null) ifNull() else ifNotNull(this)

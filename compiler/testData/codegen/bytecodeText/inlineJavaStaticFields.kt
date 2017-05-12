@@ -35,29 +35,31 @@ object KoKobject {
     val JvmStaticString: String? = "123"
 }
 
+fun Any?.use() {}
+
 fun test() {
-    Integer.MIN_VALUE
-    java.lang.Long.MAX_VALUE
+    Integer.MIN_VALUE.use()
+    java.lang.Long.MAX_VALUE.use()
 
-    JClass.PrimitiveInt
-    JClass.BigPrimitiveInt
-    JClass.PrimitiveByte
-    JClass.PrimitiveChar
-    JClass.PrimitiveLong
-    JClass.PrimitiveShort
-    JClass.PrimitiveBool
-    JClass.PrimitiveFloat
-    JClass.PrimitiveDouble
-    JClass.Str
-    JClass.StrNullable
+    JClass.PrimitiveInt.use()
+    JClass.BigPrimitiveInt.use()
+    JClass.PrimitiveByte.use()
+    JClass.PrimitiveChar.use()
+    JClass.PrimitiveLong.use()
+    JClass.PrimitiveShort.use()
+    JClass.PrimitiveBool.use()
+    JClass.PrimitiveFloat.use()
+    JClass.PrimitiveDouble.use()
+    JClass.Str.use()
+    JClass.StrNullable.use()
 
-    JClass.BoxedInt
-    JClass.NonFinal
+    JClass.BoxedInt.use()
+    JClass.NonFinal.use()
 
-    JClass().NonStatic
+    JClass().NonStatic.use()
 
-    KoKobject.JvmStatic
-    KoKobject.JvmStaticString
+    KoKobject.JvmStatic.use()
+    KoKobject.JvmStaticString.use()
 }
 
 // 1 LDC -2147483648
@@ -78,5 +80,4 @@ fun test() {
 // 1 GETFIELD JClass.NonStatic : I
 // 1 GETSTATIC KoKobject.JvmStatic : I
 // 1 GETSTATIC KoKobject.JvmStaticString : Ljava/lang/String
-// 3 POP2
-// 18 POP
+

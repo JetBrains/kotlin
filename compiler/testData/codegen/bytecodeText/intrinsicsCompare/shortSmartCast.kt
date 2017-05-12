@@ -13,4 +13,5 @@ fun less5(a: Any?, b: Any?) = if (a is Short && b is Short) a < b else true
 // 3 Intrinsics\.areEqual
 // 3 Intrinsics\.compare
 // for compare:
-// 3 IF_ICMPGE
+// 3 IFGE
+// 0 IF_ICMPGE

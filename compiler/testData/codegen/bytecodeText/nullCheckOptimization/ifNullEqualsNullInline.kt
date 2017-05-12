@@ -4,8 +4,8 @@
 
 fun test1() {
     val n = null
-    n.elvis { "X1" }
-    "X2".elvis { "X3" }
+    val u1 = n.elvis { "X1" }
+    val u2 = "X2".elvis { "X3" }
 }
 
 // @TestKt.class:

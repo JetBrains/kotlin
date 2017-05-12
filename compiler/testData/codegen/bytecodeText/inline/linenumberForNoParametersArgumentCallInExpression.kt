@@ -11,4 +11,4 @@ inline fun lookAtMe(f: () -> Int): Int {
 }
 
 // TODO: Less NOPs is better
-// 1 NOP
+// 2 NOP
