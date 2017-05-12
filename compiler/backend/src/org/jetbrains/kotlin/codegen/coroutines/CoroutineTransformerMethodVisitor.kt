@@ -22,9 +22,10 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.codegen.inline.MaxStackFrameSizeAndLocalsCalculator
 import org.jetbrains.kotlin.codegen.optimization.DeadCodeEliminationMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.*
+import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -67,6 +68,8 @@ class CoroutineTransformerMethodVisitor(
         // First instruction in the method node may change in case of named function
         val actualCoroutineStart = methodNode.instructions.first
 
+        FixStackMethodTransformer().transform(containingClassInternalName, methodNode)
+
         if (isForNamedFunction) {
             if (allSuspensionPointsAreTailCalls(containingClassInternalName, methodNode, suspensionPoints)) {
                 dropSuspensionMarkers(methodNode, suspensionPoints)
@@ -83,8 +86,8 @@ class CoroutineTransformerMethodVisitor(
             splitTryCatchBlocksContainingSuspensionPoint(methodNode, suspensionPoint)
         }
 
-        // Spill stack to variables before suspension points, try/catch blocks
-        FixStackWithLabelNormalizationMethodTransformer().transform(containingClassInternalName, methodNode)
+        // Actual max stack might be increased during the previous phases
+        updateMaxStack(methodNode)
 
         // Remove unreachable suspension points
         // If we don't do this, then relevant frames will not be analyzed, that is unexpected from point of view of next steps (e.g. variable spilling)
@@ -135,7 +138,20 @@ class CoroutineTransformerMethodVisitor(
 
         dropSuspensionMarkers(methodNode, suspensionPoints)
         methodNode.removeEmptyCatchBlocks()
+    }
 
+    private fun updateMaxStack(methodNode: MethodNode) {
+        methodNode.instructions.resetLabels()
+        methodNode.accept(
+                MaxStackFrameSizeAndLocalsCalculator(
+                        Opcodes.ASM5, methodNode.access, methodNode.desc,
+                        object : MethodVisitor(Opcodes.ASM5) {
+                            override fun visitMaxs(maxStack: Int, maxLocals: Int) {
+                                methodNode.maxStack = maxStack
+                            }
+                        }
+                )
+        )
     }
 
     private fun prepareMethodNodePreludeForNamedFunction(methodNode: MethodNode) {

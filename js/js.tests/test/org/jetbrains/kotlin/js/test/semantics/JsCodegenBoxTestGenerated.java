@@ -6116,6 +6116,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
+            @TestMetadata("breakWithNonEmptyStack.kt")
+            public void testBreakWithNonEmptyStack() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/breakWithNonEmptyStack.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("destructuringInLambdas.kt")
             public void testDestructuringInLambdas() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/destructuringInLambdas.kt");

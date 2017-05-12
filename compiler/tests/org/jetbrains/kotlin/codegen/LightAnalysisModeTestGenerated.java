@@ -5407,6 +5407,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("breakWithNonEmptyStack.kt")
+            public void testBreakWithNonEmptyStack() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/breakWithNonEmptyStack.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("destructuringInLambdas.kt")
             public void testDestructuringInLambdas() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/destructuringInLambdas.kt");
