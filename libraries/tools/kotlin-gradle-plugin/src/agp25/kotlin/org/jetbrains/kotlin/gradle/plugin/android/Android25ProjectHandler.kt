@@ -1,10 +1,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.*
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.api.SourceKind
-import com.android.build.gradle.api.TestVariant
-import com.android.build.gradle.api.UnitTestVariant
+import com.android.build.gradle.api.*
 import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -87,6 +84,15 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
 
             // Then don't register kotlinTask output, but only use it for Java compilation
             javaTask.classpath = project.files(kotlinTask.destinationDir).from(javaTask.classpath)
+        }
+
+        getTestedVariantData(variantData)?.let {
+            // Find the classpath entry that comes from the tested variant and register it as the friend path, lazily
+            kotlinTask.setFriendClasspathEntries(lazy {
+                variantData.getCompileClasspathArtifacts(preJavaClasspathKey)
+                        .filter { it.id.componentIdentifier is TestedComponentIdentifier }
+                        .map { it.file.absolutePath }
+            })
         }
     }
 

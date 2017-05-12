@@ -375,6 +375,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
 
     protected val KotlinCompile.annotationsFile: File? get() = kaptOptions.annotationsFile
     protected fun KotlinCompile.setJavaOutput(file: File) { javaOutputDir = file }
+    protected fun KotlinCompile.setFriendClasspathEntries(lazyEntries: Lazy<List<String>?>) { friendClasspathEntries = lazyEntries }
 
     protected val logger = Logging.getLogger(this.javaClass)
 

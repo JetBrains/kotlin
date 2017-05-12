@@ -44,7 +44,7 @@ dependencies {
     compileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
     compileOnly 'org.jetbrains.kotlin:gradle-api:2.2'
 
-    agp25CompileOnly 'com.android.tools.build:gradle:3.0.0-dev'
+    agp25CompileOnly 'com.android.tools.build:gradle:3.0.0-alpha1'
     agp25CompileOnly 'org.codehaus.groovy:groovy-all:2.3.9'
     agp25CompileOnly gradleApi()
 
