@@ -1,0 +1,8 @@
+include ':csvparser'
+include ':gitchurn'
+include ':gtk'
+include ':libcurl'
+include ':nonBlockingEchoServer'
+include ':opengl'
+include ':socket'
+include ':tetris'

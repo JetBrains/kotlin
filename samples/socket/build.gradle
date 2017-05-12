@@ -1,16 +1,3 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            url  "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
-        }
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:+"
-    }
-}
-
 apply plugin: 'konan'
 
 konanInterop {
@@ -27,10 +14,17 @@ konanArtifacts {
 }
 
 build {
+    project.ext { outputFile = "${projectDir.canonicalPath}/${file(compileKonanEchoServer.artifactPath).name}" }
     doLast {
         copy {
             from compileKonanEchoServer.artifactPath
             into projectDir.canonicalPath
         }
+    }
+}
+
+clean {
+    doLast {
+        delete outputFile
     }
 }

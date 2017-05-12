@@ -1,0 +1,36 @@
+apply plugin: 'konan'
+
+konanInterop {
+    def includePrefixes = [ '/opt/local/include', '/usr/include', '/usr/local/include' ]
+    gtk3 {
+        includePrefixes.each {
+            includeDirs "$it/atk-1.0", "$it/gdk-pixbuf-2.0", "$it/cairo", "$it/pango-1.0", "$it/gtk-3.0", "$it/glib-2.0"
+        }
+        includeDirs '/opt/local/lib/glib-2.0/include', '/usr/lib/x86_64-linux-gnu/glib-2.0/include', '/usr/local/lib/glib-2.0/include'
+        defFile 'gtk3.def'
+    }
+}
+
+konanArtifacts {
+    Gtk3Demo {
+        inputFiles project.fileTree('src')
+        useInterop 'gtk3'
+        linkerOpts "-L/opt/local/lib -L/usr/local/lib -L/usr/lib/x86_64-linux-gnu -lglib-2.0 -lgdk-3.0 -lgtk-3 -lgio-2.0 -lgobject-2.0"
+    }
+}
+
+build {
+    project.ext { outputFile = "${projectDir.canonicalPath}/${file(compileKonanGtk3Demo.artifactPath).name}" }
+    doLast {
+        copy {
+            from compileKonanGtk3Demo.artifactPath
+            into projectDir.canonicalPath
+        }
+    }
+}
+
+clean {
+    doLast {
+        delete outputFile
+    }
+}

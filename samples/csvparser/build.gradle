@@ -1,16 +1,3 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            url  "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
-        }
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:+"
-    }
-}
-
 apply plugin: 'konan'
 
 konanInterop {
@@ -27,6 +14,7 @@ konanArtifacts {
 }
 
 build {
+    project.ext { outputFile = "${projectDir.canonicalPath}/${file(compileKonanCsvParser.artifactPath).name}" }
     doLast {
         copy {
             from compileKonanCsvParser.artifactPath
@@ -35,7 +23,7 @@ build {
     }
 }
 
-void dumpCompilatioTask(Task task) {
+void dumpCompilationTask(Task task) {
     println()
     println("Compilation task: ${task.name}")
     println("outputDir          : ${task.outputDir}")
@@ -69,10 +57,16 @@ void dumpInteropTask(Task task) {
     println("linkFiles          : ${task.linkFiles}")
 }
 
-task dumpParameters {
+task dumpParameters(type: DefaultTask) {
     doLast {
-        dumpCompilatioTask(konanArtifacts['CsvParser'].compilationTask)
+        dumpCompilationTask(konanArtifacts['CsvParser'].compilationTask)
         dumpInteropTask(konanInterop['stdio'].generateStubsTask)
-        dumpCompilatioTask(konanInterop['stdio'].compileStubsTask)
+        dumpCompilationTask(konanInterop['stdio'].compileStubsTask)
+    }
+}
+
+clean {
+    doLast {
+        delete outputFile
     }
 }
