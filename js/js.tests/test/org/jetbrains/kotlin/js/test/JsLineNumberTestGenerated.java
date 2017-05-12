@@ -66,6 +66,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("doWhileWithComplexCondition.kt")
+    public void testDoWhileWithComplexCondition() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/doWhileWithComplexCondition.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("for.kt")
     public void testFor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/for.kt");
@@ -183,6 +189,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
     @TestMetadata("whenIs.kt")
     public void testWhenIs() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/whenIs.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("whileWithComplexCondition.kt")
+    public void testWhileWithComplexCondition() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/whileWithComplexCondition.kt");
         doTest(fileName);
     }
 }

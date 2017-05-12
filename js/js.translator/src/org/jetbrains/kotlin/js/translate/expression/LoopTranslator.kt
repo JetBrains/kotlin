@@ -51,17 +51,18 @@ fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: Tr
             JsEmpty
 
     if (!conditionBlock.isEmpty) {
-        val breakIfConditionIsFalseStatement = JsIf(not(jsCondition), JsBreak())
+        val breakIfConditionIsFalseStatement = JsIf(not(jsCondition), JsBreak().apply { source = expression })
+                .apply { source = expression }
         val bodyBlock = convertToBlock(bodyStatement)
         jsCondition = JsBooleanLiteral(true)
 
         if (doWhile) {
             // translate to: tmpSecondRun = false;
             // do { if(tmpSecondRun) { <expr> if(!tmpExprVar) break; } else tmpSecondRun=true; <body> } while(true)
-            val secondRun = context.defineTemporary(JsBooleanLiteral(false))
+            val secondRun = context.defineTemporary(JsBooleanLiteral(false).source(expression))
             conditionBlock.statements.add(breakIfConditionIsFalseStatement)
-            val ifStatement = JsIf(secondRun, conditionBlock, assignment(secondRun, JsBooleanLiteral(true)).makeStmt())
-            bodyBlock.statements.add(0, ifStatement)
+            val ifStatement = JsIf(secondRun, conditionBlock, assignment(secondRun, JsBooleanLiteral(true)).source(expression).makeStmt())
+            bodyBlock.statements.add(0, ifStatement.apply { source = expression })
         }
         else {
             conditionBlock.statements.add(breakIfConditionIsFalseStatement)
@@ -74,7 +75,7 @@ fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: Tr
     val result = if (doWhile) JsDoWhile() else JsWhile()
     result.condition = jsCondition
     result.body = bodyStatement
-    return result.source(expression)!!
+    return result.source(expression)
 }
 
 fun translateForExpression(expression: KtForExpression, context: TranslationContext): JsStatement {
