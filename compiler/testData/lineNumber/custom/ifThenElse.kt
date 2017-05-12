@@ -1,15 +1,17 @@
 fun foo() {
-    if (0 < 1) {
+    if (flag) {
         System.out?.println()
     } else {
         System.out?.println()
     }
     
-    val b = if (1 < 2) {
+    val b = if (flag) {
         System.out?.println()
     } else {
         System.out?.println()
     }
 }
 
-// 2 3 5 6 +8 9 11 8 13
+val flag = true
+
+// 2 3 5 6 +8 9 11 8 13 15 15
