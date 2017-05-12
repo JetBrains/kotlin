@@ -522,7 +522,7 @@ public class InlineCodegen extends CallGenerator {
 
     private void generateClosuresBodies() {
         for (LambdaInfo info : expressionMap.values()) {
-            info.generateLambdaBody(codegen);
+            info.generateLambdaBody(codegen, reifiedTypeInliner);
         }
     }
 

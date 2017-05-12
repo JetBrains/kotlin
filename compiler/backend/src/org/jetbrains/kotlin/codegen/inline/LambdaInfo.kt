@@ -50,7 +50,7 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean, @JvmField val is
 
     lateinit var node: SMAPAndMethodNode
 
-    abstract fun generateLambdaBody(codegen: ExpressionCodegen)
+    abstract fun generateLambdaBody(codegen: ExpressionCodegen, reifiedTypeInliner: ReifiedTypeInliner)
 
     fun addAllParameters(remapper: FieldRemapper): Parameters {
         val builder = ParametersBuilder.initializeBuilderFrom(AsmTypes.OBJECT_TYPE, invokeMethod.descriptor, this)
@@ -81,7 +81,8 @@ class DefaultLambda(
         override val lambdaClassType: Type,
         val capturedArgs: Array<Type>,
         val parameterDescriptor: ValueParameterDescriptor,
-        val offset: Int
+        val offset: Int,
+        val needReification: Boolean
 ) : LambdaInfo(parameterDescriptor.isCrossinline, false) {
 
     val parameterOffsetsInDefault: MutableList<Int> = arrayListOf()
@@ -99,7 +100,7 @@ class DefaultLambda(
 
     override fun isMyLabel(name: String): Boolean = false
 
-    override fun generateLambdaBody(codegen: ExpressionCodegen) {
+    override fun generateLambdaBody(codegen: ExpressionCodegen, reifiedTypeInliner: ReifiedTypeInliner) {
         val classReader = InlineCodegenUtil.buildClassReaderByInternalName(codegen.state, lambdaClassType.internalName)
 
         val descriptor = Type.getMethodDescriptor(Type.VOID_TYPE, *capturedArgs)
@@ -129,6 +130,11 @@ class DefaultLambda(
                 invokeMethod.name,
                 invokeMethod.descriptor,
                 lambdaClassType.internalName)!!
+
+        if (needReification) {
+            //nested classes could also require reification
+            reifiedTypeInliner.reifyInstructions(node.node)
+        }
     }
 }
 
@@ -223,7 +229,7 @@ class ExpressionLambda(
     val isPropertyReference: Boolean
         get() = propertyReferenceInfo != null
 
-    override fun generateLambdaBody(codegen: ExpressionCodegen) {
+    override fun generateLambdaBody(codegen: ExpressionCodegen, reifiedTypeInliner: ReifiedTypeInliner) {
         val closureContext =
                 if (isPropertyReference)
                     codegen.getContext().intoAnonymousClass(classDescriptor, codegen, OwnerKind.IMPLEMENTATION)

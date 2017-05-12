@@ -2141,6 +2141,51 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DefaultLambda extends AbstractBlackBoxInlineCodegenTest {
+            public void testAllFilesPresentInDefaultLambda() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("chain.kt")
+            public void testChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/chain.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nested.kt")
+            public void testNested() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/nested.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nested2.kt")
+            public void testNested2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/nested2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nested2Static.kt")
+            public void testNested2Static() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/nested2Static.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nestedStatic.kt")
+            public void testNestedStatic() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/nestedStatic.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/simple.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/reified/isCheck")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

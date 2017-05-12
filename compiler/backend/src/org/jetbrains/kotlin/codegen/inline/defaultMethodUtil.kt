@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.DEFAULT_LAMBDA_FAKE_CALL
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getConstant
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.isNeedClassReificationMarker
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.insnText
@@ -153,7 +154,7 @@ private fun extractDefaultLambdasInfo(
             instanceInstuction = instanceInstuction.previous
         }
 
-        val (owner, argTypes) = when (instanceInstuction) {
+        val (owner, argTypes, needReification) = when (instanceInstuction) {
             is MethodInsnNode -> {
                 assert(instanceInstuction.name == "<init>") { "Expected constructor call for default lambda, but $instanceInstuction" }
                 val ownerInternalName = instanceInstuction.owner
@@ -170,20 +171,23 @@ private fun extractDefaultLambdasInfo(
                     addAll(InsnSequence(instanceInstuction, varAssignmentInstruction.next).toList())
                 }
 
-                Type.getObjectType(instanceInstuction.owner) to Type.getArgumentTypes(instanceInstuction.desc)
+                val needReification = instanceCreation.previous.takeIf { isNeedClassReificationMarker(it) }?.let { toDelete.add(it) } != null
+                Triple(Type.getObjectType(instanceInstuction.owner), Type.getArgumentTypes(instanceInstuction.desc), needReification)
             }
 
             is FieldInsnNode -> {
                 toDelete.addAll(InsnSequence(instanceInstuction, varAssignmentInstruction.next).toList())
 
-                Type.getObjectType(instanceInstuction.owner) to emptyArray<Type>()
+                val needReification = instanceInstuction.previous.takeIf { isNeedClassReificationMarker(it) }?.let { toDelete.add(it) } != null
+
+                Triple(Type.getObjectType(instanceInstuction.owner), emptyArray<Type>(), needReification)
             }
             else -> throw RuntimeException("Can't extract default lambda info $it.\n Unknown instruction: ${instanceInstuction.insnText}")
         }
 
         toInsert.add(varAssignmentInstruction to defaultLambdaFakeCallStub(argTypes, it.varIndex))
 
-        DefaultLambda(owner, argTypes, defaultLambdas[it.varIndex]!!, it.varIndex)
+        DefaultLambda(owner, argTypes, defaultLambdas[it.varIndex]!!, it.varIndex, needReification)
     }
 }
 
