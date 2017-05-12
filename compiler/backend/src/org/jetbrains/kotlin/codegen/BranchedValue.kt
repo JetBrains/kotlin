@@ -209,33 +209,9 @@ class NumberCompare(
         right: StackValue
 ) : BranchedValue(left, right, operandType, NumberCompare.getNumberCompareOpcode(opToken)) {
 
-    override fun patchOpcode(opcode: Int, v: InstructionAdapter): Int {
-        // Opcode takes one int operand from the stack
-        assert(opcode in IFEQ..IFLE) {
-            "Opcode for comparing must be in range ${IFEQ..IFLE}, but $opcode was found"
-        }
+    override fun patchOpcode(opcode: Int, v: InstructionAdapter): Int =
+            patchOpcode(opcode, v, opToken, operandType)
 
-        return when (operandType) {
-            Type.FLOAT_TYPE, Type.DOUBLE_TYPE -> {
-                if (opToken == KtTokens.GT || opToken == KtTokens.GTEQ) {
-                    v.cmpl(operandType)
-                }
-                else {
-                    v.cmpg(operandType)
-                }
-
-                opcode
-            }
-            Type.LONG_TYPE -> {
-                v.lcmp()
-
-                opcode
-            }
-            else -> {
-                opcode + (IF_ICMPEQ - IFEQ)
-            }
-        }
-    }
     companion object {
         fun getNumberCompareOpcode(opToken: IElementType): Int {
             return when (opToken) {
@@ -248,6 +224,27 @@ class NumberCompare(
                 else -> {
                     throw UnsupportedOperationException("Don't know how to generate this condJump: " + opToken)
                 }
+            }
+        }
+
+        fun patchOpcode(opcode: Int, v: InstructionAdapter, opToken: IElementType, operandType: Type): Int {
+            assert(opcode in IFEQ..IFLE) {
+                "Opcode for comparing must be in range ${IFEQ..IFLE}, but $opcode was found"
+            }
+            return when (operandType) {
+                Type.FLOAT_TYPE, Type.DOUBLE_TYPE -> {
+                    if (opToken == KtTokens.GT || opToken == KtTokens.GTEQ)
+                        v.cmpl(operandType)
+                    else
+                        v.cmpg(operandType)
+                    opcode
+                }
+                Type.LONG_TYPE -> {
+                    v.lcmp()
+                    opcode
+                }
+                else ->
+                    opcode + (IF_ICMPEQ - IFEQ)
             }
         }
     }
@@ -268,5 +265,93 @@ class ObjectCompare(
                 else -> throw UnsupportedOperationException("don't know how to generate this condjump")
             }
         }
+    }
+}
+
+abstract class SafeCallFusedWithPrimitiveEqualityBase(
+        val opToken: IElementType,
+        operandType: Type,
+        left: StackValue,
+        right: StackValue
+) : BranchedValue(left, right, operandType, NumberCompare.getNumberCompareOpcode(opToken)) {
+    private val trueIfEqual = opToken == KtTokens.EQEQ || opToken == KtTokens.EQEQEQ
+
+    protected abstract fun cleanupOnNullReceiver(v: InstructionAdapter)
+
+    override fun patchOpcode(opcode: Int, v: InstructionAdapter): Int =
+            NumberCompare.patchOpcode(opcode, v, opToken, operandType)
+
+    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+        val endLabel = Label()
+
+        arg1.put(operandType, v)
+        arg2!!.put(operandType, v)
+        v.visitJumpInsn(patchOpcode(if (jumpIfFalse) opcode else negatedOperations[opcode]!!, v), jumpLabel)
+        v.goTo(endLabel)
+
+        cleanupOnNullReceiver(v)
+        if (jumpIfFalse == trueIfEqual) {
+            v.goTo(jumpLabel)
+        }
+
+        v.mark(endLabel)
+    }
+
+    override fun putSelector(type: Type, v: InstructionAdapter) {
+        val falseLabel = Label()
+        val endLabel = Label()
+
+        arg1.put(operandType, v)
+        arg2!!.put(operandType, v)
+        v.visitJumpInsn(patchOpcode(opcode, v), falseLabel)
+
+        if (!trueIfEqual) {
+            val trueLabel = Label()
+            v.goTo(trueLabel)
+            cleanupOnNullReceiver(v)
+            v.mark(trueLabel)
+        }
+
+        v.iconst(1)
+        v.goTo(endLabel)
+
+        if (trueIfEqual) {
+            cleanupOnNullReceiver(v)
+        }
+
+        v.mark(falseLabel)
+        v.iconst(0)
+
+        v.mark(endLabel)
+        coerceTo(type, v)
+    }
+}
+
+class SafeCallToPrimitiveEquality(
+        opToken: IElementType,
+        operandType: Type,
+        left: StackValue,
+        right: StackValue,
+        val safeReceiverType: Type,
+        val safeReceiverIsNull: Label
+) : SafeCallFusedWithPrimitiveEqualityBase(opToken, operandType, left, right) {
+    override fun cleanupOnNullReceiver(v: InstructionAdapter) {
+        v.mark(safeReceiverIsNull)
+        AsmUtil.pop(v, safeReceiverType)
+    }
+}
+
+class PrimitiveToSafeCallEquality(
+        opToken: IElementType,
+        operandType: Type,
+        left: StackValue,
+        right: StackValue,
+        val safeReceiverType: Type,
+        val safeReceiverIsNull: Label
+) : SafeCallFusedWithPrimitiveEqualityBase(opToken, operandType, left, right) {
+    override fun cleanupOnNullReceiver(v: InstructionAdapter) {
+        v.mark(safeReceiverIsNull)
+        AsmUtil.pop(v, safeReceiverType)
+        AsmUtil.pop(v, arg1.type)
     }
 }

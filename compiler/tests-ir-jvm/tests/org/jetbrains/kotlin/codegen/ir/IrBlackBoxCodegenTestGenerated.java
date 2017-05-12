@@ -16616,6 +16616,30 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("primitiveEqSafeCall.kt")
+        public void testPrimitiveEqSafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/safeCall/primitiveEqSafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primitiveNotEqSafeCall.kt")
+        public void testPrimitiveNotEqSafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/safeCall/primitiveNotEqSafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("safeCallEqPrimitive.kt")
+        public void testSafeCallEqPrimitive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/safeCall/safeCallEqPrimitive.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("safeCallNotEqPrimitive.kt")
+        public void testSafeCallNotEqPrimitive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/safeCall/safeCallNotEqPrimitive.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("safeCallOnLong.kt")
         public void testSafeCallOnLong() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/safeCall/safeCallOnLong.kt");

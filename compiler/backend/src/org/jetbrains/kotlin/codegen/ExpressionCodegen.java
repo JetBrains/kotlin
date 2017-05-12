@@ -2927,6 +2927,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return genCmpWithZero(left, opToken);
         }
 
+        if (left instanceof KtSafeQualifiedExpression && isPrimitive(rightType)) {
+            return genCmpSafeCallToPrimitive((KtSafeQualifiedExpression) left, right, rightType, opToken);
+        }
+        if (isPrimitive(leftType) && right instanceof KtSafeQualifiedExpression) {
+            return genCmpPrimitiveToSafeCall(left, leftType, (KtSafeQualifiedExpression) right, opToken);
+        }
+
         if (isPrimitive(leftType) != isPrimitive(rightType)) {
             leftType = boxType(leftType);
             rightType = boxType(rightType);
@@ -2939,6 +2946,40 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         return genEqualsForExpressionsPreferIEEE754Arithmetic(left, right, opToken, leftType, rightType, null);
+    }
+
+    private StackValue genCmpPrimitiveToSafeCall(
+            @NotNull KtExpression left,
+            @NotNull Type leftType,
+            @NotNull KtSafeQualifiedExpression right,
+            @NotNull IElementType opToken
+    ) {
+        Label rightIsNull = new Label();
+        return new PrimitiveToSafeCallEquality(
+                opToken,
+                leftType,
+                genLazy(left, leftType),
+                generateSafeQualifiedExpression(right, rightIsNull),
+                expressionType(right.getReceiverExpression()),
+                rightIsNull
+        );
+    }
+
+    private StackValue genCmpSafeCallToPrimitive(
+            @NotNull KtSafeQualifiedExpression left,
+            @NotNull KtExpression right,
+            @NotNull Type rightType,
+            @NotNull IElementType opToken
+    ) {
+        Label leftIsNull = new Label();
+        return new SafeCallToPrimitiveEquality(
+                opToken,
+                rightType,
+                generateSafeQualifiedExpression(left, leftIsNull),
+                genLazy(right, rightType),
+                expressionType(left.getReceiverExpression()),
+                leftIsNull
+        );
     }
 
     /*tries to use IEEE 754 arithmetic*/

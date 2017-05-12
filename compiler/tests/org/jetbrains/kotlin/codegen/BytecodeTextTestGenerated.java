@@ -527,6 +527,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("safeCallToPrimitiveEquality.kt")
+        public void testSafeCallToPrimitiveEquality() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/safeCallToPrimitiveEquality.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("safeCallWithElvis.kt")
         public void testSafeCallWithElvis() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/safeCallWithElvis.kt");
