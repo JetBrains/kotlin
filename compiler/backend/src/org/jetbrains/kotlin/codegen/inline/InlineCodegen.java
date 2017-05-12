@@ -91,7 +91,7 @@ public class InlineCodegen extends CallGenerator {
 
     private final ReifiedTypeInliner reifiedTypeInliner;
 
-    @Nullable
+    @NotNull
     private final TypeParameterMappings typeParameterMappings;
 
     private LambdaInfo activeLambda;
@@ -109,7 +109,7 @@ public class InlineCodegen extends CallGenerator {
             @NotNull GenerationState state,
             @NotNull FunctionDescriptor function,
             @NotNull KtElement callElement,
-            @Nullable TypeParameterMappings typeParameterMappings
+            @NotNull TypeParameterMappings typeParameterMappings
     ) {
         assert InlineUtil.isInline(function) || InlineUtil.isArrayConstructorWithLambda(function) :
                 "InlineCodegen can inline only inline functions and array constructors: " + function;
