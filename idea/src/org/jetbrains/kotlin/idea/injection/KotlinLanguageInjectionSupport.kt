@@ -57,7 +57,9 @@ class KotlinLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
         val configuration = Configuration.getProjectInstance(host.project).advancedConfiguration
         if (!configuration.isSourceModificationAllowed) {
             // It's not allowed to modify code without explicit permission. Postpone adding @Inject or comment till it granted.
-            host.putUserData(InjectLanguageAction.FIX_KEY, Processor { host -> addInjectionInstructionInCode(language, host) })
+            host.putUserData(InjectLanguageAction.FIX_KEY, Processor { fixHost ->
+                addInjectionInstructionInCode(language, fixHost)
+            })
             return false
         }
 

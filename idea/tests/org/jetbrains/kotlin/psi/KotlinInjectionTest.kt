@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.html.HTMLLanguage
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import org.intellij.lang.regexp.RegExpLanguage
 import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
@@ -323,5 +324,90 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             }
             """,
             languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+    )
+
+    fun testInjectionOnInterpolationWithAnnotation() = doInjectionPresentTest(
+            """
+            val b = 2
+
+            @org.intellij.lang.annotations.Language("HTML")
+            val test = "<caret>simple${'$'}{b}.kt"
+            """,
+            unInjectShouldBePresent = false,
+            shreds = listOf(
+                    ShredInfo(range(0, 6), hostRange=range(1, 7)),
+                    ShredInfo(range(6, 21), hostRange=range(11, 14), prefix="missingValue")
+            )
+    )
+
+    fun testInjectionOnInterpolatedStringWithComment() = doInjectionPresentTest(
+            """
+            val some = 42
+            // language=HTML
+            val test = "<ht<caret>ml>${'$'}some</html>"
+            """,
+            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false,
+            shreds = listOf(
+                    ShredInfo(range(0, 6), hostRange = range(1, 7)),
+                    ShredInfo(range(6, 17), hostRange = range(12, 19), prefix="some"))
+    )
+
+    fun testEditorShortShreadsInInterpolatedInjection() = doInjectionPresentTest(
+            """
+            val s = 42
+            // language=TEXT
+            val test = "${'$'}s <caret>text ${'$'}s${'$'}{s}${'$'}s text ${'$'}s"
+            """,
+            languageId = PlainTextLanguage.INSTANCE.id, unInjectShouldBePresent = false,
+            shreds = listOf(
+                    ShredInfo(range(0, 0), hostRange=range(1, 1)),
+                    ShredInfo(range(0, 7), hostRange=range(3, 9), prefix="s"),
+                    ShredInfo(range(7, 8), hostRange=range(11, 11), prefix="s"),
+                    ShredInfo(range(8, 20), hostRange=range(15, 15), prefix="missingValue"),
+                    ShredInfo(range(20, 27), hostRange=range(17, 23), prefix="s"),
+                    ShredInfo(range(27, 28), hostRange=range(25, 25), prefix="s")
+            )
+    )
+
+    fun testEditorLongShreadsInInterpolatedInjection() = doInjectionPresentTest(
+            """
+            val s = 42
+            // language=TEXT
+            val test = "${'$'}{s} <caret>text ${'$'}{s}${'$'}s${'$'}{s} text ${'$'}{s}"
+            """,
+            languageId = PlainTextLanguage.INSTANCE.id, unInjectShouldBePresent = false,
+            shreds = listOf(
+                    ShredInfo(range(0, 0), hostRange=range(1, 1)),
+                    ShredInfo(range(0, 18), hostRange=range(5, 11), prefix="missingValue"),
+                    ShredInfo(range(18, 30), hostRange=range(15, 15), prefix="missingValue"),
+                    ShredInfo(range(30, 31), hostRange=range(17, 17), prefix="s"),
+                    ShredInfo(range(31, 49), hostRange=range(21, 27), prefix="missingValue"),
+                    ShredInfo(range(49, 61), hostRange=range(31, 31), prefix="missingValue")
+            )
+    )
+
+    fun testEditorShreadsWithEscapingInjection() = doInjectionPresentTest(
+            """
+            // language=TEXT
+            val test = "\rte<caret>xt\ttext\n\t"
+            """,
+            languageId = PlainTextLanguage.INSTANCE.id, unInjectShouldBePresent = false,
+            shreds = listOf(
+                    ShredInfo(range(0, 12), hostRange=range(1, 17))
+            )
+    )
+
+    fun testEditorShreadsInInterpolatedWithEscapingInjection() = doInjectionPresentTest(
+            """
+            val s = 1
+            // language=TEXT
+            val test = "\r${'$'}s te<caret>xt${'$'}s\ttext\n\t"
+            """,
+            languageId = PlainTextLanguage.INSTANCE.id, unInjectShouldBePresent = false,
+            shreds = listOf(
+                    ShredInfo(range(0, 1), hostRange=range(1, 3)),
+                    ShredInfo(range(1, 7), hostRange=range(5, 10), prefix="s"),
+                    ShredInfo(range(7, 15), hostRange=range(12, 22), prefix="s")
+            )
     )
 }

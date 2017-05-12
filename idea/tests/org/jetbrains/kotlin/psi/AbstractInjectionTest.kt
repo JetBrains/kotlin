@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.psi
 
+import com.intellij.injected.editor.DocumentWindowImpl
 import com.intellij.injected.editor.EditorWindow
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.injection.Injectable
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
@@ -40,9 +42,17 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
+    data class ShredInfo(
+            val range: TextRange,
+            val hostRange: TextRange,
+            val prefix: String = "",
+            val suffix: String = "") {
+    }
+
     protected fun doInjectionPresentTest(
             @Language("kotlin") text: String, @Language("Java") javaText: String? = null,
-            languageId: String? = null, unInjectShouldBePresent: Boolean = true) {
+            languageId: String? = null, unInjectShouldBePresent: Boolean = true,
+            shreds: List<ShredInfo>? = null) {
         if (javaText != null) {
             myFixture.configureByText("${getTestName(true)}.java", javaText.trimIndent())
         }
@@ -50,6 +60,16 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
         myFixture.configureByText("${getTestName(true)}.kt", text.trimIndent())
 
         assertInjectionPresent(languageId, unInjectShouldBePresent)
+
+        if (shreds != null) {
+            val actualShreds = (editor.document as DocumentWindowImpl).shreds.map {
+                ShredInfo(it.range, it.rangeInsideHost, it.prefix, it.suffix)
+            }
+
+            assertOrderedEquals(
+                    actualShreds.sortedBy { it.range.startOffset },
+                    shreds.sortedBy { it.range.startOffset })
+        }
     }
 
     protected fun assertInjectionPresent(languageId: String?, unInjectShouldBePresent: Boolean) {
@@ -103,4 +123,6 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
             configuration.isSourceModificationAllowed = allowed
         }
     }
+
+    fun range(start: Int, end: Int) = TextRange.create(start, end)
 }

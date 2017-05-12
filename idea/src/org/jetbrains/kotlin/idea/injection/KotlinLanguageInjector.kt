@@ -25,11 +25,15 @@ import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.plugins.intelliLang.Configuration
+import org.intellij.plugins.intelliLang.inject.InjectedLanguage
 import org.intellij.plugins.intelliLang.inject.InjectorUtils
+import org.intellij.plugins.intelliLang.inject.LanguageInjectionSupport
+import org.intellij.plugins.intelliLang.inject.TemporaryPlacesRegistry
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.intellij.plugins.intelliLang.inject.java.JavaLanguageInjectionSupport
 import org.intellij.plugins.intelliLang.util.AnnotationUtilEx
@@ -44,7 +48,10 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 import kotlin.collections.ArrayList
 
-class KotlinLanguageInjector : MultiHostInjector {
+class KotlinLanguageInjector(
+        val configuration: Configuration,
+        val project: Project,
+        val temporaryPlacesRegistry: TemporaryPlacesRegistry) : MultiHostInjector {
     companion object {
         private val STRING_LITERALS_REGEXP = "\"([^\"]*)\"".toRegex()
     }
@@ -61,10 +68,38 @@ class KotlinLanguageInjector : MultiHostInjector {
 
         if (!ProjectRootsUtil.isInProjectOrLibSource(ktHost)) return
 
-        val injectionInfo = findInjectionInfo(context) ?: return
-        InjectorUtils.getLanguageByString(injectionInfo.languageId) ?: return
+        val containingFile = ktHost.containingFile
+        val tempInjectedLanguage: InjectedLanguage? = temporaryPlacesRegistry.getLanguageFor(ktHost, containingFile)
 
-        InjectorUtils.registerInjectionSimple(ktHost, injectionInfo.toBaseInjection(support)!!, support, registrar)
+        val baseInjection: BaseInjection = if (tempInjectedLanguage == null) {
+            val injectionInfo = findInjectionInfo(context) ?: return
+            injectionInfo.toBaseInjection(support)
+        }
+        else {
+            InjectorUtils.putInjectedFileUserData(registrar, LanguageInjectionSupport.TEMPORARY_INJECTED_LANGUAGE, tempInjectedLanguage)
+            BaseInjection(support.id).apply {
+                injectedLanguageId = tempInjectedLanguage.id
+                prefix = tempInjectedLanguage.prefix
+                suffix = tempInjectedLanguage.suffix
+            }
+        } ?: return
+
+        val language = InjectorUtils.getLanguageByString(baseInjection.injectedLanguageId) ?: return
+
+        if (ktHost.hasInterpolation()) {
+            val file = ktHost.containingKtFile
+            val parts = splitLiteralToInjectionParts(baseInjection, ktHost) ?: return
+
+            if (parts.ranges.isEmpty()) return
+
+            InjectorUtils.registerInjection(language, parts.ranges, file, registrar)
+            InjectorUtils.registerSupport(support, false, registrar)
+            InjectorUtils.putInjectedFileUserData(registrar, InjectedLanguageUtil.FRANKENSTEIN_INJECTION,
+                                                  if (parts.isUnparsable) java.lang.Boolean.TRUE else null)
+        }
+        else {
+            InjectorUtils.registerInjectionSimple(ktHost, baseInjection, support, registrar)
+        }
     }
 
     override fun elementsToInjectIn(): List<Class<out PsiElement>> {

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.LiteralTextEscaper;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -57,5 +58,15 @@ public class KtStringTemplateExpression extends KtExpressionImpl implements PsiL
     @Override
     public LiteralTextEscaper<? extends PsiLanguageInjectionHost> createLiteralTextEscaper() {
         return new KotlinStringLiteralTextEscaper(this);
+    }
+
+    public boolean hasInterpolation() {
+        for (PsiElement child : getChildren()) {
+            if (child instanceof KtSimpleNameStringTemplateEntry || child instanceof KtBlockStringTemplateEntry) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
