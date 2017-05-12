@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.konan.util.atMostOne
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -76,13 +77,13 @@ class DeclarationIrBuilder : IrBuilderWithScope {
 
 @Deprecated("Creates unbound symbol")
 fun BackendContext.createIrBuilder(declarationDescriptor: DeclarationDescriptor,
-                                   startOffset : Int = UNDEFINED_OFFSET,
-                                   endOffset : Int = UNDEFINED_OFFSET) =
+                                   startOffset: Int = UNDEFINED_OFFSET,
+                                   endOffset: Int = UNDEFINED_OFFSET) =
         DeclarationIrBuilder(this, declarationDescriptor, startOffset, endOffset)
 
 fun BackendContext.createIrBuilder(symbol: IrSymbol,
-                                   startOffset : Int = UNDEFINED_OFFSET,
-                                   endOffset : Int = UNDEFINED_OFFSET) =
+                                   startOffset: Int = UNDEFINED_OFFSET,
+                                   endOffset: Int = UNDEFINED_OFFSET) =
         DeclarationIrBuilder(this, symbol, startOffset, endOffset)
 
 
@@ -259,4 +260,23 @@ fun IrConstructor.callsSuper(): Boolean {
     })
     assert(numberOfCalls == 1, { "Expected exactly one delegating constructor call but none encountered: $descriptor" })
     return callsSuper
+}
+
+fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index: Int)
+        = when (this) {
+    is ValueParameterDescriptor -> this.copy(newOwner, name, index)
+    is ReceiverParameterDescriptor -> ValueParameterDescriptorImpl(
+            containingDeclaration = newOwner,
+            original              = null,
+            index                 = index,
+            annotations           = annotations,
+            name                  = name,
+            outType               = type,
+            declaresDefaultValue  = false,
+            isCrossinline         = false,
+            isNoinline            = false,
+            varargElementType     = null,
+            source                = source
+    )
+    else -> throw Error("Unexpected parameter descriptor: $this")
 }

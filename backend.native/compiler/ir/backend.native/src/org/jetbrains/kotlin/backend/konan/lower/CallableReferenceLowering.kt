@@ -103,32 +103,6 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
         return listOf(declaration) + createdClasses
     }
 
-    private abstract class DescriptorWithIrBuilder<out D : DeclarationDescriptor, out B : IrDeclaration> {
-
-        protected abstract fun buildDescriptor(): D
-
-        protected open fun doInitialize() {}
-
-        protected abstract fun buildIr(): B
-
-        val descriptor by lazy { buildDescriptor() }
-
-        private val builtIr by lazy { buildIr() }
-        private var initialized: Boolean = false
-
-        fun initialize() {
-            doInitialize()
-            initialized = true
-        }
-
-        val ir: B
-            get() {
-                if (!initialized)
-                    throw Error("Access to IR before initialization")
-                return builtIr
-            }
-    }
-
     private class BuiltFunctionReference(val functionReferenceClass: IrClass,
                                          val functionReferenceConstructorDescriptor: ClassConstructorDescriptor)
 
@@ -206,25 +180,6 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
             functionReferenceClass.createParameterDeclarations()
 
             return BuiltFunctionReference(functionReferenceClass, constructorBuilder.descriptor)
-        }
-
-        private fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index: Int)
-                = when (this) {
-            is ValueParameterDescriptor -> this.copy(newOwner, name, index)
-            is ReceiverParameterDescriptor -> ValueParameterDescriptorImpl(
-                    containingDeclaration = newOwner,
-                    original = null,
-                    index = index,
-                    annotations = annotations,
-                    name = name,
-                    outType = type,
-                    declaresDefaultValue = false,
-                    isCrossinline = false,
-                    isNoinline = false,
-                    varargElementType = null,
-                    source = source
-            )
-            else -> throw Error("Unexpected parameter descriptor: $this")
         }
 
         private fun createConstructorBuilder()
@@ -367,147 +322,17 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
             }
         }
 
-        private fun createPropertyGetterBuilder(propertyDescriptor: PropertyDescriptor, type: KotlinType)
-                = object : DescriptorWithIrBuilder<PropertyGetterDescriptorImpl, IrFunction>() {
-
-            override fun buildDescriptor() = PropertyGetterDescriptorImpl(
-                    /* correspondingProperty = */ propertyDescriptor,
-                    /* annotations           = */ Annotations.EMPTY,
-                    /* modality              = */ Modality.FINAL,
-                    /* visibility            = */ Visibilities.PRIVATE,
-                    /* isDefault             = */ false,
-                    /* isExternal            = */ false,
-                    /* isInline              = */ false,
-                    /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
-                    /* original              = */ null,
-                    /* source                = */ SourceElement.NO_SOURCE
-            )
-
-            override fun doInitialize() {
-                descriptor.apply {
-                    initialize(type)
-                }
-            }
-
-            override fun buildIr() = IrFunctionImpl(
-                    startOffset = functionReference.startOffset,
-                    endOffset = functionReference.endOffset,
-                    origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                    descriptor = descriptor).apply {
-
-                createParameterDeclarations()
-
-                body = context.createIrBuilder(descriptor, startOffset, endOffset).irBlockBody {
-                    +irReturn(irGetField(irThis(), propertyDescriptor))
-                }
-            }
-        }
-
-        private fun createPropertySetterBuilder(propertyDescriptor: PropertyDescriptor, type: KotlinType)
-                = object : DescriptorWithIrBuilder<PropertySetterDescriptorImpl, IrFunction>() {
-
-            override fun buildDescriptor() = PropertySetterDescriptorImpl(
-                    /* correspondingProperty = */ propertyDescriptor,
-                    /* annotations           = */ Annotations.EMPTY,
-                    /* modality              = */ Modality.FINAL,
-                    /* visibility            = */ Visibilities.PRIVATE,
-                    /* isDefault             = */ false,
-                    /* isExternal            = */ false,
-                    /* isInline              = */ false,
-                    /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
-                    /* original              = */ null,
-                    /* source                = */ SourceElement.NO_SOURCE
-            )
-
-            lateinit var valueParameterDescriptor: ValueParameterDescriptor
-
-            override fun doInitialize() {
-                descriptor.apply {
-                    valueParameterDescriptor = ValueParameterDescriptorImpl(
-                            containingDeclaration = this,
-                            original = null,
-                            index = 0,
-                            annotations = Annotations.EMPTY,
-                            name = Name.identifier("value"),
-                            outType = type,
-                            declaresDefaultValue = false,
-                            isCrossinline = false,
-                            isNoinline = false,
-                            varargElementType = null,
-                            source = SourceElement.NO_SOURCE
-                    )
-
-                    initialize(valueParameterDescriptor)
-                }
-            }
-
-            override fun buildIr() = IrFunctionImpl(
-                    startOffset = functionReference.startOffset,
-                    endOffset = functionReference.endOffset,
-                    origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                    descriptor = descriptor).apply {
-
-                createParameterDeclarations()
-
-                body = context.createIrBuilder(descriptor, startOffset, endOffset).irBlockBody {
-                    +irSetField(irThis(), propertyDescriptor, irGet(valueParameterDescriptor))
-                }
-            }
-        }
-
-        private fun createPropertyWithBackingFieldBuilder(name: Name, type: KotlinType, isMutable: Boolean)
-                = object : DescriptorWithIrBuilder<PropertyDescriptorImpl, IrProperty>() {
-
-            private lateinit var getterBuilder: DescriptorWithIrBuilder<PropertyGetterDescriptorImpl, IrFunction>
-            private var setterBuilder: DescriptorWithIrBuilder<PropertySetterDescriptorImpl, IrFunction>? = null
-
-            override fun buildDescriptor() = PropertyDescriptorImpl.create(
-                    /* containingDeclaration = */ functionReferenceClassDescriptor,
-                    /* annotations           = */ Annotations.EMPTY,
-                    /* modality              = */ Modality.FINAL,
-                    /* visibility            = */ Visibilities.PRIVATE,
-                    /* isVar                 = */ isMutable,
-                    /* name                  = */ name,
-                    /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
-                    /* source                = */ SourceElement.NO_SOURCE,
-                    /* lateInit              = */ false,
-                    /* isConst               = */ false,
-                    /* isHeader              = */ false,
-                    /* isImpl                = */ false,
-                    /* isExternal            = */ false,
-                    /* isDelegated           = */ false)
-
-            override fun doInitialize() {
-                getterBuilder = createPropertyGetterBuilder(descriptor, type).apply { initialize() }
-                if (isMutable)
-                    setterBuilder = createPropertySetterBuilder(descriptor, type).apply { initialize() }
-                descriptor.initialize(getterBuilder.descriptor, setterBuilder?.descriptor)
-                val receiverType: KotlinType? = null
-                descriptor.setType(type, emptyList(), functionReferenceClassDescriptor.thisAsReceiverParameter, receiverType)
-            }
-
-            override fun buildIr(): IrProperty {
-                val startOffset = functionReference.startOffset
-                val endOffset = functionReference.endOffset
-                val backingField = IrFieldImpl(
-                        startOffset = startOffset,
-                        endOffset = endOffset,
-                        origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        descriptor = descriptor)
-                return IrPropertyImpl(
-                        startOffset = startOffset,
-                        endOffset = endOffset,
-                        origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        isDelegated = false,
-                        descriptor = descriptor,
-                        backingField = backingField,
-                        getter = getterBuilder.ir,
-                        setter = setterBuilder?.ir)
-            }
-        }
-
         private fun buildPropertyWithBackingField(name: Name, type: KotlinType, isMutable: Boolean): PropertyDescriptor {
-            val propertyBuilder = createPropertyWithBackingFieldBuilder(name, type, isMutable).apply { initialize() }
+            val propertyBuilder = context.createPropertyWithBackingFieldBuilder(
+                    startOffset = functionReference.startOffset,
+                    endOffset   = functionReference.endOffset,
+                    origin      = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+                    owner       = functionReferenceClassDescriptor,
+                    name        = name,
+                    type        = type,
+                    isMutable   = isMutable).apply {
+                initialize()
+            }
 
             functionReferenceMembers.add(propertyBuilder.ir)
             return propertyBuilder.descriptor

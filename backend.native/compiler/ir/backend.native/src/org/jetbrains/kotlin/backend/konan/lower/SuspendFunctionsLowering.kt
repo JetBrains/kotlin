@@ -121,8 +121,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                 override fun visitCall(expression: IrCall): IrExpression {
                     expression.transformChildrenVoid(this)
 
-                    val descriptor = expression.descriptor as? FunctionDescriptor
-                            ?: return expression
+                    val descriptor = expression.descriptor
 
                     if (!descriptor.isSuspendFunctionInvoke || descriptor.extensionReceiverParameter == null)
                         return expression
@@ -130,8 +129,8 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                     val invokeFunctionDescriptor = descriptor.dispatchReceiverParameter!!.type.memberScope
                             .getContributedFunctions(Name.identifier("invoke"), NoLookupLocation.FROM_BACKEND).single()
                     return IrCallImpl(
-                            startOffset = expression.startOffset,
-                            endOffset = expression.endOffset,
+                            startOffset      = expression.startOffset,
+                            endOffset        = expression.endOffset,
                             calleeDescriptor = invokeFunctionDescriptor
                     ).apply {
                         dispatchReceiver = expression.dispatchReceiver
@@ -165,11 +164,11 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
             }
 
             SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
-                val coroutine: IrDeclaration = buildCoroutine(irFunction, callableReference)   // Coroutine implementation.
+                val coroutine = buildCoroutine(irFunction, callableReference)   // Coroutine implementation.
                 if (suspendLambdas.contains(irFunction.descriptor))             // Suspend lambdas are called through factory method <create>,
                     listOf(coroutine)                                           // thus we can eliminate original body.
                 else
-                    listOf(
+                    listOf<IrDeclaration>(
                             coroutine,
                             irFunction
                     )
@@ -182,8 +181,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
             return SuspendFunctionKind.NEEDS_STATE_MACHINE            // Suspend lambdas always need coroutine implementation.
 
         val body = irFunction.body
-        if (body == null)
-            return SuspendFunctionKind.NO_SUSPEND_CALLS
+                ?: return SuspendFunctionKind.NO_SUSPEND_CALLS
 
         var numberOfSuspendCalls = 0
         body.acceptVoid(object: IrElementVisitorVoid {
@@ -283,32 +281,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
         }
 
         return coroutine.coroutineClass
-    }
-
-    private abstract class DescriptorWithIrBuilder<out D: DeclarationDescriptor, out B: IrDeclaration> {
-
-        protected abstract fun buildDescriptor(): D
-
-        protected open fun doInitialize() { }
-
-        protected abstract fun buildIr(): B
-
-        val descriptor by lazy { buildDescriptor() }
-
-        private val builtIr by lazy { buildIr() }
-        private var initialized: Boolean = false
-
-        fun initialize() {
-            doInitialize()
-            initialized = true
-        }
-
-        val ir: B
-            get() {
-                if (!initialized)
-                    throw Error("Access to IR before initialization")
-                return builtIr
-            }
     }
 
     private class BuiltCoroutine(val coroutineClass: IrClass,
@@ -522,25 +494,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
             }
         }
 
-        private fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index: Int)
-                = when (this) {
-            is ValueParameterDescriptor -> this.copy(newOwner, name, index)
-            is ReceiverParameterDescriptor -> ValueParameterDescriptorImpl(
-                    containingDeclaration = newOwner,
-                    original              = null,
-                    index                 = index,
-                    annotations           = annotations,
-                    name                  = name,
-                    outType               = type,
-                    declaresDefaultValue  = false,
-                    isCrossinline         = false,
-                    isNoinline            = false,
-                    varargElementType     = null,
-                    source                = source
-            )
-            else -> throw Error("Unexpected parameter descriptor: $this")
-        }
-
         private fun createFactoryConstructorBuilder(boundParams: List<ParameterDescriptor>)
                 = object : DescriptorWithIrBuilder<ClassConstructorDescriptorImpl, IrConstructor>() {
 
@@ -725,147 +678,17 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
             }
         }
 
-        private fun createPropertyGetterBuilder(propertyDescriptor: PropertyDescriptor, type: KotlinType)
-                = object: DescriptorWithIrBuilder<PropertyGetterDescriptorImpl, IrFunction>() {
-
-            override fun buildDescriptor() = PropertyGetterDescriptorImpl(
-                    /* correspondingProperty = */ propertyDescriptor,
-                    /* annotations           = */ Annotations.EMPTY,
-                    /* modality              = */ Modality.FINAL,
-                    /* visibility            = */ Visibilities.PRIVATE,
-                    /* isDefault             = */ false,
-                    /* isExternal            = */ false,
-                    /* isInline              = */ false,
-                    /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
-                    /* original              = */ null,
-                    /* source                = */ SourceElement.NO_SOURCE
-            )
-
-            override fun doInitialize() {
-                descriptor.apply {
-                    initialize(type)
-                }
-            }
-
-            override fun buildIr() = IrFunctionImpl(
-                    startOffset = irFunction.startOffset,
-                    endOffset   = irFunction.endOffset,
-                    origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
-                    descriptor  = descriptor).apply {
-
-                createParameterDeclarations()
-
-                body = context.createIrBuilder(descriptor, startOffset, endOffset).irBlockBody {
-                    +irReturn(irGetField(irThis(), propertyDescriptor))
-                }
-            }
-        }
-
-        private fun createPropertySetterBuilder(propertyDescriptor: PropertyDescriptor, type: KotlinType)
-                = object: DescriptorWithIrBuilder<PropertySetterDescriptorImpl, IrFunction>() {
-
-            override fun buildDescriptor() = PropertySetterDescriptorImpl(
-                    /* correspondingProperty = */ propertyDescriptor,
-                    /* annotations           = */ Annotations.EMPTY,
-                    /* modality              = */ Modality.FINAL,
-                    /* visibility            = */ Visibilities.PRIVATE,
-                    /* isDefault             = */ false,
-                    /* isExternal            = */ false,
-                    /* isInline              = */ false,
-                    /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
-                    /* original              = */ null,
-                    /* source                = */ SourceElement.NO_SOURCE
-            )
-
-            lateinit var valueParameterDescriptor: ValueParameterDescriptor
-
-            override fun doInitialize() {
-                descriptor.apply {
-                    valueParameterDescriptor = ValueParameterDescriptorImpl(
-                            containingDeclaration = this,
-                            original              = null,
-                            index                 = 0,
-                            annotations           = Annotations.EMPTY,
-                            name                  = Name.identifier("value"),
-                            outType               = type,
-                            declaresDefaultValue  = false,
-                            isCrossinline         = false,
-                            isNoinline            = false,
-                            varargElementType     = null,
-                            source                = SourceElement.NO_SOURCE
-                    )
-
-                    initialize(valueParameterDescriptor)
-                }
-            }
-
-            override fun buildIr() = IrFunctionImpl(
-                    startOffset = irFunction.startOffset,
-                    endOffset   = irFunction.endOffset,
-                    origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
-                    descriptor  = descriptor).apply {
-
-                createParameterDeclarations()
-
-                body = context.createIrBuilder(descriptor, startOffset, endOffset).irBlockBody {
-                    +irSetField(irThis(), propertyDescriptor, irGet(valueParameterDescriptor))
-                }
-            }
-        }
-
-        private fun createPropertyWithBackingFieldBuilder(name: Name, type: KotlinType, isMutable: Boolean)
-                = object: DescriptorWithIrBuilder<PropertyDescriptorImpl, IrProperty>() {
-
-            private lateinit var getterBuilder: DescriptorWithIrBuilder<PropertyGetterDescriptorImpl, IrFunction>
-            private var setterBuilder: DescriptorWithIrBuilder<PropertySetterDescriptorImpl, IrFunction>? = null
-
-            override fun buildDescriptor() = PropertyDescriptorImpl.create(
-                    /* containingDeclaration = */ coroutineClassDescriptor,
-                    /* annotations           = */ Annotations.EMPTY,
-                    /* modality              = */ Modality.FINAL,
-                    /* visibility            = */ Visibilities.PRIVATE,
-                    /* isVar                 = */ isMutable,
-                    /* name                  = */ name,
-                    /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
-                    /* source                = */ SourceElement.NO_SOURCE,
-                    /* lateInit              = */ false,
-                    /* isConst               = */ false,
-                    /* isHeader              = */ false,
-                    /* isImpl                = */ false,
-                    /* isExternal            = */ false,
-                    /* isDelegated           = */ false)
-
-            override fun doInitialize() {
-                getterBuilder = createPropertyGetterBuilder(descriptor, type).apply { initialize() }
-                if (isMutable)
-                    setterBuilder = createPropertySetterBuilder(descriptor, type).apply { initialize() }
-                descriptor.initialize(getterBuilder.descriptor, setterBuilder?.descriptor)
-                val receiverType: KotlinType? = null
-                descriptor.setType(type, emptyList(), coroutineClassDescriptor.thisAsReceiverParameter, receiverType)
-            }
-
-            override fun buildIr(): IrProperty {
-                val startOffset = irFunction.startOffset
-                val endOffset = irFunction.endOffset
-                val backingField = IrFieldImpl(
-                        startOffset = startOffset,
-                        endOffset   = endOffset,
-                        origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
-                        descriptor  = descriptor)
-                return IrPropertyImpl(
-                        startOffset  = startOffset,
-                        endOffset    = endOffset,
-                        origin       = DECLARATION_ORIGIN_COROUTINE_IMPL,
-                        isDelegated  = false,
-                        descriptor   = descriptor,
-                        backingField = backingField,
-                        getter       = getterBuilder.ir,
-                        setter       = setterBuilder?.ir)
-            }
-        }
-
         private fun buildPropertyWithBackingField(name: Name, type: KotlinType, isMutable: Boolean): PropertyDescriptor {
-            val propertyBuilder = createPropertyWithBackingFieldBuilder(name, type, isMutable).apply { initialize() }
+            val propertyBuilder = context.createPropertyWithBackingFieldBuilder(
+                    startOffset = irFunction.startOffset,
+                    endOffset   = irFunction.endOffset,
+                    origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
+                    owner       = coroutineClassDescriptor,
+                    name        = name,
+                    type        = type,
+                    isMutable   = isMutable).apply {
+                initialize()
+            }
 
             coroutineMembers.add(propertyBuilder.ir)
             return propertyBuilder.descriptor
