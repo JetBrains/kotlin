@@ -461,7 +461,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitLambdaExpression(@NotNull KtLambdaExpression expression, @NotNull TranslationContext context) {
-        return new LiteralFunctionTranslator(context).translate(expression.getFunctionLiteral());
+        return new LiteralFunctionTranslator(context).translate(expression.getFunctionLiteral()).source(expression);
     }
 
     @Override
