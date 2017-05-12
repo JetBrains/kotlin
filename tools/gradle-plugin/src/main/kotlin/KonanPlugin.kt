@@ -26,7 +26,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
 
 /**
- * We use the follwing properties:
+ * We use the following properties:
  *      konan.home       - directory where compiler is located (aka dist in konan project output).
  *      konan.version    - a konan compiler version for downloading.
  */
