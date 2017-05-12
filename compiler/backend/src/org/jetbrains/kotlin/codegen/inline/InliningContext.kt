@@ -29,9 +29,14 @@ open class InliningContext(
         val isInliningLambda: Boolean,
         val classRegeneration: Boolean
 ) {
-    val internalNameToAnonymousObjectTransformationInfo: MutableMap<String, AnonymousObjectTransformationInfo> = HashMap()
+    val internalNameToAnonymousObjectTransformationInfo = hashMapOf<String, AnonymousObjectTransformationInfo>()
 
     var isContinuation: Boolean = false
+
+    val isRoot: Boolean = parent == null
+
+    val root: RootInliningContext
+        get() = if (isRoot) this as RootInliningContext else parent!!.root
 
     fun subInline(generator: NameGenerator): InliningContext {
         return subInline(generator, emptyMap(), isInliningLambda)
@@ -70,16 +75,9 @@ open class InliningContext(
         )
     }
 
-    val isRoot: Boolean
-        get() = parent == null
-
-    val root: RootInliningContext
-        get() = if (isRoot) this as RootInliningContext else parent!!.root
-
     open val callSiteInfo: InlineCallSiteInfo
         get() {
-            assert(parent != null) { "At least root context should return proper value" }
-            return parent!!.callSiteInfo
+            return parent?.callSiteInfo ?: throw AssertionError("At least root context should return proper value")
         }
 
     fun findAnonymousObjectTransformationInfo(internalName: String): AnonymousObjectTransformationInfo? {
