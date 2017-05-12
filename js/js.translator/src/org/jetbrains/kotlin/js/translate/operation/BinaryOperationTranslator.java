@@ -201,7 +201,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
         assert operationToken.equals(KtTokens.ANDAND) || operationToken.equals(KtTokens.OROR) : "Unsupported binary operation: " + expression.getText();
         boolean isOror = operationToken.equals(KtTokens.OROR);
-        JsExpression literalResult = new JsBooleanLiteral(isOror);
+        JsExpression literalResult = new JsBooleanLiteral(isOror).source(rightKtExpression);
         leftExpression = isOror ? not(leftExpression) : leftExpression;
 
         JsIf ifStatement;
@@ -211,9 +211,11 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
                 result = rightExpression; // Reuse tmp variable
             } else {
                 result = context().declareTemporary(null).reference();
-                rightBlock.getStatements().add(JsAstUtils.asSyntheticStatement(JsAstUtils.assignment(result, rightExpression)));
+                JsExpression rightAssignment = JsAstUtils.assignment(result.deepCopy(), rightExpression).source(rightKtExpression);
+                rightBlock.getStatements().add(JsAstUtils.asSyntheticStatement(rightAssignment));
             }
-            JsStatement assignmentStatement = JsAstUtils.asSyntheticStatement(JsAstUtils.assignment(result, literalResult));
+            JsStatement assignmentStatement = JsAstUtils.asSyntheticStatement(
+                    JsAstUtils.assignment(result.deepCopy(), literalResult).source(rightKtExpression));
             ifStatement = JsAstUtils.newJsIf(leftExpression, rightBlock, assignmentStatement);
             MetadataProperties.setSynthetic(ifStatement, true);
         }
@@ -221,6 +223,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
             ifStatement = JsAstUtils.newJsIf(leftExpression, rightBlock);
             result = new JsNullLiteral();
         }
+        ifStatement.source(expression);
         context().addStatementToCurrentBlock(ifStatement);
         return result;
     }
