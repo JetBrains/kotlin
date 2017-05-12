@@ -123,7 +123,7 @@ class MethodInliner(
                 resultNode.access,
                 resultNode.desc,
                 resultNode,
-                AsmTypeRemapper(remapper, inliningContext.root.typeParameterMappings == null, result)
+                AsmTypeRemapper(remapper, result)
         )
 
         val markerShift = InlineCodegenUtil.calcMarkerShift(parameters, node)
@@ -231,8 +231,7 @@ class MethodInliner(
                 else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     //TODO add proper message
                     assert(transformationInfo is AnonymousObjectTransformationInfo) {
-                        "<init> call doesn't correspond to object transformation info: " +
-                        owner + "." + name + ", info " + transformationInfo
+                        "<init> call doesn't correspond to object transformation info for '$owner.$name': $transformationInfo"
                     }
                     val parent = inliningContext.parent
                     val shouldRegenerate = transformationInfo!!.shouldRegenerate(isSameModule)
@@ -258,7 +257,7 @@ class MethodInliner(
 
                         //TODO: add new inner class also for other contexts
                         if (inliningContext.parent is RegeneratedClassContext) {
-                            inliningContext.parent!!.typeRemapper.addAdditionalMappings(
+                            inliningContext.parent.typeRemapper.addAdditionalMappings(
                                     transformationInfo!!.oldClassName, transformationInfo!!.newClassName
                             )
                         }

@@ -42,7 +42,7 @@ abstract class ObjectTransformer<out T : TransformationInfo>(@JvmField val trans
 
         return RemappingClassBuilder(
                 classBuilder,
-                AsmTypeRemapper(inliningContext.typeRemapper, inliningContext.root.typeParameterMappings == null, transformationResult)
+                AsmTypeRemapper(inliningContext.typeRemapper, transformationResult)
         )
     }
 

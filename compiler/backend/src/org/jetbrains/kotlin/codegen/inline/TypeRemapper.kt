@@ -23,11 +23,11 @@ class TypeParameter(val oldName: String, val newName: String?, val isReified: Bo
 //typeMapping data could be changed outside through method processing
 class TypeRemapper private constructor(
         private val typeMapping: MutableMap<String, String>,
-        val parent: TypeRemapper?,
-        val isInlineLambda: Boolean = false
+        val parent: TypeRemapper? = null,
+        val isRootInlineLambda: Boolean = false
 ) {
-    private var additionalMappings: MutableMap<String, String> = hashMapOf()
-    private val typeParametersMapping: MutableMap<String, TypeParameter> = hashMapOf()
+    private var additionalMappings = hashMapOf<String, String>()
+    private val typeParametersMapping = hashMapOf<String, TypeParameter>()
 
     fun addMapping(type: String, newType: String) {
         typeMapping.put(type, newType)
@@ -59,13 +59,13 @@ class TypeRemapper private constructor(
     }
 
     fun mapTypeParameter(name: String): TypeParameter? {
-        return typeParametersMapping[name] ?: if (!isInlineLambda) parent?.mapTypeParameter(name) else null
+        return typeParametersMapping[name] ?: if (!isRootInlineLambda) parent?.mapTypeParameter(name) else null
     }
 
     companion object {
         @JvmStatic
         fun createRoot(formalTypeParameters: TypeParameterMappings?): TypeRemapper {
-            return TypeRemapper(HashMap<String, String>(), null).apply {
+            return TypeRemapper(HashMap<String, String>()).apply {
                 formalTypeParameters?.forEach {
                     registerTypeParameter(it)
                 }
@@ -74,13 +74,13 @@ class TypeRemapper private constructor(
 
         @JvmStatic
         fun createFrom(mappings: MutableMap<String, String>): TypeRemapper {
-            return TypeRemapper(mappings, null)
+            return TypeRemapper(mappings)
         }
 
         @JvmStatic
         @JvmOverloads
-        fun createFrom(remapper: TypeRemapper, mappings: Map<String, String?>, isInlineLambda: Boolean = false): TypeRemapper {
-            return TypeRemapper(createNewAndMerge(remapper, mappings), remapper, isInlineLambda)
+        fun createFrom(parentRemapper: TypeRemapper, mappings: Map<String, String?>, isRootInlineLambda: Boolean = false): TypeRemapper {
+            return TypeRemapper(createNewAndMerge(parentRemapper, mappings), parentRemapper, isRootInlineLambda)
         }
 
         private fun createNewAndMerge(remapper: TypeRemapper, additionalTypeMappings: Map<String, String?>): MutableMap<String, String> {

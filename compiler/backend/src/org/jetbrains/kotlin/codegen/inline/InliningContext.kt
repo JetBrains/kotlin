@@ -26,7 +26,7 @@ class RootInliningContext(
         val callElement: KtElement,
         override val callSiteInfo: InlineCallSiteInfo,
         val reifiedTypeInliner: ReifiedTypeInliner,
-        val typeParameterMappings: TypeParameterMappings
+        typeParameterMappings: TypeParameterMappings
 ) : InliningContext(
         null, expressionMap, state, nameGenerator, TypeRemapper.createRoot(typeParameterMappings), null, false
 )
@@ -76,12 +76,10 @@ open class InliningContext(
             generator: NameGenerator,
             newTypeMappings: MutableMap<String, String>,
             callSiteInfo: InlineCallSiteInfo
-    ): InliningContext {
-        return RegeneratedClassContext(
-                this, expressionMap, state, generator, TypeRemapper.createFrom(typeRemapper, newTypeMappings),
-                lambdaInfo, callSiteInfo
-        )
-    }
+    ): InliningContext = RegeneratedClassContext(
+            this, expressionMap, state, generator, TypeRemapper.createFrom(typeRemapper, newTypeMappings),
+            lambdaInfo, callSiteInfo
+    )
 
     @JvmOverloads
     fun subInline(
@@ -89,7 +87,6 @@ open class InliningContext(
             additionalTypeMappings: Map<String, String?> = emptyMap(),
             lambdaInfo: LambdaInfo? = this.lambdaInfo
     ): InliningContext {
-        //isInliningLambda && !this.isInliningLambda for root inline lambda
         val isInliningLambda = lambdaInfo != null
         return InliningContext(
                 this, expressionMap, state, generator,
