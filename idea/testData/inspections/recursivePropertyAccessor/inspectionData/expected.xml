@@ -1,0 +1,119 @@
+<problems>
+    <problem>
+        <file>recursivePropertyAccessors.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="recursivePropertyAccessors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Recursive property accessor</problem_class>
+        <description>Recursive property accessor</description>
+    </problem>
+
+    <problem>
+        <file>recursivePropertyAccessors.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="recursivePropertyAccessors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Recursive property accessor</problem_class>
+        <description>Recursive property accessor</description>
+    </problem>
+
+    <problem>
+        <file>recursivePropertyAccessors.kt</file>
+        <line>6</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="recursivePropertyAccessors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Recursive property accessor</problem_class>
+        <description>Recursive property accessor</description>
+    </problem>
+
+    <problem>
+        <file>recursivePropertyAccessors.kt</file>
+        <line>11</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="recursivePropertyAccessors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Recursive property accessor</problem_class>
+        <description>Recursive property accessor</description>
+    </problem>
+
+    <problem>
+        <file>recursivePropertyAccessors.kt</file>
+        <line>12</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="recursivePropertyAccessors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Recursive property accessor</problem_class>
+        <description>Recursive property accessor</description>
+    </problem>
+
+    <problem>
+        <file>recursivePropertyAccessors.kt</file>
+        <line>13</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="recursivePropertyAccessors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Recursive property accessor</problem_class>
+        <description>Recursive property accessor</description>
+    </problem>
+
+    <problem>
+        <file>recursivePropertyAccessors.kt</file>
+        <line>14</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="recursivePropertyAccessors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Recursive property accessor</problem_class>
+        <description>Recursive property accessor</description>
+    </problem>
+
+    <problem>
+        <file>recursivePropertyAccessors.kt</file>
+        <line>18</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="recursivePropertyAccessors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Recursive property accessor</problem_class>
+        <description>Recursive property accessor</description>
+    </problem>
+
+    <problem>
+        <file>recursiveSyntheticPropertyAccessor.kt</file>
+        <line>9</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/recursiveSyntheticPropertyAccessor.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Recursive property accessor</problem_class>
+        <description>Recursive synthetic property accessor</description>
+    </problem>
+
+    <problem>
+        <file>recursiveSyntheticPropertyAccessor.kt</file>
+        <line>14</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/recursiveSyntheticPropertyAccessor.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Recursive property accessor</problem_class>
+        <description>Recursive synthetic property accessor</description>
+    </problem>
+
+    <problem>
+        <file>recursivePropertyAccessors.kt</file>
+        <line>27</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/recursivePropertyAccessors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Recursive property accessor</problem_class>
+        <description>Recursive property accessor</description>
+    </problem>
+
+    <problem>
+        <file>recursivePropertyAccessors.kt</file>
+        <line>31</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/recursivePropertyAccessors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Recursive property accessor</problem_class>
+        <description>Recursive property accessor</description>
+    </problem>
+
+    <problem>
+        <file>recursivePropertyAccessors.kt</file>
+        <line>38</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/recursivePropertyAccessors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Recursive property accessor</problem_class>
+        <description>Recursive property accessor</description>
+    </problem>
+
+</problems>
