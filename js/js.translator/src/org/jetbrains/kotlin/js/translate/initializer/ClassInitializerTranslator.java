@@ -142,7 +142,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         initFunction.getParameters().add(0, new JsParameter(outerName));
 
         JsExpression paramRef = pureFqn(outerName, null);
-        JsExpression assignment = JsAstUtils.assignment(pureFqn(outerName, new JsThisRef()), paramRef);
+        JsExpression assignment = JsAstUtils.assignment(pureFqn(outerName, new JsThisRef()), paramRef).source(classDeclaration);
         initFunction.getBody().getStatements().add(new JsExpressionStatement(assignment));
     }
 

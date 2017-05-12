@@ -54,6 +54,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("classCapturingLocals.kt")
+    public void testClassCapturingLocals() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/classCapturingLocals.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("closure.kt")
     public void testClosure() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/closure.kt");
@@ -111,6 +117,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
     @TestMetadata("inliningWithLambda.kt")
     public void testInliningWithLambda() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/inliningWithLambda.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("innerClass.kt")
+    public void testInnerClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/innerClass.kt");
         doTest(fileName);
     }
 
