@@ -2,7 +2,6 @@
     <import file="build.xml" optional="false"/>
 
     <property name="build.number" value="snapshot"/>
-    <property name="jdk16.home" value="${java.home}"/>
     <property name="fail.on.plugin.verifier.error" value="true"/>
 
     <property name="version_substitute_dir" value="${basedir}/versions_temp/"/>
