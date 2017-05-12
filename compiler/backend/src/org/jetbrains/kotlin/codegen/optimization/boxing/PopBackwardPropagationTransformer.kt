@@ -30,7 +30,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
 import java.util.*
 
-class RedundantCoercionToUnitTransformer : MethodTransformer() {
+class PopBackwardPropagationTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
         Transformer(methodNode).transform()
     }
