@@ -252,11 +252,11 @@ task cross_dist_runtime(type: Copy) {
 }
 
 task dist {
-    dependsOn 'dist_compiler', 'dist_runtime'
+    dependsOn 'dist_compiler', 'dist_runtime', ':tools:gradle-plugin:dist'
 }
 
 task cross_dist {
-    dependsOn 'cross_dist_runtime', 'dist_compiler'
+    dependsOn 'cross_dist_runtime', 'dist'
 }
 
 task bundle(type: Tar) {

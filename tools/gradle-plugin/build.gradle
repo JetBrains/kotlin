@@ -62,6 +62,20 @@ jar {
     from (rootProject.findProject(':tools:helpers').sourceSets.main.output)
 }
 
+task dist(type: Copy) {
+    dependsOn 'jar'
+    destinationDir file('dist')
+    from (jar.outputs.files)
+}
+
+task deleteDist(type: Delete) {
+    delete 'dist'
+}
+
+clean {
+    dependsOn 'deleteDist'
+}
+
 publishing {
     publications {
         gradlePlugin(MavenPublication) {
