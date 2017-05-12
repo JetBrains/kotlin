@@ -1031,6 +1031,8 @@
         <element name="class-path"/>
 
         <sequential>
+            <property environment="env"/>
+
             <cleandir dir="@{output}"/>
 
             <dirset dir="${basedir}" id="src.dirset">
@@ -1063,6 +1065,8 @@
                 <arg line="@{additionalOptions}"/>
                 <arg value="-classpath"/>
                 <arg value="${toString:classpath.path}"/>
+                <arg value="-jdk-home" />
+                <arg value="${env.JDK_16}" />
                 <arg value="-module-name"/>
                 <arg value="@{moduleName}"/>
                 <arg value="-Xallow-kotlin-package"/>
