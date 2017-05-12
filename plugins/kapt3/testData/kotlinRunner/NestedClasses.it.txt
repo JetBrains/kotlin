@@ -1,3 +1,10 @@
+package error;
+
+public final class NonExistentClass {
+}
+
+////////////////////
+
 package test;
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
@@ -46,11 +53,4 @@ public final class Simple {
             super();
         }
     }
-}
-
-////////////////////
-
-package error;
-
-public final class NonExistentClass {
 }

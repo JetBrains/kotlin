@@ -1,3 +1,18 @@
+package error;
+
+public final class NonExistentClass {
+}
+
+////////////////////
+
+package test;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MyAnnotation {
+}
+
+////////////////////
+
 package test;
 
 public enum EnumClass {
@@ -12,15 +27,14 @@ public enum EnumClass {
 
 package test;
 
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface MyAnnotation {
-}
+public enum EnumClass2 {
+    /*public static final*/ WHITE /* = new WHITE(null) */,
+    /*public static final*/ RED /* = new RED(null) */;
+    private final java.lang.String blah = null;
 
-////////////////////
-
-package error;
-
-public final class NonExistentClass {
+    EnumClass2(@org.jetbrains.annotations.NotNull()
+    java.lang.String blah) {
+    }
 }
 
 ////////////////////
@@ -39,19 +53,5 @@ public final class Simple {
 
     public Simple() {
         super();
-    }
-}
-
-////////////////////
-
-package test;
-
-public enum EnumClass2 {
-    /*public static final*/ WHITE /* = new WHITE(null) */,
-    /*public static final*/ RED /* = new RED(null) */;
-    private final java.lang.String blah = null;
-
-    EnumClass2(@org.jetbrains.annotations.NotNull()
-    java.lang.String blah) {
     }
 }

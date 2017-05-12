@@ -1,3 +1,10 @@
+package error;
+
+public final class NonExistentClass {
+}
+
+////////////////////
+
 package test;
 
 @MyAnnotation()
@@ -36,11 +43,4 @@ package test;
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface MyAnnotation {
-}
-
-////////////////////
-
-package error;
-
-public final class NonExistentClass {
 }

@@ -164,7 +164,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
 
             this.savedStubs = stubs
                     .map { it.toString() }
-                    .sortedBy(String::hashCode)
+                    .sorted()
                     .joinToString(AbstractKotlinKapt3Test.FILE_SEPARATOR)
 
             super.saveStubs(stubs)
