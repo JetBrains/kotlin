@@ -125,9 +125,9 @@ class CoroutineTransformerMethodVisitor(
             )
 
             insert(startLabel, withInstructionAdapter { generateResumeWithExceptionCheck(exceptionIndex) })
+            insert(last, defaultLabel)
 
             insert(last, withInstructionAdapter {
-                visitLabel(defaultLabel.label)
                 AsmUtil.genThrow(this, "java/lang/IllegalStateException", "call to 'resume' before 'invoke' with coroutine")
                 areturn(Type.VOID_TYPE)
             })
