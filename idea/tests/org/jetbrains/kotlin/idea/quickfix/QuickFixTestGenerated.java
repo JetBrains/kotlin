@@ -6327,6 +6327,45 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/memberVisibilityCanBePrivate")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MemberVisibilityCanBePrivate extends AbstractQuickFixTest {
+        public void testAllFilesPresentInMemberVisibilityCanBePrivate() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/memberVisibilityCanBePrivate"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("constructorParam.kt")
+        public void testConstructorParam() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/memberVisibilityCanBePrivate/constructorParam.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("internal.kt")
+        public void testInternal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/memberVisibilityCanBePrivate/internal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noModifier.kt")
+        public void testNoModifier() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/memberVisibilityCanBePrivate/noModifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("protected.kt")
+        public void testProtected() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/memberVisibilityCanBePrivate/protected.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("public.kt")
+        public void testPublic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/memberVisibilityCanBePrivate/public.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/migration")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
