@@ -30,3 +30,10 @@ fun bar() {
     a(); // redundant
     b()
 }
+
+fun baz(args: Array<String>) {
+    for (arg in args);
+    while (args.size > 0);
+    // But here redundant!
+    do while (args.size > 0);
+}

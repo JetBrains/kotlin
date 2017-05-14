@@ -70,4 +70,12 @@
         <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>
         <description>Redundant semicolon</description>
     </problem>
+    <problem>
+        <file>Test.kt</file>
+        <line>38</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/Test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>
+        <description>Redundant semicolon</description>
+    </problem>
 </problems>
