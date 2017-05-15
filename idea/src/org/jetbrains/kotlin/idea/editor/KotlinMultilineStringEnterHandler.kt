@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
     private var wasInMultilineString: Boolean = false
     private var whiteSpaceAfterCaret: String = ""
+    private var isInBrace = false
 
     override fun preprocessEnter(
             file: PsiFile, editor: Editor, caretOffset: Ref<Int>, caretAdvance: Ref<Int>, dataContext: DataContext,
@@ -70,7 +71,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
 
         val ch1 = text[offset - 1]
         val ch2 = text[offset]
-        val isInBrace = (ch1 == '(' && ch2 == ')') || (ch1 == '{' && ch2 == '}')
+        isInBrace = (ch1 == '(' && ch2 == ')') || (ch1 == '{' && ch2 == '}')
         if (!isInBrace || !CodeInsightSettings.getInstance().SMART_INDENT_ON_ENTER) {
             return Result.Continue
         }
@@ -118,11 +119,8 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
             val wasSingleLine = literal.text.indexOf("\n") == literal.text.lastIndexOf("\n") // Only one '\n' in the string after insertion
             val lines = literal.text.split("\n")
 
-            val inBraces = (prevLine.endsWith("{") && nextLine.trim().startsWith("}")) ||
-                           (prevLine.endsWith("(") && nextLine.trim().startsWith(")"))
-
             val literalOffset = literal.textRange.startOffset
-            if (wasSingleLine || (lines.size == 3 && inBraces)) {
+            if (wasSingleLine || (lines.size == 3 && isInBrace)) {
                 val shouldUseTrimIndent = hasTrimIndentCallInChain || (marginChar == null && lines.first().trim() == MULTILINE_QUOTE)
                 val newMarginChar: Char? = if (shouldUseTrimIndent) null else (marginChar ?: DEFAULT_TRIM_MARGIN_CHAR)
 
@@ -141,7 +139,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
                     caretMarker.isGreedyToRight = true
                 }
 
-                if (inBraces) {
+                if (isInBrace) {
                     // Move closing bracket under same indent
                     forceIndent(caretOffset() + 1, indentSize, newMarginChar, document, settings)
                 }
@@ -175,7 +173,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
 
                 if (marginCharToInsert == null || !currentLine.trimStart().startsWith(marginCharToInsert)) {
                     val indentLength = when {
-                        inBraces -> settings.indentLength(nextLine)
+                        isInBrace -> settings.indentLength(nextLine)
                         !isPrevLineFirst -> settings.indentLength(prevLine)
                         else -> settings.indentLength(prevLine) + settings.marginIndent
                     }
@@ -192,7 +190,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
                     // Insert same indent after margin char that previous line has
                     document.insertString(caretOffset(), wsAfterMargin)
 
-                    if (inBraces) {
+                    if (isInBrace) {
                         val nextLineOffset = document.getLineStartOffset(prevLineNumber + 2)
                         forceIndent(nextLineOffset, 0, null, document, settings)
                         document.insertString(nextLineOffset, (marginCharToInsert?.toString() ?: "") + wsAfterMargin)

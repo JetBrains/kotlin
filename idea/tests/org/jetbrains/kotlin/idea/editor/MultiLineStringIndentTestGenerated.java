@@ -98,6 +98,12 @@ public class MultiLineStringIndentTestGenerated extends AbstractMultiLineStringI
             doTest(fileName);
         }
 
+        @TestMetadata("enterAfterOpenningBrace.kt")
+        public void testEnterAfterOpenningBrace() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/enterHandler/multilineString/spaces/enterAfterOpenningBrace.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("enterBeforeMarginChar.kt")
         public void testEnterBeforeMarginChar() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/enterHandler/multilineString/spaces/enterBeforeMarginChar.kt");
