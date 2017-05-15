@@ -38,11 +38,6 @@ class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
 }
 
 class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
-    private companion object {
-        @Volatile
-        var migrateWarningReported: Boolean = false
-    }
-
     override fun isApplicable(project: Project, task: KotlinCompile): Boolean {
         try {
             project.extensions.getByName("android") as? BaseExtension ?: return false
@@ -50,11 +45,6 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             return false
         }
         if (project.plugins.findPlugin(AndroidExtensionsSubpluginIndicator::class.java) == null) {
-            val dependencies = project.buildscript.configurations.getByName("classpath").dependencies
-            if (dependencies.any { it.name == getArtifactName() && it.group == getGroupName() } && !migrateWarningReported) {
-                project.logger.warn("To enable Android Extensions, use: \"apply plugin: 'kotlin-android-extensions'\"")
-                migrateWarningReported = true
-            }
             return false
         }
         return true
