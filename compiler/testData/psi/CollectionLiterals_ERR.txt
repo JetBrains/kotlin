@@ -1,4 +1,4 @@
-JetFile: CollectionLiterals_ERR.kt
+KtFile: CollectionLiterals_ERR.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

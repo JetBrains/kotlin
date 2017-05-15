@@ -1,4 +1,4 @@
-JetFile: delegate.kt
+KtFile: delegate.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

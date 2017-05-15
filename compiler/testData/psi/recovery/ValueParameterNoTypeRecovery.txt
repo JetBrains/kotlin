@@ -1,4 +1,4 @@
-JetFile: ValueParameterNoTypeRecovery.kt
+KtFile: ValueParameterNoTypeRecovery.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

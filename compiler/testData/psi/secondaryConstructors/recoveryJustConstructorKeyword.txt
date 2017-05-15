@@ -1,4 +1,4 @@
-JetFile: recoveryJustConstructorKeyword.kt
+KtFile: recoveryJustConstructorKeyword.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

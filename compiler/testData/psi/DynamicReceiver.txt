@@ -1,4 +1,4 @@
-JetFile: DynamicReceiver.kt
+KtFile: DynamicReceiver.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

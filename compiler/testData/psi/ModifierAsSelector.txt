@@ -1,4 +1,4 @@
-JetFile: ModifierAsSelector.kt
+KtFile: ModifierAsSelector.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

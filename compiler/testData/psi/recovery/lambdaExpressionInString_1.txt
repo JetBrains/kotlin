@@ -1,4 +1,4 @@
-JetFile: lambdaExpressionInString_1.kt
+KtFile: lambdaExpressionInString_1.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

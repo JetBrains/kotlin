@@ -1,4 +1,4 @@
-JetFile: Stack.kt
+KtFile: Stack.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

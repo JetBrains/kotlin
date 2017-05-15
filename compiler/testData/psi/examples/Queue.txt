@@ -1,4 +1,4 @@
-JetFile: Queue.kt
+KtFile: Queue.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

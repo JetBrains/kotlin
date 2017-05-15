@@ -1,4 +1,4 @@
-JetFile: IncompleteAccessor2.kt
+KtFile: IncompleteAccessor2.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

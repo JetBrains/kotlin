@@ -1,4 +1,4 @@
-JetFile: SoftKeywords.kt
+KtFile: SoftKeywords.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

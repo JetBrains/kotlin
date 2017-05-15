@@ -1,4 +1,4 @@
-JetFile: IncompleteFunDeclaration.kt
+KtFile: IncompleteFunDeclaration.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

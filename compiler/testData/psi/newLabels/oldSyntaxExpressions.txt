@@ -1,4 +1,4 @@
-JetFile: oldSyntaxExpressions.kt
+KtFile: oldSyntaxExpressions.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

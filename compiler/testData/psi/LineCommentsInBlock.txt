@@ -1,4 +1,4 @@
-JetFile: LineCommentsInBlock.kt
+KtFile: LineCommentsInBlock.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

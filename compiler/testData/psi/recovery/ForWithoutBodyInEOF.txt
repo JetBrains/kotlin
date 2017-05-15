@@ -1,4 +1,4 @@
-JetFile: ForWithoutBodyInEOF.kt
+KtFile: ForWithoutBodyInEOF.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

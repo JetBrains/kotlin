@@ -1,4 +1,4 @@
-JetFile: enumEntries.kt
+KtFile: enumEntries.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

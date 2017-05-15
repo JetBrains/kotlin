@@ -1,4 +1,4 @@
-JetFile: UpdateOperation.kt
+KtFile: UpdateOperation.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -1,4 +1,4 @@
-JetFile: ObjectLiteralAsStatement.kt
+KtFile: ObjectLiteralAsStatement.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -1,4 +1,4 @@
-JetFile: ShortAnnotations.kt
+KtFile: ShortAnnotations.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

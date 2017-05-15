@@ -1,4 +1,4 @@
-JetFile: IMutableSet.kt
+KtFile: IMutableSet.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

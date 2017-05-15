@@ -1,4 +1,4 @@
-JetFile: Everything.kt
+KtFile: Everything.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

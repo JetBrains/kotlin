@@ -1,4 +1,4 @@
-JetFile: RawStringsWithManyQuotes.kt
+KtFile: RawStringsWithManyQuotes.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

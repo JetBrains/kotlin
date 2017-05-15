@@ -1,4 +1,4 @@
-JetFile: DuplicateAccessor.kt
+KtFile: DuplicateAccessor.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

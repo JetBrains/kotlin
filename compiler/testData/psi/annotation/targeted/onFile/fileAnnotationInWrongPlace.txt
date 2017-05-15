@@ -1,4 +1,4 @@
-JetFile: fileAnnotationInWrongPlace.kt
+KtFile: fileAnnotationInWrongPlace.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

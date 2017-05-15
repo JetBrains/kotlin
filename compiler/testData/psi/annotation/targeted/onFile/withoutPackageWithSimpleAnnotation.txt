@@ -1,4 +1,4 @@
-JetFile: withoutPackageWithSimpleAnnotation.kt
+KtFile: withoutPackageWithSimpleAnnotation.kt
   FILE_ANNOTATION_LIST
     ANNOTATION_ENTRY
       PsiElement(AT)('@')

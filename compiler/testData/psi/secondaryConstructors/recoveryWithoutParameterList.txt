@@ -1,4 +1,4 @@
-JetFile: recoveryWithoutParameterList.kt
+KtFile: recoveryWithoutParameterList.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

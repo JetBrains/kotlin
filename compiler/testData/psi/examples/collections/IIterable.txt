@@ -1,4 +1,4 @@
-JetFile: IIterable.kt
+KtFile: IIterable.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

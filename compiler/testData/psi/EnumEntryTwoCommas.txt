@@ -1,4 +1,4 @@
-JetFile: EnumEntryTwoCommas.kt
+KtFile: EnumEntryTwoCommas.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

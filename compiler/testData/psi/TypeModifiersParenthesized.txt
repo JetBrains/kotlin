@@ -1,4 +1,4 @@
-JetFile: TypeModifiersParenthesized.kt
+KtFile: TypeModifiersParenthesized.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

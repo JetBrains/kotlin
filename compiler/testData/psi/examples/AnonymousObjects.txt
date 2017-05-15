@@ -1,4 +1,4 @@
-JetFile: AnonymousObjects.kt
+KtFile: AnonymousObjects.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -1,4 +1,4 @@
-JetFile: BlockCommentUnmatchedClosing_ERR.kt
+KtFile: BlockCommentUnmatchedClosing_ERR.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

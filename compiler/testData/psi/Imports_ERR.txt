@@ -1,4 +1,4 @@
-JetFile: Imports_ERR.kt
+KtFile: Imports_ERR.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

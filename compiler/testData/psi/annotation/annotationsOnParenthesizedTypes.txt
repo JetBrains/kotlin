@@ -1,4 +1,4 @@
-JetFile: annotationsOnParenthesizedTypes.kt
+KtFile: annotationsOnParenthesizedTypes.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

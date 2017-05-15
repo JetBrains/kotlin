@@ -1,4 +1,4 @@
-JetFile: FunctionTypesWithFunctionReceivers.kt
+KtFile: FunctionTypesWithFunctionReceivers.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

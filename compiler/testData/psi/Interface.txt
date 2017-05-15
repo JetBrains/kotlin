@@ -1,4 +1,4 @@
-JetFile: Interface.kt
+KtFile: Interface.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

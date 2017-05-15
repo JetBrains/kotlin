@@ -1,4 +1,4 @@
-JetFile: PropertyWithoutTypeRef.kt
+KtFile: PropertyWithoutTypeRef.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -1,4 +1,4 @@
-JetFile: AbsentLeftHandSide.kt
+KtFile: AbsentLeftHandSide.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

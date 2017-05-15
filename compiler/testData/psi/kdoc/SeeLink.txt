@@ -1,4 +1,4 @@
-JetFile: SeeLink.kt
+KtFile: SeeLink.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

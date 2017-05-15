@@ -1,4 +1,4 @@
-JetFile: ControlStructures.kt
+KtFile: ControlStructures.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -1,4 +1,4 @@
-JetFile: fragment.kt
+KtFile: fragment.kt
   BLOCK
     PROPERTY
       PsiElement(val)('val')

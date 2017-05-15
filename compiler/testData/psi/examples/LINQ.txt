@@ -1,4 +1,4 @@
-JetFile: LINQ.kt
+KtFile: LINQ.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

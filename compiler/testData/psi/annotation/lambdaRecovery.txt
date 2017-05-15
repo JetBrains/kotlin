@@ -1,4 +1,4 @@
-JetFile: lambdaRecovery.kt
+KtFile: lambdaRecovery.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

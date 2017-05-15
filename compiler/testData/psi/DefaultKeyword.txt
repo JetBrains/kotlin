@@ -1,4 +1,4 @@
-JetFile: DefaultKeyword.kt
+KtFile: DefaultKeyword.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

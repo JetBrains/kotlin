@@ -1,4 +1,4 @@
-JetFile: AnnotationsOnPatterns.kt
+KtFile: AnnotationsOnPatterns.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

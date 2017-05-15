@@ -1,4 +1,4 @@
-JetFile: SimpleClassMembers_ERR.kt
+KtFile: SimpleClassMembers_ERR.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

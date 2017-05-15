@@ -1,4 +1,4 @@
-JetFile: ImportSoftKW.kt
+KtFile: ImportSoftKW.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -1,4 +1,4 @@
-JetFile: AtTags.kt
+KtFile: AtTags.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

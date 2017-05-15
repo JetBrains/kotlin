@@ -1,4 +1,4 @@
-JetFile: BackslashInString.kt
+KtFile: BackslashInString.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

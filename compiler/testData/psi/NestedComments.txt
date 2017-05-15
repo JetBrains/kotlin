@@ -1,4 +1,4 @@
-JetFile: NestedComments.kt
+KtFile: NestedComments.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

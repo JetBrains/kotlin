@@ -1,4 +1,4 @@
-JetFile: DocCommentOnPackageDirectiveLine.kt
+KtFile: DocCommentOnPackageDirectiveLine.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

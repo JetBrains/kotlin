@@ -1,4 +1,4 @@
-JetFile: FunctionExpressions.kt
+KtFile: FunctionExpressions.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -1,4 +1,4 @@
-JetFile: IMutableIterable.kt
+KtFile: IMutableIterable.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

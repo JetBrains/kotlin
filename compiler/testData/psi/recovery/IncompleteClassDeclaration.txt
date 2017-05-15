@@ -1,4 +1,4 @@
-JetFile: IncompleteClassDeclaration.kt
+KtFile: IncompleteClassDeclaration.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

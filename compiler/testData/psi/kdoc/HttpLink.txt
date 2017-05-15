@@ -1,4 +1,4 @@
-JetFile: HttpLink.kt
+KtFile: HttpLink.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

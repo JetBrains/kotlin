@@ -1,4 +1,4 @@
-JetFile: oldUsages.kt
+KtFile: oldUsages.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

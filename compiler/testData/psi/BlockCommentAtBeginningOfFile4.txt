@@ -1,4 +1,4 @@
-JetFile: BlockCommentAtBeginningOfFile4.kt
+KtFile: BlockCommentAtBeginningOfFile4.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -1,4 +1,4 @@
-JetFile: TypeAlias.kt
+KtFile: TypeAlias.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

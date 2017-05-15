@@ -1,4 +1,4 @@
-JetFile: safeQualifiedExpressionWithoutSelector.kt
+KtFile: safeQualifiedExpressionWithoutSelector.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

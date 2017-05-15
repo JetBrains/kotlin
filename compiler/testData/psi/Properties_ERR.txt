@@ -1,4 +1,4 @@
-JetFile: Properties_ERR.kt
+KtFile: Properties_ERR.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

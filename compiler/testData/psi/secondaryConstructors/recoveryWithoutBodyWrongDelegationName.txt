@@ -1,4 +1,4 @@
-JetFile: recoveryWithoutBodyWrongDelegationName.kt
+KtFile: recoveryWithoutBodyWrongDelegationName.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

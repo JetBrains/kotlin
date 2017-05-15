@@ -1,4 +1,4 @@
-JetFile: DeclarationAfterDotSelectorExpected.kt
+KtFile: DeclarationAfterDotSelectorExpected.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

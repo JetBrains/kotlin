@@ -1,4 +1,4 @@
-JetFile: Comparison.kt
+KtFile: Comparison.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

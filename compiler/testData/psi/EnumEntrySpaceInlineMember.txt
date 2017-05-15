@@ -1,4 +1,4 @@
-JetFile: EnumEntrySpaceInlineMember.kt
+KtFile: EnumEntrySpaceInlineMember.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

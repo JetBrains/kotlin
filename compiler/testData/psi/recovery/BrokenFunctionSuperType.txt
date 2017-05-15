@@ -1,4 +1,4 @@
-JetFile: BrokenFunctionSuperType.kt
+KtFile: BrokenFunctionSuperType.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -533,7 +533,7 @@ private fun createFileForDebugger(codeFragment: KtCodeFragment,
 }
 
 private fun PsiElement.createKtFile(fileName: String, fileText: String): KtFile {
-    // Not using KtPsiFactory because we need a virtual file attached to the JetFile
+    // Not using KtPsiFactory because we need a virtual file attached to the KtFile
     val virtualFile = LightVirtualFile(fileName, KotlinLanguage.INSTANCE, fileText)
     virtualFile.charset = CharsetToolkit.UTF8_CHARSET
     val jetFile = (PsiFileFactory.getInstance(project) as PsiFileFactoryImpl)

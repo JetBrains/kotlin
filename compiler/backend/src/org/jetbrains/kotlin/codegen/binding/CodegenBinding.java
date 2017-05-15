@@ -213,7 +213,7 @@ public class CodegenBinding {
 
         sortedAnswer.sort(Comparator.comparing((KtFile file) -> {
             VirtualFile virtualFile = file.getVirtualFile();
-            assert virtualFile != null : "VirtualFile is null for JetFile: " + file.getName();
+            assert virtualFile != null : "VirtualFile is null for KtFile: " + file.getName();
             return virtualFile.getPath();
         }));
 

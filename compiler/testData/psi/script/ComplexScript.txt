@@ -1,4 +1,4 @@
-JetFile: ComplexScript.kts
+KtFile: ComplexScript.kts
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

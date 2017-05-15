@@ -1,4 +1,4 @@
-JetFile: ForWithoutRange.kt
+KtFile: ForWithoutRange.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

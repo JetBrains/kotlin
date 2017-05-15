@@ -1,4 +1,4 @@
-JetFile: recovery.kt
+KtFile: recovery.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

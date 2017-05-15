@@ -1,4 +1,4 @@
-JetFile: DoubleColon_ERR.kt
+KtFile: DoubleColon_ERR.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

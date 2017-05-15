@@ -1,4 +1,4 @@
-JetFile: PackageBlockFirst.kt
+KtFile: PackageBlockFirst.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

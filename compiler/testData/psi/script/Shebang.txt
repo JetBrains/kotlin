@@ -1,4 +1,4 @@
-JetFile: Shebang.kts
+KtFile: Shebang.kts
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

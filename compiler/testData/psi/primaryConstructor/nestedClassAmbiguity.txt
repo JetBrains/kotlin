@@ -1,4 +1,4 @@
-JetFile: nestedClassAmbiguity.kt
+KtFile: nestedClassAmbiguity.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

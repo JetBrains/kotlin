@@ -1,4 +1,4 @@
-JetFile: TypeAlias_ERR.kt
+KtFile: TypeAlias_ERR.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

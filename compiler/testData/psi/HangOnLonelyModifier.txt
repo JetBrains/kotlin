@@ -1,4 +1,4 @@
-JetFile: HangOnLonelyModifier.kt
+KtFile: HangOnLonelyModifier.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -81,7 +81,7 @@ public abstract class KtClassOrObjectInfo<E extends KtClassOrObject> implements 
             KtFile jetFile = (KtFile) file;
             return jetFile.getPackageFqName();
         }
-        throw new IllegalArgumentException("Not in a JetFile: " + element);
+        throw new IllegalArgumentException("Not in a KtFile: " + element);
     }
 
     @NotNull

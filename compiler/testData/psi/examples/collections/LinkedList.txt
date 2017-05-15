@@ -1,4 +1,4 @@
-JetFile: LinkedList.kt
+KtFile: LinkedList.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

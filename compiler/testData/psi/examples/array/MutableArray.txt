@@ -1,4 +1,4 @@
-JetFile: MutableArray.kt
+KtFile: MutableArray.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

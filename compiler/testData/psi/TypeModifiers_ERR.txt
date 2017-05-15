@@ -1,4 +1,4 @@
-JetFile: TypeModifiers_ERR.kt
+KtFile: TypeModifiers_ERR.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

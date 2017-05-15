@@ -1,4 +1,4 @@
-JetFile: LineCommentAfterFileAnnotations.kt
+KtFile: LineCommentAfterFileAnnotations.kt
   FILE_ANNOTATION_LIST
     ANNOTATION
       PsiElement(AT)('@')

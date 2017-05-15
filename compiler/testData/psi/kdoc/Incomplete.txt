@@ -1,4 +1,4 @@
-JetFile: Incomplete.kt
+KtFile: Incomplete.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

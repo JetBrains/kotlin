@@ -1,4 +1,4 @@
-JetFile: single.kt
+KtFile: single.kt
   FILE_ANNOTATION_LIST
     ANNOTATION_ENTRY
       PsiElement(AT)('@')

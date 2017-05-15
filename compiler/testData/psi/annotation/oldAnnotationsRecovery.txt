@@ -1,4 +1,4 @@
-JetFile: oldAnnotationsRecovery.kt
+KtFile: oldAnnotationsRecovery.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

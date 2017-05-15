@@ -1,4 +1,4 @@
-JetFile: NamedClassObject.kt
+KtFile: NamedClassObject.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

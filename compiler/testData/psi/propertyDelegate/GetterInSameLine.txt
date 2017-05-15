@@ -1,4 +1,4 @@
-JetFile: GetterInSameLine.kt
+KtFile: GetterInSameLine.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

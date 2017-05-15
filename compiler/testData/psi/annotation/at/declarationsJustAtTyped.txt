@@ -1,4 +1,4 @@
-JetFile: declarationsJustAtTyped.kt
+KtFile: declarationsJustAtTyped.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -70,7 +70,7 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
 
     @Override
     public String toString() {
-        return "JetFile: " + getName();
+        return "KtFile: " + getName();
     }
 
     @NotNull

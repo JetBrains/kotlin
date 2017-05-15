@@ -1,4 +1,4 @@
-JetFile: WrongWordInParentheses.kt
+KtFile: WrongWordInParentheses.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -1,4 +1,4 @@
-JetFile: topLevelPropertiesWithGetSet.kts
+KtFile: topLevelPropertiesWithGetSet.kts
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

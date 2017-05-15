@@ -1,4 +1,4 @@
-JetFile: WithWithoutInAndMultideclaration.kt
+KtFile: WithWithoutInAndMultideclaration.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

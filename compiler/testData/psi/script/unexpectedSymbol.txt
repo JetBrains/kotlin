@@ -1,4 +1,4 @@
-JetFile: unexpectedSymbol.kts
+KtFile: unexpectedSymbol.kts
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

@@ -1,4 +1,4 @@
-JetFile: recoveryNestedClassAmbiguity.kt
+KtFile: recoveryNestedClassAmbiguity.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

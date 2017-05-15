@@ -1,4 +1,4 @@
-JetFile: IncompleteWhere.kt
+KtFile: IncompleteWhere.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

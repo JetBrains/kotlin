@@ -1,4 +1,4 @@
-JetFile: TopLevelProperty.kt
+KtFile: TopLevelProperty.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

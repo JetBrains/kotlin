@@ -1,4 +1,4 @@
-JetFile: FloatingPointLiteral.kt
+KtFile: FloatingPointLiteral.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

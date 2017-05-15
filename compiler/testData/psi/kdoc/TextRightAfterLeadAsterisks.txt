@@ -1,4 +1,4 @@
-JetFile: TextRightAfterLeadAsterisks.kt
+KtFile: TextRightAfterLeadAsterisks.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

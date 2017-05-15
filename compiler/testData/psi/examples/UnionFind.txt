@@ -1,4 +1,4 @@
-JetFile: UnionFind.kt
+KtFile: UnionFind.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

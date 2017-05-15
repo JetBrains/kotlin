@@ -1,4 +1,4 @@
-JetFile: EOLsInComments.kt
+KtFile: EOLsInComments.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

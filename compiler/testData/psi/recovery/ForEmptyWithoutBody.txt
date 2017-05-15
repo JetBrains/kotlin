@@ -1,4 +1,4 @@
-JetFile: ForEmptyWithoutBody.kt
+KtFile: ForEmptyWithoutBody.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

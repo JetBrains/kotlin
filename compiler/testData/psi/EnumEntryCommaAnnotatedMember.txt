@@ -1,4 +1,4 @@
-JetFile: EnumEntryCommaAnnotatedMember.kt
+KtFile: EnumEntryCommaAnnotatedMember.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

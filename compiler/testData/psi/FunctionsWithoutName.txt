@@ -1,4 +1,4 @@
-JetFile: FunctionsWithoutName.kt
+KtFile: FunctionsWithoutName.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST

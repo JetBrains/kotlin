@@ -1,4 +1,4 @@
-JetFile: BareVal.kt
+KtFile: BareVal.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST
