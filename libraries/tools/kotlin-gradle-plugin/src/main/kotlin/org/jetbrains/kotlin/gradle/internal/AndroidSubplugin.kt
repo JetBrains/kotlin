@@ -18,6 +18,10 @@ package org.jetbrains.kotlin.gradle.internal
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
+import com.android.build.gradle.api.BaseVariant
+import com.android.build.gradle.api.TestVariant
+import com.android.build.gradle.internal.variant.BaseVariantData
+import com.android.build.gradle.internal.variant.TestVariantData
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
@@ -25,7 +29,6 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
-import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.w3c.dom.Document
 import java.io.File
@@ -54,36 +57,94 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             project: Project,
             kotlinCompile: KotlinCompile,
             javaCompile: AbstractCompile, 
-            variantData: Any?, 
+            variantData: Any?,
+            androidProjectHandler: Any?,
             javaSourceSet: SourceSet?
     ): List<SubpluginOption> {
-        val androidExtension = project.extensions.getByName("android") as? BaseExtension ?: return emptyList()
-        val sourceSets = androidExtension.sourceSets
+        @Suppress("UNCHECKED_CAST")
+        androidProjectHandler as? AbstractAndroidProjectHandler<Any?> ?: return emptyList()
 
+        val androidExtension = project.extensions.getByName("android") as? BaseExtension ?: return emptyList()
         val pluginOptions = arrayListOf<SubpluginOption>()
 
-        val mainSourceSet = sourceSets.getByName("main")
-        val manifestFile = mainSourceSet.manifest.srcFile
-        val applicationPackage = getApplicationPackageFromManifest(manifestFile) ?: run {
-            project.logger.warn(
-                    "Application package name is not present in the manifest file (${manifestFile.absolutePath})")
-            ""
-        }
-        pluginOptions += SubpluginOption("package", applicationPackage)
+        val mainSourceSet = androidExtension.sourceSets.getByName("main")
+        pluginOptions += SubpluginOption("package", getApplicationPackage(project, mainSourceSet))
 
-        fun addVariant(sourceSet: AndroidSourceSet) {
-            pluginOptions += SubpluginOption("variant", sourceSet.name + ';' +
-                    sourceSet.res.srcDirs.joinToString(";") { it.absolutePath })
+        fun addVariant(name: String, resDirectories: List<File>) {
+            pluginOptions += SubpluginOption("variant", buildString {
+                append(name)
+                append(';')
+                resDirectories.joinTo(this, separator = ";") { it.canonicalPath }
+            })
         }
 
-        addVariant(mainSourceSet)
+        fun addSourceSetAsVariant(name: String) {
+            val sourceSet = androidExtension.sourceSets.findByName(name) ?: return
+            val srcDirs = sourceSet.res.srcDirs.toList()
+            if (srcDirs.isNotEmpty()) {
+                addVariant(sourceSet.name, srcDirs)
+            }
+        }
 
-        val flavorSourceSets = AndroidGradleWrapper.getProductFlavorsSourceSets(androidExtension).filterNotNull()
-        for (sourceSet in flavorSourceSets) {
-            addVariant(sourceSet)
+        val resDirectoriesForAllVariants = mutableListOf<List<File>>()
+
+        androidProjectHandler.forEachVariant(project) { variant ->
+            if (androidProjectHandler.getTestedVariantData(variant) != null) return@forEachVariant
+            resDirectoriesForAllVariants += androidProjectHandler.getResDirectories(variant)
+        }
+
+        val commonResDirectories = getCommonResDirectories(resDirectoriesForAllVariants)
+
+        addVariant("main", commonResDirectories.toList())
+
+        getVariantComponentNames(variantData)?.let { (variantName, flavorName, buildTypeName) ->
+            addSourceSetAsVariant(buildTypeName)
+
+            if (flavorName.isNotEmpty()) {
+                addSourceSetAsVariant(flavorName)
+            }
+
+            addSourceSetAsVariant(variantName)
         }
 
         return pluginOptions
+    }
+
+    // Android25ProjectHandler.KaptVariant actually contains BaseVariant, not BaseVariantData
+    private fun getVariantComponentNames(flavorData: Any?): VariantComponentNames? = when(flavorData) {
+        is KaptVariantData<*> -> getVariantComponentNames(flavorData.variantData)
+        is TestVariantData -> getVariantComponentNames(flavorData.testedVariantData)
+        is TestVariant -> getVariantComponentNames(flavorData.testedVariant)
+        is BaseVariant -> VariantComponentNames(flavorData.name, flavorData.flavorName, flavorData.buildType.name)
+        is BaseVariantData<*> -> VariantComponentNames(flavorData.name, flavorData.variantConfiguration.flavorName,
+                flavorData.variantConfiguration.buildType.name)
+        else -> null
+    }
+
+    private data class VariantComponentNames(val variantName: String, val flavorName: String, val buildTypeName: String)
+
+    private fun getCommonResDirectories(resDirectories: List<List<File>>): Set<File> {
+        var common = resDirectories.firstOrNull()?.toSet() ?: return emptySet()
+
+        for (resDirs in resDirectories.drop(1)) {
+            common = common.intersect(resDirs)
+        }
+
+        return common
+    }
+
+    private fun getApplicationPackage(project: Project, mainSourceSet: AndroidSourceSet): String {
+        val manifestFile = mainSourceSet.manifest.srcFile
+        val applicationPackage = getApplicationPackageFromManifest(manifestFile)
+
+        if (applicationPackage == null) {
+            project.logger.warn("Application package name is not present in the manifest file " +
+                    "(${manifestFile.absolutePath})")
+
+            return ""
+        } else {
+            return applicationPackage
+        }
     }
 
     private fun getApplicationPackageFromManifest(manifestFile: File): String? {
@@ -101,7 +162,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     override fun getArtifactName() = "kotlin-android-extensions"
 
-    fun File.parseXml(): Document {
+    private fun File.parseXml(): Document {
         val factory = DocumentBuilderFactory.newInstance()
         val builder = factory.newDocumentBuilder()
         return builder.parse(this)

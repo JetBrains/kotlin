@@ -2,7 +2,9 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.*
 import com.android.build.gradle.api.*
+import com.android.build.gradle.tasks.MergeResources
 import com.android.builder.model.SourceProvider
+import com.android.ide.common.res2.ResourceSet
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -117,6 +119,10 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         // to some degree -- the dependent projects will rebuild non-incrementally when a library project changes
     }
 
+    override fun getResDirectories(variantData: BaseVariant): List<File> {
+        return variantData.mergeResources?.computeResourceSetList0()?.flatMap { it.sourceFiles } ?: emptyList()
+    }
+
     private inner class KaptVariant(variantData: BaseVariant) : KaptVariantData<BaseVariant>(variantData) {
         override val name: String = getVariantName(variantData)
         override val sourceProviders: Iterable<SourceProvider> = getSourceProviders(variantData)
@@ -134,6 +140,22 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
             val kaptSourceOutput = project.fileTree(kaptTask.destinationDir).builtBy(kaptTask)
             variantData.registerExternalAptJavaOutput(kaptSourceOutput)
             variantData.dataBindingDependencyArtifactsIfSupported?.let { kaptTask.dependsOn(it) }
+        }
+    }
+
+    //TODO once the Android plugin reaches its 3.0.0 release, consider compiling against it (remove the reflective call)
+    //TODO this is a private API for now
+    private fun MergeResources.computeResourceSetList0(): List<ResourceSet>? {
+        val computeResourceSetListMethod = MergeResources::class.java.declaredMethods
+                .firstOrNull { it.name == "computeResourceSetList" && it.parameterCount == 0 } ?: return null
+
+        val oldIsAccessible = computeResourceSetListMethod.isAccessible
+        try {
+            computeResourceSetListMethod.isAccessible = true
+            @Suppress("UNCHECKED_CAST")
+            return computeResourceSetListMethod.invoke(this) as? List<ResourceSet>
+        } finally {
+            computeResourceSetListMethod.isAccessible = oldIsAccessible
         }
     }
 

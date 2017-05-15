@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.com.intellij.util.ReflectionUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.getKaptClasssesDir
-import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
@@ -135,7 +134,7 @@ internal class Kotlin2JvmSourceSetProcessor(
 
                 val subpluginEnvironment = loadSubplugins(project)
                 val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
-                        project, kotlinTask, javaTask as JavaCompile, null, sourceSet)
+                        project, kotlinTask, javaTask as JavaCompile, null, null, sourceSet)
 
                 var kotlinAfterJavaTask: KotlinCompile? = null
 
@@ -148,7 +147,7 @@ internal class Kotlin2JvmSourceSetProcessor(
                             aptConfiguration.resolve(), aptOutputDir, aptWorkingDir)
 
                     kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
-                            sourceSetName, null, subpluginEnvironment, tasksProvider)
+                            sourceSetName, null, subpluginEnvironment, tasksProvider, null)
                 } else {
                     removeAnnotationProcessingPluginClasspathEntry(kotlinTask)
                 }
@@ -409,12 +408,13 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
 
     protected val logger = Logging.getLogger(this.javaClass)
 
-    protected abstract fun forEachVariant(project: Project, action: (V) -> Unit): Unit
+    abstract fun forEachVariant(project: Project, action: (V) -> Unit): Unit
+    abstract fun getTestedVariantData(variantData: V): V?
+    abstract fun getResDirectories(variantData: V): List<File>
 
     protected abstract fun getSourceProviders(variantData: V): Iterable<SourceProvider>
     protected abstract fun getAllJavaSources(variantData: V): Iterable<File>
     protected abstract fun getVariantName(variant: V): String
-    protected abstract fun getTestedVariantData(variantData: V): V?
     protected abstract fun getJavaTask(variantData: V): AbstractCompile?
     protected abstract fun addJavaSourceDirectoryToVariantModel(variantData: V, javaSourceDirectory: File): Unit
 
@@ -541,7 +541,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
                     aptFiles.toSet(), aptOutputDir, aptWorkingDir, variantData)
 
             kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
-                    variantDataName, rootKotlinOptions, subpluginEnvironment, tasksProvider)
+                    variantDataName, rootKotlinOptions, subpluginEnvironment, tasksProvider, this)
         }
 
         for (task in listOfNotNull(kotlinTask, kotlinAfterJavaTask)) {
@@ -554,7 +554,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         configureMultiProjectIc(project, variantData, javaTask, kotlinTask, kotlinAfterJavaTask)
 
         val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
-                project, kotlinTask, javaTask, wrapVariantDataForKapt(variantData), null)
+                project, kotlinTask, javaTask, wrapVariantDataForKapt(variantData), this, null)
 
         appliedPlugins.flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
                 .forEach { configureSources(it, variantData) }
@@ -700,6 +700,7 @@ internal class SubpluginEnvironment(
             kotlinTask: KotlinCompile,
             javaTask: AbstractCompile,
             variantData: Any?,
+            androidProjectHandler: AbstractAndroidProjectHandler<out Any?>?,
             javaSourceSet: SourceSet?
     ): List<KotlinGradleSubplugin<KotlinCompile>> {
         val pluginOptions = kotlinTask.pluginOptions
@@ -715,7 +716,7 @@ internal class SubpluginEnvironment(
             val subpluginClasspath = subpluginClasspaths[subplugin] ?: continue
             subpluginClasspath.forEach { pluginOptions.addClasspathEntry(it) }
 
-            for (option in subplugin.apply(project, kotlinTask, javaTask, variantData, javaSourceSet)) {
+            for (option in subplugin.apply(project, kotlinTask, javaTask, variantData, androidProjectHandler, javaSourceSet)) {
                 pluginOptions.addPluginArgument(subplugin.getCompilerPluginId(), option.key, option.value)
             }
         }

@@ -22,7 +22,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 
 class SubpluginOption(val key: String, val value: String)
 
-interface KotlinGradleSubplugin<KotlinCompile : AbstractCompile> {
+interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
     fun isApplicable(project: Project, task: KotlinCompile): Boolean
     
     fun apply(
@@ -30,6 +30,7 @@ interface KotlinGradleSubplugin<KotlinCompile : AbstractCompile> {
             kotlinCompile: KotlinCompile,
             javaCompile: AbstractCompile,
             variantData: Any?,
+            androidProjectHandler: Any?,
             javaSourceSet: SourceSet?
     ): List<SubpluginOption>
 
