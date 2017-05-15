@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.idea.caches
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.asJava.getAccessorLightMethods
 import org.jetbrains.kotlin.asJava.getAccessorNamesCandidatesByPropertyName
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
@@ -56,7 +59,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
      * Return class names form kotlin sources in given scope which should be visible as Java classes.
      */
     override fun getClassesByName(name: String, scope: GlobalSearchScope): Array<PsiClass> {
-        val effectiveScope = KotlinSourceFilterScope.sourcesAndLibraries(scope, project)
+        val effectiveScope = kotlinDeclarationsVisibleFromJavaScope(scope)
         val allFqNames = HashSet<FqName?>()
 
         KotlinClassShortNameIndex.getInstance().get(name, project, effectiveScope)
@@ -83,6 +86,16 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         }
 
         return result.toTypedArray()
+    }
+
+    private fun kotlinDeclarationsVisibleFromJavaScope(scope: GlobalSearchScope): GlobalSearchScope {
+        val noBuiltInsScope: GlobalSearchScope = object : GlobalSearchScope(project) {
+            override fun isSearchInModuleContent(aModule: Module) = true
+            override fun compare(file1: VirtualFile, file2: VirtualFile) = 0
+            override fun isSearchInLibraries() = true
+            override fun contains(file: VirtualFile) = file.fileType != KotlinBuiltInFileType
+        }
+        return KotlinSourceFilterScope.sourceAndClassFiles(scope, project).intersectWith(noBuiltInsScope)
     }
 
     override fun getAllClassNames(dest: HashSet<String>) {
