@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.declaration;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator;
 import org.jetbrains.kotlin.descriptors.*;
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +53,9 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
 
         JsFunction functionObject = generateJsMethod(function);
         JsExpression returnExpression = JsAstUtils.pureFqn(context.getNameForDescriptor(propertyDescriptor), new JsThisRef());
-        functionObject.getBody().getStatements().add(new JsReturn(returnExpression));
+        JsReturn returnStatement = new JsReturn(returnExpression);
+        returnStatement.setSource(KotlinSourceElementKt.getPsi(parameter.getSource()));
+        functionObject.getBody().getStatements().add(returnStatement);
     }
 
     @Override
@@ -87,7 +91,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
                 JsExpression defaultCondition = JsAstUtils.equality(new JsNameRef(paramName), Namer.getUndefinedExpression());
                 argumentValue = new JsConditional(defaultCondition, new JsNameRef(fieldName, new JsThisRef()), parameterValue);
             }
-            constructorArguments.add(argumentValue);
+            constructorArguments.add(argumentValue.source(constructorParam));
         }
 
         ClassDescriptor classDescriptor = (ClassDescriptor) function.getContainingDeclaration();
@@ -100,7 +104,11 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         if (context.shouldBeDeferred(constructor)) {
             context.deferConstructorCall(constructor, returnExpression.getArguments());
         }
-        functionObj.getBody().getStatements().add(new JsReturn(returnExpression));
+        returnExpression.setSource(getDeclaration());
+
+        JsReturn returnStatement = new JsReturn(returnExpression);
+        returnStatement.setSource(getDeclaration());
+        functionObj.getBody().getStatements().add(returnStatement);
     }
 
     @Override
@@ -115,7 +123,8 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
             JsName name = context.getNameForDescriptor(classProperties.get(i));
             JsExpression literal = new JsStringLiteral((i == 0 ? (getClassDescriptor().getName() + "(") : ", ") + printName + "=");
             JsExpression expr = new JsInvocation(context.namer().kotlin("toString"), new JsNameRef(name, new JsThisRef()));
-            JsExpression component = JsAstUtils.sum(literal, expr);
+            PsiElement source = KotlinSourceElementKt.getPsi(classProperties.get(i).getSource());
+            JsExpression component = JsAstUtils.sum(literal, expr).source(source);
             if (result == null) {
                 result = component;
             }
@@ -125,7 +134,10 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         }
         assert result != null;
         result = JsAstUtils.sum(result, new JsStringLiteral(")"));
-        functionObj.getBody().getStatements().add(new JsReturn(result));
+
+        JsReturn returnStatement = new JsReturn(result);
+        returnStatement.setSource(getDeclaration());
+        functionObj.getBody().getStatements().add(returnStatement);
     }
 
     @Override
@@ -136,7 +148,9 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
 
         JsName varName = functionObj.getScope().declareName("result");
 
-        statements.add(new JsVars(new JsVars.JsVar(varName, new JsIntLiteral(0))));
+        JsVars resultVar = new JsVars(new JsVars.JsVar(varName, new JsIntLiteral(0)));
+        resultVar.setSource(getDeclaration());
+        statements.add(resultVar);
 
         for (PropertyDescriptor prop : classProperties) {
             // TODO: we should statically check that we can call hashCode method directly.
@@ -146,10 +160,12 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
             JsExpression assignment = JsAstUtils.assignment(new JsNameRef(varName),
                                                             new JsBinaryOperation(JsBinaryOperator.BIT_OR, newHashValue,
                                                                                   new JsIntLiteral(0)));
-            statements.add(assignment.makeStmt());
+            statements.add(assignment.source(KotlinSourceElementKt.getPsi(prop.getSource())).makeStmt());
         }
 
-        statements.add(new JsReturn(new JsNameRef(varName)));
+        JsReturn returnStatement = new JsReturn(new JsNameRef(varName));
+        returnStatement.setSource(getDeclaration());
+        statements.add(returnStatement);
     }
 
     @Override
@@ -171,9 +187,10 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         JsExpression fieldChain = null;
         for (PropertyDescriptor prop : classProperties) {
             JsName name = context.getNameForDescriptor(prop);
+            PsiElement source = KotlinSourceElementKt.getPsi(prop.getSource());
             JsExpression next = new JsInvocation(context.namer().kotlin("equals"),
                                                  new JsNameRef(name, new JsThisRef()),
-                                                 new JsNameRef(name, new JsNameRef(paramName)));
+                                                 new JsNameRef(name, new JsNameRef(paramName))).source(source);
             if (fieldChain == null) {
                 fieldChain = next;
             }
@@ -184,7 +201,9 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         assert fieldChain != null;
 
         JsExpression returnExpression = or(referenceEqual, and(isNotNull, and(otherIsObject, and(prototypeEqual, fieldChain))));
-        functionObj.getBody().getStatements().add(new JsReturn(returnExpression));
+        JsReturn returnStatement = new JsReturn(returnExpression);
+        returnStatement.setSource(getDeclaration());
+        functionObj.getBody().getStatements().add(returnStatement);
     }
 
     private JsFunction generateJsMethod(@NotNull FunctionDescriptor functionDescriptor) {

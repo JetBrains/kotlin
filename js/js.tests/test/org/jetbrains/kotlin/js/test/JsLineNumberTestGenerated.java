@@ -78,6 +78,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("dataClass.kt")
+    public void testDataClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/dataClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("delegateMemberVal.kt")
     public void testDelegateMemberVal() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/delegateMemberVal.kt");
