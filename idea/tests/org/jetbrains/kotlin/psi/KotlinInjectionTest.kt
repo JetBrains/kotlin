@@ -203,32 +203,6 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             """
     )
 
-    // TODO: Doesn't work. UnInjectionLanguageAction is not enabled because of absent LanguageInjectionSupport.INJECTOR_SUPPORT user data.
-//    fun testRemoveInjectionFromOneLineFunWithAnnotation() = doRemoveInjectionTest(
-//            """
-//            import org.intellij.lang.annotations.Language
-//            
-//            @Language("HTML") fun template(): String = "<caret><html></html>"
-//            """,
-//            """
-//            import org.intellij.lang.annotations.Language
-//            
-//            fun template(): String = "<caret><html></html>"
-//            """
-//    )
-
-//    fun testRemoveInjectionOnQualifiedNameWithAnnotation() = doRemoveInjectionTest(
-//            """
-//            import org.intellij.lang.annotations.Language
-//            
-//            @Language("RegExp")
-//            val s = java.util.regex.Pattern.compile("Hi")
-//            """,
-//            """
-//            val test1 = java.util.regex.Pattern.compile("Hi")
-//            """
-//    )
-
     fun testRemoveInjectionWithComment() = doRemoveInjectionTest(
             """
             //language=file-reference
@@ -320,45 +294,6 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             fun other() { foo(s = "<caret>some") }
             """,
             languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false)
-
-//    fun testInjectionOfCustomParameterJavaWithAnnotation() = dotInjectionPresentTest(
-//            """
-//            import some.Test
-//
-//            fun bar() { Test.foo("<caret>some") }
-//            """,
-//            javaCode =
-//            """
-//            package some;
-//
-//            import org.intellij.lang.annotations.Language;
-//
-//            public class Test {
-//              public static void foo(@Language("HTML") String str) {}
-//            }
-//            """,
-//            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
-//    )
-//
-//    fun testInjectionOfCustomParameterInJavaConstructorWithAnnotation() = dotInjectionPresentTest(
-//            """
-//            import some.Test
-//
-//            fun bar() { Test("<caret>some") }
-//            """,
-//            javaCode =
-//            """
-//            package some;
-//
-//            import org.intellij.lang.annotations.Language;
-//
-//            public class Test {
-//              public Test(@Language("HTML") String str) {}
-//            }
-//            """,
-//            languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
-//    )
-
 
     fun testInjectionOfCustomParameterInJavaConstructorWithAnnotationWithAnnotation() = doInjectionPresentTest(
             """
