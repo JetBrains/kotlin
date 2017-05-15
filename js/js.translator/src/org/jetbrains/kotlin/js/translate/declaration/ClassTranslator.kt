@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.CommonSupertypes.topologicallySortSuperclassesAndRecordAllInstances
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -89,7 +90,7 @@ class ClassTranslator private constructor(
         val companionDescriptor = descriptor.companionObjectDescriptor
         if (enumInitFunction != null && companionDescriptor != null) {
             val initInvocation = JsInvocation(JsAstUtils.pureFqn(context().getNameForObjectInstance(companionDescriptor), null))
-            enumInitFunction.body.statements += JsAstUtils.asSyntheticStatement(initInvocation)
+            enumInitFunction.body.statements += JsAstUtils.asSyntheticStatement(initInvocation.source(companionDescriptor.source.getPsi()))
         }
 
         translatePrimaryConstructor(constructorFunction, context, delegationTranslator)
