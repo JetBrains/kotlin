@@ -1,5 +1,9 @@
 package inline
 
+var z = 0
+
 inline var f: Int
-    get() = 0
-    set(p: Int) {0}
+    get() = z
+    set(p: Int) {
+        z = p
+    }
