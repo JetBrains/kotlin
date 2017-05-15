@@ -192,6 +192,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("propertyWithoutInitializer.kt")
+    public void testPropertyWithoutInitializer() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/propertyWithoutInitializer.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/simple.kt");
