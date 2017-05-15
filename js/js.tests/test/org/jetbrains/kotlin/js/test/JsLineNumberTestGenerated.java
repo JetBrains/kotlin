@@ -102,6 +102,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("expressionAsFunctionBody.kt")
+    public void testExpressionAsFunctionBody() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/expressionAsFunctionBody.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("for.kt")
     public void testFor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/for.kt");
