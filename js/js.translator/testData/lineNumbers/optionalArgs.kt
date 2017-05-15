@@ -7,4 +7,4 @@ fun box(
     println(y)
 }
 
-// LINES: 2 2 3 4 6 7
+// LINES: 2 2 3 3 4 6 7

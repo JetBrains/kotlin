@@ -72,6 +72,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("complexExpressionAsDefaultArgument.kt")
+    public void testComplexExpressionAsDefaultArgument() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/complexExpressionAsDefaultArgument.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("coroutine.kt")
     public void testCoroutine() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/coroutine.kt");

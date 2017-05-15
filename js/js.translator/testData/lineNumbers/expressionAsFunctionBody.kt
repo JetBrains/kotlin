@@ -4,4 +4,4 @@ fun box() =
 fun foo() =
         23
 
-// LINES: 1 2 4 5
+// LINES: 2 5

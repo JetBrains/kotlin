@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -84,7 +85,8 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             KtExpression defaultArgument = getDefaultArgument(valueParameter);
             JsBlock defaultArgBlock = new JsBlock();
             JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext, defaultArgBlock);
-            JsStatement assignStatement = assignment(jsNameRef, defaultValue).makeStmt();
+            PsiElement psi = KotlinSourceElementKt.getPsi(valueParameter.getSource());
+            JsStatement assignStatement = assignment(jsNameRef, defaultValue).source(psi).makeStmt();
             JsStatement thenStatement = JsAstUtils.mergeStatementInBlockIfNeeded(assignStatement, defaultArgBlock);
             JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, Namer.getUndefinedExpression());
             checkArgIsUndefined.source(KotlinSourceElementKt.getPsi(valueParameter.getSource()));
@@ -150,7 +152,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             }
 
             JsReturn jsReturn = new JsReturn((JsExpression) node);
-            jsReturn.setSource(declaration);
+            jsReturn.setSource(declaration.getBodyExpression());
             MetadataProperties.setReturnTarget(jsReturn, descriptor);
             return jsReturn;
         });
