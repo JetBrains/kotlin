@@ -6,7 +6,7 @@ import org.junit.Test
 import java.io.File
 
 
-class KotlinAndroidGradleCLIOnly : AbstractKotlinAndroidGradleTests(gradleVersion = "2.14.1", androidGradlePluginVersion = "1.5.+")
+class KotlinAndroidGradleCLIOnly : AbstractKotlinAndroidGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.0")
 
 class KotlinAndroidWithJackGradleCLIOnly : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.+")
 
@@ -114,8 +114,6 @@ fun getSomething() = 10
     fun testIncrementalBuildWithNoChanges() {
         val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
         val tasksToExecute = arrayOf(
-                ":app:prepareComAndroidSupportAppcompatV72311Library",
-                ":app:prepareComAndroidSupportSupportV42311Library",
                 ":app:compileDebugKotlin",
                 ":app:compileDebugJavaWithJavac"
         )
@@ -148,25 +146,12 @@ fun getSomething() = 10
         // rebuilt because BuildConfig.java was regenerated (timestamp was changed)
         val useBuildConfigJavaKt = project.projectDir.getFileByName("useBuildConfigJava.kt")
 
-        val stringsXml = project.projectDir.getFileByName("strings.xml")
-        stringsXml.modify { """
-            <resources>
-                <string name="app_name">kotlin</string>
-                <string name="app_name1">kotlin1</string>
-            </resources>
-        """ }
-        // rebuilt because R.java changed
-        val homeActivityKt = project.projectDir.getFileByName("HomeActivity.kt")
-        val useRJavaActivity = project.projectDir.getFileByName("UseRJavaActivity.kt")
-
         project.build(":app:assembleDebug", options = options) {
             assertSuccessful()
             assertCompiledKotlinSources(project.relativize(
                     androidModuleKt,
                     baseApplicationKt,
-                    useBuildConfigJavaKt,
-                    homeActivityKt,
-                    useRJavaActivity
+                    useBuildConfigJavaKt
             ))
         }
     }
