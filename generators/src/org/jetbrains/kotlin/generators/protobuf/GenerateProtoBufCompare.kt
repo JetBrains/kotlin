@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.protobuf.Descriptors
 import org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf
 import org.jetbrains.kotlin.serialization.DebugProtoBuf
+import org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.rpc.requestToByteBuf
 import java.io.File
 import java.util.*
 
@@ -60,7 +62,9 @@ class GenerateProtoBufCompare {
     private val CHECK_CLASS_ID_EQUALS_NAME = "checkClassIdEquals"
     private val HASH_CODE_NAME = "hashCode"
 
-    private val extensionsMap = DebugJvmProtoBuf.getDescriptor().extensions.groupBy { it.containingType }
+    private val jvmExtensions = DebugJvmProtoBuf.getDescriptor().extensions
+    private val jsExtensions = DebugJsProtoBuf.getDescriptor().extensions
+    private val extensionsMap = (jvmExtensions + jsExtensions).groupBy { it.containingType }
 
     private val allMessages: MutableSet<Descriptors.Descriptor> = linkedSetOf()
     private val messagesToProcess: Queue<Descriptors.Descriptor> = LinkedList()
@@ -77,6 +81,7 @@ class GenerateProtoBufCompare {
         p.println("import org.jetbrains.kotlin.serialization.ProtoBuf")
         p.println("import org.jetbrains.kotlin.serialization.deserialization.NameResolver")
         p.println("import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf")
+        p.println("import org.jetbrains.kotlin.serialization.js.JsProtoBuf")
         p.println("import org.jetbrains.kotlin.utils.Interner")
         p.println("import java.util.*")
         p.println()
@@ -429,7 +434,18 @@ class GenerateProtoBufCompare {
         }
 
     private val Descriptors.FieldDescriptor.enumName: String
-            get() = (name.javaName + (if (isRepeated) "List" else "")).replace("[A-Z]".toRegex()) { "_" + it.value }.toUpperCase()
+            get() {
+                var extensionPrefix = ""
+                if (isExtension) {
+                    if (this in jvmExtensions) {
+                        extensionPrefix = "jvmExt_"
+                    }
+                    if (this in jsExtensions) {
+                        extensionPrefix = "jsExt_"
+                    }
+                }
+                return (extensionPrefix + name.javaName + (if (isRepeated) "List" else "")).replace("[A-Z]".toRegex()) { "_" + it.value }.toUpperCase()
+            }
 
     private fun Descriptors.FieldDescriptor.helperMethodName(): String {
         val packageHeader = this.file.`package`

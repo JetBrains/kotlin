@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.jps.incremental
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.incremental.Difference
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -25,13 +26,15 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 
-abstract class AbstractProtoComparisonTest<PROTO_DATA> : UsefulTestCase() {
+abstract class AbstractProtoComparisonTest<PROTO_DATA> : TestWithWorkingDir() {
     protected abstract fun compileAndGetClasses(sourceDir: File, outputDir: File): Map<ClassId, PROTO_DATA>
     protected abstract fun difference(oldData: PROTO_DATA, newData: PROTO_DATA): Difference?
 
+    protected open fun expectedOutputFile(testDir: File): File =
+        File(testDir, "result.out")
+
     fun doTest(testDataPath: String) {
         val testDir = File(testDataPath)
-        val workingDir = KotlinTestUtils.tmpDir("testDirectory")
 
         val oldClassMap = classesForPrefixedSources(testDir, workingDir, "old")
         val newClassMap = classesForPrefixedSources(testDir, workingDir, "new")
@@ -69,7 +72,7 @@ abstract class AbstractProtoComparisonTest<PROTO_DATA> : UsefulTestCase() {
             p.println("CHANGES in $classId: ${changes.joinToString()}")
         }
 
-        KotlinTestUtils.assertEqualsToFile(File(testDataPath + File.separator + "result.out"), sb.toString())
+        KotlinTestUtils.assertEqualsToFile(expectedOutputFile(testDir), sb.toString())
     }
 
     private fun classesForPrefixedSources(testDir: File, workingDir: File, prefix: String): Map<ClassId, PROTO_DATA> {

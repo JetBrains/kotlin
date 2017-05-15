@@ -15,5 +15,6 @@
     <orderEntry type="module" module-name="tests-common" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="idea-full" level="project" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />
+    <orderEntry type="module" module-name="js.serializer" />
   </component>
 </module>

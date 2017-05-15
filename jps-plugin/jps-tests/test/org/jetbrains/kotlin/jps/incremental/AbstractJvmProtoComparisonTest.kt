@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.incremental.Difference
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.incremental.difference
 import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
-import org.jetbrains.kotlin.incremental.testingUtils.copyTestSources
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
@@ -40,7 +39,7 @@ abstract class AbstractJvmProtoComparisonTest : AbstractProtoComparisonTest<Loca
     override fun difference(oldData: LocalFileKotlinClass, newData: LocalFileKotlinClass): Difference? {
         val oldProto = oldData.readProto() ?: return null
         val newProto = newData.readProto() ?: return null
-        return org.jetbrains.kotlin.incremental.difference(oldProto, newProto)
+        return difference(oldProto, newProto)
     }
 
     private fun KotlinJvmBinaryClass.readProto(): ProtoMapValue? {

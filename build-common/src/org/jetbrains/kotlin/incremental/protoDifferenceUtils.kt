@@ -34,21 +34,42 @@ data class Difference(
         val changedMembersNames: Set<String> = emptySet()
 )
 
-fun difference(oldData: ProtoMapValue, newData: ProtoMapValue): Difference {
-    if (!oldData.isPackageFacade && newData.isPackageFacade) return Difference(isClassAffected = true, areSubclassesAffected = true)
+sealed class ProtoData
+data class ClassProtoData(val proto: ProtoBuf.Class, val nameResolver: NameResolver) : ProtoData()
+data class PackagePartProtoData(val proto: ProtoBuf.Package, val nameResolver: NameResolver) : ProtoData()
 
-    if (oldData.isPackageFacade && !newData.isPackageFacade) return Difference(isClassAffected = true)
+fun ProtoMapValue.toProtoData(): ProtoData =
+    if (isPackageFacade) {
+        val packageData = JvmProtoBufUtil.readPackageDataFrom(bytes, strings)
+        PackagePartProtoData(packageData.packageProto, packageData.nameResolver)
+    }
+    else {
+        val classData = JvmProtoBufUtil.readClassDataFrom(bytes, strings)
+        ClassProtoData(classData.classProto, classData.nameResolver)
+    }
 
-    val differenceObject =
-            if (oldData.isPackageFacade) {
-                DifferenceCalculatorForPackageFacade(oldData, newData)
+fun difference(oldValue: ProtoMapValue, newValue: ProtoMapValue): Difference =
+        difference(oldValue.toProtoData(), newValue.toProtoData())
+
+fun difference(oldData: ProtoData, newData: ProtoData): Difference =
+        when (oldData) {
+            is ClassProtoData -> {
+                when (newData) {
+                    is ClassProtoData ->
+                        DifferenceCalculatorForClass(oldData, newData).difference()
+                    is PackagePartProtoData ->
+                        Difference(isClassAffected = true, areSubclassesAffected = true)
+                }
             }
-            else {
-                DifferenceCalculatorForClass(oldData, newData)
+            is PackagePartProtoData -> {
+                when (newData) {
+                    is ClassProtoData ->
+                        Difference(isClassAffected = true)
+                    is PackagePartProtoData ->
+                        DifferenceCalculatorForPackageFacade(oldData, newData).difference()
+                }
             }
-
-    return differenceObject.difference()
-}
+        }
 
 internal val MessageLite.isPrivate: Boolean
     get() = Visibilities.isPrivate(Deserialization.visibility(
@@ -72,11 +93,8 @@ private fun MessageLite.name(nameResolver: NameResolver): String {
 
 internal fun List<MessageLite>.names(nameResolver: NameResolver): List<String> = map { it.name(nameResolver) }
 
-private abstract class DifferenceCalculator() {
-    protected abstract val oldNameResolver: NameResolver
-    protected abstract val newNameResolver: NameResolver
-
-    protected val compareObject by lazy { ProtoCompareGenerated(oldNameResolver, newNameResolver) }
+private abstract class DifferenceCalculator {
+    protected abstract val compareObject: ProtoCompareGenerated
 
     abstract fun difference(): Difference
 
@@ -158,19 +176,18 @@ private abstract class DifferenceCalculator() {
     }
 }
 
-private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: ProtoMapValue) : DifferenceCalculator() {
-    val oldClassData = JvmProtoBufUtil.readClassDataFrom(oldData.bytes, oldData.strings)
-    val newClassData = JvmProtoBufUtil.readClassDataFrom(newData.bytes, newData.strings)
-
-    val oldProto = oldClassData.classProto
-    val newProto = newClassData.classProto
-
-    override val oldNameResolver = oldClassData.nameResolver
-    override val newNameResolver = newClassData.nameResolver
-
-    val diff = compareObject.difference(oldProto, newProto)
+private class DifferenceCalculatorForClass(
+        private val oldData: ClassProtoData,
+        private val newData: ClassProtoData
+) : DifferenceCalculator() {
+    override val compareObject = ProtoCompareGenerated(oldData.nameResolver, newData.nameResolver)
 
     override fun difference(): Difference {
+        val (oldProto, oldNameResolver) = oldData
+        val (newProto, newNameResolver) = newData
+
+        val diff = compareObject.difference(oldProto, newProto)
+
         var isClassAffected = false
         var areSubclassesAffected = false
         val names = hashSetOf<String>()
@@ -233,10 +250,12 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
                     isClassAffected = true
                     areSubclassesAffected = true
                 }
-                ProtoBufClassKind.CLASS_MODULE_NAME -> {
-                    // TODO
+                ProtoBufClassKind.JVM_EXT_CLASS_MODULE_NAME,
+                ProtoBufClassKind.JS_EXT_CLASS_ANNOTATION_LIST,
+                ProtoBufClassKind.JS_EXT_CLASS_CONTAINING_FILE_ID -> {
+                   // TODO
                 }
-                ProtoBufClassKind.CLASS_LOCAL_VARIABLE_LIST -> {
+                ProtoBufClassKind.JVM_EXT_CLASS_LOCAL_VARIABLE_LIST -> {
                     // Not affected, local variables are not accessible outside of a file
                 }
             }
@@ -246,19 +265,18 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
     }
 }
 
-private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newData: ProtoMapValue) : DifferenceCalculator() {
-    val oldPackageData = JvmProtoBufUtil.readPackageDataFrom(oldData.bytes, oldData.strings)
-    val newPackageData = JvmProtoBufUtil.readPackageDataFrom(newData.bytes, newData.strings)
-
-    val oldProto = oldPackageData.packageProto
-    val newProto = newPackageData.packageProto
-
-    override val oldNameResolver = oldPackageData.nameResolver
-    override val newNameResolver = newPackageData.nameResolver
-
-    val diff = compareObject.difference(oldProto, newProto)
+private class DifferenceCalculatorForPackageFacade(
+        private val oldData: PackagePartProtoData,
+        private val newData: PackagePartProtoData
+) : DifferenceCalculator() {
+    override val compareObject = ProtoCompareGenerated(oldData.nameResolver, newData.nameResolver)
 
     override fun difference(): Difference {
+        val oldProto = oldData.proto
+        val newProto = newData.proto
+
+        val diff = compareObject.difference(oldProto, newProto)
+
         val names = hashSetOf<String>()
 
         fun calcDifferenceForNonPrivateMembers(members: (ProtoBuf.Package) -> List<MessageLite>): Collection<String> {
@@ -278,10 +296,11 @@ private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newDa
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getTypeAliasList))
                 ProtoBufPackageKind.TYPE_TABLE,
                 ProtoBufPackageKind.SINCE_KOTLIN_INFO_TABLE,
-                ProtoBufPackageKind.PACKAGE_MODULE_NAME -> {
+                ProtoBufPackageKind.JVM_EXT_PACKAGE_MODULE_NAME,
+                ProtoBufPackageKind.JS_EXT_PACKAGE_FQ_NAME-> {
                     // TODO
                 }
-                ProtoBufPackageKind.PACKAGE_LOCAL_VARIABLE_LIST -> {
+                ProtoBufPackageKind.JVM_EXT_PACKAGE_LOCAL_VARIABLE_LIST -> {
                     // Not affected, local variables are not accessible outside of a file
                 }
             }
