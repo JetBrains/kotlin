@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.framework
 
-import com.google.common.collect.Lists
 import com.intellij.framework.library.LibraryVersionProperties
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -77,13 +76,13 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
         } ?: return
 
         val model = library.modifiableModel
-        val copyToPath = KotlinWithLibraryConfigurator.getPathFromLibrary(library, OrderRootType.CLASSES)
         try {
             val collector = createConfigureKotlinNotificationCollector(module.project)
             copyFileRequests?.performRequests(module.getModuleDir(), model, collector)
 
+            val copyToPath = KotlinWithLibraryConfigurator.getPathFromLibraryUrls(model.getUrls(OrderRootType.CLASSES))
             if (copyToPath != null) {
-                val jarState = if (copyFileRequests == null) DO_NOT_COPY else COPY
+                val jarState = if (copyFileRequests?.isEmpty() != false) DO_NOT_COPY else COPY
 
                 // Now that we know the SDK which is going to be set for the module, we can add jre 7/8 if required
                 val descriptorsWithSdk = configurator.getLibraryJarDescriptors(rootModel.sdk)
@@ -108,7 +107,9 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
     }
 
     class DeferredCopyFileRequests(private val configurator: KotlinWithLibraryConfigurator) {
-        private val copyFilesRequests = Lists.newArrayList<CopyFileRequest>()
+        private val copyFilesRequests = arrayListOf<CopyFileRequest>()
+
+        fun isEmpty() = copyFilesRequests.isEmpty()
 
         fun performRequests(relativePath: String, model: Library.ModifiableModel, collector: NotificationMessageCollector) {
             for (request in copyFilesRequests) {

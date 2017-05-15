@@ -303,6 +303,10 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
             if (library == null) return null
 
             val libraryFiles = library.getUrls(type)
+            return getPathFromLibraryUrls(libraryFiles)
+        }
+
+        fun getPathFromLibraryUrls(libraryFiles: Array<String>): String? {
             if (libraryFiles.size < 1) return null
 
             val pathToJarInLib = VfsUtilCore.urlToPath(libraryFiles[0])
