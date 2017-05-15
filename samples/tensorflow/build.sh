@@ -2,8 +2,11 @@
 
 PATH=../../dist/bin:../../bin:$PATH
 DIR=.
-TF_TARGET_DIRECTORY="/opt/local" # If you change this, adapt compilerOpts in tensorflow.def accordingly
+TF_TARGET_DIRECTORY="$HOME/.konan/third-party/tensorflow"
 TF_TYPE="cpu" # Change to "gpu" for GPU support
+
+CFLAGS_macbook="-I${TF_TARGET_DIRECTORY}/include"
+CFLAGS_linux="-I${TF_TARGET_DIRECTORY}/include"
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -22,12 +25,14 @@ COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
 if [ ! -d $TF_TARGET_DIRECTORY/include/tensorflow ]; then
  echo "Installing TensorFlow into $TF_TARGET_DIRECTORY ..."
- sudo mkdir -p $TF_TARGET_DIRECTORY
+ mkdir -p $TF_TARGET_DIRECTORY
  curl -s -L \
    "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-${TF_TYPE}-${TF_TARGET}-x86_64-1.1.0.tar.gz" |
-   sudo tar -C $TF_TARGET_DIRECTORY -xz
+   tar -C $TF_TARGET_DIRECTORY -xz
 fi
 
 cinterop -def $DIR/tensorflow.def -copt "$CFLAGS" -target $TARGET -o tensorflow.kt.bc || exit 1
 konanc $COMPILER_ARGS -target $TARGET $DIR/HelloTensorflow.kt -library tensorflow.kt.bc -o HelloTensorflow.kexe \
     -linkerArgs "-L$TF_TARGET_DIRECTORY/lib -ltensorflow" || exit 1
+
+echo "Note: You may need to specify LD_LIBRARY_PATH or DYLD_LIBRARY_PATH env variables to $TF_TARGET_DIRECTORY/lib if the TensorFlow dynamic library cannot be found."

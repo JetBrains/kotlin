@@ -12,10 +12,12 @@ showing how a TensorFlow client in Kotlin/Native could look like.
 
     ./build.sh
 
-will install [TensorFlow for C](https://www.tensorflow.org/versions/r1.1/install/install_c) into `/opt/local` (if not yet done) and build the example.
+will install [TensorFlow for C](https://www.tensorflow.org/versions/r1.1/install/install_c) into
+`$HOME/.konan/third-party/tensorflow` (if not yet done) and build the example.
 
     ./HelloTensorflow.kexe
 
 will then run the example.
 
-You may need to specify `LD_LIBRARY_PATH` or `DYLD_LIBRARY_PATH` to `/opt/local/lib` if the TensorFlow dynamic library cannot be found.
+You may need to specify `LD_LIBRARY_PATH` or `DYLD_LIBRARY_PATH` to `$HOME/.konan/third-party/tensorflow/lib`
+if the TensorFlow dynamic library cannot be found.

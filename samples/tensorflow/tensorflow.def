@@ -1,2 +1,1 @@
 headers = tensorflow/c/c_api.h
-compilerOpts = -I/opt/local/include -L/opt/local/lib
