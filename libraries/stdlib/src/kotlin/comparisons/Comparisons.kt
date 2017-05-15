@@ -26,6 +26,10 @@ package kotlin.comparisons
  */
 public fun <T> compareValuesBy(a: T, b: T, vararg selectors: (T) -> Comparable<*>?): Int {
     require(selectors.size > 0)
+    return compareValuesByImpl(a, b, selectors)
+}
+
+private fun <T> compareValuesByImpl(a: T, b: T, selectors: Array<out (T)->Comparable<*>?>): Int {
     for (fn in selectors) {
         val v1 = fn(a)
         val v2 = fn(b)
@@ -84,8 +88,9 @@ public fun <T : Comparable<*>> compareValues(a: T?, b: T?): Int {
  * compare as equal, the result of that comparison is returned from the [Comparator].
  */
 public fun <T> compareBy(vararg selectors: (T) -> Comparable<*>?): Comparator<T> {
+    require(selectors.size > 0)
     return object : Comparator<T> {
-        public override fun compare(a: T, b: T): Int = compareValuesBy(a, b, *selectors)
+        public override fun compare(a: T, b: T): Int = compareValuesByImpl(a, b, selectors)
     }
 }
 
