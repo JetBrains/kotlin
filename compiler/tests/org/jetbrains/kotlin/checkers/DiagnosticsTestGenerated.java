@@ -11053,6 +11053,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("defaultLambdaInlineDisable.kt")
+            public void testDefaultLambdaInlineDisable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/defaultLambdaInlineDisable.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("defaultLambdaInlining.kt")
+            public void testDefaultLambdaInlining() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/defaultLambdaInlining.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("extensionOnFunction.kt")
             public void testExtensionOnFunction() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/extensionOnFunction.kt");

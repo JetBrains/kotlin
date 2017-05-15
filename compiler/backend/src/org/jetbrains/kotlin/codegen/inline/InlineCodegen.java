@@ -70,6 +70,7 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.*;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isInlineOnly;
+import static org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinableParameterExpression;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
 
 public class InlineCodegen extends CallGenerator {
@@ -781,12 +782,6 @@ public class InlineCodegen extends CallGenerator {
 
         return InlineUtil.isInlineLambdaParameter(valueParameterDescriptor) &&
                isInlinableParameterExpression(deparenthesized);
-    }
-
-    private static boolean isInlinableParameterExpression(@Nullable KtExpression deparenthesized) {
-        return deparenthesized instanceof KtLambdaExpression ||
-               deparenthesized instanceof KtNamedFunction ||
-               deparenthesized instanceof KtCallableReferenceExpression;
     }
 
     private LambdaInfo rememberClosure(@NotNull KtExpression expression, @NotNull Type type, @NotNull ValueParameterDescriptor parameter) {

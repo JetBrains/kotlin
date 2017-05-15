@@ -941,6 +941,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("varArgNoInline.kt")
+        public void testVarArgNoInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/varArgNoInline.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

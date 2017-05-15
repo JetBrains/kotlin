@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.KtCallableDeclaration;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
@@ -37,10 +38,16 @@ public class AnalyzerExtensions {
 
     @NotNull private final BindingTrace trace;
     @NotNull private final Iterable<ReasonableInlineRule> reasonableInlineRules;
+    private LanguageVersionSettings languageVersionSettings;
 
-    public AnalyzerExtensions(@NotNull BindingTrace trace, @NotNull Iterable<ReasonableInlineRule> reasonableInlineRules) {
+    public AnalyzerExtensions(
+            @NotNull BindingTrace trace,
+            @NotNull Iterable<ReasonableInlineRule> reasonableInlineRules,
+            @NotNull LanguageVersionSettings languageVersionSettings
+    ) {
         this.trace = trace;
         this.reasonableInlineRules = reasonableInlineRules;
+        this.languageVersionSettings = languageVersionSettings;
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
@@ -66,7 +73,7 @@ public class AnalyzerExtensions {
     @NotNull
     private List<InlineAnalyzerExtension> getFunctionExtensions(@NotNull FunctionDescriptor functionDescriptor) {
         if (InlineUtil.isInline(functionDescriptor)) {
-            return Collections.singletonList(new InlineAnalyzerExtension(reasonableInlineRules));
+            return Collections.singletonList(new InlineAnalyzerExtension(reasonableInlineRules, languageVersionSettings));
         }
         return Collections.emptyList();
     }
@@ -74,7 +81,7 @@ public class AnalyzerExtensions {
     @NotNull
     private List<InlineAnalyzerExtension> getPropertyExtensions(@NotNull PropertyDescriptor propertyDescriptor) {
         if (InlineUtil.hasInlineAccessors(propertyDescriptor)) {
-            return Collections.singletonList(new InlineAnalyzerExtension(reasonableInlineRules));
+            return Collections.singletonList(new InlineAnalyzerExtension(reasonableInlineRules, languageVersionSettings));
         }
         return Collections.emptyList();
     }

@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.inline
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.isInlineOnlyOrReifiable
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -26,7 +28,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 
-class InlineAnalyzerExtension(private val reasonableInlineRules: Iterable<ReasonableInlineRule>) : AnalyzerExtensions.AnalyzerExtension {
+class InlineAnalyzerExtension(
+        private val reasonableInlineRules: Iterable<ReasonableInlineRule>,
+        private val languageVersionSettings: LanguageVersionSettings
+) : AnalyzerExtensions.AnalyzerExtension {
 
     override fun process(descriptor: CallableMemberDescriptor, functionOrProperty: KtCallableDeclaration, trace: BindingTrace) {
         checkModalityAndOverrides(descriptor, functionOrProperty, trace)
@@ -86,10 +91,24 @@ class InlineAnalyzerExtension(private val reasonableInlineRules: Iterable<Reason
         for (parameter in functionDescriptor.valueParameters) {
             if (parameter.hasDefaultValue()) {
                 val ktParameter = ktParameters[parameter.index]
-                //report unsupported default only on inlinable lambda and on parameter with inherited default (there is some problems to inline it)
-                if (checkInlinableParameter(parameter, ktParameter, functionDescriptor, null) || !parameter.declaresDefaultValue()) {
-                    trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(ktParameter, ktParameter, functionDescriptor))
+                //Always report unsupported error on functional parameter with inherited default (there are some problems with inlining)
+                val inheritDefaultValues = !parameter.declaresDefaultValue()
+                if (checkInlinableParameter(parameter, ktParameter, functionDescriptor, null) || inheritDefaultValues) {
+                    if (inheritDefaultValues || !languageVersionSettings.supportsFeature(LanguageFeature.InlineDefaultFunctionalParameters)) {
+                        trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(ktParameter, ktParameter, functionDescriptor))
+                    }
+                    else {
+                        checkDefaultValue(trace, parameter, ktParameter)
+                    }
                 }
+            }
+        }
+    }
+
+    private fun checkDefaultValue(trace: BindingTrace, parameterDescriptor: ValueParameterDescriptor, ktParameter: KtParameter) {
+        ktParameter.defaultValue?.let { defaultValue ->
+            if (!InlineUtil.isInlinableParameterExpression(KtPsiUtil.deparenthesize(defaultValue))) {
+                trace.report(Errors.INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE.on(defaultValue, defaultValue, parameterDescriptor))
             }
         }
     }

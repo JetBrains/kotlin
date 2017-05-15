@@ -50,6 +50,7 @@ enum class LanguageFeature(
     DefaultImportOfPackageKotlinComparisons(KOTLIN_1_1),
 
     ArrayLiteralsInAnnotations(KOTLIN_1_2),
+    InlineDefaultFunctionalParameters(KOTLIN_1_2),
 
     // Experimental features
 
