@@ -1,9 +1,9 @@
-// IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // WITH_COROUTINES
 
 // FILE: stuff.kt
 package stuff
+import helpers.*
 
 import kotlin.coroutines.experimental.intrinsics.*
 
@@ -16,6 +16,7 @@ object Host {
 
 
 // FILE: test.kt
+import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 import stuff.Host.suspendHere

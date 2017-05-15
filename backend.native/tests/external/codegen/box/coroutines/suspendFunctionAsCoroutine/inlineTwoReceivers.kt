@@ -1,7 +1,6 @@
-// IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // WITH_COROUTINES
-// TARGET_BACKEND: JVM
+import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn

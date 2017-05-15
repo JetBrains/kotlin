@@ -1,7 +1,7 @@
-// IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // WITH_COROUTINES
 // FILE: promise.kt
+import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
@@ -32,7 +32,7 @@ class Promise<T>(private val executor: ((T) -> Unit) -> Unit) {
 }
 
 // FILE: queue.kt
-
+import helpers.*
 private val queue = mutableListOf<() -> Unit>()
 
 fun <T> postpone(computation: () -> T): Promise<T> {
@@ -50,6 +50,7 @@ fun processQueue() {
 }
 
 // FILE: await.kt
+import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 

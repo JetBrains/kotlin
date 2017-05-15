@@ -1,6 +1,6 @@
-// IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // WITH_COROUTINES
+import helpers.*
 import kotlin.coroutines.experimental.startCoroutine
 
 class Controller {

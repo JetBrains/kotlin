@@ -420,6 +420,7 @@ class RunExternalTestGroup extends RunKonanTest {
         createLauncherFile("$outputDirectory/_launcher.kt", imports)
         result.add("$outputDirectory/_launcher.kt")
         result.add(project.file("testUtils.kt"))
+        result.add(project.file("helpers.kt"))
         return result
     }
 

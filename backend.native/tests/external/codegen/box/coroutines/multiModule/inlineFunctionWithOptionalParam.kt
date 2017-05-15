@@ -1,14 +1,14 @@
-// IGNORE_BACKEND: NATIVE
 // MODULE: lib
 // FILE: lib.kt
 inline fun foo(x: String = "OK"): String {
     return x + x
 }
 
-// MODULE: main(lib)
+// MODULE: main(lib, support)
 // FILE: main.kt
 // WITH_RUNTIME
 // WITH_COROUTINES
+import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
