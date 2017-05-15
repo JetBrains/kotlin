@@ -41,7 +41,11 @@ internal fun modifyCompilerArgumentsForPlugin(
     val newPluginOptions = oldPluginOptions + annotationOptions
 
     val oldPluginClasspaths = (commonArguments.pluginClasspaths ?: emptyArray()).filterTo(mutableListOf()) {
-        !it.substringAfterLast(File.separatorChar, missingDelimiterValue = "").matches("(kotlin-)?(maven-)?$pluginName-.*\\.jar".toRegex())
+        val lastIndexOfFile = it.lastIndexOfAny(charArrayOf('/', File.separatorChar))
+        if (lastIndexOfFile < 0) {
+            return@filterTo true
+        }
+        !it.drop(lastIndexOfFile + 1).matches("(kotlin-)?(maven-)?$pluginName-.*\\.jar".toRegex())
     }
 
     val newPluginClasspaths = oldPluginClasspaths + (setup?.classpath ?: emptyList())
