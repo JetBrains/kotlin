@@ -217,7 +217,7 @@ class JsAstSerializer {
             override fun visitFor(x: JsFor) {
                 val forBuilder = For.newBuilder()
                 when {
-                    x.initVars != null -> forBuilder.variables = serializeVars(x.initVars)
+                    x.initVars != null -> forBuilder.variables = serialize(x.initVars)
                     x.initExpression != null -> forBuilder.expression = serialize(x.initExpression)
                     else -> forBuilder.empty = EmptyInit.newBuilder().build()
                 }
@@ -460,8 +460,10 @@ class JsAstSerializer {
         val varsBuilder = Vars.newBuilder()
         for (varDecl in vars.vars) {
             val declBuilder = VarDeclaration.newBuilder()
-            declBuilder.nameId = serialize(varDecl.name)
-            varDecl.initExpression?.let { declBuilder.initialValue = serialize(it) }
+            withLocation(varDecl, { declBuilder.fileId = it }, { declBuilder.location = it }) {
+                declBuilder.nameId = serialize(varDecl.name)
+                varDecl.initExpression?.let { declBuilder.initialValue = serialize(it) }
+            }
             varsBuilder.addDeclaration(declBuilder)
         }
 

@@ -207,7 +207,7 @@ class JsAstDeserializer(program: JsProgram) {
 
         StatementCase.FOR_STATEMENT -> {
             val forProto = proto.forStatement
-            val initVars = if (forProto.hasVariables()) deserializeVars(forProto.variables) else null
+            val initVars = if (forProto.hasVariables()) deserialize(forProto.variables) as JsVars else null
             val initExpr = if (forProto.hasExpression()) deserialize(forProto.expression) else null
             val condition = if (forProto.hasCondition()) deserialize(forProto.condition) else null
             val increment = if (forProto.hasIncrement()) deserialize(forProto.increment) else null
@@ -395,8 +395,13 @@ class JsAstDeserializer(program: JsProgram) {
     private fun deserializeVars(proto: Vars): JsVars {
         val vars = JsVars(proto.multiline)
         for (declProto in proto.declarationList) {
-            val initialValue = if (declProto.hasInitialValue()) deserialize(declProto.initialValue) else null
-            vars.vars += JsVars.JsVar(deserializeName(declProto.nameId), initialValue)
+            vars.vars += withLocation(
+                    fileId = if (declProto.hasFileId()) declProto.fileId else null,
+                    location = if (declProto.hasLocation()) declProto.location else null
+            ) {
+                val initialValue = if (declProto.hasInitialValue()) deserialize(declProto.initialValue) else null
+                JsVars.JsVar(deserializeName(declProto.nameId), initialValue)
+            }
         }
         if (proto.hasExportedPackageId()) {
             vars.exportedPackage = deserializeString(proto.exportedPackageId)
