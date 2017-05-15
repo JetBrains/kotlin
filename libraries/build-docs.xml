@@ -4,7 +4,7 @@
     <property name="dokka.path" value="../dependencies/dokka" />
     <property name="js.stdlib.src.path" value="../dependencies/js-stdlib-src" />
     <property name="docs.output" value="${basedir}/doc" />
-    <property name="dokka.format" value="kotlin-website-samples"/>
+    <property name="dokka.format" value="kotlin-website-html"/>
 
     <typedef resource="dokka-antlib.xml">
         <classpath>
@@ -57,6 +57,7 @@
             <sourceRoot path="kotlin.test/js/src/main/kotlin" platforms="JS"/>
 
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
+            <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="file://${docs.output}/jre8/kotlin-stdlib/package-list" />
         </dokka>
     </target>
 
