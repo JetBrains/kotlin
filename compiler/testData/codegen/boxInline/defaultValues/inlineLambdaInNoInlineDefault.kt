@@ -12,5 +12,5 @@ inline fun inlineFun(crossinline inlineLambda: () -> String, noinline noInlineLa
 import test.*
 
 fun box(): String {
-    return inlineFun ({ "OK" })
+    return inlineFun({ "OK" })
 }

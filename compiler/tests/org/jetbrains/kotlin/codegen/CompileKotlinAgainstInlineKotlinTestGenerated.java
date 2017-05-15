@@ -905,6 +905,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("inlineLambdaInNoInlineDefault.kt")
+        public void testInlineLambdaInNoInlineDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/inlineLambdaInNoInlineDefault.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt11479.kt")
         public void testKt11479() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/kt11479.kt");

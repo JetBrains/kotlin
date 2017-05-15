@@ -1,4 +1,5 @@
 // FILE: 1.kt
+// LANGUAGE_VERSION: 1.2
 // SKIP_INLINE_CHECK_IN: inlineFun$default
 //WITH_RUNTIME
 package test
@@ -6,7 +7,6 @@ package test
 class OK
 class FAIL
 
-@Suppress("NOT_YET_SUPPORTED_IN_INLINE")
 inline fun <reified T> inlineFun(lambda: () -> String = { T::class.java.simpleName }): String {
     return lambda()
 }
