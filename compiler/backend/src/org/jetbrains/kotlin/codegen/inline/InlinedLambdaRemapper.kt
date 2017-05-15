@@ -14,46 +14,33 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.inline;
+package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
-import java.util.Collection;
+class InlinedLambdaRemapper(
+        lambdaInternalName: String,
+        parent: FieldRemapper,
+        methodParams: Parameters
+) : FieldRemapper(lambdaInternalName, parent, methodParams) {
 
-public class InlinedLambdaRemapper extends FieldRemapper {
-    public InlinedLambdaRemapper(
-            @NotNull String lambdaInternalName,
-            @NotNull FieldRemapper parent,
-            @NotNull Parameters methodParams
-    ) {
-        super(lambdaInternalName, parent, methodParams);
+    public override fun canProcess(fieldOwner: String, fieldName: String, isFolding: Boolean): Boolean {
+        return isFolding && super.canProcess(fieldOwner, fieldName, true)
     }
 
-    @Override
-    public boolean canProcess(@NotNull String fieldOwner, @NotNull String fieldName, boolean isFolding) {
-        return isFolding && super.canProcess(fieldOwner, fieldName, true);
+    public override fun findField(fieldInsnNode: FieldInsnNode, captured: Collection<CapturedParamInfo>): CapturedParamInfo? {
+        return parent.findField(fieldInsnNode, captured)
     }
 
-    @Override
-    @Nullable
-    public CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode, @NotNull Collection<CapturedParamInfo> captured) {
-        return parent.findField(fieldInsnNode, captured);
+    override fun isInsideInliningLambda(): Boolean {
+        return true
     }
 
-    @Override
-    public boolean isInsideInliningLambda() {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public StackValue getFieldForInline(@NotNull FieldInsnNode node, @Nullable StackValue prefix) {
-        if (parent.isRoot()) {
-            return super.getFieldForInline(node, prefix);
+    override fun getFieldForInline(node: FieldInsnNode, prefix: StackValue?): StackValue? {
+        if (parent.isRoot) {
+            return super.getFieldForInline(node, prefix)
         }
-        return parent.getFieldForInline(node, prefix);
+        return parent.getFieldForInline(node, prefix)
     }
 }
