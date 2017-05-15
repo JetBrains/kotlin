@@ -213,13 +213,14 @@ object CastDiagnosticsUtil {
         return isRefinementUseless(possibleTypes, refinedTargetType, typeChecker, shouldCheckForExactType(expression, context.expectedType))
     }
 
+    // It is a warning "useless cast" for `as` and a warning "redundant is" for `is`
     fun isRefinementUseless(
             possibleTypes: Collection<KotlinType>,
             targetType: KotlinType,
             typeChecker: KotlinTypeChecker,
             shouldCheckForExactType: Boolean
     ): Boolean {
-        val intersectedType = TypeIntersector.intersectTypes(typeChecker, possibleTypes) ?: return false
+        val intersectedType = TypeIntersector.intersectTypes(typeChecker, possibleTypes.map { it.upperIfFlexible() }) ?: return false
 
         return if (shouldCheckForExactType)
             isExactTypeCast(intersectedType, targetType)

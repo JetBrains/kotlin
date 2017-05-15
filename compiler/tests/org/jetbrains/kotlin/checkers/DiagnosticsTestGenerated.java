@@ -2746,6 +2746,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("FlexibleTargetType.kt")
+            public void testFlexibleTargetType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/FlexibleTargetType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("IsErasedAllowForDerivedWithOneSubstitutedAndOneSameGeneric.kt")
             public void testIsErasedAllowForDerivedWithOneSubstitutedAndOneSameGeneric() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/IsErasedAllowForDerivedWithOneSubstitutedAndOneSameGeneric.kt");

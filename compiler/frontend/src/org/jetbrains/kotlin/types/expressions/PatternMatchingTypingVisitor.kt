@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.*
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.containsError
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
 
 class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
@@ -464,8 +463,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         if (subjectType.containsError() || targetType.containsError()) return
 
         val possibleTypes = DataFlowAnalyzer.getAllPossibleTypes(subjectType, context, subjectDataFlowValue)
-        val intersection = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, possibleTypes.map { it.upperIfFlexible() })
-        if (intersection?.isSubtypeOf(targetType) ?: false) {
+        if (CastDiagnosticsUtil.isRefinementUseless(possibleTypes, targetType, KotlinTypeChecker.DEFAULT, false)) {
             context.trace.report(Errors.USELESS_IS_CHECK.on(isCheck, !negated))
         }
     }
