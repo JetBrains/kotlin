@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
@@ -90,10 +92,7 @@ class DefaultLambda(
     override lateinit var invokeMethod: Method
         private set
 
-
-    override val invokeMethodDescriptor: FunctionDescriptor =
-            parameterDescriptor.type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).single()
-
+    override lateinit var invokeMethodDescriptor: FunctionDescriptor
 
     override lateinit var capturedVars: List<CapturedParamDesc>
         private set
@@ -102,6 +101,25 @@ class DefaultLambda(
 
     override fun generateLambdaBody(codegen: ExpressionCodegen, reifiedTypeInliner: ReifiedTypeInliner) {
         val classReader = InlineCodegenUtil.buildClassReaderByInternalName(codegen.state, lambdaClassType.internalName)
+        var isPropertyReference = false
+        var isFunctionReference = false
+        classReader.accept(object: ClassVisitor(InlineCodegenUtil.API){
+            override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<out String>?) {
+                isPropertyReference = superName?.startsWith("kotlin/jvm/internal/PropertyReference") ?: false
+                isFunctionReference = "kotlin/jvm/internal/FunctionReference" == superName
+
+                super.visit(version, access, name, signature, superName, interfaces)
+            }
+        }, ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES or ClassReader.SKIP_DEBUG)
+
+        invokeMethodDescriptor =
+                parameterDescriptor.type.memberScope
+                        .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
+                        .single()
+                        .let {
+                            //property reference generates erased 'get' method
+                            if (isPropertyReference) it.original else it
+                        }
 
         val descriptor = Type.getMethodDescriptor(Type.VOID_TYPE, *capturedArgs)
         val constructor = InlineCodegenUtil.getMethodNode(
@@ -121,7 +139,7 @@ class DefaultLambda(
 
 
         invokeMethod = Method(
-                OperatorNameConventions.INVOKE.asString(),
+                (if (isPropertyReference) OperatorNameConventions.GET else OperatorNameConventions.INVOKE).asString(),
                 codegen.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod.descriptor
         )
 

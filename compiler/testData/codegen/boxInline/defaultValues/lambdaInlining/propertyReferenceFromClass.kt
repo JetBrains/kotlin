@@ -3,9 +3,7 @@
 // SKIP_INLINE_CHECK_IN: inlineFun$default
 package test
 
-class A(val value: String) {
-    fun ok() = value
-}
+class A(val ok: String)
 
 inline fun inlineFun(a: A, lambda: (A) -> String = A::ok): String {
     return lambda(a)

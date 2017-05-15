@@ -979,6 +979,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
                 doTest(fileName);
             }
 
+            @TestMetadata("functionReferenceFromObject.kt")
+            public void testFunctionReferenceFromObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/functionReferenceFromObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("instanceCapuredInClass.kt")
             public void testInstanceCapuredInClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapuredInClass.kt");
@@ -1006,6 +1012,24 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             @TestMetadata("nonDefaultInlineInNoInline.kt")
             public void testNonDefaultInlineInNoInline() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/nonDefaultInlineInNoInline.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyReference.kt")
+            public void testPropertyReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/propertyReference.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyReferenceFromClass.kt")
+            public void testPropertyReferenceFromClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/propertyReferenceFromClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyReferenceFromObject.kt")
+            public void testPropertyReferenceFromObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/propertyReferenceFromObject.kt");
                 doTest(fileName);
             }
 
