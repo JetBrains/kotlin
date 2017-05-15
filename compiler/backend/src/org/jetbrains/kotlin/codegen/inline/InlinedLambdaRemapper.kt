@@ -25,22 +25,17 @@ class InlinedLambdaRemapper(
         methodParams: Parameters
 ) : FieldRemapper(lambdaInternalName, parent, methodParams) {
 
-    public override fun canProcess(fieldOwner: String, fieldName: String, isFolding: Boolean): Boolean {
-        return isFolding && super.canProcess(fieldOwner, fieldName, true)
-    }
+    public override fun canProcess(fieldOwner: String, fieldName: String, isFolding: Boolean) =
+            isFolding && super.canProcess(fieldOwner, fieldName, true)
 
-    public override fun findField(fieldInsnNode: FieldInsnNode, captured: Collection<CapturedParamInfo>): CapturedParamInfo? {
-        return parent.findField(fieldInsnNode, captured)
-    }
+    public override fun findField(fieldInsnNode: FieldInsnNode, captured: Collection<CapturedParamInfo>) =
+            parent.findField(fieldInsnNode, captured)
 
-    override fun isInsideInliningLambda(): Boolean {
-        return true
-    }
+    override fun isInsideInliningLambda() = true
 
-    override fun getFieldForInline(node: FieldInsnNode, prefix: StackValue?): StackValue? {
-        if (parent.isRoot) {
-            return super.getFieldForInline(node, prefix)
-        }
-        return parent.getFieldForInline(node, prefix)
-    }
+    override fun getFieldForInline(node: FieldInsnNode, prefix: StackValue?) =
+            if (parent.isRoot)
+                super.getFieldForInline(node, prefix)
+            else
+                parent.getFieldForInline(node, prefix)
 }
