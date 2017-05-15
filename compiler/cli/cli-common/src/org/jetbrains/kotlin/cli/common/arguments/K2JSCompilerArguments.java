@@ -35,7 +35,8 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @Argument(
             value = "-libraries",
             valueDescription = "<path>",
-            description = "Paths to Kotlin libraries with .meta.js and .kjsm files, separated by system file separator")
+            description = "Paths to Kotlin libraries with .meta.js and .kjsm files, separated by system path separator"
+    )
     public String libraries;
 
     @GradleOption(DefaultValues.BooleanFalseDefault.class)

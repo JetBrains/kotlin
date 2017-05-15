@@ -2,7 +2,7 @@ Usage: kotlinc-js <options> <source files>
 where possible options include:
   -output <path>             Output file path
   -no-stdlib                 Don't use bundled Kotlin stdlib
-  -libraries <path>          Paths to Kotlin libraries with .meta.js and .kjsm files, separated by system file separator
+  -libraries <path>          Paths to Kotlin libraries with .meta.js and .kjsm files, separated by system path separator
   -source-map                Generate source map
   -meta-info                 Generate .meta.js and .kjsm files with metadata. Use to create a library
   -target { v5 }             Generate JS files for specific ECMA version
