@@ -211,6 +211,16 @@ fun getSomething() = 10
     }
 
     @Test
+    fun testAndroidExtensionsManyVariants() {
+        val project = Project("AndroidExtensionsManyVariants", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = false)
+
+        project.build("assemble", options = options) {
+            assertSuccessful()
+        }
+    }
+
+    @Test
     fun testAndroidKaptChangingDependencies() {
         val project = Project("AndroidKaptChangingDependencies", gradleVersion)
 

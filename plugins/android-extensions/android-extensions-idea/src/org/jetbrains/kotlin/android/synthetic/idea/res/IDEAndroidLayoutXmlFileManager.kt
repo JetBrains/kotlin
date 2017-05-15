@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.android.synthetic.idea.res
 import com.android.builder.model.SourceProvider
 import com.android.tools.idea.gradle.AndroidGradleModel
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
@@ -47,7 +48,9 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
         else {
             if (_moduleData == null) {
                 _moduleData = cachedValue(project) {
-                    CachedValueProvider.Result.create(super.getModuleData(), getPsiTreeChangePreprocessor())
+                    CachedValueProvider.Result.create(
+                            super.getModuleData(),
+                            getPsiTreeChangePreprocessor(), ProjectRootModificationTracker.getInstance(project))
                 }
             }
         }
@@ -103,31 +106,33 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
         return listOf()
     }
 
+    private fun SourceProvider.toVariant() = AndroidVariant(name, resDirectories.map { it.canonicalPath })
+
     private val Module.androidFacet: AndroidFacet?
         get() = AndroidFacet.getInstance(this)
 
-    private fun SourceProvider.toVariant() = AndroidVariant(name, resDirectories.map { it.absolutePath })
-
     private fun AndroidFacet.toAndroidModuleInfo(): AndroidModule? {
-        val applicationPackage = manifest?.`package`?.toString()
+        val applicationPackage = manifest?.`package`?.toString() ?: return null
 
-        if (applicationPackage != null) {
-            val mainVariant = mainSourceProvider.toVariant()
+        val allResDirectories = getAppResources(true)?.resourceDirs.orEmpty().mapNotNull { it.canonicalPath }
 
-            val method = try { this::class.java.getMethod("getFlavorSourceProviders") } catch (e: NoSuchMethodException) { null }
-            val variants: List<AndroidVariant>? = if (method != null) {
-                val sourceProviders = method.invoke(this) as List<SourceProvider>?
-                sourceProviders?.map { it.toVariant() } ?: listOf()
-            }
-            else {
-                val model = AndroidGradleModel.get(module)
-                model?.flavorSourceProviders?.map { it.toVariant() } ?: listOf(this.mainSourceProvider.toVariant())
-            }
+        val resDirectoriesForMainVariant = run {
+            val resDirsFromSourceProviders = AndroidGradleModel.get(module)?.allSourceProviders.orEmpty()
+                    .filter { it.name != "main" }
+                    .flatMap { it.resDirectories }
+                    .map { it.canonicalPath }
 
-            if (variants != null) {
-                return AndroidModule(applicationPackage, listOf(mainVariant) + variants)
+            allResDirectories - resDirsFromSourceProviders
+        }
+
+        val variants = mutableListOf(AndroidVariant("main", resDirectoriesForMainVariant))
+
+        AndroidGradleModel.get(module)?.let { androidGradleModel ->
+            androidGradleModel.activeSourceProviders.filter { it.name != "main" }.forEach { sourceProvider ->
+                variants += sourceProvider.toVariant()
             }
         }
-        return null
+
+        return AndroidModule(applicationPackage, variants)
     }
 }
