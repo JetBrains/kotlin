@@ -1,9 +1,11 @@
 package inline
 
 class A {
+    var z = 0
+
     inline var f: Int
-        get() = 0
+        get() = z
         set(p: Int) {
-            0
+            z = p
         }
 }
