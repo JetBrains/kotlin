@@ -1981,7 +1981,6 @@ public final class kotlin/coroutines/experimental/CoroutinesKt {
 	public static final fun createCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 	public static final fun startCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/experimental/Continuation;)V
 	public static final fun startCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)V
-	public static final fun suspendCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
 }
 
 public final class kotlin/coroutines/experimental/EmptyCoroutineContext : kotlin/coroutines/experimental/CoroutineContext {
@@ -2029,7 +2028,7 @@ public final class kotlin/coroutines/experimental/intrinsics/IntrinsicsKt {
 
 public abstract class kotlin/coroutines/experimental/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/experimental/Continuation {
 	protected field completion Lkotlin/coroutines/experimental/Continuation;
-	protected field label I
+	public field label I
 	public fun <init> (ILkotlin/coroutines/experimental/Continuation;)V
 	public fun create (Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 	public fun create (Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
@@ -2038,6 +2037,16 @@ public abstract class kotlin/coroutines/experimental/jvm/internal/CoroutineImpl 
 	public final fun getFacade ()Lkotlin/coroutines/experimental/Continuation;
 	public fun resume (Ljava/lang/Object;)V
 	public fun resumeWithException (Ljava/lang/Throwable;)V
+}
+
+public abstract class kotlin/coroutines/experimental/jvm/internal/CoroutineImplForNamedFunction : kotlin/coroutines/experimental/jvm/internal/CoroutineImpl, kotlin/coroutines/experimental/Continuation {
+	public static final field Companion Lkotlin/coroutines/experimental/jvm/internal/CoroutineImplForNamedFunction$Companion;
+	public field data Ljava/lang/Object;
+	public field exception Ljava/lang/Throwable;
+	public fun <init> (Lkotlin/coroutines/experimental/Continuation;)V
+	public final fun checkAndFlushLastBit ()Z
+	protected abstract fun doResume ()Ljava/lang/Object;
+	protected fun doResume (Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;
 }
 
 public final class kotlin/coroutines/experimental/jvm/internal/CoroutineIntrinsics {
