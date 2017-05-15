@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.backend.konan.lower.SuspendFunctionsLowering
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -32,6 +31,8 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
@@ -63,11 +64,11 @@ abstract class DescriptorWithIrBuilder<out D: DeclarationDescriptor, out B: IrDe
 }
 
 fun BackendContext.createPropertyGetterBuilder(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin,
-                                               propertyDescriptor: PropertyDescriptor, type: KotlinType)
+                                               symbol: IrFieldSymbol, type: KotlinType)
         = object: DescriptorWithIrBuilder<PropertyGetterDescriptorImpl, IrFunction>() {
 
     override fun buildDescriptor() = PropertyGetterDescriptorImpl(
-            /* correspondingProperty = */ propertyDescriptor,
+            /* correspondingProperty = */ symbol.descriptor,
             /* annotations           = */ Annotations.EMPTY,
             /* modality              = */ Modality.FINAL,
             /* visibility            = */ Visibilities.PRIVATE,
@@ -93,18 +94,18 @@ fun BackendContext.createPropertyGetterBuilder(startOffset: Int, endOffset: Int,
 
         createParameterDeclarations()
 
-        body = createIrBuilder(descriptor, startOffset, endOffset).irBlockBody {
-            +irReturn(irGetField(irThis(), propertyDescriptor))
+        body = createIrBuilder(this.symbol, startOffset, endOffset).irBlockBody {
+            +irReturn(irGetField(irGet(this@apply.dispatchReceiverParameter!!.symbol), symbol))
         }
     }
 }
 
 private fun BackendContext.createPropertySetterBuilder(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin,
-                                                       propertyDescriptor: PropertyDescriptor, type: KotlinType)
+                                                       symbol: IrFieldSymbol, type: KotlinType)
         = object: DescriptorWithIrBuilder<PropertySetterDescriptorImpl, IrFunction>() {
 
     override fun buildDescriptor() = PropertySetterDescriptorImpl(
-            /* correspondingProperty = */ propertyDescriptor,
+            /* correspondingProperty = */ symbol.descriptor,
             /* annotations           = */ Annotations.EMPTY,
             /* modality              = */ Modality.FINAL,
             /* visibility            = */ Visibilities.PRIVATE,
@@ -146,8 +147,8 @@ private fun BackendContext.createPropertySetterBuilder(startOffset: Int, endOffs
 
         createParameterDeclarations()
 
-        body = createIrBuilder(descriptor, startOffset, endOffset).irBlockBody {
-            +irSetField(irThis(), propertyDescriptor, irGet(valueParameterDescriptor))
+        body = createIrBuilder(this.symbol, startOffset, endOffset).irBlockBody {
+            +irSetField(irGet(this@apply.dispatchReceiverParameter!!.symbol), symbol, irGet(this@apply.valueParameters.single().symbol))
         }
     }
 }
@@ -158,6 +159,7 @@ fun BackendContext.createPropertyWithBackingFieldBuilder(startOffset: Int, endOf
 
     private lateinit var getterBuilder: DescriptorWithIrBuilder<PropertyGetterDescriptorImpl, IrFunction>
     private var setterBuilder: DescriptorWithIrBuilder<PropertySetterDescriptorImpl, IrFunction>? = null
+    private lateinit var fieldSymbol: IrFieldSymbol
 
     override fun buildDescriptor() = PropertyDescriptorImpl.create(
             /* containingDeclaration = */ owner,
@@ -176,9 +178,10 @@ fun BackendContext.createPropertyWithBackingFieldBuilder(startOffset: Int, endOf
             /* isDelegated           = */ false)
 
     override fun doInitialize() {
-        getterBuilder = createPropertyGetterBuilder(startOffset, endOffset, origin, descriptor, type).apply { initialize() }
+        fieldSymbol = IrFieldSymbolImpl(descriptor)
+        getterBuilder = createPropertyGetterBuilder(startOffset, endOffset, origin, fieldSymbol, type).apply { initialize() }
         if (isMutable)
-            setterBuilder = createPropertySetterBuilder(startOffset, endOffset, origin, descriptor, type).apply { initialize() }
+            setterBuilder = createPropertySetterBuilder(startOffset, endOffset, origin, fieldSymbol, type).apply { initialize() }
         descriptor.initialize(getterBuilder.descriptor, setterBuilder?.descriptor)
         val receiverType: KotlinType? = null
         descriptor.setType(type, emptyList(), owner.thisAsReceiverParameter, receiverType)
@@ -189,7 +192,7 @@ fun BackendContext.createPropertyWithBackingFieldBuilder(startOffset: Int, endOf
                 startOffset = startOffset,
                 endOffset   = endOffset,
                 origin      = origin,
-                descriptor  = descriptor)
+                symbol      = fieldSymbol)
         return IrPropertyImpl(
                 startOffset  = startOffset,
                 endOffset    = endOffset,

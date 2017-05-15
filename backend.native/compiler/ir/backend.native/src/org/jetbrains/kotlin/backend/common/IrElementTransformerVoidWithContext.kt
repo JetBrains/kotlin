@@ -52,13 +52,9 @@ abstract internal class IrElementTransformerVoidWithContext : IrElementTransform
     }
 
     override final fun visitField(declaration: IrField): IrStatement {
-        val peek = scopeStack.peek()
-        val fieldDiffersFromProperty = peek == null || peek.scope.scopeOwner != declaration.descriptor
-        if (fieldDiffersFromProperty)
-            scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
+        scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
         val result = visitFieldNew(declaration)
-        if (fieldDiffersFromProperty)
-            scopeStack.pop()
+        scopeStack.pop()
         return result
     }
 

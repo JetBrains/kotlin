@@ -17,11 +17,16 @@
 package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -73,6 +78,10 @@ fun IrBuilderWithScope.irSetVar(variable: VariableDescriptor, value: IrExpressio
 @Deprecated("Creates unbound symbol")
 fun IrBuilderWithScope.irCall(descriptor: FunctionDescriptor): IrCallImpl {
     return IrCallImpl(this.startOffset, this.endOffset, descriptor)
+}
+
+fun IrBuilderWithScope.irCall(symbol: IrFunctionSymbol): IrCallImpl {
+    return IrCallImpl(this.startOffset, this.endOffset, symbol)
 }
 
 @Deprecated("Creates unbound symbol")

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -146,6 +147,12 @@ fun IrBuilderWithScope.irGetField(receiver: IrExpression, descriptor: PropertyDe
 @Deprecated("Creates unbound symbol")
 fun IrBuilderWithScope.irSetField(receiver: IrExpression, descriptor: PropertyDescriptor, value: IrExpression) =
         IrSetFieldImpl(startOffset, endOffset, descriptor, receiver, value)
+
+fun IrBuilderWithScope.irGetField(receiver: IrExpression, symbol: IrFieldSymbol) =
+        IrGetFieldImpl(startOffset, endOffset, symbol, receiver)
+
+fun IrBuilderWithScope.irSetField(receiver: IrExpression, symbol: IrFieldSymbol, value: IrExpression) =
+        IrSetFieldImpl(startOffset, endOffset, symbol, receiver, value)
 
 @Deprecated("Creates unbound symbol")
 open class IrBuildingTransformer(private val context: BackendContext) : IrElementTransformerVoid() {

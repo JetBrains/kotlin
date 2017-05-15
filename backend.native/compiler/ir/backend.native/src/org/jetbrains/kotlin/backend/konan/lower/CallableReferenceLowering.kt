@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -93,7 +95,7 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
                 return IrCallImpl(
                         startOffset = expression.startOffset,
                         endOffset   = expression.endOffset,
-                        calleeDescriptor  = loweredFunctionReference.functionReferenceConstructorDescriptor).apply {
+                        symbol      = loweredFunctionReference. functionReferenceConstructor.symbol).apply {
                     expression.getArguments().forEachIndexed { index, argument ->
                         putValueArgument(index, argument.second)
                     }
@@ -104,7 +106,7 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
     }
 
     private class BuiltFunctionReference(val functionReferenceClass: IrClass,
-                                         val functionReferenceConstructorDescriptor: ClassConstructorDescriptor)
+                                         val functionReferenceConstructor: IrConstructor)
 
     private inner class FunctionReferenceBuilder(val containingDeclaration: DeclarationDescriptor,
                                                  val functionReference: IrFunctionReference) {
@@ -115,8 +117,9 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
         private val unboundFunctionParameters = functionParameters - boundFunctionParameters
 
         private lateinit var functionReferenceClassDescriptor: ClassDescriptorImpl
-        private lateinit var argumentToPropertiesMap: Map<ParameterDescriptor, PropertyDescriptor>
-        private val functionReferenceMembers = mutableListOf<IrDeclaration>()
+        private lateinit var functionReferenceClass: IrClassImpl
+        private lateinit var functionReferenceThis: IrValueParameterSymbol
+        private lateinit var argumentToPropertiesMap: Map<ParameterDescriptor, IrFieldSymbol>
 
         private fun KotlinType.replace(types: List<KotlinType>) = this.replace(types.map(::TypeProjectionImpl))
 
@@ -126,7 +129,7 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
             val startOffset = functionReference.startOffset
             val endOffset = functionReference.endOffset
 
-            val superTypes = mutableListOf<KotlinType>(
+            val superTypes = mutableListOf(
                     kFunctionImplClassDescriptor.defaultType.replace(listOf(functionDescriptor.returnType!!))
             )
             var suspendFunctionClassDescriptor: ClassDescriptor? = null
@@ -143,6 +146,15 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
                     /* source                = */ SourceElement.NO_SOURCE,
                     /* isExternal            = */ false
             )
+            functionReferenceClass = IrClassImpl(
+                    startOffset = startOffset,
+                    endOffset   = endOffset,
+                    origin      = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+                    descriptor  = functionReferenceClassDescriptor
+            )
+            functionReferenceClass.createParameterDeclarations()
+            functionReferenceThis = functionReferenceClass.thisReceiver!!.symbol
+
             val constructorBuilder = createConstructorBuilder()
 
             val typeSubstitutor = TypeSubstitutor.create(
@@ -164,29 +176,18 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
             functionReferenceClassDescriptor.initialize(SimpleMemberScope(contributedDescriptors), setOf(constructorBuilder.descriptor), null)
 
             constructorBuilder.initialize()
-            functionReferenceMembers.add(constructorBuilder.ir)
+            functionReferenceClass.declarations.add(constructorBuilder.ir)
 
             invokeMethodBuilder.initialize()
-            functionReferenceMembers.add(invokeMethodBuilder.ir)
+            functionReferenceClass.declarations.add(invokeMethodBuilder.ir)
 
-            val functionReferenceClass = IrClassImpl(
-                    startOffset = startOffset,
-                    endOffset   = endOffset,
-                    origin      = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                    descriptor  = functionReferenceClassDescriptor,
-                    members     = functionReferenceMembers
-            )
-
-            functionReferenceClass.createParameterDeclarations()
-
-            return BuiltFunctionReference(functionReferenceClass, constructorBuilder.descriptor)
+            return BuiltFunctionReference(functionReferenceClass, constructorBuilder.ir)
         }
 
         private fun createConstructorBuilder()
                 = object : DescriptorWithIrBuilder<ClassConstructorDescriptorImpl, IrConstructor>() {
 
             private val kFunctionImplConstructorDescriptor = kFunctionImplClassDescriptor.constructors.single()
-            private lateinit var constructorParameters: List<ValueParameterDescriptor>
 
             override fun buildDescriptor(): ClassConstructorDescriptorImpl {
                 return ClassConstructorDescriptorImpl.create(
@@ -198,7 +199,7 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
             }
 
             override fun doInitialize() {
-                constructorParameters = boundFunctionParameters.mapIndexed { index, parameter ->
+                val constructorParameters = boundFunctionParameters.mapIndexed { index, parameter ->
                     parameter.copyAsValueParameter(descriptor, index)
                 }
                 descriptor.initialize(constructorParameters, Visibilities.PUBLIC)
@@ -212,34 +213,35 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
 
                 val startOffset = functionReference.startOffset
                 val endOffset = functionReference.endOffset
-                val irBuilder = context.createIrBuilder(descriptor, startOffset, endOffset)
                 return IrConstructorImpl(
                         startOffset = startOffset,
-                        endOffset = endOffset,
-                        origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        descriptor = descriptor).apply {
+                        endOffset   = endOffset,
+                        origin      = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+                        descriptor  = descriptor).apply {
+
+                    val irBuilder = context.createIrBuilder(this.symbol, startOffset, endOffset)
 
                     createParameterDeclarations()
 
                     body = irBuilder.irBlockBody {
                         +IrDelegatingConstructorCallImpl(startOffset, endOffset, kFunctionImplConstructorDescriptor).apply {
-                            val name = IrConstImpl<String>(startOffset, endOffset, context.builtIns.stringType,
+                            val name = IrConstImpl(startOffset, endOffset, context.builtIns.stringType,
                                     IrConstKind.String, functionDescriptor.name.asString())
                             putValueArgument(0, name)
-                            val fqName = IrConstImpl<String>(startOffset, endOffset, context.builtIns.stringType, IrConstKind.String,
+                            val fqName = IrConstImpl(startOffset, endOffset, context.builtIns.stringType, IrConstKind.String,
                                     functionDescriptor.fullName)
                             putValueArgument(1, fqName)
                             val bound = IrConstImpl.boolean(startOffset, endOffset, context.builtIns.booleanType,
                                     boundFunctionParameters.isNotEmpty())
                             putValueArgument(2, bound)
                             val needReceiver = boundFunctionParameters.singleOrNull() is ReceiverParameterDescriptor
-                            val receiver = if (needReceiver) irGet(constructorParameters.single()) else irNull()
+                            val receiver = if (needReceiver) irGet(valueParameters.single().symbol) else irNull()
                             putValueArgument(3, receiver)
                         }
-                        +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClassDescriptor)
+                        +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol)
                         // Save all arguments to fields.
                         boundFunctionParameters.forEachIndexed { index, parameter ->
-                            +irSetField(irThis(), argumentToPropertiesMap[parameter]!!, irGet(constructorParameters[index]))
+                            +irSetField(irGet(functionReferenceThis), argumentToPropertiesMap[parameter]!!, irGet(valueParameters[index].symbol))
                         }
                     }
                 }
@@ -288,25 +290,27 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
                 val startOffset = functionReference.startOffset
                 val endOffset = functionReference.endOffset
                 val ourDescriptor = this.descriptor
-                val irBuilder = context.createIrBuilder(this.descriptor, startOffset, endOffset)
                 return IrFunctionImpl(
                         startOffset = startOffset,
-                        endOffset = endOffset,
-                        origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        descriptor = this.descriptor).apply {
+                        endOffset   = endOffset,
+                        origin      = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+                        descriptor  = this.descriptor).apply {
+
+                    val function = this
+                    val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)
 
                     createParameterDeclarations()
 
                     body = irBuilder.irBlockBody(startOffset, endOffset) {
                         +irReturn(
-                                irCall(functionReference.descriptor).apply {
+                                irCall(functionReference.symbol).apply {
                                     var unboundIndex = 0
                                     val unboundArgsSet = unboundFunctionParameters.toSet()
                                     functionParameters.forEach {
                                         val argument = if (unboundArgsSet.contains(it))
-                                            irGet(ourDescriptor.valueParameters[unboundIndex++])
+                                            irGet(valueParameters[unboundIndex++].symbol)
                                         else
-                                            irGet(irThis(), argumentToPropertiesMap[it]!!)
+                                            irGetField(irGet(functionReferenceThis), argumentToPropertiesMap[it]!!)
                                         when (it) {
                                             functionDescriptor.dispatchReceiverParameter -> dispatchReceiver = argument
                                             functionDescriptor.extensionReceiverParameter -> extensionReceiver = argument
@@ -322,7 +326,7 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
             }
         }
 
-        private fun buildPropertyWithBackingField(name: Name, type: KotlinType, isMutable: Boolean): PropertyDescriptor {
+        private fun buildPropertyWithBackingField(name: Name, type: KotlinType, isMutable: Boolean): IrFieldSymbol {
             val propertyBuilder = context.createPropertyWithBackingFieldBuilder(
                     startOffset = functionReference.startOffset,
                     endOffset   = functionReference.endOffset,
@@ -334,8 +338,8 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
                 initialize()
             }
 
-            functionReferenceMembers.add(propertyBuilder.ir)
-            return propertyBuilder.descriptor
+            functionReferenceClass.declarations.add(propertyBuilder.ir)
+            return propertyBuilder.ir.backingField!!.symbol
         }
 
         private object DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL :
