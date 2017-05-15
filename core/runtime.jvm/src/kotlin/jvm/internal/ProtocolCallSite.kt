@@ -63,7 +63,7 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
 
     private fun resolveAccessibleMethod(target: Class<*>): Method {
         val method = resolveMethod(target)!!
-        if (method.isAccessible) {
+        if (isAccessible(method)) {
             return method
         }
 
@@ -72,7 +72,7 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
 
     private fun findAccessor(target: Class<*>, method: Method): Method? {
         for (candidate in target.methods) {
-            if (candidate.name != method.name || candidate.parameters != method.parameters || !candidate.isAccessible) {
+            if (candidate.name != method.name || candidate.parameters != method.parameters || !isAccessible(candidate)) {
                 continue
             }
 
@@ -146,6 +146,15 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
         }
 
         return -1
+    }
+
+    private fun isAccessible(method: Method): Boolean {
+        try {
+            lookup.unreflect(method)
+            return true
+        } catch (t: Throwable) { /* unavaliable */ }
+
+        return false
     }
 
     private fun IntArray.greater(other: IntArray): Boolean {

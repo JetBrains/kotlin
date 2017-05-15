@@ -34,7 +34,6 @@ import java.lang.invoke.MethodType
 import java.lang.reflect.Method
 
 abstract class ProtocolGenerator(protected val codegen: ExpressionCodegen, protected val cacheType: ProtocolsBackend.CacheType, protected val cacheSize: Int = 20)  {
-    private var last = 0
 
     companion object {
         @JvmStatic
@@ -42,6 +41,8 @@ abstract class ProtocolGenerator(protected val codegen: ExpressionCodegen, prote
             ProtocolsBackend.BackendType.REFLECTION -> ReflectionProtocolGenerator(codegen, backend.cacheType, backend.cacheSize)
             ProtocolsBackend.BackendType.INDY -> IndyProtocolGenerator(codegen, backend.cacheType, backend.cacheSize)
         }
+
+        private var last = 0
     }
 
     fun putInvokerAndGenerateIfNeeded(method: CallableMethod, call: ResolvedCall<*>) {
