@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,25 @@
 package org.jetbrains.kotlin
 
 import com.intellij.openapi.util.io.FileUtil
+import junit.framework.TestCase
 import org.junit.After
 import org.junit.Before
 import java.io.File
 import kotlin.properties.Delegates
 
-abstract class TestWithWorkingDir {
+abstract class TestWithWorkingDir : TestCase() {
     protected var workingDir: File by Delegates.notNull()
         private set
 
     @Before
-    open fun setUp() {
-        workingDir = FileUtil.createTempDirectory(this::class.java.simpleName, null)
+    public override fun setUp() {
+        super.setUp()
+        workingDir = FileUtil.createTempDirectory(this::class.java.simpleName, null, /* deleteOnExit = */ true)
     }
 
     @After
-    open fun tearDown() {
+    public override fun tearDown() {
         workingDir.deleteRecursively()
+        super.tearDown()
     }
 }
