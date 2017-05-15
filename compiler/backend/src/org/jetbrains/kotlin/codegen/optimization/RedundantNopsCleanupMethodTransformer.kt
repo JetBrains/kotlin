@@ -16,25 +16,29 @@
 
 package org.jetbrains.kotlin.codegen.optimization
 
+import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.findNextOrNull
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.LineNumberNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import java.util.*
 
 class RedundantNopsCleanupMethodTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        // NOP instruction is required, iff one of the following conditions is true:
-        // (a) it is a sole bytecode instruction in a try-catch block (TCB)
-        // (b) it is a sole bytecode instruction is a source code line
+        LabelNormalizationMethodTransformer().transform(internalClassName, methodNode)
 
         val requiredNops = HashSet<AbstractInsnNode>()
 
-        recordNopsRequiredForSourceCodeLines(methodNode.instructions.first, requiredNops)
+        // NOP instruction is required, if it is a sole bytecode instruction in a try-catch block (TCB)
         recordNopsRequiredForTryCatchBlocks(methodNode, requiredNops)
+
+        // NOP instruction is required, if it is a sole bytecode instruction in a debugger stepping interval
+        recordNopsRequiredForDebugger(methodNode, requiredNops)
 
         var current: AbstractInsnNode? = methodNode.instructions.first
         while (current != null) {
@@ -49,17 +53,42 @@ class RedundantNopsCleanupMethodTransformer : MethodTransformer() {
         }
     }
 
-    private fun recordNopsRequiredForSourceCodeLines(first: AbstractInsnNode, requiredNops: MutableSet<AbstractInsnNode>) {
-        var current: AbstractInsnNode? = first
-        while (current != null) {
-            if (current is LineNumberNode) {
-                val nextLineNumberNode = current.getNextLineNumberNode()
-                requiredNops.addIfNotNull(getRequiredNopInRange(current, nextLineNumberNode))
-                current = nextLineNumberNode
+    private fun recordNopsRequiredForDebugger(methodNode: MethodNode, requiredNops: MutableSet<AbstractInsnNode>) {
+        // We two subsets of labels that are "special" for the debugger:
+        //  1) Labels for line numbers.
+        //  2) Labels for observable local variables lifetimes.
+        //     NB this includes synthetic variables denoting inlined function bodies and arguments
+        //     (see JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION, JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT).
+        //
+        // If we enumerate labels in a given subset in order of occurrence in the method code:
+        //      L[0], L[1], ..., L[n-1], L[n]
+        // then for each k, 1 <= k <= n-1:
+        // an instruction interval I[k] = [L[k]; L[k+1]) should contain at least one bytecode instruction (which can be a NOP).
+
+        for (insn in methodNode.instructions) {
+            if (insn is LineNumberNode) {
+                val nextLineNumber = insn.findNextOrNull { it is LineNumberNode && it.line != insn.line }
+                requiredNops.addIfNotNull(getRequiredNopInRange(insn, nextLineNumber))
             }
-            else {
-                current = current.next
+        }
+
+        val localVariableLabels = run {
+            val labels = hashSetOf<LabelNode>().apply {
+                for (localVariable in methodNode.localVariables) {
+                    add(localVariable.start)
+                    add(localVariable.end)
+                }
             }
+
+            methodNode.instructions.toArray().filter { labels.contains(it) }
+        }
+
+
+        for (i in 0 .. localVariableLabels.size - 2) {
+            val begin = localVariableLabels[i]
+            val end = localVariableLabels[i + 1]
+            if (InsnSequence(begin, end).any { it in requiredNops }) continue
+            requiredNops.addIfNotNull(getRequiredNopInRange(begin, end))
         }
     }
 
@@ -73,17 +102,6 @@ class RedundantNopsCleanupMethodTransformer : MethodTransformer() {
     }
 }
 
-
-internal fun LineNumberNode.getNextLineNumberNode(): LineNumberNode? {
-    var current: AbstractInsnNode? = this
-    while (current != null) {
-        if (current is LineNumberNode && current.line != this.line) {
-            return current
-        }
-        current = current.next
-    }
-    return null
-}
 
 internal fun getRequiredNopInRange(firstInclusive: AbstractInsnNode, lastExclusive: AbstractInsnNode?): AbstractInsnNode? {
     var lastNop: AbstractInsnNode? = null

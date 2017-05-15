@@ -911,6 +911,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlineIfFalse.kt")
+        public void testInlineIfFalse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constantConditions/inlineIfFalse.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt3098.kt")
         public void testKt3098() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constantConditions/kt3098.kt");

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.codegen.optimization.common.isLoadOperation
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.removeNodeGetNext
-import org.jetbrains.kotlin.codegen.optimization.replaceNodeGetNext
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -47,9 +46,9 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
                     }
                 }
 
-        private val REPLACE_WITH_NOP = Transformation { insnList.replaceNodeGetNext(it, createRemovableNopInsn()) }
-        private val REPLACE_WITH_POP1 = Transformation { insnList.replaceNodeGetNext(it, InsnNode(Opcodes.POP)) }
-        private val REPLACE_WITH_POP2 = Transformation { insnList.replaceNodeGetNext(it, InsnNode(Opcodes.POP2)) }
+        private val REPLACE_WITH_NOP = Transformation { insnList.set(it, createRemovableNopInsn()) }
+        private val REPLACE_WITH_POP1 = Transformation { insnList.set(it, InsnNode(Opcodes.POP)) }
+        private val REPLACE_WITH_POP2 = Transformation { insnList.set(it, InsnNode(Opcodes.POP2)) }
         private val INSERT_POP1_AFTER = Transformation { insnList.insert(it, InsnNode(Opcodes.POP)) }
         private val INSERT_POP2_AFTER = Transformation { insnList.insert(it, InsnNode(Opcodes.POP2)) }
 

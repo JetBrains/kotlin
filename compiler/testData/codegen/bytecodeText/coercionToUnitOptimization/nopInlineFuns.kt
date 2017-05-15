@@ -23,4 +23,4 @@ fun simpleFunVoid(f: () -> Unit): Unit {
     return f()
 }
 
-// 4 NOP
+// 5 NOP
