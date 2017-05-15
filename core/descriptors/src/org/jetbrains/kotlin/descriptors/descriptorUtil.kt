@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
 fun ModuleDescriptor.resolveClassByFqName(fqName: FqName, lookupLocation: LookupLocation): ClassDescriptor? {
@@ -37,3 +38,6 @@ fun ModuleDescriptor.findContinuationClassDescriptorOrNull(lookupLocation: Looku
 
 fun ModuleDescriptor.findContinuationClassDescriptor(lookupLocation: LookupLocation) =
         findContinuationClassDescriptorOrNull(lookupLocation).sure { "Continuation interface is not found" }
+
+fun FunctionDescriptor.isEffectivelyOpen() =
+        modality == Modality.OPEN && containingDeclaration.safeAs<ClassDescriptor>()?.modality == Modality.OPEN

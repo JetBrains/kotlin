@@ -201,6 +201,46 @@ public class FunctionCodegen {
             // Native methods are only defined in facades and do not need package part implementations
             return;
         }
+
+        boolean isOpenSuspendInClass =
+                functionDescriptor.isSuspend() && DescriptorUtilKt.isEffectivelyOpen(functionDescriptor) &&
+                !isInterface(functionDescriptor.getContainingDeclaration()) &&
+                origin.getOriginKind() != JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL;
+
+        if (isOpenSuspendInClass) {
+            MethodVisitor mv =
+                    v.newMethod(origin,
+                                flags,
+                                asmMethod.getName(),
+                                asmMethod.getDescriptor(),
+                                jvmSignature.getGenericsSignature(),
+                                getThrownExceptions(functionDescriptor, typeMapper)
+                    );
+
+            mv.visitCode();
+            mv.visitVarInsn(Opcodes.ALOAD, 0);
+            int index = 1;
+            for (Type type : asmMethod.getArgumentTypes()) {
+                mv.visitVarInsn(type.getOpcode(Opcodes.ILOAD), index);
+                index += type.getSize();
+            }
+
+            asmMethod = CoroutineCodegenUtilKt.getImplForOpenMethod(asmMethod, v.getThisName());
+
+            mv.visitMethodInsn(
+                    Opcodes.INVOKESTATIC,
+                    v.getThisName(), asmMethod.getName(), asmMethod.getDescriptor(),
+                    false
+            );
+
+            mv.visitInsn(Opcodes.ARETURN);
+            mv.visitEnd();
+
+            flags |= Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC;
+            flags &= ~getVisibilityAccessFlag(functionDescriptor);
+            flags |= AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
+        }
+
         MethodVisitor mv =
                 strategy.wrapMethodVisitor(
                         v.newMethod(origin,

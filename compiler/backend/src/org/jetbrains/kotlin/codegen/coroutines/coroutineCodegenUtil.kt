@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 // These classes do not actually exist at runtime
@@ -300,3 +301,6 @@ fun InstructionAdapter.invokeDoResumeWithUnit(thisName: String) {
             false
     )
 }
+
+fun Method.getImplForOpenMethod(ownerInternalName: String) =
+        Method("$name\$suspendImpl", returnType, arrayOf(Type.getObjectType(ownerInternalName)) + argumentTypes)

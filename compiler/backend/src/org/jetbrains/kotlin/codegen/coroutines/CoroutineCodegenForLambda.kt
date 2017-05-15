@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -400,14 +401,28 @@ class CoroutineCodegenForNamedFunction private constructor(
                             ).put(captureThisType, codegen.v)
                         }
 
-                        val callableMethod = typeMapper.mapToCallableMethod(suspendFunctionJvmView, false)
+                        val isInterfaceMethod = DescriptorUtils.isInterface(suspendFunctionJvmView.containingDeclaration)
+                        val callableMethod =
+                                typeMapper.mapToCallableMethod(
+                                        suspendFunctionJvmView,
+                                        // Obtain default impls method for interfaces
+                                        isInterfaceMethod
+                                )
 
                         for (argumentType in callableMethod.getAsmMethod().argumentTypes.dropLast(1)) {
                             AsmUtil.pushDefaultValueOnStack(argumentType, codegen.v)
                         }
 
                         codegen.v.load(0, AsmTypes.OBJECT_TYPE)
-                        callableMethod.genInvokeInstruction(codegen.v)
+
+                        if (suspendFunctionJvmView.isEffectivelyOpen() && !isInterfaceMethod && captureThisType != null) {
+                            val owner = captureThisType.internalName
+                            val impl = callableMethod.getAsmMethod().getImplForOpenMethod(owner)
+                            codegen.v.invokestatic(owner, impl.name, impl.descriptor, false)
+                        }
+                        else {
+                            callableMethod.genInvokeInstruction(codegen.v)
+                        }
 
                         codegen.v.visitInsn(Opcodes.ARETURN)
                     }
