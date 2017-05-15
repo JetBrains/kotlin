@@ -99,6 +99,11 @@ fun parameterOffsets(isStatic: Boolean, valueParameters: List<JvmMethodParameter
     }
 }
 
+fun MethodNode.remove(instructions: Sequence<AbstractInsnNode>) =
+        instructions.forEach {
+            this@remove.instructions.remove(it)
+        }
+
 fun MethodNode.remove(instructions: Collection<AbstractInsnNode>) {
     instructions.forEach {
         this@remove.instructions.remove(it)
