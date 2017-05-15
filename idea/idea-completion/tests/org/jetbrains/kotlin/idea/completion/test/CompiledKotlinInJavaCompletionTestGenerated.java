@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompiledKotlinInJavaCompletionTestGenerated extends AbstractCompiledKotlinInJavaCompletionTest {
     public void testAllFilesPresentInInjava() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/injava"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/injava"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("AnnotationParameter.java")

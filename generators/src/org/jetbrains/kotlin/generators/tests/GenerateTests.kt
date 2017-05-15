@@ -1026,11 +1026,15 @@ fun main(args: Array<String>) {
 
     testGroup("idea/idea-completion/tests", "idea/idea-completion/testData") {
         testClass<AbstractCompiledKotlinInJavaCompletionTest> {
-            model("injava", extension = "java")
+            model("injava", extension = "java", recursive = false)
         }
 
         testClass<AbstractKotlinSourceInJavaCompletionTest> {
-            model("injava", extension = "java")
+            model("injava", extension = "java", recursive = false)
+        }
+
+        testClass<AbstractKotlinStdLibInJavaCompletionTest> {
+            model("injava/stdlib", extension = "java", recursive = false)
         }
 
         testClass<AbstractBasicCompletionWeigherTest> {
