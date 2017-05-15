@@ -9,7 +9,7 @@ inline fun <reified T> inlineFun(lambda: () -> String = { { T::class.java.simple
 }
 
 // FILE: 2.kt
-
+//NO_CHECK_LAMBDA_INLINING
 import test.*
 
 class OK

@@ -75,6 +75,12 @@ class MethodInliner(
     ): InlineResult {
         //analyze body
         var transformedNode = markPlacesForInlineAndRemoveInlinable(node, labelOwner, finallyDeepShift)
+        if (inliningContext.isInliningLambda &&
+            inliningContext.lambdaInfo is DefaultLambda &&
+            inliningContext.lambdaInfo.needReification) {
+            //TODO maybe move reification in one place
+            inliningContext.root.inlineMethodReificator.reifyInstructions(transformedNode)
+        }
 
         //substitute returns with "goto end" instruction to keep non local returns in lambdas
         val end = Label()
@@ -203,7 +209,7 @@ class MethodInliner(
                     setLambdaInlining(true)
                     val lambdaSMAP = info.node.classSMAP
 
-                    val mapper = if (inliningContext.classRegeneration && !inliningContext.isInliningLambda)
+                    val sourceMapper = if (inliningContext.classRegeneration && !inliningContext.isInliningLambda)
                         NestedSourceMapper(sourceMapper, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
                     else
                         InlineLambdaSourceMapper(sourceMapper.parent!!, info.node)
@@ -211,12 +217,12 @@ class MethodInliner(
                             info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
                             newCapturedRemapper, true /*cause all calls in same module as lambda*/,
                             "Lambda inlining " + info.lambdaClassType.internalName,
-                            mapper, inlineCallSiteInfo, null
+                            sourceMapper, inlineCallSiteInfo, null
                     )
 
-                    val remapper = LocalVarRemapper(lambdaParameters, valueParamShift)
+                    val varRemapper = LocalVarRemapper(lambdaParameters, valueParamShift)
                     //TODO add skipped this and receiver
-                    val lambdaResult = inliner.doInline(this.mv, remapper, true, info, invokeCall.finallyDepthShift)
+                    val lambdaResult = inliner.doInline(this.mv, varRemapper, true, info, invokeCall.finallyDepthShift)
                     result.mergeWithNotChangeInfo(lambdaResult)
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
 
@@ -225,7 +231,7 @@ class MethodInliner(
                     StackValue.onStack(info.invokeMethod.returnType).put(bridge.returnType, this)
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
-                    mapper.endMapping()
+                    sourceMapper.endMapping()
                     inlineOnlySmapSkipper?.markCallSiteLineNumber(remappingMethodAdapter)
                 }
                 else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
@@ -268,8 +274,11 @@ class MethodInliner(
                         super.visitMethodInsn(opcode, owner, name, desc, itf)
                     }
                 }
-                else if (!inliningContext.isInliningLambda && ReifiedTypeInliner.isNeedClassReificationMarker(MethodInsnNode(opcode, owner, name, desc, false))) {
-                    //we shouldn't process here content of inlining lambda it should be reified at external level
+                else if ((!inliningContext.isInliningLambda ||
+                          inliningContext.lambdaInfo is DefaultLambda &&
+                          inliningContext.lambdaInfo.needReification) &&
+                         ReifiedTypeInliner.isNeedClassReificationMarker(MethodInsnNode(opcode, owner, name, desc, false))) {
+                    //we shouldn't process here content of inlining lambda it should be reified at external level except default lambdas
                 }
                 else {
                     super.visitMethodInsn(opcode, owner, name, desc, itf)

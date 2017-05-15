@@ -183,7 +183,7 @@ class AnonymousObjectTransformer(
             capturedBuilder: ParametersBuilder,
             isConstructor: Boolean
     ): InlineResult {
-        val typeParametersToReify = inliningContext.root.reifiedTypeInliner.reifyInstructions(sourceNode)
+        val typeParametersToReify = inliningContext.root.inlineMethodReificator.reifyInstructions(sourceNode)
         val parameters = if (isConstructor) capturedBuilder.buildParameters() else getMethodParametersWithCaptured(capturedBuilder, sourceNode)
 
         val remapper = RegeneratedLambdaFieldRemapper(

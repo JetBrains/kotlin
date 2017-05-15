@@ -2184,6 +2184,18 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/simple.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("transitiveChain.kt")
+            public void testTransitiveChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/transitiveChain.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("transitiveChainStatic.kt")
+            public void testTransitiveChainStatic() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda/transitiveChainStatic.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/boxInline/reified/isCheck")

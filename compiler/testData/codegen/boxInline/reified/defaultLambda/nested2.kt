@@ -14,8 +14,8 @@ inline fun <reified T> inlineFun(p: String, crossinline lambda: () -> String = {
 
 import test.*
 
-class OK
+class K
 
 fun box(): String {
-    return inlineFun<OK>()
+    return inlineFun<K>("O")
 }

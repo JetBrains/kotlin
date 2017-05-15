@@ -9,11 +9,11 @@ inline fun <reified T> inlineFun(p: String, lambda: () -> String = { { p + T::cl
 }
 
 // FILE: 2.kt
-
+//NO_CHECK_LAMBDA_INLINING
 import test.*
 
 class K
 
 fun box(): String {
-    return inlineFun<OK>("O")
+    return inlineFun<K>("O")
 }

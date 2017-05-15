@@ -25,7 +25,7 @@ class RootInliningContext(
         nameGenerator: NameGenerator,
         val callElement: KtElement,
         override val callSiteInfo: InlineCallSiteInfo,
-        val reifiedTypeInliner: ReifiedTypeInliner,
+        val inlineMethodReificator: ReifiedTypeInliner,
         typeParameterMappings: TypeParameterMappings
 ) : InliningContext(
         null, expressionMap, state, nameGenerator, TypeRemapper.createRoot(typeParameterMappings), null, false
