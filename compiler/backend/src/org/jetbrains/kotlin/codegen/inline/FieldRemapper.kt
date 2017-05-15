@@ -14,122 +14,91 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.inline;
+package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-import java.util.Collection;
-import java.util.List;
+open class FieldRemapper(val lambdaInternalName: String?, @JvmField val parent: FieldRemapper?, private val params: Parameters) {
 
-public class FieldRemapper {
-    protected FieldRemapper parent;
-    private final String lambdaInternalName;
-    private final Parameters params;
-
-    public FieldRemapper(@Nullable String lambdaInternalName, @Nullable FieldRemapper parent, @NotNull Parameters methodParams) {
-        this.lambdaInternalName = lambdaInternalName;
-        this.parent = parent;
-        this.params = methodParams;
-    }
-
-    protected boolean canProcess(@NotNull String fieldOwner, @NotNull String fieldName, boolean isFolding) {
-        return fieldOwner.equals(getLambdaInternalName()) &&
+    protected open fun canProcess(fieldOwner: String, fieldName: String, isFolding: Boolean): Boolean {
+        return fieldOwner == lambdaInternalName &&
                //don't process general field of anonymous objects
-               InlineCodegenUtil.isCapturedFieldName(fieldName);
+               InlineCodegenUtil.isCapturedFieldName(fieldName)
     }
 
-    @Nullable
-    public AbstractInsnNode foldFieldAccessChainIfNeeded(@NotNull List<AbstractInsnNode> capturedFieldAccess, @NotNull MethodNode node) {
-        if (capturedFieldAccess.size() == 1) {
+    fun foldFieldAccessChainIfNeeded(capturedFieldAccess: List<AbstractInsnNode>, node: MethodNode): AbstractInsnNode? {
+        if (capturedFieldAccess.size == 1) {
             //just aload
-            return null;
+            return null
         }
 
-        return foldFieldAccessChainIfNeeded(capturedFieldAccess, 1, node);
+        return foldFieldAccessChainIfNeeded(capturedFieldAccess, 1, node)
     }
 
     //TODO: seems that this method is redundant but it added from safety purposes before new milestone
-    public boolean processNonAload0FieldAccessChains(boolean isInlinedLambda) {
-        return false;
+    open fun processNonAload0FieldAccessChains(isInlinedLambda: Boolean): Boolean {
+        return false
     }
 
-    @Nullable
-    private AbstractInsnNode foldFieldAccessChainIfNeeded(
-            @NotNull List<AbstractInsnNode> capturedFieldAccess,
-            int currentInstruction,
-            @NotNull MethodNode node
-    ) {
-        boolean checkParent = !isRoot() && currentInstruction < capturedFieldAccess.size() - 1;
+    private fun foldFieldAccessChainIfNeeded(
+            capturedFieldAccess: List<AbstractInsnNode>,
+            currentInstruction: Int,
+            node: MethodNode
+    ): AbstractInsnNode? {
+        val checkParent = !isRoot && currentInstruction < capturedFieldAccess.size - 1
         if (checkParent) {
-            AbstractInsnNode transformed = parent.foldFieldAccessChainIfNeeded(capturedFieldAccess, currentInstruction + 1, node);
+            val transformed = parent!!.foldFieldAccessChainIfNeeded(capturedFieldAccess, currentInstruction + 1, node)
             if (transformed != null) {
-                return transformed;
+                return transformed
             }
         }
 
-        FieldInsnNode insnNode = (FieldInsnNode) capturedFieldAccess.get(currentInstruction);
+        val insnNode = capturedFieldAccess[currentInstruction] as FieldInsnNode
         if (canProcess(insnNode.owner, insnNode.name, true)) {
-            insnNode.name = "$$$" + insnNode.name;
-            insnNode.setOpcode(Opcodes.GETSTATIC);
+            insnNode.name = "$$$" + insnNode.name
+            insnNode.opcode = Opcodes.GETSTATIC
 
-            AbstractInsnNode next = capturedFieldAccess.get(0);
-            while (next != insnNode) {
-                AbstractInsnNode toDelete = next;
-                next = next.getNext();
-                node.instructions.remove(toDelete);
+            var next = capturedFieldAccess[0]
+            while (next !== insnNode) {
+                val toDelete = next
+                next = next.next
+                node.instructions.remove(toDelete)
             }
 
-            return capturedFieldAccess.get(capturedFieldAccess.size() - 1);
+            return capturedFieldAccess[capturedFieldAccess.size - 1]
         }
 
-        return null;
+        return null
     }
 
-    @Nullable
-    public CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode) {
-        return findField(fieldInsnNode, params.getCaptured());
+    fun findField(fieldInsnNode: FieldInsnNode): CapturedParamInfo? {
+        return findField(fieldInsnNode, params.captured)
     }
 
-    @Nullable
-    protected CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode, @NotNull Collection<CapturedParamInfo> captured) {
-        for (CapturedParamInfo valueDescriptor : captured) {
-            if (valueDescriptor.getOriginalFieldName().equals(fieldInsnNode.name) &&
-                valueDescriptor.getContainingLambdaName().equals(fieldInsnNode.owner)) {
-                return valueDescriptor;
+    open fun findField(fieldInsnNode: FieldInsnNode, captured: Collection<CapturedParamInfo>): CapturedParamInfo? {
+        for (valueDescriptor in captured) {
+            if (valueDescriptor.originalFieldName == fieldInsnNode.name && valueDescriptor.containingLambdaName == fieldInsnNode.owner) {
+                return valueDescriptor
             }
         }
-        return null;
+        return null
     }
 
-    @NotNull
-    public FieldRemapper getParent() {
-        return parent;
+    open fun getNewLambdaInternalName(): String {
+        return lambdaInternalName!!
     }
 
-    public String getLambdaInternalName() {
-        return lambdaInternalName;
+    val isRoot: Boolean
+        get() = parent == null
+
+    open fun getFieldForInline(node: FieldInsnNode, prefix: StackValue?): StackValue? {
+        return MethodInliner.findCapturedField(node, this).remapValue
     }
 
-    public String getNewLambdaInternalName() {
-        return lambdaInternalName;
-    }
-
-    public boolean isRoot() {
-        return parent == null;
-    }
-
-    @Nullable
-    public StackValue getFieldForInline(@NotNull FieldInsnNode node, @Nullable StackValue prefix) {
-        return MethodInliner.findCapturedField(node, this).getRemapValue();
-    }
-
-    public boolean isInsideInliningLambda() {
-        return !isRoot() && parent.isInsideInliningLambda();
-    }
+    open val isInsideInliningLambda: Boolean
+        get() = !isRoot && parent!!.isInsideInliningLambda
 }

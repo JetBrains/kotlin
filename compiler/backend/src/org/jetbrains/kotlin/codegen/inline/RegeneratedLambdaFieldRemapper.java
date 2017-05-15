@@ -60,7 +60,7 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
 
     @Nullable
     @Override
-    public CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode, @NotNull Collection<CapturedParamInfo> captured) {
+    public CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode, @NotNull Collection<? extends CapturedParamInfo> captured) {
         boolean searchInParent = !canProcess(fieldInsnNode.owner, fieldInsnNode.name, false);
         if (searchInParent) {
             return parent.findField(fieldInsnNode);

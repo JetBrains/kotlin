@@ -391,7 +391,7 @@ class AnonymousObjectTransformer(
         //TODO: some of such parameters could be skipped - we should perform additional analysis
         val capturedLambdasToInline = HashMap<String, LambdaInfo>() //captured var of inlined parameter
         val allRecapturedParameters = ArrayList<CapturedParamDesc>()
-        val addCapturedNotAddOuter = parentFieldRemapper.isRoot || parentFieldRemapper is InlinedLambdaRemapper && parentFieldRemapper.getParent().isRoot
+        val addCapturedNotAddOuter = parentFieldRemapper.isRoot || parentFieldRemapper is InlinedLambdaRemapper && parentFieldRemapper.parent!!.isRoot
         val alreadyAdded = HashMap<String, CapturedParamInfo>()
         for (info in capturedLambdas) {
             if (addCapturedNotAddOuter) {
@@ -426,8 +426,8 @@ class AnonymousObjectTransformer(
 
         if (parentFieldRemapper is InlinedLambdaRemapper && !capturedLambdas.isEmpty() && !addCapturedNotAddOuter) {
             //lambda with non InlinedLambdaRemapper already have outer
-            val parent = parentFieldRemapper.getParent()
-            assert(parent is RegeneratedLambdaFieldRemapper)
+            val parent = parentFieldRemapper.parent as? RegeneratedLambdaFieldRemapper ?:
+                         throw AssertionError("Expecting RegeneratedLambdaFieldRemapper, but ${parentFieldRemapper.parent}")
             val ownerType = Type.getObjectType(parent.lambdaInternalName)
             val desc = CapturedParamDesc(ownerType, InlineCodegenUtil.THIS, ownerType)
             val recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, InlineCodegenUtil.`THIS$0`/*outer lambda/object*/, false)
