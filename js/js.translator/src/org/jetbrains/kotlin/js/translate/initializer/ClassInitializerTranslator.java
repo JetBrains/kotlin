@@ -197,6 +197,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
             if (classDeclaration instanceof KtEnumEntry) {
                 JsExpression expression = CallTranslator.translate(context(), superCall, null);
+                expression.setSource(classDeclaration);
 
                 JsExpression fixedInvocation = AstUtilsKt.toInvocationWith(
                         expression, getAdditionalArgumentsForEnumConstructor(), 0, new JsThisRef());

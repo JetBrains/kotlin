@@ -120,6 +120,12 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         doTest(fileName);
     }
 
+    @TestMetadata("enumObject.kt")
+    public void testEnumObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/enumObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("expressionAsFunctionBody.kt")
     public void testExpressionAsFunctionBody() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/expressionAsFunctionBody.kt");
