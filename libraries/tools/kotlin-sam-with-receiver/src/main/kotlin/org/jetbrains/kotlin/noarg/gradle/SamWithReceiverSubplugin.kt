@@ -80,6 +80,7 @@ class SamWithReceiverKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompi
             kotlinCompile: AbstractCompile,
             javaCompile: AbstractCompile,
             variantData: Any?,
+            androidProjectHandler: Any?,
             javaSourceSet: SourceSet?
     ): List<SubpluginOption> {
         if (!SamWithReceiverGradleSubplugin.isEnabled(project)) return emptyList()

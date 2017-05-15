@@ -47,7 +47,8 @@ internal fun Project.initKapt(
         variantName: String,
         kotlinOptions: KotlinJvmOptionsImpl?,
         subpluginEnvironment: SubpluginEnvironment,
-        tasksProvider: KotlinTasksProvider
+        tasksProvider: KotlinTasksProvider,
+        androidProjectHandler: AbstractAndroidProjectHandler<*>?
 ): KotlinCompile? {
     val kaptExtension = extensions.getByType(KaptExtension::class.java)
     val kotlinAfterJavaTask: KotlinCompile?
@@ -72,7 +73,7 @@ internal fun Project.initKapt(
 
         kotlinAfterJavaTask.source(kaptManager.generatedKotlinSourceDir)
         kotlinAfterJavaTask.source(kaptManager.aptOutputDir)
-        subpluginEnvironment.addSubpluginOptions(this, kotlinAfterJavaTask, javaTask, null, null)
+        subpluginEnvironment.addSubpluginOptions(this, kotlinAfterJavaTask, javaTask, null, androidProjectHandler, null)
 
         javaTask.doLast {
             moveGeneratedJavaFilesToCorrespondingDirectories(kaptManager.aptOutputDir)

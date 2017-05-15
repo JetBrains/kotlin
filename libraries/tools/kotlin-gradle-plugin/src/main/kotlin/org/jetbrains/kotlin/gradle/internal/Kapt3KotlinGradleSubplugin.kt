@@ -125,6 +125,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             kotlinCompile: KotlinCompile,
             javaCompile: AbstractCompile,
             variantData: Any?,
+            androidProjectHandler: Any?,
             javaSourceSet: SourceSet?
     ): List<SubpluginOption> {
         assert((variantData != null) xor (javaSourceSet != null))
