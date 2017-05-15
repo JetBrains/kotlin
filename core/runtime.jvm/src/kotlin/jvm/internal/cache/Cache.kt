@@ -16,9 +16,11 @@
 
 package kotlin.jvm.internal.cache
 
-enum class ProtocolCache {
+enum class CacheType {
     ARRAY,
-    LRU
+    LRU,
+    SYNCHRONIZED_LIST,
+    RW_LIST
 }
 
 interface Cache<in Key, Value> {
@@ -26,9 +28,11 @@ interface Cache<in Key, Value> {
     operator fun set(key: Key, value: Value)
 
     companion object {
-        inline fun <reified Key, reified Value> makeCache(type: Int, size: Int): Cache<Key, Value> = when (ProtocolCache.values()[type]) {
-            ProtocolCache.ARRAY -> SmallArrayCache(size)
-            ProtocolCache.LRU -> LRUCache(size)
+        inline fun <reified Key, reified Value> makeCache(type: Int, size: Int): Cache<Key, Value> = when (CacheType.values()[type]) {
+            CacheType.ARRAY -> SmallArrayCache(size)
+            CacheType.LRU -> LRUCache(size)
+            CacheType.SYNCHRONIZED_LIST -> SynchronizedListCache()
+            CacheType.RW_LIST -> RwListCache()
         }
     }
 }
