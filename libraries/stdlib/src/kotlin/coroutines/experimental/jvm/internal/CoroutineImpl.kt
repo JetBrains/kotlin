@@ -75,7 +75,7 @@ abstract class CoroutineImpl(
 abstract class CoroutineImplForNamedFunction(
        completion: Continuation<Any?>?
 ) : CoroutineImpl(0, completion), Continuation<Any?> {
-    companion object {
+    private companion object {
         private const val LAST_BIT_MASK = 1 shl 31
     }
 
