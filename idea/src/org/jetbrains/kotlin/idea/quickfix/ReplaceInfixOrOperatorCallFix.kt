@@ -83,9 +83,12 @@ class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixActio
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val expression = diagnostic.psiElement
-            if (expression is KtArrayAccessExpression) {
-                if (expression.arrayExpression == null) return null
-                return ReplaceInfixOrOperatorCallFix(expression)
+            when(expression) {
+                is KtArrayAccessExpression -> {
+                    if (expression.arrayExpression == null) return null
+                    return ReplaceInfixOrOperatorCallFix(expression)
+                }
+                is KtNameReferenceExpression -> return null
             }
             val parent = expression.parent
             return when (parent) {
