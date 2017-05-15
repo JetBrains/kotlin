@@ -56,9 +56,40 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
             return cached
         }
 
-        val method = resolveMethod(receiverClass)!!
+        val method = resolveAccessibleMethod(receiverClass)
         reflectCache[receiverClass] = method
         return method
+    }
+
+    private fun resolveAccessibleMethod(target: Class<*>): Method {
+        val method = resolveMethod(target)!!
+        if (method.isAccessible) {
+            return method
+        }
+
+        return findAccessor(target, method)!!
+    }
+
+    private fun findAccessor(target: Class<*>, method: Method): Method? {
+        for (candidate in target.methods) {
+            if (candidate.name != method.name || candidate.parameters != method.parameters || !candidate.isAccessible) {
+                continue
+            }
+
+            return candidate
+        }
+
+        if (target.superclass != null) {
+            val result = findAccessor(target.superclass, method)
+            if (result != null) return result
+        }
+
+        for (base in target.interfaces) {
+            val result = findAccessor(target.superclass, method)
+            if (result != null) return result
+        }
+
+        return null
     }
 
     private fun resolveMethod(target: Class<*>): Method? {
