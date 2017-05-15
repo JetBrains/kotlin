@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.SearchScope
 import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -59,6 +60,8 @@ class BinaryJavaClass(
     override val isAnnotationType get() = isSet(Opcodes.ACC_ANNOTATION)
     override val isEnum get() = isSet(Opcodes.ACC_ENUM)
     override val lightClassOriginKind: LightClassOriginKind? get() = null
+
+    override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = false
 
     override fun visitEnd() {
         methods.trimToSize()

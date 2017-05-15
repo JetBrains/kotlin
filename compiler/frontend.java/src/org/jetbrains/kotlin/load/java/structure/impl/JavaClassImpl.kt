@@ -20,6 +20,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiTypeParameter
+import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.structure.*
@@ -112,6 +113,8 @@ class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass)
 
     override val virtualFile: VirtualFile?
         get() =  psi.containingFile?.virtualFile
+
+    override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = psi.containingFile.virtualFile in scope
 
     override fun getAnnotationOwnerPsi() = psi.modifierList
 

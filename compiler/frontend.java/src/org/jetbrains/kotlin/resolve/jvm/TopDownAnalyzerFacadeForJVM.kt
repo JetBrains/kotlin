@@ -41,10 +41,8 @@ import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerFo
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.frontend.java.di.initialize
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.javac.MockKotlinClassifier
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
@@ -62,7 +60,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.javac.wrappers.trees.TreeBasedClass
+import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import java.util.*
 
 object TopDownAnalyzerFacadeForJVM {
@@ -247,8 +245,7 @@ object TopDownAnalyzerFacadeForJVM {
         lateinit var sourceCodeResolver: JavaDescriptorResolver
 
         override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
-            val resolver = if (javaClass is JavaClassImpl && javaClass.psi.containingFile.virtualFile in sourceScope
-                               || javaClass is TreeBasedClass || javaClass is MockKotlinClassifier)
+            val resolver = if (javaClass is VirtualFileBoundJavaClass && javaClass.isFromSourceCodeInScope(sourceScope))
                 sourceCodeResolver
             else
                 compiledCodeResolver

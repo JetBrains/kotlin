@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.javac
 
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.structure.*
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.javac.wrappers.trees.find
 import org.jetbrains.kotlin.javac.wrappers.trees.findInner
 import org.jetbrains.kotlin.javac.wrappers.trees.tryToResolveByFqName
 import org.jetbrains.kotlin.javac.wrappers.trees.tryToResolveInJavaLang
+import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 
 class KotlinClassifiersCache(sourceFiles: Collection<KtFile>,
                              private val javac: JavacWrapper) {
@@ -58,7 +61,7 @@ class KotlinClassifiersCache(sourceFiles: Collection<KtFile>,
 class MockKotlinClassifier(override val fqName: FqName,
                            private val classOrObject: KtClassOrObject,
                            val hasTypeParameters: Boolean,
-                           private val javac: JavacWrapper) : JavaClass {
+                           private val javac: JavacWrapper) : VirtualFileBoundJavaClass {
 
     override val isAbstract: Boolean
         get() = throw UnsupportedOperationException("Should not be called")
@@ -114,6 +117,9 @@ class MockKotlinClassifier(override val fqName: FqName,
     override val lightClassOriginKind
         get() = LightClassOriginKind.SOURCE
 
+    override val virtualFile: VirtualFile?
+        get() = null
+
     override val methods: Collection<JavaMethod>
         get() = throw UnsupportedOperationException("Should not be called")
 
@@ -131,6 +137,8 @@ class MockKotlinClassifier(override val fqName: FqName,
 
     override val isDeprecatedInJavaDoc: Boolean
         get() = throw UnsupportedOperationException("Should not be called")
+
+    override fun isFromSourceCodeInScope(scope: SearchScope) = true
 
     override fun findAnnotation(fqName: FqName) =
             throw UnsupportedOperationException("Should not be called")
