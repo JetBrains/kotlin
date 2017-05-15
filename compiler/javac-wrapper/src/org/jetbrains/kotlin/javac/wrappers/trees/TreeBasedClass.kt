@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.javac.wrappers.trees
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.SearchScope
 import com.sun.source.tree.Tree
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.code.Flags
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities.PUBLIC
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import javax.tools.JavaFileObject
@@ -33,7 +35,7 @@ import javax.tools.JavaFileObject
 class TreeBasedClass(tree: JCTree.JCClassDecl,
                      treePath: TreePath,
                      javac: JavacWrapper,
-                     val file: JavaFileObject) : TreeBasedElement<JCTree.JCClassDecl>(tree, treePath, javac), JavaClass {
+                     val file: JavaFileObject) : TreeBasedElement<JCTree.JCClassDecl>(tree, treePath, javac), VirtualFileBoundJavaClass {
 
     override val name: Name
         get() = Name.identifier(tree.simpleName.toString())
@@ -130,9 +132,11 @@ class TreeBasedClass(tree: JCTree.JCClassDecl,
     override val innerClassNames: Collection<Name>
         get() = innerClasses.keys
 
-    val virtualFile: VirtualFile? by lazy {
+    override val virtualFile: VirtualFile? by lazy {
         javac.toVirtualFile(file)
     }
+
+    override fun isFromSourceCode(scope: SearchScope): Boolean = true
 
     override fun findInnerClass(name: Name) = innerClasses[name]
 

@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.load.java.structure.impl
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 
 interface VirtualFileBoundJavaClass : JavaClass {
     val virtualFile: VirtualFile?
+    fun isFromSourceCode(scope: SearchScope): Boolean
 }

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.javac.wrappers.symbols
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.CommonClassNames
+import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
@@ -113,6 +114,8 @@ class SymbolBasedClass(element: TypeElement,
     override val virtualFile: VirtualFile? by lazy {
         file?.let { javac.toVirtualFile(it) }
     }
+
+    override fun isFromSourceCode(scope: SearchScope): Boolean = false
 
     override fun findInnerClass(name: Name) = innerClasses[name]
 
