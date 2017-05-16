@@ -29,7 +29,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.findUsages.handlers.DelegatingFindMemberUsagesHandler
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindMemberUsagesHandler
@@ -80,6 +79,10 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
 
             is KtParameter -> {
                 if (canAsk) {
+                    if (element.hasValOrVar()) {
+                        val declarationsToSearch = checkSuperMethods(element, null, "find usages of")
+                        return handlerForMultiple(element, declarationsToSearch)
+                    }
                     val function = element.ownerFunction
                     if (function != null && function.isOverridable()) {
                         val psiMethod = function.toLightMethods().singleOrNull()

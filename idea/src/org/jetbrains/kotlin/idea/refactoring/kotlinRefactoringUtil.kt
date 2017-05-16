@@ -848,7 +848,7 @@ fun checkSuperMethods(
         return overriddenElementsToDescriptor.entries.map { entry ->
             val (element, descriptor) = entry
             val description = when (element) {
-                is KtNamedFunction, is KtProperty -> formatClassDescriptor(descriptor.containingDeclaration)
+                is KtNamedFunction, is KtProperty, is KtParameter -> formatClassDescriptor(descriptor.containingDeclaration)
                 is PsiMethod -> {
                     val psiClass = element.containingClass ?: error("Invalid element: ${element.getText()}")
                     formatPsiClass(psiClass, true, false)
@@ -891,7 +891,7 @@ fun checkSuperMethods(
     val overriddenElementsToDescriptor = HashMap<PsiElement, CallableDescriptor>()
     for (overriddenDescriptor in DescriptorUtils.getAllOverriddenDescriptors(declarationDescriptor)) {
         val overriddenDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, overriddenDescriptor) ?: continue
-        if (overriddenDeclaration is KtNamedFunction || overriddenDeclaration is KtProperty || overriddenDeclaration is PsiMethod) {
+        if (overriddenDeclaration is KtNamedFunction || overriddenDeclaration is KtProperty || overriddenDeclaration is PsiMethod || overriddenDeclaration is KtParameter) {
             overriddenElementsToDescriptor[overriddenDeclaration] = overriddenDescriptor
         }
     }
