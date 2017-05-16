@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.getDefault
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -129,7 +130,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
         ) as IrFunction
 
         val copyStatements = (copyFunctionDeclaration.body as IrBlockBody).statements       // IR statements from function copy.
-        val statements     = replaceDelegatingConstructorCall(copyStatements)
+        val statements     = replaceDelegatingConstructorCall(copyStatements, irCall)
         val returnType     = copyFunctionDeclaration.descriptor.returnType!!                // Substituted return type.
         val inlineFunctionBody = IrReturnableBlockImpl(                                     // Create new IR element to replace "call".
             startOffset = copyFunctionDeclaration.startOffset,
@@ -358,19 +359,44 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
     //-------------------------------------------------------------------------//
 
-    private fun replaceDelegatingConstructorCall(statements: List<IrStatement>): List<IrStatement> {
+    private fun replaceDelegatingConstructorCall(statements: List<IrStatement>, irCall: IrCall): List<IrStatement> {
 
-        return statements.map { statement ->
-            if (statement is IrDelegatingConstructorCallImpl) generateIrCall(statement)
-            else statement
-        }
+        if (!isInlineConstructor) return statements
+
+        val delegatingCall = statements[0]
+        if (delegatingCall !is IrDelegatingConstructorCallImpl) return statements
+
+        val thisVariable = generateIrCall(delegatingCall)
+
+        val newThisGetValue = IrGetValueImpl(                                                       // Create new expression, representing access the new variable.
+            startOffset = currentScope.irElement.startOffset,
+            endOffset   = currentScope.irElement.endOffset,
+            descriptor  = thisVariable.descriptor
+        )
+
+        val classDescriptor = delegatingCall.descriptor.constructedClass
+        val oldThisGetValue = classDescriptor.thisAsReceiverParameter
+        substituteMap[oldThisGetValue] = newThisGetValue
+
+        val newStatements = statements.toMutableList()
+        newStatements[0] = thisVariable
+        newStatements += newThisGetValue
+
+        val block = IrBlockImpl(
+            startOffset = 0,
+            endOffset   = 0,
+            type        = newThisGetValue.type,
+            origin      = null,
+            statements  = newStatements
+        )
+
+        val returnThis = IrReturnImpl(0, 0, irCall.descriptor, block)
+        return listOf(returnThis)
     }
 
     //-------------------------------------------------------------------------//
 
-    fun generateIrCall(expression: IrDelegatingConstructorCallImpl): IrStatement {
-
-        if (!isInlineConstructor) return expression
+    fun generateIrCall(expression: IrDelegatingConstructorCallImpl): IrVariable {
 
         val newExpression = IrCallImpl(
             expression.startOffset,
@@ -390,16 +416,6 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
             irExpression = newExpression,
             nameHint     = newExpression.descriptor.fqNameSafe.toString() + ".this",
             isMutable    = false)
-
-        val newThis = IrGetValueImpl(                                                       // Create new expression, representing access the new variable.
-            startOffset = currentScope.irElement.startOffset,
-            endOffset   = currentScope.irElement.endOffset,
-            descriptor  = newVariable.descriptor
-        )
-
-        val classDescriptor = expression.descriptor.constructedClass
-        val oldThis = classDescriptor.thisAsReceiverParameter
-        substituteMap[oldThis] = newThis
 
         return newVariable
     }
