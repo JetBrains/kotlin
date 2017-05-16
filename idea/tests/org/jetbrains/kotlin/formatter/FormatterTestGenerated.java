@@ -1129,6 +1129,5 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhileOnNewLine.after.inv.kt");
             doTestInverted(fileName);
         }
-
     }
 }

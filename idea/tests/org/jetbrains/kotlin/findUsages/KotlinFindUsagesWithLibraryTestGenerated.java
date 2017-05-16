@@ -169,6 +169,5 @@ public class KotlinFindUsagesWithLibraryTestGenerated extends AbstractKotlinFind
         public void testAllFilesPresentIn_library() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/libraryUsages/_library"), Pattern.compile("^(.+)\\.0\\.kt$"), TargetBackend.ANY, true);
         }
-
     }
 }

@@ -451,6 +451,5 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/SettingAlignMultilineParametersInCalls.after.inv.kt");
             doNewlineTestWithInvert(fileName);
         }
-
     }
 }

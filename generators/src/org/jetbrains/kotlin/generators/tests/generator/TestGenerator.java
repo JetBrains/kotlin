@@ -161,24 +161,34 @@ public class TestGenerator {
         Collection<MethodModel> testMethods = testClassModel.getMethods();
         Collection<TestClassModel> innerTestClasses = testClassModel.getInnerTestClasses();
 
+        boolean first = true;
+
         for (Iterator<MethodModel> iterator = testMethods.iterator(); iterator.hasNext(); ) {
             MethodModel methodModel = iterator.next();
 
             if (!methodModel.shouldBeGenerated()) continue;
 
-            generateTestMethod(p, methodModel);
-            if (iterator.hasNext() || !innerTestClasses.isEmpty()) {
+            if (first) {
+                first = false;
+            }
+            else {
                 p.println();
             }
+
+            generateTestMethod(p, methodModel);
         }
 
         for (Iterator<TestClassModel> iterator = innerTestClasses.iterator(); iterator.hasNext(); ) {
             TestClassModel innerTestClass = iterator.next();
             if (!innerTestClass.isEmpty()) {
-                generateTestClass(p, innerTestClass, true);
-                if (iterator.hasNext()) {
+                if (first) {
+                    first = false;
+                }
+                else {
                     p.println();
                 }
+
+                generateTestClass(p, innerTestClass, true);
             }
         }
 

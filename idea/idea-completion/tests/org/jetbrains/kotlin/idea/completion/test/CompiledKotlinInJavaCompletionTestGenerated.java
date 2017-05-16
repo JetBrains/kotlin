@@ -209,5 +209,4 @@ public class CompiledKotlinInJavaCompletionTestGenerated extends AbstractCompile
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/injava/TraitMember.java");
         doTest(fileName);
     }
-
 }

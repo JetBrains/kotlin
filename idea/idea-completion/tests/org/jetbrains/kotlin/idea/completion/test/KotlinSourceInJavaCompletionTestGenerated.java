@@ -209,5 +209,4 @@ public class KotlinSourceInJavaCompletionTestGenerated extends AbstractKotlinSou
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/injava/TraitMember.java");
         doTest(fileName);
     }
-
 }

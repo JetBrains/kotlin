@@ -1848,7 +1848,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/hashSet.kt");
                 doTest(fileName);
             }
-
         }
     }
 
@@ -12667,7 +12666,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             public void testAllFilesPresentInOptimized() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multifileClasses/optimized"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
-
         }
     }
 
@@ -20732,7 +20730,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
                 throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
             }
-
         }
     }
 
@@ -20932,7 +20929,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withReturnUnit.kt");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("compiler/testData/codegen/box/smap")
@@ -20942,7 +20938,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         public void testAllFilesPresentInSmap() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/smap"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
-
     }
 
     @TestMetadata("compiler/testData/codegen/box/smartCasts")

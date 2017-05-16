@@ -919,7 +919,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/unresolvedReferenceInCall.kt");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("idea/testData/quickfix/canBeParameter")
@@ -1151,7 +1150,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedParameter.kt");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("idea/testData/quickfix/changeToLabeledReturn")
@@ -5463,7 +5461,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
         }
-
     }
 
     @TestMetadata("idea/testData/quickfix/expressions")

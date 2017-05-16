@@ -73,6 +73,5 @@ public class AndroidGutterIconTestGenerated extends AbstractAndroidGutterIconTes
         public void testAllFilesPresentInRes() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/gutterIcon/res"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
-
     }
 }

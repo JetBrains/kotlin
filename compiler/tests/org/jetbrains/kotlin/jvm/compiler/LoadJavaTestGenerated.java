@@ -1777,7 +1777,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJavaAndKotlin/MixedPackage.txt");
             doTestCompiledJavaAndKotlin(fileName);
         }
-
     }
 
     @TestMetadata("compiler/testData/loadJava/compiledJavaIncludeObjectMethods")
@@ -5065,7 +5064,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/javaAgainstKotlin/samAdapters/SamAdapterForOverriddenFromKotlin.txt");
                 doTestJavaAgainstKotlin(fileName);
             }
-
         }
 
         @TestMetadata("compiler/testData/loadJava/javaAgainstKotlin/signaturePropagation")
@@ -5105,7 +5103,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/javaAgainstKotlin/signaturePropagation/SubclassingKotlinInJava.txt");
                 doTestJavaAgainstKotlin(fileName);
             }
-
         }
 
         @TestMetadata("compiler/testData/loadJava/javaAgainstKotlin/visibility")
@@ -5127,7 +5124,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/javaAgainstKotlin/visibility/ProtectedPackage.txt");
                 doTestJavaAgainstKotlin(fileName);
             }
-
         }
     }
 

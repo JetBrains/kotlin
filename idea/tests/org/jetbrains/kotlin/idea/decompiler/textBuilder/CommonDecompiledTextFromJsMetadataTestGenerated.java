@@ -149,5 +149,4 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/TypeModifiers/");
         doTest(fileName);
     }
-
 }

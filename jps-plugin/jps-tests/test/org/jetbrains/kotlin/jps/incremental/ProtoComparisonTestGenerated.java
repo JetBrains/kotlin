@@ -79,7 +79,6 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/packageFacadeToClass/");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange")
@@ -119,7 +118,6 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateVarChanged/");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged")
@@ -177,7 +175,6 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/sealedClassImplAdded/");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("jps-plugin/testData/comparison/packageMembers")
@@ -217,7 +214,6 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/packageFacadePublicChanges/");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("jps-plugin/testData/comparison/unchanged")
@@ -239,6 +235,5 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/unchanged/unchangedPackageFacade/");
             doTest(fileName);
         }
-
     }
 }

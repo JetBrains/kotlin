@@ -101,5 +101,4 @@ public class DataContainerVersionChangedTestGenerated extends AbstractDataContai
         String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/withError/");
         doTest(fileName);
     }
-
 }

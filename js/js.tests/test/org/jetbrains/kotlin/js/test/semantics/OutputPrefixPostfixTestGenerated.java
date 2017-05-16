@@ -59,5 +59,4 @@ public class OutputPrefixPostfixTestGenerated extends AbstractOutputPrefixPostfi
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/outputPrefixPostfix/simpleWithPrefixAndPostfix.kt");
         doTest(fileName);
     }
-
 }

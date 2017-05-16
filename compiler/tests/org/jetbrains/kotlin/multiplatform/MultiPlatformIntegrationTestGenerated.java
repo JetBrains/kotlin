@@ -145,7 +145,6 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/classScopes/simple/");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("compiler/testData/multiplatform/implTypeAlias")
@@ -167,7 +166,6 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias/");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("compiler/testData/multiplatform/regressions")
@@ -183,7 +181,5 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/regressions/kt17001/");
             doTest(fileName);
         }
-
     }
-
 }

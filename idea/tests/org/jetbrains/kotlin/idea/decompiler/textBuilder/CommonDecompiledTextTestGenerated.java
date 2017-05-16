@@ -155,5 +155,4 @@ public class CommonDecompiledTextTestGenerated extends AbstractCommonDecompiledT
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/TypeModifiers/");
         doTest(fileName);
     }
-
 }

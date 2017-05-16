@@ -1677,7 +1677,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/willNotInlineClassProperty.kt");
                 doTest(fileName);
             }
-
         }
 
         @TestMetadata("idea/testData/intentions/branched/ifThenToSafeAccess")
@@ -1945,7 +1944,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/willNotInlineClassProperty.kt");
                 doTest(fileName);
             }
-
         }
 
         @TestMetadata("idea/testData/intentions/branched/ifWhen")
@@ -3686,7 +3684,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/unnamedAndNamed.kt");
                 doTest(fileName);
             }
-
         }
 
         @TestMetadata("idea/testData/intentions/conventionNameCalls/replaceInvoke")
@@ -6973,7 +6970,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/unescapeSingleQuote.kt");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("idea/testData/intentions/convertToWith")
@@ -7826,7 +7822,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/ValPropertyWithReturn.kt");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("idea/testData/intentions/destructuringInLambda")
@@ -7932,7 +7927,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/variables.kt");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("idea/testData/intentions/destructuringVariables")
@@ -9445,7 +9439,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/ValueOnly.kt");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("idea/testData/intentions/joinDeclarationAndAssignment")
@@ -11891,7 +11884,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/WithCommentAfterExpression.kt");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("idea/testData/intentions/operatorToFunction")
@@ -12720,7 +12712,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitSuperQualifier/WrongOffset2.kt");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("idea/testData/intentions/removeExplicitType")
@@ -12913,7 +12904,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/variablesAndLiterals.kt");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("idea/testData/intentions/removeForLoopIndices")
@@ -14594,7 +14584,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpression/simpleInvert.kt");
             doTest(fileName);
         }
-
     }
 
     @TestMetadata("idea/testData/intentions/specifyExplicitLambdaSignature")
