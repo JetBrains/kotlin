@@ -194,13 +194,7 @@ fun acceptClientsAndRun(serverFd: Int, block: suspend Client.() -> Unit) {
     }
 }
 
-class IOException: RuntimeException {
-    constructor() : super() {
-    }
-
-    constructor(message: String): super(message) {
-    }
-}
+class IOException(message: String): RuntimeException(message)
 
 val errno: Int
     get() = interop_errno()

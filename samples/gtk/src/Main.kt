@@ -28,24 +28,23 @@ fun <F : CFunction<*>> g_signal_connect(obj: CPointer<*>, actionName: String,
 fun activate(app: CPointer<GtkApplication>?, user_data: gpointer?) {
     val windowWidget = gtk_application_window_new(app)!!
     val window = windowWidget.reinterpret<GtkWindow>()
-    gtk_window_set_title(window, "Window");
+    gtk_window_set_title(window, "Window")
     gtk_window_set_default_size(window, 200, 200)
 
     val button_box = gtk_button_box_new(
             GtkOrientation.GTK_ORIENTATION_HORIZONTAL)!!
-    gtk_container_add(window.reinterpret(), button_box);
+    gtk_container_add(window.reinterpret(), button_box)
 
     val button = gtk_button_new_with_label("Konan говорит: click me!")!!
     g_signal_connect(button, "clicked",
-            staticCFunction { widget: CPointer<GtkApplication>?, data: gpointer? ->
-                println("Hi Kotlin")
-            });
+            staticCFunction { _: CPointer<GtkWidget>?, _: gpointer? -> println("Hi Kotlin")
+            })
     g_signal_connect(button, "clicked",
             staticCFunction { widget: CPointer<GtkWidget>? ->
                 gtk_widget_destroy(widget)
             },
             window, G_CONNECT_SWAPPED)
-    gtk_container_add (button_box.reinterpret(), button);
+    gtk_container_add (button_box.reinterpret(), button)
 
     gtk_widget_show_all(windowWidget)
 }

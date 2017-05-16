@@ -19,11 +19,14 @@ Run the server:
 
     ./EchoServer.kexe 3000 &
 
-Test the server by conecting to it, for example with telnet:
+Test the server by connecting to it, for example with telnet:
 
     telnet localhost 3000
 
 Write something to console and watch server echoing it back.
+Concurrently connect from another terminal. Note that each connection gets its own
+connection id prefixed to echo response.
+
 
 ~~Quit telnet by pressing ctrl+] ctrl+D~~
 
