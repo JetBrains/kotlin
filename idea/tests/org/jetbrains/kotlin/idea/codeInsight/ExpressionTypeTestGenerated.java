@@ -126,6 +126,12 @@ public class ExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
         doTest(fileName);
     }
 
+    @TestMetadata("ThisInLambda.kt")
+    public void testThisInLambda() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/ThisInLambda.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("VariableDeclaration.kt")
     public void testVariableDeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/VariableDeclaration.kt");
