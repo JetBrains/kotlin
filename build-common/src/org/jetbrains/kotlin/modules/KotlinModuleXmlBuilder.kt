@@ -39,6 +39,7 @@ class KotlinModuleXmlBuilder {
             sourceFiles: Iterable<File>,
             javaSourceRoots: Iterable<JvmSourceRoot>,
             classpathRoots: Iterable<File>,
+            modularJdkRoot: File?,
             targetTypeId: String,
             isTests: Boolean,
             directoriesToFilterOut: Set<File>,
@@ -63,6 +64,10 @@ class KotlinModuleXmlBuilder {
 
         processJavaSourceRoots(javaSourceRoots)
         processClasspath(classpathRoots, directoriesToFilterOut)
+
+        if (modularJdkRoot != null) {
+            p.println("<", MODULAR_JDK_ROOT, " ", PATH, "=\"", getEscapedPath(modularJdkRoot), "\"/>")
+        }
 
         closeTag(p, MODULE)
         return this
