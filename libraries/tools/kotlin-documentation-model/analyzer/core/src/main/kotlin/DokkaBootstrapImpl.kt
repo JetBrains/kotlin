@@ -61,7 +61,9 @@ class DokkaBootstrapImpl : DokkaBootstrap {
                         generateIndexPages,
                         sourceLinks,
                         impliedPlatforms,
-                        perPackageOptions
+                        perPackageOptions,
+                        externalDocumentationLinks,
+                        noStdlibLink
                 )
         )
     }
