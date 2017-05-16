@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.injection
 import com.intellij.codeInsight.AnnotationUtil
 import com.intellij.lang.Language
 import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
@@ -26,16 +27,13 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTreeUtil.getDeepestLast
 import com.intellij.util.Processor
 import org.intellij.plugins.intelliLang.Configuration
-import org.intellij.plugins.intelliLang.inject.AbstractLanguageInjectionSupport
-import org.intellij.plugins.intelliLang.inject.InjectLanguageAction
-import org.intellij.plugins.intelliLang.inject.InjectedLanguage
-import org.intellij.plugins.intelliLang.inject.TemporaryPlacesRegistry
+import org.intellij.plugins.intelliLang.inject.*
+import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.patterns.KotlinPatterns
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.findAnnotation
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -43,7 +41,6 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 @NonNls val KOTLIN_SUPPORT_ID = "kotlin"
-val LINE_LANGUAGE_REGEXP_COMMENT = Regex("//\\s*language=[\\w-]+")
 
 class KotlinLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
     override fun getId(): String = KOTLIN_SUPPORT_ID
@@ -90,17 +87,21 @@ class KotlinLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
         return true
     }
 
+    override fun findCommentInjection(host: PsiElement, commentRef: Ref<PsiElement>?): BaseInjection? {
+        // Do not inject through CommentLanguageInjector, because it injects as simple injection.
+        // We need to behave special for interpolated strings.
+        return null
+    }
+
+    fun findInjectionCommentLanguageId(host: KtElement): String? {
+        return InjectorUtils.findCommentInjection(host, "", null)?.injectedLanguageId
+    }
+
     fun findInjectionComment(host: KtElement): PsiComment? {
-        if (findCommentInjection(host, null) == null) return null
+        val commentRef = Ref.create<PsiElement>(null)
+        InjectorUtils.findCommentInjection(host, "", commentRef) ?: return null
 
-        val commentsToCheck: Sequence<PsiComment> =
-                findElementToInjectWithAnnotation(host)?.findChildrenComments() ?:
-                findElementToInjectWithComment(host)?.findCommentsBeforeElement() ?:
-                return null
-
-        return commentsToCheck.firstOrNull {
-            it.node.elementType == KtTokens.EOL_COMMENT && it.text.matches(LINE_LANGUAGE_REGEXP_COMMENT)
-        }
+        return commentRef.get() as? PsiComment
     }
 
     fun findAnnotationInjectionLanguageId(host: KtElement): String? {
@@ -208,14 +209,6 @@ private fun checkIsValidPlaceForInjectionWithLineComment(statement: KtExpression
     }
 
     return true
-}
-
-private fun PsiElement.findChildrenComments(): Sequence<PsiComment> {
-    return firstChild.siblings().takeWhile { it is PsiComment || it is PsiWhiteSpace }.filterIsInstance<PsiComment>()
-}
-
-private fun PsiElement.findCommentsBeforeElement(): Sequence<PsiComment> {
-    return siblings(forward = false, withItself = false).takeWhile { it is PsiComment || it is PsiWhiteSpace }.filterIsInstance<PsiComment>()
 }
 
 private fun PsiElement.firstNonCommentChild(): PsiElement? {

@@ -80,7 +80,10 @@ class KotlinLanguageInjector : MultiHostInjector {
 
     private fun injectWithExplicitCodeInstruction(host: KtElement): InjectionInfo? {
         val support = kotlinSupport ?: return null
-        val languageId = support.findAnnotationInjectionLanguageId(host) ?: return null
+        val languageId =
+                support.findInjectionCommentLanguageId(host) ?:
+                support.findAnnotationInjectionLanguageId(host) ?:
+                return null
         return InjectionInfo(languageId, null, null)
     }
 
