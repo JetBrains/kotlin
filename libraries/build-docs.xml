@@ -31,7 +31,7 @@
 
     <target name="document" depends="clean,build-js-stdlib-sources">
         <dokka samples="stdlib/samples/test" outputDir="${docs.output}/jre8" moduleName="kotlin-stdlib" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS"
-               include="stdlib/src/Module.md">
+               include="stdlib/src/Module.md" noStdlibLink="true">
 
             <sourceRoot path="stdlib/src" platforms="JVM"/>
             <sourceRoot path="stdlib/jre7/src" platforms="JVM,JRE7"/>
@@ -50,7 +50,8 @@
 
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
         </dokka>
-        <dokka outputDir="${docs.output}/jre8" moduleName="kotlin-test" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS">
+        <dokka outputDir="${docs.output}/jre8" moduleName="kotlin-test" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS"
+               noStdlibLink="true">
 
             <sourceRoot path="kotlin.test/common/src/main/kotlin" platforms="JVM,JS"/>
             <sourceRoot path="kotlin.test/jvm/src/main/kotlin" platforms="JVM"/>
