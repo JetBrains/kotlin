@@ -66,6 +66,36 @@ public class CopyTestGenerated extends AbstractCopyTest {
         doTest(fileName);
     }
 
+    @TestMetadata("copyLocalClass/copyLocalClass.test")
+    public void testCopyLocalClass_CopyLocalClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyLocalClass/copyLocalClass.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyLocalFunction/copyLocalFunction.test")
+    public void testCopyLocalFunction_CopyLocalFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyLocalFunction/copyLocalFunction.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyLocalVariable/copyLocalVariable.test")
+    public void testCopyLocalVariable_CopyLocalVariable() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyLocalVariable/copyLocalVariable.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyMemberFunction/copyMemberFunction.test")
+    public void testCopyMemberFunction_CopyMemberFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyMemberFunction/copyMemberFunction.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyMemberProperty/copyMemberProperty.test")
+    public void testCopyMemberProperty_CopyMemberProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyMemberProperty/copyMemberProperty.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("copyMultiClassFile/copyMultiClassFile.test")
     public void testCopyMultiClassFile_CopyMultiClassFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyMultiClassFile/copyMultiClassFile.test");
@@ -84,6 +114,12 @@ public class CopyTestGenerated extends AbstractCopyTest {
         doTest(fileName);
     }
 
+    @TestMetadata("copyMultipleDeclarations/copyMultipleDeclarations.test")
+    public void testCopyMultipleDeclarations_CopyMultipleDeclarations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyMultipleDeclarations/copyMultipleDeclarations.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("copyNestedClass/copyNestedClass.test")
     public void testCopyNestedClass_CopyNestedClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyNestedClass/copyNestedClass.test");
@@ -99,6 +135,30 @@ public class CopyTestGenerated extends AbstractCopyTest {
     @TestMetadata("copySingleClassFile/copySingleClassFile.test")
     public void testCopySingleClassFile_CopySingleClassFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copySingleClassFile/copySingleClassFile.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyTopLevelFunction/copyTopLevelFunction.test")
+    public void testCopyTopLevelFunction_CopyTopLevelFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyTopLevelFunction/copyTopLevelFunction.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyTopLevelFunctionWithRename/copyTopLevelFunctionWithRename.test")
+    public void testCopyTopLevelFunctionWithRename_CopyTopLevelFunctionWithRename() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyTopLevelFunctionWithRename/copyTopLevelFunctionWithRename.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyTopLevelProperty/copyTopLevelProperty.test")
+    public void testCopyTopLevelProperty_CopyTopLevelProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyTopLevelProperty/copyTopLevelProperty.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("copyTopLevelPropertyWithRename/copyTopLevelPropertyWithRename.test")
+    public void testCopyTopLevelPropertyWithRename_CopyTopLevelPropertyWithRename() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyTopLevelPropertyWithRename/copyTopLevelPropertyWithRename.test");
         doTest(fileName);
     }
 }

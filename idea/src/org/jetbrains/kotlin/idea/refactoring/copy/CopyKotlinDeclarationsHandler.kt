@@ -25,6 +25,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesDialog
 import com.intellij.refactoring.copy.CopyHandlerDelegateBase
@@ -41,30 +42,31 @@ import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.ifEmpty
 
-class CopyKotlinClassesHandler : CopyHandlerDelegateBase() {
+class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
     companion object {
         @set:TestOnly
         var Project.newName: String? by UserDataProperty(Key.create("NEW_NAME"))
 
-        private fun PsiElement.getTopLevelClasses(): List<KtClassOrObject> {
-            val classOrFile = parentsWithSelf.firstOrNull { it is KtFile || (it is KtClassOrObject && it.isTopLevel()) }
-            return when (classOrFile) {
-                is KtFile -> classOrFile.declarations.filterIsInstance<KtClassOrObject>()
-                is KtClassOrObject -> listOf(classOrFile)
+        private fun PsiElement.getElementsToCopy(): List<PsiNamedElement> {
+            val declarationOrFile = parentsWithSelf.firstOrNull { it is KtFile || (it is KtNamedDeclaration && it.parent is KtFile) }
+            return when (declarationOrFile) {
+                is KtFile -> declarationOrFile.declarations.filterIsInstance<KtNamedDeclaration>().ifEmpty { listOf(declarationOrFile) }
+                is KtNamedDeclaration -> listOf(declarationOrFile)
                 else -> emptyList()
             }
         }
     }
 
     override fun canCopy(elements: Array<out PsiElement>, fromUpdate: Boolean): Boolean {
-        return elements.flatMap { it.getTopLevelClasses().ifEmpty { return false } }.distinctBy { it.containingFile }.size == 1
+        return elements.flatMap { it.getElementsToCopy().ifEmpty { return false } }.distinctBy { it.containingFile }.size == 1
     }
 
     enum class ExistingFilePolicy {
@@ -135,32 +137,32 @@ class CopyKotlinClassesHandler : CopyHandlerDelegateBase() {
     }
 
     override fun doCopy(elements: Array<out PsiElement>, defaultTargetDirectory: PsiDirectory?) {
-        val classesToCopy = elements.flatMap { it.getTopLevelClasses() }
-        if (classesToCopy.isEmpty()) return
+        val elementsToCopy = elements.flatMap { it.getElementsToCopy() }
+        if (elementsToCopy.isEmpty()) return
 
-        val singleClassToCopy = classesToCopy.singleOrNull()
+        val singleElementToCopy = elementsToCopy.singleOrNull()
 
-        val originalFile = classesToCopy.first().containingKtFile
+        val originalFile = elementsToCopy.first().containingFile as KtFile
         val initialTargetDirectory = defaultTargetDirectory ?: originalFile.containingDirectory ?: return
 
         val project = initialTargetDirectory.project
 
         if (ProjectRootManager.getInstance(project).fileIndex.getSourceRootForFile(initialTargetDirectory.virtualFile) == null) return
 
-        val commandName = RefactoringBundle.message("copy.handler.copy.class")
+        val commandName = "Copy Declarations"
 
         var openInEditor = false
-        var newName: String? = singleClassToCopy?.name ?: originalFile.name
+        var newName: String? = singleElementToCopy?.name ?: originalFile.name
         var targetDirWrapper: AutocreatingPsiDirectoryWrapper = initialTargetDirectory.toDirectoryWrapper()
 
         if (!ApplicationManager.getApplication().isUnitTestMode) {
-            if (singleClassToCopy != null) {
-                val dialog = CopyKotlinClassDialog(singleClassToCopy, initialTargetDirectory, project)
+            if (singleElementToCopy != null && singleElementToCopy is KtNamedDeclaration) {
+                val dialog = CopyKotlinDeclarationDialog(singleElementToCopy, initialTargetDirectory, project)
                 dialog.title = commandName
                 if (!dialog.showAndGet()) return
 
                 openInEditor = dialog.openInEditor
-                newName = dialog.className ?: singleClassToCopy.name
+                newName = dialog.newName ?: singleElementToCopy.name
                 targetDirWrapper = dialog.targetDirectory?.toDirectoryWrapper() ?: return
             }
             else {
@@ -175,7 +177,7 @@ class CopyKotlinClassesHandler : CopyHandlerDelegateBase() {
             project.newName?.let { newName = it }
         }
 
-        if (singleClassToCopy != null && newName.isNullOrEmpty()) return
+        if (singleElementToCopy != null && newName.isNullOrEmpty()) return
 
         val internalUsages = runReadAction {
             val targetPackageName = targetDirWrapper.getPackageName()
@@ -183,10 +185,10 @@ class CopyKotlinClassesHandler : CopyHandlerDelegateBase() {
                     ContainerInfo.Package(originalFile.packageFqName),
                     ContainerInfo.Package(FqName(targetPackageName))
             )
-            classesToCopy.flatMap { classToCopy ->
-                classToCopy.getInternalReferencesToUpdateOnPackageNameChange(changeInfo).filter {
+            elementsToCopy.flatMap { elementToCopy ->
+                (elementToCopy as KtElement).getInternalReferencesToUpdateOnPackageNameChange(changeInfo).filter {
                     val referencedElement = (it as? MoveRenameUsageInfo)?.referencedElement
-                    referencedElement == null || !classToCopy.isAncestor(referencedElement)
+                    referencedElement == null || !elementToCopy.isAncestor(referencedElement)
                 }
             }
         }
@@ -199,23 +201,30 @@ class CopyKotlinClassesHandler : CopyHandlerDelegateBase() {
                 val targetDirectory = runWriteAction { targetDirWrapper.getOrCreateDirectory(initialTargetDirectory) }
                 val targetFileName = if (newName?.contains(".") ?: false) newName!! else newName + "." + originalFile.virtualFile.extension
 
-                val targetFile = getOrCreateTargetFile(originalFile, targetDirectory, targetFileName, commandName) ?: return@executeCommand
+                val oldToNewElementsMapping = HashMap<PsiElement, PsiElement>()
 
-                val newClasses = runWriteAction {
-                    val newClasses = classesToCopy.map { targetFile.add(it.copy()) as KtClassOrObject }
-                    val oldToNewElementsMapping = classesToCopy.zip(newClasses).toMap<PsiElement, PsiElement>()
+                val targetFile: KtFile
+                if (singleElementToCopy is KtFile) {
+                    targetFile = runWriteAction { targetDirectory.copyFileFrom(targetFileName, singleElementToCopy) as KtFile }
+                }
+                else {
+                    targetFile = getOrCreateTargetFile(originalFile, targetDirectory, targetFileName, commandName) ?: return@executeCommand
+                    runWriteAction {
+                        val newElements = elementsToCopy.map { targetFile.add(it.copy()) as KtNamedDeclaration }
+                        elementsToCopy.zip(newElements).toMap(oldToNewElementsMapping)
+                    }
+                }
 
-                    for (newClass in newClasses) {
-                        restoredInternalUsages += restoreInternalUsages(newClass, oldToNewElementsMapping, true)
+                runWriteAction {
+                    for (newElement in oldToNewElementsMapping.values) {
+                        restoredInternalUsages += restoreInternalUsages(newElement as KtElement, oldToNewElementsMapping, true)
                         postProcessMoveUsages(restoredInternalUsages, oldToNewElementsMapping)
                     }
 
                     performDelayedRefactoringRequests(project)
-
-                    newClasses
                 }
 
-                newClasses.singleOrNull()?.let {
+                oldToNewElementsMapping.values.singleOrNull()?.let {
                     RenameProcessor(project, it, newName!!.quoteIfNeeded(), false, false).run()
                 }
 

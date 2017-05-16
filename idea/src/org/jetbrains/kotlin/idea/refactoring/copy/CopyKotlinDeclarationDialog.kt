@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.refactoring.Pass
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.awt.BorderLayout
 import java.awt.Font
 import javax.swing.JComponent
@@ -48,8 +48,8 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 
 // Based on com.intellij.refactoring.copy.CopyClassDialog
-class CopyKotlinClassDialog(
-        klass: KtClassOrObject,
+class CopyKotlinDeclarationDialog(
+        declaration: KtNamedDeclaration,
         private val defaultTargetDirectory: PsiDirectory?,
         private val project: Project
 ) : DialogWrapper(project, true) {
@@ -63,13 +63,13 @@ class CopyKotlinClassDialog(
         override fun reportBaseInTestSelectionInSource() = true
     }
 
-    private val originalFile = klass.containingFile
+    private val originalFile = declaration.containingFile
 
     var targetDirectory: MoveDestination? = null
         private set
 
     init {
-        informationLabel.text = RefactoringBundle.message("copy.class.copy.0.1", UsageViewUtil.getType(klass), UsageViewUtil.getLongName(klass))
+        informationLabel.text = RefactoringBundle.message("copy.class.copy.0.1", UsageViewUtil.getType(declaration), UsageViewUtil.getLongName(declaration))
         informationLabel.font = informationLabel.font.deriveFont(Font.BOLD)
 
         init()
@@ -80,7 +80,7 @@ class CopyKotlinClassDialog(
                 Pass { setErrorText(it, destinationComboBox) },
                 packageNameField.childComponent
         )
-        classNameField.text = UsageViewUtil.getShortName(klass)
+        classNameField.text = UsageViewUtil.getShortName(declaration)
         classNameField.selectAll()
     }
 
@@ -115,7 +115,7 @@ class CopyKotlinClassDialog(
     private val qualifiedName: String
         get() = defaultTargetDirectory?.getPackage()?.qualifiedName ?: ""
 
-    val className: String?
+    val newName: String?
         get() = classNameField.text
 
     val openInEditor: Boolean
@@ -123,7 +123,7 @@ class CopyKotlinClassDialog(
 
     private fun checkForErrors(): String? {
         val packageName = packageNameField.text
-        val className = className
+        val newName = newName
 
         val manager = PsiManager.getInstance(project)
 
@@ -131,7 +131,7 @@ class CopyKotlinClassDialog(
             return RefactoringBundle.message("invalid.target.package.name.specified")
         }
 
-        if (className.isNullOrEmpty()) {
+        if (newName.isNullOrEmpty()) {
             return RefactoringBundle.message("no.class.name.specified")
         }
 
@@ -143,7 +143,7 @@ class CopyKotlinClassDialog(
         }
 
         targetDirectory?.getTargetIfExists(defaultTargetDirectory)?.let {
-            val targetFileName = className + "." + originalFile.virtualFile.extension
+            val targetFileName = newName + "." + originalFile.virtualFile.extension
             if (it.findFile(targetFileName) == originalFile) {
                 return "Can't copy class to the containing file"
             }
@@ -173,6 +173,6 @@ class CopyKotlinClassDialog(
     override fun getHelpId() = HelpID.COPY_CLASS
 
     companion object {
-        @NonNls private val RECENTS_KEY = "CopyKotlinClassDialog.RECENTS_KEY"
+        @NonNls private val RECENTS_KEY = "CopyKotlinDeclarationDialog.RECENTS_KEY"
     }
 }
