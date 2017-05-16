@@ -89,7 +89,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                     return@getOrPut outerClass?.findInnerClass(classId.shortClassName)
                 }
 
-                val resolver = ClassifierResolutionContext { findClass(it, searchScope) }
+                val resolver = ClassifierResolutionContext { findClass(it, allScope) }
 
                 BinaryJavaClass(
                         virtualFile,
