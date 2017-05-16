@@ -25,6 +25,7 @@ extend Class {
 
 extend Constructor {
     repeated Annotation constructor_annotation = 170;
+    optional InlineIrBody inline_constructor_ir_body = 171;
 }
 
 extend Function {

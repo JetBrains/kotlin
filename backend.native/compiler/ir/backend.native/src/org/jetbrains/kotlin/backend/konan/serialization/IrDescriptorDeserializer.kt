@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanIrDeserializationException
 import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
+import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.serialization.KonanIr.KotlinDescriptor
+import org.jetbrains.kotlin.serialization.KonanIr.DeclarationDescriptor.DescriptorCase.*
 import org.jetbrains.kotlin.serialization.KonanLinkData
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
@@ -36,17 +38,11 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.types.*
 
-internal fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
-    return if (this is PackageFragmentDescriptor) this 
-        else this.containingDeclaration!!.findPackage()
-}
-
 internal fun DeserializedMemberDescriptor.nameTable(): ProtoBuf.QualifiedNameTable {
     val pkg = this.findPackage()
     assert(pkg is KonanPackageFragment)
     return (pkg as KonanPackageFragment).proto.getNameTable()
 }
-
 
 internal fun DeserializedMemberDescriptor.nameResolver(): NameResolver {
     val pkg = this.findPackage() as KonanPackageFragment
@@ -68,9 +64,10 @@ internal class IrDescriptorDeserializer(val context: Context,
     fun deserializeKotlinType(proto: KonanIr.KotlinType): KotlinType {
         val index = proto.getIndex()
         val text = proto.getDebugText()
-        val typeProto = localDeserializer.typeTable[index]
+        val typeProto = localDeserializer.parentTypeTable[index]
         val type = localDeserializer.deserializeInlineType(typeProto)
-        if (type.isError) throw KonanIrDeserializationException("Could not deserialize KotlinType: $text $type")
+        if (type.isError)
+            throw KonanIrDeserializationException("Could not deserialize KotlinType: $text $type")
 
         val realType = if (proto.isCaptured) {
             unpackCapturedType(type)
@@ -80,26 +77,24 @@ internal class IrDescriptorDeserializer(val context: Context,
         context.log{"### deserialized Kotlin Type index=$index, text=$text:\t$realType"}
         return realType
     }
+
     fun deserializeLocalDeclaration(irProto: KonanIr.KotlinDescriptor): DeclarationDescriptor {
         val localDeclarationProto = irProto.irLocalDeclaration.descriptor
-        when {
-            localDeclarationProto.hasFunction() -> {
-                val index = irProto.index
-                val descriptor = localDeserializer.deserializeFunction(irProto)
-                descriptorIndex.put(index, descriptor)
-                return descriptor
-            }
-
-            localDeclarationProto.hasProperty() -> {
-                val index = irProto.index
-                val descriptor = localDeserializer.deserializeProperty(irProto)
-                descriptorIndex.put(index, descriptor)
-                return descriptor
-            }
-            // TODO
-            //  localDclarationProto.hasClazz() -> 
+        val index = irProto.index
+        //val localDeserializer = LocalDeclarationDeserializer(parent)
+        val descriptor: DeclarationDescriptor = when(localDeclarationProto.descriptorCase) {
+            FUNCTION ->
+                localDeserializer.deserializeFunction(irProto)
+            PROPERTY ->
+                localDeserializer.deserializeProperty(irProto)
+            CLAZZ ->
+                localDeserializer.deserializeClass(irProto)
+            CONSTRUCTOR ->
+                localDeserializer.deserializeConstructor(irProto)
             else -> TODO("Unexpected descriptor kind")
         }
+        descriptorIndex.put(index, descriptor)
+        return descriptor
     }
 
     // Either (a substitution of) a public descriptor
@@ -113,6 +108,10 @@ internal class IrDescriptorDeserializer(val context: Context,
             KonanIr.KotlinDescriptor.Kind.VALUE_PARAMETER,
             KonanIr.KotlinDescriptor.Kind.TYPE_PARAMETER,
             KonanIr.KotlinDescriptor.Kind.RECEIVER,
+            // Properties can only be found in local
+            // classes, so no need to look for them
+            // in the public descriptor tree.
+            KonanIr.KotlinDescriptor.Kind.PROPERTY,
             KonanIr.KotlinDescriptor.Kind.VARIABLE ->
                 descriptorIndex[index]!!
 
@@ -133,7 +132,6 @@ internal class IrDescriptorDeserializer(val context: Context,
     fun deserializeDescriptor(proto: KonanIr.KotlinDescriptor): DeclarationDescriptor {
 
         context.log{"### deserializeDescriptor ${proto.kind} ${proto.index}"}
-
         val descriptor = if (proto.hasIrLocalDeclaration()) {
             deserializeLocalDeclaration(proto)
         } else 
@@ -146,7 +144,7 @@ internal class IrDescriptorDeserializer(val context: Context,
         // Now there are several descriptors that automatically
         // recreated in addition to this one. Register them
         // all too.
-       
+
         if (descriptor is FunctionDescriptor) {
             registerParameterDescriptors(proto, descriptor)
         }
@@ -307,7 +305,6 @@ internal class IrDescriptorDeserializer(val context: Context,
     fun matchNameInParentScope(proto: KonanIr.KotlinDescriptor): Collection<DeclarationDescriptor> {
         val classOrPackage = proto.classOrPackage
         val name = proto.name
-
         when (proto.kind) {
             KotlinDescriptor.Kind.CLASS -> {
                 val parentScope = 
@@ -362,7 +359,6 @@ internal class IrDescriptorDeserializer(val context: Context,
         constructors: Collection<DeclarationDescriptor>,
         descriptorProto: KonanIr.KotlinDescriptor): 
         DeserializedClassConstructorDescriptor {
-
         val originalIndex = descriptorProto.originalIndex
         return constructors.single {
             it.uniqId == originalIndex

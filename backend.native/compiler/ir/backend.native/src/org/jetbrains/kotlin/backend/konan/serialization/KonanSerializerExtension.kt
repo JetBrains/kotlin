@@ -24,12 +24,10 @@ import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.*
 import org.jetbrains.kotlin.types.KotlinType
 
-
-internal class KonanSerializerExtension(val context: Context, val util: KonanSerializationUtil) :
+internal class KonanSerializerExtension(val context: Context) :
         KotlinSerializerExtensionBase(KonanSerializerProtocol), IrAwareExtension {
 
     val inlineDescriptorTable = DescriptorTable(context.irBuiltIns)
-    val originalVariables = mutableMapOf<PropertyDescriptor, VariableDescriptor>()
     override val stringTable = KonanStringTable()
     override fun shouldUseTypeTable(): Boolean = true
 
@@ -85,17 +83,19 @@ internal class KonanSerializerExtension(val context: Context, val util: KonanSer
     override fun addFunctionIR(proto: ProtoBuf.Function.Builder, serializedIR: String) 
         = proto.setInlineIr(inlineBody(serializedIR))
 
+    override fun addConstructorIR(proto: ProtoBuf.Constructor.Builder, serializedIR: String) 
+        = proto.setConstructorIr(inlineBody(serializedIR))
+
     override fun addGetterIR(proto: ProtoBuf.Property.Builder, serializedIR: String) 
         = proto.setGetterIr(inlineBody(serializedIR))
 
     override fun addSetterIR(proto: ProtoBuf.Property.Builder, serializedIR: String) 
         = proto.setSetterIr(inlineBody(serializedIR))
 
-    override fun serializeInlineBody(descriptor: FunctionDescriptor, typeSerializer: ((KotlinType)->Int)): String {
+    override fun serializeInlineBody(descriptor: FunctionDescriptor, serializer: KonanDescriptorSerializer): String {
 
         return IrSerializer( 
-            context, inlineDescriptorTable, stringTable, util, 
-            typeSerializer, descriptor).serializeInlineBody()
+            context, inlineDescriptorTable, stringTable, serializer, descriptor).serializeInlineBody()
     }
 }
 
@@ -117,9 +117,11 @@ object KonanSerializerProtocol : SerializerExtensionProtocol(
 
 internal interface IrAwareExtension {
 
-    fun serializeInlineBody(descriptor: FunctionDescriptor, typeSerializer: ((KotlinType)->Int)): String 
+    fun serializeInlineBody(descriptor: FunctionDescriptor, serializer: KonanDescriptorSerializer): String 
 
     fun addFunctionIR(proto: ProtoBuf.Function.Builder, serializedIR: String): ProtoBuf.Function.Builder
+
+    fun addConstructorIR(proto: ProtoBuf.Constructor.Builder, serializedIR: String): ProtoBuf.Constructor.Builder
 
     fun addSetterIR(proto: ProtoBuf.Property.Builder, serializedIR: String): ProtoBuf.Property.Builder
 

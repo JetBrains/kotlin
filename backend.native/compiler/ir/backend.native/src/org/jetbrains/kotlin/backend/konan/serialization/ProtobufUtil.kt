@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.serialization.KonanLinkData
 import org.jetbrains.kotlin.serialization.KonanLinkData.*
@@ -48,6 +50,12 @@ val ProtoBuf.Property.setterIr: InlineIrBody
 fun ProtoBuf.Property.Builder.setSetterIr(body: InlineIrBody): ProtoBuf.Property.Builder = 
     this.setExtension(inlineSetterIrBody, body)
 
+val ProtoBuf.Constructor.constructorIr: InlineIrBody
+    get() = this.getExtension(inlineConstructorIrBody)
+
+fun ProtoBuf.Constructor.Builder.setConstructorIr(body: InlineIrBody): ProtoBuf.Constructor.Builder  = 
+    this.setExtension(inlineConstructorIrBody, body)
+
 val ProtoBuf.Function.inlineIr: InlineIrBody
     get() = this.getExtension(inlineIrBody)
 
@@ -73,5 +81,24 @@ internal fun printTypeTable(proto: ProtoBuf.TypeTable) {
         printType(it)
     }
 }
+
+// -----------------------------------------------------------
+
+internal val DeclarationDescriptor.typeParameterProtos: List<ProtoBuf.TypeParameter>
+    get() = when (this) {
+        // These are different typeParameterLists not 
+        // having a common ancestor.
+        is DeserializedSimpleFunctionDescriptor
+            -> this.proto.typeParameterList
+        is DeserializedPropertyDescriptor
+            -> this.proto.typeParameterList
+        is DeserializedClassDescriptor
+            -> this.classProto.typeParameterList
+        is DeserializedTypeAliasDescriptor
+            -> this.proto.typeParameterList
+        is DeserializedClassConstructorDescriptor
+            -> listOf()
+        else -> error("Unexpected descriptor kind: $this")
+    }
 
 

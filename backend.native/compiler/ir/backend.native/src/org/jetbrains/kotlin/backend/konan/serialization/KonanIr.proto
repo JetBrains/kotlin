@@ -19,6 +19,7 @@ message KotlinDescriptor {
         TYPE_PARAMETER = 6;
         RECEIVER = 7;
         ACCESSOR = 8;
+        PROPERTY = 9;
     }
     // TODO: Use the string table index.
     optional string name = 1;
@@ -150,6 +151,16 @@ message IrGetEnumValue {
     required KotlinDescriptor descriptor = 2;
 }
 
+message FieldAccessCommon {
+    required KotlinDescriptor descriptor = 1;
+    optional KotlinDescriptor super = 2;
+    required IrExpression reciever = 3;
+}
+
+message IrGetField {
+    required FieldAccessCommon field_access = 1;
+}
+
 message IrGetValue {
     required KotlinDescriptor descriptor = 1;
 }
@@ -164,6 +175,11 @@ message IrInstanceInitializerCall {
 
 message IrReturn {
     required KotlinDescriptor return_target = 1;
+    required IrExpression value = 2;
+}
+
+message IrSetField {
+    required FieldAccessCommon field_access = 1;
     required IrExpression value = 2;
 }
 
@@ -220,18 +236,20 @@ message IrOperation {
         IrDelegatingConstructorCall delegating_constructor_call = 7;
         IrEnumConstructorCall enum_constructor_call = 8;
         IrGetEnumValue get_enum_value = 9;
-        IrGetValue get_value = 10;
-        IrGetObject get_object = 11;
-        IrInstanceInitializerCall instance_initializer_call = 12;
-        IrReturn return = 13;
-        IrSetVariable set_variable = 14;
-        IrStringConcat string_concat = 15;
-        IrThrow throw = 16;
-        IrTry try = 17;
-        IrTypeOp type_op = 18;
-        IrVararg vararg = 19;
-        IrWhen when = 20;
-        IrWhile while = 21;
+        IrGetField get_field = 10;
+        IrGetValue get_value = 11;
+        IrGetObject get_object = 12;
+        IrInstanceInitializerCall instance_initializer_call = 13;
+        IrReturn return = 14;
+        IrSetField set_field = 15;
+        IrSetVariable set_variable = 16;
+        IrStringConcat string_concat = 17;
+        IrThrow throw = 18;
+        IrTry try = 19;
+        IrTypeOp type_op = 20;
+        IrVararg vararg = 21;
+        IrWhen when = 22;
+        IrWhile while = 23;
     }
 }
 
@@ -254,13 +272,23 @@ message IrExpression {
 
 /* ------ Declarations --------------------------------------------- */
 
-message IrFunc {
+message IrFunction {
     message DefaultArgument {
         required int32 position = 1;
         required IrExpression value = 2;
     }
     optional IrStatement body = 1;
     repeated DefaultArgument default_argument = 2;
+}
+
+message IrProperty {
+    message IrField {
+        required IrExpression initializer = 1;
+    }
+    required bool is_delegated = 1;
+    optional IrField backing_field = 2;
+    optional IrFunction getter = 3;
+    optional IrFunction setter = 4;
 }
 
 message IrVar {
@@ -281,9 +309,10 @@ message IrEnumEntry {
 message IrDeclarator {
     oneof symbol {
         IrVar variable = 1;
-        IrFunc function = 2;
+        IrFunction function = 2;
         IrClass ir_class = 3;
         IrEnumEntry ir_enum_entry = 4;
+        IrProperty ir_property = 5;
     }
 }
 

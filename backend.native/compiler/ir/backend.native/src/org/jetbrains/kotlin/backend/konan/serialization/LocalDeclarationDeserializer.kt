@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
+import org.jetbrains.kotlin.backend.konan.descriptors.allContainingDeclarations
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.serialization.Flags
@@ -23,96 +24,103 @@ import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.serialization.KonanLinkData
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName
-import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfoTable
-import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.backend.common.peek
+import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.backend.common.pop
 
 // This class knows how to construct contexts for 
 // MemberDeserializer to deserialize descriptors declared in IR.
-// Consider merging it all to the very MemberDesereializer itself eventually.
+// Eventually, these descriptors shall be reconstructed from IR declarations,
+// or may be just go away completely.
 
-class LocalDeclarationDeserializer(val rootDescriptor: DeserializedCallableMemberDescriptor, val module: ModuleDescriptor) {
-        
-    val pkg = rootDescriptor.getContainingDeclaration() as KonanPackageFragment
+class LocalDeclarationDeserializer(val rootDescriptor: DeclarationDescriptor) {
+
+    val tower: List<DeclarationDescriptor> = 
+        (listOf(rootDescriptor) + rootDescriptor.allContainingDeclarations()).reversed()
     init {
-        assert(pkg is KonanPackageFragment)
+        assert(tower.first() is ModuleDescriptor)
     }
+    val parents = tower.drop(1)
 
+    val pkg = parents.first() as KonanPackageFragment
     val components = pkg.components
-    val nameResolver = NameResolverImpl(pkg.proto.getStringTable(), pkg.proto.getNameTable())
-    val nameTable = pkg.proto.getNameTable()
-    val typeTable = TypeTable(pkg.proto.getPackage().getTypeTable())
-    val context = components.createContext(
-        pkg, nameResolver, typeTable, SinceKotlinInfoTable.EMPTY, null)
+    val nameTable = pkg.proto.nameTable
+    val nameResolver = NameResolverImpl(pkg.proto.stringTable, nameTable)
+  
+    val contextStack = mutableListOf<Pair<DeserializationContext, MemberDeserializer>>()
 
-    val typeParameterProtos = when (rootDescriptor) {
-        // These are two different typeParameterLists not 
-        // having a common ancestor.
-        is DeserializedSimpleFunctionDescriptor
-            -> rootDescriptor.proto.typeParameterList
-        is DeserializedPropertyDescriptor
-            -> rootDescriptor.proto.typeParameterList
-        else -> error("Unexpected descriptor kind")
+    init {
+        parents.forEach{
+            pushContext(it)
+        }
     }
 
-    val childContext = context.childContext(rootDescriptor, typeParameterProtos, nameResolver, typeTable)
-    val typeDeserializer = childContext.typeDeserializer
+    val parentContext: DeserializationContext
+        get() = contextStack.peek()!!.first
 
-    val memberDeserializer = MemberDeserializer(childContext)
+    val parentTypeTable: TypeTable
+        get() = parentContext.typeTable
+
+    val typeDeserializer: TypeDeserializer
+        get() = parentContext.typeDeserializer
+
+    val memberDeserializer: MemberDeserializer
+        get() = contextStack.peek()!!.second
+
+    fun newContext(descriptor: DeclarationDescriptor): DeserializationContext {
+        if (descriptor is KonanPackageFragment) {
+            val packageTypeTable = TypeTable(pkg.proto.getPackage().typeTable)
+            return components.createContext(
+                pkg, nameResolver, packageTypeTable, SinceKotlinInfoTable.EMPTY, null)
+        }
+
+        // Only packages and classes have their type tables.
+        val typeTable = if (descriptor is DeserializedClassDescriptor) {
+            TypeTable(descriptor.classProto.typeTable)
+        } else {
+            parentTypeTable
+        }
+
+
+        val oldContext = contextStack.peek()!!.first
+
+        return oldContext.childContext(descriptor, 
+            descriptor.typeParameterProtos, nameResolver, typeTable)
+    }
+
+    fun pushContext(descriptor: DeclarationDescriptor) {
+        val newContext = newContext(descriptor)
+        contextStack.push(Pair(newContext, MemberDeserializer(newContext)))
+    }
+
+    fun popContext(descriptor: DeclarationDescriptor) {
+        assert(contextStack.peek()!!.first.containingDeclaration == descriptor)
+        contextStack.pop()
+    }
 
     fun deserializeInlineType(type: ProtoBuf.Type): KotlinType {
+
         val result = typeDeserializer.type(type)
 
         return result
     }
 
-    fun getDescriptorByFqNameIndex(module: ModuleDescriptor, fqNameIndex: Int): DeclarationDescriptor {
+    fun deserializeClass(irProto: KonanIr.KotlinDescriptor): ClassDescriptor {
+        return DeserializedClassDescriptor(parentContext, irProto.irLocalDeclaration.descriptor.clazz, nameResolver, SourceElement.NO_SOURCE)
 
-        val packageName = nameResolver.getPackageFqName(fqNameIndex)
-        // Here we using internals of NameresolverImpl. 
-        val proto = nameTable.getQualifiedName(fqNameIndex)
-        when (proto.kind) {
-            QualifiedName.Kind.CLASS,
-            QualifiedName.Kind.LOCAL ->
-                return module.findClassAcrossModuleDependencies(nameResolver.getClassId(fqNameIndex))!!
-            QualifiedName.Kind.PACKAGE ->
-                return module.getPackage(packageName)
-            else -> TODO("Unexpected descriptor kind.")
-        }
-    }
 
-    fun memberDeserializerByParentFqNameIndex(fqNameIndex: Int): MemberDeserializer {
-
-       val parent = getDescriptorByFqNameIndex(module, fqNameIndex)
-       val typeParameters = if (parent is DeserializedClassDescriptor) {
-           parent.classProto.typeParameterList
-       } else listOf<ProtoBuf.TypeParameter>()
-
-       val childContext = context.childContext(parent, typeParameters, nameResolver, typeTable)
-       return MemberDeserializer(childContext)
-
-    }
-
-    private fun memberDeserializer(irProto: KonanIr.KotlinDescriptor): MemberDeserializer {
-        return if (irProto.hasClassOrPackage()) {
-            memberDeserializerByParentFqNameIndex(irProto.classOrPackage)
-        } else {
-            // TODO: learn to take the containing IR declaration
-            this.memberDeserializer
-        }
     }
 
     fun deserializeFunction(irProto: KonanIr.KotlinDescriptor): FunctionDescriptor =
-        memberDeserializer(irProto).loadFunction(irProto.irLocalDeclaration.descriptor.function)
+        memberDeserializer.loadFunction(irProto.irLocalDeclaration.descriptor.function)
 
     fun deserializeConstructor(irProto: KonanIr.KotlinDescriptor): ConstructorDescriptor {
 
        val proto = irProto.irLocalDeclaration.descriptor.constructor
-       val memberDeserializer = memberDeserializerByParentFqNameIndex(irProto.classOrPackage)
        val isPrimary = !Flags.IS_SECONDARY.get(proto.flags)
        val constructor = memberDeserializer.loadConstructor(proto, isPrimary)
 
@@ -122,7 +130,7 @@ class LocalDeclarationDeserializer(val rootDescriptor: DeserializedCallableMembe
     fun deserializeProperty(irProto: KonanIr.KotlinDescriptor): VariableDescriptor {
 
         val proto = irProto.irLocalDeclaration.descriptor.property
-        val property = memberDeserializer(irProto).loadProperty(proto)
+        val property = memberDeserializer.loadProperty(proto)
 
         return if (proto.getExtension(KonanLinkData.usedAsVariable)) {
             propertyToVariable(property)

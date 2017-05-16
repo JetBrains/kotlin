@@ -296,6 +296,20 @@ internal fun FunctionDescriptor.bridgeDirectionsTo(overriddenDescriptor: Functio
     return ourDirections
 }
 
+internal fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
+    return if (this is PackageFragmentDescriptor) this 
+        else this.containingDeclaration!!.findPackage()
+}
+
+internal fun DeclarationDescriptor.allContainingDeclarations(): List<DeclarationDescriptor> {
+    var list = mutableListOf<DeclarationDescriptor>()
+    var current = this.containingDeclaration
+    while (current != null) {
+        list.add(current)
+        current = current.containingDeclaration
+    }
+    return list
+}
 
 internal fun DeclarationDescriptor.getMemberScope(): MemberScope {
         val containingScope = when (this) {
