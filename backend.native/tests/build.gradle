@@ -1739,6 +1739,21 @@ task deserialized_listof0(type: RunKonanTest) {
     source = "serialization/deserialized_listof0.kt"
 }
 
+task deserialized_members(type: LinkKonanTest) {
+    goldValue=
+        "first level\n"+
+        "second level\n"+
+        "third levelxz\n"+
+        "inner first level\n"+
+        "inner second level\n"+
+        "inner third level\n"+
+        "types first level: 13\n"+
+        "types second level cha-cha-cha\n"+
+        "types third level 1\n"
+    lib = "serialization/serialize_members.kt"
+    source = "serialization/deserialize_members.kt"
+}
+
 // Just check that the driver is able to produce runnable binaries.
 task driver0(type: RunDriverKonanTest) {
     goldValue = "Hello, world!\n"
