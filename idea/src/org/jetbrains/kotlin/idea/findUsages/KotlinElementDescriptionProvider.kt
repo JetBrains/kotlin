@@ -92,6 +92,8 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
                             }
                         }
                     }
+
+                    override fun visitParameter(parameter: KtParameter, data: Unit) = parameter.typeReference?.accept(this, data) ?: "???"
                 },
                 Unit
         )
