@@ -208,6 +208,11 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             outputConsumer: OutputConsumer,
             fsOperations: FSOperationsHelper
     ): ModuleLevelBuilder.ExitCode {
+        val useJavac = "-Xuse-javac" in JpsKotlinCompilerSettings.getCompilerSettings(chunk.representativeTarget().module).additionalArguments
+        if (useJavac) {
+            JavaBuilder.IS_ENABLED[context] = true
+        }
+
         // Workaround for Android Studio
         if (!JavaBuilder.IS_ENABLED[context, true] && !JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
             messageCollector.report(INFO, "Kotlin JPS plugin is disabled")
@@ -229,6 +234,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
             targets.forEach { rebuildAfterCacheVersionChanged.clean(it) }
             return NOTHING_DONE
+        }
+
+        if (useJavac) {
+            JavaBuilder.IS_ENABLED[context] = false
         }
 
         val targetsWithoutOutputDir = targets.filter { it.outputDir == null }
