@@ -35,7 +35,9 @@ subprojects {
             manifestAttributes(manifest, project)
         }
 
-        compileKotlin.kotlinOptions.freeCompilerArgs += ["-module-name", "${project.name}"]
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).all { task ->
+            task.kotlinOptions.freeCompilerArgs += ["-module-name", "${project.name}"]
+        }
     }
 }
 
