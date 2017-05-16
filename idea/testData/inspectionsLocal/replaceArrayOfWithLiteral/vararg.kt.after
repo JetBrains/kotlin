@@ -1,4 +1,4 @@
-// ERROR: The feature "array literals in annotations" is only available since language version 1.2
+// LANGUAGE_VERSION: 1.2
 
 annotation class Some(vararg val strings: String)
 

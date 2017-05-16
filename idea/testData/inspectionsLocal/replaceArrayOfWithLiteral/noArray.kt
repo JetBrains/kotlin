@@ -1,3 +1,4 @@
+// LANGUAGE_VERSION: 1.2
 // PROBLEM: none
 // ERROR: Type mismatch: inferred type is Int but Array<String> was expected
 
