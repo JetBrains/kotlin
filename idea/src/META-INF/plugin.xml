@@ -398,7 +398,7 @@
         language="kotlin" />
     <refactoring.copyHandler
         id="kotlinClass"
-        implementation="org.jetbrains.kotlin.idea.refactoring.copy.CopyKotlinClassHandler"
+        implementation="org.jetbrains.kotlin.idea.refactoring.copy.CopyKotlinClassesHandler"
         order="first" />
     <refactoring.copyHandler
         id="kotlinFile"

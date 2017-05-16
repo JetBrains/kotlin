@@ -27,7 +27,7 @@ import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDest
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.refactoring.AbstractMultifileRefactoringTest
-import org.jetbrains.kotlin.idea.refactoring.copy.CopyKotlinClassHandler.Companion.newName
+import org.jetbrains.kotlin.idea.refactoring.copy.CopyKotlinClassesHandler.Companion.newName
 import org.jetbrains.kotlin.idea.refactoring.runRefactoringTest
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.utils.ifEmpty
