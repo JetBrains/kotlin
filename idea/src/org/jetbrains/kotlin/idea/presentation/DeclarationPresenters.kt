@@ -77,7 +77,9 @@ class KtFunctionPresenter : ItemPresentationProvider<KtFunction> {
                     function.name?.let { append(it) }
 
                     append("(")
-                    append(function.valueParameters.joinToString { it.typeReference?.text ?: "" })
+                    append(function.valueParameters.joinToString {
+                        (if (it.isVarArg) "vararg " else "") + (it.typeReference?.text ?: "")
+                    })
                     append(")")
                 }
             }
