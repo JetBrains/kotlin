@@ -29,6 +29,10 @@ public enum CompilerMessageSeverity {
     WARNING,
     INFO,
     LOGGING,
+    /**
+     * Source to output files mapping messages (e.g A.kt->A.class).
+     * It is needed for incremental compilation.
+     */
     OUTPUT;
 
     public static final EnumSet<CompilerMessageSeverity> ERRORS = EnumSet.of(ERROR, EXCEPTION);
