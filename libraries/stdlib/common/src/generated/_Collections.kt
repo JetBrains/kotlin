@@ -898,9 +898,32 @@ public header fun <T : Any> Iterable<T?>.requireNoNulls(): Iterable<T>
  */
 public header fun <T : Any> List<T?>.requireNoNulls(): List<T>
 
+/**
+ * Splits this collection into a list of lists each not exceeding the given [size].
+ * 
+ * The last list in the resulting list may have less elements than the given [size].
+ * 
+ * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.chunked
+ */
 @SinceKotlin("1.2")
 public header fun <T> Iterable<T>.chunked(size: Int): List<List<T>>
 
+/**
+ * Splits this collection into several lists each not exceeding the given [size]
+ * and applies the given [transform] function to an each.
+ * 
+ * @return list of results of the [transform] applied to an each list.
+ * 
+ * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it escape someway, unless you made a snapshot of it.
+ * The last list may have less elements than the given [size].
+ * 
+ * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this collection.
+ * 
+ * @sample samples.text.Strings.chunkedTransform
+ */
 @SinceKotlin("1.2")
 public header fun <T, R> Iterable<T>.chunked(size: Int, transform: (List<T>) -> R): List<R>
 

@@ -1333,11 +1333,38 @@ public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
     return map { it ?: throw IllegalArgumentException("null element found in $this.") }
 }
 
+/**
+ * Splits this sequence into a sequence of lists each not exceeding the given [size].
+ * 
+ * The last list in the resulting sequence may have less elements than the given [size].
+ * 
+ * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this sequence.
+ * 
+ * @sample samples.collections.Collections.Transformations.chunked
+ *
+ * The operation is _intermediate_ and _stateful_.
+ */
 @SinceKotlin("1.2")
 public fun <T> Sequence<T>.chunked(size: Int): Sequence<List<T>> {
     return windowed(size, size)
 }
 
+/**
+ * Splits this sequence into several lists each not exceeding the given [size]
+ * and applies the given [transform] function to an each.
+ * 
+ * @return sequence of results of the [transform] applied to an each list.
+ * 
+ * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it escape someway, unless you made a snapshot of it.
+ * The last list may have less elements than the given [size].
+ * 
+ * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this sequence.
+ * 
+ * @sample samples.text.Strings.chunkedTransform
+ *
+ * The operation is _intermediate_ and _stateful_.
+ */
 @SinceKotlin("1.2")
 public fun <T, R> Sequence<T>.chunked(size: Int, transform: (List<T>) -> R): Sequence<R> {
     return windowed(size, size, transform)
