@@ -41,7 +41,7 @@ object SMAPTestUtil {
                 }
             }, 0)
 
-            SMAPAndFile.SMAPAndFile(debugInfo, outputFile.sourceFiles.single())
+            SMAPAndFile.SMAPAndFile(debugInfo, outputFile.sourceFiles.single(), outputFile.relativePath)
         }
     }
 
@@ -57,7 +57,7 @@ object SMAPTestUtil {
             }
         }.trim()
 
-        return SMAPAndFile(if (content.isNotEmpty()) content else null, SMAPAndFile.getPath(file.name))
+        return SMAPAndFile(if (content.isNotEmpty()) content else null, SMAPAndFile.getPath(file.name), "NOT_SORTED")
     }
 
     fun checkSMAP(inputFiles: List<CodegenTestCase.TestFile>, outputFiles: Iterable<OutputFile>) {
@@ -68,8 +68,8 @@ object SMAPTestUtil {
         val compiledData = compiledSmaps.groupBy {
             it.sourceFile
         }.map {
-            val smap = it.value.mapNotNull { it.smap }.joinToString("\n")
-            SMAPAndFile(if (smap.isNotEmpty()) smap else null, it.key)
+            val smap = it.value.sortedByDescending { it.outputFile }.mapNotNull { it.smap }.joinToString("\n")
+            SMAPAndFile(if (smap.isNotEmpty()) smap else null, it.key, "NOT_SORTED")
         }.associateBy { it.sourceFile }
 
         for (source in sourceData) {
@@ -107,9 +107,10 @@ object SMAPTestUtil {
     private fun normalize(text: String?) =
             text?.let { StringUtil.convertLineSeparators(it.trim()) }
 
-    private class SMAPAndFile(val smap: String?, val sourceFile: String) {
+    private class SMAPAndFile(val smap: String?, val sourceFile: String, val outputFile: String) {
         companion object {
-            fun SMAPAndFile(smap: String?, sourceFile: File) = SMAPAndFile(smap, getPath(sourceFile))
+            fun SMAPAndFile(smap: String?, sourceFile: File, outputFile: String) =
+                    SMAPAndFile(smap, getPath(sourceFile), outputFile)
 
             fun getPath(file: File): String {
                 return getPath(file.canonicalPath)
