@@ -39,9 +39,10 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
     override fun getPresentableText() = declaration.name
 
     override fun getLocationString(): String? {
-        if (declaration is KtFunction && declaration.isLocal) {
-            val containingDeclaration = declaration.getStrictParentOfType<KtDeclaration>() ?: return null
-            return "(in ${containingDeclaration.name})"
+        if ((declaration is KtFunction && declaration.isLocal) || (declaration is KtClassOrObject && declaration.isLocal)) {
+            val containingDeclaration = declaration.getStrictParentOfType<KtNamedDeclaration>() ?: return null
+            val containerName = containingDeclaration.fqName ?: containingDeclaration.name
+            return "(in $containerName)"
         }
         val name = declaration.fqName ?: return null
         val qualifiedContainer = name.parent().toString()
