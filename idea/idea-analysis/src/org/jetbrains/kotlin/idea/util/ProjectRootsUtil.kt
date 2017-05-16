@@ -22,10 +22,12 @@ import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.FileIndex
 import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileSystemItem
 import org.jetbrains.kotlin.idea.KotlinModuleFileType
 import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
@@ -39,6 +41,11 @@ fun VirtualFile.isKotlinBinary(): Boolean = fileType in kotlinBinaries
 fun FileIndex.isInSourceContentWithoutInjected(file: VirtualFile): Boolean {
     return file !is VirtualFileWindow && isInSourceContent(file)
 }
+
+fun VirtualFile.getSourceRoot(project: Project): VirtualFile? = ProjectRootManager.getInstance(project).fileIndex.getSourceRootForFile(this)
+
+val PsiFileSystemItem.sourceRoot: VirtualFile?
+    get() = virtualFile?.getSourceRoot(project)
 
 object ProjectRootsUtil {
     @JvmStatic fun isInContent(project: Project, file: VirtualFile, includeProjectSource: Boolean,

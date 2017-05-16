@@ -15,10 +15,12 @@
  */
 package org.jetbrains.kotlin.idea.refactoring.copy
 
+import com.intellij.ide.util.DirectoryChooser
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.HelpID
@@ -39,6 +41,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.refactoring.Pass
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
+import org.jetbrains.kotlin.idea.util.sourceRoot
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.awt.BorderLayout
@@ -67,6 +70,9 @@ class CopyKotlinDeclarationDialog(
 
     var targetDirectory: MoveDestination? = null
         private set
+
+    val targetSourceRoot: VirtualFile?
+        get() = ((destinationComboBox.comboBox.selectedItem as? DirectoryChooser.ItemWrapper)?.directory ?: originalFile).sourceRoot
 
     init {
         informationLabel.text = RefactoringBundle.message("copy.class.copy.0.1", UsageViewUtil.getType(declaration), UsageViewUtil.getLongName(declaration))
