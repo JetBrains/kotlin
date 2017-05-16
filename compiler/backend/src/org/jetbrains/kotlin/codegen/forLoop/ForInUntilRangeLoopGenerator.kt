@@ -22,37 +22,18 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.org.objectweb.asm.Type
 
 class ForInUntilRangeLoopGenerator(
         codegen: ExpressionCodegen,
         forExpression: KtForExpression,
         loopRangeCall: ResolvedCall<*>
-) : AbstractForInRangeLoopGenerator(codegen, forExpression) {
+) : AbstractForInExclusiveRangeLoopGenerator(codegen, forExpression) {
     private val from: ReceiverValue = loopRangeCall.extensionReceiver!!
     private val to: KtExpression = ExpressionCodegen.getSingleArgumentExpression(loopRangeCall)!!
 
-    override fun storeRangeStartAndEnd() {
-        loopParameter().store(codegen.generateReceiverValue(from, false), v)
-        StackValue.local(endVar, asmElementType).store(codegen.gen(to), v)
-    }
+    override fun generateFrom(): StackValue =
+            codegen.generateReceiverValue(from, false)
 
-    override fun checkEmptyLoop(loopExit: Label) {}
-
-    override fun checkPreCondition(loopExit: Label) {
-        loopParameter().put(asmElementType, v)
-        v.load(endVar, asmElementType)
-        if (asmElementType.sort == Type.LONG) {
-            v.lcmp()
-            v.ifge(loopExit)
-        }
-        else {
-            v.ificmpge(loopExit)
-        }
-    }
-
-    override fun checkPostConditionAndIncrement(loopExit: Label) {
-        incrementLoopVariable()
-    }
+    override fun generateTo(): StackValue =
+            codegen.gen(to)
 }
