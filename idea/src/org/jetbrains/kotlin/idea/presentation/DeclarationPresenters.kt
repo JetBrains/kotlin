@@ -25,6 +25,7 @@ import com.intellij.openapi.util.Iconable
 import org.jetbrains.kotlin.idea.KotlinIconProvider
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 open class KotlinDefaultNamedDeclarationPresentation(private val declaration: KtNamedDeclaration) : ColoredItemPresentation {
 
@@ -38,6 +39,10 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
     override fun getPresentableText() = declaration.name
 
     override fun getLocationString(): String? {
+        if (declaration is KtFunction && declaration.isLocal) {
+            val containingDeclaration = declaration.getStrictParentOfType<KtDeclaration>() ?: return null
+            return "(in ${containingDeclaration.name})"
+        }
         val name = declaration.fqName ?: return null
         val qualifiedContainer = name.parent().toString()
         val parent = declaration.parent
