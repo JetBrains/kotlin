@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.versions
 
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.util.indexing.DataIndexer
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileContent
@@ -41,9 +40,8 @@ object KotlinJsMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJsMet
         val result = HashMap<JsMetadataVersion, Void?>()
 
         tryBlock(inputData) {
-            val text = VfsUtilCore.loadText(inputData.file)
             val metadataList = ArrayList<KotlinJavascriptMetadata>()
-            KotlinJavascriptMetadataUtils.parseMetadata(text, metadataList)
+            KotlinJavascriptMetadataUtils.parseMetadata(inputData.contentAsText, metadataList)
             for (metadata in metadataList) {
                 val version = metadata.version.takeIf { it.isCompatible() }
                               // Version is set to something weird

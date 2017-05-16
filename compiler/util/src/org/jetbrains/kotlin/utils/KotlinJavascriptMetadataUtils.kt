@@ -89,7 +89,7 @@ object KotlinJavascriptMetadataUtils {
     fun loadMetadata(path: String): List<KotlinJavascriptMetadata> = loadMetadata(File(path))
 
     @JvmStatic
-    fun parseMetadata(text: String, metadataList: MutableList<KotlinJavascriptMetadata>) {
+    fun parseMetadata(text: CharSequence, metadataList: MutableList<KotlinJavascriptMetadata>) {
         // Check for literal pattern first in order to reduce time for large files without metadata
         if (!KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN.matcher(text).find()) return
 
