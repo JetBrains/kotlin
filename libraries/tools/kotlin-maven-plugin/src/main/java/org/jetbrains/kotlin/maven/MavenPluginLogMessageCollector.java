@@ -62,15 +62,30 @@ public class MavenPluginLogMessageCollector implements MessageCollector {
 
         String text = position + message;
 
-        if (CompilerMessageSeverity.VERBOSE.contains(severity)) {
-            log.debug(text);
-        } else if (CompilerMessageSeverity.ERRORS.contains(severity)) {
-            collectedErrors.add(new Pair<CompilerMessageLocation, String>(location, message));
-            log.error(text);
-        } else if (severity == CompilerMessageSeverity.INFO) {
-            log.info(text);
-        } else {
-            log.warn(text);
+        switch (severity) {
+            case EXCEPTION:
+            case ERROR: {
+                collectedErrors.add(new Pair<CompilerMessageLocation, String>(location, message));
+                log.error(text);
+                break;
+            }
+            case STRONG_WARNING:
+            case WARNING: {
+                log.warn(text);
+                break;
+            }
+            case INFO: {
+                log.info(text);
+                break;
+            }
+            case LOGGING:
+            case OUTPUT: {
+                log.debug(text);
+                break;
+            }
+            default: {
+                log.warn("[Unknown severity " + severity + "] " + text);
+            }
         }
     }
 
