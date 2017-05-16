@@ -143,6 +143,12 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
             doSymbolTest(fileName);
         }
 
+        @TestMetadata("localFunction.kt")
+        public void testLocalFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/localFunction.kt");
+            doSymbolTest(fileName);
+        }
+
         @TestMetadata("privateTopLevelDeclarations.kt")
         public void testPrivateTopLevelDeclarations() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/privateTopLevelDeclarations.kt");

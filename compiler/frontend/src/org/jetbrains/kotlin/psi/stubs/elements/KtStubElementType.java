@@ -87,11 +87,8 @@ public abstract class KtStubElementType<StubT extends StubElement, PsiT extends 
     @Override
     public boolean shouldCreateStub(ASTNode node) {
         PsiElement psi = node.getPsi();
-        if (psi instanceof KtClassOrObject) {
+        if (psi instanceof KtClassOrObject || psi instanceof KtFunction) {
             return true;
-        }
-        if (psi instanceof KtFunction) {
-            return !((KtFunction) psi).isLocal();
         }
         if (psi instanceof KtProperty) {
             return !((KtProperty) psi).isLocal();

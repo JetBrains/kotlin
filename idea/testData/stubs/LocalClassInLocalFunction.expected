@@ -5,14 +5,16 @@ PsiJetFileStubImpl[package=]
   CLASS[fqName=T, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=T, superNames=[]]
   FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=foo]
     VALUE_PARAMETER_LIST
-    CLASS[fqName=null, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=Test, superNames=[A, T]]
-      SUPER_TYPE_LIST
-        SUPER_TYPE_CALL_ENTRY
-          CONSTRUCTOR_CALLEE
+    FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=bar]
+      VALUE_PARAMETER_LIST
+      CLASS[fqName=null, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=Test, superNames=[A, T]]
+        SUPER_TYPE_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=A]
+          SUPER_TYPE_ENTRY
             TYPE_REFERENCE
               USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=A]
-        SUPER_TYPE_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=T]
+                REFERENCE_EXPRESSION[referencedName=T]
