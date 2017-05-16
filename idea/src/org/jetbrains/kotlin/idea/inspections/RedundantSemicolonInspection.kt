@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtImportList
 import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
+import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 
 class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -57,6 +58,11 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
         }
 
         if (semicolon.parent is KtEnumEntry) return false
+
+        (semicolon.prevLeaf()?.parent as? KtLoopExpression)?.let {
+            if (it.body == null)
+                return false
+        }
 
         if (nextLeaf?.nextLeaf { it !is PsiComment }?.node?.elementType == KtTokens.LBRACE) {
             return false // case with statement starting with '{' and call on the previous line
