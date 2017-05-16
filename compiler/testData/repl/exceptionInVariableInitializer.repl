@@ -1,0 +1,8 @@
+>>> var x: Int = { -> if (true) throw RuntimeException() else 5}()
+java.lang.RuntimeException
+	at Line_0$x$1.invoke(Line_0.kts:1)
+	at Line_0$x$1.invoke(Line_0.kts:1)
+>>> x
+error: unresolved reference: x
+x
+^
