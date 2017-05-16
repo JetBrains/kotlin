@@ -72,6 +72,15 @@ class Collections {
         }
 
         @Sample
+        fun chunked() {
+            val words = "one two three four five six seven eight nine ten".split(' ')
+            val chunks = words.chunked(3)
+
+            assertPrints(chunks, "[[one, two, three], [four, five, six], [seven, eight, nine], [ten]]")
+        }
+
+
+        @Sample
         fun pairwise() {
             val letters = ('a'..'f').toList()
             val pairs = letters.pairwise()

@@ -50,5 +50,25 @@ class Strings {
         assertPrints(withoutMargin2, "XYZ\nfoo\nbar")
     }
 
+    @Sample
+    fun chunkedTransform() {
+        val codonTable = mapOf("ATT" to "Isoleucine", "CAA" to "Glutamine", "CGC" to "Arginine", "GGC" to "Glycine")
+        val dnaFragment = "ATTCGCGGCCGCCAA"
+
+        val proteins = dnaFragment.chunked(3) { codon: CharSequence -> codonTable[codon.toString()] ?: error("Unknown codon") }
+
+        assertPrints(proteins, "[Isoleucine, Arginine, Glycine, Arginine, Glutamine]")
+    }
+
+    @Sample
+    fun chunkedTransformToSequence() {
+        val codonTable = mapOf("ATT" to "Isoleucine", "CAA" to "Glutamine", "CGC" to "Arginine", "GGC" to "Glycine")
+        val dnaFragment = "ATTCGCGGCCGCCAACGG"
+
+        val proteins = dnaFragment.chunkedSequence(3) { codon: CharSequence -> codonTable[codon.toString()] ?: error("Unknown codon") }
+
+        // sequence is evaluated lazily, so that unknown codon is not reached
+        assertPrints(proteins.take(5).toList(), "[Isoleucine, Arginine, Glycine, Arginine, Glutamine]")
+    }
 
 }
