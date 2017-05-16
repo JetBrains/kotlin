@@ -80,13 +80,11 @@ class LazyJavaPackageScope(
                     )
                 }
 
-
-                val javaClassFqName = javaClass?.fqName ?: return@classByRequest null
-                assert(!javaClassFqName.isRoot && javaClassFqName.parent() == ownerDescriptor.fqName) {
-                    "Java class by request $requestClassId should be contained in package ${ownerDescriptor.fqName}, but it's fq-name: $javaClassFqName"
-                }
-
-                LazyJavaClassDescriptor(c, ownerDescriptor, javaClass)
+                val actualFqName = javaClass?.fqName
+                if (actualFqName == null || actualFqName.isRoot || actualFqName.parent() != ownerDescriptor.fqName)
+                    null
+                else
+                    LazyJavaClassDescriptor(c, ownerDescriptor, javaClass)
             }
         }
     }
