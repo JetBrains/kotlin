@@ -54,6 +54,12 @@ public class BreadcrumbsTestGenerated extends AbstractBreadcrumbsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("FunctionalType.kt")
+    public void testFunctionalType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/FunctionalType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("If.kt")
     public void testIf() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/If.kt");
