@@ -24,28 +24,28 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
-abstract class DescriptorWithIrBuilder<out D: DeclarationDescriptor, out B: IrDeclaration> {
+abstract class SymbolWithIrBuilder<out S: IrSymbol, out D: IrDeclaration> {
 
-    protected abstract fun buildDescriptor(): D
+    protected abstract fun buildSymbol(): S
 
     protected open fun doInitialize() { }
 
-    protected abstract fun buildIr(): B
+    protected abstract fun buildIr(): D
 
-    val descriptor by lazy { buildDescriptor() }
+    val symbol by lazy { buildSymbol() }
 
     private val builtIr by lazy { buildIr() }
     private var initialized: Boolean = false
@@ -55,7 +55,7 @@ abstract class DescriptorWithIrBuilder<out D: DeclarationDescriptor, out B: IrDe
         initialized = true
     }
 
-    val ir: B
+    val ir: D
         get() {
             if (!initialized)
                 throw Error("Access to IR before initialization")
@@ -64,23 +64,26 @@ abstract class DescriptorWithIrBuilder<out D: DeclarationDescriptor, out B: IrDe
 }
 
 fun BackendContext.createPropertyGetterBuilder(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin,
-                                               symbol: IrFieldSymbol, type: KotlinType)
-        = object: DescriptorWithIrBuilder<PropertyGetterDescriptorImpl, IrFunction>() {
+                                               fieldSymbol: IrFieldSymbol, type: KotlinType)
+        = object: SymbolWithIrBuilder<IrSimpleFunctionSymbol, IrSimpleFunction>() {
 
-    override fun buildDescriptor() = PropertyGetterDescriptorImpl(
-            /* correspondingProperty = */ symbol.descriptor,
-            /* annotations           = */ Annotations.EMPTY,
-            /* modality              = */ Modality.FINAL,
-            /* visibility            = */ Visibilities.PRIVATE,
-            /* isDefault             = */ false,
-            /* isExternal            = */ false,
-            /* isInline              = */ false,
-            /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
-            /* original              = */ null,
-            /* source                = */ SourceElement.NO_SOURCE
+    override fun buildSymbol() = IrSimpleFunctionSymbolImpl(
+            PropertyGetterDescriptorImpl(
+                    /* correspondingProperty = */ fieldSymbol.descriptor,
+                    /* annotations           = */ Annotations.EMPTY,
+                    /* modality              = */ Modality.FINAL,
+                    /* visibility            = */ Visibilities.PRIVATE,
+                    /* isDefault             = */ false,
+                    /* isExternal            = */ false,
+                    /* isInline              = */ false,
+                    /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
+                    /* original              = */ null,
+                    /* source                = */ SourceElement.NO_SOURCE
+            )
     )
 
     override fun doInitialize() {
+        val descriptor = symbol.descriptor as PropertyGetterDescriptorImpl
         descriptor.apply {
             initialize(type)
         }
@@ -90,36 +93,39 @@ fun BackendContext.createPropertyGetterBuilder(startOffset: Int, endOffset: Int,
             startOffset = startOffset,
             endOffset   = endOffset,
             origin      = origin,
-            descriptor  = descriptor).apply {
+            symbol      = symbol).apply {
 
         createParameterDeclarations()
 
         body = createIrBuilder(this.symbol, startOffset, endOffset).irBlockBody {
-            +irReturn(irGetField(irGet(this@apply.dispatchReceiverParameter!!.symbol), symbol))
+            +irReturn(irGetField(irGet(this@apply.dispatchReceiverParameter!!.symbol), fieldSymbol))
         }
     }
 }
 
 private fun BackendContext.createPropertySetterBuilder(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin,
-                                                       symbol: IrFieldSymbol, type: KotlinType)
-        = object: DescriptorWithIrBuilder<PropertySetterDescriptorImpl, IrFunction>() {
+                                                       fieldSymbol: IrFieldSymbol, type: KotlinType)
+        = object: SymbolWithIrBuilder<IrSimpleFunctionSymbol, IrSimpleFunction>() {
 
-    override fun buildDescriptor() = PropertySetterDescriptorImpl(
-            /* correspondingProperty = */ symbol.descriptor,
-            /* annotations           = */ Annotations.EMPTY,
-            /* modality              = */ Modality.FINAL,
-            /* visibility            = */ Visibilities.PRIVATE,
-            /* isDefault             = */ false,
-            /* isExternal            = */ false,
-            /* isInline              = */ false,
-            /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
-            /* original              = */ null,
-            /* source                = */ SourceElement.NO_SOURCE
+    override fun buildSymbol() = IrSimpleFunctionSymbolImpl(
+            PropertySetterDescriptorImpl(
+                    /* correspondingProperty = */ fieldSymbol.descriptor,
+                    /* annotations           = */ Annotations.EMPTY,
+                    /* modality              = */ Modality.FINAL,
+                    /* visibility            = */ Visibilities.PRIVATE,
+                    /* isDefault             = */ false,
+                    /* isExternal            = */ false,
+                    /* isInline              = */ false,
+                    /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
+                    /* original              = */ null,
+                    /* source                = */ SourceElement.NO_SOURCE
+            )
     )
 
     lateinit var valueParameterDescriptor: ValueParameterDescriptor
 
     override fun doInitialize() {
+        val descriptor = symbol.descriptor as PropertySetterDescriptorImpl
         descriptor.apply {
             valueParameterDescriptor = ValueParameterDescriptorImpl(
                     containingDeclaration = this,
@@ -143,46 +149,50 @@ private fun BackendContext.createPropertySetterBuilder(startOffset: Int, endOffs
             startOffset = startOffset,
             endOffset   = endOffset,
             origin      = origin,
-            descriptor  = descriptor).apply {
+            symbol      = symbol).apply {
 
         createParameterDeclarations()
 
         body = createIrBuilder(this.symbol, startOffset, endOffset).irBlockBody {
-            +irSetField(irGet(this@apply.dispatchReceiverParameter!!.symbol), symbol, irGet(this@apply.valueParameters.single().symbol))
+            +irSetField(irGet(this@apply.dispatchReceiverParameter!!.symbol), fieldSymbol, irGet(this@apply.valueParameters.single().symbol))
         }
     }
 }
 
 fun BackendContext.createPropertyWithBackingFieldBuilder(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin,
                                                          owner: ClassDescriptor, name: Name, type: KotlinType, isMutable: Boolean)
-        = object: DescriptorWithIrBuilder<PropertyDescriptorImpl, IrProperty>() {
+        = object: SymbolWithIrBuilder<IrFieldSymbol, IrProperty>() {
 
-    private lateinit var getterBuilder: DescriptorWithIrBuilder<PropertyGetterDescriptorImpl, IrFunction>
-    private var setterBuilder: DescriptorWithIrBuilder<PropertySetterDescriptorImpl, IrFunction>? = null
-    private lateinit var fieldSymbol: IrFieldSymbol
+    private lateinit var getterBuilder: SymbolWithIrBuilder<IrSimpleFunctionSymbol, IrSimpleFunction>
+    private var setterBuilder: SymbolWithIrBuilder<IrSimpleFunctionSymbol, IrSimpleFunction>? = null
 
-    override fun buildDescriptor() = PropertyDescriptorImpl.create(
-            /* containingDeclaration = */ owner,
-            /* annotations           = */ Annotations.EMPTY,
-            /* modality              = */ Modality.FINAL,
-            /* visibility            = */ Visibilities.PRIVATE,
-            /* isVar                 = */ isMutable,
-            /* name                  = */ name,
-            /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
-            /* source                = */ SourceElement.NO_SOURCE,
-            /* lateInit              = */ false,
-            /* isConst               = */ false,
-            /* isHeader              = */ false,
-            /* isImpl                = */ false,
-            /* isExternal            = */ false,
-            /* isDelegated           = */ false)
+    override fun buildSymbol() = IrFieldSymbolImpl(
+            PropertyDescriptorImpl.create(
+                    /* containingDeclaration = */ owner,
+                    /* annotations           = */ Annotations.EMPTY,
+                    /* modality              = */ Modality.FINAL,
+                    /* visibility            = */ Visibilities.PRIVATE,
+                    /* isVar                 = */ isMutable,
+                    /* name                  = */ name,
+                    /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
+                    /* source                = */ SourceElement.NO_SOURCE,
+                    /* lateInit              = */ false,
+                    /* isConst               = */ false,
+                    /* isHeader              = */ false,
+                    /* isImpl                = */ false,
+                    /* isExternal            = */ false,
+                    /* isDelegated           = */ false
+            )
+    )
 
     override fun doInitialize() {
-        fieldSymbol = IrFieldSymbolImpl(descriptor)
-        getterBuilder = createPropertyGetterBuilder(startOffset, endOffset, origin, fieldSymbol, type).apply { initialize() }
+        val descriptor = symbol.descriptor as PropertyDescriptorImpl
+        getterBuilder = createPropertyGetterBuilder(startOffset, endOffset, origin, symbol, type).apply { initialize() }
         if (isMutable)
-            setterBuilder = createPropertySetterBuilder(startOffset, endOffset, origin, fieldSymbol, type).apply { initialize() }
-        descriptor.initialize(getterBuilder.descriptor, setterBuilder?.descriptor)
+            setterBuilder = createPropertySetterBuilder(startOffset, endOffset, origin, symbol, type).apply { initialize() }
+        descriptor.initialize(
+                /* getter = */ getterBuilder.symbol.descriptor as PropertyGetterDescriptorImpl,
+                /* setter = */ setterBuilder?.symbol?.descriptor as? PropertySetterDescriptorImpl)
         val receiverType: KotlinType? = null
         descriptor.setType(type, emptyList(), owner.thisAsReceiverParameter, receiverType)
     }
@@ -192,13 +202,13 @@ fun BackendContext.createPropertyWithBackingFieldBuilder(startOffset: Int, endOf
                 startOffset = startOffset,
                 endOffset   = endOffset,
                 origin      = origin,
-                symbol      = fieldSymbol)
+                symbol      = symbol)
         return IrPropertyImpl(
                 startOffset  = startOffset,
                 endOffset    = endOffset,
                 origin       = origin,
                 isDelegated  = false,
-                descriptor   = descriptor,
+                descriptor   = symbol.descriptor,
                 backingField = backingField,
                 getter       = getterBuilder.ir,
                 setter       = setterBuilder?.ir)

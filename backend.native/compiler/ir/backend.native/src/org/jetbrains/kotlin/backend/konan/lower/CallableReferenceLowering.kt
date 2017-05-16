@@ -38,8 +38,12 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -171,9 +175,10 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
                     .map { it.createFakeOverrideDescriptor(functionReferenceClassDescriptor) }
                     .filterNotNull()
             val contributedDescriptors = (
-                    inheritedKFunctionImpl + invokeMethodBuilder.descriptor
+                    inheritedKFunctionImpl + invokeMethodBuilder.symbol.descriptor
                     ).toList()
-            functionReferenceClassDescriptor.initialize(SimpleMemberScope(contributedDescriptors), setOf(constructorBuilder.descriptor), null)
+            functionReferenceClassDescriptor.initialize(
+                    SimpleMemberScope(contributedDescriptors), setOf(constructorBuilder.symbol.descriptor), null)
 
             constructorBuilder.initialize()
             functionReferenceClass.declarations.add(constructorBuilder.ir)
@@ -185,20 +190,21 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
         }
 
         private fun createConstructorBuilder()
-                = object : DescriptorWithIrBuilder<ClassConstructorDescriptorImpl, IrConstructor>() {
+                = object : SymbolWithIrBuilder<IrConstructorSymbol, IrConstructor>() {
 
             private val kFunctionImplConstructorDescriptor = kFunctionImplClassDescriptor.constructors.single()
 
-            override fun buildDescriptor(): ClassConstructorDescriptorImpl {
-                return ClassConstructorDescriptorImpl.create(
-                        /* containingDeclaration = */ functionReferenceClassDescriptor,
-                        /* annotations           = */ Annotations.EMPTY,
-                        /* isPrimary             = */ false,
-                        /* source                = */ SourceElement.NO_SOURCE
-                )
-            }
+            override fun buildSymbol() = IrConstructorSymbolImpl(
+                    ClassConstructorDescriptorImpl.create(
+                            /* containingDeclaration = */ functionReferenceClassDescriptor,
+                            /* annotations           = */ Annotations.EMPTY,
+                            /* isPrimary             = */ false,
+                            /* source                = */ SourceElement.NO_SOURCE
+                    )
+            )
 
             override fun doInitialize() {
+                val descriptor = symbol.descriptor as ClassConstructorDescriptorImpl
                 val constructorParameters = boundFunctionParameters.mapIndexed { index, parameter ->
                     parameter.copyAsValueParameter(descriptor, index)
                 }
@@ -217,7 +223,7 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
                         startOffset = startOffset,
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        descriptor  = descriptor).apply {
+                        symbol      = symbol).apply {
 
                     val irBuilder = context.createIrBuilder(this.symbol, startOffset, endOffset)
 
@@ -261,20 +267,24 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
             }
 
         private fun createInvokeMethodBuilder(functionInvokeFunctionDescriptor: FunctionDescriptor)
-                = object : DescriptorWithIrBuilder<SimpleFunctionDescriptorImpl, IrFunction>() {
+                = object : SymbolWithIrBuilder<IrSimpleFunctionSymbol, IrSimpleFunction>() {
 
-            override fun buildDescriptor() = SimpleFunctionDescriptorImpl.create(
-                    /* containingDeclaration = */ functionReferenceClassDescriptor,
-                    /* annotations           = */ Annotations.EMPTY,
-                    /* name                  = */ Name.identifier("invoke"),
-                    /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
-                    /* source                = */ SourceElement.NO_SOURCE)
+            override fun buildSymbol() = IrSimpleFunctionSymbolImpl(
+                    SimpleFunctionDescriptorImpl.create(
+                        /* containingDeclaration = */ functionReferenceClassDescriptor,
+                        /* annotations           = */ Annotations.EMPTY,
+                        /* name                  = */ Name.identifier("invoke"),
+                        /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
+                        /* source                = */ SourceElement.NO_SOURCE
+                    )
+            )
 
             override fun doInitialize() {
+                val descriptor = symbol.descriptor as SimpleFunctionDescriptorImpl
                 val valueParameters = functionInvokeFunctionDescriptor.valueParameters
-                        .map { it.copyAsValueParameter(this.descriptor, it.index) }
+                        .map { it.copyAsValueParameter(descriptor, it.index) }
 
-                this.descriptor.initialize(
+                descriptor.initialize(
                         /* receiverParameterType        = */ null,
                         /* dispatchReceiverParameter    = */ functionReferenceClassDescriptor.thisAsReceiverParameter,
                         /* typeParameters               = */ emptyList(),
@@ -286,15 +296,14 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
                 }
             }
 
-            override fun buildIr(): IrFunction {
+            override fun buildIr(): IrSimpleFunction {
                 val startOffset = functionReference.startOffset
                 val endOffset = functionReference.endOffset
-                val ourDescriptor = this.descriptor
                 return IrFunctionImpl(
                         startOffset = startOffset,
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        descriptor  = this.descriptor).apply {
+                        symbol      = symbol).apply {
 
                     val function = this
                     val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)
@@ -317,8 +326,7 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
                                             else -> putValueArgument((it as ValueParameterDescriptor).index, argument)
                                         }
                                     }
-                                    assert(unboundIndex == ourDescriptor.valueParameters.size,
-                                            { "Not all arguments of <invoke> are used" })
+                                    assert(unboundIndex == valueParameters.size, { "Not all arguments of <invoke> are used" })
                                 }
                         )
                     }
