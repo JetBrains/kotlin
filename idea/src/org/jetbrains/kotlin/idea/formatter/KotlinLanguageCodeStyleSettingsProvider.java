@@ -158,11 +158,11 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
                                           CodeStyleSettingsCustomizable.SPACES_AROUND_OPERATORS);
 
                 consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_BEFORE_TYPE_COLON",
-                                          "Space before colon, after declarations' name",
+                                          "Space before colon, after declaration name",
                                           CodeStyleSettingsCustomizable.SPACES_OTHER);
 
                 consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_AFTER_TYPE_COLON",
-                                          "Space after colon, before declarations' type",
+                                          "Space after colon, before declaration type",
                                           CodeStyleSettingsCustomizable.SPACES_OTHER);
 
                 consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_BEFORE_EXTEND_COLON",
@@ -208,7 +208,7 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
                         "METHOD_PARAMETERS_WRAP"
                 );
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements");
-                consumer.showCustomOption(KotlinCodeStyleSettings.class, "ALIGN_IN_COLUMNS_CASE_BRANCH", "Align in columns 'case' branches",
+                consumer.showCustomOption(KotlinCodeStyleSettings.class, "ALIGN_IN_COLUMNS_CASE_BRANCH", "Align 'when' branches in columns",
                                           CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT);
 
                 consumer.showCustomOption(KotlinCodeStyleSettings.class, "LBRACE_ON_NEXT_LINE",
