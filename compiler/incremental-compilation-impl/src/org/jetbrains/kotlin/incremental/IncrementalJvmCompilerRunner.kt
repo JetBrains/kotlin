@@ -267,7 +267,7 @@ class IncrementalJvmCompilerRunner(
         when (compilationMode) {
             is CompilationMode.Incremental -> {
                 dirtySources = ArrayList(compilationMode.dirtyFiles)
-                args.classpathAsList += args.destinationAsFile
+                args.classpathAsList += args.destinationAsFile.apply { mkdirs() }
             }
             is CompilationMode.Rebuild -> {
                 dirtySources = allKotlinSources.toMutableList()
