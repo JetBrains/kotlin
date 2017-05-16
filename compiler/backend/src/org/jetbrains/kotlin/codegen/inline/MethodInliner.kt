@@ -204,7 +204,10 @@ class MethodInliner(
                     addInlineMarker(this, true)
                     val lambdaParameters = info.addAllParameters(nodeRemapper)
 
-                    val newCapturedRemapper = InlinedLambdaRemapper(info.lambdaClassType.internalName, nodeRemapper, lambdaParameters)
+                    val newCapturedRemapper = InlinedLambdaRemapper(
+                            info.lambdaClassType.internalName, nodeRemapper, lambdaParameters,
+                            info is DefaultLambda && info.isBoundCallableReference
+                    )
 
                     setLambdaInlining(true)
                     val lambdaSMAP = info.node.classSMAP
@@ -256,7 +259,7 @@ class MethodInliner(
                         for (capturedParamDesc in info.allRecapturedParameters) {
                             visitFieldInsn(
                                     Opcodes.GETSTATIC, capturedParamDesc.containingLambdaName,
-                                    "$$$" + capturedParamDesc.fieldName, capturedParamDesc.type.descriptor
+                                    CAPTURED_FIELD_FOLD_PREFIX + capturedParamDesc.fieldName, capturedParamDesc.type.descriptor
                             )
                         }
                         super.visitMethodInsn(opcode, info.newClassName, name, info.newConstructorDescriptor, itf)
@@ -347,7 +350,7 @@ class MethodInliner(
                     lambda.parameterOffsetsInDefault.zip(lambda.capturedVars).asReversed().forEach {
                         (_, captured) ->
                         super.visitFieldInsn(
-                                Opcodes.PUTSTATIC, captured.containingLambdaName, "$$$" + captured.fieldName, captured.type.descriptor
+                                Opcodes.PUTSTATIC, captured.containingLambdaName, CAPTURED_FIELD_FOLD_PREFIX + captured.fieldName, captured.type.descriptor
                         )
                     }
                 }
@@ -570,7 +573,7 @@ class MethodInliner(
         return when {
             insnNode.opcode == Opcodes.ALOAD ->
                 getLambdaIfExists((insnNode as VarInsnNode).`var`)
-            insnNode is FieldInsnNode && insnNode.name.startsWith("$$$") ->
+            insnNode is FieldInsnNode && insnNode.name.startsWith(CAPTURED_FIELD_FOLD_PREFIX) ->
                 findCapturedField(insnNode, nodeRemapper).lambda
             else ->
                 null
@@ -706,7 +709,9 @@ class MethodInliner(
 
         @JvmStatic
         fun findCapturedField(node: FieldInsnNode, fieldRemapper: FieldRemapper): CapturedParamInfo {
-            assert(node.name.startsWith("$$$")) { "Captured field template should start with $$$ prefix" }
+            assert(node.name.startsWith(CAPTURED_FIELD_FOLD_PREFIX)) {
+                "Captured field template should start with $CAPTURED_FIELD_FOLD_PREFIX prefix"
+            }
             val fin = FieldInsnNode(node.opcode, node.owner, node.name.substring(3), node.desc)
             val field = fieldRemapper.findField(fin) ?: throw IllegalStateException(
                     "Couldn't find captured field ${node.owner}.${node.name} in ${fieldRemapper.originalLambdaInternalName}"

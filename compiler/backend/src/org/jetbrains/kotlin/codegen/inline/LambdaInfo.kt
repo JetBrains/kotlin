@@ -39,8 +39,11 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import kotlin.properties.Delegates
 
-abstract class LambdaInfo(@JvmField val isCrossInline: Boolean, @JvmField val isBoundCallableReference: Boolean) : LabelOwner {
+abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : LabelOwner {
+
+    abstract val isBoundCallableReference: Boolean
 
     abstract val lambdaClassType: Type
 
@@ -85,7 +88,10 @@ class DefaultLambda(
         val parameterDescriptor: ValueParameterDescriptor,
         val offset: Int,
         val needReification: Boolean
-) : LambdaInfo(parameterDescriptor.isCrossinline, false) {
+) : LambdaInfo(parameterDescriptor.isCrossinline) {
+
+    override var isBoundCallableReference by Delegates.notNull<Boolean>()
+        private set
 
     val parameterOffsetsInDefault: MutableList<Int> = arrayListOf()
 
@@ -132,11 +138,18 @@ class DefaultLambda(
             "Can't find non-default constructor <init>$descriptor for default lambda $lambdaClassType"
         }
 
-        capturedVars = constructor?.findCapturedFieldAssignmentInstructions()?.map {
-            fieldNode ->
-            capturedParamDesc(fieldNode.name, Type.getType(fieldNode.desc))
-        }?.toList() ?: emptyList()
+        capturedVars =
+                if (isFunctionReference || isPropertyReference)
+                    constructor?.desc?.let { Type.getArgumentTypes(it) }?.singleOrNull()?.let {
+                        listOf(capturedParamDesc(AsmUtil.RECEIVER_NAME, it))
+                    } ?: emptyList()
+                else
+                    constructor?.findCapturedFieldAssignmentInstructions()?.map {
+                        fieldNode ->
+                        capturedParamDesc(fieldNode.name, Type.getType(fieldNode.desc))
+                    }?.toList() ?: emptyList()
 
+        isBoundCallableReference = (isFunctionReference || isPropertyReference) && capturedVars.isNotEmpty()
 
         invokeMethod = Method(
                 (if (isPropertyReference) OperatorNameConventions.GET else OperatorNameConventions.INVOKE).asString(),
@@ -160,8 +173,8 @@ class ExpressionLambda(
         expression: KtExpression,
         private val typeMapper: KotlinTypeMapper,
         isCrossInline: Boolean,
-        isBoundCallableReference: Boolean
-) : LambdaInfo(isCrossInline, isBoundCallableReference) {
+        override val isBoundCallableReference: Boolean
+) : LambdaInfo(isCrossInline) {
 
     override val lambdaClassType: Type
 
@@ -186,7 +199,7 @@ class ExpressionLambda(
             val variableDescriptor =
                     bindingContext.get(BindingContext.VARIABLE, functionWithBodyOrCallableReference) as? VariableDescriptorWithAccessors ?:
                     throw AssertionError("""Reference expression not resolved to variable descriptor with accessors: ${expression.getText()}""")
-            classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor!!)
+            classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor)
             lambdaClassType = typeMapper.mapClass(classDescriptor)
             val getFunction = PropertyReferenceCodegen.findGetFunction(variableDescriptor)
             invokeMethodDescriptor = PropertyReferenceCodegen.createFakeOpenDescriptor(getFunction, classDescriptor)

@@ -820,7 +820,7 @@ public class InlineCodegen extends CallGenerator {
     private void putClosureParametersOnStack() {
         for (LambdaInfo next : expressionMap.values()) {
             //closure parameters for bounded callable references are generated inplace
-            if (next.isBoundCallableReference) continue;
+            if (next instanceof ExpressionLambda && next.isBoundCallableReference()) continue;
             putClosureParametersOnStack(next, null);
         }
     }

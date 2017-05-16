@@ -59,7 +59,8 @@ public class RemapVisitor extends MethodBodyVisitor {
 
     @Override
     public void visitFieldInsn(int opcode, @NotNull String owner, @NotNull String name, @NotNull String desc) {
-        if (name.startsWith("$$$") && (nodeRemapper instanceof RegeneratedLambdaFieldRemapper || nodeRemapper.isRoot())) {
+        if (name.startsWith(InlineCodegenUtil.CAPTURED_FIELD_FOLD_PREFIX) &&
+            (nodeRemapper instanceof RegeneratedLambdaFieldRemapper || nodeRemapper.isRoot())) {
             FieldInsnNode fin = new FieldInsnNode(opcode, owner, name, desc);
             StackValue inline = nodeRemapper.getFieldForInline(fin, null);
             assert inline != null : "Captured field should have not null stackValue " + fin;

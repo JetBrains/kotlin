@@ -16,17 +16,25 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
 class InlinedLambdaRemapper(
-        lambdaInternalName: String,
+        originalLambdaInternalName: String,
         parent: FieldRemapper,
-        methodParams: Parameters
-) : FieldRemapper(lambdaInternalName, parent, methodParams) {
+        methodParams: Parameters,
+        val isDefaultBoundCallableReference: Boolean
+) : FieldRemapper(originalLambdaInternalName, parent, methodParams) {
 
     public override fun canProcess(fieldOwner: String, fieldName: String, isFolding: Boolean) =
-            isFolding && super.canProcess(fieldOwner, fieldName, true)
+            isFolding && (isMyBoundReceiverForDefaultLambda(fieldOwner, fieldName) || super.canProcess(fieldOwner, fieldName, true))
+
+    private fun isMyBoundReceiverForDefaultLambda(fieldOwner: String, fieldName: String) =
+            isDefaultBoundCallableReference && fieldName == AsmUtil.BOUND_REFERENCE_RECEIVER && fieldOwner == originalLambdaInternalName
+
+    override fun getFieldNameForFolding(insnNode: FieldInsnNode): String =
+            if (isMyBoundReceiverForDefaultLambda(insnNode.owner, insnNode.name)) AsmUtil.RECEIVER_NAME else insnNode.name
 
     override fun findField(fieldInsnNode: FieldInsnNode, captured: Collection<CapturedParamInfo>) =
             parent!!.findField(fieldInsnNode, captured)

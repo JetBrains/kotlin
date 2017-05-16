@@ -961,6 +961,18 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("boundFunctionReference.kt")
+            public void testBoundFunctionReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/boundFunctionReference.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("boundPropertyReference.kt")
+            public void testBoundPropertyReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/boundPropertyReference.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("defaultLambdaInNoInline.kt")
             public void testDefaultLambdaInNoInline() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultLambdaInNoInline.kt");

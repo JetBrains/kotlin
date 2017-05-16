@@ -61,7 +61,7 @@ open class FieldRemapper(
 
         val insnNode = capturedFieldAccess[currentInstruction] as FieldInsnNode
         if (canProcess(insnNode.owner, insnNode.name, true)) {
-            insnNode.name = "$$$" + insnNode.name
+            insnNode.name = InlineCodegenUtil.CAPTURED_FIELD_FOLD_PREFIX + getFieldNameForFolding(insnNode)
             insnNode.opcode = Opcodes.GETSTATIC
 
             node.remove(InsnSequence(capturedFieldAccess[0], insnNode))
@@ -70,6 +70,8 @@ open class FieldRemapper(
 
         return null
     }
+
+    protected open fun getFieldNameForFolding(insnNode: FieldInsnNode): String = insnNode.name
 
     @JvmOverloads
     open fun findField(fieldInsnNode: FieldInsnNode, captured: Collection<CapturedParamInfo> = parameters.captured): CapturedParamInfo? {
