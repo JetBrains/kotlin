@@ -1,4 +1,4 @@
 fun foo() {
-    @[Deprecated] fun innerFoo() {
+    @Deprecated fun innerFoo() {
     }
 }
