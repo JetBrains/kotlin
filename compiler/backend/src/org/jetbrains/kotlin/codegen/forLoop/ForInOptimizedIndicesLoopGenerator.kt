@@ -28,21 +28,18 @@ abstract class ForInOptimizedIndicesLoopGenerator(
         codegen: ExpressionCodegen,
         forExpression: KtForExpression,
         loopRangeCall: ResolvedCall<*>
-) : AbstractForInRangeLoopGenerator(codegen, forExpression) {
+) : AbstractForInExclusiveRangeLoopGenerator(codegen, forExpression) {
     protected val receiverValue: ReceiverValue = loopRangeCall.extensionReceiver!!
     protected val expectedReceiverType: KotlinType = ExpressionCodegen.getExpectedReceiverType(loopRangeCall)
 
-    override fun storeRangeStartAndEnd() {
-        loopParameter().store(StackValue.constant(0, asmElementType), codegen.v)
+    override fun generateFrom(): StackValue =
+            StackValue.constant(0, asmElementType)
 
-        val receiver = codegen.generateReceiverValue(receiverValue, false)
-        val receiverType = codegen.asmType(expectedReceiverType)
-        receiver.put(receiverType, codegen.v)
-        getReceiverSizeAsInt()
-        codegen.v.iconst(1)
-        codegen.v.sub(Type.INT_TYPE)
-        StackValue.local(endVar, asmElementType).store(StackValue.onStack(Type.INT_TYPE), codegen.v)
-    }
+    override fun generateTo(): StackValue =
+            StackValue.operation(Type.INT_TYPE) { v ->
+                codegen.generateReceiverValue(receiverValue, false).put(codegen.asmType(expectedReceiverType), v)
+                getReceiverSizeAsInt()
+            }
 
     /**
      * `(receiver -> size:I)`
