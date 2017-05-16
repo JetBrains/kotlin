@@ -10,14 +10,14 @@ UFile (package = ) [public final class LocalDeclarationsKt {...]
                         ULambdaExpression [fun () {...}] = Undetermined
                             UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] = external <init>()()
                                 UIdentifier (Identifier (Local)) [UIdentifier (Identifier (Local))]
-                                USimpleNameReferenceExpression (identifier = <init>) [<init>] = external <init>()
+                                USimpleNameReferenceExpression (identifier = <init>) [<init>] = external <init>()()
                 UDeclarationsExpression [var baz: <ErrorType> = fun () {...}] = Undetermined
                     ULocalVariable (name = baz) [var baz: <ErrorType> = fun () {...}]
                         ULambdaExpression [fun () {...}] = Undetermined
                             UBlockExpression [{...}] = external <init>()()
                                 UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] = external <init>()()
                                     UIdentifier (Identifier (Local)) [UIdentifier (Identifier (Local))]
-                                    USimpleNameReferenceExpression (identifier = <init>) [<init>] = external <init>()
+                                    USimpleNameReferenceExpression (identifier = <init>) [<init>] = external <init>()()
                 UDeclarationsExpression [var someLocalFun: kotlin.jvm.functions.Function2<? super java.lang.Integer,? super java.lang.String,? extends java.lang.Integer> = fun (var text: java.lang.String) {...}] = Undetermined
                     UVariable (name = someLocalFun) [var someLocalFun: kotlin.jvm.functions.Function2<? super java.lang.Integer,? super java.lang.String,? extends java.lang.Integer> = fun (var text: java.lang.String) {...}]
                         ULambdaExpression [fun (var text: java.lang.String) {...}] = Undetermined
@@ -27,7 +27,7 @@ UFile (package = ) [public final class LocalDeclarationsKt {...]
                     UBinaryExpression (operator = ==) [bar() == <init>()] = Undetermined
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [bar()] = external bar()()
                             UIdentifier (Identifier (bar)) [UIdentifier (Identifier (bar))]
-                            USimpleNameReferenceExpression (identifier = bar) [bar] = external bar()
+                            USimpleNameReferenceExpression (identifier = bar) [bar] = external bar()()
                         UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] = external <init>()()
                             UIdentifier (Identifier (Local)) [UIdentifier (Identifier (Local))]
-                            USimpleNameReferenceExpression (identifier = <init>) [<init>] = external <init>()
+                            USimpleNameReferenceExpression (identifier = <init>) [<init>] = external <init>()()
