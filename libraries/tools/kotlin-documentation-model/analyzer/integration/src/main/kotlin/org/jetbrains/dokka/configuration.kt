@@ -22,6 +22,7 @@ interface DokkaConfiguration {
     val impliedPlatforms: List<String>
     val perPackageOptions: List<PackageOptions>
     val externalDocumentationLinks: List<DokkaConfiguration.ExternalDocumentationLink>
+    val noStdlibLink: Boolean
 
     interface SourceRoot {
         val path: String
@@ -78,7 +79,8 @@ data class SerializeOnlyDokkaConfiguration(override val moduleName: String,
                                            override val sourceLinks: List<DokkaConfiguration.SourceLinkDefinition>,
                                            override val impliedPlatforms: List<String>,
                                            override val perPackageOptions: List<DokkaConfiguration.PackageOptions>,
-                                           override val externalDocumentationLinks: List<DokkaConfiguration.ExternalDocumentationLink>) : DokkaConfiguration
+                                           override val externalDocumentationLinks: List<DokkaConfiguration.ExternalDocumentationLink>,
+                                           override val noStdlibLink: Boolean) : DokkaConfiguration
 
 
 data class ExternalDocumentationLinkImpl internal constructor(override val url: URL,
