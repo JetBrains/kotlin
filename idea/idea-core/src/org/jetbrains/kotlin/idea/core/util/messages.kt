@@ -25,7 +25,7 @@ import javax.swing.Icon
 
 fun showYesNoCancelDialog(key: String, project: Project, message: String, title: String, icon: Icon, default: Int?): Int {
     return if (!ApplicationManager.getApplication().isUnitTestMode) {
-        Messages.showYesNoCancelDialog(project, message, message, icon)
+        Messages.showYesNoCancelDialog(project, message, title, icon)
     }
     else {
         callInTestMode(key, default)
