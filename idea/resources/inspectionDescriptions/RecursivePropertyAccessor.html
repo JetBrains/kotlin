@@ -1,0 +1,23 @@
+<html>
+<body>
+Reports recursive property accessor calls which can end up with StackOverflowError
+<p>
+  For example:
+  <code><pre>
+    <b>class</b> A {
+        <b>var</b> x = 0
+            <b>get</b>() {
+                <b>return</b> x //recursive getter call
+            }
+
+        <b>var</b> y = 0
+            <b>set</b>(value) {
+                <b>if</b> (value > 0) {
+                    y = value //recursive setter call
+                }
+            }
+    }
+</pre></code>
+</p>
+</body>
+</html>
