@@ -65,7 +65,10 @@ class NewKotlinFileAction
             else {
                 val editor = FileEditorManager.getInstance(createdElement.project).selectedTextEditor ?: return
                 if (editor.document == createdElement.viewProvider.document) {
-                    editor.caretModel.moveToLogicalPosition(LogicalPosition(editor.document.lineCount-1, 0))
+                    val lineCount = editor.document.lineCount
+                    if (lineCount > 0) {
+                        editor.caretModel.moveToLogicalPosition(LogicalPosition(lineCount - 1, 0))
+                    }
                 }
             }
         }
