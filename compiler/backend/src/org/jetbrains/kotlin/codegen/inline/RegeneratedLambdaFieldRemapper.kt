@@ -14,108 +14,76 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.inline;
+package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
-import java.util.Collection;
-import java.util.Map;
+class RegeneratedLambdaFieldRemapper(
+        val oldOwnerType: String,
+        override val newLambdaInternalName: String,
+        private val parameters: Parameters,
+        private val recapturedLambdas: Map<String, LambdaInfo>,
+        remapper: FieldRemapper,
+        private val isConstructor: Boolean
+) : FieldRemapper(oldOwnerType, remapper, parameters) {
 
-public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
-    private final String oldOwnerType;
-    private final String newOwnerType;
-    private final Parameters parameters;
-    private final Map<String, LambdaInfo> recapturedLambdas;
-    private final boolean isConstructor;
+    public override fun canProcess(fieldOwner: String, fieldName: String, isFolding: Boolean) =
+            super.canProcess(fieldOwner, fieldName, isFolding) || isRecapturedLambdaType(fieldOwner, isFolding)
 
-    public RegeneratedLambdaFieldRemapper(
-            @NotNull String oldOwnerType,
-            @NotNull String newOwnerType,
-            @NotNull Parameters parameters,
-            @NotNull Map<String, LambdaInfo> recapturedLambdas,
-            @NotNull FieldRemapper remapper,
-            boolean isConstructor
-    ) {
-        super(oldOwnerType, remapper, parameters);
-        this.oldOwnerType = oldOwnerType;
-        this.newOwnerType = newOwnerType;
-        this.parameters = parameters;
-        this.recapturedLambdas = recapturedLambdas;
-        this.isConstructor = isConstructor;
-    }
+    private fun isRecapturedLambdaType(owner: String, isFolding: Boolean) =
+            recapturedLambdas.containsKey(owner) && (isFolding || parent !is InlinedLambdaRemapper)
 
-    @Override
-    public boolean canProcess(@NotNull String fieldOwner, @NotNull String fieldName, boolean isFolding) {
-        return super.canProcess(fieldOwner, fieldName, isFolding) || isRecapturedLambdaType(fieldOwner, isFolding);
-    }
-
-    private boolean isRecapturedLambdaType(@NotNull String owner, boolean isFolding) {
-        return recapturedLambdas.containsKey(owner) && (isFolding || !(parent instanceof InlinedLambdaRemapper));
-    }
-
-    @Nullable
-    @Override
-    public CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode, @NotNull Collection<? extends CapturedParamInfo> captured) {
-        boolean searchInParent = !canProcess(fieldInsnNode.owner, fieldInsnNode.name, false);
+    override fun findField(fieldInsnNode: FieldInsnNode, captured: Collection<CapturedParamInfo>): CapturedParamInfo? {
+        val searchInParent = !canProcess(fieldInsnNode.owner, fieldInsnNode.name, false)
         if (searchInParent) {
-            return parent.findField(fieldInsnNode);
+            return parent!!.findField(fieldInsnNode)
         }
-        return findFieldInMyCaptured(fieldInsnNode);
+        return findFieldInMyCaptured(fieldInsnNode)
     }
 
-    @Override
-    public boolean processNonAload0FieldAccessChains(boolean isInlinedLambda) {
-        return isInlinedLambda && isConstructor;
+    override fun processNonAload0FieldAccessChains(isInlinedLambda: Boolean): Boolean {
+        return isInlinedLambda && isConstructor
     }
 
-    @Nullable
-    private CapturedParamInfo findFieldInMyCaptured(@NotNull FieldInsnNode fieldInsnNode) {
-        return super.findField(fieldInsnNode, parameters.getCaptured());
+    private fun findFieldInMyCaptured(fieldInsnNode: FieldInsnNode): CapturedParamInfo? {
+        return super.findField(fieldInsnNode, parameters.captured)
     }
 
-    @NotNull
-    @Override
-    public String getNewLambdaInternalName() {
-        return newOwnerType;
-    }
-
-    @Nullable
-    @Override
-    public StackValue getFieldForInline(@NotNull FieldInsnNode node, @Nullable StackValue prefix) {
-        assert node.name.startsWith("$$$") : "Captured field template should start with $$$ prefix";
-        if (node.name.equals("$$$" + InlineCodegenUtil.THIS)) {
-            assert oldOwnerType.equals(node.owner) : "Can't unfold '$$$THIS' parameter";
-            return StackValue.LOCAL_0;
+    override fun getFieldForInline(node: FieldInsnNode, prefix: StackValue?): StackValue? {
+        assert(node.name.startsWith("$$$")) { "Captured field template should start with $$$ prefix" }
+        if (node.name == "$$$" + InlineCodegenUtil.THIS) {
+            assert(oldOwnerType == node.owner) { "Can't unfold '$$\$THIS' parameter" }
+            return StackValue.LOCAL_0
         }
 
-        FieldInsnNode fin = new FieldInsnNode(node.getOpcode(), node.owner, node.name.substring(3), node.desc);
-        CapturedParamInfo field = findFieldInMyCaptured(fin);
+        val fin = FieldInsnNode(node.opcode, node.owner, node.name.substring(3), node.desc)
+        var field = findFieldInMyCaptured(fin)
 
-        boolean searchInParent = false;
+        var searchInParent = false
         if (field == null) {
-            field = findFieldInMyCaptured(new FieldInsnNode(
-                    Opcodes.GETSTATIC, oldOwnerType, InlineCodegenUtil.THIS$0,
-                    Type.getObjectType(parent.getLambdaInternalName()).getDescriptor()
-            ));
-            searchInParent = true;
+            field = findFieldInMyCaptured(FieldInsnNode(
+                    Opcodes.GETSTATIC, oldOwnerType, InlineCodegenUtil.`THIS$0`,
+                    Type.getObjectType(parent!!.lambdaInternalName!!).descriptor
+            ))
+            searchInParent = true
             if (field == null) {
-                throw new IllegalStateException("Couldn't find captured this " + getLambdaInternalName() + " for " + node.name);
+                throw IllegalStateException("Couldn't find captured this " + lambdaInternalName + " for " + node.name)
             }
         }
 
-        StackValue result = StackValue.field(
-                field.isSkipped ?
-                Type.getObjectType(parent.parent.getNewLambdaInternalName()) : field.getType(),
-                Type.getObjectType(getNewLambdaInternalName()), /*TODO owner type*/
-                field.getNewFieldName(), false,
-                prefix == null ? StackValue.LOCAL_0 : prefix
-        );
+        val result = StackValue.field(
+                if (field.isSkipped)
+                    Type.getObjectType(parent!!.parent!!.newLambdaInternalName)
+                else
+                    field.getType(),
+                Type.getObjectType(newLambdaInternalName), /*TODO owner type*/
+                field.newFieldName, false,
+                prefix ?: StackValue.LOCAL_0
+        )
 
-        return searchInParent ? parent.getFieldForInline(node, result) : result;
+        return if (searchInParent) parent!!.getFieldForInline(node, result) else result
     }
 }
