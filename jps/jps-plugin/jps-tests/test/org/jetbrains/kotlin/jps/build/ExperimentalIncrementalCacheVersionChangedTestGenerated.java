@@ -101,5 +101,4 @@ public class ExperimentalIncrementalCacheVersionChangedTestGenerated extends Abs
         String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/withError/");
         doTest(fileName);
     }
-
 }

@@ -71,5 +71,4 @@ public class ExperimentalChangeIncrementalOptionTestGenerated extends AbstractEx
         String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOn/");
         doTest(fileName);
     }
-
 }
