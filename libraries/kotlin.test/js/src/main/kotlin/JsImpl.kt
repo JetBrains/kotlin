@@ -36,6 +36,9 @@ inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noin
     return exception as T
 }
 
+/**
+ * @suppress
+ */
 var _asserter: Asserter = QUnitAsserter()
 
 /**
