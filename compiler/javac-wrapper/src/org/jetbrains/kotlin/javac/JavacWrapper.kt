@@ -143,7 +143,7 @@ class JavacWrapper(javaFiles: Collection<File>,
             }
             .associateBy(TreeBasedPackage::fqName)
 
-    private val kotlinClassifiersCache = KotlinClassifiersCache(kotlinFiles, this)
+    private val kotlinClassifiersCache = KotlinClassifiersCache(if (javaFiles.isNotEmpty()) kotlinFiles else emptyList(), this)
     private val treePathResolverCache = TreePathResolverCache(this)
     private val symbolBasedClassesCache = hashMapOf<String, SymbolBasedClass?>()
     private val symbolBasedPackagesCache = hashMapOf<String, SymbolBasedPackage?>()
@@ -151,9 +151,13 @@ class JavacWrapper(javaFiles: Collection<File>,
     fun compile(outDir: File? = null): Boolean = with(javac) {
         if (errorCount() > 0) return false
 
+        val javaFilesNumber = fileObjects.length()
+        if (javaFilesNumber == 0) return true
+
         fileManager.setClassPathForCompilation(outDir)
         messageCollector?.report(CompilerMessageSeverity.INFO,
-                                 "Compiling Java sources")
+                                 "Compiling $javaFilesNumber Java source files" +
+                                 " to [${fileManager.getLocation(StandardLocation.CLASS_OUTPUT)?.firstOrNull()?.path}]")
         compile(fileObjects)
         errorCount() == 0
     }
