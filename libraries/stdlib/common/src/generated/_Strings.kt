@@ -638,15 +638,61 @@ public header inline fun CharSequence.sumBy(selector: (Char) -> Int): Int
  */
 public header inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double
 
+/**
+ * Splits this char sequence into a list of strings each not exceeding the given [size].
+ * 
+ * The last string in the resulting list may have less characters than the given [size].
+ * 
+ * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
+ * 
+ * @sample samples.collections.Collections.Transformations.chunked
+ */
 @SinceKotlin("1.2")
 public header fun CharSequence.chunked(size: Int): List<String>
 
+/**
+ * Splits this char sequence into several char sequences each not exceeding the given [size]
+ * and applies the given [transform] function to an each.
+ * 
+ * @return list of results of the [transform] applied to an each char sequence.
+ * 
+ * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it escape someway, unless you made a snapshot of it.
+ * The last char sequence may have less characters than the given [size].
+ * 
+ * @param size the number of elements to take in each char sequence, must be positive and can be greater than the number of elements in this char sequence.
+ * 
+ * @sample samples.text.Strings.chunkedTransform
+ */
 @SinceKotlin("1.2")
 public header fun <R> CharSequence.chunked(size: Int, transform: (CharSequence) -> R): List<R>
 
+/**
+ * Splits this char sequence into a sequence of strings each not exceeding the given [size].
+ * 
+ * The last string in the resulting sequence may have less characters than the given [size].
+ * 
+ * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
+ * 
+ * @sample samples.collections.Collections.Transformations.chunked
+ */
 @SinceKotlin("1.2")
 public header fun CharSequence.chunkedSequence(size: Int): Sequence<String> 
 
+/**
+ * Splits this char sequence into several char sequences each not exceeding the given [size]
+ * and applies the given [transform] function to an each.
+ * 
+ * @return sequence of results of the [transform] applied to an each char sequence.
+ * 
+ * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape someway, unless you made a snapshot of it.
+ * The last char sequence may have less characters than the given [size].
+ * 
+ * @param size the number of elements to take in each char sequence, must be positive and can be greater than the number of elements in this char sequence.
+ * 
+ * @sample samples.text.Strings.chunkedTransformToSequence
+ */
 @SinceKotlin("1.2")
 public header fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence) -> R): Sequence<R> 
 
