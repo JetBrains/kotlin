@@ -26,7 +26,7 @@ class TypeRemapper private constructor(
         val parent: TypeRemapper? = null,
         val isRootInlineLambda: Boolean = false
 ) {
-    private var additionalMappings = hashMapOf<String, String>()
+    private val additionalMappings = hashMapOf<String, String>()
     private val typeParametersMapping = hashMapOf<String, TypeParameter>()
 
     fun addMapping(type: String, newType: String) {

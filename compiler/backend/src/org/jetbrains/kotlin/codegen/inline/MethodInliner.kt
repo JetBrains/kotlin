@@ -75,11 +75,9 @@ class MethodInliner(
     ): InlineResult {
         //analyze body
         var transformedNode = markPlacesForInlineAndRemoveInlinable(node, labelOwner, finallyDeepShift)
-        if (inliningContext.isInliningLambda &&
-            inliningContext.lambdaInfo is DefaultLambda &&
-            inliningContext.lambdaInfo.needReification) {
+        if (inliningContext.isInliningLambda && isDefaultLambdaWithReification(inliningContext.lambdaInfo!!)) {
             //TODO maybe move reification in one place
-            inliningContext.root.inlineMethodReificator.reifyInstructions(transformedNode)
+            inliningContext.root.inlineMethodReifier.reifyInstructions(transformedNode)
         }
 
         //substitute returns with "goto end" instruction to keep non local returns in lambdas
@@ -277,9 +275,7 @@ class MethodInliner(
                         super.visitMethodInsn(opcode, owner, name, desc, itf)
                     }
                 }
-                else if ((!inliningContext.isInliningLambda ||
-                          inliningContext.lambdaInfo is DefaultLambda &&
-                          inliningContext.lambdaInfo.needReification) &&
+                else if ((!inliningContext.isInliningLambda || isDefaultLambdaWithReification(inliningContext.lambdaInfo!!)) &&
                          ReifiedTypeInliner.isNeedClassReificationMarker(MethodInsnNode(opcode, owner, name, desc, false))) {
                     //we shouldn't process here content of inlining lambda it should be reified at external level except default lambdas
                 }
@@ -305,6 +301,9 @@ class MethodInliner(
 
         return resultNode
     }
+
+    private fun isDefaultLambdaWithReification(lambdaInfo: LambdaInfo) =
+            lambdaInfo is DefaultLambda && lambdaInfo.needReification
 
     private fun prepareNode(node: MethodNode, finallyDeepShift: Int): MethodNode {
         node.instructions.resetLabels()
