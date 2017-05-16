@@ -24,16 +24,16 @@ import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 open class FieldRemapper(
-        val lambdaInternalName: String?,
+        val originalLambdaInternalName: String?,
         @JvmField val parent: FieldRemapper?,
-        private val params: Parameters
+        protected val parameters: Parameters
 ) {
     val isRoot = parent == null
 
     open val isInsideInliningLambda: Boolean = parent?.isInsideInliningLambda ?: false
 
     protected open fun canProcess(fieldOwner: String, fieldName: String, isFolding: Boolean): Boolean {
-        return fieldOwner == lambdaInternalName &&
+        return fieldOwner == originalLambdaInternalName &&
                //don't process general field of anonymous objects
                InlineCodegenUtil.isCapturedFieldName(fieldName)
     }
@@ -72,7 +72,7 @@ open class FieldRemapper(
     }
 
     @JvmOverloads
-    open fun findField(fieldInsnNode: FieldInsnNode, captured: Collection<CapturedParamInfo> = params.captured): CapturedParamInfo? {
+    open fun findField(fieldInsnNode: FieldInsnNode, captured: Collection<CapturedParamInfo> = parameters.captured): CapturedParamInfo? {
         for (valueDescriptor in captured) {
             if (valueDescriptor.originalFieldName == fieldInsnNode.name && valueDescriptor.containingLambdaName == fieldInsnNode.owner) {
                 return valueDescriptor
@@ -82,7 +82,7 @@ open class FieldRemapper(
     }
 
     open val newLambdaInternalName: String
-        get() = lambdaInternalName!!
+        get() = originalLambdaInternalName!!
 
     open fun getFieldForInline(node: FieldInsnNode, prefix: StackValue?): StackValue? =
             MethodInliner.findCapturedField(node, this).remapValue

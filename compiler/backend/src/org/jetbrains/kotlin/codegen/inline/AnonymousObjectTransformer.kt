@@ -428,7 +428,7 @@ class AnonymousObjectTransformer(
             //lambda with non InlinedLambdaRemapper already have outer
             val parent = parentFieldRemapper.parent as? RegeneratedLambdaFieldRemapper ?:
                          throw AssertionError("Expecting RegeneratedLambdaFieldRemapper, but ${parentFieldRemapper.parent}")
-            val ownerType = Type.getObjectType(parent.lambdaInternalName)
+            val ownerType = Type.getObjectType(parent.originalLambdaInternalName)
             val desc = CapturedParamDesc(ownerType, InlineCodegenUtil.THIS, ownerType)
             val recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, InlineCodegenUtil.`THIS$0`/*outer lambda/object*/, false)
             val composed = StackValue.LOCAL_0

@@ -28,9 +28,8 @@ class InlinedLambdaRemapper(
     public override fun canProcess(fieldOwner: String, fieldName: String, isFolding: Boolean) =
             isFolding && super.canProcess(fieldOwner, fieldName, true)
 
-    override fun findField(fieldInsnNode: FieldInsnNode, captured: Collection<CapturedParamInfo>): CapturedParamInfo? {
-        return parent!!.findField(fieldInsnNode, captured)
-    }
+    override fun findField(fieldInsnNode: FieldInsnNode, captured: Collection<CapturedParamInfo>) =
+            parent!!.findField(fieldInsnNode, captured)
 
     override val isInsideInliningLambda: Boolean = true
 

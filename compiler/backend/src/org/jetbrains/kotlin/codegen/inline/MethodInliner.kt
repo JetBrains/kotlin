@@ -709,7 +709,7 @@ class MethodInliner(
             assert(node.name.startsWith("$$$")) { "Captured field template should start with $$$ prefix" }
             val fin = FieldInsnNode(node.opcode, node.owner, node.name.substring(3), node.desc)
             val field = fieldRemapper.findField(fin) ?: throw IllegalStateException(
-                    "Couldn't find captured field " + node.owner + "." + node.name + " in " + fieldRemapper.lambdaInternalName
+                    "Couldn't find captured field ${node.owner}.${node.name} in ${fieldRemapper.originalLambdaInternalName}"
             )
             return field
         }

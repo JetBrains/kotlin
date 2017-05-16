@@ -17,18 +17,20 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.CAPTURED_FIELD_FOLD_PREFIX
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.THIS
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
 class RegeneratedLambdaFieldRemapper(
-        val oldOwnerType: String,
+        originalLambdaInternalName: String,
         override val newLambdaInternalName: String,
-        private val parameters: Parameters,
+        parameters: Parameters,
         private val recapturedLambdas: Map<String, LambdaInfo>,
         remapper: FieldRemapper,
         private val isConstructor: Boolean
-) : FieldRemapper(oldOwnerType, remapper, parameters) {
+) : FieldRemapper(originalLambdaInternalName, remapper, parameters) {
 
     public override fun canProcess(fieldOwner: String, fieldName: String, isFolding: Boolean) =
             super.canProcess(fieldOwner, fieldName, isFolding) || isRecapturedLambdaType(fieldOwner, isFolding)
@@ -41,38 +43,35 @@ class RegeneratedLambdaFieldRemapper(
         if (searchInParent) {
             return parent!!.findField(fieldInsnNode)
         }
-        return findFieldInMyCaptured(fieldInsnNode)
+        return findFieldInSuper(fieldInsnNode)
     }
 
     override fun processNonAload0FieldAccessChains(isInlinedLambda: Boolean): Boolean {
         return isInlinedLambda && isConstructor
     }
 
-    private fun findFieldInMyCaptured(fieldInsnNode: FieldInsnNode): CapturedParamInfo? {
+    private fun findFieldInSuper(fieldInsnNode: FieldInsnNode): CapturedParamInfo? {
         return super.findField(fieldInsnNode, parameters.captured)
     }
 
     override fun getFieldForInline(node: FieldInsnNode, prefix: StackValue?): StackValue? {
-        assert(node.name.startsWith("$$$")) { "Captured field template should start with $$$ prefix" }
-        if (node.name == "$$$" + InlineCodegenUtil.THIS) {
-            assert(oldOwnerType == node.owner) { "Can't unfold '$$\$THIS' parameter" }
+        val fieldName = node.name
+        assert(fieldName.startsWith(CAPTURED_FIELD_FOLD_PREFIX)) { "Captured field template should start with $CAPTURED_FIELD_FOLD_PREFIX prefix" }
+        if (fieldName == CAPTURED_FIELD_FOLD_PREFIX + THIS) {
+            assert(originalLambdaInternalName == node.owner) { "Can't unfold '$CAPTURED_FIELD_FOLD_PREFIX$THIS' parameter" }
             return StackValue.LOCAL_0
         }
 
-        val fin = FieldInsnNode(node.opcode, node.owner, node.name.substring(3), node.desc)
-        var field = findFieldInMyCaptured(fin)
+        val fin = FieldInsnNode(node.opcode, node.owner, fieldName.substringAfter(CAPTURED_FIELD_FOLD_PREFIX), node.desc)
+        var fromParent = false
+        val field = findFieldInSuper(fin) ?:
+                    //search in parent
+                    findFieldInSuper(FieldInsnNode(
+                            Opcodes.GETSTATIC, originalLambdaInternalName, InlineCodegenUtil.`THIS$0`,
+                            Type.getObjectType(parent!!.originalLambdaInternalName!!).descriptor
+                    ))?.also { fromParent = true } ?:
+                    throw AssertionError("Couldn't find captured this $originalLambdaInternalName for $fieldName")
 
-        var searchInParent = false
-        if (field == null) {
-            field = findFieldInMyCaptured(FieldInsnNode(
-                    Opcodes.GETSTATIC, oldOwnerType, InlineCodegenUtil.`THIS$0`,
-                    Type.getObjectType(parent!!.lambdaInternalName!!).descriptor
-            ))
-            searchInParent = true
-            if (field == null) {
-                throw IllegalStateException("Couldn't find captured this " + lambdaInternalName + " for " + node.name)
-            }
-        }
 
         val result = StackValue.field(
                 if (field.isSkipped)
@@ -84,6 +83,6 @@ class RegeneratedLambdaFieldRemapper(
                 prefix ?: StackValue.LOCAL_0
         )
 
-        return if (searchInParent) parent!!.getFieldForInline(node, result) else result
+        return if (fromParent) parent!!.getFieldForInline(node, result) else result
     }
 }

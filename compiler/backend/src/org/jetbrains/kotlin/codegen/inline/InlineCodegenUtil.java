@@ -89,7 +89,8 @@ public class InlineCodegenUtil {
     public static final String INLINE_FUN_VAR_SUFFIX = "$iv";
 
     public static final String DEFAULT_LAMBDA_FAKE_CALL = "$$$DEFAULT_LAMBDA_FAKE_CALL$$$";
-
+    public static final String CAPTURED_FIELD_FOLD_PREFIX = "$$$";
+    
     @Nullable
     public static SMAPAndMethodNode getMethodNode(
             byte[] classData,
