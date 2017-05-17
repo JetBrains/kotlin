@@ -147,23 +147,6 @@ class KotlinFacetEditorGeneralTab(
             get() = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
     }
 
-    inner class VersionValidator : FacetEditorValidator() {
-        override fun check(): ValidationResult {
-            val apiLevel = editor.compilerConfigurable.apiVersionComboBox.selectedItem as? ApiVersion?
-                           ?: return ValidationResult.OK
-            val languageLevel = editor.compilerConfigurable.languageVersionComboBox.selectedItem as? LanguageVersion?
-                                ?: return ValidationResult.OK
-            val targetPlatform = editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
-            val libraryLevel = getLibraryLanguageLevel(editorContext.module, editorContext.rootModel, targetPlatform)
-
-            val apiLevelVersion = LanguageVersion.fromVersionString(apiLevel.versionString) ?: return ValidationResult.OK
-            if (languageLevel < apiLevelVersion || libraryLevel < apiLevelVersion) {
-                return ValidationResult("Language version/Runtime version may not be less than API version", null)
-            }
-            return ValidationResult.OK
-        }
-    }
-
     inner class ArgumentConsistencyValidator : FacetEditorValidator() {
         override fun check(): ValidationResult {
             val platform = editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*>? ?: return ValidationResult.OK
@@ -221,7 +204,6 @@ class KotlinFacetEditorGeneralTab(
     val editor = EditorComponent(editorContext.project, configuration)
 
     private val libraryValidator: FrameworkLibraryValidator
-    private val versionValidator = VersionValidator()
     private val coroutineValidator = ArgumentConsistencyValidator()
 
     private var enableValidation = false
@@ -234,7 +216,6 @@ class KotlinFacetEditorGeneralTab(
         ) { editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*> }
 
         validatorsManager.registerValidator(libraryValidator)
-        validatorsManager.registerValidator(versionValidator)
         validatorsManager.registerValidator(coroutineValidator)
 
         with(editor.compilerConfigurable) {
@@ -256,6 +237,15 @@ class KotlinFacetEditorGeneralTab(
         editor.targetPlatformComboBox.validateOnChange()
 
         editor.updateCompilerConfigurable()
+    }
+
+    private fun restrictAPIVersions() {
+        with(editor.compilerConfigurable) {
+            val targetPlatform = editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
+            val libraryLevel = getLibraryLanguageLevel(editorContext.module, editorContext.rootModel, targetPlatform)
+            val versionUpperBound = minOf(selectedLanguageVersion, libraryLevel)
+            restrictAPIVersions(versionUpperBound)
+        }
     }
 
     private fun JTextField.validateOnChange() {
