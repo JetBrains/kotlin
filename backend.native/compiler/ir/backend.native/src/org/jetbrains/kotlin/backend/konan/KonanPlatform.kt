@@ -41,6 +41,10 @@ class KonanBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageMana
     override fun getClassDescriptorFactories() =
             super.getClassDescriptorFactories() + KonanBuiltInClassDescriptorFactory(storageManager, builtInsModule)
 
+    override fun getSuspendFunction(parameterCount: Int): ClassDescriptor {
+        return getBuiltInClassByName(Name.identifier("SuspendFunction$parameterCount"))
+    }
+
     object FqNames {
         val packageName = FqName("konan.internal")
 

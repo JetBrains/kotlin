@@ -50,11 +50,9 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.backend.common.descriptors.*
 
 internal class SuspendFunctionsLowering(val context: Context): DeclarationContainerLoweringPass {
 
@@ -236,17 +234,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
     private val getContinuationDescriptor = context.builtIns.getKonanInternalFunctions("getContinuation").single()
     private val returnIfSuspendedDescriptor = context.builtIns.getKonanInternalFunctions("returnIfSuspended").single()
 
-    private fun KotlinType.replace(types: List<KotlinType>) = this.replace(types.map(::TypeProjectionImpl))
-
-    private fun FunctionDescriptor.substitute(vararg types: KotlinType): FunctionDescriptor {
-        val typeSubstitutor = TypeSubstitutor.create(
-                typeParameters
-                        .withIndex()
-                        .associateBy({ it.value.typeConstructor }, { TypeProjectionImpl(types[it.index]) })
-        )
-        return substitute(typeSubstitutor)!!
-    }
-
     private fun removeReturnIfSuspendedCall(irFunction: IrFunction) {
         irFunction.transformChildrenVoid(object: IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
@@ -332,22 +319,23 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
             val superTypes = mutableListOf<KotlinType>(coroutineImplClassDescriptor.defaultType)
             var suspendFunctionClassDescriptor: ClassDescriptor? = null
             var functionClassDescriptor: ClassDescriptor? = null
+            var suspendFunctionClassTypeArguments: List<KotlinType>? = null
+            var functionClassTypeArguments: List<KotlinType>? = null
             if (unboundFunctionParameters != null) {
                 // Suspend lambda inherits SuspendFunction.
                 val numberOfParameters = unboundFunctionParameters.size
                 suspendFunctionClassDescriptor = kotlinPackageScope.getContributedClassifier(
                         Name.identifier("SuspendFunction$numberOfParameters"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-                superTypes += suspendFunctionClassDescriptor.defaultType.replace(
-                        unboundFunctionParameters.map { it.type } + irFunction.descriptor.returnType!!
-                )
+                val unboundParameterTypes = unboundFunctionParameters.map { it.type }
+                suspendFunctionClassTypeArguments = unboundParameterTypes + irFunction.descriptor.returnType!!
+                superTypes += suspendFunctionClassDescriptor.defaultType.replace(suspendFunctionClassTypeArguments)
 
                 functionClassDescriptor = kotlinPackageScope.getContributedClassifier(
                         Name.identifier("Function${numberOfParameters + 1}"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
                 val continuationType = continuationClassDescriptor.defaultType.replace(listOf(irFunction.descriptor.returnType!!))
-                superTypes += functionClassDescriptor.defaultType.replace(
-                        unboundFunctionParameters.map { it.type }     // Main arguments,
-                                + continuationType                    // and continuation.
-                                + context.builtIns.nullableAnyType)   // Return type
+                functionClassTypeArguments = unboundParameterTypes + continuationType + context.builtIns.nullableAnyType
+                superTypes += functionClassDescriptor.defaultType.replace(functionClassTypeArguments)
+
             }
             coroutineClassDescriptor = ClassDescriptorImpl(
                     /* containingDeclaration = */ irFunction.descriptor.containingDeclaration,
@@ -397,10 +385,8 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                 if (createFunctionDescriptor != null)
                     overriddenMap += createFunctionDescriptor to createMethodBuilder.symbol.descriptor
 
-                val invokeFunctionDescriptor = functionClassDescriptor!!.unsubstitutedMemberScope
-                        .getContributedFunctions(Name.identifier("invoke"), NoLookupLocation.FROM_BACKEND).single()
-                val suspendInvokeFunctionDescriptor = suspendFunctionClassDescriptor!!.unsubstitutedMemberScope
-                        .getContributedFunctions(Name.identifier("invoke"), NoLookupLocation.FROM_BACKEND).single()
+                val invokeFunctionDescriptor = functionClassDescriptor!!.getFunction("invoke", functionClassTypeArguments!!)
+                val suspendInvokeFunctionDescriptor = suspendFunctionClassDescriptor!!.getFunction("invoke", suspendFunctionClassTypeArguments!!)
                 invokeMethodBuilder = createInvokeMethodBuilder(
                         suspendFunctionInvokeFunctionDescriptor = suspendInvokeFunctionDescriptor,
                         functionInvokeFunctionDescriptor        = invokeFunctionDescriptor,

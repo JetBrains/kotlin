@@ -18,6 +18,12 @@ package org.jetbrains.kotlin.backend.common.descriptors
 
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.replace
 
 internal val CallableDescriptor.isSuspend: Boolean
     get() = this is FunctionDescriptor && isSuspend
@@ -65,3 +71,25 @@ fun CallableDescriptor.getOriginalParameter(parameter: ParameterDescriptor): Par
     this.extensionReceiverParameter -> this.original.extensionReceiverParameter!!
     else -> TODO("$parameter in $this")
 }
+
+fun KotlinType.replace(types: List<KotlinType>) = this.replace(types.map(::TypeProjectionImpl))
+
+fun FunctionDescriptor.substitute(vararg types: KotlinType): FunctionDescriptor {
+    val typeSubstitutor = TypeSubstitutor.create(
+            typeParameters
+                    .withIndex()
+                    .associateBy({ it.value.typeConstructor }, { TypeProjectionImpl(types[it.index]) })
+    )
+    return substitute(typeSubstitutor)!!
+}
+
+fun ClassDescriptor.getFunction(name: String, types: List<KotlinType>): FunctionDescriptor {
+    val typeSubstitutor = TypeSubstitutor.create(
+            declaredTypeParameters
+                    .withIndex()
+                    .associateBy({ it.value.typeConstructor }, { TypeProjectionImpl(types[it.index]) })
+    )
+    return unsubstitutedMemberScope
+            .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).single().substitute(typeSubstitutor)!!
+}
+

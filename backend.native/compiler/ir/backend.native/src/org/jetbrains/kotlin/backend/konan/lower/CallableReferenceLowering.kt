@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
+import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionOrKFunctionType
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.createFakeOverrideDescriptor
@@ -47,16 +48,16 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.types.*
 
 internal class CallableReferenceLowering(val context: Context): DeclarationContainerLoweringPass {
 
@@ -112,6 +113,17 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
     private class BuiltFunctionReference(val functionReferenceClass: IrClass,
                                          val functionReferenceConstructor: IrConstructor)
 
+    private val COROUTINES_FQ_NAME = FqName.fromSegments(listOf("kotlin", "coroutines", "experimental"))
+    private val KOTLIN_FQ_NAME     = FqName("kotlin")
+
+    private val coroutinesScope    = context.irModule!!.descriptor.getPackage(COROUTINES_FQ_NAME).memberScope
+    private val kotlinPackageScope = context.irModule!!.descriptor.getPackage(KOTLIN_FQ_NAME).memberScope
+
+    private val continuationClassDescriptor = coroutinesScope
+            .getContributedClassifier(Name.identifier("Continuation"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+
+    private val getContinuationDescriptor = context.builtIns.getKonanInternalFunctions("getContinuation").single()
+
     private inner class FunctionReferenceBuilder(val containingDeclaration: DeclarationDescriptor,
                                                  val functionReference: IrFunctionReference) {
 
@@ -125,21 +137,33 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
         private lateinit var functionReferenceThis: IrValueParameterSymbol
         private lateinit var argumentToPropertiesMap: Map<ParameterDescriptor, IrFieldSymbol>
 
-        private fun KotlinType.replace(types: List<KotlinType>) = this.replace(types.map(::TypeProjectionImpl))
-
         private val kFunctionImplClassDescriptor = context.builtIns.getKonanInternalClass("KFunctionImpl")
 
         fun build(): BuiltFunctionReference {
             val startOffset = functionReference.startOffset
             val endOffset = functionReference.endOffset
 
+            val returnType = functionDescriptor.returnType!!
             val superTypes = mutableListOf(
-                    kFunctionImplClassDescriptor.defaultType.replace(listOf(functionDescriptor.returnType!!))
+                    kFunctionImplClassDescriptor.defaultType.replace(listOf(returnType))
             )
+
+            val numberOfParameters = unboundFunctionParameters.size
+            val functionClassDescriptor = context.reflectionTypes.getKFunction(numberOfParameters)
+            val functionParameterTypes = unboundFunctionParameters.map { it.type }
+            val functionClassTypeParameters = functionParameterTypes + returnType
+            superTypes += functionClassDescriptor.defaultType.replace(functionClassTypeParameters)
+
             var suspendFunctionClassDescriptor: ClassDescriptor? = null
-            val functionClassDescriptor = context.reflectionTypes.getKFunction(unboundFunctionParameters.size)
-            val types = unboundFunctionParameters.map { it.type } + functionDescriptor.returnType!!
-            superTypes += functionClassDescriptor.defaultType.replace(types)
+            var suspendFunctionClassTypeParameters: List<KotlinType>? = null
+            val lastParameterType = unboundFunctionParameters.lastOrNull()?.type
+            if (lastParameterType != null && TypeUtils.getClassDescriptor(lastParameterType) == continuationClassDescriptor) {
+                // If the last parameter is Continuation<> inherit from SuspendFunction.
+                suspendFunctionClassDescriptor = kotlinPackageScope.getContributedClassifier(
+                        Name.identifier("SuspendFunction${numberOfParameters - 1}"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+                suspendFunctionClassTypeParameters = functionParameterTypes.dropLast(1) + lastParameterType.arguments.single().type
+                superTypes += suspendFunctionClassDescriptor.defaultType.replace(suspendFunctionClassTypeParameters)
+            }
 
             functionReferenceClassDescriptor = ClassDescriptorImpl(
                     /* containingDeclaration = */ containingDeclaration,
@@ -156,27 +180,29 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
                     origin      = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
                     descriptor  = functionReferenceClassDescriptor
             )
+
             functionReferenceClass.createParameterDeclarations()
+
             functionReferenceThis = functionReferenceClass.thisReceiver!!.symbol
 
             val constructorBuilder = createConstructorBuilder()
 
-            val typeSubstitutor = TypeSubstitutor.create(
-                    functionClassDescriptor.declaredTypeParameters
-                            .withIndex()
-                            .associateBy({ it.value.typeConstructor }, { TypeProjectionImpl(types[it.index]) })
-            )
-            val invokeFunctionDescriptor = functionClassDescriptor.unsubstitutedMemberScope
-                    .getContributedFunctions(Name.identifier("invoke"), NoLookupLocation.FROM_BACKEND).single().substitute(typeSubstitutor)!!
+            val invokeFunctionDescriptor = functionClassDescriptor.getFunction("invoke", functionClassTypeParameters)
             val invokeMethodBuilder = createInvokeMethodBuilder(invokeFunctionDescriptor)
+
+            var suspendInvokeMethodBuilder: SymbolWithIrBuilder<IrSimpleFunctionSymbol, IrSimpleFunction>? = null
+            if (suspendFunctionClassDescriptor != null) {
+                val suspendInvokeFunctionDescriptor = suspendFunctionClassDescriptor.getFunction("invoke", suspendFunctionClassTypeParameters!!)
+                suspendInvokeMethodBuilder = createInvokeMethodBuilder(suspendInvokeFunctionDescriptor)
+            }
 
             val inheritedKFunctionImpl = kFunctionImplClassDescriptor.unsubstitutedMemberScope
                     .getContributedDescriptors()
                     .map { it.createFakeOverrideDescriptor(functionReferenceClassDescriptor) }
                     .filterNotNull()
             val contributedDescriptors = (
-                    inheritedKFunctionImpl + invokeMethodBuilder.symbol.descriptor
-                    ).toList()
+                    inheritedKFunctionImpl + invokeMethodBuilder.symbol.descriptor + suspendInvokeMethodBuilder?.symbol?.descriptor
+                    ).filterNotNull().toList()
             functionReferenceClassDescriptor.initialize(
                     SimpleMemberScope(contributedDescriptors), setOf(constructorBuilder.symbol.descriptor), null)
 
@@ -185,6 +211,11 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
 
             invokeMethodBuilder.initialize()
             functionReferenceClass.declarations.add(invokeMethodBuilder.ir)
+
+            suspendInvokeMethodBuilder?.let {
+                it.initialize()
+                functionReferenceClass.declarations.add(it.ir)
+            }
 
             return BuiltFunctionReference(functionReferenceClass, constructorBuilder.ir)
         }
@@ -266,7 +297,7 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
                 }
             }
 
-        private fun createInvokeMethodBuilder(functionInvokeFunctionDescriptor: FunctionDescriptor)
+        private fun createInvokeMethodBuilder(superFunctionDescriptor: FunctionDescriptor)
                 = object : SymbolWithIrBuilder<IrSimpleFunctionSymbol, IrSimpleFunction>() {
 
             override fun buildSymbol() = IrSimpleFunctionSymbolImpl(
@@ -281,7 +312,7 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
 
             override fun doInitialize() {
                 val descriptor = symbol.descriptor as SimpleFunctionDescriptorImpl
-                val valueParameters = functionInvokeFunctionDescriptor.valueParameters
+                val valueParameters = superFunctionDescriptor.valueParameters
                         .map { it.copyAsValueParameter(descriptor, it.index) }
 
                 descriptor.initialize(
@@ -289,21 +320,23 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
                         /* dispatchReceiverParameter    = */ functionReferenceClassDescriptor.thisAsReceiverParameter,
                         /* typeParameters               = */ emptyList(),
                         /* unsubstitutedValueParameters = */ valueParameters,
-                        /* unsubstitutedReturnType      = */ functionInvokeFunctionDescriptor.returnType,
+                        /* unsubstitutedReturnType      = */ superFunctionDescriptor.returnType,
                         /* modality                     = */ Modality.FINAL,
                         /* visibility                   = */ Visibilities.PRIVATE).apply {
-                    overriddenDescriptors += functionInvokeFunctionDescriptor
+                    overriddenDescriptors              +=    superFunctionDescriptor
+                    isSuspend                           =    superFunctionDescriptor.isSuspend
                 }
             }
 
             override fun buildIr(): IrSimpleFunction {
                 val startOffset = functionReference.startOffset
                 val endOffset = functionReference.endOffset
+                val ourSymbol = symbol
                 return IrFunctionImpl(
                         startOffset = startOffset,
                         endOffset   = endOffset,
                         origin      = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        symbol      = symbol).apply {
+                        symbol      = ourSymbol).apply {
 
                     val function = this
                     val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)
@@ -316,10 +349,17 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
                                     var unboundIndex = 0
                                     val unboundArgsSet = unboundFunctionParameters.toSet()
                                     functionParameters.forEach {
-                                        val argument = if (unboundArgsSet.contains(it))
-                                            irGet(valueParameters[unboundIndex++].symbol)
-                                        else
-                                            irGetField(irGet(functionReferenceThis), argumentToPropertiesMap[it]!!)
+                                        val argument =
+                                                if (!unboundArgsSet.contains(it))
+                                                    // Bound parameter - read from field.
+                                                    irGetField(irGet(functionReferenceThis), argumentToPropertiesMap[it]!!)
+                                                else {
+                                                    if (ourSymbol.descriptor.isSuspend && unboundIndex == valueParameters.size)
+                                                        // For suspend functions the last argument is continuation and it is implicit.
+                                                        irCall(getContinuationDescriptor.substitute(ourSymbol.descriptor.returnType!!))
+                                                    else
+                                                        irGet(valueParameters[unboundIndex++].symbol)
+                                                }
                                         when (it) {
                                             functionDescriptor.dispatchReceiverParameter -> dispatchReceiver = argument
                                             functionDescriptor.extensionReceiverParameter -> extensionReceiver = argument
