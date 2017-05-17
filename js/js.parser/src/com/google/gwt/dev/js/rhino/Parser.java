@@ -103,15 +103,15 @@ public class Parser extends Observable {
     ((Node) tempBlock).setIsSyntheticBlock(true);
 
     while (true) {
-      ts.flags |= ts.TSF_REGEXP;
+      ts.flags |= TokenStream.TSF_REGEXP;
       tt = ts.getToken();
-      ts.flags &= ~ts.TSF_REGEXP;
+      ts.flags &= ~TokenStream.TSF_REGEXP;
 
-      if (tt <= ts.EOF) {
+      if (tt <= TokenStream.EOF) {
         break;
       }
 
-      if (tt == ts.FUNCTION) {
+      if (tt == TokenStream.FUNCTION) {
         try {
           nf.addChildToBack(tempBlock, function(ts, false));
         } catch (JavaScriptException e) {
@@ -148,7 +148,7 @@ public class Parser extends Observable {
     Object pn = nf.createBlock(ts.getLineno());
     try {
       int tt;
-      while ((tt = ts.peekToken()) > ts.EOF && tt != ts.RC) {
+      while ((tt = ts.peekToken()) > TokenStream.EOF && tt != TokenStream.RC) {
         if (tt == TokenStream.FUNCTION) {
           ts.getToken();
           nf.addChildToBack(pn, function(ts, false));
@@ -174,9 +174,9 @@ public class Parser extends Observable {
 
     String name;
     Object memberExprNode = null;
-    if (ts.matchToken(ts.NAME)) {
+    if (ts.matchToken(TokenStream.NAME)) {
       name = ts.getString();
-      if (!ts.matchToken(ts.LP)) {
+      if (!ts.matchToken(TokenStream.LP)) {
         if (Context.getContext().hasFeature(
           Context.FEATURE_MEMBER_EXPR_AS_FUNCTION_NAME)) {
           // Extension to ECMA: if 'function <name>' does not follow
@@ -185,9 +185,9 @@ public class Parser extends Observable {
           name = null;
           memberExprNode = memberExprTail(ts, false, memberExprHead);
         }
-        mustMatchToken(ts, ts.LP, "msg.no.paren.parms");
+        mustMatchToken(ts, TokenStream.LP, "msg.no.paren.parms");
       }
-    } else if (ts.matchToken(ts.LP)) {
+    } else if (ts.matchToken(TokenStream.LP)) {
       // Anonymous function
       name = null;
     } else {
@@ -199,7 +199,7 @@ public class Parser extends Observable {
         // processed as anonymous function
         memberExprNode = memberExpr(ts, false);
       }
-      mustMatchToken(ts, ts.LP, "msg.no.paren.parms");
+      mustMatchToken(ts, TokenStream.LP, "msg.no.paren.parms");
     }
 
     ++functionNumber;
@@ -212,22 +212,22 @@ public class Parser extends Observable {
     Object body;
     try {
       functionNumber = 0;
-      args = nf.createLeaf(ts.LP);
+      args = nf.createLeaf(TokenStream.LP);
 
-      if (!ts.matchToken(ts.GWT)) {
+      if (!ts.matchToken(TokenStream.GWT)) {
         do {
-          mustMatchToken(ts, ts.NAME, "msg.no.parm");
+          mustMatchToken(ts, TokenStream.NAME, "msg.no.parm");
           String s = ts.getString();
           nf.addChildToBack(args, nf.createName(s));
 
-        } while (ts.matchToken(ts.COMMA));
+        } while (ts.matchToken(TokenStream.COMMA));
 
-        mustMatchToken(ts, ts.GWT, "msg.no.paren.after.parms");
+        mustMatchToken(ts, TokenStream.GWT, "msg.no.paren.after.parms");
       }
 
-      mustMatchToken(ts, ts.LC, "msg.no.brace.body");
+      mustMatchToken(ts, TokenStream.LC, "msg.no.brace.body");
       body = parseFunctionBody(ts);
-      mustMatchToken(ts, ts.RC, "msg.no.brace.after.body");
+      mustMatchToken(ts, TokenStream.RC, "msg.no.brace.after.body");
       // skip the last EOL so nested functions work...
     } finally {
       sourceTop = savedSourceTop;
@@ -237,13 +237,13 @@ public class Parser extends Observable {
     Object pn = nf.createFunction(name, args, body, ts.getSourceName(),
       baseLineno, ts.getLineno(), null, isExpr || memberExprNode != null);
     if (memberExprNode != null) {
-      pn = nf.createBinary(ts.ASSIGN, ts.NOP, memberExprNode, pn);
+      pn = nf.createBinary(TokenStream.ASSIGN, TokenStream.NOP, memberExprNode, pn);
     }
 
     // Add EOL but only if function is not part of expression, in which
     // case it gets SEMI + EOL from Statement.
     if (!isExpr) {
-      wellTerminated(ts, ts.FUNCTION);
+      wellTerminated(ts, TokenStream.FUNCTION);
     }
 
     notifyObservers(new ParserEvents.OnFunctionParsingEnd(ts));
@@ -254,7 +254,7 @@ public class Parser extends Observable {
     Object pn = nf.createBlock(ts.getLineno());
 
     int tt;
-    while ((tt = ts.peekToken()) > ts.EOF && tt != ts.RC) {
+    while ((tt = ts.peekToken()) > TokenStream.EOF && tt != TokenStream.RC) {
       nf.addChildToBack(pn, statement(ts));
     }
 
@@ -264,37 +264,35 @@ public class Parser extends Observable {
   private Object condition(TokenStream ts) throws IOException,
       JavaScriptException {
     Object pn;
-    mustMatchToken(ts, ts.LP, "msg.no.paren.cond");
+    mustMatchToken(ts, TokenStream.LP, "msg.no.paren.cond");
     pn = expr(ts, false);
-    mustMatchToken(ts, ts.GWT, "msg.no.paren.after.cond");
+    mustMatchToken(ts, TokenStream.GWT, "msg.no.paren.after.cond");
 
     // there's a check here in jsparse.c that corrects = to ==
 
     return pn;
   }
 
-  private boolean wellTerminated(TokenStream ts, int lastExprType)
+  private void wellTerminated(TokenStream ts, int lastExprType)
       throws IOException, JavaScriptException {
     int tt = ts.peekTokenSameLine();
-    if (tt == ts.ERROR) {
-      return false;
+    if (tt == TokenStream.ERROR) {
+      return;
     }
 
-    if (tt != ts.EOF && tt != ts.EOL && tt != ts.SEMI && tt != ts.RC) {
+    if (tt != TokenStream.EOF && tt != TokenStream.EOL && tt != TokenStream.SEMI && tt != TokenStream.RC) {
       int version = Context.getContext().getLanguageVersion();
-      if ((tt == ts.FUNCTION || lastExprType == ts.FUNCTION)
+      if ((tt == TokenStream.FUNCTION || lastExprType == TokenStream.FUNCTION)
         && (version < Context.VERSION_1_2)) {
         /*
          * Checking against version < 1.2 and version >= 1.0 in the above line
          * breaks old javascript, so we keep it this way for now... XXX warning
          * needed?
          */
-        return true;
       } else {
         reportError(ts, "msg.no.semi.stmt");
       }
     }
-    return true;
   }
 
   // match a NAME; return null if no match.
@@ -305,13 +303,13 @@ public class Parser extends Observable {
     String label = null;
     int tt;
     tt = ts.peekTokenSameLine();
-    if (tt == ts.NAME) {
+    if (tt == TokenStream.NAME) {
       ts.getToken();
       label = ts.getString();
     }
 
     if (lineno == ts.getLineno())
-      wellTerminated(ts, ts.ERROR);
+      wellTerminated(ts, TokenStream.ERROR);
 
     return label;
   }
@@ -338,27 +336,21 @@ public class Parser extends Observable {
 
   private Object statementHelper(TokenStream ts) throws IOException,
       JavaScriptException {
-    Object pn = null;
-
-    // If skipsemi == true, don't add SEMI + EOL to source at the
-    // end of this statment. For compound statements, IF/FOR etc.
-    boolean skipsemi = false;
+    Object pn;
 
     int tt;
 
-    int lastExprType = 0; // For wellTerminated. 0 to avoid warning.
+    int lastExprType; // For wellTerminated
 
     tt = ts.getToken();
 
     switch (tt) {
       case TokenStream.IF: {
-        skipsemi = true;
-
         int lineno = ts.getLineno();
         Object cond = condition(ts);
         Object ifTrue = statement(ts);
         Object ifFalse = null;
-        if (ts.matchToken(ts.ELSE)) {
+        if (ts.matchToken(TokenStream.ELSE)) {
           ifFalse = statement(ts);
         }
         pn = nf.createIf(cond, ifTrue, ifFalse, lineno);
@@ -366,26 +358,24 @@ public class Parser extends Observable {
       }
 
       case TokenStream.SWITCH: {
-        skipsemi = true;
-
         pn = nf.createSwitch(ts.getLineno());
 
         Object cur_case = null; // to kill warning
         Object case_statements;
 
-        mustMatchToken(ts, ts.LP, "msg.no.paren.switch");
+        mustMatchToken(ts, TokenStream.LP, "msg.no.paren.switch");
         nf.addChildToBack(pn, expr(ts, false));
-        mustMatchToken(ts, ts.GWT, "msg.no.paren.after.switch");
-        mustMatchToken(ts, ts.LC, "msg.no.brace.switch");
+        mustMatchToken(ts, TokenStream.GWT, "msg.no.paren.after.switch");
+        mustMatchToken(ts, TokenStream.LC, "msg.no.brace.switch");
 
-        while ((tt = ts.getToken()) != ts.RC && tt != ts.EOF) {
+        while ((tt = ts.getToken()) != TokenStream.RC && tt != TokenStream.EOF) {
           switch (tt) {
             case TokenStream.CASE:
-              cur_case = nf.createUnary(ts.CASE, expr(ts, false));
+              cur_case = nf.createUnary(TokenStream.CASE, expr(ts, false));
               break;
 
             case TokenStream.DEFAULT:
-              cur_case = nf.createLeaf(ts.DEFAULT);
+              cur_case = nf.createLeaf(TokenStream.DEFAULT);
               // XXX check that there isn't more than one default
               break;
 
@@ -393,13 +383,13 @@ public class Parser extends Observable {
               reportError(ts, "msg.bad.switch");
               break;
           }
-          mustMatchToken(ts, ts.COLON, "msg.no.colon.case");
+          mustMatchToken(ts, TokenStream.COLON, "msg.no.colon.case");
 
           case_statements = nf.createLeaf(TokenStream.BLOCK);
           ((Node) case_statements).setIsSyntheticBlock(true);
 
-          while ((tt = ts.peekToken()) != ts.RC && tt != ts.CASE
-            && tt != ts.DEFAULT && tt != ts.EOF) {
+          while ((tt = ts.peekToken()) != TokenStream.RC && tt != TokenStream.CASE
+                 && tt != TokenStream.DEFAULT && tt != TokenStream.EOF) {
             nf.addChildToBack(case_statements, statement(ts));
           }
           // assert cur_case
@@ -411,8 +401,6 @@ public class Parser extends Observable {
       }
 
       case TokenStream.WHILE: {
-        skipsemi = true;
-
         int lineno = ts.getLineno();
         Object cond = condition(ts);
         Object body = statement(ts);
@@ -427,7 +415,7 @@ public class Parser extends Observable {
 
         Object body = statement(ts);
 
-        mustMatchToken(ts, ts.WHILE, "msg.no.while.do");
+        mustMatchToken(ts, TokenStream.WHILE, "msg.no.while.do");
         Object cond = condition(ts);
 
         pn = nf.createDoWhile(body, cond, lineno);
@@ -435,8 +423,6 @@ public class Parser extends Observable {
       }
 
       case TokenStream.FOR: {
-        skipsemi = true;
-
         int lineno = ts.getLineno();
 
         Object init; // Node init is also foo in 'foo in Object'
@@ -444,12 +430,12 @@ public class Parser extends Observable {
         Object incr = null; // to kill warning
         Object body;
 
-        mustMatchToken(ts, ts.LP, "msg.no.paren.for");
+        mustMatchToken(ts, TokenStream.LP, "msg.no.paren.for");
         tt = ts.peekToken();
-        if (tt == ts.SEMI) {
-          init = nf.createLeaf(ts.VOID);
+        if (tt == TokenStream.SEMI) {
+          init = nf.createLeaf(TokenStream.VOID);
         } else {
-          if (tt == ts.VAR) {
+          if (tt == TokenStream.VAR) {
             // set init to a var list or initial
             ts.getToken(); // throw away the 'var' token
             init = variables(ts, true);
@@ -459,28 +445,28 @@ public class Parser extends Observable {
         }
 
         tt = ts.peekToken();
-        if (tt == ts.RELOP && ts.getOp() == ts.IN) {
-          ts.matchToken(ts.RELOP);
+        if (tt == TokenStream.RELOP && ts.getOp() == TokenStream.IN) {
+          ts.matchToken(TokenStream.RELOP);
           // 'cond' is the object over which we're iterating
           cond = expr(ts, false);
         } else { // ordinary for loop
-          mustMatchToken(ts, ts.SEMI, "msg.no.semi.for");
-          if (ts.peekToken() == ts.SEMI) {
+          mustMatchToken(ts, TokenStream.SEMI, "msg.no.semi.for");
+          if (ts.peekToken() == TokenStream.SEMI) {
             // no loop condition
-            cond = nf.createLeaf(ts.VOID);
+            cond = nf.createLeaf(TokenStream.VOID);
           } else {
             cond = expr(ts, false);
           }
 
-          mustMatchToken(ts, ts.SEMI, "msg.no.semi.for.cond");
-          if (ts.peekToken() == ts.GWT) {
-            incr = nf.createLeaf(ts.VOID);
+          mustMatchToken(ts, TokenStream.SEMI, "msg.no.semi.for.cond");
+          if (ts.peekToken() == TokenStream.GWT) {
+            incr = nf.createLeaf(TokenStream.VOID);
           } else {
             incr = expr(ts, false);
           }
         }
 
-        mustMatchToken(ts, ts.GWT, "msg.no.paren.for.ctrl");
+        mustMatchToken(ts, TokenStream.GWT, "msg.no.paren.for.ctrl");
         body = statement(ts);
 
         if (incr == null) {
@@ -496,46 +482,45 @@ public class Parser extends Observable {
         int lineno = ts.getLineno();
 
         Object tryblock;
-        Object catchblocks = null;
+        Object catchblocks;
         Object finallyblock = null;
 
-        skipsemi = true;
         tryblock = statement(ts);
 
         catchblocks = nf.createLeaf(TokenStream.BLOCK);
 
         boolean sawDefaultCatch = false;
         int peek = ts.peekToken();
-        if (peek == ts.CATCH) {
-          while (ts.matchToken(ts.CATCH)) {
+        if (peek == TokenStream.CATCH) {
+          while (ts.matchToken(TokenStream.CATCH)) {
             if (sawDefaultCatch) {
               reportError(ts, "msg.catch.unreachable");
             }
-            mustMatchToken(ts, ts.LP, "msg.no.paren.catch");
+            mustMatchToken(ts, TokenStream.LP, "msg.no.paren.catch");
 
-            mustMatchToken(ts, ts.NAME, "msg.bad.catchcond");
+            mustMatchToken(ts, TokenStream.NAME, "msg.bad.catchcond");
             String varName = ts.getString();
 
             Object catchCond = null;
-            if (ts.matchToken(ts.IF)) {
+            if (ts.matchToken(TokenStream.IF)) {
               catchCond = expr(ts, false);
             } else {
               sawDefaultCatch = true;
             }
 
-            mustMatchToken(ts, ts.GWT, "msg.bad.catchcond");
-            mustMatchToken(ts, ts.LC, "msg.no.brace.catchblock");
+            mustMatchToken(ts, TokenStream.GWT, "msg.bad.catchcond");
+            mustMatchToken(ts, TokenStream.LC, "msg.no.brace.catchblock");
 
             nf.addChildToBack(catchblocks, nf.createCatch(varName, catchCond,
               statements(ts), ts.getLineno()));
 
-            mustMatchToken(ts, ts.RC, "msg.no.brace.after.body");
+            mustMatchToken(ts, TokenStream.RC, "msg.no.brace.after.body");
           }
-        } else if (peek != ts.FINALLY) {
-          mustMatchToken(ts, ts.FINALLY, "msg.try.no.catchfinally");
+        } else if (peek != TokenStream.FINALLY) {
+          mustMatchToken(ts, TokenStream.FINALLY, "msg.try.no.catchfinally");
         }
 
-        if (ts.matchToken(ts.FINALLY)) {
+        if (ts.matchToken(TokenStream.FINALLY)) {
           finallyblock = statement(ts);
         }
 
@@ -548,7 +533,7 @@ public class Parser extends Observable {
         int lineno = ts.getLineno();
         pn = nf.createThrow(expr(ts, false), lineno);
         if (lineno == ts.getLineno())
-          wellTerminated(ts, ts.ERROR);
+          wellTerminated(ts, TokenStream.ERROR);
         break;
       }
       case TokenStream.BREAK: {
@@ -579,12 +564,10 @@ public class Parser extends Observable {
         
         reportError(ts, "msg.jsni.unsupported.with");
 
-        skipsemi = true;
-
         int lineno = ts.getLineno();
-        mustMatchToken(ts, ts.LP, "msg.no.paren.with");
+        mustMatchToken(ts, TokenStream.LP, "msg.no.paren.with");
         Object obj = expr(ts, false);
-        mustMatchToken(ts, ts.GWT, "msg.no.paren.after.with");
+        mustMatchToken(ts, TokenStream.GWT, "msg.no.paren.after.with");
         Object body = statement(ts);
         pn = nf.createWith(obj, body, lineno);
         break;
@@ -593,30 +576,30 @@ public class Parser extends Observable {
         int lineno = ts.getLineno();
         pn = variables(ts, false);
         if (ts.getLineno() == lineno)
-          wellTerminated(ts, ts.ERROR);
+          wellTerminated(ts, TokenStream.ERROR);
         break;
       }
       case TokenStream.RETURN: {
         Object retExpr = null;
         int lineno = 0;
         // bail if we're not in a (toplevel) function
-        if ((!insideFunction) && ((ts.flags & ts.TSF_FUNCTION) == 0)) {
+        if ((!insideFunction) && ((ts.flags & TokenStream.TSF_FUNCTION) == 0)) {
             reportError(ts, "msg.bad.return");
         }
 
         /* This is ugly, but we don't want to require a semicolon. */
-        ts.flags |= ts.TSF_REGEXP;
+        ts.flags |= TokenStream.TSF_REGEXP;
         tt = ts.peekTokenSameLine();
-        ts.flags &= ~ts.TSF_REGEXP;
+        ts.flags &= ~TokenStream.TSF_REGEXP;
 
-        if (tt != ts.EOF && tt != ts.EOL && tt != ts.SEMI && tt != ts.RC) {
+        if (tt != TokenStream.EOF && tt != TokenStream.EOL && tt != TokenStream.SEMI && tt != TokenStream.RC) {
           lineno = ts.getLineno();
           retExpr = expr(ts, false);
           if (ts.getLineno() == lineno)
-            wellTerminated(ts, ts.ERROR);
-          ts.flags |= ts.TSF_RETURN_EXPR;
+            wellTerminated(ts, TokenStream.ERROR);
+          ts.flags |= TokenStream.TSF_RETURN_EXPR;
         } else {
-          ts.flags |= ts.TSF_RETURN_VOID;
+          ts.flags |= TokenStream.TSF_RETURN_VOID;
         }
 
         // XXX ASSERT pn
@@ -624,18 +607,15 @@ public class Parser extends Observable {
         break;
       }
       case TokenStream.LC:
-        skipsemi = true;
-
         pn = statements(ts);
-        mustMatchToken(ts, ts.RC, "msg.no.brace.block");
+        mustMatchToken(ts, TokenStream.RC, "msg.no.brace.block");
         break;
 
       case TokenStream.ERROR:
       // Fall thru, to have a node for error recovery to work on
       case TokenStream.EOL:
       case TokenStream.SEMI:
-        pn = nf.createLeaf(ts.VOID);
-        skipsemi = true;
+        pn = nf.createLeaf(TokenStream.VOID);
         break;
 
       default: {
@@ -646,12 +626,12 @@ public class Parser extends Observable {
 
         pn = expr(ts, false);
 
-        if (ts.peekToken() == ts.COLON) {
+        if (ts.peekToken() == TokenStream.COLON) {
           /*
            * check that the last thing the tokenizer returned was a NAME and
            * that only one token was consumed.
            */
-          if (lastExprType != ts.NAME || (ts.getTokenno() != tokenno))
+          if (lastExprType != TokenStream.NAME || (ts.getTokenno() != tokenno))
             reportError(ts, "msg.bad.label");
 
           ts.getToken(); // eat the COLON
@@ -673,8 +653,8 @@ public class Parser extends Observable {
           return pn;
         }
 
-        if (lastExprType == ts.FUNCTION) {
-          if (nf.getLeafType(pn) != ts.FUNCTION) {
+        if (lastExprType == TokenStream.FUNCTION) {
+          if (nf.getLeafType(pn) != TokenStream.FUNCTION) {
             reportError(ts, "msg.syntax");
           }
         }
@@ -691,13 +671,13 @@ public class Parser extends Observable {
          * line number even when they didn't succeed.
          */
         if (ts.getLineno() == lineno
-          || (lastExprType == ts.FUNCTION && ts.getLineno() == lastExprEndLine)) {
+          || (lastExprType == TokenStream.FUNCTION && ts.getLineno() == lastExprEndLine)) {
           wellTerminated(ts, lastExprType);
         }
         break;
       }
     }
-    ts.matchToken(ts.SEMI);
+    ts.matchToken(TokenStream.SEMI);
 
     return pn;
   }
@@ -706,25 +686,27 @@ public class Parser extends Observable {
       throws IOException, JavaScriptException {
     Object pn = nf.createVariables(ts.getLineno());
 
-    for (;;) {
+    while (true) {
       Object name;
       Object init;
-      mustMatchToken(ts, ts.NAME, "msg.bad.var");
+      mustMatchToken(ts, TokenStream.NAME, "msg.bad.var");
       String s = ts.getString();
       name = nf.createName(s);
 
       // omitted check for argument hiding
 
-      if (ts.matchToken(ts.ASSIGN)) {
-        if (ts.getOp() != ts.NOP)
+      if (ts.matchToken(TokenStream.ASSIGN)) {
+        if (ts.getOp() != TokenStream.NOP) {
           reportError(ts, "msg.bad.var.init");
+        }
 
         init = assignExpr(ts, inForInit);
         nf.addChildToBack(name, init);
       }
       nf.addChildToBack(pn, name);
-      if (!ts.matchToken(ts.COMMA))
+      if (!ts.matchToken(TokenStream.COMMA)) {
         break;
+      }
     }
     return pn;
   }
@@ -732,8 +714,8 @@ public class Parser extends Observable {
   private Object expr(TokenStream ts, boolean inForInit) throws IOException,
       JavaScriptException {
     Object pn = assignExpr(ts, inForInit);
-    while (ts.matchToken(ts.COMMA)) {
-      pn = nf.createBinary(ts.COMMA, pn, assignExpr(ts, inForInit));
+    while (ts.matchToken(TokenStream.COMMA)) {
+      pn = nf.createBinary(TokenStream.COMMA, pn, assignExpr(ts, inForInit));
     }
     return pn;
   }
@@ -742,10 +724,10 @@ public class Parser extends Observable {
       throws IOException, JavaScriptException {
     Object pn = condExpr(ts, inForInit);
 
-    if (ts.matchToken(ts.ASSIGN)) {
+    if (ts.matchToken(TokenStream.ASSIGN)) {
       // omitted: "invalid assignment left-hand side" check.
       pn = nf
-        .createBinary(ts.ASSIGN, ts.getOp(), pn, assignExpr(ts, inForInit));
+        .createBinary(TokenStream.ASSIGN, ts.getOp(), pn, assignExpr(ts, inForInit));
     }
 
     return pn;
@@ -758,9 +740,9 @@ public class Parser extends Observable {
 
     Object pn = orExpr(ts, inForInit);
 
-    if (ts.matchToken(ts.HOOK)) {
+    if (ts.matchToken(TokenStream.HOOK)) {
       ifTrue = assignExpr(ts, false);
-      mustMatchToken(ts, ts.COLON, "msg.no.colon.cond");
+      mustMatchToken(ts, TokenStream.COLON, "msg.no.colon.cond");
       ifFalse = assignExpr(ts, inForInit);
       return nf.createTernary(pn, ifTrue, ifFalse);
     }
@@ -771,8 +753,8 @@ public class Parser extends Observable {
   private Object orExpr(TokenStream ts, boolean inForInit) throws IOException,
       JavaScriptException {
     Object pn = andExpr(ts, inForInit);
-    if (ts.matchToken(ts.OR)) {
-      pn = nf.createBinary(ts.OR, pn, orExpr(ts, inForInit));
+    if (ts.matchToken(TokenStream.OR)) {
+      pn = nf.createBinary(TokenStream.OR, pn, orExpr(ts, inForInit));
     }
 
     return pn;
@@ -781,8 +763,8 @@ public class Parser extends Observable {
   private Object andExpr(TokenStream ts, boolean inForInit) throws IOException,
       JavaScriptException {
     Object pn = bitOrExpr(ts, inForInit);
-    if (ts.matchToken(ts.AND)) {
-      pn = nf.createBinary(ts.AND, pn, andExpr(ts, inForInit));
+    if (ts.matchToken(TokenStream.AND)) {
+      pn = nf.createBinary(TokenStream.AND, pn, andExpr(ts, inForInit));
     }
 
     return pn;
@@ -791,8 +773,8 @@ public class Parser extends Observable {
   private Object bitOrExpr(TokenStream ts, boolean inForInit)
       throws IOException, JavaScriptException {
     Object pn = bitXorExpr(ts, inForInit);
-    while (ts.matchToken(ts.BITOR)) {
-      pn = nf.createBinary(ts.BITOR, pn, bitXorExpr(ts, inForInit));
+    while (ts.matchToken(TokenStream.BITOR)) {
+      pn = nf.createBinary(TokenStream.BITOR, pn, bitXorExpr(ts, inForInit));
     }
     return pn;
   }
@@ -800,8 +782,8 @@ public class Parser extends Observable {
   private Object bitXorExpr(TokenStream ts, boolean inForInit)
       throws IOException, JavaScriptException {
     Object pn = bitAndExpr(ts, inForInit);
-    while (ts.matchToken(ts.BITXOR)) {
-      pn = nf.createBinary(ts.BITXOR, pn, bitAndExpr(ts, inForInit));
+    while (ts.matchToken(TokenStream.BITXOR)) {
+      pn = nf.createBinary(TokenStream.BITXOR, pn, bitAndExpr(ts, inForInit));
     }
     return pn;
   }
@@ -809,8 +791,8 @@ public class Parser extends Observable {
   private Object bitAndExpr(TokenStream ts, boolean inForInit)
       throws IOException, JavaScriptException {
     Object pn = eqExpr(ts, inForInit);
-    while (ts.matchToken(ts.BITAND)) {
-      pn = nf.createBinary(ts.BITAND, pn, eqExpr(ts, inForInit));
+    while (ts.matchToken(TokenStream.BITAND)) {
+      pn = nf.createBinary(TokenStream.BITAND, pn, eqExpr(ts, inForInit));
     }
     return pn;
   }
@@ -818,8 +800,8 @@ public class Parser extends Observable {
   private Object eqExpr(TokenStream ts, boolean inForInit) throws IOException,
       JavaScriptException {
     Object pn = relExpr(ts, inForInit);
-    while (ts.matchToken(ts.EQOP)) {
-      pn = nf.createBinary(ts.EQOP, ts.getOp(), pn, relExpr(ts, inForInit));
+    while (ts.matchToken(TokenStream.EQOP)) {
+      pn = nf.createBinary(TokenStream.EQOP, ts.getOp(), pn, relExpr(ts, inForInit));
     }
     return pn;
   }
@@ -827,14 +809,14 @@ public class Parser extends Observable {
   private Object relExpr(TokenStream ts, boolean inForInit) throws IOException,
       JavaScriptException {
     Object pn = shiftExpr(ts);
-    while (ts.matchToken(ts.RELOP)) {
+    while (ts.matchToken(TokenStream.RELOP)) {
       int op = ts.getOp();
-      if (inForInit && op == ts.IN) {
-        ts.ungetToken(ts.RELOP);
+      if (inForInit && op == TokenStream.IN) {
+        ts.ungetToken(TokenStream.RELOP);
         break;
       }
 
-      pn = nf.createBinary(ts.RELOP, op, pn, shiftExpr(ts));
+      pn = nf.createBinary(TokenStream.RELOP, op, pn, shiftExpr(ts));
     }
     return pn;
   }
@@ -842,8 +824,8 @@ public class Parser extends Observable {
   private Object shiftExpr(TokenStream ts) throws IOException,
       JavaScriptException {
     Object pn = addExpr(ts);
-    while (ts.matchToken(ts.SHOP)) {
-      pn = nf.createBinary(ts.SHOP, ts.getOp(), pn, addExpr(ts));
+    while (ts.matchToken(TokenStream.SHOP)) {
+      pn = nf.createBinary(TokenStream.SHOP, ts.getOp(), pn, addExpr(ts));
     }
     return pn;
   }
@@ -853,7 +835,7 @@ public class Parser extends Observable {
     int tt;
     Object pn = mulExpr(ts);
 
-    while ((tt = ts.getToken()) == ts.ADD || tt == ts.SUB) {
+    while ((tt = ts.getToken()) == TokenStream.ADD || tt == TokenStream.SUB) {
       // flushNewLines
       pn = nf.createBinary(tt, pn, mulExpr(ts));
     }
@@ -868,7 +850,7 @@ public class Parser extends Observable {
 
     Object pn = unaryExpr(ts);
 
-    while ((tt = ts.peekToken()) == ts.MUL || tt == ts.DIV || tt == ts.MOD) {
+    while ((tt = ts.peekToken()) == TokenStream.MUL || tt == TokenStream.DIV || tt == TokenStream.MOD) {
       tt = ts.getToken();
       pn = nf.createBinary(tt, pn, unaryExpr(ts));
     }
@@ -880,24 +862,24 @@ public class Parser extends Observable {
       JavaScriptException {
     int tt;
 
-    ts.flags |= ts.TSF_REGEXP;
+    ts.flags |= TokenStream.TSF_REGEXP;
     tt = ts.getToken();
-    ts.flags &= ~ts.TSF_REGEXP;
+    ts.flags &= ~TokenStream.TSF_REGEXP;
 
     switch (tt) {
       case TokenStream.UNARYOP:
-        return nf.createUnary(ts.UNARYOP, ts.getOp(), unaryExpr(ts));
+        return nf.createUnary(TokenStream.UNARYOP, ts.getOp(), unaryExpr(ts));
 
       case TokenStream.ADD:
       case TokenStream.SUB:
-        return nf.createUnary(ts.UNARYOP, tt, unaryExpr(ts));
+        return nf.createUnary(TokenStream.UNARYOP, tt, unaryExpr(ts));
 
       case TokenStream.INC:
       case TokenStream.DEC:
-        return nf.createUnary(tt, ts.PRE, memberExpr(ts, true));
+        return nf.createUnary(tt, TokenStream.PRE, memberExpr(ts, true));
 
       case TokenStream.DELPROP:
-        return nf.createUnary(ts.DELPROP, unaryExpr(ts));
+        return nf.createUnary(TokenStream.DELPROP, unaryExpr(ts));
 
       case TokenStream.ERROR:
         break;
@@ -917,10 +899,10 @@ public class Parser extends Observable {
          * calls. It'd be better if they had similar behavior...
          */
         int peeked;
-        if (((peeked = ts.peekToken()) == ts.INC || peeked == ts.DEC)
+        if (((peeked = ts.peekToken()) == TokenStream.INC || peeked == TokenStream.DEC)
           && ts.getLineno() == lineno) {
           int pf = ts.getToken();
-          return nf.createUnary(pf, ts.POST, pn);
+          return nf.createUnary(pf, TokenStream.POST, pn);
         }
         return pn;
     }
@@ -931,15 +913,15 @@ public class Parser extends Observable {
   private Object argumentList(TokenStream ts, Object listNode)
       throws IOException, JavaScriptException {
     boolean matched;
-    ts.flags |= ts.TSF_REGEXP;
-    matched = ts.matchToken(ts.GWT);
-    ts.flags &= ~ts.TSF_REGEXP;
+    ts.flags |= TokenStream.TSF_REGEXP;
+    matched = ts.matchToken(TokenStream.GWT);
+    ts.flags &= ~TokenStream.TSF_REGEXP;
     if (!matched) {
       do {
         nf.addChildToBack(listNode, assignExpr(ts, false));
-      } while (ts.matchToken(ts.COMMA));
+      } while (ts.matchToken(TokenStream.COMMA));
 
-      mustMatchToken(ts, ts.GWT, "msg.no.paren.arg");
+      mustMatchToken(ts, TokenStream.GWT, "msg.no.paren.arg");
     }
     return listNode;
   }
@@ -951,18 +933,18 @@ public class Parser extends Observable {
     Object pn;
 
     /* Check for new expressions. */
-    ts.flags |= ts.TSF_REGEXP;
+    ts.flags |= TokenStream.TSF_REGEXP;
     tt = ts.peekToken();
-    ts.flags &= ~ts.TSF_REGEXP;
-    if (tt == ts.NEW) {
+    ts.flags &= ~TokenStream.TSF_REGEXP;
+    if (tt == TokenStream.NEW) {
       /* Eat the NEW token. */
       ts.getToken();
 
       /* Make a NEW node to append to. */
-      pn = nf.createLeaf(ts.NEW);
+      pn = nf.createLeaf(TokenStream.NEW);
       nf.addChildToBack(pn, memberExpr(ts, false));
 
-      if (ts.matchToken(ts.LP)) {
+      if (ts.matchToken(TokenStream.LP)) {
         /* Add the arguments to pn, if any are supplied. */
         pn = argumentList(ts, pn);
       }
@@ -979,7 +961,7 @@ public class Parser extends Observable {
        * argument to the constructor.
        */
       tt = ts.peekToken();
-      if (tt == ts.LC) {
+      if (tt == TokenStream.LC) {
         nf.addChildToBack(pn, primaryExpr(ts));
       }
     } else {
@@ -993,26 +975,26 @@ public class Parser extends Observable {
       Object pn) throws IOException, JavaScriptException {
     lastExprEndLine = ts.getLineno();
     int tt;
-    while ((tt = ts.getToken()) > ts.EOF) {
-      if (tt == ts.DOT) {
+    while ((tt = ts.getToken()) > TokenStream.EOF) {
+      if (tt == TokenStream.DOT) {
         ts.treatKeywordAsIdentifier = true;
-        mustMatchToken(ts, ts.NAME, "msg.no.name.after.dot");
+        mustMatchToken(ts, TokenStream.NAME, "msg.no.name.after.dot");
         ts.treatKeywordAsIdentifier = false;
-        pn = nf.createBinary(ts.DOT, pn, nf.createName(ts.getString()));
+        pn = nf.createBinary(TokenStream.DOT, pn, nf.createName(ts.getString()));
         /*
          * pn = nf.createBinary(ts.DOT, pn, memberExpr(ts)) is the version in
          * Brendan's IR C version. Not in ECMA... does it reflect the 'new'
          * operator syntax he mentioned?
          */
         lastExprEndLine = ts.getLineno();
-      } else if (tt == ts.LB) {
-        pn = nf.createBinary(ts.LB, pn, expr(ts, false));
+      } else if (tt == TokenStream.LB) {
+        pn = nf.createBinary(TokenStream.LB, pn, expr(ts, false));
 
-        mustMatchToken(ts, ts.RB, "msg.no.bracket.index");
+        mustMatchToken(ts, TokenStream.RB, "msg.no.bracket.index");
         lastExprEndLine = ts.getLineno();
-      } else if (allowCallSyntax && tt == ts.LP) {
+      } else if (allowCallSyntax && tt == TokenStream.LP) {
         /* make a call node */
-        pn = nf.createUnary(ts.CALL, pn);
+        pn = nf.createUnary(TokenStream.CALL, pn);
 
         /* Add the arguments to pn, if any are supplied. */
         pn = argumentList(ts, pn);
@@ -1032,9 +1014,9 @@ public class Parser extends Observable {
 
     Object pn;
 
-    ts.flags |= ts.TSF_REGEXP;
+    ts.flags |= TokenStream.TSF_REGEXP;
     tt = ts.getToken();
-    ts.flags &= ~ts.TSF_REGEXP;
+    ts.flags &= ~TokenStream.TSF_REGEXP;
 
     switch (tt) {
 
@@ -1042,39 +1024,39 @@ public class Parser extends Observable {
         return function(ts, true);
 
       case TokenStream.LB: {
-        pn = nf.createLeaf(ts.ARRAYLIT);
+        pn = nf.createLeaf(TokenStream.ARRAYLIT);
 
-        ts.flags |= ts.TSF_REGEXP;
-        boolean matched = ts.matchToken(ts.RB);
-        ts.flags &= ~ts.TSF_REGEXP;
+        ts.flags |= TokenStream.TSF_REGEXP;
+        boolean matched = ts.matchToken(TokenStream.RB);
+        ts.flags &= ~TokenStream.TSF_REGEXP;
 
         if (!matched) {
           do {
-            ts.flags |= ts.TSF_REGEXP;
+            ts.flags |= TokenStream.TSF_REGEXP;
             tt = ts.peekToken();
-            ts.flags &= ~ts.TSF_REGEXP;
+            ts.flags &= ~TokenStream.TSF_REGEXP;
 
-            if (tt == ts.RB) { // to fix [,,,].length behavior...
+            if (tt == TokenStream.RB) { // to fix [,,,].length behavior...
               break;
             }
 
-            if (tt == ts.COMMA) {
-              nf.addChildToBack(pn, nf.createLeaf(ts.PRIMARY, ts.UNDEFINED));
+            if (tt == TokenStream.COMMA) {
+              nf.addChildToBack(pn, nf.createLeaf(TokenStream.PRIMARY, TokenStream.UNDEFINED));
             } else {
               nf.addChildToBack(pn, assignExpr(ts, false));
             }
 
-          } while (ts.matchToken(ts.COMMA));
-          mustMatchToken(ts, ts.RB, "msg.no.bracket.arg");
+          } while (ts.matchToken(TokenStream.COMMA));
+          mustMatchToken(ts, TokenStream.RB, "msg.no.bracket.arg");
         }
 
         return nf.createArrayLiteral(pn);
       }
 
       case TokenStream.LC: {
-        pn = nf.createLeaf(ts.OBJLIT);
+        pn = nf.createLeaf(TokenStream.OBJLIT);
 
-        if (!ts.matchToken(ts.RC)) {
+        if (!ts.matchToken(TokenStream.RC)) {
 
           commaloop : do {
             Object property;
@@ -1102,16 +1084,16 @@ public class Parser extends Observable {
                 reportError(ts, "msg.bad.prop");
                 break commaloop;
             }
-            mustMatchToken(ts, ts.COLON, "msg.no.colon.prop");
+            mustMatchToken(ts, TokenStream.COLON, "msg.no.colon.prop");
 
             // OBJLIT is used as ':' in object literal for
             // decompilation to solve spacing ambiguity.
             nf.addChildToBack(pn, property);
             nf.addChildToBack(pn, assignExpr(ts, false));
 
-          } while (ts.matchToken(ts.COMMA));
+          } while (ts.matchToken(TokenStream.COMMA));
 
-          mustMatchToken(ts, ts.RC, "msg.no.brace.prop");
+          mustMatchToken(ts, TokenStream.RC, "msg.no.brace.prop");
         }
         return nf.createObjectLiteral(pn);
       }
@@ -1125,7 +1107,7 @@ public class Parser extends Observable {
          * think) in the C IR as 'function call.'
          */
         pn = expr(ts, false);
-        mustMatchToken(ts, ts.GWT, "msg.no.paren");
+        mustMatchToken(ts, TokenStream.GWT, "msg.no.paren");
         return pn;
 
       case TokenStream.NAME:
@@ -1152,7 +1134,7 @@ public class Parser extends Observable {
       }
 
       case TokenStream.PRIMARY:
-        return nf.createLeaf(ts.PRIMARY, ts.getOp());
+        return nf.createLeaf(TokenStream.PRIMARY, ts.getOp());
 
       case TokenStream.ERROR:
         /* the scanner or one of its subroutines reported the error. */
@@ -1167,8 +1149,7 @@ public class Parser extends Observable {
   }
 
   private int lastExprEndLine; // Hack to handle function expr termination.
-  private IRFactory nf;
-  private ErrorReporter er;
+  private final IRFactory nf;
   private boolean ok; // Did the parse encounter an error?
 
   private int sourceTop;
