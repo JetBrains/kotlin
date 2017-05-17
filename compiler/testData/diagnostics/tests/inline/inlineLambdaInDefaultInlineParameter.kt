@@ -3,24 +3,24 @@
 
 inline fun inlineFun(lambda: () -> String) = lambda()
 
-inline fun noInlineFun(lambda: () -> String) = lambda()
+fun noInlineFun(lambda: () -> String) = lambda()
 
 
-inline fun default0_1(lambda: () -> String, dlambda: () -> String = { <!NOT_SUPPORTED_USAGE_OF_INLINE_PARAMETER_IN_DEFAULT_INLINE_ONE!>lambda<!>; "OK" }) {
+inline fun default0_1(lambda: () -> String, dlambda: () -> String = { <!NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE!>lambda<!>; "OK" }) {
     lambda() + dlambda()
 }
 
-inline fun default0_2(lambda: () -> String, dlambda: () -> String = { noInlineFun (<!NOT_SUPPORTED_USAGE_OF_INLINE_PARAMETER_IN_DEFAULT_INLINE_ONE, NOT_SUPPORTED_USAGE_OF_INLINE_PARAMETER_IN_DEFAULT_INLINE_ONE!>lambda<!>) }) {
+inline fun default0_2(lambda: () -> String, dlambda: () -> String = { noInlineFun (<!NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE, NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE!>lambda<!>) }) {
     lambda() + dlambda()
 }
 
 
 
-inline fun default0(lambda: () -> String, dlambda: () -> String = { noInlineFun (<!NOT_SUPPORTED_USAGE_OF_INLINE_PARAMETER_IN_DEFAULT_INLINE_ONE, NOT_SUPPORTED_USAGE_OF_INLINE_PARAMETER_IN_DEFAULT_INLINE_ONE!>lambda<!>) }) {
+inline fun default0(lambda: () -> String, dlambda: () -> String = { noInlineFun (<!NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE, NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE!>lambda<!>) }) {
     lambda() + dlambda()
 }
 
-inline fun default1_0(lambda: () -> String, dlambda: () -> String = { <!NON_LOCAL_RETURN_NOT_ALLOWED, NOT_SUPPORTED_USAGE_OF_INLINE_PARAMETER_IN_DEFAULT_INLINE_ONE!>lambda<!>() }) {
+inline fun default1_0(lambda: () -> String, dlambda: () -> String = { <!NON_LOCAL_RETURN_NOT_ALLOWED, NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE!>lambda<!>() }) {
     lambda() + dlambda()
 }
 

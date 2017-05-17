@@ -89,7 +89,7 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
             !supportDefaultValueInline || expression.getParentOfType<KtParameter>(true)?.let {
                 val allow = it !in inlinableKtParameters
                 if (!allow) {
-                    context.trace.report(NOT_SUPPORTED_USAGE_OF_INLINE_PARAMETER_IN_DEFAULT_INLINE_ONE.on(expression, expression, descriptor))
+                    context.trace.report(NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE.on(expression, expression, descriptor))
                 }
                 allow
             } ?: true

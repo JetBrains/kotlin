@@ -1009,6 +1009,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 doTest(fileName);
             }
 
+            @TestMetadata("innerClassConstuctorReference.kt")
+            public void testInnerClassConstuctorReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/innerClassConstuctorReference.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("instanceCapuredInClass.kt")
             public void testInstanceCapuredInClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapuredInClass.kt");
@@ -1036,6 +1042,18 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             @TestMetadata("nonDefaultInlineInNoInline.kt")
             public void testNonDefaultInlineInNoInline() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/nonDefaultInlineInNoInline.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privateFunctionReference.kt")
+            public void testPrivateFunctionReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/privateFunctionReference.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privatePropertyReference.kt")
+            public void testPrivatePropertyReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/privatePropertyReference.kt");
                 doTest(fileName);
             }
 

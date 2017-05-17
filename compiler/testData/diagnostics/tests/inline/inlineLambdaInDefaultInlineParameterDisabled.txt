@@ -13,4 +13,4 @@ public inline fun default2_1crossinline(/*0*/ crossinline lambda: () -> kotlin.S
 public inline fun default2_2(/*0*/ noinline lambda: () -> kotlin.String, /*1*/ dlambda: () -> kotlin.String = ...): kotlin.Unit
 public inline fun default2_3(/*0*/ noinline lambda: () -> kotlin.String, /*1*/ noinline dlambda: () -> kotlin.String = ...): kotlin.Unit
 public inline fun inlineFun(/*0*/ lambda: () -> kotlin.String): kotlin.String
-public inline fun noInlineFun(/*0*/ lambda: () -> kotlin.String): kotlin.String
+public fun noInlineFun(/*0*/ lambda: () -> kotlin.String): kotlin.String
