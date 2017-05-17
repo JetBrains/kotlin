@@ -750,6 +750,74 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    fun testKotlinAndroidPluginDetection() {
+        createProjectSubFile("build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    jcenter()
+                    maven {
+                        url='https://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                    }
+                }
+                dependencies {
+                    classpath "com.android.tools.build:gradle:2.3.0"
+                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
+                }
+            }
+
+            apply plugin: 'com.android.application'
+            apply plugin: 'kotlin-android'
+
+            android {
+                compileSdkVersion 23
+                buildToolsVersion "23.0.1"
+
+                defaultConfig {
+                    minSdkVersion 11
+                    targetSdkVersion 23
+                    versionCode 1002003
+                    versionName version
+                }
+
+                dataBinding {
+                    enabled = true
+                }
+
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_1_7
+                    targetCompatibility JavaVersion.VERSION_1_7
+                }
+
+                buildTypes {
+                    debug {
+                        applicationIdSuffix ".debug"
+                        versionNameSuffix "-debug"
+                    }
+                    release {
+                        minifyEnabled true
+                        shrinkResources true
+                    }
+                }
+            }
+        """)
+        createProjectSubFile("local.properties", """
+            sdk.dir=/${StringUtil.escapeBackSlashes(File(homePath).parent + "/dependencies/androidSDK")}
+        """)
+        createProjectSubFile("src/main/AndroidManifest.xml", """
+            <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+                      xmlns:tools="http://schemas.android.com/tools"
+                      package="my.test.project" >
+            </manifest>
+        """)
+        importProject()
+
+        Assert.assertNotNull(KotlinFacet.get(getModule("project")))
+    }
+
+    @Test
     fun testNoFacetInModuleWithoutKotlinPlugin() {
         createProjectSubFile("build.gradle", """
             group 'gr01'
