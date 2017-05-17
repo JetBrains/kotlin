@@ -296,7 +296,7 @@ internal fun FunctionDescriptor.bridgeDirectionsTo(overriddenDescriptor: Functio
     return ourDirections
 }
 
-internal fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
+tailrec internal fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
     return if (this is PackageFragmentDescriptor) this 
         else this.containingDeclaration!!.findPackage()
 }

@@ -60,8 +60,7 @@ internal class LocalDeclarationSerializer(val context: Context, val rootFunction
     val localSerializer 
         get() = contextStack.peek()!!
 
-    val typeSerializer: ((KotlinType)->Int)
-        get() = {it -> localSerializer.typeId(it)}
+    fun typeSerializer(type: KotlinType) = localSerializer.typeId(type)
 
     fun serializeLocalDeclaration(descriptor: DeclarationDescriptor): KonanIr.DeclarationDescriptor {
 

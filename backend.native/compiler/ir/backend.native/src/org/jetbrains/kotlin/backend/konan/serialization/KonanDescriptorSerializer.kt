@@ -295,8 +295,7 @@ class KonanDescriptorSerializer private constructor(
 
         extension.serializeFunction(descriptor, builder)
 
-        if (extension is IrAwareExtension
-                && descriptor.needsSerializedIr) {
+        if (extension is IrAwareExtension && descriptor.needsSerializedIr) {
             extension.addFunctionIR(builder,
                     extension.serializeInlineBody(descriptor, local))
         }
@@ -324,8 +323,7 @@ class KonanDescriptorSerializer private constructor(
 
         extension.serializeConstructor(descriptor, builder)
 
-        if (extension is IrAwareExtension 
-            && descriptor.needsSerializedIr) {
+        if (extension is IrAwareExtension && descriptor.needsSerializedIr) {
             extension.addConstructorIR(builder, 
                 extension.serializeInlineBody(descriptor, local))
         }
@@ -453,10 +451,7 @@ class KonanDescriptorSerializer private constructor(
         return builder
     }
 
-    public fun typeId(type: KotlinType): Int {
-        val result = typeTable[type(type)]
-        return result
-    }
+    public fun typeId(type: KotlinType) = typeTable[type(type)]
 
     private fun type(type: KotlinType): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
