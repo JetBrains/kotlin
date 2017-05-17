@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.UNIT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -42,7 +43,12 @@ object JavaClassProperty : IntrinsicPropertyGetter() {
 
     fun generateImpl(v: InstructionAdapter, receiver: StackValue): Type {
         val type = receiver.type
-        if (isPrimitive(type)) {
+        if (type == Type.VOID_TYPE) {
+            receiver.put(Type.VOID_TYPE, v)
+            StackValue.unit().put(UNIT_TYPE, v)
+            v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
+        }
+        else if (isPrimitive(type)) {
             if (!StackValue.couldSkipReceiverOnStaticCall(receiver)) {
                 receiver.put(type, v)
                 AsmUtil.pop(v, type)
@@ -61,12 +67,7 @@ object JavaClassProperty : IntrinsicPropertyGetter() {
         val classType = codegen.state.typeMapper.mapType(resolvedCall.call.dispatchReceiver!!.type)
         return object : IntrinsicCallable(getType(Class::class.java), listOf(), classType, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
-                if (isPrimitive(classType)) {
-                    v.getstatic(boxType(classType).internalName, "TYPE", "Ljava/lang/Class;")
-                }
-                else {
-                    v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
-                }
+                generateImpl(v, StackValue.none())
             }
 
             override fun isStaticCall() = isPrimitive(classType)

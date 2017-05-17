@@ -1621,6 +1621,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localUnitFunction.kt")
+            public void testLocalUnitFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/localUnitFunction.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("multiCase.kt")
             public void testMultiCase() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/multiCase.kt");
