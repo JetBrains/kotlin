@@ -80,8 +80,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     private val facadesForScriptDependencies: SLRUCache<ScriptModuleInfo, ProjectResolutionFacade> =
             object : SLRUCache<ScriptModuleInfo, ProjectResolutionFacade>(2, 3) {
                 override fun createValue(scriptModuleInfo: ScriptModuleInfo?): ProjectResolutionFacade {
-                    val dependencies = scriptModuleInfo?.externalDependencies
-                    return createFacadeForScriptDependencies(ScriptDependenciesModuleInfo(project, dependencies, scriptModuleInfo))
+                    return createFacadeForScriptDependencies(ScriptDependenciesModuleInfo(project, scriptModuleInfo))
                 }
             }
 
@@ -93,7 +92,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             dependenciesModuleInfo: ScriptDependenciesModuleInfo,
             syntheticFiles: Collection<KtFile> = listOf()
     ): ProjectResolutionFacade {
-        val sdk = findJdk(dependenciesModuleInfo.dependencies, project)
+        val sdk = findJdk(dependenciesModuleInfo.scriptModuleInfo?.externalDependencies, project)
         val platform = JvmPlatform // TODO: Js scripts?
         val facadeKey = PlatformAnalysisSettings(platform, sdk, true)
         val sdkFacade = GlobalFacade(facadeKey).facadeForSdk
