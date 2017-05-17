@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import org.jetbrains.org.objectweb.asm.Type
 import java.text.CharacterIterator
 import java.text.StringCharacterIterator
@@ -45,7 +46,7 @@ class BinaryClassSignatureParser(globalContext: ClassifierResolutionContext) {
             return emptyList()
         }
 
-        val typeParameters = ContainerUtil.newArrayList<JavaTypeParameter>()
+        val typeParameters = ContainerUtil.newSmartList<JavaTypeParameter>()
         signature.next()
         while (signature.current() != '>') {
             typeParameters.add(parseTypeParameter(signature, context))
@@ -148,7 +149,10 @@ class BinaryClassSignatureParser(globalContext: ClassifierResolutionContext) {
 
         if (canonicalName.toString() == "java/lang/Object") return JAVA_LANG_OBJECT_CLASSIFIER_TYPE
 
-        return PlainJavaClassifierType({ context.resolveByInternalName(canonicalName.toString()) }, argumentGroups.reversed().flatten())
+        return PlainJavaClassifierType(
+                { context.resolveByInternalName(canonicalName.toString()) },
+                argumentGroups.reversed().flattenTo(ContainerUtil.newSmartList())
+        )
     }
 
     private fun parseClassOrTypeVariableElement(signature: CharacterIterator, context: ClassifierResolutionContext): JavaType {
