@@ -557,6 +557,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("internalTypealiasConstructor")
+        public void testInternalTypealiasConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/internalTypealiasConstructor/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("internalTypealiasObject")
+        public void testInternalTypealiasObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/internalTypealiasObject/");
+            doTest(fileName);
+        }
+
         @TestMetadata("localClassChanged")
         public void testLocalClassChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/localClassChanged/");

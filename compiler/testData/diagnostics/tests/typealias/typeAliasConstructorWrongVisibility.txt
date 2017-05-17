@@ -4,7 +4,7 @@ public val test1: [ERROR : Type for MyAlias(1)]
 public val test1a: [ERROR : Type for MyClass(1)]
 public val test2: [ERROR : Type for MyAlias("")]
 public val test2a: [ERROR : Type for MyClass("")]
-public val test3: MyClass
+public val test3: MyAlias /* = MyClass */
 public val test3a: MyClass
 
 public open class MyClass {
@@ -21,9 +21,9 @@ public final class MyDerived : MyClass {
     public constructor MyDerived()
     public final val test4: [ERROR : Type for MyAlias(1)]
     public final val test4a: [ERROR : Type for MyClass(1)]
-    public final val test5: MyClass
+    public final val test5: MyAlias /* = MyClass */
     public final val test5a: MyClass
-    public final val test6: MyClass
+    public final val test6: MyAlias /* = MyClass */
     public final val test6a: MyClass
     public final override /*1*/ /*fake_override*/ val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

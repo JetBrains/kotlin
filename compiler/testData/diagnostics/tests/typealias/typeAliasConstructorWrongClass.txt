@@ -1,19 +1,19 @@
 package
 
-public val test1: AbstractClass
+public val test1: Test1 /* = AbstractClass */
 public val test1a: AbstractClass
-public val test2: AnnotationClass
+public val test2: Test2 /* = AnnotationClass */
 public val test2a: AnnotationClass
-public val test3: EnumClass
+public val test3: Test3 /* = EnumClass */
 public val test3a: EnumClass
-public val test4: SealedClass
+public val test4: Test4 /* = SealedClass */
 public val test4a: SealedClass
 public val test5: [ERROR : Type for Test5()]
 public val test5a: [ERROR : Type for Outer.Inner()]
 public val test5b: [ERROR : Type for Outer.TestInner()]
 public val test5c: [ERROR : Type for Outer().TestInner()]
 public val test5d: Outer.Inner
-public val test5e: Outer.Inner
+public val test5e: Test5 /* = Outer.Inner */
 
 public abstract class AbstractClass {
     public constructor AbstractClass()

@@ -1,6 +1,6 @@
 package
 
-public fun test1(/*0*/ x: Outer): Outer.Inner
+public fun test1(/*0*/ x: Outer): OI /* = Outer.Inner */
 public fun test2(/*0*/ x: Generic<kotlin.Int>): GI<kotlin.Int> /* = Generic<kotlin.Int>.Inner */
 public fun </*0*/ T> test3(/*0*/ x: Generic<T>): GI<T> /* = Generic<T>.Inner */
 public fun </*0*/ T> test4(/*0*/ x: Generic<kotlin.collections.List<T>>): GI<kotlin.collections.List<T>> /* = Generic<kotlin.collections.List<T>>.Inner */

@@ -185,11 +185,7 @@ class TypeAliasConstructorDescriptorImpl private constructor(
             val returnType = run {
                 val returnTypeNoAbbreviation = substitutorForUnderlyingClass.substitute(constructor.returnType, Variance.INVARIANT)
                                                ?: return null
-                val abbreviation = typeAliasDescriptor.defaultType
-                if (returnTypeNoAbbreviation is SimpleType && abbreviation is SimpleType)
-                    returnTypeNoAbbreviation.withAbbreviation(abbreviation)
-                else
-                    returnTypeNoAbbreviation
+                returnTypeNoAbbreviation.unwrap().lowerIfFlexible().withAbbreviation(typeAliasDescriptor.defaultType)
             }
 
             val receiverParameterType = constructor.dispatchReceiverParameter?.let { substitutorForUnderlyingClass.safeSubstitute(it.type, Variance.INVARIANT) }
