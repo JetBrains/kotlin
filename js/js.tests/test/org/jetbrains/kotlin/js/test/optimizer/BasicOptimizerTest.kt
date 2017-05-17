@@ -96,7 +96,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
                 }
 
                 override fun visitIf(x: JsIf) {
-                    val line = x.getData<Int?>("line")
+                    val line = (x.source as? JsLocation)?.startLine
                     if (line != null && line in comments.indices && comments[line]) {
                         x.synthetic = true
                     }

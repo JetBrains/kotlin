@@ -126,7 +126,7 @@ class FunctionReader(private val config: JsConfig, private val currentModuleName
     }
 
     operator fun get(descriptor: CallableDescriptor): JsFunction = functionCache.get(descriptor)
-    
+
     private fun readFunction(descriptor: CallableDescriptor): JsFunction? {
         if (descriptor !in this) return null
 

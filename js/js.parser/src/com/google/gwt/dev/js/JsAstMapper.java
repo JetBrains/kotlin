@@ -16,6 +16,7 @@
 package com.google.gwt.dev.js;
 
 import com.google.gwt.dev.js.parserExceptions.JsParserException;
+import com.google.gwt.dev.js.rhino.CodePosition;
 import com.google.gwt.dev.js.rhino.Node;
 import com.google.gwt.dev.js.rhino.TokenStream;
 import com.intellij.util.SmartList;
@@ -1071,7 +1072,7 @@ public class JsAstMapper {
             //
             String fromName = fromVar.getString();
             JsName toName = scopeContext.localNameFor(fromName);
-            JsVars.JsVar toVar = new JsVars.JsVar(toName);
+            JsVars.JsVar toVar = withLocation(new JsVars.JsVar(toName), fromVar);
 
             Node fromInit = fromVar.getFirstChild();
             if (fromInit != null) {
@@ -1103,14 +1104,14 @@ public class JsAstMapper {
     }
 
     private <T extends JsNode> T withLocation(T astNode, Node node) {
-        int lineNumber = node.getLineno();
-        if (lineNumber >= 0) {
-            JsLocation location = new JsLocation(fileName, lineNumber, 0);
+        CodePosition location = node.getPosition();
+        if (location != null) {
+            JsLocation jsLocation = new JsLocation(fileName, location.getLine(), location.getOffset());
             if (astNode instanceof SourceInfoAwareJsNode) {
-                astNode.setSource(location);
+                astNode.setSource(jsLocation);
             }
             else if (astNode instanceof JsExpressionStatement) {
-                ((JsExpressionStatement) astNode).getExpression().setSource(location);
+                ((JsExpressionStatement) astNode).getExpression().setSource(jsLocation);
             }
         }
         return astNode;
