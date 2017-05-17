@@ -22,8 +22,8 @@ FILE /kt16905.kt
             $this: GET_VAR '<receiver: Outer>' type=Outer origin=null
           INSTANCE_INITIALIZER_CALL classDescriptor='InnerDerived1'
   TYPEALIAS typealias OI = Outer.Inner type=Outer.Inner
-  FUN public fun test(): Outer.Inner
+  FUN public fun test(): OI /* = Outer.Inner */
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(): Outer.Inner'
+      RETURN type=kotlin.Nothing from='test(): OI /* = Outer.Inner */'
         CALL 'constructor Inner()' type=Outer.Inner origin=null
           $this: CALL 'constructor Outer()' type=Outer origin=null

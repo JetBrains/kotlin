@@ -79,14 +79,13 @@ fun isContainedByCompiledPartOfOurModule(descriptor: DeclarationDescriptor, outD
 }
 
 fun getSourceElement(descriptor: DeclarationDescriptor): SourceElement =
-        if (descriptor is CallableMemberDescriptor && descriptor.source === SourceElement.NO_SOURCE) {
-            descriptor.containingDeclaration.toSourceElement
-        }
-        else if (descriptor is DeserializedTypeAliasDescriptor) {
-            descriptor.containingDeclaration.toSourceElement
-        }
-        else {
-            descriptor.toSourceElement
+        when {
+            descriptor is CallableMemberDescriptor && descriptor.source === SourceElement.NO_SOURCE ->
+                getSourceElement(descriptor.containingDeclaration)
+            descriptor is DeserializedTypeAliasDescriptor ->
+                getSourceElement(descriptor.containingDeclaration)
+            else ->
+                descriptor.toSourceElement
         }
 
 private val DeclarationDescriptor.toSourceElement: SourceElement

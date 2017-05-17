@@ -2,9 +2,9 @@ package
 
 public val test1: ObjectWithInvoke
 public val test2: ObjectWithInvoke
-public val test3: ClassWithCompanionObjectWithInvoke
+public val test3: CWI /* = ClassWithCompanionObjectWithInvoke */
 public val test4: kotlin.Any
-public val test5: ClassWithCompanionObjectWithInvoke
+public val test5: CWI /* = ClassWithCompanionObjectWithInvoke */
 public val test5a: ClassWithCompanionObjectWithInvoke
 
 public final class ClassWithCompanionObjectWithInvoke {
