@@ -246,7 +246,10 @@ class KotlinFacetEditorGeneralTab(
             outputDirectory.textField.validateOnChange()
             copyRuntimeFilesCheckBox.validateOnChange()
             moduleKindComboBox.validateOnChange()
-            languageVersionComboBox.validateOnChange()
+            languageVersionComboBox.addActionListener {
+                restrictAPIVersions()
+                doValidate()
+            }
             apiVersionComboBox.validateOnChange()
             coroutineSupportComboBox.validateOnChange()
         }

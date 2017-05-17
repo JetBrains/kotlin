@@ -131,14 +131,16 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         this.k2jvmCompilerArguments = k2jvmCompilerArguments;
         this.isProjectSettings = isProjectSettings;
 
-        languageVersionComboBox.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        restrictAPIVersions();
+        if (isProjectSettings) {
+            languageVersionComboBox.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            restrictAPIVersions();
+                        }
                     }
-                }
-        );
+            );
+        }
 
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
 
@@ -298,7 +300,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     }
 
     @SuppressWarnings("unchecked")
-    private void restrictAPIVersions() {
+    public void restrictAPIVersions() {
         ApiVersion selectedAPIVersion = getSelectedAPIVersion();
         final LanguageVersion selectedLanguageVersion = getSelectedLanguageVersion();
         List<ApiVersion> permittedAPIVersions = ArraysKt.mapNotNull(
