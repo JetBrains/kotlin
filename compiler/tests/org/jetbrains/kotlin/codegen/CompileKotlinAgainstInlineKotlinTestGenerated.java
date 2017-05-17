@@ -961,57 +961,9 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
-            @TestMetadata("boundFunctionReference.kt")
-            public void testBoundFunctionReference() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/boundFunctionReference.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("boundPropertyReference.kt")
-            public void testBoundPropertyReference() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/boundPropertyReference.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("constuctorReference.kt")
-            public void testConstuctorReference() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/constuctorReference.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("defaultLambdaInNoInline.kt")
             public void testDefaultLambdaInNoInline() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultLambdaInNoInline.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("functionImportedFromObject.kt")
-            public void testFunctionImportedFromObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/functionImportedFromObject.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("functionReference.kt")
-            public void testFunctionReference() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/functionReference.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("functionReferenceFromClass.kt")
-            public void testFunctionReferenceFromClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/functionReferenceFromClass.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("functionReferenceFromObject.kt")
-            public void testFunctionReferenceFromObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/functionReferenceFromObject.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("innerClassConstuctorReference.kt")
-            public void testInnerClassConstuctorReference() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/innerClassConstuctorReference.kt");
                 doTest(fileName);
             }
 
@@ -1045,42 +997,6 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 doTest(fileName);
             }
 
-            @TestMetadata("privateFunctionReference.kt")
-            public void testPrivateFunctionReference() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/privateFunctionReference.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("privatePropertyReference.kt")
-            public void testPrivatePropertyReference() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/privatePropertyReference.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("propertyImportedFromObject.kt")
-            public void testPropertyImportedFromObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/propertyImportedFromObject.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("propertyReference.kt")
-            public void testPropertyReference() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/propertyReference.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("propertyReferenceFromClass.kt")
-            public void testPropertyReferenceFromClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/propertyReferenceFromClass.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("propertyReferenceFromObject.kt")
-            public void testPropertyReferenceFromObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/propertyReferenceFromObject.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simple.kt");
@@ -1109,6 +1025,99 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             public void testSimpleStaticInstance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleStaticInstance.kt");
                 doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CallableReferences extends AbstractCompileKotlinAgainstInlineKotlinTest {
+                public void testAllFilesPresentInCallableReferences() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("boundFunctionReference.kt")
+                public void testBoundFunctionReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundFunctionReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boundPropertyReference.kt")
+                public void testBoundPropertyReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundPropertyReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("constuctorReference.kt")
+                public void testConstuctorReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/constuctorReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("functionImportedFromObject.kt")
+                public void testFunctionImportedFromObject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/functionImportedFromObject.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("functionReference.kt")
+                public void testFunctionReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/functionReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("functionReferenceFromClass.kt")
+                public void testFunctionReferenceFromClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/functionReferenceFromClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("functionReferenceFromObject.kt")
+                public void testFunctionReferenceFromObject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/functionReferenceFromObject.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("innerClassConstuctorReference.kt")
+                public void testInnerClassConstuctorReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/innerClassConstuctorReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("privateFunctionReference.kt")
+                public void testPrivateFunctionReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/privateFunctionReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("privatePropertyReference.kt")
+                public void testPrivatePropertyReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/privatePropertyReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("propertyImportedFromObject.kt")
+                public void testPropertyImportedFromObject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/propertyImportedFromObject.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("propertyReference.kt")
+                public void testPropertyReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/propertyReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("propertyReferenceFromClass.kt")
+                public void testPropertyReferenceFromClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/propertyReferenceFromClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("propertyReferenceFromObject.kt")
+                public void testPropertyReferenceFromObject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/propertyReferenceFromObject.kt");
+                    doTest(fileName);
+                }
             }
         }
 
