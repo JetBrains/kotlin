@@ -1,0 +1,22 @@
+package test
+
+public fun useEnum(): kotlin.String!
+
+public abstract enum class AbstractEnum : kotlin.Enum<test.AbstractEnum!> {
+    enum entry ONE
+
+    private constructor AbstractEnum()
+    public final /*fake_override*/ val name: kotlin.String
+    public final /*fake_override*/ val ordinal: kotlin.Int
+    protected final /*fake_override*/ fun clone(): kotlin.Any
+    public final /*fake_override*/ fun compareTo(/*0*/ test.AbstractEnum!): kotlin.Int
+    protected/*protected and package*/ final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.AbstractEnum!>!
+    public/*package*/ abstract fun getString(): kotlin.String!
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.AbstractEnum
+    public open fun valueOf(/*0*/ kotlin.String!): test.AbstractEnum!
+    public open fun values(): kotlin.Array<(out) test.AbstractEnum!>!
+    public final /*synthesized*/ fun values(): kotlin.Array<test.AbstractEnum>
+}

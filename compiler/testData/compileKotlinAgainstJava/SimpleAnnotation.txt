@@ -1,0 +1,7 @@
+package test
+
+@test.SimpleAnnotation private fun withSimpleAnnotation(): kotlin.Unit
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER}) public final annotation class SimpleAnnotation : kotlin.Annotation {
+    public constructor SimpleAnnotation()
+}

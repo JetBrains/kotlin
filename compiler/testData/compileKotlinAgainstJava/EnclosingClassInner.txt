@@ -1,0 +1,41 @@
+package test
+
+private final class Impl : test.InterfaceImpl {
+    public constructor Impl()
+    public/*package*/ open /*fake_override*/ fun getBuilder(): test.Interface.Builder!
+    private final fun kind(/*0*/ test.Interface.Kind): test.Interface.Builder!
+}
+
+public/*package*/ interface Interface {
+
+    public interface Builder {
+        public abstract fun setKind(/*0*/ test.Interface.Kind!): test.Interface.Builder!
+    }
+
+    public final enum class Kind : kotlin.Enum<test.Interface.Kind!> {
+        enum entry DECLARATION
+
+        private constructor Kind()
+        public final /*fake_override*/ val name: kotlin.String
+        public final /*fake_override*/ val ordinal: kotlin.Int
+        protected final /*fake_override*/ fun clone(): kotlin.Any
+        public final /*fake_override*/ fun compareTo(/*0*/ test.Interface.Kind!): kotlin.Int
+        protected/*protected and package*/ final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+        public final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.Interface.Kind!>!
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.Interface.Kind
+        public open fun valueOf(/*0*/ kotlin.String!): test.Interface.Kind!
+        public open fun values(): kotlin.Array<(out) test.Interface.Kind!>!
+        public final /*synthesized*/ fun values(): kotlin.Array<test.Interface.Kind>
+    }
+}
+
+public/*package*/ open class InterfaceImpl : test.Interface {
+    public/*package*/ constructor InterfaceImpl()
+    public/*package*/ open fun getBuilder(): test.Interface.Builder!
+
+    public/*package*/ interface BuilderImpl : test.Interface.Builder {
+        public abstract fun setKind(/*0*/ test.Interface.Kind!): test.Interface.Builder!
+    }
+}

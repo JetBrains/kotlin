@@ -1,0 +1,14 @@
+package test
+
+public fun method(): kotlin.Unit
+
+public final class KotlinClass {
+    public constructor KotlinClass()
+}
+
+public open class MethodWithArgument {
+    public constructor MethodWithArgument()
+
+    // Static members
+    public open fun method(/*0*/ test.KotlinClass!): kotlin.Unit
+}

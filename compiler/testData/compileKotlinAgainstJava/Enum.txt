@@ -1,0 +1,27 @@
+package test
+
+public fun checkEnum(/*0*/ test.Enum): kotlin.Unit
+
+public final enum class Enum : kotlin.Enum<test.Enum!> {
+    enum entry NORTH
+
+    enum entry SOUTH
+
+    enum entry WEST
+
+    enum entry EAST
+
+    private constructor Enum()
+    public final /*fake_override*/ val name: kotlin.String
+    public final /*fake_override*/ val ordinal: kotlin.Int
+    protected final /*fake_override*/ fun clone(): kotlin.Any
+    public final /*fake_override*/ fun compareTo(/*0*/ test.Enum!): kotlin.Int
+    protected/*protected and package*/ final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.Enum!>!
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.Enum
+    public open fun valueOf(/*0*/ kotlin.String!): test.Enum!
+    public open fun values(): kotlin.Array<(out) test.Enum!>!
+    public final /*synthesized*/ fun values(): kotlin.Array<test.Enum>
+}

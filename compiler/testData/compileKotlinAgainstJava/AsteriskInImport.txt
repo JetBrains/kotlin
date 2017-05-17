@@ -1,0 +1,10 @@
+package test
+
+public fun getStrings(): kotlin.collections.(Mutable)List<kotlin.String!>!
+
+public open class AsteriskInImport {
+    public constructor AsteriskInImport()
+
+    // Static members
+    public open fun getStrings(): kotlin.collections.(Mutable)List<kotlin.String!>!
+}

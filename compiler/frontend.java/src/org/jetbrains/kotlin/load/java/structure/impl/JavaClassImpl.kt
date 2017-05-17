@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.load.java.structure.impl
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiTypeParameter
+import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.structure.*
@@ -26,7 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
-class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass), JavaClass, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
+class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass), VirtualFileBoundJavaClass, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
     init {
         assert(psiClass !is PsiTypeParameter) { "PsiTypeParameter should be wrapped in JavaTypeParameter, not JavaClass: use JavaClassifier.create()" }
     }
@@ -108,6 +110,11 @@ class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass)
 
     override val lightClassOriginKind: LightClassOriginKind?
         get() = (psi as? KtLightClassMarker)?.originKind
+
+    override val virtualFile: VirtualFile?
+        get() =  psi.containingFile?.virtualFile
+
+    override fun isFromSourceCode(scope: SearchScope): Boolean = psi.containingFile.virtualFile in scope
 
     override fun getAnnotationOwnerPsi() = psi.modifierList
 

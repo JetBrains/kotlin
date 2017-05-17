@@ -25,6 +25,7 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.MetaLanguage
 import com.intellij.lang.java.JavaParserDefinition
@@ -70,10 +71,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
-import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
@@ -89,6 +87,7 @@ import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.javac.JavacWrapperRegistrar
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -123,7 +122,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         override fun registerJavaPsiFacade() {
-            with (project) {
+            with(project) {
                 registerService(CoreJavaFileManager::class.java, ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager)
 
                 val cliLightClassGenerationSupport = CliLightClassGenerationSupport(this)
@@ -217,6 +216,28 @@ class KotlinCoreEnvironment private constructor(
         val finderFactory = CliVirtualFileFinderFactory(rootsIndex)
         project.registerService(MetadataFinderFactory::class.java, finderFactory)
         project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
+    }
+
+    private val VirtualFile.javaFiles: List<VirtualFile>
+        get() = mutableListOf<VirtualFile>().apply {
+            VfsUtilCore.processFilesRecursively(this@javaFiles) { file ->
+                if (file.fileType == JavaFileType.INSTANCE) {
+                    add(file)
+                }
+                true
+            }
+        }
+
+    private val allJavaFiles: List<File>
+        get() = configuration.javaSourceRoots
+                .mapNotNull(this::findLocalDirectory)
+                .flatMap { it.javaFiles }
+                .map { File(it.canonicalPath) }
+
+    fun registerJavac(javaFiles: List<File> = allJavaFiles,
+                      kotlinFiles: List<KtFile> = sourceFiles,
+                      arguments: Array<String>? = null): Boolean {
+        return JavacWrapperRegistrar.registerJavac(this, javaFiles, kotlinFiles, arguments)
     }
 
     private val applicationEnvironment: CoreApplicationEnvironment
@@ -327,6 +348,10 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 
+    fun findLocalFile(path: String) = applicationEnvironment.localFileSystem.findFileByPath(path)
+
+    fun findJarFile(path: String) = applicationEnvironment.jarFileSystem.findFileByPath(path)
+
     private fun findLocalDirectory(root: JvmContentRoot): VirtualFile? {
         val path = root.file
         val localFile = findLocalDirectory(path.absolutePath)
@@ -383,7 +408,7 @@ class KotlinCoreEnvironment private constructor(
                 // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
                 // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
                 Disposer.register(parentDisposable, Disposable {
-                    synchronized (APPLICATION_LOCK) {
+                    synchronized(APPLICATION_LOCK) {
                         if (--ourProjectCount <= 0) {
                             disposeApplicationEnvironment()
                         }
@@ -392,7 +417,7 @@ class KotlinCoreEnvironment private constructor(
             }
             val environment = KotlinCoreEnvironment(parentDisposable, appEnv, configuration, configFiles)
 
-            synchronized (APPLICATION_LOCK) {
+            synchronized(APPLICATION_LOCK) {
                 ourProjectCount++
             }
             return environment
@@ -419,7 +444,7 @@ class KotlinCoreEnvironment private constructor(
         val applicationEnvironment: JavaCoreApplicationEnvironment? get() = ourApplicationEnvironment
 
         private fun getOrCreateApplicationEnvironmentForProduction(configuration: CompilerConfiguration, configFilePaths: List<String>): JavaCoreApplicationEnvironment {
-            synchronized (APPLICATION_LOCK) {
+            synchronized(APPLICATION_LOCK) {
                 if (ourApplicationEnvironment != null)
                     return ourApplicationEnvironment!!
 
@@ -427,7 +452,7 @@ class KotlinCoreEnvironment private constructor(
                 ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configuration, configFilePaths)
                 ourProjectCount = 0
                 Disposer.register(parentDisposable, Disposable {
-                    synchronized (APPLICATION_LOCK) {
+                    synchronized(APPLICATION_LOCK) {
                         ourApplicationEnvironment = null
                     }
                 })
@@ -436,7 +461,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         fun disposeApplicationEnvironment() {
-            synchronized (APPLICATION_LOCK) {
+            synchronized(APPLICATION_LOCK) {
                 val environment = ourApplicationEnvironment ?: return
                 ourApplicationEnvironment = null
                 Disposer.dispose(environment.parentDisposable)
@@ -524,7 +549,7 @@ class KotlinCoreEnvironment private constructor(
 
         // made public for Upsource
         @JvmStatic fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment) {
-            with (projectEnvironment.project) {
+            with(projectEnvironment.project) {
                 val kotlinScriptDefinitionProvider = KotlinScriptDefinitionProvider()
                 registerService(KotlinScriptDefinitionProvider::class.java, kotlinScriptDefinitionProvider)
                 registerService(KotlinScriptExternalImportsProvider::class.java, KotlinScriptExternalImportsProviderImpl(projectEnvironment.project, kotlinScriptDefinitionProvider))

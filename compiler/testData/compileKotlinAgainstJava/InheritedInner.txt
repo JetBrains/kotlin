@@ -1,0 +1,20 @@
+package test
+
+public fun getSecond(): test.InheritedInner.First.Second
+
+public open class InheritedInner {
+    public constructor InheritedInner()
+    public open fun getSecond(): test.InheritedInner.First.Second!
+
+    public open class First {
+        public constructor First()
+
+        public open class Second {
+            public constructor Second()
+        }
+    }
+
+    public open class Third : test.InheritedInner.First {
+        public constructor Third()
+    }
+}

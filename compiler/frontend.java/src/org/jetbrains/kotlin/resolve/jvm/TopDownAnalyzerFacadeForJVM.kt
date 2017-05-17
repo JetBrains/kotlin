@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.frontend.java.di.initialize
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
@@ -61,6 +60,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import java.util.*
 
 object TopDownAnalyzerFacadeForJVM {
@@ -143,6 +143,8 @@ object TopDownAnalyzerFacadeForJVM {
                 }
                 else null
 
+        val useJavac = configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC)
+
         val dependencyModule = if (separateModules) {
             val dependenciesContext = ContextForNewModule(
                     moduleContext, Name.special("<dependencies of ${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"),
@@ -154,7 +156,7 @@ object TopDownAnalyzerFacadeForJVM {
 
             val dependenciesContainer = createContainerForTopDownAnalyzerForJvm(
                     dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, lookupTracker,
-                    packagePartProvider(dependencyScope), moduleClassResolver, jvmTarget, languageVersionSettings
+                    packagePartProvider(dependencyScope), moduleClassResolver, jvmTarget, languageVersionSettings, useJavac
             )
 
             StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(dependenciesContainer, null) }
@@ -181,7 +183,7 @@ object TopDownAnalyzerFacadeForJVM {
         // TODO: get rid of duplicate invocation of CodeAnalyzerInitializer#initialize, or refactor CliLightClassGenerationSupport
         val container = createContainerForTopDownAnalyzerForJvm(
                 moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, lookupTracker,
-                partProvider, moduleClassResolver, jvmTarget, languageVersionSettings
+                partProvider, moduleClassResolver, jvmTarget, languageVersionSettings, useJavac
         ).apply {
             initJvmBuiltInsForTopDownAnalysis()
             (partProvider as? IncrementalPackagePartProvider)?.deserializationConfiguration = get<DeserializationConfiguration>()
@@ -243,7 +245,7 @@ object TopDownAnalyzerFacadeForJVM {
         lateinit var sourceCodeResolver: JavaDescriptorResolver
 
         override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
-            val resolver = if (javaClass is JavaClassImpl && javaClass.psi.containingFile.virtualFile in sourceScope)
+            val resolver = if (javaClass is VirtualFileBoundJavaClass && javaClass.isFromSourceCode(sourceScope))
                 sourceCodeResolver
             else
                 compiledCodeResolver

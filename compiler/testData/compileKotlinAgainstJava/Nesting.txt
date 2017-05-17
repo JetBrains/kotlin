@@ -1,0 +1,25 @@
+package test
+
+public fun getImpl(): test.Nesting.Second.Third.Fourth
+
+public open class Nesting {
+    public constructor Nesting()
+    public open fun getImpl(): test.Nesting.Second.Third.FourthImpl!
+
+    public final class Second {
+        public constructor Second()
+
+        public final class Third {
+            public constructor Third()
+
+            public interface Fourth {
+                public abstract fun isImplemented(): kotlin.Boolean
+            }
+
+            public final class FourthImpl : test.Nesting.Second.Third.Fourth {
+                public constructor FourthImpl()
+                public open fun isImplemented(): kotlin.Boolean
+            }
+        }
+    }
+}

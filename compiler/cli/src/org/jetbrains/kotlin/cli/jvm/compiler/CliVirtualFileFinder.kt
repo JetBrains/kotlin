@@ -32,6 +32,7 @@ class CliVirtualFileFinder(
         private val index: JvmDependenciesIndex,
         private val scope: GlobalSearchScope
 ) : VirtualFileFinder() {
+
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
             findBinaryClass(classId, classId.relativeClassName.asString().replace('.', '$') + ".class")
 

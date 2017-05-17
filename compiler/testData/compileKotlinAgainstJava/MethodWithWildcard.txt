@@ -1,0 +1,8 @@
+package test
+
+public fun useMethodWithWildcard(): kotlin.collections.(Mutable)Collection<kotlin.CharSequence!>!
+
+public open class MethodWithWildcard</*0*/ V : kotlin.Any!> {
+    public constructor MethodWithWildcard</*0*/ V : kotlin.Any!>()
+    public open fun method(/*0*/ (kotlin.collections.MutableCollection<out V!>..kotlin.collections.Collection<V!>?)): kotlin.collections.(Mutable)Collection<V!>!
+}

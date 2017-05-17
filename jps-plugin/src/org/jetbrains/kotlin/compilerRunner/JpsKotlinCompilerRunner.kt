@@ -227,7 +227,8 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             getOrCreateDaemonConnection {
                 val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, environment.messageCollector)
                 val compilerPath = File(libPath, "kotlin-compiler.jar")
-                val compilerId = CompilerId.makeCompilerId(compilerPath)
+                val toolsJarPath = CompilerRunnerUtil.getJdkToolsJar()
+                val compilerId = CompilerId.makeCompilerId(listOfNotNull(compilerPath, toolsJarPath) )
                 val daemonOptions = configureDaemonOptions()
 
                 val clientFlagFile = KotlinCompilerClient.getOrCreateClientFlagFile(daemonOptions)

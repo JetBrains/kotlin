@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.SearchScope
 import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -29,14 +31,14 @@ import java.text.CharacterIterator
 import java.text.StringCharacterIterator
 
 class BinaryJavaClass(
-        val virtualFile: VirtualFile,
+        override val virtualFile: VirtualFile,
         override val fqName: FqName,
         private val context: ClassifierResolutionContext,
         private val signatureParser: BinaryClassSignatureParser,
         override var access: Int = 0,
         override val outerClass: JavaClass?,
         classContent: ByteArray? = null
-) : ClassVisitor(ASM_API_VERSION_FOR_CLASS_READING), JavaClass, BinaryJavaModifierListOwner, BinaryJavaAnnotationOwner {
+) : ClassVisitor(ASM_API_VERSION_FOR_CLASS_READING), VirtualFileBoundJavaClass, BinaryJavaModifierListOwner, BinaryJavaAnnotationOwner {
     lateinit var myInternalName: String
 
     override val annotations: MutableCollection<JavaAnnotation> = mutableListOf()
@@ -58,6 +60,8 @@ class BinaryJavaClass(
     override val isAnnotationType get() = isSet(Opcodes.ACC_ANNOTATION)
     override val isEnum get() = isSet(Opcodes.ACC_ENUM)
     override val lightClassOriginKind: LightClassOriginKind? get() = null
+
+    override fun isFromSourceCode(scope: SearchScope): Boolean = false
 
     override fun visitEnd() {
         methods.trimToSize()
