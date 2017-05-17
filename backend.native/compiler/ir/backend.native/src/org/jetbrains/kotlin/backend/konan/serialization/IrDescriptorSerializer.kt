@@ -87,11 +87,10 @@ internal class IrDescriptorSerializer(
         val typeParameters = descriptor.propertyIfAccessor.typeParameters
         typeParameters.forEach {
             proto.addTypeParameter(serializeDescriptor(it))
-            // We explicitly serialize type parameters
-            // as types here so that they are interned in the 
-            // natural order of declaration. Otherwise 
-            // they appear in the order of appearence in the 
-            // body of the function, and get wrong indices.
+            // We explicitly serialize type parameters as types here so that 
+            // they are interned in the natural order of declaration. 
+            // Otherwise they appear in the order of appearence in the body 
+            // of the function, and get wrong indices.
             localDeclarationSerializer.typeSerializer(it.defaultType)
         }
 
@@ -99,9 +98,8 @@ internal class IrDescriptorSerializer(
             proto.addValueParameter(serializeDescriptor(it))
         }
 
-        // Allocate two indicies for the receivers.
-        // They are not deserialized from protobuf, 
-        // just recreated together with their function.
+        // Allocate two indicies for the receivers. They are not deserialized 
+        // from protobuf, just recreated together with their function.
 
         val dispatchReceiver = descriptor.dispatchReceiverParameter
         if (dispatchReceiver != null) 
@@ -141,8 +139,7 @@ internal class IrDescriptorSerializer(
         } else null
 
         val index = descriptorTable.indexByValue(descriptor)
-        // For getters and setters we use 
-        // the *property* original index.
+        // For getters and setters we use the *property* original index.
         val originalIndex = descriptorTable.indexByValue(descriptor.propertyIfAccessor.original)
 
         context.log{"index = $index"}
