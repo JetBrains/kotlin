@@ -122,10 +122,10 @@ abstract class BasicBoxTest(
             }
             val inputJsFiles = inputFiles
                     .filter { it.fileName.endsWith(".js") }
-                    .map { file ->
-                        val sourceFile = File(file.fileName)
-                        val targetFile = File(outputDir, file.module.outputFileSimpleName() + "-js-" + sourceFile.name)
-                        FileUtil.copy(File(file.fileName), targetFile)
+                    .map { inputJsFile ->
+                        val sourceFile = File(inputJsFile.fileName)
+                        val targetFile = File(outputDir, inputJsFile.module.outputFileSimpleName() + "-js-" + sourceFile.name)
+                        FileUtil.copy(File(inputJsFile.fileName), targetFile)
                         targetFile.absolutePath
                     }
 
