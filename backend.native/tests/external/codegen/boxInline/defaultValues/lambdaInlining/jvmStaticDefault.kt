@@ -1,5 +1,6 @@
 // FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: inlineFun$default
+// IGNORE_BACKEND: NATIVE
 //WITH_RUNTIME
 package test
 

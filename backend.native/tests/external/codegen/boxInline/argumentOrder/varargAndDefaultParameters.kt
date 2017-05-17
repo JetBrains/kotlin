@@ -29,8 +29,7 @@ fun box(): String {
                        init = { invokeOrder += " init"; "I" }())
     if (result != "C, R, I") return "fail 1: $result"
 
-    //Change test after KT-17691 FIX
-    if (invokeOrder != " receiver initconstraints") return "fail 2: $invokeOrder"
+    if (invokeOrder != "constraints receiver init") return "fail 2: $invokeOrder"
 
     result = ""
     invokeOrder = ""
