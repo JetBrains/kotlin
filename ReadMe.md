@@ -30,7 +30,7 @@ In order to build Kotlin distribution you need to have:
 
 - Apache Ant 1.9.4 and higher
 - JDK 1.6, 1.7 and 1.8
-- Setup environment variables as following:
+- Setup environment variables as following, include slash `/` at end of path:
 
         JAVA_HOME="path to JDK 1.8"
         JDK_16="path to JDK 1.6"
