@@ -25,12 +25,4 @@ public abstract class JsLiteral extends JsExpression {
             return this;
         }
     }
-
-    public static boolean isTrueBoolean(@NotNull JsExpression expression) {
-        return expression instanceof JsBooleanLiteral && ((JsBooleanLiteral) expression).getValue();
-    }
-
-    public static boolean isFalseBoolean(@NotNull JsExpression expression) {
-        return expression instanceof JsBooleanLiteral && !((JsBooleanLiteral) expression).getValue();
-    }
 }

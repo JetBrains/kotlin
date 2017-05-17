@@ -67,7 +67,7 @@ class WhileConditionFolding(val body: JsBlock) {
                         statement.body = remove(statement.body)
                         val existingCondition = statement.condition
                         statement.condition = when {
-                            JsLiteral.isTrueBoolean(existingCondition) -> condition
+                            JsBooleanLiteral.isTrue(existingCondition) -> condition
                             else -> combine(existingCondition, condition)
                         }
                         changed = true
@@ -142,7 +142,7 @@ class WhileConditionFolding(val body: JsBlock) {
                             // Just a little optimization. When inner statement is a single `break`, `nextCondition` would be false.
                             // However, `A || false` can be rewritten as simply `A`
                             nextCondition == null -> null
-                            JsLiteral.isFalseBoolean(nextCondition) -> JsAstUtils.notOptimized(statement.ifExpression)
+                            JsBooleanLiteral.isFalse(nextCondition) -> JsAstUtils.notOptimized(statement.ifExpression)
                             else -> JsAstUtils.or(JsAstUtils.notOptimized(statement.ifExpression), nextCondition)
                         }
                         result

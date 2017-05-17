@@ -21,10 +21,17 @@ import org.jetbrains.annotations.NotNull;
 public final class JsBooleanLiteral extends JsLiteral.JsValueLiteral {
     private final boolean value;
 
-    // Should be interned by JsProgram
     public JsBooleanLiteral(boolean value) {
-    this.value = value;
-  }
+        this.value = value;
+    }
+
+    public static boolean isTrue(@NotNull JsExpression expression) {
+        return expression instanceof JsBooleanLiteral && ((JsBooleanLiteral) expression).getValue();
+    }
+
+    public static boolean isFalse(@NotNull JsExpression expression) {
+        return expression instanceof JsBooleanLiteral && !((JsBooleanLiteral) expression).getValue();
+    }
 
     public boolean getValue() {
     return value;
