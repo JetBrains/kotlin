@@ -22,9 +22,12 @@ import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.serialization.Base64
 import org.jetbrains.kotlin.backend.konan.serialization.deserializeModule
+import org.jetbrains.kotlin.backend.konan.util.File
+import org.jetbrains.kotlin.backend.konan.util.copyTo
+import org.jetbrains.kotlin.backend.konan.util.unzipAs
+import org.jetbrains.kotlin.backend.konan.util.zipDirAs
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import java.io.File
 
 interface KonanLibraryReader {
     val libraryName: String
@@ -87,23 +90,23 @@ class SplitLibraryReader(val libDir: File, configuration: CompilerConfiguration)
     // TODO: Search path processing is also goes somewhere around here.
     fun unpackIfNeeded() {
         // TODO: Clarify the policy here.
-        if (libDir.exists()) {
-            if (libDir.isDirectory()) return
+        if (libDir.exists) {
+            if (libDir.isDirectory) return
         }
-        if (!klibFile.exists()) {
+        if (!klibFile.exists) {
             error("Could not find neither $libDir nor $klibFile.")
         }
-        if (klibFile.isFile()) {
+        if (klibFile.isFile) {
             klibFile.unzipAs(libDir)
 
-            if (!libDir.exists()) error("Could not unpack $klibFile as $libDir.")
+            if (!libDir.exists) error("Could not unpack $klibFile as $libDir.")
         } else {
             error("Expected $klibFile to be a regular libDir.")
         }
     }
 
     private val File.dirAbsolutePaths: List<String>
-        get() = this.listFiles()!!.toList()!!.map{it->it.absolutePath}
+        get() = this.listFiles!!.toList()!!.map{it->it.absolutePath}
 
     private val targetDir: File
         get() {
@@ -209,7 +212,7 @@ class SplitLibraryWriter(val libDir: File, target: String, val nopack: Boolean =
     }
 
     override fun addNativeBitcode(library: String) {
-        val basename = File(library).getName()
+        val basename = File(library).name
         File(library).copyTo(File(nativeDir, basename)) 
     }
 

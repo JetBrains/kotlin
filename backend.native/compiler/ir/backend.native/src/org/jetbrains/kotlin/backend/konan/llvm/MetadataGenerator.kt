@@ -18,13 +18,9 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.LinkData
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.backend.konan.util.File
 import java.io.Closeable
-import java.io.File
-import kotlin.io.readText
 import java.util.Properties
 
 class NamedModuleData(val name:String, val base64: String)
