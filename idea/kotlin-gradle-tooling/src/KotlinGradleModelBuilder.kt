@@ -57,7 +57,7 @@ class KotlinGradleModelBuilder : ModelBuilderService {
                 "kotlin" to "kotlin-platform-jvm",
                 "kotlin2js" to "kotlin-platform-js"
         )
-        val kotlinPluginIds = listOf("kotlin", "kotlin2js")
+        val kotlinPluginIds = listOf("kotlin", "kotlin2js", "kotlin-android")
         private val kotlinPlatformCommonPluginId = "kotlin-platform-common"
     }
 
