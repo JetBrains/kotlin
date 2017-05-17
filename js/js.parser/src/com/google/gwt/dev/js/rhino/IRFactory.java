@@ -41,7 +41,6 @@ package com.google.gwt.dev.js.rhino;
  * @see Node
  */
 public class IRFactory {
-
     public IRFactory(TokenStream ts) {
         this.ts = ts;
     }
@@ -49,77 +48,70 @@ public class IRFactory {
     /**
      * Script (for associating file/url names with toplevel scripts.)
      */
-    public Object createScript(Object body, String sourceName,
-                               int baseLineno, int endLineno, Object source)
+    public Node createScript(Node body)
     {
         Node result = new Node(TokenStream.SCRIPT);
-        Node children = ((Node) body).getFirstChild();
+        Node children = body.getFirstChild();
         if (children != null)
             result.addChildrenToBack(children);
-        
-        result.putProp(Node.SOURCENAME_PROP, sourceName);
-        result.putIntProp(Node.BASE_LINENO_PROP, baseLineno);
-        result.putIntProp(Node.END_LINENO_PROP, endLineno);
-        if (source != null)
-            result.putProp(Node.SOURCE_PROP, source);
+
         return result;
     }
 
     /**
      * Leaf
      */
-    public Object createLeaf(int nodeType) {
-            return new Node(nodeType);
+    public Node createLeaf(int nodeType, CodePosition location) {
+        return new Node(nodeType, location);
     }
 
-    public Object createLeaf(int nodeType, int nodeOp) {
-        return new Node(nodeType, nodeOp);
+    public Node createLeaf(int nodeType, int nodeOp, CodePosition location) {
+        return new Node(nodeType, nodeOp, location);
     }
 
-    public int getLeafType(Object leaf) {
-        Node n = (Node) leaf;
-        return n.getType();
+    public int getLeafType(Node leaf) {
+        return leaf.getType();
     }
 
     /**
      * Statement leaf nodes.
      */
 
-    public Object createSwitch(int lineno) {
-        return new Node(TokenStream.SWITCH, lineno);
+    public Node createSwitch(CodePosition location) {
+        return new Node(TokenStream.SWITCH, location);
     }
 
-    public Object createVariables(int lineno) {
-        return new Node(TokenStream.VAR, lineno);
+    public Node createVariables(CodePosition location) {
+        return new Node(TokenStream.VAR, location);
     }
 
-    public Object createExprStatement(Object expr, int lineno) {
-        return new Node(TokenStream.EXPRSTMT, (Node) expr, lineno);
+    public Node createExprStatement(Object expr, CodePosition location) {
+        return new Node(TokenStream.EXPRSTMT, (Node) expr, location);
     }
 
     /**
      * Name
      */
-    public Object createName(String name) {
-        return Node.newString(TokenStream.NAME, name);
+    public Node createName(String name, CodePosition location) {
+        return Node.newString(TokenStream.NAME, name, location);
     }
 
     /**
      * String (for literals)
      */
-    public Object createString(String string) {
-        return Node.newString(string);
+    public Node createString(String string, CodePosition location) {
+        return Node.newString(string, location);
     }
 
     /**
      * Number (for literals)
      */
-    public Object createNumber(int number) {
-        return Node.newNumber(number);
+    public Node createNumber(int number, CodePosition location) {
+        return Node.newNumber(number, location);
     }
 
-    public Object createNumber(double number) {
-        return Node.newNumber(number);
+    public Node createNumber(double number, CodePosition location) {
+        return Node.newNumber(number, location);
     }
 
     /**
@@ -130,52 +122,47 @@ public class IRFactory {
      * @param stmts the statements in the catch clause
      * @param lineno the starting line number of the catch clause
      */
-    public Object createCatch(String varName, Object catchCond, Object stmts,
-                              int lineno)
-    {
+    public Node createCatch(Node varName, Node catchCond, Node stmts, CodePosition location) {
         if (catchCond == null) {
-            catchCond = new Node(TokenStream.PRIMARY, TokenStream.TRUE);
+            catchCond = new Node(TokenStream.PRIMARY, TokenStream.TRUE, location);
         }
-        return new Node(TokenStream.CATCH, (Node)createName(varName),
-                               (Node)catchCond, (Node)stmts, lineno);
+        return new Node(TokenStream.CATCH, varName, catchCond, stmts, location);
     }
 
     /**
      * Throw
      */
-    public Object createThrow(Object expr, int lineno) {
-        return new Node(TokenStream.THROW, (Node)expr, lineno);
+    public Node createThrow(Node expr, CodePosition location) {
+        return new Node(TokenStream.THROW, expr, location);
     }
 
     /**
      * Return
      */
-    public Object createReturn(Object expr, int lineno) {
+    public Node createReturn(Node expr, CodePosition location) {
         return expr == null
-            ? new Node(TokenStream.RETURN, lineno)
-            : new Node(TokenStream.RETURN, (Node)expr, lineno);
+            ? new Node(TokenStream.RETURN, location)
+            : new Node(TokenStream.RETURN, expr, location);
     }
 
     /**
      * Label
      */
-    public Object createLabel(String label, int lineno) {
-        Node result = new Node(TokenStream.LABEL, lineno);
-        Node name = Node.newString(TokenStream.NAME, label);
-        result.addChildToBack(name);
+    public Node createLabel(Node label, CodePosition location) {
+        Node result = new Node(TokenStream.LABEL, location);
+        result.addChildToBack(label);
         return result;
     }
 
     /**
      * Break (possibly labeled)
      */
-    public Object createBreak(String label, int lineno) {
-        Node result = new Node(TokenStream.BREAK, lineno);
+    public Node createBreak(Node label, CodePosition location) {
+        Node result = new Node(TokenStream.BREAK, location);
         if (label == null) {
             return result;
         } else {
-            Node name = Node.newString(TokenStream.NAME, label);
-            result.addChildToBack(name);
+            result.addChildToBack(label);
             return result;
         }
     }
@@ -183,13 +170,12 @@ public class IRFactory {
     /**
      * Continue (possibly labeled)
      */
-    public Object createContinue(String label, int lineno) {
-        Node result = new Node(TokenStream.CONTINUE, lineno);
+    public Node createContinue(Node label, CodePosition location) {
+        Node result = new Node(TokenStream.CONTINUE, location);
         if (label == null) {
             return result;
         } else {
-            Node name = Node.newString(TokenStream.NAME, label);
-            result.addChildToBack(name);
+            result.addChildToBack(label);
             return result;
         }
     }
@@ -197,8 +183,8 @@ public class IRFactory {
     /**
      * debugger
      */
-    public Object createDebugger(int lineno) {
-        Node result = new Node(TokenStream.DEBUGGER, lineno);
+    public Node createDebugger(CodePosition location) {
+        Node result = new Node(TokenStream.DEBUGGER, location);
         return result;
     }
 
@@ -207,81 +193,54 @@ public class IRFactory {
      * Creates the empty statement block
      * Must make subsequent calls to add statements to the node
      */
-    public Object createBlock(int lineno) {
-        return new Node(TokenStream.BLOCK, lineno);
+    public Node createBlock(CodePosition location) {
+        return new Node(TokenStream.BLOCK, location);
     }
 
-    public Object createFunction(String name, Object args, Object statements,
-                                 String sourceName, int baseLineno,
-                                 int endLineno, Object source,
-                                 boolean isExpr)
-    {
-        Node f = new Node(TokenStream.FUNCTION, 
-                          Node.newString(TokenStream.NAME, 
-                                         name == null ? "" : name),
-                          (Node)args, (Node)statements, baseLineno);
-
-        f.putProp(Node.SOURCENAME_PROP, sourceName);
-        f.putIntProp(Node.BASE_LINENO_PROP, baseLineno);
-        f.putIntProp(Node.END_LINENO_PROP, endLineno);
-        if (source != null)
-            f.putProp(Node.SOURCE_PROP, source);
-
-        return f;
-    }
-
-    /**
-     * Add a child to the back of the given node.  This function
-     * breaks the Factory abstraction, but it removes a requirement
-     * from implementors of Node.
-     */
-    public void addChildToBack(Object parent, Object child) {
-        ((Node)parent).addChildToBack((Node)child);
+    public Node createFunction(Node name, Node args, Node statements, CodePosition location) {
+        if (name == null) {
+            name = createName("", location);
+        }
+        return new Node(TokenStream.FUNCTION, name, args, statements, location);
     }
 
     /**
      * While
      */
-    public Object createWhile(Object cond, Object body, int lineno) {
-        return new Node(TokenStream.WHILE, (Node)cond, (Node)body, lineno);
+    public Node createWhile(Node cond, Node body, CodePosition location) {
+        return new Node(TokenStream.WHILE, cond, body, location);
     }
 
     /**
      * DoWhile
      */
-    public Object createDoWhile(Object body, Object cond, int lineno) {
-        return new Node(TokenStream.DO, (Node)body, (Node)cond, lineno);
+    public Node createDoWhile(Node body, Node cond, CodePosition location) {
+        return new Node(TokenStream.DO, body, cond, location);
     }
 
     /**
      * For
      */
-    public Object createFor(Object init, Object test, Object incr,
-                            Object body, int lineno)
-    {
-        return new Node(TokenStream.FOR, (Node)init, (Node)test, (Node)incr,
-                        (Node)body);
+    public Node createFor(Node init, Node test, Node incr, Node body, CodePosition location) {
+        return new Node(TokenStream.FOR, init, test, incr, body, location);
     }
 
     /**
      * For .. In
      *
      */
-    public Object createForIn(Object lhs, Object obj, Object body, int lineno) {
-        return new Node(TokenStream.FOR, (Node)lhs, (Node)obj, (Node)body);
+    public Node createForIn(Node lhs, Node obj, Node body, CodePosition location) {
+        return new Node(TokenStream.FOR, lhs, obj, body, location);
     }
 
     /**
      * Try/Catch/Finally
      */
-    public Object createTryCatchFinally(Object tryblock, Object catchblocks,
-                                        Object finallyblock, int lineno)
-    {
+    public Node createTryCatchFinally(Node tryblock, Node catchblocks, Node finallyblock, CodePosition location) {
         if (finallyblock == null) {
-            return new Node(TokenStream.TRY, (Node)tryblock, (Node)catchblocks);
+            return new Node(TokenStream.TRY, tryblock, catchblocks, location);
         }
-        return new Node(TokenStream.TRY, (Node)tryblock,
-                        (Node)catchblocks, (Node)finallyblock);
+        return new Node(TokenStream.TRY, tryblock, catchblocks, finallyblock, location);
     }
 
     /**
@@ -291,81 +250,70 @@ public class IRFactory {
     /**
      * With
      */
-    public Object createWith(Object obj, Object body, int lineno) {
-        return new Node(TokenStream.WITH, (Node)obj, (Node)body, lineno);
+    public Node createWith(Node obj, Node body, CodePosition location) {
+        return new Node(TokenStream.WITH, obj, body, location);
     }
 
     /**
      * Array Literal
      */
-    public Object createArrayLiteral(Object obj) {
+    public Node createArrayLiteral(Node obj) {
         return obj;
     }
 
     /**
      * Object Literals
      */
-    public Object createObjectLiteral(Object obj) {
+    public Node createObjectLiteral(Node obj) {
         return obj;
     }
 
     /**
      * Regular expressions
      */
-    public Object createRegExp(String string, String flags) {
+    public Node createRegExp(String string, String flags, CodePosition location) {
         return flags.length() == 0
                ? new Node(TokenStream.REGEXP,
-                          Node.newString(string))
+                          Node.newString(string, location), location)
                : new Node(TokenStream.REGEXP,
-                          Node.newString(string),
-                          Node.newString(flags));
+                          Node.newString(string, location),
+                          Node.newString(flags, location),
+                          location);
     }
 
     /**
      * If statement
      */
-    public Object createIf(Object cond, Object ifTrue, Object ifFalse,
-                           int lineno)
-    {
+    public Node createIf(Node cond, Node ifTrue, Node ifFalse, CodePosition location) {
         if (ifFalse == null)
-            return new Node(TokenStream.IF, (Node)cond, (Node)ifTrue, lineno);
-        return new Node(TokenStream.IF, (Node)cond, (Node)ifTrue, (Node)ifFalse, lineno);
+            return new Node(TokenStream.IF, cond, ifTrue, location);
+        return new Node(TokenStream.IF, cond, ifTrue, ifFalse, location);
     }
 
-    public Object createTernary(Object cond, Object ifTrue, Object ifFalse) {
-        return new Node(TokenStream.HOOK,
-                        (Node)cond, (Node)ifTrue, (Node)ifFalse);
+    public Node createTernary(Node cond, Node ifTrue, Node ifFalse, CodePosition location) {
+        return new Node(TokenStream.HOOK, cond, ifTrue, ifFalse, location);
     }
 
     /**
      * Unary
      */
-    public Object createUnary(int nodeType, Object child) {
-        Node childNode = (Node) child;
-        return new Node(nodeType, childNode);
+    public Node createUnary(int nodeType, Node child, CodePosition location) {
+        return new Node(nodeType, child, location);
     }
 
-    public Object createUnary(int nodeType, int nodeOp, Object child) {
-        return new Node(nodeType, (Node)child, nodeOp);
+    public Node createUnary(int nodeType, int nodeOp, Node child, CodePosition location) {
+        return new Node(nodeType, child, nodeOp, location);
     }
 
     /**
      * Binary
      */
-    public Object createBinary(int nodeType, Object left, Object right) {
-        Node temp;
+    public Node createBinary(int nodeType, Node left, Node right, CodePosition location) {
         switch (nodeType) {
 
           case TokenStream.DOT:
             nodeType = TokenStream.GETPROP;
-            Node idNode = (Node) right;
-            idNode.setType(TokenStream.STRING);
-            String id = idNode.getString();
-            if (id.equals("__proto__") || id.equals("__parent__")) {
-                Node result = new Node(nodeType, (Node) left);
-                result.putProp(Node.SPECIAL_PROP_PROP, id);
-                return result;
-            }
+              right.setType(TokenStream.STRING);
             break;
 
           case TokenStream.LB:
@@ -373,22 +321,17 @@ public class IRFactory {
             nodeType = TokenStream.GETELEM;
             break;
         }
-        return new Node(nodeType, (Node)left, (Node)right);
+        return new Node(nodeType, left, right, location);
     }
 
-    public Object createBinary(int nodeType, int nodeOp, Object left,
-                               Object right)
-    {
+    public Node createBinary(int nodeType, int nodeOp, Node left, Node right, CodePosition location) {
         if (nodeType == TokenStream.ASSIGN) {
-            return createAssignment(nodeOp, (Node) left, (Node) right,
-                                    null, false);
+            return createAssignment(nodeOp, left, right, location);
         }
-        return new Node(nodeType, (Node) left, (Node) right, nodeOp);
+        return new Node(nodeType, left, right, nodeOp, location);
     }
 
-    public Object createAssignment(int nodeOp, Node left, Node right,
-                                   Class convert, boolean postfix)
-    {
+    public Node createAssignment(int nodeOp, Node left, Node right, CodePosition location) {
         int nodeType = left.getType();
         switch (nodeType) {
             case TokenStream.NAME:
@@ -401,7 +344,7 @@ public class IRFactory {
                 reportError("msg.bad.lhs.assign");
         }
         
-        return new Node(TokenStream.ASSIGN, left, right, nodeOp);
+        return new Node(TokenStream.ASSIGN, left, right, nodeOp, location);
     }
 
     private void reportError(String msgResource) {

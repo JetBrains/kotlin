@@ -46,13 +46,13 @@ public class Node implements Cloneable {
 
     private static class NumberNode extends Node {
 
-        NumberNode(int number) {
-            super(TokenStream.NUMBER_INT);
+        NumberNode(int number, CodePosition location) {
+            super(TokenStream.NUMBER_INT, location);
             this.number = number;
         }
 
-        NumberNode(double number) {
-            super(TokenStream.NUMBER);
+        NumberNode(double number, CodePosition position) {
+            super(TokenStream.NUMBER, position);
             this.number = number;
         }
 
@@ -61,19 +61,13 @@ public class Node implements Cloneable {
           return this.number;
         }
 
-        @Override
-        public boolean equals(Object o) {
-            return o instanceof NumberNode
-                && getDouble() == ((NumberNode) o).getDouble();
-        }
-
         private double number;
     }
 
     private static class StringNode extends Node {
 
-        StringNode(int type, String str) {
-            super(type);
+        StringNode(int type, String str, CodePosition position) {
+            super(type, position);
             if (null == str) {
                 throw new IllegalArgumentException("StringNode: str is null");
             }
@@ -99,13 +93,6 @@ public class Node implements Cloneable {
             this.str = str;
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof StringNode)) { return false; }
-            return o instanceof StringNode
-                && this.str.equals(((StringNode) o).str);
-        }
-
         private String str;
     }
 
@@ -113,30 +100,46 @@ public class Node implements Cloneable {
         type = nodeType;
     }
 
-    public Node(int nodeType, Node child) {
+    public Node(int nodeType, Node child, CodePosition position) {
         type = nodeType;
         first = last = child;
         child.next = null;
+        this.position = position;
     }
 
-    public Node(int nodeType, Node left, Node right) {
+    public Node(int nodeType, Node child, int operation, CodePosition position) {
+        type = nodeType;
+        first = last = child;
+        child.next = null;
+        this.operation = operation;
+        this.position = position;
+    }
+
+    public Node(int nodeType, Node left, Node right, CodePosition position) {
+        this(nodeType, left, right, -1, position);
+    }
+
+    public Node(int nodeType, Node left, Node right, int operation, CodePosition position) {
         type = nodeType;
         first = left;
         last = right;
         left.next = right;
         right.next = null;
+        this.operation = operation;
+        this.position = position;
     }
 
-    public Node(int nodeType, Node left, Node mid, Node right) {
+    public Node(int nodeType, Node left, Node mid, Node right, CodePosition position) {
         type = nodeType;
         first = left;
         last = right;
         left.next = mid;
         mid.next = right;
         right.next = null;
+        this.position = position;
     }
 
-    public Node(int nodeType, Node left, Node mid, Node mid2, Node right) {
+    public Node(int nodeType, Node left, Node mid, Node mid2, Node right, CodePosition position) {
         type = nodeType;
         first = left;
         last = right;
@@ -144,6 +147,7 @@ public class Node implements Cloneable {
         mid.next = mid2;
         mid2.next = right;
         right.next = null;
+        this.position = position;
     }
 
     public Node(int nodeType, Node[] children) {
@@ -166,40 +170,31 @@ public class Node implements Cloneable {
         }
     }
 
-    public Node(int nodeType, int value) {
+    public Node(int nodeType, CodePosition position) {
         type = nodeType;
-        intDatum = value;
+        this.position = position;
     }
 
-    public Node(int nodeType, Node child, int value) {
-        this(nodeType, child);
-        intDatum = value;
+    public Node(int nodeType, int operation, CodePosition position) {
+        type = nodeType;
+        this.operation = operation;
+        this.position = position;
     }
 
-    public Node(int nodeType, Node left, Node right, int value) {
-        this(nodeType, left, right);
-        intDatum = value;
+    public static Node newNumber(int number, CodePosition position) {
+        return new NumberNode(number, position);
     }
 
-    public Node(int nodeType, Node left, Node mid, Node right, int value) {
-        this(nodeType, left, mid, right);
-        intDatum = value;
+    public static Node newNumber(double number, CodePosition position) {
+        return new NumberNode(number, position);
     }
 
-    public static Node newNumber(int number) {
-        return new NumberNode(number);
+    public static Node newString(String str, CodePosition position) {
+        return new StringNode(TokenStream.STRING, str, position);
     }
 
-    public static Node newNumber(double number) {
-        return new NumberNode(number);
-    }
-
-    public static Node newString(String str) {
-        return new StringNode(TokenStream.STRING, str);
-    }
-
-    public static Node newString(int type, String str) {
-        return new StringNode(type, str);
+    public static Node newString(int type, String str, CodePosition position) {
+        return new StringNode(type, str, position);
     }
 
     public int getType() {
@@ -208,10 +203,6 @@ public class Node implements Cloneable {
 
     public void setType(int type) {
         this.type = type;
-    }
-
-    public int getIntDatum() {
-        return this.intDatum;
     }
 
     public Node getFirstChild() {
@@ -353,73 +344,12 @@ public class Node implements Cloneable {
         return null;
     }
 
-    public Object getProp(int propType) {
-        if (props == null)
-            return null;
-        return props.getObject(propType);
-    }
-
-    public void putProp(int propType, Object prop) {
-        if (prop == null) {
-            removeProp(propType);
-        }
-        else {
-            if (props == null) {
-                props = new UintMap(2);
-            }
-            props.put(propType, prop);
-        }
-    }
-
-    public void putIntProp(int propType, int prop) {
-        if (props == null)
-            props = new UintMap(2);
-        props.put(propType, prop);
-    }
-
-    public void removeProp(int propType) {
-        if (props != null) {
-            props.remove(propType);
-        }
-    }
-
     public int getOperation() {
-        switch (type) {
-            case TokenStream.EQOP:
-            case TokenStream.RELOP:
-            case TokenStream.UNARYOP:
-            case TokenStream.PRIMARY:
-                return intDatum;
-        }
-        Context.codeBug();
-        return 0;
+        return operation;
     }
 
-    public int getLineno() {
-        if (hasLineno()) {
-            return intDatum;
-        }
-        return -1;
-    }
-
-    private boolean hasLineno() {
-        switch (type) {
-            case TokenStream.EXPRSTMT:
-            case TokenStream.BLOCK:
-            case TokenStream.VAR:
-            case TokenStream.WHILE:
-            case TokenStream.DO:
-            case TokenStream.SWITCH:
-            case TokenStream.CATCH:
-            case TokenStream.THROW:
-            case TokenStream.RETURN:
-            case TokenStream.BREAK:
-            case TokenStream.CONTINUE:
-            case TokenStream.WITH:
-            case TokenStream.IF:
-                return true;
-        }
-        return false;
+    public CodePosition getPosition() {
+        return position;
     }
 
     /** Can only be called when <tt>getType() == TokenStream.NUMBER</tt> */
@@ -435,22 +365,6 @@ public class Node implements Cloneable {
     /** Can only be called when node has String context. */
     public void setString(String s) throws UnsupportedOperationException {
         throw new UnsupportedOperationException(this + " is not a string node");
-    }
-
-    /**
-     * Not usefully implemented.
-     */
-    @Override
-    public final int hashCode() {
-        assert false : "hashCode not designed";
-        return 42; // any arbitrary constant will do
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Node)) { return false; }
-        return hasLineno()
-            || this.getIntDatum() == ((Node) o).getIntDatum();
     }
 
     @Override
@@ -480,57 +394,19 @@ public class Node implements Cloneable {
                         break;
                 }
             }
-            if (intDatum != -1) {
+            if (operation != -1) {
                 sb.append(' ');
-                sb.append(intDatum);
-            }
-            if (props == null)
-                return sb.toString();
-
-            int[] keys = props.getKeys();
-            for (int i = 0; i != keys.length; ++i) {
-                int key = keys[i];
-                sb.append(" [");
-                sb.append(propToString(key));
-                sb.append(": ");
-                switch (key) {
-                    case FIXUPS_PROP : // can't add this as it recurses
-                        sb.append("fixups property");
-                        break;
-                    case SOURCE_PROP : // can't add this as it has unprintables
-                        sb.append("source property");
-                        break;
-                    case TARGETBLOCK_PROP : // can't add this as it recurses
-                        sb.append("target block property");
-                        break;
-                    case LASTUSE_PROP :     // can't add this as it is dull
-                        sb.append("last use property");
-                        break;
-                    default :
-                        Object obj = props.getObject(key);
-                        if (obj != null) {
-                            sb.append(obj.toString());
-                        } else {
-                            sb.append(props.getExistingInt(key));
-                        }
-                        break;
-                }
-                sb.append(']');
+                sb.append(operation);
             }
             return sb.toString();
         }
         return null;
     }
 
-    public void setIsSyntheticBlock(boolean val) {
-        isSyntheticBlock = val;
-    }
-
     int type;              // type of the node; TokenStream.NAME for example
     Node next;             // next sibling
     private Node first;    // first element of a linked list of children
     private Node last;     // last element of a linked list of children
-    private int intDatum = -1;    // encapsulated int data; depends on type
-    private UintMap props;
-    private boolean isSyntheticBlock = false;
+    private CodePosition position;
+    private int operation;
 }
