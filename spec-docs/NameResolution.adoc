@@ -713,7 +713,7 @@ Inside this lambda we can access its receiver of type `C` simply by `this`.
 Also we can access property's receiver of type `B` by specifying a label `this@foo` and the instance of outer class by writing `this@A`.
 
 While resolving the call `foo` the compiler has to ensure that all necessary receivers are available: `A` and `B` to resolve a property `foo`, and `C` to call the hidden invoke function.
-====
+========================================================================
 
 === Name resolution and SAM conversion
 
