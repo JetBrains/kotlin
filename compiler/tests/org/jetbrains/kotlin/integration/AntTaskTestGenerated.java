@@ -150,6 +150,12 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         doTest(fileName);
     }
 
+    @TestMetadata("withKotlinFork")
+    public void testWithKotlinFork() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/withKotlinFork/");
+        doTest(fileName);
+    }
+
     @TestMetadata("withKotlinNoJavaSources")
     public void testWithKotlinNoJavaSources() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/withKotlinNoJavaSources/");

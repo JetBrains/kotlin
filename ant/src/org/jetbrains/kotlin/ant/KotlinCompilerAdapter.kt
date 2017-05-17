@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ant
 
 import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.MagicNames
+import org.apache.tools.ant.Project.MSG_ERR
 import org.apache.tools.ant.Project.MSG_WARN
 import org.apache.tools.ant.taskdefs.compilers.Javac13
 import org.apache.tools.ant.taskdefs.condition.AntVersion
@@ -44,6 +45,11 @@ class KotlinCompilerAdapter : Javac13() {
 
     @Throws(BuildException::class)
     override fun execute(): Boolean {
+        if (javac.isForkedJavac) {
+            javac.log("<withKotlin> task does not yet support the fork mode", MSG_ERR)
+            return false
+        }
+
         val javac = javac
 
         checkAntVersion()
