@@ -247,7 +247,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
     private fun buildParameterToArgument(irCall     : IrCall,                               // Call site.
                                          irFunction: IrFunction                             // Function to be called.
-    ): MutableList<ParameterToArgument> {
+    ): List<ParameterToArgument> {
 
         val parameterToArgument = mutableListOf<ParameterToArgument>()                      // Result list.
         val functionDescriptor = irFunction.descriptor.original                             // Descriptor of function to be called.
@@ -277,6 +277,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
             valueArguments.add(0, irCall.extensionReceiver!!)
         }
 
+        val parametersWithDefaultToArgument = mutableListOf<ParameterToArgument>()
         functionDescriptor.valueParameters.forEach { parameterDescriptor ->                 // Iterate value parameter descriptors.
             val argument = valueArguments[parameterDescriptor.index]                        // Get appropriate argument from call site.
             when {
@@ -289,7 +290,7 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
                 parameterDescriptor.hasDefaultValue() -> {                                  // There is no argument - try default value.
                     val defaultArgument = irFunction.getDefault(parameterDescriptor)!!
-                    parameterToArgument += ParameterToArgument(
+                    parametersWithDefaultToArgument += ParameterToArgument(
                         parameterDescriptor = parameterDescriptor,
                         argumentExpression  = defaultArgument.expression
                     )
@@ -315,7 +316,8 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
                 }
             }
         }
-        return parameterToArgument
+        return parameterToArgument + parametersWithDefaultToArgument                        // All arguments except default are evaluated at callsite,
+                                                                                            // but default arguments are evaluated inside callee.
     }
 
     //-------------------------------------------------------------------------//
