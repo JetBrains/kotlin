@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.SmartList
 
 private val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
@@ -143,6 +145,16 @@ fun DeclarationDescriptor.getDeprecations(languageVersionSettings: LanguageVersi
     return emptyList()
 }
 
+private fun KotlinType.deprecationsByConstituentTypes(languageVersionSettings: LanguageVersionSettings): List<Deprecation> =
+        SmartList<Deprecation>().also { deprecations ->
+            TypeUtils.contains(this) { type ->
+                type.constructor.declarationDescriptor?.run {
+                    deprecations.addAll(getDeprecations(languageVersionSettings))
+                }
+                false
+            }
+        }
+
 private fun deprecationByOverridden(root: CallableMemberDescriptor, languageVersionSettings: LanguageVersionSettings): Deprecation? {
     val visited = HashSet<CallableMemberDescriptor>()
     val deprecations = LinkedHashSet<Deprecation>()
@@ -177,13 +189,6 @@ private fun deprecationByOverridden(root: CallableMemberDescriptor, languageVers
 }
 
 private fun DeclarationDescriptor.getOwnDeprecations(languageVersionSettings: LanguageVersionSettings): List<Deprecation> {
-    if (this is TypeAliasConstructorDescriptor) {
-        // Constructor of type alias has no annotations by itself, all its annotations come from the aliased constructor
-        // and from the typealias declaration
-        return underlyingConstructorDescriptor.getOwnDeprecations(languageVersionSettings) +
-               typeAliasDescriptor.getOwnDeprecations(languageVersionSettings)
-    }
-
     // The problem is that declaration `mod` in built-ins has @Deprecated annotation but actually it was deprecated only in version 1.1
     if (this is FunctionDescriptor && this.isOperatorMod() && this.hasSubpackageOfKotlin()) {
         if (!shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
@@ -227,6 +232,12 @@ private fun DeclarationDescriptor.getOwnDeprecations(languageVersionSettings: La
     addUseSiteTargetedDeprecationIfPresent(this, AnnotationUseSiteTarget.getAssociatedUseSiteTarget(this))
 
     when (this) {
+        is TypeAliasDescriptor -> {
+            result.addAll(expandedType.deprecationsByConstituentTypes(languageVersionSettings))
+        }
+        is TypeAliasConstructorDescriptor -> {
+            result.addAll(typeAliasDescriptor.getOwnDeprecations(languageVersionSettings))
+        }
         is ConstructorDescriptor -> {
             addDeprecationIfPresent(containingDeclaration)
         }

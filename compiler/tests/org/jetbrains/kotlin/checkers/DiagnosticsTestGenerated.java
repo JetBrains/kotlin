@@ -6607,6 +6607,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typealiasForDeprecatedClass.kt")
+            public void testTypealiasForDeprecatedClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/typealiasForDeprecatedClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typealiasUsage.kt")
             public void testTypealiasUsage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/typealiasUsage.kt");

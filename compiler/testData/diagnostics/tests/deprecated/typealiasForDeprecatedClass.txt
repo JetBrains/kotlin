@@ -1,0 +1,15 @@
+package
+
+public fun use1(/*0*/ b: Test1 /* = Foo */): Test1 /* = Foo */
+public fun use2(/*0*/ b: Test2 /* = kotlin.collections.List<Foo> */): Test2 /* = kotlin.collections.List<Foo> */
+public fun use3(/*0*/ b: Test3 /* = kotlin.collections.List<Test2 /* = kotlin.collections.List<Foo> */> */): Test3 /* = kotlin.collections.List<Test2 /* = kotlin.collections.List<Foo> */> */
+
+@kotlin.Deprecated(message = "") public final class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias Test1 = Foo
+public typealias Test2 = kotlin.collections.List<Foo>
+public typealias Test3 = kotlin.collections.List<Test2>
