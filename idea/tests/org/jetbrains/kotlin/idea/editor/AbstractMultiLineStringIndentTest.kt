@@ -38,6 +38,7 @@ abstract class AbstractMultiLineStringIndentTest : KotlinLightCodeInsightFixture
             val beforeFile = multiFileText.substringBefore(FILE_SEPARATOR).trim()
             val afterFile = multiFileText.substringAfter(FILE_SEPARATOR).trim()
 
+            myFixture.setCaresAboutInjection(false)
             myFixture.configureByText(KotlinFileType.INSTANCE, beforeFile)
             myFixture.type('\n')
 

@@ -18,7 +18,11 @@ package org.jetbrains.kotlin.idea.refactoring
 
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 
 val DataContext.project: Project
     get() = CommonDataKeys.PROJECT.getData(this)!!
+
+val DataContext.hostEditor: Editor?
+    get() = CommonDataKeys.HOST_EDITOR.getData(this)

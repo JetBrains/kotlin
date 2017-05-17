@@ -116,6 +116,12 @@ public class MultiLineStringIndentTestGenerated extends AbstractMultiLineStringI
             doTest(fileName);
         }
 
+        @TestMetadata("enterInInjectedFragment.kt")
+        public void testEnterInInjectedFragment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/enterHandler/multilineString/spaces/enterInInjectedFragment.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("enterInLineWithMarginOnNotMargedLine.kt")
         public void testEnterInLineWithMarginOnNotMargedLine() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/enterHandler/multilineString/spaces/enterInLineWithMarginOnNotMargedLine.kt");
