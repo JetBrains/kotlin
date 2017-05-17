@@ -142,7 +142,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
             return ScriptDependenciesSourceModuleInfo(project)
         }
         else {
-            return ScriptDependenciesModuleInfo(project, null, null)
+            return ScriptDependenciesModuleInfo(project, null)
         }
     }
     if (!isBinary && virtualFile in scriptConfigurationManager.getAllLibrarySourcesScope()) {
