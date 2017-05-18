@@ -37,14 +37,13 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
-private val inlineConstructor = FqName("konan.internal.InlineConstructor")
-
 //-----------------------------------------------------------------------------//
 
 internal class InlineConstructorsTransformation(val context: Context): IrElementTransformerVoidWithContext() {
 
     private val deserializer = DeserializerDriver(context)
     val substituteMap = mutableMapOf<ValueDescriptor, IrExpression>()
+    private val inlineConstructor by lazy { FqName("konan.internal.InlineConstructor") }
 
     //-------------------------------------------------------------------------//
 
