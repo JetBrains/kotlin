@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValueFactory
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -38,6 +40,13 @@ sealed class AccessTarget {
     }
     object BlackBox: AccessTarget()
 }
+
+val AccessTarget.accessedDescriptor: CallableDescriptor?
+    get() = when (this) {
+        is AccessTarget.Declaration -> descriptor
+        is AccessTarget.Call -> resolvedCall.resultingDescriptor
+        is AccessTarget.BlackBox -> null
+    }
 
 abstract class AccessValueInstruction protected constructor(
         element: KtElement,

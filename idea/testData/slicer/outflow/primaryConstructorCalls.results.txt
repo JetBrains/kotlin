@@ -1,0 +1,6 @@
+3 open class A<bold>(n: Int)</bold> {
+7 	class B : <bold>A(1)</bold>
+14 	val x = <bold>A(1)</bold>
+14 		val <bold>x = A(1)</bold>
+4 	constructor() : <bold>this(1)</bold>
+10 	constructor() : <bold>super(1)</bold>

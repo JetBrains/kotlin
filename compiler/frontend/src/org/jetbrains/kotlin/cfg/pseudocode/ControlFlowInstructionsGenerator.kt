@@ -248,13 +248,13 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override fun returnValue(returnExpression: KtExpression, returnValue: PseudoValue, subroutine: KtElement) {
             val exitPoint = getSubroutineExitPoint(subroutine) ?: return
             handleJumpInsideTryFinally(exitPoint)
-            add(ReturnValueInstruction(returnExpression, currentScope, exitPoint, returnValue))
+            add(ReturnValueInstruction(returnExpression, currentScope, exitPoint, returnValue, subroutine))
         }
 
         override fun returnNoValue(returnExpression: KtReturnExpression, subroutine: KtElement) {
             val exitPoint = getSubroutineExitPoint(subroutine) ?: return
             handleJumpInsideTryFinally(exitPoint)
-            add(ReturnNoValueInstruction(returnExpression, currentScope, exitPoint))
+            add(ReturnNoValueInstruction(returnExpression, currentScope, exitPoint, subroutine))
         }
 
         override fun write(

@@ -1,0 +1,3 @@
+4 val <bold>x = n</bold>
+4 	val x = <bold>n</bold>
+3 		fun test(<bold>n: Int</bold>) {

@@ -1,0 +1,2 @@
+3 fun test(m: Int, <bold>n: Int</bold>) {
+4 	val <bold>x = when (m) {</bold>
