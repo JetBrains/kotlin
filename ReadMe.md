@@ -22,7 +22,7 @@ Welcome to [Kotlin](https://kotlinlang.org/)! Some handy links:
 
  * [Kotlin IntelliJ IDEA Plugin](https://kotlinlang.org/docs/tutorials/getting-started.html)
  * [Kotlin Eclipse Plugin](https://kotlinlang.org/docs/tutorials/getting-started-eclipse.html)
- * [Kotlin TextMate Bundle](https://github.com/vkostyukov/kotlin-sublime-package)
+ * [Kotlin Sublime Text Package](https://github.com/vkostyukov/kotlin-sublime-package)
 
 ## Build environment requirements
 
