@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.psiUtil.contains
 
 class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass), VirtualFileBoundJavaClass, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
     init {
@@ -114,7 +115,7 @@ class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass)
     override val virtualFile: VirtualFile?
         get() =  psi.containingFile?.virtualFile
 
-    override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = psi.containingFile.virtualFile in scope
+    override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = psi.containingFile in scope
 
     override fun getAnnotationOwnerPsi() = psi.modifierList
 
