@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
 import org.jetbrains.kotlin.cli.jvm.javac.JavacWrapperRegistrar
+import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
@@ -98,6 +99,7 @@ import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
@@ -194,7 +196,9 @@ class KotlinCoreEnvironment private constructor(
 
         classpathRootsResolver = ClasspathRootsResolver(PsiManager.getInstance(project), messageCollector, this::contentRootToVirtualFile)
 
-        initialRoots = classpathRootsResolver.convertClasspathRoots(configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS))
+        val (initialRoots, javaModules) =
+                classpathRootsResolver.convertClasspathRoots(configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS))
+        this.initialRoots = initialRoots
 
         if (!configuration.getBoolean(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK) && messageCollector != null) {
             JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(
@@ -217,6 +221,11 @@ class KotlinCoreEnvironment private constructor(
                 rootsIndex,
                 SingleJavaFileRootsIndex(singleJavaFileRoots),
                 configuration.getBoolean(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING)
+        )
+
+        project.registerService(
+                JavaModuleResolver::class.java,
+                CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules)
         )
 
         val finderFactory = CliVirtualFileFinderFactory(rootsIndex)
@@ -277,8 +286,9 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 
-    internal fun updateClasspath(contentRoots: List<ContentRoot>): List<File>? {
-        val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots)
+    fun updateClasspath(contentRoots: List<ContentRoot>): List<File>? {
+        // TODO: add new Java modules to CliJavaModuleResolver
+        val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots).roots
 
         for (packagePartProvider in packagePartProviders) {
             packagePartProvider.addRoots(newRoots)

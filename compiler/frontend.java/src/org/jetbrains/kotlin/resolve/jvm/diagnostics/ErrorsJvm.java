@@ -95,6 +95,9 @@ public interface ErrorsJvm {
     DiagnosticFactory2<PsiElement, String, String> INLINE_FROM_HIGHER_PLATFORM = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<PsiElement> OBSOLETE_SUSPEND_INLINE_FUNCTIONS_ABI = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory1<PsiElement, String> JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<PsiElement, String, String> JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE = DiagnosticFactory2.create(ERROR);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

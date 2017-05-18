@@ -501,7 +501,7 @@ public class KotlinTestUtils {
             JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRootsFromJre(getJreHome(jdk6)));
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_9) {
-            File home = getJre9HomeIfPossible();
+            File home = getJdk9HomeIfPossible();
             if (home != null) {
                 configuration.put(JVMConfigurationKeys.JDK_HOME, home);
             }
@@ -529,8 +529,11 @@ public class KotlinTestUtils {
     }
 
     @Nullable
-    public static File getJre9HomeIfPossible() {
+    public static File getJdk9HomeIfPossible() {
         String jdk9 = System.getenv("JDK_19");
+        if (jdk9 == null) {
+            jdk9 = System.getenv("JDK_9");
+        }
         if (jdk9 == null) {
             // TODO: replace this with a failure as soon as Java 9 is installed on all TeamCity agents
             System.err.println("Environment variable JDK_19 is not set, the test will be skipped");

@@ -44,7 +44,7 @@ public abstract class AbstractDiagnosticsWithJdk9Test extends AbstractDiagnostic
             @NotNull Map<String, ModuleAndDependencies> modules,
             @NotNull List<TestFile> testFiles
     ) {
-        if (KotlinTestUtils.getJre9HomeIfPossible() == null) {
+        if (KotlinTestUtils.getJdk9HomeIfPossible() == null) {
             // Skip this test if no Java 9 is found
             return;
         }

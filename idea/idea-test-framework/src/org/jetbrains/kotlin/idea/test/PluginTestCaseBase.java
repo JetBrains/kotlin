@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.idea.test;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TestJdkKind;
 
 import java.io.File;
 
@@ -38,19 +40,36 @@ public class PluginTestCaseBase {
 
     @NotNull
     private static Sdk getSdk(String sdkHome, String name) {
-        return JavaSdk.getInstance().createJdk(name + " JDK", sdkHome, true);
+        return JavaSdk.getInstance().createJdk(name, sdkHome, true);
     }
 
     @NotNull
     public static Sdk mockJdk() {
-        return getSdk("compiler/testData/mockJDK/jre", "Mock");
+        return getSdk("compiler/testData/mockJDK/jre", "Mock JDK");
     }
 
     @NotNull
     public static Sdk fullJdk() {
         String javaHome = System.getProperty("java.home");
         assert new File(javaHome).isDirectory();
-        return getSdk(javaHome, "Full");
+        return getSdk(javaHome, "Full JDK");
+    }
+
+    @NotNull
+    public static Sdk jdk(@NotNull TestJdkKind kind) {
+        switch (kind) {
+            case MOCK_JDK:
+                return mockJdk();
+            case FULL_JDK_9:
+                File jre9 = KotlinTestUtils.getJdk9HomeIfPossible();
+                assert jre9 != null : "JDK_19 environment variable is not set";
+                VfsRootAccess.allowRootAccess(jre9.getPath());
+                return getSdk(jre9.getPath(), "Full JDK 9");
+            case FULL_JDK:
+                return fullJdk();
+            default:
+                throw new UnsupportedOperationException(kind.toString());
+        }
     }
 
     public static boolean isAllFilesPresentTest(@NotNull String testName) {

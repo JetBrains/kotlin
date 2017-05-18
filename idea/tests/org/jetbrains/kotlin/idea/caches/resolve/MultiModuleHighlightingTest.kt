@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.test.TestJdkKind.FULL_JDK
 
 open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/"
@@ -110,10 +111,10 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     }
 
     fun testLanguageVersionsViaFacets() {
-        val m1 = module("m1", useFullJdk = true).setupKotlinFacet {
+        val m1 = module("m1", FULL_JDK).setupKotlinFacet {
             settings.languageLevel = LanguageVersion.KOTLIN_1_1
         }
-        val m2 = module("m2", useFullJdk = true).setupKotlinFacet {
+        val m2 = module("m2", FULL_JDK).setupKotlinFacet {
             settings.languageLevel = LanguageVersion.KOTLIN_1_0
         }
 
@@ -174,7 +175,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
         fun testUseCorrectBuiltInsForCommonModule() {
             doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], TargetPlatformKind.JavaScript,
-                                withStdlibCommon = true, useFullJdk = true, configureModule = { module, platform ->
+                                withStdlibCommon = true, jdk = FULL_JDK, configureModule = { module, platform ->
                 if (platform == TargetPlatformKind.JavaScript) {
                     module.addLibrary(ForTestCompileRuntime.stdlibJsForTests())
                     module.addLibrary(ForTestCompileRuntime.stdlibCommonForTests())

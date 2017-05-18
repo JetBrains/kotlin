@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.container
 
 import com.intellij.util.containers.ContainerUtil
 import java.lang.reflect.*
-import java.util.ArrayList
-import java.util.LinkedHashSet
+import java.util.*
 
 private object ClassTraversalCache {
     private val cache = ContainerUtil.createConcurrentWeakKeySoftValueMap<Class<*>, ClassInfo>()
@@ -82,7 +81,11 @@ private fun getConstructorInfo(c: Class<*>): ConstructorInfo? {
         return null
 
     val constructor = constructors.single()
-    return ConstructorInfo(constructor, constructor.genericParameterTypes.toList())
+    val parameterTypes =
+            if (c.declaringClass != null && !Modifier.isStatic(c.modifiers))
+                listOf(c.declaringClass, *constructor.genericParameterTypes)
+            else constructor.genericParameterTypes.toList()
+    return ConstructorInfo(constructor, parameterTypes)
 }
 
 

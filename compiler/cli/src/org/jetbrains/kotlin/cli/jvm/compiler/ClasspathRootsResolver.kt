@@ -44,9 +44,11 @@ internal class ClasspathRootsResolver(
         private val contentRootToVirtualFile: (JvmContentRoot) -> VirtualFile?
 ) {
     private val javaModuleFinder = CliJavaModuleFinder(VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL))
-    private val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
+    val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
-    fun convertClasspathRoots(contentRoots: Iterable<ContentRoot>): List<JavaRoot> {
+    data class RootsAndModules(val roots: List<JavaRoot>, val modules: List<JavaModule>)
+
+    fun convertClasspathRoots(contentRoots: Iterable<ContentRoot>): RootsAndModules {
         val result = mutableListOf<JavaRoot>()
 
         val modules = ArrayList<JavaModule>()
@@ -79,7 +81,7 @@ internal class ClasspathRootsResolver(
 
         addModularRoots(modules, result)
 
-        return result
+        return RootsAndModules(result, modules)
     }
 
     private fun modularSourceRoot(root: VirtualFile): JavaModule.Explicit? {
