@@ -141,4 +141,32 @@ class Sequences {
     }
 
 
+    class Transformations {
+
+        @Sample
+        fun takeWindows() {
+            val sequence = generateSequence(1) { it + 1 }
+
+            val windows = sequence.windowed(size = 5, step = 1)
+            assertPrints(windows.take(4).toList(), "[[1, 2, 3, 4, 5], [2, 3, 4, 5, 6], [3, 4, 5, 6, 7], [4, 5, 6, 7, 8]]")
+
+            val moreSparseWindows = sequence.windowed(size = 5, step = 3)
+            assertPrints(moreSparseWindows.take(4).toList(), "[[1, 2, 3, 4, 5], [4, 5, 6, 7, 8], [7, 8, 9, 10, 11], [10, 11, 12, 13, 14]]")
+
+            val partialWindows = sequence.take(10).windowed(size = 5, step = 3)
+            assertPrints(partialWindows.toList(), "[[1, 2, 3, 4, 5], [4, 5, 6, 7, 8], [7, 8, 9, 10], [10]]")
+        }
+
+        @Sample
+        fun averageWindows() {
+            val dataPoints = sequenceOf(10, 15, 18, 25, 19, 21, 14, 8, 5)
+
+            val averaged = dataPoints.windowed(size = 4, step = 1) { window -> window.average() }
+            assertPrints(averaged.toList(), "[17.0, 19.25, 20.75, 19.75, 15.5, 12.0, 9.0, 6.5, 5.0]")
+
+            val averagedNoPartialWindows = dataPoints.windowed(size = 4, step = 1).filter { it.size == 4 }.map { it.average() }
+            assertPrints(averagedNoPartialWindows.toList(), "[17.0, 19.25, 20.75, 19.75, 15.5, 12.0]")
+        }
+    }
+
 }
