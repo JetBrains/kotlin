@@ -36,7 +36,7 @@ inline fun <reified T : IrElement> T.deepCopyWithSymbols(): T {
 }
 
 
-class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper) : IrElementTransformerVoid() {
+open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper) : IrElementTransformerVoid() {
     private fun mapDeclarationOrigin(origin: IrDeclarationOrigin) = origin
     private fun mapStatementOrigin(origin: IrStatementOrigin?) = origin
 
@@ -455,7 +455,7 @@ class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper) : Ir
     private fun getTransformedLoop(irLoop: IrLoop): IrLoop =
             transformedLoops.getOrElse(irLoop) { getNonTransformedLoop(irLoop) }
 
-    private fun getNonTransformedLoop(irLoop: IrLoop): IrLoop =
+    protected open fun getNonTransformedLoop(irLoop: IrLoop): IrLoop =
             throw AssertionError("Outer loop was not transformed: ${irLoop.render()}")
 
     override fun visitWhileLoop(loop: IrWhileLoop): IrWhileLoop =
