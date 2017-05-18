@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 internal class InlineConstructorsTransformation(val context: Context): IrElementTransformerVoidWithContext() {
 
-    private val deserializer = DeserializerDriver(context)
-    val substituteMap = mutableMapOf<ValueDescriptor, IrExpression>()
+    private val deserializer      by lazy { DeserializerDriver(context) }
+    private val substituteMap     by lazy { mutableMapOf<ValueDescriptor, IrExpression>() }
     private val inlineConstructor by lazy { FqName("konan.internal.InlineConstructor") }
 
     //-------------------------------------------------------------------------//
