@@ -69,7 +69,7 @@ internal class InlineConstructorsTransformation(val context: Context): IrElement
         val statements = (functionDeclaration.body as IrBlockBody).statements
         replaceDelegatingConstructorCall(statements, functionDescriptor)
         functionDeclaration.transformChildrenVoid(ValueSubstitutor())
-        context.ir.originalModuleIndex.functions[functionDescriptor] = functionDeclaration
+        context.ir.originalModuleIndex.functions[functionDescriptor.original] = functionDeclaration
 
         return irCall
     }
