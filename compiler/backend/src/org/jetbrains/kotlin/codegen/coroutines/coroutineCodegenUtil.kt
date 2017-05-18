@@ -60,6 +60,8 @@ const val AFTER_SUSPENSION_POINT_MARKER_NAME = "afterSuspensionPoint"
 const val COROUTINE_LABEL_FIELD_NAME = "label"
 const val SUSPEND_FUNCTION_CREATE_METHOD_NAME = "create"
 const val DO_RESUME_METHOD_NAME = "doResume"
+const val DATA_FIELD_NAME = "data"
+const val EXCEPTION_FIELD_NAME = "exception"
 
 @JvmField
 val COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME =
@@ -70,10 +72,6 @@ val CONTINUATION_ASM_TYPE = DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME.topLe
 
 @JvmField
 val COROUTINE_IMPL_ASM_TYPE = COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineImpl")).topLevelClassAsmType()
-
-@JvmField
-val COROUTINE_IMPL_FOR_NAMED_ASM_TYPE =
-        COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineImplForNamedFunction")).topLevelClassAsmType()
 
 private val COROUTINES_INTRINSICS_FILE_FACADE_INTERNAL_NAME =
         COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.child(Name.identifier("IntrinsicsKt")).topLevelClassAsmType()

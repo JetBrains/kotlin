@@ -15,9 +15,13 @@ final class InlineWithoutStateMachineKt$box$1 {
 final class InlineWithoutStateMachineKt$complexSuspend$1 {
     field L$0: java.lang.Object
     field L$1: java.lang.Object
+    synthetic field data: java.lang.Object
+    synthetic field exception: java.lang.Throwable
     inner class InlineWithoutStateMachineKt$complexSuspend$1
     method <init>(p0: kotlin.coroutines.experimental.Continuation): void
-    public final @org.jetbrains.annotations.Nullable method doResume(): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
+    synthetic final method getLabel(): int
+    synthetic final method setLabel(p0: int): void
 }
 
 @kotlin.Metadata

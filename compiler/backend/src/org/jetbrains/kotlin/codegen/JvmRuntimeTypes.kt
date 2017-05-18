@@ -43,7 +43,6 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
     private val localVariableReference: ClassDescriptor by klass("LocalVariableReference")
     private val mutableLocalVariableReference: ClassDescriptor by klass("MutableLocalVariableReference")
     private val coroutineImplClass by lazy { createClass(kotlinCoroutinesJvmInternalPackage, "CoroutineImpl") }
-    private val coroutineImplForNamedFunctionClass by lazy { createClass(kotlinCoroutinesJvmInternalPackage, "CoroutineImplForNamedFunction") }
 
     private val propertyReferences: List<ClassDescriptor> by lazy {
         (0..2).map { i -> createClass(kotlinJvmInternalPackage, "PropertyReference$i") }
@@ -85,12 +84,9 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
 
         if (descriptor.isSuspend) {
             return mutableListOf<KotlinType>().apply {
+                add(coroutineImplClass.defaultType)
                 if (descriptor.isSuspendLambda) {
-                    add(coroutineImplClass.defaultType)
                     add(functionType)
-                }
-                else {
-                    add(coroutineImplForNamedFunctionClass.defaultType)
                 }
             }
         }

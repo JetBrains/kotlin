@@ -158,7 +158,7 @@ class CoroutineTransformerMethodVisitor(
         val objectTypeForState = Type.getObjectType(classBuilderForCoroutineState.thisName)
         methodNode.instructions.insert(withInstructionAdapter {
             val createStateInstance = Label()
-            val storeStateObject = Label()
+            val afterCoroutineStateCreated = Label()
 
             // We have to distinguish the following situations:
             // - Our function got called in a common way (e.g. from another function or via recursive call) and we should execute our
@@ -180,15 +180,39 @@ class CoroutineTransformerMethodVisitor(
 
             visitVarInsn(Opcodes.ALOAD, continuationIndex)
             checkcast(objectTypeForState)
+            visitVarInsn(Opcodes.ASTORE, continuationIndex)
+
+            visitVarInsn(Opcodes.ALOAD, continuationIndex)
             invokevirtual(
-                    COROUTINE_IMPL_FOR_NAMED_ASM_TYPE.internalName,
-                    "checkAndFlushLastBit", Type.getMethodDescriptor(Type.BOOLEAN_TYPE), false
+                    classBuilderForCoroutineState.thisName,
+                    "getLabel",
+                    Type.getMethodDescriptor(Type.INT_TYPE),
+                    false
             )
+
+            iconst(1 shl 31)
+            and(Type.INT_TYPE)
             ifeq(createStateInstance)
 
             visitVarInsn(Opcodes.ALOAD, continuationIndex)
-            checkcast(objectTypeForState)
-            goTo(storeStateObject)
+            dup()
+            invokevirtual(
+                    classBuilderForCoroutineState.thisName,
+                    "getLabel",
+                    Type.getMethodDescriptor(Type.INT_TYPE),
+                    false
+            )
+
+            iconst(1 shl 31)
+            sub(Type.INT_TYPE)
+            invokevirtual(
+                    classBuilderForCoroutineState.thisName,
+                    "setLabel",
+                    Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE),
+                    false
+            )
+
+            goTo(afterCoroutineStateCreated)
 
             visitLabel(createStateInstance)
 
@@ -218,17 +242,16 @@ class CoroutineTransformerMethodVisitor(
                     false
             )
 
-            visitLabel(storeStateObject)
             visitVarInsn(Opcodes.ASTORE, continuationIndex)
 
+            visitLabel(afterCoroutineStateCreated)
+
             visitVarInsn(Opcodes.ALOAD, continuationIndex)
-            checkcast(objectTypeForState)
-            getfield(COROUTINE_IMPL_FOR_NAMED_ASM_TYPE.internalName, "data", AsmTypes.OBJECT_TYPE.descriptor)
+            getfield(classBuilderForCoroutineState.thisName, DATA_FIELD_NAME, AsmTypes.OBJECT_TYPE.descriptor)
             visitVarInsn(Opcodes.ASTORE, dataIndex)
 
             visitVarInsn(Opcodes.ALOAD, continuationIndex)
-            checkcast(objectTypeForState)
-            getfield(COROUTINE_IMPL_FOR_NAMED_ASM_TYPE.internalName, "exception", AsmTypes.JAVA_THROWABLE_TYPE.descriptor)
+            getfield(classBuilderForCoroutineState.thisName, EXCEPTION_FIELD_NAME, AsmTypes.JAVA_THROWABLE_TYPE.descriptor)
             visitVarInsn(Opcodes.ASTORE, exceptionIndex)
         })
     }
@@ -418,10 +441,18 @@ class CoroutineTransformerMethodVisitor(
                          insnListOf(
                                  VarInsnNode(Opcodes.ALOAD, continuationIndex),
                                  *withInstructionAdapter { iconst(id) }.toArray(),
-                                 FieldInsnNode(
-                                         Opcodes.PUTFIELD, COROUTINE_IMPL_ASM_TYPE.internalName, COROUTINE_LABEL_FIELD_NAME,
-                                         Type.INT_TYPE.descriptor
-                                 )
+                                 if (isForNamedFunction)
+                                     MethodInsnNode(
+                                             Opcodes.INVOKEVIRTUAL, classBuilderForCoroutineState.thisName,
+                                             "setLabel",
+                                             Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE),
+                                             false
+                                     )
+                                 else
+                                     FieldInsnNode(
+                                             Opcodes.PUTFIELD, COROUTINE_IMPL_ASM_TYPE.internalName, COROUTINE_LABEL_FIELD_NAME,
+                                             Type.INT_TYPE.descriptor
+                                     )
                          )
             )
 

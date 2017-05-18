@@ -1037,7 +1037,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (captureReceiver != null) {
             StackValue capturedReceiver =
                     functionReferenceReceiver != null ? functionReferenceReceiver :
-                    generateExtensionReceiver(unwrapOriginalReceiverOwnerForSuspendFunction(context));
+                    generateExtensionReceiver(unwrapOriginalReceiverOwnerForSuspendLambda(context));
             callGenerator.putCapturedValueOnStack(capturedReceiver, capturedReceiver.type, paramIndex++);
         }
 
@@ -1076,7 +1076,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private static CallableDescriptor unwrapOriginalReceiverOwnerForSuspendFunction(@NotNull MethodContext context) {
+    private static CallableDescriptor unwrapOriginalReceiverOwnerForSuspendLambda(@NotNull MethodContext context) {
         FunctionDescriptor originalForDoResume =
                 context.getFunctionDescriptor().getUserData(CoroutineCodegenUtilKt.INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME);
 
