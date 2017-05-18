@@ -18,10 +18,7 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.DeepCopyIrTreeWithDescriptors
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ScopeWithIr
-import org.jetbrains.kotlin.backend.common.reportWarning
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
@@ -193,34 +190,9 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
     //-------------------------------------------------------------------------//
 
-    private fun isLambdaExpression(expression: IrExpression) : Boolean {
-        if (expression !is IrBlock)                                     return false        // Lambda mast be represented with IrBlock.
-        if (expression.origin != IrStatementOrigin.LAMBDA &&                                // Origin mast be LAMBDA or ANONYMOUS.
-            expression.origin != IrStatementOrigin.ANONYMOUS_FUNCTION)  return false
-
-        val statements          = expression.statements
-        val irFunction          = statements[0]
-        val irCallableReference = statements[1]
-        if (irFunction !is IrFunction)                   return false                       // First statement of the block must be lambda declaration.
-        if (irCallableReference !is IrCallableReference) return false                       // Second statement of the block must be CallableReference.
-        return true                                                                         // The expression represents lambda.
-    }
-
-    //-------------------------------------------------------------------------//
-
     private fun getLambdaFunction(lambdaArgument: IrBlock): IrFunction {
         val statements = lambdaArgument.statements
         return statements[0] as IrFunction
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun argumentNeedsEvaluation(expression: IrExpression): Boolean {
-        if (expression is IrGetValue)          return false                                 // Parameter is already GetValue - nothing to evaluate.
-        if (expression is IrConst<*>)          return false                                 // Parameter is constant - nothing to evaluate.
-        if (expression is IrCallableReference) return false                                 // Parameter is callable reference - nothing to evaluate.
-        if (isLambdaExpression(expression))    return false                                 // Parameter is lambda - will be inlined.
-        return true
     }
 
     //-------------------------------------------------------------------------//
@@ -238,10 +210,32 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
     //-------------------------------------------------------------------------//
 
-    private class ParameterToArgument(
-        val parameterDescriptor: ValueDescriptor,
-        val argumentExpression : IrExpression
-    )
+    private class ParameterToArgument(val parameterDescriptor: ValueDescriptor,
+                                      val argumentExpression : IrExpression) {
+        val needsEvaluation: Boolean
+            get() {
+                if (argumentExpression is IrGetValue) return false                         // Parameter is already GetValue - nothing to evaluate.
+                if (argumentExpression is IrConst<*>) return false                         // Parameter is constant - nothing to evaluate.
+                if (argumentExpression is IrCallableReference) return false                // Parameter is callable reference - nothing to evaluate.
+                if (isLambdaExpression(argumentExpression)
+                        && !(parameterDescriptor is ValueParameterDescriptor
+                        && parameterDescriptor.isNoinline)) return false                   // Parameter is lambda and it is not noInline - will be inlined.
+                return true
+            }
+
+        private fun isLambdaExpression(expression: IrExpression) : Boolean {
+            if (expression !is IrBlock)                                     return false    // Lambda mast be represented with IrBlock.
+            if (expression.origin != IrStatementOrigin.LAMBDA                               // Origin mast be LAMBDA or ANONYMOUS.
+                    && expression.origin != IrStatementOrigin.ANONYMOUS_FUNCTION)  return false
+
+            val statements          = expression.statements
+            val irFunction          = statements[0]
+            val irCallableReference = statements[1]
+            if (irFunction !is IrFunction)                   return false                   // First statement of the block must be lambda declaration.
+            if (irCallableReference !is IrCallableReference) return false                   // Second statement of the block must be CallableReference.
+            return true                                                                     // The expression represents lambda.
+        }
+    }
 
     //-------------------------------------------------------------------------//
 
@@ -330,16 +324,16 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
         val evaluationStatements   = mutableListOf<IrStatement>()                           // List of evaluation statements.
         parameterToArgumentOld.forEach {
             val parameterDescriptor = it.parameterDescriptor
-            val argumentExpression  = it.argumentExpression
 
-            if (!argumentNeedsEvaluation(argumentExpression)) {                             // If argument does not need evaluation
-                substituteMap[parameterDescriptor] = argumentExpression                     // Copy parameterDescriptor -> argumentExpression to new map.
+            if (!it.needsEvaluation) {                                                      // If argument does not need evaluation
+                substituteMap[parameterDescriptor] = it.argumentExpression                  // Copy parameterDescriptor -> argumentExpression to new map.
                 return@forEach
             }
 
-            val newExpression = copyIrElement.copy(argumentExpression, null) as IrExpression
             val newVariable = currentScope.scope.createTemporaryVariable(                   // Create new variable and init it with the parameter expression.
-                irExpression = newExpression,
+                irExpression = copyIrElement
+                        .copy(it.argumentExpression, typeSubstitutor = null)                // Clone expression.
+                        .transform(ParameterSubstitutor(), data = null) as IrExpression,    // Arguments may reference the previous ones - substitute them.
                 nameHint     = functionDeclaration.descriptor.name.toString(),
                 isMutable    = false)
 
