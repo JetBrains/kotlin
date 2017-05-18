@@ -1125,7 +1125,7 @@ public fun CharSequence.chunked(size: Int): List<String> {
  * @return list of results of the [transform] applied to an each char sequence.
  * 
  * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
- * You should not store it or allow it escape someway, unless you made a snapshot of it.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
  * The last char sequence may have less characters than the given [size].
  * 
  * @param size the number of elements to take in each char sequence, must be positive and can be greater than the number of elements in this char sequence.
@@ -1158,7 +1158,7 @@ public fun CharSequence.chunkedSequence(size: Int): Sequence<String>  {
  * @return sequence of results of the [transform] applied to an each char sequence.
  * 
  * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
- * You should not store it or allow it to escape someway, unless you made a snapshot of it.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
  * The last char sequence may have less characters than the given [size].
  * 
  * @param size the number of elements to take in each char sequence, must be positive and can be greater than the number of elements in this char sequence.
@@ -1237,11 +1237,39 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
     return Pair(first.toString(), second.toString())
 }
 
+/**
+ * Returns a list of snapshots of the window of the given [size]
+ * sliding along this char sequence with the given [step], where each
+ * snapshot is a string.
+ * 
+ * Several last strings may have less characters than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step
+ * 
+ * @sample samples.collections.Sequences.Transformations.takeWindows
+ */
 @SinceKotlin("1.2")
 public fun CharSequence.windowed(size: Int, step: Int): List<String> {
     return windowed(size, step) { it.toString() }
 }
 
+/**
+ * Returns a list of results of applying the given [transform] function to
+ * an each char sequence representing a view over the window of the given [size]
+ * sliding along this char sequence with the given [step].
+ * 
+ * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * Several last char sequences may have less characters than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step
+ * 
+ * @sample samples.collections.Sequences.Transformations.averageWindows
+ */
 @SinceKotlin("1.2")
 public fun <R> CharSequence.windowed(size: Int, step: Int, transform: (CharSequence) -> R): List<R> {
     checkWindowSizeStep(size, step)
@@ -1255,11 +1283,39 @@ public fun <R> CharSequence.windowed(size: Int, step: Int, transform: (CharSeque
     return result
 }
 
+/**
+ * Returns a sequence of snapshots of the window of the given [size]
+ * sliding along this char sequence with the given [step], where each
+ * snapshot is a string.
+ * 
+ * Several last strings may have less characters than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step
+ * 
+ * @sample samples.collections.Sequences.Transformations.takeWindows
+ */
 @SinceKotlin("1.2")
 public fun CharSequence.windowedSequence(size: Int, step: Int): Sequence<String>  {
     return windowedSequence(size, step) { it.toString() }
 }
 
+/**
+ * Returns a sequence of results of applying the given [transform] function to
+ * an each char sequence representing a view over the window of the given [size]
+ * sliding along this char sequence with the given [step].
+ * 
+ * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * Several last char sequences may have less characters than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step
+ * 
+ * @sample samples.collections.Sequences.Transformations.averageWindows
+ */
 @SinceKotlin("1.2")
 public fun <R> CharSequence.windowedSequence(size: Int, step: Int, transform: (CharSequence) -> R): Sequence<R>  {
     checkWindowSizeStep(size, step)

@@ -1814,7 +1814,7 @@ public fun <T> Iterable<T>.chunked(size: Int): List<List<T>> {
  * @return list of results of the [transform] applied to an each list.
  * 
  * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
- * You should not store it or allow it escape someway, unless you made a snapshot of it.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
  * The last list may have less elements than the given [size].
  * 
  * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this collection.
@@ -2029,6 +2029,19 @@ public inline fun <T> Collection<T>.plusElement(element: T): List<T> {
     return plus(element)
 }
 
+/**
+ * Returns a list of snapshots of the window of the given [size]
+ * sliding along this collection with the given [step], where each
+ * snapshot is a list.
+ * 
+ * Several last lists may have less elements than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this collection.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step
+ * 
+ * @sample samples.collections.Sequences.Transformations.takeWindows
+ */
 @SinceKotlin("1.2")
 public fun <T> Iterable<T>.windowed(size: Int, step: Int): List<List<T>> {
     checkWindowSizeStep(size, step)
@@ -2049,6 +2062,21 @@ public fun <T> Iterable<T>.windowed(size: Int, step: Int): List<List<T>> {
     return result
 }
 
+/**
+ * Returns a list of results of applying the given [transform] function to
+ * an each list representing a view over the window of the given [size]
+ * sliding along this collection with the given [step].
+ * 
+ * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
+ * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
+ * Several last lists may have less elements than the given [size].
+ * 
+ * Both [size] and [step] must be positive and can be greater than the number of elements in this collection.
+ * @param size the number of elements to take in each window
+ * @param step the number of elements to move the window forward by on an each step
+ * 
+ * @sample samples.collections.Sequences.Transformations.averageWindows
+ */
 @SinceKotlin("1.2")
 public fun <T, R> Iterable<T>.windowed(size: Int, step: Int, transform: (List<T>) -> R): List<R> {
     checkWindowSizeStep(size, step)
