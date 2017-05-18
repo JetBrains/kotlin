@@ -62,6 +62,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("AfterIf.kt")
+    public void testAfterIf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/AfterIf.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AfterSafeDot.kt")
     public void testAfterSafeDot() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/AfterSafeDot.kt");
@@ -228,6 +234,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("InElse.kt")
+    public void testInElse() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InElse.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InEnumScope1.kt")
     public void testInEnumScope1() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InEnumScope1.kt");
@@ -267,6 +279,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("InGetterExpressionBody.kt")
     public void testInGetterExpressionBody() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InGetterExpressionBody.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InIf.kt")
+    public void testInIf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InIf.kt");
         doTest(fileName);
     }
 
