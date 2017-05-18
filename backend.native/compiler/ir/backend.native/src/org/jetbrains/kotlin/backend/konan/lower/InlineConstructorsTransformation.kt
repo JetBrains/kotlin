@@ -170,9 +170,3 @@ internal class InlineConstructorsTransformation(val context: Context): IrElement
         override fun visitElement(element: IrElement) = element.accept(this, null)
     }
 }
-
-
-
-
-
-
