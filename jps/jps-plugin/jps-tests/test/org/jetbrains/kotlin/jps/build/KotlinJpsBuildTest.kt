@@ -939,7 +939,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testJre9() {
-        val path = KotlinTestUtils.getJre9HomeIfPossible()?.absolutePath ?: return
+        val path = KotlinTestUtils.getJdk9HomeIfPossible()?.absolutePath ?: return
 
         val jdk = myModel.global.addSdk(JDK_NAME, path, "9", JpsJavaSdkType.INSTANCE)
         jdk.addRoot(StandardFileSystems.JRT_PROTOCOL_PREFIX + path + URLUtil.JAR_SEPARATOR + "java.base", JpsOrderRootType.COMPILED)
