@@ -41,11 +41,12 @@ class ResolvedLambdaArgument(
         override val outerCall: KotlinCall,
         override val argument: LambdaKotlinCallArgument,
         override val myTypeVariables: Collection<LambdaTypeVariable>,
+        val isSuspend: Boolean,
         val receiver: UnwrappedType?,
         val parameters: List<UnwrappedType>,
         val returnType: UnwrappedType
 ) : ArgumentWithPostponeResolution() {
-    val type: SimpleType = createFunctionType(returnType.builtIns, Annotations.EMPTY, receiver, parameters, null, returnType) // todo support annotations
+    val type: SimpleType = createFunctionType(returnType.builtIns, Annotations.EMPTY, receiver, parameters, null, returnType, isSuspend) // todo support annotations
 
     override val inputType: Collection<UnwrappedType> get() = receiver?.let { parameters + it } ?: parameters
     override val outputType: UnwrappedType get() = returnType

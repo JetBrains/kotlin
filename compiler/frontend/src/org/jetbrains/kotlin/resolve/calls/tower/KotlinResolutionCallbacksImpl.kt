@@ -59,6 +59,7 @@ class KotlinResolutionCallbacksImpl(
     override fun analyzeAndGetLambdaResultArguments(
             topLevelCall: KotlinCall,
             lambdaArgument: LambdaKotlinCallArgument,
+            isSuspend: Boolean,
             receiverType: UnwrappedType?,
             parameters: List<UnwrappedType>,
             expectedReturnType: UnwrappedType?
@@ -71,7 +72,7 @@ class KotlinResolutionCallbacksImpl(
 
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
         val expectedType = createFunctionType(builtIns, Annotations.EMPTY, receiverType, parameters, null,
-                           expectedReturnType ?: TypeUtils.NO_EXPECTED_TYPE)
+                           expectedReturnType ?: TypeUtils.NO_EXPECTED_TYPE, isSuspend)
 
         val approximatesExpectedType = typeApproximator.approximateToSubType(expectedType, TypeApproximatorConfiguration.LocalDeclaration) ?: expectedType
 

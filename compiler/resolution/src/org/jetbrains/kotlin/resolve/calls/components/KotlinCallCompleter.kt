@@ -67,6 +67,7 @@ class KotlinCallCompleter(
     fun transformWhenAmbiguity(candidate: KotlinResolutionCandidate, resolutionCallbacks: KotlinResolutionCallbacks): ResolvedKotlinCall =
             toCompletedBaseResolvedCall(candidate.lastCall.constraintSystem.asCallCompleterContext(), candidate, resolutionCallbacks)
 
+    // todo investigate variable+function calls
     fun completeCallIfNecessary(
             candidate: KotlinResolutionCandidate,
             expectedType: UnwrappedType?,
@@ -259,7 +260,7 @@ class KotlinCallCompleter(
         val parameters = lambda.parameters.map(::substitute)
         val expectedType = lambda.returnType.takeIf { c.canBeProper(it) }?.let(::substitute)
         lambda.analyzed = true
-        lambda.resultArguments = resolutionCallbacks.analyzeAndGetLambdaResultArguments(topLevelCall, lambda.argument, receiver, parameters, expectedType)
+        lambda.resultArguments = resolutionCallbacks.analyzeAndGetLambdaResultArguments(topLevelCall, lambda.argument, lambda.isSuspend, receiver, parameters, expectedType)
 
         for (innerCall in lambda.resultArguments) {
             // todo strange code -- why top-level kotlinCall? may be it isn't right outer call
