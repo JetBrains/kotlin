@@ -104,9 +104,21 @@ public class MultiLineStringIndentTestGenerated extends AbstractMultiLineStringI
             doTest(fileName);
         }
 
+        @TestMetadata("enterBeforeLongEntryOneLine.kt")
+        public void testEnterBeforeLongEntryOneLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/enterHandler/multilineString/spaces/enterBeforeLongEntryOneLine.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("enterBeforeMarginChar.kt")
         public void testEnterBeforeMarginChar() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/enterHandler/multilineString/spaces/enterBeforeMarginChar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enterBeforeShortEntryOneLine.kt")
+        public void testEnterBeforeShortEntryOneLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/enterHandler/multilineString/spaces/enterBeforeShortEntryOneLine.kt");
             doTest(fileName);
         }
 

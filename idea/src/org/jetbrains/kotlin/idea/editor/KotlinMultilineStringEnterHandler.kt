@@ -273,7 +273,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
                 KtTokens.REGULAR_STRING_PART -> {
                     // Ok
                 }
-                KtTokens.CLOSING_QUOTE -> {
+                KtTokens.CLOSING_QUOTE, KtTokens.SHORT_TEMPLATE_ENTRY_START, KtTokens.LONG_TEMPLATE_ENTRY_START -> {
                     if (element.startOffset != offset) {
                         return null
                     }
