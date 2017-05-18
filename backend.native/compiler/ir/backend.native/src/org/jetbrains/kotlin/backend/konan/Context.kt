@@ -16,12 +16,15 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import llvm.*
-import org.jetbrains.kotlin.backend.common.validateIrModule
+import llvm.LLVMDumpModule
+import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.jvm.descriptors.initialize
+import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.konan.ir.Ir
+import org.jetbrains.kotlin.backend.konan.library.LinkData
+import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations

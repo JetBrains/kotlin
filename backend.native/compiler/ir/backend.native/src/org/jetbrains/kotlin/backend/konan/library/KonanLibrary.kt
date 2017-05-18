@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.konan
+package org.jetbrains.kotlin.backend.konan.library
 
-import llvm.LLVMLinkModules2
 import llvm.LLVMModuleRef
 import llvm.LLVMWriteBitcodeToFile
-import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.TargetManager
 import org.jetbrains.kotlin.backend.konan.serialization.Base64
 import org.jetbrains.kotlin.backend.konan.serialization.deserializeModule
 import org.jetbrains.kotlin.backend.konan.util.File
@@ -63,16 +63,6 @@ abstract class FileBasedLibraryReader(
             {it -> packageMetadata(it)}, 
             tableOfContentsAsString, moduleName)
     }
-}
-
-class KtBcLibraryReader(file: File, configuration: CompilerConfiguration) 
-    : FileBasedLibraryReader(file, configuration, KtBcMetadataReader(file)) {
-
-    public constructor(path: String, configuration: CompilerConfiguration) : this(File(path), configuration) 
-
-    override val bitcodePaths: List<String>
-        get() = listOf(libraryName)
-
 }
 
 // TODO: Get rid of the configuration here.
@@ -141,37 +131,6 @@ class LinkData(
 
 abstract class FileBasedLibraryWriter (
     val file: File): KonanLibraryWriter {
-}
-
-class KtBcLibraryWriter(file: File, val llvmModule: LLVMModuleRef) 
-    : FileBasedLibraryWriter(file) {
-
-    override val mainBitcodeFileName = file.path
-
-    public constructor(path: String, llvmModule: LLVMModuleRef) 
-        : this(File(path), llvmModule)
-
-    override fun addKotlinBitcode(llvmModule: LLVMModuleRef) {
-        // This is a noop for .kt.bc based libraries,
-        // because the bitcode itself is the container.
-    }
-
-    override fun addLinkData(linkData: LinkData) {
-        MetadataGenerator(llvmModule).addLinkData(linkData)
-    }
-
-    override fun addNativeBitcode(library: String) {
-
-        val libraryModule = parseBitcodeFile(library)
-        val failed = LLVMLinkModules2(llvmModule, libraryModule)
-        if (failed != 0) {
-            throw Error("failed to link $library") // TODO: retrieve error message from LLVM.
-        }
-    }
-
-    override fun commit() {
-        LLVMWriteBitcodeToFile(llvmModule, file.path)
-    }
 }
 
 class SplitLibraryWriter(val libDir: File, target: String, val nopack: Boolean = false): FileBasedLibraryWriter(libDir) {

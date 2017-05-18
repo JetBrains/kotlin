@@ -14,49 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.konan.llvm
+package org.jetbrains.kotlin.backend.konan.library
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.LinkData
 import org.jetbrains.kotlin.backend.konan.util.File
 import java.io.Closeable
 import java.util.Properties
 
-class NamedModuleData(val name:String, val base64: String)
-
-interface MetadataReader {
-    fun loadSerializedModule(currentAbiVersion: Int): NamedModuleData
-    fun loadSerializedPackageFragment(fqName: String): String
-}
-
-class SplitMetadataReader(file: File) : MetadataReader {
-
-    val linkDataDir = File(file, "linkdata")
-
-    override fun loadSerializedModule(currentAbiVersion: Int): NamedModuleData {
-        val header = Properties()
-        val file = File(linkDataDir, "module")
-        file.bufferedReader().use { reader ->
-            header.load(reader)
-        }
-        val headerAbiVersion = header.getProperty("abi_version")!!
-        val moduleName = header.getProperty("module_name")!!
-        val moduleData = header.getProperty("module_data")!!
-
-        if ("$currentAbiVersion" != headerAbiVersion) 
-            error("ABI version mismatch. Compiler expects: $currentAbiVersion, the library is $headerAbiVersion")
-
-        return NamedModuleData(moduleName, moduleData)
-    }
-
-    override fun loadSerializedPackageFragment(fqName: String): String {
-        val realName = if (fqName == "") "<root>" else fqName
-
-        return File(linkDataDir, realName).readText()
-
-    }
-}
+// We still keep this format around for now. But, most probably, it will
+// go away completely soon.
 
 class KtBcMetadataReader(file: File) : Closeable, MetadataReader {
 
@@ -173,7 +140,7 @@ override fun loadSerializedPackageFragment(fqName: String): String {
     }
 }
 
-internal class MetadataGenerator(val llvmModule: LLVMModuleRef) {
+internal class KtBcMetadataGenerator(val llvmModule: LLVMModuleRef) {
 
     private fun metadataNode(args: List<LLVMValueRef?>): LLVMValueRef {
         return LLVMMDNode(args.toCValues(), args.size)!!
@@ -211,26 +178,6 @@ internal class MetadataGenerator(val llvmModule: LLVMModuleRef) {
             val dataNode = metadataString(it)
             val kpackageArg = metadataNode(listOf(dataNode))
             emitModuleMetadata("kpackage:$name", kpackageArg)
-        }
-    }
-}
-
-internal class SplitMetadataGenerator(val file: File) {
-
-    fun addLinkData(linkData: LinkData) {
-
-        val header = Properties()
-        header.putAll(hashMapOf(
-            "abi_version" to "${linkData.abiVersion}",
-            "module_name" to "${linkData.moduleName}",
-            "module_data" to "${linkData.module}"
-        ))
-        header.store(File(file, "module").outputStream(), null)
-
-        linkData.fragments.forEachIndexed { index, it ->
-            val name = linkData.fragmentNames[index] 
-            val realName = if (name == "") "<root>" else name
-            File(file, realName).writeText(it)
         }
     }
 }
