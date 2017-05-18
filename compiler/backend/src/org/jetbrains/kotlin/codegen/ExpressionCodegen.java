@@ -1740,7 +1740,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         int parameterOffsetInConstructor = context.closure.getCapturedParameterOffsetInConstructor(descriptor);
         // when captured parameter is singleton
         // see compiler/testData/codegen/box/objects/objectInLocalAnonymousObject.kt (fun local() captured in A)
-        if (parameterOffsetInConstructor == -1) return parentResult;
+        if (parameterOffsetInConstructor == -1) return adjustVariableValue(parentResult , descriptor);
 
         assert parentResult instanceof StackValue.Field || parentResult instanceof StackValue.FieldForSharedVar
                 : "Part of closure should be either Field or FieldForSharedVar";
