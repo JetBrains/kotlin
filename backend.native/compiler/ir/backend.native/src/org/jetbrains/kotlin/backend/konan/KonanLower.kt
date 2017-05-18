@@ -38,6 +38,10 @@ internal class KonanLower(val context: Context) {
     fun lowerModule(irModule: IrModuleFragment) {
         val phaser = PhaseManager(context)
 
+        phaser.phase(KonanPhase.LOWER_INLINE_CONSTRUCTORS) {
+            InlineConstructorsTransformation(context).lower(irModule)
+        }
+
         // Inlining must be run before other phases.
         phaser.phase(KonanPhase.LOWER_INLINE) {
             FunctionInlining(context).inline(irModule)

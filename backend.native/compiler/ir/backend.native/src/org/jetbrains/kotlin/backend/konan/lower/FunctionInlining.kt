@@ -35,19 +35,17 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.getDefault
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrMemberAccessExpressionBase
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
-
-private val inlineConstructor = FqName("konan.internal.InlineConstructor")
 
 //-----------------------------------------------------------------------------//
 
@@ -103,14 +101,12 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
 
     val copyIrElement = DeepCopyIrTreeWithDescriptors(currentScope.scope.scopeOwner, context) // Create DeepCopy for current scope.
     val substituteMap = mutableMapOf<ValueDescriptor, IrExpression>()
-    var isInlineConstructor = false
 
     //-------------------------------------------------------------------------//
 
     fun inline(irCall             : IrCall,                                                 // Call to be substituted.
                functionDeclaration: IrFunction): IrReturnableBlockImpl {                    // Function to substitute.
 
-        isInlineConstructor = irCall.descriptor.annotations.hasAnnotation(inlineConstructor)
         val inlineFunctionBody = inlineFunction(irCall, functionDeclaration)
         val descriptorSubstitutor = copyIrElement.descriptorSubstitutorForExternalScope
         currentScope.irElement.transformChildrenVoid(descriptorSubstitutor)                 // Transform calls to object that might be returned from inline function call.
@@ -129,9 +125,8 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
             typeSubstitutor = createTypeSubstitutor(irCall)                                 // Type parameters will be substituted with type arguments.
         ) as IrFunction
 
-        val copyStatements = (copyFunctionDeclaration.body as IrBlockBody).statements       // IR statements from function copy.
-        val statements     = replaceDelegatingConstructorCall(copyStatements, irCall)
-        val returnType     = copyFunctionDeclaration.descriptor.returnType!!                // Substituted return type.
+        val statements = (copyFunctionDeclaration.body as IrBlockBody).statements           // IR statements from function copy.
+        val returnType = copyFunctionDeclaration.descriptor.returnType!!                    // Substituted return type.
         val inlineFunctionBody = IrReturnableBlockImpl(                                     // Create new IR element to replace "call".
             startOffset = copyFunctionDeclaration.startOffset,
             endOffset   = copyFunctionDeclaration.endOffset,
@@ -355,69 +350,6 @@ private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
             substituteMap[parameterDescriptor] = getVal                                     // Parameter will be replaced with the new variable.
         }
         return evaluationStatements
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun replaceDelegatingConstructorCall(statements: List<IrStatement>, irCall: IrCall): List<IrStatement> {
-
-        if (!isInlineConstructor) return statements
-
-        val delegatingCall = statements[0]
-        if (delegatingCall !is IrDelegatingConstructorCallImpl) return statements
-
-        val thisVariable = generateIrCall(delegatingCall)
-
-        val newThisGetValue = IrGetValueImpl(                                                       // Create new expression, representing access the new variable.
-            startOffset = currentScope.irElement.startOffset,
-            endOffset   = currentScope.irElement.endOffset,
-            descriptor  = thisVariable.descriptor
-        )
-
-        val classDescriptor = delegatingCall.descriptor.constructedClass
-        val oldThisGetValue = classDescriptor.thisAsReceiverParameter
-        substituteMap[oldThisGetValue] = newThisGetValue
-
-        val newStatements = statements.toMutableList()
-        newStatements[0] = thisVariable
-        newStatements += newThisGetValue
-
-        val block = IrBlockImpl(
-            startOffset = 0,
-            endOffset   = 0,
-            type        = newThisGetValue.type,
-            origin      = null,
-            statements  = newStatements
-        )
-
-        val returnThis = IrReturnImpl(0, 0, irCall.descriptor, block)
-        return listOf(returnThis)
-    }
-
-    //-------------------------------------------------------------------------//
-
-    fun generateIrCall(expression: IrDelegatingConstructorCallImpl): IrVariable {
-
-        val newExpression = IrCallImpl(
-            expression.startOffset,
-            expression.endOffset,
-            expression.descriptor.returnType,
-            expression.descriptor,
-            expression.typeArguments,
-            expression.origin
-        ).apply {
-            expression.descriptor.valueParameters.forEach {
-                val valueArgument = expression.getValueArgument(it)
-                putValueArgument(it.index, valueArgument)
-            }
-        }
-
-        val newVariable = currentScope.scope.createTemporaryVariable(                      // Create new variable and init it with constructor call.
-            irExpression = newExpression,
-            nameHint     = newExpression.descriptor.fqNameSafe.toString() + ".this",
-            isMutable    = false)
-
-        return newVariable
     }
 }
 
