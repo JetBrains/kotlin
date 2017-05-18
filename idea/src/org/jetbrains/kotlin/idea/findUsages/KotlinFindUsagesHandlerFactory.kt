@@ -64,7 +64,7 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
         return createFindUsagesHandler(element, forHighlightUsages, canAsk = !forHighlightUsages)
     }
 
-    private fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean, canAsk: Boolean): FindUsagesHandler {
+    fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean, canAsk: Boolean): FindUsagesHandler {
         val handler = createFindUsagesHandlerNoDecoration(element, canAsk)
 
         return Extensions.getArea(element.project).getExtensionPoint(KotlinFindUsagesHandlerDecorator.EP_NAME).extensions.fold(handler) {
@@ -124,7 +124,7 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
         }
     }
 
-    private fun handlerForMultiple(originalDeclaration: KtNamedDeclaration, declarations: Collection<PsiElement>): FindUsagesHandler {
+    fun handlerForMultiple(originalDeclaration: KtNamedDeclaration, declarations: Collection<PsiElement>): FindUsagesHandler {
         return when (declarations.size) {
             0 -> FindUsagesHandler.NULL_HANDLER
 

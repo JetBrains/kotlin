@@ -810,6 +810,8 @@
 
     <facetType implementation="org.jetbrains.kotlin.idea.facet.KotlinFacetType"/>
 
+    <lang.sliceProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.slicer.KotlinSliceProvider"/>
+
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisIntention</className>
       <category>Kotlin</category>

@@ -1,0 +1,4 @@
+4 <bold>constructor(n: Int)</bold>
+7 	class B : <bold>A(1)</bold>
+10 	val x = <bold>A(1)</bold>
+10 		val <bold>x = A(1)</bold>

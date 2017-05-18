@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithRe
 class ReturnNoValueInstruction(
         element: KtElement,
         blockScope: BlockScope,
-        targetLabel: Label
+        targetLabel: Label,
+        val subroutine: KtElement
 ) : AbstractJumpInstruction(element, targetLabel, blockScope) {
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitReturnNoValue(this)
@@ -38,5 +39,5 @@ class ReturnNoValueInstruction(
     override fun toString(): String = "ret $targetLabel"
 
     override fun createCopy(newLabel: Label, blockScope: BlockScope): AbstractJumpInstruction =
-            ReturnNoValueInstruction(element, blockScope, newLabel)
+            ReturnNoValueInstruction(element, blockScope, newLabel, subroutine)
 }
