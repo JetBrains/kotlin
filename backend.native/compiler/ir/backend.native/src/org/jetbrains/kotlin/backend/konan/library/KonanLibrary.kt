@@ -118,16 +118,12 @@ class SplitLibraryReader(override val libDir: File, configuration: CompilerConfi
 
             if (!libDir.exists) error("Could not unpack $klibFile as $libDir.")
         } else {
-            error("Expected $klibFile to be a regular libDir.")
+            error("Expected $klibFile to be a regular file.")
         }
     }
 
-    private val File.dirAbsolutePaths: List<String>
-        get() = this.listFiles!!.toList()!!.map{it->it.absolutePath}
-
     override val bitcodePaths: List<String>
-        get() = kotlinDir.dirAbsolutePaths + 
-                nativeDir.dirAbsolutePaths
+        get() = (kotlinDir.listFiles + nativeDir.listFiles).map{it.absolutePath}
 
 }
 /* ------------ writer part ----------------*/

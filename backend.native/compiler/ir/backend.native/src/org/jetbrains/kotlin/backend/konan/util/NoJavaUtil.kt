@@ -45,7 +45,7 @@ class File(val path: String) {
     val isFile 
         get() = javaFile.isFile()
     val listFiles
-        get() = javaFile.listFiles()
+        get() = javaFile.listFiles()!!.toList()
 
     fun mkdirs() = javaFile.mkdirs()
     fun delete() = javaFile.delete()
