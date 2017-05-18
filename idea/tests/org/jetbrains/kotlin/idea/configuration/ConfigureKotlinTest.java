@@ -259,4 +259,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     public void testJvm6InProjectJvm8InModule() {
         configureFacetAndCheckJvm(JvmTarget.JVM_1_8);
     }
+
+    public void testProjectWithoutFacetWithJvmTarget18() {
+        assertEquals(TargetPlatformKind.Jvm.Companion.get(JvmTarget.JVM_1_8), PlatformKt.getTargetPlatform(getModule()));
+    }
 }
