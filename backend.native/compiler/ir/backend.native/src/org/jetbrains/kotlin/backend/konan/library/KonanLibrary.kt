@@ -73,10 +73,8 @@ interface SplitScheme {
         get() = null 
     val klibFile 
         get() = File("${libDir.path}.klib")
-    val moduleFile 
-        get() = File(libDir, "module")
-    val linkdataDir 
-        get() = File(libDir, "linkdata")
+    val manifestFile 
+        get() = File(libDir, "manifest")
     val resourcesDir 
         get() = File(libDir, "resources")
     val targetDir 
@@ -85,6 +83,12 @@ interface SplitScheme {
         get() = File(targetDir, "kotlin")
     val nativeDir 
         get() = File(targetDir, "native")
+    val linkdataDir 
+        get() = File(libDir, "linkdata")
+    val moduleHeaderFile 
+        get() = File(linkdataDir, "<module>")
+    fun packageFile(packageName: String) 
+        = File(linkdataDir, if (packageName == "") "<root>" else packageName)
 }
 
 // TODO: Get rid of the configuration here.

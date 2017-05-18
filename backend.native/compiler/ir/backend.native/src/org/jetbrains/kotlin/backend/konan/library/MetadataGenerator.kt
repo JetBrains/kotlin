@@ -30,12 +30,12 @@ class SplitMetadataReader(override val libDir: File) : MetadataReader, SplitSche
 
     override fun loadSerializedModule(currentAbiVersion: Int): NamedModuleData {
         val header = Properties()
-        moduleFile.bufferedReader().use { reader ->
+        manifestFile.bufferedReader().use { reader ->
             header.load(reader)
         }
         val headerAbiVersion = header.getProperty("abi_version")!!
         val moduleName = header.getProperty("module_name")!!
-        val moduleData = header.getProperty("module_data")!!
+        val moduleData = moduleHeaderFile.readText()
 
         if ("$currentAbiVersion" != headerAbiVersion) 
             error("ABI version mismatch. Compiler expects: $currentAbiVersion, the library is $headerAbiVersion")
@@ -43,12 +43,8 @@ class SplitMetadataReader(override val libDir: File) : MetadataReader, SplitSche
         return NamedModuleData(moduleName, moduleData)
     }
 
-    override fun loadSerializedPackageFragment(fqName: String): String {
-        val realName = if (fqName == "") "<root>" else fqName
-
-        return File(linkdataDir, realName).readText()
-
-    }
+    override fun loadSerializedPackageFragment(fqName: String) 
+        = packageFile(fqName).readText()
 }
 
 internal class SplitMetadataGenerator(override val libDir: File): SplitScheme {
@@ -59,15 +55,14 @@ internal class SplitMetadataGenerator(override val libDir: File): SplitScheme {
         val header = Properties()
         header.putAll(hashMapOf(
             "abi_version" to "${linkData.abiVersion}",
-            "module_name" to "${linkData.moduleName}",
-            "module_data" to "${linkData.module}"
+            "module_name" to "${linkData.moduleName}"
         ))
-        header.store(moduleFile.outputStream(), null)
+        moduleHeaderFile.writeText(linkData.module)
+        header.store(manifestFile.outputStream(), null)
 
         linkData.fragments.forEachIndexed { index, it ->
             val name = linkData.fragmentNames[index] 
-            val realName = if (name == "") "<root>" else name
-            File(linkdataDir, realName).writeText(it)
+            packageFile(name).writeText(it)
         }
     }
 }
