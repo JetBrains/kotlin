@@ -1766,6 +1766,20 @@ task driver_opt(type: RunDriverKonanTest) {
     flags = ["-opt"]
 }
 
+// Check that cross-compilation completes successfully. We can't run such 
+// binaries, but we verify that the compiler has been built, operational 
+// and accepts the -target flag, resulting in a successful compilation.
+task driver_cross(type: RunDriverKonanTest) {
+    goldValue = "Hello, world!\n"
+    source = "runtime/basic/hello0.kt"
+    run = false
+    if (isLinux()) {
+        flags = ["-target", "raspberrypi"]
+    } else if (isMac()) {
+        flags = ["-target", "iphone"]
+    }
+}
+
 // Enable when deserialization for default arguments is fixed.
 task inline_defaultArgs_linkTest(type: LinkKonanTest) {
     goldValue = "122\n47\n"

@@ -262,6 +262,12 @@ class RunKonanTest extends KonanTest {
 // from IDEA. Use the RunKonanTest instead.
 @ParallelizableTask
 class RunDriverKonanTest extends KonanTest {
+
+    RunDriverKonanTest() {
+        super()
+        dependsOn(project.rootProject.tasks['cross_dist'])
+    }
+
     void compileTest(List<String> filesToCompile, String exe) {
         runCompiler(filesToCompile, exe, flags?:[])
     }
