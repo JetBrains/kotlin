@@ -67,6 +67,8 @@ class ReplaceArrayOfWithLiteralInspection : AbstractKotlinInspection() {
     private class ReplaceWithArrayLiteralFix : LocalQuickFix {
         override fun getFamilyName() = "Replace with [...]"
 
+        override fun getName() = familyName
+
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val calleeExpression = descriptor.psiElement as KtExpression
             val callExpression = calleeExpression.parent as KtCallExpression
