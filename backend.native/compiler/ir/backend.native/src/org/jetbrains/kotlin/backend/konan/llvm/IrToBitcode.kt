@@ -87,7 +87,7 @@ internal fun emitLLVM(context: Context) {
         
         if (!config.getBoolean(KonanConfigKeys.NOLINK)) {
             val program = config.get(KonanConfigKeys.PROGRAM_NAME)!!
-            val output = "$program}.kt.bc"
+            val output = "${program}.kt.bc"
             context.bitcodeFileName = output
 
             phaser.phase(KonanPhase.BITCODE_LINKER) {
