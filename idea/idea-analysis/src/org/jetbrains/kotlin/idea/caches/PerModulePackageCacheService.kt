@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPackageDirective
+import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import java.util.concurrent.ConcurrentMap
 
@@ -71,6 +72,11 @@ class KotlinPackageStatementPsiTreeChangePreprocessor(private val project: Proje
             PsiTreeChangeEventImpl.PsiEventType.CHILD_ADDED, PsiTreeChangeEventImpl.PsiEventType.CHILD_MOVED, PsiTreeChangeEventImpl.PsiEventType.CHILD_REPLACED, PsiTreeChangeEventImpl.PsiEventType.CHILD_REMOVED -> {
                 val child = event.child ?: return
                 if (child.getParentOfType<KtPackageDirective>(false) != null)
+                    project.service<PerModulePackageCacheService>().notifyPackageChange(file)
+            }
+            PsiTreeChangeEventImpl.PsiEventType.CHILDREN_CHANGED -> {
+                val parent = event.parent ?: return
+                if (parent.getChildrenOfType<KtPackageDirective>().any())
                     project.service<PerModulePackageCacheService>().notifyPackageChange(file)
             }
             else -> {
