@@ -262,7 +262,6 @@ targetList.each { target ->
 
         from(project(':runtime').file("build/$target")) {
             include("*.bc")
-            eachFile {println("eachfile= $it")}
             into("klib/stdlib/$target/native")
         }
         from(project(':runtime').file("build/${target}Stdlib")) {
