@@ -6979,6 +6979,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("openInCompanion.kt")
+            public void testOpenInCompanion() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/openInCompanion.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("secondaryCtrDelegationInHeader.kt")
             public void testSecondaryCtrDelegationInHeader() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/secondaryCtrDelegationInHeader.kt");
