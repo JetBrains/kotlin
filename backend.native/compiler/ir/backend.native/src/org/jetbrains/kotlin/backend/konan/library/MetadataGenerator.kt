@@ -26,14 +26,11 @@ interface MetadataReader {
     fun loadSerializedPackageFragment(fqName: String): String
 }
 
-class SplitMetadataReader(file: File) : MetadataReader {
-
-    val linkDataDir = File(file, "linkdata")
+class SplitMetadataReader(override val libDir: File) : MetadataReader, SplitScheme {
 
     override fun loadSerializedModule(currentAbiVersion: Int): NamedModuleData {
         val header = Properties()
-        val file = File(linkDataDir, "module")
-        file.bufferedReader().use { reader ->
+        moduleFile.bufferedReader().use { reader ->
             header.load(reader)
         }
         val headerAbiVersion = header.getProperty("abi_version")!!
@@ -49,27 +46,28 @@ class SplitMetadataReader(file: File) : MetadataReader {
     override fun loadSerializedPackageFragment(fqName: String): String {
         val realName = if (fqName == "") "<root>" else fqName
 
-        return File(linkDataDir, realName).readText()
+        return File(linkdataDir, realName).readText()
 
     }
 }
 
-internal class SplitMetadataGenerator(val file: File) {
+internal class SplitMetadataGenerator(override val libDir: File): SplitScheme {
 
     fun addLinkData(linkData: LinkData) {
 
+        val linkdataDir = File(libDir, "linkdata")
         val header = Properties()
         header.putAll(hashMapOf(
             "abi_version" to "${linkData.abiVersion}",
             "module_name" to "${linkData.moduleName}",
             "module_data" to "${linkData.module}"
         ))
-        header.store(File(file, "module").outputStream(), null)
+        header.store(moduleFile.outputStream(), null)
 
         linkData.fragments.forEachIndexed { index, it ->
             val name = linkData.fragmentNames[index] 
             val realName = if (name == "") "<root>" else name
-            File(file, realName).writeText(it)
+            File(linkdataDir, realName).writeText(it)
         }
     }
 }

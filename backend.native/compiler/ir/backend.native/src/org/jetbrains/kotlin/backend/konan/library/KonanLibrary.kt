@@ -65,13 +65,36 @@ abstract class FileBasedLibraryReader(
     }
 }
 
+// This scheme describes the Konan Library (klib) layout.
+interface SplitScheme {
+    val libDir: File
+    val target: String?
+        // This is a default implementation. Can't make it an assignment.
+        get() = null 
+    val klibFile 
+        get() = File("${libDir.path}.klib")
+    val moduleFile 
+        get() = File(libDir, "module")
+    val linkdataDir 
+        get() = File(libDir, "linkdata")
+    val resourcesDir 
+        get() = File(libDir, "resources")
+    val targetDir 
+        get() = File(libDir, target!!)
+    val kotlinDir 
+        get() = File(targetDir, "kotlin")
+    val nativeDir 
+        get() = File(targetDir, "native")
+}
+
 // TODO: Get rid of the configuration here.
-class SplitLibraryReader(val libDir: File, configuration: CompilerConfiguration) 
-    : FileBasedLibraryReader(libDir, configuration, SplitMetadataReader(libDir)) {
+class SplitLibraryReader(override val libDir: File, configuration: CompilerConfiguration) 
+    : FileBasedLibraryReader(libDir, configuration, SplitMetadataReader(libDir)), 
+      SplitScheme  {
 
     public constructor(path: String, configuration: CompilerConfiguration) : this(File(path), configuration) 
 
-    val klibFile = File("${libDir.path}.klib")
+    override val target: String? = TargetManager(configuration).currentName
 
     init {
         unpackIfNeeded()
@@ -98,16 +121,9 @@ class SplitLibraryReader(val libDir: File, configuration: CompilerConfiguration)
     private val File.dirAbsolutePaths: List<String>
         get() = this.listFiles!!.toList()!!.map{it->it.absolutePath}
 
-    private val targetDir: File
-        get() {
-            val target = TargetManager(configuration).currentName
-            val dir = File(libDir, target)
-            return dir
-        }
-
     override val bitcodePaths: List<String>
-        get() = File(targetDir, "kotlin").dirAbsolutePaths + 
-                File(targetDir, "native").dirAbsolutePaths
+        get() = kotlinDir.dirAbsolutePaths + 
+                nativeDir.dirAbsolutePaths
 
 }
 /* ------------ writer part ----------------*/
@@ -133,15 +149,11 @@ abstract class FileBasedLibraryWriter (
     val file: File): KonanLibraryWriter {
 }
 
-class SplitLibraryWriter(val libDir: File, target: String, val nopack: Boolean = false): FileBasedLibraryWriter(libDir) {
+class SplitLibraryWriter(override val libDir: File, override val target: String?, val nopack: Boolean = false): 
+    FileBasedLibraryWriter(libDir), SplitScheme {
+
     public constructor(path: String, target: String, nopack: Boolean): this(File(path), target, nopack)
 
-    val klibFile = File("${libDir.path}.klib")
-    val linkdataDir = File(libDir, "linkdata")
-    val resourcesDir = File(libDir, "resources")
-    val targetDir = File(libDir, target)
-    val kotlinDir = File(targetDir, "kotlin")
-    val nativeDir = File(targetDir, "native")
     // TODO: Experiment with separate bitcode files.
     // Per package or per class.
     val mainBitcodeFile = File(kotlinDir, "program.kt.bc")
@@ -167,7 +179,7 @@ class SplitLibraryWriter(val libDir: File, target: String, val nopack: Boolean =
     }
 
     override fun addLinkData(linkData: LinkData) {
-        SplitMetadataGenerator(linkdataDir).addLinkData(linkData)
+        SplitMetadataGenerator(libDir).addLinkData(linkData)
     }
 
     override fun addNativeBitcode(library: String) {
