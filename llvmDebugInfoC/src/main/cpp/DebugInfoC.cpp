@@ -48,6 +48,10 @@ DEFINE_SIMPLE_CONVERSION_FUNCTIONS(DIExpression,     DIExpressionRef)
 DEFINE_SIMPLE_CONVERSION_FUNCTIONS(Module,        LLVMModuleRef)
 }
 
+/**
+ * see [DIFlags::FlagFwdDecl].
+ */
+#define DI_FORWARD_DECLARAION (4)
 extern "C" {
 
 DIBuilderRef DICreateBuilder(LLVMModuleRef module) {
@@ -106,8 +110,11 @@ DICompositeTypeRef DICreateStructType(DIBuilderRef refBuilder,
                                       uint64_t elementsCount,
                                       DICompositeTypeRef refPlace) {
   auto builder = llvm::unwrap(refBuilder);
+  if ((flags & DI_FORWARD_DECLARAION) != 0) {
+    return llvm::wrap(builder->createStructType(llvm::unwrap(scope), name, NULL, 0, 0, 0, flags, NULL, NULL));
+  }
   std::vector<llvm::Metadata *> typeElements;
-  for(int i = 0; i != elementsCount; ++i) {
+  for(int i = 0; i < elementsCount; ++i) {
     typeElements.push_back(llvm::unwrap(elements[i]));
   }
   auto elementsArray = builder->getOrCreateArray(typeElements);
