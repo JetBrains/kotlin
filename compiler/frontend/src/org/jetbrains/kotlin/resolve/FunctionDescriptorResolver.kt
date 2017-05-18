@@ -336,12 +336,12 @@ class FunctionDescriptorResolver(
         for (i in valueParameters.indices) {
             val valueParameter = valueParameters[i]
             val typeReference = valueParameter.typeReference
-            val expectedType = expectedParameterTypes?.let { if (i < it.size) it[i] else null }
+            val expectedType = expectedParameterTypes?.let { if (i < it.size) it[i] else null }?.takeUnless { TypeUtils.noExpectedType(it) }
 
             val type: KotlinType
             if (typeReference != null) {
                 type = typeResolver.resolveType(parameterScope, typeReference, trace, true)
-                if (expectedType != null && !TypeUtils.noExpectedType(expectedType)) {
+                if (expectedType != null) {
                     if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(expectedType, type)) {
                         trace.report(EXPECTED_PARAMETER_TYPE_MISMATCH.on(valueParameter, expectedType))
                     }

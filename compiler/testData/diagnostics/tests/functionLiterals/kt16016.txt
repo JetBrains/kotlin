@@ -1,0 +1,6 @@
+package
+
+public val la: (???) -> kotlin.Unit
+public val larg: kotlin.Unit
+public val las: (kotlin.Int) -> kotlin.Unit
+public val twoarg: kotlin.Unit
