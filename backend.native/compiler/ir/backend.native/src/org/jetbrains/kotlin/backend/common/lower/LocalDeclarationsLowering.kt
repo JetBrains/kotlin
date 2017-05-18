@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.*
@@ -78,13 +79,14 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             get() = declaration.descriptor
 
         abstract val transformedDescriptor: FunctionDescriptor
+        abstract val transformedDeclaration: IrFunction
 
-        val capturedValueToParameter: MutableMap<ValueDescriptor, ValueParameterDescriptor> = HashMap()
+        val capturedValueToParameter: MutableMap<ValueDescriptor, IrValueParameterSymbol> = HashMap()
 
         override fun irGet(startOffset: Int, endOffset: Int, descriptor: ValueDescriptor): IrExpression? {
-            val newDescriptor = capturedValueToParameter[descriptor] ?: return null
+            val newSymbol = capturedValueToParameter[descriptor] ?: return null
 
-            return IrGetValueImpl(startOffset, endOffset, newDescriptor)
+            return IrGetValueImpl(startOffset, endOffset, newSymbol)
         }
     }
 
@@ -92,6 +94,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
         lateinit var closure: Closure
 
         override lateinit var transformedDescriptor: FunctionDescriptor
+        override lateinit var transformedDeclaration: IrSimpleFunction
 
         var index: Int = -1
 
@@ -104,6 +107,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             get() = declaration.descriptor
 
         override lateinit var transformedDescriptor: ClassConstructorDescriptor
+        override lateinit var transformedDeclaration: IrConstructor
 
         override fun toString(): String =
                 "LocalClassConstructorContext for $descriptor"
@@ -115,13 +119,13 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
 
         lateinit var closure: Closure
 
-        val capturedValueToField: MutableMap<ValueDescriptor, PropertyDescriptor> = HashMap()
+        val capturedValueToField: MutableMap<ValueDescriptor, IrField> = HashMap()
 
         override fun irGet(startOffset: Int, endOffset: Int, descriptor: ValueDescriptor): IrExpression? {
-            val fieldDescriptor = capturedValueToField[descriptor] ?: return null
+            val field = capturedValueToField[descriptor] ?: return null
 
-            return IrGetFieldImpl(startOffset, endOffset, fieldDescriptor,
-                    receiver = IrGetValueImpl(startOffset, endOffset, this.descriptor.thisAsReceiverParameter)
+            return IrGetFieldImpl(startOffset, endOffset, field.symbol,
+                    receiver = IrGetValueImpl(startOffset, endOffset, declaration.thisReceiver!!.symbol)
             )
         }
 
@@ -134,14 +138,14 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
         val localClasses: MutableMap<ClassDescriptor, LocalClassContext> = LinkedHashMap()
         val localClassConstructors: MutableMap<ClassConstructorDescriptor, LocalClassConstructorContext> = LinkedHashMap()
 
-        val transformedDescriptors = mutableMapOf<DeclarationDescriptor, DeclarationDescriptor>()
+        val transformedDeclarations = mutableMapOf<DeclarationDescriptor, IrSymbol>()
 
-        val FunctionDescriptor.transformed: FunctionDescriptor?
-            get() = transformedDescriptors[this] as FunctionDescriptor?
+        val FunctionDescriptor.transformed: IrFunctionSymbol?
+            get() = transformedDeclarations[this] as IrFunctionSymbol?
 
-        val oldParameterToNew: MutableMap<ParameterDescriptor, ParameterDescriptor> = HashMap()
+        val oldParameterToNew: MutableMap<ParameterDescriptor, IrValueParameterSymbol> = HashMap()
         val newParameterToOld: MutableMap<ParameterDescriptor, ParameterDescriptor> = HashMap()
-        val newParameterToCaptured: MutableMap<ValueParameterDescriptor, ValueDescriptor> = HashMap()
+        val newParameterToCaptured: MutableMap<ValueParameterDescriptor, IrValueSymbol> = HashMap()
 
         fun lowerLocalDeclarations(): List<IrDeclaration>? {
             collectLocalDeclarations()
@@ -163,16 +167,12 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
 
                     localFunctions.values.mapTo(this) {
                         val original = it.declaration
-                        IrFunctionImpl(
-                                original.startOffset, original.endOffset, original.origin,
-                                it.transformedDescriptor,
-                                original.body
-                        ).apply {
-                            createParameterDeclarations()
+                        it.transformedDeclaration.apply {
+                            this.body = original.body
 
                             original.descriptor.valueParameters.filter { it.declaresDefaultValue() }.forEach { argument ->
                                 val body = original.getDefault(argument)!!
-                                this.putDefault(oldParameterToNew[argument] as ValueParameterDescriptor, body)
+                                oldParameterToNew[argument]!!.owner.defaultValue = body
                             }
                         }
                     }
@@ -205,16 +205,14 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             override fun visitConstructor(declaration: IrConstructor): IrStatement {
                 // Body is transformed separately. See loop over constructors in rewriteDeclarations().
 
-                val transformedDescriptor = localClassConstructors[declaration.descriptor]?.transformedDescriptor
-                if (transformedDescriptor != null) {
-                    return IrConstructorImpl(declaration.startOffset, declaration.endOffset, declaration.origin,
-                            transformedDescriptor, declaration.body!!).apply {
-
-                        createParameterDeclarations()
+                val constructorContext = localClassConstructors[declaration.descriptor]
+                if (constructorContext != null) {
+                    return constructorContext.transformedDeclaration.apply {
+                        this.body = declaration.body!!
 
                         declaration.descriptor.valueParameters.filter { it.declaresDefaultValue() }.forEach { argument ->
                             val body = declaration.getDefault(argument)!!
-                            this.putDefault(oldParameterToNew[argument] as ValueParameterDescriptor, body)
+                            oldParameterToNew[argument]!!.owner.defaultValue = body
                         }
                     }
                 } else {
@@ -251,12 +249,13 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                 expression.transformChildrenVoid(this)
 
                 val oldCallee = expression.descriptor.original
-                val newCallee = transformedDescriptors[oldCallee] as ClassConstructorDescriptor? ?: return expression
+                val newCallee = transformedDeclarations[oldCallee] as IrConstructorSymbol? ?: return expression
 
                 val newExpression = IrDelegatingConstructorCallImpl(
                         expression.startOffset, expression.endOffset,
                         newCallee,
-                        remapTypeArguments(expression, newCallee)
+                        newCallee.descriptor,
+                        remapTypeArguments(expression, newCallee.descriptor)
                 ).fillArguments(expression)
 
                 return newExpression
@@ -271,17 +270,18 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                         oldExpression.getValueArgument(oldParameter as ValueParameterDescriptor)
                     } else {
                         // The callee expects captured value as argument.
-                        val capturedValueDescriptor =
+                        val capturedValueSymbol =
                                 newParameterToCaptured[newValueParameterDescriptor] ?:
                                         throw AssertionError("Non-mapped parameter $newValueParameterDescriptor")
 
+                        val capturedValueDescriptor = capturedValueSymbol.descriptor
                         localContext?.irGet(
                                 oldExpression.startOffset, oldExpression.endOffset,
                                 capturedValueDescriptor
                         ) ?:
                                 // Captured value is directly available for the caller.
                                 IrGetValueImpl(oldExpression.startOffset, oldExpression.endOffset,
-                                        oldParameterToNew[capturedValueDescriptor] ?: capturedValueDescriptor)
+                                        oldParameterToNew[capturedValueDescriptor] ?: capturedValueSymbol)
                     }
 
                 }
@@ -302,7 +302,8 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                         expression.startOffset, expression.endOffset,
                         expression.type, // TODO functional type for transformed descriptor
                         newCallee,
-                        remapTypeArguments(expression, newCallee),
+                        newCallee.descriptor,
+                        remapTypeArguments(expression, newCallee.descriptor),
                         expression.origin
                 ).fillArguments(expression)
 
@@ -319,14 +320,14 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             }
 
             override fun visitDeclarationReference(expression: IrDeclarationReference): IrExpression {
-                if (expression.descriptor in transformedDescriptors) {
+                if (expression.descriptor in transformedDeclarations) {
                     TODO()
                 }
                 return super.visitDeclarationReference(expression)
             }
 
             override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
-                if (declaration.descriptor in transformedDescriptors) {
+                if (declaration.descriptor in transformedDeclarations) {
                     TODO()
                 }
                 return super.visitDeclaration(declaration)
@@ -352,24 +353,18 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                     .filter { it.declaration.callsSuper() }
             assert(constructorsCallingSuper.any(), { "Expected at least one constructor calling super; class: $classDescriptor" })
 
-            localClassContext.capturedValueToField.forEach { capturedValue, fieldDescriptor ->
+            localClassContext.capturedValueToField.forEach { capturedValue, field ->
                 val startOffset = irClass.startOffset
                 val endOffset = irClass.endOffset
-                irClass.declarations.add(
-                        IrFieldImpl(
-                                startOffset, endOffset,
-                                DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE,
-                                fieldDescriptor
-                        )
-                )
+                irClass.declarations.add(field)
 
                 for (constructorContext in constructorsCallingSuper) {
                     val blockBody = constructorContext.declaration.body as? IrBlockBody
                             ?: throw AssertionError("Unexpected constructor body: ${constructorContext.declaration.body}")
                     val capturedValueExpression = constructorContext.irGet(startOffset, endOffset, capturedValue)!!
                     blockBody.statements.add(0,
-                            IrSetFieldImpl(startOffset, endOffset, fieldDescriptor,
-                                    IrGetValueImpl(startOffset, endOffset, classDescriptor.thisAsReceiverParameter),
+                            IrSetFieldImpl(startOffset, endOffset, field.symbol,
+                                    IrGetValueImpl(startOffset, endOffset, irClass.thisReceiver!!.symbol),
                                     capturedValueExpression, STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE))
                 }
             }
@@ -391,15 +386,16 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             rewriteFunctionBody(memberDeclaration, null)
         }
 
-        private fun createNewCall(oldCall: IrCall, newCallee: FunctionDescriptor) =
+        private fun createNewCall(oldCall: IrCall, newCallee: IrFunctionSymbol) =
                 if (oldCall is IrCallWithShallowCopy)
-                    oldCall.shallowCopy(oldCall.origin, newCallee, oldCall.superQualifier)
+                    oldCall.shallowCopy(oldCall.origin, newCallee, oldCall.superQualifierSymbol)
                 else
                     IrCallImpl(
                             oldCall.startOffset, oldCall.endOffset,
                             newCallee,
-                            remapTypeArguments(oldCall, newCallee),
-                            oldCall.origin, oldCall.superQualifier
+                            newCallee.descriptor,
+                            remapTypeArguments(oldCall, newCallee.descriptor),
+                            oldCall.origin, oldCall.superQualifierSymbol
                     )
 
         private fun remapTypeArguments(oldExpression: IrMemberAccessExpression, newCallee: CallableDescriptor): Map<TypeParameterDescriptor, KotlinType>? {
@@ -463,7 +459,6 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             }
 
             localFunctionContext.transformedDescriptor = newDescriptor
-            transformedDescriptors[oldDescriptor] = newDescriptor
 
             if (oldDescriptor.dispatchReceiverParameter != null) {
                 throw AssertionError("local functions must not have dispatch receiver")
@@ -490,12 +485,20 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             )
 
             oldDescriptor.extensionReceiverParameter?.let {
-                recordRemappedParameter(it, newDescriptor.extensionReceiverParameter!!)
+                newParameterToOld.putAbsentOrSame(newDescriptor.extensionReceiverParameter!!, it)
+            }
+
+            localFunctionContext.transformedDeclaration = with(localFunctionContext.declaration) {
+                IrFunctionImpl(startOffset, endOffset, origin, newDescriptor)
+            }.apply {
+                createParameterDeclarations()
+                recordTransformedValueParameters(localFunctionContext)
+                transformedDeclarations[oldDescriptor] = this.symbol
             }
         }
 
         private fun createTransformedValueParameters(localContext: LocalContextWithClosureAsParameters,
-                                                     capturedValues: List<ValueDescriptor>)
+                                                     capturedValues: List<IrValueSymbol>)
                 : List<ValueParameterDescriptor> {
 
             val oldDescriptor = localContext.descriptor
@@ -505,19 +508,37 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             val newValueParametersCount = closureParametersCount + oldDescriptor.valueParameters.size
 
             val newValueParameters = ArrayList<ValueParameterDescriptor>(newValueParametersCount).apply {
-                capturedValues.mapIndexedTo(this) { i, capturedValueDescriptor ->
-                    createUnsubstitutedCapturedValueParameter(newDescriptor, capturedValueDescriptor, i).apply {
-                        localContext.recordCapturedAsParameter(capturedValueDescriptor, this)
+                capturedValues.mapIndexedTo(this) { i, capturedValue ->
+                    createUnsubstitutedCapturedValueParameter(newDescriptor, capturedValue.descriptor, i).apply {
+                        newParameterToCaptured[this] = capturedValue
                     }
                 }
 
                 oldDescriptor.valueParameters.mapIndexedTo(this) { i, oldValueParameterDescriptor ->
                     createUnsubstitutedParameter(newDescriptor, oldValueParameterDescriptor, closureParametersCount + i).apply {
-                        recordRemappedParameter(oldValueParameterDescriptor, this)
+                        newParameterToOld.putAbsentOrSame(this, oldValueParameterDescriptor)
                     }
                 }
             }
             return newValueParameters
+        }
+
+        private fun IrFunction.recordTransformedValueParameters(localContext: LocalContextWithClosureAsParameters) {
+
+            valueParameters.forEach {
+                val capturedValue = newParameterToCaptured[it.descriptor]
+                if (capturedValue != null) {
+                    localContext.capturedValueToParameter[capturedValue.descriptor] = it.symbol
+                }
+            }
+
+            (listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters).forEach {
+                val oldParameter = newParameterToOld[it.descriptor]
+                if (oldParameter != null) {
+                    oldParameterToNew.putAbsentOrSame(oldParameter, it.symbol)
+                }
+            }
+
         }
 
         private fun createTransformedConstructorDescriptor(constructorContext: LocalClassConstructorContext) {
@@ -528,7 +549,6 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                     Annotations.EMPTY, oldDescriptor.isPrimary, oldDescriptor.source)
 
             constructorContext.transformedDescriptor = newDescriptor
-            transformedDescriptors[oldDescriptor] = newDescriptor
 
             // Do not substitute type parameters for now.
             val newTypeParameters = oldDescriptor.typeParameters
@@ -545,11 +565,19 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             newDescriptor.returnType = oldDescriptor.returnType
 
             oldDescriptor.dispatchReceiverParameter?.let {
-                recordRemappedParameter(it, newDescriptor.dispatchReceiverParameter!!)
+                newParameterToOld.putAbsentOrSame(newDescriptor.dispatchReceiverParameter!!, it)
             }
 
             oldDescriptor.extensionReceiverParameter?.let {
                 throw AssertionError("constructors can't have extension receiver")
+            }
+
+            constructorContext.transformedDeclaration = with(constructorContext.declaration) {
+                IrConstructorImpl(startOffset, endOffset, origin, newDescriptor)
+            }.apply {
+                createParameterDeclarations()
+                recordTransformedValueParameters(constructorContext)
+                transformedDeclarations[oldDescriptor] = this.symbol
             }
         }
 
@@ -563,7 +591,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                         Modality.FINAL,
                         Visibilities.PRIVATE,
                         /* isVar = */ false,
-                        suggestNameForCapturedValue(capturedValue),
+                        suggestNameForCapturedValue(capturedValue.descriptor),
                         CallableMemberDescriptor.Kind.SYNTHESIZED,
                         SourceElement.NO_SOURCE,
                         /* lateInit = */ false,
@@ -578,23 +606,17 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                 val extensionReceiverParameter: ReceiverParameterDescriptor? = null
 
                 fieldDescriptor.setType(
-                        capturedValue.type,
+                        capturedValue.descriptor.type,
                         emptyList<TypeParameterDescriptor>(),
                         classDescriptor.thisAsReceiverParameter,
                         extensionReceiverParameter)
 
-                localClassContext.capturedValueToField[capturedValue] = fieldDescriptor
+                localClassContext.capturedValueToField[capturedValue.descriptor] = IrFieldImpl(
+                        localClassContext.declaration.startOffset, localClassContext.declaration.endOffset,
+                        DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE,
+                        fieldDescriptor
+                )
             }
-        }
-
-        private fun LocalContextWithClosureAsParameters.recordCapturedAsParameter(
-                oldDescriptor: ValueDescriptor,
-                newDescriptor: ValueParameterDescriptor
-        ) {
-
-            capturedValueToParameter[oldDescriptor] = newDescriptor
-            newParameterToCaptured[newDescriptor] = oldDescriptor
-
         }
 
         private fun <K, V> MutableMap<K, V>.putAbsentOrSame(key: K, value: V) {
@@ -603,11 +625,6 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             if (current != value) {
                 error("$current != $value")
             }
-        }
-
-        private fun recordRemappedParameter(oldDescriptor: ParameterDescriptor, newDescriptor: ParameterDescriptor) {
-            oldParameterToNew.putAbsentOrSame(oldDescriptor, newDescriptor)
-            newParameterToOld.putAbsentOrSame(newDescriptor, oldDescriptor)
         }
 
         private fun suggestNameForCapturedValue(valueDescriptor: ValueDescriptor): Name =

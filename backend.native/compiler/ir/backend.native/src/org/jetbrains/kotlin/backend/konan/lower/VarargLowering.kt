@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -138,31 +139,31 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
                                         descriptor    = arrayHandle.setMethodDescriptor,
                                         typeArguments = null
                                 )
-                                setArrayElementCall.dispatchReceiver = irGet(arrayTmpVariable.descriptor)
-                                setArrayElementCall.putValueArgument(0, if (hasSpreadElement) irGet(indexTmpVariable.descriptor) else irConstInt(i))
-                                setArrayElementCall.putValueArgument(1, irGet(dst.descriptor))
+                                setArrayElementCall.dispatchReceiver = irGet(arrayTmpVariable.symbol)
+                                setArrayElementCall.putValueArgument(0, if (hasSpreadElement) irGet(indexTmpVariable.symbol) else irConstInt(i))
+                                setArrayElementCall.putValueArgument(1, irGet(dst.symbol))
                                 block.statements.add(setArrayElementCall)
                                 if (hasSpreadElement) {
-                                    block.statements.add(incrementVariable(indexTmpVariable.descriptor, kIntOne))
+                                    block.statements.add(incrementVariable(indexTmpVariable.symbol, kIntOne))
                                 }
                             } else {
-                                val arraySizeVariable = scope.createTemporaryVariable(irArraySize(arrayHandle, irGet(dst.descriptor)), "length".synthesizedString)
+                                val arraySizeVariable = scope.createTemporaryVariable(irArraySize(arrayHandle, irGet(dst.symbol)), "length".synthesizedString)
                                 block.statements.add(arraySizeVariable)
                                 val copyCall = irCall(arrayHandle.copyRangeToDescriptor, null).apply {
-                                    extensionReceiver = irGet(dst.descriptor)
-                                    putValueArgument(0, irGet(arrayTmpVariable.descriptor))  /* destination */
+                                    extensionReceiver = irGet(dst.symbol)
+                                    putValueArgument(0, irGet(arrayTmpVariable.symbol))  /* destination */
                                     putValueArgument(1, kIntZero)                            /* fromIndex */
-                                    putValueArgument(2, irGet(arraySizeVariable.descriptor)) /* toIndex */
-                                    putValueArgument(3, irGet(indexTmpVariable.descriptor))  /* destinationIndex */
+                                    putValueArgument(2, irGet(arraySizeVariable.symbol)) /* toIndex */
+                                    putValueArgument(3, irGet(indexTmpVariable.symbol))  /* destinationIndex */
                                 }
                                 block.statements.add(copyCall)
-                                block.statements.add(incrementVariable(indexTmpVariable.descriptor,
-                                        irGet(arraySizeVariable.descriptor)))
+                                block.statements.add(incrementVariable(indexTmpVariable.symbol,
+                                        irGet(arraySizeVariable.symbol)))
                                 log("element:$i:spread element> ${ir2string(element.expression)}")
                             }
                         }
                     }
-                    block.statements.add(irGet(arrayTmpVariable.descriptor))
+                    block.statements.add(irGet(arrayTmpVariable.symbol))
                     return block
                 }
             }
@@ -203,9 +204,9 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
         }
     }
 
-    private fun IrBuilderWithScope.incrementVariable(descriptor: VariableDescriptor, value: IrExpression): IrExpression {
-        return irSetVar(descriptor, intPlus().apply {
-            dispatchReceiver = irGet(descriptor)
+    private fun IrBuilderWithScope.incrementVariable(symbol: IrVariableSymbol, value: IrExpression): IrExpression {
+        return irSetVar(symbol, intPlus().apply {
+            dispatchReceiver = irGet(symbol)
             putValueArgument(0, value)
         })
     }
@@ -216,7 +217,7 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
             val notSpreadElementCount = expression.elements.filter { it !is IrSpreadElement}.size
             val initialValue = irConstInt(notSpreadElementCount) as IrExpression
             return vars.filter{it.key is IrSpreadElement}.toList().fold( initial = initialValue) { result, it ->
-                val arraySize = irArraySize(arrayHandle, irGet(it.second.descriptor))
+                val arraySize = irArraySize(arrayHandle, irGet(it.second.symbol))
                 increment(result, arraySize)
             }
         }

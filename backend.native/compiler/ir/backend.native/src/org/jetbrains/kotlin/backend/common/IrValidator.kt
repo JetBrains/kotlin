@@ -203,7 +203,7 @@ private class IrValidator(val context: BackendContext, performHeavyValidations: 
 
     private fun recordDeclaration(declaration: IrDeclaration) {
         if (foundDeclarations.isAlreadyDeclared(declaration)) {
-            if (declaration.descriptor !is ReceiverParameterDescriptor && declaration !is IrTypeParameter) {
+            if (declaration !is IrValueParameter && declaration !is IrTypeParameter) {
                 // TODO: remove the check.
                 error(declaration, "redeclaration")
             }

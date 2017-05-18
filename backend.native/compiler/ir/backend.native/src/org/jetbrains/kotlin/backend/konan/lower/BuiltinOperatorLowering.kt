@@ -19,17 +19,15 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.ENABLE_ASSERTIONS
-import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
 import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.util.atMostOne
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isNullConst
+import org.jetbrains.kotlin.ir.util.type
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -89,17 +87,17 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
 
         return when (descriptor) {
             irBuiltins.eqeq -> {
-                val binary = expression as IrBinaryPrimitiveImpl
-                lowerEqeq(binary.argument0, binary.argument1, expression.startOffset, expression.endOffset)
+                lowerEqeq(expression.getValueArgument(0)!!, expression.getValueArgument(1)!!,
+                        expression.startOffset, expression.endOffset)
             }
 
             irBuiltins.eqeqeq -> lowerEqeqeq(expression)
 
             irBuiltins.throwNpe -> IrCallImpl(expression.startOffset, expression.endOffset,
-                    builtIns.getKonanInternalFunctions("ThrowNullPointerException").single())
+                    context.ir.symbols.ThrowNullPointerException)
 
             irBuiltins.noWhenBranchMatchedException -> IrCallImpl(expression.startOffset, expression.endOffset,
-                    builtIns.getKonanInternalFunctions("ThrowNoWhenBranchMatchedException").single())
+                    context.ir.symbols.ThrowNoWhenBranchMatchedException)
 
             else -> expression
         }
@@ -129,29 +127,30 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
         }
     }
 
-    private fun selectEqualsFunction(lhs: IrExpression, rhs: IrExpression): FunctionDescriptor {
+    private fun selectEqualsFunction(lhs: IrExpression, rhs: IrExpression): IrSimpleFunctionSymbol {
         val nullableNothingType = builtIns.nullableNothingType
         if (lhs.type.isSubtypeOf(nullableNothingType) && rhs.type.isSubtypeOf(nullableNothingType)) {
             // Compare by reference if each part is either `Nothing` or `Nothing?`:
-            return irBuiltins.eqeqeq
+            return irBuiltins.eqeqeqSymbol
         }
 
         // TODO: areEqualByValue intrinsics are specially treated by code generator
         // and thus can be declared synthetically in the compiler instead of explicitly in the runtime.
 
         // Find a type-compatible `konan.internal.areEqualByValue` intrinsic:
-        builtIns.getKonanInternalFunctions("areEqualByValue").atMostOne {
-            lhs.type.isSubtypeOf(it.valueParameters[0].type) && rhs.type.isSubtypeOf(it.valueParameters[1].type)
+        context.ir.symbols.areEqualByValue.atMostOne {
+            lhs.type.isSubtypeOf(it.owner.valueParameters[0].type) &&
+                    rhs.type.isSubtypeOf(it.owner.valueParameters[1].type)
         }?.let {
             return it
         }
 
         return if (lhs.isNullConst() || rhs.isNullConst()) {
             // or compare by reference if left or right part is `null`:
-            irBuiltins.eqeqeq
+            irBuiltins.eqeqeqSymbol
         } else {
             // or use the general implementation:
-            builtIns.getKonanInternalFunctions("areEqual").single()
+            context.ir.symbols.areEqual
         }
     }
 }

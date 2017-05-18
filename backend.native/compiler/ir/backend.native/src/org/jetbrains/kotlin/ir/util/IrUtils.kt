@@ -19,17 +19,21 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.types.KotlinType
 
 /**
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
@@ -53,6 +57,32 @@ internal fun IrMemberAccessExpression.getArguments(): List<Pair<ParameterDescrip
         val arg = getValueArgument(it.index)
         if (arg != null) {
             res += (it to arg)
+        }
+    }
+
+    return res
+}
+
+/**
+ * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
+ * The arguments are to be evaluated in the same order as they appear in the resulting list.
+ */
+internal fun IrFunctionAccessExpression.getArgumentsWithSymbols(): List<Pair<IrValueParameterSymbol, IrExpression>> {
+    val res = mutableListOf<Pair<IrValueParameterSymbol, IrExpression>>()
+    val irFunction = symbol.owner as IrFunction
+
+    dispatchReceiver?.let {
+        res += (irFunction.dispatchReceiverParameter!!.symbol to it)
+    }
+
+    extensionReceiver?.let {
+        res += (irFunction.extensionReceiverParameter!!.symbol to it)
+    }
+
+    irFunction.valueParameters.forEach {
+        val arg = getValueArgument(it.descriptor as ValueParameterDescriptor)
+        if (arg != null) {
+            res += (it.symbol to arg)
         }
     }
 
@@ -146,7 +176,93 @@ fun IrClass.createParameterDeclarations() {
 }
 
 private fun IrElement.innerStartOffset(descriptor: DeclarationDescriptorWithSource): Int =
-        (descriptor.source as? PsiSourceElement)?.psi?.startOffset ?: this.startOffset
+        descriptor.startOffset ?: this.startOffset
 
 private fun IrElement.innerEndOffset(descriptor: DeclarationDescriptorWithSource): Int =
-        (descriptor.source as? PsiSourceElement)?.psi?.endOffset ?: this.endOffset
+       descriptor.endOffset ?: this.endOffset
+
+val DeclarationDescriptorWithSource.startOffset: Int? get() = (this.source as? PsiSourceElement)?.psi?.startOffset
+val DeclarationDescriptorWithSource.endOffset: Int? get() = (this.source as? PsiSourceElement)?.psi?.endOffset
+
+val DeclarationDescriptorWithSource.startOffsetOrUndefined: Int get() = startOffset ?: UNDEFINED_OFFSET
+val DeclarationDescriptorWithSource.endOffsetOrUndefined: Int get() = endOffset ?: UNDEFINED_OFFSET
+
+val IrClassSymbol.functions: Sequence<IrSimpleFunctionSymbol>
+    get() = this.owner.declarations.asSequence().filterIsInstance<IrSimpleFunction>().map { it.symbol }
+
+val IrClassSymbol.constructors: Sequence<IrConstructorSymbol>
+    get() = this.owner.declarations.asSequence().filterIsInstance<IrConstructor>().map { it.symbol }
+
+val IrFunction.explicitParameters: List<IrValueParameterSymbol>
+    get() = (listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters).map { it.symbol }
+
+val IrValueParameter.type: KotlinType
+    get() = this.descriptor.type
+
+val IrClass.defaultType: KotlinType
+    get() = this.descriptor.defaultType
+
+class IrSymbolBindingChecker : IrElementVisitorVoid {
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
+    }
+
+    override fun visitDeclarationReference(expression: IrDeclarationReference) {
+        super.visitDeclarationReference(expression)
+
+        expression.symbol.ensureBound(expression)
+    }
+
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
+        super.visitFunctionAccess(expression)
+
+        expression.symbol.ensureBound(expression)
+    }
+
+    override fun visitFunctionReference(expression: IrFunctionReference) {
+        super.visitFunctionReference(expression)
+
+        expression.symbol.ensureBound(expression)
+    }
+
+    override fun visitCall(expression: IrCall) {
+        super.visitCall(expression)
+
+        expression.superQualifierSymbol?.ensureBound(expression)
+    }
+
+    override fun visitPropertyReference(expression: IrPropertyReference) {
+        super.visitPropertyReference(expression)
+
+        expression.field?.ensureBound(expression)
+        expression.getter?.ensureBound(expression)
+        expression.setter?.ensureBound(expression)
+    }
+
+    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) {
+        super.visitLocalDelegatedPropertyReference(expression)
+
+        expression.delegate.ensureBound(expression)
+        expression.getter.ensureBound(expression)
+        expression.setter?.ensureBound(expression)
+    }
+
+    override fun visitReturn(expression: IrReturn) {
+        super.visitReturn(expression)
+
+        expression.returnTargetSymbol.ensureBound(expression)
+    }
+
+    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) {
+        super.visitInstanceInitializerCall(expression)
+
+        expression.classSymbol.ensureBound(expression)
+    }
+
+    private fun IrSymbol.ensureBound(expression: IrExpression) {
+        if (!this.isBound) {
+            throw Error("Unbound symbol ${this} found in ${expression.render()}")
+        }
+    }
+
+}

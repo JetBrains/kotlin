@@ -32,15 +32,15 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -55,22 +55,34 @@ import java.util.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
 
-internal class SpecialDescriptorsFactory(val context: Context) {
-    private val enumSpecialDescriptorsFactory by lazy { EnumSpecialDescriptorsFactory(context) }
-    private val outerThisDescriptors = mutableMapOf<ClassDescriptor, PropertyDescriptor>()
+internal class SpecialDeclarationsFactory(val context: Context) {
+    private val enumSpecialDeclarationsFactory by lazy { EnumSpecialDeclarationsFactory(context) }
+    private val outerThisFields = mutableMapOf<ClassDescriptor, IrField>()
     private val bridgesDescriptors = mutableMapOf<Pair<FunctionDescriptor, BridgeDirections>, FunctionDescriptor>()
     private val loweredEnums = mutableMapOf<ClassDescriptor, LoweredEnum>()
 
-    fun getOuterThisFieldDescriptor(innerClassDescriptor: ClassDescriptor): PropertyDescriptor =
+    object DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS :
+            IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
+
+    fun getOuterThisField(innerClassDescriptor: ClassDescriptor): IrField =
         if (!innerClassDescriptor.isInner) throw AssertionError("Class is not inner: $innerClassDescriptor")
-        else outerThisDescriptors.getOrPut(innerClassDescriptor) {
+        else outerThisFields.getOrPut(innerClassDescriptor) {
             val outerClassDescriptor = DescriptorUtils.getContainingClass(innerClassDescriptor) ?:
                     throw AssertionError("No containing class for inner class $innerClassDescriptor")
 
             val receiver = ReceiverParameterDescriptorImpl(innerClassDescriptor, ImplicitClassReceiver(innerClassDescriptor))
-            PropertyDescriptorImpl.create(innerClassDescriptor, Annotations.EMPTY, Modality.FINAL, Visibilities.PRIVATE,
-                false, "this$0".synthesizedName, CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE,
-                false, false, false, false, false, false).initialize(outerClassDescriptor.defaultType, dispatchReceiverParameter = receiver)
+            val descriptor = PropertyDescriptorImpl.create(
+                    innerClassDescriptor, Annotations.EMPTY, Modality.FINAL,
+                    Visibilities.PRIVATE, false, "this$0".synthesizedName, CallableMemberDescriptor.Kind.SYNTHESIZED,
+                    SourceElement.NO_SOURCE, false, false, false, false, false, false
+            ).initialize(outerClassDescriptor.defaultType, dispatchReceiverParameter = receiver)
+
+            IrFieldImpl(
+                    innerClassDescriptor.startOffsetOrUndefined,
+                    innerClassDescriptor.endOffsetOrUndefined,
+                    DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS,
+                    descriptor
+            )
         }
 
     fun getBridgeDescriptor(overriddenFunctionDescriptor: OverriddenFunctionDescriptor): FunctionDescriptor {
@@ -93,7 +105,7 @@ internal class SpecialDescriptorsFactory(val context: Context) {
     fun getLoweredEnum(enumClassDescriptor: ClassDescriptor): LoweredEnum {
         assert(enumClassDescriptor.kind == ClassKind.ENUM_CLASS, { "Expected enum class but was: $enumClassDescriptor" })
         return loweredEnums.getOrPut(enumClassDescriptor) {
-            enumSpecialDescriptorsFactory.createLoweredEnum(enumClassDescriptor)
+            enumSpecialDeclarationsFactory.createLoweredEnum(enumClassDescriptor)
         }
     }
 
@@ -219,7 +231,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     override val builtIns: KonanBuiltIns by lazy(PUBLICATION) { moduleDescriptor.builtIns as KonanBuiltIns }
 
-    val specialDescriptorsFactory = SpecialDescriptorsFactory(this)
+    val specialDeclarationsFactory = SpecialDeclarationsFactory(this)
     val reflectionTypes: ReflectionTypes by lazy(PUBLICATION) { ReflectionTypes(moduleDescriptor) }
     private val vtableBuilders = mutableMapOf<ClassDescriptor, ClassVtablesBuilder>()
 
@@ -233,6 +245,9 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     // to dump this information into generated file.
     var serializedLinkData: LinkData? = null
 
+    @Deprecated("")
+    lateinit var psi2IrGeneratorContext: GeneratorContext
+
     // TODO: make lateinit?
     var irModule: IrModuleFragment? = null
         set(module: IrModuleFragment?) {
@@ -244,7 +259,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
             ir = Ir(this, module)
         }
 
-    lateinit var ir: Ir
+    override lateinit var ir: Ir
 
     override val irBuiltIns
         get() = ir.irModule.irBuiltins

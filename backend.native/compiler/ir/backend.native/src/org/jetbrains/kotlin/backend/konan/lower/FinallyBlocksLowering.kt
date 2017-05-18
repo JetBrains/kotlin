@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
@@ -204,17 +205,21 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
                                 name                  = Name.identifier("t"),
                                 outType               = context.builtIns.throwable.defaultType
                         )
+                        val catchParameter = IrVariableImpl(
+                                startOffset, endOffset, IrDeclarationOrigin.CATCH_PARAMETER, parameter)
+
                         val syntheticTry = IrTryImpl(
                                 startOffset       = startOffset,
                                 endOffset         = endOffset,
                                 type              = context.builtIns.nothingType,
                                 tryResult         = transformedTry,
                                 catches           = listOf(
-                                        irCatch(parameter,
-                                                irBlock {
+                                        irCatch(catchParameter).apply {
+                                                result = irBlock {
                                                     +finallyExpression.copy()
-                                                    +irThrow(irGet(parameter))
-                                                })),
+                                                    +irThrow(irGet(catchParameter.symbol))
+                                                }
+                                        }),
                                 finallyExpression = null
                         )
                         using(TryScope(syntheticTry, transformedFinallyExpression, this)) {
@@ -243,21 +248,14 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
                             +finallyExpression.copy()
                         }
                         else -> irBlock(value, null, returnType) {
-                            val tmp = IrTemporaryVariableDescriptorImpl(
-                                    functionDescriptor,
-                                    "tmp${tempIndex++}".synthesizedName,
-                                    returnType
-                            )
-                            +irVar(tmp, irReturnableBlock(descriptor) {
+                            val tmp = irTemporary(irReturnableBlock(descriptor) {
                                 +irReturn(descriptor, value)
                             })
                             +finallyExpression.copy()
-                            +irGet(tmp)
+                            +irGet(tmp.symbol)
                         }
                     }
                 }
-
-                private var tempIndex = 0
 
                 private fun getFakeFunctionDescriptor(name: String, returnType: KotlinType): FunctionDescriptor {
                     return SimpleFunctionDescriptorImpl.create(

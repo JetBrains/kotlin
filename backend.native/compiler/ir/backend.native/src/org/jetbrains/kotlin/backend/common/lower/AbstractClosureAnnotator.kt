@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCatch
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 // TODO: synchronize with JVM BE
 // TODO: rename the file.
-class Closure(val capturedValues: List<ValueDescriptor> = emptyList())
+class Closure(val capturedValues: List<IrValueSymbol> = emptyList())
 
 class ClosureAnnotator   {
     private val closureBuilders = mutableMapOf<DeclarationDescriptor, ClosureBuilder>()
@@ -51,7 +52,7 @@ class ClosureAnnotator   {
     }
 
     private class ClosureBuilder(val owner: DeclarationDescriptor) {
-        val capturedValues = mutableSetOf<ValueDescriptor>()
+        val capturedValues = mutableSetOf<IrValueSymbol>()
         private val declaredValues = mutableSetOf<ValueDescriptor>()
         private val includes = mutableSetOf<ClosureBuilder>()
 
@@ -63,11 +64,11 @@ class ClosureAnnotator   {
          *                  variables declared in the node.
          */
         fun buildClosure(): Closure {
-            val result = mutableSetOf<ValueDescriptor>().apply { addAll(capturedValues) }
+            val result = mutableSetOf<IrValueSymbol>().apply { addAll(capturedValues) }
             includes.forEach {
                 if (!it.processed) {
                     it.processed = true
-                    it.buildClosure().capturedValues.filterTo(result) { isExternal(it) }
+                    it.buildClosure().capturedValues.filterTo(result) { isExternal(it.descriptor) }
                 }
             }
             // TODO: We can save the closure and reuse it.
@@ -84,9 +85,9 @@ class ClosureAnnotator   {
                 declaredValues.add(valueDescriptor)
         }
 
-        fun seeVariable(valueDescriptor: ValueDescriptor) {
-            if (isExternal(valueDescriptor))
-                capturedValues.add(valueDescriptor)
+        fun seeVariable(value: IrValueSymbol) {
+            if (isExternal(value.descriptor))
+                capturedValues.add(value)
         }
 
         fun isExternal(valueDescriptor: ValueDescriptor): Boolean {
@@ -159,7 +160,7 @@ class ClosureAnnotator   {
         }
 
         override fun visitVariableAccess(expression: IrValueAccessExpression) {
-            closuresStack.peek()?.seeVariable(expression.descriptor)
+            closuresStack.peek()?.seeVariable(expression.symbol)
             super.visitVariableAccess(expression)
         }
 

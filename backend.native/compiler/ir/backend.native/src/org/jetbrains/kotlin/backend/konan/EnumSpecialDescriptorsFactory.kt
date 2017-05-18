@@ -22,7 +22,13 @@ import org.jetbrains.kotlin.backend.konan.ir.createSimpleDelegatingConstructorDe
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
+import org.jetbrains.kotlin.ir.util.endOffsetOrUndefined
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.startOffsetOrUndefined
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -32,19 +38,33 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.replace
 
-internal data class LoweredEnum(val implObjectDescriptor: ClassDescriptor,
-                                val valuesProperty: PropertyDescriptor,
-                                val valuesGetter: FunctionDescriptor,
-                                val itemGetter: FunctionDescriptor,
+
+internal object DECLARATION_ORIGIN_ENUM :
+        IrDeclarationOriginImpl("ENUM")
+
+internal data class LoweredEnum(val implObject: IrClass,
+                                val valuesField: IrField,
+                                val valuesGetter: IrSimpleFunction,
+                                val itemGetterSymbol: IrFunctionSymbol,
+                                val itemGetterDescriptor: FunctionDescriptor,
                                 val entriesMap: Map<Name, Int>)
 
-internal class EnumSpecialDescriptorsFactory(val context: Context) {
+internal class EnumSpecialDeclarationsFactory(val context: Context) {
     fun createLoweredEnum(enumClassDescriptor: ClassDescriptor): LoweredEnum {
+
+        val startOffset = enumClassDescriptor.startOffsetOrUndefined
+        val endOffset = enumClassDescriptor.endOffsetOrUndefined
+
         val implObjectDescriptor = ClassDescriptorImpl(enumClassDescriptor, "OBJECT".synthesizedName, Modality.FINAL,
                 ClassKind.OBJECT, listOf(context.builtIns.anyType), SourceElement.NO_SOURCE, false)
 
         val valuesProperty = createEnumValuesField(enumClassDescriptor, implObjectDescriptor)
-        val valuesGetter = createValuesGetterDescriptor(enumClassDescriptor, implObjectDescriptor)
+        val valuesField = IrFieldImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, valuesProperty)
+
+        val valuesGetterDescriptor = createValuesGetterDescriptor(enumClassDescriptor, implObjectDescriptor)
+        val valuesGetter = IrFunctionImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, valuesGetterDescriptor).apply {
+            createParameterDeclarations()
+        }
 
         val memberScope = MemberScope.Empty
 
@@ -53,9 +73,18 @@ internal class EnumSpecialDescriptorsFactory(val context: Context) {
         val constructorDescriptor = implObjectDescriptor.createSimpleDelegatingConstructorDescriptor(constructorOfAny, true)
 
         implObjectDescriptor.initialize(memberScope, setOf(constructorDescriptor), constructorDescriptor)
+        val implObject = IrClassImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, implObjectDescriptor).apply {
+            createParameterDeclarations()
+        }
 
-        return LoweredEnum(implObjectDescriptor, valuesProperty, valuesGetter,
-                getEnumItemGetter(enumClassDescriptor), createEnumEntriesMap(enumClassDescriptor))
+        val (itemGetterSymbol, itemGetterDescriptor) = getEnumItemGetter(enumClassDescriptor)
+
+        return LoweredEnum(
+                implObject,
+                valuesField,
+                valuesGetter,
+                itemGetterSymbol, itemGetterDescriptor,
+                createEnumEntriesMap(enumClassDescriptor))
     }
 
     private fun createValuesGetterDescriptor(enumClassDescriptor: ClassDescriptor, implObjectDescriptor: ClassDescriptor)
@@ -87,15 +116,15 @@ internal class EnumSpecialDescriptorsFactory(val context: Context) {
     }
 
     private val kotlinPackage = context.irModule!!.descriptor.getPackage(FqName("kotlin"))
-    private val genericArrayType = kotlinPackage.memberScope.getContributedClassifier(Name.identifier("Array"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+    private val genericArrayType = context.ir.symbols.array.descriptor
 
-    private fun getEnumItemGetter(enumClassDescriptor: ClassDescriptor): FunctionDescriptor {
-        val getter = genericArrayType.unsubstitutedMemberScope.getContributedFunctions(Name.identifier("get"), NoLookupLocation.FROM_BACKEND).single()
+    private fun getEnumItemGetter(enumClassDescriptor: ClassDescriptor): Pair<IrFunctionSymbol, FunctionDescriptor> {
+        val getter = context.ir.symbols.array.functions.single { it.descriptor.name == Name.identifier("get") }
 
         val typeParameterT = genericArrayType.declaredTypeParameters[0]
         val enumClassType = enumClassDescriptor.defaultType
         val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameterT.typeConstructor to TypeProjectionImpl(enumClassType)))
-        return getter.substitute(typeSubstitutor)!!
+        return getter to getter.descriptor.substitute(typeSubstitutor)!!
     }
 
     private fun createEnumEntriesMap(enumClassDescriptor: ClassDescriptor): Map<Name, Int> {

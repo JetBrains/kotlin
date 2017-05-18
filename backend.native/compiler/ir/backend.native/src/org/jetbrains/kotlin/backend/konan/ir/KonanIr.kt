@@ -16,31 +16,53 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrContainerExpressionBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
+import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrBindableSymbolBase
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 //-----------------------------------------------------------------------------//
 
-interface IrReturnableBlock: IrBlock {
-    val descriptor: CallableDescriptor
+interface IrReturnableBlockSymbol : IrFunctionSymbol, IrBindableSymbol<FunctionDescriptor, IrReturnableBlock>
+
+interface IrReturnableBlock: IrBlock, IrSymbolOwner {
+    override val symbol: IrReturnableBlockSymbol
+    val descriptor: FunctionDescriptor
 }
 
+class IrReturnableBlockSymbolImpl(descriptor: FunctionDescriptor) :
+        IrBindableSymbolBase<FunctionDescriptor, IrReturnableBlock>(descriptor),
+        IrReturnableBlockSymbol
+
 class IrReturnableBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType,
-                            override val descriptor: CallableDescriptor, origin: IrStatementOrigin? = null)
+                            override val symbol: IrReturnableBlockSymbol, origin: IrStatementOrigin? = null)
     : IrContainerExpressionBase(startOffset, endOffset, type, origin), IrReturnableBlock {
+
+    override val descriptor = symbol.descriptor
+
     constructor(startOffset: Int, endOffset: Int, type: KotlinType,
-                descriptor: CallableDescriptor, origin: IrStatementOrigin?, statements: List<IrStatement>) :
+                descriptor: FunctionDescriptor, origin: IrStatementOrigin? = null) :
+            this(startOffset, endOffset, type, IrReturnableBlockSymbolImpl(descriptor), origin)
+
+    constructor(startOffset: Int, endOffset: Int, type: KotlinType,
+                descriptor: FunctionDescriptor, origin: IrStatementOrigin?, statements: List<IrStatement>) :
         this(startOffset, endOffset, type, descriptor, origin) {
         this.statements.addAll(statements)
+    }
+
+    init {
+        symbol.bind(this)
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

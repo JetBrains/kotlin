@@ -33,10 +33,12 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.expressions.IrCallableReference
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -48,39 +50,48 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
     private val kotlinPackage = context.irModule!!.descriptor.getPackage(FqName("kotlin"))
     private val genericArrayType = kotlinPackage.memberScope.getContributedClassifier(Name.identifier("Array"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
 
-    private fun getKPropertyImplConstructorDescriptor(receiverTypes: List<KotlinType>,
-                                                      returnType: KotlinType,
-                                                      isLocal: Boolean,
-                                                      isMutable: Boolean) : ClassConstructorDescriptor {
-        val classDescriptor =
+    private fun getKPropertyImplConstructor(receiverTypes: List<KotlinType>,
+                                            returnType: KotlinType,
+                                            isLocal: Boolean,
+                                            isMutable: Boolean) : Pair<IrConstructorSymbol, ClassConstructorDescriptor> {
+
+        val symbols = context.ir.symbols
+
+        val classSymbol =
                 if (isLocal) {
                     assert(receiverTypes.isEmpty(), { "Local delegated property cannot have explicit receiver" })
                     when {
-                        isMutable -> reflectionTypes.kLocalDelegatedMutablePropertyImpl
-                        else -> reflectionTypes.kLocalDelegatedPropertyImpl
+                        isMutable -> symbols.kLocalDelegatedMutablePropertyImpl
+                        else -> symbols.kLocalDelegatedPropertyImpl
                     }
                 } else {
                     when (receiverTypes.size) {
                         0 -> when {
-                            isMutable -> reflectionTypes.kMutableProperty0Impl
-                            else -> reflectionTypes.kProperty0Impl
+                            isMutable -> symbols.kMutableProperty0Impl
+                            else -> symbols.kProperty0Impl
                         }
                         1 -> when {
-                            isMutable -> reflectionTypes.kMutableProperty1Impl
-                            else -> reflectionTypes.kProperty1Impl
+                            isMutable -> symbols.kMutableProperty1Impl
+                            else -> symbols.kProperty1Impl
                         }
                         2 -> when {
-                            isMutable -> reflectionTypes.kMutableProperty2Impl
-                            else -> reflectionTypes.kProperty2Impl
+                            isMutable -> symbols.kMutableProperty2Impl
+                            else -> symbols.kProperty2Impl
                         }
                         else -> throw AssertionError("More than 2 receivers is not allowed")
                     }
                 }
+
+        val classDescriptor = classSymbol.descriptor
+
         val typeParameters = classDescriptor.declaredTypeParameters
         val arguments = (receiverTypes + listOf(returnType))
                 .mapIndexed { index, type -> typeParameters[index].typeConstructor to TypeProjectionImpl(type) }
                 .toMap()
-        return classDescriptor.unsubstitutedPrimaryConstructor!!.substitute(TypeSubstitutor.create(arguments))!!
+
+        val constructorSymbol = classSymbol.constructors.single()
+
+        return constructorSymbol to constructorSymbol.descriptor.substitute(TypeSubstitutor.create(arguments))!!
     }
 
     private fun ClassDescriptor.replace(vararg type: KotlinType): SimpleType {
@@ -90,14 +101,21 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
     override fun lower(irFile: IrFile) {
         val kProperties = mutableMapOf<VariableDescriptorWithAccessors, Pair<IrExpression, Int>>()
 
-        val arrayItemGetter = genericArrayType.unsubstitutedMemberScope.getContributedFunctions(Name.identifier("get"),
-                NoLookupLocation.FROM_BACKEND).single()
+        val arrayClass = context.ir.symbols.array
+
+        val arrayItemGetter = arrayClass.functions.single { it.descriptor.name == Name.identifier("get") }
+
         val typeParameterT = genericArrayType.declaredTypeParameters[0]
         val kPropertyImplType = reflectionTypes.kProperty1Impl.replace(context.builtIns.anyType, context.builtIns.anyType)
         val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameterT.typeConstructor to TypeProjectionImpl(kPropertyImplType)))
-        val substitutedArrayItemGetter = arrayItemGetter.substitute(typeSubstitutor)!!
+        val substitutedArrayItemGetter = arrayItemGetter.descriptor.substitute(typeSubstitutor)!!
 
-        val kPropertiesField = createKPropertiesFieldDescriptor(irFile.packageFragmentDescriptor, genericArrayType.replace(kPropertyImplType))
+        val kPropertiesField = IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
+                createKPropertiesFieldDescriptor(irFile.packageFragmentDescriptor,
+                        genericArrayType.replace(kPropertyImplType)
+                )
+        )
 
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitFunction(declaration: IrFunction): IrStatement {
@@ -120,22 +138,52 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
 
             }
 
-            override fun visitCallableReference(expression: IrCallableReference): IrExpression {
+            override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
                 expression.transformChildrenVoid(this)
-                val propertyDescriptor = expression.descriptor as? VariableDescriptorWithAccessors
-                if (propertyDescriptor == null) return expression
+
                 val receiversCount = listOf(expression.dispatchReceiver, expression.extensionReceiver).count { it != null }
-                if (receiversCount == 1 && propertyDescriptor is PropertyDescriptor) // Has receiver and is not local delegated.
-                    return createKProperty(expression, propertyDescriptor)
+                if (receiversCount == 1) // Has receiver.
+                    return createKProperty(expression)
                 else if (receiversCount == 2)
-                    throw AssertionError("Callable reference to properties with two receivers is not allowed: $propertyDescriptor")
+                    throw AssertionError("Callable reference to properties with two receivers is not allowed: ${expression.descriptor}")
                 else { // Cache KProperties with no arguments.
-                    val field = kProperties.getOrPut(propertyDescriptor) {
-                        createKProperty(expression, propertyDescriptor) to kProperties.size
+                    val field = kProperties.getOrPut(expression.descriptor) {
+                        createKProperty(expression) to kProperties.size
                     }
 
-                    return IrCallImpl(expression.startOffset, expression.endOffset, substitutedArrayItemGetter).apply {
-                        dispatchReceiver = IrGetFieldImpl(expression.startOffset, expression.endOffset, kPropertiesField)
+                    return IrCallImpl(
+                            expression.startOffset, expression.endOffset,
+                            arrayItemGetter, substitutedArrayItemGetter
+                    ).apply {
+                        dispatchReceiver =
+                                IrGetFieldImpl(expression.startOffset, expression.endOffset, kPropertiesField.symbol)
+
+                        putValueArgument(0, IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, field.second))
+                    }
+                }
+
+            }
+
+            override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
+                expression.transformChildrenVoid(this)
+                val propertyDescriptor = expression.descriptor
+
+                val receiversCount = listOf(expression.dispatchReceiver, expression.extensionReceiver).count { it != null }
+                if (receiversCount == 2)
+                    throw AssertionError("Callable reference to properties with two receivers is not allowed: $propertyDescriptor")
+                else { // Cache KProperties with no arguments.
+                    // TODO: what about `receiversCount == 1` case?
+                    val field = kProperties.getOrPut(propertyDescriptor) {
+                        createLocalKProperty(expression, propertyDescriptor) to kProperties.size
+                    }
+
+                    return IrCallImpl(
+                            expression.startOffset, expression.endOffset,
+                            arrayItemGetter, substitutedArrayItemGetter
+                    ).apply {
+                        dispatchReceiver =
+                                IrGetFieldImpl(expression.startOffset, expression.endOffset, kPropertiesField.symbol)
+
                         putValueArgument(0, IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, field.second))
                     }
                 }
@@ -146,72 +194,93 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
         if (kProperties.isNotEmpty()) {
             val initializers = kProperties.values.sortedBy { it.second }.map { it.first }
             // TODO: move to object for lazy initialization.
-            irFile.declarations.add(0, IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
-                    kPropertiesField,
-                    IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            context.createArrayOfExpression(kPropertyImplType, initializers, UNDEFINED_OFFSET, UNDEFINED_OFFSET))))
+            irFile.declarations.add(0, kPropertiesField.apply {
+                initializer = IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        context.createArrayOfExpression(kPropertyImplType, initializers, UNDEFINED_OFFSET, UNDEFINED_OFFSET))
+            })
         }
     }
 
-    private fun createKProperty(expression: IrCallableReference, propertyDescriptor: VariableDescriptorWithAccessors): IrCallImpl {
+    private fun createKProperty(expression: IrPropertyReference): IrCallImpl {
         val startOffset = expression.startOffset
         val endOffset = expression.endOffset
         val receiverTypes = mutableListOf<KotlinType>()
-        val isLocal = propertyDescriptor !is PropertyDescriptor
+
+        val propertyDescriptor = expression.descriptor
 
         val returnType = propertyDescriptor.type
-        val getterCallableReference = propertyDescriptor.getter.let {
-            if (it == null || isLocal) null
-            else {
-                val getter = propertyDescriptor.getter!!
-                getter.extensionReceiverParameter.let {
-                    if (it != null && expression.extensionReceiver == null)
-                        receiverTypes.add(it.type)
-                }
-                getter.dispatchReceiverParameter.let {
-                    if (it != null && expression.dispatchReceiver == null)
-                        receiverTypes.add(it.type)
-                }
-                val getterKFunctionType = context.reflectionTypes.getKFunctionType(
-                        annotations = Annotations.EMPTY,
-                        receiverType = receiverTypes.firstOrNull(),
-                        parameterTypes = if (receiverTypes.size < 2) listOf() else listOf(receiverTypes[1]),
-                        returnType = returnType)
-                IrFunctionReferenceImpl(startOffset, endOffset, getterKFunctionType, getter, null).apply {
-                    dispatchReceiver = expression.dispatchReceiver
-                    extensionReceiver = expression.extensionReceiver
-                }
+        val getterCallableReference = propertyDescriptor.getter?.let { getter ->
+            getter.extensionReceiverParameter.let {
+                if (it != null && expression.extensionReceiver == null)
+                    receiverTypes.add(it.type)
+            }
+            getter.dispatchReceiverParameter.let {
+                if (it != null && expression.dispatchReceiver == null)
+                    receiverTypes.add(it.type)
+            }
+            val getterKFunctionType = context.reflectionTypes.getKFunctionType(
+                    annotations = Annotations.EMPTY,
+                    receiverType = receiverTypes.firstOrNull(),
+                    parameterTypes = if (receiverTypes.size < 2) listOf() else listOf(receiverTypes[1]),
+                    returnType = returnType)
+            IrFunctionReferenceImpl(
+                    startOffset, endOffset,
+                    getterKFunctionType, expression.getter!!, getter, null
+            ).apply {
+                dispatchReceiver = expression.dispatchReceiver
+                extensionReceiver = expression.extensionReceiver
             }
         }
 
-        val setterCallableReference = propertyDescriptor.setter.let {
-            if (it == null || isLocal || !isKMutablePropertyType(expression.type)) null
+        val setterCallableReference = propertyDescriptor.setter?.let {
+            if (!isKMutablePropertyType(expression.type)) null
             else {
                 val setterKFunctionType = context.reflectionTypes.getKFunctionType(
                         annotations = Annotations.EMPTY,
                         receiverType = receiverTypes.firstOrNull(),
                         parameterTypes = if (receiverTypes.size < 2) listOf(returnType) else listOf(receiverTypes[1], returnType),
                         returnType = context.builtIns.unitType)
-                IrFunctionReferenceImpl(startOffset, endOffset, setterKFunctionType, it, null).apply {
+                IrFunctionReferenceImpl(
+                        startOffset, endOffset,
+                        setterKFunctionType, expression.setter!!, it, null
+                ).apply {
                     dispatchReceiver = expression.dispatchReceiver
                     extensionReceiver = expression.extensionReceiver
                 }
             }
         }
 
-        val descriptor = getKPropertyImplConstructorDescriptor(
+        val (symbol, descriptor) = getKPropertyImplConstructor(
                 receiverTypes = receiverTypes,
                 returnType = returnType,
-                isLocal = isLocal,
+                isLocal = false,
                 isMutable = setterCallableReference != null)
-        val initializer = IrCallImpl(startOffset, endOffset, descriptor).apply {
+        val initializer = IrCallImpl(startOffset, endOffset, symbol, descriptor).apply {
             putValueArgument(0, IrConstImpl<String>(startOffset, endOffset,
                     context.builtIns.stringType, IrConstKind.String, propertyDescriptor.name.asString()))
             if (getterCallableReference != null)
                 putValueArgument(1, getterCallableReference)
             if (setterCallableReference != null)
                 putValueArgument(2, setterCallableReference)
+        }
+        return initializer
+    }
+
+    private fun createLocalKProperty(expression: IrLocalDelegatedPropertyReference, propertyDescriptor: VariableDescriptorWithAccessors): IrCallImpl {
+        val startOffset = expression.startOffset
+        val endOffset = expression.endOffset
+
+        val returnType = propertyDescriptor.type
+
+        val (symbol, descriptor) = getKPropertyImplConstructor(
+                receiverTypes = emptyList(),
+                returnType = returnType,
+                isLocal = true,
+                isMutable = false)
+
+        val initializer = IrCallImpl(startOffset, endOffset, symbol, descriptor).apply {
+            putValueArgument(0, IrConstImpl<String>(startOffset, endOffset,
+                    context.builtIns.stringType, IrConstKind.String, propertyDescriptor.name.asString()))
         }
         return initializer
     }

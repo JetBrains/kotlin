@@ -112,7 +112,7 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
             IrDeclarationOriginImpl("BRIDGE_METHOD")
 
     private fun buildBridge(descriptor: OverriddenFunctionDescriptor, irClass: IrClass) {
-        val bridgeDescriptor = context.specialDescriptorsFactory.getBridgeDescriptor(descriptor)
+        val bridgeDescriptor = context.specialDeclarationsFactory.getBridgeDescriptor(descriptor)
         val target = descriptor.descriptor.target
 
         val delegatingCall = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target,

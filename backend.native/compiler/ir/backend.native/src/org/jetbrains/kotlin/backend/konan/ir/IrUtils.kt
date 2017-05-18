@@ -20,17 +20,16 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -91,30 +90,38 @@ internal fun ClassDescriptor.createSimpleDelegatingConstructorDescriptor(superCo
     return constructorDescriptor
 }
 
-internal fun ClassDescriptor.createSimpleDelegatingConstructor(superConstructorDescriptor: ClassConstructorDescriptor,
-                                                               constructorDescriptor: ClassConstructorDescriptor,
-                                                               startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin)
+internal fun IrClass.addSimpleDelegatingConstructor(superConstructorSymbol: IrConstructorSymbol,
+                                                    constructorDescriptor: ClassConstructorDescriptor,
+                                                    origin: IrDeclarationOrigin)
         : IrConstructor {
-    val body = IrBlockBodyImpl(startOffset, endOffset,
-            listOf(
-                    IrDelegatingConstructorCallImpl(startOffset, endOffset, superConstructorDescriptor).apply {
-                        constructorDescriptor.valueParameters.forEachIndexed { idx, parameter ->
-                            putValueArgument(idx, IrGetValueImpl(startOffset, endOffset, parameter))
-                        }
-                    },
-                    IrInstanceInitializerCallImpl(startOffset, endOffset, this)
-            )
-    )
-    return IrConstructorImpl(startOffset, endOffset, origin, constructorDescriptor, body).apply {
-        createParameterDeclarations()
+
+    return IrConstructorImpl(startOffset, endOffset, origin, constructorDescriptor).also { constructor ->
+        constructor.createParameterDeclarations()
+
+        constructor.body = IrBlockBodyImpl(startOffset, endOffset,
+                listOf(
+                        IrDelegatingConstructorCallImpl(
+                                startOffset, endOffset,
+                                superConstructorSymbol, superConstructorSymbol.descriptor
+                        ).apply {
+                            constructor.valueParameters.forEachIndexed { idx, parameter ->
+                                putValueArgument(idx, IrGetValueImpl(startOffset, endOffset, parameter.symbol))
+                            }
+                        },
+                        IrInstanceInitializerCallImpl(startOffset, endOffset, this.symbol)
+                )
+        )
+
+        this.declarations.add(constructor)
     }
 }
 
 internal fun Context.createArrayOfExpression(arrayElementType: KotlinType,
                                              arrayElements: List<IrExpression>,
                                              startOffset: Int, endOffset: Int): IrExpression {
-    val kotlinPackage = irModule!!.descriptor.getPackage(FqName("kotlin"))
-    val genericArrayOfFun = kotlinPackage.memberScope.getContributedFunctions(Name.identifier("arrayOf"), NoLookupLocation.FROM_BACKEND).first()
+
+    val genericArrayOfFunSymbol = ir.symbols.arrayOf
+    val genericArrayOfFun = genericArrayOfFunSymbol.descriptor
     val typeParameter0 = genericArrayOfFun.typeParameters[0]
     val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameter0.typeConstructor to TypeProjectionImpl(arrayElementType)))
     val substitutedArrayOfFun = genericArrayOfFun.substitute(typeSubstitutor)!!
@@ -126,7 +133,7 @@ internal fun Context.createArrayOfExpression(arrayElementType: KotlinType,
     val arg0VarargElementType = valueParameter0.varargElementType!!
     val arg0 = IrVarargImpl(startOffset, endOffset, arg0VarargType, arg0VarargElementType, arrayElements)
 
-    return IrCallImpl(startOffset, endOffset, substitutedArrayOfFun, typeArguments).apply {
+    return IrCallImpl(startOffset, endOffset, genericArrayOfFunSymbol, substitutedArrayOfFun, typeArguments).apply {
         putValueArgument(0, arg0)
     }
 }

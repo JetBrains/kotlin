@@ -126,11 +126,10 @@ fun IrBuilderWithScope.irNot(arg: IrExpression) =
 fun IrBuilderWithScope.irThrow(arg: IrExpression) =
         IrThrowImpl(startOffset, endOffset, context.builtIns.nothingType, arg)
 
-fun IrBuilderWithScope.irCatch(parameter: VariableDescriptor, result: IrExpression) =
+fun IrBuilderWithScope.irCatch(catchParameter: IrVariable) =
         IrCatchImpl(
                 startOffset, endOffset,
-                IrVariableImpl(startOffset, endOffset, IrDeclarationOrigin.CATCH_PARAMETER, parameter),
-                result
+                catchParameter
         )
 
 fun IrBuilderWithScope.irCast(arg: IrExpression, type: KotlinType, typeOperand: KotlinType) =

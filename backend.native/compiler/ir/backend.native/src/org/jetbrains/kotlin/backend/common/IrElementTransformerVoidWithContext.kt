@@ -38,7 +38,7 @@ abstract internal class IrElementTransformerVoidWithContext : IrElementTransform
     }
 
     override final fun visitClass(declaration: IrClass): IrStatement {
-        scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
+        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
         val result = visitClassNew(declaration)
         scopeStack.pop()
         return result
@@ -52,14 +52,14 @@ abstract internal class IrElementTransformerVoidWithContext : IrElementTransform
     }
 
     override final fun visitField(declaration: IrField): IrStatement {
-        scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
+        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
         val result = visitFieldNew(declaration)
         scopeStack.pop()
         return result
     }
 
     override final fun visitFunction(declaration: IrFunction): IrStatement {
-        scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
+        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
         val result = visitFunctionNew(declaration)
         scopeStack.pop()
         return result
@@ -102,13 +102,13 @@ abstract internal class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
     private val scopeStack = mutableListOf<ScopeWithIr>()
 
     override final fun visitFile(declaration: IrFile) {
-        scopeStack.push(ScopeWithIr(Scope(declaration.packageFragmentDescriptor), declaration))
+        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
         visitFileNew(declaration)
         scopeStack.pop()
     }
 
     override final fun visitClass(declaration: IrClass) {
-        scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
+        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
         visitClassNew(declaration)
         scopeStack.pop()
     }
@@ -121,7 +121,7 @@ abstract internal class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
 
     override final fun visitField(declaration: IrField) {
         val isDelegated = declaration.descriptor.isDelegated
-        if (isDelegated) scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
+        if (isDelegated) scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
         visitFieldNew(declaration)
         if (isDelegated) scopeStack.pop()
     }

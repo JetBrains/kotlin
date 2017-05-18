@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -29,6 +27,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
@@ -42,19 +41,17 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
  */
 internal class TypeOperatorLowering(val context: Context) : FunctionLoweringPass {
     override fun lower(irFunction: IrFunction) {
-        val transformer = TypeOperatorTransformer(context, irFunction.descriptor)
+        val transformer = TypeOperatorTransformer(context, irFunction.symbol)
         irFunction.transformChildrenVoid(transformer)
     }
 }
 
 
-private class TypeOperatorTransformer(val context: Context, val function: FunctionDescriptor) : IrElementTransformerVoid() {
+private class TypeOperatorTransformer(val context: Context, val function: IrFunctionSymbol) : IrElementTransformerVoid() {
 
     private val builder = context.createIrBuilder(function)
 
-    val throwTypeCastException by lazy {
-        context.builtIns.getKonanInternalFunctions("ThrowTypeCastException").single()
-    }
+    val throwTypeCastException = context.ir.symbols.ThrowTypeCastException
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         // ignore inner functions during this pass
@@ -93,7 +90,7 @@ private class TypeOperatorTransformer(val context: Context, val function: Functi
 
             expression.argument.type.isNullable() -> {
                 with (builder) {
-                    irLet(expression.argument) { argument ->
+                    irLetS(expression.argument) { argument ->
                         irIfThenElse(
                                 type = expression.type,
                                 condition = irEqeqeq(irGet(argument), irNull()),
@@ -123,7 +120,7 @@ private class TypeOperatorTransformer(val context: Context, val function: Functi
         val typeOperand = expression.typeOperand.erasure()
 
         return builder.irBlock(expression) {
-            +irLet(expression.argument) { variable ->
+            +irLetS(expression.argument) { variable ->
                 irIfThenElse(expression.type,
                         condition = irIs(irGet(variable), typeOperand),
                         thenPart = irImplicitCast(irGet(variable), typeOperand),

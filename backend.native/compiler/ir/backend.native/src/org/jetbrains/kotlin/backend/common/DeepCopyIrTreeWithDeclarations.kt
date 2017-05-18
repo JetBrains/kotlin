@@ -20,14 +20,26 @@ import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlock
 import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
+import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
+import org.jetbrains.kotlin.ir.util.DeepCopySymbolsRemapper
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 /**
  * Copies IR tree with descriptors of all declarations inside;
  * updates the references to these declarations.
  */
+@Deprecated("Creates unbound symbols")
 open class DeepCopyIrTreeWithDeclarations : DeepCopyIrTree() {
 
     private fun DeclarationDescriptor.notSupported(): Nothing = TODO("${this}")
@@ -96,3 +108,68 @@ open class DeepCopyIrTreeWithDeclarations : DeepCopyIrTree() {
         return irLoop
     }
 }
+
+fun IrElement.deepCopyWithVariablesImpl(): IrElement {
+    // FIXME: support non-transformed loops
+
+    val remapper = DeepCopySymbolsRemapper()
+    acceptVoid(remapper)
+
+    val variableDescriptorReplacer = object : IrElementTransformerVoid() {
+
+        val copiedVariables = mutableMapOf<IrVariableSymbol, IrVariableSymbol>()
+
+        override fun visitVariable(declaration: IrVariable): IrStatement {
+            declaration.transformChildrenVoid()
+
+            val descriptor = declaration.descriptor
+            val newDescriptor = LocalVariableDescriptor(
+                    /* containingDeclaration = */ descriptor.containingDeclaration,
+                    /* annotations = */ descriptor.annotations,
+                    /* name = */ descriptor.name,
+                    /* type = */ descriptor.type,
+                    /* mutable = */ descriptor.isVar,
+                    /* isDelegated = */ false,
+                    /* source = */ descriptor.source
+            )
+            val newSymbol = IrVariableSymbolImpl(newDescriptor)
+            copiedVariables[declaration.symbol] = newSymbol
+
+            return with(declaration) {
+                IrVariableImpl(startOffset, endOffset, origin, newSymbol).also {
+                    it.initializer = initializer
+                }
+            }
+
+        }
+
+        override fun visitValueAccess(expression: IrValueAccessExpression): IrExpression {
+            assert(expression.symbol !in copiedVariables)
+            return super.visitValueAccess(expression)
+        }
+
+        override fun visitGetValue(expression: IrGetValue): IrExpression {
+            val newSymbol = copiedVariables[expression.symbol] ?: return super.visitGetValue(expression)
+
+            expression.transformChildrenVoid()
+            return with(expression) {
+                IrGetValueImpl(startOffset, endOffset, newSymbol, origin)
+            }
+        }
+
+        override fun visitSetVariable(expression: IrSetVariable): IrExpression {
+            val newSymbol = copiedVariables[expression.symbol] ?: return super.visitSetVariable(expression)
+
+            expression.transformChildrenVoid()
+            return with(expression) {
+                IrSetVariableImpl(startOffset, endOffset, newSymbol, value, origin)
+            }
+        }
+
+    }
+
+    return this.transform(DeepCopyIrTreeWithSymbols(remapper), null).transform(variableDescriptorReplacer, null)
+}
+
+inline fun <reified T : IrElement> T.deepCopyWithVariables(): T =
+        this.deepCopyWithVariablesImpl() as T

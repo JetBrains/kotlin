@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -46,8 +47,8 @@ internal class InitializersLowering(val context: Context) : ClassLoweringPass {
 
         fun lowerInitializers() {
             collectAndRemoveInitializers()
-            val initializerMethodDescriptor = createInitializerMethod()
-            lowerConstructors(initializerMethodDescriptor)
+            val initializerMethodSymbol = createInitializerMethod()
+            lowerConstructors(initializerMethodSymbol)
         }
 
         object STATEMENT_ORIGIN_ANONYMOUS_INITIALIZER :
@@ -72,13 +73,12 @@ internal class InitializersLowering(val context: Context) : ClassLoweringPass {
 
                 override fun visitField(declaration: IrField): IrStatement {
                     val initializer = declaration.initializer ?: return declaration
-                    val propertyDescriptor = declaration.descriptor
                     val startOffset = initializer.startOffset
                     val endOffset = initializer.endOffset
                     initializers.add(IrBlockImpl(startOffset, endOffset, context.builtIns.unitType, STATEMENT_ORIGIN_ANONYMOUS_INITIALIZER,
                             listOf(
-                                    IrSetFieldImpl(startOffset, endOffset, propertyDescriptor,
-                                            IrGetValueImpl(startOffset, endOffset, irClass.descriptor.thisAsReceiverParameter),
+                                    IrSetFieldImpl(startOffset, endOffset, declaration.symbol,
+                                            IrGetValueImpl(startOffset, endOffset, irClass.thisReceiver!!.symbol),
                                             initializer.expression, STATEMENT_ORIGIN_ANONYMOUS_INITIALIZER))))
                     declaration.initializer = null
                     return declaration
@@ -92,7 +92,7 @@ internal class InitializersLowering(val context: Context) : ClassLoweringPass {
             }
         }
 
-        private fun createInitializerMethod(): FunctionDescriptor? {
+        private fun createInitializerMethod(): IrSimpleFunctionSymbol? {
             if (irClass.descriptor.hasPrimaryConstructor())
                 return null // Place initializers in the primary constructor.
             val initializerMethodDescriptor = SimpleFunctionDescriptorImpl.create(
@@ -118,10 +118,10 @@ internal class InitializersLowering(val context: Context) : ClassLoweringPass {
 
             irClass.declarations.add(initializer)
 
-            return initializerMethodDescriptor
+            return initializer.symbol
         }
 
-        private fun lowerConstructors(initializerMethodDescriptor: FunctionDescriptor?) {
+        private fun lowerConstructors(initializerMethodSymbol: IrSimpleFunctionSymbol?) {
             irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
 
                 override fun visitClass(declaration: IrClass): IrStatement {
@@ -135,14 +135,14 @@ internal class InitializersLowering(val context: Context) : ClassLoweringPass {
                     blockBody.statements.transformFlat {
                         when {
                             it is IrInstanceInitializerCall -> {
-                                if (initializerMethodDescriptor == null) {
+                                if (initializerMethodSymbol == null) {
                                     assert(declaration.descriptor.isPrimary)
                                     initializers
                                 } else {
                                     val startOffset = it.startOffset
                                     val endOffset = it.endOffset
-                                    listOf(IrCallImpl(startOffset, endOffset, initializerMethodDescriptor).apply {
-                                        dispatchReceiver = IrGetValueImpl(startOffset, endOffset, irClass.descriptor.thisAsReceiverParameter)
+                                    listOf(IrCallImpl(startOffset, endOffset, initializerMethodSymbol).apply {
+                                        dispatchReceiver = IrGetValueImpl(startOffset, endOffset, irClass.thisReceiver!!.symbol)
                                     })
                                 }
                             }
