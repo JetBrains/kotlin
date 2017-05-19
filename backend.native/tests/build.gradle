@@ -1770,7 +1770,6 @@ task driver_opt(type: RunDriverKonanTest) {
 // binaries, but we verify that the compiler has been built, operational 
 // and accepts the -target flag, resulting in a successful compilation.
 task driver_cross(type: RunDriverKonanTest) {
-    goldValue = "Hello, world!\n"
     source = "runtime/basic/hello0.kt"
     run = false
     if (isLinux()) {
