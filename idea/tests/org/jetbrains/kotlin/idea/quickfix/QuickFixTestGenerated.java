@@ -6558,6 +6558,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeSetterExtensionFunJsRuntime.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("nestedExtension01.kt")
+            public void testNestedExtension01() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nestedExtension01.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/migration/missingConstructorKeyword")

@@ -65,7 +65,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
     }
 
     private fun fixNativeClass(containingClass: KtClassOrObject) {
-        val membersToFix = containingClass.declarations.filterIsInstance<KtCallableDeclaration>().filter { isMemberDeclaration(it) }. map {
+        val membersToFix = containingClass.declarations.filterIsInstance<KtCallableDeclaration>().filter { isMemberDeclaration(it) && !isMemberExtensionDeclaration(it) }. map {
              it to fetchJsNativeAnnotations(it)
         }.filter {
             it.second.annotations.isNotEmpty()
@@ -251,7 +251,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
             val e = diagnostic.psiElement
             when (diagnostic.factory) {
                 ErrorsJs.WRONG_EXTERNAL_DECLARATION -> {
-                    if (isMemberExtensionDeclaration(e)) {
+                    if (isMemberExtensionDeclaration(e) && e.getParentOfType<KtClassOrObject>(true) == null) {
                         return MigrateExternalExtensionFix(e as KtNamedDeclaration)
                     }
                 }

@@ -1,9 +1,12 @@
 // "Fix with 'asDynamic'" "true"
 // JS
+// ERROR: Declaration of such kind (extension function) cant be external
 
 external class B {
 
     fun dontTouch(): Nothing = definedExternally
+
+    fun B.doNotTouchNestedExtensionMembers(): Nothing = definedExternally
 }
 
 @Suppress("NOTHING_TO_INLINE")
