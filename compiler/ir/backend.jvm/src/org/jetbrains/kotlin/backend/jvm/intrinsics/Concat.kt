@@ -116,10 +116,8 @@ class Concat : IntrinsicMethod() {
                     }
                 }
 
-                override fun afterReceiverGeneration(v: InstructionAdapter) {
-                    v.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder")
-                    v.dupX1()
-                    v.swap()
+                override fun afterReceiverGeneration(v: InstructionAdapter, frameMap: FrameMap) {
+                    v.generateNewInstanceDupAndPlaceBeforeStackTop(frameMap, AsmTypes.JAVA_STRING_TYPE, "java/lang/StringBuilder")
                     v.invokespecial("java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false)
                 }
 
