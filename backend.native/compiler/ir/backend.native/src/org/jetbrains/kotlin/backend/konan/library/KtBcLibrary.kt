@@ -26,13 +26,13 @@ import org.jetbrains.kotlin.backend.konan.util.File
 import org.jetbrains.kotlin.backend.konan.util.copyTo
 import org.jetbrains.kotlin.backend.konan.util.unzipAs
 import org.jetbrains.kotlin.backend.konan.util.zipDirAs
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 
-class KtBcLibraryReader(file: File, configuration: CompilerConfiguration) 
-    : FileBasedLibraryReader(file, configuration, KtBcMetadataReader(file)) {
+class KtBcLibraryReader(file: File, currentAbiVersion: Int) 
+    : FileBasedLibraryReader(file, currentAbiVersion, KtBcMetadataReader(file)) {
 
-    public constructor(path: String, configuration: CompilerConfiguration) : this(File(path), configuration) 
+    public constructor(path: String, currentAbiVersion: Int) : this(File(path), currentAbiVersion) 
 
     override val bitcodePaths: List<String>
         get() = listOf(libraryName)

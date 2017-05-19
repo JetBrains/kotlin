@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
 import org.jetbrains.kotlin.backend.konan.llvm.base64Encode
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -127,7 +129,7 @@ internal fun deserializePackageFragment(base64: Base64): KonanLinkData.PackageFr
             KonanSerializerProtocol.extensionRegistry)
 }
 
-internal fun deserializeModule(configuration: CompilerConfiguration, 
+internal fun deserializeModule(languageVersionSettings: LanguageVersionSettings,
     packageLoader:(String)->Base64, library: Base64,  moduleName: String): ModuleDescriptorImpl {
 
     val storageManager = LockBasedStorageManager()
@@ -135,7 +137,7 @@ internal fun deserializeModule(configuration: CompilerConfiguration,
     val moduleDescriptor = ModuleDescriptorImpl(
             Name.special(moduleName), storageManager, builtIns)
     builtIns.builtInsModule = moduleDescriptor
-    val deserializationConfiguration = CompilerDeserializationConfiguration(configuration.languageVersionSettings)
+    val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 
     val libraryProto = KonanLinkData.Library
         .parseFrom(base64ToStream(library), 

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.konan.library.SplitLibraryReader
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import java.io.File
 
@@ -44,20 +45,24 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val libraries: List<KonanLibraryReader> by lazy {
         // Here we have chosen a particular KonanLibraryReader implementation
-        libraryNames.map{it -> SplitLibraryReader(it, configuration)}
+        val currentAbiVersion = configuration.get(KonanConfigKeys.ABI_VERSION)!!
+        val target = targetManager.currentName
+        libraryNames.map{it -> SplitLibraryReader(it, currentAbiVersion, target)}
     }
 
     private val loadedDescriptors = loadLibMetadata()
 
-    internal val nativeLibraries: List<String> = configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
+    internal val nativeLibraries: List<String> = 
+        configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
 
     fun loadLibMetadata(): List<ModuleDescriptorImpl> {
 
         val allMetadata = mutableListOf<ModuleDescriptorImpl>()
+        val specifics = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
 
         for (klib in libraries) {
             profile("Loading ${klib.libraryName}") {
-                val moduleDescriptor = klib.moduleDescriptor
+                val moduleDescriptor = klib.moduleDescriptor(specifics)
                 allMetadata.add(moduleDescriptor)
             }
         }

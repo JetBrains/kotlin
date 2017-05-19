@@ -26,26 +26,24 @@ import org.jetbrains.kotlin.backend.konan.util.File
 import org.jetbrains.kotlin.backend.konan.util.copyTo
 import org.jetbrains.kotlin.backend.konan.util.unzipAs
 import org.jetbrains.kotlin.backend.konan.util.zipDirAs
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 
 interface KonanLibraryReader {
     val libraryName: String
     val moduleName: String
-    val moduleDescriptor: ModuleDescriptorImpl
     val bitcodePaths: List<String>
+    fun moduleDescriptor(specifics: LanguageVersionSettings): ModuleDescriptorImpl
 }
 
-abstract class FileBasedLibraryReader(
-    val file: File, 
-    val configuration: CompilerConfiguration, 
+abstract open class FileBasedLibraryReader(
+    val file: File, val currentAbiVersion: Int,
     val reader: MetadataReader): KonanLibraryReader {
 
     override val libraryName: String
         get() = file.path
 
-    protected val namedModuleData by lazy {
-        val currentAbiVersion = configuration.get(KonanConfigKeys.ABI_VERSION)!!
+    protected val namedModuleData: NamedModuleData by lazy {
         reader.loadSerializedModule(currentAbiVersion)
     }
 
@@ -58,11 +56,9 @@ abstract class FileBasedLibraryReader(
     protected fun packageMetadata(fqName: String): Base64 =
         reader.loadSerializedPackageFragment(fqName)
 
-    override val moduleDescriptor: ModuleDescriptorImpl by lazy {
-        deserializeModule(configuration, 
-            {it -> packageMetadata(it)}, 
+    override fun moduleDescriptor(specifics: LanguageVersionSettings) 
+        = deserializeModule(specifics, {packageMetadata(it)}, 
             tableOfContentsAsString, moduleName)
-    }
 }
 
 // This scheme describes the Konan Library (klib) layout.
@@ -91,14 +87,13 @@ interface SplitScheme {
         = File(linkdataDir, if (packageName == "") "<root>" else packageName)
 }
 
-// TODO: Get rid of the configuration here.
-class SplitLibraryReader(override val libDir: File, configuration: CompilerConfiguration) 
-    : FileBasedLibraryReader(libDir, configuration, SplitMetadataReader(libDir)), 
+class SplitLibraryReader(override val libDir: File, currentAbiVersion: Int,
+        override val target: String) : 
+      FileBasedLibraryReader(libDir, currentAbiVersion, SplitMetadataReader(libDir)), 
       SplitScheme  {
 
-    public constructor(path: String, configuration: CompilerConfiguration) : this(File(path), configuration) 
-
-    override val target: String? = TargetManager(configuration).currentName
+    public constructor(path: String, currentAbiVersion: Int, target: String) : 
+        this(File(path), currentAbiVersion, target) 
 
     init {
         unpackIfNeeded()
@@ -149,10 +144,11 @@ abstract class FileBasedLibraryWriter (
     val file: File): KonanLibraryWriter {
 }
 
-class SplitLibraryWriter(override val libDir: File, override val target: String?, val nopack: Boolean = false): 
-    FileBasedLibraryWriter(libDir), SplitScheme {
+class SplitLibraryWriter(override val libDir: File, override val target: String?, 
+    val nopack: Boolean = false): FileBasedLibraryWriter(libDir), SplitScheme {
 
-    public constructor(path: String, target: String, nopack: Boolean): this(File(path), target, nopack)
+    public constructor(path: String, target: String, nopack: Boolean): 
+        this(File(path), target, nopack)
 
     // TODO: Experiment with separate bitcode files.
     // Per package or per class.
