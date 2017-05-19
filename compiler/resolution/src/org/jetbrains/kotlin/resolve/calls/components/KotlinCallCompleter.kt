@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.FixationOrderCalc
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
@@ -220,6 +219,7 @@ class KotlinCallCompleter(
     }
 
     // true if it is the end (happy or not)
+    // every step we fix type variable or analyzeLambda
     private fun SimpleKotlinResolutionCandidate.oneStepToEndOrLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks): Boolean {
         if (c.hasContradiction) return true
 
@@ -240,14 +240,7 @@ class KotlinCallCompleter(
                 break
             }
             c.fixVariable(variable, resultType)
-
-            if (variable is LambdaTypeVariable) {
-                val resolvedLambda = c.lambdaArguments.find { it.argument == variable.lambdaArgument } ?: return true
-                if (canWeAnalyzeIt(c, resolvedLambda)) {
-                    analyzeLambda(c, resolutionCallbacks, callContext, kotlinCall, resolvedLambda)
-                    return false
-                }
-            }
+            return false
         }
         return true
     }

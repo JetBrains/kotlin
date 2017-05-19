@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.calls.components.CreateDescriptorWithFreshTy
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -82,80 +81,49 @@ internal object CheckArguments : ResolutionPart {
         }
     }
 
-    inline fun computeParameterTypes(
-            argument: LambdaKotlinCallArgument,
-            expectedType: UnwrappedType,
-            createFreshType: () -> UnwrappedType
-    ): List<UnwrappedType> {
-        argument.parametersTypes?.map { it ?: createFreshType() } ?.let { return it }
-
-        if (expectedType.isBuiltinFunctionalType) {
-            return expectedType.getValueParameterTypesFromFunctionType().map { createFreshType() }
-        }
-
-        // if expected type is non-functional type and there is no declared parameters
-        return emptyList()
-    }
-
-    inline fun computeReceiver(
-            argument: LambdaKotlinCallArgument,
-            expectedType: UnwrappedType,
-            createFreshType: () -> UnwrappedType
-    ) : UnwrappedType? {
-        if (argument is FunctionExpression) return argument.receiverType
-
-        if (expectedType.isBuiltinExtensionFunctionalType) return createFreshType()
-
-        return null
-    }
-
-    inline fun computeReturnType(
-            argument: LambdaKotlinCallArgument,
-            createFreshType: () -> UnwrappedType
-    ) : UnwrappedType {
-        if (argument is FunctionExpression) return argument.receiverType ?: createFreshType()
-
-        return createFreshType()
-    }
-
+    // if expected type isn't function type, then may be it is Function<R>, Any or just `T`
     fun processLambdaArgument(
             kotlinCall: KotlinCall,
             csBuilder: ConstraintSystemBuilder,
             argument: LambdaKotlinCallArgument,
             expectedType: UnwrappedType
     ): KotlinCallDiagnostic? {
-        // initial checks
-        if (expectedType.isBuiltinFunctionalType) {
-            val expectedParameterCount = expectedType.getValueParameterTypesFromFunctionType().size
-
-            argument.parametersTypes?.size?.let {
-                if (expectedParameterCount != it) return ExpectedLambdaParametersCountMismatch(argument, expectedParameterCount, it)
-            }
-
-            if (argument is FunctionExpression) {
-                if (argument.receiverType != null && !expectedType.isBuiltinExtensionFunctionalType) return UnexpectedReceiver(argument)
-                if (argument.receiverType == null && expectedType.isBuiltinExtensionFunctionalType) return MissingReceiver(argument)
-            }
-        }
-
         val builtIns = expectedType.builtIns
-        val freshVariables = SmartList<LambdaTypeVariable>()
-        val receiver = computeReceiver(argument, expectedType) {
-            LambdaTypeVariable(argument, LambdaTypeVariable.Kind.RECEIVER, builtIns).apply { freshVariables.add(this) }.defaultType
-        }
-
-        val parameters = computeParameterTypes(argument, expectedType) {
-            LambdaTypeVariable(argument, LambdaTypeVariable.Kind.PARAMETER, builtIns).apply { freshVariables.add(this) }.defaultType
-        }
-
-        val returnType = computeReturnType(argument) {
-            LambdaTypeVariable(argument, LambdaTypeVariable.Kind.RETURN_TYPE, builtIns).apply { freshVariables.add(this) }.defaultType
-        }
-
         val isSuspend = expectedType.isSuspendFunctionType
-        val resolvedArgument = ResolvedLambdaArgument(kotlinCall, argument, freshVariables, isSuspend, receiver, parameters, returnType)
 
-        freshVariables.forEach(csBuilder::registerVariable)
+        val receiverType: UnwrappedType? // null means that there is no receiver
+        val parameters: List<UnwrappedType>
+        val returnType: UnwrappedType
+
+        if (expectedType.isBuiltinFunctionalType) {
+            receiverType = if (argument is FunctionExpression) argument.receiverType else expectedType.getReceiverTypeFromFunctionType()?.unwrap()
+
+            val expectedParameters = expectedType.getValueParameterTypesFromFunctionType()
+            if (argument.parametersTypes != null) {
+                parameters = argument.parametersTypes!!.mapIndexed {
+                    index, type ->
+                    type ?: expectedParameters.getOrNull(index)?.type?.unwrap() ?: builtIns.anyType
+                }
+            }
+            else {
+                // lambda without explicit parameters: { }
+                parameters = expectedParameters.map { it.type.unwrap() }
+            }
+            returnType = (argument as? FunctionExpression)?.returnType ?: expectedType.getReturnTypeFromFunctionType().unwrap()
+        }
+        else {
+            val isFunctionSupertype = KotlinBuiltIns.isNotNullOrNullableFunctionSupertype(expectedType)
+            receiverType = (argument as? FunctionExpression)?.receiverType
+            parameters = argument.parametersTypes?.map { it ?: builtIns.nothingType } ?: emptyList()
+            returnType = (argument as? FunctionExpression)?.returnType ?:
+                         expectedType.arguments.singleOrNull()?.type?.unwrap()?.takeIf { isFunctionSupertype } ?:
+                         builtIns.nullableAnyType
+
+            // what about case where expected type is type variable? In old TY such cases was not supported. => do nothing for now. todo design
+        }
+
+        val resolvedArgument = ResolvedLambdaArgument(kotlinCall, argument, isSuspend, receiverType, parameters, returnType)
+
         csBuilder.addSubtypeConstraint(resolvedArgument.type, expectedType, ArgumentConstraintPosition(argument))
         csBuilder.addLambdaArgument(resolvedArgument)
 

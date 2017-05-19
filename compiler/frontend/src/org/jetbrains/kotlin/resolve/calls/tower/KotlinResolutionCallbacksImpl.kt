@@ -77,7 +77,7 @@ class KotlinResolutionCallbacksImpl(
         val approximatesExpectedType = typeApproximator.approximateToSubType(expectedType, TypeApproximatorConfiguration.LocalDeclaration) ?: expectedType
 
         val actualContext = outerCallContext.replaceBindingTrace(trace).
-                replaceContextDependency(ContextDependency.DEPENDENT).replaceExpectedType(approximatesExpectedType)
+                replaceContextDependency(if (expectedReturnType == null) ContextDependency.DEPENDENT else ContextDependency.INDEPENDENT).replaceExpectedType(approximatesExpectedType)
 
 
         val functionTypeInfo = expressionTypingServices.getTypeInfo(expression, actualContext)
