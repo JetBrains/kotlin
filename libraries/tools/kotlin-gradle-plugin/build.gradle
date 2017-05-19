@@ -19,9 +19,7 @@ repositories {
     jcenter()
     mavenLocal()
     maven { url 'http://repository.jetbrains.com/utils/' }
-
-    // todo: remove this once the AGP artifacts get published
-    maven { url (project.findProperty("googlePreviewRepositoryPath") ?: System.getProperty("googlePreviewRepositoryPath")) }
+    maven { url 'https://maven.google.com' }
 }
 
 configurations {
