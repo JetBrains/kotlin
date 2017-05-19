@@ -1,0 +1,4 @@
+package
+
+public fun bar(): kotlin.Unit
+public fun foo(): kotlin.Unit
