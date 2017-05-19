@@ -1,8 +1,11 @@
+// !LANGUAGE: +SoundSmartCastsAfterTry
+
 fun foo() {
     var s: String?
     s = "Test"
     try {
         s = "Other"
     } catch (ex: Exception) {}
-    <!DEBUG_INFO_SMARTCAST!>s<!>.hashCode()
+    // Problem: here we do not see that 's' is always not-null
+    s<!UNSAFE_CALL!>.<!>hashCode()
 }

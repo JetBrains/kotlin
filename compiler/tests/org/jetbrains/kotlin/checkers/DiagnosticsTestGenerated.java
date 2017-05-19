@@ -21186,6 +21186,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("setNullInTryUnsound.kt")
+                public void testSetNullInTryUnsound() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/setNullInTryUnsound.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("setSameInTry.kt")
                 public void testSetSameInTry() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/setSameInTry.kt");

@@ -1,3 +1,5 @@
+// !LANGUAGE: +SoundSmartCastsAfterTry
+
 fun bar(arg: Any?) = arg
 
 fun foo() {
@@ -6,7 +8,7 @@ fun foo() {
     try {
         s = "Test"
     } catch (ex: Exception) {}
-    bar(<!DEBUG_INFO_CONSTANT!>s<!>)
-    if (<!SENSELESS_COMPARISON!><!DEBUG_INFO_CONSTANT!>s<!> != null<!>) { }
-    <!DEBUG_INFO_CONSTANT!>s<!><!UNSAFE_CALL!>.<!>hashCode()
+    bar(s)
+    if (s != null) { }
+    s<!UNSAFE_CALL!>.<!>hashCode()
 }
