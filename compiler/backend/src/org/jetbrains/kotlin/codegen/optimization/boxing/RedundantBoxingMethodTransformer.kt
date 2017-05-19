@@ -14,503 +14,472 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.optimization.boxing;
+package org.jetbrains.kotlin.codegen.optimization.boxing
 
-import com.intellij.openapi.util.Pair;
-import kotlin.collections.CollectionsKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
-import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue;
-import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
-import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer;
-import org.jetbrains.org.objectweb.asm.Label;
-import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
-import org.jetbrains.org.objectweb.asm.tree.*;
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
-import org.jetbrains.org.objectweb.asm.tree.analysis.Frame;
+import com.intellij.openapi.util.Pair
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
+import org.jetbrains.kotlin.codegen.optimization.common.*
+import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
+import org.jetbrains.kotlin.codegen.optimization.fixStack.top
+import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
+import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 
-import java.util.*;
+import java.util.*
 
-public class RedundantBoxingMethodTransformer extends MethodTransformer {
+class RedundantBoxingMethodTransformer : MethodTransformer() {
 
-    @Override
-    public void transform(@NotNull String internalClassName, @NotNull MethodNode node) {
-        RedundantBoxingInterpreter interpreter = new RedundantBoxingInterpreter(node.instructions);
-        Frame<BasicValue>[] frames = analyze(internalClassName, node, interpreter);
+    override fun transform(internalClassName: String, node: MethodNode) {
+        val interpreter = RedundantBoxingInterpreter(node.instructions)
+        val frames = MethodTransformer.analyze(internalClassName, node, interpreter)
 
-        interpretPopInstructionsForBoxedValues(interpreter, node, frames);
+        interpretPopInstructionsForBoxedValues(interpreter, node, frames)
 
-        RedundantBoxedValuesCollection valuesToOptimize = interpreter.getCandidatesBoxedValues();
+        val valuesToOptimize = interpreter.candidatesBoxedValues
 
-        if (!valuesToOptimize.isEmpty()) {
+        if (!valuesToOptimize.isEmpty) {
             // has side effect on valuesToOptimize and frames, containing BoxedBasicValues that are unsafe to remove
-            removeValuesClashingWithVariables(valuesToOptimize, node, frames);
+            removeValuesClashingWithVariables(valuesToOptimize, node, frames)
 
-            adaptLocalVariableTableForBoxedValues(node, frames);
+            adaptLocalVariableTableForBoxedValues(node, frames)
 
-            UtilKt.remapLocalVariables(node, buildVariablesRemapping(valuesToOptimize, node));
+            node.remapLocalVariables(buildVariablesRemapping(valuesToOptimize, node))
 
-            adaptInstructionsForBoxedValues(node, valuesToOptimize);
+            adaptInstructionsForBoxedValues(node, valuesToOptimize)
         }
     }
 
-    private static void interpretPopInstructionsForBoxedValues(
-            @NotNull RedundantBoxingInterpreter interpreter,
-            @NotNull MethodNode node,
-            @NotNull Frame<BasicValue>[] frames
+    private fun interpretPopInstructionsForBoxedValues(
+            interpreter: RedundantBoxingInterpreter,
+            node: MethodNode,
+            frames: Array<out Frame<BasicValue>?>
     ) {
-        for (int i = 0; i < node.instructions.size(); i++) {
-            AbstractInsnNode insn = node.instructions.get(i);
-            if ((insn.getOpcode() != Opcodes.POP && insn.getOpcode() != Opcodes.POP2) || frames[i] == null) {
-                continue;
+        for (i in 0..node.instructions.size() - 1) {
+            val insn = node.instructions.get(i)
+            val frame = frames[i]
+            if (insn.opcode != Opcodes.POP && insn.opcode != Opcodes.POP2 || frame == null) {
+                continue
             }
 
-            BasicValue top = frames[i].getStack(frames[i].getStackSize() - 1);
-            interpreter.processPopInstruction(insn, top);
+            val top = frame.top()!!
+            interpreter.processPopInstruction(insn, top)
 
-            if (top.getSize() == 1 && insn.getOpcode() == Opcodes.POP2) {
-                interpreter.processPopInstruction(insn, frames[i].getStack(frames[i].getStackSize() - 2));
+            if (top.size == 1 && insn.opcode == Opcodes.POP2) {
+                interpreter.processPopInstruction(insn, frame.peek(1)!!)
             }
         }
     }
 
-    private static void removeValuesClashingWithVariables(
-            @NotNull RedundantBoxedValuesCollection values,
-            @NotNull MethodNode node,
-            @NotNull Frame<BasicValue>[] frames
+    private fun removeValuesClashingWithVariables(
+            values: RedundantBoxedValuesCollection,
+            node: MethodNode,
+            frames: Array<Frame<BasicValue>>
     ) {
         while (removeValuesClashingWithVariablesPass(values, node, frames)) {
             // do nothing
         }
     }
 
-    private static boolean removeValuesClashingWithVariablesPass(
-            @NotNull RedundantBoxedValuesCollection values,
-            @NotNull MethodNode node,
-            @NotNull Frame<BasicValue>[] frames
-    ) {
-        boolean needToRepeat = false;
+    private fun removeValuesClashingWithVariablesPass(
+            values: RedundantBoxedValuesCollection,
+            node: MethodNode,
+            frames: Array<out Frame<BasicValue>?>
+    ): Boolean {
+        var needToRepeat = false
 
-        for (LocalVariableNode localVariableNode : node.localVariables) {
-            if (Type.getType(localVariableNode.desc).getSort() != Type.OBJECT) {
-                continue;
+        for (localVariableNode in node.localVariables) {
+            if (Type.getType(localVariableNode.desc).sort != Type.OBJECT) {
+                continue
             }
 
-            List<BasicValue> variableValues = getValuesStoredOrLoadedToVariable(localVariableNode, node, frames);
+            val variableValues = getValuesStoredOrLoadedToVariable(localVariableNode, node, frames)
 
-            Collection<BasicValue> boxed = CollectionsKt.filter(variableValues, value -> value instanceof BoxedBasicValue);
+            val boxed = variableValues.filterIsInstance<BoxedBasicValue>()
 
-            if (boxed.isEmpty()) continue;
+            if (boxed.isEmpty()) continue
 
-            BoxedValueDescriptor firstBoxed = ((BoxedBasicValue) boxed.iterator().next()).getDescriptor();
-            if (isUnsafeToRemoveBoxingForConnectedValues(variableValues, firstBoxed.getUnboxedType())) {
-                for (BasicValue value : variableValues) {
-                    if (!(value instanceof BoxedBasicValue)) continue;
-
-                    BoxedValueDescriptor descriptor = ((BoxedBasicValue) value).getDescriptor();
-                    if (descriptor.isSafeToRemove()) {
-                        values.remove(descriptor);
-                        needToRepeat = true;
+            val firstBoxed = boxed.iterator().next().descriptor
+            if (isUnsafeToRemoveBoxingForConnectedValues(variableValues, firstBoxed.unboxedType)) {
+                for (value in boxed) {
+                    val descriptor = value.descriptor
+                    if (descriptor.isSafeToRemove) {
+                        values.remove(descriptor)
+                        needToRepeat = true
                     }
                 }
             }
         }
 
-        return needToRepeat;
+        return needToRepeat
     }
 
-    private static boolean isUnsafeToRemoveBoxingForConnectedValues(List<BasicValue> usedValues, Type unboxedType) {
-        return CollectionsKt.any(usedValues, input -> {
-            if (input == StrictBasicValue.UNINITIALIZED_VALUE) return false;
-            if (!(input instanceof BoxedBasicValue)) return true;
+    private fun isUnsafeToRemoveBoxingForConnectedValues(usedValues: List<BasicValue>, unboxedType: Type): Boolean =
+            usedValues.any { input ->
+                if (input === StrictBasicValue.UNINITIALIZED_VALUE) return@any false
+                if (input !is BoxedBasicValue) return@any true
 
-            BoxedValueDescriptor descriptor = ((BoxedBasicValue) input).getDescriptor();
-            return !descriptor.isSafeToRemove() ||
-                   !(descriptor.getUnboxedType().equals(unboxedType));
-        });
-    }
-
-    private static void adaptLocalVariableTableForBoxedValues(@NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames) {
-        for (LocalVariableNode localVariableNode : node.localVariables) {
-            if (Type.getType(localVariableNode.desc).getSort() != Type.OBJECT) {
-                continue;
+                val descriptor = input.descriptor
+                !descriptor.isSafeToRemove || descriptor.unboxedType != unboxedType
             }
 
-            for (BasicValue value : getValuesStoredOrLoadedToVariable(localVariableNode, node, frames)) {
-                if (!(value instanceof BoxedBasicValue)) continue;
+    private fun adaptLocalVariableTableForBoxedValues(node: MethodNode, frames: Array<Frame<BasicValue>>) {
+        for (localVariableNode in node.localVariables) {
+            if (Type.getType(localVariableNode.desc).sort != Type.OBJECT) {
+                continue
+            }
 
-                BoxedValueDescriptor descriptor = ((BoxedBasicValue) value).getDescriptor();
-                if (!descriptor.isSafeToRemove()) continue;
-                localVariableNode.desc = descriptor.getUnboxedType().getDescriptor();
+            for (value in getValuesStoredOrLoadedToVariable(localVariableNode, node, frames)) {
+                if (value !is BoxedBasicValue) continue
+
+                val descriptor = value.descriptor
+                if (!descriptor.isSafeToRemove) continue
+                localVariableNode.desc = descriptor.unboxedType.descriptor
             }
         }
     }
 
-    @NotNull
-    private static List<BasicValue> getValuesStoredOrLoadedToVariable(
-            @NotNull LocalVariableNode localVariableNode,
-            @NotNull MethodNode node,
-            @NotNull Frame<BasicValue>[] frames
-    ) {
-        List<BasicValue> values = new ArrayList<>();
-        InsnList insnList = node.instructions;
-        int from = insnList.indexOf(localVariableNode.start) + 1;
-        int to = insnList.indexOf(localVariableNode.end) - 1;
+    private fun getValuesStoredOrLoadedToVariable(
+            localVariableNode: LocalVariableNode,
+            node: MethodNode,
+            frames: Array<out Frame<BasicValue>?>
+    ): List<BasicValue> {
+        val values = ArrayList<BasicValue>()
+        val insnList = node.instructions
+        val localVariableStart = insnList.indexOf(localVariableNode.start)
+        val localVariableEnd = insnList.indexOf(localVariableNode.end)
 
-        Frame<BasicValue> frameForFromInstr = frames[from];
-        if (frameForFromInstr != null) {
-            BasicValue localVarValue = frameForFromInstr.getLocal(localVariableNode.index);
-            if (localVarValue != null) {
-                values.add(localVarValue);
+        frames[localVariableStart]?.let { frameForStartInsn ->
+            frameForStartInsn.getLocal(localVariableNode.index)?.let { localVarValue ->
+                values.add(localVarValue)
             }
         }
 
-        for (int i = from; i <= to; i++) {
-            if (i < 0 || i >= insnList.size()) continue;
-
-            AbstractInsnNode insn = insnList.get(i);
-            if ((insn.getOpcode() == Opcodes.ASTORE || insn.getOpcode() == Opcodes.ALOAD) &&
-                ((VarInsnNode) insn).var == localVariableNode.index) {
-
-                if (frames[i] == null) {
-                    //unreachable code
-                    continue;
-                }
-
+        for (i in localVariableStart until localVariableEnd) {
+            if (i < 0 || i >= insnList.size()) continue
+            val frame = frames[i] ?: continue
+            val insn = insnList[i]
+            if ((insn.opcode == Opcodes.ASTORE || insn.opcode == Opcodes.ALOAD) &&
+                (insn as VarInsnNode).`var` == localVariableNode.index) {
                 if (insn.getOpcode() == Opcodes.ASTORE) {
-                    values.add(frames[i].getStack(frames[i].getStackSize() - 1));
+                    values.add(frame.top()!!)
                 }
                 else {
-                    values.add(frames[i].getLocal(((VarInsnNode) insn).var));
+                    values.add(frame.getLocal(insn.`var`))
                 }
             }
         }
 
-        return values;
+        return values
     }
 
-    @NotNull
-    private static int[] buildVariablesRemapping(@NotNull RedundantBoxedValuesCollection values, @NotNull MethodNode node) {
-        Set<Integer> doubleSizedVars = new HashSet<>();
-        for (BoxedValueDescriptor valueDescriptor : values) {
+    private fun buildVariablesRemapping(values: RedundantBoxedValuesCollection, node: MethodNode): IntArray {
+        val doubleSizedVars = HashSet<Int>()
+        for (valueDescriptor in values) {
             if (valueDescriptor.isDoubleSize()) {
-                doubleSizedVars.addAll(valueDescriptor.getVariablesIndexes());
+                doubleSizedVars.addAll(valueDescriptor.getVariablesIndexes())
             }
         }
 
-        node.maxLocals += doubleSizedVars.size();
-        int[] remapping = new int[node.maxLocals];
-        for (int i = 0; i < remapping.length; i++) {
-            remapping[i] = i;
+        node.maxLocals += doubleSizedVars.size
+        val remapping = IntArray(node.maxLocals)
+        for (i in remapping.indices) {
+            remapping[i] = i
         }
 
-        for (int varIndex : doubleSizedVars) {
-            for (int i = varIndex + 1; i < remapping.length; i++) {
-                remapping[i]++;
+        for (varIndex in doubleSizedVars) {
+            for (i in varIndex + 1..remapping.size - 1) {
+                remapping[i]++
             }
         }
 
-        return remapping;
+        return remapping
     }
 
-    private static void adaptInstructionsForBoxedValues(
-            @NotNull MethodNode node,
-            @NotNull RedundantBoxedValuesCollection values
+    private fun adaptInstructionsForBoxedValues(
+            node: MethodNode,
+            values: RedundantBoxedValuesCollection
     ) {
-        for (BoxedValueDescriptor value : values) {
-            adaptInstructionsForBoxedValue(node, value);
+        for (value in values) {
+            adaptInstructionsForBoxedValue(node, value)
         }
     }
 
-    private static void adaptInstructionsForBoxedValue(@NotNull MethodNode node, @NotNull BoxedValueDescriptor value) {
-        adaptBoxingInstruction(node, value);
+    private fun adaptInstructionsForBoxedValue(node: MethodNode, value: BoxedValueDescriptor) {
+        adaptBoxingInstruction(node, value)
 
-        for (Pair<AbstractInsnNode, Type> cast : value.getUnboxingWithCastInsns()) {
-            adaptCastInstruction(node, value, cast);
+        for (cast in value.getUnboxingWithCastInsns()) {
+            adaptCastInstruction(node, value, cast)
         }
 
-        for (AbstractInsnNode insn : value.getAssociatedInsns()) {
-            adaptInstruction(node, insn, value);
+        for (insn in value.getAssociatedInsns()) {
+            adaptInstruction(node, insn, value)
         }
     }
 
-    private static void adaptBoxingInstruction(@NotNull MethodNode node, @NotNull BoxedValueDescriptor value) {
+    private fun adaptBoxingInstruction(node: MethodNode, value: BoxedValueDescriptor) {
         if (!value.isFromProgressionIterator()) {
-            node.instructions.remove(value.getBoxingInsn());
+            node.instructions.remove(value.boxingInsn)
         }
         else {
-            ProgressionIteratorBasicValue iterator = value.getProgressionIterator();
-            assert iterator != null : "iterator should not be null because isFromProgressionIterator returns true";
+            val iterator = value.progressionIterator ?: error("iterator should not be null because isFromProgressionIterator returns true")
 
             //add checkcast to kotlin/<T>Iterator before next() call
-            node.instructions.insertBefore(
-                    value.getBoxingInsn(),
-                    new TypeInsnNode(Opcodes.CHECKCAST, iterator.getType().getInternalName())
-            );
+            node.instructions.insertBefore(value.boxingInsn, TypeInsnNode(Opcodes.CHECKCAST, iterator.type.internalName))
 
             //invoke concrete method (kotlin/<T>iterator.next<T>())
             node.instructions.set(
-                    value.getBoxingInsn(),
-                    new MethodInsnNode(
+                    value.boxingInsn,
+                    MethodInsnNode(
                             Opcodes.INVOKEVIRTUAL,
-                            iterator.getType().getInternalName(),
-                            iterator.getNextMethodName(),
-                            iterator.getNextMethodDesc(),
+                            iterator.type.internalName, iterator.nextMethodName, iterator.nextMethodDesc,
                             false
                     )
-            );
+            )
         }
     }
 
-    private static void adaptCastInstruction(
-            @NotNull MethodNode node,
-            @NotNull BoxedValueDescriptor value,
-            @NotNull Pair<AbstractInsnNode, Type> castWithType
+    private fun adaptCastInstruction(
+            node: MethodNode,
+            value: BoxedValueDescriptor,
+            castWithType: Pair<AbstractInsnNode, Type>
     ) {
-        AbstractInsnNode castInsn = castWithType.getFirst();
-        MethodNode castInsnsListener = new MethodNode(Opcodes.ASM5);
-        new InstructionAdapter(castInsnsListener).cast(value.getUnboxedType(), castWithType.getSecond());
+        val castInsn = castWithType.getFirst()
+        val castInsnsListener = MethodNode(Opcodes.ASM5)
+        InstructionAdapter(castInsnsListener).cast(value.unboxedType, castWithType.getSecond())
 
-        for (AbstractInsnNode insn : castInsnsListener.instructions.toArray()) {
-            node.instructions.insertBefore(castInsn, insn);
+        for (insn in castInsnsListener.instructions.toArray()) {
+            node.instructions.insertBefore(castInsn, insn)
         }
 
-        node.instructions.remove(castInsn);
+        node.instructions.remove(castInsn)
     }
 
-    private static void adaptInstruction(
-            @NotNull MethodNode node, @NotNull AbstractInsnNode insn, @NotNull BoxedValueDescriptor value
+    private fun adaptInstruction(
+            node: MethodNode, insn: AbstractInsnNode, value: BoxedValueDescriptor
     ) {
-        boolean isDoubleSize = value.isDoubleSize();
+        val isDoubleSize = value.isDoubleSize()
 
-        switch (insn.getOpcode()) {
-            case Opcodes.POP:
+        when (insn.opcode) {
+            Opcodes.POP ->
                 if (isDoubleSize) {
-                    node.instructions.set(
-                            insn,
-                            new InsnNode(Opcodes.POP2)
-                    );
+                    node.instructions.set(insn, InsnNode(Opcodes.POP2))
                 }
-                break;
-            case Opcodes.DUP:
+
+            Opcodes.DUP ->
                 if (isDoubleSize) {
-                    node.instructions.set(
-                            insn,
-                            new InsnNode(Opcodes.DUP2)
-                    );
+                    node.instructions.set(insn, InsnNode(Opcodes.DUP2))
                 }
-                break;
-            case Opcodes.ASTORE:
-            case Opcodes.ALOAD:
-                int intVarOpcode = insn.getOpcode() == Opcodes.ASTORE ? Opcodes.ISTORE : Opcodes.ILOAD;
-                node.instructions.set(
-                        insn,
-                        new VarInsnNode(
-                                value.getUnboxedType().getOpcode(intVarOpcode),
-                                ((VarInsnNode) insn).var
-                        )
-                );
-                break;
-            case Opcodes.INSTANCEOF:
+
+            Opcodes.ASTORE, Opcodes.ALOAD -> {
+                val storeOpcode = value.unboxedType.getOpcode(if (insn.opcode == Opcodes.ASTORE) Opcodes.ISTORE else Opcodes.ILOAD)
+                node.instructions.set(insn, VarInsnNode(storeOpcode, (insn as VarInsnNode).`var`))
+            }
+
+            Opcodes.INSTANCEOF -> {
                 node.instructions.insertBefore(
                         insn,
-                        new InsnNode(isDoubleSize ? Opcodes.POP2 : Opcodes.POP)
-                );
-                node.instructions.set(insn, new InsnNode(Opcodes.ICONST_1));
-                break;
-            case Opcodes.INVOKESTATIC:
-                if (BoxingInterpreterKt.isAreEqualIntrinsic(insn)) {
-                    adaptAreEqualIntrinsic(node, insn, value);
-                    break;
+                        InsnNode(if (isDoubleSize) Opcodes.POP2 else Opcodes.POP)
+                )
+                node.instructions.set(insn, InsnNode(Opcodes.ICONST_1))
+            }
+
+            Opcodes.INVOKESTATIC -> {
+                when {
+                    insn.isAreEqualIntrinsic() ->
+                        adaptAreEqualIntrinsic(node, insn, value)
+                    insn.isJavaLangComparableCompareTo() ->
+                        adaptJavaLangComparableCompareTo(node, insn, value)
+                    insn.isJavaLangClassBoxing() ||
+                    insn.isJavaLangClassUnboxing() ->
+                        node.instructions.remove(insn)
+                    else ->
+                        throwCannotAdaptInstruction(insn)
                 }
-                else if (BoxingInterpreterKt.isJavaLangClassBoxing(insn) || BoxingInterpreterKt.isJavaLangClassUnboxing(insn)) {
-                    node.instructions.remove(insn);
-                    break;
+            }
+
+            Opcodes.INVOKEINTERFACE -> {
+                if (insn.isJavaLangComparableCompareTo()) {
+                    adaptJavaLangComparableCompareTo(node, insn, value)
                 }
                 else {
-                    throwCannotAdaptInstruction(insn);
+                    throwCannotAdaptInstruction(insn)
                 }
-            case Opcodes.INVOKEINTERFACE:
-                if (BoxingInterpreterKt.isJavaLangComparableCompareTo(insn)) {
-                    adaptJavaLangComparableCompareTo(node, insn, value);
-                    break;
+            }
+
+            Opcodes.CHECKCAST,
+            Opcodes.INVOKEVIRTUAL ->
+                node.instructions.remove(insn)
+
+            else ->
+                throwCannotAdaptInstruction(insn)
+        }
+    }
+
+    private fun throwCannotAdaptInstruction(insn: AbstractInsnNode): Nothing =
+            throw AssertionError("Cannot adapt instruction: ${InlineCodegenUtil.getInsnText(insn)}")
+
+    private fun adaptAreEqualIntrinsic(
+            node: MethodNode,
+            insn: AbstractInsnNode,
+            value: BoxedValueDescriptor
+    ) {
+        val unboxedType = value.unboxedType
+
+        when (unboxedType.sort) {
+            Type.BOOLEAN, Type.BYTE, Type.SHORT, Type.INT, Type.CHAR ->
+                adaptAreEqualIntrinsicForInt(node, insn)
+            Type.LONG ->
+                adaptAreEqualIntrinsicForLong(node, insn)
+            Type.OBJECT ->
+                {}
+            else ->
+                throw AssertionError("Unexpected unboxed type kind: $unboxedType")
+        }
+    }
+
+    private fun adaptAreEqualIntrinsicForInt(node: MethodNode, insn: AbstractInsnNode) {
+        node.instructions.run {
+            val next = insn.next
+            if (next != null && (next.opcode == Opcodes.IFEQ || next.opcode == Opcodes.IFNE)) {
+                fuseAreEqualWithBranch(node, insn, Opcodes.IF_ICMPNE, Opcodes.IF_ICMPEQ)
+                remove(insn)
+                remove(next)
+            }
+            else {
+                ifEqual1Else0(node, insn, Opcodes.IF_ICMPNE)
+                remove(insn)
+            }
+        }
+    }
+
+    private fun adaptAreEqualIntrinsicForLong(node: MethodNode, insn: AbstractInsnNode) {
+        node.instructions.run {
+            insertBefore(insn, InsnNode(Opcodes.LCMP))
+            val next = insn.next
+            if (next != null && (next.opcode == Opcodes.IFEQ || next.opcode == Opcodes.IFNE)) {
+                fuseAreEqualWithBranch(node, insn, Opcodes.IFNE, Opcodes.IFEQ)
+                remove(insn)
+                remove(next)
+            }
+            else {
+                ifEqual1Else0(node, insn, Opcodes.IFNE)
+                remove(insn)
+            }
+        }
+    }
+
+    private fun fuseAreEqualWithBranch(
+            node: MethodNode,
+            insn: AbstractInsnNode,
+            ifEqualOpcode: Int,
+            ifNotEqualOpcode: Int
+    ) {
+        node.instructions.run {
+            val next = insn.next
+            assert(next is JumpInsnNode) { "JumpInsnNode expected: $next" }
+            val nextLabel = (next as JumpInsnNode).label
+            when {
+                next.getOpcode() == Opcodes.IFEQ ->
+                    insertBefore(insn, JumpInsnNode(ifEqualOpcode, nextLabel))
+                next.getOpcode() == Opcodes.IFNE ->
+                    insertBefore(insn, JumpInsnNode(ifNotEqualOpcode, nextLabel))
+                else ->
+                    throw AssertionError("IFEQ or IFNE expected: " + InlineCodegenUtil.getInsnOpcodeText(next))
+            }
+        }
+    }
+
+    private fun ifEqual1Else0(node: MethodNode, insn: AbstractInsnNode, ifneOpcode: Int) {
+        node.instructions.run {
+            val lNotEqual = LabelNode(Label())
+            val lDone = LabelNode(Label())
+            insertBefore(insn, JumpInsnNode(ifneOpcode, lNotEqual))
+            insertBefore(insn, InsnNode(Opcodes.ICONST_1))
+            insertBefore(insn, JumpInsnNode(Opcodes.GOTO, lDone))
+            insertBefore(insn, lNotEqual)
+            insertBefore(insn, InsnNode(Opcodes.ICONST_0))
+            insertBefore(insn, lDone)
+        }
+    }
+
+    private fun adaptJavaLangComparableCompareTo(
+            node: MethodNode,
+            insn: AbstractInsnNode,
+            value: BoxedValueDescriptor
+    ) {
+        val unboxedType = value.unboxedType
+
+        when (unboxedType.sort) {
+            Type.BOOLEAN, Type.BYTE, Type.SHORT, Type.INT, Type.CHAR -> 
+                adaptJavaLangComparableCompareToForInt(node, insn)
+            Type.LONG -> 
+                adaptJavaLangComparableCompareToForLong(node, insn)
+            Type.FLOAT -> 
+                adaptJavaLangComparableCompareToForFloat(node, insn)
+            Type.DOUBLE -> 
+                adaptJavaLangComparableCompareToForDouble(node, insn)
+            else -> 
+                throw AssertionError("Unexpected unboxed type kind: $unboxedType")
+        }
+    }
+
+    private fun adaptJavaLangComparableCompareToForInt(node: MethodNode, insn: AbstractInsnNode) {
+        node.instructions.run {
+            val next = insn.next
+            val next2 = next?.next
+            when {
+                next != null && next2 != null &&
+                next.opcode == Opcodes.ICONST_0 &&
+                next2.opcode >= Opcodes.IF_ICMPEQ && next2.opcode <= Opcodes.IF_ICMPLE -> {
+                    // Fuse: compareTo + ICONST_0 + IF_ICMPxx -> IF_ICMPxx
+                    remove(insn)
+                    remove(next)
                 }
-                else {
-                    throwCannotAdaptInstruction(insn);
+
+                next != null &&
+                next.opcode >= Opcodes.IFEQ && next.opcode <= Opcodes.IFLE -> {
+                    // Fuse: compareTo + IFxx -> IF_ICMPxx
+                    val nextLabel = (next as JumpInsnNode).label
+                    val ifCmpOpcode = next.opcode - Opcodes.IFEQ + Opcodes.IF_ICMPEQ
+                    insertBefore(insn, JumpInsnNode(ifCmpOpcode, nextLabel))
+                    remove(insn)
+                    remove(next)
                 }
-            case Opcodes.CHECKCAST:
-            case Opcodes.INVOKEVIRTUAL:
-                // CHECKCAST or unboxing-method call
-                node.instructions.remove(insn);
-                break;
-            default:
-                throwCannotAdaptInstruction(insn);
+
+                else -> {
+                    // Can't fuse with branching instruction.
+                    // Trick: convert I, I on stack to L, L and use LCMP.
+                    // This is more compact than explicit branching.
+                    // TODO Generate 'java.lang.Integer#compare(int, int)' in targets >= JVM 1.7
+
+                    // Initial stack: I1 I2
+                    insertBefore(insn, InsnNode(Opcodes.SWAP))       // I2 I1
+                    insertBefore(insn, InsnNode(Opcodes.I2L))        // L2 I1
+                    insertBefore(insn, InsnNode(Opcodes.DUP2_X1))    // L2 I1 L2
+                    insertBefore(insn, InsnNode(Opcodes.POP2))       // I1 L2
+                    insertBefore(insn, InsnNode(Opcodes.I2L))        // L1 L2
+                    insertBefore(insn, InsnNode(Opcodes.LCMP))       // compare(L1, L2)
+                    remove(insn)
+                }
+            }
         }
     }
 
-    private static void throwCannotAdaptInstruction(@NotNull AbstractInsnNode insn) {
-        throw new AssertionError("Cannot adapt instruction: " + InlineCodegenUtil.getInsnText(insn));
+    private fun adaptJavaLangComparableCompareToForLong(node: MethodNode, insn: AbstractInsnNode) {
+        node.instructions.set(insn, InsnNode(Opcodes.LCMP))
     }
 
-    private static void adaptAreEqualIntrinsic(
-            @NotNull MethodNode node,
-            @NotNull AbstractInsnNode insn,
-            @NotNull BoxedValueDescriptor value
-    ) {
-        Type unboxedType = value.getUnboxedType();
-
-        switch (unboxedType.getSort()) {
-            case Type.BOOLEAN:
-            case Type.BYTE:
-            case Type.SHORT:
-            case Type.INT:
-            case Type.CHAR:
-                adaptAreEqualIntrinsicForInt(node, insn);
-                break;
-            case Type.LONG:
-                adaptAreEqualIntrinsicForLong(node, insn);
-                break;
-            case Type.OBJECT:
-                break;
-            default:
-                throw new AssertionError("Unexpected unboxed type kind: " + unboxedType);
-        }
+    private fun adaptJavaLangComparableCompareToForFloat(node: MethodNode, insn: AbstractInsnNode) {
+        node.instructions.set(insn, MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Float", "compare", "(FF)I", false))
     }
 
-    private static void adaptAreEqualIntrinsicForInt(@NotNull MethodNode node, @NotNull AbstractInsnNode insn) {
-        AbstractInsnNode next = insn.getNext();
-        if (next != null && (next.getOpcode() == Opcodes.IFEQ || next.getOpcode() == Opcodes.IFNE)) {
-            fuseAreEqualWithBranch(node, insn, Opcodes.IF_ICMPNE, Opcodes.IF_ICMPEQ);
-            node.instructions.remove(insn);
-            node.instructions.remove(next);
-        }
-        else {
-            ifEqual1Else0(node, insn, Opcodes.IF_ICMPNE);
-            node.instructions.remove(insn);
-        }
-    }
-
-    private static void adaptAreEqualIntrinsicForLong(@NotNull MethodNode node, @NotNull AbstractInsnNode insn) {
-        node.instructions.insertBefore(insn, new InsnNode(Opcodes.LCMP));
-        AbstractInsnNode next = insn.getNext();
-        if (next != null && (next.getOpcode() == Opcodes.IFEQ || next.getOpcode() == Opcodes.IFNE)) {
-            fuseAreEqualWithBranch(node, insn, Opcodes.IFNE, Opcodes.IFEQ);
-            node.instructions.remove(insn);
-            node.instructions.remove(next);
-        }
-        else {
-            ifEqual1Else0(node, insn, Opcodes.IFNE);
-            node.instructions.remove(insn);
-        }
-    }
-
-    private static void fuseAreEqualWithBranch(
-            @NotNull MethodNode node,
-            @NotNull AbstractInsnNode insn,
-            int ifEqualOpcode,
-            int ifNotEqualOpcode
-    ) {
-        AbstractInsnNode next = insn.getNext();
-        assert next instanceof JumpInsnNode : "JumpInsnNode expected: " + next;
-        LabelNode nextLabel = ((JumpInsnNode) next).label;
-        if (next.getOpcode() == Opcodes.IFEQ) {
-            node.instructions.insertBefore(insn, new JumpInsnNode(ifEqualOpcode, nextLabel));
-        }
-        else if (next.getOpcode() == Opcodes.IFNE) {
-            node.instructions.insertBefore(insn, new JumpInsnNode(ifNotEqualOpcode, nextLabel));
-        }
-        else {
-            throw new AssertionError("IFEQ or IFNE expected: " + InlineCodegenUtil.getInsnOpcodeText(next));
-        }
-    }
-
-    private static void ifEqual1Else0(@NotNull MethodNode node, @NotNull AbstractInsnNode insn, int ifneOpcode) {
-        LabelNode lNotEqual = new LabelNode(new Label());
-        LabelNode lDone = new LabelNode(new Label());
-        node.instructions.insertBefore(insn, new JumpInsnNode(ifneOpcode, lNotEqual));
-        node.instructions.insertBefore(insn, new InsnNode(Opcodes.ICONST_1));
-        node.instructions.insertBefore(insn, new JumpInsnNode(Opcodes.GOTO, lDone));
-        node.instructions.insertBefore(insn, lNotEqual);
-        node.instructions.insertBefore(insn, new InsnNode(Opcodes.ICONST_0));
-        node.instructions.insertBefore(insn, lDone);
-    }
-
-    private static void adaptJavaLangComparableCompareTo(
-            @NotNull MethodNode node,
-            @NotNull AbstractInsnNode insn,
-            @NotNull BoxedValueDescriptor value
-    ) {
-        Type unboxedType = value.getUnboxedType();
-
-        switch (unboxedType.getSort()) {
-            case Type.BOOLEAN:
-            case Type.BYTE:
-            case Type.SHORT:
-            case Type.INT:
-            case Type.CHAR:
-                adaptJavaLangComparableCompareToForInt(node, insn);
-                break;
-            case Type.LONG:
-                adaptJavaLangComparableCompareToForLong(node, insn);
-                break;
-            case Type.FLOAT:
-                adaptJavaLangComparableCompareToForFloat(node, insn);
-                break;
-            case Type.DOUBLE:
-                adaptJavaLangComparableCompareToForDouble(node, insn);
-                break;
-            default:
-                throw new AssertionError("Unexpected unboxed type kind: " + unboxedType);
-        }
-    }
-
-    private static void adaptJavaLangComparableCompareToForInt(@NotNull MethodNode node, @NotNull AbstractInsnNode insn) {
-        AbstractInsnNode next = insn.getNext();
-        AbstractInsnNode next2 = next == null ? null : next.getNext();
-        if (next != null && next2 != null &&
-            next.getOpcode() == Opcodes.ICONST_0 &&
-            next2.getOpcode() >= Opcodes.IF_ICMPEQ && next2.getOpcode() <= Opcodes.IF_ICMPLE) {
-            // Fuse: compareTo + ICONST_0 + IF_ICMPxx -> IF_ICMPxx
-            node.instructions.remove(insn);
-            node.instructions.remove(next);
-        }
-        else if (next != null &&
-                next.getOpcode() >= Opcodes.IFEQ && next.getOpcode() <= Opcodes.IFLE) {
-            // Fuse: compareTo + IFxx -> IF_ICMPxx
-            LabelNode nextLabel = ((JumpInsnNode) next).label;
-            int ifCmpOpcode = next.getOpcode() - Opcodes.IFEQ + Opcodes.IF_ICMPEQ;
-            node.instructions.insertBefore(insn, new JumpInsnNode(ifCmpOpcode, nextLabel));
-            node.instructions.remove(insn);
-            node.instructions.remove(next);
-        }
-        else {
-            // Can't fuse with branching instruction.
-            // Trick: convert I, I on stack to L, L and use LCMP.
-            // This is more compact than explicit branching.
-            // TODO Generate 'java.lang.Integer#compare(int, int)' in targets >= JVM 1.7
-
-            // Initial stack: I1 I2
-            node.instructions.insertBefore(insn, new InsnNode(Opcodes.SWAP));       // I2 I1
-            node.instructions.insertBefore(insn, new InsnNode(Opcodes.I2L));        // L2 I1
-            node.instructions.insertBefore(insn, new InsnNode(Opcodes.DUP2_X1));    // L2 I1 L2
-            node.instructions.insertBefore(insn, new InsnNode(Opcodes.POP2));       // I1 L2
-            node.instructions.insertBefore(insn, new InsnNode(Opcodes.I2L));        // L1 L2
-            node.instructions.insertBefore(insn, new InsnNode(Opcodes.LCMP));       // compare(L1, L2)
-            node.instructions.remove(insn);
-        }
-    }
-
-    private static void adaptJavaLangComparableCompareToForLong(@NotNull MethodNode node, @NotNull AbstractInsnNode insn) {
-        node.instructions.set(insn, new InsnNode(Opcodes.LCMP));
-    }
-
-    private static void adaptJavaLangComparableCompareToForFloat(@NotNull MethodNode node, @NotNull AbstractInsnNode insn) {
-        node.instructions.set(insn, new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Float", "compare", "(FF)I", false));
-    }
-
-    private static void adaptJavaLangComparableCompareToForDouble(@NotNull MethodNode node, @NotNull AbstractInsnNode insn) {
-        node.instructions.set(insn, new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Double", "compare", "(DD)I", false));
+    private fun adaptJavaLangComparableCompareToForDouble(node: MethodNode, insn: AbstractInsnNode) {
+        node.instructions.set(insn, MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Double", "compare", "(DD)I", false))
     }
 }
