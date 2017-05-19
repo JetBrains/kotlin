@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.caches.resolve
+package org.jetbrains.kotlin.js.resolve
 
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.caches.project.LibraryModuleInfo
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -68,22 +66,20 @@ object JsAnalyzerFacade : ResolverForModuleFactory() {
         )
         var packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 
-        if (moduleInfo is LibraryModuleInfo && moduleInfo.platform == JsPlatform) {
-            val providers = moduleInfo.getLibraryRoots()
-                .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(it) }
-                .filter { it.version.isCompatible() }
-                .map { metadata ->
-                    val (header, packageFragmentProtos) =
-                            KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
-                    createKotlinJavascriptPackageFragmentProvider(
-                        moduleContext.storageManager, moduleDescriptor, header, packageFragmentProtos, metadata.version,
-                        container.get(), LookupTracker.DO_NOTHING
-                    )
-                }
-
-            if (providers.isNotEmpty()) {
-                packageFragmentProvider = CompositePackageFragmentProvider(listOf(packageFragmentProvider) + providers)
+        val libraryProviders = (moduleInfo as? LibraryModuleInfo)?.getLibraryRoots().orEmpty()
+            .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(it) }
+            .filter { it.version.isCompatible() }
+            .map { metadata ->
+                val (header, packageFragmentProtos) =
+                    KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
+                createKotlinJavascriptPackageFragmentProvider(
+                    moduleContext.storageManager, moduleDescriptor, header, packageFragmentProtos, metadata.version,
+                    container.get(), LookupTracker.DO_NOTHING
+                )
             }
+
+        if (libraryProviders.isNotEmpty()) {
+            packageFragmentProvider = CompositePackageFragmentProvider(listOf(packageFragmentProvider) + libraryProviders)
         }
 
         return ResolverForModule(packageFragmentProvider, container)
