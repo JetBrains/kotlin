@@ -1,6 +1,5 @@
 class A(val n: Int) {
-    val foo: Boolean
-        get() = n > 1
+    val foo get() = n > 1
 }
 
 fun test() {

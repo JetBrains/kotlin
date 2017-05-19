@@ -4151,9 +4151,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertFunctionToProperty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("annotationLineBreak.kt")
+        public void testAnnotationLineBreak() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/annotationLineBreak.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("blockBody.kt")
         public void testBlockBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/blockBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("comments.kt")
+        public void testComments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/comments.kt");
             doTest(fileName);
         }
 
@@ -4220,6 +4232,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("localFun.kt")
         public void testLocalFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/localFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noExplicitType.kt")
+        public void testNoExplicitType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/noExplicitType.kt");
             doTest(fileName);
         }
 
