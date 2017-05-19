@@ -405,9 +405,9 @@ class KotlinGradleIT: BaseGradleIT() {
         val project = Project("kotlinProject", GRADLE_VERSION)
         project.setupWorkingDir()
 
+        val customModuleName = "custom_module_name"
+
         File(project.projectDir, "build.gradle").modify {
-            // lazy eval is important
-            val customModuleName = "\${project.name}"
             it + """
             compileKotlin {
                 kotlinOptions.freeCompilerArgs = [ "-module-name", "$customModuleName" ]
@@ -416,6 +416,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
+            assertFileExists("build/classes/main/META-INF/$customModuleName.kotlin_module")
         }
     }
 
