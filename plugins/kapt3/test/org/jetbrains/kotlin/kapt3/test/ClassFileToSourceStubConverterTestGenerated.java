@@ -186,6 +186,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("methodParameterNames.kt")
+    public void testMethodParameterNames() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/methodParameterNames.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("methodPropertySignatureClash.kt")
     public void testMethodPropertySignatureClash() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/methodPropertySignatureClash.kt");

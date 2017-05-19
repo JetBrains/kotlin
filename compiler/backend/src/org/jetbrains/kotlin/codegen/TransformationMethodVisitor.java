@@ -70,7 +70,7 @@ public abstract class TransformationMethodVisitor extends MethodVisitor {
             // So we just do it here
             if (methodNode.instructions.size() == 0
                 // MethodNode does not create a list of variables for abstract methods, so we would get NPE in accept() instead
-                && (!(delegate instanceof MethodNode) || (methodNode.access & Opcodes.ACC_ABSTRACT) == 0)
+                && (!(delegate instanceof MethodNode) || methodNode.localVariables != null)
             ) {
                 List<LocalVariableNode> localVariables = methodNode.localVariables;
                 // visits local variables
