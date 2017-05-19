@@ -113,11 +113,7 @@ class CoroutineTransformerMethodVisitor(
                                  *withInstructionAdapter { loadCoroutineSuspendedMarker() }.toArray(),
                                  VarInsnNode(Opcodes.ASTORE, suspendMarkerVarIndex),
                                  VarInsnNode(Opcodes.ALOAD, continuationIndex),
-                                 FieldInsnNode(
-                                         Opcodes.GETFIELD,
-                                         COROUTINE_IMPL_ASM_TYPE.internalName,
-                                         COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor
-                                 ),
+                                 createInsnForReadingLabel(),
                                  TableSwitchInsnNode(0,
                                                      suspensionPoints.size,
                                                      defaultLabel,
@@ -139,6 +135,38 @@ class CoroutineTransformerMethodVisitor(
         dropSuspensionMarkers(methodNode, suspensionPoints)
         methodNode.removeEmptyCatchBlocks()
     }
+
+    private fun createInsnForReadingLabel() =
+            if (isForNamedFunction)
+                MethodInsnNode(
+                        Opcodes.INVOKEVIRTUAL,
+                        classBuilderForCoroutineState.thisName,
+                        "getLabel",
+                        Type.getMethodDescriptor(Type.INT_TYPE),
+                        false
+                )
+            else
+                FieldInsnNode(
+                    Opcodes.GETFIELD,
+                    COROUTINE_IMPL_ASM_TYPE.internalName,
+                    COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor
+                )
+
+    private fun createInsnForSettingLabel() =
+            if (isForNamedFunction)
+                MethodInsnNode(
+                        Opcodes.INVOKEVIRTUAL,
+                        classBuilderForCoroutineState.thisName,
+                        "setLabel",
+                        Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE),
+                        false
+                )
+            else
+                FieldInsnNode(
+                        Opcodes.PUTFIELD,
+                        COROUTINE_IMPL_ASM_TYPE.internalName,
+                        COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor
+                )
 
     private fun updateMaxStack(methodNode: MethodNode) {
         methodNode.instructions.resetLabels()
@@ -441,18 +469,7 @@ class CoroutineTransformerMethodVisitor(
                          insnListOf(
                                  VarInsnNode(Opcodes.ALOAD, continuationIndex),
                                  *withInstructionAdapter { iconst(id) }.toArray(),
-                                 if (isForNamedFunction)
-                                     MethodInsnNode(
-                                             Opcodes.INVOKEVIRTUAL, classBuilderForCoroutineState.thisName,
-                                             "setLabel",
-                                             Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE),
-                                             false
-                                     )
-                                 else
-                                     FieldInsnNode(
-                                             Opcodes.PUTFIELD, COROUTINE_IMPL_ASM_TYPE.internalName, COROUTINE_LABEL_FIELD_NAME,
-                                             Type.INT_TYPE.descriptor
-                                     )
+                                 createInsnForSettingLabel()
                          )
             )
 
