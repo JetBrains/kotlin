@@ -36,6 +36,12 @@ public class MultiModuleCopyTestGenerated extends AbstractMultiModuleCopyTest {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/copyMultiModule"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }
 
+    @TestMetadata("fileNotUnderSourceRoot/fileNotUnderSourceRoot.test")
+    public void testFileNotUnderSourceRoot_FileNotUnderSourceRoot() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copyMultiModule/fileNotUnderSourceRoot/fileNotUnderSourceRoot.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("internalReferencesToAnotherModule2/internalReferencesToAnotherModule.test")
     public void testInternalReferencesToAnotherModule2_InternalReferencesToAnotherModule() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copyMultiModule/internalReferencesToAnotherModule2/internalReferencesToAnotherModule.test");
