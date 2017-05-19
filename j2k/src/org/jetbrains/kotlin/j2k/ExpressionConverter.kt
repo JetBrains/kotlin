@@ -593,12 +593,11 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             }
 
             // add qualification for static members from base classes and also this works for enum constants in switch
-            val context = converter.specialContext ?: expression
             if (target is PsiMember
-                    && target.hasModifierProperty(PsiModifier.STATIC)
-                    && target.containingClass != null
-                    && !PsiTreeUtil.isAncestor(target.containingClass, context, true)
-                    && !target.isImported(context.containingFile as PsiJavaFile)) {
+                && target.hasModifierProperty(PsiModifier.STATIC)
+                && target.containingClass != null
+                && !PsiTreeUtil.isAncestor(target.containingClass, expression, true)
+                && !target.isImported(expression.containingFile as PsiJavaFile)) {
                 var member: PsiMember = target
                 var code = Identifier.toKotlin(referenceName)
                 while (true) {
