@@ -1,5 +1,5 @@
 // "Create class 'Foo'" "true"
-// ERROR: No value passed for parameter n
+// ERROR: No value passed for parameter 'n'
 
 open class A(n: Int)
 

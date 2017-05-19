@@ -3,7 +3,7 @@
 // ACTION: Remove parameter 's'
 // ACTION: Create secondary constructor
 // ACTION: Add 'i =' to argument
-// ERROR: No value passed for parameter s
+// ERROR: No value passed for parameter 's'
 
 class Foo(i: Int, s: String)
 

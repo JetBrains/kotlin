@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-// ERROR: No value passed for parameter b
+// ERROR: No value passed for parameter 'b'
 // ERROR: 'operator' modifier is inapplicable on this function: must have a single value parameter
 fun test() {
     class Test{

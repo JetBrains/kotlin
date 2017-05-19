@@ -1,6 +1,6 @@
 // IS_APPLICABLE: false
 // ERROR: An argument is already passed for this parameter
-// ERROR: No value passed for parameter b
+// ERROR: No value passed for parameter 'b'
 fun test() {
     class Test{
         operator fun get(a: Int, b: Int) : Int = 0

@@ -1,4 +1,4 @@
-// ERROR: No value passed for parameter p
+// ERROR: No value passed for parameter 'p'
 
 open class B {
     open fun foo(p: String){}

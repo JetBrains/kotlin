@@ -1,4 +1,4 @@
-// ERROR: No value passed for parameter i
+// ERROR: No value passed for parameter 'i'
 package a
 
 private fun f(p: A, t: T) {
