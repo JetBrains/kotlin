@@ -453,19 +453,8 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
                 }
 
                 else -> {
-                    // Can't fuse with branching instruction.
-                    // Trick: convert I, I on stack to L, L and use LCMP.
-                    // This is more compact than explicit branching.
-                    // TODO Generate 'java.lang.Integer#compare(int, int)' in targets >= JVM 1.7
-
-                    // Initial stack: I1 I2
-                    insertBefore(insn, InsnNode(Opcodes.SWAP))       // I2 I1
-                    insertBefore(insn, InsnNode(Opcodes.I2L))        // L2 I1
-                    insertBefore(insn, InsnNode(Opcodes.DUP2_X1))    // L2 I1 L2
-                    insertBefore(insn, InsnNode(Opcodes.POP2))       // I1 L2
-                    insertBefore(insn, InsnNode(Opcodes.I2L))        // L1 L2
-                    insertBefore(insn, InsnNode(Opcodes.LCMP))       // compare(L1, L2)
-                    remove(insn)
+                    // Can't fuse with branching instruction. Use Intrinsics#compare(int, int).
+                    set(insn, MethodInsnNode(Opcodes.INVOKESTATIC, "kotlin/jvm/internal/Intrinsics", "compare", "(II)I", false))
                 }
             }
         }
