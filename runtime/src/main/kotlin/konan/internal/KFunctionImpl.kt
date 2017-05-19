@@ -30,6 +30,6 @@ open class KFunctionImpl<out R>(override val name: String, val fqName: String, v
     }
 
     override fun toString(): String {
-        return fqName
+        return (if (name == "<init>") "constructor" else "function " + name) + " (Kotlin reflection is not available)"
     }
 }
