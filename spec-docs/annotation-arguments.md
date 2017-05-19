@@ -1,5 +1,9 @@
 # Annotation Arguments
 
+**NOTE**: This document contains old language design notes and does not correspond to the current state of Kotlin. Please see http://kotlinlang.org/docs/reference/annotations.html for up-to-date documentation on this topic. 
+
+***
+
 Goals:
 * Sort out problems of positional parameters and varargs in annotations
 * \[TBD later] Better syntax for array arguments to annotations
