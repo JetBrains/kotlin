@@ -23,13 +23,12 @@ import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -555,12 +554,20 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
 
     val descriptorSubstitutorForExternalScope = object : IrElementTransformerVoid() {
 
+        override fun visitFunction(declaration: IrFunction): IrStatement {
+            if (declaration.descriptor == targetDescriptor)
+                return declaration
+            return super.visitFunction(declaration)
+        }
+
         override fun visitCall(expression: IrCall): IrExpression {
             val oldExpression = super.visitCall(expression) as IrCall
 
-            if (oldExpression is IrCallImpl)
-                return copyIrCallImpl(oldExpression)
-            return oldExpression
+            return when (oldExpression) {
+                is IrCallImpl -> copyIrCallImpl(oldExpression)
+                is IrCallWithShallowCopy -> copyIrCallWithShallowCopy(oldExpression)
+                else -> oldExpression
+            }
         }
     }
 
@@ -569,18 +576,26 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
     private fun copyIrCallImpl(oldExpression: IrCallImpl): IrCallImpl {
 
         val oldDescriptor = oldExpression.descriptor
-        val newDescriptor = descriptorSubstituteMap.getOrDefault(oldDescriptor.original,
-            oldDescriptor) as FunctionDescriptor
+        val newDescriptor = (descriptorSubstituteMap[oldDescriptor.original] ?: oldDescriptor) as FunctionDescriptor
 
-        val newSuperQualifier = oldExpression.superQualifier?.let { (descriptorSubstituteMap[it] ?: it) as ClassDescriptor }
+        val oldSuperQualifier = oldExpression.superQualifier
+        val newSuperQualifier = oldSuperQualifier?.let { (descriptorSubstituteMap[it] ?: it) as ClassDescriptor }
+
+        val newType = substituteType(oldExpression.type)!!
+        val newTypeArguments = substituteTypeArguments(oldExpression.typeArguments)
+
+        if (newDescriptor == oldDescriptor && newSuperQualifier == oldSuperQualifier && newType == oldExpression.type
+                && ((newTypeArguments == null && oldExpression.typeArguments == null)
+                    || (newTypeArguments!!.all { it.value == oldExpression.typeArguments!![it.key] })))
+            return oldExpression
 
         val newExpression = IrCallImpl(
-            startOffset    = oldExpression.startOffset,
-            endOffset      = oldExpression.endOffset,
-            type           = substituteType(oldExpression.type)!!,
-            calleeDescriptor = newDescriptor,
-            typeArguments  = substituteTypeArguments(oldExpression.typeArguments),
-            origin         = oldExpression.origin,
+            startOffset              = oldExpression.startOffset,
+            endOffset                = oldExpression.endOffset,
+            type                     = newType,
+            calleeDescriptor         = newDescriptor,
+            typeArguments            = newTypeArguments,
+            origin                   = oldExpression.origin,
             superQualifierDescriptor = newSuperQualifier
         ).apply {
             oldExpression.descriptor.valueParameters.forEach {
@@ -592,6 +607,22 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
         }
 
         return newExpression
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun copyIrCallWithShallowCopy(oldExpression: IrCallWithShallowCopy): IrCall {
+
+        val oldDescriptor = oldExpression.descriptor
+        val newDescriptor = (descriptorSubstituteMap[oldDescriptor.original] ?: oldDescriptor) as FunctionDescriptor
+
+        val oldSuperQualifier = oldExpression.superQualifier
+        val newSuperQualifier = oldSuperQualifier?.let { (descriptorSubstituteMap[it] ?: it) as ClassDescriptor }
+
+        if (newDescriptor == oldDescriptor && newSuperQualifier == oldSuperQualifier)
+            return oldExpression
+
+        return oldExpression.shallowCopy(oldExpression.origin, newDescriptor, newSuperQualifier)
     }
 }
 

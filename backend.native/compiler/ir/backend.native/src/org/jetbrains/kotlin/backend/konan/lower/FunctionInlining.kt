@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.getDefault
@@ -59,7 +60,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
     override fun visitCall(expression: IrCall): IrExpression {
 
         val irCall = super.visitCall(expression) as IrCall
-        val functionDescriptor = irCall.descriptor as FunctionDescriptor
+        val functionDescriptor = irCall.descriptor
         if (!functionDescriptor.needsInlining) return irCall                                // This call does not need inlining.
 
         val functionDeclaration = getFunctionDeclaration(irCall)                            // Get declaration of the function to be inlined.
@@ -71,15 +72,15 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         }
 
         functionDeclaration.transformChildrenVoid(this)                                     // Process recursive inline.
-        val inliner = Inliner(currentScope!!, context)                                      // Create inliner for this scope.
-        return inliner.inline(irCall, functionDeclaration)                                  // Return newly created IrInlineBody instead of IrCall.
+        val inliner = Inliner(currentFile, functionDeclaration, currentScope!!, context)    // Create inliner for this scope.
+        return inliner.inline(irCall )                                  // Return newly created IrInlineBody instead of IrCall.
     }
 
     //-------------------------------------------------------------------------//
 
     private fun getFunctionDeclaration(irCall: IrCall): IrFunction? {
 
-        val functionDescriptor = irCall.descriptor as FunctionDescriptor
+        val functionDescriptor = irCall.descriptor
         val originalDescriptor = functionDescriptor.resolveFakeOverride().original
         val functionDeclaration =
             context.ir.originalModuleIndex.functions[originalDescriptor] ?:                 // If function is declared in the current module.
@@ -94,19 +95,20 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
 //-----------------------------------------------------------------------------//
 
-private class Inliner(val currentScope: ScopeWithIr, val context: Context) {
+private class Inliner(val irFile: IrFile,
+                      val functionDeclaration: IrFunction,                                  // Function to substitute.
+                      val currentScope: ScopeWithIr,
+                      val context: Context) {
 
-    val copyIrElement = DeepCopyIrTreeWithDescriptors(currentScope.scope.scopeOwner, context) // Create DeepCopy for current scope.
+    val copyIrElement = DeepCopyIrTreeWithDescriptors(functionDeclaration.descriptor, context) // Create DeepCopy for current scope.
     val substituteMap = mutableMapOf<ValueDescriptor, IrExpression>()
 
     //-------------------------------------------------------------------------//
 
-    fun inline(irCall             : IrCall,                                                 // Call to be substituted.
-               functionDeclaration: IrFunction): IrReturnableBlockImpl {                    // Function to substitute.
-
+    fun inline(irCall: IrCall): IrReturnableBlockImpl {                                     // Call to be substituted.
         val inlineFunctionBody = inlineFunction(irCall, functionDeclaration)
         val descriptorSubstitutor = copyIrElement.descriptorSubstitutorForExternalScope
-        currentScope.irElement.transformChildrenVoid(descriptorSubstitutor)                 // Transform calls to object that might be returned from inline function call.
+        irFile.transformChildrenVoid(descriptorSubstitutor)                                 // Transform calls to object that might be returned from inline function call.
         return inlineFunctionBody
     }
 
