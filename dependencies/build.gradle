@@ -31,6 +31,8 @@ apply plugin: 'com.jfrog.bintray'
 configurations {
     kotlin_compiler_jar
     kotlin_compiler_pom
+    kotlin_compiler_src
+    kotlin_compiler_doc
 }
 
 // TODO: Check if we really need the our bintray mirror and delete the uploading code below if we don't.
@@ -41,6 +43,8 @@ repositories {
 dependencies {
     kotlin_compiler_jar "$kotlinCompilerModule@jar"
     kotlin_compiler_pom "$kotlinCompilerModule@pom"
+    kotlin_compiler_src "$kotlinCompilerModule:sources@jar"
+    kotlin_compiler_doc "$kotlinCompilerModule:javadoc@jar"
 }
 
 // Hack kotlin-compiler pom-file to resolve the dependency correctly.
@@ -83,6 +87,8 @@ bintray {
         def artifactPath = artifactId
         def versionPath =  "${version.tokenize('-')[0]}-SNAPSHOT"
         from project.configurations.kotlin_compiler_jar.files
+        from project.configurations.kotlin_compiler_src.files
+        from project.configurations.kotlin_compiler_doc.files
         from generatePom.outputs.files
         into "$groupPath/$artifactPath/$versionPath"
     }
