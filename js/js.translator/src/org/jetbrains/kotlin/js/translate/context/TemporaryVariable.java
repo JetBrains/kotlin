@@ -28,6 +28,7 @@ public class TemporaryVariable {
         JsBinaryOperation rhs = null;
         if (initExpression != null) {
             rhs = JsAstUtils.assignment(temporaryName.makeRef(), initExpression);
+            rhs.source(initExpression.getSource());
             MetadataProperties.setSynthetic(rhs, true);
         }
         return new TemporaryVariable(temporaryName, rhs);
