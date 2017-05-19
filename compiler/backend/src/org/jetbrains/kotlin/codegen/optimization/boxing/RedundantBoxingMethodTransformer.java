@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.optimization.boxing;
 import com.intellij.openapi.util.Pair;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue;
 import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer;
@@ -324,16 +325,40 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
                     adaptAreEqualIntrinsic(node, insn, value);
                     break;
                 }
-                else {
-                    // fall-through to default
+                else if (BoxingInterpreterKt.isJavaLangClassBoxing(insn) || BoxingInterpreterKt.isJavaLangClassUnboxing(insn)) {
+                    node.instructions.remove(insn);
+                    break;
                 }
-            default:
+                else {
+                    throwCannotAdaptInstruction(insn);
+                }
+            case Opcodes.INVOKEINTERFACE:
+                if (BoxingInterpreterKt.isJavaLangComparableCompareTo(insn)) {
+                    adaptJavaLangComparableCompareTo(node, insn, value);
+                    break;
+                }
+                else {
+                    throwCannotAdaptInstruction(insn);
+                }
+            case Opcodes.CHECKCAST:
+            case Opcodes.INVOKEVIRTUAL:
                 // CHECKCAST or unboxing-method call
                 node.instructions.remove(insn);
+                break;
+            default:
+                throwCannotAdaptInstruction(insn);
         }
     }
 
-    private static void adaptAreEqualIntrinsic(@NotNull MethodNode node, @NotNull AbstractInsnNode insn, @NotNull BoxedValueDescriptor value) {
+    private static void throwCannotAdaptInstruction(@NotNull AbstractInsnNode insn) {
+        throw new AssertionError("Cannot adapt instruction: " + InlineCodegenUtil.getInsnText(insn));
+    }
+
+    private static void adaptAreEqualIntrinsic(
+            @NotNull MethodNode node,
+            @NotNull AbstractInsnNode insn,
+            @NotNull BoxedValueDescriptor value
+    ) {
         Type unboxedType = value.getUnboxedType();
 
         switch (unboxedType.getSort()) {
@@ -355,32 +380,137 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     }
 
     private static void adaptAreEqualIntrinsicForInt(@NotNull MethodNode node, @NotNull AbstractInsnNode insn) {
-        LabelNode lNotEqual = new LabelNode(new Label());
-        LabelNode lDone = new LabelNode(new Label());
-        node.instructions.insertBefore(insn, new JumpInsnNode(Opcodes.IF_ICMPNE, lNotEqual));
-        node.instructions.insertBefore(insn, new InsnNode(Opcodes.ICONST_1));
-        node.instructions.insertBefore(insn, new JumpInsnNode(Opcodes.GOTO, lDone));
-        node.instructions.insertBefore(insn, lNotEqual);
-        node.instructions.insertBefore(insn, new InsnNode(Opcodes.ICONST_0));
-        node.instructions.insertBefore(insn, lDone);
-
-        node.instructions.remove(insn);
+        AbstractInsnNode next = insn.getNext();
+        if (next != null && (next.getOpcode() == Opcodes.IFEQ || next.getOpcode() == Opcodes.IFNE)) {
+            fuseAreEqualWithBranch(node, insn, Opcodes.IF_ICMPNE, Opcodes.IF_ICMPEQ);
+            node.instructions.remove(insn);
+            node.instructions.remove(next);
+        }
+        else {
+            ifEqual1Else0(node, insn, Opcodes.IF_ICMPNE);
+            node.instructions.remove(insn);
+        }
     }
 
     private static void adaptAreEqualIntrinsicForLong(@NotNull MethodNode node, @NotNull AbstractInsnNode insn) {
         node.instructions.insertBefore(insn, new InsnNode(Opcodes.LCMP));
-        ifEqual1Else0(node, insn);
-        node.instructions.remove(insn);
+        AbstractInsnNode next = insn.getNext();
+        if (next != null && (next.getOpcode() == Opcodes.IFEQ || next.getOpcode() == Opcodes.IFNE)) {
+            fuseAreEqualWithBranch(node, insn, Opcodes.IFNE, Opcodes.IFEQ);
+            node.instructions.remove(insn);
+            node.instructions.remove(next);
+        }
+        else {
+            ifEqual1Else0(node, insn, Opcodes.IFNE);
+            node.instructions.remove(insn);
+        }
     }
 
-    private static void ifEqual1Else0(@NotNull MethodNode node, @NotNull AbstractInsnNode insn) {
+    private static void fuseAreEqualWithBranch(
+            @NotNull MethodNode node,
+            @NotNull AbstractInsnNode insn,
+            int ifEqualOpcode,
+            int ifNotEqualOpcode
+    ) {
+        AbstractInsnNode next = insn.getNext();
+        assert next instanceof JumpInsnNode : "JumpInsnNode expected: " + next;
+        LabelNode nextLabel = ((JumpInsnNode) next).label;
+        if (next.getOpcode() == Opcodes.IFEQ) {
+            node.instructions.insertBefore(insn, new JumpInsnNode(ifEqualOpcode, nextLabel));
+        }
+        else if (next.getOpcode() == Opcodes.IFNE) {
+            node.instructions.insertBefore(insn, new JumpInsnNode(ifNotEqualOpcode, nextLabel));
+        }
+        else {
+            throw new AssertionError("IFEQ or IFNE expected: " + InlineCodegenUtil.getInsnOpcodeText(next));
+        }
+    }
+
+    private static void ifEqual1Else0(@NotNull MethodNode node, @NotNull AbstractInsnNode insn, int ifneOpcode) {
         LabelNode lNotEqual = new LabelNode(new Label());
         LabelNode lDone = new LabelNode(new Label());
-        node.instructions.insertBefore(insn, new JumpInsnNode(Opcodes.IFNE, lNotEqual));
+        node.instructions.insertBefore(insn, new JumpInsnNode(ifneOpcode, lNotEqual));
         node.instructions.insertBefore(insn, new InsnNode(Opcodes.ICONST_1));
         node.instructions.insertBefore(insn, new JumpInsnNode(Opcodes.GOTO, lDone));
         node.instructions.insertBefore(insn, lNotEqual);
         node.instructions.insertBefore(insn, new InsnNode(Opcodes.ICONST_0));
         node.instructions.insertBefore(insn, lDone);
+    }
+
+    private static void adaptJavaLangComparableCompareTo(
+            @NotNull MethodNode node,
+            @NotNull AbstractInsnNode insn,
+            @NotNull BoxedValueDescriptor value
+    ) {
+        Type unboxedType = value.getUnboxedType();
+
+        switch (unboxedType.getSort()) {
+            case Type.BOOLEAN:
+            case Type.BYTE:
+            case Type.SHORT:
+            case Type.INT:
+            case Type.CHAR:
+                adaptJavaLangComparableCompareToForInt(node, insn);
+                break;
+            case Type.LONG:
+                adaptJavaLangComparableCompareToForLong(node, insn);
+                break;
+            case Type.FLOAT:
+                adaptJavaLangComparableCompareToForFloat(node, insn);
+                break;
+            case Type.DOUBLE:
+                adaptJavaLangComparableCompareToForDouble(node, insn);
+                break;
+            default:
+                throw new AssertionError("Unexpected unboxed type kind: " + unboxedType);
+        }
+    }
+
+    private static void adaptJavaLangComparableCompareToForInt(@NotNull MethodNode node, @NotNull AbstractInsnNode insn) {
+        AbstractInsnNode next = insn.getNext();
+        AbstractInsnNode next2 = next == null ? null : next.getNext();
+        if (next != null && next2 != null &&
+            next.getOpcode() == Opcodes.ICONST_0 &&
+            next2.getOpcode() >= Opcodes.IF_ICMPEQ && next2.getOpcode() <= Opcodes.IF_ICMPLE) {
+            // Fuse: compareTo + ICONST_0 + IF_ICMPxx -> IF_ICMPxx
+            node.instructions.remove(insn);
+            node.instructions.remove(next);
+        }
+        else if (next != null &&
+                next.getOpcode() >= Opcodes.IFEQ && next.getOpcode() <= Opcodes.IFLE) {
+            // Fuse: compareTo + IFxx -> IF_ICMPxx
+            LabelNode nextLabel = ((JumpInsnNode) next).label;
+            int ifCmpOpcode = next.getOpcode() - Opcodes.IFEQ + Opcodes.IF_ICMPEQ;
+            node.instructions.insertBefore(insn, new JumpInsnNode(ifCmpOpcode, nextLabel));
+            node.instructions.remove(insn);
+            node.instructions.remove(next);
+        }
+        else {
+            // Can't fuse with branching instruction.
+            // Trick: convert I, I on stack to L, L and use LCMP.
+            // This is more compact than explicit branching.
+            // TODO Generate 'java.lang.Integer#compare(int, int)' in targets >= JVM 1.7
+
+            // Initial stack: I1 I2
+            node.instructions.insertBefore(insn, new InsnNode(Opcodes.SWAP));       // I2 I1
+            node.instructions.insertBefore(insn, new InsnNode(Opcodes.I2L));        // L2 I1
+            node.instructions.insertBefore(insn, new InsnNode(Opcodes.DUP2_X1));    // L2 I1 L2
+            node.instructions.insertBefore(insn, new InsnNode(Opcodes.POP2));       // I1 L2
+            node.instructions.insertBefore(insn, new InsnNode(Opcodes.I2L));        // L1 L2
+            node.instructions.insertBefore(insn, new InsnNode(Opcodes.LCMP));       // compare(L1, L2)
+            node.instructions.remove(insn);
+        }
+    }
+
+    private static void adaptJavaLangComparableCompareToForLong(@NotNull MethodNode node, @NotNull AbstractInsnNode insn) {
+        node.instructions.set(insn, new InsnNode(Opcodes.LCMP));
+    }
+
+    private static void adaptJavaLangComparableCompareToForFloat(@NotNull MethodNode node, @NotNull AbstractInsnNode insn) {
+        node.instructions.set(insn, new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Float", "compare", "(FF)I", false));
+    }
+
+    private static void adaptJavaLangComparableCompareToForDouble(@NotNull MethodNode node, @NotNull AbstractInsnNode insn) {
+        node.instructions.set(insn, new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Double", "compare", "(DD)I", false));
     }
 }
