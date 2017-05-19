@@ -744,10 +744,14 @@ OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t lengthBytes) {
 
 // String.kt
 KInt Kotlin_String_compareTo(KString thiz, KString other) {
-  return memcmp(
+  int result = memcmp(
     CharArrayAddressOfElementAt(thiz, 0),
     CharArrayAddressOfElementAt(other, 0),
     (thiz->count_ < other->count_ ? thiz->count_ : other->count_) * sizeof(KChar));
+  if (result != 0) return result;
+  int diff = thiz->count_ - other->count_;
+  if (diff == 0) return 0;
+  return diff < 0 ? -1 : 1;
 }
 
 KChar Kotlin_String_get(KString thiz, KInt index) {
