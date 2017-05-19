@@ -10,12 +10,12 @@ buildscript {
     }
 }
 
-apply from: 'commonConfiguration.gradle'
-
 allprojects {
     group = 'org.jetbrains.kotlin'
     version = "$kotlin_version"
 }
+
+apply from: 'commonConfiguration.gradle'
 
 subprojects {
 
