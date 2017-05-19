@@ -165,7 +165,7 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
                 modulesContent: (M) -> ModuleContent,
                 platformParameters: P,
                 targetEnvironment: TargetEnvironment = CompilerEnvironment,
-                builtIns: (M) -> KotlinBuiltIns = { DefaultBuiltIns.Instance },
+                builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
                 delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
                 packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { _, _ -> PackagePartProvider.Empty },
                 firstDependency: M? = null,
@@ -175,7 +175,7 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             val storageManager = projectContext.storageManager
 
             val resolverForProject = ResolverForProjectImpl(debugName, modules.keysToMap { module ->
-                ModuleDescriptorImpl(module.name, storageManager, builtIns(module), modulePlatforms(module), module.capabilities)
+                ModuleDescriptorImpl(module.name, storageManager, builtIns, modulePlatforms(module), module.capabilities)
             }, delegateResolver)
 
             for (module in modules) {

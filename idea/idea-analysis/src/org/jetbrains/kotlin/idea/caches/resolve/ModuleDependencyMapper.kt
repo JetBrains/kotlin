@@ -26,39 +26,34 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import org.jetbrains.kotlin.analyzer.AnalyzerFacade
 import org.jetbrains.kotlin.analyzer.ModuleContent
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForProject
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 fun createModuleResolverProvider(
         debugName: String,
         project: Project,
         globalContext: GlobalContextImpl,
-        sdk: Sdk?,
-        platform: TargetPlatform,
+        analysisSettings: PlatformAnalysisSettings,
         syntheticFiles: Collection<KtFile>,
         delegateResolver: ResolverForProject<IdeaModuleInfo>,
         moduleFilter: (IdeaModuleInfo) -> Boolean,
         allModules: Collection<IdeaModuleInfo>?,
-        builtInsCache: BuiltInsCache?, // this cache is null only for SDK resolver provider
+        providedBuiltIns: KotlinBuiltIns?, // null means create new builtins based on SDK
         dependencies: Collection<Any>
 ): ModuleResolverProvider {
-    var sdkBuiltIns: KotlinBuiltIns? = null
-
-    val builtInsProvider: (ModuleInfo) -> KotlinBuiltIns = builtInsCache?.let { it::getBuiltIns } ?: run {
-        sdkBuiltIns = BuiltInsCache.calculateBuiltIns(platform, sdk, globalContext);
-
-        { _: ModuleInfo -> sdkBuiltIns!! }
-    }
+    val builtIns = providedBuiltIns ?: createBuiltIns(analysisSettings, globalContext)
 
     val allModuleInfos = (allModules ?: collectAllModuleInfosFromIdeaModel(project)).toHashSet()
 
@@ -81,10 +76,10 @@ fun createModuleResolverProvider(
 
         return AnalyzerFacade.setupResolverForProject(
                 debugName, globalContext.withProject(project), modulesToCreateResolversFor,
-                { module -> AnalyzerFacadeProvider.getAnalyzerFacade(module.platform ?: platform) },
-                modulesContent, jvmPlatformParameters, IdeaEnvironment, builtInsProvider,
+                { module -> AnalyzerFacadeProvider.getAnalyzerFacade(module.platform ?: analysisSettings.platform) },
+                modulesContent, jvmPlatformParameters, IdeaEnvironment, builtIns,
                 delegateResolver, { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
-                sdk?.let { SdkInfo(project, it) },
+                analysisSettings.sdk?.let { SdkInfo(project, it) },
                 modulePlatforms = { module -> module.platform?.multiTargetPlatform },
                 packageOracleFactory = project.service<IdePackageOracleFactory>()
         )
@@ -92,15 +87,14 @@ fun createModuleResolverProvider(
 
     val resolverForProject = createResolverForProject()
 
-    val newBuiltInsCache = builtInsCache ?: run {
-        val sdkModuleDescriptor = sdk?.let { resolverForProject.descriptorForModule(SdkInfo(project, it)) }
-
-        BuiltInsCache.createCacheAndInitializeBuiltIns(project, platform, sdk, sdkModuleDescriptor, sdkBuiltIns!!, globalContext)
+    if (providedBuiltIns == null && builtIns is JvmBuiltIns) {
+        val sdkModuleDescriptor = analysisSettings.sdk!!.let { resolverForProject.descriptorForModule(SdkInfo(project, it)) }
+        builtIns.initialize(sdkModuleDescriptor, analysisSettings.isAdditionalBuiltInFeaturesSupported)
     }
 
     return ModuleResolverProviderImpl(
             resolverForProject,
-            newBuiltInsCache,
+            builtIns,
             dependencies + listOf(globalContext.exceptionTracker)
     )
 }
@@ -130,6 +124,13 @@ fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
     return collectAllModuleInfos
 }
 
+private fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns = when {
+    settings.platform is JsPlatform -> JsPlatform.builtIns
+    settings.platform is JvmPlatform && settings.sdk != null -> JvmBuiltIns(sdkContext.storageManager)
+    else -> DefaultBuiltIns.Instance
+
+}
+
 fun getAllProjectSdks(): Collection<Sdk> {
     return ProjectJdkTable.getInstance().allJdks.toList()
 }
@@ -137,12 +138,12 @@ fun getAllProjectSdks(): Collection<Sdk> {
 
 interface ModuleResolverProvider {
     val resolverForProject: ResolverForProject<IdeaModuleInfo>
-    val builtInsCache: BuiltInsCache
+    val builtIns: KotlinBuiltIns
     val cacheDependencies: Collection<Any>
 }
 
 class ModuleResolverProviderImpl(
         override val resolverForProject: ResolverForProject<IdeaModuleInfo>,
-        override val builtInsCache: BuiltInsCache,
+        override val builtIns: KotlinBuiltIns,
         override val cacheDependencies: Collection<Any>
 ) : ModuleResolverProvider
