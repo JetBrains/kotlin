@@ -123,9 +123,9 @@ class TypeApproximator {
 
                 if (conf.flexible) {
                     /**
-                     * Let inputType = L_1..U_1; resultType = L_2..U_2
-                     * We should create resultType such as inputType <: resultType.
-                     * It means that if A <: inputType, then A <: U_1. And, because inputType <: resultType,
+                     * Let inputTypes = L_1..U_1; resultType = L_2..U_2
+                     * We should create resultType such as inputTypes <: resultType.
+                     * It means that if A <: inputTypes, then A <: U_1. And, because inputTypes <: resultType,
                      * A <: resultType => A <: U_2. I.e. for every type A such A <: U_1, A <: U_2 => U_1 <: U_2.
                      *
                      * Similar for L_1 <: L_2: Let B : resultType <: B. L_2 <: B and L_1 <: B.
@@ -138,7 +138,7 @@ class TypeApproximator {
 
                     /**
                      * If C <: L..U then C <: L.
-                     * inputType.lower <: lowerResult => inputType.lower <: lowerResult?.lowerIfFlexible()
+                     * inputTypes.lower <: lowerResult => inputTypes.lower <: lowerResult?.lowerIfFlexible()
                      * i.e. this type is correct. We use this type, because this type more flexible.
                      *
                      * If U_1 <: U_2.lower .. U_2.upper, then we know only that U_1 <: U_2.upper.

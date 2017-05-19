@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceCandidate
-import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -30,8 +28,7 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 sealed class ArgumentWithPostponeResolution {
     abstract val outerCall: KotlinCall
     abstract val argument: KotlinCallArgument
-    abstract val myTypeVariables: Collection<NewTypeVariable>
-    abstract val inputType: Collection<UnwrappedType> // parameters and implicit receiver
+    abstract val inputTypes: Collection<UnwrappedType> // parameters and implicit receiver
     abstract val outputType: UnwrappedType?
 
     var analyzed: Boolean = false
@@ -40,7 +37,6 @@ sealed class ArgumentWithPostponeResolution {
 class ResolvedLambdaArgument(
         override val outerCall: KotlinCall,
         override val argument: LambdaKotlinCallArgument,
-        override val myTypeVariables: Collection<LambdaTypeVariable>,
         val isSuspend: Boolean,
         val receiver: UnwrappedType?,
         val parameters: List<UnwrappedType>,
@@ -48,7 +44,7 @@ class ResolvedLambdaArgument(
 ) : ArgumentWithPostponeResolution() {
     val type: SimpleType = createFunctionType(returnType.builtIns, Annotations.EMPTY, receiver, parameters, null, returnType, isSuspend) // todo support annotations
 
-    override val inputType: Collection<UnwrappedType> get() = receiver?.let { parameters + it } ?: parameters
+    override val inputTypes: Collection<UnwrappedType> get() = receiver?.let { parameters + it } ?: parameters
     override val outputType: UnwrappedType get() = returnType
 
     lateinit var resultArguments: List<KotlinCallArgument>
@@ -57,9 +53,9 @@ class ResolvedLambdaArgument(
 class ResolvedCallableReferenceArgument(
         override val outerCall: KotlinCall,
         override val argument: CallableReferenceKotlinCallArgument,
-        override val myTypeVariables: List<NewTypeVariable>,
+        val myTypeVariables: List<NewTypeVariable>,
         val callableResolutionCandidate: CallableReferenceCandidate
 ) : ArgumentWithPostponeResolution() {
-    override val inputType: Collection<UnwrappedType> get() = emptyList()
+    override val inputTypes: Collection<UnwrappedType> get() = emptyList()
     override val outputType: UnwrappedType? = null
 }
