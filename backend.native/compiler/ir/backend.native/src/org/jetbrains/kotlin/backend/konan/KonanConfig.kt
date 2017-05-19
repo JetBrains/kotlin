@@ -44,9 +44,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
 
     internal val libraries: List<KonanLibraryReader> by lazy {
-        // Here we have chosen a particular KonanLibraryReader implementation
         val currentAbiVersion = configuration.get(KonanConfigKeys.ABI_VERSION)!!
         val target = targetManager.currentName
+        // Here we have chosen a particular KonanLibraryReader implementation.
         libraryNames.map{it -> SplitLibraryReader(it, currentAbiVersion, target)}
     }
 

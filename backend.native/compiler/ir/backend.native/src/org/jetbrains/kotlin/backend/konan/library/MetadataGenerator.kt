@@ -26,7 +26,7 @@ interface MetadataReader {
     fun loadSerializedPackageFragment(fqName: String): String
 }
 
-class SplitMetadataReader(override val libDir: File) : MetadataReader, SplitScheme {
+class SplitMetadataReader(override val libDir: File) : MetadataReader, SplitLibraryScheme {
 
     override fun loadSerializedModule(currentAbiVersion: Int): NamedModuleData {
         val header = Properties()
@@ -47,7 +47,7 @@ class SplitMetadataReader(override val libDir: File) : MetadataReader, SplitSche
         = packageFile(fqName).readText()
 }
 
-internal class SplitMetadataGenerator(override val libDir: File): SplitScheme {
+internal class SplitMetadataGenerator(override val libDir: File): SplitLibraryScheme {
 
     fun addLinkData(linkData: LinkData) {
 

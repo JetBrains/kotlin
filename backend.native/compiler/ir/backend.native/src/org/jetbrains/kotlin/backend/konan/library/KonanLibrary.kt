@@ -62,7 +62,7 @@ abstract open class FileBasedLibraryReader(
 }
 
 // This scheme describes the Konan Library (klib) layout.
-interface SplitScheme {
+interface SplitLibraryScheme {
     val libDir: File
     val target: String?
         // This is a default implementation. Can't make it an assignment.
@@ -90,7 +90,7 @@ interface SplitScheme {
 class SplitLibraryReader(override val libDir: File, currentAbiVersion: Int,
         override val target: String) : 
       FileBasedLibraryReader(libDir, currentAbiVersion, SplitMetadataReader(libDir)), 
-      SplitScheme  {
+      SplitLibraryScheme  {
 
     public constructor(path: String, currentAbiVersion: Int, target: String) : 
         this(File(path), currentAbiVersion, target) 
@@ -145,7 +145,7 @@ abstract class FileBasedLibraryWriter (
 }
 
 class SplitLibraryWriter(override val libDir: File, override val target: String?, 
-    val nopack: Boolean = false): FileBasedLibraryWriter(libDir), SplitScheme {
+    val nopack: Boolean = false): FileBasedLibraryWriter(libDir), SplitLibraryScheme {
 
     public constructor(path: String, target: String, nopack: Boolean): 
         this(File(path), target, nopack)
