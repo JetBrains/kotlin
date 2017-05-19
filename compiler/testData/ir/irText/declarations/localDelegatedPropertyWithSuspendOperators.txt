@@ -97,21 +97,20 @@ FILE /localDelegatedPropertyWithSuspendOperators.kt
           CALL 'provideDelegate(Any?, Any): A' type=A origin=null
             $this: CALL 'constructor A()' type=A origin=null
             host: CONST Null type=kotlin.Nothing? value='null'
-            p: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testVar: Int' delegate='`testVar$delegate`: A' getter='<get-testVar>(): Int' setter='<set-testVar>(Int): Int' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            p: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testVar: Int' delegate='`testVar$delegate`: A' getter='<get-testVar>(): Int' setter='<set-testVar>(Int): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
         FUN DELEGATED_PROPERTY_ACCESSOR local final suspend fun <get-testVar>(): kotlin.Int
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-testVar>(): Int'
               CALL 'getValue(Any?, KProperty<*>): Int' type=kotlin.Int origin=null
                 $this: GET_VAR '`testVar$delegate`: A' type=A origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value='null'
-                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testVar: Int' delegate='`testVar$delegate`: A' getter='<get-testVar>(): Int' setter='<set-testVar>(Int): Int' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-        FUN DELEGATED_PROPERTY_ACCESSOR local final suspend fun <set-testVar>(value: kotlin.Int): kotlin.Int
+                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testVar: Int' delegate='`testVar$delegate`: A' getter='<get-testVar>(): Int' setter='<set-testVar>(Int): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        FUN DELEGATED_PROPERTY_ACCESSOR local final suspend fun <set-testVar>(value: kotlin.Int): kotlin.Unit
           VALUE_PARAMETER value-parameter value: kotlin.Int
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='<set-testVar>(Int): Int'
-              TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                CALL 'setValue(Any?, KProperty<*>, Int): Unit' type=kotlin.Unit origin=null
-                  $this: GET_VAR '`testVar$delegate`: A' type=A origin=null
-                  thisRef: CONST Null type=kotlin.Nothing? value='null'
-                  property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testVar: Int' delegate='`testVar$delegate`: A' getter='<get-testVar>(): Int' setter='<set-testVar>(Int): Int' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-                  value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
+            RETURN type=kotlin.Nothing from='<set-testVar>(Int): Unit'
+              CALL 'setValue(Any?, KProperty<*>, Int): Unit' type=kotlin.Unit origin=null
+                $this: GET_VAR '`testVar$delegate`: A' type=A origin=null
+                thisRef: CONST Null type=kotlin.Nothing? value='null'
+                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testVar: Int' delegate='`testVar$delegate`: A' getter='<get-testVar>(): Int' setter='<set-testVar>(Int): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
