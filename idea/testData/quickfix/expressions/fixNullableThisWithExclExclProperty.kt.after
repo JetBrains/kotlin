@@ -1,0 +1,9 @@
+// "Add non-null asserted (!!) call" "true"
+
+class A {
+    val prop = 1
+}
+
+fun A?.bar() {
+    this!!.prop
+}

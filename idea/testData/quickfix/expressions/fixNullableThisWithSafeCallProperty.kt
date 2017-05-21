@@ -1,0 +1,9 @@
+// "Replace with safe (this?.) call" "true"
+
+class A {
+    val prop = 1
+}
+
+fun A?.bar() {
+    <caret>prop
+}

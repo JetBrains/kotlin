@@ -1,0 +1,9 @@
+// "Replace with safe (this?.) call" "true"
+
+class A {
+    fun foo() {}
+}
+
+fun A?.bar() {
+    this?.foo()
+}

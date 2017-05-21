@@ -38,6 +38,10 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
+
 
 abstract class ExclExclCallFix(psiElement: PsiElement) : KotlinQuickFixAction<PsiElement>(psiElement) {
     override fun getFamilyName(): String = text
@@ -75,7 +79,9 @@ class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement
     }
 }
 
-class AddExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement) {
+class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boolean) : ExclExclCallFix(psiElement) {
+    constructor(psiElement: PsiElement) : this(psiElement, true)
+
     override fun getText() = KotlinBundle.message("introduce.non.null.assertion")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
@@ -85,32 +91,45 @@ class AddExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement) {
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
 
-        val modifiedExpression = getExpressionForIntroduceCall() ?: return
-        val exclExclExpression = KtPsiFactory(project).createExpressionByPattern("$0!!", modifiedExpression)
+        val expr = getExpressionForIntroduceCall() ?: return
+        val modifiedExpression = expr.expression
+        val exclExclExpression = if (expr.implicitReceiver) {
+            KtPsiFactory(project).createExpressionByPattern("this!!.$0", modifiedExpression)
+        } else {
+            KtPsiFactory(project).createExpressionByPattern("$0!!", modifiedExpression)
+        }
         modifiedExpression.replace(exclExclExpression)
     }
 
-    private fun getExpressionForIntroduceCall(): KtExpression? {
+    private class ExpressionForCall(val expression: KtExpression, val implicitReceiver: Boolean) {
+        constructor(expression: KtExpression) : this(expression, false)
+    }
+
+    private fun getExpressionForIntroduceCall(): ExpressionForCall? {
         val psiElement = element ?: return null
         if (psiElement is LeafPsiElement && psiElement.elementType == KtTokens.DOT) {
             val sibling = psiElement.prevSibling
             if (sibling is KtExpression) {
-                return sibling
+                return ExpressionForCall(sibling)
             }
         }
         else if (psiElement is KtArrayAccessExpression) {
-            return psiElement.arrayExpression
+            return ExpressionForCall(psiElement.arrayExpression ?: return null)
         }
         else if (psiElement is KtOperationReferenceExpression) {
             val parent = psiElement.parent
             return when (parent) {
-                is KtUnaryExpression -> parent.baseExpression
-                is KtBinaryExpression -> parent.left
+                is KtUnaryExpression -> ExpressionForCall(parent.baseExpression ?: return null)
+                is KtBinaryExpression -> ExpressionForCall(parent.left ?: return null)
                 else -> null
             }
         }
         else if (psiElement is KtExpression) {
-            return psiElement
+            if (checkImplicitReceivers && psiElement.getResolvedCall(psiElement.analyze())?.getImplicitReceiverValue() != null) {
+                val expressionToReplace = psiElement.parent as? KtCallExpression ?: psiElement
+                return ExpressionForCall(expressionToReplace, true)
+            }
+            return ExpressionForCall(psiElement)
         }
 
         return null
@@ -137,7 +156,7 @@ object SmartCastImpossibleExclExclFixFactory: KotlinSingleIntentionActionFactory
         val nullableExpectedType = TypeUtils.makeNullable(expectedType)
         if (!type.isSubtypeOf(nullableExpectedType)) return null
 
-        return AddExclExclCallFix(element)
+        return AddExclExclCallFix(element, false)
     }
 }
 
