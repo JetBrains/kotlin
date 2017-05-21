@@ -16,16 +16,14 @@
 
 package org.jetbrains.kotlin.js.translate.expression;
 
-import org.jetbrains.kotlin.js.backend.ast.JsExpression;
-import org.jetbrains.kotlin.js.backend.ast.JsInvocation;
-import org.jetbrains.kotlin.js.backend.ast.JsNameRef;
-import org.jetbrains.kotlin.js.backend.ast.JsNumberLiteral;
+import org.jetbrains.kotlin.js.backend.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
+import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
@@ -87,16 +85,22 @@ public final class StringTemplateTranslator extends AbstractTranslator {
 
             KotlinType type = context().bindingContext().getType(entryExpression);
 
-            if (translatedExpression instanceof JsNumberLiteral) {
+            if (type != null && KotlinBuiltIns.isCharOrNullableChar(type)) {
+                if (type.isMarkedNullable()) {
+                    TemporaryVariable tmp = context().declareTemporary(translatedExpression);
+                    append(new JsConditional(JsAstUtils.equality(tmp.assignmentExpression(), JsLiteral.NULL),
+                                             JsLiteral.NULL,
+                                             JsAstUtils.charToString(tmp.reference())));
+                }
+                else {
+                    append(JsAstUtils.charToString(translatedExpression));
+                }
+            }
+            else if (translatedExpression instanceof JsNumberLiteral) {
                 append(context().program().getStringLiteral(translatedExpression.toString()));
-                return;
             }
-
-            if (type == null || type.isMarkedNullable()) {
+            else if (type == null || type.isMarkedNullable()) {
                 append(TopLevelFIF.TO_STRING.apply((JsExpression) null, new SmartList<>(translatedExpression), context()));
-            }
-            else if (KotlinBuiltIns.isChar(type)) {
-                append(JsAstUtils.charToString(translatedExpression));
             }
             else if (mustCallToString(type)) {
                 append(new JsInvocation(new JsNameRef("toString", translatedExpression)));
