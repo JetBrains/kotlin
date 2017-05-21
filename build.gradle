@@ -72,7 +72,7 @@ void setupCompilationFlags() {
             [(ext.host): 
                ["--sysroot=${gccToolchainDir}/${gnuTriplet}/sysroot"],
              "raspberrypi":
-               ["-target", "armv7-unknown-linux-gnueabihf",
+               ["-target", "armv6-unknown-linux-gnueabihf",
                 "-mfpu=vfp", "-mfloat-abi=hard",
                 "--sysroot=$raspberryPiSysrootDir",
                 // TODO: those two are hacks.
