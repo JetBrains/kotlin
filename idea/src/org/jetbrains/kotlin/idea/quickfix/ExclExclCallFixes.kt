@@ -38,6 +38,10 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
+
 
 abstract class ExclExclCallFix(psiElement: PsiElement) : KotlinQuickFixAction<PsiElement>(psiElement) {
     override fun getFamilyName(): String = text
@@ -75,7 +79,9 @@ class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement
     }
 }
 
-class AddExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement) {
+class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boolean) : ExclExclCallFix(psiElement) {
+    constructor(psiElement: PsiElement) : this(psiElement, true)
+
     override fun getText() = KotlinBundle.message("introduce.non.null.assertion")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
@@ -85,40 +91,50 @@ class AddExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement) {
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
 
-        val modifiedExpression = getExpressionForIntroduceCall() ?: return
-        val exclExclExpression = KtPsiFactory(project).createExpressionByPattern("$0!!", modifiedExpression)
+        val expr = getExpressionForIntroduceCall() ?: return
+        val modifiedExpression = expr.expression
+        val exclExclExpression = if (expr.implicitReceiver) {
+            KtPsiFactory(project).createExpressionByPattern("this!!.$0", modifiedExpression)
+        } else {
+            KtPsiFactory(project).createExpressionByPattern("$0!!", modifiedExpression)
+        }
         modifiedExpression.replace(exclExclExpression)
     }
 
-    private fun getExpressionForIntroduceCall(): KtExpression? {
+    private class ExpressionForCall(val expression: KtExpression, val implicitReceiver: Boolean)
+
+    private fun KtExpression?.expressionForCall(implicitReceiver: Boolean = false) = this?.let { ExpressionForCall(it, implicitReceiver) }
+
+    private fun getExpressionForIntroduceCall(): ExpressionForCall? {
         val psiElement = element ?: return null
-        if (psiElement is LeafPsiElement && psiElement.elementType == KtTokens.DOT) {
-            val sibling = psiElement.prevSibling
-            if (sibling is KtExpression) {
-                return sibling
-            }
+        return if (psiElement is LeafPsiElement && psiElement.elementType == KtTokens.DOT) {
+            (psiElement.prevSibling as? KtExpression).expressionForCall()
         }
         else if (psiElement is KtArrayAccessExpression) {
-            return psiElement.arrayExpression
+            psiElement.arrayExpression.expressionForCall()
         }
         else if (psiElement is KtOperationReferenceExpression) {
             val parent = psiElement.parent
-            return when (parent) {
-                is KtUnaryExpression -> parent.baseExpression
-                is KtBinaryExpression -> parent.left
+            when (parent) {
+                is KtUnaryExpression -> parent.baseExpression.expressionForCall()
+                is KtBinaryExpression -> parent.left.expressionForCall()
                 else -> null
             }
         }
         else if (psiElement is KtExpression) {
-            return psiElement
+            if (checkImplicitReceivers && psiElement.getResolvedCall(psiElement.analyze())?.getImplicitReceiverValue() != null) {
+                val expressionToReplace = psiElement.parent as? KtCallExpression ?: psiElement
+                expressionToReplace.expressionForCall(implicitReceiver = true)
+            }
+            else psiElement.expressionForCall()
         }
-
-        return null
+        else {
+            null
+        }
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): IntentionAction
-                = AddExclExclCallFix(diagnostic.psiElement)
+        override fun createAction(diagnostic: Diagnostic): IntentionAction = AddExclExclCallFix(diagnostic.psiElement)
     }
 }
 
@@ -137,7 +153,7 @@ object SmartCastImpossibleExclExclFixFactory: KotlinSingleIntentionActionFactory
         val nullableExpectedType = TypeUtils.makeNullable(expectedType)
         if (!type.isSubtypeOf(nullableExpectedType)) return null
 
-        return AddExclExclCallFix(element)
+        return AddExclExclCallFix(element, checkImplicitReceivers = false)
     }
 }
 

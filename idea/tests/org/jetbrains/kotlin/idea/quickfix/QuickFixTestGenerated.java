@@ -234,6 +234,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addExclExclCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddExclExclCall extends AbstractQuickFixTest {
+        public void testAllFilesPresentInAddExclExclCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addExclExclCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("implicit.kt")
+        public void testImplicit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addExclExclCall/implicit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implicitFunctionCall.kt")
+        public void testImplicitFunctionCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addExclExclCall/implicitFunctionCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal.kt")
+        public void testNormal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addExclExclCall/normal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal2.kt")
+        public void testNormal2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addExclExclCall/normal2.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addGenericUpperBound")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -7243,6 +7276,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("unsafeInvokeWithImplicitReceiver.kt")
+            public void testUnsafeInvokeWithImplicitReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeInvokeWithImplicitReceiver.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unsafeInvokeWithReceiver.kt")
             public void testUnsafeInvokeWithReceiver() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeInvokeWithReceiver.kt");
@@ -8427,6 +8466,45 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceInfixOrOperatorCall extends AbstractQuickFixTest {
+        public void testAllFilesPresentInReplaceInfixOrOperatorCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceInfixOrOperatorCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("array.kt")
+        public void testArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/array.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("arraySet.kt")
+        public void testArraySet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/arraySet.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("binaryOperator.kt")
+        public void testBinaryOperator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/binaryOperator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("callExpression.kt")
+        public void testCallExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/callExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("list.kt")
+        public void testList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceInfixOrOperatorCall/list.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/replaceJvmFieldWithConst")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -8486,6 +8564,90 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("toplevel.kt")
         public void testToplevel() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceJvmFieldWithConst/toplevel.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/replaceWithDotCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceWithDotCall extends AbstractQuickFixTest {
+        public void testAllFilesPresentInReplaceWithDotCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceWithDotCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("functionCall.kt")
+        public void testFunctionCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithDotCall/functionCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal.kt")
+        public void testNormal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithDotCall/normal.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/replaceWithSafeCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceWithSafeCall extends AbstractQuickFixTest {
+        public void testAllFilesPresentInReplaceWithSafeCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceWithSafeCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("apply.kt")
+        public void testApply() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/apply.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("applyWithImplicitParameter.kt")
+        public void testApplyWithImplicitParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/applyWithImplicitParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("applyWithImplicitParameterFunctionCall.kt")
+        public void testApplyWithImplicitParameterFunctionCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/applyWithImplicitParameterFunctionCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extFunction.kt")
+        public void testExtFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/extFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionCall.kt")
+        public void testFunctionCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/functionCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("let.kt")
+        public void testLet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/let.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letWithParameter.kt")
+        public void testLetWithParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/letWithParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noReplaceWithSafeCallForImplicitReceiver.kt")
+        public void testNoReplaceWithSafeCallForImplicitReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/noReplaceWithSafeCallForImplicitReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal.kt")
+        public void testNormal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCall/normal.kt");
             doTest(fileName);
         }
     }
