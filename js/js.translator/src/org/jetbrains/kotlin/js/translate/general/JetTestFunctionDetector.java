@@ -94,22 +94,20 @@ public class JetTestFunctionDetector {
     ) {
         if (classDescriptor.getModality() == Modality.ABSTRACT) return;
 
+        Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getUnsubstitutedMemberScope().getContributedDescriptors(
+        DescriptorKindFilter.FUNCTIONS, MemberScope.Companion.getALL_NAME_FILTER());
+        List<FunctionDescriptor> testFunctions = ContainerUtil.mapNotNull(allDescriptors,
+            descriptor-> {
+                if (descriptor instanceof FunctionDescriptor) {
+                    FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+                    if (isTest(functionDescriptor)) return functionDescriptor;
+                }
 
-                Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getUnsubstitutedMemberScope().getContributedDescriptors(
-                DescriptorKindFilter.FUNCTIONS, MemberScope.Companion.getALL_NAME_FILTER());
-                List<FunctionDescriptor> testFunctions = ContainerUtil.mapNotNull(
-                        allDescriptors,
-                         descriptor-> {
-                                if (descriptor instanceof FunctionDescriptor) {
-                                    FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-                                    if (isTest(functionDescriptor)) return functionDescriptor;
-                                }
-
-                                return null;
-                            });
+                return null;
+            });
 
 
-                foundFunctions.addAll(testFunctions);
+        foundFunctions.addAll(testFunctions);
 
     }
 }

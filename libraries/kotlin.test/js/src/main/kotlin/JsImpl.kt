@@ -16,6 +16,7 @@
 
 package kotlin.test
 
+import QUnit
 import kotlin.reflect.KClass
 
 /**
@@ -42,24 +43,34 @@ impl fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: Str
 /**
  * Provides the JS implementation of asserter using [QUnit](http://QUnitjs.com/)
  */
-internal impl fun lookupAsserter(): Asserter = qunitAsserter
+internal impl fun lookupAsserter(): Asserter = currentAsserter
 
 private val qunitAsserter = QUnitAsserter()
 
+private var currentAsserter: Asserter = qunitAsserter
+
+internal fun withAsserter(asserter: Asserter, fn: () -> Unit) {
+    val prevAsserter = currentAsserter
+    fn()
+    currentAsserter = prevAsserter
+}
+
+internal var okFun: (Boolean, String?) -> Unit = { _, _ -> }
+
 // TODO: make object in 1.2
-class QUnitAsserter : Asserter {
+class QUnitAsserter() : Asserter {
 
     override fun assertTrue(lazyMessage: () -> String?, actual: Boolean) {
         assertTrue(actual, lazyMessage())
     }
 
     override fun assertTrue(message: String?, actual: Boolean) {
-        QUnit.ok(actual, message)
+        okFun(actual, message)
         if (!actual) failWithMessage(message)
     }
 
     override fun fail(message: String?): Nothing {
-        QUnit.ok(false, message)
+        okFun(false, message)
         failWithMessage(message)
     }
 
