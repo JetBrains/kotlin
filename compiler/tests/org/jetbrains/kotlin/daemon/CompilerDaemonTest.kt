@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import java.lang.management.ManagementFactory
 import java.net.URL
 import java.net.URLClassLoader
 import java.rmi.server.UnicastRemoteObject
@@ -148,6 +149,20 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             assertEquals("10k", opts.maxPermSize)
             assertEquals("100", opts.reservedCodeCacheSize)
             assertEquals(arrayListOf("aaa", "bbb,ccc", "ddd", "xxx,yyy"), opts.jvmParams)
+
+            System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, "-Xmx300m,-XX:MaxPermSize=10k,-XX:ReservedCodeCacheSize=100")
+            val opts2 = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false)
+            assertEquals("300m", opts2.maxMemory)
+            assertEquals( -1, DaemonJVMOptionsMemoryComparator().compare(opts, opts2))
+            assertEquals("300m", listOf(opts, opts2).maxWith(DaemonJVMOptionsMemoryComparator())?.maxMemory)
+
+            val myXmxParam = ManagementFactory.getRuntimeMXBean().inputArguments.first { it.startsWith("-Xmx") }
+            TestCase.assertNotNull(myXmxParam)
+            val myXmxVal = myXmxParam.substring(4)
+            System.clearProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)
+            val opts3 = configureDaemonJVMOptions(inheritMemoryLimits = true,
+                                                  inheritAdditionalProperties = false)
+            assertEquals(myXmxVal, opts3.maxMemory)
         }
         finally {
             restoreSystemProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, backupJvmOptions)
