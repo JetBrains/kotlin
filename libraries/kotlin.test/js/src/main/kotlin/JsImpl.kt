@@ -46,27 +46,68 @@ internal impl fun lookupAsserter(): Asserter = qunitAsserter
 
 private val qunitAsserter = QUnitAsserter()
 
+internal var assertHook: (result: Boolean, expected: Any?, actual: Any?, () -> String?) -> Unit = { _, _, _, _ -> }
+
 // TODO: make object in 1.2
 class QUnitAsserter : Asserter {
+    private var e: Any? = undefined
+    private var a: Any? = undefined
+
+    override fun assertEquals(message: String?, expected: Any?, actual: Any?) {
+        e = expected
+        a = actual
+        super.assertEquals(message, expected, actual)
+    }
+
+    override fun assertNotEquals(message: String?, illegal: Any?, actual: Any?) {
+        e = illegal
+        a = actual
+        super.assertNotEquals(message, illegal, actual)
+    }
+
+    override fun assertNull(message: String?, actual: Any?) {
+        a = actual
+        super.assertNull(message, actual)
+    }
+
+    override fun assertNotNull(message: String?, actual: Any?) {
+        a = actual
+        super.assertNotNull(message, actual)
+    }
 
     override fun assertTrue(lazyMessage: () -> String?, actual: Boolean) {
-        assertTrue(actual, lazyMessage())
+        if (!actual) {
+            failWithMessage(lazyMessage)
+        }
+        else {
+            invokeHook(true, lazyMessage)
+        }
     }
 
     override fun assertTrue(message: String?, actual: Boolean) {
-        QUnit.ok(actual, message)
-        if (!actual) failWithMessage(message)
+        assertTrue({ message }, actual)
     }
 
     override fun fail(message: String?): Nothing {
-        QUnit.ok(false, message)
-        failWithMessage(message)
+        failWithMessage { message }
     }
 
-    private fun failWithMessage(message: String?): Nothing {
+    private fun failWithMessage(lazyMessage: () -> String?): Nothing {
+        val message = lazyMessage()
+        invokeHook(false) { message }
         if (message == null)
             throw AssertionError()
         else
             throw AssertionError(message)
+    }
+
+    private fun invokeHook(result: Boolean, lazyMessage: () -> String?) {
+        try {
+            assertHook(result, e, a, lazyMessage)
+        }
+        finally {
+            e = undefined
+            a = undefined
+        }
     }
 }
