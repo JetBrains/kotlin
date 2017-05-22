@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
@@ -23,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
+import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
@@ -83,10 +85,7 @@ class ScriptDependenciesModuleInfo(
                     KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope(), project
             )
         }
-        val roots = scriptModuleInfo.externalDependencies?.classpath ?: emptyList()
-        val classpath = KotlinScriptConfigurationManager.toVfsRoots(roots)
-        // TODO: this is not very efficient because KotlinSourceFilterScope already checks if the files are in scripts classpath
-        return KotlinSourceFilterScope.libraryClassFiles(NonClasspathDirectoriesScope(classpath), project)
+        return project.service<ScriptBinariesScopeCache>().get(scriptModuleInfo.externalDependencies)
     }
 
     // NOTE: intentionally not taking corresponding script info into account
@@ -113,4 +112,13 @@ data class ScriptDependenciesSourceModuleInfo(
             KotlinScriptConfigurationManager.getInstance(project).getAllLibrarySourcesScope(), project
     )
 
+}
+
+private class ScriptBinariesScopeCache(private val project: Project) : SLRUCache<KotlinScriptExternalDependencies, GlobalSearchScope>(6, 6) {
+    override fun createValue(key: KotlinScriptExternalDependencies?): GlobalSearchScope {
+        val roots = key?.classpath ?: emptyList()
+        val classpath = KotlinScriptConfigurationManager.toVfsRoots(roots)
+        // TODO: this is not very efficient because KotlinSourceFilterScope already checks if the files are in scripts classpath
+        return KotlinSourceFilterScope.libraryClassFiles(NonClasspathDirectoriesScope(classpath), project)
+    }
 }
