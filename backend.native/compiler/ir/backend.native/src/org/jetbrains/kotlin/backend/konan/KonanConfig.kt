@@ -19,12 +19,13 @@ package org.jetbrains.kotlin.backend.konan
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.library.SplitLibraryReader
+import org.jetbrains.kotlin.backend.konan.library.KonanLibrarySearchPathResolver
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import java.io.File
+import org.jetbrains.kotlin.backend.konan.util.File
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
@@ -40,14 +41,20 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             if (configuration.get(KonanConfigKeys.NOSTDLIB) ?: false) {
                 return fromCommandLine
             }
-            return fromCommandLine + distribution.stdlib
+            return fromCommandLine + "stdlib"
         }
+
+    private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES) ?: emptyList()
+    private val resolver = KonanLibrarySearchPathResolver(repositories, distribution)
+    private val librariesFound: List<File> by lazy {
+        libraryNames.map{it -> resolver.resolve(it)}
+    }
 
     internal val libraries: List<KonanLibraryReader> by lazy {
         val currentAbiVersion = configuration.get(KonanConfigKeys.ABI_VERSION)!!
         val target = targetManager.currentName
         // Here we have chosen a particular KonanLibraryReader implementation.
-        libraryNames.map{it -> SplitLibraryReader(it, currentAbiVersion, target)}
+        librariesFound.map{it -> SplitLibraryReader(it, currentAbiVersion, target)}
     }
 
     private val loadedDescriptors = loadLibMetadata()

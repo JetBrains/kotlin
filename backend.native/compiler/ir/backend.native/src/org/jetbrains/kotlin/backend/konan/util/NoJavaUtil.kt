@@ -44,6 +44,8 @@ class File(val path: String) {
         get() = javaFile.isDirectory()
     val isFile 
         get() = javaFile.isFile()
+    val isAbsolute 
+        get() = javaFile.isAbsolute()
     val listFiles
         get() = javaFile.listFiles()!!.toList()
 
@@ -58,6 +60,11 @@ class File(val path: String) {
     // TODO: Consider removeing these after konanazing java.util.Properties.
     fun bufferedReader() = javaFile.bufferedReader()
     fun outputStream() = javaFile.outputStream()
+
+    companion object {
+        val userDir
+            get() = File(System.getProperty("user.dir"))
+    }
 }
 
 

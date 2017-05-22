@@ -101,6 +101,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
                 put(NATIVE_LIBRARY_FILES,
                         arguments.nativeLibraries.toNonNullList())
+                put(REPOSITORIES,
+                        arguments.repositories.toNonNullList())
 
                 // TODO: Collect all the explicit file names into an object
                 // and teach the compiler to work with temporaries and -save-temps.

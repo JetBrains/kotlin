@@ -83,6 +83,9 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "--print_bitcode", description = "Print llvm bitcode")
     public boolean printBitCode;
 
+    @Argument(value = "-repo", shortName = "-r", valueDescription = "<path>", description = "Library search path")
+    public String[] repositories;
+
     @Argument(value = "--verify_ir", description = "Verify IR")
     public boolean verifyIr;
 

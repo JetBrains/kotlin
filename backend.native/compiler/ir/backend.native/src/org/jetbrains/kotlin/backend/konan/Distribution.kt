@@ -27,6 +27,10 @@ class Distribution(val config: CompilerConfiguration) {
     val hostSuffix = TargetManager.host.suffix
     init { if (!targetManager.crossCompile) assert(suffix == hostSuffix) }
 
+    private fun findUserHome() = File(System.getProperty("user.home")).absolutePath
+    val userHome = findUserHome()
+    val localKonanDir = "$userHome/.konan"
+
     private fun findKonanHome(): String {
         val value = System.getProperty("konan.home", "dist")
         val path = File(value).absolutePath 

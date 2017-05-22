@@ -53,6 +53,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("assume 'main' entry point to be provided by external libraries")
         val LINKER_ARGS: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("additional linker arguments")
+        val REPOSITORIES: CompilerConfigurationKey<List<String>>
+                = CompilerConfigurationKey.create("library search path repositories")
         val TARGET: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("target we compile for")
         val LIST_TARGETS: CompilerConfigurationKey<Boolean>
