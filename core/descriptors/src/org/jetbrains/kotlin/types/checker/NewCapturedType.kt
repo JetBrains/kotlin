@@ -70,6 +70,8 @@ fun captureFromArguments(
         status: CaptureStatus,
         acceptNewCapturedType: ((argumentIndex: Int, NewCapturedType) -> Unit) = DO_NOTHING_2
 ): SimpleType? {
+    if (type.arguments.size != type.constructor.parameters.size) return null
+
     val arguments = type.arguments
     if (arguments.all { it.projectionKind == Variance.INVARIANT }) return null
 
