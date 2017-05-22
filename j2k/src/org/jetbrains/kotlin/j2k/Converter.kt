@@ -66,7 +66,12 @@ class Converter private constructor(
         }
     }
 
+    private fun withCommonState(state: CommonState) = Converter(elementToConvert, settings, inConversionScope, services, state)
+
     private fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
+
+    /* special code converter for type, based on this with detached deferred elements list, to prevent recursive deferred elements */
+    val codeConverterForType by lazy { withCommonState(CommonState {}).createDefaultCodeConverter() }
 
     data class IntermediateResult(
             val codeGenerator: (Map<PsiElement, Collection<UsageProcessing>>) -> Result,
@@ -489,15 +494,16 @@ class Converter private constructor(
     fun shouldDeclareVariableType(variable: PsiVariable, type: Type, canChangeType: Boolean): Boolean {
         assert(inConversionScope(variable))
 
+        val codeConverter = codeConverterForType
         val initializer = variable.initializer
         if (initializer == null || initializer.isNullLiteral()) return true
         if (initializer.type is PsiPrimitiveType && type is PrimitiveType) {
-            if (createDefaultCodeConverter().convertedExpressionType(initializer, variable.type) != type) {
+            if (codeConverter.convertedExpressionType(initializer, variable.type) != type) {
                 return true
             }
         }
 
-        val initializerType = createDefaultCodeConverter().convertedExpressionType(initializer, variable.type)
+        val initializerType = codeConverter.convertedExpressionType(initializer, variable.type)
         // do not add explicit type when initializer is not resolved, let user add it if really needed
         if (initializerType is ErrorType) return false
 

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
 import org.jetbrains.kotlin.idea.intentions.*
@@ -36,6 +37,9 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
@@ -66,6 +70,8 @@ object J2KPostProcessingRegistrar {
         _processings.add(FixObjectStringConcatenationProcessing())
         _processings.add(ConvertToStringTemplateProcessing())
         _processings.add(UsePropertyAccessSyntaxProcessing())
+        _processings.add(UninitializedVariableReferenceFromInitializerToThisReferenceProcessing())
+        _processings.add(UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing())
         _processings.add(RemoveRedundantSamAdaptersProcessing())
         _processings.add(RemoveRedundantCastToNullableProcessing())
 
@@ -275,6 +281,41 @@ object J2KPostProcessingRegistrar {
                     })
                 }
             }
+            return null
+        }
+    }
+
+    private class UninitializedVariableReferenceFromInitializerToThisReferenceProcessing : J2kPostProcessing {
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtSimpleNameExpression || diagnostics.forElement(element).none { it.factory == Errors.UNINITIALIZED_VARIABLE }) return null
+
+            val resolved = element.mainReference.resolve() ?: return null
+            if (resolved.isAncestor(element, strict = true)) {
+                if (resolved is KtVariableDeclaration && resolved.hasInitializer()) {
+                    val anonymousObject = element.getParentOfType<KtClassOrObject>(true) ?: return null
+                    if (resolved.initializer!!.getChildOfType<KtClassOrObject>() == anonymousObject) {
+                        return { element.replaced(KtPsiFactory(element).createThisExpression()) }
+                    }
+                }
+            }
+
+            return null
+        }
+    }
+
+    private class UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing : J2kPostProcessing {
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtSimpleNameExpression || diagnostics.forElement(element).none { it.factory == Errors.UNRESOLVED_REFERENCE }) return null
+
+            val anonymousObject = element.getParentOfType<KtClassOrObject>(true) ?: return null
+
+            val variable = anonymousObject.getParentOfType<KtVariableDeclaration>(true) ?: return null
+
+            if (variable.nameAsName == element.getReferencedNameAsName() &&
+                variable.initializer?.getChildOfType<KtClassOrObject>() == anonymousObject) {
+                return { element.replaced(KtPsiFactory(element).createThisExpression()) }
+            }
+
             return null
         }
     }

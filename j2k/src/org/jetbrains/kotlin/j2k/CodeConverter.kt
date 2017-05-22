@@ -150,30 +150,32 @@ class CodeConverter(
     }
 
     fun convertedExpressionType(expression: PsiExpression, expectedType: PsiType): Type {
-        val convertedExpression = convertExpression(expression)
-        val actualType = expression.type ?: return ErrorType()
-        var resultType = typeConverter.convertType(actualType, if (convertedExpression.isNullable) Nullability.Nullable else Nullability.NotNull)
+        with(converter.codeConverterForType) {
+            val convertedExpression = convertExpression(expression)
+            val actualType = expression.type ?: return ErrorType()
+            var resultType = typeConverter.convertType(actualType, if (convertedExpression.isNullable) Nullability.Nullable else Nullability.NotNull)
 
-        if (actualType is PsiPrimitiveType && resultType.isNullable ||
-            expectedType is PsiPrimitiveType && actualType is PsiClassType) {
-            resultType = resultType.toNotNullType()
-        }
-
-        if (needConversion(actualType, expectedType)) {
-            val expectedTypeStr = expectedType.canonicalText
-
-            val willConvert = if (convertedExpression is LiteralExpression
-                                  || expression is PsiPrefixExpression && expression.isLiteralWithSign() )
-                expectedTypeStr == "float" || expectedTypeStr == "double"
-            else
-                PRIMITIVE_TYPE_CONVERSIONS[expectedTypeStr] != null
-
-            if (willConvert) {
-                resultType = typeConverter.convertType(expectedType, Nullability.NotNull)
+            if (actualType is PsiPrimitiveType && resultType.isNullable ||
+                expectedType is PsiPrimitiveType && actualType is PsiClassType) {
+                resultType = resultType.toNotNullType()
             }
-        }
 
-        return resultType
+            if (needConversion(actualType, expectedType)) {
+                val expectedTypeStr = expectedType.canonicalText
+
+                val willConvert = if (convertedExpression is LiteralExpression
+                                      || expression is PsiPrefixExpression && expression.isLiteralWithSign())
+                    expectedTypeStr == "float" || expectedTypeStr == "double"
+                else
+                    PRIMITIVE_TYPE_CONVERSIONS[expectedTypeStr] != null
+
+                if (willConvert) {
+                    resultType = typeConverter.convertType(expectedType, Nullability.NotNull)
+                }
+            }
+
+            return resultType
+        }
     }
 
     private fun PsiPrefixExpression.isLiteralWithSign()
