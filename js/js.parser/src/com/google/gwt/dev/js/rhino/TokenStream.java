@@ -802,7 +802,7 @@ public class TokenStream {
 
             this.number = dval;
 
-            if (isInteger && this.number >= Integer.MIN_VALUE && this.number <= Integer.MAX_VALUE) {
+            if (isInteger) {
                 return NUMBER_INT;
             }
 

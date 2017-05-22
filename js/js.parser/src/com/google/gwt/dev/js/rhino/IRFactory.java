@@ -106,8 +106,8 @@ public class IRFactory {
     /**
      * Number (for literals)
      */
-    public Node createNumber(int number, CodePosition location) {
-        return Node.newNumber(number, location);
+    public Node createIntNumber(double number, CodePosition location) {
+        return Node.newIntNumber(number, location);
     }
 
     public Node createNumber(double number, CodePosition location) {

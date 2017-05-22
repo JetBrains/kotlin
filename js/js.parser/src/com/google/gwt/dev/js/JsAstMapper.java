@@ -681,7 +681,13 @@ public class JsAstMapper {
     }
 
     private static JsExpression mapIntNumber(Node numberNode) {
-        return new JsIntLiteral((int) numberNode.getDouble());
+        double value = numberNode.getDouble();
+        if (value <= Integer.MAX_VALUE && value >= Integer.MIN_VALUE) {
+            return new JsIntLiteral((int) numberNode.getDouble());
+        }
+        else {
+            return new JsDoubleLiteral(numberNode.getDouble());
+        }
     }
 
     private static JsExpression mapDoubleNumber(Node numberNode) {
@@ -1032,8 +1038,17 @@ public class JsAstMapper {
 
     private JsExpression mapUnaryVariant(Node unOp) throws JsParserException {
         switch (unOp.getOperation()) {
-            case TokenStream.SUB:
+            case TokenStream.SUB: {
+                Node operand = unOp.getFirstChild();
+                if (operand.getType() == TokenStream.NUMBER_INT) {
+                    double value = operand.getDouble();
+                    if (-value >= Integer.MIN_VALUE) {
+                        return new JsIntLiteral((int) -value);
+                    }
+                }
+
                 return mapPrefixOperation(JsUnaryOperator.NEG, unOp);
+            }
 
             case TokenStream.NOT:
                 return mapPrefixOperation(JsUnaryOperator.NOT, unOp);
@@ -1045,13 +1060,7 @@ public class JsAstMapper {
                 return mapPrefixOperation(JsUnaryOperator.TYPEOF, unOp);
 
             case TokenStream.ADD:
-                if (!isJsNumber(unOp.getFirstChild())) {
-                    return mapPrefixOperation(JsUnaryOperator.POS, unOp);
-                }
-                else {
-                    // Pretend we didn't see it.
-                    return mapExpression(unOp.getFirstChild());
-                }
+                return mapPrefixOperation(JsUnaryOperator.POS, unOp);
 
             case TokenStream.VOID:
                 return mapPrefixOperation(JsUnaryOperator.VOID, unOp);
@@ -1096,11 +1105,6 @@ public class JsAstMapper {
         //
         throw createParserException("Internal error: unexpected token 'with'",
                                     withNode);
-    }
-
-    private boolean isJsNumber(Node jsNode) {
-        int type = jsNode.getType();
-        return type == TokenStream.NUMBER || type == TokenStream.NUMBER;
     }
 
     private <T extends JsNode> T withLocation(T astNode, Node node) {

@@ -45,14 +45,8 @@ package com.google.gwt.dev.js.rhino;
 public class Node implements Cloneable {
 
     private static class NumberNode extends Node {
-
-        NumberNode(int number, CodePosition location) {
-            super(TokenStream.NUMBER_INT, location);
-            this.number = number;
-        }
-
-        NumberNode(double number, CodePosition position) {
-            super(TokenStream.NUMBER, position);
+        NumberNode(int type, double number, CodePosition position) {
+            super(type, position);
             this.number = number;
         }
 
@@ -181,12 +175,12 @@ public class Node implements Cloneable {
         this.position = position;
     }
 
-    public static Node newNumber(int number, CodePosition position) {
-        return new NumberNode(number, position);
+    public static Node newIntNumber(double number, CodePosition position) {
+        return new NumberNode(TokenStream.NUMBER_INT, number, position);
     }
 
     public static Node newNumber(double number, CodePosition position) {
-        return new NumberNode(number, position);
+        return new NumberNode(TokenStream.NUMBER, number, position);
     }
 
     public static Node newString(String str, CodePosition position) {
