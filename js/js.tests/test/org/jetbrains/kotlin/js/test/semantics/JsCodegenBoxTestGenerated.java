@@ -5876,6 +5876,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("longRangeInSuspendCall.kt")
+        public void testLongRangeInSuspendCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/longRangeInSuspendCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("longRangeInSuspendFun.kt")
+        public void testLongRangeInSuspendFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/longRangeInSuspendFun.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("mergeNullAndString.kt")
         public void testMergeNullAndString() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/mergeNullAndString.kt");

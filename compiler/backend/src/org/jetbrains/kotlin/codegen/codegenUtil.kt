@@ -377,3 +377,22 @@ fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodege
 }
 
 fun <D : CallableDescriptor> D.unwrapFrontendVersion() = unwrapInitialDescriptorForSuspendFunction()
+
+inline fun FrameMap.useTmpVar(type: Type, block: (index: Int) -> Unit) {
+    val index = enterTemp(type)
+    block(index)
+    leaveTemp(type)
+}
+
+fun InstructionAdapter.generateNewInstanceDupAndPlaceBeforeStackTop(
+        frameMap: FrameMap,
+        topStackType: Type,
+        newInstanceInternalName: String
+) {
+    frameMap.useTmpVar(topStackType) { index ->
+        store(index, topStackType)
+        anew(Type.getObjectType(newInstanceInternalName))
+        dup()
+        load(index, topStackType)
+    }
+}

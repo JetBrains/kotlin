@@ -2262,7 +2262,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 myFrameMap.leaveTemp(firstReceiverType);
             }
 
-            callableMethod.afterReceiverGeneration(v);
+            callableMethod.afterReceiverGeneration(v, myFrameMap);
         }
     }
 

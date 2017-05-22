@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
-import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -83,10 +82,8 @@ class Concat : IntrinsicMethod() {
                     }
                 }
 
-                override fun afterReceiverGeneration(v: InstructionAdapter) {
-                    v.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder")
-                    v.dupX1()
-                    v.swap()
+                override fun afterReceiverGeneration(v: InstructionAdapter, frameMap: FrameMap) {
+                    v.generateNewInstanceDupAndPlaceBeforeStackTop(frameMap, AsmTypes.JAVA_STRING_TYPE, "java/lang/StringBuilder")
                     v.invokespecial("java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false)
                 }
 

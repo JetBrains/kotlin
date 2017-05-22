@@ -123,15 +123,14 @@ class ConstructorConverter(
         val body = primaryConstructor.body
 
         val parameterUsageReplacementMap = HashMap<String, String>()
-        val correctedTypeConverter = converter.withSpecialContext(psiClass).typeConverter /* to correct nested class references */
 
         val bodyGenerator: (CodeConverter) -> Block = if (body != null) {
             val statementsToRemove = HashSet<PsiStatement>()
             for (parameter in params) {
                 val (field, initializationStatement) = findBackingFieldForConstructorParameter(parameter, primaryConstructor) ?: continue
 
-                val fieldType = correctedTypeConverter.convertVariableType(field)
-                val parameterType = correctedTypeConverter.convertVariableType(parameter)
+                val fieldType = converter.typeConverter.convertVariableType(field)
+                val parameterType = converter.typeConverter.convertVariableType(parameter)
                 // types can be different only in nullability
                 val type = if (fieldType == parameterType) {
                     fieldType
@@ -175,27 +174,25 @@ class ConstructorConverter(
 
         // we need to replace renamed parameter usages in base class constructor arguments and in default values
 
-        val correctedConverter = converter.withSpecialContext(psiClass) /* to correct nested class references */
-
         fun CodeConverter.correct() = withSpecialExpressionConverter(ReplacingExpressionConverter(parameterUsageReplacementMap))
 
         val statement = primaryConstructor.body?.statements?.firstOrNull()
         val methodCall = (statement as? PsiExpressionStatement)?.expression as? PsiMethodCallExpression
         if (methodCall != null && methodCall.isSuperConstructorCall()) {
             baseClassParams = methodCall.argumentList.expressions.map {
-                correctedConverter.deferredElement { codeConverter -> codeConverter.correct().convertExpression(it) }
+                converter.deferredElement { codeConverter -> codeConverter.correct().convertExpression(it) }
             }
         }
         else {
             baseClassParams = emptyList()
         }
 
-        val parameterList = correctedConverter.convertParameterList(
+        val parameterList = converter.convertParameterList(
                 primaryConstructor,
                 overloadReducer,
                 { parameter, default ->
                     if (!parameterToField.containsKey(parameter)) {
-                        correctedConverter.convertParameter(parameter, defaultValue = default)
+                        converter.convertParameter(parameter, defaultValue = default)
                     }
                     else {
                         val (field, type) = parameterToField[parameter]!!

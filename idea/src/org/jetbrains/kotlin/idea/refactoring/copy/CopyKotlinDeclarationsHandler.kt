@@ -19,14 +19,12 @@ package org.jetbrains.kotlin.idea.refactoring.copy
 import com.intellij.ide.util.EditorHelper
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesDialog
@@ -74,7 +72,13 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
     }
 
     override fun canCopy(elements: Array<out PsiElement>, fromUpdate: Boolean): Boolean {
-        return elements.flatMap { it.getElementsToCopy().ifEmpty { return false } }.distinctBy { it.containingFile }.size == 1
+        val containingFile =
+                elements
+                        .flatMap { it.getElementsToCopy().ifEmpty { return false } }
+                        .distinctBy { it.containingFile }
+                        .singleOrNull()
+                        ?.containingFile ?: return false
+        return containingFile.sourceRoot != null
     }
 
     enum class ExistingFilePolicy {

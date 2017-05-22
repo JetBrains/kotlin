@@ -41,8 +41,7 @@ class Converter private constructor(
         val settings: ConverterSettings,
         val inConversionScope: (PsiElement) -> Boolean,
         val services: JavaToKotlinConverterServices,
-        private val commonState: Converter.CommonState,
-        private val personalState: Converter.PersonalState
+        private val commonState: Converter.CommonState
 ) {
 
     // state which is shared between all converter's based on this one
@@ -51,14 +50,9 @@ class Converter private constructor(
         val postUnfoldActions = ArrayList<() -> Unit>()
     }
 
-    // state which may differ in different converter's
-    class PersonalState(val specialContext: PsiElement?)
-
     val project: Project = elementToConvert.project
     val typeConverter: TypeConverter = TypeConverter(this)
     val annotationConverter: AnnotationConverter = AnnotationConverter(this)
-
-    val specialContext: PsiElement? = personalState.specialContext
 
     val referenceSearcher: ReferenceSearcher = CachingReferenceSearcher(services.referenceSearcher)
 
@@ -68,14 +62,9 @@ class Converter private constructor(
         fun create(elementToConvert: PsiElement, settings: ConverterSettings, services: JavaToKotlinConverterServices,
                    inConversionScope: (PsiElement) -> Boolean, usageProcessingsCollector: (UsageProcessing) -> Unit): Converter {
             return Converter(elementToConvert, settings, inConversionScope,
-                             services, CommonState(usageProcessingsCollector), PersonalState(null))
+                             services, CommonState(usageProcessingsCollector))
         }
     }
-
-    fun withSpecialContext(context: PsiElement): Converter = withState(PersonalState(context))
-
-    private fun withState(state: PersonalState): Converter
-            = Converter(elementToConvert, settings, inConversionScope, services, commonState, state)
 
     private fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
 
@@ -134,14 +123,14 @@ class Converter private constructor(
         var i = 0
         while (i < commonState.deferredElements.size) {
             val deferredElement = commonState.deferredElements[i++]
-            deferredElement.unfold(codeConverter.withConverter(this.withState(deferredElement.converterState)))
+            deferredElement.unfold(codeConverter)
         }
 
         commonState.postUnfoldActions.forEach { it() }
     }
 
     fun <TResult : Element> deferredElement(generator: (CodeConverter) -> TResult): DeferredElement<TResult> {
-        val element = DeferredElement(generator, personalState)
+        val element = DeferredElement(generator)
         commonState.deferredElements.add(element)
         return element
     }
@@ -686,7 +675,7 @@ class Converter private constructor(
             if (!hasExternalQualifier) {
                 // references to nested classes may need correction
                 if (targetClass != null) {
-                    val identifier = constructNestedClassReferenceIdentifier(targetClass, specialContext ?: element)
+                    val identifier = constructNestedClassReferenceIdentifier(targetClass, element)
                     if (identifier != null) {
                         return ReferenceElement(identifier, typeArgs).assignPrototype(element, CommentsAndSpacesInheritance.NO_SPACES)
                     }
@@ -701,7 +690,7 @@ class Converter private constructor(
         val outerClass = psiClass.containingClass
         if (outerClass != null
             && !PsiTreeUtil.isAncestor(outerClass, context, true)
-            && !psiClass.isImported(context.containingFile as PsiJavaFile)) {
+            && !psiClass.isImported(elementToConvert.containingFile as PsiJavaFile)) {
             val qualifier = constructNestedClassReferenceIdentifier(outerClass, context)?.name ?: outerClass.name!!
             return Identifier.withNoPrototype(Identifier.toKotlin(qualifier) + "." + Identifier.toKotlin(psiClass.name!!))
         }

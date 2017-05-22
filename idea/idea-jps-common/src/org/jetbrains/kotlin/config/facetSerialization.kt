@@ -132,8 +132,8 @@ fun deserializeFacetSettings(element: Element): KotlinFacetSettings {
         1 -> readV1Config(element)
         2 -> readV2Config(element)
         KotlinFacetSettings.CURRENT_VERSION -> readLatestConfig(element)
-        else -> KotlinFacetSettings() // Reset facet configuration if versions don't match
-    }
+        else -> return KotlinFacetSettings() // Reset facet configuration if versions don't match
+    }.apply { this.version = version }
 }
 
 fun CommonCompilerArguments.convertPathsToSystemIndependent() {
@@ -166,10 +166,9 @@ fun CompilerSettings.convertPathsToSystemIndependent() {
     outputDirectoryForJsLibraryFiles = PathUtil.toSystemIndependentName(outputDirectoryForJsLibraryFiles)
 }
 
-fun KotlinFacetSettings.serializeFacetSettings(element: Element) {
+private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     val filter = SkipDefaultsSerializationFilter()
 
-    element.setAttribute("version", KotlinFacetSettings.CURRENT_VERSION.toString())
     targetPlatformKind?.let {
         element.setAttribute("platform", it.description)
     }
@@ -189,5 +188,37 @@ fun KotlinFacetSettings.serializeFacetSettings(element: Element) {
             XmlSerializer.serializeInto(it, this, filter)
             element.addContent(this)
         }
+    }
+}
+
+// Special treatment of v2 may be dropped after transition to IDEA 172
+private fun KotlinFacetSettings.writeV2Config(element: Element) {
+    writeLatestConfig(element)
+    element.getChild("compilerArguments")?.let {
+        it.getOption("coroutinesState")?.detach()
+        val coroutineOption = when (compilerArguments?.coroutinesState) {
+            CommonCompilerArguments.ENABLE -> "coroutinesEnable"
+            CommonCompilerArguments.WARN -> "coroutinesWarn"
+            CommonCompilerArguments.ERROR -> "coroutinesError"
+            else -> null
+        }
+        if (coroutineOption != null) {
+            Element("option").apply {
+                setAttribute("name", coroutineOption)
+                setAttribute("value", "true")
+                it.addContent(this)
+            }
+        }
+    }
+}
+
+fun KotlinFacetSettings.serializeFacetSettings(element: Element) {
+    val versionToWrite = if (version == 2) version else KotlinFacetSettings.CURRENT_VERSION
+    element.setAttribute("version", versionToWrite.toString())
+    if (versionToWrite == 2) {
+        writeV2Config(element)
+    }
+    else {
+        writeLatestConfig(element)
     }
 }

@@ -217,7 +217,7 @@ object KeywordCompletion {
                         }
 
                         if (prevLeaf?.getParentOfType<KtIfExpression>(strict = false) != null) {
-                            prefixText += "if(true){}"
+                            prefixText += "if(true){}\n"
                         }
 
                         return buildFilterWithContext(prefixText, prevParent, position)
