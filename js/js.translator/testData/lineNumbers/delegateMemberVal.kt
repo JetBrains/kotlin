@@ -7,4 +7,4 @@ fun foo() {
     println(A().z)
 }
 
-// LINES: 2 3 * 3 * 7
+// LINES: 2 3 * 2 * 3 * 7
