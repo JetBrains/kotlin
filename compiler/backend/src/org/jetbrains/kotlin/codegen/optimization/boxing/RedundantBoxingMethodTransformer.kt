@@ -60,12 +60,13 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
             node: MethodNode,
             frames: Array<out Frame<BasicValue>?>
     ) {
-        for (i in 0..node.instructions.size() - 1) {
-            val insn = node.instructions.get(i)
-            val frame = frames[i]
-            if (insn.opcode != Opcodes.POP && insn.opcode != Opcodes.POP2 || frame == null) {
+        for (i in frames.indices) {
+            val insn = node.instructions[i]
+            if (insn.opcode != Opcodes.POP && insn.opcode != Opcodes.POP2) {
                 continue
             }
+
+            val frame = frames[i] ?: continue
 
             val top = frame.top()!!
             interpreter.processPopInstruction(insn, top)
@@ -104,7 +105,7 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
 
             if (boxed.isEmpty()) continue
 
-            val firstBoxed = boxed.iterator().next().descriptor
+            val firstBoxed = boxed.first().descriptor
             if (isUnsafeToRemoveBoxingForConnectedValues(variableValues, firstBoxed.unboxedType)) {
                 for (value in boxed) {
                     val descriptor = value.descriptor
@@ -193,7 +194,7 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
         }
 
         for (varIndex in doubleSizedVars) {
-            for (i in varIndex + 1..remapping.size - 1) {
+            for (i in varIndex + 1..remapping.lastIndex) {
                 remapping[i]++
             }
         }
