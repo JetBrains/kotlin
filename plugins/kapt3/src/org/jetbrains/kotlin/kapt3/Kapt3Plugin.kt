@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.kapt3
 
 import com.intellij.mock.MockProject
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.ANNOTATION_PROCESSOR_CL
 import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.APT_OPTIONS
 import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.JAVAC_CLI_OPTIONS
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
@@ -237,7 +236,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
 
         val contentRoots = configuration[JVMConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
 
-        val compileClasspath = contentRoots.filterIsInstance<JvmContentRoot>().map { it.file }
+        val compileClasspath = contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file }
 
         val javaSourceRoots = contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file }
 
