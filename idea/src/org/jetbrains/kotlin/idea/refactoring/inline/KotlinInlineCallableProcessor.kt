@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.lang.findUsages.DescriptiveNameUtil
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
@@ -32,10 +31,7 @@ import org.jetbrains.kotlin.idea.codeInliner.replaceUsages
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 
 class KotlinInlineCallableProcessor(
         project: Project,
@@ -44,7 +40,7 @@ class KotlinInlineCallableProcessor(
         private val reference: KtSimpleNameReference?,
         private val inlineThisOnly: Boolean,
         private val deleteAfter: Boolean,
-        private val assignments: Set<PsiElement> = emptySet()
+        private val statementToDelete: KtBinaryExpression? = null
 ) : BaseRefactoringProcessor(project) {
 
     private val kind = when (declaration) {
@@ -71,11 +67,11 @@ class KotlinInlineCallableProcessor(
                 declaration,
                 myProject,
                 commandName,
-                {
+                postAction = {
                     if (deleteAfter) {
                         if (usages.size == simpleNameUsages.size) {
                             declaration.delete()
-                            assignments.forEach(PsiElement::delete)
+                            statementToDelete?.delete()
                         }
                         else {
                             CommonRefactoringUtil.showErrorHint(

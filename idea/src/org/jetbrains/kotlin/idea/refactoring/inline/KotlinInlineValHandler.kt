@@ -39,13 +39,18 @@ import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.references.ReferenceAccess
+import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class KotlinInlineValHandler : InlineActionHandler() {
@@ -82,28 +87,24 @@ class KotlinInlineValHandler : InlineActionHandler() {
             return showErrorHint(project, editor, "$kind '$name' is never used")
         }
 
-        val assignments = hashSetOf<PsiElement>()
-        referenceExpressions.forEach { expression ->
-            val parent = expression.parent
-
-            val assignment = expression.getAssignmentByLHS()
-            if (assignment != null) {
-                assignments.add(parent)
-            }
-
-            if (parent is KtUnaryExpression && OperatorConventions.INCREMENT_OPERATIONS.contains(parent.operationToken)) {
-                assignments.add(parent)
-            }
-        }
-
+        val writeUsages = referenceExpressions.filter { it.readWriteAccess(useResolveForReadWrite = true) != ReferenceAccess.READ }
+        
         val initializerInDeclaration = declaration.initializer
-        val initializer = if (initializerInDeclaration != null) {
-            if (!assignments.isEmpty()) return reportAmbiguousAssignment(project, editor, name, assignments)
-            initializerInDeclaration
+        val initializer: KtExpression
+        val assignment: KtBinaryExpression?
+        if (initializerInDeclaration != null) {
+            if (!writeUsages.isEmpty()) {
+                return reportAmbiguousAssignment(project, editor, name, writeUsages)
+            }
+            initializer = initializerInDeclaration
+            assignment = null
         }
         else {
-            (assignments.singleOrNull() as? KtBinaryExpression)?.right
-            ?: return reportAmbiguousAssignment(project, editor, name, assignments)
+            assignment = writeUsages.singleOrNull()
+                    ?.getAssignmentByLHS()
+                    ?.takeIf { it.operationToken == KtTokens.EQ }
+            initializer = assignment?.right
+                          ?: return reportAmbiguousAssignment(project, editor, name, writeUsages)
         }
 
         val referencesInOriginalFile = referenceExpressions.filter { it.containingFile == file }
@@ -133,7 +134,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
             val replacement = replacementBuilder.prepareCodeToInline(initializerCopy, emptyList(), ::analyzeInitializerCopy)
             val replacementStrategy = CallableUsageReplacementStrategy(replacement)
 
-            val dialog = KotlinInlineValDialog(declaration, reference, replacementStrategy, assignments)
+            val dialog = KotlinInlineValDialog(declaration, reference, replacementStrategy, assignment)
 
             if (!ApplicationManager.getApplication().isUnitTestMode) {
                 dialog.show()
@@ -159,7 +160,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
         }
     }
 
-    private fun reportAmbiguousAssignment(project: Project, editor: Editor?, name: String, assignments: Set<PsiElement>) {
+    private fun reportAmbiguousAssignment(project: Project, editor: Editor?, name: String, assignments: Collection<PsiElement>) {
         val key = if (assignments.isEmpty()) "variable.has.no.initializer" else "variable.has.no.dominating.definition"
         val message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message(key, name))
         showErrorHint(project, editor, message)
