@@ -159,7 +159,8 @@ internal fun createSimplePSICallArgument(
     val baseType = onlyResolvedCall?.currentReturnType ?: typeInfo.type?.unwrap() ?: return null
     val preparedType = prepareArgumentTypeRegardingCaptureTypes(baseType) ?: baseType
 
-    val receiverToCast = context.transformToReceiverWithSmartCastInfo(
+    // we should use DFI after this argument, because there can be some useful smartcast. Popular case: if branches.
+    val receiverToCast = context.replaceDataFlowInfo(typeInfo.dataFlowInfo).transformToReceiverWithSmartCastInfo(
             ExpressionReceiver.create(ktExpression, baseType, context.trace.bindingContext)
     ).let {
         ReceiverValueWithSmartCastInfo(it.receiverValue.replaceType(preparedType), it.possibleTypes, it.isStable)
