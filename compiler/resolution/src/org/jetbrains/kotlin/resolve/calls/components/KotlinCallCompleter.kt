@@ -257,20 +257,8 @@ class KotlinCallCompleter(
 
         for (innerCall in lambda.resultArguments) {
             // todo strange code -- why top-level kotlinCall? may be it isn't right outer call
-            CheckArguments.checkArgument(topLevelCallContext, topLevelCall, c.getBuilder(), innerCall, lambda.returnType)
+            CheckArguments.checkArgument(topLevelCallContext, topLevelCall, c.getBuilder(), innerCall, lambda.returnType.let(::substitute))
         }
-//            when (innerCall) {
-//                is ResolvedKotlinCall.CompletedResolvedKotlinCall -> {
-//                    val returnType = innerCall.completedCall.lastCall.resultingDescriptor.returnTypeOrNothing
-//                    constraintInjector.addInitialSubtypeConstraint(injectorContext, returnType, lambda.returnType, position)
-//                }
-//                is ResolvedKotlinCall.OnlyResolvedKotlinCall -> {
-//                    // todo register call
-//                    val returnType = innerCall.candidate.lastCall.descriptorWithFreshTypes.returnTypeOrNothing
-//                    c.addInnerCall(innerCall)
-//                    constraintInjector.addInitialSubtypeConstraint(injectorContext, returnType, lambda.returnType, position)
-//                }
-//            }
     }
 
     private fun canWeAnalyzeIt(c: Context, lambda: ResolvedLambdaArgument): Boolean {
