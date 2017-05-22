@@ -2364,3 +2364,30 @@ public fun CharSequence.asSequence(): Sequence<Char> {
     if (this is String && isEmpty()) return emptySequence()
     return Sequence { this.iterator() }
 }
+
+/**
+ * Returns a string containing this char sequence repeated [n] times.
+ * @throws [IllegalArgumentException] when n < 0.
+ * @sample samples.text.Strings.repeat
+ */
+public fun CharSequence.repeat(n: Int): String {
+    require (n >= 0) { "Count 'n' must be non-negative, but was $n." }
+
+    return when (n) {
+        0 -> ""
+        1 -> this.toString()
+        else -> {
+            when (length) {
+                0 -> ""
+                1 -> this[0].let { char -> fromCharArray(CharArray(n) { char }, 0, n) }
+                else -> {
+                    val sb = StringBuilder(n * length)
+                    for (i in 1..n) {
+                        sb.append(this)
+                    }
+                    sb.toString()
+                }
+            }
+        }
+    }
+}
