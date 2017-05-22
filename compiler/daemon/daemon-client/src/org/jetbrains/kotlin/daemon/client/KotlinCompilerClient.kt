@@ -347,7 +347,7 @@ object KotlinCompilerClient {
         finally {
             timestampMarker.delete()
         }
-        val comparator = compareByDescending<DaemonWithMetadata, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
+        val comparator = compareBy<DaemonWithMetadata, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
                 .thenBy(FileAgeComparator()) { it.runFile }
         val optsCopy = daemonJVMOptions.copy()
         // if required options fit into fattest running daemon - return the daemon and required options with memory params set to actual ones in the daemon
