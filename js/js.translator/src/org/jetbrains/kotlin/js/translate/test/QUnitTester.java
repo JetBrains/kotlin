@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,30 @@
 
 package org.jetbrains.kotlin.js.translate.test;
 
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
-import org.jetbrains.kotlin.js.backend.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor;
 
 public final class QUnitTester extends CommonUnitTester {
     public QUnitTester(@NotNull TranslationContext context) {
         super(context);
     }
 
-    @NotNull
-    private static final JsNameRef TEST_FUN_REF = new JsNameRef("test", "QUnit");
-
     @Override
     @NotNull
     protected JsExpression getTestMethodRef() {
-        return TEST_FUN_REF;
+        for (JsModuleDescriptor<ModuleDescriptorImpl> d : getContext ().getConfig().getModuleDescriptors()) {
+            if (d.getName() == "kotlin-test") {
+                DeclarationDescriptor descriptor = DescriptorUtils.getFunctionByName(d.getData().getPackage(FqName.ROOT).getMemberScope(), Name.identifier("test"));
+                return getContext().getQualifiedReference(descriptor);
+            }
+        }
+        throw new Error("Module kotlin-test not found");
     }
 }

@@ -1,6 +1,5 @@
 package foo
 
-
 fun box(): String {
     val s = StringBuilder()
     s.append("a")
