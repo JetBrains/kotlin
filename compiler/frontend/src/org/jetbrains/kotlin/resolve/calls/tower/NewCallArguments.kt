@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -147,30 +149,45 @@ class FakeValueArgumentForLeftCallableReference(val ktExpression: KtCallableRefe
     override fun isExternal(): Boolean = false
 }
 
+// context here is context for value argument analysis
 internal fun createSimplePSICallArgument(
-        context: BasicCallResolutionContext,
+        contextForArgument: BasicCallResolutionContext,
         valueArgument: ValueArgument,
-        typeInfo: KotlinTypeInfo
+        typeInfoForArgument: KotlinTypeInfo
+) = createSimplePSICallArgument(contextForArgument.trace.bindingContext, contextForArgument.statementFilter,
+                                contextForArgument.scope.ownerDescriptor, valueArgument,
+                                contextForArgument.dataFlowInfo, typeInfoForArgument)
+
+internal fun createSimplePSICallArgument(
+        bindingContext: BindingContext,
+        statementFilter: StatementFilter,
+        ownerDescriptor: DeclarationDescriptor,
+        valueArgument: ValueArgument,
+        dataFlowInfoBeforeThisArgument: DataFlowInfo,
+        typeInfoForArgument: KotlinTypeInfo
 ): PSIKotlinCallArgument? {
-    val ktExpression = KtPsiUtil.getLastElementDeparenthesized(valueArgument.getArgumentExpression(), context.statementFilter) ?: return null
-    val onlyResolvedCall = ktExpression.getCall(context.trace.bindingContext)?.let {
-        context.trace.bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)
+
+    val ktExpression = KtPsiUtil.getLastElementDeparenthesized(valueArgument.getArgumentExpression(), statementFilter) ?: return null
+    val onlyResolvedCall = ktExpression.getCall(bindingContext)?.let {
+        bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)
     }
-    val baseType = onlyResolvedCall?.currentReturnType ?: typeInfo.type?.unwrap() ?: return null
+    val baseType = onlyResolvedCall?.currentReturnType ?: typeInfoForArgument.type?.unwrap() ?: return null
     val preparedType = prepareArgumentTypeRegardingCaptureTypes(baseType) ?: baseType
 
     // we should use DFI after this argument, because there can be some useful smartcast. Popular case: if branches.
-    val receiverToCast = context.replaceDataFlowInfo(typeInfo.dataFlowInfo).transformToReceiverWithSmartCastInfo(
-            ExpressionReceiver.create(ktExpression, baseType, context.trace.bindingContext)
+    val receiverToCast = transformToReceiverWithSmartCastInfo(
+            ownerDescriptor, bindingContext,
+            typeInfoForArgument.dataFlowInfo,
+            ExpressionReceiver.create(ktExpression, baseType, bindingContext)
     ).let {
         ReceiverValueWithSmartCastInfo(it.receiverValue.replaceType(preparedType), it.possibleTypes, it.isStable)
     }
 
     return if (onlyResolvedCall == null) {
-        ExpressionKotlinCallArgumentImpl(valueArgument, context.dataFlowInfo, typeInfo.dataFlowInfo, receiverToCast)
+        ExpressionKotlinCallArgumentImpl(valueArgument, dataFlowInfoBeforeThisArgument, typeInfoForArgument.dataFlowInfo, receiverToCast)
     }
     else {
-        SubKotlinCallArgumentImpl(valueArgument, context.dataFlowInfo, typeInfo.dataFlowInfo, receiverToCast, onlyResolvedCall)
+        SubKotlinCallArgumentImpl(valueArgument, dataFlowInfoBeforeThisArgument, typeInfoForArgument.dataFlowInfo, receiverToCast, onlyResolvedCall)
     }
 
 }

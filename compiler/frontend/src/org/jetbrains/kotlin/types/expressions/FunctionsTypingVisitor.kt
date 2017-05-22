@@ -225,6 +225,8 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val blockReturnedType = components.expressionTypingServices.getBlockReturnedType(functionLiteral.bodyExpression!!, COERCION_TO_UNIT, newContext)
         val typeOfBodyExpression = blockReturnedType.type
 
+        context.trace[BindingContext.NEW_INFERENCE_LAMBDA_INFO, expression.functionLiteral]?.dataFlowInfoAfter = blockReturnedType.dataFlowInfo
+
         return computeReturnTypeBasedOnReturnExpressions(functionLiteral, context, typeOfBodyExpression)
     }
 

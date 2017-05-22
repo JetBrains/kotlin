@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallIm
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionResultsHandler
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
@@ -457,8 +459,16 @@ class NewResolutionOldInference(
 
 }
 
-fun ResolutionContext<*>.transformToReceiverWithSmartCastInfo(receiver: ReceiverValue): ReceiverValueWithSmartCastInfo {
-    val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, this)
+fun ResolutionContext<*>.transformToReceiverWithSmartCastInfo(receiver: ReceiverValue) =
+        transformToReceiverWithSmartCastInfo(scope.ownerDescriptor, trace.bindingContext, dataFlowInfo, receiver)
+
+fun transformToReceiverWithSmartCastInfo(
+        containingDescriptor: DeclarationDescriptor,
+        bindingContext: BindingContext,
+        dataFlowInfo: DataFlowInfo,
+        receiver: ReceiverValue
+): ReceiverValueWithSmartCastInfo {
+    val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, bindingContext, containingDescriptor)
     return ReceiverValueWithSmartCastInfo(receiver, dataFlowInfo.getCollectedTypes(dataFlowValue), dataFlowValue.isStable)
 }
 
