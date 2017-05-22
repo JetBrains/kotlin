@@ -32,6 +32,7 @@ class RwListCache<Key, Value> : Cache<Key, Value> {
     override fun get(key: Key): Value? {
         var result: Value? = null
         val readLock = lock.readLock()
+        readLock.lock()
 
         for (item in buffer) {
             if (item.key == key) {
