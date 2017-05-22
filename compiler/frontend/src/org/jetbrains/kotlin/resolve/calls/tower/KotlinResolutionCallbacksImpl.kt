@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -45,6 +47,7 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class KotlinResolutionCallbacksImpl(
         val topLevelCallContext: BasicCallResolutionContext,
@@ -55,6 +58,15 @@ class KotlinResolutionCallbacksImpl(
         val doubleColonExpressionResolver: DoubleColonExpressionResolver
 ): KotlinResolutionCallbacks {
     val trace: BindingTrace = topLevelCallContext.trace
+
+    class LambdaInfo(val expectedType: UnwrappedType, val contextDependency: ContextDependency) {
+        var dataFlowInfoAfter: DataFlowInfo? = null
+        val returnStatements = ArrayList<Pair<KtReturnExpression, KotlinTypeInfo>>()
+
+        companion object {
+            val STUB_EMPTY = LambdaInfo(TypeUtils.NO_EXPECTED_TYPE, ContextDependency.INDEPENDENT)
+        }
+    }
 
     override fun analyzeAndGetLambdaResultArguments(
             topLevelCall: KotlinCall,
@@ -67,25 +79,54 @@ class KotlinResolutionCallbacksImpl(
         val psiCallArgument = lambdaArgument.psiCallArgument
         val outerCallContext = (psiCallArgument as? LambdaKotlinCallArgumentImpl)?.outerCallContext ?:
                                (psiCallArgument as FunctionExpressionImpl).outerCallContext
+
+        fun createCallArgument(ktExpression: KtExpression, typeInfo: KotlinTypeInfo) =
+                createSimplePSICallArgument(trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
+                                            CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo)
+
+
         val expression: KtExpression = (psiCallArgument as? LambdaKotlinCallArgumentImpl)?.ktLambdaExpression ?:
                                (psiCallArgument as FunctionExpressionImpl).ktFunction
 
+        val ktFunction: KtFunction = (psiCallArgument as? LambdaKotlinCallArgumentImpl)?.ktLambdaExpression?.functionLiteral ?:
+                         (psiCallArgument as FunctionExpressionImpl).ktFunction
+
+        val lambdaInfo = LambdaInfo(expectedReturnType ?: TypeUtils.NO_EXPECTED_TYPE,
+                                    if (expectedReturnType == null) ContextDependency.DEPENDENT else ContextDependency.INDEPENDENT)
+
+        trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, ktFunction, lambdaInfo)
+
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
         val expectedType = createFunctionType(builtIns, Annotations.EMPTY, receiverType, parameters, null,
-                           expectedReturnType ?: TypeUtils.NO_EXPECTED_TYPE, isSuspend)
+                           lambdaInfo.expectedType, isSuspend)
 
         val approximatesExpectedType = typeApproximator.approximateToSubType(expectedType, TypeApproximatorConfiguration.LocalDeclaration) ?: expectedType
 
         val actualContext = outerCallContext.replaceBindingTrace(trace).
-                replaceContextDependency(if (expectedReturnType == null) ContextDependency.DEPENDENT else ContextDependency.INDEPENDENT).replaceExpectedType(approximatesExpectedType)
+                replaceContextDependency(lambdaInfo.contextDependency).replaceExpectedType(approximatesExpectedType)
 
 
         val functionTypeInfo = expressionTypingServices.getTypeInfo(expression, actualContext)
-        val lastExpressionType = functionTypeInfo.type?.let {
-            if (it.isFunctionType) it.getReturnTypeFromFunctionType() else it
-        }
-        val lastExpressionTypeInfo = KotlinTypeInfo(lastExpressionType, functionTypeInfo.dataFlowInfo)
+        trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, ktFunction, LambdaInfo.STUB_EMPTY)
 
+        val lastExpressionArgument = getLastDeparentesizedExpression(psiCallArgument)?.let { lastExpression ->
+            val lastExpressionType = functionTypeInfo.type?.let {
+                if (it.isFunctionType) it.getReturnTypeFromFunctionType() else it
+            }
+            val lastExpressionTypeInfo = KotlinTypeInfo(lastExpressionType, lambdaInfo.dataFlowInfoAfter ?: functionTypeInfo.dataFlowInfo)
+            createCallArgument(lastExpression, lastExpressionTypeInfo)
+        }
+
+        val returnArguments = lambdaInfo.returnStatements.mapNotNullTo(ArrayList()) { (expression, typeInfo) ->
+            expression.returnedExpression?.let { createCallArgument(it, typeInfo) }
+        }
+
+        returnArguments.addIfNotNull(lastExpressionArgument)
+
+        return returnArguments
+    }
+
+    private fun getLastDeparentesizedExpression(psiCallArgument: PSIKotlinCallArgument): KtExpression? {
         val lastExpression: KtExpression?
         if (psiCallArgument is LambdaKotlinCallArgumentImpl) {
             lastExpression = psiCallArgument.ktLambdaExpression.bodyExpression?.statements?.lastOrNull()
@@ -94,11 +135,7 @@ class KotlinResolutionCallbacksImpl(
             lastExpression = (psiCallArgument as FunctionExpressionImpl).ktFunction.bodyExpression?.lastBlockStatementOrThis()
         }
 
-        val deparentesized = KtPsiUtil.deparenthesize(lastExpression) ?: return emptyList()
-
-        val simpleArgument = createSimplePSICallArgument(actualContext, CallMaker.makeExternalValueArgument(deparentesized), lastExpressionTypeInfo)
-
-        return listOfNotNull(simpleArgument)
+        return KtPsiUtil.deparenthesize(lastExpression)
     }
 
     override fun bindStubResolvedCallForCandidate(candidate: KotlinResolutionCandidate) {
