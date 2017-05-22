@@ -55,6 +55,8 @@ fun IrBuilderWithScope.irContinue(loop: IrLoop) =
 
 fun IrBuilderWithScope.irTrue() = IrConstImpl.boolean(startOffset, endOffset, context.builtIns.booleanType, true)
 
+fun IrBuilderWithScope.irFalse() = IrConstImpl.boolean(startOffset, endOffset, context.builtIns.booleanType, false)
+
 @Deprecated("Creates unbound symbol")
 fun IrBuilderWithScope.irGet(value: ValueDescriptor) =
         IrGetValueImpl(startOffset, endOffset, value)

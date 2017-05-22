@@ -86,4 +86,13 @@ tailrec fun KotlinType.notNullableIsRepresentedAs(valueType: ValueType): Boolean
     return firstSupertype.notNullableIsRepresentedAs(valueType)
 }
 
-internal fun KotlinType.isValueType() = ValueType.values().any { this.isRepresentedAs(it) }
+fun KotlinType.isValueType() = ValueType.values().any { this.isRepresentedAs(it) }
+
+/**
+ * @return the [ValueType] given type represented in generated code as,
+ * or `null` if represented as object reference.
+ */
+val KotlinType.correspondingValueType: ValueType?
+    get() = ValueType.values().firstOrNull {
+        isRepresentedAs(it)
+    }

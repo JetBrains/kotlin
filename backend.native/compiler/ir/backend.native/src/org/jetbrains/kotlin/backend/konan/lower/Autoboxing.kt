@@ -19,11 +19,8 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.ValueType
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.konan.notNullableIsRepresentedAs
-import org.jetbrains.kotlin.backend.konan.isRepresentedAs
 import org.jetbrains.kotlin.backend.konan.util.atMostOne
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
@@ -116,16 +113,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         }
     }
 
-    /**
-     * @return the [ValueType] given type represented in generated code as,
-     * or `null` if represented as object reference.
-     */
-    private fun getValueType(type: KotlinType): ValueType? {
-        return ValueType.values().firstOrNull {
-            type.isRepresentedAs(it)
-        }
-    }
-
     private var currentFunctionDescriptor: FunctionDescriptor? = null
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
@@ -188,8 +175,8 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     private fun IrExpression.adaptIfNecessary(actualType: KotlinType, expectedType: KotlinType): IrExpression {
-        val actualValueType = getValueType(actualType)
-        val expectedValueType = getValueType(expectedType)
+        val actualValueType = actualType.correspondingValueType
+        val expectedValueType = expectedType.correspondingValueType
 
         return when {
             actualValueType == expectedValueType -> this
