@@ -115,8 +115,27 @@ class KotlinInlineValHandler : InlineActionHandler() {
             preProcessInternalUsages(initializer, referenceExpressions)
         }
 
-        val descriptor = element.resolveToDescriptor() as VariableDescriptor
-        val expectedType = if (element.typeReference != null)
+        if (foreignUsages.isNotEmpty()) {
+            val conflicts = MultiMap<PsiElement, String>().apply {
+                putValue(null, "Property '$name' has non-Kotlin usages. They won't be processed by the Inline refactoring.")
+                foreignUsages.forEach { putValue(it, it.text) }
+            }
+            project.checkConflictsInteractively(conflicts) { performRefactoring(declaration, initializer, editor, assignment, isHighlighting) }
+        }
+        else {
+            performRefactoring(declaration, initializer, editor, assignment, isHighlighting)
+        }
+    }
+
+    fun performRefactoring(
+            declaration: KtProperty,
+            initializer: KtExpression,
+            editor: Editor?,
+            assignment: KtBinaryExpression?,
+            isHighlighting: Boolean
+    ) {
+        val descriptor = declaration.resolveToDescriptor() as VariableDescriptor
+        val expectedType = if (declaration.typeReference != null)
             descriptor.returnType ?: TypeUtils.NO_EXPECTED_TYPE
         else
             TypeUtils.NO_EXPECTED_TYPE
@@ -128,35 +147,22 @@ class KotlinInlineValHandler : InlineActionHandler() {
                                                     expectedType = expectedType)
         }
 
-        fun performRefactoring() {
-            val reference = editor?.let { TargetElementUtil.findReference(it, it.caretModel.offset) } as? KtSimpleNameReference
-            val replacementBuilder = CodeToInlineBuilder(descriptor, element.getResolutionFacade())
-            val replacement = replacementBuilder.prepareCodeToInline(initializerCopy, emptyList(), ::analyzeInitializerCopy)
-            val replacementStrategy = CallableUsageReplacementStrategy(replacement)
+        val reference = editor?.let { TargetElementUtil.findReference(it, it.caretModel.offset) } as? KtSimpleNameReference
+        val replacementBuilder = CodeToInlineBuilder(descriptor, declaration.getResolutionFacade())
+        val replacement = replacementBuilder.prepareCodeToInline(initializerCopy, emptyList(), ::analyzeInitializerCopy)
+        val replacementStrategy = CallableUsageReplacementStrategy(replacement)
 
-            val dialog = KotlinInlineValDialog(declaration, reference, replacementStrategy, assignment)
+        val dialog = KotlinInlineValDialog(declaration, reference, replacementStrategy, assignment)
 
-            if (!ApplicationManager.getApplication().isUnitTestMode) {
-                dialog.show()
-                if (!dialog.isOK && isHighlighting) {
-                    val statusBar = WindowManager.getInstance().getStatusBar(project)
-                    statusBar?.info = RefactoringBundle.message("press.escape.to.remove.the.highlighting")
-                }
+        if (!ApplicationManager.getApplication().isUnitTestMode) {
+            dialog.show()
+            if (!dialog.isOK && isHighlighting) {
+                val statusBar = WindowManager.getInstance().getStatusBar(declaration.project)
+                statusBar?.info = RefactoringBundle.message("press.escape.to.remove.the.highlighting")
             }
-            else {
-                dialog.doAction()
-            }
-        }
-
-        if (foreignUsages.isNotEmpty()) {
-            val conflicts = MultiMap<PsiElement, String>().apply {
-                putValue(null, "Property '$name' has non-Kotlin usages. They won't be processed by the Inline refactoring.")
-                foreignUsages.forEach { putValue(it, it.text) }
-            }
-            project.checkConflictsInteractively(conflicts) { performRefactoring() }
         }
         else {
-            performRefactoring()
+            dialog.doAction()
         }
     }
 
