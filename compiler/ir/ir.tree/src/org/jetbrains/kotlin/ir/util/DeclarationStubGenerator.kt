@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-class DeclarationStubGenerator(val symbolTable: SymbolTable) {
+class DeclarationStubGenerator(
+        val symbolTable: SymbolTable,
+        val origin: IrDeclarationOrigin
+) {
     fun generateEmptyModuleFragmentStub(descriptor: ModuleDescriptor, irBuiltIns: IrBuiltIns): IrModuleFragment =
             IrModuleFragmentImpl(descriptor, irBuiltIns)
 
@@ -56,17 +59,11 @@ class DeclarationStubGenerator(val symbolTable: SymbolTable) {
             }
 
     fun generatePropertyStub(descriptor: PropertyDescriptor): IrProperty =
-            IrPropertyImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    descriptor
-            ).also { irProperty ->
+            IrPropertyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irProperty ->
                 val getterDescriptor = descriptor.getter
                 if (getterDescriptor == null) {
                     irProperty.backingField =
-                            symbolTable.declareField(
-                                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                                    descriptor
-                            )
+                            symbolTable.declareField(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor)
                 }
                 else {
                     irProperty.getter = generateFunctionStub(getterDescriptor)
@@ -76,19 +73,13 @@ class DeclarationStubGenerator(val symbolTable: SymbolTable) {
             }
 
     fun generateFunctionStub(descriptor: FunctionDescriptor): IrSimpleFunction =
-            symbolTable.declareSimpleFunction(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    descriptor
-            ).also { irFunction ->
+            symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irFunction ->
                 generateTypeParameterStubs(descriptor.typeParameters, irFunction)
                 generateValueParametersStubs(descriptor.valueParameters, irFunction)
             }
 
     fun generateConstructorStub(descriptor: ClassConstructorDescriptor): IrConstructor =
-            symbolTable.declareConstructor(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    descriptor
-            ).also { irConstructor ->
+            symbolTable.declareConstructor(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irConstructor ->
                 generateValueParametersStubs(descriptor.valueParameters, irConstructor)
             }
 
@@ -97,10 +88,7 @@ class DeclarationStubGenerator(val symbolTable: SymbolTable) {
     }
 
     fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter =
-            IrValueParameterImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    descriptor
-            ).also { irValueParameter ->
+            IrValueParameterImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irValueParameter ->
                 if (descriptor.declaresDefaultValue()) {
                     irValueParameter.defaultValue =
                             IrExpressionBodyImpl(IrErrorExpressionImpl(
@@ -111,10 +99,7 @@ class DeclarationStubGenerator(val symbolTable: SymbolTable) {
             }
 
     fun generateClassStub(descriptor: ClassDescriptor): IrClass =
-            symbolTable.declareClass(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    descriptor
-            ).also { irClass ->
+            symbolTable.declareClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irClass ->
                 generateTypeParameterStubs(descriptor.declaredTypeParameters, irClass)
                 generateChildStubs(descriptor.constructors, irClass)
                 generateMemberStubs(descriptor.defaultType.memberScope, irClass)
@@ -122,17 +107,14 @@ class DeclarationStubGenerator(val symbolTable: SymbolTable) {
             }
 
     fun generateEnumEntryStub(descriptor: ClassDescriptor): IrEnumEntry =
-            symbolTable.declareEnumEntry(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    descriptor
-            )
+            symbolTable.declareEnumEntry(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor)
 
     fun generateTypeParameterStubs(typeParameters: List<TypeParameterDescriptor>, container: IrTypeParametersContainer) {
         typeParameters.mapTo(container.typeParameters) { generateTypeParameterStub(it) }
     }
 
     fun generateTypeParameterStub(descriptor: TypeParameterDescriptor): IrTypeParameter =
-            IrTypeParameterImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, descriptor)
+            IrTypeParameterImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor)
 
     fun generateMemberStubs(memberScope: MemberScope, container: IrDeclarationContainer) {
         generateChildStubs(memberScope.getContributedDescriptors(), container)

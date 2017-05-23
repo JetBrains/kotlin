@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
@@ -38,7 +38,7 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
     private val packageFragment = IrBuiltinsPackageFragmentDescriptorImpl(builtIns.builtInsModule, KOTLIN_INTERNAL_IR_FQN)
     val irBuiltInsExternalPackageFragment = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(packageFragment))
 
-    private val stubBuilder = IrDeclarationStubBuilder(IrDeclarationOrigin.IR_BUILTINS_STUB)
+    private val stubBuilder = DeclarationStubGenerator(SymbolTable(), IrDeclarationOrigin.IR_BUILTINS_STUB)
 
     private fun defineOperator(name: String, returnType: KotlinType, valueParameterTypes: List<KotlinType>): IrSimpleFunction {
         val operatorDescriptor = IrSimpleBuiltinOperatorDescriptorImpl(packageFragment, Name.identifier(name), returnType)
@@ -51,7 +51,7 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
     }
 
     private fun addStubToPackageFragment(descriptor: SimpleFunctionDescriptor): IrSimpleFunction {
-        val irSimpleFunction = stubBuilder.buildSimpleFunctionStub(IrSimpleFunctionSymbolImpl(descriptor))
+        val irSimpleFunction = stubBuilder.generateFunctionStub(descriptor)
         irBuiltInsExternalPackageFragment.declarations.add(irSimpleFunction)
         return irSimpleFunction
     }

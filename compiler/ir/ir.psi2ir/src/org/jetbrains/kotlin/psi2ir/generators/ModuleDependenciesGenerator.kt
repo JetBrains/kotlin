@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class ModuleDependenciesGenerator(override val context: GeneratorContext) : Generator {
-    private val stubGenerator = DeclarationStubGenerator(context.symbolTable)
+    private val stubGenerator = DeclarationStubGenerator(context.symbolTable, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB)
 
     private class DependenciesCollector {
         private val modulesForDependencyDescriptors = LinkedHashSet<ModuleDescriptor>()
