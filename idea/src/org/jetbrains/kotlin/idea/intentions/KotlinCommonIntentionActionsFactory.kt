@@ -26,12 +26,19 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.core.insertMembersAfter
 import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement
@@ -65,15 +72,15 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
                 PsiModifier.ABSTRACT to KtTokens.ABSTRACT_KEYWORD
         )
 
-        val javaVisibilityMapping = mapOf(
+        val javaVisibilityMapping: Map<String, String> = mapOf(
                 PsiModifier.PRIVATE to Visibilities.PRIVATE.displayName,
                 PsiModifier.PUBLIC to "",
                 PsiModifier.PROTECTED to Visibilities.PROTECTED.displayName,
                 PsiModifier.PACKAGE_LOCAL to Visibilities.INTERNAL.displayName
-        ).withDefault { Visibilities.DEFAULT_VISIBILITY }
+        ).withDefault { Visibilities.DEFAULT_VISIBILITY.displayName }
     }
 
-    override fun createAddMethodAction(u: UClass, methodName: String, visibilityModifier: String, returnType: PsiType, vararg parameters: PsiType): IntentionAction? {
+    override fun createAddMethodAction(uClass: UClass, methodName: String, visibilityModifier: String, returnType: PsiType, vararg parameters: PsiType): IntentionAction? {
         val returnTypeString: String = typeString(returnType).let {
             when {
                 it.isEmpty() -> ""
@@ -81,26 +88,46 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
             }
         }
         val paramsStr = parameters.mapIndexed { index, psiType -> "arg${index + 1}: ${typeString(psiType)}" }.joinToString()
-        return object : LocalQuickFixAndIntentionActionOnPsiElement(u) {
+        return object : LocalQuickFixAndIntentionActionOnPsiElement(uClass) {
             override fun getFamilyName(): String = "Add method"
 
-            private val text = "Add method '$methodName' to '${u.name}'"
+            private val text = "Add method '$methodName' to '${uClass.name}'"
 
             override fun getText(): String = text
 
             override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
                 val visibilityStr = javaVisibilityMapping.getValue(visibilityModifier)
-                val psiFactory = KtPsiFactory(u)
+                val psiFactory = KtPsiFactory(uClass)
                 val function = psiFactory.createFunction("$visibilityStr fun $methodName($paramsStr)$returnTypeString{}")
-                val ktClassOrObject = u.asKtElement<KtClassOrObject>()!!
+                val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
                 insertMembersAfter(null, ktClassOrObject, listOf(function), ktClassOrObject.declarations.lastOrNull())
             }
         }
 
     }
 
+    override fun createAddBeanPropertyActions(uClass: UClass, propertyName: String, visibilityModifier: String, propertyType: PsiType, setterRequired: Boolean, getterRequired: Boolean): Array<IntentionAction> {
+
+        return arrayOf(object : LocalQuickFixAndIntentionActionOnPsiElement(uClass) {
+            override fun getFamilyName(): String = "Add property"
+
+            private val text = "Add '${if (setterRequired) "var" else "val"}' property '$propertyName' to '${uClass.name}'"
+
+            override fun getText(): String = text
+
+            override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
+                val visibilityStr = javaVisibilityMapping.getValue(visibilityModifier)
+                val psiFactory = KtPsiFactory(uClass)
+                val function = psiFactory.createProperty(visibilityStr, propertyName, typeString(propertyType), setterRequired, null)
+                val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
+                insertMembersAfter(null, ktClassOrObject, listOf(function), null)
+            }
+        })
+    }
+
+
     private fun typeString(str: PsiType): String {
-        return when (str) {
+        var typeName: String? = when (str) {
             PsiType.VOID -> ""
             PsiType.INT -> "kotlin.Int"
             PsiType.LONG -> "kotlin.Long"
@@ -110,7 +137,11 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
             PsiType.CHAR -> "kotlin.Char"
             PsiType.DOUBLE -> "kotlin.Double"
             PsiType.FLOAT -> "kotlin.Float"
-            else -> str.canonicalText
+            else -> null
         }
+        if (typeName == null)
+            typeName = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(FqName(str.canonicalText), DefaultBuiltIns.Instance)?.fqNameSafe?.asString()
+
+        return typeName ?: str.canonicalText
     }
 }

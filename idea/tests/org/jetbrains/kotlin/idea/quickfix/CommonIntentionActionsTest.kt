@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.JvmCommonIntentionActionsFactory
 import com.intellij.lang.Language
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiType
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import org.jetbrains.uast.*
@@ -112,6 +113,40 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |class Foo {
         |    fun bar() {}
         |    fun baz(arg1: Int): Int {}
+        |}
+        """.trim().trimMargin(), true)
+    }
+
+    fun testAddStringVarProperty() {
+        myFixture.configureByText("foo.kt", """
+        |class Foo<caret> {
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin())
+
+        myFixture.launchAction(codeModifications.createAddBeanPropertyActions(
+                atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.getTypeByName("java.lang.String", project, GlobalSearchScope.allScope(project)), true, true).first())
+        myFixture.checkResult("""
+        |class Foo {
+        |    var baz: String
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin(), true)
+    }
+
+    fun testAddStringValProperty() {
+        myFixture.configureByText("foo.kt", """
+        |class Foo<caret> {
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin())
+
+        myFixture.launchAction(codeModifications.createAddBeanPropertyActions(
+                atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.getTypeByName("java.lang.String", project, GlobalSearchScope.allScope(project)), false, true).first())
+        myFixture.checkResult("""
+        |class Foo {
+        |    val baz: String
+        |    fun bar() {}
         |}
         """.trim().trimMargin(), true)
     }
