@@ -86,29 +86,6 @@ private fun UsageReplacementStrategy.doRefactoringInside(
     }
 }
 
-// Sort them in the following order: children first, parents second
-// NB: this is topological sort implementation
-private fun Collection<KtSimpleNameExpression>.sortChildrenFirst(): List<KtSimpleNameExpression> {
-    val usagesSet = toSet()
-    val result = mutableListOf<KtSimpleNameExpression>()
-    val visited = hashSetOf<KtSimpleNameExpression>()
-
-    fun visit(expr: KtSimpleNameExpression) {
-        if (expr in visited) return
-        visited += expr
-
-        expr.parent.forEachDescendantOfType<KtSimpleNameExpression> {
-            if (it != expr && it in usagesSet) visit(it)
-        }
-
-        result += expr
-    }
-
-    this.forEach(::visit)
-    assert(result.size == this.size)
-    return result
-}
-
 fun UsageReplacementStrategy.replaceUsages(
         usages: Collection<KtSimpleNameExpression>,
         targetPsiElement: PsiElement,
@@ -157,7 +134,7 @@ private fun UsageReplacementStrategy.processUsages(
         importsToDelete: MutableList<KtImportDirective>
 ): Boolean {
     var invalidUsagesFound = false
-    for (usage in usages.sortChildrenFirst()) {
+    for (usage in usages) {
         try {
             if (!usage.isValid) {
                 invalidUsagesFound = true
