@@ -127,14 +127,19 @@ public class SourceMap3Builder implements SourceMapBuilder {
 
     @Override
     public void addMapping(String source, int sourceLine, int sourceColumn) {
-        if (previousGeneratedColumn == -1) {
+        boolean newGroupStarted = previousGeneratedColumn == -1;
+        if (newGroupStarted) {
             previousGeneratedColumn = 0;
-        }
-        else {
-            out.append(',');
         }
 
         int columnDiff = textOutput.getColumn() - previousGeneratedColumn;
+        if (!newGroupStarted && columnDiff == 0) {
+            return;
+        }
+        if (!newGroupStarted) {
+            out.append(',');
+        }
+
         // TODO fix sections overlapping
         // assert columnDiff != 0;
         Base64VLQ.encode(out, columnDiff);
