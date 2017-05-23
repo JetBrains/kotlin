@@ -796,6 +796,11 @@ task propertyCallableReference_linkTest(type: LinkKonanTest) {
     lib = "codegen/propertyCallableReference/linkTest_lib.kt"
 }
 
+task propertyCallableReference_dynamicReceiver(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/propertyCallableReference/dynamicReceiver.kt"
+}
+
 task lateinit_initialized(type: RunKonanTest) {
     goldValue = "zzz\n"
     source = "codegen/lateinit/initialized.kt"
