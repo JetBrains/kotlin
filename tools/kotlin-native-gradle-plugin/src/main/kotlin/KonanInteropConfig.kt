@@ -60,7 +60,7 @@ open class KonanInteropConfig(
     internal val compileStubsConfig = KonanCompilerConfig("${name}InteropStubs", project, "compile").apply {
         compilationTask.dependsOn(generateStubsTask)
         outputDir("${project.konanInteropCompiledStubsDir}/$name")
-        noLink()
+        produce("library")
         inputFiles(project.fileTree(generateStubsTask.stubsDir).apply { builtBy(generateStubsTask) })
     }
     val compileStubsTask = compileStubsConfig.compilationTask

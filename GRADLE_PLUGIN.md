@@ -94,8 +94,10 @@ cinterop execution (see the `dumpParameters` task in `samles/csvparser/build.gra
              // naitve library for linking.
              nativeLibrary project.file('path/to/native/library/')
 
+             // Produce either a 'program' or a 'library' or a bare 'bitcode'.
+             produce 'library'     
+
              noStdLib()            // Don't link with stdlib.
-             noLink()              // Don't link, just produce a bitcode file.
              enableOptimization()  // Enable compiler optimizations.
 
              // Arguments to be passed to a linker.

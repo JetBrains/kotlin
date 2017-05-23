@@ -48,8 +48,10 @@ open class KonanCompileTask: DefaultTask() {
         outputDir = project.file("${project.konanCompilerOutputDir}/$artifactName")
     }
 
+    private val artifactSuffix = mapOf("program" to "kexe", "library" to "klib", "bitcode" to "bc")
+
     val artifactPath: String
-        get() = "${outputDir.absolutePath}/$artifactName.${ if (noLink) "bc" else "kexe" }"
+        get() = "${outputDir.absolutePath}/$artifactName.${artifactSuffix[produce]}"
 
     // Other compilation parameters -------------------------------------------
 
@@ -58,12 +60,13 @@ open class KonanCompileTask: DefaultTask() {
     @InputFiles val libraries       = mutableSetOf<FileCollection>()
     @InputFiles val nativeLibraries = mutableSetOf<FileCollection>()
 
+    @Input var produce              = "program"
+        internal set
+
     @Input var linkerOpts = mutableListOf<String>()
         internal set
 
     @Input var noStdLib           = false
-        internal set
-    @Input var noLink             = false
         internal set
     @Input var noMain             = false
         internal set
@@ -89,6 +92,7 @@ open class KonanCompileTask: DefaultTask() {
 
         addFileArgs("-library", libraries)
         addFileArgs("-nativelibrary", nativeLibraries)
+        addArg("-produce", produce)
 
         addListArg("-linkerArgs", linkerOpts)
 
@@ -97,7 +101,6 @@ open class KonanCompileTask: DefaultTask() {
         addArgIfNotNull("-api-version", apiVersion)
 
         addKey("-nostdlib", noStdLib)
-        addKey("-nolink", noLink)
         addKey("-nomain", noMain)
         addKey("-opt", enableOptimization)
         addKey("-ea", enableAssertions)

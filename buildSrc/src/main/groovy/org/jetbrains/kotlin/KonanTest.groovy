@@ -308,7 +308,7 @@ class RunInteropKonanTest extends KonanTest {
 
     void compileTest(List<String> filesToCompile, String exe) {
         String interopBc = exe + "-interop.bc"
-        runCompiler([interopConf.generatedSrcDir.absolutePath], interopBc, ["-nolink"])
+        runCompiler([interopConf.generatedSrcDir.absolutePath], interopBc, ['-produce', 'library'])
 
         String interopStubsBc = new File(interopConf.nativeLibsDir, interop + "stubs.bc").absolutePath
 
@@ -322,19 +322,6 @@ class RunInteropKonanTest extends KonanTest {
 }
 
 @ParallelizableTask
-class LinkKonanTestNoStdlib extends KonanTest {
-    protected String lib
-
-    void compileTest(List<String> filesToCompile, String exe) {
-        def libDir = project.file(lib).absolutePath
-        def libBc = "${libDir}.bc"
-
-        runCompiler(lib, libBc, ['-nolink', '-nostdlib'])
-        runCompiler(filesToCompile, exe, ['-library', libBc])
-    }
-}
-
-@ParallelizableTask
 class LinkKonanTest extends KonanTest {
     protected String lib
 
@@ -342,7 +329,7 @@ class LinkKonanTest extends KonanTest {
         def libDir = project.file(lib).absolutePath
         def libBc = "${libDir}.bc"
 
-        runCompiler(lib, libBc, ['-nolink'] + ((flags != null) ? flags :[]))
+        runCompiler(lib, libBc, ['-produce', 'library'] + ((flags != null) ? flags :[]))
         runCompiler(filesToCompile, exe, ['-library', libBc] + ((flags != null) ? flags :[]))
     }
 }

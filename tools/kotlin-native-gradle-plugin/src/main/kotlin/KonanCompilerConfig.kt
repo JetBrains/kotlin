@@ -39,7 +39,7 @@ import java.io.File
  *          nativeLibrary File("Library")
  *
  *          noStdLib
- *          noLink
+ *          produce "library"|"program"|"bitcode"
  *          enableOptimization
  *
  *          linkerOpts "linker" "args"
@@ -61,6 +61,7 @@ import java.io.File
  *  }
 
  */
+
 // TODO: check debug outputs
 // TODO: Use +=/-= syntax for libraries and inputFiles
 open class KonanCompilerConfig(
@@ -90,9 +91,9 @@ open class KonanCompilerConfig(
         anotherTask.target?.let { target(it) }
         anotherTask.languageVersion?.let { languageVersion(it) }
         anotherTask.apiVersion?.let { apiVersion(it) }
+        anotherTask.produce?.let { produce(it) }
 
         if (anotherTask.noStdLib) noStdLib()
-        if (anotherTask.noLink) noLink()
         if (anotherTask.noMain) noMain()
         if (anotherTask.enableOptimization) enableOptimization()
         if (anotherTask.enableAssertions) enableAssertions()
@@ -174,8 +175,8 @@ open class KonanCompilerConfig(
         noStdLib = true
     }
 
-    fun noLink() = with(compilationTask) {
-        noLink = true
+    fun produce(prod: String) = with(compilationTask) {
+        produce = prod
     }
 
     fun noMain() = with(compilationTask) {

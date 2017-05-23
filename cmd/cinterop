@@ -24,7 +24,7 @@ fi
 declare -a java_args
 declare -a interop_args
 
-OUTPUT_FILE_NAME=nativelib.kt.bc
+OUTPUT_FILE_NAME=nativelib
 TARGET=host
 
 while [ $# -gt 0 ]; do
@@ -96,5 +96,5 @@ $JAVACMD $JAVA_OPTS ${java_args[@]} \
 # Stubs may be rather big, so we may need more heap space.
 XMX_ARG=-J-Xmx3G
 
-$KONAN_HOME/bin/konanc $XMX_ARG "$GENERATED_DIR" -nolink -nativelibrary "$NATIVES_DIR/$CSTUBSNAME.bc" \
+$KONAN_HOME/bin/konanc $XMX_ARG "$GENERATED_DIR" -produce library -nativelibrary "$NATIVES_DIR/$CSTUBSNAME.bc" \
     -o "$OUTPUT_FILE_NAME" -target "$TARGET"
