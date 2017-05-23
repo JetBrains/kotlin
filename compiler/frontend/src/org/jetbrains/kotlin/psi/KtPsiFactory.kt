@@ -612,7 +612,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         private fun placeKeyword() {
             assert(state == State.MODIFIERS)
 
-            if (!sb.endsWith(" ")) {
+            if (sb.isNotEmpty() && !sb.endsWith(" ")) {
                 sb.append(" ")
             }
             val keyword = when (target) {
