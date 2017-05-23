@@ -43,8 +43,8 @@ public abstract class AbstractDiagnosticsWithJdk9Test extends AbstractDiagnostic
             @NotNull Map<String, ModuleAndDependencies> modules,
             @NotNull List<TestFile> testFiles
     ) {
-        if (System.getenv("JDK_9") == null) {
-            // Skip this test if no environment variable JDK_9 is set up
+        if (System.getenv("JDK_19") == null) {
+            // Skip this test if no environment variable JDK_19 is set up
             return;
         }
         super.doMultiFileTest(file, modules, testFiles);
