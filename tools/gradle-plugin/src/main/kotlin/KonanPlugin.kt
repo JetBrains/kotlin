@@ -24,6 +24,8 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.AbstractNamedDomainObjectContainer
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import javax.inject.Inject
 
 /**
  * We use the following properties:
@@ -107,7 +109,8 @@ internal fun MutableList<String>.addListArg(parameter: String, values: List<Stri
     }
 }
 
-class KonanPlugin: Plugin<ProjectInternal> {
+class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderRegistry)
+    : Plugin<ProjectInternal> {
 
     companion object {
         internal const val COMPILER_EXTENSION_NAME = "konanArtifacts"
@@ -146,6 +149,7 @@ class KonanPlugin: Plugin<ProjectInternal> {
     // TODO: Create default config? what about test sources?
     override fun apply(project: ProjectInternal?) {
         if (project == null) { return }
+        registry.register(KonanToolingModelBuilder)
         project.tasks.create(KONAN_DOWNLOAD_TASK_NAME, CompilerDownloadTask::class.java)
         project.extensions.add(COMPILER_EXTENSION_NAME, KonanArtifactsContainer(project))
         project.extensions.add(INTEROP_EXTENSION_NAME, KonanInteropContainer(project))
