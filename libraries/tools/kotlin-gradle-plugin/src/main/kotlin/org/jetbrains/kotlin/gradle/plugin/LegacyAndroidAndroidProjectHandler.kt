@@ -118,7 +118,7 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
                 AndroidGradleWrapper.getAnnotationProcessorOptionsFromAndroidVariant(variantData)
 
         override fun wireKaptTask(project: Project, task: KaptTask, kotlinTask: KotlinCompile, javaTask: AbstractCompile) {
-            task.dependsOn(*(javaTask.dependsOn.filter { it !== kotlinTask }.toTypedArray()))
+            task.dependsOn(*(javaTask.dependsOn.filter { it !== kotlinTask && it != kotlinTask.name }.toTypedArray()))
             javaTask.source(task.destinationDir)
         }
     }
