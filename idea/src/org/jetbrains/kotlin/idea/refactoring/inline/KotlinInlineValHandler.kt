@@ -29,12 +29,14 @@ import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
@@ -58,18 +60,70 @@ class KotlinInlineValHandler : InlineActionHandler() {
     override fun isEnabledForLanguage(l: Language) = l == KotlinLanguage.INSTANCE
 
     override fun canInlineElement(element: PsiElement): Boolean {
-        if (element !is KtProperty) return false
-        return element.getter == null && element.receiverTypeReference == null
+        return element is KtProperty && element.name != null
     }
 
     override fun inlineElement(project: Project, editor: Editor?, element: PsiElement) {
         val declaration = element as KtProperty
+        val name = declaration.name!!
+
         val file = declaration.containingKtFile
-        val name = declaration.name ?: return
         if (file.isCompiled) {
             return showErrorHint(project, editor, "Cannot inline '$name' from a decompiled file")
         }
 
+        val getter = declaration.getter?.takeIf { it.hasBody() }
+        val setter = declaration.setter?.takeIf { it.hasBody() }
+
+        if (getter != null || setter != null) {
+            if (declaration.initializer != null) {
+                return showErrorHint(project, editor, "Cannot inline property with accessor(s) and backing field")
+            }
+
+            if (setter != null) {
+                return showErrorHint(project, editor, "Inline property not supported for properties with setter")
+            }
+        }
+
+        val (referenceExpressions, foreignUsages) = findUsages(declaration)
+
+        if (referenceExpressions.isEmpty()) {
+            val kind = if (declaration.isLocal) "Variable" else "Property"
+            return showErrorHint(project, editor, "$kind '$name' is never used") //TODO: foreign usages!
+        }
+
+        val referencesInOriginalFile = referenceExpressions.filter { it.containingFile == file }
+        val isHighlighting = referencesInOriginalFile.isNotEmpty()
+        highlightElements(project, editor, referencesInOriginalFile)
+
+        val codeToInline: CodeToInline
+        val assignment: KtBinaryExpression?
+        if (getter == null) {
+            val initialization = extractInitialization(declaration, referenceExpressions, project, editor) ?: return
+            codeToInline = buildCodeToInline(declaration, initialization.value)
+            assignment = initialization.assignment
+        }
+        else {
+            val descriptor = declaration.resolveToDescriptor() as PropertyDescriptor
+            codeToInline = buildCodeToInline(getter, descriptor.type, editor) ?: return
+            assignment = null
+        }
+
+        if (foreignUsages.isNotEmpty()) {
+            val conflicts = MultiMap<PsiElement, String>().apply {
+                putValue(null, "Property '$name' has non-Kotlin usages. They won't be processed by the Inline refactoring.")
+                foreignUsages.forEach { putValue(it, it.text) }
+            }
+            project.checkConflictsInteractively(conflicts) { performRefactoring(declaration, codeToInline, editor, assignment, isHighlighting) }
+        }
+        else {
+            performRefactoring(declaration, codeToInline, editor, assignment, isHighlighting)
+        }
+    }
+
+    private data class Usages(val referenceExpressions: Collection<KtExpression>, val foreignUsages: Collection<PsiElement>)
+
+    private fun findUsages(declaration: KtProperty): Usages {
         val references = ReferencesSearch.search(declaration)
         val referenceExpressions = mutableListOf<KtExpression>()
         val foreignUsages = mutableListOf<PsiElement>()
@@ -81,59 +135,41 @@ class KotlinInlineValHandler : InlineActionHandler() {
             }
             referenceExpressions.addIfNotNull((refElement as? KtExpression)?.getQualifiedExpressionForSelectorOrThis())
         }
+        return Usages(referenceExpressions, foreignUsages)
+    }
 
-        if (referenceExpressions.isEmpty()) {
-            val kind = if (declaration.isLocal) "Variable" else "Property"
-            return showErrorHint(project, editor, "$kind '$name' is never used")
-        }
+    private data class Initialization(val value: KtExpression, val assignment: KtBinaryExpression?)
 
+    private fun extractInitialization(
+            declaration: KtProperty,
+            referenceExpressions: Collection<KtExpression>,
+            project: Project,
+            editor: Editor?
+    ): Initialization? {
         val writeUsages = referenceExpressions.filter { it.readWriteAccess(useResolveForReadWrite = true) != ReferenceAccess.READ }
-        
+
         val initializerInDeclaration = declaration.initializer
-        val initializer: KtExpression
-        val assignment: KtBinaryExpression?
         if (initializerInDeclaration != null) {
             if (!writeUsages.isEmpty()) {
-                return reportAmbiguousAssignment(project, editor, name, writeUsages)
+                reportAmbiguousAssignment(project, editor, declaration.name!!, writeUsages)
+                return null
             }
-            initializer = initializerInDeclaration
-            assignment = null
+            return Initialization(initializerInDeclaration, assignment = null)
         }
         else {
-            assignment = writeUsages.singleOrNull()
+            val assignment = writeUsages.singleOrNull()
                     ?.getAssignmentByLHS()
                     ?.takeIf { it.operationToken == KtTokens.EQ }
-            initializer = assignment?.right
-                          ?: return reportAmbiguousAssignment(project, editor, name, writeUsages)
-        }
-
-        val referencesInOriginalFile = referenceExpressions.filter { it.containingFile == file }
-        val isHighlighting = referencesInOriginalFile.isNotEmpty()
-        highlightElements(project, editor, referencesInOriginalFile)
-
-        if (referencesInOriginalFile.size != referenceExpressions.size) {
-            preProcessInternalUsages(initializer, referenceExpressions)
-        }
-
-        if (foreignUsages.isNotEmpty()) {
-            val conflicts = MultiMap<PsiElement, String>().apply {
-                putValue(null, "Property '$name' has non-Kotlin usages. They won't be processed by the Inline refactoring.")
-                foreignUsages.forEach { putValue(it, it.text) }
+            val initializer = assignment?.right
+            if (initializer == null) {
+                reportAmbiguousAssignment(project, editor, declaration.name!!, writeUsages)
+                return null
             }
-            project.checkConflictsInteractively(conflicts) { performRefactoring(declaration, initializer, editor, assignment, isHighlighting) }
-        }
-        else {
-            performRefactoring(declaration, initializer, editor, assignment, isHighlighting)
+            return Initialization(initializer, assignment)
         }
     }
 
-    fun performRefactoring(
-            declaration: KtProperty,
-            initializer: KtExpression,
-            editor: Editor?,
-            assignment: KtBinaryExpression?,
-            isHighlighting: Boolean
-    ) {
+    private fun buildCodeToInline(declaration: KtProperty, initializer: KtExpression): CodeToInline {
         val descriptor = declaration.resolveToDescriptor() as VariableDescriptor
         val expectedType = if (declaration.typeReference != null)
             descriptor.returnType ?: TypeUtils.NO_EXPECTED_TYPE
@@ -147,10 +183,20 @@ class KotlinInlineValHandler : InlineActionHandler() {
                                                     expectedType = expectedType)
         }
 
-        val reference = editor?.let { TargetElementUtil.findReference(it, it.caretModel.offset) } as? KtSimpleNameReference
-        val replacementBuilder = CodeToInlineBuilder(descriptor, declaration.getResolutionFacade())
-        val replacement = replacementBuilder.prepareCodeToInline(initializerCopy, emptyList(), ::analyzeInitializerCopy)
+        val codeToInlineBuilder = CodeToInlineBuilder(descriptor, declaration.getResolutionFacade())
+        return codeToInlineBuilder.prepareCodeToInline(initializerCopy, emptyList(), ::analyzeInitializerCopy)
+    }
+
+    private fun performRefactoring(
+            declaration: KtProperty,
+            replacement: CodeToInline,
+            editor: Editor?,
+            assignment: KtBinaryExpression?,
+            isHighlighting: Boolean
+    ) {
         val replacementStrategy = CallableUsageReplacementStrategy(replacement)
+
+        val reference = editor?.let { TargetElementUtil.findReference(it, it.caretModel.offset) } as? KtSimpleNameReference
 
         val dialog = KotlinInlineValDialog(declaration, reference, replacementStrategy, assignment)
 

@@ -65,9 +65,9 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
                 }
             }
             catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
-                TestCase.assertFalse(afterFileExists)
-                TestCase.assertEquals(1, expectedErrors.size)
-                TestCase.assertEquals(expectedErrors[0].replace("\\n", "\n"), e.message)
+                TestCase.assertFalse("Refactoring not available: ${e.message}", afterFileExists)
+                TestCase.assertEquals("Expected errors", 1, expectedErrors.size)
+                TestCase.assertEquals("Error message", expectedErrors[0].replace("\\n", "\n"), e.message)
             }
         }
         else {

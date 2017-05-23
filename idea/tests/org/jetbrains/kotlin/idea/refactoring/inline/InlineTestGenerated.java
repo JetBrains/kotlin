@@ -994,12 +994,6 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("ExtensionProperty.kt")
-            public void testExtensionProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/ExtensionProperty.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("InstanceProperty.kt")
             public void testInstanceProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/InstanceProperty.kt");
@@ -1048,16 +1042,37 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("WithGetter.kt")
-            public void testWithGetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/WithGetter.kt");
-                doTest(fileName);
-            }
+            @TestMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Accessors extends AbstractInlineTest {
+                public void testAllFilesPresentInAccessors() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors"), Pattern.compile("^(\\w+)\\.kt$"), TargetBackend.ANY, true);
+                }
 
-            @TestMetadata("WithInitializerAndGetter.kt")
-            public void testWithInitializerAndGetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/WithInitializerAndGetter.kt");
-                doTest(fileName);
+                @TestMetadata("BlockBody.kt")
+                public void testBlockBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors/BlockBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ExpressionBody.kt")
+                public void testExpressionBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors/ExpressionBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ExtensionProperty.kt")
+                public void testExtensionProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors/ExtensionProperty.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("WithInitializer.kt")
+                public void testWithInitializer() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors/WithInitializer.kt");
+                    doTest(fileName);
+                }
             }
         }
 
