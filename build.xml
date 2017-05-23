@@ -65,6 +65,7 @@
         <fileset dir="${dependencies}" includes="jansi.jar"/>
         <fileset dir="${dependencies}" includes="jline.jar"/>
         <fileset dir="${dependencies}" includes="javaslang-2.0.6.jar"/>
+        <fileset dir="${dependencies}" includes="json-org.jar"/>
         <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
     </path>
 
@@ -385,6 +386,7 @@
                 <zipfileset src="${idea.sdk}/jps/jps-model.jar"/>
                 <zipfileset src="${dependencies}/jline.jar"/>
                 <zipfileset src="${dependencies}/javaslang-2.0.6.jar"/>
+                <zipfileset src="${dependencies}/json-org.jar"/>
                 <zipfileset src="${protobuf.jar}"/>
 
                 <manifest>

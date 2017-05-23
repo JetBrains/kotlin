@@ -295,6 +295,9 @@
 
         <!-- node.js -->
         <antcall target="download-nodejs-and-npm"/>
+
+        <!-- JSON.org -->
+        <get src="https://repo.maven.apache.org/maven2/org/json/json/20160807/json-20160807.jar" dest="${dependencies}/json-org.jar"/>
     </target>
 
     <macrodef name="get-protobuf-and-rename-packages">
