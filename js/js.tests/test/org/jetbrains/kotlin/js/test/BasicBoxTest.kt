@@ -87,9 +87,7 @@ abstract class BasicBoxTest(
         val outputPostfixFile = getOutputPostfixFile(filePath)
 
         TestFileFactoryImpl().use { testFactory ->
-            testFactory.defaultModule.moduleKind
-
-            val inputFiles = KotlinTestUtils.createTestFiles(file.name, fileContent, testFactory)
+            val inputFiles = KotlinTestUtils.createTestFiles(file.name, fileContent, testFactory, true)
             val modules = inputFiles
                     .map { it.module }.distinct()
                     .map { it.name to it }.toMap()
@@ -627,7 +625,7 @@ abstract class BasicBoxTest(
         private val METADATA_EXTENSION = "jsmeta"
         private val HEADER_FILE = "header.$METADATA_EXTENSION"
 
-        private val TEST_MODULE = "JS_TESTS"
+        val TEST_MODULE = "JS_TESTS"
         private val DEFAULT_MODULE = "main"
         private val TEST_FUNCTION = "box"
         private val OLD_MODULE_SUFFIX = "-old"

@@ -124,6 +124,7 @@ public class KotlinTestUtils {
             "(?://\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*)?" +
             "//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
     private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!([\\w_]+)(:\\s*(.*)$)?", Pattern.MULTILINE);
+    private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
 
     public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
         @NotNull
@@ -648,6 +649,12 @@ public class KotlinTestUtils {
 
     @NotNull
     public static <M, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M, F> factory) {
+        return createTestFiles(testFileName, expectedText, factory, false);
+    }
+
+    @NotNull
+    public static <M, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M, F> factory,
+            boolean preserveLocations) {
         Map<String, String> directives = parseDirectives(expectedText);
 
         List<F> testFiles = Lists.newArrayList();
@@ -681,7 +688,9 @@ public class KotlinTestUtils {
                 else {
                     end = expectedText.length();
                 }
-                String fileText = expectedText.substring(start, end);
+                String fileText = preserveLocations ?
+                                  substringKeepingLocations(expectedText, start, end) :
+                                  expectedText.substring(start,end);
                 processedChars = end;
 
                 testFiles.add(factory.createFile(module, fileName, fileText, directives));
@@ -728,6 +737,26 @@ public class KotlinTestUtils {
         }
 
         return testFiles;
+    }
+
+    private static String substringKeepingLocations(String string, int start, int end) {
+        Matcher matcher = LINE_SEPARATOR_PATTERN.matcher(string);
+        StringBuilder prefix = new StringBuilder();
+        int lastLineOffset = 0;
+        while (matcher.find()) {
+            if (matcher.end() > start) {
+                break;
+            }
+
+            lastLineOffset = matcher.end();
+            prefix.append('\n');
+        }
+
+        while (lastLineOffset++ < start) {
+            prefix.append(' ');
+        }
+
+        return prefix + string.substring(start, end);
     }
 
     private static List<String> parseModuleList(@Nullable String dependencies) {

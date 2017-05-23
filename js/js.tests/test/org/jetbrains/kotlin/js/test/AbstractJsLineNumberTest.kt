@@ -39,61 +39,104 @@ import org.jetbrains.kotlin.js.test.utils.LineCollector
 import org.jetbrains.kotlin.js.test.utils.LineOutputToStringVisitor
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
+import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.utils.DFS
 import java.io.ByteArrayOutputStream
+import java.io.Closeable
 import java.io.File
 import java.io.PrintStream
 import java.nio.charset.Charset
 
 abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
     fun doTest(filePath: String) {
-        val translator = K2JSTranslator(createConfig())
-        val unit = TranslationUnit.SourceFile(createPsiFile(filePath))
-        val translationResult = translator.translateUnits(listOf(unit), MainCallParameters.noCall())
+        val file = File(filePath)
+        val sourceCode = file.readText()
 
-        if (translationResult !is TranslationResult.Success) {
-            val outputStream = ByteArrayOutputStream()
-            val collector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
-            AnalyzerWithCompilerReport.reportDiagnostics(translationResult.diagnostics, collector)
-            val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
-            throw AssertionError("The following errors occurred compiling test:\n" + messages)
+        TestFileFactoryImpl().use { testFactory ->
+            val inputFiles = KotlinTestUtils.createTestFiles(file.name, sourceCode, testFactory, true)
+            val modules = inputFiles
+                    .map { it.module }.distinct()
+                    .associateBy { it.name }
+
+            val orderedModules = DFS.topologicalOrder(modules.values) { module -> module.dependencies.mapNotNull { modules[it] } }
+
+            orderedModules.asReversed().forEach { module ->
+                val baseOutputPath = module.outputFileName(file)
+
+                val translator = K2JSTranslator(createConfig(module, file, modules))
+                val units = module.files.map { TranslationUnit.SourceFile(createPsiFile(it.fileName)) }
+                val translationResult = translator.translateUnits(units, MainCallParameters.noCall())
+
+                if (translationResult !is TranslationResult.Success) {
+                    val outputStream = ByteArrayOutputStream()
+                    val collector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
+                    AnalyzerWithCompilerReport.reportDiagnostics(translationResult.diagnostics, collector)
+                    val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
+                    throw AssertionError("The following errors occurred compiling test:\n" + messages)
+                }
+
+                val lineCollector = LineCollector()
+                lineCollector.accept(translationResult.program)
+
+                val programOutput = TextOutputImpl()
+                translationResult.program.globalBlock.accept(LineOutputToStringVisitor(programOutput, lineCollector))
+                val generatedCode = programOutput.toString()
+                with(File(baseOutputPath + "-lines.js")) {
+                    parentFile.mkdirs()
+                    writeText(generatedCode)
+                }
+
+                File(baseOutputPath + ".js").writeText(translationResult.program.globalBlock.toString())
+
+                val moduleDescription = JsModuleDescriptor(
+                        name = module.name,
+                        data = translationResult.moduleDescriptor,
+                        kind = ModuleKind.PLAIN,
+                        imported = emptyList()
+                )
+                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(
+                        translationResult.bindingContext, moduleDescription)
+                File(baseOutputPath + ".meta.js").writeText(metaFileContent)
+
+                val linesMatcher = module.files
+                        .mapNotNull { LINES_PATTERN.find(File(it.fileName).readText()) }
+                        .firstOrNull()
+                                   ?: error("'// LINES: ' comment was not found in source file. Generated code is:\n$generatedCode")
+
+                val expectedLines = linesMatcher.groups[1]!!.value
+                val actualLines = lineCollector.lines
+                        .dropLastWhile { it == null }
+                        .joinToString(" ") { if (it == null) "*" else (it + 1).toString() }
+
+                TestCase.assertEquals(generatedCode, expectedLines, actualLines)
+            }
         }
-
-        val lineCollector = LineCollector()
-        lineCollector.accept(translationResult.program)
-
-        val programOutput = TextOutputImpl()
-        translationResult.program.globalBlock.accept(LineOutputToStringVisitor(programOutput, lineCollector))
-        val generatedCode = programOutput.toString()
-        val relativePath = File(filePath).relativeTo(File(BASE_PATH)).path.removeSuffix(".kt")
-        with(File(File(OUT_PATH), relativePath + ".js")) {
-            parentFile.mkdirs()
-            writeText(generatedCode)
-        }
-
-        val sourceCode = FileUtil.loadFile(File(filePath))
-        val linesMatcher = LINES_PATTERN.find(sourceCode) ?:
-                           error("'// LINES: ' comment was not found in source file. Generated code is:\n$generatedCode")
-
-        val expectedLines = linesMatcher.groups[1]!!.value
-        val actualLines = lineCollector.lines
-                .dropLastWhile { it == null }
-                .joinToString(" ") { if (it == null) "*" else (it + 1).toString() }
-
-        TestCase.assertEquals(generatedCode, expectedLines, actualLines)
     }
+
+    private fun TestModule.outputFileName(file: File): String {
+        return outputPath(file) + "-" + name
+    }
+
+    private fun outputPath(file: File) = File(OUT_PATH, file.relativeTo(File(BASE_PATH)).path.removeSuffix(".kt")).path
 
     override fun createEnvironment(): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
     }
 
-    private fun createConfig(): JsConfig {
+    private fun createConfig(module: TestModule, inputFile: File, modules: Map<String, TestModule>): JsConfig {
+        val dependencies = module.dependencies
+                .mapNotNull { modules[it]?.outputFileName(inputFile) }
+                .map { "$it.meta.js" }
+
         val configuration = environment.configuration.copy()
 
-        configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST)
+        configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies )
 
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, "test")
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name)
         configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.v5)
 
@@ -107,6 +150,44 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
         return psiManager.findFile(fileSystem.findFileByPath(fileName)!!) as KtFile
+    }
+
+    private inner class TestFileFactoryImpl : KotlinTestUtils.TestFileFactory<TestModule, TestFile>, Closeable {
+        val tmpDir = KotlinTestUtils.tmpDir("js-tests")
+        val defaultModule = TestModule(BasicBoxTest.TEST_MODULE, emptyList())
+
+        override fun createFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile? {
+            val currentModule = module ?: defaultModule
+
+            val temporaryFile = File(tmpDir, "${currentModule.name}/$fileName")
+            KotlinTestUtils.mkdirs(temporaryFile.parentFile)
+            temporaryFile.writeText(text, Charsets.UTF_8)
+
+
+            return TestFile(temporaryFile.absolutePath, currentModule)
+        }
+
+        override fun createModule(name: String, dependencies: List<String>, friends: List<String>): TestModule? {
+            return TestModule(name, dependencies)
+        }
+
+        override fun close() {
+            FileUtil.delete(tmpDir)
+        }
+    }
+
+    private class TestModule(
+            val name: String,
+            dependencies: List<String>
+    ) {
+        val dependencies = dependencies.toMutableList()
+        val files = mutableListOf<TestFile>()
+    }
+
+    private class TestFile(val fileName: String, val module: TestModule) {
+        init {
+            module.files += this
+        }
     }
 
     companion object {

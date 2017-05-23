@@ -47,8 +47,8 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             val program: JsProgram,
             diagnostics: Diagnostics,
             private val importedModules: List<String>,
-            private val moduleDescriptor: ModuleDescriptor,
-            private val bindingContext: BindingContext,
+            val moduleDescriptor: ModuleDescriptor,
+            val bindingContext: BindingContext,
             val metadataHeader: ByteArray?,
             val fileTranslationResults: Map<KtFile, FileTranslationResult>
     ) : TranslationResult(diagnostics) {

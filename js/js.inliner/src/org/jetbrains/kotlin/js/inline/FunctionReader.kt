@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
+import org.jetbrains.kotlin.js.parser.OffsetToSourceMapping
 import org.jetbrains.kotlin.js.parser.parseFunction
+import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
+import java.io.StringReader
 
 // TODO: add hash checksum to defineModule?
 /**
@@ -57,7 +60,14 @@ class FunctionReader(private val config: JsConfig, private val currentModuleName
      * kotlinVariable: kotlin object variable.
      *     The default variable is Kotlin, but it can be renamed by minifier.
      */
-    data class ModuleInfo(val filePath: String, val fileContent: String, val moduleVariable: String, val kotlinVariable: String)
+    class ModuleInfo(
+            val filePath: String,
+            val fileContent: String,
+            val moduleVariable: String,
+            val kotlinVariable: String,
+            val offsetToSourceMapping: OffsetToSourceMapping,
+            val sourceMap: SourceMap?
+    )
 
     private val moduleNameToInfo = HashMultimap.create<String, ModuleInfo>()
 
@@ -68,22 +78,40 @@ class FunctionReader(private val config: JsConfig, private val currentModuleName
 
         moduleNameMap = buildModuleNameMap(fragments)
 
-        JsLibraryUtils.traverseJsLibraries(libs) { fileContent, filePath ->
+        JsLibraryUtils.traverseJsLibraries(libs) { (content, path, sourceMapContent) ->
             var current = 0
 
             while (true) {
-                var index = fileContent.indexOf(DEFINE_MODULE_FIND_PATTERN, current)
+                var index = content.indexOf(DEFINE_MODULE_FIND_PATTERN, current)
                 if (index < 0) break
 
                 current = index + 1
-                index = rewindToIdentifierStart(fileContent, index)
-                val preciseMatcher = DEFINE_MODULE_PATTERN.matcher(offset(fileContent, index))
+                index = rewindToIdentifierStart(content, index)
+                val preciseMatcher = DEFINE_MODULE_PATTERN.matcher(offset(content, index))
                 if (!preciseMatcher.lookingAt()) continue
 
                 val moduleName = preciseMatcher.group(3)
                 val moduleVariable = preciseMatcher.group(4)
                 val kotlinVariable = preciseMatcher.group(1)
-                moduleNameToInfo.put(moduleName, ModuleInfo(filePath, fileContent, moduleVariable, kotlinVariable))
+
+                val sourceMap = sourceMapContent?.let {
+                    val result = SourceMapParser.parse(StringReader(it))
+                    when (result) {
+                        is SourceMapSuccess -> result.value
+                        is SourceMapError -> throw RuntimeException("Error parsing source map file: ${result.message}\n$it")
+                    }
+                }
+
+                val moduleInfo = ModuleInfo(
+                        filePath = path,
+                        fileContent = content,
+                        moduleVariable = moduleVariable,
+                        kotlinVariable = kotlinVariable,
+                        offsetToSourceMapping = OffsetToSourceMapping(content),
+                        sourceMap = sourceMap
+                )
+
+                moduleNameToInfo.put(moduleName, moduleInfo)
             }
         }
     }
@@ -152,8 +180,15 @@ class FunctionReader(private val config: JsConfig, private val currentModuleName
             offset++
         }
 
-        val function = parseFunction(source, info.filePath, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram()))
+        val position = info.offsetToSourceMapping[offset]
+        val function = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram()))
         val moduleReference = moduleNameMap[tag] ?: currentModuleName.makeRef()
+
+        val sourceMap = info.sourceMap
+        if (sourceMap != null) {
+            val remapper = SourceMapLocationRemapper(mapOf(info.filePath to sourceMap))
+            remapper.remap(function)
+        }
 
         val replacements = hashMapOf(info.moduleVariable to moduleReference,
                                      info.kotlinVariable to Namer.kotlinObject())

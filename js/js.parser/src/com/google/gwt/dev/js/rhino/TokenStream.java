@@ -495,14 +495,15 @@ public class TokenStream {
     }
 
     public TokenStream(Reader in,
-                       String sourceName, int lineno)
+                       String sourceName, CodePosition position)
     {
-        this.in = new LineBuffer(in, lineno);
+        this.in = new LineBuffer(in, position);
         this.pushbackToken = EOF;
         this.sourceName = sourceName;
         flags = 0;
-        secondToLastPosition = new CodePosition(lineno, 0);
-        lastPosition = new CodePosition(lineno, 0);
+        secondToLastPosition = position;
+        lastPosition = position;
+        lastTokenPosition = position;
     }
 
     /* return and pop the token from the stream if it matches...

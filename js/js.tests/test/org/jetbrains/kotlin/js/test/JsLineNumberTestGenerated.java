@@ -269,4 +269,19 @@ public class JsLineNumberTestGenerated extends AbstractJsLineNumberTest {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/whileWithComplexCondition.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("js/js.translator/testData/lineNumbers/inlineMultiModule")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineMultiModule extends AbstractJsLineNumberTest {
+        public void testAllFilesPresentInInlineMultiModule() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/lineNumbers/inlineMultiModule"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/lineNumbers/inlineMultiModule/simple.kt");
+            doTest(fileName);
+        }
+    }
 }

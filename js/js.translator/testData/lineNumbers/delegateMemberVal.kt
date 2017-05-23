@@ -1,10 +1,16 @@
 class A {
     val z by
-            lazy { 23 }
+        Delegate { 23 }
 }
 
 fun foo() {
     println(A().z)
 }
 
-// LINES: 2 3 * 2 * 3 * 7
+class Delegate(val f: () -> Int) {
+    operator fun getValue(thisRef: Any?, property: Any): Int {
+        return f()
+    }
+}
+
+// LINES: 2 3 2 * 3 * 7 10 12

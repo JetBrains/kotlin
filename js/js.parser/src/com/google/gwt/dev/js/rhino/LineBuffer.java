@@ -64,9 +64,10 @@ final class LineBuffer {
      */
     static final int BUFLEN = 256;
 
-    LineBuffer(Reader in, int lineno) {
+    LineBuffer(Reader in, CodePosition position) {
         this.in = in;
-        this.lineno = lineno;
+        this.lineno = position.getLine();
+        this.lineStart = -position.getOffset();
     }
 
     int read() throws IOException {
