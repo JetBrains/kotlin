@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
 import org.jetbrains.kotlin.psi.psiUtil.canPlaceAfterSimpleNameEntry
 
 class RemoveCurlyBracesFromTemplateInspection : IntentionBasedInspection<KtBlockStringTemplateEntry>(RemoveCurlyBracesFromTemplateIntention::class)
@@ -37,7 +37,7 @@ class RemoveCurlyBracesFromTemplateIntention : SelfTargetingOffsetIndependentInt
         applyTo(element)
     }
 
-    fun applyTo(element: KtBlockStringTemplateEntry): KtStringTemplateEntryWithExpression {
+    fun applyTo(element: KtBlockStringTemplateEntry): KtSimpleNameStringTemplateEntry {
         val name = (element.expression as KtNameReferenceExpression).getReferencedName()
         val newEntry = KtPsiFactory(element).createSimpleNameStringTemplateEntry(name)
         return element.replaced(newEntry)

@@ -17,12 +17,17 @@
 package org.jetbrains.kotlin.idea.codeInliner
 
 import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiTreeChangeAdapter
+import com.intellij.psi.PsiTreeChangeEvent
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
+import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
+import org.jetbrains.kotlin.psi.psiUtil.canPlaceAfterSimpleNameEntry
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import java.util.*
 
@@ -109,9 +114,11 @@ internal class ExpressionReplacementPerformer(
         }
 
         val mainExpression = codeToInline.mainExpression
-        val replaced: PsiElement? = when (mainExpression) {
+        val replaced: KtExpression? = when (mainExpression) {
             is KtStringTemplateExpression -> elementToBeReplaced.replacedWithStringTemplate(mainExpression)
+
             is KtExpression -> elementToBeReplaced.replaced(mainExpression)
+
             else -> {
                 // NB: Unit is never used as expression
                 val stub = elementToBeReplaced.replaced(psiFactory.createExpression("0"))
@@ -122,7 +129,7 @@ internal class ExpressionReplacementPerformer(
                     null
                 }
                 else {
-                    stub.replace(psiFactory.createExpression("Unit"))
+                    stub.replaced(psiFactory.createExpression("Unit"))
                 }
             }
         }
@@ -147,9 +154,28 @@ internal class ExpressionReplacementPerformer(
             }
         }
 
-        range = postProcessing(range)
+        val listener = replaced?.let { TrackExpressionListener(it) }
+        listener?.attach()
+        try {
+            range = postProcessing(range)
+        }
+        finally {
+            listener?.detach()
+        }
 
-        return range.last as KtExpression? //TODO: return value not correct!
+        val resultExpression = listener?.result
+
+        // simplify "${x}" to "$x"
+        val templateEntry = resultExpression?.parent as? KtBlockStringTemplateEntry
+        if (templateEntry != null) {
+            val intention = RemoveCurlyBracesFromTemplateIntention()
+            if (intention.isApplicableTo(templateEntry)) {
+                val newEntry = intention.applyTo(templateEntry)
+                return newEntry.expression
+            }
+        }
+
+        return resultExpression ?: range.last as? KtExpression
     }
 
     /**
@@ -203,6 +229,28 @@ internal class ExpressionReplacementPerformer(
         elementToBeReplaced = result.findDescendantOfType<KtExpression> { it.getCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY) != null }!!
         elementToBeReplaced.putCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY, null)
         return result
+    }
+
+    private class TrackExpressionListener(expression: KtExpression) : PsiTreeChangeAdapter() {
+        private var expression: KtExpression? = expression
+        private val manager = expression.manager
+
+        fun attach() {
+            manager.addPsiTreeChangeListener(this)
+        }
+
+        fun detach() {
+            manager.removePsiTreeChangeListener(this)
+        }
+
+        val result: KtExpression?
+            get() = expression?.takeIf { it.isValid }
+
+        override fun childReplaced(event: PsiTreeChangeEvent) {
+            if (event.oldChild == expression) {
+                expression = event.newChild as? KtExpression
+            }
+        }
     }
 }
 

@@ -50,6 +50,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
             doTest(fileName);
         }
 
+        @TestMetadata("InStringTemplates.kt")
+        public void testInStringTemplates() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/InStringTemplates.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("LocalCapturing.kt")
         public void testLocalCapturing() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/LocalCapturing.kt");

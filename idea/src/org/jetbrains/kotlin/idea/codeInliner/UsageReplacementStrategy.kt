@@ -22,6 +22,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -116,84 +118,104 @@ fun UsageReplacementStrategy.replaceUsages(
 ) {
     GuiUtils.invokeLaterIfNeeded({
         project.executeWriteCommand(commandName) {
-            // we should delete imports later to not affect other usages
-            val importsToDelete = arrayListOf<KtImportDirective>()
-            val replacements = mutableListOf<KtElement>()
-
-            var invalidUsagesFound = false
-
             val targetDeclaration = targetPsiElement as? KtNamedDeclaration
 
-            val usagesChildrenFirst = usages.sortChildrenFirst()
-            usages@ for (usage in usagesChildrenFirst) {
-                try {
-                    if (!usage.isValid) {
-                        invalidUsagesFound = true
-                        continue
-                    }
+            val usagesByFile = usages.groupBy { it.containingFile }
 
-                    val usageParent = usage.parent
-                    when (usageParent) {
-                        is KtCallableReferenceExpression -> {
-                            val grandParent = usageParent.parent
-                            ConvertReferenceToLambdaIntention().applyTo(usageParent, null)
-                            (grandParent as? KtElement)?.let {
-                                doRefactoringInside(it, targetDeclaration?.name, targetDeclaration?.descriptor)
-                            }
-                            continue@usages
-                        }
-                        is KtCallElement -> {
-                            val lambdaArguments = usageParent.lambdaArguments
-                            if (lambdaArguments.isNotEmpty()) {
-                                val grandParent = usageParent.parent
-                                val specifySignature = SpecifyExplicitLambdaSignatureIntention()
-                                for (lambdaArgument in lambdaArguments) {
-                                    val lambdaExpression = lambdaArgument.getLambdaExpression()
-                                    val functionDescriptor =
-                                            lambdaExpression.functionLiteral.resolveToDescriptorIfAny() as? FunctionDescriptor ?: continue
-                                    if (functionDescriptor.valueParameters.isNotEmpty()) {
-                                        specifySignature.applyTo(lambdaExpression, null)
-                                    }
-                                }
-                                (grandParent as? KtElement)?.let {
-                                    doRefactoringInside(it, targetDeclaration?.name, targetDeclaration?.descriptor)
-                                }
-                                continue@usages
-                            }
-                        }
+            val KEY = Key<Unit>("UsageReplacementStrategy.replaceUsages")
 
-                    }
+            for ((file, usagesInFile) in usagesByFile) {
+                usagesInFile.forEach { it.putCopyableUserData(KEY, Unit) }
 
-                    //TODO: keep the import if we don't know how to replace some of the usages
-                    val importDirective = usage.getStrictParentOfType<KtImportDirective>()
-                    if (importDirective != null) {
-                        if (!importDirective.isAllUnder && importDirective.targetDescriptors().size == 1) {
-                            importsToDelete.add(importDirective)
-                        }
-                        continue
-                    }
+                // we should delete imports later to not affect other usages
+                val importsToDelete = mutableListOf<KtImportDirective>()
 
-                    val replacement = createReplacer(usage)?.invoke()
-                    if (replacement != null) {
-                        replacements += replacement
-                    }
+                var usagesToProcess = usagesInFile
+                while (usagesToProcess.isNotEmpty()) {
+                    if (processUsages(usagesToProcess, targetDeclaration, importsToDelete)) break
+
+                    // some usages may get invalidated we need to find them in the tree
+                    usagesToProcess = file.collectDescendantsOfType<KtSimpleNameExpression> { it.getCopyableUserData(KEY) != null }
                 }
-                catch (e: Throwable) {
-                    LOG.error(e)
-                }
+
+                file.forEachDescendantOfType<KtSimpleNameExpression> { it.putCopyableUserData(KEY, null) }
+                
+                importsToDelete.forEach { it.delete() }
             }
-
-            if (invalidUsagesFound && targetDeclaration != null) {
-                val name = targetDeclaration.name
-                val descriptor = targetDeclaration.descriptor
-                for (replacement in replacements) {
-                    doRefactoringInside(replacement, name, descriptor)
-                }
-            }
-
-            importsToDelete.forEach { it.delete() }
 
             postAction()
         }
     }, ModalityState.NON_MODAL)
+}
+
+/**
+ * @return false if some usages were invalidated
+ */
+private fun UsageReplacementStrategy.processUsages(
+        usages: List<KtSimpleNameExpression>,
+        targetDeclaration: KtNamedDeclaration?,
+        importsToDelete: MutableList<KtImportDirective>
+): Boolean {
+    var invalidUsagesFound = false
+    for (usage in usages.sortChildrenFirst()) {
+        try {
+            if (!usage.isValid) {
+                invalidUsagesFound = true
+                continue
+            }
+
+            if (specialUsageProcessing(usage, targetDeclaration)) continue
+
+            //TODO: keep the import if we don't know how to replace some of the usages
+            val importDirective = usage.getStrictParentOfType<KtImportDirective>()
+            if (importDirective != null) {
+                if (!importDirective.isAllUnder && importDirective.targetDescriptors().size == 1) {
+                    importsToDelete.add(importDirective)
+                }
+                continue
+            }
+
+            createReplacer(usage)?.invoke()
+        }
+        catch (e: Throwable) {
+            LOG.error(e)
+        }
+    }
+    return !invalidUsagesFound
+}
+
+private fun UsageReplacementStrategy.specialUsageProcessing(usage: KtSimpleNameExpression, targetDeclaration: KtNamedDeclaration?): Boolean {
+    val usageParent = usage.parent
+    when (usageParent) {
+        is KtCallableReferenceExpression -> {
+            val grandParent = usageParent.parent
+            ConvertReferenceToLambdaIntention().applyTo(usageParent, null)
+            (grandParent as? KtElement)?.let {
+                doRefactoringInside(it, targetDeclaration?.name, targetDeclaration?.descriptor)
+            }
+            return true
+        }
+
+        is KtCallElement -> {
+            val lambdaArguments = usageParent.lambdaArguments
+            if (lambdaArguments.isNotEmpty()) {
+                val grandParent = usageParent.parent
+                val specifySignature = SpecifyExplicitLambdaSignatureIntention()
+                for (lambdaArgument in lambdaArguments) {
+                    val lambdaExpression = lambdaArgument.getLambdaExpression()
+                    val functionDescriptor =
+                            lambdaExpression.functionLiteral.resolveToDescriptorIfAny() as? FunctionDescriptor ?: continue
+                    if (functionDescriptor.valueParameters.isNotEmpty()) {
+                        specifySignature.applyTo(lambdaExpression, null)
+                    }
+                }
+                (grandParent as? KtElement)?.let {
+                    doRefactoringInside(it, targetDeclaration?.name, targetDeclaration?.descriptor)
+                }
+                return true
+            }
+        }
+
+    }
+    return false
 }

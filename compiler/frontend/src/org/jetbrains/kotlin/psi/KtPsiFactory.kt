@@ -381,9 +381,9 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return stringTemplateExpression.entries[0] as KtStringTemplateEntryWithExpression
     }
 
-    fun createSimpleNameStringTemplateEntry(name: String): KtStringTemplateEntryWithExpression {
+    fun createSimpleNameStringTemplateEntry(name: String): KtSimpleNameStringTemplateEntry {
         val stringTemplateExpression = createExpression("\"\$$name\"") as KtStringTemplateExpression
-        return stringTemplateExpression.entries[0] as KtStringTemplateEntryWithExpression
+        return stringTemplateExpression.entries[0] as KtSimpleNameStringTemplateEntry
     }
 
     fun createStringTemplate(content: String) = createExpression("\"$content\"") as KtStringTemplateExpression
