@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir.generators
+package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.SourceManager
