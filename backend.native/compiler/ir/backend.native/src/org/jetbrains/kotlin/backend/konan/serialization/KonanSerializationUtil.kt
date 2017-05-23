@@ -205,19 +205,19 @@ internal class KonanSerializationUtil(val context: Context) {
 
         // TODO: ModuleDescriptor should be able to return 
         // the package only with the contents of that module, without dependencies
-        val skip: (DeclarationDescriptor) -> Boolean = 
-            { DescriptorUtils.getContainingModule(it) != module }
+        val keep: (DeclarationDescriptor) -> Boolean = 
+            { DescriptorUtils.getContainingModule(it) == module }
+
+        val fragments = packageView.fragments
+        if (fragments.filter(keep).isEmpty()) return null
 
         val classifierDescriptors = KonanDescriptorSerializer
             .sort(packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))
-            .filterNot(skip)
+            .filter(keep)
 
-        val fragments = packageView.fragments
         val members = fragments
                 .flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) }
-                .filterNot(skip)
-
-        if (members.isEmpty() && classifierDescriptors.isEmpty()) return null
+                .filter(keep)
 
         val classesBuilder = KonanLinkData.Classes.newBuilder()
 
