@@ -42,7 +42,7 @@ class KonanLibrarySearchPathResolver(repositories: List<String>,
         get() = File(distribution.klib)
 
     val currentDirHead: File
-        get() = File.userDir.klib
+        get() = File.userDir
 
     private val repoRoots: List<File> by lazy {
         repositories.map{File(it).klib}
