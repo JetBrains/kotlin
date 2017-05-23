@@ -2181,7 +2181,7 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MemberVisibilityCanPrivateInspection"
-                     displayName="Can have 'private' visibility"
+                     displayName="Class member can have 'private' visibility"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
