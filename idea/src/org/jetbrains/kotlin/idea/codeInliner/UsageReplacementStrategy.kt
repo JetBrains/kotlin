@@ -73,19 +73,6 @@ fun UsageReplacementStrategy.replaceUsagesInWholeProject(
             })
 }
 
-private fun UsageReplacementStrategy.doRefactoringInside(
-        element: KtElement, targetName: String?, targetDescriptor: DeclarationDescriptor?
-) {
-    element.forEachDescendantOfType<KtSimpleNameExpression> { usage ->
-        if (usage.isValid && usage.getReferencedName() == targetName) {
-            val context = usage.analyze(BodyResolveMode.PARTIAL)
-            if (targetDescriptor == context[BindingContext.REFERENCE_TARGET, usage]) {
-                createReplacer(usage)?.invoke()
-            }
-        }
-    }
-}
-
 fun UsageReplacementStrategy.replaceUsages(
         usages: Collection<KtSimpleNameExpression>,
         targetPsiElement: PsiElement,
@@ -195,4 +182,17 @@ private fun UsageReplacementStrategy.specialUsageProcessing(usage: KtSimpleNameE
 
     }
     return false
+}
+
+private fun UsageReplacementStrategy.doRefactoringInside(
+        element: KtElement, targetName: String?, targetDescriptor: DeclarationDescriptor?
+) {
+    element.forEachDescendantOfType<KtSimpleNameExpression> { usage ->
+        if (usage.isValid && usage.getReferencedName() == targetName) {
+            val context = usage.analyze(BodyResolveMode.PARTIAL)
+            if (targetDescriptor == context[BindingContext.REFERENCE_TARGET, usage]) {
+                createReplacer(usage)?.invoke()
+            }
+        }
+    }
 }
