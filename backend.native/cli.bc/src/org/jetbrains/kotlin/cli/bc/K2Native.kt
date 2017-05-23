@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.bc
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.CompilerOutputKind.*
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -91,7 +92,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             with(configuration) {
 
                 put(NOSTDLIB, arguments.nostdlib)
-                put(NOLINK, arguments.nolink)
                 put(NOPACK, arguments.nopack)
                 put(NOMAIN, arguments.nomain)
                 put(LIBRARY_FILES,
@@ -108,18 +108,31 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
                 // TODO: Collect all the explicit file names into an object
                 // and teach the compiler to work with temporaries and -save-temps.
-                val library = arguments.outputFile ?: "library"
-                if (arguments.nolink) 
-                    put(LIBRARY_NAME, library)
-                    put(LIBRARY_FILE, suffixIfNot(library, ".klib"))
-                val program = arguments.outputFile ?: "program"
-                if (!arguments.nolink) {
-                    put(PROGRAM_NAME, program)
-                    put(EXECUTABLE_FILE, suffixIfNot(program, ".kexe"))
+
+                val outputKind = CompilerOutputKind.valueOf(
+                    (arguments.produce ?: "program").toUpperCase())
+
+                put(PRODUCE, outputKind)
+                val (defaultName, suffix) = when (outputKind) {
+                    CompilerOutputKind.LIBRARY -> {
+                        put(NOLINK, true)
+                        Pair("library", ".klib")
+                    }
+                    CompilerOutputKind.PROGRAM -> {
+                        put(NOLINK, false)
+                        Pair("program", ".kexe")
+                    }
+                    CompilerOutputKind.BITCODE -> {
+                        put(NOLINK, true)
+                        Pair("output", ".bc")
+                    }
                 }
+                val output = arguments.outputFile ?: defaultName
+                put(OUTPUT_NAME, output)
+                put(OUTPUT_FILE, suffixIfNot(output, suffix))
+
                 // This is a decision we could change
-                val module = if (arguments.nolink) library else program
-                put(CommonConfigurationKeys.MODULE_NAME, module)
+                put(CommonConfigurationKeys.MODULE_NAME, output)
                 put(ABI_VERSION, 1)
 
                 if (arguments.runtimeFile != null)

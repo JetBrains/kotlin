@@ -205,7 +205,7 @@ internal class LinkStage(val context: Context) {
         get() = if (nomain) emptyList() else platform.entrySelector
 
     fun link(objectFiles: List<ObjectFile>): ExecutableFile {
-        val executable = config.get(KonanConfigKeys.EXECUTABLE_FILE)!!
+        val executable = config.get(KonanConfigKeys.OUTPUT_FILE)!!
         val linkCommand = platform.linkCommand(objectFiles, executable, optimize) +
                 distribution.libffi +
                 asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.CompilerOutputKind
 import org.jetbrains.kotlin.backend.konan.KonanPhase
 import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.backend.konan.PhaseManager
@@ -85,41 +86,48 @@ internal fun emitLLVM(context: Context) {
             DIFinalize(context.debugInfo.builder)
         }
         
-        if (!config.getBoolean(KonanConfigKeys.NOLINK)) {
-            val program = config.get(KonanConfigKeys.PROGRAM_NAME)!!
-            val output = "${program}.kt.bc"
-            context.bitcodeFileName = output
+        when (config.get(KonanConfigKeys.PRODUCE)) {
+            CompilerOutputKind.PROGRAM -> {
+                val program = config.get(KonanConfigKeys.OUTPUT_NAME)!!
+                val output = "${program}.kt.bc"
+                context.bitcodeFileName = output
 
-            phaser.phase(KonanPhase.BITCODE_LINKER) {
-                for (library in context.config.nativeLibraries) {
-                    val libraryModule = parseBitcodeFile(library)
-                    val failed = LLVMLinkModules2(llvmModule, libraryModule)
-                    if (failed != 0) {
-                        throw Error("failed to link $library") // TODO: retrieve error message from LLVM.
+                phaser.phase(KonanPhase.BITCODE_LINKER) {
+                    for (library in context.config.nativeLibraries) {
+                        val libraryModule = parseBitcodeFile(library)
+                        val failed = LLVMLinkModules2(llvmModule, libraryModule)
+                        if (failed != 0) {
+                            throw Error("failed to link $library") // TODO: retrieve error message from LLVM.
+                        }
                     }
-                 }
+                }
+
+                LLVMWriteBitcodeToFile(llvmModule, output)
             }
+            CompilerOutputKind.LIBRARY -> {
 
-            LLVMWriteBitcodeToFile(llvmModule, output)
-        } else {
+                val libraryName = config.get(KonanConfigKeys.OUTPUT_NAME)!!
+                val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
+                val targetName = context.config.targetManager.currentName
 
-            val libraryName = config.get(KonanConfigKeys.LIBRARY_NAME)!!
-            val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
-            val targetName = context.config.targetManager.currentName
+                val library = buildLibrary(
+                    phaser, 
+                    context.config.nativeLibraries, 
+                    context.serializedLinkData!!, 
+                    targetName,
+                    libraryName, 
+                    llvmModule,
+                    nopack)
 
-            val library = buildLibrary(
-                phaser, 
-                context.config.nativeLibraries, 
-                context.serializedLinkData!!, 
-                targetName,
-                libraryName, 
-                llvmModule,
-                nopack)
+                context.library = library
 
-            context.library = library
-
-            context.bitcodeFileName = 
-                library.mainBitcodeFileName
+                context.bitcodeFileName = library.mainBitcodeFileName
+            }
+            CompilerOutputKind.BITCODE -> {
+                val output = config.get(KonanConfigKeys.OUTPUT_FILE)!!
+                context.bitcodeFileName = output
+                LLVMWriteBitcodeToFile(llvmModule, output)
+            }
         }
 }
 
@@ -130,9 +138,7 @@ internal fun buildLibrary(phaser: PhaseManager, natives: List<String>, linkData:
 
     library.addKotlinBitcode(llvmModule)
 
-    phaser.phase(KonanPhase.METADATOR) {
-        library.addLinkData(linkData)
-    }
+    library.addLinkData(linkData)
 
     phaser.phase(KonanPhase.BITCODE_LINKER) {
         natives.forEach {

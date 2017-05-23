@@ -103,13 +103,8 @@ internal fun String?.toFileAndFolder():FileAndFolder {
 internal fun generateDebugInfoHeader(context: Context) {
     if (context.shouldContainDebugInfo()) {
 
-        val path = with(context.config.configuration) {
-            if (!getBoolean(KonanConfigKeys.NOLINK)) {
-                get(KonanConfigKeys.EXECUTABLE_FILE)!!
-            } else {
-                get(KonanConfigKeys.LIBRARY_NAME)!!
-            }
-        }.toFileAndFolder()
+        val path = context.config.configuration.get(KonanConfigKeys.OUTPUT_FILE)!!
+            .toFileAndFolder()
 
         context.debugInfo.module = DICreateModule(
                 builder = context.debugInfo.builder,

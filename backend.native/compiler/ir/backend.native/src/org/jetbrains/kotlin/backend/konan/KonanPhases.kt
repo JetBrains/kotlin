@@ -53,7 +53,6 @@ enum class KonanPhase(val description: String,
     /* ... */ BITCODE("LLVM BitCode Generation"),
     /* ... ... */ RTTI("RTTI Generation"),
     /* ... ... */ CODEGEN("Code Generation"),
-    /* ... ... */ METADATOR("Metadata Generation"),
     /* ... ... */ BITCODE_LINKER("Bitcode linking"),
     /* */ LINK_STAGE("Link stage"),
     /* ... */ OBJECT_FILES("Bitcode to object file"),
@@ -76,8 +75,8 @@ object KonanPhases {
         with (config.configuration) { with (KonanConfigKeys) { 
 
             // Don't serialize anything to a final executable.
-            KonanPhase.SERIALIZER.enabled = getBoolean(NOLINK)
-            KonanPhase.METADATOR.enabled = getBoolean(NOLINK)
+            KonanPhase.SERIALIZER.enabled = 
+                (get(PRODUCE) == CompilerOutputKind.LIBRARY)
 
             val disabled = get(DISABLED_PHASES)
             disabled?.forEach { phases[known(it)]!!.enabled = false }

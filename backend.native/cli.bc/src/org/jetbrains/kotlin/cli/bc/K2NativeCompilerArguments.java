@@ -42,9 +42,6 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "-nativelibrary", shortName = "-nl", valueDescription = "<path>", description = "Include the native library")
     public String[] nativeLibraries;
 
-    @Argument(value = "-nolink", description = "Don't link, just produce a bitcode file")
-    public boolean nolink;
-
     @Argument(value = "-nomain", description = "Assume 'main' entry point to be provided by external libraries")
     public boolean nomain;
 
@@ -59,6 +56,9 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
 
     @Argument(value = "-output", shortName = "-o", valueDescription = "<path>", description = "Output file path")
     public String outputFile;
+
+    @Argument(value = "-produce", valueDescription = "{program|library|bitcode}", description = "Produce either .kexe, .klib or a .bc file.")
+    public String produce;
 
     @Argument(value = "-properties", valueDescription = "<path>", description = "Override standard 'konan.properties' location")
     public String propertyFile;
@@ -116,3 +116,4 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     public boolean verifyIr;
 
 }
+
