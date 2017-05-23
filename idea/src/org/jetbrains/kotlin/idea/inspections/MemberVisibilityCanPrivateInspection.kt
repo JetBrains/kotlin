@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -83,7 +84,8 @@ class MemberVisibilityCanPrivateInspection : AbstractKotlinInspection() {
             is KtNamedFunction -> "Function"
             else -> "Property"
         }
-        holder.registerProblem(declaration,
+        val nameElement = (declaration as? PsiNameIdentifierOwner)?.nameIdentifier ?: return
+        holder.registerProblem(nameElement,
                                "$member '${declaration.name}' can be private",
                                ProblemHighlightType.WEAK_WARNING,
                                IntentionWrapper(AddModifierFix(modifierListOwner, KtTokens.PRIVATE_KEYWORD), declaration.containingFile))
