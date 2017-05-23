@@ -159,19 +159,18 @@ object SmartCastImpossibleExclExclFixFactory: KotlinSingleIntentionActionFactory
 
 object MissingIteratorExclExclFixFactory : KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val element = diagnostic.psiElement
-        if (element !is KtExpression) return null
-        
+        val element = diagnostic.psiElement as? KtExpression ?: return null
+
         val analyze = element.analyze(BodyResolveMode.PARTIAL)
         val type = analyze.getType(element)
         if (type == null || !TypeUtils.isNullableType(type)) return null
         
         val descriptor = type.constructor.declarationDescriptor
 
-        fun hasIteratorFunction(descriptor: ClassifierDescriptor?) : Boolean {
-            if (descriptor !is ClassDescriptor) return false
+        fun hasIteratorFunction(classifierDescriptor: ClassifierDescriptor?) : Boolean {
+            if (classifierDescriptor !is ClassDescriptor) return false
 
-            val memberScope = descriptor.unsubstitutedMemberScope
+            val memberScope = classifierDescriptor.unsubstitutedMemberScope
             val functions = memberScope.getContributedFunctions(OperatorNameConventions.ITERATOR, NoLookupLocation.FROM_IDE)
 
             return functions.any { it.isValidOperator() }
