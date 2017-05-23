@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -35,7 +36,7 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
             }
 
     private fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment) {
-        ModuleDependenciesGenerator(context).generateUnboundSymbolsAsDependencies(irModule)
+        ExternalDependenciesGenerator(context.symbolTable, context.irBuiltIns).generateUnboundSymbolsAsDependencies(irModule)
     }
 
     private fun generateFiles(ktFiles: Collection<KtFile>): List<IrFile> {
