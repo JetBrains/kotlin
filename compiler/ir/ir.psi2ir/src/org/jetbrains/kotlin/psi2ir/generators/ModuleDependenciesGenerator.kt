@@ -16,20 +16,20 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.psi2ir.StableDescriptorsComparator
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class ModuleDependenciesGenerator(override val context: GeneratorContext) : Generator {
+    private val stubGenerator = DeclarationStubGenerator(context.symbolTable)
+
     private class DependenciesCollector {
         private val modulesForDependencyDescriptors = LinkedHashSet<ModuleDescriptor>()
         private val packageFragmentsForDependencyDescriptors = LinkedHashMap<ModuleDescriptor, MutableSet<PackageFragmentDescriptor>>()
@@ -94,110 +94,18 @@ class ModuleDependenciesGenerator(override val context: GeneratorContext) : Gene
         }
     }
 
-    private fun generateModuleStub(collector: DependenciesCollector, moduleDescriptor: ModuleDescriptor): IrModuleFragmentImpl =
-            IrModuleFragmentImpl(moduleDescriptor, context.irBuiltIns).also { irDependencyModule ->
+    private fun generateModuleStub(collector: DependenciesCollector, moduleDescriptor: ModuleDescriptor): IrModuleFragment =
+            stubGenerator.generateEmptyModuleFragmentStub(moduleDescriptor, context.irBuiltIns).also { irDependencyModule ->
                 collector.getPackageFragments(moduleDescriptor).mapTo(irDependencyModule.externalPackageFragments) { packageFragmentDescriptor ->
                     generatePackageStub(packageFragmentDescriptor, collector.getTopLevelDescriptors(packageFragmentDescriptor))
                 }
             }
 
     private fun generatePackageStub(packageFragmentDescriptor: PackageFragmentDescriptor, topLevelDescriptors: Collection<DeclarationDescriptor>): IrExternalPackageFragment =
-            context.symbolTable.declareExternalPackageFragment(packageFragmentDescriptor).also { irExternalPackageFragment ->
+            stubGenerator.generateEmptyExternalPackageFragmentStub(packageFragmentDescriptor).also { irExternalPackageFragment ->
                 topLevelDescriptors.mapTo(irExternalPackageFragment.declarations) {
-                    generateStub(it)
+                    stubGenerator.generateMemberStub(it)
                 }
             }
 
-    private fun generateStub(descriptor: DeclarationDescriptor): IrDeclaration =
-            when (descriptor) {
-                is ClassDescriptor ->
-                    if (DescriptorUtils.isEnumEntry(descriptor))
-                        generateEnumEntryStub(descriptor)
-                    else
-                        generateClassStub(descriptor)
-                is ClassConstructorDescriptor ->
-                    generateConstructorStub(descriptor)
-                is FunctionDescriptor ->
-                    generateFunctionStub(descriptor)
-                is PropertyDescriptor ->
-                    generatePropertyStub(descriptor)
-                else ->
-                    throw AssertionError("Unexpected top-level descriptor: $descriptor")
-            }
-
-    private fun MemberScope.generateChildStubs(irParent: IrDeclarationContainer) {
-        getContributedDescriptors().sortedWith(StableDescriptorsComparator).generateChildStubs (irParent)
-    }
-
-    private fun Collection<DeclarationDescriptor>.generateChildStubs(irParent: IrDeclarationContainer) {
-        mapTo(irParent.declarations) { generateStub(it) }
-    }
-
-    private fun Collection<TypeParameterDescriptor>.generateTypeParameterStubs(irParent: IrTypeParametersContainer) {
-        mapTo(irParent.typeParameters) { generateTypeParameterStub(it) }
-    }
-
-    private fun Collection<ValueParameterDescriptor>.generateValueParametersStubs(irParent: IrFunction) {
-        mapTo(irParent.valueParameters) { generateValueParameterStub(it) }
-    }
-
-    private fun generateClassStub(classDescriptor: ClassDescriptor): IrClass =
-            context.symbolTable.declareClass(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    classDescriptor
-            ).also { irClass ->
-                classDescriptor.declaredTypeParameters.generateTypeParameterStubs(irClass)
-                classDescriptor.constructors.generateChildStubs(irClass)
-                classDescriptor.defaultType.memberScope.generateChildStubs(irClass)
-                classDescriptor.staticScope.generateChildStubs(irClass)
-            }
-
-    private fun generateEnumEntryStub(enumEntryDescriptor: ClassDescriptor): IrEnumEntry =
-            context.symbolTable.declareEnumEntry(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    enumEntryDescriptor
-            )
-
-    private fun generateTypeParameterStub(typeParameterDescriptor: TypeParameterDescriptor): IrTypeParameter =
-            IrTypeParameterImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, typeParameterDescriptor)
-
-    private fun generateValueParameterStub(valueParameterDescriptor: ValueParameterDescriptor): IrValueParameter =
-            IrValueParameterImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, valueParameterDescriptor)
-
-    private fun generateConstructorStub(constructorDescriptor: ClassConstructorDescriptor): IrConstructor =
-            context.symbolTable.declareConstructor(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    constructorDescriptor
-            ).also { irConstructor ->
-                constructorDescriptor.valueParameters.generateValueParametersStubs(irConstructor)
-            }
-
-    private fun generateFunctionStub(functionDescriptor: FunctionDescriptor): IrFunction =
-            context.symbolTable.declareSimpleFunction(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    functionDescriptor
-            ).also { irFunction ->
-                functionDescriptor.typeParameters.generateTypeParameterStubs(irFunction)
-                functionDescriptor.valueParameters.generateValueParametersStubs(irFunction)
-            }
-
-    private fun generatePropertyStub(propertyDescriptor: PropertyDescriptor): IrProperty =
-            IrPropertyImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    propertyDescriptor
-            ).also { irProperty ->
-                val getterDescriptor = propertyDescriptor.getter
-                if (getterDescriptor == null) {
-                    irProperty.backingField =
-                            context.symbolTable.declareField(
-                                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                                    propertyDescriptor
-                            )
-                }
-                else {
-                    irProperty.getter = generateFunctionStub(getterDescriptor)
-                }
-
-                irProperty.setter = propertyDescriptor.setter?.let { generateFunctionStub(it) }
-            }
 }
