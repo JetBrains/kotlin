@@ -54,6 +54,12 @@ public class CopyTestGenerated extends AbstractCopyTest {
         doTest(fileName);
     }
 
+    @TestMetadata("copyClassToSamePackageWithRename/copyClassToSamePackageWithRename.test")
+    public void testCopyClassToSamePackageWithRename_CopyClassToSamePackageWithRename() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyClassToSamePackageWithRename/copyClassToSamePackageWithRename.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("copyClassWithCompanionRefs/copyClassWithCompanionRefs.test")
     public void testCopyClassWithCompanionRefs_CopyClassWithCompanionRefs() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyClassWithCompanionRefs/copyClassWithCompanionRefs.test");

@@ -25,18 +25,18 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesDialog
 import com.intellij.refactoring.copy.CopyHandlerDelegateBase
-import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.*
@@ -240,8 +240,13 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
                         performDelayedRefactoringRequests(project)
                     }
 
-                    oldToNewElementsMapping.values.singleOrNull()?.let {
-                        RenameProcessor(project, it, newName!!.quoteIfNeeded(), false, false).run()
+                    (oldToNewElementsMapping.values.singleOrNull() as? KtNamedDeclaration)?.let { newDeclaration ->
+                        if (newName == newDeclaration.name) return@let
+                        val selfReferences = ReferencesSearch.search(newDeclaration, LocalSearchScope(newDeclaration)).findAll()
+                        runWriteAction {
+                            selfReferences.forEach { it.handleElementRename(newName!!) }
+                            newDeclaration.setName(newName!!)
+                        }
                     }
 
                     if (openInEditor) {
