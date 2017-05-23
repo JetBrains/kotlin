@@ -698,7 +698,8 @@ public class DescriptorResolver {
             @NotNull KtTypeAlias typeAlias,
             @NotNull BindingTrace trace
     ) {
-        if (!(containingDeclaration instanceof PackageFragmentDescriptor)) {
+        if (!(containingDeclaration instanceof PackageFragmentDescriptor) &&
+            !(containingDeclaration instanceof ScriptDescriptor)) {
             trace.report(TOPLEVEL_TYPEALIASES_ONLY.on(typeAlias));
         }
 
