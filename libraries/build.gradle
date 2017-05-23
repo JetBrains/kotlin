@@ -1,3 +1,21 @@
+buildscript {
+    ext.kotlin_root = "$rootDir/.."
+    apply from: 'versions.gradle'
+}
+
+allprojects {
+    group = 'org.jetbrains.kotlin'
+    version = "$kotlin_version"
+}
+
 apply plugin: 'base'
+apply from: 'commonConfiguration.gradle'
 
 task install
+
+if (isSonatypeRelease) {
+    println 'Applying configuration for sonatype release'
+    apply from: 'prepareSonatypeStaging.gradle'
+}
+
+task publish(dependsOn: preparePublication)
