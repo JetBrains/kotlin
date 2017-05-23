@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
@@ -112,7 +113,10 @@ class KotlinTargetElementEvaluator : TargetElementEvaluatorEx, TargetElementUtil
     }
 
     override fun isIdentifierPart(file: PsiFile, text: CharSequence?, offset: Int): Boolean {
+        val elementAtCaret = file.findElementAt(offset)
+
+        if (elementAtCaret?.node?.elementType == KtTokens.IDENTIFIER) return true
         // '(' is considered identifier part if it belongs to primary constructor without 'constructor' keyword
-        return file.findElementAt(offset)?.getNonStrictParentOfType<KtPrimaryConstructor>()?.textOffset == offset
+        return elementAtCaret?.getNonStrictParentOfType<KtPrimaryConstructor>()?.textOffset == offset
     }
 }

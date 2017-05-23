@@ -342,6 +342,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("nonQuotedToQuoted/nonQuotedToQuoted.test")
+    public void testNonQuotedToQuoted_NonQuotedToQuoted() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/nonQuotedToQuoted/nonQuotedToQuoted.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("noShadowingConflictForSiblingDeclarations/noShadowingConflictForSiblingDeclarations.test")
     public void testNoShadowingConflictForSiblingDeclarations_NoShadowingConflictForSiblingDeclarations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/noShadowingConflictForSiblingDeclarations/noShadowingConflictForSiblingDeclarations.test");
@@ -435,6 +441,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("propertyRedeclaredByPropertyParameter/propertyRedeclaredByPropertyParameter.test")
     public void testPropertyRedeclaredByPropertyParameter_PropertyRedeclaredByPropertyParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/propertyRedeclaredByPropertyParameter/propertyRedeclaredByPropertyParameter.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("quotedToNonQuoted/quotedToNonQuoted.test")
+    public void testQuotedToNonQuoted_QuotedToNonQuoted() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/quotedToNonQuoted/quotedToNonQuoted.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("quotedToNonQuotedCaretAtTheEnd/quotedToNonQuotedCaretAtTheEnd.test")
+    public void testQuotedToNonQuotedCaretAtTheEnd_QuotedToNonQuotedCaretAtTheEnd() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/quotedToNonQuotedCaretAtTheEnd/quotedToNonQuotedCaretAtTheEnd.test");
         doTest(fileName);
     }
 

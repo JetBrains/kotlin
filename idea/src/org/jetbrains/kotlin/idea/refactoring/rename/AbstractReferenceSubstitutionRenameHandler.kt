@@ -35,14 +35,20 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 abstract class AbstractReferenceSubstitutionRenameHandler(
         private val delegateHandler: RenameHandler = MemberInplaceRenameHandler()
 ) : PsiElementRenameHandler() {
-        protected fun getReferenceExpression(dataContext: DataContext): KtSimpleNameExpression? {
-        val caret = CommonDataKeys.CARET.getData(dataContext) ?: return null
-        val ktFile = CommonDataKeys.PSI_FILE.getData(dataContext) as? KtFile ?: return null
-        var elementAtCaret = ktFile.findElementAt(caret.offset)
-        if (elementAtCaret is PsiWhiteSpace) {
-            elementAtCaret = CodeInsightUtils.getElementAtOffsetIgnoreWhitespaceAfter(ktFile, caret.offset)
+    companion object {
+        fun getReferenceExpression(file: PsiFile, offset: Int): KtSimpleNameExpression? {
+            var elementAtCaret = file.findElementAt(offset)
+            if (elementAtCaret is PsiWhiteSpace) {
+                elementAtCaret = CodeInsightUtils.getElementAtOffsetIgnoreWhitespaceAfter(file, offset)
+            }
+            return elementAtCaret?.getNonStrictParentOfType<KtSimpleNameExpression>()
         }
-        return elementAtCaret?.getNonStrictParentOfType<KtSimpleNameExpression>()
+
+        fun getReferenceExpression(dataContext: DataContext): KtSimpleNameExpression? {
+            val caret = CommonDataKeys.CARET.getData(dataContext) ?: return null
+            val ktFile = CommonDataKeys.PSI_FILE.getData(dataContext) as? KtFile ?: return null
+            return getReferenceExpression(ktFile, caret.offset)
+        }
     }
 
     protected abstract fun getElementToRename(dataContext: DataContext): PsiElement?
