@@ -164,6 +164,54 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("kt17972.kt")
+        public void testKt17972() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972_2.kt")
+        public void testKt17972_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972_2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972_3.kt")
+        public void testKt17972_3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972_3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972_4.kt")
+        public void testKt17972_4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972_4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972_5.kt")
+        public void testKt17972_5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972_5.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972_super.kt")
+        public void testKt17972_super() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972_super.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972_super2.kt")
+        public void testKt17972_super2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972_super2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt17972_super3.kt")
+        public void testKt17972_super3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt17972_super3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt6552.kt")
         public void testKt6552() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt6552.kt");

@@ -46,8 +46,8 @@ class RegeneratedLambdaFieldRemapper(
         return findFieldInSuper(fieldInsnNode)
     }
 
-    override fun processNonAload0FieldAccessChains(isInlinedLambda: Boolean): Boolean {
-        return isInlinedLambda && isConstructor
+    override fun shouldProcessNonAload0FieldAccessChains(): Boolean {
+        return isConstructor
     }
 
     private fun findFieldInSuper(fieldInsnNode: FieldInsnNode): CapturedParamInfo? {

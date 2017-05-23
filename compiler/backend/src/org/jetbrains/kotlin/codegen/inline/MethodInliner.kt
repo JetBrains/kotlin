@@ -602,7 +602,7 @@ class MethodInliner(
         while (cur != null) {
             if (cur is VarInsnNode && cur.opcode == Opcodes.ALOAD) {
                 val varIndex = cur.`var`
-                if (varIndex == 0 || nodeRemapper.processNonAload0FieldAccessChains(getLambdaIfExists(varIndex) != null)) {
+                if (varIndex == 0 || nodeRemapper.shouldProcessNonAload0FieldAccessChains()) {
                     val accessChain = getCapturedFieldAccessChain((cur as VarInsnNode?)!!)
                     val insnNode = nodeRemapper.foldFieldAccessChainIfNeeded(accessChain, node)
                     if (insnNode != null) {

@@ -44,8 +44,15 @@ open class FieldRemapper(
             else
                 foldFieldAccessChainIfNeeded(capturedFieldAccess, 1, node)
 
-    //TODO: seems that this method is redundant but it added from safety purposes before new milestone
-    open fun processNonAload0FieldAccessChains(isInlinedLambda: Boolean): Boolean = false
+    /**constructors could access outer not through
+     * ALOAD 0 //this
+     * GETFIELD this$0 //outer
+     * GETFIELD this$0 //outer of outer
+     * but directly through constructor parameter
+     * ALOAD X //outer
+     * GETFIELD this$0 //outer of outer
+    */
+    open fun shouldProcessNonAload0FieldAccessChains(): Boolean = false
 
     private fun foldFieldAccessChainIfNeeded(
             capturedFieldAccess: List<AbstractInsnNode>,
