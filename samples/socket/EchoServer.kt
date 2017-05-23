@@ -54,7 +54,7 @@ fun main(args: Array<String>) {
             val length = read(commFd, buffer, bufferLength)
                     .ensureUnixCallResult { it >= 0 }
 
-            if (length == 0L) {
+            if (length.toInt() == 0) {
                 break
             }
 

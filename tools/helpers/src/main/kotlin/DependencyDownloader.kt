@@ -37,11 +37,10 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
 
     class DependencyFile(directory: File, fileName: String) {
         val file = File(directory, fileName).apply { createNewFile() }
-        private val dependencies_ = file.readLines().toMutableSet()
-        val dependencies = dependencies_.toSet()
+        private val dependencies = file.readLines().toMutableSet()
 
-        fun contains(dependency: String) = dependencies_.contains(dependency)
-        fun add(dependency: String) = dependencies_.add(dependency)
+        fun contains(dependency: String) = dependencies.contains(dependency)
+        fun add(dependency: String) = dependencies.add(dependency)
         fun addWithSave(dependency: String) {
             add(dependency)
             save()
@@ -50,7 +49,7 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
         fun save() {
             val writer = file.writer()
             writer.use {
-                dependencies_.forEach {
+                dependencies.forEach {
                     writer.write(it)
                     writer.write("\n")
                 }

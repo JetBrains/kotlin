@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 
 enum class KonanTarget(val suffix: String, var enabled: Boolean = false) {
+    ANDROID_ARM32("android_arm32"),
     IPHONE("ios"),
-    IPHONE_SIM("ios-sim"),
+    IPHONE_SIM("ios_sim"),
     LINUX("linux"),
     MACBOOK("osx"),
     RASPBERRYPI("raspberrypi")
@@ -38,11 +38,13 @@ class TargetManager(val config: CompilerConfiguration) {
             KonanTarget.LINUX   -> {
                 KonanTarget.LINUX.enabled = true
                 KonanTarget.RASPBERRYPI.enabled = true
+                KonanTarget.ANDROID_ARM32.enabled = true
             }
             KonanTarget.MACBOOK -> {
                 KonanTarget.MACBOOK.enabled = true
                 KonanTarget.IPHONE.enabled = true
                 KonanTarget.IPHONE_SIM.enabled = true
+                KonanTarget.ANDROID_ARM32.enabled = true
             }
             else ->
                 error("Unknown host platform: $host")
@@ -78,10 +80,10 @@ class TargetManager(val config: CompilerConfiguration) {
         }
     }
 
-    fun currentSuffix(): String {
-        return host.suffix + 
-            if (host != current) "-${current.suffix}" else ""
-    }
+    fun hostSuffix() = host.suffix
+    fun hostTargetSuffix() =
+            if (current == host) host.suffix else "${host.suffix}-${current.suffix}"
+    fun targetSuffix() = current.suffix
 
     companion object {
         fun host_os(): String {
@@ -109,7 +111,5 @@ class TargetManager(val config: CompilerConfiguration) {
             else -> error("Unknown host target: ${host_os()} ${host_arch()}")
         }
     }
-
-    val crossCompile = (host != current)
 }
 

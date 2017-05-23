@@ -29,67 +29,72 @@ typealias ExecutableFile = String
 internal abstract class PlatformFlags(val distribution: Distribution) {
     val properties = distribution.properties
 
-    val hostSuffix = TargetManager.host.suffix
-    val targetSuffix = distribution.suffix
-    val arch = propertyTargetString("arch")
+    val hostSuffix = distribution.hostTargetSuffix
+    val targetSuffix = distribution.targetSuffix
 
     open val llvmLtoNooptFlags 
-        = propertyHostList("llvmLtoNooptFlags")
-    open val llvmLtoOptFlags 
-        = propertyHostList("llvmLtoOptFlags")
+        = propertyTargetList("llvmLtoNooptFlags")
+    open val llvmLtoOptFlags
+        = propertyTargetList("llvmLtoOptFlags")
     open val llvmLtoFlags 
-        = propertyHostList("llvmLtoFlags")
+        = propertyTargetList("llvmLtoFlags")
     open val entrySelector 
-        = propertyHostList("entrySelector")
+        = propertyTargetList("entrySelector")
     open val linkerOptimizationFlags 
-        = propertyHostList("linkerOptimizationFlags")
+        = propertyTargetList("linkerOptimizationFlags")
     open val linkerKonanFlags 
-        = propertyHostList("linkerKonanFlags")
+        = propertyTargetList("linkerKonanFlags")
 
-    abstract val linker: String 
-
-    abstract fun linkCommand(objectFiles: List<ObjectFile>, 
+   abstract fun linkCommand(objectFiles: List<ObjectFile>,
         executable: ExecutableFile, optimize: Boolean): List<String>
 
     protected fun propertyHostString(name: String)
         = properties.propertyString(name, hostSuffix)!!
-    protected fun propertyHostList(name: String) 
+    protected fun propertyHostList(name: String)
         = properties.propertyList(name, hostSuffix)
-    protected fun propertyTargetString(name: String) 
+    protected fun propertyTargetString(name: String)
         = properties.propertyString(name, targetSuffix)!!
     protected fun propertyTargetList(name: String) 
         = properties.propertyList(name, targetSuffix)
-    protected fun propertyCommonString(name: String) 
-        = properties.propertyString(name, null)!!
-    protected fun propertyCommonList(name: String) 
-        = properties.propertyList(name, null)
+}
+
+
+internal open class AndroidPlatform(distribution: Distribution)
+    : PlatformFlags(distribution) {
+
+    private val prefix = "${distribution.targetToolchain}/bin/"
+    private val clang = "$prefix/clang"
+
+    override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
+        return mutableListOf<String>(clang, "-o", executable, "-fPIC", "-shared") +
+                    objectFiles +
+                    (if (optimize) linkerOptimizationFlags else emptyList()) +
+                linkerKonanFlags
+    }
 }
 
 internal open class MacOSBasedPlatform(distribution: Distribution)
     : PlatformFlags(distribution) {
 
-    override val linker = "${distribution.sysRoot}/usr/bin/ld"
+    // TODO: move 'ld' out of the host sysroot, as it doesn't belong here.
+    private val linker = "${distribution.hostSysRoot}/usr/bin/ld"
     private val dsymutil = "${distribution.llvmBin}/llvm-dsymutil"
 
-    open val osVersionMin = listOf(
-        propertyTargetString("osVersionMinFlagLd"),
-        propertyTargetString("osVersionMin")+".0")
-                            
-    open val sysRoot = distribution.sysRoot
-    open val targetSysRoot = distribution.targetSysRoot
+    open val osVersionMin by lazy {
+        listOf(
+                propertyTargetString("osVersionMinFlagLd"),
+                propertyTargetString("osVersionMin") + ".0")
+    }
 
     override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
-
-        return mutableListOf<String>(linker, "-demangle") +
-            listOf("-object_path_lto", "temporary.o", "-lto_library", distribution.libLTO) +
-            listOf( "-dynamic", "-arch", arch) +
-            osVersionMin +
-            listOf("-syslibroot", "$targetSysRoot",
-            "-o", executable) +
-            objectFiles + 
-            if (optimize) linkerOptimizationFlags else {listOf<String>()} +
-            linkerKonanFlags +
-            listOf("-lSystem")
+        return mutableListOf(linker, "-demangle") +
+                    listOf("-object_path_lto", "temporary.o", "-lto_library", distribution.libLTO) +
+                    listOf("-dynamic", "-arch", propertyTargetString("arch")) +
+                    osVersionMin +
+                    listOf("-syslibroot", distribution.targetSysRoot, "-o", executable) +
+                    objectFiles +
+                    (if (optimize) linkerOptimizationFlags else emptyList()) +
+                    linkerKonanFlags + listOf("-lSystem")
     }
 
     open fun dsymutilCommand(executable: ExecutableFile): List<String> {
@@ -104,29 +109,21 @@ internal open class MacOSBasedPlatform(distribution: Distribution)
 internal open class LinuxBasedPlatform(distribution: Distribution)
     : PlatformFlags(distribution) {
 
-    open val sysRoot = distribution.sysRoot
-    open val targetSysRoot = distribution.targetSysRoot
-
+    val targetSysRoot = distribution.targetSysRoot
     val llvmLib = distribution.llvmLib
-    val libGcc = distribution.libGcc
-
-    override val linker = "${distribution.sysRoot}/../bin/ld.gold"
-
-    open val pluginOptimizationFlags = 
-        propertyHostList("pluginOptimizationFlags")
-    open val dynamicLinker = 
-        propertyTargetString("dynamicLinker")
-
-    open val specificLibs 
+    val libGcc = "$targetSysRoot/${propertyTargetString("libGcc")!!}"
+    val linker = "${distribution.targetToolchain}/bin/ld.gold"
+    val pluginOptimizationFlags = propertyTargetList("pluginOptimizationFlags")
+    val specificLibs
         = propertyTargetList("abiSpecificLibraries").map{it -> "-L${targetSysRoot}/$it"}
 
     override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
         // TODO: Can we extract more to the konan.properties?
-        return mutableListOf<String>("$linker",
+        return mutableListOf(linker,
             "--sysroot=${targetSysRoot}",
             "-export-dynamic", "-z", "relro", "--hash-style=gnu", 
             "--build-id", "--eh-frame-hdr", // "-m", "elf_x86_64",
-            "-dynamic-linker", dynamicLinker,
+            "-dynamic-linker", propertyTargetString("dynamicLinker"),
             "-o", executable,
             "${targetSysRoot}/usr/lib64/crt1.o", "${targetSysRoot}/usr/lib64/crti.o", "${libGcc}/crtbegin.o",
             "-L${llvmLib}", "-L${libGcc}") +
@@ -147,21 +144,18 @@ internal class LinkStage(val context: Context) {
 
     val config = context.config.configuration
 
-    val targetManager = context.config.targetManager
-    private val distribution =
-        context.config.distribution
-    private val properties = distribution.properties
+    private val distribution = context.config.distribution
 
-    val platform = when (TargetManager.host) {
-        KonanTarget.LINUX ->
+    val platform = when (context.config.targetManager.current) {
+        KonanTarget.LINUX, KonanTarget.RASPBERRYPI ->
             LinuxBasedPlatform(distribution)
-        KonanTarget.MACBOOK -> 
+        KonanTarget.MACBOOK, KonanTarget.IPHONE, KonanTarget.IPHONE_SIM ->
             MacOSBasedPlatform(distribution)
+        KonanTarget.ANDROID_ARM32 ->
+            AndroidPlatform(distribution)
         else ->
-            error("Unexpected host platform")
+            error("Unexpected target platform: ${context.config.targetManager.current}")
     }
-
-    val suffix = targetManager.currentSuffix()
 
     val optimize = config.get(KonanConfigKeys.OPTIMIZATION) ?: false
     val nomain = config.get(KonanConfigKeys.NOMAIN) ?: false
@@ -187,18 +181,6 @@ internal class LinkStage(val context: Context) {
         return combined
     }
 
-    fun llvmLlc(file: BitcodeFile): ObjectFile {
-        val tmpObjectFile = File.createTempFile(File(file).name, ".o")
-        tmpObjectFile.deleteOnExit()
-        val objectFile = tmpObjectFile.absolutePath
-
-        val command = listOf(distribution.llvmLlc, "-o", objectFile, "-filetype=obj") +
-                properties.propertyList("llvmLlcFlags.$suffix") + listOf(file)
-        runTool(*command.toTypedArray())
-
-        return objectFile
-    }
-
     fun asLinkerArgs(args: List<String>): List<String> {
         val result = mutableListOf<String>()
         for (arg in args) {
@@ -220,8 +202,7 @@ internal class LinkStage(val context: Context) {
     // So we stick to "-alias _main _konan_main" on Mac.
     // And just do the same on Linux.
     val entryPointSelector: List<String> 
-        get() = if (nomain) listOf() 
-                else platform.entrySelector
+        get() = if (nomain) emptyList() else platform.entrySelector
 
     fun link(objectFiles: List<ObjectFile>): ExecutableFile {
         val executable = config.get(KonanConfigKeys.EXECUTABLE_FILE)!!
@@ -265,7 +246,7 @@ internal class LinkStage(val context: Context) {
     fun linkStage() {
         context.log{"# Compiler root: ${distribution.konanHome}"}
 
-        val bitcodeFiles = listOf<BitcodeFile>(emitted) + 
+        val bitcodeFiles = listOf(emitted) +
             libraries.map{it -> it.bitcodePaths}.flatten()
 
         var objectFiles: List<String> = listOf()

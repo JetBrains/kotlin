@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.backend.konan.library.KonanLibrarySearchPathResolver
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.backend.konan.util.File
 

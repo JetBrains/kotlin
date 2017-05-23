@@ -4,7 +4,7 @@ PATH=../../dist/bin:../../bin:$PATH
 DIR=.
 
 CFLAGS_macbook=-I/opt/local/include
-CFLAGS_linux=-I/usr/include
+CFLAGS_linux=-I/usr/include/x86_64-linux-gnu
 LINKER_ARGS_macbook="-L/opt/local/lib -lcurl"
 LINKER_ARGS_linux="-L/usr/lib/x86_64-linux-gnu -lcurl"
 
@@ -23,5 +23,5 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-cinterop -copt "$CFLAGS" -copt -I. -def $DIR/libcurl.def -target $TARGET -o libcurl.bc || exit 1
+cinterop -copt "$CFLAGS" -copt -I. -copt -I/usr/include -def $DIR/libcurl.def -target $TARGET -o libcurl.bc || exit 1
 konanc -target $TARGET src -library libcurl.bc -linkerArgs "$LINKER_ARGS" -o Curl.kexe || exit 1

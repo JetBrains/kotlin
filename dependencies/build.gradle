@@ -221,6 +221,13 @@ if (isLinux()) {
     //  }
 }
 
+task android_arm32Sysroot(type: HelperNativeDep) {
+   baseName = "target-sysroot-21-android_arm32"
+}
+
+task android_arm32Libffi(type: HelperNativeDep) {
+    baseName = "libffi-3.2.1-2-android_arm32"
+}
 
 task update(type: Copy) {
     dependsOn tasks.withType(NativeDep)

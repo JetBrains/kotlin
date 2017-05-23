@@ -23,9 +23,9 @@ class Distribution(val config: CompilerConfiguration) {
 
     val targetManager = TargetManager(config)
     val target = targetManager.currentName
-    val suffix = targetManager.currentSuffix()
-    val hostSuffix = TargetManager.host.suffix
-    init { if (!targetManager.crossCompile) assert(suffix == hostSuffix) }
+    val hostSuffix = targetManager.hostSuffix()
+    val hostTargetSuffix = targetManager.hostTargetSuffix()
+    val targetSuffix = targetManager.targetSuffix()
 
     private fun findUserHome() = File(System.getProperty("user.home")).absolutePath
     val userHome = findUserHome()
@@ -45,32 +45,23 @@ class Distribution(val config: CompilerConfiguration) {
     val klib = "$konanHome/klib"
 
     val dependenciesDir = "$konanHome/dependencies"
-    val dependencies = properties.propertyList("dependencies.$suffix")
+    val dependencies = properties.propertyList("dependencies.$hostTargetSuffix")
 
     val stdlib = "$klib/stdlib"
     val runtime = config.get(KonanConfigKeys.RUNTIME_FILE) 
         ?: "$stdlib/$target/native/runtime.bc"
 
     val llvmHome = "$dependenciesDir/${properties.propertyString("llvmHome.$hostSuffix")}"
-    val sysRoot = "$dependenciesDir/${properties.propertyString("sysRoot.$hostSuffix")}"
-
-    val libGcc = "$dependenciesDir/${properties.propertyString("libGcc.$suffix")}"
-    val targetSysRoot = if (properties.hasProperty("targetSysRoot.$suffix")) {
-            "$dependenciesDir/${properties.propertyString("targetSysRoot.$suffix")}"
-        } else {
-            sysRoot
-        }
-
-    val libffi = "$dependenciesDir/${properties.propertyString("libffiDir.$suffix")}/lib/libffi.a"
+    val hostSysRoot = "$dependenciesDir/${properties.propertyString("targetSysRoot.$hostSuffix")}"
+    val targetSysRoot = "$dependenciesDir/${properties.propertyString("targetSysRoot.$targetSuffix")}"
+    val targetToolchain = "$dependenciesDir/${properties.propertyString("targetToolchain.$hostTargetSuffix")}"
+    val libffi =
+            "$dependenciesDir/${properties.propertyString("libffiDir.$targetSuffix")}/lib/libffi.a"
 
     val llvmBin = "$llvmHome/bin"
     val llvmLib = "$llvmHome/lib"
 
-    val llvmOpt = "$llvmBin/opt"
-    val llvmLlc = "$llvmBin/llc"
     val llvmLto = "$llvmBin/llvm-lto"
-    val llvmLink = "$llvmBin/llvm-link"
-    val libCppAbi = "$llvmLib/libc++abi.a"
     val libLTO = when (TargetManager.host) {
         KonanTarget.MACBOOK -> "$llvmLib/libLTO.dylib" 
         KonanTarget.LINUX -> "$llvmLib/libLTO.so" 

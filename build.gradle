@@ -92,6 +92,16 @@ void setupCompilationFlags() {
 //                ["-stdlib=libc++", "-isysroot", "$iphoneSimSysrootDir", "-miphoneos-version-min=8.0.0"],
             ]
      }
+     ext.targetArgs << [
+       "android_arm32":
+                ["-target", "arm-linux-androideabi",
+                "--sysroot=$android_arm32SysrootDir",
+                // HACKS!
+                /*"-D_LIBCPP_HAS_MUSL_LIBC",*/ "-DOMIT_BACKTRACE", "-D__ANDROID__",
+                "-I$android_arm32SysrootDir/usr/include/c++/4.9.x",
+                "-I$android_arm32SysrootDir/usr/include/c++/4.9.x/arm-linux-androideabi"
+                ]
+     ]
      ext.targetList = ext.targetArgs.keySet() as List
 
     if (isLinux()) {

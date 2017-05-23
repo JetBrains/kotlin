@@ -49,8 +49,10 @@ private fun maybeExecuteHelper(configuration: CompilerConfiguration) {
     }
 }
 
-class K2Native : CLICompiler<K2NativeCompilerArguments>() { 
+private fun suffixIfNot(name: String, suffix: String) =
+        if (name.endsWith(suffix)) name else "$name$suffix"
 
+class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     override fun doExecute(arguments : K2NativeCompilerArguments,
                            configuration : CompilerConfiguration,
@@ -109,11 +111,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 val library = arguments.outputFile ?: "library"
                 if (arguments.nolink) 
                     put(LIBRARY_NAME, library)
-                    put(LIBRARY_FILE, "${library}.klib")
+                    put(LIBRARY_FILE, suffixIfNot(library, ".klib"))
                 val program = arguments.outputFile ?: "program"
                 if (!arguments.nolink) {
-                    put(PROGRAM_NAME,program)
-                    put(EXECUTABLE_FILE,"${program}.kexe")
+                    put(PROGRAM_NAME, program)
+                    put(EXECUTABLE_FILE, suffixIfNot(program, ".kexe"))
                 }
                 // This is a decision we could change
                 val module = if (arguments.nolink) library else program

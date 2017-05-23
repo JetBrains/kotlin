@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#ifndef OMIT_BACKTRACE
 #include <execinfo.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 
@@ -59,6 +60,12 @@ extern "C" {
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
 OBJ_GETTER0(GetCurrentStackTrace) {
+#if OMIT_BACKTRACE
+  ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, 1, OBJ_RESULT);
+  ArrayHeader* array = result->array();
+  CreateStringFromCString("<UNIMPLEMENTED>", ArrayAddressOfElementAt(array, 0));
+  return result;
+#else
   const int maxSize = 32;
   void* buffer[maxSize];
 
@@ -74,6 +81,7 @@ OBJ_GETTER0(GetCurrentStackTrace) {
       symbols[index], ArrayAddressOfElementAt(array, index));
   }
   return result;
+#endif
 }
 
 void ThrowException(KRef exception) {

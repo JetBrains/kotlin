@@ -39,7 +39,7 @@ public class KonanProperties(val propertyFile: String) {
 
     fun propertyList(key: String, suffix: String? = null): List<String> {
         val value =  properties.getProperty(key.suffix(suffix))
-        return value?.split(' ') ?: listOf<String>()
+        return value?.split(' ') ?: emptyList()
     }
 
     fun hasProperty(key: String, suffix: String? = null): Boolean

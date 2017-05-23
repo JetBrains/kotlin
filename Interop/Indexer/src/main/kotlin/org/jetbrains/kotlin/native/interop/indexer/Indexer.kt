@@ -169,7 +169,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
         }
 
 
-        if (name == "__gnuc_va_list"  || name == "va_list") {
+        if (name == "__gnuc_va_list"  || name == "va_list" || name == "__va_list") {
             // TODO: fix GNUC varargs support.
             return UnsupportedType
         }
