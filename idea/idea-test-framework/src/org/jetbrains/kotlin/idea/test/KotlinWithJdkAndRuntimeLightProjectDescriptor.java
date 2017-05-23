@@ -34,11 +34,16 @@ public class KotlinWithJdkAndRuntimeLightProjectDescriptor extends KotlinJdkAndL
         super(libraryFiles);
     }
 
+    @NotNull
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE = new KotlinWithJdkAndRuntimeLightProjectDescriptor();
+
+    @NotNull
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_WITH_KOTLIN_TEST = new KotlinWithJdkAndRuntimeLightProjectDescriptor(
             Arrays.asList(ForTestCompileRuntime.runtimeJarForTests(),
                           PathUtil.getKotlinPathsForDistDirectory().getKotlinTestPath())
     );
+
+    @NotNull
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_FULL_JDK = new KotlinWithJdkAndRuntimeLightProjectDescriptor() {
         @Override
         public Sdk getSdk() {
