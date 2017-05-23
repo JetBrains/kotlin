@@ -2067,8 +2067,8 @@
                      displayName="Can be replaced with function reference"
                      groupPath="Kotlin"
                      groupName="Style issues"
-                     enabledByDefault="true"
-                     level="INFORMATION"
+                     enabledByDefault="false"
+                     level="INFO"
                      language="kotlin"
     />
 
@@ -2076,8 +2076,8 @@
                      displayName="Can be replaced with lambda"
                      groupPath="Kotlin"
                      groupName="Style issues"
-                     enabledByDefault="true"
-                     level="INFORMATION"
+                     enabledByDefault="false"
+                     level="INFO"
                      language="kotlin"
     />
 
