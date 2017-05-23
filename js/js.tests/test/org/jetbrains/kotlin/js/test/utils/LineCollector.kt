@@ -31,11 +31,21 @@ class LineCollector : RecursiveJsVisitor() {
     }
 
     private fun handleNodeLocation(node: JsNode) {
-        (node.source as? PsiElement)?.let { source ->
-            val file = source.containingFile
-            val offset = source.node.startOffset
-            val document = file.viewProvider.document!!
-            val line = document.getLineNumber(offset)
+        val source = node.source
+        val line = when (source) {
+            is PsiElement -> {
+                val file = source.containingFile
+                val offset = source.node.startOffset
+                val document = file.viewProvider.document!!
+                document.getLineNumber(offset)
+            }
+            is JsLocation -> {
+                source.startLine
+            }
+            else -> null
+        }
+
+        if (line != null) {
             currentStatement?.let {
                 val linesByStatement = lineNumbersByStatement.getOrPut(it, ::mutableListOf)
                 if (linesByStatement.lastOrNull() != line) {

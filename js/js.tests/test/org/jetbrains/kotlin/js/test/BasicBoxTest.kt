@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.test
 
+import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
@@ -31,19 +32,19 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.js.JavaScript
-import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.dce.DeadCodeElimination
 import org.jetbrains.kotlin.js.dce.InputFile
-import org.jetbrains.kotlin.js.facade.K2JSTranslator
-import org.jetbrains.kotlin.js.facade.MainCallParameters
-import org.jetbrains.kotlin.js.facade.TranslationResult
-import org.jetbrains.kotlin.js.facade.TranslationUnit
-import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils
-import org.jetbrains.kotlin.js.test.utils.JsTestUtils
-import org.jetbrains.kotlin.js.test.utils.verifyAst
+import org.jetbrains.kotlin.js.facade.*
+import org.jetbrains.kotlin.js.parser.parse
+import org.jetbrains.kotlin.js.parser.sourcemaps.*
+import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
+import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
+import org.jetbrains.kotlin.js.test.utils.*
+import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -55,10 +56,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactory
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.DFS
-import java.io.ByteArrayOutputStream
-import java.io.Closeable
-import java.io.File
-import java.io.PrintStream
+import java.io.*
 import java.nio.charset.Charset
 import java.util.regex.Pattern
 
@@ -386,6 +384,7 @@ abstract class BasicBoxTest(
         }
 
         processJsProgram(translationResult.program, units.filterIsInstance<TranslationUnit.SourceFile>().map { it.file })
+        checkSourceMap(outputFile, translationResult.program)
     }
 
     protected fun processJsProgram(program: JsProgram, psiFiles: List<KtFile>) {
@@ -393,6 +392,56 @@ abstract class BasicBoxTest(
                 .map { it.text }
                 .forEach { DirectiveTestUtils.processDirectives(program, it) }
         program.verifyAst()
+    }
+
+    private fun checkSourceMap(outputFile: File, program: JsProgram) {
+        val generatedProgram = JsProgram()
+        generatedProgram.globalBlock.statements += program.globalBlock.statements.map { it.deepCopy() }
+        generatedProgram.accept(object : RecursiveJsVisitor() {
+            override fun visitObjectLiteral(x: JsObjectLiteral) {
+                super.visitObjectLiteral(x)
+                x.isMultiline = false
+            }
+            override fun visitVars(x: JsVars) {
+                x.isMultiline = false
+                super.visitVars(x)
+            }
+        })
+        removeLocationFromBlocks(generatedProgram)
+        generatedProgram.accept(AmbiguousAstSourcePropagation())
+
+        val output = TextOutputImpl()
+        val sourceMapBuilder = SourceMap3Builder(outputFile, output, SourceMapBuilderConsumer())
+        generatedProgram.accept(JsSourceGenerationVisitor(output, sourceMapBuilder))
+        val code = output.toString()
+        val generatedSourceMap = sourceMapBuilder.build()
+
+        val codeWithLines = generatedProgram.toStringWithLineNumbers()
+
+        val parsedProgram = JsProgram()
+        parsedProgram.globalBlock.statements += parse(code, ThrowExceptionOnErrorReporter, parsedProgram.scope, outputFile.path)
+        removeLocationFromBlocks(parsedProgram)
+        val sourceMapParseResult = SourceMapParser.parse(StringReader(generatedSourceMap))
+        val sourceMap = when (sourceMapParseResult) {
+            is SourceMapSuccess -> sourceMapParseResult.value
+            is SourceMapError -> error("Could not parse source map: ${sourceMapParseResult.message}")
+        }
+
+        val remapper = SourceMapLocationRemapper(mapOf(outputFile.path to sourceMap))
+        remapper.remap(parsedProgram)
+
+        val codeWithRemappedLines = parsedProgram.toStringWithLineNumbers()
+
+        TestCase.assertEquals(codeWithLines, codeWithRemappedLines)
+    }
+
+    private fun removeLocationFromBlocks(program: JsProgram) {
+        program.globalBlock.accept(object : RecursiveJsVisitor() {
+            override fun visitBlock(x: JsBlock) {
+                super.visitBlock(x)
+                x.source = null
+            }
+        })
     }
 
     private fun createPsiFile(fileName: String): KtFile {
@@ -422,12 +471,10 @@ abstract class BasicBoxTest(
         configuration.put(JSConfigurationKeys.MODULE_KIND, module.moduleKind)
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.v5)
 
-        configuration.put(JSConfigurationKeys.SOURCE_MAP, generateSourceMap)
-
         val hasFilesToRecompile = module.hasFilesToRecompile
         configuration.put(JSConfigurationKeys.META_INFO, multiModule)
         configuration.put(JSConfigurationKeys.SERIALIZE_FRAGMENTS, hasFilesToRecompile)
-        configuration.put(JSConfigurationKeys.SOURCE_MAP, hasFilesToRecompile)
+        configuration.put(JSConfigurationKeys.SOURCE_MAP, hasFilesToRecompile || generateSourceMap)
 
         if (additionalMetadata != null) {
             val metadata = PackagesWithHeaderMetadata(

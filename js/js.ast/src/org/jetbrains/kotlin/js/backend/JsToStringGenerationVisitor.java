@@ -608,11 +608,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
 
         p.maybeIndent();
-        beforeNodePrinted(nameRef);
         p.print(nameRef.getIdent());
-    }
-
-    protected void beforeNodePrinted(JsNode node) {
     }
 
     @Override
