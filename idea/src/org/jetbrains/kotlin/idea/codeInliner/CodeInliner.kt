@@ -21,6 +21,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.RenameProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -63,10 +65,15 @@ class CodeInliner<TCallElement : KtElement>(
         val descriptor = resolvedCall.resultingDescriptor
         val file = nameExpression.containingKtFile
 
-        val elementToBeReplaced = when (callElement) {
-            is KtExpression -> callElement.getQualifiedExpressionForSelectorOrThis()
-            else -> callElement
-        }
+        val qualifiedElement = if (callElement is KtExpression) callElement.getQualifiedExpressionForSelectorOrThis() else callElement
+        val assignment = (qualifiedElement as? KtExpression)
+                ?.getAssignmentByLHS()
+                ?.takeIf { it.operationToken == KtTokens.EQ }
+        val elementToBeReplaced = assignment ?: qualifiedElement
+        val callableForParameters = if (assignment != null && descriptor is PropertyDescriptor)
+            descriptor.setter ?: descriptor
+        else
+            descriptor
 
         val commentSaver = CommentSaver(elementToBeReplaced, saveLineBreaks = true)
 
@@ -103,10 +110,9 @@ class CodeInliner<TCallElement : KtElement>(
             }
         }
 
-        val introduceValuesForParameters = processValueParameterUsages()
+        val introduceValuesForParameters = processValueParameterUsages(callableForParameters)
 
         processTypeParameterUsages()
-
 
         val lexicalScope = callElement.parent.getResolutionScope(bindingContext)
 
@@ -164,13 +170,12 @@ class CodeInliner<TCallElement : KtElement>(
         }
     }
 
-    private fun processValueParameterUsages(): Collection<IntroduceValueForParameter> {
+    private fun processValueParameterUsages(descriptor: CallableDescriptor): Collection<IntroduceValueForParameter> {
         val introduceValuesForParameters = ArrayList<IntroduceValueForParameter>()
 
         // process parameters in reverse order because default values can use previous parameters
-        val parameters = resolvedCall.resultingDescriptor.valueParameters
-        for (parameter in parameters.asReversed()) {
-            val argument = argumentForParameter(parameter) ?: continue
+        for (parameter in descriptor.valueParameters.asReversed()) {
+            val argument = argumentForParameter(parameter, descriptor) ?: continue
 
             argument.expression.put(PARAMETER_VALUE_KEY, parameter)
 
@@ -329,7 +334,15 @@ class CodeInliner<TCallElement : KtElement>(
             val isNamed: Boolean = false,
             val isDefaultValue: Boolean = false)
 
-    private fun argumentForParameter(parameter: ValueParameterDescriptor): Argument? {
+    private fun argumentForParameter(parameter: ValueParameterDescriptor, callableDescriptor: CallableDescriptor): Argument? {
+        if (callableDescriptor is PropertySetterDescriptor) {
+            val valueAssigned = (callElement as? KtExpression)
+                    ?.getQualifiedExpressionForSelectorOrThis()
+                    ?.getAssignmentByLHS()
+                    ?.right ?: return null
+            return Argument(valueAssigned, bindingContext.getType(valueAssigned))
+        }
+
         val resolvedArgument = resolvedCall.valueArguments[parameter]!!
         when (resolvedArgument) {
             is ExpressionValueArgument -> {
@@ -343,19 +356,18 @@ class CodeInliner<TCallElement : KtElement>(
             }
 
             is DefaultValueArgument -> {
-                val defaultValue = OptionalParametersHelper.defaultParameterValue(parameter, project) ?: return null
-                val (expression, parameterUsages) = defaultValue
+                val (defaultValue, parameterUsages) = OptionalParametersHelper.defaultParameterValue(parameter, project) ?: return null
 
                 for ((param, usages) in parameterUsages) {
                     usages.forEach { it.put(CodeToInline.PARAMETER_USAGE_KEY, param.name) }
                 }
 
-                val expressionCopy = expression.copied()
+                val defaultValueCopy = defaultValue.copied()
 
                 // clean up user data in original
-                expression.forEachDescendantOfType<KtExpression> { it.clear(CodeToInline.PARAMETER_USAGE_KEY) }
+                defaultValue.forEachDescendantOfType<KtExpression> { it.clear(CodeToInline.PARAMETER_USAGE_KEY) }
 
-                return Argument(expressionCopy, null/*TODO*/, isDefaultValue = true)
+                return Argument(defaultValueCopy, null/*TODO*/, isDefaultValue = true)
             }
 
             is VarargValueArgument -> {

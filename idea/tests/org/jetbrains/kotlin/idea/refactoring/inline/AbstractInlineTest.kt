@@ -22,6 +22,7 @@ import com.intellij.codeInsight.TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
 import com.intellij.lang.refactoring.InlineActionHandler
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
@@ -69,9 +70,14 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
                 TestCase.assertEquals("Expected errors", 1, expectedErrors.size)
                 TestCase.assertEquals("Error message", expectedErrors[0].replace("\\n", "\n"), e.message)
             }
+            catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
+                TestCase.assertFalse("Conflicts: ${e.message}", afterFileExists)
+                TestCase.assertEquals("Expected errors", 1, expectedErrors.size)
+                TestCase.assertEquals("Error message", expectedErrors[0].replace("\\n", "\n"), e.message)
+            }
         }
         else {
-            TestCase.assertFalse(afterFileExists)
+            TestCase.assertFalse("No refactoring handler available", afterFileExists)
         }
     }
 

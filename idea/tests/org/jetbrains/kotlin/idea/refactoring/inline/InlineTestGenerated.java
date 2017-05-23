@@ -1030,6 +1030,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("PrivateSet.kt")
+            public void testPrivateSet() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/PrivateSet.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("QualifiedUsage.kt")
             public void testQualifiedUsage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/QualifiedUsage.kt");
@@ -1065,6 +1071,18 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 @TestMetadata("ExtensionProperty.kt")
                 public void testExtensionProperty() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors/ExtensionProperty.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("GetterAndSetter.kt")
+                public void testGetterAndSetter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors/GetterAndSetter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("PlusPlus.kt")
+                public void testPlusPlus() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/property/accessors/PlusPlus.kt");
                     doTest(fileName);
                 }
 

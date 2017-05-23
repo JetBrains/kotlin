@@ -26,7 +26,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
-import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.replaceUsages
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.*
 
 class KotlinInlineCallableProcessor(
         project: Project,
-        private val replacementStrategy: CallableUsageReplacementStrategy,
+        private val replacementStrategy: UsageReplacementStrategy,
         private val declaration: KtCallableDeclaration,
         private val reference: KtSimpleNameReference?,
         private val inlineThisOnly: Boolean,

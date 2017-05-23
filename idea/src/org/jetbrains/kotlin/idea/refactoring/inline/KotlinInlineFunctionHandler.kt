@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.codeInliner.PropertyUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction

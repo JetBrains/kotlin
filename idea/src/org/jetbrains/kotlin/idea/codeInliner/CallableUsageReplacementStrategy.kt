@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class CallableUsageReplacementStrategy(
-        private val replacement: CodeToInline
-) : UsageReplacementStrategy {
-
+class CallableUsageReplacementStrategy(private val replacement: CodeToInline) : UsageReplacementStrategy {
     override fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement?)? {
         val bindingContext = usage.analyze(BodyResolveMode.PARTIAL)
         val resolvedCall = usage.getResolvedCall(bindingContext) ?: return null

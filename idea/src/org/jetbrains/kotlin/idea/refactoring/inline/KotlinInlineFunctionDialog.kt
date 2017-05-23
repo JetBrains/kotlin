@@ -21,7 +21,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.inline.InlineOptionsDialog
-import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.codeInliner.PropertyUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtConstructor
@@ -32,7 +33,7 @@ class KotlinInlineFunctionDialog(
         project: Project,
         private val function: KtNamedFunction,
         private val reference: KtSimpleNameReference?,
-        private val replacementStrategy: CallableUsageReplacementStrategy,
+        private val replacementStrategy: UsageReplacementStrategy,
         private val allowInlineThisOnly: Boolean
 ) : InlineOptionsDialog(project, true, function) {
 

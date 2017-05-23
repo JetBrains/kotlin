@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.inline.InlineOptionsDialog
-import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtProperty
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 class KotlinInlineValDialog(
         private val property: KtProperty,
         private val reference: KtSimpleNameReference?,
-        private val replacementStrategy: CallableUsageReplacementStrategy,
+        private val replacementStrategy: UsageReplacementStrategy,
         private val assignmentToDelete: KtBinaryExpression?
  ) : InlineOptionsDialog(property.project, true, property) {
 
