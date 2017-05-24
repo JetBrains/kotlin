@@ -6,6 +6,8 @@ import java.math.BigDecimal
 
 import kotlin.test.*
 import org.junit.Test
+import java.math.MathContext
+import java.math.RoundingMode
 
 class MathTest {
     @Test fun testBigInteger() {
@@ -29,15 +31,33 @@ class MathTest {
         assertEquals(BigInteger("1"), a xor b)
         assertEquals(BigInteger("4"), a shl 1)
         assertEquals(BigInteger("1"), a shr 1)
+        assertEquals(BigInteger("0"), a shr 2)
         assertEquals(BigInteger("-4"), -a shl 1)
         assertEquals(BigInteger("-1"), -a shr 1)
+        assertEquals(BigInteger("-1"), -a shr 2)
 
-        assertEquals(BigInteger("2"), "2".toBigInteger())
-        assertEquals(BigInteger("-3"), "-3".toBigInteger())
         assertEquals(BigInteger("2"),  2.toBigInteger())
         assertEquals(BigInteger("-3"), -3L.toBigInteger())
 
         assertEquals(BigDecimal("2"), a.toBigDecimal())
+        assertEquals(BigDecimal("0.02"), a.toBigDecimal(2))
+        assertEquals(BigDecimal("2E+2"), a.toBigDecimal(-2))
+        assertEquals(BigDecimal("2.6E+3"), BigInteger("253").toBigDecimal(-1, MathContext(2, RoundingMode.UP)))
+        assertEquals(BigDecimal("2.6E+2"), BigInteger("253").toBigDecimal(mathContext = MathContext(2, RoundingMode.UP)))
+        assertEquals(BigDecimal("3"), BigInteger("253").toBigDecimal(2, MathContext(1, RoundingMode.UP)))
+
+
+
+        var c = 2.toBigInteger()
+        assertEquals(BigInteger("2"), c++)
+        assertEquals(BigInteger("3"), c)
+        assertEquals(BigInteger("4"), ++c)
+        assertEquals(BigInteger("4"), c)
+
+        assertEquals(BigInteger("4"), c--)
+        assertEquals(BigInteger("3"), c)
+        assertEquals(BigInteger("2"), --c)
+        assertEquals(BigInteger("2"), c)
     }
 
     @Test fun testBigDecimal() {
@@ -56,29 +76,21 @@ class MathTest {
         assertEquals(BigDecimal("3"), a.inc())
         assertEquals(BigDecimal("1"), a.dec())
 
-        assertEquals(BigDecimal("2.5"), "2.5".toBigDecimal())
-        assertEquals(BigDecimal("-3"), "-3".toBigDecimal())
         assertEquals(BigDecimal("2"),  2.toBigDecimal())
         assertEquals(BigDecimal("-3"), -3L.toBigDecimal())
         assertEquals(BigDecimal("2.0"), 2f.toBigDecimal())
         assertEquals(BigDecimal("0.5"),  0.5.toBigDecimal())
+
+        var c = "1.5".toBigDecimal()
+        assertEquals(BigDecimal("1.5"), c++)
+        assertEquals(BigDecimal("2.5"), c)
+        assertEquals(BigDecimal("3.5"), ++c)
+        assertEquals(BigDecimal("3.5"), c)
+        assertEquals(BigDecimal("3.5"), c--)
+        assertEquals(BigDecimal("2.5"), c)
+        assertEquals(BigDecimal("1.5"), --c)
+        assertEquals(BigDecimal("1.5"), c)
     }
 
-    @Test fun mutatingBigNumbers() {
-        var a = 2.toBigInteger()
-        var b = "1.5".toBigDecimal()
-
-        a++
-        b++
-
-        assertEquals(BigInteger("3"), a)
-        assertEquals(BigDecimal("2.5"), b)
-
-        --a
-        --b
-
-        assertEquals(BigInteger("2"), a)
-        assertEquals(BigDecimal("1.5"), b)
-    }
 }
 
