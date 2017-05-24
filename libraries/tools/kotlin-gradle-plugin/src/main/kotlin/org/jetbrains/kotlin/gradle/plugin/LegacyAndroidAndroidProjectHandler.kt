@@ -10,7 +10,8 @@ import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.internal.KaptTask
-import org.jetbrains.kotlin.gradle.internal.WrappedVariantData
+import org.jetbrains.kotlin.gradle.internal.KaptVariantData
+import org.jetbrains.kotlin.gradle.internal.wireKaptTaskForJavaProject
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
@@ -60,7 +61,7 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
 
     override fun getVariantName(variant: BaseVariantData<out BaseVariantOutputData>): String = variant.name
 
-    override fun checkVariant(variant: BaseVariantData<out BaseVariantOutputData>): Unit {
+    override fun checkVariantIsValid(variant: BaseVariantData<out BaseVariantOutputData>): Unit {
         if (AndroidGradleWrapper.isJackEnabled(variant)) {
             throw ProjectConfigurationException(
                     "Kotlin Gradle plugin does not support the deprecated Jack toolchain.\n" +
@@ -106,8 +107,8 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
     private val BaseVariantData<*>.sourceProviders: List<SourceProvider>
         get() = variantConfiguration.sortedSourceProviders
 
-    private inner class WrappedLegacyVariantData(variantData: BaseVariantData<out BaseVariantOutputData>)
-        : WrappedVariantData<BaseVariantData<out BaseVariantOutputData>>(variantData) {
+    private inner class KaptLegacyVariantData(variantData: BaseVariantData<out BaseVariantOutputData>)
+        : KaptVariantData<BaseVariantData<out BaseVariantOutputData>>(variantData) {
 
         override val name: String = variantData.name
         override val sourceProviders: Iterable<SourceProvider> = getSourceProviders(variantData)
@@ -117,13 +118,11 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
         override val annotationProcessorOptions: Map<String, String>? =
                 AndroidGradleWrapper.getAnnotationProcessorOptionsFromAndroidVariant(variantData)
 
-        override fun wireKaptTask(project: Project, task: KaptTask, kotlinTask: KotlinCompile, javaTask: AbstractCompile) {
-            task.dependsOn(*(javaTask.dependsOn.filter { it !== kotlinTask && it != kotlinTask.name }.toTypedArray()))
-            javaTask.source(task.destinationDir)
-        }
+        override fun wireKaptTask(project: Project, task: KaptTask, kotlinTask: KotlinCompile, javaTask: AbstractCompile) =
+                wireKaptTaskForJavaProject(task, kotlinTask, javaTask)
     }
 
-    override fun wrapVariantData(variantData: BaseVariantData<out BaseVariantOutputData>)
-            : WrappedVariantData<BaseVariantData<out BaseVariantOutputData>> =
-            WrappedLegacyVariantData(variantData)
+    override fun wrapVariantDataForKapt(variantData: BaseVariantData<out BaseVariantOutputData>)
+            : KaptVariantData<BaseVariantData<out BaseVariantOutputData>> =
+            KaptLegacyVariantData(variantData)
 }

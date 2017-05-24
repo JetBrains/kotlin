@@ -8,7 +8,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptTask
-import org.jetbrains.kotlin.gradle.internal.WrappedVariantData
+import org.jetbrains.kotlin.gradle.internal.KaptVariantData
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
@@ -18,26 +18,15 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
     : AbstractAndroidProjectHandler<BaseVariant>(kotlinConfigurationTools) {
 
     override fun forEachVariant(project: Project, action: (BaseVariant) -> Unit) {
-        project.plugins.all { plugin ->
-            val androidExtension = project.extensions.getByName("android")
-            var testedExtension: TestedExtension? = null
-            when (plugin.javaClass) {
-                AppPlugin::class.java -> {
-                    (androidExtension as AppExtension).applicationVariants.all(action)
-                    testedExtension = androidExtension
-                }
-                LibraryPlugin::class.java -> {
-                    (androidExtension as LibraryExtension).libraryVariants.all(action)
-                    testedExtension = androidExtension
-                }
-                TestPlugin::class.java -> {
-                    (androidExtension as TestExtension).applicationVariants.all(action)
-                }
-            }
-            testedExtension?.apply {
-                testVariants.all(action)
-                unitTestVariants.all(action)
-            }
+        val androidExtension = project.extensions.getByName("android")
+        when (androidExtension) {
+            is AppExtension -> androidExtension.applicationVariants.all(action)
+            is LibraryExtension -> androidExtension.libraryVariants.all(action)
+            is TestExtension -> androidExtension.applicationVariants.all(action)
+        }
+        if (androidExtension is TestedExtension) {
+            androidExtension.testVariants.all(action)
+            androidExtension.unitTestVariants.all(action)
         }
     }
 
@@ -49,50 +38,44 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
                                  kotlinTask: KotlinCompile,
                                  kotlinAfterJavaTask: KotlinCompile?) {
 
-        val preJavaKotlinOutput =
-                (if (kotlinAfterJavaTask == null)
-                    project.files(kotlinTask.destinationDir).let { kotlinOutput ->
-                        if (Kapt3GradleSubplugin.isEnabled(project))
-                            // Add Kapt3 output as well, since there's no SyncOutputTask with the new API
-                            kotlinOutput.from(Kapt3KotlinGradleSubplugin.getKaptClasssesDir(project, getVariantName(variantData)))
-                        else
-                            kotlinOutput
-                    }
-                else
-                    // Don't register the output, but add the task to the pipeline
-                    project.files()
-                ).builtBy(kotlinTask)
-
+        val preJavaKotlinOutput = project.files().builtBy(kotlinTask)
+        if (kotlinAfterJavaTask == null) {
+            preJavaKotlinOutput.add(project.files(kotlinTask.destinationDir))
+        }
+        if (Kapt3GradleSubplugin.isEnabled(project)) {
+            // Add Kapt3 output as well, since there's no SyncOutputTask with the new API
+            val kaptClasssesDir = Kapt3KotlinGradleSubplugin.getKaptClasssesDir(project, getVariantName(variantData))
+            preJavaKotlinOutput.add(project.files(kaptClasssesDir))
+        }
 
         val preJavaClasspathKey = variantData.registerPreJavacGeneratedBytecode(preJavaKotlinOutput)
         kotlinTask.dependsOn(variantData.getSourceFolders(SourceKind.JAVA))
 
-        kotlinTask.conventionMapping.map("classpath") {
+        kotlinTask.mapClasspath {
             val kotlinClasspath = variantData.getCompileClasspath(preJavaClasspathKey)
             kotlinClasspath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
         }
 
-        kotlinTask.setJavaOutput(javaTask.destinationDir)
-        kotlinAfterJavaTask?.setJavaOutput(javaTask.destinationDir)
+        kotlinTask.javaOutputDir = javaTask.destinationDir
+        kotlinAfterJavaTask?.javaOutputDir = javaTask.destinationDir
 
         // Use kapt1 annotations file for up-to-date check since annotation processing is done with javac
-        kotlinTask.annotationsFile?.let { javaTask.inputs.file(it) }
+        kotlinTask.kaptOptions.annotationsFile?.let { javaTask.inputs.file(it) }
 
         if (kotlinAfterJavaTask != null) {
             val kotlinAfterJavaOutput = project.files(kotlinAfterJavaTask.destinationDir).builtBy(kotlinAfterJavaTask)
             variantData.registerPostJavacGeneratedBytecode(kotlinAfterJavaOutput)
 
-            // Then don't register kotlinTask output, but only use it for Java compilation
+            // Then we don't need the kotlinTask output in artifacts, but we need to use it for Java compilation.
+            // Add it to Java classpath -- note the `from` used to avoid accident classpath resolution.
             javaTask.classpath = project.files(kotlinTask.destinationDir).from(javaTask.classpath)
         }
 
-        getTestedVariantData(variantData)?.let {
-            // Find the classpath entry that comes from the tested variant and register it as the friend path, lazily
-            kotlinTask.setFriendClasspathEntries(lazy {
-                variantData.getCompileClasspathArtifacts(preJavaClasspathKey)
-                        .filter { it.id.componentIdentifier is TestedComponentIdentifier }
-                        .map { it.file.absolutePath }
-            })
+        // Find the classpath entries that comes from the tested variant and register it as the friend path, lazily
+        kotlinTask.friendClasspathEntries = lazy {
+            variantData.getCompileClasspathArtifacts(preJavaClasspathKey)
+                    .filter { it.id.componentIdentifier is TestedComponentIdentifier }
+                    .map { it.file.absolutePath }
         }
     }
 
@@ -103,8 +86,6 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
             variantData.getSourceFolders(SourceKind.JAVA).map { it.dir }
 
     override fun getVariantName(variant: BaseVariant): String = variant.name
-
-    override fun checkVariant(variant: BaseVariant) = Unit
 
     override fun getTestedVariantData(variantData: BaseVariant): BaseVariant? = when (variantData) {
         is TestVariant -> variantData.testedVariant
@@ -129,14 +110,20 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         // to some degree -- the dependent projects will rebuild non-incrementally when a library project changes
     }
 
-    private inner class WrappedVariant(variantData: BaseVariant) : org.jetbrains.kotlin.gradle.internal.WrappedVariantData<BaseVariant>(variantData) {
+    private inner class KaptVariant(variantData: BaseVariant) : KaptVariantData<BaseVariant>(variantData) {
         override val name: String = getVariantName(variantData)
         override val sourceProviders: Iterable<SourceProvider> = getSourceProviders(variantData)
-        override fun addJavaSourceFoldersToModel(generatedFilesDir: File) = addJavaSourceDirectoryToVariantModel(variantData, generatedFilesDir)
+        override fun addJavaSourceFoldersToModel(generatedFilesDir: File) =
+                addJavaSourceDirectoryToVariantModel(variantData, generatedFilesDir)
 
-        override val annotationProcessorOptions: Map<String, String>? = variantData.javaCompileOptions.annotationProcessorOptions.arguments
+        override val annotationProcessorOptions: Map<String, String>? =
+                variantData.javaCompileOptions.annotationProcessorOptions.arguments
 
-        override fun wireKaptTask(project: Project, task: KaptTask, kotlinTask: KotlinCompile, javaTask: AbstractCompile) {
+        override fun wireKaptTask(project: Project,
+                                  task: KaptTask,
+                                  kotlinTask: KotlinCompile,
+                                  javaTask: AbstractCompile) {
+
             task.dependsOn(kotlinTask.dependsOn.minus(task))
 
             val kaptSourceOutput = project.fileTree(task.destinationDir).builtBy(task)
@@ -144,5 +131,6 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         }
     }
 
-    override fun wrapVariantData(variantData: BaseVariant): WrappedVariantData<BaseVariant> = WrappedVariant(variantData)
+    override fun wrapVariantDataForKapt(variantData: BaseVariant): KaptVariantData<BaseVariant> =
+            KaptVariant(variantData)
 }
