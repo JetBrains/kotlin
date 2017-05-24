@@ -4,12 +4,12 @@ fun foo(a: Int, b: Int) {
     }
 }
 ---------------------
-                      <v0>: Int        NEW: magic[FAKE_INITIALIZER](a: Int) -> <v0>
-                      <v1>: Int        NEW: magic[FAKE_INITIALIZER](b: Int) -> <v1>
-a                     <v2>: OR{*, *}   NEW: r(a) -> <v2>
-b                     <v3>: *          NEW: r(b) -> <v3>
-a == b                <v4>: Boolean    NEW: call(a == b, equals|<v2>, <v3>) -> <v4>
+                      <v0>: Int       NEW: magic[FAKE_INITIALIZER](a: Int) -> <v0>
+                      <v1>: Int       NEW: magic[FAKE_INITIALIZER](b: Int) -> <v1>
+a                     <v2>: *         NEW: r(a) -> <v2>
+b                     <v3>: *         NEW: r(b) -> <v3>
+a == b                <v4>: Boolean   NEW: call(a == b, equals|<v2>, <v3>) -> <v4>
 { }                   !<v5>: *
-if (a == b) { }       <v6>: *          NEW: merge(if (a == b) { }|!<v5>) -> <v6>
-{ if (a == b) { } }   <v6>: *          COPY
+if (a == b) { }       <v6>: *         NEW: merge(if (a == b) { }|!<v5>) -> <v6>
+{ if (a == b) { } }   <v6>: *         COPY
 =====================

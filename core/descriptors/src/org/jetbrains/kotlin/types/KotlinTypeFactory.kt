@@ -39,8 +39,22 @@ object KotlinTypeFactory {
             annotations: Annotations,
             constructor: TypeConstructor,
             arguments: List<TypeProjection>,
+            nullable: Boolean
+    ): SimpleType {
+        if (annotations.isEmpty() && arguments.isEmpty() && !nullable && constructor.declarationDescriptor != null) {
+            return constructor.declarationDescriptor!!.defaultType
+        }
+
+        return SimpleTypeImpl(annotations, constructor, arguments, nullable, computeMemberScope(constructor, arguments))
+    }
+
+    @JvmStatic
+    fun simpleType(
+            annotations: Annotations,
+            constructor: TypeConstructor,
+            arguments: List<TypeProjection>,
             nullable: Boolean,
-            memberScope: MemberScope = computeMemberScope(constructor, arguments)
+            memberScope: MemberScope
     ): SimpleType = SimpleTypeImpl(annotations, constructor, arguments, nullable, memberScope)
 
     @JvmStatic
