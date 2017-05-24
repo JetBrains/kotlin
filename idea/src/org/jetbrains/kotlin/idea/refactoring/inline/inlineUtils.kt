@@ -29,7 +29,6 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringMessageDialog
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
@@ -114,24 +113,30 @@ internal fun <E : KtElement> postProcessInternalReferences(inlinedElement: E): E
     return pointer.element
 }
 
-internal fun buildCodeToInline(declaration: KtDeclarationWithBody, returnType: KotlinType?, editor: Editor?): CodeToInline? {
-    val bodyExpression = declaration.bodyExpression!!
-    val bodyCopy = bodyExpression.copied()
+internal fun buildCodeToInline(
+        declaration: KtDeclaration,
+        returnType: KotlinType?,
+        isReturnTypeExplicit: Boolean,
+        bodyOrInitializer: KtExpression,
+        isBlockBody: Boolean,
+        editor: Editor?
+): CodeToInline? {
+    val bodyCopy = bodyOrInitializer.copied()
 
-    val expectedType = if (!declaration.hasBlockBody() && declaration.hasDeclaredReturnType())
+    val expectedType = if (!isBlockBody && isReturnTypeExplicit)
         returnType ?: TypeUtils.NO_EXPECTED_TYPE
     else
         TypeUtils.NO_EXPECTED_TYPE
 
     fun analyzeBodyCopy(): BindingContext {
-        return bodyCopy.analyzeInContext(bodyExpression.getResolutionScope(),
-                                         contextExpression = bodyExpression,
+        return bodyCopy.analyzeInContext(bodyOrInitializer.getResolutionScope(),
+                                         contextExpression = bodyOrInitializer,
                                          expectedType = expectedType)
     }
 
     val descriptor = declaration.resolveToDescriptor()
     val builder = CodeToInlineBuilder(descriptor as CallableDescriptor, declaration.getResolutionFacade())
-    if (declaration.hasBlockBody()) {
+    if (isBlockBody) {
         bodyCopy as KtBlockExpression
         val statements = bodyCopy.statements
 

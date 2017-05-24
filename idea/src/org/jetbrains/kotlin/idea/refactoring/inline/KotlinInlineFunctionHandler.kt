@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
-import org.jetbrains.kotlin.idea.codeInliner.PropertyUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -64,7 +63,14 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
         }
 
         val descriptor = element.resolveToDescriptor() as SimpleFunctionDescriptor
-        val codeToInline = buildCodeToInline(element, descriptor.returnType, editor) ?: return
+        val codeToInline = buildCodeToInline(
+                element,
+                descriptor.returnType,
+                element.hasDeclaredReturnType(),
+                element.bodyExpression!!,
+                element.hasBlockBody(),
+                editor
+        ) ?: return
 
         val replacementStrategy = CallableUsageReplacementStrategy(codeToInline)
 

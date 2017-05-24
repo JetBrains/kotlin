@@ -29,22 +29,16 @@ import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.analysis.analyzeInContext
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
-import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
 import org.jetbrains.kotlin.idea.codeInliner.PropertyUsageReplacementStrategy
-import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccess
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtElement
@@ -52,8 +46,6 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.TypeUtils
 
 class KotlinInlineValHandler : InlineActionHandler() {
 
@@ -93,16 +85,21 @@ class KotlinInlineValHandler : InlineActionHandler() {
         val readReplacement: CodeToInline?
         val writeReplacement: CodeToInline?
         val assignmentToDelete: KtBinaryExpression?
+        val descriptor = declaration.resolveToDescriptor() as ValueDescriptor
+        val isTypeExplicit = declaration.typeReference != null
         if (getter == null && setter == null) {
             val initialization = extractInitialization(declaration, referenceExpressions, project, editor) ?: return
-            readReplacement = buildCodeToInline(declaration, initialization.value)
+            readReplacement = buildCodeToInline(declaration, descriptor.type, isTypeExplicit, initialization.value, false, editor) ?: return
             writeReplacement = null
             assignmentToDelete = initialization.assignment
         }
         else {
-            val descriptor = declaration.resolveToDescriptor() as PropertyDescriptor
-            readReplacement = getter?.let { buildCodeToInline(getter, descriptor.type, editor) ?: return }
-            writeReplacement = setter?.let { buildCodeToInline(setter, setter.builtIns.unitType, editor) ?: return }
+            readReplacement = getter?.let {
+                buildCodeToInline(getter, descriptor.type, isTypeExplicit, getter.bodyExpression!!, getter.hasBlockBody(), editor) ?: return
+            }
+            writeReplacement = setter?.let {
+                buildCodeToInline(setter, setter.builtIns.unitType, true, setter.bodyExpression!!, setter.hasBlockBody(), editor) ?: return
+            }
             assignmentToDelete = null
         }
 
@@ -173,24 +170,6 @@ class KotlinInlineValHandler : InlineActionHandler() {
             }
             return Initialization(initializer, assignment)
         }
-    }
-
-    private fun buildCodeToInline(declaration: KtProperty, initializer: KtExpression): CodeToInline {
-        val descriptor = declaration.resolveToDescriptor() as VariableDescriptor
-        val expectedType = if (declaration.typeReference != null)
-            descriptor.returnType ?: TypeUtils.NO_EXPECTED_TYPE
-        else
-            TypeUtils.NO_EXPECTED_TYPE
-
-        val initializerCopy = initializer.copied()
-        fun analyzeInitializerCopy(): BindingContext {
-            return initializerCopy.analyzeInContext(initializer.getResolutionScope(),
-                                                    contextExpression = initializer,
-                                                    expectedType = expectedType)
-        }
-
-        val codeToInlineBuilder = CodeToInlineBuilder(descriptor, declaration.getResolutionFacade())
-        return codeToInlineBuilder.prepareCodeToInline(initializerCopy, emptyList(), ::analyzeInitializerCopy)
     }
 
     private fun performRefactoring(
