@@ -385,7 +385,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         if (newSetter != null) {
             List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(
                     newSetter, setter.getValueParameters(), substitutor, /* dropOriginal = */ false,
-                    false
+                    false, null
             );
             if (substitutedValueParameters == null) {
                 // The setter is projected out, e.g. in this case:

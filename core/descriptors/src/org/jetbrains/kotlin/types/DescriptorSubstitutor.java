@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
@@ -38,6 +39,17 @@ public class DescriptorSubstitutor {
             @NotNull TypeSubstitution originalSubstitution,
             @NotNull DeclarationDescriptor newContainingDeclaration,
             @NotNull @Mutable List<TypeParameterDescriptor> result
+    ) {
+        return substituteTypeParameters(typeParameters, originalSubstitution, newContainingDeclaration, result, null);
+    }
+
+    @NotNull
+    public static TypeSubstitutor substituteTypeParameters(
+            @ReadOnly @NotNull List<TypeParameterDescriptor> typeParameters,
+            @NotNull TypeSubstitution originalSubstitution,
+            @NotNull DeclarationDescriptor newContainingDeclaration,
+            @NotNull @Mutable List<TypeParameterDescriptor> result,
+            @Nullable boolean[] wereChanges
     ) {
         Map<TypeConstructor, TypeProjection> mutableSubstitution = new HashMap<TypeConstructor, TypeProjection>();
 
@@ -69,6 +81,11 @@ public class DescriptorSubstitutor {
             for (KotlinType upperBound : descriptor.getUpperBounds()) {
                 KotlinType substitutedBound = substitutor.substitute(upperBound, Variance.IN_VARIANCE);
                 assert substitutedBound != null : "Upper bound failed to substitute: " + descriptor;
+
+                if (substitutedBound != upperBound && wereChanges != null) {
+                    wereChanges[0] = true;
+                }
+
                 substituted.addUpperBound(substitutedBound);
             }
             substituted.setInitialized();
