@@ -41,5 +41,5 @@ class AddBroadcastReceiverToManifest : AbstractRegisterComponentAction("Add broa
     }
 
     private fun KtClass.isSubclassOfBroadcastReceiver() =
-            (descriptor as? ClassDescriptor)?.defaultType?.isSubclassOf(FqName(SdkConstants.CLASS_BROADCASTRECEIVER), true) ?: false
+            (descriptor as? ClassDescriptor)?.defaultType?.isSubclassOf(SdkConstants.CLASS_BROADCASTRECEIVER, true) ?: false
 }

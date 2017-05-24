@@ -41,5 +41,5 @@ class AddServiceToManifest : AbstractRegisterComponentAction("Add service to man
     }
 
     private fun KtClass.isSubclassOfService() =
-            (descriptor as? ClassDescriptor)?.defaultType?.isSubclassOf(FqName(SdkConstants.CLASS_SERVICE), true) ?: false
+            (descriptor as? ClassDescriptor)?.defaultType?.isSubclassOf(SdkConstants.CLASS_SERVICE, true) ?: false
 }

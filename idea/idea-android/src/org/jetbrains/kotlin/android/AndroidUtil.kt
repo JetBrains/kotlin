@@ -22,8 +22,11 @@ import com.android.SdkConstants.R_CLASS
 import com.android.resources.ResourceType
 import com.android.tools.idea.AndroidPsiUtils
 import com.android.tools.idea.AndroidPsiUtils.ResourceReferenceType.*
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import org.jetbrains.android.augment.AndroidPsiElementFinder
+import org.jetbrains.android.dom.AndroidAttributeValue
+import org.jetbrains.android.dom.manifest.Manifest
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.android.util.AndroidResourceUtil
 import org.jetbrains.android.util.AndroidResourceUtil.isManifestJavaFile
@@ -32,17 +35,37 @@ import org.jetbrains.android.util.AndroidUtils
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
+
+internal fun KtClass.findComponentDeclarationInManifest(manifest: Manifest): AndroidAttributeValue<PsiClass>? {
+    val application = manifest.application ?: return null
+    val type = (resolveToDescriptor(BodyResolveMode.PARTIAL) as? ClassDescriptor)?.defaultType ?: return null
+
+    val component = when {
+        type.isSubclassOf(AndroidUtils.ACTIVITY_BASE_CLASS_NAME) ->
+            application.activities?.find { it.activityClass.value?.qualifiedName == fqName?.asString() }?.activityClass
+        type.isSubclassOf(AndroidUtils.SERVICE_CLASS_NAME) ->
+            application.services?.find { it.serviceClass.value?.qualifiedName == fqName?.asString() }?.serviceClass
+        type.isSubclassOf(AndroidUtils.RECEIVER_CLASS_NAME) ->
+            application.receivers?.find { it.receiverClass.value?.qualifiedName == fqName?.asString() }?.receiverClass
+        type.isSubclassOf(AndroidUtils.PROVIDER_CLASS_NAME) ->
+            application.providers?.find { it.providerClass.value?.qualifiedName == fqName?.asString() }?.providerClass
+        else -> null
+    }
+
+    return component
+}
 
 internal fun PsiElement.getAndroidFacetForFile(): AndroidFacet? {
     val file = containingFile ?: return null
