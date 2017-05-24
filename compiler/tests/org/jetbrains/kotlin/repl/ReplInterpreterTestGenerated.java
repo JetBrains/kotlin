@@ -48,6 +48,12 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         doTest(fileName);
     }
 
+    @TestMetadata("destructuringDeclaration.repl")
+    public void testDestructuringDeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/destructuringDeclaration.repl");
+        doTest(fileName);
+    }
+
     @TestMetadata("empty.repl")
     public void testEmpty() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/empty.repl");
