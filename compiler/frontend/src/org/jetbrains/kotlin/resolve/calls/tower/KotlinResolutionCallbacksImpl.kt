@@ -109,9 +109,7 @@ class KotlinResolutionCallbacksImpl(
         trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, ktFunction, LambdaInfo.STUB_EMPTY)
 
         val lastExpressionArgument = getLastDeparentesizedExpression(psiCallArgument)?.let { lastExpression ->
-            val lastExpressionType = functionTypeInfo.type?.let {
-                if (it.isFunctionType) it.getReturnTypeFromFunctionType() else it
-            }
+            val lastExpressionType = trace.getType(lastExpression)
             val lastExpressionTypeInfo = KotlinTypeInfo(lastExpressionType, lambdaInfo.dataFlowInfoAfter ?: functionTypeInfo.dataFlowInfo)
             createCallArgument(lastExpression, lastExpressionTypeInfo)
         }
