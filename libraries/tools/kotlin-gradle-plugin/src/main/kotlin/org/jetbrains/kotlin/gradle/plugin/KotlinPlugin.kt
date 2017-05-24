@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.com.intellij.util.ReflectionUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.getKaptClasssesDir
+import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
@@ -466,6 +467,8 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
                                                              androidPluginIds.joinToString("\n\t") { "* $it" })
 
                 val subpluginEnvironment = loadSubplugins(project)
+
+                checkAndroidAnnotationProcessorDependencyUsage(project)
 
                 forEachVariant(project) {
                     processVariant(it, project, ext, plugin, aptConfigurations, kotlinOptions,
