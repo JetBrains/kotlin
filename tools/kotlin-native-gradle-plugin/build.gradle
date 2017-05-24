@@ -20,6 +20,9 @@ apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
+group = 'org.jetbrains.kotlin'
+version = konanVersion
+
 // TODO: move this code to top level (the same for backend.native)
 // Copied from backend.native
 allprojects {
@@ -80,9 +83,6 @@ publishing {
     publications {
         gradlePlugin(MavenPublication) {
             artifact jar
-            groupId 'org.jetbrains.kotlin'
-            artifactId 'kotlin-native-gradle-plugin'
-            version konanVersion
             pom.withXml { XmlProvider xml ->
                 def stdlibDep = xml.asNode().appendNode("dependencies").appendNode("dependency")
                 stdlibDep.appendNode("groupId", "org.jetbrains.kotlin")
