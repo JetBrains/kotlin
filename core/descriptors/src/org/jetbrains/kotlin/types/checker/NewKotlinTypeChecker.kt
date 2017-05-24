@@ -53,6 +53,9 @@ object StrictEqualityTypeChecker {
         ) {
             return false
         }
+
+        if (a.arguments === b.arguments) return true
+
         for (i in a.arguments.indices) {
             val aArg = a.arguments[i]
             val bArg = b.arguments[i]
@@ -322,6 +325,9 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             capturedSubArguments: List<TypeProjection>,
             superType: SimpleType
     ): Boolean {
+
+        if (capturedSubArguments === superType.arguments) return true
+
         val parameters = superType.constructor.parameters
 
         for (index in parameters.indices) {
