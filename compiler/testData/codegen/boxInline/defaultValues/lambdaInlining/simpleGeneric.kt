@@ -12,6 +12,7 @@ inline fun <T : A> inlineFun(capturedParam: T, lambda: () -> T = { capturedParam
 }
 
 // FILE: 2.kt
+// CHECK_CONTAINS_NO_CALLS: box
 
 import test.*
 

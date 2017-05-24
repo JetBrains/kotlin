@@ -8,6 +8,7 @@ inline fun inlineFun(capturedParam: String, lambda: () -> Any = { capturedParam 
 }
 
 // FILE: 2.kt
+// CHECK_CONTAINS_NO_CALLS: box except=throwCCE;isType
 
 import test.*
 

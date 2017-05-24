@@ -1377,6 +1377,10 @@ fun main(args: Array<String>) {
             model("codegen/boxInline/enum/", targetBackend = TargetBackend.JS)
         }
 
+        testClass<AbstractInlineDefaultValuesTests> {
+            model("codegen/boxInline/defaultValues/", targetBackend = TargetBackend.JS)
+        }
+
         testClass<AbstractJsTypedArraysBoxTest> {
             model("codegen/box/arrays", targetBackend = TargetBackend.JS)
         }

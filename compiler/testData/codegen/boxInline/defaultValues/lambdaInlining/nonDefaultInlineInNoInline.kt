@@ -9,6 +9,7 @@ inline fun inlineFun(crossinline inlineLambda: () -> String, noinline noInlineLa
 
 // FILE: 2.kt
 //NO_CHECK_LAMBDA_INLINING
+// CHECK_CALLED_IN_SCOPE: function=inlineFun$f scope=inlineFun
 import test.*
 
 fun box(): String {

@@ -1,6 +1,7 @@
 // FILE: 1.kt
 // LANGUAGE_VERSION: 1.2
 // SKIP_INLINE_CHECK_IN: inlineFun$default
+// CHECK_CONTAINS_NO_CALLS: test
 package test
 
 //problem in test framework

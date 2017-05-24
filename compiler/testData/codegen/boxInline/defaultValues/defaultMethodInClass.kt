@@ -1,3 +1,6 @@
+// There's no String?.plus implementation in JS stdlib
+// IGNORE_BACKEND: JS
+
 // FILE: 1.kt
 
 package test

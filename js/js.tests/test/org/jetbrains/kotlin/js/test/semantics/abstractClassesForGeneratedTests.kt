@@ -37,6 +37,8 @@ abstract class AbstractCallableReferenceInlineTests : BorrowedInlineTest("callab
 
 abstract class AbstractEnumValuesInlineTests : BorrowedInlineTest("enum/")
 
+abstract class AbstractInlineDefaultValuesTests : BorrowedInlineTest("defaultValues/")
+
 abstract class AbstractBoxJsTest : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
         BasicBoxTest.TEST_DATA_DIR_PATH + "out/box/"
