@@ -56,6 +56,7 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
         }
 
         if (substitutedType == null) return null;
+        if (substitutedType == getType()) return this;
 
         return new ReceiverParameterDescriptorImpl(getContainingDeclaration(), new TransientReceiver(substitutedType));
     }
