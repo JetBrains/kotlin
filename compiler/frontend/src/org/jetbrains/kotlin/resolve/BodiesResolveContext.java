@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,8 @@ public interface BodiesResolveContext {
     Map<KtNamedFunction, SimpleFunctionDescriptor> getFunctions();
     @Mutable
     Map<KtTypeAlias, TypeAliasDescriptor> getTypeAliases();
+    @Mutable
+    Map<KtDestructuringDeclarationEntry, PropertyDescriptor> getDestructuringDeclarationEntries();
 
     @Nullable
     LexicalScope getDeclaringScope(@NotNull KtDeclaration declaration);
