@@ -73,9 +73,9 @@ class KotlinInlineValHandler : InlineActionHandler() {
 
         val (referenceExpressions, conflicts) = findUsages(declaration)
 
-        if (referenceExpressions.isEmpty()) {
+        if (referenceExpressions.isEmpty() && conflicts.isEmpty) {
             val kind = if (declaration.isLocal) "Variable" else "Property"
-            return showErrorHint(project, editor, "$kind '$name' is never used") //TODO: foreign usages!
+            return showErrorHint(project, editor, "$kind '$name' is never used")
         }
 
         val referencesInOriginalFile = referenceExpressions.filter { it.containingFile == file }
@@ -105,7 +105,8 @@ class KotlinInlineValHandler : InlineActionHandler() {
 
         if (!conflicts.isEmpty) {
             val conflictsCopy = conflicts.copy()
-            conflictsCopy.putValue(null, "The following usages are not supported by the Inline refactoring. They won't be processed.")
+            val allOrSome = if (referenceExpressions.isEmpty()) "All" else "The following"
+            conflictsCopy.putValue(null, "$allOrSome usages are not supported by the Inline refactoring. They won't be processed.")
 
             project.checkConflictsInteractively(conflictsCopy) {
                 performRefactoring(declaration, readReplacement, writeReplacement, assignmentToDelete, editor, hasHighlightings)
