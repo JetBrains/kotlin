@@ -983,24 +983,6 @@ public class ApiDetector extends ResourceXmlDetector
         }
 
         @Override
-        public boolean visitMethod(@NotNull UMethod method) {
-            // API check for default methods
-            if (method.getModifierList().hasExplicitModifier(PsiModifier.DEFAULT)) {
-                int api = 24; // minSdk for default methods
-                int minSdk = getMinSdk(mContext);
-
-                if (!isSuppressed(api, method, minSdk, mContext, UNSUPPORTED)) {
-                    Location location = mContext.getLocation(method);
-                    String message = String.format("Default method requires API level %1$d "
-                                                   + "(current min is %2$d)", api, minSdk);
-                    mContext.reportUast(UNSUPPORTED, method, location, message);
-                }
-            }
-
-            return super.visitMethod(method);
-        }
-
-        @Override
         public boolean visitClass(@NotNull UClass aClass) {
             // Check for repeatable annotations
             if (aClass.isAnnotationType()) {
