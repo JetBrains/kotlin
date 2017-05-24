@@ -7802,6 +7802,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DeprecationLevelHidden.kt")
+        public void testDeprecationLevelHidden() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/DeprecationLevelHidden.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ExceptionInPropertyDestructuringEntry.kt")
         public void testExceptionInPropertyDestructuringEntry() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/ExceptionInPropertyDestructuringEntry.kt");
