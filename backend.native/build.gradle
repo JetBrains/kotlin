@@ -239,7 +239,7 @@ targetList.each { target ->
             '-target', target,
             '-library', project(':runtime').file("build/${target}Stdlib"),
             '-runtime', project(':runtime').file("build/${target}/runtime.bc"),
-            '-properties', project(':backend.native').file('konan.properties'),
+            '-properties', rootProject.konanPropertiesFile.canonicalPath,
         project(':runtime').file('src/launcher/kotlin'), 
         *project.globalBuildArgs)
 

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import static DependencyTaskKind.*
+
 buildscript {
     repositories {
         mavenCentral()
@@ -27,6 +29,10 @@ buildscript {
 }
 
 apply plugin: 'com.jfrog.bintray'
+
+rootProject.ext.konanPropertiesFile = project(':backend.native').file('konan.properties')
+rootProject.ext.konanProperties = new Properties()
+rootProject.konanProperties.load(new FileInputStream(rootProject.konanPropertiesFile))
 
 configurations {
     kotlin_compiler_jar
@@ -184,50 +190,71 @@ class HelperNativeDep extends TgzNativeDep {
     }
 }
 
+static String substituteName(String name) {
+    switch (name) {
+        case "macbook": return "osx"
+        case "iphone": return "ios"
+        case "iphoneSim": return "ios_sim"
+    }
+    return name
+}
+
+enum DependencyTaskKind {
+    LIBFFI("Libffi"), SYSROOT("Sysroot")
+
+    DependencyTaskKind(String name) {
+        this.name = name
+    }
+
+    String name = ""
+    String toString() { return name }
+}
+
+void dependencyTask(String target, DependencyTaskKind kind) {
+    String dependencyBaseName
+    def properties = rootProject.konanProperties
+    switch (kind) {
+        case LIBFFI:
+            dependencyBaseName = properties.getProperty("libffiDir.${substituteName(target)}")
+            break
+        case SYSROOT:
+            dependencyBaseName = properties.getProperty("targetSysRoot.${substituteName(target)}")
+            break
+    }
+    if (dependencyBaseName == null) {
+        throw project.unsupportedPlatformException()
+    }
+
+    task "${target}${kind}"(type: HelperNativeDep) {
+        baseName = dependencyBaseName
+    }
+}
+
 task llvm(type: HelperNativeDep) {
     baseName = "clang-llvm-$llvmVersion-$host"
 }
 
 if (isLinux()) {
-    task linuxLibffi(type: HelperNativeDep) {
-        baseName = "libffi-3.2.1-2-$host"
-    }
+    // The gcc toolchain contains the sysroot for linux platform.
     task gccToolchain(type: HelperNativeDep) {
         baseName = "target-gcc-toolchain-3-$host"
     }
-    task raspberryPiSysroot(type: HelperNativeDep) {
-        baseName = "target-sysroot-1-raspberrypi"
-    }
-    task raspberrypiLibffi(type: HelperNativeDep) {
-        baseName = "libffi-3.2.1-2-raspberrypi"
-    }
+
+    dependencyTask("linux", LIBFFI)
+    dependencyTask("raspberrypi", SYSROOT)
+    dependencyTask("raspberrypi", LIBFFI)
 } else {
-    task macbookLibffi(type: HelperNativeDep) {
-        baseName = "libffi-3.2.1-2-$host"
-    }
-    task macbookSysroot(type: HelperNativeDep) {
-        baseName = "target-sysroot-1-$host"
-    }
-    task iphoneSysroot(type: HelperNativeDep) {
-        baseName = "target-sysroot-2-darwin-ios"
-    }
-    task iphoneLibffi(type: HelperNativeDep) {
-        baseName = "libffi-3.2.1-2-darwin-ios"
-    }
-    // TODO: re-enable when we known how to bring the simulator
-    // sysroot to dependencies.
-    //    task iphoneSimSysroot(type: TgzNativeDep) {
-    //       baseName = "target-sysroot-1-darwin-ios-sim"
-    //  }
+    dependencyTask("macbook", SYSROOT)
+    dependencyTask("macbook", LIBFFI)
+    dependencyTask("iphone", SYSROOT)
+    dependencyTask("iphone", LIBFFI)
+
+    // TODO: re-enable when we known how to bring the simulator sysroot to dependencies.
+    // dependencyTask("iphoneSim", SYSROOT)
 }
 
-task android_arm32Sysroot(type: HelperNativeDep) {
-   baseName = "target-sysroot-21-android_arm32"
-}
-
-task android_arm32Libffi(type: HelperNativeDep) {
-    baseName = "libffi-3.2.1-2-android_arm32"
-}
+dependencyTask("android_arm32", SYSROOT)
+dependencyTask("android_arm32", LIBFFI)
 
 task update(type: Copy) {
     dependsOn tasks.withType(NativeDep)
