@@ -40,7 +40,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
                 StringBuilder sb = new StringBuilder();
                 for (DeclarationDescriptor descriptor : renderedDescriptors) {
-                    sb.append("    ").append(Renderers.COMPACT.render(descriptor, renderingContext)).append("\n");
+                    sb.append("    ").append(Renderers.WITHOUT_MODIFIERS.render(descriptor, renderingContext)).append("\n");
                 }
                 return ("The following declarations have the same JVM signature (" + data.getSignature().getName() + data.getSignature().getDesc() + "):\n" + sb).trim();
             };
