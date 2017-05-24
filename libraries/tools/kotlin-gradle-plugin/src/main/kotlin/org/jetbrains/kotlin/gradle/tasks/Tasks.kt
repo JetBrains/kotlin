@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.kotlinInfo
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
+import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistry
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
-import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import java.util.*
@@ -112,13 +112,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     // TODO: consider more reliable approach (see usage)
     internal var anyClassesCompiled: Boolean = false
     internal var friendTaskName: String? = null
-    internal var javaOutputDir: File? = null
     internal var sourceSetName: String by Delegates.notNull()
     internal val moduleName: String
             get() = "${project.name}_$sourceSetName"
 
-    // In case the friend classpath entries are known at the task configuration time, they will be set
-    internal var friendClasspathEntries: Lazy<List<String>?> = lazyOf(null)
+    var javaOutputDir: File? = null
+
+    // In case the way to retrieve friend classpath entries is known at configuration time, it will be set
+    var friendClasspathEntries: Lazy<List<String>?> = lazyOf(null)
 
     override fun compile() {
         assert(false, { "unexpected call to compile()" })
@@ -184,7 +185,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
     private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
 
-    internal val kaptOptions = KaptOptions()
+    val kaptOptions = KaptOptions()
+
     internal val pluginOptions = CompilerPluginOptions()
     internal var artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null
     internal var artifactFile: File? = null

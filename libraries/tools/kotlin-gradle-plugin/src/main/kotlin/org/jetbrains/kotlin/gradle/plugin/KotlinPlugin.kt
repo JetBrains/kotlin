@@ -373,10 +373,6 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
     protected val artifactDifferenceRegistryProvider get() =
             kotlinConfigurationTools.kotlinGradleBuildServices.artifactDifferenceRegistryProvider
 
-    protected val KotlinCompile.annotationsFile: File? get() = kaptOptions.annotationsFile
-    protected fun KotlinCompile.setJavaOutput(file: File) { javaOutputDir = file }
-    protected fun KotlinCompile.setFriendClasspathEntries(lazyEntries: Lazy<List<String>?>) { friendClasspathEntries = lazyEntries }
-
     protected val logger = Logging.getLogger(this.javaClass)
 
     protected abstract fun forEachVariant(project: Project, action: (V) -> Unit): Unit
@@ -384,10 +380,11 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
     protected abstract fun getSourceProviders(variantData: V): Iterable<SourceProvider>
     protected abstract fun getAllJavaSources(variantData: V): Iterable<File>
     protected abstract fun getVariantName(variant: V): String
-    protected abstract fun checkVariant(variant: V): Unit
     protected abstract fun getTestedVariantData(variantData: V): V?
     protected abstract fun getJavaTask(variantData: V): AbstractCompile?
     protected abstract fun addJavaSourceDirectoryToVariantModel(variantData: V, javaSourceDirectory: File): Unit
+
+    protected open fun checkVariantIsValid(variant: V) = Unit
 
     protected abstract fun wireKotlinTasks(project: Project,
                                            androidPlugin: BasePlugin,
@@ -403,7 +400,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
                                                    kotlinTask: KotlinCompile,
                                                    kotlinAfterJavaTask: KotlinCompile?)
 
-    protected abstract fun wrapVariantData(variantData: V): WrappedVariantData<V>
+    protected abstract fun wrapVariantDataForKapt(variantData: V): KaptVariantData<V>
 
     fun handleProject(project: Project) {
         val ext = project.extensions.getByName("android") as BaseExtension
@@ -447,7 +444,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
                                rootKotlinOptions: KotlinJvmOptionsImpl,
                                tasksProvider: KotlinTasksProvider, subpluginEnvironment: SubpluginEnvironment) {
 
-        checkVariant(variantData)
+        checkVariantIsValid(variantData)
 
         val variantDataName = getVariantName(variantData)
         logger.kotlinDebug("Process variant [$variantDataName]")
@@ -515,7 +512,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         configureMultiProjectIc(project, variantData, javaTask, kotlinTask, kotlinAfterJavaTask)
 
         val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
-                project, kotlinTask, javaTask, wrapVariantData(variantData), null)
+                project, kotlinTask, javaTask, wrapVariantDataForKapt(variantData), null)
 
         appliedPlugins.flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
                 .forEach { configureSources(it, variantData) }
