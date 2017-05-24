@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationsKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.types.*;
-import kotlin.collections.CollectionsKt;
-import org.jetbrains.kotlin.utils.SmartSet;
+import org.jetbrains.kotlin.utils.SmartList;
 
 import java.util.*;
 
@@ -54,7 +53,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private boolean hasStableParameterNames = true;
     private boolean hasSynthesizedParameterNames = false;
     private Collection<? extends FunctionDescriptor> overriddenFunctions = null;
-    private volatile Function0<Set<FunctionDescriptor>> lazyOverriddenFunctionsTask = null;
+    private volatile Function0<Collection<FunctionDescriptor>> lazyOverriddenFunctionsTask = null;
     private final FunctionDescriptor original;
     private final Kind kind;
     @Nullable
@@ -192,7 +191,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     private void performOverriddenLazyCalculationIfNeeded() {
-        Function0<Set<FunctionDescriptor>> overriddenTask = lazyOverriddenFunctionsTask;
+        Function0<Collection<FunctionDescriptor>> overriddenTask = lazyOverriddenFunctionsTask;
         if (overriddenTask != null) {
             overriddenFunctions = overriddenTask.invoke();
             // Here it's important that this assignment is strictly after previous one
@@ -692,10 +691,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 }
             }
             else {
-                substitutedDescriptor.lazyOverriddenFunctionsTask = new Function0<Set<FunctionDescriptor>>() {
+                substitutedDescriptor.lazyOverriddenFunctionsTask = new Function0<Collection<FunctionDescriptor>>() {
                     @Override
-                    public Set<FunctionDescriptor> invoke() {
-                        SmartSet<FunctionDescriptor> result = SmartSet.create();
+                    public Collection<FunctionDescriptor> invoke() {
+                        Collection<FunctionDescriptor> result = new SmartList<FunctionDescriptor>();
                         for (FunctionDescriptor overriddenFunction : getOverriddenDescriptors()) {
                             result.add(overriddenFunction.substitute(substitutor));
                         }
