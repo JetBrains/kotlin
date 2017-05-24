@@ -152,6 +152,8 @@ public class TypeSubstitutor {
                    originalProjectionKind == Variance.INVARIANT || originalProjectionKind == substitutedProjectionKind :
                     "Unexpected substituted projection kind: " + substitutedProjectionKind + "; original: " + originalProjectionKind;
 
+            if (substitutedLower.getType() == flexibleType.getLowerBound() && substitutedUpper.getType() == flexibleType.getUpperBound()) return originalProjection;
+
             KotlinType substitutedFlexibleType = KotlinTypeFactory.flexibleType(
                     TypeSubstitutionKt.asSimpleType(substitutedLower.getType()), TypeSubstitutionKt.asSimpleType(substitutedUpper.getType()));
             return new TypeProjectionImpl(substitutedProjectionKind, substitutedFlexibleType);
@@ -252,6 +254,7 @@ public class TypeSubstitutor {
             List<TypeParameterDescriptor> typeParameters, List<TypeProjection> typeArguments, int recursionDepth
     ) throws SubstitutionException {
         List<TypeProjection> substitutedArguments = new ArrayList<TypeProjection>(typeParameters.size());
+        boolean wereChanges = false;
         for (int i = 0; i < typeParameters.size(); i++) {
             TypeParameterDescriptor typeParameter = typeParameters.get(i);
             TypeProjection typeArgument = typeArguments.get(i);
@@ -271,8 +274,15 @@ public class TypeSubstitutor {
                     break;
             }
 
+            if (substitutedTypeArgument != typeArgument) {
+                wereChanges = true;
+            }
+
             substitutedArguments.add(substitutedTypeArgument);
         }
+
+        if (!wereChanges) return typeArguments;
+
         return substitutedArguments;
     }
 
