@@ -23,7 +23,10 @@ import com.intellij.psi.PsiType
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import org.jetbrains.uast.*
+import org.jetbrains.uast.UClass
+import org.jetbrains.uast.UDeclaration
+import org.jetbrains.uast.UElement
+import org.jetbrains.uast.toUElement
 import org.junit.Assert
 
 
@@ -95,7 +98,9 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.checkResult("""
         |class Foo {
         |    fun bar() {}
-        |    private fun baz() {}
+        |    private fun baz() {
+        |
+        |    }
         |}
         """.trim().trimMargin(), true)
     }
@@ -112,7 +117,9 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.checkResult("""
         |class Foo {
         |    fun bar() {}
-        |    fun baz(arg1: Int): Int {}
+        |    fun baz(arg1: Int): Int {
+        |
+        |    }
         |}
         """.trim().trimMargin(), true)
     }

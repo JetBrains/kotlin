@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder
+import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder.Target.FUNCTION
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UDeclaration
@@ -81,13 +83,6 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
     }
 
     override fun createAddMethodAction(uClass: UClass, methodName: String, visibilityModifier: String, returnType: PsiType, vararg parameters: PsiType): IntentionAction? {
-        val returnTypeString: String = typeString(returnType).let {
-            when {
-                it.isEmpty() -> ""
-                else -> ": $it"
-            }
-        }
-        val paramsStr = parameters.mapIndexed { index, psiType -> "arg${index + 1}: ${typeString(psiType)}" }.joinToString()
         return object : LocalQuickFixAndIntentionActionOnPsiElement(uClass) {
             override fun getFamilyName(): String = "Add method"
 
@@ -98,9 +93,21 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
             override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
                 val visibilityStr = javaVisibilityMapping.getValue(visibilityModifier)
                 val psiFactory = KtPsiFactory(uClass)
-                val function = psiFactory.createFunction("$visibilityStr fun $methodName($paramsStr)$returnTypeString{}")
+                val functionString = psiFactory.createFunction(CallableBuilder(FUNCTION).apply {
+                    modifier(visibilityStr)
+                    typeParams()
+                    name(methodName)
+                    for ((index, psiType) in parameters.withIndex()) {
+                        param("arg${index + 1}", typeString(psiType))
+                    }
+                    if (returnType == PsiType.VOID)
+                        noReturnType()
+                    else
+                        returnType(typeString(returnType))
+                    blockBody("")
+                }.asString())
                 val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
-                insertMembersAfter(null, ktClassOrObject, listOf(function), ktClassOrObject.declarations.lastOrNull())
+                insertMembersAfter(null, ktClassOrObject, listOf(functionString), ktClassOrObject.declarations.lastOrNull())
             }
         }
 
