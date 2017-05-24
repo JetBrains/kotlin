@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens.VARARG_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.LATEINIT_KEYWORD
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -86,6 +87,7 @@ class MovePropertyToConstructorIntention :
                 element.modifierList?.getModifiersText()?.let(this::append)
                 propertyAnnotationsText?.takeIf(String::isNotBlank)?.let { appendWithSpaceBefore(it) }
                 parameterAnnotationsText?.let { appendWithSpaceBefore(it) }
+                if (constructorParameter.isVarArg) appendWithSpaceBefore(VARARG_KEYWORD.value)
                 appendWithSpaceBefore(element.valOrVarKeyword.text)
                 element.name?.let { appendWithSpaceBefore(it) }
                 constructorParameter.typeReference?.text?.let { append(": $it") }
