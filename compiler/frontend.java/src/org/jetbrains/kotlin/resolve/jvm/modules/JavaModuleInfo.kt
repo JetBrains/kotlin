@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.modules
+package org.jetbrains.kotlin.resolve.jvm.modules
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.name.FqName

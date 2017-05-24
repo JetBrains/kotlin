@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.modules
+package org.jetbrains.kotlin.resolve.jvm.modules
 
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-class ModuleGraph(getModuleInfo: (String) -> JavaModuleInfo) {
+class JavaModuleGraph(getModuleInfo: (String) -> JavaModuleInfo) {
     private val moduleInfo: (String) -> JavaModuleInfo = LockBasedStorageManager.NO_LOCKS.createMemoizedFunction(getModuleInfo)
 
     fun getAllReachable(rootModules: List<String>): List<String> {
