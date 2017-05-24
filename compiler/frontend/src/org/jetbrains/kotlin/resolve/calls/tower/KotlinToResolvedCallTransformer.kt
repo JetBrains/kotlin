@@ -426,7 +426,7 @@ class StubOnlyResolvedCall<D : CallableDescriptor>(val candidate: SimpleKotlinRe
     override fun getStatus() = ResolutionStatus.UNKNOWN_STATUS
 
     override fun getCandidateDescriptor(): D = candidate.candidateDescriptor as D
-    override fun getResultingDescriptor(): D = candidateDescriptor
+    override fun getResultingDescriptor(): D = candidate.descriptorWithFreshTypes as D
     override fun getExtensionReceiver() = candidate.extensionReceiver?.receiver?.receiverValue
     override fun getDispatchReceiver() = candidate.dispatchReceiverArgument?.receiver?.receiverValue
     override fun getExplicitReceiverKind() = candidate.explicitReceiverKind
