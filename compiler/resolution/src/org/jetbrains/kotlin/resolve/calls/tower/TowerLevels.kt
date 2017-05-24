@@ -35,9 +35,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastI
 import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
 import org.jetbrains.kotlin.resolve.scopes.utils.collectVariables
 import org.jetbrains.kotlin.resolve.selectMostSpecificInEachOverridableGroup
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.getImmediateSuperclassNotAny
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -113,10 +111,10 @@ internal class MemberScopeTowerLevel(
 
         if (dispatchReceiver.possibleTypes.isNotEmpty()) {
             if (unstableCandidates == null) {
-                result.retainAll(result.selectMostSpecificInEachOverridableGroup { descriptor })
+                result.retainAll(result.selectMostSpecificInEachOverridableGroup { descriptor.approximateCapturedTypes() })
             }
             else {
-                result.addAll(unstableCandidates.selectMostSpecificInEachOverridableGroup { descriptor })
+                result.addAll(unstableCandidates.selectMostSpecificInEachOverridableGroup { descriptor.approximateCapturedTypes() })
             }
         }
 
@@ -127,6 +125,27 @@ internal class MemberScopeTowerLevel(
         }
 
         return result
+    }
+
+    /**
+     * this is bad hack for test like BlackBoxCodegenTestGenerated.Reflection.Properties#testGetPropertiesMutableVsReadonly (see last get call)
+     * Main reason for this hack: when we have List<*> we do capturing and transform receiver type to List<Capture(*)>.
+     * So method get has signature get(Int): Capture(*). If we also have smartcast to MutableList<String>, then there is also method get(Int): String.
+     * And we should chose get(Int): String.
+     */
+    private fun CallableDescriptor.approximateCapturedTypes(): CallableDescriptor {
+        if (!USE_NEW_INFERENCE) return this
+
+        val approximator = TypeApproximator()
+        val wrappedSubstitution = object : TypeSubstitution() {
+            override fun get(key: KotlinType): TypeProjection? = null
+            override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) = when (position) {
+                Variance.INVARIANT -> null
+                Variance.OUT_VARIANCE -> approximator.approximateToSuperType(topLevelType.unwrap(), TypeApproximatorConfiguration.CapturedTypesApproximation)
+                Variance.IN_VARIANCE -> approximator.approximateToSubType(topLevelType.unwrap(), TypeApproximatorConfiguration.CapturedTypesApproximation)
+            } ?: topLevelType
+        }
+        return substitute(TypeSubstitutor.create(wrappedSubstitution))
     }
 
     private fun ReceiverValueWithSmartCastInfo.smartCastReceiver(targetType: KotlinType): ReceiverValueWithSmartCastInfo {
