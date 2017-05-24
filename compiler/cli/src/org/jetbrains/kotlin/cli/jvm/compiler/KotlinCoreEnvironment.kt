@@ -74,8 +74,6 @@ import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
-import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleInfo
-import org.jetbrains.kotlin.cli.jvm.modules.ModuleGraph
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -98,6 +96,8 @@ import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleGraph
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
@@ -291,7 +291,7 @@ class KotlinCoreEnvironment private constructor(
     }
 
     private fun addModularJdkRoots(fileSystem: VirtualFileSystem, result: MutableList<JavaRoot>) {
-        val graph = ModuleGraph { moduleName ->
+        val graph = JavaModuleGraph { moduleName ->
             fileSystem.findFileByPath("/modules/$moduleName/module-info.class")?.let((JavaModuleInfo)::read) ?: run {
                 report(ERROR, "Module $moduleName cannot be found in the Java runtime image")
                 JavaModuleInfo(moduleName, emptyList(), emptyList())
