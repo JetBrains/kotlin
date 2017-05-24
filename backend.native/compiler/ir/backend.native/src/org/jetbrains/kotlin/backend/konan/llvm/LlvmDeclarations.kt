@@ -287,13 +287,14 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             return null
         }
 
-        val symbolName = if (descriptor.isExported()) {
+        val isExported = descriptor.isExported()
+        val symbolName = if (isExported) {
             descriptor.objectInstanceFieldSymbolName
         } else {
             "kobjref:" + qualifyInternalName(descriptor)
         }
         val instanceFieldRef = addGlobal(
-                symbolName, getLLVMType(descriptor.defaultType), threadLocal = true)
+                symbolName, getLLVMType(descriptor.defaultType), isExported = isExported, threadLocal = true)
 
         return SingletonLlvmDeclarations(instanceFieldRef)
     }
@@ -320,7 +321,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             val name = "kvar:" + qualifyInternalName(descriptor)
 
             val storage = addGlobal(
-                    name, getLLVMType(descriptor.type), threadLocal = true)
+                    name, getLLVMType(descriptor.type), isExported = false, threadLocal = true)
 
             this.staticFields[descriptor] = StaticFieldLlvmDeclarations(storage)
         }

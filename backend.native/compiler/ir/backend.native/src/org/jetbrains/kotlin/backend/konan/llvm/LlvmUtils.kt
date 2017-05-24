@@ -182,9 +182,10 @@ internal fun getGlobalType(ptrToGlobal: LLVMValueRef): LLVMTypeRef {
     return LLVMGetElementType(ptrToGlobal.type)!!
 }
 
-internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef,
+internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported: Boolean,
                                     threadLocal: Boolean = false): LLVMValueRef {
-    assert(LLVMGetNamedGlobal(context.llvmModule, name) == null)
+    if (isExported)
+        assert(LLVMGetNamedGlobal(context.llvmModule, name) == null)
     val result = LLVMAddGlobal(context.llvmModule, type, name)!!
     if (threadLocal)
         LLVMSetThreadLocalMode(result, runtime.tlsMode)
