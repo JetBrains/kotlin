@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.types.UnwrappedType
 sealed class ResolvedKotlinCall {
     class CompletedResolvedKotlinCall(
             val completedCall: CompletedKotlinCall,
-            val allInnerCalls: Collection<CompletedKotlinCall>
+            val allInnerCalls: Collection<CompletedKotlinCall>,
+            val lambdaArguments: List<ResolvedLambdaArgument>
     ): ResolvedKotlinCall()
 
     class OnlyResolvedKotlinCall(

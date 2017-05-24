@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
@@ -69,6 +70,7 @@ class KotlinToResolvedCallTransformer(
                 for (resolvedCall in allResolvedCalls) {
                     runCallCheckers(resolvedCall, callCheckerContext)
                 }
+                runLambdaArgumentsChecks(context, trace, baseResolvedCall.lambdaArguments)
             }
 
             return result
@@ -147,6 +149,38 @@ class KotlinToResolvedCallTransformer(
     }
 
 
+    private fun runLambdaArgumentsChecks(
+            context: BasicCallResolutionContext,
+            trace: BindingTrace,
+            lambdaArguments: List<ResolvedLambdaArgument>
+    ) {
+        for (lambdaArgument in lambdaArguments) {
+            val returnType = lambdaArgument.finalReturnType
+
+            val psiCallArgument = lambdaArgument.argument.psiCallArgument
+            val ktFunction = when (psiCallArgument) {
+                is LambdaKotlinCallArgumentImpl -> psiCallArgument.ktLambdaExpression.functionLiteral
+                is FunctionExpressionImpl -> psiCallArgument.ktFunction
+                else -> throw AssertionError("Unexpected psiCallArgument for resolved lambda argument: $psiCallArgument")
+            }
+
+            val functionDescriptor = trace.bindingContext.get(BindingContext.FUNCTION, ktFunction) as? FunctionDescriptorImpl ?:
+                                     throw AssertionError("No function descriptor for resolved lambda argument")
+            functionDescriptor.setReturnType(returnType)
+
+            for (lambdaResult in lambdaArgument.resultArguments) {
+                val resultValueArgument = lambdaResult.psiCallArgument
+                val newContext =
+                        context.replaceDataFlowInfo(resultValueArgument.dataFlowInfoAfterThisArgument)
+                                .replaceExpectedType(returnType)
+                                .replaceBindingTrace(trace)
+
+                val argumentExpression = resultValueArgument.valueArgument.getArgumentExpression() ?: continue
+                updateRecordedType(argumentExpression, newContext)
+            }
+        }
+    }
+
     // todo very beginning code
     private fun runArgumentsChecks(
             context: BasicCallResolutionContext,
@@ -168,33 +202,38 @@ class KotlinToResolvedCallTransformer(
                             .replaceCallPosition(callPosition)
                             .replaceBindingTrace(trace)
 
-            // todo
-//            if (valueArgument.isExternal()) continue
+            // todo external argument
 
             val argumentExpression = valueArgument.getArgumentExpression() ?: continue
-            val deparenthesized = argumentExpression.let {
-                KtPsiUtil.getLastElementDeparenthesized(it, context.statementFilter)
-            } ?: continue
-
-            val recordedType = context.trace.getType(deparenthesized)
-            var updatedType = recordedType
-
-            val resolvedCall = deparenthesized.getResolvedCall(trace.bindingContext)
-            if (resolvedCall != null) {
-                updatedType = resolvedCall.resultingDescriptor.returnType ?: updatedType
-            }
-
-            // For the cases like 'foo(1)' the type of '1' depends on expected type (it can be Int, Byte, etc.),
-            // so while the expected type is not known, it's IntegerValueType(1), and should be updated when the expected type is known.
-            if (recordedType != null && !recordedType.constructor.isDenotable) {
-                updatedType = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(newContext, deparenthesized) ?: updatedType
-            }
-
-            updatedType = updateRecordedTypeForArgument(updatedType, recordedType, argumentExpression, context)
-
+            updateRecordedType(argumentExpression, newContext)
 //            dataFlowAnalyzer.checkType(updatedType, deparenthesized, newContext)
         }
 
+    }
+
+    fun updateRecordedType(
+            expression: KtExpression,
+            context: BasicCallResolutionContext
+    ): KotlinType? {
+        val deparenthesized = expression.let {
+            KtPsiUtil.getLastElementDeparenthesized(it, context.statementFilter)
+        } ?: return null
+
+        val recordedType = context.trace.getType(deparenthesized)
+        var updatedType = recordedType
+
+        val resolvedCall = deparenthesized.getResolvedCall(context.trace.bindingContext)
+        if (resolvedCall != null) {
+            updatedType = resolvedCall.resultingDescriptor.returnType ?: updatedType
+        }
+
+        // For the cases like 'foo(1)' the type of '1' depends on expected type (it can be Int, Byte, etc.),
+        // so while the expected type is not known, it's IntegerValueType(1), and should be updated when the expected type is known.
+        if (recordedType != null && !recordedType.constructor.isDenotable) {
+            updatedType = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, deparenthesized) ?: updatedType
+        }
+
+        return updateRecordedTypeForArgument(updatedType, recordedType, expression, context)
     }
 
     // See CallCompleter#updateRecordedTypeForArgument

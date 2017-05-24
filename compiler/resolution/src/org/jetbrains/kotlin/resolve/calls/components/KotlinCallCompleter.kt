@@ -114,12 +114,12 @@ class KotlinCallCompleter(
             it.candidate.toCompletedCall(currentSubstitutor)
         }
         c.lambdaArguments.forEach {
-            resolutionCallbacks.completeLambdaReturnType(it, currentSubstitutor.safeSubstitute(it.returnType))
+            it.finalReturnType = currentSubstitutor.safeSubstitute(it.returnType)
         }
         c.callableReferenceArguments.forEach {
             resolutionCallbacks.completeCallableReference(it, it.myTypeVariables.map { currentSubstitutor.safeSubstitute(it.defaultType) })
         }
-        return ResolvedKotlinCall.CompletedResolvedKotlinCall(completedCall, competedCalls)
+        return ResolvedKotlinCall.CompletedResolvedKotlinCall(completedCall, competedCalls, c.lambdaArguments)
     }
 
     private fun KotlinResolutionCandidate.toCompletedCall(substitutor: NewTypeSubstitutor): CompletedKotlinCall {

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPsiUtil
@@ -140,31 +139,6 @@ class KotlinResolutionCallbacksImpl(
 
     override fun bindStubResolvedCallForCandidate(candidate: KotlinResolutionCandidate) {
         kotlinToResolvedCallTransformer.createStubResolvedCallAndWriteItToTrace<CallableDescriptor>(candidate, trace)
-    }
-
-    override fun completeLambdaReturnType(lambdaArgument: ResolvedLambdaArgument, returnType: KotlinType) {
-        val psiCallArgument = lambdaArgument.argument.psiCallArgument
-        val ktFunction = when (psiCallArgument) {
-            is LambdaKotlinCallArgumentImpl -> psiCallArgument.ktLambdaExpression.functionLiteral
-            is FunctionExpressionImpl -> psiCallArgument.ktFunction
-            else -> throw AssertionError("Unexpected psiCallArgument for resolved lambda argument: $psiCallArgument")
-        }
-
-        val functionDescriptor = trace.bindingContext.get(BindingContext.FUNCTION, ktFunction) as? FunctionDescriptorImpl ?:
-                                 throw AssertionError("No function descriptor for resolved lambda argument")
-        functionDescriptor.setReturnType(returnType)
-
-        for (lambdaResult in lambdaArgument.resultArguments) {
-            val resultValueArgument = lambdaResult.psiCallArgument.valueArgument
-            val deparenthesized = resultValueArgument.getArgumentExpression()?.let {
-                KtPsiUtil.getLastElementDeparenthesized(it, expressionTypingServices.statementFilter)
-            } ?: continue
-
-            val recordedType = trace.getType(deparenthesized)
-            if (recordedType != null && !recordedType.constructor.isDenotable) {
-                argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(trace, expressionTypingServices.statementFilter, returnType, deparenthesized)
-            }
-        }
     }
 
     override fun completeCallableReference(
