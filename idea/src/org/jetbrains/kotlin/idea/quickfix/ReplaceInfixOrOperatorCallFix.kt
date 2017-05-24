@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.types.typeUtil.isBoolean
 
 class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixAction<KtExpression>(element) {
 
@@ -99,6 +99,7 @@ class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixActio
                 is KtCallExpression -> {
                     if (parent.calleeExpression == null) null
                     else if (parent.parent is KtQualifiedExpression) null
+                    else if (parent.getResolvedCall(parent.analyze())?.getImplicitReceiverValue() != null) null
                     else ReplaceInfixOrOperatorCallFix(parent)
                 }
                 else -> null

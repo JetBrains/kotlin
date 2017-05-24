@@ -5495,6 +5495,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("fixNullableThisWithExclExclFunction.kt")
+        public void testFixNullableThisWithExclExclFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableThisWithExclExclFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fixNullableThisWithExclExclProperty.kt")
+        public void testFixNullableThisWithExclExclProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableThisWithExclExclProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fixNullableThisWithSafeCallFunction.kt")
+        public void testFixNullableThisWithSafeCallFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableThisWithSafeCallFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fixNullableThisWithSafeCallProperty.kt")
+        public void testFixNullableThisWithSafeCallProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableThisWithSafeCallProperty.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("fixNullableUnaryWithExclExcl.kt")
         public void testFixNullableUnaryWithExclExcl() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableUnaryWithExclExcl.kt");
@@ -7240,6 +7264,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("unsafeInvoke.kt")
             public void testUnsafeInvoke() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeInvoke.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unsafeInvokeWithImplicitReceiver.kt")
+            public void testUnsafeInvokeWithImplicitReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeInvokeWithImplicitReceiver.kt");
                 doTest(fileName);
             }
 
