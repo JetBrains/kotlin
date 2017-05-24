@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
 import org.jetbrains.kotlin.idea.codeInliner.PropertyUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.core.copied
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
@@ -101,7 +102,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
         else {
             val descriptor = declaration.resolveToDescriptor() as PropertyDescriptor
             readReplacement = getter?.let { buildCodeToInline(getter, descriptor.type, editor) ?: return }
-            writeReplacement = setter?.let { buildCodeToInline(setter, descriptor.type, editor) ?: return }
+            writeReplacement = setter?.let { buildCodeToInline(setter, setter.builtIns.unitType, editor) ?: return }
             assignmentToDelete = null
         }
 
