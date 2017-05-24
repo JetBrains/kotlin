@@ -179,7 +179,8 @@ class TypeAliasConstructorDescriptorImpl private constructor(
 
             val valueParameters =
                     FunctionDescriptorImpl.getSubstitutedValueParameters(
-                            typeAliasConstructor, constructor.valueParameters, substitutorForUnderlyingClass, false, false
+                            typeAliasConstructor, constructor.valueParameters, substitutorForUnderlyingClass, false, false,
+                            null
                     ) ?: return null
 
             val returnType = run {

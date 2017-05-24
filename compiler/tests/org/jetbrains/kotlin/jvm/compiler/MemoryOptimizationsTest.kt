@@ -20,14 +20,18 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
+import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.types.FlexibleType
+import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.lowerIfFlexible
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.upperIfFlexible
 import org.junit.Test
 
@@ -53,5 +57,50 @@ class MemoryOptimizationsTest : KtUsefulTestCase() {
         assertTrue(upperBound.javaClass.simpleName == "NullableSimpleType")
         // NullableSimpleType should store and return the same instance as lower bound of flexible type
         assertTrue(parameterType.lowerIfFlexible() === upperBound.makeNullableAsSpecified(false))
+    }
+
+
+
+    @Test
+    fun testSubstitutorDoNotRecreateUnchangedDescriptor() {
+        val text =
+                """
+                |package test
+                |interface A<T> : java.lang.Appendable {
+                |   fun foo(x: T)
+                |}
+                """.trimMargin()
+
+        val environment =
+                KotlinTestUtils
+                        .createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                                myTestRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
+                        )
+        val moduleDescriptor =
+                JvmResolveUtil.analyze(
+                        KotlinTestUtils.createFile("main.kt", text, environment.project),
+                        environment
+                ).moduleDescriptor
+
+        val aClass =
+                moduleDescriptor.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("test.A")))!!
+
+        val memberScope =
+                aClass.getMemberScope(
+                        TypeConstructorSubstitution.create(
+                                aClass.typeConstructor, listOf(moduleDescriptor.builtIns.stringType.asTypeProjection())
+                        )
+                )
+
+        val append =
+                memberScope.findFirstFunction("append") {
+                    it.valueParameters.singleOrNull()?.type?.let(KotlinBuiltIns::isChar) == false
+                }
+
+        assertTrue(append.original === append)
+
+        val foo = memberScope.findSingleFunction(Name.identifier("foo"))
+
+        assertTrue(foo.original !== foo)
     }
 }
