@@ -10291,6 +10291,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("preferExclExcl.kt")
+            public void testPreferExclExcl() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/casts/preferExclExcl.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("smartcastImpossible1.kt")
             public void testSmartcastImpossible1() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/casts/smartcastImpossible1.kt");
