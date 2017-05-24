@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -46,6 +44,7 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class KotlinResolutionCallbacksImpl(
@@ -109,6 +108,8 @@ class KotlinResolutionCallbacksImpl(
         trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, ktFunction, LambdaInfo.STUB_EMPTY)
 
         val lastExpressionArgument = getLastDeparentesizedExpression(psiCallArgument)?.let { lastExpression ->
+            if (expectedReturnType?.isUnit() == true) return@let null // coercion to Unit
+
             val lastExpressionType = trace.getType(lastExpression)
             val lastExpressionTypeInfo = KotlinTypeInfo(lastExpressionType, lambdaInfo.dataFlowInfoAfter ?: functionTypeInfo.dataFlowInfo)
             createCallArgument(lastExpression, lastExpressionTypeInfo)
