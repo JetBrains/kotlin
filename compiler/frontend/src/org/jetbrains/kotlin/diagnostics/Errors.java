@@ -462,6 +462,8 @@ public interface Errors {
 
     DiagnosticFactory0<KtProperty> MUST_BE_INITIALIZED = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtProperty> MUST_BE_INITIALIZED_OR_BE_ABSTRACT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtProperty> EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT =
+            DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtProperty> UNNECESSARY_LATEINIT = DiagnosticFactory0.create(WARNING, LATEINIT_MODIFIER);
 
     DiagnosticFactory0<KtExpression> EXTENSION_PROPERTY_WITH_BACKING_FIELD = DiagnosticFactory0.create(ERROR);

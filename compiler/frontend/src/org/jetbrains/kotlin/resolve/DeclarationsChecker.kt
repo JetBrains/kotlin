@@ -668,19 +668,19 @@ class DeclarationsChecker(
         val hasAccessorImplementation = propertyDescriptor.hasAccessorImplementation()
 
         val containingDeclaration = propertyDescriptor.containingDeclaration
-        val inTrait = containingDeclaration is ClassDescriptor && containingDeclaration.kind == ClassKind.INTERFACE
+        val inInterface = DescriptorUtils.isInterface(containingDeclaration)
         if (propertyDescriptor.modality == Modality.ABSTRACT) {
             if (!property.hasDelegateExpressionOrInitializer() && property.typeReference == null) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property))
             }
-            if (inTrait && property.hasModifier(KtTokens.PRIVATE_KEYWORD) && !property.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
+            if (inInterface && property.hasModifier(KtTokens.PRIVATE_KEYWORD) && !property.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
                 trace.report(PRIVATE_PROPERTY_IN_INTERFACE.on(property))
             }
             return
         }
 
         val backingFieldRequired = trace.bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor) ?: false
-        if (inTrait && backingFieldRequired && hasAccessorImplementation) {
+        if (inInterface && backingFieldRequired && hasAccessorImplementation) {
             trace.report(BACKING_FIELD_IN_INTERFACE.on(property))
         }
 
@@ -688,7 +688,7 @@ class DeclarationsChecker(
         val delegate = property.delegate
         val isHeader = propertyDescriptor.isHeader
         if (initializer != null) {
-            if (inTrait) {
+            if (inInterface) {
                 trace.report(PROPERTY_INITIALIZER_IN_INTERFACE.on(initializer))
             }
             else if (isHeader) {
@@ -702,15 +702,18 @@ class DeclarationsChecker(
             }
         }
         else if (delegate != null) {
-            if (inTrait) {
+            if (inInterface) {
                 trace.report(DELEGATED_PROPERTY_IN_INTERFACE.on(delegate))
             }
         }
         else {
             val isUninitialized = trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor) ?: false
             val isExternal = propertyDescriptor.isEffectivelyExternal()
-            if (backingFieldRequired && !inTrait && !propertyDescriptor.isLateInit && !isHeader && isUninitialized && !isExternal) {
-                if (containingDeclaration !is ClassDescriptor || hasAccessorImplementation) {
+            if (backingFieldRequired && !inInterface && !propertyDescriptor.isLateInit && !isHeader && isUninitialized && !isExternal) {
+                if (propertyDescriptor.extensionReceiverParameter != null && !hasAccessorImplementation) {
+                    trace.report(EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT.on(property))
+                }
+                else if (containingDeclaration !is ClassDescriptor || hasAccessorImplementation) {
                     trace.report(MUST_BE_INITIALIZED.on(property))
                 }
                 else {
@@ -723,7 +726,7 @@ class DeclarationsChecker(
             else if (noExplicitTypeOrGetterType(property)) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property))
             }
-            if (backingFieldRequired && !inTrait && propertyDescriptor.isLateInit && !isUninitialized &&
+            if (backingFieldRequired && !inInterface && propertyDescriptor.isLateInit && !isUninitialized &&
                 trace[MUST_BE_LATEINIT, propertyDescriptor] != true) {
                 trace.report(UNNECESSARY_LATEINIT.on(property))
             }

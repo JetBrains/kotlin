@@ -231,6 +231,7 @@ public class DefaultErrorMessages {
         MAP.put(BACKING_FIELD_IN_INTERFACE, "Property in an interface cannot have a backing field");
         MAP.put(MUST_BE_INITIALIZED, "Property must be initialized");
         MAP.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract");
+        MAP.put(EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, "Extension property must have accessors or be abstract");
         MAP.put(UNNECESSARY_LATEINIT, "Lateinit is unnecessary: definitely initialized in constructors");
         MAP.put(PROPERTY_INITIALIZER_IN_INTERFACE, "Property initializers are not allowed in interfaces");
         MAP.put(PRIVATE_PROPERTY_IN_INTERFACE, "Abstract property in an interface cannot be private");

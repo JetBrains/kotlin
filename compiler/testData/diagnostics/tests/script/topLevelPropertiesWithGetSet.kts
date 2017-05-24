@@ -34,6 +34,6 @@ set(value) {}
 <!UNRESOLVED_REFERENCE!>get<!>() = 42
 <!UNRESOLVED_REFERENCE!>set<!>(<!UNRESOLVED_REFERENCE!>value<!>) {}
 
-<!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var String.testExtVarLineBreakSemi: Int<!>;
+<!EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT!>var String.testExtVarLineBreakSemi: Int<!>;
 <!UNRESOLVED_REFERENCE!>get<!>() = 42
 <!UNRESOLVED_REFERENCE!>set<!>(<!UNRESOLVED_REFERENCE!>value<!>) {}
