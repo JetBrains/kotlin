@@ -16,13 +16,11 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -36,52 +34,13 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.type
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.types.KotlinType
-
-internal class DirectBridgesCallsLowering(val context: Context) : BodyLoweringPass {
-    override fun lower(irBody: IrBody) {
-        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitCall(expression: IrCall): IrExpression {
-                expression.transformChildrenVoid(this)
-                val descriptor = expression.descriptor as? FunctionDescriptor ?: return expression
-                if (descriptor.modality == Modality.ABSTRACT
-                        || (expression.superQualifier == null && descriptor.isOverridable)) {
-                    // A virtual call. boxing/unboxing will be in the corresponding bridge.
-                    return expression
-                }
-
-                val target = descriptor.target
-                if (!descriptor.original.needBridgeTo(target)) return expression
-
-                return IrCallImpl(expression.startOffset, expression.endOffset,
-                        target, remapTypeArguments(expression, target), expression.origin,
-                        superQualifierDescriptor = target.containingDeclaration as ClassDescriptor /* Call non-virtually */
-                ).apply {
-                    dispatchReceiver = expression.dispatchReceiver
-                    extensionReceiver = expression.extensionReceiver
-                    mapValueParameters { expression.getValueArgument(it)!! }
-                }
-            }
-
-            private fun remapTypeArguments(oldExpression: IrMemberAccessExpression, newCallee: CallableDescriptor)
-                    : Map<TypeParameterDescriptor, KotlinType>? {
-                val oldCallee = oldExpression.descriptor
-
-                return if (oldCallee.typeParameters.isEmpty())
-                    null
-                else oldCallee.typeParameters.associateBy(
-                        { newCallee.typeParameters[it.index] },
-                        { oldExpression.getTypeArgument(it)!! }
-                )
-            }
-        })
-    }
-}
 
 internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
 
@@ -162,30 +121,31 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
     private object DECLARATION_ORIGIN_BRIDGE_METHOD :
             IrDeclarationOriginImpl("BRIDGE_METHOD")
 
-    private val ValueType.shortName
-        get() = this.classFqName.shortName()
-
-    private fun getBoxType(valueType: ValueType) =
-            context.builtIns.getKonanInternalClass("${valueType.shortName}Box").defaultType
-
     private fun buildBridge(descriptor: OverriddenFunctionDescriptor, irClass: IrClass) {
         val bridgeDescriptor = context.specialDeclarationsFactory.getBridgeDescriptor(descriptor)
-        val target = descriptor.descriptor.target
+        val bridge = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, DECLARATION_ORIGIN_BRIDGE_METHOD,
+                bridgeDescriptor).apply { createParameterDeclarations() }
+
+        val target = descriptor.descriptor
+
+        assert(target.containingDeclaration == irClass.descriptor)
+        val superQualifierSymbol = irClass.symbol
+        val targetSymbol = irClass.findMember(target) // TODO: optimize
 
         val statements = mutableListOf<IrExpression>()
-        val irBuilder = context.createIrBuilder(bridgeDescriptor, irClass.startOffset, irClass.endOffset)
+        val irBuilder = context.createIrBuilder(bridge.symbol, irClass.startOffset, irClass.endOffset)
         irBuilder.run {
             val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor.overriddenDescriptor)
             if (typeSafeBarrierDescription != null) {
-                val valueParameters = bridgeDescriptor.valueParameters
+                val valueParameters = bridge.valueParameters
                 for (i in valueParameters.indices) {
                     if (!typeSafeBarrierDescription.checkParameter(i))
                         continue
                     val type = target.valueParameters[i].type
                     if (type != context.builtIns.nullableAnyType) {
-                        statements += returnIfBadType(irGet(valueParameters[i]), type,
+                        statements += returnIfBadType(irGet(valueParameters[i].symbol), type,
                                 if (typeSafeBarrierDescription == BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT)
-                                    irGet(valueParameters[2])
+                                    irGet(valueParameters[2].symbol)
                                 else irConst(typeSafeBarrierDescription.defaultValue)
                         )
                     }
@@ -193,22 +153,22 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
             }
         }
 
-        val delegatingCall = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target,
-                superQualifierDescriptor = target.containingDeclaration as ClassDescriptor /* Call non-virtually */
+        val delegatingCall = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, targetSymbol, target,
+                superQualifierSymbol = superQualifierSymbol /* Call non-virtually */
         ).apply {
-            val dispatchReceiverParameter = bridgeDescriptor.dispatchReceiverParameter
+            val dispatchReceiverParameter = bridge.dispatchReceiverParameter
             if (dispatchReceiverParameter != null)
-                dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, dispatchReceiverParameter)
-            val extensionReceiverParameter = bridgeDescriptor.extensionReceiverParameter
+                dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, dispatchReceiverParameter.symbol)
+            val extensionReceiverParameter = bridge.extensionReceiverParameter
             if (extensionReceiverParameter != null)
-                extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, extensionReceiverParameter)
-            bridgeDescriptor.valueParameters.forEach {
-                this.putValueArgument(it.index, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it))
+                extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, extensionReceiverParameter.symbol)
+            bridge.valueParameters.forEachIndexed { index, parameter ->
+                this.putValueArgument(index, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.symbol))
             }
         }
 
         val bridgeBody = if (bridgeDescriptor.returnType.let { it != null && !KotlinBuiltIns.isUnitOrNullableUnit(it) })
-            IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridgeDescriptor, delegatingCall)
+            IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridge.symbol, delegatingCall)
         else
             delegatingCall
         statements += bridgeBody
@@ -218,4 +178,13 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
                 ).apply { createParameterDeclarations() }
         )
     }
+}
+
+private fun IrClass.findMember(descriptor: FunctionDescriptor): IrFunctionSymbol {
+    val functions = this.declarations.filterIsInstance<IrFunction>().map { it.symbol }
+    val propertyAccessors = this.declarations
+            .filterIsInstance<IrProperty>()
+            .flatMap { listOfNotNull(it.getter?.symbol, it.setter?.symbol) }
+
+    return (functions + propertyAccessors).single { it.descriptor == descriptor }
 }

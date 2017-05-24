@@ -58,20 +58,6 @@ internal val CallableDescriptor.explicitParameters: List<ParameterDescriptor>
         return result
     }
 
-/**
- * Returns the parameter in the original function corresponding to given parameter of this function.
- *
- * Note: `parameter.original` doesn't seem to be always the parameter of `this.original`.
- *
- * @param parameter must be declared in this function
- */
-fun CallableDescriptor.getOriginalParameter(parameter: ParameterDescriptor): ParameterDescriptor = when (parameter) {
-    is ValueParameterDescriptor -> this.original.valueParameters[parameter.index]
-    this.dispatchReceiverParameter -> this.original.dispatchReceiverParameter!!
-    this.extensionReceiverParameter -> this.original.extensionReceiverParameter!!
-    else -> TODO("$parameter in $this")
-}
-
 fun KotlinType.replace(types: List<KotlinType>) = this.replace(types.map(::TypeProjectionImpl))
 
 fun FunctionDescriptor.substitute(vararg types: KotlinType): FunctionDescriptor {
@@ -79,6 +65,13 @@ fun FunctionDescriptor.substitute(vararg types: KotlinType): FunctionDescriptor 
             typeParameters
                     .withIndex()
                     .associateBy({ it.value.typeConstructor }, { TypeProjectionImpl(types[it.index]) })
+    )
+    return substitute(typeSubstitutor)!!
+}
+
+fun FunctionDescriptor.substitute(typeArguments: Map<TypeParameterDescriptor, KotlinType>): FunctionDescriptor {
+    val typeSubstitutor = TypeSubstitutor.create(
+            typeParameters.associateBy({ it.typeConstructor }, { TypeProjectionImpl(typeArguments[it]!!) })
     )
     return substitute(typeSubstitutor)!!
 }

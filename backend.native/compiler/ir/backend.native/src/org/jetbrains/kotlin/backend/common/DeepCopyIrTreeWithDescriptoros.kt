@@ -86,9 +86,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: DeclarationDe
             val contributedDescriptors = oldDescriptor.unsubstitutedMemberScope
                     .getContributedDescriptors()
                     .map {
-                        if (it is CallableMemberDescriptor && it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
-                            it
-                        else descriptorSubstituteMap[it]!!
+                        descriptorSubstituteMap[it]!!
                     }
             newDescriptor.initialize(
                     SimpleMemberScope(contributedDescriptors),

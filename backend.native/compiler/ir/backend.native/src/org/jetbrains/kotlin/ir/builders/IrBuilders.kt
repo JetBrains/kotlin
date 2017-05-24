@@ -16,33 +16,17 @@
 
 package org.jetbrains.kotlin.ir.builders
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.backend.common.descriptors.substitute
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
-
-inline fun IrBuilderWithScope.irLetSequence(
-        value: IrExpression,
-        nameHint: String? = null,
-        startOffset: Int = this.startOffset,
-        endOffset: Int = this.endOffset,
-        origin: IrStatementOrigin? = null,
-        resultType: KotlinType? = null,
-        body: IrBlockBuilder.(VariableDescriptor) -> Unit
-): IrExpression = irBlock(startOffset, endOffset, origin, resultType) {
-    val irTemporary = defineTemporary(value, nameHint)
-    this.body(irTemporary)
-}
 
 fun IrBuilderWithScope.irWhile(origin: IrStatementOrigin? = null) =
         IrWhileLoopImpl(startOffset, endOffset, context.builtIns.unitType, origin)
@@ -57,46 +41,18 @@ fun IrBuilderWithScope.irTrue() = IrConstImpl.boolean(startOffset, endOffset, co
 
 fun IrBuilderWithScope.irFalse() = IrConstImpl.boolean(startOffset, endOffset, context.builtIns.booleanType, false)
 
-@Deprecated("Creates unbound symbol")
-fun IrBuilderWithScope.irGet(value: ValueDescriptor) =
-        IrGetValueImpl(startOffset, endOffset, value)
-
-@Deprecated("Creates unbound symbol")
-fun IrBuilderWithScope.irGet(receiver: IrExpression?, property: PropertyDescriptor): IrCall =
-        IrCallImpl(startOffset, endOffset, property.getter!!).apply {
-            dispatchReceiver = receiver
-        }
-
-@Deprecated("Creates unbound symbol")
-fun IrBuilderWithScope.irThis() =
-        scope.classOwner().let { classOwner ->
-            IrGetValueImpl(startOffset, endOffset, classOwner.thisAsReceiverParameter)
-        }
-
-@Deprecated("Creates unbound symbol")
-fun IrBuilderWithScope.irSetVar(variable: VariableDescriptor, value: IrExpression) =
-        IrSetVariableImpl(startOffset, endOffset, variable, value, IrStatementOrigin.EQ)
-
-@Deprecated("Creates unbound symbol")
-fun IrBuilderWithScope.irCall(descriptor: FunctionDescriptor): IrCallImpl {
-    return IrCallImpl(this.startOffset, this.endOffset, descriptor)
-}
-
 fun IrBuilderWithScope.irCall(symbol: IrFunctionSymbol): IrCallImpl {
     return IrCallImpl(this.startOffset, this.endOffset, symbol)
 }
 
-@Deprecated("Creates unbound symbol")
-fun IrBuilderWithScope.irCall(
-        callee: FunctionDescriptor,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>
-): IrCallImpl {
-    val substitutionContext = typeArguments.map { (typeParameter, typeArgument) ->
-        typeParameter.typeConstructor to TypeProjectionImpl(typeArgument)
-    }.toMap()
+fun IrBuilderWithScope.irCall(symbol: IrFunctionSymbol, typeArguments: Map<TypeParameterDescriptor, KotlinType>) =
+        IrCallImpl(this.startOffset, this.endOffset, symbol, symbol.descriptor.substitute(typeArguments), typeArguments)
 
-    val substitutor = TypeSubstitutor.create(substitutionContext)
-    val substitutedCallee = callee.substitute(substitutor)!!
+fun IrBuilderWithScope.irCall(symbol: IrFunctionSymbol, typeArguments: List<KotlinType>) =
+    irCall(symbol, symbol.descriptor.typeParameters.zip(typeArguments).toMap())
 
-    return IrCallImpl(this.startOffset, this.endOffset, substitutedCallee, typeArguments)
-}
+fun IrBuilderWithScope.irGetObject(classSymbol: IrClassSymbol) =
+        IrGetObjectValueImpl(startOffset, endOffset, classSymbol.owner.defaultType, classSymbol)
+
+fun IrBuilderWithScope.irGetField(receiver: IrExpression?, symbol: IrFieldSymbol) =
+        IrGetFieldImpl(startOffset, endOffset, symbol, receiver)

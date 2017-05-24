@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.createParameterDeclarations
-import org.jetbrains.kotlin.ir.util.endOffsetOrUndefined
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.startOffsetOrUndefined
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -75,6 +72,7 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
         implObjectDescriptor.initialize(memberScope, setOf(constructorDescriptor), constructorDescriptor)
         val implObject = IrClassImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, implObjectDescriptor).apply {
             createParameterDeclarations()
+            addFakeOverrides()
         }
 
         val (itemGetterSymbol, itemGetterDescriptor) = getEnumItemGetter(enumClassDescriptor)

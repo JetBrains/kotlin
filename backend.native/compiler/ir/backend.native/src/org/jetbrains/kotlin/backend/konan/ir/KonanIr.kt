@@ -52,6 +52,12 @@ class IrReturnableBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType,
     override val descriptor = symbol.descriptor
 
     constructor(startOffset: Int, endOffset: Int, type: KotlinType,
+                symbol: IrReturnableBlockSymbol, origin: IrStatementOrigin?, statements: List<IrStatement>) :
+            this(startOffset, endOffset, type, symbol, origin) {
+        this.statements.addAll(statements)
+    }
+
+    constructor(startOffset: Int, endOffset: Int, type: KotlinType,
                 descriptor: FunctionDescriptor, origin: IrStatementOrigin? = null) :
             this(startOffset, endOffset, type, IrReturnableBlockSymbolImpl(descriptor), origin)
 

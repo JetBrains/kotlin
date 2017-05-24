@@ -54,13 +54,14 @@ abstract class AbstractValueUsageTransformer(val builtIns: KotlinBuiltIns): IrEl
     protected open fun IrExpression.useAsArgument(parameter: ParameterDescriptor): IrExpression =
             this.useAsValue(parameter)
 
-    protected open fun IrExpression.useAsDispatchReceiver(function: CallableDescriptor): IrExpression =
-            this.useAsArgument(function.dispatchReceiverParameter!!)
+    protected open fun IrExpression.useAsDispatchReceiver(expression: IrMemberAccessExpression): IrExpression =
+            this.useAsArgument(expression.descriptor.dispatchReceiverParameter!!)
 
-    protected open fun IrExpression.useAsExtensionReceiver(function: CallableDescriptor): IrExpression =
-            this.useAsArgument(function.extensionReceiverParameter!!)
+    protected open fun IrExpression.useAsExtensionReceiver(expression: IrMemberAccessExpression): IrExpression =
+            this.useAsArgument(expression.descriptor.extensionReceiverParameter!!)
 
-    protected open fun IrExpression.useAsValueArgument(parameter: ValueParameterDescriptor): IrExpression =
+    protected open fun IrExpression.useAsValueArgument(expression: IrMemberAccessExpression,
+                                                       parameter: ValueParameterDescriptor): IrExpression =
             this.useAsArgument(parameter)
 
     protected open fun IrExpression.useForVariable(variable: VariableDescriptor): IrExpression =
@@ -81,12 +82,12 @@ abstract class AbstractValueUsageTransformer(val builtIns: KotlinBuiltIns): IrEl
         expression.transformChildrenVoid(this)
 
         with(expression) {
-            dispatchReceiver = dispatchReceiver?.useAsDispatchReceiver(descriptor)
-            extensionReceiver = extensionReceiver?.useAsExtensionReceiver(descriptor)
+            dispatchReceiver = dispatchReceiver?.useAsDispatchReceiver(expression)
+            extensionReceiver = extensionReceiver?.useAsExtensionReceiver(expression)
             for (index in descriptor.valueParameters.indices) {
                 val argument = getValueArgument(index) ?: continue
                 val parameter = descriptor.valueParameters[index]
-                putValueArgument(index, argument.useAsValueArgument(parameter))
+                putValueArgument(index, argument.useAsValueArgument(expression, parameter))
             }
         }
 
@@ -240,7 +241,7 @@ abstract class AbstractValueUsageTransformer(val builtIns: KotlinBuiltIns): IrEl
         declaration.descriptor.valueParameters.forEach { parameter ->
             val defaultValue = declaration.getDefault(parameter)
             if (defaultValue is IrExpressionBody) {
-                defaultValue.expression = defaultValue.expression.useAsValueArgument(parameter)
+                defaultValue.expression = defaultValue.expression.useAsArgument(parameter)
             }
         }
 

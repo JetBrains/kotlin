@@ -16,20 +16,19 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.backend.konan.util.atMostOne
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -175,6 +174,35 @@ fun IrClass.createParameterDeclarations() {
     }
 }
 
+fun IrClass.addFakeOverrides() {
+
+    val startOffset = this.startOffset
+    val endOffset = this.endOffset
+
+    fun FunctionDescriptor.createFunction(): IrFunction = IrFunctionImpl(
+            startOffset, endOffset,
+            IrDeclarationOrigin.FAKE_OVERRIDE, this
+    ).apply {
+        createParameterDeclarations()
+    }
+
+    descriptor.unsubstitutedMemberScope.getContributedDescriptors()
+            .filterIsInstance<CallableMemberDescriptor>()
+            .filter { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
+            .mapTo(this.declarations) {
+                when (it) {
+                    is FunctionDescriptor -> it.createFunction()
+                    is PropertyDescriptor ->
+                        IrPropertyImpl(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, it).apply {
+                            // TODO: add field if getter is missing?
+                            getter = it.getter?.createFunction()
+                            setter = it.setter?.createFunction()
+                        }
+                    else -> TODO(it.toString())
+                }
+            }
+}
+
 private fun IrElement.innerStartOffset(descriptor: DeclarationDescriptorWithSource): Int =
         descriptor.startOffset ?: this.startOffset
 
@@ -193,6 +221,16 @@ val IrClassSymbol.functions: Sequence<IrSimpleFunctionSymbol>
 val IrClassSymbol.constructors: Sequence<IrConstructorSymbol>
     get() = this.owner.declarations.asSequence().filterIsInstance<IrConstructor>().map { it.symbol }
 
+private fun IrClassSymbol.getPropertyDeclaration(name: String) =
+        this.owner.declarations.filterIsInstance<IrProperty>()
+                .atMostOne { it.descriptor.name == Name.identifier(name) }
+
+fun IrClassSymbol.getPropertyGetter(name: String): IrFunctionSymbol? =
+        this.getPropertyDeclaration(name)?.getter?.symbol
+
+fun IrClassSymbol.getPropertySetter(name: String): IrFunctionSymbol? =
+        this.getPropertyDeclaration(name)?.setter?.symbol
+
 val IrFunction.explicitParameters: List<IrValueParameterSymbol>
     get() = (listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters).map { it.symbol }
 
@@ -201,68 +239,3 @@ val IrValueParameter.type: KotlinType
 
 val IrClass.defaultType: KotlinType
     get() = this.descriptor.defaultType
-
-class IrSymbolBindingChecker : IrElementVisitorVoid {
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
-    override fun visitDeclarationReference(expression: IrDeclarationReference) {
-        super.visitDeclarationReference(expression)
-
-        expression.symbol.ensureBound(expression)
-    }
-
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
-        super.visitFunctionAccess(expression)
-
-        expression.symbol.ensureBound(expression)
-    }
-
-    override fun visitFunctionReference(expression: IrFunctionReference) {
-        super.visitFunctionReference(expression)
-
-        expression.symbol.ensureBound(expression)
-    }
-
-    override fun visitCall(expression: IrCall) {
-        super.visitCall(expression)
-
-        expression.superQualifierSymbol?.ensureBound(expression)
-    }
-
-    override fun visitPropertyReference(expression: IrPropertyReference) {
-        super.visitPropertyReference(expression)
-
-        expression.field?.ensureBound(expression)
-        expression.getter?.ensureBound(expression)
-        expression.setter?.ensureBound(expression)
-    }
-
-    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) {
-        super.visitLocalDelegatedPropertyReference(expression)
-
-        expression.delegate.ensureBound(expression)
-        expression.getter.ensureBound(expression)
-        expression.setter?.ensureBound(expression)
-    }
-
-    override fun visitReturn(expression: IrReturn) {
-        super.visitReturn(expression)
-
-        expression.returnTargetSymbol.ensureBound(expression)
-    }
-
-    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) {
-        super.visitInstanceInitializerCall(expression)
-
-        expression.classSymbol.ensureBound(expression)
-    }
-
-    private fun IrSymbol.ensureBound(expression: IrExpression) {
-        if (!this.isBound) {
-            throw Error("Unbound symbol ${this} found in ${expression.render()}")
-        }
-    }
-
-}

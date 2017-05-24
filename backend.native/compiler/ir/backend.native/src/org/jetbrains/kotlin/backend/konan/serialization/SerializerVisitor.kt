@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.backend.konan.PhaseManager
 import org.jetbrains.kotlin.backend.konan.KonanPhase
 import org.jetbrains.kotlin.serialization.MutableTypeTable
 import org.jetbrains.kotlin.serialization.KonanLinkData
-import org.jetbrains.kotlin.backend.common.validateIrFunction
 
 internal class DeserializerDriver(val context: Context) {
 

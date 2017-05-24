@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
-import org.jetbrains.kotlin.backend.konan.descriptors.isSuspendFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.util.atMostOne
@@ -43,9 +41,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.util.createParameterDeclarations
-import org.jetbrains.kotlin.ir.util.getArguments
-import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -53,6 +48,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.ir.util.*
 
 internal class SuspendFunctionsLowering(val context: Context): DeclarationContainerLoweringPass {
 
@@ -67,7 +63,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
             else null
         }
         transformCallableReferencesToSuspendLambdas(irDeclarationContainer)
-        transformCallsToExtensionSuspendFunctions(irDeclarationContainer)
     }
 
     private fun markSuspendLambdas(irDeclarationContainer: IrDeclarationContainer) {
@@ -109,36 +104,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                         return irCall(coroutine.coroutineConstructor.symbol).apply {
                             expressionArguments.forEachIndexed { index, argument ->
                                 putValueArgument(index, argument) }
-                        }
-                    }
-                }
-            })
-        }
-    }
-
-    private fun transformCallsToExtensionSuspendFunctions(irDeclarationContainer: IrDeclarationContainer) {
-        irDeclarationContainer.declarations.forEach {
-            it.transformChildrenVoid(object: IrElementTransformerVoid() {
-
-                override fun visitCall(expression: IrCall): IrExpression {
-                    expression.transformChildrenVoid(this)
-
-                    val descriptor = expression.descriptor
-
-                    if (!descriptor.isSuspendFunctionInvoke || descriptor.extensionReceiverParameter == null)
-                        return expression
-
-                    val invokeFunctionDescriptor = descriptor.dispatchReceiverParameter!!.type.memberScope
-                            .getContributedFunctions(Name.identifier("invoke"), NoLookupLocation.FROM_BACKEND).single()
-                    return IrCallImpl(
-                            startOffset      = expression.startOffset,
-                            endOffset        = expression.endOffset,
-                            calleeDescriptor = invokeFunctionDescriptor
-                    ).apply {
-                        dispatchReceiver = expression.dispatchReceiver
-                        putValueArgument(0, expression.extensionReceiver)
-                        invokeFunctionDescriptor.valueParameters.drop(1).forEach {
-                            putValueArgument(it.index, expression.getValueArgument(it.index - 1))
                         }
                     }
                 }
@@ -235,7 +200,8 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
         }
     }
 
-    private val getContinuationDescriptor = context.builtIns.getKonanInternalFunctions("getContinuation").single()
+    private val symbols = context.ir.symbols
+    private val getContinuationSymbol = symbols.getContinuation
     private val returnIfSuspendedDescriptor = context.builtIns.getKonanInternalFunctions("returnIfSuspended").single()
 
     private fun removeReturnIfSuspendedCall(irFunction: IrFunction) {
@@ -262,15 +228,15 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                 +irReturn(
                         irCall(coroutine.doResumeFunction.symbol).apply {
                             dispatchReceiver = irCall(coroutine.coroutineConstructor.symbol).apply {
-                                val functionParameters = irFunction.descriptor.explicitParameters
+                                val functionParameters = irFunction.explicitParameters
                                 functionParameters.forEachIndexed { index, argument ->
                                     putValueArgument(index, irGet(argument))
                                 }
                                 putValueArgument(functionParameters.size,
-                                        irCall(getContinuationDescriptor.substitute(descriptor.returnType!!)))
+                                        irCall(getContinuationSymbol, listOf(descriptor.returnType!!)))
                             }
-                            putValueArgument(0, irUnit())       // value
-                            putValueArgument(1, irNull())       // exception
+                            putValueArgument(0, irGetObject(symbols.unit)) // value
+                            putValueArgument(1, irNull()) // exception
                         })
             }
         }
@@ -285,17 +251,13 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
     private var coroutineId = 0
 
     private val COROUTINES_FQ_NAME            = FqName.fromSegments(listOf("kotlin", "coroutines", "experimental"))
-    private val COROUTINES_INTRINSICS_FQ_NAME = FqName.fromSegments(listOf("kotlin", "coroutines", "experimental", "intrinsics"))
     private val KOTLIN_FQ_NAME                = FqName("kotlin")
 
     private val coroutinesScope           = context.irModule!!.descriptor.getPackage(COROUTINES_FQ_NAME).memberScope
-    private val coroutinesIntrinsicsScope = context.irModule!!.descriptor.getPackage(COROUTINES_INTRINSICS_FQ_NAME).memberScope
     private val kotlinPackageScope        = context.irModule!!.descriptor.getPackage(KOTLIN_FQ_NAME).memberScope
 
     private val continuationClassDescriptor = coroutinesScope
             .getContributedClassifier(Name.identifier("Continuation"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-    private val COROUTINE_SUSPENDED = coroutinesIntrinsicsScope
-            .getContributedVariables(Name.identifier("COROUTINE_SUSPENDED"), NoLookupLocation.FROM_BACKEND).first()
 
     private inner class CoroutineBuilder(val irFunction: IrFunction, val functionReference: IrFunctionReference?) {
 
@@ -313,11 +275,16 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
         private lateinit var coroutineClassThis: IrValueParameterSymbol
         private lateinit var argumentToPropertiesMap: Map<ParameterDescriptor, IrFieldSymbol>
 
-        private val coroutineImplClassDescriptor = context.builtIns.getKonanInternalClass("CoroutineImpl")
+        private val coroutineImplSymbol = symbols.coroutineImpl
+        private val coroutineImplConstructorSymbol = coroutineImplSymbol.constructors.single()
+        private val coroutineImplClassDescriptor = coroutineImplSymbol.descriptor
         private val create1FunctionDescriptor = coroutineImplClassDescriptor.unsubstitutedMemberScope
                 .getContributedFunctions(Name.identifier("create"), NoLookupLocation.FROM_BACKEND)
                 .single { it.valueParameters.size == 1 }
         private val create1CompletionParameter = create1FunctionDescriptor.valueParameters[0]
+
+        private val coroutineImplLabelGetterSymbol = coroutineImplSymbol.getPropertyGetter("label")!!
+        private val coroutineImplLabelSetterSymbol = coroutineImplSymbol.getPropertySetter("label")!!
 
         fun build(): BuiltCoroutine {
             val superTypes = mutableListOf<KotlinType>(coroutineImplClassDescriptor.defaultType)
@@ -406,6 +373,8 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                     ).filterNotNull().toList()
             coroutineClassDescriptor.initialize(SimpleMemberScope(contributedDescriptors), constructors, null)
 
+            coroutineClass.addFakeOverrides()
+
             coroutineConstructorBuilder.initialize()
             coroutineClass.declarations.add(coroutineConstructorBuilder.ir)
 
@@ -437,8 +406,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
         private fun createConstructorBuilder()
                 = object : SymbolWithIrBuilder<IrConstructorSymbol, IrConstructor>() {
 
-            private val coroutineImplConstructorDescriptor = coroutineImplClassDescriptor.constructors.single()
-
             override fun buildSymbol() = IrConstructorSymbolImpl(
                     ClassConstructorDescriptorImpl.create(
                             /* containingDeclaration = */ coroutineClassDescriptor,
@@ -452,7 +419,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                 val descriptor = symbol.descriptor as ClassConstructorDescriptorImpl
                 val constructorParameters = (
                         functionParameters
-                        + coroutineImplConstructorDescriptor.valueParameters[0] // completion.
+                        + coroutineImplConstructorSymbol.descriptor.valueParameters[0] // completion.
                         ).mapIndexed { index, parameter -> parameter.copyAsValueParameter(descriptor, index) }
 
                 descriptor.initialize(constructorParameters, Visibilities.PUBLIC)
@@ -478,7 +445,8 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                     val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
                     body = irBuilder.irBlockBody {
                         val completionParameter = valueParameters.last()
-                        +IrDelegatingConstructorCallImpl(startOffset, endOffset, coroutineImplConstructorDescriptor).apply {
+                        +IrDelegatingConstructorCallImpl(startOffset, endOffset,
+                                coroutineImplConstructorSymbol, coroutineImplConstructorSymbol.descriptor).apply {
                             putValueArgument(0, irGet(completionParameter.symbol))
                         }
                         +IrInstanceInitializerCallImpl(startOffset, endOffset, coroutineClass.symbol)
@@ -492,8 +460,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
 
         private fun createFactoryConstructorBuilder(boundParams: List<ParameterDescriptor>)
                 = object : SymbolWithIrBuilder<IrConstructorSymbol, IrConstructor>() {
-
-            private val coroutineImplConstructorDescriptor = coroutineImplClassDescriptor.constructors.single()
 
             override fun buildSymbol() = IrConstructorSymbolImpl(
                     ClassConstructorDescriptorImpl.create(
@@ -526,7 +492,8 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
 
                     val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
                     body = irBuilder.irBlockBody {
-                        +IrDelegatingConstructorCallImpl(startOffset, endOffset, coroutineImplConstructorDescriptor).apply {
+                        +IrDelegatingConstructorCallImpl(startOffset, endOffset,
+                                coroutineImplConstructorSymbol, coroutineImplConstructorSymbol.descriptor).apply {
                             putValueArgument(0, irNull()) // Completion.
                         }
                         +IrInstanceInitializerCallImpl(startOffset, endOffset, coroutineClass.symbol)
@@ -669,9 +636,9 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                                             putValueArgument(index, irGet(parameter.symbol))
                                         }
                                         putValueArgument(valueParameters.size,
-                                                irCall(getContinuationDescriptor.substitute(symbol.descriptor.returnType!!)))
+                                                irCall(getContinuationSymbol, listOf(symbol.descriptor.returnType!!)))
                                     }
-                                    putValueArgument(0, irUnit())       // value
+                                    putValueArgument(0, irGetObject(symbols.unit))       // value
                                     putValueArgument(1, irNull())       // exception
                                 }
                         )
@@ -803,7 +770,10 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                                                 scope.forEach {
                                                     +irSetField(irGet(coroutineClassThis), localToPropertyMap[it]!!, irGet(localsMap[it.descriptor] ?: it))
                                                 }
-                                                +irSet(irGet(coroutineClassThis), label, irGet(suspensionPoint.suspensionPointIdParameter.symbol))
+                                                +irCall(coroutineImplLabelSetterSymbol).apply {
+                                                    dispatchReceiver = irGet(coroutineClassThis)
+                                                    putValueArgument(0, irGet(suspensionPoint.suspensionPointIdParameter.symbol))
+                                                }
                                             }
                                         }
                                         restoreStateSymbol -> {
@@ -828,13 +798,15 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                             startOffset       = startOffset,
                             endOffset         = endOffset,
                             type              = context.builtIns.unitType,
-                            suspensionPointId = irGet(irGet(coroutineClassThis), label),
+                            suspensionPointId = irCall(coroutineImplLabelGetterSymbol).apply {
+                                dispatchReceiver = irGet(coroutineClassThis)
+                            },
                             result            = irBlock(startOffset, endOffset) {
                                 +irThrowIfNotNull(exceptionArgument)    // Coroutine might start with an exception.
                                 statements.forEach { +it }
                             })
                     if (irFunction.descriptor.returnType!!.isUnit())
-                        +irReturn(irUnit())                             // Insert explicit return for Unit functions.
+                        +irReturn(irGetObject(symbols.unit))                             // Insert explicit return for Unit functions.
                 }
                 return function
             }
@@ -1156,7 +1128,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                 }
 
         private fun IrBuilderWithScope.irReturnIfSuspended(value: IrValueSymbol) =
-                irIfThen(irEqeqeq(irGet(value), irGet(COROUTINE_SUSPENDED)),
+                irIfThen(irEqeqeq(irGet(value), irCall(symbols.coroutineSuspendedGetter)),
                         irReturn(irGet(value)))
 
         private fun IrBuilderWithScope.irThrowIfNotNull(exception: IrValueSymbol) =

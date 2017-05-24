@@ -23,47 +23,50 @@ import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.konan.ir.ir2string
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.Scope
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irSetVar
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 
 class VarargInjectionLowering internal constructor(val context: Context): DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.forEach{
             when (it) {
-                is IrField    -> lower(it.descriptor, it.initializer)
-                is IrFunction -> lower(it.descriptor, it.body)
+                is IrField    -> lower(it.symbol, it.initializer)
+                is IrFunction -> lower(it.symbol, it.body)
                 is IrProperty -> {
-                    lower(it.descriptor, it.backingField)
-                    if (it.getter != null)
-                        lower(it.getter!!.descriptor, it.getter)
-                    if (it.setter != null)
-                        lower(it.setter!!.descriptor, it.setter)
+                    it.backingField?.let { field ->
+                        lower(field.symbol, field)
+                    }
+                    it.getter?.let { getter ->
+                        lower(getter.symbol, getter)
+                    }
+                    it.setter?.let { setter ->
+                        lower(setter.symbol, setter)
+                    }
                 }
             }
         }
     }
 
-    private fun lower(owner:DeclarationDescriptor, element: IrElement?) {
+    private fun lower(owner: IrSymbol, element: IrElement?) {
         element?.transformChildrenVoid(object: IrElementTransformerVoid() {
             val transformer = this
 
@@ -107,11 +110,13 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
                     val type = expression.varargElementType
                     log("$expression: array type:$type, is array of primitives ${!KotlinBuiltIns.isArray(expression.type)}")
                     val arrayHandle = arrayType(expression.type)
-                    val arrayConstructor = arrayHandle.arrayDescriptor.constructors.find { it.valueParameters.size == 1 }!!
-                    val block = irBlock(arrayHandle.arrayDescriptor.defaultType)
-                    val arrayConstructorCall = irCall(
-                            descriptor = arrayConstructor,
-                            typeArguments = typeArgument(arrayConstructor, type))
+                    val arrayConstructor = arrayHandle.arraySymbol.constructors.find { it.owner.valueParameters.size == 1 }!!
+                    val block = irBlock(arrayHandle.arraySymbol.owner.defaultType)
+                    val arrayConstructorCall = if (arrayConstructor.owner.typeParameters.isEmpty()) {
+                        irCall(arrayConstructor)
+                    } else {
+                        irCall(arrayConstructor, listOf(type))
+                    }
 
 
                     val vars = expression.elements.map {
@@ -135,10 +140,7 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
                             log("element:$i> ${ir2string(element)}")
                             val dst = vars[element]!!
                             if (element !is IrSpreadElement) {
-                                val setArrayElementCall = irCall(
-                                        descriptor    = arrayHandle.setMethodDescriptor,
-                                        typeArguments = null
-                                )
+                                val setArrayElementCall = irCall(arrayHandle.setMethodSymbol)
                                 setArrayElementCall.dispatchReceiver = irGet(arrayTmpVariable.symbol)
                                 setArrayElementCall.putValueArgument(0, if (hasSpreadElement) irGet(indexTmpVariable.symbol) else irConstInt(i))
                                 setArrayElementCall.putValueArgument(1, irGet(dst.symbol))
@@ -149,7 +151,7 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
                             } else {
                                 val arraySizeVariable = scope.createTemporaryVariable(irArraySize(arrayHandle, irGet(dst.symbol)), "length".synthesizedString)
                                 block.statements.add(arraySizeVariable)
-                                val copyCall = irCall(arrayHandle.copyRangeToDescriptor, null).apply {
+                                val copyCall = irCall(arrayHandle.copyRangeToSymbol).apply {
                                     extensionReceiver = irGet(dst.symbol)
                                     putValueArgument(0, irGet(arrayTmpVariable.symbol))  /* destination */
                                     putValueArgument(1, kIntZero)                            /* fromIndex */
@@ -170,13 +172,8 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
         })
     }
 
-
-    private fun typeArgument(arrayConstructor: ClassConstructorDescriptor, type: KotlinType):Map<TypeParameterDescriptor, KotlinType>? {
-        return if (!arrayConstructor.typeParameters.isEmpty())
-            mapOf(arrayConstructor.typeParameters.first() to type)
-        else
-            null
-    }
+    private val symbols = context.ir.symbols
+    private val intPlusInt = symbols.intPlusInt
 
     private fun arrayType(type: KotlinType): ArrayHandle = when {
         KotlinBuiltIns.isPrimitiveArray(type) -> {
@@ -196,7 +193,7 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
         else -> kArrayHandler
     }
 
-    private fun IrBuilderWithScope.intPlus() = irCall(kIntPlusDescriptor, null)
+    private fun IrBuilderWithScope.intPlus() = irCall(intPlusInt)
     private fun IrBuilderWithScope.increment(expression: IrExpression, value: IrExpression): IrExpression {
         return intPlus().apply {
             dispatchReceiver = expression
@@ -211,7 +208,7 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
         })
     }
     private fun calculateArraySize(arrayHandle: ArrayHandle, hasSpreadElement: Boolean, scope:Scope, expression: IrVararg, vars: Map<IrVarargElement, IrVariable>): IrExpression? {
-        context.createIrBuilder(scope.scopeOwner, expression.startOffset, expression.endOffset).run {
+        context.createIrBuilder(scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
             if (!hasSpreadElement)
                 return irConstInt(expression.elements.size)
             val notSpreadElementCount = expression.elements.filter { it !is IrSpreadElement}.size
@@ -224,7 +221,7 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
     }
 
     private fun IrBuilderWithScope.irArraySize(arrayHandle: ArrayHandle, expression: IrExpression): IrExpression {
-        val arraySize = irCall((arrayHandle.sizeDescriptor as PropertyDescriptor).getter as FunctionDescriptor, null).apply {
+        val arraySize = irCall(arrayHandle.sizeGetterSymbol).apply {
             dispatchReceiver = expression
         }
         return arraySize
@@ -237,48 +234,31 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
         context.log{"VARARG-INJECTOR:    $msg"}
     }
 
-    data class ArrayHandle(val arrayDescriptor:ClassDescriptor,
-                           val setMethodDescriptor: FunctionDescriptor,
-                           val sizeDescriptor:DeclarationDescriptor,
-                           val copyRangeToDescriptor:FunctionDescriptor)
-    val kKotlinPackage       = context.builtIns.builtInsModule.getPackage(FqName("kotlin"))
-    val kByteArrayHandler    = handle(arrayClassDescriptor("ByteArray"))
-    val kCharArrayHandler    = handle(arrayClassDescriptor("CharArray"))
-    val kShortArrayHandler   = handle(arrayClassDescriptor("ShortArray"))
-    val kIntArrayHandler     = handle(arrayClassDescriptor("IntArray"))
-    val kLongArrayHandler    = handle(arrayClassDescriptor("LongArray"))
-    val kFloatArrayHandler   = handle(arrayClassDescriptor("FloatArray"))
-    val kDoubleArrayHandler  = handle(arrayClassDescriptor("DoubleArray"))
-    val kBooleanArrayHandler = handle(arrayClassDescriptor("BooleanArray"))
-    val kArrayHandler        = handle(context.builtIns.array)
+    data class ArrayHandle(val arraySymbol: IrClassSymbol,
+                           val setMethodSymbol: IrFunctionSymbol,
+                           val sizeGetterSymbol: IrFunctionSymbol,
+                           val copyRangeToSymbol: IrFunctionSymbol)
 
-    val kInt               = context.builtIns.int
-    val kIntType           =  context.builtIns.intType
-    val kIntPlusDescriptor = DescriptorUtils.getAllDescriptors(kInt.unsubstitutedMemberScope).find {
-                        it.name.asString() == "plus"
-                    && (it as FunctionDescriptor).valueParameters[0].type == kIntType} as FunctionDescriptor
+    val kByteArrayHandler    = handle(symbols.byteArray)
+    val kCharArrayHandler    = handle(symbols.charArray)
+    val kShortArrayHandler   = handle(symbols.shortArray)
+    val kIntArrayHandler     = handle(symbols.intArray)
+    val kLongArrayHandler    = handle(symbols.longArray)
+    val kFloatArrayHandler   = handle(symbols.floatArray)
+    val kDoubleArrayHandler  = handle(symbols.doubleArray)
+    val kBooleanArrayHandler = handle(symbols.booleanArray)
+    val kArrayHandler        = handle(symbols.array)
 
-    private fun handle(descriptor:ClassDescriptor) = ArrayHandle(
-            arrayDescriptor       = descriptor,
-            setMethodDescriptor   = setMethodDescriptor(descriptor),
-            sizeDescriptor        = sizeMethodDescriptor(descriptor)!!,
-            copyRangeToDescriptor = copyRangeToFunctionDescriptor(descriptor))
+    private fun handle(symbol: IrClassSymbol) = ArrayHandle(
+            arraySymbol = symbol,
+            setMethodSymbol = symbol.functions.single { it.descriptor.name == OperatorNameConventions.SET },
+            sizeGetterSymbol = symbol.getPropertyGetter("size")!!,
+            copyRangeToSymbol = symbols.copyRangeTo[symbol.descriptor]!!
+    )
 
-    private fun copyRangeToFunctionDescriptor(descriptor: ClassDescriptor): FunctionDescriptor {
-        val packageViewDescriptor = descriptor.module.getPackage(KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME)
-        return packageViewDescriptor.memberScope.getContributedFunctions(Name.identifier("copyRangeTo"), NoLookupLocation.FROM_BACKEND).first {
-            it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor == descriptor
-        }
-    }
-    private fun setMethodDescriptor(descriptor:ClassDescriptor) = methodDescriptor(descriptor, "set")
-    private fun sizeMethodDescriptor(descriptor:ClassDescriptor) = descriptor(descriptor, "size")
-    private fun methodDescriptor(descriptor:ClassDescriptor, methodName:String) = DescriptorUtils.getFunctionByName(descriptor.unsubstitutedMemberScope, Name.identifier(methodName))
-    private fun arrayClassDescriptor(name:String) = kKotlinPackage.memberScope.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-    private fun descriptor(descriptor: ClassDescriptor, name:String) = DescriptorUtils.getAllDescriptors(descriptor.unsubstitutedMemberScope).find{it.name.asString() == name}
 }
 
 private fun IrBuilderWithScope.irConstInt(value: Int): IrConst<Int> = IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, value)
 private fun IrBuilderWithScope.irBlock(type: KotlinType): IrBlock = IrBlockImpl(startOffset, endOffset, type)
-private fun IrBuilderWithScope.irCall(descriptor: FunctionDescriptor, typeArguments: Map<TypeParameterDescriptor, KotlinType>?): IrCall = IrCallImpl(startOffset, endOffset, descriptor, typeArguments)
 private val IrBuilderWithScope.kIntZero get() = irConstInt(0)
 private val IrBuilderWithScope.kIntOne get() = irConstInt(1)

@@ -17,8 +17,12 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -41,6 +45,12 @@ class CheckIrElementVisitor(val builtIns: KotlinBuiltIns, val reportError: Repor
     private fun IrExpression.ensureTypeIs(expectedType: KotlinType) {
         if (expectedType != type) {
             reportError(this, "unexpected expression.type: expected $expectedType, got ${type}")
+        }
+    }
+
+    private fun IrSymbol.ensureBound(expression: IrExpression) {
+        if (!this.isBound) {
+            reportError(expression, "Unbound symbol ${this}")
         }
     }
 
@@ -110,6 +120,8 @@ class CheckIrElementVisitor(val builtIns: KotlinBuiltIns, val reportError: Repor
         } else {
             expression.ensureTypeIs(returnType)
         }
+
+        expression.superQualifierSymbol?.ensureBound(expression)
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
@@ -128,6 +140,7 @@ class CheckIrElementVisitor(val builtIns: KotlinBuiltIns, val reportError: Repor
         super.visitInstanceInitializerCall(expression)
 
         expression.ensureTypeIs(builtIns.unitType)
+        expression.classSymbol.ensureBound(expression)
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall) {
@@ -173,6 +186,7 @@ class CheckIrElementVisitor(val builtIns: KotlinBuiltIns, val reportError: Repor
         super.visitReturn(expression)
 
         expression.ensureTypeIs(builtIns.nothingType)
+        expression.returnTargetSymbol.ensureBound(expression)
     }
 
     override fun visitThrow(expression: IrThrow) {
@@ -180,4 +194,60 @@ class CheckIrElementVisitor(val builtIns: KotlinBuiltIns, val reportError: Repor
 
         expression.ensureTypeIs(builtIns.nothingType)
     }
+
+    override fun visitClass(declaration: IrClass) {
+        super.visitClass(declaration)
+
+        if (declaration.descriptor.kind != ClassKind.ANNOTATION_CLASS) {
+            // Check that all functions and properties from memberScope are present in IR
+            // (including FAKE_OVERRIDE ones).
+
+            val allDescriptors = declaration.descriptor.unsubstitutedMemberScope
+                    .getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>()
+
+            val presentDescriptors = declaration.declarations.map { it.descriptor }
+
+            val missingDescriptors = allDescriptors - presentDescriptors
+
+            if (missingDescriptors.isNotEmpty()) {
+                reportError(declaration, "Missing declarations for descriptors:\n" +
+                        missingDescriptors.joinToString("\n"))
+            }
+        }
+    }
+
+    override fun visitDeclarationReference(expression: IrDeclarationReference) {
+        super.visitDeclarationReference(expression)
+
+        expression.symbol.ensureBound(expression)
+    }
+
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
+        super.visitFunctionAccess(expression)
+
+        expression.symbol.ensureBound(expression)
+    }
+
+    override fun visitFunctionReference(expression: IrFunctionReference) {
+        super.visitFunctionReference(expression)
+
+        expression.symbol.ensureBound(expression)
+    }
+
+    override fun visitPropertyReference(expression: IrPropertyReference) {
+        super.visitPropertyReference(expression)
+
+        expression.field?.ensureBound(expression)
+        expression.getter?.ensureBound(expression)
+        expression.setter?.ensureBound(expression)
+    }
+
+    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) {
+        super.visitLocalDelegatedPropertyReference(expression)
+
+        expression.delegate.ensureBound(expression)
+        expression.getter.ensureBound(expression)
+        expression.setter?.ensureBound(expression)
+    }
+
 }

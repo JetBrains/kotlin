@@ -19,13 +19,11 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.validateIrFile
+import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.konan.lower.*
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.IrSymbolBindingChecker
 import org.jetbrains.kotlin.ir.util.replaceUnboundSymbols
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 internal class KonanLower(val context: Context) {
 
@@ -49,9 +47,14 @@ internal class KonanLower(val context: Context) {
         // Inlining must be run before other phases.
         phaser.phase(KonanPhase.LOWER_INLINE) {
             FunctionInlining(context).inline(irModule)
-            irModule.replaceUnboundSymbols(context)
-            irModule.checkSymbolsBound()
         }
+
+        phaser.phase(KonanPhase.LOWER_INTEROP_PART1) {
+            irModule.files.forEach(InteropLoweringPart1(context)::lower)
+        }
+
+        irModule.replaceUnboundSymbols(context)
+        validateIrModule(context, irModule)
     }
 
     fun lowerFile(irFile: IrFile) {
@@ -59,31 +62,24 @@ internal class KonanLower(val context: Context) {
 
         phaser.phase(KonanPhase.LOWER_STRING_CONCAT) {
             StringConcatenationLowering(context).lower(irFile)
-            irFile.checkSymbolsBound()
         }
         phaser.phase(KonanPhase.LOWER_ENUMS) {
             EnumClassLowering(context).run(irFile)
-            irFile.checkSymbolsBound()
         }
         phaser.phase(KonanPhase.LOWER_INITIALIZERS) {
             InitializersLowering(context).runOnFilePostfix(irFile)
-            irFile.checkSymbolsBound()
         }
         phaser.phase(KonanPhase.LOWER_SHARED_VARIABLES) {
             SharedVariablesLowering(context).runOnFilePostfix(irFile)
-            irFile.checkSymbolsBound()
         }
         phaser.phase(KonanPhase.LOWER_DELEGATION) {
             PropertyDelegationLowering(context).lower(irFile)
-            irFile.checkSymbolsBound()
         }
         phaser.phase(KonanPhase.LOWER_LOCAL_FUNCTIONS) {
             LocalDeclarationsLowering(context).runOnFilePostfix(irFile)
-            irFile.checkSymbolsBound()
         }
         phaser.phase(KonanPhase.LOWER_TAILREC) {
             TailrecLowering(context).runOnFilePostfix(irFile)
-            irFile.checkSymbolsBound()
         }
         phaser.phase(KonanPhase.LOWER_FINALLY) {
             FinallyBlocksLowering(context).runOnFilePostfix(irFile)
@@ -101,8 +97,8 @@ internal class KonanLower(val context: Context) {
         phaser.phase(KonanPhase.LOWER_INNER_CLASSES) {
             InnerClassLowering(context).runOnFilePostfix(irFile)
         }
-        phaser.phase(KonanPhase.LOWER_INTEROP) {
-            InteropLowering(context).lower(irFile)
+        phaser.phase(KonanPhase.LOWER_INTEROP_PART2) {
+            InteropLoweringPart2(context).lower(irFile)
         }
         phaser.phase(KonanPhase.LOWER_CALLABLES) {
             CallableReferenceLowering(context).runOnFilePostfix(irFile)
@@ -118,7 +114,6 @@ internal class KonanLower(val context: Context) {
         }
         phaser.phase(KonanPhase.BRIDGES_BUILDING) {
             BridgesBuilding(context).runOnFilePostfix(irFile)
-            DirectBridgesCallsLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.AUTOBOX) {
             validateIrFile(context, irFile)
@@ -126,9 +121,4 @@ internal class KonanLower(val context: Context) {
         }
     }
 
-    private fun IrElement.checkSymbolsBound() {
-        if (context.shouldVerifyIr()) {
-            this.acceptVoid(IrSymbolBindingChecker())
-        }
-    }
 }

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * This pass lowers tail recursion calls in `tailrec` functions.
  *
  * Note: it currently can't handle local functions and classes declared in default arguments.
- * See [DeepCopyIrTreeWithDeclarations].
+ * See [deepCopyWithVariables].
  */
 internal class TailrecLowering(val context: BackendContext) : FunctionLoweringPass {
     override fun lower(irFunction: IrFunction) {

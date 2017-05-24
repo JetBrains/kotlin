@@ -16,17 +16,12 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.StarProjectionImpl
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.replace
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 private val cPointerName = "CPointer"
 private val nativePointedName = "NativePointed"
@@ -67,52 +62,11 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
                 TypeUtils.getClassDescriptor(extensionReceiverParameter.type) == nativePointed
     }
 
-    val memberAt = packageScope.getContributedFunctions("memberAt").single()
-
     val interpretNullablePointed = packageScope.getContributedFunctions("interpretNullablePointed").single()
 
     val interpretCPointer = packageScope.getContributedFunctions("interpretCPointer").single()
 
-    val variableClass = packageScope.getContributedClassifier("CVariable") as ClassDescriptor
-
-    val arrayGetByIntIndex = packageScope.getContributedFunctions("get").single {
-        KotlinBuiltIns.isInt(it.valueParameters.single().type) &&
-                it.typeParameters.single().upperBounds.single() == variableClass.defaultType
-    }
-
-    val arrayGetByLongIndex = packageScope.getContributedFunctions("get").single {
-        KotlinBuiltIns.isLong(it.valueParameters.single().type) &&
-                it.typeParameters.single().upperBounds.single() == variableClass.defaultType
-    }
-
-    val allocUninitializedArrayWithIntLength = packageScope.getContributedFunctions("allocArray").single {
-        it.valueParameters.size == 1 && KotlinBuiltIns.isInt(it.valueParameters[0].type)
-    }
-
-    val allocUninitializedArrayWithLongLength = packageScope.getContributedFunctions("allocArray").single {
-        it.valueParameters.size == 1 && KotlinBuiltIns.isLong(it.valueParameters[0].type)
-    }
-
-    val allocVariable = packageScope.getContributedFunctions("alloc").single {
-        it.valueParameters.size == 0
-    }
-
-    val readValue = packageScope.getContributedFunctions("readValue").single {
-        it.valueParameters.size == 0
-    }
-
-    val readValueBySizeAndAlign = packageScope.getContributedFunctions("readValue").single {
-        it.valueParameters.size == 2
-    }
-
     val typeOf = packageScope.getContributedFunctions("typeOf").single()
-
-    val variableTypeClass =
-            variableClass.unsubstitutedInnerClassesScope.getContributedClassifier("Type") as ClassDescriptor
-
-    val variableTypeSize = variableTypeClass.unsubstitutedMemberScope.getContributedVariables("size").single()
-
-    val variableTypeAlign = variableTypeClass.unsubstitutedMemberScope.getContributedVariables("align").single()
 
     val nativeMemUtils = packageScope.getContributedClassifier("nativeMemUtils") as ClassDescriptor
 

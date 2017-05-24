@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.konan.util.atMostOne
+import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
+import org.jetbrains.kotlin.backend.konan.descriptors.target
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.isNullConst
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.type
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -49,6 +52,8 @@ internal class Autoboxing(val context: Context) : FileLoweringPass {
 }
 
 private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTransformer(context.builtIns) {
+
+    val symbols = context.ir.symbols
 
     // TODO: should we handle the cases when expression type
     // is not equal to e.g. called function return type?
@@ -133,13 +138,13 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     override fun IrExpression.useAs(type: KotlinType): IrExpression {
         val interop = context.interopBuiltIns
         if (this.isNullConst() && interop.nullableInteropValueTypes.any { type.isRepresentedAs(it) }) {
-            return IrCallImpl(startOffset, endOffset, context.builtIns.getNativeNullPtr).uncheckedCast(type)
+            return IrCallImpl(startOffset, endOffset, symbols.getNativeNullPtr).uncheckedCast(type)
         }
 
         val actualType = when (this) {
             is IrCall -> {
                 if (this.descriptor.isSuspend) context.builtIns.nullableAnyType
-                else this.descriptor.original.returnType ?: this.type
+                else this.callTarget.returnType ?: this.type
             }
             is IrGetField -> this.descriptor.original.type
 
@@ -157,17 +162,32 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         return this.adaptIfNecessary(actualType, type)
     }
 
-    override fun IrExpression.useAsDispatchReceiver(function: CallableDescriptor): IrExpression {
-        return this.useAsArgument(function.original.dispatchReceiverParameter!!)
+    private val IrMemberAccessExpression.target: CallableDescriptor get() = when (this) {
+        is IrCall -> this.callTarget
+        is IrDelegatingConstructorCall -> this.descriptor.original
+        else -> TODO(this.render())
     }
 
-    override fun IrExpression.useAsExtensionReceiver(function: CallableDescriptor): IrExpression {
-        return this.useAsArgument(function.original.extensionReceiverParameter!!)
+    private val IrCall.callTarget: FunctionDescriptor
+        get() = if (superQualifier == null && descriptor.isOverridable) {
+            // A virtual call.
+            descriptor.original
+        } else {
+            descriptor.target
+        }
+
+    override fun IrExpression.useAsDispatchReceiver(expression: IrMemberAccessExpression): IrExpression {
+        return this.useAsArgument(expression.target.dispatchReceiverParameter!!)
     }
 
-    override fun IrExpression.useAsValueArgument(parameter: ValueParameterDescriptor): IrExpression {
-        val function = parameter.containingDeclaration
-        return this.useAsArgument(function.original.valueParameters[parameter.index])
+    override fun IrExpression.useAsExtensionReceiver(expression: IrMemberAccessExpression): IrExpression {
+        return this.useAsArgument(expression.target.extensionReceiverParameter!!)
+    }
+
+    override fun IrExpression.useAsValueArgument(expression: IrMemberAccessExpression,
+                                                 parameter: ValueParameterDescriptor): IrExpression {
+
+        return this.useAsArgument(expression.target.valueParameters[parameter.index])
     }
 
     override fun IrExpression.useForField(field: PropertyDescriptor): IrExpression {
@@ -211,9 +231,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             context.builtIns.getKonanInternalClass("${valueType.shortName}Box").defaultType
 
     private fun IrExpression.box(valueType: ValueType): IrExpression {
-        val boxFunctionName = "box${valueType.shortName}"
-        val boxFunction = context.builtIns.getKonanInternalFunctions(boxFunctionName).singleOrNull() ?:
-                TODO(valueType.toString())
+        val boxFunction = symbols.boxFunctions[valueType]!!
 
         return IrCallImpl(startOffset, endOffset, boxFunction).apply {
             putValueArgument(0, this@box)
@@ -221,22 +239,16 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     private fun IrExpression.unbox(valueType: ValueType): IrExpression {
-        val unboxFunctionName = "unbox${valueType.shortName}"
-
-        context.builtIns.getKonanInternalFunctions(unboxFunctionName).atMostOne()?.let {
+        symbols.unboxFunctions[valueType]?.let {
             return IrCallImpl(startOffset, endOffset, it).apply {
-                putValueArgument(0, this@unbox.uncheckedCast(it.valueParameters[0].type))
+                putValueArgument(0, this@unbox.uncheckedCast(it.owner.valueParameters[0].type))
             }.uncheckedCast(this.type)
         }
 
-        val boxGetter = getBoxType(valueType)
-                .memberScope.getContributedDescriptors()
-                .filterIsInstance<PropertyDescriptor>()
-                .single { it.name.asString() == "value" }
-                .getter!!
+        val boxGetter = symbols.boxClasses[valueType]!!.getPropertyGetter("value")!!
 
         return IrCallImpl(startOffset, endOffset, boxGetter).apply {
-            dispatchReceiver = this@unbox.uncheckedCast(boxGetter.dispatchReceiverParameter!!.type)
+            dispatchReceiver = this@unbox.uncheckedCast(boxGetter.descriptor.dispatchReceiverParameter!!.type)
         }.uncheckedCast(this.type) // Try not to bring new type incompatibilities.
     }
 

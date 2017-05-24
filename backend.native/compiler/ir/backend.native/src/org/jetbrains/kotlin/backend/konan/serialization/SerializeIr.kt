@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.util.addFakeOverrides
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
 import org.jetbrains.kotlin.serialization.KonanIr
@@ -1057,6 +1058,7 @@ internal class IrDeserializer(val context: Context,
         val clazz = IrClassImpl(start, end, origin, descriptor, members)
 
         clazz.createParameterDeclarations()
+        clazz.addFakeOverrides()
 
         return clazz
 

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -48,39 +47,16 @@ import org.jetbrains.kotlin.utils.Printer
 
 class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContext(backendContext.irBuiltIns)
 
-class DeclarationIrBuilder : IrBuilderWithScope {
-
-    constructor(
-            backendContext: BackendContext,
-            symbol: IrSymbol,
-            startOffset: Int = UNDEFINED_OFFSET,
-            endOffset: Int = UNDEFINED_OFFSET
-    ) : super(
-            IrLoweringContext(backendContext),
-            Scope(symbol),
-            startOffset,
-            endOffset
-    )
-
-    @Deprecated("Creates unbound symbol")
-    constructor(
-            backendContext: BackendContext,
-            declarationDescriptor: DeclarationDescriptor,
-            startOffset: Int = UNDEFINED_OFFSET,
-            endOffset: Int = UNDEFINED_OFFSET
-    ) : super(
-            IrLoweringContext(backendContext),
-            Scope(declarationDescriptor),
-            startOffset,
-            endOffset
-    )
-}
-
-@Deprecated("Creates unbound symbol")
-fun BackendContext.createIrBuilder(declarationDescriptor: DeclarationDescriptor,
-                                   startOffset: Int = UNDEFINED_OFFSET,
-                                   endOffset: Int = UNDEFINED_OFFSET) =
-        DeclarationIrBuilder(this, declarationDescriptor, startOffset, endOffset)
+class DeclarationIrBuilder(
+        backendContext: BackendContext,
+        symbol: IrSymbol,
+        startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET
+) : IrBuilderWithScope(
+        IrLoweringContext(backendContext),
+        Scope(symbol),
+        startOffset,
+        endOffset
+)
 
 fun BackendContext.createIrBuilder(symbol: IrSymbol,
                                    startOffset: Int = UNDEFINED_OFFSET,
@@ -101,24 +77,8 @@ inline fun IrGeneratorWithScope.irBlock(expression: IrExpression, origin: IrStat
 inline fun IrGeneratorWithScope.irBlockBody(irElement: IrElement, body: IrBlockBodyBuilder.() -> Unit) =
         this.irBlockBody(irElement.startOffset, irElement.endOffset, body)
 
-
-@Deprecated("Creates unbound symbol")
-fun IrBuilderWithScope.irUnit() =
-        IrGetObjectValueImpl(startOffset, endOffset, context.builtIns.unitType, context.builtIns.unit)
-
 fun IrBuilderWithScope.irIfThen(condition: IrExpression, thenPart: IrExpression) =
         IrIfThenElseImpl(startOffset, endOffset, context.builtIns.unitType, condition, thenPart, null)
-
-@Deprecated("Creates unbound symbol")
-fun IrBuilderWithScope.irGet(descriptor: PropertyDescriptor) =
-        IrCallImpl(startOffset, endOffset, descriptor.getter!!)
-
-@Deprecated("Creates unbound symbol")
-fun IrBuilderWithScope.irSet(receiver: IrExpression, descriptor: PropertyDescriptor, arg: IrExpression) =
-        IrCallImpl(startOffset, endOffset, descriptor.setter!!).apply {
-            dispatchReceiver = receiver
-            putValueArgument(0, arg)
-        }
 
 fun IrBuilderWithScope.irNot(arg: IrExpression) =
         primitiveOp1(startOffset, endOffset, context.irBuiltIns.booleanNotSymbol, IrStatementOrigin.EXCL, arg)
@@ -139,30 +99,21 @@ fun IrBuilderWithScope.irImplicitCoercionToUnit(arg: IrExpression) =
         IrTypeOperatorCallImpl(startOffset, endOffset, context.builtIns.unitType,
                 IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.builtIns.unitType, arg)
 
-@Deprecated("Creates unbound symbol")
-fun IrBuilderWithScope.irGetField(receiver: IrExpression, descriptor: PropertyDescriptor) =
-        IrGetFieldImpl(startOffset, endOffset, descriptor, receiver)
-
-@Deprecated("Creates unbound symbol")
-fun IrBuilderWithScope.irSetField(receiver: IrExpression, descriptor: PropertyDescriptor, value: IrExpression) =
-        IrSetFieldImpl(startOffset, endOffset, descriptor, receiver, value)
-
 fun IrBuilderWithScope.irGetField(receiver: IrExpression, symbol: IrFieldSymbol) =
         IrGetFieldImpl(startOffset, endOffset, symbol, receiver)
 
 fun IrBuilderWithScope.irSetField(receiver: IrExpression, symbol: IrFieldSymbol, value: IrExpression) =
         IrSetFieldImpl(startOffset, endOffset, symbol, receiver, value)
 
-@Deprecated("Creates unbound symbol")
 open class IrBuildingTransformer(private val context: BackendContext) : IrElementTransformerVoid() {
     private var currentBuilder: IrBuilderWithScope? = null
 
     protected val builder: IrBuilderWithScope
         get() = currentBuilder!!
 
-    private inline fun <T> withBuilder(declarationDescriptor: DeclarationDescriptor, block: () -> T): T {
+    private inline fun <T> withBuilder(symbol: IrSymbol, block: () -> T): T {
         val oldBuilder = currentBuilder
-        currentBuilder = context.createIrBuilder(declarationDescriptor)
+        currentBuilder = context.createIrBuilder(symbol)
         return try {
             block()
         } finally {
@@ -171,20 +122,20 @@ open class IrBuildingTransformer(private val context: BackendContext) : IrElemen
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
-        withBuilder(declaration.descriptor) {
+        withBuilder(declaration.symbol) {
             return super.visitFunction(declaration)
         }
     }
 
     override fun visitField(declaration: IrField): IrStatement {
-        withBuilder(declaration.descriptor) {
+        withBuilder(declaration.symbol) {
             // Transforms initializer:
             return super.visitField(declaration)
         }
     }
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement {
-        withBuilder(declaration.descriptor) {
+        withBuilder(declaration.symbol) {
             return super.visitAnonymousInitializer(declaration)
         }
     }

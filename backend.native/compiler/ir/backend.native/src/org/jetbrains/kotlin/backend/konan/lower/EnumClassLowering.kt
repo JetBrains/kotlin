@@ -282,6 +282,8 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                     .toList()
             defaultClassDescriptor.initialize(SimpleMemberScope(contributedDescriptors), constructors, null)
 
+            defaultClass.addFakeOverrides()
+
             return defaultClass
         }
 

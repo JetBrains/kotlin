@@ -25,32 +25,60 @@ import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.isRepresentedAs
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.builders.IrBuilder
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getArguments
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
+internal class InteropLoweringPart1(val context: Context) : IrElementTransformerVoid(), FileLoweringPass {
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid(this)
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        expression.transformChildrenVoid()
+
+        return when (expression.descriptor.original) {
+            context.interopBuiltIns.typeOf -> {
+                val typeArgument = expression.getSingleTypeArgument()
+                val classDescriptor = TypeUtils.getClassDescriptor(typeArgument)
+
+                if (classDescriptor == null) {
+                    expression
+                } else {
+                    val companionObjectDescriptor = classDescriptor.companionObjectDescriptor ?:
+                            error("native variable class $classDescriptor must have the companion object")
+
+                    IrGetObjectValueImpl(
+                            expression.startOffset, expression.endOffset,
+                            companionObjectDescriptor.defaultType, companionObjectDescriptor
+                    )
+                }
+            }
+            else -> expression
+        }
+    }
+}
+
 /**
  * Lowers some interop intrinsic calls.
  */
-internal class InteropLowering(val context: Context) : FileLoweringPass {
+internal class InteropLoweringPart2(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val transformer = InteropTransformer(context, irFile)
         irFile.transformChildrenVoid(transformer)
@@ -60,142 +88,7 @@ internal class InteropLowering(val context: Context) : FileLoweringPass {
 private class InteropTransformer(val context: Context, val irFile: IrFile) : IrBuildingTransformer(context) {
 
     val interop = context.interopBuiltIns
-    val konanBuiltins = context.builtIns
-
-    private fun MemberScope.getSingleContributedFunction(name: String,
-                                                         predicate: (SimpleFunctionDescriptor) -> Boolean) =
-            this.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).single(predicate)
-
-    private fun IrBuilder.irGetObject(descriptor: ClassDescriptor): IrExpression {
-        return IrGetObjectValueImpl(startOffset, endOffset, descriptor.defaultType, descriptor)
-    }
-
-    private fun IrBuilder.typeOf(descriptor: ClassDescriptor): IrExpression {
-        val companionObject = descriptor.companionObjectDescriptor ?:
-                error("native variable class $descriptor must have the companion object")
-        // TODO: add more checks and produce the compile error instead of exception.
-
-        return irGetObject(companionObject)
-    }
-
-    private fun IrBuilder.typeOf(type: KotlinType): IrExpression? {
-        val descriptor = TypeUtils.getClassDescriptor(type) ?: return null
-        return typeOf(descriptor)
-    }
-
-    private fun KotlinType.findOverride(property: PropertyDescriptor): PropertyDescriptor {
-        val result = this.memberScope.getContributedVariables(property.name, NoLookupLocation.FROM_BACKEND).single()
-        assert (OverridingUtil.overrides(result, property))
-        return result
-    }
-
-    private fun IrBuilderWithScope.sizeOf(typeObject: IrExpression): IrExpression {
-        val sizeProperty = typeObject.type.findOverride(interop.variableTypeSize)
-        return irGet(typeObject, sizeProperty)
-    }
-
-    private fun IrBuilderWithScope.sizeOf(type: KotlinType): IrExpression? {
-        val typeObject = typeOf(type) ?: return null
-        return sizeOf(typeObject)
-    }
-
-    private fun IrBuilderWithScope.alignOf(typeObject: IrExpression): IrExpression {
-        val alignProperty = typeObject.type.findOverride(interop.variableTypeAlign)
-        return irGet(typeObject, alignProperty)
-    }
-
-    private fun IrBuilderWithScope.alignOf(type: KotlinType): IrExpression? {
-        val typeObject = typeOf(type) ?: return null
-        return alignOf(typeObject)
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    private fun IrBuilderWithScope.interpretPointed(expression: IrCall, type: KotlinType): IrExpression =
-            irCall(interop.interpretNullablePointed).apply {
-                putValueArgument(0, expression)
-            }
-    // TODO: make the result type more correct.
-
-    private fun IrBuilderWithScope.arrayGet(array: IrExpression, index: IrExpression): IrExpression? {
-        val elementType = array.type.arguments.single().type
-        val elementSize = sizeOf(elementType) ?: return null
-
-        val resultRawPtr = irCall(konanBuiltins.nativePtrPlusLong).apply {
-            dispatchReceiver = irCall(interop.cPointerGetRawValue).apply {
-                extensionReceiver = array
-            }
-            putValueArgument(0, times(elementSize, index))
-        }
-        return interpretPointed(resultRawPtr, elementType)
-    }
-
-    private fun IrBuilderWithScope.times(left: IrExpression, right: IrExpression): IrCall {
-        val times = left.type.memberScope.getSingleContributedFunction("times") {
-            right.type.isSubtypeOf(it.valueParameters.single().type)
-        }
-
-        return irCall(times).apply {
-            dispatchReceiver = left
-            putValueArgument(0, right)
-        }
-    }
-
-    private fun IrBuilderWithScope.alloc(placement: IrExpression, size: IrExpression, align: IrExpression): IrExpression {
-        val alloc = placement.type.memberScope.getSingleContributedFunction("alloc") {
-            size.type.isSubtypeOf(it.valueParameters[0]!!.type) &&
-                    align.type.isSubtypeOf(it.valueParameters[1]!!.type)
-        }
-
-        return irCall(alloc).apply {
-            dispatchReceiver = placement
-            putValueArgument(0, size)
-            putValueArgument(1, align)
-        }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    private fun IrBuilderWithScope.nativePointedToCPointer(
-            expression: IrExpression, pointeeType: KotlinType
-    ): IrExpression = irCall(interop.interpretCPointer).apply {
-        putValueArgument(0, irCall(interop.nativePointedGetRawPointer).apply {
-            extensionReceiver = expression
-        })
-    }
-    // TODO: make the result type more correct.
-
-    private fun IrBuilderWithScope.allocArray(placement: IrExpression,
-                                              elementType: KotlinType,
-                                              length: IrExpression
-    ): IrExpression? {
-
-        val elementSize = sizeOf(elementType) ?: return null
-        val size = times(elementSize, length)
-        val align = alignOf(elementType) ?: return null
-
-        return nativePointedToCPointer(alloc(placement, size, align), elementType)
-    }
-
-    private fun IrBuilderWithScope.alloc(placement: IrExpression, type: KotlinType): IrExpression? {
-        val size = sizeOf(type) ?: return null
-        val align = alignOf(type) ?: return null
-
-        return alloc(placement, size, align)
-    }
-
-    private fun IrBuilderWithScope.readValue(receiver: IrExpression, typeArgument: KotlinType): IrCallImpl? {
-        val size = sizeOf(typeArgument) ?: return null
-        val align = alignOf(typeArgument) ?: return null
-
-        val callee = interop.readValueBySizeAndAlign
-        val typeParameter = callee.typeParameters.single()
-        val typeArguments = mapOf(typeParameter to typeArgument)
-
-        return irCall(callee, typeArguments).apply {
-            extensionReceiver = receiver
-            putValueArgument(0, size)
-            putValueArgument(1, align)
-        }
-    }
+    val symbols = context.ir.symbols
 
     override fun visitCall(expression: IrCall): IrExpression {
 
@@ -214,7 +107,7 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                 OverridingUtil.overrides(descriptor, interop.nativePointedRawPtrGetter)) {
 
             // Replace by the intrinsic call to be handled by code generator:
-            return builder.irCall(interop.nativePointedGetRawPointer).apply {
+            return builder.irCall(symbols.interopNativePointedGetRawPointer).apply {
                 extensionReceiver = expression.dispatchReceiver
             }
         }
@@ -222,33 +115,9 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
         return when (descriptor) {
             interop.cPointerRawValue.getter ->
                 // Replace by the intrinsic call to be handled by code generator:
-                builder.irCall(interop.cPointerGetRawValue).apply {
+                builder.irCall(symbols.interopCPointerGetRawValue).apply {
                     extensionReceiver = expression.dispatchReceiver
                 }
-
-            interop.arrayGetByIntIndex, interop.arrayGetByLongIndex -> {
-                val array = expression.extensionReceiver!!
-                val index = expression.getValueArgument(0)!!
-                builder.arrayGet(array, index) ?: expression
-            }
-
-            interop.allocUninitializedArrayWithIntLength, interop.allocUninitializedArrayWithLongLength -> {
-                val placement = expression.extensionReceiver!!
-                val elementType = expression.type.arguments.single().type
-                val length = expression.getValueArgument(0)!!
-                builder.allocArray(placement, elementType, length) ?: expression
-            }
-
-            interop.allocVariable -> {
-                val placement = expression.extensionReceiver!!
-                val type = expression.getSingleTypeArgument()
-                builder.alloc(placement, type) ?: expression
-            }
-
-            interop.typeOf -> {
-                val type = expression.getSingleTypeArgument()
-                builder.typeOf(type) ?: expression
-            }
 
             interop.bitsToFloat -> {
                 val argument = expression.getValueArgument(0)
@@ -270,13 +139,6 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                 }
             }
 
-            interop.readValue -> {
-                val typeArgument = expression.getSingleTypeArgument()
-                val receiver = expression.extensionReceiver!!
-
-                builder.readValue(receiver, typeArgument) ?: expression
-            }
-
             in interop.staticCFunction -> {
                 val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(0)!!)
 
@@ -288,7 +150,8 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                     // TODO: should probably be reported during analysis.
                 }
 
-                val target = irCallableReference.descriptor.original
+                val targetSymbol = irCallableReference.symbol
+                val target = targetSymbol.descriptor
                 val signatureTypes = target.allParameters.map { it.type } + target.returnType!!
 
                 signatureTypes.forEachIndexed { index, type ->
@@ -312,7 +175,7 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                 IrFunctionReferenceImpl(
                         builder.startOffset, builder.endOffset,
                         expression.type,
-                        target,
+                        targetSymbol, target,
                         typeArguments = null)
             }
 
@@ -352,10 +215,14 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                     else -> throw Error()
                 }
 
-                val conversionDescriptor = receiver.type.memberScope.getContributedFunctions(
-                        Name.identifier("to$typeOperand"), NoLookupLocation.FROM_BACKEND).single()
+                val receiverClass = symbols.integerClasses.single {
+                    receiver.type.isSubtypeOf(it.owner.defaultType)
+                }
+                val conversionSymbol = receiverClass.functions.single {
+                    it.descriptor.name == Name.identifier("to$typeOperand")
+                }
 
-                builder.irCall(conversionDescriptor).apply {
+                builder.irCall(conversionSymbol).apply {
                     dispatchReceiver = receiver
                 }
             }
@@ -415,11 +282,11 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
 
         return argument.statements.last() as? IrFunctionReference
     }
+}
 
-    private fun IrCall.getSingleTypeArgument(): KotlinType {
-        val typeParameter = descriptor.original.typeParameters.single()
-        return getTypeArgument(typeParameter)!!
-    }
+private fun IrCall.getSingleTypeArgument(): KotlinType {
+    val typeParameter = descriptor.original.typeParameters.single()
+    return getTypeArgument(typeParameter)!!
 }
 
 private fun IrBuilder.irFloat(value: Float) =

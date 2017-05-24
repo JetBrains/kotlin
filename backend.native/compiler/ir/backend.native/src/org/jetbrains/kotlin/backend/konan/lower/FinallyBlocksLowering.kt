@@ -1,24 +1,25 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.DeepCopyIrTreeWithDeclarations
 import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockImpl
+import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -32,9 +33,9 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
         fun toIr(context: Context, startOffset: Int, endOffset: Int, value: IrExpression): IrExpression
     }
 
-    private data class Return(val functionDescriptor: FunctionDescriptor): HighLevelJump {
+    private data class Return(val target: IrFunctionSymbol): HighLevelJump {
         override fun toIr(context: Context, startOffset: Int, endOffset: Int, value: IrExpression)
-                = IrReturnImpl(startOffset, endOffset, functionDescriptor, value)
+                = IrReturnImpl(startOffset, endOffset, target, value)
     }
 
     private data class Break(val loop: IrLoop): HighLevelJump {
@@ -64,7 +65,7 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
     private class TryScope(var expression: IrExpression,
                            val finallyExpression: IrExpression,
                            val irBuilder: IrBuilderWithScope): Scope() {
-        val jumps = mutableMapOf<HighLevelJump, FunctionDescriptor>()
+        val jumps = mutableMapOf<HighLevelJump, IrFunctionSymbol>()
     }
 
     private val scopeStack = mutableListOf<Scope>()
@@ -101,26 +102,26 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
                 override fun visitBreak(jump: IrBreak): IrExpression {
                     val startOffset = jump.startOffset
                     val endOffset = jump.endOffset
-                    val irBuilder = context.createIrBuilder(functionDescriptor, startOffset, endOffset)
+                    val irBuilder = context.createIrBuilder(irFunction.symbol, startOffset, endOffset)
                     return performHighLevelJump(
                             targetScopePredicate = { it is LoopScope && it.loop == jump.loop },
                             jump                 = Break(jump.loop),
                             startOffset          = startOffset,
                             endOffset            = endOffset,
-                            value                = irBuilder.irUnit()
+                            value                = irBuilder.irGetObject(context.ir.symbols.unit)
                     ) ?: jump
                 }
 
                 override fun visitContinue(jump: IrContinue): IrExpression {
                     val startOffset = jump.startOffset
                     val endOffset = jump.endOffset
-                    val irBuilder = context.createIrBuilder(functionDescriptor, startOffset, endOffset)
+                    val irBuilder = context.createIrBuilder(irFunction.symbol, startOffset, endOffset)
                     return performHighLevelJump(
                             targetScopePredicate = { it is LoopScope && it.loop == jump.loop },
                             jump                 = Continue(jump.loop),
                             startOffset          = startOffset,
                             endOffset            = endOffset,
-                            value                = irBuilder.irUnit()
+                            value                = irBuilder.irGetObject(context.ir.symbols.unit)
                     ) ?: jump
                 }
 
@@ -129,7 +130,7 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
 
                     return performHighLevelJump(
                             targetScopePredicate = { it is ReturnableScope && it.descriptor == expression.returnTarget },
-                            jump                 = Return(expression.returnTarget),
+                            jump                 = Return(expression.returnTargetSymbol),
                             startOffset          = expression.startOffset,
                             endOffset            = expression.endOffset,
                             value                = expression.value
@@ -161,10 +162,10 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
 
                     val currentTryScope = tryScopes[index]
                     currentTryScope.jumps.getOrPut(jump) {
-                        val descriptor = getFakeFunctionDescriptor(jump.toString(), value.type)
+                        val symbol = getIrReturnableBlockSymbol(jump.toString(), value.type)
                         with(currentTryScope) {
                             irBuilder.run {
-                                val inlinedFinally = irInlineFinally(descriptor, expression, finallyExpression)
+                                val inlinedFinally = irInlineFinally(symbol, expression, finallyExpression)
                                 expression = performHighLevelJump(
                                         tryScopes   = tryScopes,
                                         index       = index + 1,
@@ -174,12 +175,12 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
                                         value       = inlinedFinally)
                             }
                         }
-                        descriptor
+                        symbol
                     }.let {
                         return IrReturnImpl(
                                 startOffset  = startOffset,
                                 endOffset    = endOffset,
-                                returnTargetDescriptor = it,
+                                returnTargetSymbol = it,
                                 value        = value)
                     }
                 }
@@ -191,7 +192,7 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
 
                     val startOffset = aTry.startOffset
                     val endOffset = aTry.endOffset
-                    val irBuilder = context.createIrBuilder(functionDescriptor, startOffset, endOffset)
+                    val irBuilder = context.createIrBuilder(irFunction.symbol, startOffset, endOffset)
                     val transformer = this
                     irBuilder.run {
                         val transformedTry = IrTryImpl(
@@ -223,33 +224,33 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
                                 finallyExpression = null
                         )
                         using(TryScope(syntheticTry, transformedFinallyExpression, this)) {
-                            val fallThroughDescriptor = getFakeFunctionDescriptor("fallThrough", aTry.type)
+                            val fallThroughSymbol = getIrReturnableBlockSymbol("fallThrough", aTry.type)
                             val transformedResult = aTry.tryResult.transform(transformer, null)
-                            transformedTry.tryResult = irReturn(fallThroughDescriptor, transformedResult)
+                            transformedTry.tryResult = irReturn(fallThroughSymbol, transformedResult)
                             for (aCatch in aTry.catches) {
                                 val transformedCatch = aCatch.transform(transformer, null)
-                                transformedCatch.result = irReturn(fallThroughDescriptor, transformedCatch.result)
+                                transformedCatch.result = irReturn(fallThroughSymbol, transformedCatch.result)
                                 transformedTry.catches.add(transformedCatch)
                             }
-                            return irInlineFinally(fallThroughDescriptor, it.expression, it.finallyExpression)
+                            return irInlineFinally(fallThroughSymbol, it.expression, it.finallyExpression)
                         }
                     }
                 }
 
-                private fun IrBuilderWithScope.irInlineFinally(descriptor: FunctionDescriptor,
+                private fun IrBuilderWithScope.irInlineFinally(symbol: IrReturnableBlockSymbol,
                                                                value: IrExpression,
                                                                finallyExpression: IrExpression): IrExpression {
-                    val returnType = descriptor.returnType!!
+                    val returnType = symbol.descriptor.returnType!!
                     return when {
                         returnType.isUnit() || returnType.isNothing() -> irBlock(value, null, returnType) {
-                            +irReturnableBlock(descriptor) {
+                            +irReturnableBlock(symbol) {
                                 +value
                             }
                             +finallyExpression.copy()
                         }
                         else -> irBlock(value, null, returnType) {
-                            val tmp = irTemporary(irReturnableBlock(descriptor) {
-                                +irReturn(descriptor, value)
+                            val tmp = irTemporary(irReturnableBlock(symbol) {
+                                +irReturn(symbol, value)
                             })
                             +finallyExpression.copy()
                             +irGet(tmp.symbol)
@@ -268,23 +269,19 @@ internal class FinallyBlocksLowering(val context: Context): FunctionLoweringPass
                     }
                 }
 
-                @Suppress("UNCHECKED_CAST")
-                private fun <T: IrElement> T.copy() = this.transform(DeepCopyIrTreeWithDeclarations(), data = null) as T
+                private fun getIrReturnableBlockSymbol(name: String, returnType: KotlinType): IrReturnableBlockSymbol =
+                        IrReturnableBlockSymbolImpl(getFakeFunctionDescriptor(name, returnType))
+
+                private inline fun <reified T : IrElement> T.copy() = this.deepCopyWithVariables()
             })
         }
     }
 
-    private object DECLARATION_ORIGIN_FINALLY_BLOCK :
-            IrDeclarationOriginImpl("FINALLY_BLOCK")
-
-    private fun IrBuilderWithScope.irVar(descriptor: VariableDescriptor, initializer: IrExpression?) =
-            IrVariableImpl(startOffset, endOffset, DECLARATION_ORIGIN_FINALLY_BLOCK, descriptor, initializer)
-
-    fun IrBuilderWithScope.irReturn(target: FunctionDescriptor, value: IrExpression) =
+    fun IrBuilderWithScope.irReturn(target: IrFunctionSymbol, value: IrExpression) =
             IrReturnImpl(startOffset, endOffset, target, value)
 
-    inline fun IrBuilderWithScope.irReturnableBlock(descriptor: FunctionDescriptor, body: IrBlockBuilder.() -> Unit) =
-            IrReturnableBlockImpl(startOffset, endOffset, descriptor.returnType!!, descriptor, null,
-                    IrBlockBuilder(context, scope, startOffset, endOffset, null, descriptor.returnType!!)
+    inline fun IrBuilderWithScope.irReturnableBlock(symbol: IrReturnableBlockSymbol, body: IrBlockBuilder.() -> Unit) =
+            IrReturnableBlockImpl(startOffset, endOffset, symbol.descriptor.returnType!!, symbol, null,
+                    IrBlockBuilder(context, scope, startOffset, endOffset, null, symbol.descriptor.returnType!!)
                             .block(body).statements)
 }
