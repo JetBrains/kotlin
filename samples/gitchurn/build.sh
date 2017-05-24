@@ -26,5 +26,5 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-cinterop -copt $CFLAGS -def $DIR/libgit2.def -target $TARGET -o libgit2.kt.bc || exit 1
-konanc -target $TARGET src -library libgit2.kt.bc -linkerArgs "$LINKER_ARGS" -o GitChurn.kexe || exit 1
+cinterop -copt $CFLAGS -def $DIR/libgit2.def -target $TARGET -o libgit2 || exit 1
+konanc -target $TARGET src -library libgit2 -linkerArgs "$LINKER_ARGS" -o GitChurn || exit 1

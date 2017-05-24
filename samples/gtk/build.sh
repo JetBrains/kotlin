@@ -29,8 +29,7 @@ if [ ! -f $DIR/gtk3.bc ]; then
   cinterop -J-Xmx8g -copt $IPREFIX/atk-1.0 -copt $IPREFIX/gdk-pixbuf-2.0 -copt $IPREFIX/cairo -copt $IPREFIX/pango-1.0 \
   -copt -I/opt/local/lib/glib-2.0/include -copt -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -copt -I/usr/local/lib/glib-2.0/include \
   -copt $IPREFIX/gtk-3.0 -copt $IPREFIX/glib-2.0 -def $DIR/gtk3.def \
-  -target $TARGET -o $DIR/gtk3.bc || exit 1
+  -target $TARGET -o $DIR/gtk3 || exit 1
 fi
-konanc -target $TARGET $DIR/src -library $DIR/gtk3.bc -linkerArgs "$LINKER_ARGS" -o $DIR/Gtk3Demo.kexe || exit 1
-
+konanc -target $TARGET $DIR/src -library $DIR/gtk3 -linkerArgs "$LINKER_ARGS" -o $DIR/Gtk3Demo || exit 1
 

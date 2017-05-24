@@ -18,5 +18,5 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-cinterop -def $DIR/stdio.def -copt "$CFLAGS" -target $TARGET -o stdio.kt.bc || exit 1
-konanc $COMPILER_ARGS -target $TARGET $DIR/CsvParser.kt -library stdio.kt.bc -o CsvParser.kexe || exit 1
+cinterop -def $DIR/stdio.def -copt "$CFLAGS" -target $TARGET -o stdio || exit 1
+konanc $COMPILER_ARGS -target $TARGET $DIR/CsvParser.kt -library stdio -o CsvParser || exit 1

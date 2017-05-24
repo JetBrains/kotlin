@@ -31,8 +31,8 @@ if [ ! -d $TF_TARGET_DIRECTORY/include/tensorflow ]; then
    tar -C $TF_TARGET_DIRECTORY -xz
 fi
 
-cinterop -def $DIR/tensorflow.def -copt "$CFLAGS" -target $TARGET -o tensorflow.kt.bc || exit 1
-konanc $COMPILER_ARGS -target $TARGET $DIR/HelloTensorflow.kt -library tensorflow.kt.bc -o HelloTensorflow.kexe \
+cinterop -def $DIR/tensorflow.def -copt "$CFLAGS" -target $TARGET -o tensorflow || exit 1
+konanc $COMPILER_ARGS -target $TARGET $DIR/HelloTensorflow.kt -library tensorflow -o HelloTensorflow \
     -linkerArgs "-L$TF_TARGET_DIRECTORY/lib -ltensorflow" || exit 1
 
 echo "Note: You may need to specify LD_LIBRARY_PATH or DYLD_LIBRARY_PATH env variables to $TF_TARGET_DIRECTORY/lib if the TensorFlow dynamic library cannot be found."
