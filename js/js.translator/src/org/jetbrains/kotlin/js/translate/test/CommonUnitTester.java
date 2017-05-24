@@ -20,12 +20,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 
-public class CommonUnitTester extends JSTester {
+public abstract class CommonUnitTester extends JSTester {
     public CommonUnitTester(@NotNull TranslationContext context) {
         super(context);
     }
 
-    
+    @Override
+    public void constructTestMethodInvocation(@NotNull JsExpression functionToTestCall,
+            @NotNull JsStringLiteral testName) {
+        JsFunction functionToTest = new JsFunction(getContext().scope(), "test function");
+        functionToTest.setBody(new JsBlock(functionToTestCall.makeStmt()));
+        getContext().addTopLevelStatement(new JsInvocation(getTestMethodRef(), testName, functionToTest).makeStmt());
+    }
 
     @NotNull
     protected abstract JsExpression getTestMethodRef();
