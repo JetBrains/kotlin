@@ -466,10 +466,18 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         List<String> pluginClassPaths = getCompilerPluginClassPaths();
         if (pluginClassPaths != null && !pluginClassPaths.isEmpty()) {
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("Plugin classpaths are: " + Joiner.on(", ").join(pluginClassPaths));
+            if (arguments.pluginClasspaths == null || arguments.pluginClasspaths.length == 0) {
+                arguments.pluginClasspaths = pluginClassPaths.toArray(new String[pluginClassPaths.size()]);
+            } else {
+                for (String path : pluginClassPaths) {
+                    arguments.pluginClasspaths = ArrayUtil.append(arguments.pluginClasspaths, path);
+                }
             }
-            arguments.pluginClasspaths = pluginClassPaths.toArray(new String[pluginClassPaths.size()]);
+
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Plugin classpaths are: " + Joiner.on(", ").join(arguments.pluginClasspaths));
+            }
+
         }
 
         List<String> pluginArguments;
