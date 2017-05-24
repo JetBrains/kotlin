@@ -48,6 +48,7 @@ class ResolvedLambdaArgument(
     override val outputType: UnwrappedType get() = returnType
 
     lateinit var resultArguments: List<KotlinCallArgument>
+    lateinit var finalReturnType: UnwrappedType
 }
 
 class ResolvedCallableReferenceArgument(
