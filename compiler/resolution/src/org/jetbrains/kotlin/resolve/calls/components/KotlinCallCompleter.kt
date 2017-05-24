@@ -78,13 +78,18 @@ class KotlinCallCompleter(
                     is VariableAsFunctionKotlinResolutionCandidate -> candidate.invokeCandidate
                     else -> candidate as SimpleKotlinResolutionCandidate
                 }
-        resolveCallableReferenceArguments(topLevelCall)
 
         if (topLevelCall.prepareForCompletion(expectedType)) {
+            resolveCallableReferenceArguments(topLevelCall)
+
             val c = candidate.lastCall.constraintSystem.asCallCompleterContext()
 
             topLevelCall.competeCall(c, resolutionCallbacks)
             return toCompletedBaseResolvedCall(c, candidate, resolutionCallbacks)
+        }
+        else {
+            // todo I'm not sure that we should do this
+            resolveCallableReferenceArguments(topLevelCall)
         }
 
         return ResolvedKotlinCall.OnlyResolvedKotlinCall(candidate)
