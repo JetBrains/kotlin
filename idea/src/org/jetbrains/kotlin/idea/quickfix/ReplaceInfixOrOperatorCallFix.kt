@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 
@@ -83,9 +84,15 @@ class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixActio
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val expression = diagnostic.psiElement
-            if (expression is KtArrayAccessExpression) {
-                if (expression.arrayExpression == null) return null
-                return ReplaceInfixOrOperatorCallFix(expression)
+            when (expression) {
+                is KtArrayAccessExpression -> {
+                    if (expression.arrayExpression == null) return null
+                    return ReplaceInfixOrOperatorCallFix(expression)
+                }
+                is KtNameReferenceExpression -> {
+                    val resolvedCall = expression.getResolvedCall(expression.analyze()) ?: return null
+                    if (resolvedCall.call.callType != Call.CallType.INVOKE) return null
+                }
             }
             val parent = expression.parent
             return when (parent) {
