@@ -57,7 +57,7 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "-output", shortName = "-o", valueDescription = "<path>", description = "Output file path")
     public String outputFile;
 
-    @Argument(value = "-produce", valueDescription = "{program|library|bitcode}", description = "Produce either .kexe, .klib or a .bc file.")
+    @Argument(value = "-produce", shortName = "-p", valueDescription = "{program|library|bitcode}", description = "Produce either .kexe, .klib or a .bc file.")
     public String produce;
 
     @Argument(value = "-properties", valueDescription = "<path>", description = "Override standard 'konan.properties' location")
