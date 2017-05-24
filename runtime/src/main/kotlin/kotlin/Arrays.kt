@@ -64,6 +64,10 @@ public final class ByteArray {
     public operator fun iterator(): ByteIterator {
         return ByteIteratorImpl(this)
     }
+
+    public override fun toString(): String {
+        return this.joinToString(separator = ", ", prefix = "[", postfix = "]")
+    }
 }
 
 // TODO: replace with generics, once implemented.
@@ -116,6 +120,10 @@ public final class CharArray {
     public operator fun iterator(): kotlin.collections.CharIterator {
         return CharIteratorImpl(this)
     }
+
+    public override fun toString(): String {
+        return this.joinToString(separator = ", ", prefix = "[", postfix = "]")
+    }
 }
 
 private class CharIteratorImpl(val collection: CharArray) : CharIterator() {
@@ -166,6 +174,10 @@ public final class ShortArray {
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.ShortIterator {
         return ShortIteratorImpl(this)
+    }
+
+    public override fun toString(): String {
+        return this.joinToString(separator = ", ", prefix = "[", postfix = "]")
     }
 }
 
@@ -218,6 +230,10 @@ public final class IntArray {
     public operator fun iterator(): kotlin.collections.IntIterator {
         return IntIteratorImpl(this)
     }
+
+    public override fun toString(): String {
+        return this.joinToString(separator = ", ", prefix = "[", postfix = "]")
+    }
 }
 
 private class IntIteratorImpl(val collection: IntArray) : IntIterator() {
@@ -268,6 +284,10 @@ public final class LongArray {
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.LongIterator {
         return LongIteratorImpl(this)
+    }
+
+    public override fun toString(): String {
+        return this.joinToString(separator = ", ", prefix = "[", postfix = "]")
     }
 }
 
@@ -320,6 +340,10 @@ public final class FloatArray {
     public operator fun iterator(): kotlin.collections.FloatIterator {
         return FloatIteratorImpl(this)
     }
+
+    public override fun toString(): String {
+        return this.joinToString(separator = ", ", prefix = "[", postfix = "]")
+    }
 }
 
 private class FloatIteratorImpl(val collection: FloatArray) : FloatIterator() {
@@ -367,6 +391,10 @@ public final class DoubleArray {
     public operator fun iterator(): kotlin.collections.DoubleIterator {
         return DoubleIteratorImpl(this)
     }
+
+    public override fun toString(): String {
+        return this.joinToString(separator = ", ", prefix = "[", postfix = "]")
+    }
 }
 
 private class DoubleIteratorImpl(val collection: DoubleArray) : DoubleIterator() {
@@ -413,6 +441,10 @@ public final class BooleanArray {
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.BooleanIterator {
         return BooleanIteratorImpl(this)
+    }
+
+    public override fun toString(): String {
+        return this.joinToString(separator = ", ", prefix = "[", postfix = "]")
     }
 }
 

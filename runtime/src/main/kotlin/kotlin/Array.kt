@@ -47,6 +47,10 @@ public final class Array<T> {
         return IteratorImpl(this)
     }
 
+    public override fun toString(): String {
+        return this.joinToString(separator = ", ", prefix = "[", postfix = "]")
+    }
+
     // Konan-specific.
     @SymbolName("Kotlin_Array_getArrayLength")
     external private fun getArrayLength(): Int
