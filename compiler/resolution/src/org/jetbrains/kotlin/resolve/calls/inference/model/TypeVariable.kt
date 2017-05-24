@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 
@@ -41,9 +42,11 @@ class TypeVariableTypeConstructor(private val builtIns: KotlinBuiltIns, val debu
 sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String) {
     val freshTypeConstructor: TypeConstructor = TypeVariableTypeConstructor(builtIns, name)
 
+    // member scope is used if we have receiver with type TypeVariable(T)
+    // todo add to member scope methods from supertypes for type variable
     val defaultType: SimpleType = KotlinTypeFactory.simpleType(
             Annotations.EMPTY, freshTypeConstructor, arguments = emptyList(),
-            nullable = false, memberScope = ErrorUtils.createErrorScope("Type variable", true))
+            nullable = false, memberScope = builtIns.any.unsubstitutedMemberScope)
 
     override fun toString() = freshTypeConstructor.toString()
 }

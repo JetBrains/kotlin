@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.components.ArgumentsToParametersMapper
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -378,7 +380,22 @@ class PSICallResolver(
                 is QualifierReceiver -> QualifierReceiverKotlinCallArgument(oldReceiver) // todo report warning if isSafeCall
                 is ReceiverValue -> {
                     val detailedReceiver = context.transformToReceiverWithSmartCastInfo(oldReceiver)
-                    ReceiverExpressionKotlinCallArgument(detailedReceiver, isSafeCall)
+
+                    var subCallArgument: ReceiverKotlinCallArgument? = null
+                    if (oldReceiver is ExpressionReceiver) {
+                        val ktExpression = KtPsiUtil.getLastElementDeparenthesized(oldReceiver.expression, context.statementFilter)
+
+                        val onlyResolvedCall = ktExpression?.getCall(context.trace.bindingContext)?.let {
+                            context.trace.get(BindingContext.ONLY_RESOLVED_CALL, it)
+                        }
+                        if (onlyResolvedCall != null) {
+                            subCallArgument = SubKotlinCallArgumentImpl(CallMaker.makeExternalValueArgument(oldReceiver.expression),
+                                                      context.dataFlowInfo, context.dataFlowInfo, detailedReceiver, onlyResolvedCall)
+
+                        }
+                    }
+
+                    subCallArgument ?: ReceiverExpressionKotlinCallArgument(detailedReceiver, isSafeCall)
                 }
                 else -> error("Incorrect receiver: $oldReceiver")
             }
