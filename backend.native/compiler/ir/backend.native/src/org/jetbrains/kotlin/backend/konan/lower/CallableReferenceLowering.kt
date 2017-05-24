@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
@@ -48,39 +49,23 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.types.*
 
-internal class CallableReferenceLowering(val context: Context): DeclarationContainerLoweringPass {
+internal class CallableReferenceLowering(val context: Context): FileLoweringPass {
 
     private var functionReferenceCount = 0
 
-    override fun lower(irDeclarationContainer: IrDeclarationContainer) {
-        irDeclarationContainer.declarations.transformFlat { declaration ->
-            if (declaration !is IrDeclarationContainer)
-                lowerFunctionReferences(irDeclarationContainer, declaration)
-            else
-                null
-        }
-    }
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid(object: IrElementTransformerVoidWithContext() {
 
-    private fun lowerFunctionReferences(irDeclarationContainer: IrDeclarationContainer,
-                                        declaration: IrDeclaration): List<IrDeclaration> {
-        val containingDeclaration = when (irDeclarationContainer) {
-            is IrClass -> irDeclarationContainer.descriptor
-            is IrFile -> irDeclarationContainer.packageFragmentDescriptor
-            else -> throw AssertionError("Unexpected declaration container: $irDeclarationContainer")
-        }
-        val createdClasses = mutableListOf<IrDeclaration>()
-        declaration.transformChildrenVoid(object: IrElementTransformerVoid() {
-
-            override fun visitClass(declaration: IrClass): IrStatement {
-                // Class is a declaration container - it will be visited by the main visitor (CallableReferenceLowering).
-                return declaration
+            override fun visitCall(expression: IrCall): IrExpression {
+                if (expression.descriptor.original in context.interopBuiltIns.staticCFunction) {
+                    return expression
+                }
+                return super.visitCall(expression)
             }
 
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
@@ -91,19 +76,18 @@ internal class CallableReferenceLowering(val context: Context): DeclarationConta
                     return expression
                 }
 
-                val loweredFunctionReference = FunctionReferenceBuilder(containingDeclaration, expression).build()
-                createdClasses += loweredFunctionReference.functionReferenceClass
-                return IrCallImpl(
-                        startOffset = expression.startOffset,
-                        endOffset   = expression.endOffset,
-                        symbol      = loweredFunctionReference. functionReferenceConstructor.symbol).apply {
-                    expression.getArguments().forEachIndexed { index, argument ->
-                        putValueArgument(index, argument.second)
+                val loweredFunctionReference = FunctionReferenceBuilder(currentScope!!.scope.scopeOwner, expression).build()
+                val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+                return irBuilder.irBlock(expression) {
+                    +loweredFunctionReference.functionReferenceClass
+                    +irCall(loweredFunctionReference.functionReferenceConstructor.symbol).apply {
+                        expression.getArguments().forEachIndexed { index, argument ->
+                            putValueArgument(index, argument.second)
+                        }
                     }
                 }
             }
         })
-        return listOf(declaration) + createdClasses
     }
 
     private class BuiltFunctionReference(val functionReferenceClass: IrClass,

@@ -75,6 +75,9 @@ internal class KonanLower(val context: Context) {
         phaser.phase(KonanPhase.LOWER_DELEGATION) {
             PropertyDelegationLowering(context).lower(irFile)
         }
+        phaser.phase(KonanPhase.LOWER_CALLABLES) {
+            CallableReferenceLowering(context).lower(irFile)
+        }
         phaser.phase(KonanPhase.LOWER_LOCAL_FUNCTIONS) {
             LocalDeclarationsLowering(context).runOnFilePostfix(irFile)
         }
@@ -99,9 +102,6 @@ internal class KonanLower(val context: Context) {
         }
         phaser.phase(KonanPhase.LOWER_INTEROP_PART2) {
             InteropLoweringPart2(context).lower(irFile)
-        }
-        phaser.phase(KonanPhase.LOWER_CALLABLES) {
-            CallableReferenceLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.LOWER_VARARG) {
             VarargInjectionLowering(context).runOnFilePostfix(irFile)
