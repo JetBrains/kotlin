@@ -164,6 +164,9 @@ class AnnotationProcessingManager(
 
         if (aptFiles.isEmpty()) return
 
+        project.logger.warn("${project.name}: " +
+                "Original kapt is deprecated. Please add \"apply plugin: 'kotlin-kapt'\" to your build.gradle.")
+
         if (project.plugins.findPlugin(ANDROID_APT_PLUGIN_ID) != null) {
             project.logger.warn("Please do not use `$ANDROID_APT_PLUGIN_ID` with kapt.")
         }
