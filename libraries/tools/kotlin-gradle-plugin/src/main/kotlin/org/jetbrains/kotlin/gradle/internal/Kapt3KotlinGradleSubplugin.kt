@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.gradle.internal
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
-import com.android.build.gradle.internal.variant.BaseVariantData
 import com.android.builder.model.SourceProvider
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -44,7 +43,7 @@ class Kapt3GradleSubplugin : Plugin<Project> {
     override fun apply(project: Project) {}
 }
 
-abstract class WrappedVariantData<T>(val variantData: T) {
+abstract class KaptVariantData<T>(val variantData: T) {
     abstract val name: String
     abstract val sourceProviders: Iterable<SourceProvider>
     abstract fun addJavaSourceFoldersToModel(generatedFilesDir: File)
@@ -102,7 +101,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             val project: Project,
             val kotlinCompile: KotlinCompile,
             val javaCompile: AbstractCompile,
-            val variantData: Any?,
+            val kaptVariantData: KaptVariantData<*>?,
             val sourceSetName: String,
             val kaptExtension: KaptExtension,
             val kaptClasspath: MutableList<File>) {
@@ -138,12 +137,14 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             }
         }
 
-        val sourceSetName = if (variantData != null) {
-            for (provider in (variantData as WrappedVariantData<*>).sourceProviders) {
+        val kaptVariantData = variantData as? KaptVariantData<*>
+
+        val sourceSetName = if (kaptVariantData != null) {
+            for (provider in kaptVariantData.sourceProviders) {
                 handleSourceSet((provider as AndroidSourceSet).name)
             }
 
-            variantData.name
+            kaptVariantData.name
         }
         else {
             if (javaSourceSet == null) error("Java source set should not be null")
@@ -155,7 +156,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val kaptExtension = project.extensions.getByType(KaptExtension::class.java)
 
         val context = Kapt3SubpluginContext(project, kotlinCompile, javaCompile,
-                variantData, sourceSetName, kaptExtension, kaptClasspath)
+                kaptVariantData, sourceSetName, kaptExtension, kaptClasspath)
 
         val kaptGenerateStubsTask = context.createKaptGenerateStubsTask()
         context.createKaptKotlinTask(kaptGenerateStubsTask)
@@ -174,9 +175,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val pluginOptions = mutableListOf<SubpluginOption>()
 
         val generatedFilesDir = getKaptGeneratedDir(project, sourceSetName)
-        if (variantData != null) {
-            (variantData as WrappedVariantData<*>).addJavaSourceFoldersToModel(generatedFilesDir)
-        }
+        kaptVariantData?.addJavaSourceFoldersToModel(generatedFilesDir)
 
         pluginOptions += SubpluginOption("aptMode", aptMode)
         disableAnnotationProcessingInJavaTask()
@@ -198,12 +197,12 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             pluginOptions += SubpluginOption("processors", annotationProcessors)
         }
 
-        val androidPlugin = variantData?.let {
+        val androidPlugin = kaptVariantData?.let {
             project.extensions.findByName("android") as? BaseExtension
         }
 
-        val androidOptions = if (variantData != null)
-            (variantData as WrappedVariantData<*>).annotationProcessorOptions ?: emptyMap()
+        val androidOptions = if (kaptVariantData != null)
+            kaptVariantData.annotationProcessorOptions ?: emptyMap()
         else
             emptyMap()
 
@@ -211,7 +210,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         val apOptions = kaptExtension.getAdditionalArguments(
                 project,
-                (variantData as WrappedVariantData<*>).variantData,
+                kaptVariantData?.variantData,
                 androidPlugin
         ) + androidOptions + mapOf("kapt.kotlin.generated" to kotlinSourcesOutputDir.absolutePath)
 
@@ -282,9 +281,13 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         kaptTask.dependsOn(kaptGenerateStubsTask)
         kotlinCompile.dependsOn(kaptTask)
-        (variantData as WrappedVariantData<*>).wireKaptTask(project, kaptTask, kotlinCompile, javaCompile)
-
         kotlinCompile.source(sourcesOutputDir, kotlinSourcesOutputDir)
+
+        if (kaptVariantData != null) {
+            kaptVariantData.wireKaptTask(project, kaptTask, kotlinCompile, javaCompile)
+        } else {
+            wireKaptTaskForJavaProject(kaptTask, kotlinCompile, javaCompile)
+        }
 
         buildAndAddOptionsTo(kaptTask.pluginOptions, aptMode = "apt")
     }
@@ -330,10 +333,12 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
     }
 
-    private val BaseVariantData<*>.sourceProviders: List<SourceProvider>
-        get() = variantConfiguration.sortedSourceProviders
-
     override fun getCompilerPluginId() = "org.jetbrains.kotlin.kapt3"
     override fun getGroupName() = "org.jetbrains.kotlin"
     override fun getArtifactName() = "kotlin-annotation-processing"
+}
+
+internal fun wireKaptTaskForJavaProject(task: KaptTask, kotlinTask: KotlinCompile, javaTask: AbstractCompile) {
+    task.dependsOn(*(javaTask.dependsOn.filter { it !== kotlinTask && it != kotlinTask.name }.toTypedArray()))
+    javaTask.source(task.destinationDir)
 }
