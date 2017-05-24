@@ -1040,6 +1040,10 @@ public abstract class KotlinBuiltIns {
         return descriptor.getContainingDeclaration() == getAny();
     }
 
+    public static boolean isEnum(@NotNull ClassDescriptor descriptor) {
+        return classFqNameEquals(descriptor, FQ_NAMES._enum);
+    }
+
     public static boolean isCharSequence(@Nullable KotlinType type) {
         return type != null && isNotNullConstructedFromGivenClass(type, FQ_NAMES.charSequence);
     }

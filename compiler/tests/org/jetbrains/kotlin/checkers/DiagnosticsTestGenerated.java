@@ -7363,6 +7363,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("extendingEnumDirectly.kt")
+            public void testExtendingEnumDirectly() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/extendingEnumDirectly.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("extensionNamedAsEnumEntry.kt")
             public void testExtensionNamedAsEnumEntry() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/extensionNamedAsEnumEntry.kt");

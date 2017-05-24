@@ -49,9 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.diagnostics.PositioningStrategies.*;
-import static org.jetbrains.kotlin.diagnostics.Severity.ERROR;
-import static org.jetbrains.kotlin.diagnostics.Severity.INFO;
-import static org.jetbrains.kotlin.diagnostics.Severity.WARNING;
+import static org.jetbrains.kotlin.diagnostics.Severity.*;
 
 /**
  * For error messages, see DefaultErrorMessages and IdeErrorMessages.
@@ -271,6 +269,8 @@ public interface Errors {
     DiagnosticFactory0<KtTypeReference> SINGLETON_IN_SUPERTYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtNullableType> NULLABLE_SUPERTYPE = DiagnosticFactory0.create(ERROR, NULLABLE_TYPE);
     DiagnosticFactory0<KtTypeReference> DYNAMIC_SUPERTYPE = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory1<KtTypeReference, ClassDescriptor> CLASS_CANNOT_BE_EXTENDED_DIRECTLY = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<KtElement> MISSING_CONSTRUCTOR_KEYWORD = DiagnosticFactory0.create(ERROR);
 

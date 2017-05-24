@@ -584,6 +584,9 @@ public class BodyResolver {
                 else if (ModalityKt.isFinalOrEnum(classDescriptor)) {
                     trace.report(FINAL_SUPERTYPE.on(typeReference));
                 }
+                else if (KotlinBuiltIns.isEnum(classDescriptor)) {
+                    trace.report(CLASS_CANNOT_BE_EXTENDED_DIRECTLY.on(typeReference, classDescriptor));
+                }
             }
         }
     }
