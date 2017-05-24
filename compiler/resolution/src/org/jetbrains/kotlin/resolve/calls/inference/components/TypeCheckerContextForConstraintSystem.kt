@@ -32,8 +32,12 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
     override fun allowSubtypeViaLowerTypeForCapturedType(subType: SimpleType, superType: NewCapturedType) =
             !subType.contains { it.anyBound(this::isMyTypeVariable) }
 
-    override val sameConstructorPolicy get() = SeveralSupertypesWithSameConstructorPolicy.TAKE_FIRST_FOR_SUBTYPING
-
+    /**
+     * todo: possible we should override this method, because otherwise OR in subtyping transformed to AND in constraint system
+     * Now we cannot do this, because sometimes we have proper intersection type as lower type and if we first supertype,
+     * then we can get wrong result.
+     * override val sameConstructorPolicy get() = SeveralSupertypesWithSameConstructorPolicy.TAKE_FIRST_FOR_SUBTYPING
+     */
     override final fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType): Boolean? {
         assertInputTypes(subType, superType)
 
