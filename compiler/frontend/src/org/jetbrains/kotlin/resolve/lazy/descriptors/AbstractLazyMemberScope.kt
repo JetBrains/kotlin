@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,6 +125,17 @@ protected constructor(
                     propertyDeclaration,
                     trace,
                     c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(propertyDeclaration))
+            result.add(propertyDescriptor)
+        }
+
+        for (entry in declarationProvider.getDestructuringDeclarationsEntries(name)) {
+            val propertyDescriptor = c.descriptorResolver.resolveDestructuringDeclarationEntryAsProperty(
+                    thisDescriptor,
+                    getScopeForMemberDeclarationResolution(entry),
+                    getScopeForInitializerResolution(entry),
+                    entry,
+                    trace,
+                    c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(entry))
             result.add(propertyDescriptor)
         }
 

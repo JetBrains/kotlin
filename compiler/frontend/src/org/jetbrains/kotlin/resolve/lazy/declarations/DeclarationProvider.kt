@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtTypeAlias
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 interface DeclarationProvider {
@@ -30,6 +27,8 @@ interface DeclarationProvider {
     fun getFunctionDeclarations(name: Name): Collection<KtNamedFunction>
 
     fun getPropertyDeclarations(name: Name): Collection<KtProperty>
+
+    fun getDestructuringDeclarationsEntries(name: Name): Collection<KtDestructuringDeclarationEntry>
 
     fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo>
 

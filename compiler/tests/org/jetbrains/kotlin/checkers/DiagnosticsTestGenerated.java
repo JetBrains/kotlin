@@ -23576,6 +23576,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("destructuringDeclarationsScript.kts")
+        public void testDestructuringDeclarationsScript() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/script/destructuringDeclarationsScript.kts");
+            doTest(fileName);
+        }
+
         @TestMetadata("imports.kts")
         public void testImports() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/script/imports.kts");
@@ -23585,6 +23591,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
         @TestMetadata("NestedInnerClass.kts")
         public void testNestedInnerClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/script/NestedInnerClass.kts");
+            doTest(fileName);
+        }
+
+        @TestMetadata("resolveInitializerOfDestructuringDeclarationOnce.kts")
+        public void testResolveInitializerOfDestructuringDeclarationOnce() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/script/resolveInitializerOfDestructuringDeclarationOnce.kts");
             doTest(fileName);
         }
 

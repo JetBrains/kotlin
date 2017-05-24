@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     private final Map<KtProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
     private final Map<KtParameter, PropertyDescriptor> primaryConstructorParameterProperties = Maps.newHashMap();
     private final Map<KtTypeAlias, TypeAliasDescriptor> typeAliases = Maps.newLinkedHashMap();
+    private final Map<KtDestructuringDeclarationEntry, PropertyDescriptor> destructuringDeclarationEntries = Maps.newLinkedHashMap();
     private Map<KtCallableDeclaration, CallableMemberDescriptor> members = null;
 
     private final Map<KtScript, LazyScriptDescriptor> scripts = Maps.newLinkedHashMap();
@@ -143,6 +144,11 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     @Override
     public Map<KtTypeAlias, TypeAliasDescriptor> getTypeAliases() {
         return typeAliases;
+    }
+
+    @Override
+    public Map<KtDestructuringDeclarationEntry, PropertyDescriptor> getDestructuringDeclarationEntries() {
+        return destructuringDeclarationEntries;
     }
 
     @NotNull

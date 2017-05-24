@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
         val properties = ArrayListMultimap.create<Name, KtProperty>()
         val classesAndObjects = ArrayListMultimap.create<Name, KtClassLikeInfo>() // order matters here
         val typeAliases = ArrayListMultimap.create<Name, KtTypeAlias>()
+        val destructuringDeclarationsEntries = ArrayListMultimap.create<Name, KtDestructuringDeclarationEntry>()
 
         fun putToIndex(declaration: KtDeclaration) {
             if (declaration is KtAnonymousInitializer || declaration is KtSecondaryConstructor) return
@@ -55,7 +56,12 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
                     val scriptInfo = KtScriptInfo(declaration)
                     classesAndObjects.put(scriptInfo.script.nameAsName, scriptInfo)
                 }
-                is KtParameter, is KtDestructuringDeclaration -> {
+                is KtDestructuringDeclaration -> {
+                    for (entry in declaration.entries) {
+                        destructuringDeclarationsEntries.put(safeNameForLazyResolve(entry.nameAsName), entry)
+                    }
+                }
+                is KtParameter -> {
                     // Do nothing, just put it into allDeclarations is enough
                 }
                 else -> throw IllegalArgumentException("Unknown declaration: " + declaration)
@@ -79,6 +85,9 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
 
     override fun getPropertyDeclarations(name: Name): List<KtProperty>
             = index().properties[ResolveSessionUtils.safeNameForLazyResolve(name)].toList()
+
+    override fun getDestructuringDeclarationsEntries(name: Name): Collection<KtDestructuringDeclarationEntry>
+            = index().destructuringDeclarationsEntries[ResolveSessionUtils.safeNameForLazyResolve(name)].toList()
 
     override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo>
             = index().classesAndObjects[ResolveSessionUtils.safeNameForLazyResolve(name)]
