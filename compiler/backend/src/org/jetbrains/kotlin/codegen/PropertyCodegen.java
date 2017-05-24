@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,6 +105,18 @@ public class PropertyCodegen {
         gen(property, propertyDescriptor, property.getGetter(), property.getSetter());
     }
 
+    public void gen(@NotNull KtDestructuringDeclarationEntry entry) {
+        VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, entry);
+        if (!(variableDescriptor instanceof PropertyDescriptor)) {
+            throw ExceptionLogger.logDescriptorNotFound(
+                    "Destructuring declaration entry" + entry.getName() + " should have a property descriptor: " + variableDescriptor, entry
+            );
+        }
+
+        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
+        gen(entry, propertyDescriptor);
+    }
+
     public void generateInPackageFacade(@NotNull DeserializedPropertyDescriptor deserializedProperty) {
         assert context instanceof MultifileClassFacadeContext : "should be called only for generating facade: " + context;
         gen(null, deserializedProperty, null, null);
@@ -127,6 +139,19 @@ public class PropertyCodegen {
         if (isAccessorNeeded(declaration, descriptor, setter)) {
             generateSetter(declaration, descriptor, setter);
         }
+    }
+
+    private void gen(
+            @Nullable KtDestructuringDeclarationEntry entry,
+            @NotNull PropertyDescriptor descriptor
+    ) {
+        assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DEFAULT_IMPLS
+                : "Generating property with a wrong kind (" + kind + "): " + descriptor;
+
+        genBackingFieldAndAnnotations(entry, descriptor, false);
+
+        generateGetter(entry, descriptor, null);
+        generateSetter(entry, descriptor, null);
     }
 
     private void genBackingFieldAndAnnotations(

@@ -48,6 +48,12 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
         doTest(fileName);
     }
 
+    @TestMetadata("destructuringDeclaration.kts")
+    public void testDestructuringDeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/destructuringDeclaration.kts");
+        doTest(fileName);
+    }
+
     @TestMetadata("empty.kts")
     public void testEmpty() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/empty.kts");
