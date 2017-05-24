@@ -90,11 +90,11 @@ class JavaTypeResolver(
             return computeSimpleJavaClassifierType(javaType, attr) ?: errorType()
         }
 
-        fun computeBound(flexibility: JavaTypeFlexibility) =
-                computeSimpleJavaClassifierType(javaType, attr.withFlexibility(flexibility))
+        fun computeBound(flexibility: JavaTypeFlexibility, lowerResult: SimpleType? = null) =
+                computeSimpleJavaClassifierType(javaType, attr.withFlexibility(flexibility), lowerResult)
 
         val lower = computeBound(FLEXIBLE_LOWER_BOUND) ?: return errorType()
-        val upper = computeBound(FLEXIBLE_UPPER_BOUND) ?: return errorType()
+        val upper = computeBound(FLEXIBLE_UPPER_BOUND, lowerResult = lower) ?: return errorType()
 
         return if (isRaw) {
             RawTypeImpl(lower, upper)
@@ -104,11 +104,20 @@ class JavaTypeResolver(
         }
     }
 
-    private fun computeSimpleJavaClassifierType(javaType: JavaClassifierType, attr: JavaTypeAttributes): SimpleType? {
-        val annotations = LazyJavaAnnotations(c, javaType)
+    private fun computeSimpleJavaClassifierType(
+            javaType: JavaClassifierType, attr: JavaTypeAttributes,
+            lowerResult: SimpleType? = null
+    ): SimpleType? {
+        val annotations =
+                lowerResult?.annotations ?: LazyJavaAnnotations(c, javaType)
         val constructor = computeTypeConstructor(javaType, attr) ?: return null
-        val arguments = computeArguments(javaType, attr, constructor)
         val isNullable = attr.isNullable()
+
+        if (lowerResult?.constructor == constructor && !javaType.isRaw && isNullable) {
+            return lowerResult.makeNullableAsSpecified(true)
+        }
+
+        val arguments = computeArguments(javaType, attr, constructor)
 
         return KotlinTypeFactory.simpleType(annotations, constructor, arguments, isNullable)
     }
@@ -340,4 +349,3 @@ internal fun TypeParameterDescriptor.getErasedUpperBound(
 
     return defaultValue()
 }
-

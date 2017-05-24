@@ -89,14 +89,38 @@ private class SimpleTypeImpl(
         override val memberScope: MemberScope
 ) : SimpleType() {
     override fun replaceAnnotations(newAnnotations: Annotations) =
-            SimpleTypeImpl(newAnnotations, constructor, arguments, isMarkedNullable, memberScope)
+            if (newAnnotations === annotations)
+                this
+            else
+                SimpleTypeImpl(newAnnotations, constructor, arguments, isMarkedNullable, memberScope)
 
     override fun makeNullableAsSpecified(newNullability: Boolean) =
-            SimpleTypeImpl(annotations, constructor, arguments, newNullability, memberScope)
+            if (newNullability == isMarkedNullable)
+                this
+            else if (newNullability)
+                NullableSimpleType(this)
+            else
+                SimpleTypeImpl(annotations, constructor, arguments, newNullability, memberScope)
 
     init {
         if (memberScope is ErrorUtils.ErrorScope) {
             throw IllegalStateException("SimpleTypeImpl should not be created for error type: $memberScope\n$constructor")
         }
+    }
+}
+
+private class NullableSimpleType(override val delegate: SimpleType) : DelegatingSimpleType() {
+    override val isMarkedNullable: Boolean
+        get() = true
+
+    override fun replaceAnnotations(newAnnotations: Annotations) =
+            if (newAnnotations !== delegate.annotations)
+                NullableSimpleType(delegate.replaceAnnotations(newAnnotations))
+            else
+                this
+
+    override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType {
+        if (newNullability) return this
+        return delegate.makeNullableAsSpecified(newNullability)
     }
 }
