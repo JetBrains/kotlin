@@ -24,10 +24,10 @@ class VarByMapExtensionsTest {
         assertEquals("empty", a2)
 
         map["c"] = "string"
-        // fails { c }  // does not fail in JS due to KT-8135
+        assertFailsWith<ClassCastException> { c }
 
         map["a"] = null
-        a // fails { a } // does not fail due to KT-8135
+        assertFailsWith<TypeCastException> { a }
 
         assertFailsWith<NoSuchElementException> { d }
         map["d"] = null
