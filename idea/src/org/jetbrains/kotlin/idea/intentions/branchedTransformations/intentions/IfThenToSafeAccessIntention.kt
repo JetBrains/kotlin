@@ -69,11 +69,10 @@ class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIf
         }
     }
 
-    private fun IfThenToSelectData.clausesReplaceableBySafeCall(): Boolean {
-        if (baseClause == null) return false
-        if (negatedClause == null && baseClause.isUsedAsExpression(context)) return false
-        if (negatedClause != null && !negatedClause.isNullExpression()) return false
-        return baseClause.evaluatesTo(receiverExpression) ||
-               baseClause.hasFirstReceiverOf(receiverExpression) && !baseClause.hasNullableType(context)
+    private fun IfThenToSelectData.clausesReplaceableBySafeCall(): Boolean = when {
+        baseClause == null -> false
+        negatedClause == null && baseClause.isUsedAsExpression(context) -> false
+        negatedClause != null && !negatedClause.isNullExpression() -> false
+        else -> baseClause.evaluatesTo(receiverExpression) || baseClause.hasFirstReceiverOf(receiverExpression)
     }
 }
