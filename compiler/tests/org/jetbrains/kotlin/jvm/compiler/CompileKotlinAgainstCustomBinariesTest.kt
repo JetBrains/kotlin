@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.io.ZipUtil
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.WrongBytecodeVersionTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -59,16 +60,56 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
         return File(testDataDirectory, "${getTestName(true)}.$extension")
     }
 
+    /**
+     * Compiles all sources (.java and .kt) under the directory named [libraryName] to [destination].
+     * [destination] should be either a path to the directory under [tmpdir], or a path to the resulting .jar file (also under [tmpdir]).
+     * Kotlin sources are compiled first, and there should be no errors or warnings. Java sources are compiled next.
+     *
+     * @return [destination]
+     */
     private fun compileLibrary(
-            sourcePath: String,
-            compiler: CLICompiler<*> = K2JVMCompiler(),
-            destination: File = File(tmpdir, "$sourcePath.jar"),
+            libraryName: String,
+            destination: File = File(tmpdir, "$libraryName.jar"),
             additionalOptions: List<String> = emptyList(),
             vararg extraClassPath: File
     ): File {
-        val output = compileKotlin(sourcePath, destination, extraClassPath.toList(), compiler, additionalOptions, expectedFileName = null)
-        assertEquals(normalizeOutput("" to ExitCode.OK), normalizeOutput(output))
+        val javaFiles = FileUtil.findFilesByMask(JAVA_FILES, File(testDataDirectory, libraryName))
+        val kotlinFiles = FileUtil.findFilesByMask(KOTLIN_FILES, File(testDataDirectory, libraryName))
+        assert(javaFiles.isNotEmpty() || kotlinFiles.isNotEmpty()) { "There should be either .kt or .java files in the directory" }
+
+        val isJar = destination.name.endsWith(".jar")
+
+        val outputDir = if (isJar) File(tmpdir, "output-$libraryName") else destination
+        if (kotlinFiles.isNotEmpty()) {
+            val output = compileKotlin(libraryName, outputDir, extraClassPath.toList(), K2JVMCompiler(), additionalOptions, expectedFileName = null)
+            assertEquals(normalizeOutput("" to ExitCode.OK), normalizeOutput(output))
+        }
+
+        if (javaFiles.isNotEmpty()) {
+            outputDir.mkdirs()
+            KotlinTestUtils.compileJavaFiles(javaFiles, listOf("-d", outputDir.path))
+        }
+
+        if (isJar) {
+            destination.delete()
+            ZipOutputStream(destination.outputStream()).use { zip ->
+                ZipUtil.addDirToZipRecursively(zip, destination, outputDir, "", null, null)
+            }
+        }
+
         return destination
+    }
+
+    /**
+     * Compiles all .kt sources under the directory named [libraryName] to a file named "[libraryName].js" in [tmpdir]
+     *
+     * @return the path to the corresponding .meta.js file, i.e. "[libraryName].meta.js"
+     */
+    private fun compileJsLibrary(libraryName: String): File {
+        val destination = File(tmpdir, "$libraryName.js")
+        val output = compileKotlin(libraryName, destination, compiler = K2JSCompiler(), expectedFileName = null)
+        assertEquals(normalizeOutput("" to ExitCode.OK), normalizeOutput(output))
+        return File(tmpdir, "$libraryName.meta.js")
     }
 
     private fun normalizeOutput(output: Pair<String, ExitCode>): String {
@@ -102,14 +143,6 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
 
     private fun analyzeAndGetAllDescriptors(vararg extraClassPath: File): Collection<DeclarationDescriptor> =
             DescriptorUtils.getAllDescriptors(analyzeFileToPackageView(*extraClassPath).memberScope)
-
-    private fun compileJava(libraryDir: String): File {
-        val allJavaFiles = FileUtil.findFilesByMask(JAVA_FILES, File(testDataDirectory, libraryDir))
-        val result = File(tmpdir, libraryDir)
-        assert(result.mkdirs()) { "Could not create directory: $result" }
-        KotlinTestUtils.compileJavaFiles(allJavaFiles, listOf("-d", result.path))
-        return result
-    }
 
     private fun compileKotlin(
             fileName: String,
@@ -154,15 +187,9 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
         return result
     }
 
-    private fun doTestBrokenJavaLibrary(libraryName: String, vararg pathsToDelete: String) {
-        // This function compiles a Java library, then deletes one class file and attempts to compile a Kotlin source against
+    private fun doTestBrokenLibrary(libraryName: String, vararg pathsToDelete: String) {
+        // This function compiles a library, then deletes one class file and attempts to compile a Kotlin source against
         // this broken library. The expected result is an error message from the compiler
-        val library = deletePaths(compileJava(libraryName), *pathsToDelete)
-        compileKotlin("source.kt", tmpdir, listOf(library))
-    }
-
-    private fun doTestBrokenKotlinLibrary(libraryName: String, vararg pathsToDelete: String) {
-        // Analogous to doTestBrokenJavaLibrary, but with a Kotlin library compiled to a JAR file
         val library = copyJarFileWithoutEntry(compileLibrary(libraryName), *pathsToDelete)
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
@@ -186,9 +213,8 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
     }
 
     private fun doTestKotlinLibraryWithWrongMetadataVersionJs(libraryName: String, vararg additionalOptions: String) {
-        compileLibrary(libraryName, K2JSCompiler(), File(tmpdir, "library.js"), emptyList())
+        val library = compileJsLibrary(libraryName)
 
-        val library = File(tmpdir, "library.meta.js")
         library.writeText(library.readText(Charsets.UTF_8).replace(
                 "(" + JsMetadataVersion.INSTANCE.toInteger() + ", ",
                 "(" + JsMetadataVersion(42, 0, 0).toInteger() + ", "
@@ -200,16 +226,18 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
     private fun doTestPreReleaseKotlinLibrary(
             compiler: CLICompiler<*>,
             libraryName: String,
-            destination: File,
-            result: File,
             usageDestination: File,
             vararg additionalOptions: String
     ) {
         // Compiles the library with the "pre-release" flag, then compiles a usage of this library in the release mode
 
-        try {
+        val result = try {
             System.setProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, "true")
-            compileLibrary(libraryName, compiler, destination)
+            when (compiler) {
+                is K2JSCompiler -> compileJsLibrary(libraryName)
+                is K2JVMCompiler -> compileLibrary(libraryName)
+                else -> throw UnsupportedOperationException(compiler.toString())
+            }
         }
         finally {
             System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY)
@@ -227,9 +255,7 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
     // ------------------------------------------------------------------------------
 
     fun testRawTypes() {
-        val libraryOutput = compileJava("library")
-        compileKotlin("library", libraryOutput, listOf(libraryOutput))
-        compileKotlin("main.kt", tmpdir, listOf(libraryOutput))
+        compileKotlin("main.kt", tmpdir, listOf(compileLibrary("library")))
     }
 
     fun testDuplicateObjectInBinaryAndSources() {
@@ -259,8 +285,8 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
         // This test checks that there are no PARAMETER_NAME_CHANGED_ON_OVERRIDE or DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
         // warnings when subclassing in Kotlin from Java binaries (in case when no parameter names are available for Java classes)
 
-        val libraryOutput = compileJava("library")
-        val environment = createEnvironment(listOf(libraryOutput))
+        val library = compileLibrary("library")
+        val environment = createEnvironment(listOf(library))
 
         val ktFile = KotlinTestUtils.loadJetFile(environment.project, getTestDataFileWithExtension("kt"))
         val result = JvmResolveUtil.analyze(ktFile, environment)
@@ -275,23 +301,23 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
     }
 
     fun testIncompleteHierarchyInJava() {
-        doTestBrokenJavaLibrary("library", "test/Super.class")
+        doTestBrokenLibrary("library", "test/Super.class")
     }
 
     fun testIncompleteHierarchyInKotlin() {
-        doTestBrokenKotlinLibrary("library", "test/Super.class")
+        doTestBrokenLibrary("library", "test/Super.class")
     }
 
     fun testMissingDependencySimple() {
-        doTestBrokenKotlinLibrary("library", "a/A.class")
+        doTestBrokenLibrary("library", "a/A.class")
     }
 
     fun testMissingDependencyDifferentCases() {
-        doTestBrokenKotlinLibrary("library", "a/A.class")
+        doTestBrokenLibrary("library", "a/A.class")
     }
 
     fun testMissingDependencyNestedAnnotation() {
-        doTestBrokenKotlinLibrary("library", "a/A\$Anno.class")
+        doTestBrokenLibrary("library", "a/A\$Anno.class")
     }
 
     fun testMissingDependencyConflictingLibraries() {
@@ -303,48 +329,33 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
     }
 
     fun testMissingDependencyJava() {
-        doTestBrokenJavaLibrary("library", "test/Bar.class")
+        doTestBrokenLibrary("library", "test/Bar.class")
     }
 
     fun testMissingDependencyJavaConflictingLibraries() {
-        val library1 = deletePaths(compileJava("library1"), "test/A.class", "test/A\$Inner.class")
-        val library2 = deletePaths(compileJava("library2"), "test/A.class", "test/A\$Inner.class")
+        val library1 = copyJarFileWithoutEntry(compileLibrary("library1"), "test/A.class", "test/A\$Inner.class")
+        val library2 = copyJarFileWithoutEntry(compileLibrary("library2"), "test/A.class", "test/A\$Inner.class")
         compileKotlin("source.kt", tmpdir, listOf(library1, library2))
     }
 
     fun testMissingDependencyJavaNestedAnnotation() {
-        doTestBrokenJavaLibrary("library", "test/A\$Anno.class")
+        doTestBrokenLibrary("library", "test/A\$Anno.class")
     }
 
     fun testReleaseCompilerAgainstPreReleaseLibrary() {
-        val destination = File(tmpdir, "library.jar")
-        doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", destination, destination, tmpdir)
+        doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir)
     }
 
     fun testReleaseCompilerAgainstPreReleaseLibraryJs() {
-        doTestPreReleaseKotlinLibrary(
-                K2JSCompiler(), "library",
-                File(tmpdir, "library.js"), File(tmpdir, "library.meta.js"),
-                File(tmpdir, "usage.js")
-        )
+        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
     }
 
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipVersionCheck() {
-        val destination = File(tmpdir, "library.jar")
-        doTestPreReleaseKotlinLibrary(
-                K2JVMCompiler(), "library",
-                destination, destination, tmpdir,
-                "-Xskip-metadata-version-check"
-        )
+        doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-metadata-version-check")
     }
 
     fun testReleaseCompilerAgainstPreReleaseLibraryJsSkipVersionCheck() {
-        doTestPreReleaseKotlinLibrary(
-                K2JSCompiler(), "library",
-                File(tmpdir, "library.js"), File(tmpdir, "library.meta.js"),
-                File(tmpdir, "usage.js"),
-                "-Xskip-metadata-version-check"
-        )
+        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), "-Xskip-metadata-version-check")
     }
 
     fun testWrongMetadataVersion() {
@@ -439,25 +450,24 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
 
     fun testProhibitNestedClassesByDollarName() {
         val library = compileLibrary("library")
-        val javaLibraryOutput = compileJava("library")
-        compileKotlin("main.kt", tmpdir, listOf(javaLibraryOutput, library))
+        compileKotlin("main.kt", tmpdir, listOf(library))
     }
 
     fun testTypeAliasesAreInvisibleInCompatibilityMode() {
-        val library = compileLibrary("typeAliases.kt")
+        val library = compileLibrary("library")
         compileKotlin("main.kt", tmpdir, listOf(library), K2JVMCompiler(), listOf("-language-version", "1.0"))
     }
 
     fun testInnerClassPackageConflict() {
-        val output = compileJava("library")
+        val output = compileLibrary("library", destination = File(tmpdir, "library"))
         File(testDataDirectory, "library/test/Foo/x.txt").copyTo(File(output, "test/Foo/x.txt"))
         MockLibraryUtil.createJarFile(tmpdir, output, null, "library", false)
         compileKotlin("source.kt", tmpdir, listOf(File(tmpdir, "library.jar")))
     }
 
     fun testInnerClassPackageConflict2() {
-        val library1 = compileJava("library1")
-        val library2 = compileJava("library2")
+        val library1 = compileLibrary("library1", destination = File(tmpdir, "library1"))
+        val library2 = compileLibrary("library2", destination = File(tmpdir, "library2"))
 
         // Copy everything from library2 to library1
         FileUtil.visitFiles(library2) { file ->
@@ -481,6 +491,7 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
 
     companion object {
         private val TEST_DATA_PATH = "compiler/testData/compileKotlinAgainstCustomBinaries/"
+        private val KOTLIN_FILES = Pattern.compile(".*\\.kt$")
         private val JAVA_FILES = Pattern.compile(".*\\.java$")
 
         private fun copyJarFileWithoutEntry(jarPath: File, vararg entriesToDelete: String): File =
@@ -511,14 +522,6 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
             }
 
             return outputFile
-        }
-
-        private fun deletePaths(library: File, vararg pathsToDelete: String): File {
-            for (pathToDelete in pathsToDelete) {
-                val fileToDelete = File(library, pathToDelete)
-                assert(fileToDelete.delete()) { "Can't delete $fileToDelete" }
-            }
-            return library
         }
     }
 }
