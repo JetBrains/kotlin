@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 public abstract interface EntryHolder {
 
     @org.jetbrains.annotations.NotNull()

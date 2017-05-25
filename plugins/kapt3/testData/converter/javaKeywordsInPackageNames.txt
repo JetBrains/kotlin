@@ -1,5 +1,6 @@
 package a.b.c;
 
+@kotlin.Metadata()
 public final class A {
 
     public A() {
@@ -11,6 +12,7 @@ public final class A {
 
 package a.b.typealias.c;
 
+@kotlin.Metadata()
 public final class E {
 
     public E() {

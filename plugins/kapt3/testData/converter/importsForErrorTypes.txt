@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit.MICROSECONDS;
 import java.util.concurrent.TimeUnit.*;
 import java.util.Calendar.*;
 
+@kotlin.Metadata()
 public final class ImportsForErrorTypesKt {
 
     public ImportsForErrorTypesKt() {

@@ -7,6 +7,16 @@ public final class NonExistentClass {
 
 package test;
 
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MyAnnotation {
+}
+
+////////////////////
+
+package test;
+
+@kotlin.Metadata()
 @MyAnnotation()
 public final class State {
     private final int someInt = 0;
@@ -35,12 +45,4 @@ public final class State {
     public State(int someInt, long someLong) {
         super();
     }
-}
-
-////////////////////
-
-package test;
-
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface MyAnnotation {
 }

@@ -1,5 +1,6 @@
 import java.util.Calendar;
 
+@kotlin.Metadata()
 public final class MyType<T extends java.lang.Object> {
 
     public MyType() {
@@ -13,6 +14,7 @@ public final class MyType<T extends java.lang.Object> {
 import java.util.Calendar;
 
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+@kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
     public ABC a;

@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 public abstract class Cls {
 
     public abstract void foo(@org.jetbrains.annotations.NotNull()
@@ -16,6 +17,7 @@ public abstract class Cls {
 ////////////////////
 
 
+@kotlin.Metadata()
 public abstract interface Intf {
 
     public abstract void foo(@org.jetbrains.annotations.NotNull()
@@ -24,6 +26,7 @@ public abstract interface Intf {
     @org.jetbrains.annotations.NotNull()
     public abstract java.lang.String bar(int bcd);
 
+    @kotlin.Metadata(mv = {1, 1, 6}, bv = {1, 0, 1}, k = 3)
     public static final class DefaultImpls {
 
         public DefaultImpls() {

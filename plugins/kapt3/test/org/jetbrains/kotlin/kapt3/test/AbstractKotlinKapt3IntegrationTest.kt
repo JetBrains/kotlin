@@ -132,7 +132,10 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             GenerationUtils.compileFiles(myFiles.psiFiles, myEnvironment, Kapt3BuilderFactory()).factory
 
             val actualRaw = kapt3Extension.savedStubs ?: error("Stubs were not saved")
-            val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' })).trimTrailingWhitespacesAndAddNewlineAtEOF()
+            val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' }))
+                    .trimTrailingWhitespacesAndAddNewlineAtEOF()
+                    .let { AbstractClassFileToSourceStubConverterTest.removeMetadataAnnotationContents(it) }
+
             KotlinTestUtils.assertEqualsToFile(txtFile, actual)
         } finally {
             sourceOutputDir.deleteRecursively()

@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno1 {
 }
@@ -5,6 +6,7 @@ public abstract @interface Anno1 {
 ////////////////////
 
 
+@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno2 {
 
@@ -30,6 +32,7 @@ public abstract @interface Anno2 {
 ////////////////////
 
 
+@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno3 {
 
@@ -39,6 +42,7 @@ public abstract @interface Anno3 {
 ////////////////////
 
 
+@kotlin.Metadata()
 public enum Colors {
     /*public static final*/ WHITE /* = new WHITE() */,
     /*public static final*/ BLACK /* = new BLACK() */;
@@ -50,6 +54,7 @@ public enum Colors {
 ////////////////////
 
 
+@kotlin.Metadata()
 @Anno3(value = "value")
 @Anno2(a = @Anno1(), clazz = TestAnno.class, classes = {TestAnno.class, Anno1.class})
 @Anno1()
@@ -63,6 +68,7 @@ public final class TestAnno {
 ////////////////////
 
 
+@kotlin.Metadata()
 @Anno2(i = 6, s = "BCD", ii = {4, 5, 6}, ss = {"Z", "X"}, a = @Anno1(), color = Colors.WHITE, colors = {Colors.WHITE}, clazz = TestAnno.class, classes = {TestAnno.class, Anno1.class})
 @Anno3(value = "value")
 public final class TestAnno2 {

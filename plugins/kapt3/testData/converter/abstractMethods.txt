@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 public abstract class Base {
 
     protected abstract void doJob(@org.jetbrains.annotations.NotNull()
@@ -14,6 +15,7 @@ public abstract class Base {
 ////////////////////
 
 
+@kotlin.Metadata()
 public final class Impl extends Base {
 
     @java.lang.Override()
