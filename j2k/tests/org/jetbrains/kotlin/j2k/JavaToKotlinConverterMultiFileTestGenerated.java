@@ -66,6 +66,12 @@ public class JavaToKotlinConverterMultiFileTestGenerated extends AbstractJavaToK
         doTest(fileName);
     }
 
+    @TestMetadata("NullabilityByDFa")
+    public void testNullabilityByDFa() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/NullabilityByDFa/");
+        doTest(fileName);
+    }
+
     @TestMetadata("ProtectedVisibility")
     public void testProtectedVisibility() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/ProtectedVisibility/");

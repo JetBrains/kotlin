@@ -11,9 +11,9 @@ object Test {
             return false
         }
         val result = true
-        if (parent.isDirectory) {
-            return true
+        return if (parent.isDirectory) {
+            true
         } else
-            return false
+            false
     }
 }

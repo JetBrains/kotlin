@@ -63,6 +63,11 @@ fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
     return innerExpression
 }
 
+fun KtExpression?.isTrivialStatementBody(): Boolean = when (this?.unwrapBlockOrParenthesis()) {
+    is KtIfExpression, is KtBlockExpression -> false
+    else -> true
+}
+
 fun KtExpression?.isNullExpression(): Boolean = this?.unwrapBlockOrParenthesis()?.node?.elementType == KtNodeTypes.NULL
 
 fun KtExpression?.isNullExpressionOrEmptyBlock(): Boolean = this.isNullExpression() || this is KtBlockExpression && this.statements.isEmpty()

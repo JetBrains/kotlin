@@ -25,7 +25,7 @@ internal class C : Base(), I {
         return ""
     }
 
-    override fun zoo(o: Any?): String? {
+    override fun zoo(o: Any?): String {
         return ""
     }
 }
