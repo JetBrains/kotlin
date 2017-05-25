@@ -376,7 +376,7 @@ public interface Errors {
     DiagnosticFactory1<KtModifierListOwner, CallableMemberDescriptor> NOTHING_TO_OVERRIDE = DiagnosticFactory1.create(ERROR, OVERRIDE_MODIFIER);
 
     DiagnosticFactory3<KtNamedDeclaration, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN =
-            DiagnosticFactory3.create(ERROR, DECLARATION_SIGNATURE);
+            DiagnosticFactory3.create(ERROR, DECLARATION_NAME);
 
     DiagnosticFactory2<KtModifierListOwner, CallableMemberDescriptor, CallableDescriptor> CANNOT_OVERRIDE_INVISIBLE_MEMBER =
             DiagnosticFactory2.create(ERROR, OVERRIDE_MODIFIER);
