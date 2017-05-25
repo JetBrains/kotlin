@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.asJava.builder.LightElementOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
+import org.jetbrains.kotlin.asJava.classes.isPossiblyAffectedByAllOpen
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -81,6 +83,8 @@ private class KtLightMemberModifierList(
         name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false
         // pretend this method behaves like a default method
         name == PsiModifier.DEFAULT && isImplementationInInterface() -> true
+        name == PsiModifier.FINAL && ((owner.containingClass as? KtLightClassForSourceDeclaration)?.isPossiblyAffectedByAllOpen() ?: false) ->
+            clsDelegate.hasModifierProperty(name)
         dummyDelegate != null -> {
             when {
                 name in visibilityModifiers && isMethodOverride() ->
