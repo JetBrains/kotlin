@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.JvmCommonIntentionActionsFactory
 import com.intellij.lang.Language
 import com.intellij.psi.PsiModifier
@@ -132,10 +133,29 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin())
 
         myFixture.launchAction(codeModifications.createAddBeanPropertyActions(
-                atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.getTypeByName("java.lang.String", project, GlobalSearchScope.allScope(project)), true, true).first())
+                atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.getTypeByName("java.lang.String", project, GlobalSearchScope.allScope(project)), true, true)
+                                       .withText("Add 'var' property 'baz' to 'Foo'"))
         myFixture.checkResult("""
         |class Foo {
-        |    var baz: String
+        |    var baz: String = TODO("initialize me")
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin(), true)
+    }
+
+    fun testAddLateInitStringVarProperty() {
+        myFixture.configureByText("foo.kt", """
+        |class Foo<caret> {
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin())
+
+        myFixture.launchAction(codeModifications.createAddBeanPropertyActions(
+                atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.getTypeByName("java.lang.String", project, GlobalSearchScope.allScope(project)), true, true)
+                                       .withText("Add 'lateinit var' property 'baz' to 'Foo'"))
+        myFixture.checkResult("""
+        |class Foo {
+        |    lateinit var baz: String
         |    fun bar() {}
         |}
         """.trim().trimMargin(), true)
@@ -152,7 +172,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
                 atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.getTypeByName("java.lang.String", project, GlobalSearchScope.allScope(project)), false, true).first())
         myFixture.checkResult("""
         |class Foo {
-        |    val baz: String
+        |    val baz: String = TODO("initialize me")
         |    fun bar() {}
         |}
         """.trim().trimMargin(), true)
@@ -162,6 +182,11 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
     private fun <T : UElement> atCaret(myFixture: CodeInsightTestFixture): T {
         return myFixture.elementAtCaret.toUElement() as T
     }
+
+    @Suppress("CAST_NEVER_SUCCEEDS")
+    private fun Array<IntentionAction>.withText(text: String): IntentionAction =
+            this.firstOrNull { it.text == text } ?:
+            Assert.fail("intention with text '$text' was not found, only ${this.joinToString { "\"${it.text}\"" }} available") as Nothing
 
     private val codeModifications: JvmCommonIntentionActionsFactory
         get() = JvmCommonIntentionActionsFactory.forLanguage(Language.findLanguageByID("kotlin")!!)!!
