@@ -79,6 +79,7 @@ public interface Errors {
             DiagnosticFactory1.create(ERROR, FOR_REDECLARATION);
     DiagnosticFactory1<PsiElement, String> PACKAGE_OR_CLASSIFIER_REDECLARATION =
             DiagnosticFactory1.create(ERROR, FOR_REDECLARATION);
+    DiagnosticFactory0<KtParameter> DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE = DiagnosticFactory0.create(ERROR, DECLARATION_NAME);
 
     DiagnosticFactory1<KtDeclaration, CallableMemberDescriptor> EXTENSION_SHADOWED_BY_MEMBER =
             DiagnosticFactory1.create(WARNING, FOR_REDECLARATION);

@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findFirstFromMeAndParent
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
@@ -55,6 +56,7 @@ import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliases
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -231,6 +233,7 @@ class TypeResolver(
                 val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
 
                 val parameterDescriptors = resolveParametersOfFunctionType(type.parameters)
+                checkParametersOfFunctionType(parameterDescriptors)
 
                 val returnTypeRef = type.returnTypeReference
                 val returnType = if (returnTypeRef != null) resolveType(c.noBareTypes(), returnTypeRef)
@@ -243,6 +246,17 @@ class TypeResolver(
                         returnType,
                         suspendFunction = hasSuspendModifier
                 ))
+            }
+
+            private fun checkParametersOfFunctionType(parameterDescriptors: List<VariableDescriptor>) {
+                val parametersByName = parameterDescriptors.filter { !it.name.isSpecial }.groupBy { it.name }
+                for (parametersGroup in parametersByName.values) {
+                    if (parametersGroup.size < 2) continue
+                    for (parameter in parametersGroup) {
+                        val ktParameter = parameter.source.getPsi()?.safeAs<KtParameter>() ?: continue
+                        c.trace.report(DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE.on(ktParameter))
+                    }
+                }
             }
 
             private fun resolveParametersOfFunctionType(parameters: List<KtParameter>): List<VariableDescriptor> {

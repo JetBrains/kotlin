@@ -16099,6 +16099,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("DuplicateParameterNamesInFunctionType.kt")
+            public void testDuplicateParameterNamesInFunctionType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/DuplicateParameterNamesInFunctionType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("EnumName.kt")
             public void testEnumName() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/EnumName.kt");
