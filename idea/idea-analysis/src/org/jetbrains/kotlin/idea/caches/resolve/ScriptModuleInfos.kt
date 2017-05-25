@@ -44,7 +44,7 @@ data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
         get() = ModuleOrigin.OTHER
 
     val externalDependencies: KotlinScriptExternalDependencies?
-        get() = KotlinScriptExternalImportsProvider.getInstance(project)?.getExternalImports(scriptFile)
+        get() = KotlinScriptConfigurationManager.getInstance(project).getExternalImports(scriptFile)
 
     override val name: Name = Name.special("<script ${scriptFile.name} ${scriptDefinition.name}>")
 
