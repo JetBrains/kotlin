@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,7 @@ class LazyTopDownAnalyzer(
         val properties = ArrayList<KtProperty>()
         val functions = ArrayList<KtNamedFunction>()
         val typeAliases = ArrayList<KtTypeAlias>()
+        val destructuringDeclarations = ArrayList<KtDestructuringDeclaration>()
 
         // fill in the context
         for (declaration in declarations) {
@@ -168,7 +169,9 @@ class LazyTopDownAnalyzer(
                 }
 
                 override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) {
-                    // Ignore: multi-declarations are only allowed locally
+                    if (destructuringDeclaration.containingKtFile.isScript) {
+                        destructuringDeclarations.add(destructuringDeclaration)
+                    }
                 }
 
                 override fun visitNamedFunction(function: KtNamedFunction) {
@@ -190,6 +193,8 @@ class LazyTopDownAnalyzer(
         createFunctionDescriptors(c, functions)
 
         createPropertyDescriptors(c, topLevelFqNames, properties)
+
+        createPropertiesFromDestructuringDeclarations(c, topLevelFqNames, destructuringDeclarations)
 
         createTypeAliasDescriptors(c, topLevelFqNames, typeAliases)
 
@@ -254,6 +259,21 @@ class LazyTopDownAnalyzer(
             ForceResolveUtil.forceResolveAllContents(simpleFunctionDescriptor.annotations)
             for (parameterDescriptor in simpleFunctionDescriptor.valueParameters) {
                 ForceResolveUtil.forceResolveAllContents(parameterDescriptor.annotations)
+            }
+        }
+    }
+
+    private fun createPropertiesFromDestructuringDeclarations(
+            c: TopDownAnalysisContext,
+            topLevelFqNames: Multimap<FqName, KtElement>,
+            destructuringDeclarations: List<KtDestructuringDeclaration>) {
+        for (destructuringDeclaration in destructuringDeclarations) {
+            for (entry in destructuringDeclaration.entries) {
+                val descriptor = lazyDeclarationResolver.resolveToDescriptor(entry) as PropertyDescriptor
+
+                c.destructuringDeclarationEntries[entry] = descriptor
+                ForceResolveUtil.forceResolveAllContents(descriptor.annotations)
+                registerTopLevelFqName(topLevelFqNames, entry, descriptor)
             }
         }
     }

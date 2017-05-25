@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -215,6 +215,17 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         }
         else if (declaration instanceof KtTypeAlias) {
             genTypeAlias((KtTypeAlias) declaration);
+        }
+        else if (declaration instanceof KtDestructuringDeclarationEntry) {
+            try {
+                propertyCodegen.gen((KtDestructuringDeclarationEntry) declaration);
+            }
+            catch (ProcessCanceledException | CompilationException e) {
+                throw e;
+            }
+            catch (Exception e) {
+                throw new CompilationException("Failed to generate destructuring declaration entry " + declaration.getName(), e, declaration);
+            }
         }
         else {
             throw new IllegalArgumentException("Unknown parameter: " + declaration);
@@ -466,10 +477,15 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                     initializeProperty(codegen.invoke(), (KtProperty) declaration);
                 }
             }
-            else if (declaration instanceof KtAnonymousInitializer) {
-                KtExpression body = ((KtAnonymousInitializer) declaration).getBody();
-                if (body != null) {
-                    codegen.invoke().gen(body, Type.VOID_TYPE);
+            else if (declaration instanceof KtDestructuringDeclaration) {
+                initializeDestructuringDeclaration(codegen.invoke(), (KtDestructuringDeclaration) declaration);
+            }
+            else {
+                if (declaration instanceof KtAnonymousInitializer) {
+                    KtExpression body = ((KtAnonymousInitializer) declaration).getBody();
+                    if (body != null) {
+                        codegen.invoke().gen(body, Type.VOID_TYPE);
+                    }
                 }
             }
         }
@@ -504,6 +520,10 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         );
 
         propValue.store(delegateValue, codegen.v);
+    }
+
+    private static void initializeDestructuringDeclaration(@NotNull ExpressionCodegen codegen, @NotNull KtDestructuringDeclaration destructuringDeclaration) {
+        codegen.initializeDestructuringDeclaration(destructuringDeclaration, true);
     }
 
     protected boolean shouldInitializeProperty(@NotNull KtProperty property) {

@@ -110,6 +110,16 @@ class DeclarationsChecker(
             identifierChecker.checkDeclaration(property, trace)
         }
 
+        val destructuringDeclarations = bodiesResolveContext.destructuringDeclarationEntries.entries
+                .map { (entry, _) -> entry.parent }
+                .filterIsInstance<KtDestructuringDeclaration>()
+                .distinct()
+
+        for (multiDeclaration in destructuringDeclarations) {
+            modifiersChecker.checkModifiersForDestructuringDeclaration(multiDeclaration)
+            identifierChecker.checkDeclaration(multiDeclaration, trace)
+        }
+
         for ((declaration, constructorDescriptor) in bodiesResolveContext.secondaryConstructors.entries) {
             checkConstructorDeclaration(constructorDescriptor, declaration)
             exposedChecker.checkFunction(declaration, constructorDescriptor)

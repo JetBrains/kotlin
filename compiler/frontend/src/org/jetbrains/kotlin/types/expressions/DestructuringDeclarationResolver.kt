@@ -49,9 +49,7 @@ class DestructuringDeclarationResolver(
     ): List<VariableDescriptor> {
         val result = arrayListOf<VariableDescriptor>()
         for ((componentIndex, entry) in destructuringDeclaration.entries.withIndex()) {
-            val componentName = DataClassDescriptorResolver.createComponentName(componentIndex + 1)
-
-            val componentType = resolveComponentFunctionAndGetType(componentName, context, entry, receiver, initializer)
+            val componentType = resolveInitializer(entry, receiver, initializer, context, componentIndex)
             val variableDescriptor = localVariableResolver.resolveLocalVariableDescriptorWithType(scope, entry, componentType, context.trace)
 
             result.add(variableDescriptor)
@@ -71,6 +69,17 @@ class DestructuringDeclarationResolver(
     ).forEach {
         ExpressionTypingUtils.checkVariableShadowing(writableScope, context.trace, it)
         writableScope.addVariableDescriptor(it)
+    }
+
+    fun resolveInitializer(
+            entry: KtDestructuringDeclarationEntry,
+            receiver: ReceiverValue?,
+            initializer: KtExpression?,
+            context: ExpressionTypingContext,
+            componentIndex: Int
+    ): KotlinType {
+        val componentName = DataClassDescriptorResolver.createComponentName(componentIndex + 1)
+        return resolveComponentFunctionAndGetType(componentName, context, entry, receiver, initializer)
     }
 
     private fun resolveComponentFunctionAndGetType(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -222,6 +222,17 @@ public class LazyDeclarationResolver {
                 MemberScope scopeForDeclaration = getMemberScopeDeclaredIn(property, location);
                 scopeForDeclaration.getContributedVariables(property.getNameAsSafeName(), location);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
+            }
+
+            @Override
+            public DeclarationDescriptor visitDestructuringDeclarationEntry(
+                    @NotNull KtDestructuringDeclarationEntry multiDeclarationEntry, Void data
+            ) {
+                LookupLocation location = lookupLocationFor(multiDeclarationEntry, false);
+                KtDestructuringDeclaration destructuringDeclaration = ((KtDestructuringDeclaration) multiDeclarationEntry.getParent());
+                MemberScope scopeForDeclaration = getMemberScopeDeclaredIn(destructuringDeclaration, location);
+                scopeForDeclaration.getContributedVariables(multiDeclarationEntry.getNameAsSafeName(), location);
+                return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, multiDeclarationEntry);
             }
 
             @Override

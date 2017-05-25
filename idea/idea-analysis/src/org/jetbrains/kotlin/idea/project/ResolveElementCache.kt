@@ -617,6 +617,8 @@ class ResolveElementCache(
 
         override fun getTypeAliases(): MutableMap<KtTypeAlias, TypeAliasDescriptor> = hashMapOf()
 
+        override fun getDestructuringDeclarationEntries(): MutableMap<KtDestructuringDeclarationEntry, PropertyDescriptor> = hashMapOf()
+
         override fun getDeclaringScope(declaration: KtDeclaration): LexicalScope? = declaringScopes(declaration)
 
         override fun getScripts(): MutableMap<KtScript, LazyScriptDescriptor> = hashMapOf()
