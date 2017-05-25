@@ -284,6 +284,7 @@ private fun ResolutionScope.getContributedFunctionsAndConstructors(
     callableConstructors.filterTo(result) { it.dispatchReceiverParameter == null }
 
     result.addAll(syntheticScopes.collectSyntheticStaticFunctions(scope, name, location))
+    result.addAll(syntheticScopes.collectSyntheticConstructors(scope, name, location))
 
     return result.toList()
 }

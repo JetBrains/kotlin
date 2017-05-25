@@ -12268,6 +12268,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typeAliasWithSamConstructor.kt")
+            public void testTypeAliasWithSamConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/typeAliasWithSamConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("UnboxingNulls.kt")
             public void testUnboxingNulls() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/UnboxingNulls.kt");

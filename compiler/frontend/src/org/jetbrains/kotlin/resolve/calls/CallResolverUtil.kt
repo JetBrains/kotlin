@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
+import org.jetbrains.kotlin.resolve.scopes.collectSyntheticConstructors
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
@@ -192,8 +194,9 @@ fun createResolutionCandidatesForConstructors(
         lexicalScope: LexicalScope,
         call: Call,
         typeWithConstructors: KotlinType,
-        useKnownTypeSubstitutor: Boolean
-): Collection<ResolutionCandidate<ConstructorDescriptor>> {
+        useKnownTypeSubstitutor: Boolean,
+        syntheticScopes: SyntheticScopes
+): List<ResolutionCandidate<ConstructorDescriptor>> {
     val classWithConstructors = typeWithConstructors.constructor.declarationDescriptor as ClassDescriptor
 
     val unwrappedType = typeWithConstructors.unwrap()
@@ -233,7 +236,9 @@ fun createResolutionCandidatesForConstructors(
         dispatchReceiver = null
     }
 
-    return constructors.map {
+    val syntheticConstructors = constructors.flatMap { syntheticScopes.collectSyntheticConstructors(it) }
+
+    return (constructors + syntheticConstructors).map {
         ResolutionCandidate.create(call, it, dispatchReceiver, receiverKind, knownSubstitutor)
     }
 }

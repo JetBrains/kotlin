@@ -3,7 +3,6 @@ package
 public fun foo(): kotlin.Unit
 
 public open class A</*0*/ E : kotlin.Any!> {
-    public /*synthesized*/ constructor A</*0*/ E : kotlin.Any!>(/*0*/ comparator: ((E!, E!) -> kotlin.Int)!)
     public constructor A</*0*/ E : kotlin.Any!>(/*0*/ comparator: java.util.Comparator<in E!>!)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

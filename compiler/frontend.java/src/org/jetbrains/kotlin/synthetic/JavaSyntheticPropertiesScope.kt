@@ -180,8 +180,17 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
     override fun getSyntheticStaticFunctions(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
             = emptyList()
 
+    override fun getSyntheticConstructors(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+            = emptyList()
+
     override fun getSyntheticStaticFunctions(scope: ResolutionScope): Collection<FunctionDescriptor>
             = emptyList()
+
+    override fun getSyntheticConstructors(scope: ResolutionScope): Collection<FunctionDescriptor>
+            = emptyList()
+
+    override fun getSyntheticConstructor(constructor: ConstructorDescriptor): ConstructorDescriptor?
+            = null
 
     private fun collectSyntheticPropertiesByName(result: SmartList<PropertyDescriptor>?, type: TypeConstructor, name: Name, processedTypes: MutableSet<TypeConstructor>?, location: LookupLocation): SmartList<PropertyDescriptor>? {
         if (processedTypes != null && !processedTypes.add(type)) return result

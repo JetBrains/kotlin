@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -27,10 +28,14 @@ interface SyntheticScope {
     fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
     fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
     fun getSyntheticStaticFunctions(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+    fun getSyntheticConstructors(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
 
     fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor>
     fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor>
     fun getSyntheticStaticFunctions(scope: ResolutionScope): Collection<FunctionDescriptor>
+    fun getSyntheticConstructors(scope: ResolutionScope): Collection<FunctionDescriptor>
+
+    fun getSyntheticConstructor(constructor: ConstructorDescriptor): ConstructorDescriptor?
 }
 
 interface SyntheticScopes {
@@ -51,6 +56,9 @@ fun SyntheticScopes.collectSyntheticMemberFunctions(receiverTypes: Collection<Ko
 fun SyntheticScopes.collectSyntheticStaticFunctions(scope: ResolutionScope, name: Name, location: LookupLocation)
         = scopes.flatMap { it.getSyntheticStaticFunctions(scope, name, location) }
 
+fun SyntheticScopes.collectSyntheticConstructors(scope: ResolutionScope, name: Name, location: LookupLocation)
+        = scopes.flatMap { it.getSyntheticConstructors(scope, name, location) }
+
 fun SyntheticScopes.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
         = scopes.flatMap { it.getSyntheticExtensionProperties(receiverTypes) }
 
@@ -59,3 +67,9 @@ fun SyntheticScopes.collectSyntheticMemberFunctions(receiverTypes: Collection<Ko
 
 fun SyntheticScopes.collectSyntheticStaticFunctions(scope: ResolutionScope)
         = scopes.flatMap { it.getSyntheticStaticFunctions(scope) }
+
+fun SyntheticScopes.collectSyntheticConstructors(scope: ResolutionScope)
+        = scopes.flatMap { it.getSyntheticConstructors(scope) }
+
+fun SyntheticScopes.collectSyntheticConstructors(constructor: ConstructorDescriptor)
+        = scopes.mapNotNull { it.getSyntheticConstructor(constructor) }

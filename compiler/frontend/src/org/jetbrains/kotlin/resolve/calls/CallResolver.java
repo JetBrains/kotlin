@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.KotlinTypeKt;
@@ -70,6 +71,7 @@ public class CallResolver {
     private GenericCandidateResolver genericCandidateResolver;
     private CallCompleter callCompleter;
     private NewResolutionOldInference newCallResolver;
+    private SyntheticScopes syntheticScopes;
     private final KotlinBuiltIns builtIns;
     private final LanguageVersionSettings languageVersionSettings;
 
@@ -117,6 +119,11 @@ public class CallResolver {
     @Inject
     public void setCallCompleter(@NotNull NewResolutionOldInference newCallResolver) {
         this.newCallResolver = newCallResolver;
+    }
+
+    @Inject
+    public void setSyntheticScopes(@NotNull SyntheticScopes syntheticScopes) {
+        this.syntheticScopes = syntheticScopes;
     }
 
     @NotNull
@@ -357,7 +364,7 @@ public class CallResolver {
             @NotNull KotlinType constructedType
     ) {
         Pair<Collection<ResolutionCandidate<ConstructorDescriptor>>, BasicCallResolutionContext> candidatesAndContext =
-                prepareCandidatesAndContextForConstructorCall(constructedType, context);
+                prepareCandidatesAndContextForConstructorCall(constructedType, context, syntheticScopes);
 
         Collection<ResolutionCandidate<ConstructorDescriptor>> candidates = candidatesAndContext.getFirst();
         context = candidatesAndContext.getSecond();
@@ -437,7 +444,7 @@ public class CallResolver {
                                   DescriptorUtils.getSuperClassType(currentClassDescriptor);
 
         Pair<Collection<ResolutionCandidate<ConstructorDescriptor>>, BasicCallResolutionContext> candidatesAndContext =
-                prepareCandidatesAndContextForConstructorCall(superType, context);
+                prepareCandidatesAndContextForConstructorCall(superType, context, syntheticScopes);
         Collection<ResolutionCandidate<ConstructorDescriptor>> candidates = candidatesAndContext.getFirst();
         context = candidatesAndContext.getSecond();
 
@@ -459,7 +466,8 @@ public class CallResolver {
     @NotNull
     private static Pair<Collection<ResolutionCandidate<ConstructorDescriptor>>, BasicCallResolutionContext> prepareCandidatesAndContextForConstructorCall(
             @NotNull KotlinType superType,
-            @NotNull BasicCallResolutionContext context
+            @NotNull BasicCallResolutionContext context,
+            @NotNull SyntheticScopes syntheticScopes
     ) {
         if (!(superType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
             return new Pair<>(Collections.<ResolutionCandidate<ConstructorDescriptor>>emptyList(), context);
@@ -474,9 +482,9 @@ public class CallResolver {
             context = context.replaceExpectedType(superType);
         }
 
-        Collection<ResolutionCandidate<ConstructorDescriptor>> candidates =
+        List<ResolutionCandidate<ConstructorDescriptor>> candidates =
                 CallResolverUtilKt.createResolutionCandidatesForConstructors(
-                        context.scope, context.call, superType, !anyConstructorHasDeclaredTypeParameters
+                        context.scope, context.call, superType, !anyConstructorHasDeclaredTypeParameters, syntheticScopes
                 );
 
         return new Pair<>(candidates, context);
