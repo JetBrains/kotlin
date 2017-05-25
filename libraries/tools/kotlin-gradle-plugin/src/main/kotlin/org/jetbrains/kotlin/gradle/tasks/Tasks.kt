@@ -112,14 +112,16 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     // TODO: consider more reliable approach (see usage)
     internal var anyClassesCompiled: Boolean = false
     internal var friendTaskName: String? = null
+    internal var javaOutputDir: File? = null
     internal var sourceSetName: String by Delegates.notNull()
     internal val moduleName: String
             get() = "${project.name}_$sourceSetName"
 
-    var javaOutputDir: File? = null
+    @Suppress("UNCHECKED_CAST")
+    protected val friendTask: AbstractKotlinCompile<T>?
+            get() = friendTaskName?.let { project.tasks.findByName(it) } as? AbstractKotlinCompile<T>
 
-    // In case the way to retrieve friend classpath entries is known at configuration time, it will be set
-    var friendClasspathEntries: Lazy<List<String>?> = lazyOf(null)
+    var friendPaths: Lazy<Array<String>?> = lazy { friendTask?.javaOutputDir?.absolutePath?.let { arrayOf(it) } }
 
     override fun compile() {
         assert(false, { "unexpected call to compile()" })
@@ -206,7 +208,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val kaptPluginOptions = getKaptPluginOptions()
         args.pluginOptions = (pluginOptions.arguments + kaptPluginOptions.arguments).toTypedArray()
 
-        args.moduleName = moduleName
         args.addCompilerBuiltIns = true
 
         val gradleVersion = getGradleVersion()
@@ -214,7 +215,11 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             args.loadBuiltInsFromDependencies = true
         }
 
-        friendTaskName?.let { addFriendPathForTestTask(it, args) }
+        args.moduleName = friendTask?.moduleName ?: moduleName
+        logger.kotlinDebug { "args.moduleName = ${args.moduleName}" }
+
+        args.friendPaths = friendPaths.value
+        logger.kotlinDebug { "args.friendPaths = ${args.friendPaths?.joinToString() ?: "[]"}" }
 
         if (defaultsOnly) return
 
@@ -224,15 +229,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         kotlinOptionsImpl.updateArguments(args)
 
         logger.kotlinDebug { "$name destinationDir = $destinationDir" }
-    }
-
-    internal fun addFriendPathForTestTask(friendKotlinTaskName: String, args: K2JVMCompilerArguments) {
-        val friendTask = project.getTasksByName(friendKotlinTaskName, /* recursive = */false).firstOrNull() as? KotlinCompile ?: return
-        args.friendPaths = arrayOf(
-                friendTask.javaOutputDir!!.absolutePath,
-                *friendClasspathEntries.value.orEmpty().toTypedArray())
-        args.moduleName = friendTask.moduleName
-        logger.kotlinDebug("java destination directory for production = ${friendTask.javaOutputDir}")
     }
 
     override fun getSourceRoots() = SourceRoots.ForJvm.create(getSource(), sourceRootsContainer)
