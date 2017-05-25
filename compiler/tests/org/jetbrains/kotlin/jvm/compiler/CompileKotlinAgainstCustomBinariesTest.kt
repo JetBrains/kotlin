@@ -14,645 +14,658 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jvm.compiler;
+package org.jetbrains.kotlin.jvm.compiler
 
-import com.google.common.collect.Iterables;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.ArrayUtil;
-import kotlin.Pair;
-import kotlin.collections.SetsKt;
-import kotlin.io.FilesKt;
-import kotlin.jvm.functions.Function2;
-import kotlin.text.Charsets;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.cli.AbstractCliTest;
-import org.jetbrains.kotlin.cli.WrongBytecodeVersionTest;
-import org.jetbrains.kotlin.cli.common.CLICompiler;
-import org.jetbrains.kotlin.cli.common.ExitCode;
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
-import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector;
-import org.jetbrains.kotlin.cli.js.K2JSCompiler;
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
-import org.jetbrains.kotlin.test.*;
-import org.jetbrains.kotlin.test.util.DescriptorValidator;
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.kotlin.utils.JsMetadataVersion;
-import org.jetbrains.kotlin.utils.StringsKt;
-import org.jetbrains.org.objectweb.asm.ClassReader;
-import org.jetbrains.org.objectweb.asm.ClassVisitor;
-import org.jetbrains.org.objectweb.asm.ClassWriter;
-import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.junit.Assert;
+import com.google.common.collect.Iterables
+import com.intellij.openapi.util.Ref
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.cli.WrongBytecodeVersionTest
+import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isObject
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.util.DescriptorValidator
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
+import org.jetbrains.kotlin.utils.JsMetadataVersion
+import org.jetbrains.kotlin.utils.join
+import org.jetbrains.kotlin.utils.rethrow
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.ClassWriter
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.junit.Assert
+import java.io.BufferedOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.util.*
+import java.util.jar.JarEntry
+import java.util.jar.JarFile
+import java.util.regex.Pattern
+import java.util.zip.ZipOutputStream
+import kotlin.experimental.xor
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.regex.Pattern;
-import java.util.zip.ZipOutputStream;
+class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
+    private val testDataDirectory: File
+        get() = File(TEST_DATA_PATH, getTestName(true))
 
-import static org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
-import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile;
-
-public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
-    private static final String TEST_DATA_PATH = "compiler/testData/compileKotlinAgainstCustomBinaries/";
-    private static final Pattern JAVA_FILES = Pattern.compile(".*\\.java$");
-
-    @NotNull
-    private File getTestDataDirectory() {
-        return new File(TEST_DATA_PATH, getTestName(true));
+    private fun getTestDataFileWithExtension(extension: String): File {
+        return File(testDataDirectory, getTestName(true) + "." + extension)
     }
 
-    @NotNull
-    private File getTestDataFileWithExtension(@NotNull String extension) {
-        return new File(getTestDataDirectory(), getTestName(true) + "." + extension);
+    private fun compileLibrary(sourcePath: String, vararg extraClassPath: File): File {
+        return compileLibrary(sourcePath, emptyList<String>(), *extraClassPath)
     }
 
-    @NotNull
-    private File compileLibrary(@NotNull String sourcePath, @NotNull File... extraClassPath) {
-        return compileLibrary(sourcePath, Collections.emptyList(), extraClassPath);
+    private fun compileLibrary(sourcePath: String, additionalOptions: List<String>, vararg extraClassPath: File): File {
+        val destination = File(tmpdir, sourcePath + ".jar")
+        compileLibrary(K2JVMCompiler(), sourcePath, destination, additionalOptions, *extraClassPath)
+        return destination
     }
 
-    private File compileLibrary(@NotNull String sourcePath, List<String> additionalOptions, @NotNull File... extraClassPath) {
-        File destination = new File(tmpdir, sourcePath + ".jar");
-        compileLibrary(new K2JVMCompiler(), sourcePath, destination, additionalOptions, extraClassPath);
-        return destination;
-    }
-
-    private void compileLibrary(
-            @NotNull CLICompiler<?> compiler, @NotNull String sourcePath, @NotNull File destination, List<String> additionalOptions, @NotNull File... extraClassPath
+    private fun compileLibrary(
+            compiler: CLICompiler<*>, sourcePath: String, destination: File, additionalOptions: List<String>, vararg extraClassPath: File
     ) {
-        Pair<String, ExitCode> output = compileKotlin(compiler, sourcePath, destination, additionalOptions, extraClassPath);
-        Assert.assertEquals(normalizeOutput(new Pair<>("", ExitCode.OK)), normalizeOutput(output));
+        val output = compileKotlin(compiler, sourcePath, destination, additionalOptions, *extraClassPath)
+        Assert.assertEquals(normalizeOutput(Pair("", ExitCode.OK)), normalizeOutput(output))
     }
 
-    @NotNull
-    private String normalizeOutput(@NotNull Pair<String, ExitCode> output) {
-        return AbstractCliTest.getNormalizedCompilerOutput(output.getFirst(), output.getSecond(), getTestDataDirectory().getPath())
-                .replace(FileUtil.toSystemIndependentName(tmpdir.getAbsolutePath()), "$TMP_DIR$");
+    private fun normalizeOutput(output: Pair<String, ExitCode>): String {
+        return AbstractCliTest.getNormalizedCompilerOutput(output.first, output.second, testDataDirectory.path)
+                .replace(FileUtil.toSystemIndependentName(tmpdir.absolutePath), "\$TMP_DIR$")
     }
 
-    private void doTestWithTxt(@NotNull File... extraClassPath) throws Exception {
-        PackageViewDescriptor packageView = analyzeFileToPackageView(extraClassPath);
+    @Throws(Exception::class)
+    private fun doTestWithTxt(vararg extraClassPath: File) {
+        val packageView = analyzeFileToPackageView(*extraClassPath)
 
-        RecursiveDescriptorComparator.Configuration comparator = AbstractLoadJavaTest.COMPARATOR_CONFIGURATION
-                .withValidationStrategy(DescriptorValidator.ValidationVisitor.errorTypesAllowed());
-        validateAndCompareDescriptorWithFile(packageView, comparator, getTestDataFileWithExtension("txt"));
+        val comparator = AbstractLoadJavaTest.COMPARATOR_CONFIGURATION
+                .withValidationStrategy(DescriptorValidator.ValidationVisitor.errorTypesAllowed())
+        validateAndCompareDescriptorWithFile(packageView, comparator, getTestDataFileWithExtension("txt"))
     }
 
-    @NotNull
-    private PackageViewDescriptor analyzeFileToPackageView(@NotNull File... extraClassPath) throws IOException {
-        KotlinCoreEnvironment environment = createEnvironment(Arrays.asList(extraClassPath));
+    @Throws(IOException::class)
+    private fun analyzeFileToPackageView(vararg extraClassPath: File): PackageViewDescriptor {
+        val environment = createEnvironment(Arrays.asList(*extraClassPath))
 
-        AnalysisResult result = JvmResolveUtil.analyzeAndCheckForErrors(
-                KotlinTestUtils.loadJetFile(environment.getProject(), getTestDataFileWithExtension("kt")), environment
-        );
+        val result = JvmResolveUtil.analyzeAndCheckForErrors(
+                KotlinTestUtils.loadJetFile(environment.project, getTestDataFileWithExtension("kt")), environment
+        )
 
-        PackageViewDescriptor packageView = result.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
-        assertFalse("Failed to find package: " + LoadDescriptorUtil.TEST_PACKAGE_FQNAME, packageView.isEmpty());
-        return packageView;
+        val packageView = result.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
+        assertFalse("Failed to find package: " + LoadDescriptorUtil.TEST_PACKAGE_FQNAME, packageView.isEmpty())
+        return packageView
     }
 
-    @NotNull
-    private KotlinCoreEnvironment createEnvironment(@NotNull List<File> extraClassPath) {
-        List<File> extras = new ArrayList<>();
-        extras.addAll(extraClassPath);
-        extras.add(KotlinTestUtils.getAnnotationsJar());
+    private fun createEnvironment(extraClassPath: List<File>): KotlinCoreEnvironment {
+        val extras = ArrayList<File>()
+        extras.addAll(extraClassPath)
+        extras.add(KotlinTestUtils.getAnnotationsJar())
 
-        CompilerConfiguration configuration =
-                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, extras.toArray(new File[extras.size()]));
-        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, *extras.toTypedArray())
+        return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
-    @NotNull
-    private Collection<DeclarationDescriptor> analyzeAndGetAllDescriptors(@NotNull File... extraClassPath) throws IOException {
-        return DescriptorUtils.getAllDescriptors(analyzeFileToPackageView(extraClassPath).getMemberScope());
+    @Throws(IOException::class)
+    private fun analyzeAndGetAllDescriptors(vararg extraClassPath: File): Collection<DeclarationDescriptor> {
+        return DescriptorUtils.getAllDescriptors(analyzeFileToPackageView(*extraClassPath).memberScope)
     }
 
-    @NotNull
-    private static File copyJarFileWithoutEntry(@NotNull File jarPath, @NotNull String... entriesToDelete) {
-        return transformJar(jarPath, (s, bytes) -> bytes, entriesToDelete);
+    @Throws(Exception::class)
+    private fun compileJava(libraryDir: String): File {
+        val allJavaFiles = FileUtil.findFilesByMask(JAVA_FILES, File(testDataDirectory, libraryDir))
+        val result = File(tmpdir, libraryDir)
+        assert(result.mkdirs()) { "Could not create directory: " + result }
+        KotlinTestUtils.compileJavaFiles(allJavaFiles, Arrays.asList("-d", result.path))
+        return result
     }
 
-    @NotNull
-    private static File transformJar(
-            @NotNull File jarPath,
-            @NotNull Function2<String, byte[], byte[]> transformEntry,
-            @NotNull String... entriesToDelete
-    ) {
-        try {
-            File outputFile = new File(jarPath.getParentFile(), FileUtil.getNameWithoutExtension(jarPath) + "-after.jar");
-            Set<String> toDelete = SetsKt.setOf(entriesToDelete);
+    private fun compileKotlin(
+            fileName: String,
+            output: File,
+            vararg classpath: File
+    ): Pair<String, ExitCode> {
+        return compileKotlin(fileName, output, emptyList<String>(), *classpath)
+    }
 
-            try (JarFile jar = new JarFile(jarPath);
-                 ZipOutputStream output = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)))) {
-                for (Enumeration<JarEntry> enumeration = jar.entries(); enumeration.hasMoreElements(); ) {
-                    JarEntry jarEntry = enumeration.nextElement();
-                    String name = jarEntry.getName();
-                    if (toDelete.contains(name)) {
-                        continue;
-                    }
-                    byte[] bytes = FileUtil.loadBytes(jar.getInputStream(jarEntry));
-                    byte[] newBytes = name.endsWith(".class") ? transformEntry.invoke(name, bytes) : bytes;
-                    JarEntry newEntry = new JarEntry(name);
-                    newEntry.setSize(newBytes.length);
-                    output.putNextEntry(newEntry);
-                    output.write(newBytes);
-                    output.closeEntry();
-                }
+    private fun compileKotlin(
+            fileName: String,
+            output: File,
+            additionalOptions: List<String>,
+            vararg classpath: File
+    ): Pair<String, ExitCode> {
+        return compileKotlin(K2JVMCompiler(), fileName, output, additionalOptions, *classpath)
+    }
+
+    private fun compileKotlin(
+            compiler: CLICompiler<*>,
+            fileName: String,
+            output: File,
+            additionalOptions: List<String>,
+            vararg classpath: File
+    ): Pair<String, ExitCode> {
+        val args = ArrayList<String>()
+        val sourceFile = File(testDataDirectory, fileName)
+        assert(sourceFile.exists()) { "Source file does not exist: " + sourceFile.absolutePath }
+        args.add(sourceFile.path)
+
+        if (compiler is K2JSCompiler) {
+            if (classpath.isNotEmpty()) {
+                args.add("-libraries")
+                args.add(join(Arrays.asList(*classpath), File.pathSeparator))
             }
-
-            return outputFile;
+            args.add("-output")
+            args.add(output.path)
+            args.add("-meta-info")
         }
-        catch (IOException e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-    }
-
-    @NotNull
-    private File compileJava(@NotNull String libraryDir) throws Exception {
-        List<File> allJavaFiles = FileUtil.findFilesByMask(JAVA_FILES, new File(getTestDataDirectory(), libraryDir));
-        File result = new File(tmpdir, libraryDir);
-        assert result.mkdirs() : "Could not create directory: " + result;
-        KotlinTestUtils.compileJavaFiles(allJavaFiles, Arrays.asList("-d", result.getPath()));
-        return result;
-    }
-
-    @NotNull
-    private static File deletePaths(@NotNull File library, @NotNull String... pathsToDelete) {
-        for (String pathToDelete : pathsToDelete) {
-            File fileToDelete = new File(library, pathToDelete);
-            assert fileToDelete.delete() : "Can't delete " + fileToDelete;
-        }
-        return library;
-    }
-
-    private Pair<String, ExitCode> compileKotlin(
-            @NotNull String fileName,
-            @NotNull File output,
-            @NotNull File... classpath
-    ) {
-        return compileKotlin(fileName, output, Collections.emptyList(), classpath);
-    }
-
-    @NotNull
-    private Pair<String, ExitCode> compileKotlin(
-            @NotNull String fileName,
-            @NotNull File output,
-            @NotNull List<String> additionalOptions,
-            @NotNull File... classpath
-    ) {
-        return compileKotlin(new K2JVMCompiler(), fileName, output, additionalOptions, classpath);
-    }
-
-    @NotNull
-    private Pair<String, ExitCode> compileKotlin(
-            @NotNull CLICompiler<?> compiler,
-            @NotNull String fileName,
-            @NotNull File output,
-            @NotNull List<String> additionalOptions,
-            @NotNull File... classpath
-    ) {
-        List<String> args = new ArrayList<>();
-        File sourceFile = new File(getTestDataDirectory(), fileName);
-        assert sourceFile.exists() : "Source file does not exist: " + sourceFile.getAbsolutePath();
-        args.add(sourceFile.getPath());
-
-        if (compiler instanceof K2JSCompiler) {
-            if (classpath.length > 0) {
-                args.add("-libraries");
-                args.add(StringsKt.join(Arrays.asList(classpath), File.pathSeparator));
+        else if (compiler is K2JVMCompiler) {
+            if (classpath.isNotEmpty()) {
+                args.add("-classpath")
+                args.add(join(Arrays.asList(*classpath), File.pathSeparator))
             }
-            args.add("-output");
-            args.add(output.getPath());
-            args.add("-meta-info");
-        }
-        else if (compiler instanceof K2JVMCompiler) {
-            if (classpath.length > 0) {
-                args.add("-classpath");
-                args.add(StringsKt.join(Arrays.asList(classpath), File.pathSeparator));
-            }
-            args.add("-d");
-            args.add(output.getPath());
+            args.add("-d")
+            args.add(output.path)
         }
         else {
-            throw new UnsupportedOperationException(compiler.toString());
+            throw UnsupportedOperationException(compiler.toString())
         }
 
-        args.addAll(additionalOptions);
+        args.addAll(additionalOptions)
 
-        return AbstractCliTest.executeCompilerGrabOutput(compiler, args);
+        return AbstractCliTest.executeCompilerGrabOutput(compiler, args)
     }
 
-    private void doTestBrokenJavaLibrary(@NotNull String libraryName, @NotNull String... pathsToDelete) throws Exception {
+    @Throws(Exception::class)
+    private fun doTestBrokenJavaLibrary(libraryName: String, vararg pathsToDelete: String) {
         // This function compiles a Java library, then deletes one class file and attempts to compile a Kotlin source against
         // this broken library. The expected result is an error message from the compiler
-        File library = deletePaths(compileJava(libraryName), pathsToDelete);
+        val library = deletePaths(compileJava(libraryName), *pathsToDelete)
 
-        Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, library);
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+        val output = compileKotlin("source.kt", tmpdir, library)
+        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
     }
 
-    private void doTestBrokenKotlinLibrary(@NotNull String libraryName, @NotNull String... pathsToDelete) throws Exception {
+    @Throws(Exception::class)
+    private fun doTestBrokenKotlinLibrary(libraryName: String, vararg pathsToDelete: String) {
         // Analogous to doTestBrokenJavaLibrary, but with a Kotlin library compiled to a JAR file
-        File library = copyJarFileWithoutEntry(compileLibrary(libraryName), pathsToDelete);
-        Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, library);
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+        val library = copyJarFileWithoutEntry(compileLibrary(libraryName), *pathsToDelete)
+        val output = compileKotlin("source.kt", tmpdir, library)
+        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
     }
 
-    private void doTestKotlinLibraryWithWrongMetadataVersion(
-            @NotNull String libraryName,
-            @Nullable Function2<String, Object, Object> additionalTransformation,
-            @NotNull String... additionalOptions
-    ) throws Exception {
-        int[] version = new JvmMetadataVersion(42, 0, 0).toArray();
-        File library = transformJar(
+    @Throws(Exception::class)
+    private fun doTestKotlinLibraryWithWrongMetadataVersion(
+            libraryName: String,
+            additionalTransformation: ((fieldName: String, value: Any?) -> Any?)?,
+            vararg additionalOptions: String
+    ) {
+        val version = JvmMetadataVersion(42, 0, 0).toArray()
+        val library = transformJar(
                 compileLibrary(libraryName),
-                (entryName, bytes) -> WrongBytecodeVersionTest.Companion.transformMetadataInClassFile(bytes, (fieldName, value) -> {
-                    if (additionalTransformation != null) {
-                        Object result = additionalTransformation.invoke(fieldName, value);
-                        if (result != null) return result;
+                { entryName, bytes ->
+                    WrongBytecodeVersionTest.transformMetadataInClassFile(bytes) { fieldName, value ->
+                        if (additionalTransformation != null) {
+                            val result = additionalTransformation.invoke(fieldName, value)
+                            if (result != null) return@transformMetadataInClassFile result
+                        }
+                        if (JvmAnnotationNames.METADATA_VERSION_FIELD_NAME == fieldName) version else null
                     }
-                    return JvmAnnotationNames.METADATA_VERSION_FIELD_NAME.equals(fieldName) ? version : null;
-                })
-        );
-        Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, Arrays.asList(additionalOptions), library);
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+                }
+        )
+        val output = compileKotlin("source.kt", tmpdir, Arrays.asList(*additionalOptions), library)
+        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
     }
 
-    private void doTestKotlinLibraryWithWrongMetadataVersionJs(@NotNull String libraryName, @NotNull String... additionalOptions) {
-        compileLibrary(new K2JSCompiler(), libraryName, new File(tmpdir, "library.js"), Collections.emptyList());
+    private fun doTestKotlinLibraryWithWrongMetadataVersionJs(libraryName: String, vararg additionalOptions: String) {
+        compileLibrary(K2JSCompiler(), libraryName, File(tmpdir, "library.js"), emptyList<String>())
 
-        File library = new File(tmpdir, "library.meta.js");
-        FilesKt.writeText(library, FilesKt.readText(library, Charsets.UTF_8).replace(
+        val library = File(tmpdir, "library.meta.js")
+        library.writeText(library.readText(Charsets.UTF_8).replace(
                 "(" + JsMetadataVersion.INSTANCE.toInteger() + ", ",
-                "(" + new JsMetadataVersion(42, 0, 0).toInteger() + ", "
-        ), Charsets.UTF_8);
+                "(" + JsMetadataVersion(42, 0, 0).toInteger() + ", "
+        ), Charsets.UTF_8)
 
-        Pair<String, ExitCode> output = compileKotlin(
-                new K2JSCompiler(), "source.kt", new File(tmpdir, "usage.js"), Arrays.asList(additionalOptions), library
-        );
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+        val output = compileKotlin(
+                K2JSCompiler(), "source.kt", File(tmpdir, "usage.js"), Arrays.asList(*additionalOptions), library
+        )
+        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
     }
 
-    private void doTestPreReleaseKotlinLibrary(
-            @NotNull CLICompiler<?> compiler,
-            @NotNull String libraryName,
-            @NotNull File destination,
-            @NotNull File result,
-            @NotNull File usageDestination,
-            @NotNull String... additionalOptions
-    ) throws Exception {
+    @Throws(Exception::class)
+    private fun doTestPreReleaseKotlinLibrary(
+            compiler: CLICompiler<*>,
+            libraryName: String,
+            destination: File,
+            result: File,
+            usageDestination: File,
+            vararg additionalOptions: String
+    ) {
         // Compiles the library with the "pre-release" flag, then compiles a usage of this library in the release mode
 
         try {
-            System.setProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, "true");
-            compileLibrary(compiler, libraryName, destination, Collections.emptyList());
+            System.setProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, "true")
+            compileLibrary(compiler, libraryName, destination, emptyList<String>())
         }
         finally {
-            System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY);
+            System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY)
         }
 
-        Pair<String, ExitCode> output;
+        val output: Pair<String, ExitCode>
         try {
-            System.setProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, "false");
-            output = compileKotlin(compiler, "source.kt", usageDestination, Arrays.asList(additionalOptions), result);
+            System.setProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, "false")
+            output = compileKotlin(compiler, "source.kt", usageDestination, Arrays.asList(*additionalOptions), result)
         }
         finally {
-            System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY);
+            System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY)
         }
 
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
     }
 
     // ------------------------------------------------------------------------------
 
-    public void testRawTypes() throws Exception {
+    @Throws(Exception::class)
+    fun testRawTypes() {
         KotlinTestUtils.compileJavaFiles(
-                Collections.singletonList(
-                        new File(getTestDataDirectory() + "/library/test/A.java")
-                ),
-                Arrays.asList("-d", tmpdir.getPath())
-        );
+                listOf(File(testDataDirectory.toString() + "/library/test/A.java")),
+                Arrays.asList("-d", tmpdir.path)
+        )
 
-        Pair<String, ExitCode> outputLib = compileKotlin("library/test/lib.kt", tmpdir, tmpdir);
+        val outputLib = compileKotlin("library/test/lib.kt", tmpdir, tmpdir)
 
-        Pair<String, ExitCode> outputMain = compileKotlin("main.kt", tmpdir, tmpdir);
+        val outputMain = compileKotlin("main.kt", tmpdir, tmpdir)
 
         KotlinTestUtils.assertEqualsToFile(
-                new File(getTestDataDirectory(), "output.txt"), normalizeOutput(outputLib) + "\n" + normalizeOutput(outputMain)
-        );
+                File(testDataDirectory, "output.txt"), normalizeOutput(outputLib) + "\n" + normalizeOutput(outputMain)
+        )
     }
 
-    public void testDuplicateObjectInBinaryAndSources() throws Exception {
-        Collection<DeclarationDescriptor> allDescriptors = analyzeAndGetAllDescriptors(compileLibrary("library"));
-        assertEquals(allDescriptors.toString(), 2, allDescriptors.size());
-        for (DeclarationDescriptor descriptor : allDescriptors) {
-            assertTrue("Wrong name: " + descriptor, descriptor.getName().asString().equals("Lol"));
-            assertTrue("Should be an object: " + descriptor, isObject(descriptor));
+    @Throws(Exception::class)
+    fun testDuplicateObjectInBinaryAndSources() {
+        val allDescriptors = analyzeAndGetAllDescriptors(compileLibrary("library"))
+        assertEquals(allDescriptors.toString(), 2, allDescriptors.size)
+        for (descriptor in allDescriptors) {
+            assertTrue("Wrong name: " + descriptor, descriptor.name.asString() == "Lol")
+            assertTrue("Should be an object: " + descriptor, isObject(descriptor))
         }
     }
 
-    public void testBrokenJarWithNoClassForObject() throws Exception {
-        File brokenJar = copyJarFileWithoutEntry(compileLibrary("library"), "test/Lol.class");
-        Collection<DeclarationDescriptor> allDescriptors = analyzeAndGetAllDescriptors(brokenJar);
-        assertEmpty("No descriptors should be found: " + allDescriptors, allDescriptors);
+    @Throws(Exception::class)
+    fun testBrokenJarWithNoClassForObject() {
+        val brokenJar = copyJarFileWithoutEntry(compileLibrary("library"), "test/Lol.class")
+        val allDescriptors = analyzeAndGetAllDescriptors(brokenJar)
+        assertEmpty("No descriptors should be found: " + allDescriptors, allDescriptors)
     }
 
-    public void testSameLibraryTwiceInClasspath() throws Exception {
-        doTestWithTxt(compileLibrary("library-1"), compileLibrary("library-2"));
+    @Throws(Exception::class)
+    fun testSameLibraryTwiceInClasspath() {
+        doTestWithTxt(compileLibrary("library-1"), compileLibrary("library-2"))
     }
 
-    public void testMissingEnumReferencedInAnnotationArgument() throws Exception {
-        doTestWithTxt(copyJarFileWithoutEntry(compileLibrary("library"), "test/E.class"));
+    @Throws(Exception::class)
+    fun testMissingEnumReferencedInAnnotationArgument() {
+        doTestWithTxt(copyJarFileWithoutEntry(compileLibrary("library"), "test/E.class"))
     }
 
-    public void testNoWarningsOnJavaKotlinInheritance() throws Exception {
+    @Throws(Exception::class)
+    fun testNoWarningsOnJavaKotlinInheritance() {
         // This test checks that there are no PARAMETER_NAME_CHANGED_ON_OVERRIDE or DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
         // warnings when subclassing in Kotlin from Java binaries (in case when no parameter names are available for Java classes)
 
         KotlinTestUtils.compileJavaFiles(
-                Collections.singletonList(getTestDataFileWithExtension("java")),
-                Arrays.asList("-d", tmpdir.getPath())
-        );
+                listOf(getTestDataFileWithExtension("java")),
+                Arrays.asList("-d", tmpdir.path)
+        )
 
-        KotlinCoreEnvironment environment = createEnvironment(Collections.singletonList(tmpdir));
+        val environment = createEnvironment(listOf(tmpdir))
 
-        AnalysisResult result = JvmResolveUtil.analyze(
-                KotlinTestUtils.loadJetFile(environment.getProject(), getTestDataFileWithExtension("kt")), environment
-        );
-        result.throwIfError();
+        val result = JvmResolveUtil.analyze(
+                KotlinTestUtils.loadJetFile(environment.project, getTestDataFileWithExtension("kt")), environment
+        )
+        result.throwIfError()
 
-        BindingContext bindingContext = result.getBindingContext();
-        AnalyzerWithCompilerReport.Companion.reportDiagnostics(
-                bindingContext.getDiagnostics(),
-                new PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
-        );
+        val bindingContext = result.bindingContext
+        AnalyzerWithCompilerReport.reportDiagnostics(
+                bindingContext.diagnostics,
+                PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
+        )
 
-        assertEquals("There should be no diagnostics", 0, Iterables.size(bindingContext.getDiagnostics()));
+        assertEquals("There should be no diagnostics", 0, Iterables.size(bindingContext.diagnostics))
     }
 
-    public void testIncompleteHierarchyInJava() throws Exception {
-        doTestBrokenJavaLibrary("library", "test/Super.class");
+    @Throws(Exception::class)
+    fun testIncompleteHierarchyInJava() {
+        doTestBrokenJavaLibrary("library", "test/Super.class")
     }
 
-    public void testIncompleteHierarchyInKotlin() throws Exception {
-        doTestBrokenKotlinLibrary("library", "test/Super.class");
+    @Throws(Exception::class)
+    fun testIncompleteHierarchyInKotlin() {
+        doTestBrokenKotlinLibrary("library", "test/Super.class")
     }
 
-    public void testMissingDependencySimple() throws Exception {
-        doTestBrokenKotlinLibrary("library", "a/A.class");
+    @Throws(Exception::class)
+    fun testMissingDependencySimple() {
+        doTestBrokenKotlinLibrary("library", "a/A.class")
     }
 
-    public void testMissingDependencyDifferentCases() throws Exception {
-        doTestBrokenKotlinLibrary("library", "a/A.class");
+    @Throws(Exception::class)
+    fun testMissingDependencyDifferentCases() {
+        doTestBrokenKotlinLibrary("library", "a/A.class")
     }
 
-    public void testMissingDependencyNestedAnnotation() throws Exception {
-        doTestBrokenKotlinLibrary("library", "a/A$Anno.class");
+    @Throws(Exception::class)
+    fun testMissingDependencyNestedAnnotation() {
+        doTestBrokenKotlinLibrary("library", "a/A\$Anno.class")
     }
 
-    public void testMissingDependencyConflictingLibraries() throws Exception {
-        File library1 = copyJarFileWithoutEntry(compileLibrary("library1"),
-                                                "a/A.class", "a/A$Inner.class", "a/AA.class", "a/AA$Inner.class");
-        File library2 = copyJarFileWithoutEntry(compileLibrary("library2"),
-                                                "a/A.class", "a/A$Inner.class", "a/AA.class", "a/AA$Inner.class");
-        Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, library1, library2);
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+    @Throws(Exception::class)
+    fun testMissingDependencyConflictingLibraries() {
+        val library1 = copyJarFileWithoutEntry(compileLibrary("library1"),
+                                               "a/A.class", "a/A\$Inner.class", "a/AA.class", "a/AA\$Inner.class")
+        val library2 = copyJarFileWithoutEntry(compileLibrary("library2"),
+                                               "a/A.class", "a/A\$Inner.class", "a/AA.class", "a/AA\$Inner.class")
+        val output = compileKotlin("source.kt", tmpdir, library1, library2)
+        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
     }
 
-    public void testMissingDependencyJava() throws Exception {
-        doTestBrokenJavaLibrary("library", "test/Bar.class");
+    @Throws(Exception::class)
+    fun testMissingDependencyJava() {
+        doTestBrokenJavaLibrary("library", "test/Bar.class")
     }
 
-    public void testMissingDependencyJavaConflictingLibraries() throws Exception {
-        File library1 = deletePaths(compileJava("library1"), "test/A.class", "test/A$Inner.class");
-        File library2 = deletePaths(compileJava("library2"), "test/A.class", "test/A$Inner.class");
-        Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, library1, library2);
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+    @Throws(Exception::class)
+    fun testMissingDependencyJavaConflictingLibraries() {
+        val library1 = deletePaths(compileJava("library1"), "test/A.class", "test/A\$Inner.class")
+        val library2 = deletePaths(compileJava("library2"), "test/A.class", "test/A\$Inner.class")
+        val output = compileKotlin("source.kt", tmpdir, library1, library2)
+        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
     }
 
-    public void testMissingDependencyJavaNestedAnnotation() throws Exception {
-        doTestBrokenJavaLibrary("library", "test/A$Anno.class");
+    @Throws(Exception::class)
+    fun testMissingDependencyJavaNestedAnnotation() {
+        doTestBrokenJavaLibrary("library", "test/A\$Anno.class")
     }
 
-    public void testReleaseCompilerAgainstPreReleaseLibrary() throws Exception {
-        File destination = new File(tmpdir, "library.jar");
-        doTestPreReleaseKotlinLibrary(new K2JVMCompiler(), "library", destination, destination, tmpdir);
+    @Throws(Exception::class)
+    fun testReleaseCompilerAgainstPreReleaseLibrary() {
+        val destination = File(tmpdir, "library.jar")
+        doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", destination, destination, tmpdir)
     }
 
-    public void testReleaseCompilerAgainstPreReleaseLibraryJs() throws Exception {
+    @Throws(Exception::class)
+    fun testReleaseCompilerAgainstPreReleaseLibraryJs() {
         doTestPreReleaseKotlinLibrary(
-                new K2JSCompiler(), "library",
-                new File(tmpdir, "library.js"), new File(tmpdir, "library.meta.js"),
-                new File(tmpdir, "usage.js")
-        );
+                K2JSCompiler(), "library",
+                File(tmpdir, "library.js"), File(tmpdir, "library.meta.js"),
+                File(tmpdir, "usage.js")
+        )
     }
 
-    public void testReleaseCompilerAgainstPreReleaseLibrarySkipVersionCheck() throws Exception {
-        File destination = new File(tmpdir, "library.jar");
+    @Throws(Exception::class)
+    fun testReleaseCompilerAgainstPreReleaseLibrarySkipVersionCheck() {
+        val destination = File(tmpdir, "library.jar")
         doTestPreReleaseKotlinLibrary(
-                new K2JVMCompiler(), "library",
+                K2JVMCompiler(), "library",
                 destination, destination, tmpdir,
                 "-Xskip-metadata-version-check"
-        );
+        )
     }
 
-    public void testReleaseCompilerAgainstPreReleaseLibraryJsSkipVersionCheck() throws Exception {
+    @Throws(Exception::class)
+    fun testReleaseCompilerAgainstPreReleaseLibraryJsSkipVersionCheck() {
         doTestPreReleaseKotlinLibrary(
-                new K2JSCompiler(), "library",
-                new File(tmpdir, "library.js"), new File(tmpdir, "library.meta.js"),
-                new File(tmpdir, "usage.js"),
+                K2JSCompiler(), "library",
+                File(tmpdir, "library.js"), File(tmpdir, "library.meta.js"),
+                File(tmpdir, "usage.js"),
                 "-Xskip-metadata-version-check"
-        );
+        )
     }
 
-    public void testWrongMetadataVersion() throws Exception {
-        doTestKotlinLibraryWithWrongMetadataVersion("library", null);
+    @Throws(Exception::class)
+    fun testWrongMetadataVersion() {
+        doTestKotlinLibraryWithWrongMetadataVersion("library", null)
     }
 
-    public void testWrongMetadataVersionJs() throws Exception {
-        doTestKotlinLibraryWithWrongMetadataVersionJs("library");
+    @Throws(Exception::class)
+    fun testWrongMetadataVersionJs() {
+        doTestKotlinLibraryWithWrongMetadataVersionJs("library")
     }
 
-    public void testWrongMetadataVersionBadMetadata() throws Exception {
+    @Throws(Exception::class)
+    fun testWrongMetadataVersionBadMetadata() {
         doTestKotlinLibraryWithWrongMetadataVersion(
                 "library",
-                (name, value) -> {
-                    if (JvmAnnotationNames.METADATA_DATA_FIELD_NAME.equals(name)) {
-                        String[] strings = (String[]) value;
-                        for (int i = 0; i < strings.length; i++) {
-                            byte[] bytes = strings[i].getBytes();
-                            for (int j = 0; j < bytes.length; j++) bytes[j] ^= 42;
-                            strings[i] = new String(bytes);
+                { name, value ->
+                    if (JvmAnnotationNames.METADATA_DATA_FIELD_NAME == name) {
+                        val strings = value as Array<String>
+                        for (i in strings.indices) {
+                            val bytes = strings[i].toByteArray()
+                            for (j in bytes.indices) bytes[j] = bytes[j] xor 42
+                            strings[i] = String(bytes)
                         }
-                        return strings;
+                        return@doTestKotlinLibraryWithWrongMetadataVersion strings
                     }
-                    return null;
+                    null
                 }
-        );
+        )
     }
 
-    public void testWrongMetadataVersionBadMetadata2() throws Exception {
+    @Throws(Exception::class)
+    fun testWrongMetadataVersionBadMetadata2() {
         doTestKotlinLibraryWithWrongMetadataVersion(
                 "library",
-                (name, value) -> {
-                    if (JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME.equals(name)) {
-                        return ArrayUtil.EMPTY_STRING_ARRAY;
+                { name, value ->
+                    if (JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME == name) {
+                        return@doTestKotlinLibraryWithWrongMetadataVersion ArrayUtil.EMPTY_STRING_ARRAY
                     }
-                    return null;
+                    null
                 }
-        );
+        )
     }
 
-    public void testWrongMetadataVersionSkipVersionCheck() throws Exception {
-        doTestKotlinLibraryWithWrongMetadataVersion("library", null, "-Xskip-metadata-version-check");
+    @Throws(Exception::class)
+    fun testWrongMetadataVersionSkipVersionCheck() {
+        doTestKotlinLibraryWithWrongMetadataVersion("library", null, "-Xskip-metadata-version-check")
     }
 
-    public void testWrongMetadataVersionJsSkipVersionCheck() throws Exception {
-        doTestKotlinLibraryWithWrongMetadataVersionJs("library", "-Xskip-metadata-version-check");
+    @Throws(Exception::class)
+    fun testWrongMetadataVersionJsSkipVersionCheck() {
+        doTestKotlinLibraryWithWrongMetadataVersionJs("library", "-Xskip-metadata-version-check")
     }
 
     /*test source mapping generation when source info is absent*/
-    public void testInlineFunWithoutDebugInfo() throws Exception {
-        compileKotlin("sourceInline.kt", tmpdir);
+    @Throws(Exception::class)
+    fun testInlineFunWithoutDebugInfo() {
+        compileKotlin("sourceInline.kt", tmpdir)
 
-        File inlineFunClass = new File(tmpdir.getAbsolutePath(), "test/A.class");
-        ClassWriter cw = new ClassWriter(Opcodes.ASM5);
-        new ClassReader(FilesKt.readBytes(inlineFunClass)).accept(new ClassVisitor(Opcodes.ASM5, cw) {
-            @Override
-            public void visitSource(String source, String debug) {
+        val inlineFunClass = File(tmpdir.absolutePath, "test/A.class")
+        val cw = ClassWriter(Opcodes.ASM5)
+        ClassReader(inlineFunClass.readBytes()).accept(object : ClassVisitor(Opcodes.ASM5, cw) {
+            override fun visitSource(source: String, debug: String) {
                 //skip debug info
             }
-        }, 0);
+        }, 0)
 
-        assert inlineFunClass.delete();
-        assert !inlineFunClass.exists();
+        assert(inlineFunClass.delete())
+        assert(!inlineFunClass.exists())
 
-        FilesKt.writeBytes(inlineFunClass, cw.toByteArray());
+        inlineFunClass.writeBytes(cw.toByteArray())
 
-        compileKotlin("source.kt", tmpdir, tmpdir);
+        compileKotlin("source.kt", tmpdir, tmpdir)
 
-        Ref<String> debugInfo = new Ref<>();
-        File resultFile = new File(tmpdir.getAbsolutePath(), "test/B.class");
-        new ClassReader(FilesKt.readBytes(resultFile)).accept(new ClassVisitor(Opcodes.ASM5) {
-            @Override
-            public void visitSource(String source, String debug) {
+        val debugInfo = Ref<String>()
+        val resultFile = File(tmpdir.absolutePath, "test/B.class")
+        ClassReader(resultFile.readBytes()).accept(object : ClassVisitor(Opcodes.ASM5) {
+            override fun visitSource(source: String, debug: String) {
                 //skip debug info
-                debugInfo.set(debug);
+                debugInfo.set(debug)
             }
-        }, 0);
+        }, 0)
 
-        String expected = "SMAP\n" +
-                          "source.kt\n" +
-                          "Kotlin\n" +
-                          "*S Kotlin\n" +
-                          "*F\n" +
-                          "+ 1 source.kt\n" +
-                          "test/B\n" +
-                          "*L\n" +
-                          "1#1,13:1\n" +
-                          "*E\n";
+        val expected = "SMAP\n" +
+                       "source.kt\n" +
+                       "Kotlin\n" +
+                       "*S Kotlin\n" +
+                       "*F\n" +
+                       "+ 1 source.kt\n" +
+                       "test/B\n" +
+                       "*L\n" +
+                       "1#1,13:1\n" +
+                       "*E\n"
 
         if (InlineCodegenUtil.GENERATE_SMAP) {
-            assertEquals(expected, debugInfo.get());
+            assertEquals(expected, debugInfo.get())
         }
         else {
-            assertEquals(null, debugInfo.get());
+            assertEquals(null, debugInfo.get())
         }
     }
 
-    public void testReplaceAnnotationClassWithInterface() throws Exception {
-        File library1 = compileLibrary("library-1");
-        File usage = compileLibrary("usage", library1);
-        File library2 = compileLibrary("library-2");
-        doTestWithTxt(usage, library2);
+    @Throws(Exception::class)
+    fun testReplaceAnnotationClassWithInterface() {
+        val library1 = compileLibrary("library-1")
+        val usage = compileLibrary("usage", library1)
+        val library2 = compileLibrary("library-2")
+        doTestWithTxt(usage, library2)
     }
 
-    public void testProhibitNestedClassesByDollarName() throws Exception {
-        File library = compileLibrary("library");
+    @Throws(Exception::class)
+    fun testProhibitNestedClassesByDollarName() {
+        val library = compileLibrary("library")
 
         KotlinTestUtils.compileJavaFiles(
-                Collections.singletonList(
-                        new File(getTestDataDirectory() + "/library/test/JavaOuter.java")
-                ),
-                Arrays.asList("-d", tmpdir.getPath())
-        );
+                listOf(File(testDataDirectory.toString() + "/library/test/JavaOuter.java")),
+                Arrays.asList("-d", tmpdir.path)
+        )
 
-        Pair<String, ExitCode> outputMain = compileKotlin("main.kt", tmpdir, tmpdir, library);
+        val outputMain = compileKotlin("main.kt", tmpdir, tmpdir, library)
 
         KotlinTestUtils.assertEqualsToFile(
-                new File(getTestDataDirectory(), "output.txt"), normalizeOutput(outputMain)
-        );
+                File(testDataDirectory, "output.txt"), normalizeOutput(outputMain)
+        )
     }
 
-    public void testTypeAliasesAreInvisibleInCompatibilityMode() {
-        compileKotlin("typeAliases.kt", tmpdir);
+    fun testTypeAliasesAreInvisibleInCompatibilityMode() {
+        compileKotlin("typeAliases.kt", tmpdir)
 
-        Pair<String, ExitCode> outputMain = compileKotlin("main.kt", tmpdir, Arrays.asList("-language-version", "1.0"), tmpdir);
+        val outputMain = compileKotlin("main.kt", tmpdir, Arrays.asList("-language-version", "1.0"), tmpdir)
 
         KotlinTestUtils.assertEqualsToFile(
-                new File(getTestDataDirectory(), "output.txt"), normalizeOutput(outputMain)
-        );
+                File(testDataDirectory, "output.txt"), normalizeOutput(outputMain)
+        )
     }
 
-    public void testInnerClassPackageConflict() throws Exception {
-        compileJava("library");
-        FileUtil.copy(new File(getTestDataDirectory(), "library/test/Foo/x.txt"),
-                      new File(tmpdir, "library/test/Foo/x.txt"));
-        MockLibraryUtil.createJarFile(tmpdir, new File(tmpdir, "library"), null, "library", false);
-        File jarPath = new File(tmpdir, "library.jar");
-        Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, jarPath);
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+    @Throws(Exception::class)
+    fun testInnerClassPackageConflict() {
+        compileJava("library")
+        FileUtil.copy(File(testDataDirectory, "library/test/Foo/x.txt"),
+                      File(tmpdir, "library/test/Foo/x.txt"))
+        MockLibraryUtil.createJarFile(tmpdir, File(tmpdir, "library"), null, "library", false)
+        val jarPath = File(tmpdir, "library.jar")
+        val output = compileKotlin("source.kt", tmpdir, jarPath)
+        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
     }
 
-    public void testInnerClassPackageConflict2() throws Exception {
-        File library1 = compileJava("library1");
-        File library2 = compileJava("library2");
+    @Throws(Exception::class)
+    fun testInnerClassPackageConflict2() {
+        val library1 = compileJava("library1")
+        val library2 = compileJava("library2")
 
         // Copy everything from library2 to library1
-        FileUtil.visitFiles(library2, file -> {
-            if (!file.isDirectory()) {
-                File newFile = new File(library1, FilesKt.relativeTo(file, library2).getPath());
-                if (!newFile.getParentFile().exists()) {
-                    assert newFile.getParentFile().mkdirs();
+        FileUtil.visitFiles(library2) { file ->
+            if (!file.isDirectory) {
+                val newFile = File(library1, file.relativeTo(library2).path)
+                if (!newFile.parentFile.exists()) {
+                    assert(newFile.parentFile.mkdirs())
                 }
-                assert file.renameTo(newFile);
+                assert(file.renameTo(newFile))
             }
-            return true;
-        });
+            true
+        }
 
-        Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, library1);
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+        val output = compileKotlin("source.kt", tmpdir, library1)
+        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
     }
 
-    public void testWrongInlineTarget() throws Exception {
-        File library = compileLibrary("library", Arrays.asList("-jvm-target", "1.8"));
+    @Throws(Exception::class)
+    fun testWrongInlineTarget() {
+        val library = compileLibrary("library", Arrays.asList("-jvm-target", "1.8"))
 
-        Pair<String, ExitCode> outputMain = compileKotlin("source.kt", tmpdir, library);
+        val outputMain = compileKotlin("source.kt", tmpdir, library)
 
         KotlinTestUtils.assertEqualsToFile(
-                new File(getTestDataDirectory(), "output.txt"), normalizeOutput(outputMain)
-        );
+                File(testDataDirectory, "output.txt"), normalizeOutput(outputMain)
+        )
+    }
+
+    companion object {
+        private val TEST_DATA_PATH = "compiler/testData/compileKotlinAgainstCustomBinaries/"
+        private val JAVA_FILES = Pattern.compile(".*\\.java$")
+
+        private fun copyJarFileWithoutEntry(jarPath: File, vararg entriesToDelete: String): File {
+            return transformJar(jarPath, { s, bytes -> bytes }, *entriesToDelete)
+        }
+
+        private fun transformJar(
+                jarPath: File,
+                transformEntry: Function2<String, ByteArray, ByteArray>,
+                vararg entriesToDelete: String
+        ): File {
+            try {
+                val outputFile = File(jarPath.parentFile, FileUtil.getNameWithoutExtension(jarPath) + "-after.jar")
+                val toDelete = setOf(*entriesToDelete)
+
+                JarFile(jarPath).use { jar ->
+                    ZipOutputStream(BufferedOutputStream(FileOutputStream(outputFile))).use { output ->
+                        val enumeration = jar.entries()
+                        while (enumeration.hasMoreElements()) {
+                            val jarEntry = enumeration.nextElement()
+                            val name = jarEntry.name
+                            if (toDelete.contains(name)) {
+                                continue
+                            }
+                            val bytes = FileUtil.loadBytes(jar.getInputStream(jarEntry))
+                            val newBytes = if (name.endsWith(".class")) transformEntry.invoke(name, bytes) else bytes
+                            val newEntry = JarEntry(name)
+                            newEntry.size = newBytes.size.toLong()
+                            output.putNextEntry(newEntry)
+                            output.write(newBytes)
+                            output.closeEntry()
+                        }
+                    }
+                }
+
+                return outputFile
+            }
+            catch (e: IOException) {
+                throw rethrow(e)
+            }
+
+        }
+
+        private fun deletePaths(library: File, vararg pathsToDelete: String): File {
+            for (pathToDelete in pathsToDelete) {
+                val fileToDelete = File(library, pathToDelete)
+                assert(fileToDelete.delete()) { "Can't delete " + fileToDelete }
+            }
+            return library
+        }
     }
 }
