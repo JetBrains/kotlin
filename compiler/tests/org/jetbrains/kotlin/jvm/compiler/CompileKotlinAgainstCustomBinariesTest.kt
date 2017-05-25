@@ -66,7 +66,7 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
             additionalOptions: List<String> = emptyList(),
             vararg extraClassPath: File
     ): File {
-        val output = compileKotlin(sourcePath, destination, extraClassPath.toList(), compiler, additionalOptions)
+        val output = compileKotlin(sourcePath, destination, extraClassPath.toList(), compiler, additionalOptions, expectedFileName = null)
         assertEquals(normalizeOutput("" to ExitCode.OK), normalizeOutput(output))
         return destination
     }
@@ -116,7 +116,8 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
             output: File,
             classpath: List<File> = emptyList(),
             compiler: CLICompiler<*> = K2JVMCompiler(),
-            additionalOptions: List<String> = emptyList()
+            additionalOptions: List<String> = emptyList(),
+            expectedFileName: String? = "output.txt"
     ): Pair<String, ExitCode> {
         val args = mutableListOf<String>()
         val sourceFile = File(testDataDirectory, fileName)
@@ -146,23 +147,24 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
 
         args.addAll(additionalOptions)
 
-        return AbstractCliTest.executeCompilerGrabOutput(compiler, args)
+        val result = AbstractCliTest.executeCompilerGrabOutput(compiler, args)
+        if (expectedFileName != null) {
+            KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, expectedFileName), normalizeOutput(result))
+        }
+        return result
     }
 
     private fun doTestBrokenJavaLibrary(libraryName: String, vararg pathsToDelete: String) {
         // This function compiles a Java library, then deletes one class file and attempts to compile a Kotlin source against
         // this broken library. The expected result is an error message from the compiler
         val library = deletePaths(compileJava(libraryName), *pathsToDelete)
-
-        val output = compileKotlin("source.kt", tmpdir, listOf(library))
-        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
+        compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
     private fun doTestBrokenKotlinLibrary(libraryName: String, vararg pathsToDelete: String) {
         // Analogous to doTestBrokenJavaLibrary, but with a Kotlin library compiled to a JAR file
         val library = copyJarFileWithoutEntry(compileLibrary(libraryName), *pathsToDelete)
-        val output = compileKotlin("source.kt", tmpdir, listOf(library))
-        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
+        compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
     private fun doTestKotlinLibraryWithWrongMetadataVersion(
@@ -180,8 +182,7 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
                     }
                 }
         )
-        val output = compileKotlin("source.kt", tmpdir, listOf(library), K2JVMCompiler(), additionalOptions.toList())
-        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
+        compileKotlin("source.kt", tmpdir, listOf(library), K2JVMCompiler(), additionalOptions.toList())
     }
 
     private fun doTestKotlinLibraryWithWrongMetadataVersionJs(libraryName: String, vararg additionalOptions: String) {
@@ -193,8 +194,7 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
                 "(" + JsMetadataVersion(42, 0, 0).toInteger() + ", "
         ), Charsets.UTF_8)
 
-        val output = compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(), additionalOptions.toList())
-        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
+        compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(), additionalOptions.toList())
     }
 
     private fun doTestPreReleaseKotlinLibrary(
@@ -215,33 +215,21 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
             System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY)
         }
 
-        val output: Pair<String, ExitCode>
         try {
             System.setProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, "false")
-            output = compileKotlin("source.kt", usageDestination, listOf(result), compiler, additionalOptions.toList())
+            compileKotlin("source.kt", usageDestination, listOf(result), compiler, additionalOptions.toList())
         }
         finally {
             System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY)
         }
-
-        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
     }
 
     // ------------------------------------------------------------------------------
 
     fun testRawTypes() {
-        KotlinTestUtils.compileJavaFiles(
-                listOf(File(testDataDirectory.toString() + "/library/test/A.java")),
-                listOf("-d", tmpdir.path)
-        )
-
-        val outputLib = compileKotlin("library/test/lib.kt", tmpdir, listOf(tmpdir))
-
-        val outputMain = compileKotlin("main.kt", tmpdir, listOf(tmpdir))
-
-        KotlinTestUtils.assertEqualsToFile(
-                File(testDataDirectory, "output.txt"), normalizeOutput(outputLib) + "\n" + normalizeOutput(outputMain)
-        )
+        val libraryOutput = compileJava("library")
+        compileKotlin("library", libraryOutput, listOf(libraryOutput))
+        compileKotlin("main.kt", tmpdir, listOf(libraryOutput))
     }
 
     fun testDuplicateObjectInBinaryAndSources() {
@@ -271,12 +259,8 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
         // This test checks that there are no PARAMETER_NAME_CHANGED_ON_OVERRIDE or DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
         // warnings when subclassing in Kotlin from Java binaries (in case when no parameter names are available for Java classes)
 
-        KotlinTestUtils.compileJavaFiles(
-                listOf(getTestDataFileWithExtension("java")),
-                listOf("-d", tmpdir.path)
-        )
-
-        val environment = createEnvironment(listOf(tmpdir))
+        val libraryOutput = compileJava("library")
+        val environment = createEnvironment(listOf(libraryOutput))
 
         val ktFile = KotlinTestUtils.loadJetFile(environment.project, getTestDataFileWithExtension("kt"))
         val result = JvmResolveUtil.analyze(ktFile, environment)
@@ -315,8 +299,7 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
                                                "a/A.class", "a/A\$Inner.class", "a/AA.class", "a/AA\$Inner.class")
         val library2 = copyJarFileWithoutEntry(compileLibrary("library2"),
                                                "a/A.class", "a/A\$Inner.class", "a/AA.class", "a/AA\$Inner.class")
-        val output = compileKotlin("source.kt", tmpdir, listOf(library1, library2))
-        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
+        compileKotlin("source.kt", tmpdir, listOf(library1, library2))
     }
 
     fun testMissingDependencyJava() {
@@ -326,8 +309,7 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
     fun testMissingDependencyJavaConflictingLibraries() {
         val library1 = deletePaths(compileJava("library1"), "test/A.class", "test/A\$Inner.class")
         val library2 = deletePaths(compileJava("library2"), "test/A.class", "test/A\$Inner.class")
-        val output = compileKotlin("source.kt", tmpdir, listOf(library1, library2))
-        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
+        compileKotlin("source.kt", tmpdir, listOf(library1, library2))
     }
 
     fun testMissingDependencyJavaNestedAnnotation() {
@@ -457,36 +439,20 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
 
     fun testProhibitNestedClassesByDollarName() {
         val library = compileLibrary("library")
-
-        KotlinTestUtils.compileJavaFiles(
-                listOf(File(testDataDirectory.toString() + "/library/test/JavaOuter.java")),
-                listOf("-d", tmpdir.path)
-        )
-
-        val outputMain = compileKotlin("main.kt", tmpdir, listOf(tmpdir, library))
-
-        KotlinTestUtils.assertEqualsToFile(
-                File(testDataDirectory, "output.txt"), normalizeOutput(outputMain)
-        )
+        val javaLibraryOutput = compileJava("library")
+        compileKotlin("main.kt", tmpdir, listOf(javaLibraryOutput, library))
     }
 
     fun testTypeAliasesAreInvisibleInCompatibilityMode() {
-        compileKotlin("typeAliases.kt", tmpdir)
-
-        val outputMain = compileKotlin("main.kt", tmpdir, listOf(tmpdir), K2JVMCompiler(), listOf("-language-version", "1.0"))
-
-        KotlinTestUtils.assertEqualsToFile(
-                File(testDataDirectory, "output.txt"), normalizeOutput(outputMain)
-        )
+        val library = compileLibrary("typeAliases.kt")
+        compileKotlin("main.kt", tmpdir, listOf(library), K2JVMCompiler(), listOf("-language-version", "1.0"))
     }
 
     fun testInnerClassPackageConflict() {
-        compileJava("library")
-        File(testDataDirectory, "library/test/Foo/x.txt").copyTo(File(tmpdir, "library/test/Foo/x.txt"))
-        MockLibraryUtil.createJarFile(tmpdir, File(tmpdir, "library"), null, "library", false)
-        val jarPath = File(tmpdir, "library.jar")
-        val output = compileKotlin("source.kt", tmpdir, listOf(jarPath))
-        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
+        val output = compileJava("library")
+        File(testDataDirectory, "library/test/Foo/x.txt").copyTo(File(output, "test/Foo/x.txt"))
+        MockLibraryUtil.createJarFile(tmpdir, output, null, "library", false)
+        compileKotlin("source.kt", tmpdir, listOf(File(tmpdir, "library.jar")))
     }
 
     fun testInnerClassPackageConflict2() {
@@ -505,18 +471,12 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
             true
         }
 
-        val output = compileKotlin("source.kt", tmpdir, listOf(library1))
-        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "output.txt"), normalizeOutput(output))
+        compileKotlin("source.kt", tmpdir, listOf(library1))
     }
 
     fun testWrongInlineTarget() {
         val library = compileLibrary("library", additionalOptions = listOf("-jvm-target", "1.8"))
-
-        val outputMain = compileKotlin("source.kt", tmpdir, listOf(library))
-
-        KotlinTestUtils.assertEqualsToFile(
-                File(testDataDirectory, "output.txt"), normalizeOutput(outputMain)
-        )
+        compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
     companion object {
