@@ -19,23 +19,16 @@ package org.jetbrains.kotlin.script
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import java.io.File
 import kotlin.script.dependencies.KotlinScriptExternalDependencies
 
 interface KotlinScriptExternalImportsProvider {
     fun <TF: Any> getExternalImports(file: TF): KotlinScriptExternalDependencies?
-    fun <TF: Any> cacheExternalImports(files: Iterable<TF>): Iterable<TF>
-    fun <TF: Any> updateExternalImportsCache(files: Iterable<TF>): Iterable<TF>
-    fun invalidateCaches()
-    fun getKnownCombinedClasspath(): List<File>
-    fun getKnownSourceRoots(): List<File>
-    fun <TF: Any> getCombinedClasspathFor(files: Iterable<TF>): List<File>
 
     companion object {
-        fun getInstance(project: Project): KotlinScriptExternalImportsProvider? =
+        fun getInstance(project: Project): KotlinScriptExternalImportsProvider =
                 ServiceManager.getService(project, KotlinScriptExternalImportsProvider::class.java)
     }
 }
 
 fun getScriptExternalDependencies(file: VirtualFile, project: Project): KotlinScriptExternalDependencies?  =
-        KotlinScriptExternalImportsProvider.getInstance(project)?.getExternalImports(file)
+        KotlinScriptExternalImportsProvider.getInstance(project).getExternalImports(file)
