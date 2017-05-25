@@ -21,6 +21,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.utils.compactIfPossible
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -79,7 +80,7 @@ abstract class BinaryJavaMethodBase(
                         }
 
             val parameterTypes = info.valueParameterTypes
-            val parameterList = ContainerUtil.newSmartList<JavaValueParameter>()
+            val parameterList = ContainerUtil.newArrayList<JavaValueParameter>()
             val paramCount = parameterTypes.size
             for (i in 0..paramCount - 1) {
                 val type = parameterTypes[i]
@@ -93,7 +94,10 @@ abstract class BinaryJavaMethodBase(
                         BinaryJavaConstructor(access, containingClass, parameterList, info.typeParameters)
                     else
                         BinaryJavaMethod(
-                                access, containingClass, parameterList, info.typeParameters, Name.identifier(name), info.returnType
+                                access, containingClass,
+                                parameterList.compactIfPossible(),
+                                info.typeParameters,
+                                Name.identifier(name), info.returnType
                         )
 
             val paramIgnoreCount = when {
@@ -126,16 +130,18 @@ abstract class BinaryJavaMethodBase(
 
             if (iterator.current() != '(') throw ClsFormatException()
             iterator.next()
-            val paramTypes: List<JavaType>
+            var paramTypes: List<JavaType>
             if (iterator.current() == ')') {
                 paramTypes = emptyList()
             }
             else {
-                paramTypes = ContainerUtil.newSmartList()
+                    paramTypes = ContainerUtil.newArrayList()
                 while (iterator.current() != ')' && iterator.current() != CharacterIterator.DONE) {
                     paramTypes.add(signatureParser.parseTypeString(iterator, context))
                 }
                 if (iterator.current() != ')') throw ClsFormatException()
+
+                paramTypes = (paramTypes as ArrayList).compactIfPossible()
             }
             iterator.next()
 

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
+import org.jetbrains.kotlin.utils.compactIfPossible
 import org.jetbrains.org.objectweb.asm.Type
 import java.text.CharacterIterator
 import java.text.StringCharacterIterator
@@ -46,13 +47,13 @@ class BinaryClassSignatureParser(globalContext: ClassifierResolutionContext) {
             return emptyList()
         }
 
-        val typeParameters = ContainerUtil.newSmartList<JavaTypeParameter>()
+        val typeParameters = ContainerUtil.newArrayList<JavaTypeParameter>()
         signature.next()
         while (signature.current() != '>') {
             typeParameters.add(parseTypeParameter(signature, context))
         }
         signature.next()
-        return typeParameters
+        return typeParameters.compactIfPossible()
     }
 
     private fun parseTypeParameter(signature: CharacterIterator, context: ClassifierResolutionContext): JavaTypeParameter {
@@ -151,7 +152,7 @@ class BinaryClassSignatureParser(globalContext: ClassifierResolutionContext) {
 
         return PlainJavaClassifierType(
                 { context.resolveByInternalName(canonicalName.toString()) },
-                argumentGroups.reversed().flattenTo(ContainerUtil.newSmartList())
+                argumentGroups.reversed().flattenTo(arrayListOf()).compactIfPossible()
         )
     }
 
