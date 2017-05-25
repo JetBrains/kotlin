@@ -49,8 +49,8 @@ class ScopeContext(scope: JsScope) {
         exitScope()
     }
 
-    fun enterLabel(ident: String): JsName =
-            (currentScope as JsDeclarationScope).enterLabel(ident)
+    fun enterLabel(ident: String, outputName: String): JsName =
+            (currentScope as JsDeclarationScope).enterLabel(ident, outputName)
 
     fun exitLabel() =
             (currentScope as JsDeclarationScope).exitLabel()

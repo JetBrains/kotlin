@@ -665,7 +665,7 @@ public class JsAstMapper {
     private JsLabel mapLabel(Node labelNode) throws JsParserException {
         String fromName = labelNode.getFirstChild().getString();
 
-        JsName toName = scopeContext.enterLabel(fromName);
+        JsName toName = scopeContext.enterLabel(fromName, fromName);
 
         Node fromStmt = labelNode.getFirstChild().getNext();
         JsLabel toLabel = new JsLabel(toName);

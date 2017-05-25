@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator;
 import org.jetbrains.kotlin.js.translate.declaration.PropertyTranslatorKt;
@@ -363,7 +364,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
         String labelIdent = getReferencedName(expression.getTargetLabel());
 
-        JsName labelName = functionScope.enterLabel(labelIdent);
+        JsName labelName = functionScope.enterLabel(labelIdent, NameSuggestion.sanitizeName(labelIdent));
         JsStatement baseStatement = Translation.translateAsStatement(baseExpression, context);
         functionScope.exitLabel();
 

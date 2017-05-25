@@ -5450,6 +5450,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("peculiarNames.kt")
+        public void testPeculiarNames() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/labels/peculiarNames.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("siblingLabels.kt")
         public void testSiblingLabels() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/labels/siblingLabels.kt");

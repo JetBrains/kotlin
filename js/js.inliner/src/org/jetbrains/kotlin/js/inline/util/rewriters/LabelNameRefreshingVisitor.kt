@@ -42,7 +42,7 @@ class LabelNameRefreshingVisitor(val functionScope: JsFunctionScope) : JsVisitor
 
     override fun visit(x: JsLabel, ctx: JsContext<JsNode>): Boolean {
         val labelName = x.name
-        val freshName = functionScope.enterLabel(labelName.ident)
+        val freshName = functionScope.enterLabel(labelName.ident, labelName.ident)
         substitutions.getOrPut(labelName) { ArrayDeque() }.push(freshName)
 
         return super.visit(x, ctx)
@@ -57,5 +57,5 @@ class LabelNameRefreshingVisitor(val functionScope: JsFunctionScope) : JsVisitor
         super.endVisit(x, ctx)
     }
 
-    private fun getSubstitution(name: JsName) = substitutions[name]?.let { it.peek() } ?: name
+    private fun getSubstitution(name: JsName) = substitutions[name]?.peek() ?: name
 }
