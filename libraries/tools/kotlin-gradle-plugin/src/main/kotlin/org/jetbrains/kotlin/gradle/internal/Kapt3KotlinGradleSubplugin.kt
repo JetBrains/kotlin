@@ -187,10 +187,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             project.extensions.findByName("android") as? BaseExtension
         }
 
-        val androidOptions = if (kaptVariantData != null)
-            kaptVariantData.annotationProcessorOptions ?: emptyMap()
-        else
-            emptyMap()
+        val androidOptions = kaptVariantData?.annotationProcessorOptions ?: emptyMap()
 
         kotlinSourcesOutputDir.mkdirs()
 
