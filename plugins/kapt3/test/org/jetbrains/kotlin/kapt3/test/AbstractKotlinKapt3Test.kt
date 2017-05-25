@@ -86,6 +86,13 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
 }
 
 abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test() {
+    internal companion object {
+        private val KOTLIN_METADATA_GROUP = "[a-z0-9]+ = \\{.+?\\}"
+        private val KOTLIN_METADATA_REGEX = "@kotlin\\.Metadata\\(($KOTLIN_METADATA_GROUP)(, $KOTLIN_METADATA_GROUP)*\\)".toRegex()
+
+        fun removeMetadataAnnotationContents(s: String): String = s.replace(KOTLIN_METADATA_REGEX, "@kotlin.Metadata()")
+    }
+
     override fun check(kaptContext: KaptContext<GenerationState>, txtFile: File, wholeFile: File) {
         fun isOptionSet(name: String) = wholeFile.useLines { lines -> lines.any { it.trim() == "// $name" } }
 
@@ -99,7 +106,9 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
         if (validate) kaptContext.compiler.enterTrees(javaFiles)
 
         val actualRaw = javaFiles.sortedBy { it.sourceFile.name }.joinToString (FILE_SEPARATOR)
-        val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' })).trimTrailingWhitespacesAndAddNewlineAtEOF()
+        val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' }))
+                .trimTrailingWhitespacesAndAddNewlineAtEOF()
+                .let { removeMetadataAnnotationContents(it) }
 
         if (kaptContext.compiler.shouldStop(CompileStates.CompileState.ENTER)) {
             Log.instance(kaptContext.context).flush()

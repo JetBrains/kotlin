@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno1 {
 
@@ -7,6 +8,7 @@ public abstract @interface Anno1 {
 ////////////////////
 
 
+@kotlin.Metadata()
 public enum Enum1 {
     /*public static final*/ BLACK /* = new BLACK() */,
     /*public static final*/ WHITE /* = new WHITE() */;
@@ -18,6 +20,7 @@ public enum Enum1 {
 ////////////////////
 
 
+@kotlin.Metadata()
 public enum Enum2 {
     /*public static final*/ RED /* = new RED(null, 0) */,
     /*public static final*/ WHITE /* = new WHITE(null, 0) */;

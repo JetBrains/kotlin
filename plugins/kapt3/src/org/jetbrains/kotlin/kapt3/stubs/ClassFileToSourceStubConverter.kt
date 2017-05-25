@@ -69,7 +69,7 @@ class ClassFileToSourceStubConverter(
                 "java.lang.Deprecated", "kotlin.Deprecated", // Deprecated annotations
                 "java.lang.Synthetic",
                 "synthetic.kotlin.jvm.GeneratedByJvmOverloads", // kapt3-related annotation for marking JvmOverloads-generated methods
-                "kotlin.jvm.", "kotlin.Metadata" // Kotlin annotations from runtime
+                "kotlin.jvm." // Kotlin annotations from runtime
         )
 
         private val JAVA_KEYWORD_FILTER_REGEX = "[a-z]+".toRegex()

@@ -1,4 +1,5 @@
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+@kotlin.Metadata()
 public final class NonExistentType {
     @org.jetbrains.annotations.Nullable()
     private static final error.NonExistentClass a = null;

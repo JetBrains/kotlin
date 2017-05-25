@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 public final class GenericRawSignatures {
 
     @org.jetbrains.annotations.Nullable()

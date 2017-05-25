@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno {
 }
@@ -5,6 +6,7 @@ public abstract @interface Anno {
 ////////////////////
 
 
+@kotlin.Metadata()
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.CLASS})
@@ -14,6 +16,7 @@ public abstract @interface Anno2 {
 ////////////////////
 
 
+@kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String prop = "A";

@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 public final class CrashMe {
     private final int resources = 1;
 

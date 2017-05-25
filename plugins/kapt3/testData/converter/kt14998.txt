@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 public final class Outer {
 
     public final void nonAbstract(@org.jetbrains.annotations.NotNull()
@@ -8,6 +9,7 @@ public final class Outer {
         super();
     }
 
+    @kotlin.Metadata()
     final class Inner {
         @org.jetbrains.annotations.NotNull()
         private final java.lang.String foo = null;
@@ -31,6 +33,7 @@ public final class Outer {
         }
     }
 
+    @kotlin.Metadata()
     static final class Nested {
         @org.jetbrains.annotations.NotNull()
         private final java.lang.String foo = null;

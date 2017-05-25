@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 public final class User {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String firstName = null;

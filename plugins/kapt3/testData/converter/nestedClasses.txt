@@ -1,3 +1,4 @@
+@kotlin.Metadata()
 public final class A {
     @org.jetbrains.annotations.Nullable()
     private final A x = null;
@@ -18,11 +19,13 @@ public final class A {
         super();
     }
 
+    @kotlin.Metadata()
     public static abstract interface B {
 
         @org.jetbrains.annotations.Nullable()
         public abstract A.B getY();
 
+        @kotlin.Metadata(mv = {1, 1, 6}, bv = {1, 0, 1}, k = 3)
         public static final class DefaultImpls {
 
             public DefaultImpls() {
@@ -31,6 +34,7 @@ public final class A {
         }
     }
 
+    @kotlin.Metadata()
     public static final class C {
         public static final A.C INSTANCE = null;
 
@@ -43,30 +47,35 @@ public final class A {
 ////////////////////
 
 
+@kotlin.Metadata()
 public final class A2 {
 
     public A2() {
         super();
     }
 
+    @kotlin.Metadata()
     public static final class B {
 
         public B() {
             super();
         }
 
+        @kotlin.Metadata()
         public static final class C {
 
             public C() {
                 super();
             }
 
+            @kotlin.Metadata()
             public static final class D {
 
                 public D() {
                     super();
                 }
 
+                @kotlin.Metadata()
                 public static final class Cme {
 
                     public Cme() {
@@ -74,6 +83,7 @@ public final class A2 {
                     }
                 }
 
+                @kotlin.Metadata()
                 public static final class E {
 
                     public E() {
@@ -88,6 +98,7 @@ public final class A2 {
 ////////////////////
 
 
+@kotlin.Metadata()
 public final class Foo {
 
     public Foo() {
@@ -98,18 +109,21 @@ public final class Foo {
 ////////////////////
 
 
+@kotlin.Metadata()
 public final class Test {
 
     public Test() {
         super();
     }
 
+    @kotlin.Metadata()
     public static final class Nested {
 
         public Nested() {
             super();
         }
 
+        @kotlin.Metadata()
         public static final class NestedNested {
 
             public NestedNested() {
@@ -118,6 +132,7 @@ public final class Test {
         }
     }
 
+    @kotlin.Metadata()
     public final class Inner {
 
         public Inner() {
@@ -125,6 +140,7 @@ public final class Test {
         }
     }
 
+    @kotlin.Metadata()
     public static final class NestedObject {
         public static final Test.NestedObject INSTANCE = null;
 
@@ -133,9 +149,11 @@ public final class Test {
         }
     }
 
+    @kotlin.Metadata()
     public static abstract interface NestedInterface {
     }
 
+    @kotlin.Metadata()
     public static enum NestedEnum {
         /*public static final*/ BLACK /* = new BLACK() */,
         /*public static final*/ WHITE /* = new WHITE() */;
