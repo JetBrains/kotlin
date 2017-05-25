@@ -5278,6 +5278,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/importCountUmd.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("topLevelVarargFun.kt")
+        public void testTopLevelVarargFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/topLevelVarargFun.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("js/js.translator/testData/box/jsName")
