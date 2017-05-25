@@ -1882,6 +1882,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/expression/compareTo"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
             }
 
+            @TestMetadata("booleanCompareTo.kt")
+            public void testBooleanCompareTo() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/compareTo/booleanCompareTo.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("customCompareToMethod.kt")
             public void testCustomCompareToMethod() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/compareTo/customCompareToMethod.kt");

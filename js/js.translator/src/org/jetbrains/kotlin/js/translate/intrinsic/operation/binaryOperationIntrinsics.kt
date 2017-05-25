@@ -76,7 +76,7 @@ private data class IntrinsicKey(
 
 interface BinaryOperationIntrinsicFactory {
 
-    fun getSupportTokens(): ImmutableSet<out KtToken>
+    fun getSupportTokens(): Set<KtToken>
 
     fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic?
 }
