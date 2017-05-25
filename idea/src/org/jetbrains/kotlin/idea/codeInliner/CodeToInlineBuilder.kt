@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -54,12 +53,11 @@ class CodeToInlineBuilder(
     fun prepareCodeToInline(
             mainExpression: KtExpression?,
             statementsBefore: List<KtExpression>,
-            analyze: () -> BindingContext,
-            importFqNames: Collection<FqName> = emptyList()
+            analyze: () -> BindingContext
     ): CodeToInline {
         var bindingContext = analyze()
 
-        val codeToInline = MutableCodeToInline(mainExpression, statementsBefore.toMutableList(), importFqNames.toMutableSet())
+        val codeToInline = MutableCodeToInline(mainExpression, statementsBefore.toMutableList(), mutableSetOf())
 
         bindingContext = insertExplicitTypeArguments(codeToInline, bindingContext, analyze)
 
