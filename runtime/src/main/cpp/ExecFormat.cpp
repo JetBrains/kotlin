@@ -35,20 +35,12 @@ namespace {
 #error "Define ELFSIZE to 32 or 64"
 #endif
 
-#define CONCAT(x,y)     __CONCAT(x,y)
-#define ELFNAME(x)      CONCAT(elf,CONCAT(ELFSIZE,CONCAT(_,x)))
-#define ELFNAME2(x,y)   CONCAT(x,CONCAT(_elf,CONCAT(ELFSIZE,CONCAT(_,y))))
-#define ELFNAMEEND(x)   CONCAT(x,CONCAT(_elf,ELFSIZE))
-#define ELFDEFNNAME(x)  CONCAT(ELF,CONCAT(ELFSIZE,CONCAT(_,x)))
-
 #if ELFSIZE == 32
 #define Elf_Ehdr        Elf32_Ehdr
-#define Elf_Phdr        Elf32_Phdr
 #define Elf_Shdr        Elf32_Shdr
 #define Elf_Sym         Elf32_Sym
 #elif ELFSIZE == 64
 #define Elf_Ehdr        Elf64_Ehdr
-#define Elf_Phdr        Elf64_Phdr
 #define Elf_Shdr        Elf64_Shdr
 #define Elf_Sym         Elf64_Sym
 #else
@@ -62,7 +54,6 @@ struct SymRecord {
 };
 
 std::vector<SymRecord>* symbols = nullptr;
-char* mapAddress = nullptr;
 
 // Unfortunately, symbol tables are stored in ELF sections not mapped
 // during regular execution, so we have to map binary ourselves.
@@ -122,8 +113,8 @@ extern "C" const char* AddressToSymbol(unsigned long address) {
     auto begin = record.symtabBegin;
     auto end = record.symtabEnd;
     while (begin < end) {
-      if (address >= (unsigned long)mapAddress + begin->st_value &&
-	  address < (unsigned long)mapAddress + begin->st_value + begin->st_size) {
+      // st_value is load address adjusted.
+      if (address >= begin->st_value && address < begin->st_value + begin->st_size) {
 	return &record.strtab[begin->st_name];
       }
       begin++;

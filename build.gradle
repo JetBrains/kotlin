@@ -109,8 +109,7 @@ void setupCompilationFlags() {
     if (isLinux()) {
 	binDir = "$gccToolchainDir/$gnuTriplet/bin"
 	ext.clangArgs.addAll([
-		"--gcc-toolchain=$gccToolchainDir",
-		"-L$llvmDir/lib"
+		"--gcc-toolchain=$gccToolchainDir"
 	])
     } else {
 	binDir = "$macbookSysrootDir/usr/bin"
