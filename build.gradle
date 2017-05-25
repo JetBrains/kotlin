@@ -287,7 +287,7 @@ targetList.each { target ->
 }
 
 task dist {
-    dependsOn 'distCompiler', 'distRuntime', ':tools:gradle-plugin:dist'
+    dependsOn 'distCompiler', 'distRuntime', ':tools:kotlin-native-gradle-plugin:dist'
 }
 
 task crossDist {

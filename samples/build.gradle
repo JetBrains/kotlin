@@ -8,17 +8,12 @@ subprojects {
         }
 
         dependencies {
-            if (project.hasProperty("konan.plugin.path")) {
-                classpath files(project.property("konan.plugin.path"))
-                classpath "org.jetbrains.kotlin:kotlin-stdlib:+"
-            } else {
-                classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:+"
-            }
+            classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:+"
         }
     }
 }
 
-task buildBash(type: Exec) {
+task buildSh(type: Exec) {
     commandLine "${projectDir.canonicalPath}/build.sh"
     workingDir projectDir.canonicalPath
 }
