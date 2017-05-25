@@ -3,7 +3,7 @@
 // ACTION: Make internal
 // ACTION: Make private
 // ACTION: Make protected
-// ERROR: Property must be initialized or be abstract
+// ERROR: Extension property must have accessors or be abstract
 class A {
     <caret>val Int.n: Int
 }
