@@ -132,7 +132,7 @@ inline fun <T> measureTimeMillisWithResult(block: () -> T) : Pair<Long, T> {
     return Pair(System.currentTimeMillis() - start, result)
 }
 
-public fun <T> Iterable<Iterable<T>>.flattenTo(c: MutableList<T>): List<T> {
+fun <T, C : MutableCollection<in T>> Iterable<Iterable<T>>.flattenTo(c: C): C {
     for (element in this) {
         c.addAll(element)
     }
