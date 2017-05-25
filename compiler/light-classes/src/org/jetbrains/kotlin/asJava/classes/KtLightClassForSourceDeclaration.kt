@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForClassOrObject
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiReferenceList
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -180,7 +180,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     override fun getName(): String? = classOrObject.nameAsName?.asString()
 
-    private val _modifierList: PsiModifierList by lazyPub { KtLightSimpleModifierList(this@KtLightClassForSourceDeclaration, computeModifiers()) }
+    private val _modifierList: PsiModifierList by lazyPub { KtLightClassModifierList(this) }
 
     override fun getModifierList(): PsiModifierList? = _modifierList
 
@@ -452,7 +452,27 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     override val originKind: LightClassOriginKind
         get() = LightClassOriginKind.SOURCE
+
+    private class KtLightClassModifierList(containingClass: KtLightClassForSourceDeclaration)
+        : KtLightModifierList<KtLightClassForSourceDeclaration>(containingClass) {
+
+        private val modifiers by lazyPub { containingClass.computeModifiers() }
+
+        override fun hasModifierProperty(name: String): Boolean {
+            if (name != PsiModifier.FINAL) {
+                return name in modifiers
+            }
+
+            val isFinalByPsi = PsiModifier.FINAL in modifiers
+            // annotations can make class open via 'allopen' plugin
+            if (!owner.isPossiblyAffectedByAllOpen() || !isFinalByPsi) return isFinalByPsi
+
+            return clsDelegate.hasModifierProperty(PsiModifier.FINAL)
+        }
+    }
 }
+
+fun KtLightClassForSourceDeclaration.isPossiblyAffectedByAllOpen() = !isAnnotationType && !isInterface && kotlinOrigin.annotationEntries.isNotEmpty()
 
 fun getOutermostClassOrObject(classOrObject: KtClassOrObject): KtClassOrObject {
     val outermostClass = KtPsiUtil.getOutermostClassOrObject(classOrObject) ?:
