@@ -265,7 +265,7 @@
                     serviceImplementation="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider"
-                    serviceImplementation="org.jetbrains.kotlin.script.KotlinScriptExternalImportsProviderImpl"/>
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptExternalImportsProvider"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager"/>
