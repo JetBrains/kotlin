@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.lazy.declarations
 import com.google.common.collect.ArrayListMultimap
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassInfoUtil
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
@@ -67,6 +66,8 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
                 else -> throw IllegalArgumentException("Unknown declaration: " + declaration)
             }
         }
+
+        override fun toString() = "allDeclarations: " + allDeclarations.mapNotNull { it.name }
     }
 
     private val index = storageManager.createLazyValue<Index> {
@@ -77,21 +78,23 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
 
     protected abstract fun doCreateIndex(index: Index)
 
+    internal fun toInfoString() = toString() + ": " + index().toString()
+
     override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<KtDeclaration>
             = index().allDeclarations
 
     override fun getFunctionDeclarations(name: Name): List<KtNamedFunction>
-            = index().functions[ResolveSessionUtils.safeNameForLazyResolve(name)].toList()
+            = index().functions[safeNameForLazyResolve(name)].toList()
 
     override fun getPropertyDeclarations(name: Name): List<KtProperty>
-            = index().properties[ResolveSessionUtils.safeNameForLazyResolve(name)].toList()
+            = index().properties[safeNameForLazyResolve(name)].toList()
 
     override fun getDestructuringDeclarationsEntries(name: Name): Collection<KtDestructuringDeclarationEntry>
-            = index().destructuringDeclarationsEntries[ResolveSessionUtils.safeNameForLazyResolve(name)].toList()
+            = index().destructuringDeclarationsEntries[safeNameForLazyResolve(name)].toList()
 
     override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo>
-            = index().classesAndObjects[ResolveSessionUtils.safeNameForLazyResolve(name)]
+            = index().classesAndObjects[safeNameForLazyResolve(name)]
 
     override fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias>
-            = index().typeAliases[ResolveSessionUtils.safeNameForLazyResolve(name)]
+            = index().typeAliases[safeNameForLazyResolve(name)]
 }
