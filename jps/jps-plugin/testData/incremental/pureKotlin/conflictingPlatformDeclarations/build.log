@@ -12,8 +12,8 @@ Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
 Platform declaration clash: The following declarations have the same JVM signature (function(Ljava/util/List;)V):
-    fun function(list: List<Any>): Unit
-    fun function(list: List<String>): Unit
+    fun function(list: List<Any>): Unit defined in test
+    fun function(list: List<String>): Unit defined in test
 Platform declaration clash: The following declarations have the same JVM signature (function(Ljava/util/List;)V):
-    fun function(list: List<Any>): Unit
-    fun function(list: List<String>): Unit
+    fun function(list: List<Any>): Unit defined in test
+    fun function(list: List<String>): Unit defined in test
