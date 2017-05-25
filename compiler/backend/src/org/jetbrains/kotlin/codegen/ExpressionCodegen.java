@@ -73,6 +73,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
+import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
@@ -3494,7 +3495,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             VariableDescriptor variableDescriptor = getVariableDescriptorNotNull(variableDeclaration);
 
             // Do not call `componentX` for destructuring entry called _
-            if (variableDescriptor.getName().isSpecial()) continue;
+            if (UnderscoreUtilKt.isSingleUnderscore(variableDeclaration)) continue;
 
             if (asProperty && variableDescriptor instanceof PropertyDescriptor) {
                 StackValue.Property propertyValue = intermediateValueForProperty(

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
@@ -142,11 +143,13 @@ public class PropertyCodegen {
     }
 
     private void gen(
-            @Nullable KtDestructuringDeclarationEntry entry,
+            @NotNull KtDestructuringDeclarationEntry entry,
             @NotNull PropertyDescriptor descriptor
     ) {
         assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DEFAULT_IMPLS
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
+
+        if (UnderscoreUtilKt.isSingleUnderscore(entry)) return;
 
         genBackingFieldAndAnnotations(entry, descriptor, false);
 
