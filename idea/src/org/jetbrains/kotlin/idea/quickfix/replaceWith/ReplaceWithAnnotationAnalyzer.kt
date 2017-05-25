@@ -78,12 +78,9 @@ object ReplaceWithAnnotationAnalyzer {
 
         val expressionTypingServices = resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
 
-        fun analyzeExpression(): BindingContext {
-            return expression.analyzeInContext(scope, expressionTypingServices = expressionTypingServices)
-        }
+        fun analyzeExpression() = expression.analyzeInContext(scope, expressionTypingServices = expressionTypingServices)
 
-        return CodeToInlineBuilder(symbolDescriptor, resolutionFacade)
-                .prepareCodeToInline(expression, emptyList(), ::analyzeExpression, importFqNames = importFqNames(annotation))
+        return CodeToInlineBuilder(symbolDescriptor, resolutionFacade).prepareCodeToInline(expression, emptyList(), ::analyzeExpression)
     }
 
     fun analyzeClassifierReplacement(
