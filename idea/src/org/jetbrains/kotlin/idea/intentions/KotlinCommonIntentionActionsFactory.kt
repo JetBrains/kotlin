@@ -39,11 +39,13 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder
+import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder.Target.CONSTRUCTOR
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder.Target.FUNCTION
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UParameter
 
 
 class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
@@ -80,63 +82,93 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
                 PsiModifier.PROTECTED to Visibilities.PROTECTED.displayName,
                 PsiModifier.PACKAGE_LOCAL to Visibilities.INTERNAL.displayName
         ).withDefault { Visibilities.DEFAULT_VISIBILITY.displayName }
+
+        fun typeString(str: PsiType): String {
+            var typeName: String? = when (str) {
+                PsiType.VOID -> ""
+                PsiType.INT -> "kotlin.Int"
+                PsiType.LONG -> "kotlin.Long"
+                PsiType.SHORT -> "kotlin.Short"
+                PsiType.BOOLEAN -> "kotlin.Boolean"
+                PsiType.BYTE -> "kotlin.Byte"
+                PsiType.CHAR -> "kotlin.Char"
+                PsiType.DOUBLE -> "kotlin.Double"
+                PsiType.FLOAT -> "kotlin.Float"
+                else -> null
+            }
+            if (typeName == null)
+                typeName = JavaToKotlinClassMap.mapJavaToKotlin(FqName(str.canonicalText), DefaultBuiltIns.Instance)?.fqNameSafe?.asString()
+
+            return typeName ?: str.canonicalText
+        }
     }
 
     override fun createAddMethodAction(uClass: UClass, methodName: String, visibilityModifier: String, returnType: PsiType, vararg parameters: PsiType): IntentionAction? {
-        return object : LocalQuickFixAndIntentionActionOnPsiElement(uClass) {
-            override fun getFamilyName(): String = "Add method"
-
-            private val text = "Add method '$methodName' to '${uClass.name}'"
-
-            override fun getText(): String = text
-
-            override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
-                val visibilityStr = javaVisibilityMapping.getValue(visibilityModifier)
-                val psiFactory = KtPsiFactory(uClass)
-                val functionString = psiFactory.createFunction(CallableBuilder(FUNCTION).apply {
-                    modifier(visibilityStr)
-                    typeParams()
-                    name(methodName)
-                    for ((index, psiType) in parameters.withIndex()) {
-                        param("arg${index + 1}", typeString(psiType))
-                    }
-                    if (returnType == PsiType.VOID)
-                        noReturnType()
-                    else
-                        returnType(typeString(returnType))
-                    blockBody("")
-                }.asString())
-                val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
-                insertMembersAfter(null, ktClassOrObject, listOf(functionString), ktClassOrObject.declarations.lastOrNull())
-            }
+        return Fix(uClass, "Add method", "Add method '$methodName' to '${uClass.name}'") {
+            uClass ->
+            val visibilityStr = javaVisibilityMapping.getValue(visibilityModifier)
+            val psiFactory = KtPsiFactory(uClass)
+            val functionString = psiFactory.createFunction(CallableBuilder(FUNCTION).apply {
+                modifier(visibilityStr)
+                typeParams()
+                name(methodName)
+                for ((index, psiType) in parameters.withIndex()) {
+                    param("arg${index + 1}", typeString(psiType))
+                }
+                if (returnType == PsiType.VOID)
+                    noReturnType()
+                else
+                    returnType(typeString(returnType))
+                blockBody("")
+            }.asString())
+            val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
+            insertMembersAfter(null, ktClassOrObject, listOf(functionString), ktClassOrObject.declarations.lastOrNull())
         }
+
+
+    }
+
+    override fun createAddConstructorActions(uClass: UClass, vararg parameters: UParameter): Array<IntentionAction> {
+
+        return arrayOf(Fix(uClass, "Add method", "Add constructor with ${parameters.size} parameters to '${uClass.name}'")
+                       { uClass ->
+                           val psiFactory = KtPsiFactory(uClass)
+                           val constructorString = psiFactory.createSecondaryConstructor(CallableBuilder(CONSTRUCTOR).apply {
+                               modifier("")
+                               typeParams()
+                               name()
+                               for ((index, param) in parameters.withIndex()) {
+                                   param(param.name ?: "arg${index + 1}", typeString(param.type))
+                               }
+                               noReturnType()
+                               blockBody("")
+                           }.asString())
+                           val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
+                           insertMembersAfter(null, ktClassOrObject, listOf(constructorString), null)
+                       })
 
     }
 
     override fun createAddBeanPropertyActions(uClass: UClass, propertyName: String, visibilityModifier: String, propertyType: PsiType, setterRequired: Boolean, getterRequired: Boolean): Array<IntentionAction> {
 
-        fun addPropertyFix(lateinit: Boolean = false) = object : LocalQuickFixAndIntentionActionOnPsiElement(uClass) {
-            override fun getFamilyName(): String = "Add property"
-
-            private val text = "Add '${if (lateinit) "lateinit " else ""}" +
-                               "${if (setterRequired) "var" else "val"}' property '$propertyName' to '${uClass.name}'"
-
-            override fun getText(): String = text
-
-            override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
-                val visibilityStr = javaVisibilityMapping.getValue(visibilityModifier)
-                val psiFactory = KtPsiFactory(uClass)
-                val modifiersString = if (lateinit) "lateinit $visibilityStr" else visibilityStr
-                val function = psiFactory.createProperty(
-                        modifiersString,
-                        propertyName,
-                        typeString(propertyType),
-                        setterRequired,
-                        if (lateinit) null else "TODO(\"initialize me\")")
-                val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
-                insertMembersAfter(null, ktClassOrObject, listOf(function), null)
-            }
-        }
+        fun addPropertyFix(lateinit: Boolean = false) =
+                Fix(uClass,
+                    "Add property",
+                    "Add '${if (lateinit) "lateinit " else ""}" +
+                    "${if (setterRequired) "var" else "val"}' property '$propertyName' to '${uClass.name}'")
+                { uClass ->
+                    val visibilityStr = javaVisibilityMapping.getValue(visibilityModifier)
+                    val psiFactory = KtPsiFactory(uClass)
+                    val modifiersString = if (lateinit) "lateinit $visibilityStr" else visibilityStr
+                    val function = psiFactory.createProperty(
+                            modifiersString,
+                            propertyName,
+                            typeString(propertyType),
+                            setterRequired,
+                            if (lateinit) null else "TODO(\"initialize me\")")
+                    val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
+                    insertMembersAfter(null, ktClassOrObject, listOf(function), null)
+                }
 
         if (setterRequired)
             return arrayOf(addPropertyFix(), addPropertyFix(lateinit = true))
@@ -144,23 +176,15 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
             return arrayOf(addPropertyFix())
     }
 
+    private class Fix(uClass: UClass, private val familyName: String, private val text: String, private val action: (uClass: UClass) -> Unit) : LocalQuickFixAndIntentionActionOnPsiElement(uClass) {
+        override fun getFamilyName(): String = familyName
 
-    private fun typeString(str: PsiType): String {
-        var typeName: String? = when (str) {
-            PsiType.VOID -> ""
-            PsiType.INT -> "kotlin.Int"
-            PsiType.LONG -> "kotlin.Long"
-            PsiType.SHORT -> "kotlin.Short"
-            PsiType.BOOLEAN -> "kotlin.Boolean"
-            PsiType.BYTE -> "kotlin.Byte"
-            PsiType.CHAR -> "kotlin.Char"
-            PsiType.DOUBLE -> "kotlin.Double"
-            PsiType.FLOAT -> "kotlin.Float"
-            else -> null
-        }
-        if (typeName == null)
-            typeName = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(FqName(str.canonicalText), DefaultBuiltIns.Instance)?.fqNameSafe?.asString()
+        override fun getText(): String = text
 
-        return typeName ?: str.canonicalText
+        override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) =
+                action(startElement as UClass)
+
     }
+
 }
+

@@ -19,15 +19,13 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.JvmCommonIntentionActionsFactory
 import com.intellij.lang.Language
+import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiType
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import org.jetbrains.uast.UClass
-import org.jetbrains.uast.UDeclaration
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.toUElement
+import org.jetbrains.uast.*
 import org.junit.Assert
 
 
@@ -123,6 +121,32 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |    }
         |}
         """.trim().trimMargin(), true)
+    }
+
+    fun testAddIntConstructor() {
+        myFixture.configureByText("foo.kt", """
+        |class Foo<caret> {
+        |}
+        """.trim().trimMargin())
+
+        myFixture.launchAction(codeModifications.createAddConstructorActions(
+                atCaret<UClass>(myFixture), *paramsMaker(PsiType.INT)).first())
+        myFixture.checkResult("""
+        |class Foo {
+        |    constructor(param0: Int) {
+        |
+        |    }
+        |}
+        """.trim().trimMargin(), true)
+    }
+
+    fun paramsMaker(vararg psyTypes: PsiType): Array<UParameter> {
+        val uastContext = UastContext(myFixture.project)
+        val parameterList = JavaPsiFacade.getElementFactory(myFixture.project)
+                .createParameterList(psyTypes.indices.map { "param$it" }.toTypedArray(), psyTypes)
+        return parameterList.parameters
+                .map { uastContext.convertElement(it, null, UParameter::class.java) as UParameter }
+                .toTypedArray()
     }
 
     fun testAddStringVarProperty() {
