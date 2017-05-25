@@ -2,12 +2,12 @@ public abstract interface ABC {
 
     @org.jetbrains.annotations.NotNull()
     public abstract <T extends java.lang.CharSequence>java.util.List<T> abc(@org.jetbrains.annotations.NotNull()
-    T p0, @org.jetbrains.annotations.NotNull()
-    java.util.List<? extends T> p1, @org.jetbrains.annotations.NotNull()
-    T... p2);
+    T item, @org.jetbrains.annotations.NotNull()
+    java.util.List<? extends T> items, @org.jetbrains.annotations.NotNull()
+    T... otherItems);
 
     public abstract <X extends java.lang.Object>int bcd(@org.jetbrains.annotations.NotNull()
-    char... p0);
+    char... a);
 }
 
 ////////////////////
