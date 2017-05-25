@@ -25,6 +25,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.caches.JarUserDataManager
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
+import java.util.zip.ZipException
 
 object KotlinJavaScriptLibraryDetectionUtil {
     @JvmStatic fun isKotlinJavaScriptLibrary(library: Library): Boolean {
@@ -51,10 +52,20 @@ object KotlinJavaScriptLibraryDetectionUtil {
         return false
     }
 
-    private fun isJsFileWithMetadata(file: VirtualFile): Boolean =
-            !file.isDirectory &&
-            JavaScript.EXTENSION == file.extension &&
-            KotlinJavascriptMetadataUtils.hasMetadata(String(file.contentsToByteArray(false)))
+    private fun isJsFileWithMetadata(file: VirtualFile): Boolean {
+        if (!file.isDirectory && JavaScript.EXTENSION == file.extension) {
+            val content = try {
+                file.contentsToByteArray(false)
+            }
+            catch (e: ZipException) {
+                throw RuntimeException("file:${file.path} isDirectory: ${file.isDirectory}, exists: ${file.exists()}", e)
+            }
+
+            return KotlinJavascriptMetadataUtils.hasMetadata(String(content))
+        }
+
+        return false
+    }
 
     object HasKotlinJSMetadataInJar : JarUserDataManager.JarBooleanPropertyCounter(HasKotlinJSMetadataInJar::class.simpleName!!) {
         override fun hasProperty(file: VirtualFile) = KotlinJavaScriptLibraryDetectionUtil.isJsFileWithMetadata(file)
