@@ -23,6 +23,7 @@ import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.AbstractNamedDomainObjectContainer
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.tasks.TaskCollection
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import javax.inject.Inject
@@ -55,6 +56,21 @@ internal val Project.konanCompilerDownloadTask  get() = tasks.getByName(KonanPlu
 
 internal val Project.konanVersion
     get() = findProperty(KonanPlugin.KONAN_VERSION_PROPERTY_NAME) as String? ?: KonanPlugin.DEFAULT_KONAN_VERSION
+
+internal val Project.supportedCompileTasks: TaskCollection<KonanCompileTask>
+    get() = project.tasks.withType(KonanCompileTask::class.java).matching { it.target?.isSupported() ?: true }
+
+internal val Project.supportedInteropTasks: TaskCollection<KonanInteropTask>
+    get() = project.tasks.withType(KonanInteropTask::class.java).matching { it.target?.isSupported() ?: true }
+
+private fun String.isSupported(): Boolean {
+    val os = CompilerDownloadTask.simpleOsName()
+    return when (os) {
+        "macos" -> this == "macbook" || this == "iphone"
+        "linux" -> this == "linux" || this == "raspberrypi"
+        else -> false
+    }
+}
 
 class KonanArtifactsContainer(val project: ProjectInternal): AbstractNamedDomainObjectContainer<KonanCompilerConfig>(
         KonanCompilerConfig::class.java,
@@ -157,8 +173,8 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
             project.delete(project.konanBuildRoot)
         }
         getTask(project, "build").apply {
-            dependsOn(project.tasks.withType(KonanCompileTask::class.java).matching { it.target?.isSupported() ?: true })
-            dependsOn(project.tasks.withType(KonanInteropTask::class.java).matching { it.target?.isSupported() ?: true })
+            dependsOn(project.supportedCompileTasks)
+            dependsOn(project.supportedInteropTasks)
         }
     }
 

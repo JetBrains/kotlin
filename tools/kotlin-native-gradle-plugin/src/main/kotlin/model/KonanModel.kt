@@ -24,4 +24,10 @@ import java.io.Serializable
  */
 interface KonanModel : Serializable {
     val konanVersion: String
+    val artifacts: List<KonanArtifact>
+}
+
+interface KonanArtifact : Serializable {
+    val name: String
+    val path: String
 }

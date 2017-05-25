@@ -18,16 +18,27 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilder
+import org.jetbrains.kotlin.gradle.plugin.model.KonanArtifact
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModel
 
 object KonanToolingModelBuilder : ToolingModelBuilder {
     override fun canBuild(modelName: String): Boolean = KonanModel::class.java.name == modelName
 
     override fun buildAll(modelName: String, project: Project): KonanModel {
-        return KonanModelImpl(project.konanVersion)
+        val artifacts = project.supportedCompileTasks
+                .toList()
+                .map { KonanArtifactImpl(it.artifactName, it.artifactPath) }
+        return KonanModelImpl(project.konanVersion, artifacts)
     }
 }
 
 private class KonanModelImpl(
-        override val konanVersion: String
+        override val konanVersion: String,
+        override val artifacts: List<KonanArtifact>
 ) : KonanModel
+
+
+private class KonanArtifactImpl(
+        override val name: String,
+        override val path: String
+) : KonanArtifact

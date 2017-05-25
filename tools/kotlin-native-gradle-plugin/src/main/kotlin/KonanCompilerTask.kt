@@ -36,7 +36,7 @@ open class KonanCompileTask: DefaultTask() {
 
     // Output artifact --------------------------------------------------------
 
-    protected lateinit var artifactName: String
+    lateinit var artifactName: String
 
     @OutputDirectory
     lateinit var outputDir: File
