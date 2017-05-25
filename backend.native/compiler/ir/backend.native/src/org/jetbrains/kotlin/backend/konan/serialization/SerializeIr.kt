@@ -1166,7 +1166,7 @@ internal class IrDeserializer(val context: Context,
             (key,value) ->
         key to value}
 
-        val copyFunctionDeclaration = DeepCopyIrTreeWithDescriptors(rootFunction.containingDeclaration, context).copy(
+        val copyFunctionDeclaration = DeepCopyIrTreeWithDescriptors(rootFunction, context).copy(
             irElement       = declaration,      
             typeSubstitutor = TypeSubstitutor.create(substitutionContext)  
         ) as IrFunction

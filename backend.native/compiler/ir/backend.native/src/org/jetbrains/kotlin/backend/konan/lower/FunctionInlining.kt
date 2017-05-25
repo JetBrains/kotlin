@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
 import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockImpl
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.getDefault
@@ -50,10 +50,17 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 internal class FunctionInlining(val context: Context): IrElementTransformerVoidWithContext() {
 
     private val deserializer = DeserializerDriver(context)
+    private val globalSubstituteMap = mutableMapOf<DeclarationDescriptor, SubstitutedDescriptor>()
 
     //-------------------------------------------------------------------------//
 
-    fun inline(irModule: IrModuleFragment) = irModule.accept(this, null)
+    fun inline(irModule: IrModuleFragment): IrElement {
+        val transformedModule = irModule.accept(this, null)
+        transformedModule.transformChildrenVoid(
+                DescriptorSubstitutorForExternalScope(globalSubstituteMap)                  // Transform calls to object that might be returned from inline function call.
+        )
+        return transformedModule
+    }
 
     //-------------------------------------------------------------------------//
 
@@ -72,7 +79,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         }
 
         functionDeclaration.transformChildrenVoid(this)                                     // Process recursive inline.
-        val inliner = Inliner(currentFile, functionDeclaration, currentScope!!, context)    // Create inliner for this scope.
+        val inliner = Inliner(globalSubstituteMap, functionDeclaration, currentScope!!, context)    // Create inliner for this scope.
         return inliner.inline(irCall )                                  // Return newly created IrInlineBody instead of IrCall.
     }
 
@@ -95,7 +102,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
 //-----------------------------------------------------------------------------//
 
-private class Inliner(val irFile: IrFile,
+private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor, SubstitutedDescriptor>,
                       val functionDeclaration: IrFunction,                                  // Function to substitute.
                       val currentScope: ScopeWithIr,
                       val context: Context) {
@@ -107,8 +114,7 @@ private class Inliner(val irFile: IrFile,
 
     fun inline(irCall: IrCall): IrReturnableBlockImpl {                                     // Call to be substituted.
         val inlineFunctionBody = inlineFunction(irCall, functionDeclaration)
-        val descriptorSubstitutor = copyIrElement.descriptorSubstitutorForExternalScope
-        irFile.transformChildrenVoid(descriptorSubstitutor)                                 // Transform calls to object that might be returned from inline function call.
+        copyIrElement.addCurrentSubstituteMap(globalSubstituteMap)
         return inlineFunctionBody
     }
 
