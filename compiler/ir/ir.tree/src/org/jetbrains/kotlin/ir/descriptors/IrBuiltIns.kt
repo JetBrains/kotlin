@@ -65,6 +65,7 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
     val int = builtIns.intType
     val nothing = builtIns.nothingType
     val unit = builtIns.unitType
+    val string = builtIns.stringType
 
     val eqeqeqFun = defineOperator("EQEQEQ", bool, listOf(anyN, anyN))
     val eqeqFun = defineOperator("EQEQ", bool, listOf(anyN, anyN))
@@ -96,7 +97,11 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
     val booleanNotSymbol = booleanNotFun.symbol
     val noWhenBranchMatchedExceptionSymbol = noWhenBranchMatchedExceptionFun.symbol
 
-    val enumValueOfFun =
+    val enumValueOfFun = createEnumValueOfFun()
+    val enumValueOf = enumValueOfFun.descriptor
+    val enumValueOfSymbol = enumValueOfFun.symbol
+
+    private fun createEnumValueOfFun(): IrSimpleFunction =
             SimpleFunctionDescriptorImpl.create(
                     packageFragment,
                     Annotations.EMPTY,
@@ -110,15 +115,21 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
 
                 val valueParameterName = ValueParameterDescriptorImpl(
                         this, null, 0, Annotations.EMPTY, Name.identifier("name"), builtIns.stringType,
-                        false, false, false, null, org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE
+                        false, false, false, null, SourceElement.NO_SOURCE
                 )
 
                 val returnType = KotlinTypeFactory.simpleType(Annotations.EMPTY, typeParameterT.typeConstructor, listOf(), false)
 
                 initialize(null, null, listOf(typeParameterT), listOf(valueParameterName), returnType, Modality.FINAL, Visibilities.PUBLIC)
             }.addStub()
-    val enumValueOf = enumValueOfFun.descriptor
-    val enumValueOfSymbol = enumValueOfFun.symbol
+
+    val dataClassArrayMemberHashCodeFun = defineOperator("dataClassArrayMemberHashCode", int, listOf(any))
+    val dataClassArrayMemberHashCode = dataClassArrayMemberHashCodeFun.descriptor
+    val dataClassArrayMemberHashCodeSymbol = dataClassArrayMemberHashCodeFun.symbol
+
+    val dataClassArrayMemberToStringFun = defineOperator("dataClassArrayMemberToString", string, listOf(anyN))
+    val dataClassArrayMemberToString = dataClassArrayMemberToStringFun.descriptor
+    val dataClassArrayMemberToStringSymbol = dataClassArrayMemberToStringFun.symbol
 
     companion object {
         val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")
