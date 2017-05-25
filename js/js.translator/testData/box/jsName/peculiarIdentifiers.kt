@@ -23,9 +23,9 @@ fun test3(): String {
 }
 
 fun test4(): String {
-    val `()` = "OK"
-    fun `[]`() = `()`
-    return `[]`()
+    val `1(¢)` = "OK"
+    fun `[£]`() = `1(¢)`
+    return `[£]`()
 }
 
 fun box(): String {
