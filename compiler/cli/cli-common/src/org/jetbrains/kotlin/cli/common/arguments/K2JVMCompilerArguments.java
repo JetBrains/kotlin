@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.config.JvmTarget;
 
 public class K2JVMCompilerArguments extends CommonCompilerArguments {
@@ -81,7 +80,7 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
             valueDescription = "<version>",
             description = "Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6"
     )
-    public String jvmTarget;
+    public String jvmTarget = JvmTarget.DEFAULT.getDescription();
 
     @GradleOption(DefaultValues.BooleanFalseDefault.class)
     @Argument(value = "-java-parameters", description = "Generate metadata for Java 1.8 reflection on method parameters")
@@ -149,11 +148,4 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
 
     // Paths to output directories for friend modules.
     public String[] friendPaths;
-
-    @NotNull
-    public static K2JVMCompilerArguments createDefaultInstance() {
-        K2JVMCompilerArguments arguments = new K2JVMCompilerArguments();
-        arguments.jvmTarget = JvmTarget.DEFAULT.getDescription();
-        return arguments;
-    }
 }

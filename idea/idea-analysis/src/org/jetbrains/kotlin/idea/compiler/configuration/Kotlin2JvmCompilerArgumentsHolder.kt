@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.compiler.configuration
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-
 import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION
 import org.jetbrains.kotlin.idea.compiler.configuration.BaseKotlinCompilerSettings.Companion.KOTLIN_COMPILER_SETTINGS_PATH
 
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.idea.compiler.configuration.BaseKotlinCompilerSettin
        storages = arrayOf(Storage(file = StoragePathMacros.PROJECT_FILE),
                           Storage(file = KOTLIN_COMPILER_SETTINGS_PATH, scheme = StorageScheme.DIRECTORY_BASED)))
 class Kotlin2JvmCompilerArgumentsHolder : BaseKotlinCompilerSettings<K2JVMCompilerArguments>() {
-    override fun createSettings() = K2JVMCompilerArguments.createDefaultInstance()
+    override fun createSettings() = createDefaultArguments()
 
     override fun validateNewSettings(settings: K2JVMCompilerArguments) {
         validateInheritedFieldsUnchanged(settings)
@@ -35,5 +34,7 @@ class Kotlin2JvmCompilerArgumentsHolder : BaseKotlinCompilerSettings<K2JVMCompil
 
     companion object {
         fun getInstance(project: Project) = ServiceManager.getService(project, Kotlin2JvmCompilerArgumentsHolder::class.java)!!
+
+        fun createDefaultArguments(): K2JVMCompilerArguments = K2JVMCompilerArguments()
     }
 }

@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments;
 
-import org.jetbrains.annotations.NotNull;
-
 public abstract class CommonCompilerArguments extends CommonToolArguments {
     public static final long serialVersionUID = 0L;
 
@@ -86,11 +84,6 @@ public abstract class CommonCompilerArguments extends CommonToolArguments {
             description = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier"
     )
     public String coroutinesState = WARN;
-
-    @NotNull
-    public static CommonCompilerArguments createDefaultInstance() {
-        return new DummyImpl();
-    }
 
     public static final String WARN = "warn";
     public static final String ERROR = "error";

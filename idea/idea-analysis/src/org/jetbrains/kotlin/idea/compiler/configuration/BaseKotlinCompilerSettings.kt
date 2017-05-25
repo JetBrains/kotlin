@@ -21,7 +21,8 @@ import com.intellij.openapi.components.StoragePathMacros.PROJECT_CONFIG_DIR
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
-import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.cli.common.arguments.collectFieldsToCopy
+import org.jetbrains.kotlin.cli.common.arguments.copyBean
 import org.jetbrains.kotlin.config.SettingConstants
 
 abstract class BaseKotlinCompilerSettings<T : Any> protected constructor() : PersistentStateComponent<Element>, Cloneable {
@@ -66,9 +67,9 @@ abstract class BaseKotlinCompilerSettings<T : Any> protected constructor() : Per
         const val KOTLIN_COMPILER_SETTINGS_PATH = PROJECT_CONFIG_DIR + "/" + SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE
 
         private val SKIP_DEFAULT_VALUES = SkipDefaultValuesSerializationFilters(
-                CommonCompilerArguments.createDefaultInstance(),
-                K2JVMCompilerArguments.createDefaultInstance(),
-                K2JSCompilerArguments.createDefaultInstance()
+                KotlinCommonCompilerArgumentsHolder.createDefaultArguments(),
+                Kotlin2JvmCompilerArgumentsHolder.createDefaultArguments(),
+                Kotlin2JsCompilerArgumentsHolder.createDefaultArguments()
         )
     }
 }
