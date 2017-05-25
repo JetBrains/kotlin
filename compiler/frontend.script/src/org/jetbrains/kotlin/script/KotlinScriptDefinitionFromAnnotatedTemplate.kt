@@ -123,25 +123,32 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
     override fun getScriptName(script: KtScript): Name = NameUtils.getScriptNameForFile(script.containingKtFile.name)
 
     override fun <TF: Any> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
-
-        fun makeScriptContents() = BasicScriptContents(file, getAnnotations = {
-            val classLoader = template.java.classLoader
-            takeUnlessError(reportError = false) {
-                getAnnotationEntries(file, project)
-                        .mapNotNull { psiAnn ->
-                            // TODO: consider advanced matching using semantic similar to actual resolving
-                            acceptedAnnotations.find { ann ->
-                                psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
-                            }?.let { constructAnnotation(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
-                        }
-            }
-            ?: emptyList()
-        })
-
         return takeUnlessError(reportError = false) {
-            val fileDeps = resolver?.resolve(makeScriptContents(), environment, ::logScriptDefMessage, previousDependencies)
+            val fileDeps = resolver?.resolve(makeScriptContents(file, project), environment, ::logScriptDefMessage, previousDependencies)
             // TODO: use it as a Future
             fileDeps?.get()
+        }
+    }
+
+    fun <TF: Any>  makeScriptContents(file: TF, project: Project) = BasicScriptContents(file, getAnnotations = {
+        val classLoader = template.java.classLoader
+        takeUnlessError(reportError = false) {
+            getAnnotationEntries(file, project)
+                    .mapNotNull { psiAnn ->
+                        // TODO: consider advanced matching using semantic similar to actual resolving
+                        acceptedAnnotations.find { ann ->
+                            psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
+                        }?.let { constructAnnotation(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
+                    }
+        }
+        ?: emptyList()
+    })
+
+
+    fun getDependenciesFor(previousDependencies: KotlinScriptExternalDependencies?, scriptContents: ScriptContents): KotlinScriptExternalDependencies? {
+        return takeUnlessError(reportError = false) {
+            // TODO: use it as a Future
+            resolver?.resolve(scriptContents, environment, ::logScriptDefMessage, previousDependencies)?.get()
         }
     }
 
