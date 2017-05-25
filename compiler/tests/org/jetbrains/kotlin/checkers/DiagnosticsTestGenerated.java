@@ -23011,6 +23011,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("varargInSetter.kt")
+            public void testVarargInSetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/varargs/varargInSetter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("varargIterator.kt")
             public void testVarargIterator() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/varargs/varargIterator.kt");
