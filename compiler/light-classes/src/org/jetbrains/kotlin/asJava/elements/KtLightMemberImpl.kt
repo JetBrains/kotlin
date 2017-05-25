@@ -79,6 +79,7 @@ private class KtLightMemberModifierList(
 ) : KtLightModifierList<KtLightMember<*>>(owner) {
     override fun hasModifierProperty(name: String) = when {
         name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false
+        // pretend this method behaves like a default method
         name == PsiModifier.DEFAULT && isImplementationInInterface() -> true
         dummyDelegate != null -> {
             when {
@@ -89,6 +90,10 @@ private class KtLightMemberModifierList(
         }
         else -> clsDelegate.hasModifierProperty(name)
     }
+
+    override fun hasExplicitModifier(name: String) =
+            // kotlin methods can't be truly default atm, that way we can avoid being reported on by diagnostics, namely android lint
+            if (name == PsiModifier.DEFAULT) false else super.hasExplicitModifier(name)
 
     private fun isMethodOverride() = owner is KtLightMethod && owner.kotlinOrigin?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: false
 
