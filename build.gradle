@@ -23,11 +23,11 @@ convention.plugins.platformInfo = new PlatformInfo()
 
 allprojects {
     if (path != ":dependencies") {
-        evaluationDependsOn(":dependencies")
+	evaluationDependsOn(":dependencies")
     }
 
     repositories {
-        mavenCentral()
+	mavenCentral()
     }
 
     loadCommandLineProperties()
@@ -41,22 +41,22 @@ void setupClang(Project project) {
     project.convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
 
     project.plugins.withType(NativeComponentPlugin) {
-        project.model {
-            toolChains {
-                clang(Clang) {
-                    clangPath.each {
-                        path it
-                    }
+	project.model {
+	    toolChains {
+		clang(Clang) {
+		    clangPath.each {
+			path it
+		    }
 
-                    eachPlatform { // TODO: will not work when cross-compiling
-                        [cCompiler, cppCompiler, linker].each {
-                            it.withArguments { it.addAll(hostClangArgs) }
-                        }
+		    eachPlatform { // TODO: will not work when cross-compiling
+			[cCompiler, cppCompiler, linker].each {
+			    it.withArguments { it.addAll(hostClangArgs) }
+			}
 
-                    }
-                }
-            }
-        }
+		    }
+		}
+	    }
+	}
     }
 }
 
@@ -67,54 +67,56 @@ void setupCompilationFlags() {
     final String binDir
 
     if (isLinux()) {
-        ext.host = "linux"
-        ext.targetArgs <<
-            [(ext.host): 
-               ["--sysroot=${gccToolchainDir}/${gnuTriplet}/sysroot"],
-             "raspberrypi":
-               ["-target", "armv6-unknown-linux-gnueabihf",
-                "-mfpu=vfp", "-mfloat-abi=hard",
-                "--sysroot=$raspberryPiSysrootDir",
-                // TODO: those two are hacks.
-                "-I$raspberryPiSysrootDir/usr/include/c++/4.8.3",
-                "-I$raspberryPiSysrootDir/usr/include/c++/4.8.3/arm-linux-gnueabihf"]
-            ]
+	ext.host = "linux"
+	ext.targetArgs <<
+	    [(ext.host):
+	       ["--sysroot=${gccToolchainDir}/${gnuTriplet}/sysroot",
+		"-DUSE_GCC_UNWIND=1", "-DELFSIZE=64"],
+	     "raspberrypi":
+	       ["-target", "armv6-unknown-linux-gnueabihf",
+		"-mfpu=vfp", "-mfloat-abi=hard",
+		"-DUSE_GCC_UNWIND=1", "-DELFSIZE=32",
+		"--sysroot=$raspberryPiSysrootDir",
+		// TODO: those two are hacks.
+		"-I$raspberryPiSysrootDir/usr/include/c++/4.8.3",
+		"-I$raspberryPiSysrootDir/usr/include/c++/4.8.3/arm-linux-gnueabihf"]
+	    ]
      } else {
-         ext.host = "macbook"
-         ext.targetArgs <<
-            [(ext.host):
-                ["--sysroot=$macbookSysrootDir", "-mmacosx-version-min=$minMacOsVersion"], 
-             "iphone":
-                ["-stdlib=libc++", "-arch", "arm64", "-isysroot", "$iphoneSysrootDir",
-                 "-miphoneos-version-min=8.0.0"]
+	 ext.host = "macbook"
+	 ext.targetArgs <<
+	    [(ext.host):
+		["--sysroot=$macbookSysrootDir", "-mmacosx-version-min=$minMacOsVersion"],
+	     "iphone":
+		["-stdlib=libc++", "-arch", "arm64", "-isysroot", "$iphoneSysrootDir",
+		 "-miphoneos-version-min=8.0.0"]
 // TODO: re-enable after simulator sysroot is available in the dependencies
 //             "iphone_sim":
 //                ["-stdlib=libc++", "-isysroot", "$iphoneSimSysrootDir", "-miphoneos-version-min=8.0.0"],
-            ]
+	    ]
      }
      ext.targetArgs << [
        "android_arm32":
-                ["-target", "arm-linux-androideabi",
-                "--sysroot=$android_arm32SysrootDir",
-                // HACKS!
-                /*"-D_LIBCPP_HAS_MUSL_LIBC",*/ "-DOMIT_BACKTRACE", "-D__ANDROID__",
-                "-I$android_arm32SysrootDir/usr/include/c++/4.9.x",
-                "-I$android_arm32SysrootDir/usr/include/c++/4.9.x/arm-linux-androideabi"
-                ]
+		["-target", "arm-linux-androideabi",
+		"--sysroot=$android_arm32SysrootDir",
+		"-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DELFSIZE=32",
+		// HACKS!
+		"-I$android_arm32SysrootDir/usr/include/c++/4.9.x",
+		"-I$android_arm32SysrootDir/usr/include/c++/4.9.x/arm-linux-androideabi"
+		]
      ]
      ext.targetList = ext.targetArgs.keySet() as List
 
     if (isLinux()) {
-        binDir = "$gccToolchainDir/$gnuTriplet/bin"
-        ext.clangArgs.addAll([
-                "--gcc-toolchain=$gccToolchainDir",
-                "-L$llvmDir/lib"
-        ])
+	binDir = "$gccToolchainDir/$gnuTriplet/bin"
+	ext.clangArgs.addAll([
+		"--gcc-toolchain=$gccToolchainDir",
+		"-L$llvmDir/lib"
+	])
     } else {
-        binDir = "$macbookSysrootDir/usr/bin"
+	binDir = "$macbookSysrootDir/usr/bin"
     }
     ext.clangArgs << "-B$binDir"
-    ext.hostClangArgs = ext.clangArgs.clone() 
+    ext.hostClangArgs = ext.clangArgs.clone()
     ext.hostClangArgs.addAll(ext.targetArgs[host])
 
     ext.clangPath << binDir
@@ -123,22 +125,22 @@ void setupCompilationFlags() {
 
 void loadLocalProperties() {
     if (new File("$project.rootDir/local.properties").exists()) {
-        Properties props = new Properties()
-        props.load(new FileInputStream("$project.rootDir/local.properties"))
-        props.each {prop -> project.ext.set(prop.key, prop.value)}
+	Properties props = new Properties()
+	props.load(new FileInputStream("$project.rootDir/local.properties"))
+	props.each {prop -> project.ext.set(prop.key, prop.value)}
     }
 }
 
 void loadCommandLineProperties() {
     if (project.hasProperty("konanc_flags")) {
-        throw new Error("Specify either -Ptest_flags or -Pbuild_flags.")
+	throw new Error("Specify either -Ptest_flags or -Pbuild_flags.")
     }
     ext.globalBuildArgs = project.hasProperty("build_flags")
-        ? ext.build_flags.split(' ') : []
+	? ext.build_flags.split(' ') : []
     ext.globalTestArgs = project.hasProperty("test_flags")
-        ? ext.test_flags.split(' ') : []
+	? ext.test_flags.split(' ') : []
     ext.testTarget = project.hasProperty("test_target")
-        ? ext.test_target : null
+	? ext.test_target : null
 }
 
 class PlatformInfo {
@@ -146,33 +148,33 @@ class PlatformInfo {
     private final String osArch = System.properties['os.arch']
 
     boolean isMac() {
-        return osName == 'Mac OS X'
+	return osName == 'Mac OS X'
     }
 
     boolean isLinux() {
-        return osName == 'Linux'
+	return osName == 'Linux'
     }
 
     boolean isAmd64() {
-        return osArch in ['x86_64', 'amd64']
+	return osArch in ['x86_64', 'amd64']
     }
 
     String getGnuTriplet() {
-        if (isLinux() && isAmd64()) {
-            return "x86_64-unknown-linux-gnu"
-        } else {
-            throw unsupportedPlatformException()
-        }
+	if (isLinux() && isAmd64()) {
+	    return "x86_64-unknown-linux-gnu"
+	} else {
+	    throw unsupportedPlatformException()
+	}
     }
 
     String simpleOsName() {
-        if (isMac()) return 'macos'
-        if (isLinux()) return 'linux'
-        throw unsupportedPlatformException()
+	if (isMac()) return 'macos'
+	if (isLinux()) return 'linux'
+	throw unsupportedPlatformException()
     }
 
     Throwable unsupportedPlatformException() {
-        return new Error("unsupported platform: $osName/$osArch")
+	return new Error("unsupported platform: $osName/$osArch")
     }
 }
 
@@ -188,53 +190,53 @@ task distCompiler(type: Copy) {
     destinationDir file('dist')
 
     from(project(':backend.native').file('build/libs')) {
-        into('konan/lib')
+	into('konan/lib')
     }
 
     from(project('Interop').file('Runtime/build/libs')) {
-        into('konan/lib')
+	into('konan/lib')
     }
 
     from(project('Interop').file('Indexer/build/libs')) {
-        into('konan/lib')
+	into('konan/lib')
     }
 
     from(project('Interop').file('StubGenerator/build/libs')) {
-        into('konan/lib')
+	into('konan/lib')
     }
 
     from(project(':backend.native').file('build/external_jars')) {
-        into('konan/lib')
+	into('konan/lib')
     }
 
     from(project(':backend.native').file('build/nativelibs')) {
-        into('konan/nativelib')
+	into('konan/nativelib')
     }
 
     from(project(':Interop').file('Indexer/build/nativelibs')) {
-        into('konan/nativelib')
+	into('konan/nativelib')
     }
 
     from(project(':Interop').file('Runtime/build/nativelibs')) {
-        into('konan/nativelib')
+	into('konan/nativelib')
     }
 
     from(project(':llvmDebugInfoC').file('build/libs/debugInfo/shared')) {
-        into('konan/nativelib')
+	into('konan/nativelib')
     }
 
 
     from(file('cmd')) {
-        fileMode(0755)
-        into('bin')
+	fileMode(0755)
+	into('bin')
     }
     from(project(':backend.native').file('konan.properties')) {
-        into('konan')
+	into('konan')
     }
 
     // TODO: check if we use native libraries copied to dist (see above) or not.
     from(project(':tools:helpers').file('build/libs')) {
-        into('konan/lib')
+	into('konan/lib')
     }
 }
 
@@ -252,8 +254,8 @@ task commonDistRuntime(type: Copy) {
 
     // Target independant common part.
     from(project(':runtime').file("build/${host}Stdlib")) {
-        include('**')
-        into('klib/stdlib')
+	include('**')
+	into('klib/stdlib')
     }
 }
 
@@ -264,25 +266,25 @@ task crossDistRuntime(type: Copy) {
 
 targetList.each { target ->
     task("${target}CrossDistRuntime", type: Copy) {
-        dependsOn ":runtime:${target}Runtime" 
-        dependsOn ":backend.native:${target}Stdlib" 
-        dependsOn ":backend.native:${target}Start" 
+	dependsOn ":runtime:${target}Runtime"
+	dependsOn ":backend.native:${target}Stdlib"
+	dependsOn ":backend.native:${target}Start"
 
-        destinationDir file('dist')
+	destinationDir file('dist')
 
-        from(project(':runtime').file("build/$target")) {
-            include("*.bc")
-            into("klib/stdlib/$target/native")
-        }
-        from(project(':runtime').file("build/${target}Stdlib")) {
-            include('**')
-            into('klib/stdlib')
-        }
-        from(project(':runtime').file("build/${target}Start/$target/kotlin")) {
-            include("program.kt.bc")
-            rename('program.kt.bc', 'start.kt.bc')
-            into("klib/stdlib/$target/native")
-        }
+	from(project(':runtime').file("build/$target")) {
+	    include("*.bc")
+	    into("klib/stdlib/$target/native")
+	}
+	from(project(':runtime').file("build/${target}Stdlib")) {
+	    include('**')
+	    into('klib/stdlib')
+	}
+	from(project(':runtime').file("build/${target}Start/$target/kotlin")) {
+	    include("program.kt.bc")
+	    rename('program.kt.bc', 'start.kt.bc')
+	    into("klib/stdlib/$target/native")
+	}
     }
 }
 
@@ -298,33 +300,33 @@ task bundle(type: Tar) {
     dependsOn('crossDist')
     baseName = "kotlin-native-${simpleOsName()}-${project.konanVersion}"
     from("$project.rootDir/dist") {
-        include '**'
-        exclude 'dependencies'
-        into baseName
+	include '**'
+	exclude 'dependencies'
+	into baseName
     }
     from(project.rootDir) {
-        include 'DISTRO_README.md'
-        rename {
-            return "README.md"
-        }
-        into baseName
+	include 'DISTRO_README.md'
+	rename {
+	    return "README.md"
+	}
+	into baseName
     }
     from(project.rootDir) {
-        include 'samples/**'
-        include 'INTEROP.md'
-        include 'RELEASE_NOTES.md'
-        include 'GRADLE_PLUGIN.md'
-        exclude '**/gradle.properties'
-        exclude '**/build'
-        exclude '**/.gradle'
-        rename { String fileName ->
-            if (fileName == "gradle.properties.for_bundle") {
-                return "gradle.properties"
-            } else {
-                return fileName
-            }
-        }
-        into baseName
+	include 'samples/**'
+	include 'INTEROP.md'
+	include 'RELEASE_NOTES.md'
+	include 'GRADLE_PLUGIN.md'
+	exclude '**/gradle.properties'
+	exclude '**/build'
+	exclude '**/.gradle'
+	rename { String fileName ->
+	    if (fileName == "gradle.properties.for_bundle") {
+		return "gradle.properties"
+	    } else {
+		return fileName
+	    }
+	}
+	into baseName
     }
     destinationDir = file('.')
     extension = 'tar.gz'
@@ -339,10 +341,9 @@ task demo(type: Exec) {
 
 task clean {
     doLast {
-        file('dist').traverse(type: FileType.ANY, excludeNameFilter: "dependencies", maxDepth: 0) {
-            delete it
-        }
-        delete bundle.outputs.files
+	file('dist').traverse(type: FileType.ANY, excludeNameFilter: "dependencies", maxDepth: 0) {
+	    delete it
+	}
+	delete bundle.outputs.files
     }
 }
-

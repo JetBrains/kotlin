@@ -13,18 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef OMIT_BACKTRACE
-#include <execinfo.h>
-#endif
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef OMIT_BACKTRACE
+#if USE_GCC_UNWIND
+// GCC unwinder for backtrace.
+#include <unwind.h>
+#else
+// Glibc backtrace function.
+#include <execinfo.h>
+#endif
+#endif // OMIT_BACKTRACE
 
 #include "Assert.h"
 #include "Exceptions.h"
+#include "ExecFormat.h"
 #include "Memory.h"
 #include "Natives.h"
 #include "KString.h"
 #include "Types.h"
+
+namespace {
 
 class KotlinException {
  public:
@@ -53,6 +63,50 @@ class AutoFree {
   }
 };
 
+#if USE_GCC_UNWIND
+struct Backtrace {
+  Backtrace(int count, int skip) : index(0), skipCount(skip), array(nullptr) {
+    auto result = AllocArrayInstance(
+	theArrayTypeInfo, count - skipCount, &array);
+    RuntimeAssert(result != nullptr, "Cannot create backtrace array");
+  }
+
+  void setNextElement(const char* element) {
+    CreateStringFromCString(
+	element, ArrayAddressOfElementAt(array->array(), index++));
+  }
+
+  int index;
+  int skipCount;
+  ObjHeader* array;
+};
+
+_Unwind_Reason_Code depthCountCallback(
+    struct _Unwind_Context * context, void* arg) {
+  int* result = reinterpret_cast<int*>(arg);
+  (*result)++;
+  return _URC_NO_REASON;
+}
+
+_Unwind_Reason_Code unwindCallback(
+    struct _Unwind_Context* context, void* arg) {
+  Backtrace* backtrace = reinterpret_cast<Backtrace*>(arg);
+  if (backtrace->skipCount > 0) {
+    backtrace->skipCount--;
+    return _URC_NO_REASON;
+  }
+  unsigned long ip = _Unwind_GetIP(context);
+  const char* symbol = AddressToSymbol(ip);
+  char line[512];
+  snprintf(line, sizeof(line) - 1, "%s (0x%lx)",
+	   symbol != nullptr ? symbol : "", ip);
+  backtrace->setNextElement(line);
+  return _URC_NO_REASON;
+}
+#endif
+
+}  // namespace
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -65,6 +119,14 @@ OBJ_GETTER0(GetCurrentStackTrace) {
   ArrayHeader* array = result->array();
   CreateStringFromCString("<UNIMPLEMENTED>", ArrayAddressOfElementAt(array, 0));
   return result;
+#else
+#if USE_GCC_UNWIND
+  int depth = 0;
+  _Unwind_Backtrace(depthCountCallback, &depth);
+  // Skips first 3 elements as irrelevant.
+  Backtrace result(depth, 3);
+  _Unwind_Backtrace(unwindCallback, &result);
+  RETURN_OBJ(result.array);
 #else
   const int maxSize = 32;
   void* buffer[maxSize];
@@ -82,11 +144,12 @@ OBJ_GETTER0(GetCurrentStackTrace) {
   }
   return result;
 #endif
+#endif  // !OMIT_BACKTRACE
 }
 
 void ThrowException(KRef exception) {
   RuntimeAssert(exception != nullptr && IsInstance(exception, theThrowableTypeInfo),
-                "Throwing something non-throwable");
+		"Throwing something non-throwable");
   throw KotlinException(exception);
 }
 
