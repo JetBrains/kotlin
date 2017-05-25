@@ -67,6 +67,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
 
     override var classifierNamePolicy: ClassifierNamePolicy by property(ClassifierNamePolicy.SOURCE_CODE_QUALIFIED)
     override var withDefinedIn by property(true)
+    override var withSourceFileForTopLevel by property(true)
     override var modifiers: Set<DescriptorRendererModifier> by property(DescriptorRendererModifier.DEFAULTS)
     override var startFromName by property(false)
     override var startFromDeclarationKeyword by property(false)

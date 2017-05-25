@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
-import kotlin.comparisons.compareBy
 
 object IdeRenderers {
 

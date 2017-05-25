@@ -14,13 +14,13 @@ compiler/testData/cli/jvm/signatureClash.kt:9:5: error: platform declaration cla
     val a: Int = 1
     ^
 compiler/testData/cli/jvm/signatureClash.kt:12:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
-    fun <get-b>(): Int defined in root package
-    fun getB(): Int defined in root package
+    fun <get-b>(): Int defined in root package in file signatureClash.kt
+    fun getB(): Int defined in root package in file signatureClash.kt
 fun getB(): Int = 1
 ^
 compiler/testData/cli/jvm/signatureClash.kt:13:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
-    fun <get-b>(): Int defined in root package
-    fun getB(): Int defined in root package
+    fun <get-b>(): Int defined in root package in file signatureClash.kt
+    fun getB(): Int defined in root package in file signatureClash.kt
 val b: Int = 1
 ^
 compiler/testData/cli/jvm/signatureClash.kt:19:7: error: platform declaration clash: The following declarations have the same JVM signature (getTr()I):
