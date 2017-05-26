@@ -11,7 +11,7 @@ import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.internal.KaptTask
 import org.jetbrains.kotlin.gradle.internal.KaptVariantData
-import org.jetbrains.kotlin.gradle.internal.wireKaptTaskForJavaProject
+import org.jetbrains.kotlin.gradle.internal.registerGeneratedJavaSource
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
@@ -41,9 +41,9 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
                                  variantData: BaseVariantData<out BaseVariantOutputData>,
                                  javaTask: AbstractCompile,
                                  kotlinTask: KotlinCompile,
-                                 kotlinAfterJavaTask: KotlinCompile?) {
-
-        kotlinTask.setDependsOn(javaTask.dependsOn)
+                                 kotlinAfterJavaTask: KotlinCompile?
+    ) {
+        kotlinTask.dependsOn(*javaTask.dependsOn.toTypedArray())
 
         kotlinTask.mapClasspath {
             javaTask.classpath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
@@ -118,8 +118,13 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
         override val annotationProcessorOptions: Map<String, String>? =
                 AndroidGradleWrapper.getAnnotationProcessorOptionsFromAndroidVariant(variantData)
 
-        override fun wireKaptTask(project: Project, task: KaptTask, kotlinTask: KotlinCompile, javaTask: AbstractCompile) =
-                wireKaptTaskForJavaProject(task, kotlinTask, javaTask)
+        override fun registerGeneratedJavaSource(
+            project: Project,
+            kaptTask: KaptTask,
+            javaTask: AbstractCompile
+        ) {
+            registerGeneratedJavaSource(kaptTask, javaTask)
+        }
     }
 
     override fun wrapVariantDataForKapt(variantData: BaseVariantData<out BaseVariantOutputData>)
