@@ -553,7 +553,7 @@ internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractComp
     // Also, use kapt1 annotations file for up-to-date check since annotation processing is done with javac
     kotlinTask.kaptOptions.annotationsFile?.let { javaTask.inputs.file(it) }
 
-    javaTask.dependsOn(kotlinTask.name)
+    javaTask.dependsOn(kotlinTask)
     /*
      * It's important to modify javaTask.classpath only in doFirst,
      * because Android plugin uses ConventionMapping to modify it too (see JavaCompileConfigAction.execute),
