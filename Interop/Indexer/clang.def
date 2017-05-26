@@ -1,5 +1,7 @@
 headers = clang-c/Index.h
 
+headerFilter = clang-c/**
+
 compiler = clang
 
 compilerOpts = -std=c99 -fPIC
