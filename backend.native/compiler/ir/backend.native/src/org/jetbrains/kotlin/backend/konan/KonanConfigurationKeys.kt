@@ -46,8 +46,6 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("module kind")
         val NATIVE_LIBRARY_FILES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("native library file paths")
-        val NOLINK: CompilerConfigurationKey<Boolean> 
-                = CompilerConfigurationKey.create("don't link, only produce a bitcode file ")
         val NOMAIN: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("assume 'main' entry point to be provided by external libraries")
         val NOSTDLIB: CompilerConfigurationKey<Boolean> 
@@ -95,8 +93,8 @@ class KonanConfigKeys {
     }
 }
 
-enum class CompilerOutputKind {
-    PROGRAM,
-    LIBRARY,
-    BITCODE
+enum class CompilerOutputKind(val suffix: String) {
+    PROGRAM(".kexe"),
+    LIBRARY(".klib"),
+    BITCODE(".bc")
 }

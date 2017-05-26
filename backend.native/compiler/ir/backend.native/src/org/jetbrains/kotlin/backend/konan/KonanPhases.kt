@@ -77,6 +77,8 @@ object KonanPhases {
             // Don't serialize anything to a final executable.
             KonanPhase.SERIALIZER.enabled = 
                 (get(PRODUCE) == CompilerOutputKind.LIBRARY)
+            KonanPhase.LINK_STAGE.enabled = 
+                (get(PRODUCE) == CompilerOutputKind.PROGRAM)
 
             val disabled = get(DISABLED_PHASES)
             disabled?.forEach { phases[known(it)]!!.enabled = false }
@@ -86,10 +88,6 @@ object KonanPhases {
 
             val verbose = get(VERBOSE_PHASES)
             verbose?.forEach { phases[known(it)]!!.verbose = true }
-
-            if (get(NOLINK) ?: false ) {
-                KonanPhase.LINK_STAGE.enabled = false
-            }
         }}
     }
 

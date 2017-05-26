@@ -51,3 +51,8 @@ fun <T: Any> T.onlyIf(condition: T.()->Boolean, then: (T)->Unit): T {
     return this
 }
 
+fun String.suffixIfNot(suffix: String) =
+    if (this.endsWith(suffix)) this else "$this$suffix"
+
+fun String.removeSuffixIfPresent(suffix: String) =
+    if (this.endsWith(suffix)) this.dropLast(suffix.length) else this

@@ -20,6 +20,8 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.CompilerOutputKind.*
 import org.jetbrains.kotlin.backend.konan.util.profile
+import org.jetbrains.kotlin.backend.konan.util.suffixIfNot
+import org.jetbrains.kotlin.backend.konan.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -49,9 +51,6 @@ private fun maybeExecuteHelper(configuration: CompilerConfiguration) {
         throw IllegalStateException("Cannot download dependencies.", e)
     }
 }
-
-private fun suffixIfNot(name: String, suffix: String) =
-        if (name.endsWith(suffix)) name else "$name$suffix"
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
@@ -113,23 +112,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     (arguments.produce ?: "program").toUpperCase())
 
                 put(PRODUCE, outputKind)
-                val (defaultName, suffix) = when (outputKind) {
-                    CompilerOutputKind.LIBRARY -> {
-                        put(NOLINK, true)
-                        Pair("library", ".klib")
-                    }
-                    CompilerOutputKind.PROGRAM -> {
-                        put(NOLINK, false)
-                        Pair("program", ".kexe")
-                    }
-                    CompilerOutputKind.BITCODE -> {
-                        put(NOLINK, true)
-                        Pair("output", ".bc")
-                    }
-                }
-                val output = arguments.outputFile ?: defaultName
+                val suffix = outputKind.suffix
+                val output = arguments.outputFile?.removeSuffixIfPresent(suffix) 
+                    ?: outputKind.name.toLowerCase()
                 put(OUTPUT_NAME, output)
-                put(OUTPUT_FILE, suffixIfNot(output, suffix))
+                put(OUTPUT_FILE, output.suffixIfNot(outputKind.suffix))
 
                 // This is a decision we could change
                 put(CommonConfigurationKeys.MODULE_NAME, output)

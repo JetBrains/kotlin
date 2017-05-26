@@ -19,17 +19,13 @@ package org.jetbrains.kotlin.backend.konan.library
 import org.jetbrains.kotlin.backend.konan.Distribution
 import org.jetbrains.kotlin.backend.konan.KonanProperties
 import org.jetbrains.kotlin.backend.konan.util.File
+import org.jetbrains.kotlin.backend.konan.util.suffixIfNot
+import org.jetbrains.kotlin.backend.konan.util.removeSuffixIfPresent
 
 interface SearchPathResolver {
     val searchRoots: List<File>
     fun resolve(givenPath: String): File
 }
-
-fun String.suffixIfNot(suffix: String) =
-    if (this.endsWith(suffix)) this else "$this$suffix"
-
-fun String.removeSuffixIfPresent(suffix: String) =
-    if (this.endsWith(suffix)) this.dropLast(suffix.length) else this
 
 class KonanLibrarySearchPathResolver(repositories: List<String>,
     val distribution: Distribution): SearchPathResolver {
