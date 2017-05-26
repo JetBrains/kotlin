@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
+DIR=$(dirname "$0")
 PATH=../../dist/bin:../../bin:$PATH
-DIR=.
 DEPS=$(dirname `type -p konanc`)/../dependencies
 
 CFLAGS_macbook=-I$HOME/Library/Frameworks/SDL2.framework/Headers
@@ -42,6 +42,17 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-cinterop -def $DIR/sdl.def -copt "$CFLAGS" -target $TARGET -o sdl.kt.bc || exit 1
-konanc $COMPILER_ARGS -target $TARGET $DIR/Tetris.kt -library sdl.kt.bc -linkerArgs "$LINKER_ARGS" -o Tetris.kexe || exit 1
-#strip Tetris.kexe
+rm -rf $DIR/build/
+mkdir $DIR/build/
+mkdir $DIR/build/c_interop/
+mkdir $DIR/build/bin/
+
+cinterop -def $DIR/src/c_interop/sdl.def -copt "$CFLAGS" -target $TARGET -o $DIR/build/c_interop/sdl.kt.bc || exit 1
+
+konanc $COMPILER_ARGS -target $TARGET $DIR/src/kotlin-native/Tetris.kt \
+       -library $DIR/build/c_interop/sdl.kt.bc -linkerArgs "$LINKER_ARGS" \
+       -o $DIR/build/bin/Tetris.kexe || exit 1
+
+cp -R $DIR/src/resources $DIR/build/bin
+
+echo "Artifact path is ./build/bin/Tetris.kexe"

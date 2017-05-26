@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
+./downloadTensorflow.sh
+
+DIR=$(dirname "$0")
 PATH=../../dist/bin:../../bin:$PATH
-DIR=.
+
 TF_TARGET_DIRECTORY="$HOME/.konan/third-party/tensorflow"
 TF_TYPE="cpu" # Change to "gpu" for GPU support
-
-CFLAGS_macbook="-I${TF_TARGET_DIRECTORY}/include"
-CFLAGS_linux="-I${TF_TARGET_DIRECTORY}/include"
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -16,6 +16,9 @@ case "$OSTYPE" in
 esac
 fi
 
+CFLAGS_macbook="-I${TF_TARGET_DIRECTORY}/include"
+CFLAGS_linux="-I${TF_TARGET_DIRECTORY}/include"
+
 var=CFLAGS_${TARGET}
 CFLAGS=${!var}
 var=LINKER_ARGS_${TARGET}
@@ -23,16 +26,19 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-if [ ! -d $TF_TARGET_DIRECTORY/include/tensorflow ]; then
- echo "Installing TensorFlow into $TF_TARGET_DIRECTORY ..."
- mkdir -p $TF_TARGET_DIRECTORY
- curl -s -L \
-   "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-${TF_TYPE}-${TF_TARGET}-x86_64-1.1.0.tar.gz" |
-   tar -C $TF_TARGET_DIRECTORY -xz
-fi
+rm -rf $DIR/build/
+mkdir $DIR/build/
+mkdir $DIR/build/c_interop/
+mkdir $DIR/build/bin/
 
-cinterop -def $DIR/tensorflow.def -copt "$CFLAGS" -target $TARGET -o tensorflow.kt.bc || exit 1
-konanc $COMPILER_ARGS -target $TARGET $DIR/HelloTensorflow.kt -library tensorflow.kt.bc -o HelloTensorflow.kexe \
-    -linkerArgs "-L$TF_TARGET_DIRECTORY/lib -ltensorflow" || exit 1
+cinterop -def $DIR/src/c_interop/tensorflow.def -copt "$CFLAGS" -target $TARGET \
+         -o $DIR/build/c_interop/tensorflow.kt.bc || exit 1
+
+konanc $COMPILER_ARGS -target $TARGET $DIR/src/kotlin-native/HelloTensorflow.kt \
+       -library $DIR/build/c_interop/tensorflow.kt.bc \
+       -o $DIR/build/bin/HelloTensorflow.kexe \
+       -linkerArgs "-L$TF_TARGET_DIRECTORY/lib -ltensorflow" || exit 1
 
 echo "Note: You may need to specify LD_LIBRARY_PATH or DYLD_LIBRARY_PATH env variables to $TF_TARGET_DIRECTORY/lib if the TensorFlow dynamic library cannot be found."
+
+echo "Artifact path is ./build/bin/HelloTensorflow.kexe"

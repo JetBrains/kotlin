@@ -1,30 +1,11 @@
 apply plugin: 'konan'
 
 konanInterop {
-    sockets {
-        defFile "sockets.def"
-    }
+    sockets { }
 }
 
 konanArtifacts {
     EchoServer {
-        inputFiles project.file("EchoServer.kt")
         useInterop "sockets"
-    }
-}
-
-build {
-    project.ext { outputFile = "${projectDir.canonicalPath}/${file(compileKonanEchoServer.artifactPath).name}" }
-    doLast {
-        copy {
-            from compileKonanEchoServer.artifactPath
-            into projectDir.canonicalPath
-        }
-    }
-}
-
-clean {
-    doLast {
-        delete outputFile
     }
 }

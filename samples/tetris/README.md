@@ -13,18 +13,23 @@ use `apt-get install libsdl2-dev`.
 
 To build Tetris application for your host platform use 
     
-    ./build.sh
- 
-You also may use gradle to build this sample: `../gradlew build`. This task builds the sample for all platforms
-supported by the host. Note that SDL2 must be installed on the host.
+    `../gradlew build` 
+    
+This task builds the sample for your host platform. Note that SDL2 must be installed on the host.
 
-For cross-compilation to iOS (on Mac host) use
+To run it on the host use `../gradlew run`
 
-	TARGET=iphone ./build.sh
+Alternatively you can run artifact directly 
+
+     ./build/konan/bin/Tetris${target}/Tetris${target}.kexe
+
+For cross-compilation to iOS (on Mac host) use gradle property
+
+	konan.build.targets=all
     
 For cross-compilation to Raspberry Pi (on Linux host) use
 
-	TARGET=raspberrypi ./build.sh
+	konan.build.targets=all
 
 During build process compilation script creates interoperability bindings to SDL2, using SDL C headers,
 and then compiles an application with the produced bindings.

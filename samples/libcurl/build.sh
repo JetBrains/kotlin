@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
+DIR=$(dirname "$0")
 PATH=../../dist/bin:../../bin:$PATH
-DIR=.
 
 CFLAGS_macbook=-I/opt/local/include
 CFLAGS_linux=-I/usr/include/x86_64-linux-gnu
@@ -23,5 +23,15 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-cinterop -copt "$CFLAGS" -copt -I. -copt -I/usr/include -def $DIR/libcurl.def -target $TARGET -o libcurl.bc || exit 1
-konanc -target $TARGET src -library libcurl.bc -linkerArgs "$LINKER_ARGS" -o Curl.kexe || exit 1
+rm -rf $DIR/build/
+mkdir $DIR/build/
+mkdir $DIR/build/c_interop/
+mkdir $DIR/build/bin/
+
+cinterop -copt "$CFLAGS" -copt -I$DIR -copt -I/usr/include -def $DIR/src/c_interop/libcurl.def -target $TARGET \
+         -o $DIR/build/c_interop/libcurl.bc || exit 1
+
+konanc -target $TARGET $DIR/src/kotlin-native -library $DIR/build/c_interop/libcurl.bc -linkerArgs "$LINKER_ARGS" \
+       -o $DIR/build/bin/Curl.kexe || exit 1
+
+echo "Artifact path is ./build/bin/Curl.kexe"

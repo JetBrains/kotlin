@@ -2,7 +2,8 @@ apply plugin: 'konan'
 
 konanInterop {
     sdlMacbook {
-        defFile 'sdl.def'
+        defFile 'src/c_interop/sdl.def'
+        pkg 'sdl'
         includeDirs '/Library/Frameworks/SDL2.framework/Headers',
                 "${System.getProperty("user.home")}/Library/Frameworks/SDL2.framework/Headers",
                 '/opt/local/include/SDL2',
@@ -12,19 +13,22 @@ konanInterop {
     }
 
     sdlLinux {
-        defFile 'sdl.def'
+        defFile 'src/c_interop/sdl.def'
+        pkg 'sdl'
         includeDirs '/usr/include/SDL2'
         target 'linux'
     }
 
     sdlIphone {
-        defFile 'sdl.def'
+        defFile 'src/c_interop/sdl.def'
+        pkg 'sdl'
         includeDirs "${project.property("konan.home")}/dependencies/target-sysroot-2-darwin-ios/System/Library/Frameworks/SDL2.framework/Headers"
         target 'iphone'
     }
 
     sdlRaspberry {
-        defFile 'sdl.def'
+        defFile 'src/c_interop/sdl.def'
+        pkg 'sdl'
         includeDirs "${project.property("konan.home")}/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
         target 'raspberrypi'
     }
@@ -32,7 +36,6 @@ konanInterop {
 
 konanArtifacts {
     TetrisMacbook {
-        inputFiles project.file('Tetris.kt')
         useInterop 'sdlMacbook'
         linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -F /Library/Frameworks -framework SDL2"
         // Use this line instead of the previous one if you've got a 'No SDL-framework' error.
@@ -41,18 +44,13 @@ konanArtifacts {
     }
 
     TetrisLinux {
-        inputFiles project.file('Tetris.kt')
         useInterop 'sdlLinux'
-
         linkerOpts '-L/usr/lib/x86_64-linux-gnu -lSDL2'
         target 'linux'
     }
 
     TetrisIphone {
-
-        inputFiles project.file('Tetris.kt')
         useInterop 'sdlIphone'
-
         linkerOpts '-framework SDL2 -framework AVFoundation -framework CoreGraphics -framework CoreMotion ' +
                    '-framework Foundation -framework GameController -framework AudioToolbox -framework OpenGLES ' +
                    '-framework QuartzCore -framework UIKit'
@@ -61,34 +59,22 @@ konanArtifacts {
     }
 
     TetrisRaspberry {
-        inputFiles project.file('Tetris.kt')
         useInterop 'sdlRaspberry'
-
         linkerOpts '-lSDL2'
         target 'raspberrypi'
     }
-
 }
 
 build {
     project.ext {
         buildTasks = getTaskDependencies().getDependencies().findAll { task -> task.name.startsWith("compileKonan") }
-        outputFiles = buildTasks.collect { task -> "${projectDir.canonicalPath}/${file(task.artifactPath).name}" }
     }
     doLast {
         buildTasks.forEach() { task ->
             copy {
-                from task.artifactPath
-                into projectDir.canonicalPath
+                from 'src/resources'
+                into file(task.artifactPath).parentFile
             }
-        }
-    }
-}
-
-clean {
-    doLast {
-        outputFiles.forEach {
-            delete it
         }
     }
 }
