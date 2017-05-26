@@ -188,7 +188,7 @@ class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
                 val declarationDescriptorType = typeMapper.mapType(receiverDescriptor)
                 receiver.put(declarationDescriptorType, v)
 
-                val resourceId = syntheticProperty.resourceId
+                val resourceId = syntheticProperty.resource.id
                 val packageName = resourceId.packageName ?: androidPackage
                 v.getstatic(packageName.replace(".", "/") + "/R\$id", resourceId.name, "I")
 

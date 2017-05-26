@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.android.synthetic.res
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.android.synthetic.AndroidXmlHandler
@@ -30,31 +29,28 @@ class CliAndroidLayoutXmlFileManager(
         applicationPackage: String,
         variants: List<AndroidVariant>
 ) : AndroidLayoutXmlFileManager(project) {
-    private companion object {
-        val LOG = Logger.getInstance(CliAndroidLayoutXmlFileManager::class.java)
-    }
-
     override val androidModule = AndroidModule(applicationPackage, variants)
 
     private val saxParser: SAXParser = initSAX()
 
-    override fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidResource> {
-        val resources = arrayListOf<AndroidResource>()
+    override fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidLayoutGroup> {
+        val layoutGroupFiles = files.groupBy { it.name }
+        val layoutGroups = mutableListOf<AndroidLayoutGroup>()
 
-        val handler = AndroidXmlHandler { id, tag ->
-            resources += parseAndroidResource(id, tag, null)
+        for ((name, layouts) in layoutGroupFiles) {
+            layoutGroups += AndroidLayoutGroup(name, layouts.map { layout ->
+                val resources = arrayListOf<AndroidResource>()
+
+                val inputStream = ByteArrayInputStream(layout.virtualFile.contentsToByteArray())
+                saxParser.parse(inputStream, AndroidXmlHandler { id, tag ->
+                    resources += parseAndroidResource(id, tag, null)
+                })
+
+                AndroidLayout(resources)
+            })
         }
 
-        for (file in files) {
-            try {
-                val inputStream = ByteArrayInputStream(file.virtualFile.contentsToByteArray())
-                saxParser.parse(inputStream, handler)
-            } catch (e: Throwable) {
-                LOG.error(e)
-            }
-        }
-
-        return resources
+        return layoutGroups
     }
 
     private fun initSAX(): SAXParser {
