@@ -1,7 +1,7 @@
 // PARAM_TYPES: X
 // PARAM_TYPES: Y
 // PARAM_DESCRIPTOR: public final fun X.test(): kotlin.Unit defined in Y
-// PARAM_DESCRIPTOR: public final class Y defined in root package
+// PARAM_DESCRIPTOR: public final class Y defined in root package in file addPrefixToBackticks.kt
 class X(val x: Int)
 
 // SIBLING:

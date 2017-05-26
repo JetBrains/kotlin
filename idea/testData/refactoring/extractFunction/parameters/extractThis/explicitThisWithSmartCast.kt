@@ -1,5 +1,5 @@
 // SUGGESTED_NAMES: i, getB
-// PARAM_DESCRIPTOR: public fun A.ext(): kotlin.Unit defined in root package
+// PARAM_DESCRIPTOR: public fun A.ext(): kotlin.Unit defined in root package in file explicitThisWithSmartCast.kt
 // PARAM_TYPES: B
 fun main(args: Array<String>) {
     val a: A = B()
