@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-DIR=$(dirname "$0")
-PATH=../../dist/bin:../../bin:$PATH
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PATH=$DIR/../../dist/bin:$DIR/../../bin:$PATH
 
 CFLAGS_macbook=-I/opt/local/include
 CFLAGS_linux=-I/usr/include/x86_64-linux-gnu
@@ -34,4 +34,4 @@ cinterop -copt "$CFLAGS" -copt -I$DIR -copt -I/usr/include -def $DIR/src/c_inter
 konanc -target $TARGET $DIR/src/kotlin-native -library $DIR/build/c_interop/libcurl.bc -linkerArgs "$LINKER_ARGS" \
        -o $DIR/build/bin/Curl.kexe || exit 1
 
-echo "Artifact path is ./build/bin/Curl.kexe"
+echo "Artifact path is $DIR/build/bin/Curl.kexe"

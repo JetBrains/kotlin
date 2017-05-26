@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-DIR=$(dirname "$0")
-PATH=../../dist/bin:../../bin:$PATH
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PATH=$DIR/../../dist/bin:$DIR/../../bin:$PATH
 DEPS=$(dirname `type -p konanc`)/../dependencies
 
 CFLAGS_macbook=-I$HOME/Library/Frameworks/SDL2.framework/Headers
@@ -55,4 +55,4 @@ konanc $COMPILER_ARGS -target $TARGET $DIR/src/kotlin-native/Tetris.kt \
 
 cp -R $DIR/src/resources $DIR/build/bin
 
-echo "Artifact path is ./build/bin/Tetris.kexe"
+echo "Artifact path is $DIR/build/bin/Tetris.kexe"

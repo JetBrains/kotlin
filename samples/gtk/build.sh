@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DIR=$(dirname "$0")
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PATH=../../dist/bin:../../bin:$PATH
 
 IPREFIX_macbook=-I/opt/local/include
@@ -38,4 +38,4 @@ cinterop -J-Xmx8g -copt $IPREFIX/atk-1.0 -copt $IPREFIX/gdk-pixbuf-2.0 -copt $IP
 konanc -target $TARGET $DIR/src/kotlin-native -library $DIR/build/c_interop/gtk3.bc -linkerArgs "$LINKER_ARGS" \
        -o $DIR/build/bin/Gtk3Demo.kexe || exit 1
 
-echo "Artifact path is ./build/bin/Gtk3Demo.kexe"
+echo "Artifact path is $DIR/build/bin/Gtk3Demo.kexe"

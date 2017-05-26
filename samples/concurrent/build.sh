@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 
-DIR=$(dirname "$0")
-PATH=../../dist/bin:../../bin:$PATH
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PATH=$DIR/../../dist/bin:$DIR/../../bin:$PATH
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -19,12 +19,12 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-rm -rf $DIR/build/
-mkdir $DIR/build/
-mkdir $DIR/build/c_interop/
-mkdir $DIR/build/bin/
+rm -rf $DIR/build
+mkdir $DIR/build
+mkdir $DIR/build/c_interop
+mkdir $DIR/build/bin
 
-./buildCpp.sh
+$DIR/buildCpp.sh
 
 cinterop -def $DIR/src/c_interop/MessageChannel.def -copt "-I$DIR/src/cpp" -target $TARGET \
          -o $DIR/build/c_interop/MessageChannel.kt.bc || exit 1
@@ -32,4 +32,4 @@ cinterop -def $DIR/src/c_interop/MessageChannel.def -copt "-I$DIR/src/cpp" -targ
 konanc $DIR/src/kotlin-native/Concurrent.kt -library $DIR/build/c_interop/MessageChannel.kt.bc \
        -nativelibrary $DIR/build/clang/MessageChannel.bc -o $DIR/build/bin/Concurrent.kexe || exit 1
 
-echo "Artifact path is ./build/bin/Concurrent.kexe"
+echo "Artifact path is $DIR/build/bin/Concurrent.kexe"

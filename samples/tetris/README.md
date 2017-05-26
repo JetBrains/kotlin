@@ -21,7 +21,7 @@ To run it on the host use `../gradlew run`
 
 Alternatively you can run artifact directly 
 
-     ./build/konan/bin/Tetris${target}/Tetris${target}.kexe
+     ./build/bin/Tetris.kexe
 
 For cross-compilation to iOS (on Mac host) use gradle property
 
