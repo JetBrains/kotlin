@@ -117,14 +117,12 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         override val annotationProcessorOptions: Map<String, String>? =
                 variantData.javaCompileOptions.annotationProcessorOptions.arguments
 
-        override fun wireKaptTask(project: Project,
-                                  task: KaptTask,
-                                  kotlinTask: KotlinCompile,
-                                  javaTask: AbstractCompile) {
-
-            task.dependsOn(kotlinTask.dependsOn.minus(task))
-
-            val kaptSourceOutput = project.fileTree(task.destinationDir).builtBy(task)
+        override fun registerGeneratedJavaSource(
+            project: Project,
+            kaptTask: KaptTask,
+            javaTask: AbstractCompile
+        ) {
+            val kaptSourceOutput = project.fileTree(kaptTask.destinationDir).builtBy(kaptTask)
             variantData.registerExternalAptJavaOutput(kaptSourceOutput)
         }
     }
