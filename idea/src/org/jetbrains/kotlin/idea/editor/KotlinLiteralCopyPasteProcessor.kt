@@ -135,14 +135,21 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
 
         return if (beginTp.isSingleQuoted()) {
             val res = StringBuilder()
+            val lineBreak = "\\n\"+\n \""
+            var endsInLineBreak = false
             TemplateTokenSequence(text).forEach {
                 when (it) {
                     is LiteralChunk -> StringUtil.escapeStringCharacters(it.text.length, it.text, "\$\"", res)
                     is EntryChunk -> res.append(it.text)
-                    is NewLineChunk -> res.append("\\n\"+\n \"")
+                    is NewLineChunk -> res.append(lineBreak)
                 }
+                endsInLineBreak = it is NewLineChunk
             }
-            res.toString()
+            return if (endsInLineBreak){
+                res.removeSuffix(lineBreak).toString() + "\\n"
+            } else{
+                res.toString()
+            }
         }
         else {
             val tripleQuoteRe = Regex("[\"]{3,}")
@@ -211,7 +218,7 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
     }
 
     private suspend fun SequenceBuilder<TemplateChunk>.yieldLiteral(chunk: String) {
-        val splitLines = LineTokenizer.tokenize(chunk, false, true)
+        val splitLines = LineTokenizer.tokenize(chunk, false, false)
         for (i in 0..splitLines.size - 1) {
             if (i != 0) {
                 yield(NewLineChunk)
