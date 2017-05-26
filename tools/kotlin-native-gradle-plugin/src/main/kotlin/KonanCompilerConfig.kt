@@ -91,7 +91,7 @@ open class KonanCompilerConfig(
         anotherTask.target?.let { target(it) }
         anotherTask.languageVersion?.let { languageVersion(it) }
         anotherTask.apiVersion?.let { apiVersion(it) }
-        anotherTask.produce?.let { produce(it) }
+        anotherTask.produce.let { produce(it) }
 
         if (anotherTask.noStdLib) noStdLib()
         if (anotherTask.noMain) noMain()
@@ -107,10 +107,7 @@ open class KonanCompilerConfig(
         compilationTask.dependsOn(generateStubsTask)
 
         linkerOpts(generateStubsTask.linkerOpts)
-        libraries(project.fileTree(compileStubsTask.outputDir).apply {
-            builtBy(compileStubsTask)
-            include("**/*.bc")
-        })
+        library(compileStubsTask.artifactPath)
         nativeLibraries(project.fileTree(generateStubsTask.libsDir).apply {
             builtBy(generateStubsTask)
             include("**/*.bc")
