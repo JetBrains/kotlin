@@ -1,7 +1,21 @@
 package org.jetbrains.dokka
 
+import ru.yole.jkid.CustomSerializer
+import ru.yole.jkid.ValueSerializer
+import ru.yole.jkid.deserialization.JKidException
+import java.io.Serializable
 import java.net.URL
 
+
+class UrlSerializer : ValueSerializer<URL?> {
+    override fun fromJsonValue(jsonValue: Any?): URL? {
+        if (jsonValue !is String?)
+            throw JKidException("Expected string representation of URL, got: $jsonValue")
+        return jsonValue?.let { URL(jsonValue) }
+    }
+
+    override fun toJsonValue(value: URL?): Any? = value?.toExternalForm()
+}
 
 interface DokkaConfiguration {
     val moduleName: String
@@ -43,13 +57,13 @@ interface DokkaConfiguration {
     }
 
     interface ExternalDocumentationLink {
-        val url: URL
-        val packageListUrl: URL
+        @CustomSerializer(UrlSerializer::class) val url: URL
+        @CustomSerializer(UrlSerializer::class) val packageListUrl: URL
 
         open class Builder(open var url: URL? = null,
                            open var packageListUrl: URL? = null) {
 
-            constructor(root: String) : this(URL(root), null)
+            constructor(root: String, packageList: String? = null) : this(URL(root), packageList?.let { URL(it) })
 
             fun build(): DokkaConfiguration.ExternalDocumentationLink =
                     if (packageListUrl != null && url != null)
@@ -83,5 +97,5 @@ data class SerializeOnlyDokkaConfiguration(override val moduleName: String,
                                            override val noStdlibLink: Boolean) : DokkaConfiguration
 
 
-data class ExternalDocumentationLinkImpl internal constructor(override val url: URL,
-                                                              override val packageListUrl: URL) : DokkaConfiguration.ExternalDocumentationLink
+data class ExternalDocumentationLinkImpl(@CustomSerializer(UrlSerializer::class) override val url: URL,
+                                         @CustomSerializer(UrlSerializer::class) override val packageListUrl: URL) : Serializable, DokkaConfiguration.ExternalDocumentationLink
