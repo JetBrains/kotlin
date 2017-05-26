@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticProperty
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.*
@@ -75,6 +76,9 @@ internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingCo
         val attributesKey = when {
             descriptor.isDynamic() ->
                 DYNAMIC_PROPERTY_CALL
+
+            descriptor is AndroidSyntheticProperty ->
+                ANDROID_EXTENSIONS_PROPERTY_CALL
 
             descriptor.extensionReceiverParameter != null ->
                 EXTENSION_PROPERTY
