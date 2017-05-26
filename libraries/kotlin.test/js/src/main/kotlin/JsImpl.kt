@@ -16,7 +16,6 @@
 
 package kotlin.test
 
-import QUnit
 import kotlin.reflect.KClass
 
 /**
