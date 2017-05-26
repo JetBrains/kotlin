@@ -27,6 +27,7 @@ public interface ErrorsAndroid {
     DiagnosticFactory1<KtExpression, String> SYNTHETIC_INVALID_WIDGET_TYPE = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<KtExpression, String> SYNTHETIC_UNRESOLVED_WIDGET_TYPE = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<KtExpression> SYNTHETIC_DEPRECATED_PACKAGE = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<KtExpression> UNSAFE_CALL_ON_PARTIALLY_DEFINED_RESOURCE = DiagnosticFactory0.create(WARNING);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

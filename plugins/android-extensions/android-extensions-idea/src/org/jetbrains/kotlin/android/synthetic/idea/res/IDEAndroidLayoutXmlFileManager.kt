@@ -61,14 +61,21 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
         return project.getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
     }
 
-    override fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidResource> {
-        val widgets = arrayListOf<AndroidResource>()
-        val visitor = AndroidXmlVisitor { id, widgetType, attribute ->
-            widgets += parseAndroidResource(id, widgetType, attribute.valueElement)
+    override fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidLayoutGroup> {
+        val layoutGroupFiles = files.groupBy { it.name }
+        val layoutGroups = mutableListOf<AndroidLayoutGroup>()
+
+        for ((name, layouts) in layoutGroupFiles) {
+            layoutGroups += AndroidLayoutGroup(name, layouts.map { layout ->
+                val resources = arrayListOf<AndroidResource>()
+                layout.accept(AndroidXmlVisitor { id, widgetType, attribute ->
+                    resources += parseAndroidResource(id, widgetType, attribute.valueElement)
+                })
+                AndroidLayout(resources)
+            })
         }
 
-        files.forEach { it.accept(visitor) }
-        return widgets
+        return layoutGroups
     }
 
 

@@ -68,7 +68,7 @@ internal fun genPropertyForWidget(
                                                 defaultType.constructor.parameters.map(::StarProjectionImpl))
     } ?: context.viewType
 
-    return genProperty(resolvedWidget.widget.id, receiverType, type, packageFragmentDescriptor, sourceEl, resolvedWidget.errorType)
+    return genProperty(resolvedWidget.widget, receiverType, type, packageFragmentDescriptor, sourceEl, resolvedWidget.errorType)
 }
 
 internal fun genPropertyForFragment(
@@ -78,11 +78,11 @@ internal fun genPropertyForFragment(
         fragment: AndroidResource.Fragment
 ): PropertyDescriptor {
     val sourceElement = fragment.sourceElement?.let(::XmlSourceElement) ?: SourceElement.NO_SOURCE
-    return genProperty(fragment.id, receiverType, type, packageFragmentDescriptor, sourceElement, null)
+    return genProperty(fragment, receiverType, type, packageFragmentDescriptor, sourceElement, null)
 }
 
 private fun genProperty(
-        id: ResourceIdentifier,
+        resource: AndroidResource,
         receiverType: KotlinType,
         type: SimpleType,
         containingDeclaration: AndroidSyntheticPackageFragmentDescriptor,
@@ -98,7 +98,7 @@ private fun genProperty(
             Modality.FINAL,
             Visibilities.PUBLIC,
             false,
-            Name.identifier(id.name),
+            Name.identifier(resource.id.name),
             CallableMemberDescriptor.Kind.SYNTHESIZED,
             sourceElement,
             /* lateinit = */ false,
@@ -110,7 +110,7 @@ private fun genProperty(
     ) {
         override val errorType = errorType
         override val cacheView = cacheView
-        override val resourceId = id
+        override val resource = resource
     }
 
     // todo support (Mutable)List
@@ -146,7 +146,7 @@ interface AndroidSyntheticFunction
 interface AndroidSyntheticProperty {
     val errorType: String?
     val cacheView: Boolean
-    val resourceId: ResourceIdentifier
+    val resource: AndroidResource
 
     val isErrorType: Boolean
         get() = errorType != null
