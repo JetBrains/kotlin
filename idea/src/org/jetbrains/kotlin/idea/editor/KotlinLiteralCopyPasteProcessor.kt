@@ -32,18 +32,16 @@ import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.isSingleQuoted
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import kotlin.coroutines.experimental.SequenceBuilder
 import kotlin.coroutines.experimental.buildIterator
 
-private fun PsiElement.findContainingTemplate(): PsiElement {
-    val parent = this.parent
-    @Suppress("IfThenToElvis") return if (parent is KtStringTemplateEntry) parent.parent else parent
-}
+private val PsiElement.templateContentRange: TextRange?
+    get() = this.getParentOfType<KtStringTemplateExpression>(false)?.let{
+        it.textRange.cutOut(it.getContentRange())
+    }
+
 
 private fun PsiFile.getTemplateIfAtLiteral(offset: Int): KtStringTemplateExpression? {
     val at = this.findElementAt(offset) ?: return null
@@ -94,7 +92,8 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
                     break
                 }
                 val elTp = element.node.elementType
-                if (elTp == KtTokens.ESCAPE_SEQUENCE && fileRange.contains(element.range) && !fileRange.contains(element.findContainingTemplate().range)) {
+                if (elTp == KtTokens.ESCAPE_SEQUENCE && fileRange.contains(element.range) &&
+                    element.templateContentRange?.contains(fileRange) == true) {
                     val tpEntry = element.parent as KtEscapeStringTemplateEntry
                     changed = true
                     buffer.append(tpEntry.unescapedValue)
@@ -263,13 +262,13 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
 }
 
 @TestOnly
-internal fun createTemplateSequenceTokenString(input:String):String{
+internal fun createTemplateSequenceTokenString(input: String): String {
     return TemplateTokenSequence(input).map {
-        when (it){
+        when (it) {
             is LiteralChunk -> "LITERAL_CHUNK(${it.text})"
             is EntryChunk -> "ENTRY_CHUNK(${it.text})"
             is NewLineChunk -> "NEW_LINE()"
         }
-    }.joinToString (separator = "")
+    }.joinToString(separator = "")
 }
 
