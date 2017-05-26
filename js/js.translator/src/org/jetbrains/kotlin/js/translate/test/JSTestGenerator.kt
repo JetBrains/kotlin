@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.js.translate.test
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -105,8 +107,16 @@ class JSTestGenerator(val context: TranslationContext) {
      *   return parameters.size() == 0;
      * }
      */
-    // Check FqName
-    private fun isTest(functionDescriptor: FunctionDescriptor) = functionDescriptor.annotations.any { it.type.toString() == "Test" }
+    private fun isTest(functionDescriptor: FunctionDescriptor)
+            = functionDescriptor.annotations.any(annotationFinder("Test", "kotlin.test.Test"))
 
-    private fun isIgnore(functionDescriptor: FunctionDescriptor) = functionDescriptor.annotations.any { it.type.toString() == "Ignore" }
+    private fun isIgnore(functionDescriptor: FunctionDescriptor)
+            = functionDescriptor.annotations.any(annotationFinder("Ignore", "kotlin.test.Ignore"))
+
+    private fun annotationFinder(shortName: String, fqName: String) = { annotation: AnnotationDescriptor ->
+        annotation.type.toString() == shortName && run {
+            val descriptor = annotation.type.constructor.declarationDescriptor
+            descriptor != null && FqNameUnsafe(fqName) == DescriptorUtils.getFqName(descriptor)
+        }
+    }
 }
