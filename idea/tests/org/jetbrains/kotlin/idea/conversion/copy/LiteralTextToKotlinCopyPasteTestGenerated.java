@@ -66,6 +66,12 @@ public class LiteralTextToKotlinCopyPasteTestGenerated extends AbstractLiteralTe
         doTest(fileName);
     }
 
+    @TestMetadata("TrailingLines.txt")
+    public void testTrailingLines() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextLiteral/TrailingLines.txt");
+        doTest(fileName);
+    }
+
     @TestMetadata("WithBackslashes.txt")
     public void testWithBackslashes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextLiteral/WithBackslashes.txt");

@@ -38,7 +38,8 @@ abstract class AbstractLiteralTextToKotlinCopyPasteTest : AbstractCopyPasteTest(
         myFixture.configureByFiles(testName + ".txt")
         val fileText = myFixture.editor.document.text
 
-        myFixture.editor.selectionModel.setSelection(0, fileText.length)
+        if (!myFixture.editor.selectionModel.hasSelection())
+            myFixture.editor.selectionModel.setSelection(0, fileText.length)
         myFixture.performEditorAction(IdeActions.ACTION_COPY)
 
         configureTargetFile(testName + ".kt")
