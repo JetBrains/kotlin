@@ -91,8 +91,8 @@ class CodeInliner<TCallElement : KtElement>(
 
         if (receiver == null) {
             val receiverValue = if (descriptor.isExtension) resolvedCall.extensionReceiver else resolvedCall.dispatchReceiver
-            val resolutionScope = elementToBeReplaced.getResolutionScope(bindingContext, elementToBeReplaced.getResolutionFacade())
             if (receiverValue is ImplicitReceiver) {
+                val resolutionScope = elementToBeReplaced.getResolutionScope(bindingContext, elementToBeReplaced.getResolutionFacade())
                 receiver = receiverValue.asExpression(resolutionScope, psiFactory)
                 receiverType = receiverValue.type
             }
@@ -100,13 +100,10 @@ class CodeInliner<TCallElement : KtElement>(
 
         receiver?.mark(RECEIVER_VALUE_KEY)
 
-        //TODO: this@
         for (thisExpression in codeToInline.collectDescendantsOfType<KtThisExpression>()) {
-            if (receiver != null) {
+            // for this@ClassName we have only option to keep it as is (although it's sometimes incorrect but we have no other options)
+            if (thisExpression.labelQualifier == null && receiver != null) {
                 codeToInline.replaceExpression(thisExpression, receiver)
-            }
-            else {
-                thisExpression.mark(RECEIVER_VALUE_KEY)
             }
         }
 
