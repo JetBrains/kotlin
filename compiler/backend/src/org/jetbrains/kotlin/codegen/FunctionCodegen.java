@@ -81,6 +81,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isAnnotationOrJvmInter
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8InterfaceWithDefaultsMember;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
+import static org.jetbrains.kotlin.descriptors.ModalityKt.isOverridable;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
@@ -203,7 +204,8 @@ public class FunctionCodegen {
         }
 
         boolean isOpenSuspendInClass =
-                functionDescriptor.isSuspend() && DescriptorUtilKt.isEffectivelyOpen(functionDescriptor) &&
+                functionDescriptor.isSuspend() &&
+                functionDescriptor.getModality() != Modality.ABSTRACT && isOverridable(functionDescriptor) &&
                 !isInterface(functionDescriptor.getContainingDeclaration()) &&
                 origin.getOriginKind() != JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL;
 
