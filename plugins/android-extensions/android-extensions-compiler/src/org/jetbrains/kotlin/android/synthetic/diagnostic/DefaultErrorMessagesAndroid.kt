@@ -36,6 +36,9 @@ class DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
 
             MAP.put(ErrorsAndroid.SYNTHETIC_DEPRECATED_PACKAGE,
                     "Use properties from the build variant packages")
+
+            MAP.put(ErrorsAndroid.UNSAFE_CALL_ON_PARTIALLY_DEFINED_RESOURCE,
+                    "Potential NullPointerException. The resource is missing in some of layout versions")
         }
     }
 

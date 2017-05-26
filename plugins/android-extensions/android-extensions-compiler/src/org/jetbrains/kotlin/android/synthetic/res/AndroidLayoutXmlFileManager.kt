@@ -88,7 +88,7 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
         return filterDuplicates(doExtractResources(files, module))
     }
 
-    protected abstract fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidResource>
+    protected abstract fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidLayoutGroup>
 
     protected fun parseAndroidResource(id: ResourceIdentifier, tag: String, sourceElement: PsiElement?): AndroidResource {
         return when (tag) {
@@ -98,27 +98,46 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
         }
     }
 
-    private fun filterDuplicates(resources: List<AndroidResource>): List<AndroidResource> {
+    private fun filterDuplicates(layoutGroups: List<AndroidLayoutGroup>): List<AndroidResource> {
         val resourceMap = linkedMapOf<String, AndroidResource>()
         val resourcesToExclude = hashSetOf<String>()
 
-        for (res in resources) {
-            if (resourceMap.contains(res.id.name)) {
-                val existing = resourceMap[res.id.name]!!
+        for (layoutGroup in layoutGroups) {
+            val resources = layoutGroup.layouts.flatMap { it.resources }.groupBy {
+                val id = it.id
+                if (id.packageName == null) id.name else id.packageName + "/" + id.name
+            }
 
-                if (!res.sameClass(existing) || res.id.packageName != existing.id.packageName) {
-                    resourcesToExclude.add(res.id.name)
-                }
-                else if (res is AndroidResource.Widget && existing is AndroidResource.Widget) {
-                    // Widgets with the same id but different types exist.
-                    if (res.xmlType != existing.xmlType && existing.xmlType != AndroidConst.VIEW_FQNAME) {
-                        resourceMap.put(res.id.name, AndroidResource.Widget(res.id, AndroidConst.VIEW_FQNAME, res.sourceElement))
+            for (resources in resources.values) {
+                val isPartiallyDefined = resources.size < layoutGroup.layouts.size
+
+                for (res in resources) {
+                    if (resourceMap.contains(res.id.name)) {
+                        val existing = resourceMap[res.id.name]!!
+
+                        if (!res.sameClass(existing) || res.id.packageName != existing.id.packageName) {
+                            resourcesToExclude.add(res.id.name)
+                        }
+                        else if (res is AndroidResource.Widget && existing is AndroidResource.Widget) {
+                            // Widgets with the same id but different types exist.
+                            if (res.xmlType != existing.xmlType && existing.xmlType != AndroidConst.VIEW_FQNAME) {
+                                val mergedWidget = AndroidResource.Widget(
+                                        res.id, AndroidConst.VIEW_FQNAME, res.sourceElement, isPartiallyDefined)
+                                resourceMap.put(res.id.name, mergedWidget)
+                            }
+                        }
+                    }
+                    else if (isPartiallyDefined) {
+                        resourceMap.put(res.id.name, res.partiallyDefined())
+                    }
+                    else {
+                        resourceMap.put(res.id.name, res)
                     }
                 }
             }
-            else resourceMap.put(res.id.name, res)
         }
-        resourcesToExclude.forEach { resourceMap.remove(it) }
+
+        resourceMap.keys.removeAll(resourcesToExclude)
         return resourceMap.values.toList()
     }
 
