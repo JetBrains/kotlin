@@ -30,6 +30,8 @@ data class JvmClasspathRoot(override val file: File) : JvmContentRoot
 
 data class JavaSourceRoot(override val file: File, val packagePrefix: String?) : JvmContentRoot
 
+data class JvmModulePathRoot(override val file: File) : JvmContentRoot
+
 fun CompilerConfiguration.addJvmClasspathRoot(file: File) {
     add(JVMConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
 }

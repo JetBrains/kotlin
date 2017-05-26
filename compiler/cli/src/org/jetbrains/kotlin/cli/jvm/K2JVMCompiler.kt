@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
+import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
@@ -106,6 +107,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         val classpath = getClasspath(paths, arguments)
         configuration.addJvmClasspathRoots(classpath)
+        for (modularRoot in arguments.javaModulePath?.split(File.pathSeparatorChar).orEmpty()) {
+            configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(modularRoot)))
+        }
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
@@ -298,6 +302,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             if (components != null) {
                 configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, components)
             }
+        }
+
+        arguments.additionalJavaModules?.let { additionalJavaModules ->
+            configuration.addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, additionalJavaModules.toList())
         }
     }
 

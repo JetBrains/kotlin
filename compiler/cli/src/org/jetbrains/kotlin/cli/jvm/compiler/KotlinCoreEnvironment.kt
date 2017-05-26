@@ -194,7 +194,11 @@ class KotlinCoreEnvironment private constructor(
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
-        classpathRootsResolver = ClasspathRootsResolver(PsiManager.getInstance(project), messageCollector, this::contentRootToVirtualFile)
+        classpathRootsResolver = ClasspathRootsResolver(
+                PsiManager.getInstance(project), messageCollector,
+                configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
+                this::contentRootToVirtualFile
+        )
 
         val (initialRoots, javaModules) =
                 classpathRootsResolver.convertClasspathRoots(configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS))
@@ -304,7 +308,8 @@ class KotlinCoreEnvironment private constructor(
 
     private fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
         return when (root) {
-            is JvmClasspathRoot -> if (root.file.isFile) findJarRoot(root) else findLocalFile(root)
+            is JvmClasspathRoot -> if (root.file.isFile) findJarRoot(root.file) else findLocalFile(root)
+            is JvmModulePathRoot -> if (root.file.isFile) findJarRoot(root.file) else findLocalFile(root)
             is JavaSourceRoot -> findLocalFile(root)
             else -> throw IllegalStateException("Unexpected root: $root")
         }
@@ -320,8 +325,8 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 
-    private fun findJarRoot(root: JvmClasspathRoot): VirtualFile? =
-            applicationEnvironment.jarFileSystem.findFileByPath("${root.file}${URLUtil.JAR_SEPARATOR}")
+    private fun findJarRoot(file: File): VirtualFile? =
+            applicationEnvironment.jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
 
     private fun getSourceRootsCheckingForDuplicates(): Collection<String> {
         val uniqueSourceRoots = linkedSetOf<String>()

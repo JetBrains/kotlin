@@ -912,6 +912,27 @@ public class KotlinTestUtils {
         }
     }
 
+    public static boolean compileJavaFilesExternallyWithJava9(@NotNull Collection<File> files, @NotNull List<String> options) {
+        File jdk9 = getJdk9HomeIfPossible();
+        assert jdk9 != null : "Environment variable JDK_19 is not set";
+
+        List<String> command = new ArrayList<>();
+        command.add(new File(jdk9, "bin/javac").getPath());
+        command.addAll(options);
+        for (File file : files) {
+            command.add(file.getPath());
+        }
+
+        try {
+            Process process = new ProcessBuilder().command(command).inheritIO().start();
+            process.waitFor();
+            return process.exitValue() == 0;
+        }
+        catch (Exception e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
+    }
+
     @NotNull
     private static String errorsToString(@NotNull DiagnosticCollector<JavaFileObject> diagnosticCollector, boolean humanReadable) {
         StringBuilder builder = new StringBuilder();

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.config.ContentRoot
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 internal class ClasspathRootsResolver(
         private val psiManager: PsiManager,
         private val messageCollector: MessageCollector?,
+        private val additionalModules: List<String>,
         private val contentRootToVirtualFile: (JvmContentRoot) -> VirtualFile?
 ) {
     private val javaModuleFinder = CliJavaModuleFinder(VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL))
@@ -75,6 +77,15 @@ internal class ClasspathRootsResolver(
                 is JvmClasspathRoot -> {
                     result += JavaRoot(root, JavaRoot.RootType.BINARY)
                 }
+                is JvmModulePathRoot -> {
+                    // TODO: sanitize the automatic module name exactly as in javac
+                    // TODO: read Automatic-Module-Name manifest entry
+                    val module = modularBinaryRoot(root, automaticModuleName = { contentRoot.file.name })
+                    if (module != null) {
+                        // TODO: report something in case of several modules with the same name?
+                        modules += module
+                    }
+                }
                 else -> error("Unknown root type: $contentRoot")
             }
         }
@@ -97,6 +108,17 @@ internal class ClasspathRootsResolver(
         return JavaModule.Explicit(JavaModuleInfo.create(psiJavaModule), root, moduleInfoFile, isBinary = false)
     }
 
+    private fun modularBinaryRoot(root: VirtualFile, automaticModuleName: () -> String): JavaModule? {
+        val moduleInfoFile = root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
+        return if (moduleInfoFile != null) {
+            val moduleInfo = JavaModuleInfo.read(moduleInfoFile) ?: return null
+            JavaModule.Explicit(moduleInfo, root, moduleInfoFile, isBinary = true)
+        }
+        else {
+            JavaModule.Automatic(automaticModuleName(), root)
+        }
+    }
+
     private fun addModularRoots(modules: List<JavaModule>, result: MutableList<JavaRoot>) {
         val sourceModules = modules.filterIsInstance<JavaModule.Explicit>().filterNot(JavaModule::isBinary)
         if (sourceModules.size > 1) {
@@ -113,12 +135,17 @@ internal class ClasspathRootsResolver(
 
         if (javaModuleFinder.allObservableModules.none()) return
 
-        val rootModules =
-                if (sourceModules.isNotEmpty()) {
-                    // TODO: support an option similar to --add-modules
-                    listOf(sourceModules.single().name)
-                }
-                else computeDefaultRootModules() // TODO: + everything from module path
+        val addAllModulePathToRoots = "ALL-MODULE-PATH" in additionalModules
+        if (addAllModulePathToRoots && sourceModules.isNotEmpty()) {
+            report(ERROR, "-Xadd-modules=ALL-MODULE-PATH can only be used when compiling the unnamed module")
+            return
+        }
+
+        val rootModules = when {
+            sourceModules.isNotEmpty() -> listOf(sourceModules.single().name) + additionalModules
+            addAllModulePathToRoots -> modules.map(JavaModule::name)
+            else -> computeDefaultRootModules() + modules.map(JavaModule::name)
+        }
 
         // TODO: if at least one automatic module is added, add all automatic modules as per java.lang.module javadoc
         val allDependencies = javaModuleGraph.getAllDependencies(rootModules).also { loadedModules ->
