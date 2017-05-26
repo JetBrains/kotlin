@@ -133,4 +133,32 @@
     <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
+
+  <problem>
+    <file>insideOtherCall.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/insideOtherCall.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary type argument</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
+  <problem>
+    <file>insideDeepOtherCall.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/insideDeepOtherCall.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary type argument</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
+  <problem>
+    <file>insideDeepOtherCall.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/insideDeepOtherCall.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary type argument</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
 </problems>

@@ -12896,6 +12896,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("insideDeepOtherCall.kt")
+        public void testInsideDeepOtherCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/insideDeepOtherCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideGenericCall.kt")
+        public void testInsideGenericCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/insideGenericCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideOtherCall.kt")
+        public void testInsideOtherCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/insideOtherCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambdaType.kt")
         public void testLambdaType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/lambdaType.kt");
