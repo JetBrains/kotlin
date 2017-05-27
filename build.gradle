@@ -17,7 +17,7 @@ import groovy.io.FileType
 
 //ant.importBuild 'backend.native/kotlin-ir/build.xml'
 
-defaultTasks 'clean', 'demo'
+defaultTasks 'clean', 'dist'
 
 convention.plugins.platformInfo = new PlatformInfo()
 
@@ -337,12 +337,6 @@ task bundle(type: Tar) {
     destinationDir = file('.')
     extension = 'tar.gz'
     compression = Compression.GZIP
-}
-
-task demo(type: Exec) {
-    dependsOn 'dist'
-
-    commandLine './dist/bin/konanc', 'backend.native/tests/runtime/collections/moderately_large_array.kt', '-o', 'build/demo.kexe'
 }
 
 task clean {
