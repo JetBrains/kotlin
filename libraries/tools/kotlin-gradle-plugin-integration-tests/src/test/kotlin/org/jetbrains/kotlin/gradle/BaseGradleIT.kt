@@ -367,17 +367,30 @@ abstract class BaseGradleIT {
             weakTesting: Boolean = false,
             tasks: List<String>) {
         for (task in tasks) {
-            assertCompiledKotlinSources(sources, weakTesting, getOutputForTask(task))
+            assertCompiledKotlinSources(sources, weakTesting, getOutputForTask(task), suffix = " in task ${task}")
         }
     }
 
-    fun CompiledProject.assertCompiledKotlinSources(sources: Iterable<String>, weakTesting: Boolean = false, output: String = this.output): CompiledProject =
-            if (weakTesting)
-                assertContainFiles(sources, getCompiledKotlinSources(output).projectRelativePaths(this.project), "Compiled Kotlin files differ:\n  ")
-            else
-                assertSameFiles(sources, getCompiledKotlinSources(output).projectRelativePaths(this.project), "Compiled Kotlin files differ:\n  ")
+    fun CompiledProject.assertCompiledKotlinSources(
+            expectedSources: Iterable<String>,
+            weakTesting: Boolean = false,
+            output: String = this.output,
+            suffix: String = ""
+    ): CompiledProject {
+        val messagePrefix = "Compiled Kotlin files differ${suffix}:\n  "
+        val actualSources = getCompiledKotlinSources(output).projectRelativePaths(this.project)
+        return if (weakTesting) {
+            assertContainFiles(expectedSources, actualSources, messagePrefix)
+        }
+        else {
+            assertSameFiles(expectedSources, actualSources, messagePrefix)
+        }
+    }
 
-    fun CompiledProject.assertCompiledJavaSources(sources: Iterable<String>, weakTesting: Boolean = false): CompiledProject =
+    fun CompiledProject.assertCompiledJavaSources(
+            sources: Iterable<String>,
+            weakTesting: Boolean = false
+    ): CompiledProject =
             if (weakTesting)
                 assertContainFiles(sources, compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ:\n  ")
             else
