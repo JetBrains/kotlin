@@ -413,9 +413,9 @@ private fun processLib(konanHome: String,
 
         val outLib = File(nativeLibsDir, System.mapLibraryName(libName))
 
-        val linkerCmd = arrayOf("$llvmInstallPath/bin/$linker", *linkerOpts, outOFile.absolutePath, "-shared",
-                "-o", outLib.absolutePath,
-                "-Wl,-flat_namespace,-undefined,dynamic_lookup")
+        val linkerCmd = arrayOf("$llvmInstallPath/bin/$linker",
+                outOFile.absolutePath, "-shared", "-o", outLib.absolutePath,
+                *linkerOpts)
 
         runCmd(linkerCmd, workDir, verbose)
 

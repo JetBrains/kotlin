@@ -91,62 +91,12 @@ task renamePackage(type: Copy) {
     outputs.files('build/renamed')
 }
 
-List<String> llvmLinkerOpts() {
-    // TODO: cannot use llvm-config because it can be inaccessible during project configuration
-    final List<String> libs = [
-            '-lLLVMX86Disassembler',
-            '-lLLVMX86AsmParser',
-            '-lLLVMX86CodeGen',
-            '-lLLVMSelectionDAG',
-            '-lLLVMAsmPrinter',
-            '-lLLVMX86Desc',
-            '-lLLVMMCDisassembler',
-            '-lLLVMX86Info',
-            '-lLLVMX86AsmPrinter',
-            '-lLLVMX86Utils',
-            '-lLLVMInterpreter',
-            '-lLLVMCodeGen',
-            '-lLLVMScalarOpts',
-            '-lLLVMInstCombine',
-            '-lLLVMInstrumentation',
-            '-lLLVMProfileData',
-            '-lLLVMTransformUtils',
-            '-lLLVMBitWriter',
-            '-lLLVMExecutionEngine',
-            '-lLLVMTarget',
-            '-lLLVMAnalysis',
-            '-lLLVMRuntimeDyld',
-            '-lLLVMObject',
-            '-lLLVMMCParser',
-            '-lLLVMBitReader',
-            '-lLLVMMC',
-            '-lLLVMCore',
-            '-lLLVMSupport',
-            '-lLLVMDebugInfoCodeView',
-            '-lLLVMLinker',
-            "-ldebugInfo"
-    ]
-
-    final List<String> res = ["-L$llvmDir/lib", "-L${project(':llvmDebugInfoC').buildDir}/libs/debugInfo/static"]
-
-    if (isLinux()) {
-        res.addAll(["-Wl,-Bstatic", "-Wl,--whole-archive"]
-                + libs
-                + ["-Wl,--no-whole-archive", "-Wl,-Bdynamic"])
-    } else {
-        res.addAll(libs)
-    }
-
-    return res
-}
-
-
 kotlinNativeInterop {
    llvm {
      dependsOn ":llvmDebugInfoC:debugInfoStaticLibrary"
      defFile 'llvm.def'
      compilerOpts "-fPIC", "-I$llvmDir/include", "-I${project(':llvmDebugInfoC').projectDir}/src/main/include"
-     linkerOpts llvmLinkerOpts()
+     linkerOpts "-L$llvmDir/lib", "-L${project(':llvmDebugInfoC').buildDir}/libs/debugInfo/static"
    }
 
    hash { // TODO: copy-pasted from ':common:compileHash'
