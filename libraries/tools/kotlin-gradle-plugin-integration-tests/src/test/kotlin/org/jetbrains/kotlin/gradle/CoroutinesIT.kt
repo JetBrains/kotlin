@@ -112,7 +112,7 @@ class CoroutinesIT: BaseGradleIT() {
         }
 
         build("build") {
-            assertContains("-Xcoroutines=$coroutineSupport")
+            assertContains("args.coroutinesState=$coroutineSupport")
         }
     }
 }

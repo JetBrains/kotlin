@@ -157,6 +157,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
             Coroutines.ERROR -> CommonCompilerArguments.ERROR
         }
 
+        logger.kotlinDebug { "args.coroutinesState=${args.coroutinesState}" }
+
         if (project.logger.isDebugEnabled) {
             args.verbose = true
         }
