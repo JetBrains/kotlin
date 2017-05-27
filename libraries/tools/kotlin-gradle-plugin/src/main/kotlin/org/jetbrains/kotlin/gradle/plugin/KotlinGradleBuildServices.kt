@@ -31,7 +31,11 @@ import org.jetbrains.kotlin.incremental.BuildCacheStorage
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import org.jetbrains.kotlin.incremental.relativeToRoot
 import org.jetbrains.kotlin.incremental.stackTraceStr
+import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 import java.io.File
+import java.lang.management.ManagementFactory
+
+
 
 internal class KotlinGradleBuildServices private constructor(gradle: Gradle): BuildAdapter() {
     companion object {
@@ -164,12 +168,16 @@ internal class KotlinGradleBuildServices private constructor(gradle: Gradle): Bu
         if (!shouldReportMemoryUsage) return null
 
         log.lifecycle(FORCE_SYSTEM_GC_MESSAGE)
+        val gcCountBefore = getGcCount()
         System.gc()
-        System.runFinalization()
-        System.gc()
+        while (getGcCount() == gcCountBefore) {}
+
         val rt = Runtime.getRuntime()
         return (rt.totalMemory() - rt.freeMemory()) / 1024
     }
+
+    private fun getGcCount(): Long =
+            ManagementFactory.getGarbageCollectorMXBeans().sumByLong { Math.max(0, it.collectionCount) }
 }
 
 
