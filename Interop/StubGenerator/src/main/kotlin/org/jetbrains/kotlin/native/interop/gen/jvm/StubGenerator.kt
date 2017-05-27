@@ -1277,7 +1277,7 @@ class StubGenerator(
             },
 
             compilerArgs = configuration.library.compilerArgs + when (platform) {
-                KotlinPlatform.JVM -> listOf("", "linux", "darwin").map {
+                KotlinPlatform.JVM -> listOf("", "linux", "darwin", "win32").map {
                     val javaHome = System.getProperty("java.home")
                     "-I$javaHome/../include/$it"
                 }

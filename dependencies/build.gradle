@@ -111,6 +111,8 @@ abstract class NativeDep extends DefaultTask {
             return 'darwin-macos'
         } else if (project.isLinux() && project.isAmd64()) {
             return 'linux-x86-64'
+        } else if (project.isWindows() && project.isAmd64()) {
+            return 'windows-x86-64'
         } else {
             throw project.unsupportedPlatformException()
         }
@@ -230,10 +232,6 @@ void dependencyTask(String target, DependencyTaskKind kind) {
     }
 }
 
-task llvm(type: HelperNativeDep) {
-    baseName = "clang-llvm-$llvmVersion-$host"
-}
-
 if (isLinux()) {
     // The gcc toolchain contains the sysroot for linux platform.
     task gccToolchain(type: HelperNativeDep) {
@@ -243,6 +241,12 @@ if (isLinux()) {
     dependencyTask("linux", LIBFFI)
     dependencyTask("raspberrypi", SYSROOT)
     dependencyTask("raspberrypi", LIBFFI)
+} else if (isWindows()) {
+    task mingwWithLlvm(type: HelperNativeDep) {
+        baseName = "msys2-mingw-w64-x86_64-gcc-6.3.0-clang-llvm-3.9.1-$host"
+    }
+
+    dependencyTask("mingw", LIBFFI)
 } else {
     dependencyTask("macbook", SYSROOT)
     dependencyTask("macbook", LIBFFI)
@@ -253,8 +257,14 @@ if (isLinux()) {
     // dependencyTask("iphoneSim", SYSROOT)
 }
 
-dependencyTask("android_arm32", SYSROOT)
-dependencyTask("android_arm32", LIBFFI)
+if (isLinux() || isMac()) {
+    task llvm(type: HelperNativeDep) {
+        baseName = "clang-llvm-$llvmVersion-$host"
+    }
+
+    dependencyTask("android_arm32", SYSROOT)
+    dependencyTask("android_arm32", LIBFFI)
+}
 
 task update(type: Copy) {
     dependsOn tasks.withType(NativeDep)
@@ -262,4 +272,8 @@ task update(type: Copy) {
 
 tasks.withType(TgzNativeDep) {
     rootProject.ext.set("${name}Dir", outputDir.path)
+}
+
+if (isWindows()) {
+    rootProject.ext.set("llvmDir", mingwWithLlvmDir)
 }

@@ -27,9 +27,6 @@ buildscript {
 apply plugin: 'kotlin'
 apply plugin: 'c'
 
-def javaHome = System.getProperty('java.home')
-def compilerArgsForJniIncludes = ["", "linux", "darwin"].collect { "-I$javaHome/../include/$it" } as String[]
-
 model {
     components {
         callbacks(NativeLibrarySpec) {
@@ -41,7 +38,7 @@ model {
                 def host = rootProject.ext.host
                 def hostLibffiDir = rootProject.ext.get("${host}LibffiDir")
 
-                cCompiler.args compilerArgsForJniIncludes
+                cCompiler.args hostCompilerArgsForJni
                 cCompiler.args "-I$hostLibffiDir/include"
 
                 linker.args "$hostLibffiDir/lib/libffi.a"

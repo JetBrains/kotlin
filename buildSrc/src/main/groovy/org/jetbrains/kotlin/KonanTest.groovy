@@ -238,7 +238,7 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
                     "Test failed. Expected exit status: $expectedExitStatus, actual: ${execResult.exitValue}")
         }
 
-        if (goldValue != null && goldValue != out.toString()) {
+        if (goldValue != null && goldValue != out.toString().replace(System.lineSeparator(), "\n")) {
             throw new TestFailedException("Test failed. Expected output: $goldValue, actual output: ${out.toString()}")
         }
     }
@@ -266,6 +266,9 @@ class RunDriverKonanTest extends KonanTest {
     RunDriverKonanTest() {
         super()
         dependsOn(project.rootProject.tasks['cross_dist'])
+        if (project.isWindows()) {
+            this.disabled = true
+        }
     }
 
     void compileTest(List<String> filesToCompile, String exe) {

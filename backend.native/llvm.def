@@ -30,6 +30,9 @@ linkerOpts.linux=\
      -Wl,-z,noexecstack \
      -lrt -ldl -lpthread -lz -lm
 
+linkerOpts.mingw = -lole32 -luuid -static-libgcc -static-libstdc++ \
+    -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive,-Bdynamic
+
 excludedFunctions = LLVMInitializeAllAsmParsers LLVMInitializeAllAsmPrinters LLVMInitializeAllDisassemblers \
     LLVMInitializeAllTargetInfos LLVMInitializeAllTargetMCs LLVMInitializeAllTargets LLVMInitializeNativeTarget \
     LLVMInitializeNativeAsmParser LLVMInitializeNativeAsmPrinter LLVMInitializeNativeDisassembler

@@ -29,9 +29,6 @@ apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 
 apply plugin: 'c'
 
-def javaHome = System.getProperty('java.home')
-def compilerArgsForJniIncludes = ["", "linux", "darwin"].collect { "-I$javaHome/../include/$it" } as String[]
-
 model {
     components {
         clangstubs(NativeLibrarySpec) {
@@ -40,12 +37,18 @@ model {
             }
 
             binaries.all {
-                cCompiler.args compilerArgsForJniIncludes
+                cCompiler.args hostCompilerArgsForJni
                 cCompiler.args "-I$llvmDir/include"
             }
 
             binaries.withType(SharedLibraryBinarySpec) {
-                linker.args "$llvmDir/lib/${System.mapLibraryName("clang")}"
+                final String libclang
+                if (isWindows()) {
+                    libclang = "bin/libclang.dll"
+                } else {
+                    libclang = "lib/${System.mapLibraryName("clang")}"
+                }
+                linker.args "$llvmDir/$libclang"
             }
         }
    }

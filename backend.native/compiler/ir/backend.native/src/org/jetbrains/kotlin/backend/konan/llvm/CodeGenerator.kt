@@ -20,6 +20,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanTarget
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -151,7 +152,9 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     private val needSlots: Boolean
         get() {
-            return slotCount > 1 || localAllocs > 0
+            return slotCount > 1 || localAllocs > 0 ||
+                    // Prevent empty cleanup on mingw to workaround LLVM bug:
+                    context.config.targetManager.current == KonanTarget.MINGW
         }
 
     private fun releaseVars() {

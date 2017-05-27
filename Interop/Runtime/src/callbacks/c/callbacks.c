@@ -147,7 +147,7 @@ static JNIEnv* getCurrentEnv() {
     return env;
 }
 
-jint JNI_OnLoad(JavaVM *vm_, void *reserved) {
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm_, void *reserved) {
     vm = vm_;
     return JNI_VERSION_1_1;
 }

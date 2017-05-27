@@ -42,17 +42,38 @@ void setupClang(Project project) {
 
     project.plugins.withType(NativeComponentPlugin) {
         project.model {
-            toolChains {
-                clang(Clang) {
-                    clangPath.each {
-                        path it
+            if (isWindows()) {
+                platforms {
+                    host {
+                        architecture 'x86_64'
                     }
+                }
 
-                    eachPlatform { // TODO: will not work when cross-compiling
-                        [cCompiler, cppCompiler, linker].each {
-                            it.withArguments { it.addAll(hostClangArgs) }
+                components {
+                    withType(NativeComponentSpec) {
+                        targetPlatform 'host'
+                    }
+                }
+
+                toolChains {
+                    gcc(Gcc) {
+                        path "$mingwWithLlvmDir/bin"
+                    }
+                }
+            } else {
+
+                toolChains {
+                    clang(Clang) {
+                        clangPath.each {
+                            path it
                         }
 
+                        eachPlatform { // TODO: will not work when cross-compiling
+                            [cCompiler, cppCompiler, linker].each {
+                                it.withArguments { it.addAll(hostClangArgs) }
+                            }
+
+                        }
                     }
                 }
             }
@@ -89,7 +110,12 @@ void setupCompilationFlags() {
             "-I$raspberrypiSysrootDir/usr/include/c++/4.8.3",
             "-I$raspberrypiSysrootDir/usr/include/c++/4.8.3/arm-linux-gnueabihf"]
         ]
-     } else {
+    } else if (isWindows()) {
+        ext.host = "mingw"
+        ext.targetArgs <<
+                [(ext.host):
+                         ["-target", "x86_64-w64-mingw32", "--sysroot=${mingwWithLlvmDir}", "-DOMIT_BACKTRACE"]]
+    } else {
          ext.host = "macbook"
          ext.targetArgs <<
             [(ext.host):
@@ -102,15 +128,19 @@ void setupCompilationFlags() {
 //                ["-stdlib=libc++", "-isysroot", "$iphoneSimSysrootDir", "-miphoneos-version-min=8.0.0"],
             ]
      }
-     ext.targetArgs << [
-         "android_arm32":
-             ["-target", getTargetArg("android_arm32"),
-              "--sysroot=$android_arm32SysrootDir",
-              "-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DELFSIZE=32",
-              // HACKS!
-              "-I$android_arm32SysrootDir/usr/include/c++/4.9.x",
-              "-I$android_arm32SysrootDir/usr/include/c++/4.9.x/arm-linux-androideabi"]
-     ]
+
+     if (isLinux() || isMac()) {
+         ext.targetArgs << [
+                 "android_arm32":
+                         ["-target", getTargetArg("android_arm32"),
+                          "--sysroot=$android_arm32SysrootDir",
+                          "-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DELFSIZE=32",
+                          // HACKS!
+                          "-I$android_arm32SysrootDir/usr/include/c++/4.9.x",
+                          "-I$android_arm32SysrootDir/usr/include/c++/4.9.x/arm-linux-androideabi"]
+         ]
+     }
+
      ext.targetList = ext.targetArgs.keySet() as List
 
     if (isLinux()) {
@@ -118,6 +148,8 @@ void setupCompilationFlags() {
         ext.clangArgs.addAll([
             "--gcc-toolchain=$gccToolchainDir"
         ])
+    } else if (isWindows()) {
+        binDir = "$mingwWithLlvmDir/bin"
     } else {
         binDir = "$macbookSysrootDir/usr/bin"
     }
@@ -127,6 +159,9 @@ void setupCompilationFlags() {
 
     ext.clangPath << binDir
     ext.jvmArgs = ["-ea"]
+
+    File jdkHome = new File(System.getProperty('java.home')).absoluteFile.parentFile
+    ext.hostCompilerArgsForJni = ["", jniHostPlatformIncludeDir()].collect { "-I$jdkHome/include/$it" } as String[]
 }
 
 void loadLocalProperties() {
@@ -157,6 +192,10 @@ class PlatformInfo {
         return osName == 'Mac OS X'
     }
 
+    boolean isWindows() {
+        return osName.startsWith('Windows');
+    }
+
     boolean isLinux() {
         return osName == 'Linux'
     }
@@ -176,6 +215,15 @@ class PlatformInfo {
     String simpleOsName() {
         if (isMac()) return 'macos'
         if (isLinux()) return 'linux'
+        if (isWindows()) return 'windows'
+        throw unsupportedPlatformException()
+    }
+
+    String jniHostPlatformIncludeDir() {
+        if (isMac()) return "darwin"
+        if (isLinux()) return "linux"
+        if (isWindows()) return "win32"
+
         throw unsupportedPlatformException()
     }
 

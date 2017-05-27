@@ -61,11 +61,11 @@ private fun parseArgs(args: Array<String>): Map<String, List<String>> {
 
 private val host: String by lazy {
     val os = System.getProperty("os.name")
-    when (os) {
-        "Linux" -> "linux"
-        "Windows" -> "win"
-        "Mac OS X" -> "osx"
-        "FreeBSD" -> "freebsd"
+    when {
+        os == "Linux" -> "linux"
+        os.startsWith("Windows") -> "mingw"
+        os == "Mac OS X" -> "osx"
+        os == "FreeBSD" -> "freebsd"
         else -> {
             throw IllegalArgumentException("we don't know ${os} value")
         }
@@ -87,7 +87,8 @@ private val knownTargets = mapOf(
         "iphone_sim" to "ios_sim",
         "ios_sim" to "ios_sim",
         "raspberrypi" to "raspberrypi",
-        "android_arm32" to "android_arm32"
+        "android_arm32" to "android_arm32",
+        "mingw" to "mingw"
 )
 
 
@@ -205,9 +206,13 @@ private fun Properties.defaultCompilerOpts(target: String, dependencies: String)
     val llvmHomeDir = getHostSpecific("llvmHome")!!
     val llvmHome = "$dependencies/$llvmHomeDir"
 
-    System.load("$llvmHome/lib/${System.mapLibraryName("clang")}")
+    val libclang = when (host) {
+        "mingw" -> "$llvmHome/bin/libclang.dll"
+        else -> "$llvmHome/lib/${System.mapLibraryName("clang")}"
+    }
+    System.load(libclang)
 
-    val llvmVersion = getProperty("llvmVersion")!!
+    val llvmVersion = getHostSpecific("llvmVersion")!!
 
     // StubGenerator passes the arguments to libclang which
     // works not exactly the same way as the clang binary and
@@ -233,6 +238,9 @@ private fun Properties.defaultCompilerOpts(target: String, dependencies: String)
             val binDir = "$targetSysRoot/${libGcc ?: "bin"}"
             return archSelector + commonArgs + listOf(
                     "-B$binDir", "--gcc-toolchain=$targetToolchain")
+        }
+        "mingw" -> {
+            return archSelector + commonArgs + listOf("-B$targetSysRoot/bin")
         }
         else -> error("Unexpected target: ${target}")
     }

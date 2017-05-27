@@ -1057,6 +1057,16 @@ KInt Kotlin_String_lastIndexOfChar(KString thiz, KChar ch, KInt fromIndex) {
   return -1;
 }
 
+#ifdef _WIN32
+static void* memmem(const void* big, size_t big_len, const void* little, size_t little_len) {
+  for (size_t i = 0; i + little_len <= big_len; ++i) {
+    void* pos = ((char*)big) + i;
+    if (memcmp(little, pos, little_len) == 0) return pos;
+  }
+  return nullptr;
+}
+#endif
+
 // TODO: or code up Knuth-Moris-Pratt.
 KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
   if (fromIndex < 0 || fromIndex > thiz->count_ ||

@@ -45,6 +45,8 @@ internal abstract class PlatformFlags(val distribution: Distribution) {
     open val linkerKonanFlags 
         = propertyTargetList("linkerKonanFlags")
 
+    open val useCompilerDriverAsLinker: Boolean get() = false // TODO: refactor.
+
    abstract fun linkCommand(objectFiles: List<ObjectFile>,
         executable: ExecutableFile, optimize: Boolean): List<String>
 
@@ -64,6 +66,8 @@ internal open class AndroidPlatform(distribution: Distribution)
 
     private val prefix = "${distribution.targetToolchain}/bin/"
     private val clang = "$prefix/clang"
+
+    override val useCompilerDriverAsLinker: Boolean get() = true
 
     override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
         return mutableListOf<String>(clang, "-o", executable, "-fPIC", "-shared") +
@@ -140,6 +144,21 @@ internal open class LinuxBasedPlatform(distribution: Distribution)
     }
 }
 
+internal open class MingwPlatform(distribution: Distribution)
+    : PlatformFlags(distribution) {
+
+    val linker = "${distribution.targetToolchain}/bin/clang++"
+
+    override val useCompilerDriverAsLinker: Boolean get() = true
+
+    override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
+        return listOf(linker, "-o", executable) +
+                objectFiles +
+                (if (optimize) linkerOptimizationFlags else {listOf<String>()}) +
+                linkerKonanFlags
+    }
+}
+
 internal class LinkStage(val context: Context) {
 
     val config = context.config.configuration
@@ -153,6 +172,8 @@ internal class LinkStage(val context: Context) {
             MacOSBasedPlatform(distribution)
         KonanTarget.ANDROID_ARM32 ->
             AndroidPlatform(distribution)
+        KonanTarget.MINGW ->
+            MingwPlatform(distribution)
         else ->
             error("Unexpected target platform: ${context.config.targetManager.current}")
     }
@@ -182,6 +203,10 @@ internal class LinkStage(val context: Context) {
     }
 
     fun asLinkerArgs(args: List<String>): List<String> {
+        if (platform.useCompilerDriverAsLinker) {
+            return args
+        }
+
         val result = mutableListOf<String>()
         for (arg in args) {
             // If user passes compiler arguments to us - transform them to linker ones.

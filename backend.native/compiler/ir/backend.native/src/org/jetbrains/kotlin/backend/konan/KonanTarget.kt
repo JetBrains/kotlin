@@ -23,6 +23,7 @@ enum class KonanTarget(val suffix: String, var enabled: Boolean = false) {
     IPHONE("ios"),
     IPHONE_SIM("ios_sim"),
     LINUX("linux"),
+    MINGW("mingw"),
     MACBOOK("osx"),
     RASPBERRYPI("raspberrypi")
 }
@@ -39,6 +40,9 @@ class TargetManager(val config: CompilerConfiguration) {
                 KonanTarget.LINUX.enabled = true
                 KonanTarget.RASPBERRYPI.enabled = true
                 KonanTarget.ANDROID_ARM32.enabled = true
+            }
+            KonanTarget.MINGW -> {
+                KonanTarget.MINGW.enabled = true
             }
             KonanTarget.MACBOOK -> {
                 KonanTarget.MACBOOK.enabled = true
@@ -88,10 +92,11 @@ class TargetManager(val config: CompilerConfiguration) {
     companion object {
         fun host_os(): String {
             val javaOsName = System.getProperty("os.name")
-            return when (javaOsName) {
-                "Mac OS X" -> "osx"
-                "Linux"    -> "linux"
-                else -> error("Unknown operating system: ${javaOsName}") 
+            return when {
+                javaOsName == "Mac OS X" -> "osx"
+                javaOsName == "Linux" -> "linux"
+                javaOsName.startsWith("Windows") -> "windows"
+                else -> error("Unknown operating system: ${javaOsName}")
             }
         }
 
@@ -108,6 +113,7 @@ class TargetManager(val config: CompilerConfiguration) {
         val host: KonanTarget = when (host_os()) {
             "osx"   -> KonanTarget.MACBOOK
             "linux" -> KonanTarget.LINUX
+            "windows" -> KonanTarget.MINGW
             else -> error("Unknown host target: ${host_os()} ${host_arch()}")
         }
     }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanTarget
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -258,7 +259,12 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val throwExceptionFunction = importRtFunction("ThrowException")
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail")
 
-    val gxxPersonalityFunction = externalNounwindFunction("__gxx_personality_v0", functionType(int32Type, true))
+    private val personalityFunctionName = when (context.config.targetManager.current) {
+        KonanTarget.MINGW -> "__gxx_personality_seh0"
+        else -> "__gxx_personality_v0"
+    }
+
+    val gxxPersonalityFunction = externalNounwindFunction(personalityFunctionName, functionType(int32Type, true))
     val cxaBeginCatchFunction = externalNounwindFunction("__cxa_begin_catch", functionType(int8TypePtr, false, int8TypePtr))
     val cxaEndCatchFunction = externalNounwindFunction("__cxa_end_catch", functionType(voidType, false))
 

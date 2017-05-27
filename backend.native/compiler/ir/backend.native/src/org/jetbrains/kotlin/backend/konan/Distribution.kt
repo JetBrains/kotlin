@@ -62,9 +62,11 @@ class Distribution(val config: CompilerConfiguration) {
     val llvmLib = "$llvmHome/lib"
 
     val llvmLto = "$llvmBin/llvm-lto"
-    val libLTO = when (TargetManager.host) {
-        KonanTarget.MACBOOK -> "$llvmLib/libLTO.dylib" 
-        KonanTarget.LINUX -> "$llvmLib/libLTO.so" 
+
+    private val libLTODir = when (TargetManager.host) {
+        KonanTarget.MACBOOK, KonanTarget.LINUX -> llvmLib
+        KonanTarget.MINGW -> llvmBin
         else -> error("Don't know libLTO location for this platform.")
     }
+    val libLTO = "$libLTODir/${System.mapLibraryName("LTO")}"
 }

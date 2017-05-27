@@ -367,11 +367,19 @@ task hello3(type: RunKonanTest) {
 }
 
 task hello4(type: RunKonanTest) {
+    if (isWindows()) {
+        // To be investigated.
+        disabled = true
+    }
     goldValue = "Hello\nПока\n"
     source = "runtime/basic/hello4.kt"
 }
 
 task tostring0(type: RunKonanTest) {
+    if (isWindows()) {
+        // To be investigated.
+        disabled = true
+    }
     goldValue = "127\n-1\n239\nA\nЁ\nト\n1122334455\n112233445566778899\n3.14159\n1E+27\n1E-300\ntrue\nfalse\n"
     source = "runtime/basic/tostring0.kt"
 }
@@ -387,6 +395,10 @@ task tostring2(type: RunKonanTest) {
 }
 
 task tostring3(type: RunKonanTest) {
+    if (isWindows()) {
+        // Double.toString()
+        disabled = true
+    }
     goldValue = "-128\n127\n-32768\n32767\n" +
             "-2147483648\n2147483647\n-9223372036854775808\n9223372036854775807\n" +
             "1.4013E-45\n3.40282E+38\n-INF\nINF\n" +
@@ -1212,11 +1224,19 @@ task moderately_large_array1(type: RunKonanTest) {
 }
 
 task string_builder0(type: RunKonanTest) {
+    if (isWindows()) {
+        // To be investigated.
+        disabled = true
+    }
     goldValue = "OK\n"
     source = "runtime/text/string_builder0.kt"
 }
 
 task string0(type: RunKonanTest) {
+    if (isWindows()) {
+        // To be investigated.
+        disabled = true
+    }
     goldValue = "true\ntrue\nПРИВЕТ\nпривет\nПока\ntrue\n"
     source = "runtime/text/string0.kt"
 }
@@ -1860,7 +1880,8 @@ task interop4(type: RunInteropKonanTest) {
 }
 
 task interop_echo_server(type: RunInteropKonanTest) {
-    if (isLinux()) {
+    if (!isMac()) {
+        // Not supported or not tested.
         disabled = true
     }
     run = false
