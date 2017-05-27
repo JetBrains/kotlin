@@ -20,7 +20,6 @@ import java.io.*
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import java.util.Properties
 import kotlin.concurrent.thread
 
 // TODO: Try to use some dependency management system (Ivy?)
@@ -57,6 +56,14 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
         }
     }
 
+    private val useZip = System.getProperty("os.name").startsWith("Windows")
+
+    private val archiveExtension = if (useZip) {
+        "zip"
+    } else {
+        "tar.gz"
+    }
+
     private fun processDependency(dependency: String) {
         val depDir = File(dependenciesDirectory, dependency)
         val depName = depDir.name
@@ -74,7 +81,7 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
             isInfoShown = true
         }
 
-        val archive = File(cacheDirectory.canonicalPath, "$depName.tar.gz")
+        val archive = File(cacheDirectory.canonicalPath, "$depName.$archiveExtension")
         if (!archive.exists()) {
             download(depName, archive)
         }
@@ -82,7 +89,15 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
         extractedDependencies.addWithSave(depName)
     }
 
-    private fun extract(tarGz: File, target: File) {
+    private fun extract(archive: File, target: File) {
+        if (useZip) {
+            archive.toPath().unzipTo(target.toPath())
+        } else {
+            extractTarGz(archive, target)
+        }
+    }
+
+    private fun extractTarGz(tarGz: File, target: File) {
         println("Extract dependency: ${tarGz.canonicalPath} in ${target.canonicalPath}")
         val tarProcess = ProcessBuilder().apply {
             command("tar", "-xzf", "${tarGz.canonicalPath}")
@@ -113,7 +128,7 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
 
     private fun download(dependencyName: String, outputFile: File) {
         val tmpFile = File("${outputFile.canonicalPath}.part")
-        val url = URL("$dependenciesUrl/$dependencyName.tar.gz")
+        val url = URL("$dependenciesUrl/$dependencyName.$archiveExtension")
         val connection = url.openConnection()
         val totalBytes = connection.contentLengthLong
 
