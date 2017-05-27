@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PATH=$DIR/../../dist/bin:$DIR/../../bin:$PATH
+DIR=$(dirname "$0")
+PATH=../../dist/bin:../../bin:$PATH
 
 LINKER_ARGS_macbook="-framework OpenGL -framework GLUT"
 LINKER_ARGS_linux="-L/usr/lib/x86_64-linux-gnu -lglut -lGL -lGLU"
@@ -32,4 +32,4 @@ cinterop -def $DIR/src/c_interop/opengl.def -target $TARGET \
 konanc -target $TARGET $DIR/src/kotlin-native/OpenGlTeapot.kt -library $DIR/build/c_interop/opengl.kt.bc \
        -linkerArgs "$LINKER_ARGS" -o $DIR/build/bin/OpenGlTeapot.kexe || exit 1
 
-echo "Artifact path is $DIR/build/bin/OpenGlTeapot.kexe"
+echo "Artifact path is ./build/bin/OpenGlTeapot.kexe"

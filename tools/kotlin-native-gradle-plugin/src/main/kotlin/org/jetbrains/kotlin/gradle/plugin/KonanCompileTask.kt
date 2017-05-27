@@ -80,7 +80,7 @@ open class KonanCompileTask: DefaultTask() {
 
     // Output artifact --------------------------------------------------------
 
-    lateinit var artifactName: String
+    protected lateinit var artifactName: String
 
     @OutputDirectory
     lateinit var outputDir: File

@@ -2,8 +2,8 @@
 
 ./downloadTensorflow.sh
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PATH=$DIR/../../dist/bin:$DIR/../../bin:$PATH
+DIR=$(dirname "$0")
+PATH=../../dist/bin:../../bin:$PATH
 
 TF_TARGET_DIRECTORY="$HOME/.konan/third-party/tensorflow"
 TF_TYPE="cpu" # Change to "gpu" for GPU support
@@ -41,4 +41,4 @@ konanc $COMPILER_ARGS -target $TARGET $DIR/src/kotlin-native/HelloTensorflow.kt 
 
 echo "Note: You may need to specify LD_LIBRARY_PATH or DYLD_LIBRARY_PATH env variables to $TF_TARGET_DIRECTORY/lib if the TensorFlow dynamic library cannot be found."
 
-echo "Artifact path is $DIR/build/bin/HelloTensorflow.kexe"
+echo "Artifact path is ./build/bin/HelloTensorflow.kexe"

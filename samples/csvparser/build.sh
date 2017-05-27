@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PATH=$DIR/../../dist/bin:$DIR/../../bin:$PATH
+DIR=$(dirname "$0")
+PATH=../../dist/bin:../../bin:$PATH
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -28,4 +28,4 @@ cinterop -def $DIR/src/c_interop/stdio.def -copt "$CFLAGS" -target $TARGET -o $D
 konanc $COMPILER_ARGS -target $TARGET $DIR/src/kotlin-native/CsvParser.kt -library $DIR/build/c_interop/stdio.kt.bc \
        -o $DIR/build/bin/CsvParser.kexe || exit 1
 
-echo "Artifact path is $DIR/build/bin/CsvParser.kexe"
+echo "Artifact path is ./build/bin/CsvParser.kexe"
