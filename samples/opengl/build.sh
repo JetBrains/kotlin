@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-DIR=$(dirname "$0")
 PATH=../../dist/bin:../../bin:$PATH
+DIR=.
 
 LINKER_ARGS_macbook="-framework OpenGL -framework GLUT"
 LINKER_ARGS_linux="-L/usr/lib/x86_64-linux-gnu -lglut -lGL -lGLU"
@@ -21,15 +21,5 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-rm -rf $DIR/build/
-mkdir $DIR/build/
-mkdir $DIR/build/c_interop/
-mkdir $DIR/build/bin/
-
-cinterop -def $DIR/src/c_interop/opengl.def -target $TARGET \
-         -o $DIR/build/c_interop/opengl.kt.bc || exit 1
-
-konanc -target $TARGET $DIR/src/kotlin-native/OpenGlTeapot.kt -library $DIR/build/c_interop/opengl.kt.bc \
-       -linkerArgs "$LINKER_ARGS" -o $DIR/build/bin/OpenGlTeapot.kexe || exit 1
-
-echo "Artifact path is ./build/bin/OpenGlTeapot.kexe"
+cinterop -def $DIR/opengl.def -target $TARGET -o opengl.kt.bc || exit 1
+konanc -target $TARGET $DIR/OpenGlTeapot.kt -library opengl.kt.bc -linkerArgs "$LINKER_ARGS" -o OpenGlTeapot.kexe || exit 1

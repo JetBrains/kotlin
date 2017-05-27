@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DIR=$(dirname "$0")
+DIR=.
 PATH=../../dist/bin:../../bin:$PATH
 
 if [ x$TARGET == x ]; then
@@ -18,14 +18,5 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-rm -rf $DIR/build/
-mkdir $DIR/build/
-mkdir $DIR/build/c_interop/
-mkdir $DIR/build/bin/
-
-cinterop -def $DIR/src/c_interop/stdio.def -copt "$CFLAGS" -target $TARGET -o $DIR/build/c_interop/stdio.kt.bc || exit 1
-
-konanc $COMPILER_ARGS -target $TARGET $DIR/src/kotlin-native/CsvParser.kt -library $DIR/build/c_interop/stdio.kt.bc \
-       -o $DIR/build/bin/CsvParser.kexe || exit 1
-
-echo "Artifact path is ./build/bin/CsvParser.kexe"
+cinterop -def $DIR/stdio.def -copt "$CFLAGS" -target $TARGET -o stdio.kt.bc || exit 1
+konanc $COMPILER_ARGS -target $TARGET $DIR/CsvParser.kt -library stdio.kt.bc -o CsvParser.kexe || exit 1

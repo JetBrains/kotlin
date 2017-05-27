@@ -1,20 +1,39 @@
 apply plugin: 'konan'
 
 konanInterop {
-    opengl { }
+    opengl {
+        defFile 'opengl.def'
+    }
 }
 
 
 konanArtifacts {
-    OpenGlTeapotMacbook {
+    OpenGlTeapot {
+        inputFiles project.file("OpenGlTeapot.kt")
         useInterop 'opengl'
-        linkerOpts "-framework OpenGL -framework GLUT"
-        target "macbook"
+        def osName = System.getProperty("os.name")
+        if (osName.equals("Mac OS X")) {
+            linkerOpts "-framework OpenGL -framework GLUT"
+        }
+        if (osName.equals("Linux")) {
+            linkerOpts "-L/usr/lib/x86_64-linux-gnu -lglut -lGL -lGLU"
+        }
     }
+}
 
-    OpenGlTeapotLinux {
-        useInterop 'opengl'
-        linkerOpts "-L/usr/lib/x86_64-linux-gnu -lglut -lGL -lGLU"
-        target "linux"
+
+build {
+    project.ext { outputFile = "${projectDir.canonicalPath}/${file(compileKonanOpenGlTeapot.artifactPath).name}" }
+    doLast {
+        copy {
+            from compileKonanOpenGlTeapot.artifactPath
+            into projectDir.canonicalPath
+        }
+    }
+}
+
+clean {
+    doLast {
+        delete outputFile
     }
 }
