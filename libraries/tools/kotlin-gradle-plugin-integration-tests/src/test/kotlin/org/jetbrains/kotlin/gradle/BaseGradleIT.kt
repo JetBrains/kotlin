@@ -53,6 +53,7 @@ abstract class BaseGradleIT {
         // gradle wrapper version to wrapper directory
         private val gradleWrappers = hashMapOf<String, File>()
         private const val MAX_DAEMON_RUNS = 30
+        private const val MAX_ACTIVE_GRADLE_PROCESSES = 1
 
         private fun getEnvJDK_18() = System.getenv()["JDK_18"]
 
@@ -81,6 +82,16 @@ abstract class BaseGradleIT {
                 withDaemon: Boolean = true
         ): File {
             val wrapperDir = gradleWrappers.getOrPut(version) { createNewWrapperDir(version) }
+
+            // Even if gradle is run with --no-daemon, we should check,
+            // that common active process count does not exceed the threshold,
+            // to avoid retaining too much memory (which is critical for CI)
+            val activeDaemonsCount = daemonRunCount.keys.size
+            val nonDaemonCount = if (!withDaemon) 1 else 0
+            if (activeDaemonsCount + nonDaemonCount > MAX_ACTIVE_GRADLE_PROCESSES) {
+                println("Too many Gradle active processes (max is $MAX_ACTIVE_GRADLE_PROCESSES). Stopping all daemons")
+                stopAllDaemons(environmentVariables)
+            }
 
             if (withDaemon) {
                 val timesDaemonUsed = daemonRunCount[version] ?: 0
