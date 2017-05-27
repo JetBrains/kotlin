@@ -58,7 +58,9 @@ internal class SplitMetadataGenerator(override val libDir: File): SplitLibrarySc
             "module_name" to "${linkData.moduleName}"
         ))
         moduleHeaderFile.writeText(linkData.module)
-        header.store(manifestFile.outputStream(), null)
+        manifestFile.outputStream().use {
+            header.store(it, null)
+        }
 
         linkData.fragments.forEachIndexed { index, it ->
             val name = linkData.fragmentNames[index] 

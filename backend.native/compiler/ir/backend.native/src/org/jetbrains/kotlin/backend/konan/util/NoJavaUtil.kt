@@ -69,7 +69,7 @@ class File(val path: String) {
 
 
 private val File.zipUri: URI
-        get() = URI.create("jar:file:${this.absolutePath}")
+        get() = URI.create("jar:${this.toPath().toUri()}")
 
 private val File.zipRootPath: Path
     get() {

@@ -82,9 +82,9 @@ interface SplitLibraryScheme {
     val linkdataDir 
         get() = File(libDir, "linkdata")
     val moduleHeaderFile 
-        get() = File(linkdataDir, "<module>")
+        get() = File(linkdataDir, "module")
     fun packageFile(packageName: String) 
-        = File(linkdataDir, if (packageName == "") "<root>" else packageName)
+        = File(linkdataDir, if (packageName == "") "root_package" else "package_$packageName")
 }
 
 class SplitLibraryReader(override val libDir: File, currentAbiVersion: Int,
