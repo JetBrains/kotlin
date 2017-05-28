@@ -6529,6 +6529,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("funPlacementOnCompanionObjectJsRuntime.kt")
+            public void testFunPlacementOnCompanionObjectJsRuntime() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/funPlacementOnCompanionObjectJsRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("funPlacementOnExternalClassJsRuntime.kt")
+            public void testFunPlacementOnExternalClassJsRuntime() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/funPlacementOnExternalClassJsRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("funPlacementOnExternalObjectJsRuntime.kt")
+            public void testFunPlacementOnExternalObjectJsRuntime() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/funPlacementOnExternalObjectJsRuntime.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nativeExtensionFunBlockBodyJsRuntime.kt")
             public void testNativeExtensionFunBlockBodyJsRuntime() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeExtensionFunBlockBodyJsRuntime.kt");

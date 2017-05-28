@@ -459,7 +459,13 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         val body = when {
                             callableInfo.kind == CallableKind.SECONDARY_CONSTRUCTOR -> ""
                             callableInfo.isAbstract -> ""
+                            containingElement is KtClass && containingElement.hasModifier(KtTokens.EXTERNAL_KEYWORD) -> ""
+                            containingElement is KtObjectDeclaration && containingElement.hasModifier(KtTokens.EXTERNAL_KEYWORD) -> ""
+                            containingElement is KtObjectDeclaration && containingElement.isCompanion()
+                                && containingElement.parent.parent is KtClass
+                                && (containingElement.parent.parent as KtClass).hasModifier(KtTokens.EXTERNAL_KEYWORD) -> ""
                             else -> "{}"
+
                         }
                         @Suppress("USELESS_CAST") // KT-10755
                         if (callableInfo is FunctionInfo) {
