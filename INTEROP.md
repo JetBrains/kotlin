@@ -39,7 +39,7 @@ Run the server:
 
     ./EchoServer.kexe 3000 &
 
-Test the server by conecting to it, for example with telnet:
+Test the server by connecting to it, for example with telnet:
 
     telnet localhost 3000
 
