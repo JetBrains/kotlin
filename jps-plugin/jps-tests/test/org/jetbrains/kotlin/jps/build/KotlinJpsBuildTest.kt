@@ -915,6 +915,20 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         buildAllModules().assertSuccessful()
     }
 
+    fun testCustomDestination() {
+        loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
+        addKotlinRuntimeDependency()
+        buildAllModules().apply {
+            assertSuccessful()
+
+            val aClass = File(workDir, "customOut/A.class")
+            assert(aClass.exists()) { "$aClass does not exist!" }
+
+            val warnings = getMessages(BuildMessage.Kind.WARNING)
+            assert(warnings.isEmpty()) { "Unexpected warnings: \n${warnings.joinToString("\n")}" }
+        }
+    }
+
     private fun BuildResult.checkErrors() {
         val actualErrors = getMessages(BuildMessage.Kind.ERROR)
                 .map { it as CompilerMessage }
