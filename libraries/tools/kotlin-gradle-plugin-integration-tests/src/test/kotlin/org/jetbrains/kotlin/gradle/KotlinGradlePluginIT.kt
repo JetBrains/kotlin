@@ -81,6 +81,7 @@ class KotlinGradleIT: BaseGradleIT() {
             assertFileExists("build/classes/main/META-INF/kotlinProject_main.kotlin_module")
             assertReportExists()
             assertContains(":compileKotlin", ":compileTestKotlin")
+            assertNotContains("Forcing System.gc")
         }
 
         project.build("build") {
@@ -99,9 +100,11 @@ class KotlinGradleIT: BaseGradleIT() {
         val userVariantArg = "-Duser.variant=$VARIANT_CONSTANT"
         val MEMORY_MAX_GROWTH_LIMIT_KB = 500
         val BUILD_COUNT = 15
+        val reportMemoryUsage = "-Dkotlin.gradle.test.report.memory.usage=true"
+        val options =  BaseGradleIT.BuildOptions(withDaemon = true)
 
         fun exitTestDaemon() {
-            project.build(userVariantArg, "exit", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
+            project.build(userVariantArg, reportMemoryUsage, "exit", options = options) {
                 assertFailed()
                 assertContains("The daemon has exited normally or was terminated in response to a user interrupt.")
             }
@@ -110,9 +113,10 @@ class KotlinGradleIT: BaseGradleIT() {
         fun buildAndGetMemoryAfterBuild(): Int {
             var reportedMemory: Int? = null
 
-            project.build(userVariantArg, "clean", "build", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
+            project.build(userVariantArg, reportMemoryUsage, "clean", "build", options = options) {
                 assertSuccessful()
-                val matches = "\\[PERF\\] Used memory after build: (\\d+) kb \\(difference since build start: ([+-]?\\d+) kb\\)".toRegex().find(output)
+                val matches = "\\[KOTLIN\\]\\[PERF\\] Used memory after build: (\\d+) kb \\(difference since build start: ([+-]?\\d+) kb\\)"
+                        .toRegex().find(output)
                 assert(matches != null && matches.groups.size == 3) { "Used memory after build is not reported by plugin" }
                 reportedMemory = matches!!.groupValues[1].toInt()
             }

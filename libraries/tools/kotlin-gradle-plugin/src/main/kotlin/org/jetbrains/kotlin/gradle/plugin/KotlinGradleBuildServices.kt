@@ -37,6 +37,8 @@ internal class KotlinGradleBuildServices private constructor(gradle: Gradle): Bu
     companion object {
         private val CLASS_NAME = KotlinGradleBuildServices::class.java.simpleName
         const val FORCE_SYSTEM_GC_MESSAGE = "Forcing System.gc()"
+        const val SHOULD_REPORT_MEMORY_USAGE_PROPERTY = "kotlin.gradle.test.report.memory.usage"
+
         val INIT_MESSAGE = "Initialized $CLASS_NAME"
         val DISPOSE_MESSAGE = "Disposed $CLASS_NAME"
         val ALREADY_INITIALIZED_MESSAGE = "$CLASS_NAME is already initialized"
@@ -68,6 +70,7 @@ internal class KotlinGradleBuildServices private constructor(gradle: Gradle): Bu
     private var startMemory: Long? = null
     private val workingDir = File(gradle.rootProject.buildDir, "kotlin-build").apply { mkdirs() }
     private val buildCacheStorage = BuildCacheStorage(workingDir)
+    private val shouldReportMemoryUsage = System.getProperty(SHOULD_REPORT_MEMORY_USAGE_PROPERTY) != null
 
     internal val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider
             get() = buildCacheStorage
@@ -75,9 +78,7 @@ internal class KotlinGradleBuildServices private constructor(gradle: Gradle): Bu
     // There is function with the same name in BuildAdapter,
     // but it is called before any plugin can attach build listener
     fun buildStarted() {
-        if (log.isDebugEnabled) {
-            startMemory = getUsedMemoryKb()!!
-        }
+        startMemory = getUsedMemoryKb()
     }
 
     override fun buildFinished(result: BuildResult) {
@@ -111,14 +112,13 @@ internal class KotlinGradleBuildServices private constructor(gradle: Gradle): Bu
             }
         }
 
-        if (kotlinCompilerCalled) {
-            startMemory?.let { startMemoryCopy ->
-                getUsedMemoryKb()?.let { endMemory ->
-                    // the value reported here is not necessarily a leak, since it is calculated before collecting the plugin classes
-                    // but on subsequent runs in the daemon it should be rather small, then the classes are actually reused by the daemon (see above)
-                    log.kotlinDebug("[PERF] Used memory after build: $endMemory kb (difference since build start: ${"%+d".format(endMemory - startMemoryCopy)} kb)")
-                }
-            }
+        if (shouldReportMemoryUsage) {
+            val startMem = startMemory!!
+            val endMem = getUsedMemoryKb()!!
+
+            // the value reported here is not necessarily a leak, since it is calculated before collecting the plugin classes
+            // but on subsequent runs in the daemon it should be rather small, then the classes are actually reused by the daemon (see above)
+            log.lifecycle("[KOTLIN][PERF] Used memory after build: $endMem kb (difference since build start: ${"%+d".format(endMem - startMem)} kb)")
         }
 
         closeArtifactDifferenceRegistry()
@@ -161,7 +161,7 @@ internal class KotlinGradleBuildServices private constructor(gradle: Gradle): Bu
     }
 
     private fun getUsedMemoryKb(): Long? {
-        if (!log.isDebugEnabled) return null
+        if (!shouldReportMemoryUsage) return null
 
         log.lifecycle(FORCE_SYSTEM_GC_MESSAGE)
         System.gc()
