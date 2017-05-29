@@ -3779,6 +3779,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("LocalValReassignment.java")
+        public void testLocalValReassignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/LocalValReassignment.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("MethodInvokedWithNullArg.java")
         public void testMethodInvokedWithNullArg() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodInvokedWithNullArg.java");

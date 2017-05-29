@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.mapToIndex
 import java.util.*
 
@@ -114,11 +115,6 @@ object J2KPostProcessingRegistrar {
             fix.invoke()
         }
 
-        registerDiagnosticBasedProcessing<KtSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, _ ->
-            val exclExclExpr = element.parent as KtUnaryExpression
-            exclExclExpr.replace(exclExclExpr.baseExpression!!)
-        }
-
         registerDiagnosticBasedProcessingFactory(
                 Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
         ) {
@@ -133,6 +129,15 @@ object J2KPostProcessingRegistrar {
                         property.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
                     }
                 }
+            }
+        }
+
+        registerDiagnosticBasedProcessing<KtSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, _ ->
+            val exclExclExpr = element.parent as KtUnaryExpression
+            val baseExpression = exclExclExpr.baseExpression!!
+            val context = baseExpression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+            if (context.diagnostics.forElement(element).any { it.factory == Errors.UNNECESSARY_NOT_NULL_ASSERTION }) {
+                exclExclExpr.replace(baseExpression)
             }
         }
 
