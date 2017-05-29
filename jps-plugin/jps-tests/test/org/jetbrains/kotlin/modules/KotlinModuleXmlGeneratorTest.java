@@ -33,11 +33,10 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Arrays.asList(new File("s1"), new File("s2")),
                 Collections.singletonList(new JvmSourceRoot(new File("java"), null)),
                 Arrays.asList(new File("cp1"), new File("cp2")),
-                null,
                 JavaModuleBuildTargetType.PRODUCTION.getTypeId(),
                 JavaModuleBuildTargetType.PRODUCTION.isTests(),
-                Collections.emptySet(),
-                Collections.emptyList()
+                Collections.<File>emptySet(),
+                Collections.<File>emptyList()
         ).asText().toString();
         KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/basic.xml"), actual);
     }
@@ -47,13 +46,12 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 "name",
                 "output",
                 Arrays.asList(new File("s1"), new File("s2")),
-                Collections.emptyList(),
+                Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp1"), new File("cp2")),
-                null,
                 JavaModuleBuildTargetType.PRODUCTION.getTypeId(),
                 JavaModuleBuildTargetType.PRODUCTION.isTests(),
                 Collections.singleton(new File("cp1")),
-                Collections.emptyList()
+                Collections.<File>emptyList()
         ).asText().toString();
         KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/filtered.xml"), actual);
     }
@@ -64,43 +62,25 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 "name",
                 "output",
                 Arrays.asList(new File("s1"), new File("s2")),
-                Collections.emptyList(),
+                Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp1"), new File("cp2")),
-                null,
                 JavaModuleBuildTargetType.PRODUCTION.getTypeId(),
                 JavaModuleBuildTargetType.PRODUCTION.isTests(),
                 Collections.singleton(new File("cp1")),
-                Collections.emptyList()
+                Collections.<File>emptyList()
         );
         builder.addModule(
                 "name2",
                 "output2",
                 Arrays.asList(new File("s12"), new File("s22")),
-                Collections.emptyList(),
+                Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp12"), new File("cp22")),
-                null,
                 JavaModuleBuildTargetType.TEST.getTypeId(),
                 JavaModuleBuildTargetType.TEST.isTests(),
                 Collections.singleton(new File("cp12")),
-                Collections.emptyList()
+                Collections.<File>emptyList()
         );
         String actual = builder.asText().toString();
         KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/multiple.xml"), actual);
-    }
-
-    public void testModularJdkRoot() throws Exception {
-        String actual = new KotlinModuleXmlBuilder().addModule(
-                "name",
-                "output",
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                new File("/path/to/modular/jdk"),
-                JavaModuleBuildTargetType.PRODUCTION.getTypeId(),
-                JavaModuleBuildTargetType.PRODUCTION.isTests(),
-                Collections.emptySet(),
-                Collections.emptyList()
-        ).asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/modularJdkRoot.xml"), actual);
     }
 }

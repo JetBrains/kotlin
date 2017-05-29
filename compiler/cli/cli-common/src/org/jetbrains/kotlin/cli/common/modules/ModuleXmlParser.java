@@ -52,7 +52,6 @@ public class ModuleXmlParser {
     public static final String JAVA_SOURCE_PACKAGE_PREFIX = "packagePrefix";
     public static final String PATH = "path";
     public static final String CLASSPATH = "classpath";
-    public static final String MODULAR_JDK_ROOT = "modularJdkRoot";
 
     @NotNull
     public static ModuleScriptData parseModuleScript(
@@ -172,10 +171,6 @@ public class ModuleXmlParser {
                 String path = getAttribute(attributes, PATH, qName);
                 String packagePrefix = getNullableAttribute(attributes, JAVA_SOURCE_PACKAGE_PREFIX);
                 moduleBuilder.addJavaSourceRoot(new JavaRootPath(path, packagePrefix));
-            }
-            else if (MODULAR_JDK_ROOT.equalsIgnoreCase(qName)) {
-                String path = getAttribute(attributes, PATH, qName);
-                moduleBuilder.setModularJdkRoot(path);
             }
             else {
                 throw createError(qName);

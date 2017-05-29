@@ -29,14 +29,13 @@ class ModuleBuilder(
     private val classpathRoots = ArrayList<String>()
     private val javaSourceRoots = ArrayList<JavaRootPath>()
     private val friendDirs = ArrayList<String>()
-    override var modularJdkRoot: String? = null
 
-    fun addSourceFiles(path: String) {
-        sourceFiles.add(path)
+    fun addSourceFiles(pattern: String) {
+        sourceFiles.add(pattern)
     }
 
-    fun addClasspathEntry(path: String) {
-        classpathRoots.add(path)
+    fun addClasspathEntry(name: String) {
+        classpathRoots.add(name)
     }
 
     fun addJavaSourceRoot(rootPath: JavaRootPath) {

@@ -18,11 +18,9 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
-import com.intellij.util.io.URLUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.jps.incremental.CompileContext
@@ -30,7 +28,6 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.ProjectBuildException
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
-import org.jetbrains.jps.model.module.JpsSdkDependency
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.build.JpsUtils.getAllDependencies
@@ -116,7 +113,6 @@ object KotlinBuilderModuleScriptGenerator {
                     moduleSources,
                     findSourceRoots(context, target),
                     findClassPathRoots(target),
-                    findModularJdkRoot(target),
                     targetId.type,
                     (targetType as JavaModuleBuildTargetType).isTests,
                     // this excludes the output directories from the class path, to be removed for true incremental compilation
@@ -164,18 +160,6 @@ object KotlinBuilderModuleScriptGenerator {
 
             true
         }
-    }
-
-    private fun findModularJdkRoot(target: ModuleBuildTarget): File? {
-        // List of paths to JRE modules in the following format:
-        // jrt:///Library/Java/JavaVirtualMachines/jdk-9.jdk/Contents/Home!/java.base
-        val urls = JpsJavaExtensionService.dependencies(target.module)
-                .satisfying { dependency -> dependency is JpsSdkDependency }
-                .classes().urls
-
-        val url = urls.firstOrNull { it.startsWith(StandardFileSystems.JRT_PROTOCOL_PREFIX) } ?: return null
-
-        return File(url.substringAfter(StandardFileSystems.JRT_PROTOCOL_PREFIX).substringBeforeLast(URLUtil.JAR_SEPARATOR))
     }
 
     private fun findSourceRoots(context: CompileContext, target: ModuleBuildTarget): List<JvmSourceRoot> {

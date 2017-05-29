@@ -494,17 +494,6 @@ public class KotlinTestUtils {
         return configuration;
     }
 
-    @Nullable
-    public static File getJre9HomeIfPossible() {
-        String jdk9 = System.getenv("JDK_19");
-        if (jdk9 == null) {
-            // TODO: replace this with a failure as soon as Java 9 is installed on all TeamCity agents
-            System.err.println("Environment variable JDK_19 is not set, the test will be skipped");
-            return null;
-        }
-        return new File(jdk9);
-    }
-
     @NotNull
     private static String getJreHome(@NotNull String jdkHome) {
         File jre = new File(jdkHome, "jre");
