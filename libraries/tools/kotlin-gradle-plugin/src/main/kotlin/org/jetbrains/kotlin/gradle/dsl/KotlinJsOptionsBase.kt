@@ -4,14 +4,14 @@ package org.jetbrains.kotlin.gradle.dsl
 
 internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions {
 
-    private var apiVersionField: kotlin.String? = null
-    override var apiVersion: kotlin.String
-        get() = apiVersionField ?: "1.1"
+    private var apiVersionField: kotlin.String?? = null
+    override var apiVersion: kotlin.String?
+        get() = apiVersionField ?: null
         set(value) { apiVersionField = value }
 
-    private var languageVersionField: kotlin.String? = null
-    override var languageVersion: kotlin.String
-        get() = languageVersionField ?: "1.1"
+    private var languageVersionField: kotlin.String?? = null
+    override var languageVersion: kotlin.String?
+        get() = languageVersionField ?: null
         set(value) { languageVersionField = value }
 
     private var suppressWarningsField: kotlin.Boolean? = null
@@ -87,8 +87,8 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
 }
 
 internal fun org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments.fillDefaultValues() {
-    apiVersion = "1.1"
-    languageVersion = "1.1"
+    apiVersion = null
+    languageVersion = null
     suppressWarnings = false
     verbose = false
     friendModulesDisabled = false

@@ -29,7 +29,7 @@ open class DefaultValues(val defaultValue: String, val possibleValues: List<Stri
     object StringNullDefault : DefaultValues("null")
 
     object LanguageVersions : DefaultValues(
-            "\"" + LanguageVersion.LATEST_STABLE.versionString + "\"",
+            "null",
             LanguageVersion.values().map { "\"${it.description}\"" }
     )
 
