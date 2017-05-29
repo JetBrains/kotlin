@@ -1792,6 +1792,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/reifiedNullIs.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("trivialInstanceOf.kt")
+        public void testTrivialInstanceOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/trivialInstanceOf.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/ranges")

@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.codegen.coroutines.withInstructionAdapter
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.optimization.DeadCodeEliminationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
+import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.optimization.common.isInsn
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -87,28 +87,30 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
         private fun injectNullabilityAssumptions(checkedReferenceTypes: Map<AbstractInsnNode, Type>) =
                 NullabilityAssumptionsBuilder(checkedReferenceTypes).injectNullabilityAssumptions()
 
-        private fun analyzeNullabilities(): Map<AbstractInsnNode, Nullability> {
+        private fun analyzeNullabilities(): Map<AbstractInsnNode, StrictBasicValue> {
             val frames = analyze(internalClassName, methodNode, NullabilityInterpreter())
             val insns = methodNode.instructions.toArray()
-            val nullabilityMap = HashMap<AbstractInsnNode, Nullability>()
+            val nullabilityMap = LinkedHashMap<AbstractInsnNode, StrictBasicValue>()
             for (i in insns.indices) {
-                val nullability = frames[i]?.top()?.getNullability() ?: continue
+                val top = frames[i]?.top() as? StrictBasicValue ?: continue
+                val nullability = top.getNullability()
                 if (nullability == Nullability.NULLABLE) continue
 
                 val insn = insns[i]
                 if (insn.isInstanceOfOrNullCheck()) {
-                    nullabilityMap[insn] = nullability
+                    nullabilityMap[insn] = top
                 }
             }
             return nullabilityMap
         }
 
-        private fun transformTrivialChecks(nullabilityMap: Map<AbstractInsnNode, Nullability>) {
-            for ((insn, nullability) in nullabilityMap) {
+        private fun transformTrivialChecks(nullabilityMap: Map<AbstractInsnNode, StrictBasicValue>) {
+            for ((insn, value) in nullabilityMap) {
+                val nullability = value.getNullability()
                 when (insn.opcode) {
                     Opcodes.IFNULL -> transformTrivialNullJump(insn as JumpInsnNode, nullability == Nullability.NULL)
                     Opcodes.IFNONNULL -> transformTrivialNullJump(insn as JumpInsnNode, nullability == Nullability.NOT_NULL)
-                    Opcodes.INSTANCEOF -> transformInstanceOf(insn, nullability)
+                    Opcodes.INSTANCEOF -> transformInstanceOf(insn as TypeInsnNode, nullability, value)
                 }
             }
         }
@@ -127,37 +129,22 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
             }
         }
 
-        private fun transformInstanceOf(insn: AbstractInsnNode, nullability: Nullability) {
-            if (nullability != Nullability.NULL) return
+        private fun transformInstanceOf(insn: TypeInsnNode, nullability: Nullability, value: StrictBasicValue) {
             if (ReifiedTypeInliner.isOperationReifiedMarker(insn.previous)) return
-
-            changes = true
-
-            val nextOpcode = insn.next?.opcode
-            if (nextOpcode == Opcodes.IFEQ || nextOpcode == Opcodes.IFNE)
-                transformNullInstanceOfWithJump(insn)
-            else
-                transformNullInstanceOf(insn)
-        }
-
-        private fun transformNullInstanceOf(insn: AbstractInsnNode) {
-            methodNode.instructions.run {
-                popReferenceValueBefore(insn)
-                set(insn, InsnNode(Opcodes.ICONST_0))
+            if (nullability == Nullability.NULL) {
+                changes = true
+                transformTrivialInstanceOf(insn, false)
+            }
+            else if (nullability == Nullability.NOT_NULL && value.type.internalName == insn.desc) {
+                changes = true
+                transformTrivialInstanceOf(insn, true)
             }
         }
 
-        private fun transformNullInstanceOfWithJump(insn: AbstractInsnNode) {
+        private fun transformTrivialInstanceOf(insn: AbstractInsnNode, constValue: Boolean) {
             methodNode.instructions.run {
                 popReferenceValueBefore(insn)
-                val jump = insn.next.assertedCast<JumpInsnNode> { "JumpInsnNode expected" }
-                remove(insn)
-                if (jump.opcode == Opcodes.IFEQ) {
-                    set(jump, JumpInsnNode(Opcodes.GOTO, jump.label))
-                }
-                else {
-                    remove(jump)
-                }
+                set(insn, if (constValue) InsnNode(Opcodes.ICONST_1) else InsnNode(Opcodes.ICONST_0))
             }
         }
 
@@ -345,7 +332,9 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
 }
 
 internal fun AbstractInsnNode.isInstanceOfOrNullCheck() =
-        opcode == Opcodes.INSTANCEOF || opcode == Opcodes.IFNULL || opcode == Opcodes.IFNONNULL
+        opcode == Opcodes.INSTANCEOF ||
+        opcode == Opcodes.IFNULL ||
+        opcode == Opcodes.IFNONNULL
 
 internal fun AbstractInsnNode.isCheckParameterNotNull() =
         isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {

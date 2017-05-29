@@ -11443,6 +11443,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullCheckOptimization/kt7774.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("trivialInstanceOf.kt")
+        public void testTrivialInstanceOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullCheckOptimization/trivialInstanceOf.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/objectIntrinsics")

@@ -1,21 +1,24 @@
 sealed class A {
-    object B : A()
+    class B : A()
 
     class C : A()
 }
 
-fun foo(): A = A.C()
+inline fun foo(): A = A.B()
 
 fun box(): String {
     val a: A = foo()
     val b: Boolean
     when (a) {
-        A.B -> b = true
+        is A.B -> b = true
         is A.C -> b = false
     }
-    return if (!b) "OK" else "FAIL"
+    return if (b) "OK" else "FAIL"
 }
 
 // 0 TABLESWITCH
 // 0 LOOKUPSWITCH
-// 1 ATHROW
+// 0 ATHROW
+// 0 INSTANCEOF
+// 0 FAIL
+// 0 POP
