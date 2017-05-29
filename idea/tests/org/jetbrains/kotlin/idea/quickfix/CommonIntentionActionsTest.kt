@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.JvmCommonIntentionActionsFactory
+import com.intellij.codeInsight.intention.NewCallableMemberInfo
 import com.intellij.lang.Language
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiModifier
@@ -92,8 +93,8 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddMethodAction(
-                atCaret<UClass>(myFixture), "baz", PsiModifier.PRIVATE, PsiType.VOID)!!)
+        myFixture.launchAction(codeModifications.createAddCallableMemberActions(NewCallableMemberInfo.simpleMethodInfo(
+                atCaret<UClass>(myFixture), "baz", PsiModifier.PRIVATE, PsiType.VOID, emptyList())).first())
         myFixture.checkResult("""
         |class Foo {
         |    fun bar() {}
@@ -111,12 +112,12 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddMethodAction(
-                atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.INT, PsiType.INT)!!)
+        myFixture.launchAction(codeModifications.createAddCallableMemberActions(NewCallableMemberInfo.simpleMethodInfo(
+                atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.INT,paramsMaker(PsiType.INT))).first())
         myFixture.checkResult("""
         |class Foo {
         |    fun bar() {}
-        |    fun baz(arg1: Int): Int {
+        |    fun baz(param0: Int): Int {
         |
         |    }
         |}
@@ -129,8 +130,8 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddConstructorActions(
-                atCaret<UClass>(myFixture), *paramsMaker(PsiType.INT)).first())
+        myFixture.launchAction(codeModifications.createAddCallableMemberActions(NewCallableMemberInfo.constructorInfo(
+                atCaret<UClass>(myFixture), paramsMaker(PsiType.INT))).first())
         myFixture.checkResult("""
         |class Foo {
         |    constructor(param0: Int) {
@@ -140,13 +141,12 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin(), true)
     }
 
-    fun paramsMaker(vararg psyTypes: PsiType): Array<UParameter> {
+    fun paramsMaker(vararg psyTypes: PsiType): List<UParameter> {
         val uastContext = UastContext(myFixture.project)
         val parameterList = JavaPsiFacade.getElementFactory(myFixture.project)
                 .createParameterList(psyTypes.indices.map { "param$it" }.toTypedArray(), psyTypes)
         return parameterList.parameters
                 .map { uastContext.convertElement(it, null, UParameter::class.java) as UParameter }
-                .toTypedArray()
     }
 
     fun testAddStringVarProperty() {

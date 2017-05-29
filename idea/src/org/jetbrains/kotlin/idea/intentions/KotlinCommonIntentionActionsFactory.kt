@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.JvmCommonIntentionActionsFactory
+import com.intellij.codeInsight.intention.NewCallableMemberInfo
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -45,7 +46,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UParameter
 
 
 class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
@@ -103,49 +103,67 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
         }
     }
 
-    override fun createAddMethodAction(uClass: UClass, methodName: String, visibilityModifier: String, returnType: PsiType, vararg parameters: PsiType): IntentionAction? {
-        return Fix(uClass, "Add method", "Add method '$methodName' to '${uClass.name}'") {
-            uClass ->
-            val visibilityStr = javaVisibilityMapping.getValue(visibilityModifier)
-            val psiFactory = KtPsiFactory(uClass)
-            val functionString = psiFactory.createFunction(CallableBuilder(FUNCTION).apply {
-                modifier(visibilityStr)
-                typeParams()
-                name(methodName)
-                for ((index, psiType) in parameters.withIndex()) {
-                    param("arg${index + 1}", typeString(psiType))
-                }
-                if (returnType == PsiType.VOID)
+    private fun CallableBuilder.paramsFromInfo(info: NewCallableMemberInfo) {
+        for ((index, param) in info.parameters.withIndex()) {
+            param(param.name ?: "arg${index + 1}", typeString(param.type))
+        }
+    }
+
+    private fun createAddMethodAction(info: NewCallableMemberInfo): IntentionAction? {
+        val visibilityStr = info.modifiers.map { javaVisibilityMapping.get(it) ?: it }.joinToString(" ")
+        val functionString = CallableBuilder(FUNCTION).apply {
+            modifier(visibilityStr)
+            typeParams()
+            name(info.name!!)
+            paramsFromInfo(info)
+            info.returnType.let { returnType ->
+                if (returnType == null || returnType == PsiType.VOID)
                     noReturnType()
                 else
                     returnType(typeString(returnType))
-                blockBody("")
-            }.asString())
-            val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
-            insertMembersAfter(null, ktClassOrObject, listOf(functionString), ktClassOrObject.declarations.lastOrNull())
+            }
+            blockBody("")
         }
 
+        return Fix(info.containingClass, "Add method", "Add method '${info.name}' to '${info.containingClass.name}'") {
+            uClass ->
+            val psiFactory = KtPsiFactory(uClass)
+            val function = psiFactory.createFunction(functionString.asString())
+            val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
+            insertMembersAfter(null, ktClassOrObject, listOf(function), ktClassOrObject.declarations.lastOrNull())
+        }
 
     }
 
-    override fun createAddConstructorActions(uClass: UClass, vararg parameters: UParameter): Array<IntentionAction> {
+    override fun createAddCallableMemberActions(info: NewCallableMemberInfo): List<IntentionAction> {
+        return when (info.kind) {
+            NewCallableMemberInfo.CallableKind.FUNCTION ->
+                createAddMethodAction(info)?.let { listOf(it) } ?: emptyList()
 
-        return arrayOf(Fix(uClass, "Add method", "Add constructor with ${parameters.size} parameters to '${uClass.name}'")
-                       { uClass ->
-                           val psiFactory = KtPsiFactory(uClass)
-                           val constructorString = psiFactory.createSecondaryConstructor(CallableBuilder(CONSTRUCTOR).apply {
-                               modifier("")
-                               typeParams()
-                               name()
-                               for ((index, param) in parameters.withIndex()) {
-                                   param(param.name ?: "arg${index + 1}", typeString(param.type))
-                               }
-                               noReturnType()
-                               blockBody("")
-                           }.asString())
-                           val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
-                           insertMembersAfter(null, ktClassOrObject, listOf(constructorString), null)
-                       })
+            NewCallableMemberInfo.CallableKind.CONSTRUCTOR ->
+                createAddConstructorActions(info)
+        }
+    }
+
+    private fun createAddConstructorActions(info: NewCallableMemberInfo): List<IntentionAction> {
+        val constructorString = CallableBuilder(CONSTRUCTOR).apply {
+            modifier("")
+            typeParams()
+            name()
+            paramsFromInfo(info)
+            noReturnType()
+            blockBody("")
+        }
+
+        return listOf(Fix(info.containingClass,
+                          "Add method",
+                          "Add constructor with ${info.parameters.size} parameters to '${info.containingClass.name}'")
+                      { uClass ->
+                          val psiFactory = KtPsiFactory(uClass)
+                          val constructor = psiFactory.createSecondaryConstructor(constructorString.asString())
+                          val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
+                          insertMembersAfter(null, ktClassOrObject, listOf(constructor), null)
+                      })
 
     }
 
