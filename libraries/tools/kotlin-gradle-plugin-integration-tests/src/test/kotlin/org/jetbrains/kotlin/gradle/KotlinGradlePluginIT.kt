@@ -492,4 +492,53 @@ class KotlinGradleIT: BaseGradleIT() {
             assertSuccessful()
         }
     }
+
+    @Test
+    fun testLanguageVersionApiVersionExplicit() {
+        val project = Project("kotlinProject", "3.3")
+        project.setupWorkingDir()
+
+        val buildGradle = File(project.projectDir, "build.gradle")
+        val buildGradleContentCopy = buildGradle.readText()
+
+        fun updateBuildGradle(langVersion: String, apiVersion: String) {
+            buildGradle.writeText(
+                    """
+                $buildGradleContentCopy
+
+                compileKotlin {
+                    kotlinOptions {
+                        languageVersion = '$langVersion'
+                        apiVersion = '$apiVersion'
+                    }
+                }
+            """.trimIndent())
+        }
+
+        assert(buildGradleContentCopy.indexOf("languageVersion") < 0) { "build.gradle should not contain 'languageVersion'" }
+        assert(buildGradleContentCopy.indexOf("apiVersion") < 0) { "build.gradle should not contain 'apiVersion'" }
+
+        // check the arguments are not passed by default (they are inferred by the compiler)
+        project.build("clean", "compileKotlin") {
+            assertSuccessful()
+            assertNotContains("-language-version")
+            assertNotContains("-api-version")
+            assertNoWarnings()
+        }
+
+        // check the arguments are always passed if specified explicitly
+        updateBuildGradle("1.0", "1.0")
+        project.build("clean", "compileKotlin") {
+            assertSuccessful()
+            assertContains("-language-version 1.0")
+            assertContains("-api-version 1.0")
+        }
+
+        updateBuildGradle("1.1", "1.1")
+        project.build("clean", "compileKotlin") {
+            assertSuccessful()
+            assertContains("-language-version 1.1")
+            assertContains("-api-version 1.1")
+        }
+    }
 }
