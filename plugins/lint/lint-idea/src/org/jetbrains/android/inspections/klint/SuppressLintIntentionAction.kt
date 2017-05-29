@@ -27,6 +27,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.android.util.AndroidBundle
+import org.jetbrains.kotlin.android.hasBackingField
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -97,9 +98,16 @@ class SuppressLintIntentionAction(val id: String, val element: PsiElement) : Int
     private fun getLintId(intentionId: String) =
             if (intentionId.startsWith(INTENTION_NAME_PREFIX)) intentionId.substring(INTENTION_NAME_PREFIX.length) else intentionId
 
-    private fun KtElement.isNewLineNeededForAnnotation() = !(this is KtParameter || this is KtTypeParameter)
+    private fun KtElement.isNewLineNeededForAnnotation(): Boolean {
+        return !(this is KtParameter ||
+                 this is KtTypeParameter ||
+                 this is KtPropertyAccessor)
+    }
 
-    private fun PsiElement.isSuppressLintTarget() = this is KtDeclaration &&
-                                                    this !is KtDestructuringDeclaration &&
-                                                    this !is KtFunctionLiteral
+    private fun PsiElement.isSuppressLintTarget(): Boolean {
+        return this is KtDeclaration &&
+               (this as? KtProperty)?.hasBackingField() ?: true &&
+               this !is KtFunctionLiteral &&
+               this !is KtDestructuringDeclaration
+    }
 }

@@ -113,6 +113,12 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
             doTest(fileName);
         }
 
+        @TestMetadata("topLevelProperty.kt")
+        public void testTopLevelProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/requiresApi/topLevelProperty.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("when.kt")
         public void testWhen() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/requiresApi/when.kt");
@@ -236,6 +242,12 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
         @TestMetadata("property.kt")
         public void testProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/targetApi/property.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelProperty.kt")
+        public void testTopLevelProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/targetApi/topLevelProperty.kt");
             doTest(fileName);
         }
 
