@@ -5867,6 +5867,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("propertyWithGetter.kt")
+        public void testPropertyWithGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/propertyWithGetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyWithSetter.kt")
+        public void testPropertyWithSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/propertyWithSetter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("protectedConstructor.kt")
         public void testProtectedConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/protectedConstructor.kt");
