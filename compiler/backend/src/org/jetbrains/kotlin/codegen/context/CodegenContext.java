@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -574,7 +574,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
         if (descriptorContext == null &&
             JavaVisibilities.PROTECTED_STATIC_VISIBILITY == descriptor.getVisibility() &&
-            !(descriptor instanceof SamConstructorDescriptor)) {
+            (!(descriptor.getOriginal() instanceof SamConstructorDescriptor))) {
             //seems we need static receiver in resolved call
             descriptorContext = ExpressionCodegen.getParentContextSubclassOf((ClassDescriptor) enclosed, this);
             superCallTarget = (ClassDescriptor) enclosed;
