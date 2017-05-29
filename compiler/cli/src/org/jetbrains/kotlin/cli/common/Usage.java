@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common;
 
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.arguments.Argument;
@@ -80,7 +81,7 @@ class Usage {
         }
 
         sb.append(" ");
-        sb.append(argument.description());
+        sb.append(argument.description().replace("\n", "\n" + StringsKt.repeat(" ", OPTION_NAME_PADDING_WIDTH)));
         return sb.toString();
     }
 }
