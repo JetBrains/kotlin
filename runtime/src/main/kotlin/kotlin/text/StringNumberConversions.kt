@@ -16,6 +16,8 @@
 
 package kotlin.text
 
+import konan.internal.FloatingPointParser
+
 /**
  * Returns a string representation of this [Byte] value in the specified [radix].
  */
@@ -118,20 +120,14 @@ public inline fun String.toLong(): Long = toLongOrNull() ?: throw NumberFormatEx
 @kotlin.internal.InlineOnly
 public inline fun String.toLong(radix: Int): Long = toLongOrNull(radix) ?: throw NumberFormatException()
 
-@SymbolName("Kotlin_String_parseFloat")
-external private fun parseFloat(value: String): Float
-
 /**
  * Parses the string as a [Float] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun String.toFloat(): Float = parseFloat(this)
+public inline fun String.toFloat(): Float = FloatingPointParser.parseFloat(this)
 
-
-@SymbolName("Kotlin_String_parseDouble")
-external private fun parseDouble(value: String): Double
 
 /**
  * Parses the string as a [Double] number and returns the result.
@@ -139,7 +135,7 @@ external private fun parseDouble(value: String): Double
  */
 @kotlin.internal.InlineOnly
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun String.toDouble(): Double = parseDouble(this)
+public inline fun String.toDouble(): Double = FloatingPointParser.parseDouble(this)
 
 
 /**

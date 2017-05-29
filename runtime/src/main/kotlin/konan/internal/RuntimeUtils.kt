@@ -45,6 +45,11 @@ internal fun ThrowNumberFormatException() : Nothing {
     throw NumberFormatException()
 }
 
+@ExportForCppRuntime
+internal fun ThrowOutOfMemoryError() : Nothing {
+    throw OutOfMemoryError()
+}
+
 fun ThrowNoWhenBranchMatchedException(): Nothing {
     throw NoWhenBranchMatchedException()
 }

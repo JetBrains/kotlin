@@ -42,6 +42,8 @@ void ThrowClassCastException();
 void ThrowArithmeticException();
 // Throws number format exception.
 void ThrowNumberFormatException();
+// Throws out of memory error.
+void ThrowOutOfMemoryError();
 
 #ifdef __cplusplus
 } // extern "C"

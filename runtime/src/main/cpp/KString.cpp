@@ -703,33 +703,6 @@ void checkParsingErrors(const char* c_str, const char* end, std::string::size_ty
   }
 }
 
-// TODO: Java Double.valueOf specification requires mandatory binary exponent character (p) in the string parsed if the string is a hex one.
-// See: http://docs.oracle.com/javase/8/docs/api/java/lang/Double.html#valueOf-java.lang.String-
-// E.g.
-// "0x77p0".toDouble() // OK for both Kotlin/JVM and Kotlin/Native.
-// "0x77".toDouble()   // throws NumberFormatException in Kotlin/JVM and OK in Kotlin/Native.
-// Do we need to handle such case? Or it is OK to consume such strings?
-KFloat parseFloat(KString value) {
-  const KChar* utf16 = CharArrayAddressOfElementAt(value, 0);
-  std::string utf8;
-  utf8::utf16to8(utf16, utf16 + value->count_, back_inserter(utf8));
-  char* end = nullptr;
-  KFloat result = strtof(utf8.c_str(), &end);
-  checkParsingErrors(utf8.c_str(), end, utf8.size());
-  return result;
-}
-
-KDouble parseDouble(KString value) {
-  const KChar* utf16 =
-      CharArrayAddressOfElementAt(value, 0);
-  std::string utf8;
-  utf8::utf16to8(utf16, utf16 + value->count_, back_inserter(utf8));
-  char* end = nullptr;
-  KDouble result = strtod(utf8.c_str(), &end);
-  checkParsingErrors(utf8.c_str(), end, utf8.size());
-  return result;
-}
-
 } // namespace
 
 extern "C" {
@@ -1170,14 +1143,6 @@ OBJ_GETTER0(Kotlin_io_Console_readLine) {
     return nullptr;
   }
   RETURN_RESULT_OF(CreateStringFromCString, data);
-}
-
-KFloat Kotlin_String_parseFloat(KString value) {
-  return parseFloat(value);
-}
-
-KDouble Kotlin_String_parseDouble(KString value) {
-  return parseDouble(value);
 }
 
 } // extern "C"

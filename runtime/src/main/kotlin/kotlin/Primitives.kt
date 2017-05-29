@@ -16,6 +16,8 @@
 
 package kotlin
 
+import konan.internal.NumberConverter
+
 /**
  * Represents a 8-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `byte`.
@@ -1151,8 +1153,7 @@ public final class Float : Number(), Comparable<Float> {
     public override fun equals(other: Any?): Boolean =
             other is Float && konan.internal.areEqualByValue(this, other)
 
-    @SymbolName("Kotlin_Float_toString")
-    external public override fun toString(): String
+    public override fun toString() = NumberConverter.convert(this)
 
     public override fun hashCode(): Int {
         return bits()
@@ -1371,8 +1372,7 @@ public final class Double : Number(), Comparable<Double> {
     public override fun equals(other: Any?): Boolean =
             other is Double && konan.internal.areEqualByValue(this, other)
 
-    @SymbolName("Kotlin_Double_toString")
-    external public override fun toString(): String
+    public override fun toString() = NumberConverter.convert(this)
 
     public override fun hashCode(): Int {
         return bits().hashCode()
