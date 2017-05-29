@@ -1637,7 +1637,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (descriptor instanceof TypeAliasDescriptor) {
             ClassDescriptor classDescriptor = ((TypeAliasDescriptor) descriptor).getClassDescriptor();
             if (classDescriptor == null) {
-                throw new IllegalStateException("Type alias " + descriptor + " static member refernece should be rejected by type checker, " +
+                throw new IllegalStateException("Type alias " + descriptor + " static member reference should be rejected by type checker, " +
                                                 "since there is no class corresponding to this type alias.");
             }
             descriptor = classDescriptor;
