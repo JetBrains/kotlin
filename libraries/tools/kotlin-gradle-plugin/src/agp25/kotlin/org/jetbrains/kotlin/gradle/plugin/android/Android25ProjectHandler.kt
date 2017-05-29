@@ -38,15 +38,17 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
                                  kotlinTask: KotlinCompile,
                                  kotlinAfterJavaTask: KotlinCompile?) {
 
-        val preJavaKotlinOutput = project.files().builtBy(kotlinTask)
-        if (kotlinAfterJavaTask == null) {
-            preJavaKotlinOutput.add(project.files(kotlinTask.destinationDir))
+        val preJavaKotlinOutputFiles = mutableListOf<File>().apply {
+            if (kotlinAfterJavaTask == null) {
+                add(kotlinTask.destinationDir)
+            }
+            if (Kapt3GradleSubplugin.isEnabled(project)) {
+                // Add Kapt3 output as well, since there's no SyncOutputTask with the new API
+                val kaptClasssesDir = Kapt3KotlinGradleSubplugin.getKaptClasssesDir(project, getVariantName(variantData))
+                add(kaptClasssesDir)
+            }
         }
-        if (Kapt3GradleSubplugin.isEnabled(project)) {
-            // Add Kapt3 output as well, since there's no SyncOutputTask with the new API
-            val kaptClasssesDir = Kapt3KotlinGradleSubplugin.getKaptClasssesDir(project, getVariantName(variantData))
-            preJavaKotlinOutput.add(project.files(kaptClasssesDir))
-        }
+        val preJavaKotlinOutput = project.files(*preJavaKotlinOutputFiles.toTypedArray()).builtBy(kotlinTask)
 
         val preJavaClasspathKey = variantData.registerPreJavacGeneratedBytecode(preJavaKotlinOutput)
         kotlinTask.dependsOn(variantData.getSourceFolders(SourceKind.JAVA))
