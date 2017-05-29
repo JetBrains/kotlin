@@ -7152,6 +7152,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/moveReceiverAnnotation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MoveReceiverAnnotation extends AbstractQuickFixTest {
+        public void testAllFilesPresentInMoveReceiverAnnotation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/moveReceiverAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("fun.kt")
+        public void testFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/moveReceiverAnnotation/fun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notExtensionFun.kt")
+        public void testNotExtensionFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/moveReceiverAnnotation/notExtensionFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notExtensionVal.kt")
+        public void testNotExtensionVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/moveReceiverAnnotation/notExtensionVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("val.kt")
+        public void testVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/moveReceiverAnnotation/val.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/moveToConstructorParameters")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

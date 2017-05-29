@@ -494,5 +494,7 @@ class QuickFixRegistrar : QuickFixContributor {
         MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(AddModifierFix.AddLateinitFactory)
 
         RETURN_NOT_ALLOWED.registerFactory(ChangeToLabeledReturnFix)
+
+        INAPPLICABLE_RECEIVER_TARGET.registerFactory(MoveReceiverAnnotationFix)
     }
 }
