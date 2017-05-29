@@ -1127,17 +1127,22 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (KtSuperTypeListEntry specifier : delegationSpecifiers) {
             if (specifier instanceof KtDelegatedSuperTypeEntry) {
                 KtExpression expression = ((KtDelegatedSuperTypeEntry) specifier).getDelegateExpression();
-                PropertyDescriptor propertyDescriptor = CodegenUtil.getDelegatePropertyIfAny(expression, descriptor, bindingContext);
-
+                PropertyDescriptor propertyDescriptor = expression != null
+                                                        ? CodegenUtil.getDelegatePropertyIfAny(expression, descriptor, bindingContext)
+                                                        : null;
 
                 if (CodegenUtil.isFinalPropertyWithBackingField(propertyDescriptor, bindingContext)) {
                     result.addField((KtDelegatedSuperTypeEntry) specifier, propertyDescriptor);
                 }
                 else {
-                    KotlinType expressionType = expression != null ? bindingContext.getType(expression) : null;
-                    Type asmType =
-                            expressionType != null ? typeMapper.mapType(expressionType) : typeMapper.mapType(getSuperClass(specifier));
-                    result.addField((KtDelegatedSuperTypeEntry) specifier, asmType, JvmAbi.DELEGATE_SUPER_FIELD_PREFIX + n);
+                    KotlinType expressionType = expression != null
+                                                ? bindingContext.getType(expression)
+                                                : null;
+                    ClassDescriptor superClass = getSuperClass(specifier);
+                    if (superClass != null) {
+                        Type asmType = expressionType != null ? typeMapper.mapType(expressionType) : typeMapper.mapType(superClass);
+                        result.addField((KtDelegatedSuperTypeEntry) specifier, asmType, JvmAbi.DELEGATE_SUPER_FIELD_PREFIX + n);
+                    }
                 }
                 n++;
             }
@@ -1145,7 +1150,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         return result;
     }
 
-    @NotNull
+    @Nullable
     private ClassDescriptor getSuperClass(@NotNull KtSuperTypeListEntry specifier) {
         return CodegenUtil.getSuperClassBySuperTypeListEntry(specifier, bindingContext);
     }

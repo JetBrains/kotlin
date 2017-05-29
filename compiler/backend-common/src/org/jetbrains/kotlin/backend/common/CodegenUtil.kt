@@ -101,12 +101,11 @@ object CodegenUtil {
     }
 
     @JvmStatic
-    fun getSuperClassBySuperTypeListEntry(specifier: KtSuperTypeListEntry, bindingContext: BindingContext): ClassDescriptor {
+    fun getSuperClassBySuperTypeListEntry(specifier: KtSuperTypeListEntry, bindingContext: BindingContext): ClassDescriptor? {
         val superType = bindingContext.get(BindingContext.TYPE, specifier.typeReference!!)
                         ?: error("superType should not be null: ${specifier.text}")
 
         return superType.constructor.declarationDescriptor as? ClassDescriptor
-               ?: error("ClassDescriptor of superType should not be null: ${specifier.text}")
     }
 
     @JvmStatic
