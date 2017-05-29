@@ -986,13 +986,11 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testInLambda2() = doFunTest(
             """
-            some {
-                p<caret> ->
+            some { p<caret> ->
             }
             """,
             """
-            some {
-                p ->
+            some { p ->
                 <caret>
             }
             """
@@ -1000,13 +998,11 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testInLambda3() = doFunTest(
             """
-            some {
-                (<caret>p: Int) : Int ->
+            some { (<caret>p: Int) : Int ->
             }
             """,
             """
-            some {
-                (p: Int) : Int ->
+            some { (p: Int) : Int ->
                 <caret>
             }
             """

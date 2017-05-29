@@ -7,8 +7,7 @@ fun test() {
         }
     }
 
-    2 ?: some {
-        s ->
+    2 ?: some { s ->
         val a = 12
     }
 }
