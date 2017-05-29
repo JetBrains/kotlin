@@ -34,9 +34,6 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "-library", shortName = "-l", valueDescription = "<path>", description = "Link with the library")
     public String[] libraries;
 
-    @Argument(value = "-linkerArgs", valueDescription = "<arg>", description = "Pass arguments to linker", delimiter = " ")
-    public String[] linkerArguments;
-
     @Argument(value = "-list_targets", description = "List available hardware targets")
     public boolean listTargets;
 
