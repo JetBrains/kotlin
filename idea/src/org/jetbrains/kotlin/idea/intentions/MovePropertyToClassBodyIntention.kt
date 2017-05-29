@@ -39,7 +39,8 @@ class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(KtP
         val propertyDeclaration = KtPsiFactory(element)
                 .createProperty("${element.valOrVarKeyword?.text} ${element.name} = ${element.name}")
 
-        parentClass.addDeclaration(propertyDeclaration).apply {
+        val firstProperty = parentClass.getProperties().firstOrNull()
+        parentClass.addDeclarationBefore(propertyDeclaration, firstProperty).apply {
             val propertyModifierList = element.modifierList?.copy() as? KtModifierList
             propertyModifierList?.let { modifierList?.replace(it) ?: addBefore(it, firstChild) }
             modifierList?.annotationEntries?.forEach {

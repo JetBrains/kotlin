@@ -11573,6 +11573,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("location1.kt")
+        public void testLocation1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToClassBody/location1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("location2.kt")
+        public void testLocation2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToClassBody/location2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("parameterAnnotation.kt")
         public void testParameterAnnotation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToClassBody/parameterAnnotation.kt");
