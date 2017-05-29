@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.optimization.nullCheck
 
 import org.jetbrains.kotlin.codegen.coroutines.withInstructionAdapter
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.DeadCodeEliminationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
@@ -403,21 +404,21 @@ internal fun AbstractInsnNode.isInstanceOfOrNullCheck() =
 
 internal fun AbstractInsnNode.isCheckParameterIsNotNull() =
         isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
-            owner == "kotlin/jvm/internal/Intrinsics" &&
+            owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
             name == "checkParameterIsNotNull" &&
             desc == "(Ljava/lang/Object;Ljava/lang/String;)V"
         }
 
 internal fun AbstractInsnNode.isCheckExpressionValueIsNotNull() =
         isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
-            owner == "kotlin/jvm/internal/Intrinsics" &&
+            owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
             name == "checkExpressionValueIsNotNull" &&
             desc == "(Ljava/lang/Object;Ljava/lang/String;)V"
         }
 
 internal fun AbstractInsnNode.isThrowNpeIntrinsic() =
         isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
-            owner == "kotlin/jvm/internal/Intrinsics" &&
+            owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
             name == "throwNpe" &&
             desc == "()V"
         }

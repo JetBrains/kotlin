@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.optimization.boxing
 import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.RangeCodegenUtil
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.name.FqName
@@ -228,7 +229,7 @@ fun areSameTypedBoxedValues(values: List<BasicValue>): Boolean {
 fun AbstractInsnNode.isAreEqualIntrinsic() =
         isMethodInsnWith(Opcodes.INVOKESTATIC) {
             name == "areEqual" &&
-            owner == "kotlin/jvm/internal/Intrinsics" &&
+            owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
             desc == "(Ljava/lang/Object;Ljava/lang/Object;)Z"
         }
 
