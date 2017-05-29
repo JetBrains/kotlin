@@ -34,6 +34,15 @@ fun main(args: Array<String>) {
     processLib(konanHome, substitutions, parseArgs(args))
 }
 
+// Options, whose values are space-separated and can be escaped.
+val escapedOptions = setOf("-compilerOpts", "-linkerOpts")
+
+private fun String.asArgList(key: String) =
+        if (escapedOptions.contains(key))
+            this.split(Regex("(?<!\\\\)\\Q \\E")).filter { it.isNotEmpty() }.map { it.replace("\\ ", " ") }
+        else
+            listOf(this)
+
 private fun parseArgs(args: Array<String>): Map<String, List<String>> {
     val commandLine = mutableMapOf<String, MutableList<String>>()
     for (index in 0..args.size - 1 step 2) {
@@ -44,8 +53,8 @@ private fun parseArgs(args: Array<String>): Map<String, List<String>> {
         if (index + 1 == args.size) {
             throw IllegalArgumentException("Expected an value after $key")
         }
-        val value = args[index + 1]
-        commandLine[key]?.add(value) ?: commandLine.put(key, mutableListOf(value))
+        val value = args[index + 1].asArgList(key)
+        commandLine[key]?.addAll(value) ?: commandLine.put(key, value.toMutableList())
     }
     return commandLine
 }
@@ -273,8 +282,8 @@ private fun usage() {
 Run interop tool with -def <def_file_for_lib>.def
 Following flags are supported:
   -def <file>.def specifies library definition file
-  -copt <c compiler flags> specifies flags passed to clang
-  -lopt <linker flags> specifies flags passed to linker
+  -compilerOpts <c compiler flags> specifies flags passed to clang
+  -linkerOpts <linker flags> specifies flags passed to linker
   -verbose <boolean> increases verbosity
   -shims <boolean> adds generation of shims tracing native library calls
   -pkg <fully qualified package name> place the resulting definitions into the package
@@ -317,16 +326,14 @@ private fun processLib(konanHome: String,
     val llvmHome = konanProperties.getHostSpecific("llvmHome")!!
     val llvmInstallPath = "$dependencies/$llvmHome"
     val additionalHeaders = args["-h"].orEmpty()
-    val additionalCompilerOpts = args["-copt"].orEmpty()
-    val additionalLinkerOpts = args["-lopt"].orEmpty()
+    val additionalCompilerOpts = args["-copt"].orEmpty()+ args["-compilerOpts"].orEmpty()
+    val additionalLinkerOpts = args["-lopt"].orEmpty() + args["-linkerOpts"].orEmpty()
     val generateShims = args["-shims"].isTrue()
     val verbose = args["-verbose"].isTrue()
 
     val defaultOpts = konanProperties.defaultCompilerOpts(target, dependencies)
     val headerFiles = config.getSpaceSeparated("headers") + additionalHeaders
-    val compilerOpts =
-            config.getSpaceSeparated("compilerOpts") +
-                    defaultOpts + additionalCompilerOpts
+    val compilerOpts = config.getSpaceSeparated("compilerOpts") + defaultOpts + additionalCompilerOpts
     val compiler = "clang"
     val language = Language.C
     val excludeSystemLibs = config.getProperty("excludeSystemLibs")?.toBoolean() ?: false
@@ -334,8 +341,7 @@ private fun processLib(konanHome: String,
 
     val entryPoint = config.getSpaceSeparated("entryPoint").atMostOne()
     val linkerOpts =
-            config.getSpaceSeparated("linkerOpts").toTypedArray() +
-                    defaultOpts + additionalLinkerOpts
+            config.getSpaceSeparated("linkerOpts").toTypedArray() + defaultOpts + additionalLinkerOpts
     val linker = args["-linker"]?.atMostOne() ?: config.getProperty("linker") ?: "clang"
     val excludedFunctions = config.getSpaceSeparated("excludedFunctions").toSet()
 

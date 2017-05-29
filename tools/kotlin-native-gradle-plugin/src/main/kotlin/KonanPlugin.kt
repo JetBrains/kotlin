@@ -153,15 +153,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         }
     }
 
-    private fun String.isSupported(): Boolean {
-        val os = CompilerDownloadTask.simpleOsName()
-        return when (os) {
-            "macos" -> this == "macbook" || this == "iphone"
-            "linux" -> this == "linux" || this == "raspberrypi"
-            else -> false
-        }
-    }
-
     // TODO: Create default config? what about test sources?
     override fun apply(project: ProjectInternal?) {
         if (project == null) { return }

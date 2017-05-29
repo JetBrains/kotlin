@@ -76,8 +76,6 @@ open class KonanCompilerConfig(
             KonanCompileTask::class.java
     ) { it.initialize(this@KonanCompilerConfig.name) }
 
-    protected fun String.toAbsolutePath() = project.file(this).canonicalPath
-
     // DSL methods --------------------------------------------------
 
     // TODO: Check if we copied all data or not

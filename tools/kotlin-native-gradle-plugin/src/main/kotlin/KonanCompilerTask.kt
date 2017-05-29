@@ -94,7 +94,7 @@ open class KonanCompileTask: DefaultTask() {
         addFileArgs("-nativelibrary", nativeLibraries)
         addArg("-produce", produce)
 
-        addListArg("-linkerArgs", linkerOpts)
+        addListArg("-linkerOpts", linkerOpts)
 
         addArgIfNotNull("-target", target)
         addArgIfNotNull("-language-version", languageVersion)

@@ -3,8 +3,8 @@
 PATH=../../dist/bin:../../bin:$PATH
 DIR=.
 
-CFLAGS_macbook=-I/opt/local/include
-CFLAGS_linux=-I/usr/include/x86_64-linux-gnu
+CFLAGS_macbook="-I /opt/local/include"
+CFLAGS_linux="-I /usr/include -I /usr/include/x86_64-linux-gnu"
 LINKER_ARGS_macbook="-L/opt/local/lib -lcurl"
 LINKER_ARGS_linux="-L/usr/lib/x86_64-linux-gnu -lcurl"
 
@@ -23,5 +23,5 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-cinterop -copt "$CFLAGS" -copt -I. -copt -I/usr/include -def $DIR/libcurl.def -target $TARGET -o libcurl || exit 1
-konanc -target $TARGET src -library libcurl -linkerArgs "$LINKER_ARGS" -o Curl || exit 1
+cinterop -compilerOpts "$CFLAGS" -def $DIR/libcurl.def -target $TARGET -o libcurl || exit 1
+konanc -target $TARGET src -library libcurl -linkerOpts "$LINKER_ARGS" -o Curl || exit 1

@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2010-2017 JetBrains s.r.o.
  *
@@ -47,6 +48,9 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
 
     @Argument(value = "-nopack", description = "Don't pack the library into a klib file")
     public boolean nopack;
+
+    @Argument(value = "-linkerOpts", valueDescription = "<arg>", description = "Pass arguments to linker", delimiter = " ")
+    public String[] linkerArguments;
 
     @Argument(value = "-nostdlib", description = "Don't link with stdlib")
     public boolean nostdlib;

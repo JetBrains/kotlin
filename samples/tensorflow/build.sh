@@ -5,8 +5,8 @@ DIR=.
 TF_TARGET_DIRECTORY="$HOME/.konan/third-party/tensorflow"
 TF_TYPE="cpu" # Change to "gpu" for GPU support
 
-CFLAGS_macbook="-I${TF_TARGET_DIRECTORY}/include"
-CFLAGS_linux="-I${TF_TARGET_DIRECTORY}/include"
+CFLAGS_macbook="-I ${TF_TARGET_DIRECTORY}/include"
+CFLAGS_linux="-I ${TF_TARGET_DIRECTORY}/include"
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -31,8 +31,8 @@ if [ ! -d $TF_TARGET_DIRECTORY/include/tensorflow ]; then
    tar -C $TF_TARGET_DIRECTORY -xz
 fi
 
-cinterop -def $DIR/tensorflow.def -copt "$CFLAGS" -target $TARGET -o tensorflow || exit 1
+cinterop -def $DIR/tensorflow.def -compilerOpts "$CFLAGS" -target $TARGET -o tensorflow || exit 1
 konanc $COMPILER_ARGS -target $TARGET $DIR/HelloTensorflow.kt -library tensorflow -o HelloTensorflow \
-    -linkerArgs "-L$TF_TARGET_DIRECTORY/lib -ltensorflow" || exit 1
+    -linkerOpts "-L$TF_TARGET_DIRECTORY/lib -ltensorflow" || exit 1
 
 echo "Note: You may need to specify LD_LIBRARY_PATH or DYLD_LIBRARY_PATH env variables to $TF_TARGET_DIRECTORY/lib if the TensorFlow dynamic library cannot be found."

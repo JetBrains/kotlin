@@ -22,4 +22,4 @@ var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
 cinterop -def $DIR/opengl.def -target $TARGET -o opengl || exit 1
-konanc -target $TARGET $DIR/OpenGlTeapot.kt -library opengl -linkerArgs "$LINKER_ARGS" -o OpenGlTeapot || exit 1
+konanc -target $TARGET $DIR/OpenGlTeapot.kt -library opengl -linkerOpts "$LINKER_ARGS" -o OpenGlTeapot || exit 1
