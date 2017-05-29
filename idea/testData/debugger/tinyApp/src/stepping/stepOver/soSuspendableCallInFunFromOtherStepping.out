@@ -1,0 +1,10 @@
+LineBreakpoint created at soSuspendableCallInFunFromOtherStepping.kt:20
+Run Java
+Connected to the target VM
+soSuspendableCallInFunFromOtherStepping.kt:20
+soSuspendableCallInFunFromOtherStepping.kt:21
+soSuspendableCallInFunFromOtherStepping.kt:18
+soSuspendableCallInFunFromOtherStepping.kt:22
+Disconnected from the target VM
+
+Process finished with exit code 0

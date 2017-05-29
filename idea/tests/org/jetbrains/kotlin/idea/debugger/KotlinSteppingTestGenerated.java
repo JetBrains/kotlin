@@ -314,6 +314,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
 
+        @TestMetadata("stepIntoSuspendFunctionSimple.kt")
+        public void testStepIntoSuspendFunctionSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/stepIntoSuspendFunctionSimple.kt");
+            doStepIntoTest(fileName);
+        }
+
         @TestMetadata("syntheticMethods.kt")
         public void testSyntheticMethods() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/syntheticMethods.kt");
@@ -608,6 +614,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("soNonSuspendableSuspendCall.kt")
+        public void testSoNonSuspendableSuspendCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soNonSuspendableSuspendCall.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("soReifiedInlineIfConditionFalse.kt")
         public void testSoReifiedInlineIfConditionFalse() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soReifiedInlineIfConditionFalse.kt");
@@ -617,6 +629,36 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("soSimpleInlineIfCondition.kt")
         public void testSoSimpleInlineIfCondition() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soSimpleInlineIfCondition.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("soSuspendableCallInEndOfFun.kt")
+        public void testSoSuspendableCallInEndOfFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soSuspendableCallInEndOfFun.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("soSuspendableCallInEndOfLambda.kt")
+        public void testSoSuspendableCallInEndOfLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soSuspendableCallInEndOfLambda.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("soSuspendableCallInFun.kt")
+        public void testSoSuspendableCallInFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soSuspendableCallInFun.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("soSuspendableCallInFunFromOtherStepping.kt")
+        public void testSoSuspendableCallInFunFromOtherStepping() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soSuspendableCallInFunFromOtherStepping.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("soSuspendableCallInLambda.kt")
+        public void testSoSuspendableCallInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soSuspendableCallInLambda.kt");
             doStepOverTest(fileName);
         }
 

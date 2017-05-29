@@ -38,8 +38,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
-import org.jetbrains.kotlin.idea.debugger.ktLocationInfo
+import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.GOTO
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.MOVE
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN
@@ -89,9 +88,18 @@ class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
             sourcePosition: SourcePosition): DebugProcessImpl.ResumeCommand? {
         val kotlinSourcePosition = KotlinSourcePosition.create(sourcePosition) ?: return null
 
-        if (!isSpecialStepOverNeeded(kotlinSourcePosition)) return null
+        if (isSpecialStepOverNeeded(kotlinSourcePosition)) {
+            return DebuggerSteppingHelper.createStepOverCommand(suspendContext, ignoreBreakpoints, kotlinSourcePosition)
+        }
 
-        return DebuggerSteppingHelper.createStepOverCommand(suspendContext, ignoreBreakpoints, kotlinSourcePosition)
+        val file = sourcePosition.elementAt.containingFile
+        val location = suspendContext.debugProcess.invokeInManagerThread { suspendContext.frameProxy?.location() } ?: return null
+        if (isInSuspendMethod(location) && !isOnSuspendReturnOrReenter(location) && !isLastLineLocationInMethod(location)) {
+            return DebugProcessImplHelper.createStepOverCommandWithCustomFilter(
+                    suspendContext, ignoreBreakpoints, KotlinSuspendCallStepOverFilter(sourcePosition.line, file))
+        }
+
+        return null
     }
 
     data class KotlinSourcePosition(val file: KtFile, val function: KtNamedFunction,
@@ -204,9 +212,8 @@ private fun getInlineArgumentsCallsIfAny(sourcePosition: SourcePosition, declara
 
     fun isCallOfArgument(ktCallExpression: KtCallExpression): Boolean {
         val context = ktCallExpression.analyze(BodyResolveMode.PARTIAL)
-        val resolvedCall = ktCallExpression.getResolvedCall(context) ?: return false
+        val resolvedCall = ktCallExpression.getResolvedCall(context) as? VariableAsFunctionResolvedCallImpl ?: return false
 
-        if (resolvedCall !is VariableAsFunctionResolvedCallImpl) return false
         val candidateDescriptor = resolvedCall.variableCall.candidateDescriptor
 
         return candidateDescriptor in valueParameters
@@ -394,8 +401,8 @@ fun getStepOverAction(
             .dropWhile { it != patchedLocation }
             .drop(1)
             .dropWhile { it.ktLineNumber() == patchedLineNumber }
-            .takeWhile { location ->
-                !isLocationSuitable(location) || lambdaArgumentRanges.any { location.ktLineNumber() in it }
+            .takeWhile { loc ->
+                !isLocationSuitable(loc) || lambdaArgumentRanges.any { loc.ktLineNumber() in it }
             }
             .dropWhile { it.ktLineNumber() == patchedLineNumber }
 
