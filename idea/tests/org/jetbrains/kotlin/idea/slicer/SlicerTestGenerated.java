@@ -54,6 +54,18 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inflow/defaultGetterFieldInSetter.kt")
+    public void testInflow_DefaultGetterFieldInSetter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/defaultGetterFieldInSetter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/delegateGetter.kt")
+    public void testInflow_DelegateGetter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/delegateGetter.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inflow/doubleLambdaResult.kt")
     public void testInflow_DoubleLambdaResult() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/doubleLambdaResult.kt");
@@ -99,6 +111,24 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("inflow/funWithReturnExpressions.kt")
     public void testInflow_FunWithReturnExpressions() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/funWithReturnExpressions.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/getterAndSetterUsingField.kt")
+    public void testInflow_GetterAndSetterUsingField() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/getterAndSetterUsingField.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/getterExpressionBody.kt")
+    public void testInflow_GetterExpressionBody() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/getterExpressionBody.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/getterReturnExpression.kt")
+    public void testInflow_GetterReturnExpression() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/getterReturnExpression.kt");
         doTest(fileName);
     }
 
@@ -165,6 +195,12 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("inflow/memberVarWithSplitInitializer.kt")
     public void testInflow_MemberVarWithSplitInitializer() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/memberVarWithSplitInitializer.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/noFieldInGetter.kt")
+    public void testInflow_NoFieldInGetter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/noFieldInGetter.kt");
         doTest(fileName);
     }
 
@@ -309,6 +345,18 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("outflow/funReturnExpression.kt")
     public void testOutflow_FunReturnExpression() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/funReturnExpression.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/getterExpressionBody.kt")
+    public void testOutflow_GetterExpressionBody() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/getterExpressionBody.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/getterReturnExpression.kt")
+    public void testOutflow_GetterReturnExpression() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/getterReturnExpression.kt");
         doTest(fileName);
     }
 

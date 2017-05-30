@@ -195,7 +195,7 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
                                          ?.getReceiverTypeFromFunctionType()
                                  ?: return null
         val containingParameter = (functionType.parent as? KtTypeReference)?.parent as? KtParameter ?: return null
-        val ownerFunction = containingParameter.ownerFunction ?: return null
+        val ownerFunction = containingParameter.ownerFunction as? KtFunction ?: return null
         val functionParameterIndex = ownerFunction.valueParameters.indexOf(containingParameter)
         return ConversionData(functionParameterIndex, lambdaReceiverType, ownerFunction)
     }

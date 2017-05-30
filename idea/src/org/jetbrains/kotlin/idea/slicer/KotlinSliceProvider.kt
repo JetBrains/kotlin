@@ -36,7 +36,7 @@ class KotlinSliceProvider : SliceLanguageSupportProvider {
                         ?.firstOrNull {
                             it is KtProperty ||
                             it is KtParameter ||
-                            it is KtFunction ||
+                            it is KtDeclarationWithBody ||
                             (it is KtExpression && it !is KtDeclaration)
                         }
                         ?.let { KtPsiUtil.safeDeparenthesize(it as KtExpression) } ?: return null

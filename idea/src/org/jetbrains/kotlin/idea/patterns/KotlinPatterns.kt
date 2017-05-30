@@ -99,7 +99,8 @@ class KtParameterPattern : PsiElementPattern<KtParameter, KtParameterPattern>(Kt
             override fun processValues(ktParameter: KtParameter,
                                        context: ProcessingContext,
                                        processor: PairProcessor<KtFunction, ProcessingContext>): Boolean {
-                return processor.process(ktParameter.ownerFunction, context)
+                val function = ktParameter.ownerFunction as? KtFunction ?: return true
+                return processor.process(function, context)
             }
 
             override fun accepts(ktParameter: KtParameter, context: ProcessingContext): Boolean {
