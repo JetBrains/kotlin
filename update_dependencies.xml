@@ -67,30 +67,6 @@
             idea.maven.version="${ideaVersion}"/>
     </target>
 
-    <target name="update_continuous_br141" depends="fetch-third-party,fetch-annotations">
-        <execute_update_with_idea_maven_artifacts
-            base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
-            idea.maven.version="141-SNAPSHOT"/>
-    </target>
-
-    <target name="update_continuous_br143" depends="fetch-third-party,fetch-annotations">
-        <execute_update_with_idea_maven_artifacts
-            base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
-            idea.maven.version="143-SNAPSHOT"/>
-    </target>
-
-    <target name="update_continuous_br144" depends="fetch-third-party,fetch-annotations">
-        <execute_update_with_idea_maven_artifacts
-            base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
-            idea.maven.version="144-SNAPSHOT"/>
-    </target>
-
-    <target name="update_continuous_br162" depends="fetch-third-party,fetch-annotations">
-        <execute_update_with_idea_maven_artifacts
-            base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
-            idea.maven.version="162-SNAPSHOT"/>
-    </target>
-
     <macrodef name="get-maven-library">
         <attribute name="prefix"/>
         <attribute name="lib"/>
