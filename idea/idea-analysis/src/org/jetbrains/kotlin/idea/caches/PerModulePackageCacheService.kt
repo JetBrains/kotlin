@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.caches
 
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Ref
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfoByVirtualFile
 import org.jetbrains.kotlin.idea.caches.resolve.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
+import org.jetbrains.kotlin.idea.stubindex.resolve.service
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPackageDirective

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.stubindex.resolve
 
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
@@ -29,6 +29,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.*
 import org.jetbrains.kotlin.storage.StorageManager
+
+// Workaround for IDEA-173622
+// Copy of com.intellij.openapi.components.service
+inline fun <reified T : Any> Project.service(): T = ServiceManager.getService(this, T::class.java)
 
 class PluginDeclarationProviderFactory(
         private val project: Project,

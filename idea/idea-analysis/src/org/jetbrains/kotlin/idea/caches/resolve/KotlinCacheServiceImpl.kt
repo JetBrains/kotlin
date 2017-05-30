@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
@@ -43,6 +42,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTrack
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.outOfBlockModificationCount
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.stubindex.resolve.service
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext

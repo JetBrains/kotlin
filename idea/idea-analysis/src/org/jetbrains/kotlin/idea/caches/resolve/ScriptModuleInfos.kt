@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
@@ -27,6 +26,7 @@ import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
+import org.jetbrains.kotlin.idea.stubindex.resolve.service
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider

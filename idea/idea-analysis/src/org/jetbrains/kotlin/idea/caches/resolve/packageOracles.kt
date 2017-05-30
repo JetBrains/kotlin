@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.PackageOracle
 import org.jetbrains.kotlin.analyzer.PackageOracleFactory
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService
+import org.jetbrains.kotlin.idea.stubindex.resolve.service
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade

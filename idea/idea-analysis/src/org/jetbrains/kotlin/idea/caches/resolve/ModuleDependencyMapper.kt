@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.components.service
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
+import org.jetbrains.kotlin.idea.stubindex.resolve.service
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
