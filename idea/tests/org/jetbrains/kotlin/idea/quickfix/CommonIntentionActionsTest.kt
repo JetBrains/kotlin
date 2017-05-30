@@ -29,7 +29,6 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import org.jetbrains.uast.*
 import org.junit.Assert
 
-
 class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
     fun testMakeNotFinal() {
@@ -113,7 +112,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin())
 
         myFixture.launchAction(codeModifications.createAddCallableMemberActions(NewCallableMemberInfo.simpleMethodInfo(
-                atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.INT,paramsMaker(PsiType.INT))).first())
+                atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.INT, makeParams(PsiType.INT))).first())
         myFixture.checkResult("""
         |class Foo {
         |    fun bar() {}
@@ -124,16 +123,30 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin(), true)
     }
 
-    fun testAddIntConstructor() {
+    fun testAddIntPrimaryConstructor() {
         myFixture.configureByText("foo.kt", """
         |class Foo<caret> {
         |}
         """.trim().trimMargin())
 
         myFixture.launchAction(codeModifications.createAddCallableMemberActions(NewCallableMemberInfo.constructorInfo(
-                atCaret<UClass>(myFixture), paramsMaker(PsiType.INT))).first())
+                atCaret<UClass>(myFixture), makeParams(PsiType.INT))).findWithText("Add primary constructor to 'Foo'"))
         myFixture.checkResult("""
-        |class Foo {
+        |class Foo(param0: Int) {
+        |}
+        """.trim().trimMargin(), true)
+    }
+
+    fun testAddIntSecondaryConstructor() {
+        myFixture.configureByText("foo.kt", """
+        |class <caret>Foo() {
+        |}
+        """.trim().trimMargin())
+
+        myFixture.launchAction(codeModifications.createAddCallableMemberActions(NewCallableMemberInfo.constructorInfo(
+                atCaret<UClass>(myFixture), makeParams(PsiType.INT))).findWithText("Add secondary constructor to 'Foo'"))
+        myFixture.checkResult("""
+        |class Foo() {
         |    constructor(param0: Int) {
         |
         |    }
@@ -141,12 +154,18 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin(), true)
     }
 
-    fun paramsMaker(vararg psyTypes: PsiType): List<UParameter> {
-        val uastContext = UastContext(myFixture.project)
-        val parameterList = JavaPsiFacade.getElementFactory(myFixture.project)
-                .createParameterList(psyTypes.indices.map { "param$it" }.toTypedArray(), psyTypes)
-        return parameterList.parameters
-                .map { uastContext.convertElement(it, null, UParameter::class.java) as UParameter }
+    fun testChangePrimaryConstructorInt() {
+        myFixture.configureByText("foo.kt", """
+        |class <caret>Foo() {
+        |}
+        """.trim().trimMargin())
+
+        myFixture.launchAction(codeModifications.createAddCallableMemberActions(NewCallableMemberInfo.constructorInfo(
+                atCaret<UClass>(myFixture), makeParams(PsiType.INT))).findWithText("Add 'int' as 1st parameter to method 'Foo'"))
+        myFixture.checkResult("""
+        |class Foo(param0: Int) {
+        |}
+        """.trim().trimMargin(), true)
     }
 
     fun testAddStringVarProperty() {
@@ -158,7 +177,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(codeModifications.createAddBeanPropertyActions(
                 atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.getTypeByName("java.lang.String", project, GlobalSearchScope.allScope(project)), true, true)
-                                       .withText("Add 'var' property 'baz' to 'Foo'"))
+                                       .findWithText("Add 'var' property 'baz' to 'Foo'"))
         myFixture.checkResult("""
         |class Foo {
         |    var baz: String = TODO("initialize me")
@@ -176,7 +195,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(codeModifications.createAddBeanPropertyActions(
                 atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.getTypeByName("java.lang.String", project, GlobalSearchScope.allScope(project)), true, true)
-                                       .withText("Add 'lateinit var' property 'baz' to 'Foo'"))
+                                       .findWithText("Add 'lateinit var' property 'baz' to 'Foo'"))
         myFixture.checkResult("""
         |class Foo {
         |    lateinit var baz: String
@@ -202,13 +221,23 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin(), true)
     }
 
+    private fun makeParams(vararg psyTypes: PsiType): List<UParameter> {
+        val uastContext = UastContext(myFixture.project)
+        val factory = JavaPsiFacade.getElementFactory(myFixture.project)
+        val parameters = psyTypes.mapIndexed { index, psiType -> factory.createParameter("param$index", psiType) }
+        return parameters.map { uastContext.convertElement(it, null, UParameter::class.java) as UParameter }
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun <T : UElement> atCaret(myFixture: CodeInsightTestFixture): T {
         return myFixture.elementAtCaret.toUElement() as T
     }
 
     @Suppress("CAST_NEVER_SUCCEEDS")
-    private fun Array<IntentionAction>.withText(text: String): IntentionAction =
+    private fun Array<IntentionAction>.findWithText(text: String): IntentionAction = this.asList().findWithText(text)
+
+    @Suppress("CAST_NEVER_SUCCEEDS")
+    private fun List<IntentionAction>.findWithText(text: String): IntentionAction =
             this.firstOrNull { it.text == text } ?:
             Assert.fail("intention with text '$text' was not found, only ${this.joinToString { "\"${it.text}\"" }} available") as Nothing
 

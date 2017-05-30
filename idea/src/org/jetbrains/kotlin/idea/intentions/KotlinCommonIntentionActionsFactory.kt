@@ -19,26 +19,24 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.JvmCommonIntentionActionsFactory
 import com.intellij.codeInsight.intention.NewCallableMemberInfo
+import com.intellij.codeInsight.intention.QuickFixFactory
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
+import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.insertMembersAfter
 import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder.Target.CONSTRUCTOR
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder.Target.FUNCTION
@@ -46,7 +44,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement
-
 
 class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
     override fun createChangeModifierAction(declaration: UDeclaration, modifier: String, shouldPresent: Boolean): IntentionAction? {
@@ -65,8 +62,41 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
             RemoveModifierFix(kModifierOwner, kToken, false)
     }
 
-    private inline fun <reified T : KtElement> UElement.asKtElement(): T? =
-            (psi as? KtLightElement<*, *>?)?.kotlinOrigin as? T
+    override fun createAddBeanPropertyActions(uClass: UClass, propertyName: String, visibilityModifier: String, propertyType: PsiType, setterRequired: Boolean, getterRequired: Boolean): Array<IntentionAction> {
+
+        fun addPropertyFix(lateinit: Boolean = false) =
+                Fix(uClass,
+                    "Add property",
+                    "Add '${if (lateinit) "lateinit " else ""}" +
+                    "${if (setterRequired) "var" else "val"}' property '$propertyName' to '${uClass.name}'")
+                { uClass ->
+                    val visibilityStr = javaVisibilityMapping.getValue(visibilityModifier)
+                    val psiFactory = KtPsiFactory(uClass)
+                    val modifiersString = if (lateinit) "lateinit $visibilityStr" else visibilityStr
+                    val function = psiFactory.createProperty(
+                            modifiersString,
+                            propertyName,
+                            typeString(propertyType),
+                            setterRequired,
+                            if (lateinit) null else "TODO(\"initialize me\")")
+                    val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
+                    insertMembersAfter(null, ktClassOrObject, listOf(function), null)
+                }
+
+        if (setterRequired)
+            return arrayOf(addPropertyFix(), addPropertyFix(lateinit = true))
+        else
+            return arrayOf(addPropertyFix())
+    }
+
+    override fun createAddCallableMemberActions(info: NewCallableMemberInfo): List<IntentionAction> =
+            when (info.kind) {
+                NewCallableMemberInfo.CallableKind.FUNCTION ->
+                    createAddMethodAction(info)?.let { listOf(it) } ?: emptyList()
+
+                NewCallableMemberInfo.CallableKind.CONSTRUCTOR ->
+                    createAddConstructorActions(info)
+            }
 
     companion object {
         val javaPsiModifiersMapping = mapOf(
@@ -103,6 +133,9 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
         }
     }
 
+    private inline fun <reified T : KtElement> UElement.asKtElement(): T? =
+            (psi as? KtLightElement<*, *>?)?.kotlinOrigin as? T
+
     private fun CallableBuilder.paramsFromInfo(info: NewCallableMemberInfo) {
         for ((index, param) in info.parameters.withIndex()) {
             param(param.name ?: "arg${index + 1}", typeString(param.type))
@@ -135,16 +168,6 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
 
     }
 
-    override fun createAddCallableMemberActions(info: NewCallableMemberInfo): List<IntentionAction> {
-        return when (info.kind) {
-            NewCallableMemberInfo.CallableKind.FUNCTION ->
-                createAddMethodAction(info)?.let { listOf(it) } ?: emptyList()
-
-            NewCallableMemberInfo.CallableKind.CONSTRUCTOR ->
-                createAddConstructorActions(info)
-        }
-    }
-
     private fun createAddConstructorActions(info: NewCallableMemberInfo): List<IntentionAction> {
         val constructorString = CallableBuilder(CONSTRUCTOR).apply {
             modifier("")
@@ -153,45 +176,68 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
             paramsFromInfo(info)
             noReturnType()
             blockBody("")
+        }.asString()
+        val primaryConstructor = info.containingClass.asKtElement<KtClass>()!!.primaryConstructor
+
+        val addConstructorAction = if (primaryConstructor == null)
+            Fix(info.containingClass,
+                "Add method",
+                "Add primary constructor to '${info.containingClass.name}'",
+                { uClass ->
+                    val psiFactory = KtPsiFactory(uClass)
+                    val constructor = psiFactory.createSecondaryConstructor(constructorString)
+                    val ktClass = uClass.asKtElement<KtClass>()!!
+                    val newPrimaryConstructor = ktClass.createPrimaryConstructorIfAbsent()
+                    newPrimaryConstructor.valueParameterList!!.replace(constructor.valueParameterList!!)
+                    ShortenReferences.DEFAULT.process(newPrimaryConstructor)
+                })
+        else Fix(info.containingClass,
+                 "Add method",
+                 "Add secondary constructor to '${info.containingClass.name}'",
+                 { uClass ->
+                     val psiFactory = KtPsiFactory(uClass)
+                     val constructor = psiFactory.createSecondaryConstructor(constructorString)
+                     val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
+                     insertMembersAfter(null, ktClassOrObject, listOf(constructor), null)
+                 })
+
+        val changePrimaryConstructorAction = run {
+            if (primaryConstructor == null) return@run null
+            QuickFixFactory.getInstance()
+                    .createChangeMethodSignatureFromUsageFix(
+                            LightClassUtil.getLightClassMethod(primaryConstructor)!!,
+                            fakeParametersExpressions(info.parameters),
+                            PsiSubstitutor.EMPTY, info.containingClass, false, 2
+                    ).takeIf { it.isAvailable(info.containingClass.project, null, info.containingClass.containingFile) }
         }
 
-        return listOf(Fix(info.containingClass,
-                          "Add method",
-                          "Add constructor with ${info.parameters.size} parameters to '${info.containingClass.name}'")
-                      { uClass ->
-                          val psiFactory = KtPsiFactory(uClass)
-                          val constructor = psiFactory.createSecondaryConstructor(constructorString.asString())
-                          val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
-                          insertMembersAfter(null, ktClassOrObject, listOf(constructor), null)
-                      })
-
+        return listOf(changePrimaryConstructorAction, addConstructorAction).filterNotNull()
     }
 
-    override fun createAddBeanPropertyActions(uClass: UClass, propertyName: String, visibilityModifier: String, propertyType: PsiType, setterRequired: Boolean, getterRequired: Boolean): Array<IntentionAction> {
+    private fun fakeParametersExpressions(parameters: List<PsiParameter>): Array<PsiExpression> =
+            JavaPsiFacade.getElementFactory(parameters.first().project)
+                    .createParameterList(
+                            parameters.map { it.name }.toTypedArray(),
+                            parameters.map { it.type }.toTypedArray()
+                    ).parameters.map { FakeExpressionFromParameter(it) }.toTypedArray()
 
-        fun addPropertyFix(lateinit: Boolean = false) =
-                Fix(uClass,
-                    "Add property",
-                    "Add '${if (lateinit) "lateinit " else ""}" +
-                    "${if (setterRequired) "var" else "val"}' property '$propertyName' to '${uClass.name}'")
-                { uClass ->
-                    val visibilityStr = javaVisibilityMapping.getValue(visibilityModifier)
-                    val psiFactory = KtPsiFactory(uClass)
-                    val modifiersString = if (lateinit) "lateinit $visibilityStr" else visibilityStr
-                    val function = psiFactory.createProperty(
-                            modifiersString,
-                            propertyName,
-                            typeString(propertyType),
-                            setterRequired,
-                            if (lateinit) null else "TODO(\"initialize me\")")
-                    val ktClassOrObject = uClass.asKtElement<KtClassOrObject>()!!
-                    insertMembersAfter(null, ktClassOrObject, listOf(function), null)
-                }
+    private class FakeExpressionFromParameter(private val psiParam: PsiParameter) : PsiReferenceExpressionImpl() {
 
-        if (setterRequired)
-            return arrayOf(addPropertyFix(), addPropertyFix(lateinit = true))
-        else
-            return arrayOf(addPropertyFix())
+        override fun getText(): String = psiParam.name!!
+
+        override fun getProject(): Project = psiParam.project
+
+        override fun getParent(): PsiElement = psiParam.parent
+
+        override fun getType(): PsiType? = psiParam.type
+
+        override fun isValid(): Boolean = true
+
+        override fun getContainingFile(): PsiFile = psiParam.containingFile
+
+        override fun getReferenceName(): String? = psiParam.name
+
+        override fun resolve(): PsiElement? = psiParam
     }
 
     private class Fix(uClass: UClass, private val familyName: String, private val text: String, private val action: (uClass: UClass) -> Unit) : LocalQuickFixAndIntentionActionOnPsiElement(uClass) {
@@ -201,7 +247,6 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
 
         override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) =
                 action(startElement as UClass)
-
     }
 
 }
