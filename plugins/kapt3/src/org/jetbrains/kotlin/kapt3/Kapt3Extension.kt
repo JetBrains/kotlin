@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.kapt3.AptMode.*
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
+import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -61,10 +62,11 @@ class ClasspathBasedKapt3Extension(
         val useLightAnalysis: Boolean,
         correctErrorTypes: Boolean,
         pluginInitializedTime: Long,
-        logger: KaptLogger
+        logger: KaptLogger,
+        compilerConfiguration: CompilerConfiguration
 ) : AbstractKapt3Extension(compileClasspath, annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
                            classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options, javacOptions, annotationProcessors,
-                           aptMode, pluginInitializedTime, logger, correctErrorTypes) {
+                           aptMode, pluginInitializedTime, logger, correctErrorTypes, compilerConfiguration) {
     override val analyzePartially: Boolean
         get() = useLightAnalysis
 
@@ -113,7 +115,8 @@ abstract class AbstractKapt3Extension(
         val aptMode: AptMode,
         val pluginInitializedTime: Long,
         val logger: KaptLogger,
-        val correctErrorTypes: Boolean
+        val correctErrorTypes: Boolean,
+        val compilerConfiguration: CompilerConfiguration
 ) : PartialAnalysisHandlerExtension() {
     val compileClasspath = compileClasspath.distinct()
     val annotationProcessingClasspath = annotationProcessingClasspath.distinct()
@@ -215,13 +218,18 @@ abstract class AbstractKapt3Extension(
     ): KaptContext<GenerationState> {
         val builderFactory = Kapt3BuilderFactory()
 
+        val targetId = TargetId(
+                name = compilerConfiguration[CommonConfigurationKeys.MODULE_NAME] ?: module.name.asString(),
+                type = "java-production")
+
         val generationState = GenerationState(
                 project,
                 builderFactory,
                 module,
                 bindingContext,
                 files,
-                CompilerConfiguration.EMPTY)
+                compilerConfiguration,
+                targetId = targetId)
 
         val (classFilesCompilationTime) = measureTimeMillis {
             KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)

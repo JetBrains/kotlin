@@ -262,7 +262,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(
                 compileClasspath, apClasspath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir,
                 stubsOutputDir, incrementalDataOutputDir, apOptions, javacCliOptions, annotationProcessors,
-                aptMode, useLightAnalysis, correctErrorTypes, System.currentTimeMillis(), logger)
+                aptMode, useLightAnalysis, correctErrorTypes, System.currentTimeMillis(), logger, configuration)
         AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
     }
 
