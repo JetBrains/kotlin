@@ -16,7 +16,7 @@
 
     <property name="bootstrap.build.no.tests" value="false"/>
 
-    <!--<property name="use.ultimate.by.default" value="true"/>-->
+    <property name="use.ultimate.by.default" value="true"/>
 
     <property name="sdk.version.prefix" value="IU" if:set="use.ultimate.by.default"/>
     <property name="sdk.version.prefix" value="IC" unless:set="use.ultimate.by.default"/>
@@ -647,7 +647,7 @@
                  dest="@{download.dir}/ideaIC-@{idea.maven.version}-sources.jar" usetimestamp="true" ignoreerrors="true"/>
 
             <get src="@{base.repository.url}/${idea.id}/@{idea.maven.version}/${idea.id}-@{idea.maven.version}.zip"
-                 dest="@{download.dir}/${idea.id}-@{idea.maven.version}.zip" usetimestamp="true"/>
+                 dest="@{download.dir}/${idea.id}-@{idea.maven.version}.zip" usetimestamp="true" maxtime="10000000"/>
 
             <download_and_unzip
                 dir="@{download.dir}/intellij-core-@{idea.maven.version}"

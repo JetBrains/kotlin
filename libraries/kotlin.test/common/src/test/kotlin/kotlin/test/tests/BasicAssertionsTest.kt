@@ -1,7 +1,7 @@
 package kotlin.test.tests
 
-import org.junit.*
 import kotlin.test.*
+import org.junit.*
 
 class BasicAssertionsTest {
     @Test

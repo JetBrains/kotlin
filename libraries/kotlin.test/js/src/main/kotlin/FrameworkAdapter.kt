@@ -39,7 +39,7 @@ fun setAdapter(adapter: FrameworkAdapter) {
     currentAdapter = adapter
 }
 
-interface FrameworkAdapter {
+external interface FrameworkAdapter {
     fun suite(name: String, suiteFn: () -> Unit)
 
     fun test(name: String, testFn: () -> Unit)
