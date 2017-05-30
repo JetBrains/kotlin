@@ -36,7 +36,8 @@ interface DeclarationAttributeAltererExtension {
             declaration: DeclarationDescriptor?,
             containingDeclaration: DeclarationDescriptor?,
             currentModality: Modality,
-            bindingContext: BindingContext
+            bindingContext: BindingContext,
+            isImplicitModality: Boolean
     ): Modality? = null
 
     fun shouldConvertFirstSAMParameterToReceiver(function: FunctionDescriptor) : Boolean = false

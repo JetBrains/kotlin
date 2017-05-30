@@ -42,7 +42,8 @@ abstract class AbstractAllOpenDeclarationAttributeAltererExtension : Declaration
             declaration: DeclarationDescriptor?,
             containingDeclaration: DeclarationDescriptor?,
             currentModality: Modality,
-            bindingContext: BindingContext
+            bindingContext: BindingContext,
+            isImplicitModality: Boolean
     ): Modality? {
         if (currentModality != Modality.FINAL) {
             return null
@@ -54,7 +55,7 @@ abstract class AbstractAllOpenDeclarationAttributeAltererExtension : Declaration
 
         val descriptor = declaration as? ClassDescriptor ?: containingDeclaration ?: return null
         if (descriptor.hasSpecialAnnotation(modifierListOwner)) {
-            return if (modifierListOwner.hasModifier(KtTokens.FINAL_KEYWORD))
+            return if (!isImplicitModality && modifierListOwner.hasModifier(KtTokens.FINAL_KEYWORD))
                 Modality.FINAL // Explicit final
             else
                 Modality.OPEN
