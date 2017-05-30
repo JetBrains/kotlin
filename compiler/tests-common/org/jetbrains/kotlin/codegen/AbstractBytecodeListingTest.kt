@@ -25,33 +25,45 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
         val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
         compile(files, javaFilesDir)
-        val actualTxt = BytecodeListingTextCollectingVisitor.getText(classFileFactory)
+        val actualTxt = BytecodeListingTextCollectingVisitor.getText(classFileFactory, withSignatures = isWithSignatures(wholeFile))
         KotlinTestUtils.assertEqualsToFile(txtFile, actualTxt)
+    }
+
+    private fun isWithSignatures(wholeFile: File): Boolean =
+            WITH_SIGNATURES.containsMatchIn(wholeFile.readText())
+
+    companion object {
+        private val WITH_SIGNATURES = Regex.fromLiteral("// WITH_SIGNATURES")
     }
 }
 
-class BytecodeListingTextCollectingVisitor(val filter: Filter) : ClassVisitor(ASM5) {
+class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignatures: Boolean) : ClassVisitor(ASM5) {
     companion object {
         @JvmOverloads
-        fun getText(factory: ClassFileFactory, filter: Filter = Filter.EMPTY, replaceHash: Boolean = true) = factory
-                .getClassFiles()
-                .sortedBy { it.relativePath }
-                .mapNotNull {
-                    val cr = ClassReader(it.asByteArray())
-                    val visitor = BytecodeListingTextCollectingVisitor(filter)
-                    cr.accept(visitor, ClassReader.SKIP_CODE)
+        fun getText(
+                factory: ClassFileFactory,
+                filter: Filter = Filter.EMPTY,
+                replaceHash: Boolean = true,
+                withSignatures: Boolean = false
+        ) =
+                factory.getClassFiles()
+                        .sortedBy { it.relativePath }
+                        .mapNotNull {
+                            val cr = ClassReader(it.asByteArray())
+                            val visitor = BytecodeListingTextCollectingVisitor(filter, withSignatures)
+                            cr.accept(visitor, ClassReader.SKIP_CODE)
 
-                    if (!filter.shouldWriteClass(cr.access, cr.className)) {
-                        return@mapNotNull null
-                    }
+                            if (!filter.shouldWriteClass(cr.access, cr.className)) {
+                                return@mapNotNull null
+                            }
 
-                    if (replaceHash) {
-                        KotlinTestUtils.replaceHash(visitor.text, "HASH")
-                    }
-                    else {
-                        visitor.text
-                    }
-                }.joinToString("\n\n", postfix = "\n")
+                            if (replaceHash) {
+                                KotlinTestUtils.replaceHash(visitor.text, "HASH")
+                            }
+                            else {
+                                visitor.text
+                            }
+                        }.joinToString("\n\n", postfix = "\n")
     }
 
     interface Filter {
@@ -74,6 +86,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter) : ClassVisitor(AS
     private val classAnnotations = arrayListOf<String>()
     private var className = ""
     private var classAccess = 0
+    private var classSignature: String? = ""
 
     private fun addAnnotation(desc: String, list: MutableList<String> = declarationsInsideClass.last().annotations) {
         val name = Type.getType(desc).className
@@ -112,6 +125,9 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter) : ClassVisitor(AS
             }
             arrayListOf<String>().apply { handleModifiers(classAccess, this) }.forEach { append(it) }
             append(classOrInterface(classAccess))
+            if (withSignatures) {
+                append("<$classSignature> ")
+            }
             append(" ")
             append(className)
             if (declarationsInsideClass.isNotEmpty()) {
@@ -159,7 +175,10 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter) : ClassVisitor(AS
                     val annotations = parameterAnnotations.getOrElse(index, { emptyList<String>() }).joinToString("")
                     "${annotations}p$index: $parameter"
                 }.joinToString()
-                declarationsInsideClass.add(Declaration("method $name($parameterWithAnnotations): $returnType", methodAnnotations))
+                val signatureIfRequired = if (withSignatures) "<$signature> " else ""
+                declarationsInsideClass.add(
+                        Declaration("${signatureIfRequired}method $name($parameterWithAnnotations): $returnType", methodAnnotations)
+                )
                 super.visitEnd()
             }
         }
@@ -171,7 +190,8 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter) : ClassVisitor(AS
         }
 
         val type = Type.getType(desc).className
-        val fieldDeclaration = Declaration("field $name: $type")
+        val fieldSignature = if (withSignatures) "<$signature> " else ""
+        val fieldDeclaration = Declaration("field $fieldSignature$name: $type")
         declarationsInsideClass.add(fieldDeclaration)
         handleModifiers(access)
         if (access and ACC_VOLATILE != 0) addModifier("volatile", fieldDeclaration.annotations)
@@ -200,6 +220,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter) : ClassVisitor(AS
     ) {
         className = name
         classAccess = access
+        classSignature = signature
     }
 
     override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {

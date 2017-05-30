@@ -241,5 +241,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/removeAtTwoSpecialBridges.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("signatureForSpecialBridge.kt")
+        public void testSignatureForSpecialBridge() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/signatureForSpecialBridge.kt");
+            doTest(fileName);
+        }
     }
 }
