@@ -380,7 +380,7 @@ task tostring0(type: RunKonanTest) {
         // To be investigated.
         disabled = true
     }
-    goldValue = "127\n-1\n239\nA\nЁ\nト\n1122334455\n112233445566778899\n3.14159\n1E+27\n1E-300\ntrue\nfalse\n"
+    goldValue = "127\n-1\n239\nA\nЁ\nト\n1122334455\n112233445566778899\n3.14159265358\n1.0E27\n1.0E-300\ntrue\nfalse\n"
     source = "runtime/basic/tostring0.kt"
 }
 
@@ -401,11 +401,10 @@ task tostring3(type: RunKonanTest) {
     }
     goldValue = "-128\n127\n-32768\n32767\n" +
             "-2147483648\n2147483647\n-9223372036854775808\n9223372036854775807\n" +
-            "1.4013E-45\n3.40282E+38\n-INF\nINF\n" +
-            // Linux version prints -NAN.
-            // "NAN\n" +
-            "4.94066E-324\n1.79769E+308\n-INF\nINF\n"
-            // "NAN\n"
+            "1.4E-45\n3.4028235E38\n-Infinity\nInfinity\n" +
+            "NaN\n" +
+            "4.9E-324\n1.7976931348623157E308\n-Infinity\nInfinity\n" +
+            "NaN\n"
     source = "runtime/basic/tostring3.kt"
 }
 
@@ -1774,7 +1773,7 @@ task deserialized_members(type: LinkKonanTest) {
         "inner third level\n"+
         "types first level: 13\n"+
         "types second level cha-cha-cha\n"+
-        "types third level 1\n"
+        "types third level 1.0\n"
     lib = "serialization/serialize_members.kt"
     source = "serialization/deserialize_members.kt"
 }
