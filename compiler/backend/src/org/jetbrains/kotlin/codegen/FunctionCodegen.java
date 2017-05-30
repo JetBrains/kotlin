@@ -189,7 +189,8 @@ public class FunctionCodegen {
             return;
         }
 
-        JvmMethodGenericSignature jvmSignature = typeMapper.mapSignatureWithGeneric(functionDescriptor, contextKind);
+        boolean hasSpecialBridge = hasSpecialBridgeMethod(functionDescriptor);
+        JvmMethodGenericSignature jvmSignature = typeMapper.mapSignatureWithGeneric(functionDescriptor, contextKind, hasSpecialBridge);
         Method asmMethod = jvmSignature.getAsmMethod();
 
         int flags = getMethodAsmFlags(functionDescriptor, contextKind, state);
@@ -794,6 +795,13 @@ public class FunctionCodegen {
             bytecode = sw.toString();
         }
         return bytecode;
+    }
+
+    private boolean hasSpecialBridgeMethod(@NotNull FunctionDescriptor descriptor) {
+        if (SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(descriptor) == null) return false;
+        return !BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
+                descriptor, typeMapper::mapAsmMethod, IS_PURE_INTERFACE_CHECKER
+        ).isEmpty();
     }
 
     public void generateBridges(@NotNull FunctionDescriptor descriptor) {

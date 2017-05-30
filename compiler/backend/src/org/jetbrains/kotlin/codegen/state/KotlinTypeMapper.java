@@ -1029,7 +1029,21 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
+    public JvmMethodGenericSignature mapSignatureWithGeneric(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind, boolean hasSpecialBridge) {
+        return mapSignature(f, kind, false, hasSpecialBridge);
+    }
+
     private JvmMethodGenericSignature mapSignature(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind, boolean skipGenericSignature) {
+        return mapSignature(f, kind, skipGenericSignature, false);
+    }
+
+    @NotNull
+    private JvmMethodGenericSignature mapSignature(
+            @NotNull FunctionDescriptor f,
+            @NotNull OwnerKind kind,
+            boolean skipGenericSignature,
+            boolean hasSpecialBridge
+    ) {
         if (f.getInitialSignatureDescriptor() != null && f != f.getInitialSignatureDescriptor()) {
             // Overrides of special builtin in Kotlin classes always have special signature
             if (SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(f) == null ||
@@ -1050,7 +1064,7 @@ public class KotlinTypeMapper {
             return mapSignature(CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(f), kind, skipGenericSignature);
         }
 
-        return mapSignatureWithCustomParameters(f, kind, f.getValueParameters(), skipGenericSignature);
+        return mapSignatureWithCustomParameters(f, kind, f.getValueParameters(), skipGenericSignature, hasSpecialBridge);
     }
 
     @NotNull
@@ -1059,6 +1073,17 @@ public class KotlinTypeMapper {
             @NotNull OwnerKind kind,
             @NotNull List<ValueParameterDescriptor> valueParameters,
             boolean skipGenericSignature
+    ) {
+        return mapSignatureWithCustomParameters(f, kind, valueParameters, skipGenericSignature, false);
+    }
+
+    @NotNull
+    public JvmMethodGenericSignature mapSignatureWithCustomParameters(
+            @NotNull FunctionDescriptor f,
+            @NotNull OwnerKind kind,
+            @NotNull List<ValueParameterDescriptor> valueParameters,
+            boolean skipGenericSignature,
+            boolean hasSpecialBridge
     ) {
         checkOwnerCompatibility(f);
 
@@ -1121,7 +1146,7 @@ public class KotlinTypeMapper {
 
         JvmMethodGenericSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f));
 
-        if (kind != OwnerKind.DEFAULT_IMPLS) {
+        if (kind != OwnerKind.DEFAULT_IMPLS && !hasSpecialBridge) {
             SpecialSignatureInfo specialSignatureInfo = BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo(f);
 
             if (specialSignatureInfo != null) {
