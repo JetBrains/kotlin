@@ -2288,6 +2288,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("forWithoutBody.java")
+        public void testForWithoutBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithoutBody.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("indicesReversed.java")
         public void testIndicesReversed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/indicesReversed.java");
@@ -2396,6 +2402,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         @TestMetadata("enhancedForWithReturn.java")
         public void testEnhancedForWithReturn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/foreachStatement/enhancedForWithReturn.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("foreachWithoutBody.java")
+        public void testForeachWithoutBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/foreachStatement/foreachWithoutBody.java");
             doTest(fileName);
         }
 
@@ -2720,6 +2732,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         @TestMetadata("elseIf.java")
         public void testElseIf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/elseIf.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifWithoutThen.java")
+        public void testIfWithoutThen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/ifWithoutThen.java");
             doTest(fileName);
         }
 
@@ -5093,6 +5111,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         @TestMetadata("whileWithReturn.java")
         public void testWhileWithReturn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/whileStatement/whileWithReturn.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whileWithoutBody.java")
+        public void testWhileWithoutBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/whileStatement/whileWithoutBody.java");
             doTest(fileName);
         }
     }
