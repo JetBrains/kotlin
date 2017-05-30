@@ -152,8 +152,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     public String protocolsBackend;
 
     @Argument(value = "-protocols-cache", description = "Protocols cache type")
-
-    @Argument(value = "protocols-cache", description = "Protocols cache type")
     public String protocolsCacheType;
 
     @Argument(value = "-protocols-cache-size", description = "Protocols cache size")

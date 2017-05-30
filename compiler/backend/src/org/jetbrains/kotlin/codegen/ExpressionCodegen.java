@@ -2203,11 +2203,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private void invokeProtocolMethodWithArguments(Callable callableMethod, ResolvedCall<?> resolvedCall, StackValue receiver, CallGenerator generator) {
-        boolean isSuspensionPoint = CoroutineCodegenUtilKt.isSuspensionPointInStateMachine(resolvedCall, bindingContext);
+        boolean isSuspendCall = CoroutineCodegenUtilKt.isSuspendNoInlineCall(resolvedCall);
         CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
         int receiverTmp = myFrameMap.enterTemp(OBJECT_TYPE);
-        putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspensionPoint, false);
+        putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspendCall, false);
         v.store(receiverTmp, OBJECT_TYPE);
 
         v.load(receiverTmp, OBJECT_TYPE);
@@ -2219,7 +2219,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         myFrameMap.leaveTemp(OBJECT_TYPE);
 
-        if (isSuspensionPoint) {
+        if (isSuspendCall) {
             v.invokestatic(
                     CoroutineCodegenUtilKt.COROUTINE_MARKER_OWNER,
                     CoroutineCodegenUtilKt.BEFORE_SUSPENSION_POINT_MARKER_NAME,

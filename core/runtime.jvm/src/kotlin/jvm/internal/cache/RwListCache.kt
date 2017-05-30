@@ -25,6 +25,7 @@ class RwListCache<Key, Value> : Cache<Key, Value> {
 
     override fun set(key: Key, value: Value) {
         val writeLock = lock.writeLock()
+        writeLock.lock()
         buffer.add(Pair(key, value))
         writeLock.unlock()
     }
