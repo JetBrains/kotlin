@@ -46,15 +46,8 @@ repositories {
     mavenCentral()
 }
 
-configurations {
-    konanCompiler
-}
-
 evaluationDependsOn(':tools:helpers')
 dependencies {
-    // TODO: do we need it?
-    konanCompiler project(':backend.native')
-
     compile project(':tools:helpers')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile gradleApi()
@@ -62,13 +55,8 @@ dependencies {
 
 jar {
     dependsOn(':tools:helpers:jar')
+    dependsOn(':cross_dist')
     from (rootProject.findProject(':tools:helpers').sourceSets.main.output)
-}
-
-task dist(type: Copy) {
-    dependsOn 'jar'
-    destinationDir file('dist')
-    from (jar.outputs.files)
 }
 
 task deleteDist(type: Delete) {
@@ -92,7 +80,6 @@ publishing {
         }
     }
 }
-
 
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
