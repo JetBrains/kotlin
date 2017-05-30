@@ -19,22 +19,13 @@ package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.JavaVisibilities
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
 import org.jetbrains.kotlin.load.java.structure.JavaModifierListOwner
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.load.java.structure.MapBasedJavaAnnotationOwner
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 internal val ASM_API_VERSION_FOR_CLASS_READING = Opcodes.ASM5
 
-internal interface BinaryJavaAnnotationOwner : JavaAnnotationOwner {
-    val annotationsByFqName: Map<FqName, JavaAnnotation>
-    override fun findAnnotation(fqName: FqName) = annotationsByFqName[fqName]
-    override val isDeprecatedInJavaDoc: Boolean
-        get() = false
-}
-
-internal interface BinaryJavaModifierListOwner : JavaModifierListOwner, BinaryJavaAnnotationOwner {
+internal interface BinaryJavaModifierListOwner : JavaModifierListOwner, MapBasedJavaAnnotationOwner {
     val access: Int
 
     fun isSet(flag: Int) = access.isSet(flag)
@@ -52,10 +43,6 @@ internal interface BinaryJavaModifierListOwner : JavaModifierListOwner, BinaryJa
         }
 
     override val isDeprecatedInJavaDoc get() = isSet(Opcodes.ACC_DEPRECATED)
-}
-
-internal fun JavaAnnotationOwner.buildLazyValueForMap() = lazy {
-    annotations.filter { it.classId != null }.associateBy({ it.classId!!.asSingleFqName() }, { it })
 }
 
 internal fun Int.isSet(flag: Int) = this and flag != 0

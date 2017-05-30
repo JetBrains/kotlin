@@ -33,7 +33,7 @@ abstract class BinaryJavaMethodBase(
         val valueParameters: List<JavaValueParameter>,
         val typeParameters: List<JavaTypeParameter>,
         override val name: Name
-) : JavaMember, BinaryJavaAnnotationOwner, BinaryJavaModifierListOwner {
+) : JavaMember, MapBasedJavaAnnotationOwner, BinaryJavaModifierListOwner {
     override val annotationsByFqName by buildLazyValueForMap()
 
     override val annotations: Collection<JavaAnnotation> = mutableListOf()

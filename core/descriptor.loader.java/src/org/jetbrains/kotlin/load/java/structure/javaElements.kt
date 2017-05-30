@@ -52,7 +52,17 @@ interface JavaAnnotation : JavaElement {
     fun resolve(): JavaClass?
 }
 
-interface JavaPackage : JavaElement {
+interface MapBasedJavaAnnotationOwner : JavaAnnotationOwner {
+    val annotationsByFqName: Map<FqName?, JavaAnnotation>
+    override fun findAnnotation(fqName: FqName) = annotationsByFqName[fqName]
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = false
+}
+
+fun JavaAnnotationOwner.buildLazyValueForMap() = lazy {
+    annotations.associateBy { it.classId?.asSingleFqName() }
+}
+
     val fqName: FqName
     val subPackages: Collection<JavaPackage>
 

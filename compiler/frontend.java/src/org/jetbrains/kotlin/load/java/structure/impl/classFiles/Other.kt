@@ -30,7 +30,7 @@ class BinaryJavaField(
         override val isEnumEntry: Boolean,
         override val type: JavaType,
         override val initializerValue: Any?
-) : JavaField, BinaryJavaAnnotationOwner, BinaryJavaModifierListOwner {
+) : JavaField, MapBasedJavaAnnotationOwner, BinaryJavaModifierListOwner {
     override val annotations: MutableCollection<JavaAnnotation> = ContainerUtil.newSmartList()
     override val annotationsByFqName by buildLazyValueForMap()
 
@@ -53,7 +53,7 @@ class BinaryJavaValueParameter(
         override val name: Name?,
         override val type: JavaType,
         override val isVararg: Boolean
-) : JavaValueParameter, BinaryJavaAnnotationOwner {
+) : JavaValueParameter, MapBasedJavaAnnotationOwner {
     override val annotations: MutableCollection<JavaAnnotation> = ContainerUtil.newSmartList()
     override val annotationsByFqName by buildLazyValueForMap()
 }
