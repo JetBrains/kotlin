@@ -22148,6 +22148,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
+        @TestMetadata("interfaceWithNonAbstractFunIndirect.kt")
+        public void testInterfaceWithNonAbstractFunIndirect() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/interfaceWithNonAbstractFunIndirect.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt1936.kt")
         public void testKt1936() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/kt1936.kt");
@@ -22193,13 +22199,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("kt3500.kt")
         public void testKt3500() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/kt3500.kt");
-            try {
-                doTest(fileName);
-            }
-            catch (Throwable ignore) {
-                return;
-            }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            doTest(fileName);
         }
 
         @TestMetadata("kt3579.kt")

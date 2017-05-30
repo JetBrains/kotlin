@@ -18044,6 +18044,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("interfaceWithNonAbstractFunIndirect.kt")
+        public void testInterfaceWithNonAbstractFunIndirect() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/interfaceWithNonAbstractFunIndirect.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt1936.kt")
         public void testKt1936() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/kt1936.kt");

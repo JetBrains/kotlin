@@ -156,7 +156,7 @@ class ClassModelGenerator(val context: StaticContext) {
         // If one of overridden members is non-abstract, copy it.
         // When none found, we have nothing to copy, ignore.
         // When multiple found, our current class should provide implementation, ignore.
-        val memberToCopy = member.overriddenDescriptors
+        val memberToCopy = member.findNonRepeatingOverriddenDescriptors { overriddenDescriptors }
                 .filter { it.modality != Modality.ABSTRACT }
                 .singleOrNull() ?: return null
 
@@ -171,7 +171,7 @@ class ClassModelGenerator(val context: StaticContext) {
         // If one of overridden members has parameters with default value, copy it.
         // When non found, we have nothing to copy, ignore.
         // When multiple found, our current class should provide implementation, ignore.
-        val memberToCopy = member.overriddenDescriptors
+        val memberToCopy = member.findNonRepeatingOverriddenDescriptors { overriddenDescriptors }
                 .filter { it.hasOrInheritsParametersWithDefaultValue() }
                 .singleOrNull() ?: return null
 
@@ -180,6 +180,23 @@ class ClassModelGenerator(val context: StaticContext) {
 
         // If found member is fake itself, repeat search for it, until we find actual implementation
         return if (!memberToCopy.kind.isReal) findOptionalArgsMemberToCopy(memberToCopy) else memberToCopy
+    }
+
+    private fun <T : CallableMemberDescriptor> T.findNonRepeatingOverriddenDescriptors(
+            getTypedOverriddenDescriptors: T.() -> Collection<T>
+    ): List<T> {
+        val allDescriptors = mutableSetOf<T>()
+        val repeatedDescriptors = mutableSetOf<T>()
+        fun walk(descriptor: T) {
+            if (!allDescriptors.add(descriptor)) return
+            val overridden = descriptor.getTypedOverriddenDescriptors()
+            repeatedDescriptors += overridden
+            overridden.forEach { walk(it) }
+        }
+
+        val directOverriddenDescriptors = getTypedOverriddenDescriptors()
+        directOverriddenDescriptors.forEach { walk(it) }
+        return directOverriddenDescriptors.filter { it !in repeatedDescriptors }
     }
 
     private fun generateBridgeMethods(descriptor: ClassDescriptor, model: JsClassModel) {
