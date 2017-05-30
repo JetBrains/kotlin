@@ -2,12 +2,6 @@
 // INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintNewApiInspection
 
 import android.graphics.drawable.VectorDrawable
-import android.os.Build
 
-class VectorDrawableProvider {
-    fun getVectorDrawable(): VectorDrawable = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        VectorDrawable()
-    } else {
-        TODO("VERSION.SDK_INT < LOLLIPOP")
-    }
-}
+val v: VectorDrawable
+    get() = <caret>VectorDrawable()

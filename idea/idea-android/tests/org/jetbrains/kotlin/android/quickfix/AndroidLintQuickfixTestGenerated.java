@@ -278,6 +278,12 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
             doTest(fileName);
         }
 
+        @TestMetadata("destructuringDeclaration.kt")
+        public void testDestructuringDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/targetVersionCheck/destructuringDeclaration.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("expressionBody.kt")
         public void testExpressionBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/targetVersionCheck/expressionBody.kt");
@@ -287,6 +293,12 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
         @TestMetadata("functionLiteral.kt")
         public void testFunctionLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/targetVersionCheck/functionLiteral.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("getterWIthExpressionBody.kt")
+        public void testGetterWIthExpressionBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/lintQuickfix/targetVersionCheck/getterWIthExpressionBody.kt");
             doTest(fileName);
         }
 

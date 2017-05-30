@@ -10,6 +10,8 @@ class VectorDrawableProvider {
         return when (flag) {
             true -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 VectorDrawable()
+            } else {
+                TODO("VERSION.SDK_INT < LOLLIPOP")
             }
             else -> VectorDrawable()
         }

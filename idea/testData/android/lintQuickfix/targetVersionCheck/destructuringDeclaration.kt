@@ -1,13 +1,12 @@
 // INTENTION_TEXT: Surround with if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) { ... }
 // INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintNewApiInspection
 
+import android.app.Activity
 import android.graphics.drawable.VectorDrawable
-import android.os.Build
 
-class VectorDrawableProvider {
-    fun getVectorDrawable(): VectorDrawable = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        VectorDrawable()
-    } else {
-        TODO("VERSION.SDK_INT < LOLLIPOP")
-    }
+data class ValueProvider(var p1: VectorDrawable, val p2: Int)
+
+val activity = Activity()
+fun foo() {
+    val (v1, v2) = ValueProvider(<caret>VectorDrawable(), 0)
 }

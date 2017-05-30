@@ -8,8 +8,10 @@ class VectorDrawableProvider {
     val flag = false
     fun getVectorDrawable(): VectorDrawable {
         if (flag) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                return VectorDrawable()
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                VectorDrawable()
+            } else {
+                TODO("VERSION.SDK_INT < LOLLIPOP")
             }
         }
     }
