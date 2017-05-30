@@ -178,27 +178,6 @@ fun KtBlockExpression.contentRange(): PsiChildRange {
 
 // ----------- Inheritance -----------------------------------------------------------------------------------------------------------------
 
-fun KtClass.isInheritable(): Boolean {
-    return isInterface() || hasModifier(KtTokens.OPEN_KEYWORD) ||
-           hasModifier(KtTokens.ABSTRACT_KEYWORD) || hasModifier(KtTokens.SEALED_KEYWORD)
-}
-
-fun KtDeclaration.isOverridable(): Boolean {
-    val parent = parent
-    if (!(parent is KtClassBody || parent is KtParameterList)) return false
-
-    val klass = if (parent.parent is KtPrimaryConstructor)
-        parent.parent.parent as? KtClass
-    else
-        parent.parent as? KtClass
-    if (klass == null || (!klass.isInheritable() && !klass.isEnum())) return false
-
-    if (hasModifier(KtTokens.FINAL_KEYWORD) || hasModifier(KtTokens.PRIVATE_KEYWORD)) return false
-
-    return klass.isInterface() ||
-           hasModifier(KtTokens.ABSTRACT_KEYWORD) || hasModifier(KtTokens.OPEN_KEYWORD) || hasModifier(KtTokens.OVERRIDE_KEYWORD)
-}
-
 fun KtClass.isAbstract(): Boolean = isInterface() || hasModifier(KtTokens.ABSTRACT_KEYWORD)
 
 /**
