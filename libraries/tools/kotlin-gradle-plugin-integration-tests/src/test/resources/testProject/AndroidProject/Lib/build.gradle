@@ -16,4 +16,16 @@ android {
         minSdkVersion 7
         targetSdkVersion 22
     }
+
+    flavorDimensions "myFlavor"
+    productFlavors {
+        flavor1 {
+            dimension "myFlavor"
+        }
+        flavor2 {
+            dimension "myFlavor"
+        }
+    }
+
+    publishNonDefault true
 }

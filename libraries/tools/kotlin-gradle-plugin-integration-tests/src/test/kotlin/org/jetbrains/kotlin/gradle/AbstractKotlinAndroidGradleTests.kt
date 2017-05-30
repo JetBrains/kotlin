@@ -1,12 +1,14 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.getFileByName
+import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
 
 
 class KotlinAndroidGradleCLIOnly : AbstractKotlinAndroidGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.0")
+class KotlinAndroid30GradleCLIOnly : AbstractKotlinAndroidGradleTests(gradleVersion = "4.0-rc-1", androidGradlePluginVersion = "3.0.0-alpha2")
 
 class KotlinAndroidWithJackGradleCLIOnly : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.+")
 
@@ -25,52 +27,46 @@ abstract class AbstractKotlinAndroidGradleTests(
     fun testSimpleCompile() {
         val project = Project("AndroidProject", gradleVersion)
 
+        val modules = listOf("Android", "Lib")
+        val flavors = listOf("Flavor1", "Flavor2")
+        val buildTypes = listOf("Debug", "Release")
+
+        val tasks = arrayListOf<String>()
+        for (module in modules) {
+            for (flavor in flavors) {
+                for (buildType in buildTypes) {
+                    tasks.add(":$module:compile$flavor${buildType}Kotlin")
+                }
+            }
+        }
+
         project.build("build", "assembleAndroidTest") {
             assertSuccessful()
-            assertContains(":Lib:compileReleaseKotlin",
-                    ":Test:compileDebugKotlin",
-                    ":compileFlavor1DebugKotlin",
-                    ":compileFlavor2DebugKotlin",
-                    ":compileFlavor1JnidebugKotlin",
-                    ":compileFlavor1ReleaseKotlin",
-                    ":compileFlavor2JnidebugKotlin",
-                    ":compileFlavor2ReleaseKotlin",
-                    ":compileFlavor1Debug",
-                    ":compileFlavor2Debug",
-                    ":compileFlavor1Jnidebug",
-                    ":compileFlavor2Jnidebug",
-                    ":compileFlavor1Release",
-                    ":compileFlavor2Release",
-                    ":compileFlavor1DebugUnitTestKotlin",
-                    "InternalDummyTest PASSED",
-                    ":compileFlavor1DebugAndroidTestKotlin")
+            // Before 3.0 AGP test only modules are compiled only against one flavor and one build type,
+            // and contain only the compileDebugKotlin task.
+            // After 3.0 AGP test only modules contain a compile<Variant>Kotlin task for each variant.
+            tasks.addAll(findTasksByPattern(":Test:compile[\\w\\d]+Kotlin"))
+            assertTasksExecuted(tasks)
+            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+                // known bug: new AGP does not run Kotlin tests
+                // https://issuetracker.google.com/issues/38454212
+                // TODO: remove when the bug is fixed
+                assertContains("InternalDummyTest PASSED")
+            }
             checkKotlinGradleBuildServices()
         }
 
         // Run the build second time, assert everything is up-to-date
         project.build("build") {
             assertSuccessful()
-            assertContains(":Lib:compileReleaseKotlin UP-TO-DATE")
+            assertTasksUpToDate(tasks)
         }
 
         // Run the build third time, re-run tasks
 
         project.build("build", "--rerun-tasks") {
             assertSuccessful()
-            assertContains(":Lib:compileReleaseKotlin",
-                    ":Test:compileDebugKotlin",
-                    ":compileFlavor1DebugKotlin",
-                    ":compileFlavor2DebugKotlin",
-                    ":compileFlavor1JnidebugKotlin",
-                    ":compileFlavor1ReleaseKotlin",
-                    ":compileFlavor2JnidebugKotlin",
-                    ":compileFlavor2ReleaseKotlin",
-                    ":compileFlavor1Debug",
-                    ":compileFlavor2Debug",
-                    ":compileFlavor1Jnidebug",
-                    ":compileFlavor2Jnidebug",
-                    ":compileFlavor1Release",
-                    ":compileFlavor2Release")
+            assertTasksExecuted(tasks)
             checkKotlinGradleBuildServices()
         }
     }
@@ -82,8 +78,11 @@ abstract class AbstractKotlinAndroidGradleTests(
         // Execute 'assembleAndroidTest' first, without 'build' side effects
         project.build("assembleAndroidTest") {
             assertSuccessful()
-            assertContains(":copyFlavor1DebugKotlinClasses")
-            assertContains(":copyFlavor2DebugKotlinClasses")
+            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+                // with the new AGP we don't need copy classes tasks
+                assertContains(":copyFlavor1DebugKotlinClasses")
+                assertContains(":copyFlavor2DebugKotlinClasses")
+            }
         }
     }
 
