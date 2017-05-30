@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
@@ -412,7 +412,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                                        configuration: CompilerConfiguration,
                                        messageCollector: MessageCollector,
                                        scriptResolverEnv: HashMap<String, Any?>) {
-            val classpath = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).filterIsInstance(JvmClasspathRoot::class.java).mapNotNull { it.file }
+            val classpath = configuration.jvmClasspathRoots
             // TODO: consider using escaping to allow kotlin escaped names in class names
             if (scriptTemplates != null && scriptTemplates.isNotEmpty()) {
                 val classloader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), Thread.currentThread().contextClassLoader)
