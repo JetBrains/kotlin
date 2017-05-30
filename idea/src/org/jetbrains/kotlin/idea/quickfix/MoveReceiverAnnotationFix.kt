@@ -20,7 +20,6 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -43,8 +42,7 @@ class MoveReceiverAnnotationFix(element: KtAnnotationEntry) : KotlinQuickFixActi
 
     companion object Factory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val diag = Errors.INAPPLICABLE_RECEIVER_TARGET.cast(diagnostic)
-            val entry = diag.psiElement as? KtAnnotationEntry ?: return null
+            val entry = diagnostic.psiElement as? KtAnnotationEntry ?: return null
 
             val declaration = entry.getParentOfType<KtCallableDeclaration>(true) ?: return null
             if (declaration.receiverTypeReference == null) return null
@@ -52,8 +50,4 @@ class MoveReceiverAnnotationFix(element: KtAnnotationEntry) : KotlinQuickFixActi
             return MoveReceiverAnnotationFix(entry)
         }
     }
-}
-
-fun String.foo() {
-
 }
