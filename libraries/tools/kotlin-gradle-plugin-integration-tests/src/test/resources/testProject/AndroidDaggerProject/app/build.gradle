@@ -2,6 +2,7 @@ buildscript {
     repositories {
         mavenLocal()
         jcenter()
+        maven { url 'https://maven.google.com' }
     }
 
     dependencies {
@@ -34,6 +35,7 @@ android {
 repositories {
     mavenLocal()
     jcenter()
+    maven { url 'https://maven.google.com' }
 }
 
 dependencies {

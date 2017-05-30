@@ -20,27 +20,22 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import java.io.File
 
-class Kapt3IT : BaseGradleIT() {
+abstract class Kapt3BaseIT : BaseGradleIT() {
     companion object {
-        private const val GRADLE_VERSION = "2.10"
-        private const val GRADLE_2_14_VERSION = "2.14.1"
-        private const val ANDROID_GRADLE_PLUGIN_VERSION = "1.5.+"
-
         private val KAPT_SUCCESSFUL_REGEX = "Annotation processing complete, errors: 0".toRegex()
     }
-
-    private fun androidBuildOptions() =
-            BuildOptions(withDaemon = true,
-                    androidHome = File(ANDROID_HOME_PATH),
-                    androidGradlePluginVersion = ANDROID_GRADLE_PLUGIN_VERSION,
-                    freeCommandLineArgs = listOf("-Pkapt.verbose=true"))
 
     override fun defaultBuildOptions(): BuildOptions =
             super.defaultBuildOptions().copy(withDaemon = true)
 
-
-    private fun CompiledProject.assertKaptSuccessful() {
+    fun CompiledProject.assertKaptSuccessful() {
         KAPT_SUCCESSFUL_REGEX.findAll(this.output).count() > 0
+    }
+}
+
+open class Kapt3IT : Kapt3BaseIT() {
+    companion object {
+        private const val GRADLE_VERSION = "3.3"
     }
 
     @Test
@@ -148,84 +143,8 @@ class Kapt3IT : BaseGradleIT() {
     }
 
     @Test
-    fun testButterKnife() {
-        val project = Project("android-butterknife", GRADLE_VERSION, directoryPrefix = "kapt2")
-        val options = androidBuildOptions()
-
-        project.build("compileReleaseSources", options = options) {
-            assertSuccessful()
-            assertKaptSuccessful()
-            assertFileExists("app/build/generated/source/kapt/release/org/example/kotlin/butterknife/SimpleActivity\$\$ViewBinder.java")
-            assertFileExists("app/build/intermediates/classes/release/org/example/kotlin/butterknife/SimpleActivity\$\$ViewBinder.class")
-            assertFileExists("app/build/intermediates/classes/release/org/example/kotlin/butterknife/SimpleAdapter\$ViewHolder.class")
-        }
-
-        project.build("compileReleaseSources", options = options) {
-            assertSuccessful()
-            assertContains(":compileReleaseKotlin UP-TO-DATE")
-            assertContains(":compileReleaseJavaWithJavac UP-TO-DATE")
-        }
-    }
-
-    @Test
-    fun testDagger() {
-        val project = Project("android-dagger", GRADLE_VERSION, directoryPrefix = "kapt2")
-        val options = androidBuildOptions()
-
-        project.build("compileReleaseSources", ":app:compileDebugUnitTestJavaWithJavac", options = options) {
-            assertSuccessful()
-            assertKaptSuccessful()
-            assertFileExists("app/build/generated/source/kapt/release/com/example/dagger/kotlin/DaggerApplicationComponent.java")
-            assertFileExists("app/build/generated/source/kapt/release/com/example/dagger/kotlin/ui/HomeActivity_MembersInjector.java")
-            assertFileExists("app/build/intermediates/classes/release/com/example/dagger/kotlin/DaggerApplicationComponent.class")
-            assertFileExists("app/build/intermediates/classes/release/com/example/dagger/kotlin/AndroidModule.class")
-        }
-    }
-
-    @Test
-    fun testKt15001() {
-        val project = Project("kt15001", GRADLE_VERSION, directoryPrefix = "kapt2")
-        val options = androidBuildOptions()
-
-        project.build("compileReleaseSources", options = options) {
-            assertSuccessful()
-            assertKaptSuccessful()
-        }
-    }
-
-    @Test
-    fun testDbFlow() {
-        val project = Project("android-dbflow", GRADLE_VERSION, directoryPrefix = "kapt2")
-        val options = androidBuildOptions()
-
-        project.build("compileReleaseSources", options = options) {
-            assertSuccessful()
-            assertKaptSuccessful()
-            assertFileExists("app/build/generated/source/kapt/release/com/raizlabs/android/dbflow/config/GeneratedDatabaseHolder.java")
-            assertFileExists("app/build/generated/source/kapt/release/com/raizlabs/android/dbflow/config/AppDatabaseapp_Database.java")
-            assertFileExists("app/build/generated/source/kapt/release/mobi/porquenao/poc/kotlin/core/Item_Table.java")
-            assertFileExists("app/build/generated/source/kapt/release/mobi/porquenao/poc/kotlin/core/Item_Adapter.java")
-        }
-    }
-
-    @Test
-    fun testRealm() {
-        val project = Project("android-realm", GRADLE_VERSION, directoryPrefix = "kapt2")
-        val options = androidBuildOptions()
-
-        project.build("compileReleaseSources", options = options) {
-            assertSuccessful()
-            assertKaptSuccessful()
-            assertFileExists("build/generated/source/kapt/release/io/realm/CatRealmProxy.java")
-            assertFileExists("build/generated/source/kapt/release/io/realm/CatRealmProxyInterface.java")
-            assertFileExists("build/generated/source/kapt/release/io/realm/DefaultRealmModule.java")
-            assertFileExists("build/generated/source/kapt/release/io/realm/DefaultRealmModuleMediator.java")
-        }
-    }
-
-    @Test
     fun testGeneratedDirectoryIsUpToDate() {
-        val project = Project("generatedDirUpToDate", GRADLE_2_14_VERSION, directoryPrefix = "kapt2")
+        val project = Project("generatedDirUpToDate", GRADLE_VERSION, directoryPrefix = "kapt2")
 
         project.build("build") {
             assertSuccessful()
@@ -268,7 +187,7 @@ class Kapt3IT : BaseGradleIT() {
 
     @Test
     fun testRemoveAnnotationIC() {
-        val project = Project("simple", GRADLE_2_14_VERSION, directoryPrefix = "kapt2")
+        val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
         val options = defaultBuildOptions().copy(incremental = true)
         project.setupWorkingDir()
         val internalDummyKt = project.projectDir.getFileByName("InternalDummy.kt")

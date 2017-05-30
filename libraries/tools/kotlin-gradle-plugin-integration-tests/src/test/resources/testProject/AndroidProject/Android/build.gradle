@@ -1,12 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
-dependencies {
-    compile project(':Lib')
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    testCompile 'junit:junit:4.12'
-}
-
 android {
     compileSdkVersion 22
     buildToolsVersion "25.0.2"
@@ -22,23 +16,17 @@ android {
         targetSdkVersion 22
     }
 
-    buildTypes {
-        jnidebug.initWith(buildTypes.debug)
-        jnidebug {
-            applicationIdSuffix ".jnidebug"
-            jniDebuggable true
-        }
-    }
-
+    flavorDimensions "myFlavor"
     productFlavors {
         flavor1 {
             applicationId "com.example.flavor1"
             versionCode 20
+            dimension "myFlavor"
         }
-
         flavor2 {
             applicationId "com.example.flavor2"
             minSdkVersion 14
+            dimension "myFlavor"
         }
     }
 
@@ -47,4 +35,30 @@ android {
     kotlinOptions {
         noJdk = true
     }
+}
+
+if (VersionNumber.parse(android_tools_version) < VersionNumber.parse("3.0.0-alpha1")) {
+    configurations {
+        flavor1DebugCompile
+        flavor1ReleaseCompile
+        flavor2DebugCompile
+        flavor2ReleaseCompile
+    }
+
+    dependencies {
+        flavor1DebugCompile project(path: ':Lib', configuration: 'flavor1Debug')
+        flavor1ReleaseCompile project(path: ':Lib', configuration: 'flavor1Release')
+        flavor2DebugCompile project(path: ':Lib', configuration: 'flavor2Debug')
+        flavor2ReleaseCompile project(path: ':Lib', configuration: 'flavor2Release')
+    }
+}
+else {
+    dependencies {
+        compile project(":Lib")
+    }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testCompile 'junit:junit:4.12'
 }

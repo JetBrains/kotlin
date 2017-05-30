@@ -4,9 +4,10 @@ buildscript {
     repositories {
         mavenLocal()
         jcenter()
+        maven { url 'https://maven.google.com' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.+'
+        classpath "com.android.tools.build:gradle:$android_tools_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath("io.realm:realm-gradle-plugin:$realm_version") {
             exclude group: 'com.android.tools.build', module: 'gradle'
@@ -48,6 +49,7 @@ repositories {
         url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
     }
     mavenCentral()
+    maven { url 'https://maven.google.com' }
 }
 
 dependencies {

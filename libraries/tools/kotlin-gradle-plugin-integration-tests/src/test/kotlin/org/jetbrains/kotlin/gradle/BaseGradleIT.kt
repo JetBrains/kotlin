@@ -347,6 +347,22 @@ abstract class BaseGradleIT {
         return this
     }
 
+    fun CompiledProject.findTasksByPattern(pattern: String): Set<String> {
+        return "task '($pattern)'".toRegex().findAll(output).mapTo(HashSet()) { it.groupValues[1] }
+    }
+
+    fun CompiledProject.assertTasksExecuted(tasks: Iterable<String>) {
+        for (task in tasks) {
+            assertContains("Executing task '$task'")
+        }
+    }
+
+    fun CompiledProject.assertTasksUpToDate(tasks: Iterable<String>) {
+        for (task in tasks) {
+            assertContains("$task UP-TO-DATE")
+        }
+    }
+
     fun CompiledProject.getOutputForTask(taskName: String): String {
         fun String.substringAfter(delimiter: String, missingDelimiterValue: () -> String): String {
             val index = indexOf(delimiter)
