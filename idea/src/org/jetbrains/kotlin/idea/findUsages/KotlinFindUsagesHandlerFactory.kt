@@ -29,6 +29,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.findUsages.handlers.DelegatingFindMemberUsagesHandler
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindMemberUsagesHandler
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinTypeParameterFindUsag
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
 import org.jetbrains.kotlin.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import java.lang.IllegalArgumentException
 

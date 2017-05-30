@@ -25,11 +25,11 @@ import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.refactoring.classMembers.AbstractMemberInfoModel
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.util.containers.HashMap
+import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.isInheritable
 import org.jetbrains.kotlin.utils.keysToMap
 import javax.swing.JLabel
 import javax.swing.JPanel

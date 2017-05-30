@@ -26,10 +26,10 @@ import com.intellij.util.MergeQuery
 import com.intellij.util.Processor
 import com.intellij.util.Query
 import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import java.util.*
 
 fun PsiElement.isOverridableElement(): Boolean = when (this) {

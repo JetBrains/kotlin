@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.implicitModality
+import org.jetbrains.kotlin.idea.core.mapModality
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -41,10 +42,6 @@ class RedundantModalityModifierInspection : AbstractKotlinInspection(), CleanupL
 
                 if (modalityModifierType != implicitModality) return
 
-                // Descriptor may have the different modality (in case of all-open plugin enabled, for example)
-                val modalityFromPsi = getModality(implicitModality)
-                if (modalityFromPsi != null && hasRefinedModalityInDescriptor(declaration, modalityFromPsi)) return
-
                 holder.registerProblem(modalityModifier,
                                        "Redundant modality modifier",
                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
@@ -52,25 +49,5 @@ class RedundantModalityModifierInspection : AbstractKotlinInspection(), CleanupL
                                                         declaration.containingFile))
             }
         }
-    }
-
-    private fun hasRefinedModalityInDescriptor(
-            declaration: KtDeclaration,
-            implicitModality: Modality
-    ): Boolean {
-        val bindingContext = declaration.analyze(BodyResolveMode.PARTIAL)
-        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] ?: return false
-        return DeclarationAttributeAltererExtension.getInstances(declaration.project).any {
-            it.refineDeclarationModality(declaration, descriptor, descriptor.containingDeclaration,
-                                         implicitModality, bindingContext) != null
-        }
-    }
-
-    private fun getModality(modalityToken: IElementType): Modality? = when (modalityToken) {
-        KtTokens.FINAL_KEYWORD -> Modality.FINAL
-        KtTokens.SEALED_KEYWORD -> Modality.SEALED
-        KtTokens.OPEN_KEYWORD -> Modality.OPEN
-        KtTokens.ABSTRACT_KEYWORD -> Modality.ABSTRACT
-        else -> null
     }
 }
