@@ -242,10 +242,31 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             doTest(fileName);
         }
 
-        @TestMetadata("signatureForSpecialBridge.kt")
-        public void testSignatureForSpecialBridge() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/signatureForSpecialBridge.kt");
-            doTest(fileName);
+        @TestMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/signatures")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Signatures extends AbstractBytecodeListingTest {
+            public void testAllFilesPresentInSignatures() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/specialBridges/signatures"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("genericClass.kt")
+            public void testGenericClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/genericClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nonGenericClass.kt")
+            public void testNonGenericClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/nonGenericClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("partiallySpecializedClass.kt")
+            public void testPartiallySpecializedClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/partiallySpecializedClass.kt");
+                doTest(fileName);
+            }
         }
     }
 }

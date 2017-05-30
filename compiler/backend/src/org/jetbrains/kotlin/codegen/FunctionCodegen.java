@@ -1126,8 +1126,12 @@ public class FunctionCodegen {
         boolean isSpecialOrDelegationToSuper = isSpecialBridge || isStubDeclarationWithDelegationToSuper;
         int flags = ACC_PUBLIC | ACC_BRIDGE | (!isSpecialOrDelegationToSuper ? ACC_SYNTHETIC : 0) | (isSpecialBridge ? ACC_FINAL : 0); // TODO.
 
-        MethodVisitor mv =
-                v.newMethod(JvmDeclarationOriginKt.Bridge(descriptor, origin), flags, bridge.getName(), bridge.getDescriptor(), null, null);
+        String bridgeSignature =
+                isSpecialBridge ? typeMapper.mapSignatureWithGeneric(descriptor, OwnerKind.IMPLEMENTATION).getGenericsSignature()
+                                : null;
+
+        MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.Bridge(descriptor, origin), flags,
+                                       bridge.getName(), bridge.getDescriptor(), bridgeSignature, null);
         if (!state.getClassBuilderMode().generateBodies) return;
 
         mv.visitCode();
