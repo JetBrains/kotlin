@@ -158,7 +158,9 @@ abstract class CLITool<A : CommonToolArguments> {
         fun doMain(compiler: CLITool<*>, args: Array<String>) {
             // We depend on swing (indirectly through PSI or something), so we want to declare headless mode,
             // to avoid accidentally starting the UI thread
-            System.setProperty("java.awt.headless", "true")
+            if (System.getProperty("java.awt.headless") == null) {
+                System.setProperty("java.awt.headless", "true")
+            }
             val exitCode = doMainNoExit(compiler, args)
             if (exitCode != ExitCode.OK) {
                 System.exit(exitCode.code)
