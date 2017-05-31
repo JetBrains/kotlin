@@ -40,6 +40,8 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
 
     // Based on SliceUsage.processChildren
     private fun KotlinSliceUsage.processChildrenWithoutProgress(processor: (KotlinSliceUsage) -> Unit) {
+        if (this is KotlinSliceDereferenceUsage) return
+
         val element = runReadAction { element }
 
         val uniqueProcessor = CommonProcessors.UniqueProcessor(
@@ -78,6 +80,9 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
                 val chunks = usage.text
                 append(chunks.first().render() + " ")
                 append("\t".repeat(indent))
+                if (usage is KotlinSliceDereferenceUsage) {
+                    append("DEREFERENCE: ")
+                }
                 chunks.slice(1..chunks.size - 1).joinTo(
                         this,
                         separator = "",
@@ -85,7 +90,9 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
                         postfix = "\n"
                 ) { it.render() }
                 if (!isDuplicated) {
-                    usage.processChildrenWithoutProgress { append(process(it, indent + 1)) }
+                    usage.processChildrenWithoutProgress {
+                        append(process(it, indent + 1))
+                    }
                 }
             }.replace(Regex("</bold><bold>"), "")
         }
@@ -100,12 +107,14 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
 
         val fileText = FileUtil.loadFile(mainFile, true)
         val flowKind = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FLOW: ")
+        val withDereferences = InTextDirectivesUtils.isDirectiveDefined(fileText, "// WITH_DEREFERENCES")
         val analysisParams = SliceAnalysisParams().apply {
             dataFlowToThis = when (flowKind) {
                 "IN" -> true
                 "OUT" -> false
                 else -> throw AssertionError("Invalid flow kind: $flowKind")
             }
+            showInstanceDereferences = withDereferences
             scope = AnalysisScope(project)
         }
 

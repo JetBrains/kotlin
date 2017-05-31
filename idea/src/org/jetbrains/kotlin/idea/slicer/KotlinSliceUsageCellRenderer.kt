@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.slicer.SliceUsage
 import com.intellij.slicer.SliceUsageCellRendererBase
+import com.intellij.ui.JBColor
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.FontUtil
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
@@ -38,9 +39,15 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
 
     override fun customizeCellRendererFor(sliceUsage: SliceUsage) {
         if (sliceUsage !is KotlinSliceUsage) return
+        val isDereference = sliceUsage is KotlinSliceDereferenceUsage
 
         for ((i, textChunk) in sliceUsage.getText().withIndex()) {
-            append(textChunk.text, textChunk.simpleAttributesIgnoreBackground)
+            var attributes = textChunk.simpleAttributesIgnoreBackground
+            if (isDereference) {
+                attributes = attributes.derive(attributes.style, JBColor.LIGHT_GRAY, attributes.bgColor, attributes.waveColor)
+            }
+
+            append(textChunk.text, attributes)
             if (i == 0) {
                 append(FontUtil.spaceAndThinSpace())
             }

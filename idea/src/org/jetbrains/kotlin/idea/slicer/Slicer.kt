@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.idea.slicer
 
+import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
+import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.SearchScope
 import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
+import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.getContainingPseudocode
@@ -37,6 +40,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.processAllUsages
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -58,13 +62,17 @@ private fun KtFunction.processCalls(scope: SearchScope, processor: (UsageInfo) -
     )
 }
 
-private fun KtDeclaration.processVariableAccesses(scope: SearchScope, isRead: Boolean, processor: (UsageInfo) -> Unit) {
+private fun KtDeclaration.processVariableAccesses(
+        scope: SearchScope,
+        kind: Access,
+        processor: (UsageInfo) -> Unit
+) {
     processAllUsages(
             {
                 KotlinPropertyFindUsagesOptions(project).apply {
-                    isReadAccess = isRead
-                    isWriteAccess = !isRead
-                    isReadWriteAccess = false
+                    isReadAccess = kind == Access.Read || kind == Access.ReadWrite
+                    isWriteAccess = kind == Access.Write || kind == Access.ReadWrite
+                    isReadWriteAccess = kind == Access.ReadWrite
                     isSearchForTextOccurrences = false
                     isSkipImportStatements = true
                     searchScope = scope.intersectWith(useScope)
@@ -88,7 +96,7 @@ private fun KtParameter.canProcess(): Boolean {
 abstract class Slicer(
         protected val element: KtExpression,
         protected val processor: Processor<SliceUsage>,
-        protected val parentUsage: SliceUsage
+        protected val parentUsage: KotlinSliceUsage
 ) {
     protected class PseudocodeCache {
         private val computedPseudocodes = HashMap<KtElement, Pseudocode>()
@@ -113,13 +121,13 @@ abstract class Slicer(
 class InflowSlicer(
         element: KtExpression,
         processor: Processor<SliceUsage>,
-        parentUsage: SliceUsage
+        parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
     private fun KtProperty.processProperty() {
         if (!canProcess()) return
 
         initializer?.passToProcessor()
-        processVariableAccesses(parentUsage.scope.toSearchScope(), false) body@ {
+        processVariableAccesses(parentUsage.scope.toSearchScope(), Access.Write) body@ {
             val refExpression = it.element as? KtExpression ?: return@body
             val rhs = KtPsiUtil.safeDeparenthesize(refExpression).getAssignmentByLHS()?.right ?: return@body
             rhs.passToProcessor()
@@ -192,7 +200,7 @@ class InflowSlicer(
 class OutflowSlicer(
         element: KtExpression,
         processor: Processor<SliceUsage>,
-        parentUsage: SliceUsage
+        parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
     private fun KtDeclaration.processVariable() {
         when (this) {
@@ -200,9 +208,18 @@ class OutflowSlicer(
             is KtParameter -> if (!canProcess()) return
             else -> return
         }
-        processVariableAccesses(parentUsage.scope.toSearchScope(),true) body@ {
+        val withDereferences = parentUsage.params.showInstanceDereferences
+        processVariableAccesses(
+                parentUsage.scope.toSearchScope(),
+                if (withDereferences) Access.ReadWrite else Access.Read
+        ) body@ {
             val refExpression = (it.element as? KtExpression)?.let { KtPsiUtil.safeDeparenthesize(it) } ?: return@body
-            refExpression.processExpression()
+            if (withDereferences) {
+                refExpression.processDereferences()
+            }
+            if (!withDereferences || KotlinReadWriteAccessDetector.INSTANCE.getExpressionAccess(refExpression) == Access.Read) {
+                refExpression.processExpression()
+            }
         }
     }
 
@@ -224,17 +241,49 @@ class OutflowSlicer(
         }
     }
 
-    private fun KtExpression.processExpression() {
+    private fun processDereferenceIsNeeded(
+            expression: KtExpression,
+            pseudoValue: PseudoValue,
+            instr: InstructionWithReceivers
+    ) {
+        if (!parentUsage.params.showInstanceDereferences) return
+
+        val receiver = instr.receiverValues[pseudoValue]
+        val resolvedCall = when (instr) {
+            is CallInstruction -> instr.resolvedCall
+            is ReadValueInstruction -> (instr.target as? AccessTarget.Call)?.resolvedCall
+            else -> null
+        } ?: return
+
+        if (receiver != null && resolvedCall.dispatchReceiver == receiver) {
+            processor.process(KotlinSliceDereferenceUsage(expression, parentUsage))
+        }
+    }
+
+    private fun KtExpression.processPseudocodeUsages(processor: (PseudoValue, Instruction) -> Unit) {
         val pseudocode = pseudocodeCache[this] ?: return
         val pseudoValue = pseudocode.getElementValue(this) ?: return
-        pseudocode.getUsages(pseudoValue).forEach { instr ->
+        pseudocode.getUsages(pseudoValue).forEach { processor(pseudoValue, it) }
+    }
+
+    private fun KtExpression.processDereferences() {
+        processPseudocodeUsages { pseudoValue, instr ->
+            when (instr) {
+                is ReadValueInstruction -> processDereferenceIsNeeded(this, pseudoValue, instr)
+                is CallInstruction -> processDereferenceIsNeeded(this, pseudoValue, instr)
+            }
+        }
+    }
+
+    private fun KtExpression.processExpression() {
+        processPseudocodeUsages { pseudoValue, instr ->
             when (instr) {
                 is WriteValueInstruction -> (instr.target.accessedDescriptor?.source?.getPsi() as? KtDeclaration)?.passToProcessor()
                 is CallInstruction -> instr.arguments[pseudoValue]?.source?.getPsi()?.passToProcessor()
                 is ReturnValueInstruction -> (instr.owner.correspondingElement as? KtFunction)?.passToProcessor()
                 is MagicInstruction -> when (instr.kind) {
                     MagicKind.NOT_NULL_ASSERTION, MagicKind.CAST -> instr.outputValue.element?.passToProcessor()
-                    else -> return
+                    else -> {}
                 }
             }
         }

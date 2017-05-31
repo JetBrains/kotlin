@@ -1,0 +1,6 @@
+13 val <bold>x = A()</bold>
+16 	DEREFERENCE: <bold>x</bold>[1]
+17 	DEREFERENCE: <bold>x</bold>[1] = y
+18 	DEREFERENCE: <bold>x</bold>[1] += y
+19 	DEREFERENCE: <bold>x</bold>[1] *= y
+20 	DEREFERENCE: <bold>x</bold>[1]++
