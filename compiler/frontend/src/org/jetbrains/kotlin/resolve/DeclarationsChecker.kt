@@ -576,27 +576,19 @@ class DeclarationsChecker(
     }
 
     private fun checkPropertyLateInit(property: KtCallableDeclaration, propertyDescriptor: PropertyDescriptor) {
-        val modifierList = property.modifierList ?: return
-        val modifier = modifierList.getModifier(KtTokens.LATEINIT_KEYWORD) ?: return
+        val modifier = property.modifierList?.getModifier(KtTokens.LATEINIT_KEYWORD) ?: return
 
         if (!propertyDescriptor.isVar) {
             trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is allowed only on mutable properties"))
         }
 
-        var returnTypeIsNullable = true
-        var returnTypeIsPrimitive = true
+        val returnType = propertyDescriptor.type
 
-        val returnType = propertyDescriptor.returnType
-        if (returnType != null) {
-            returnTypeIsNullable = TypeUtils.isNullableType(returnType)
-            returnTypeIsPrimitive = KotlinBuiltIns.isPrimitiveType(returnType)
-        }
-
-        if (returnTypeIsNullable) {
+        if (TypeUtils.isNullableType(returnType)) {
             trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on nullable properties"))
         }
 
-        if (returnTypeIsPrimitive) {
+        if (KotlinBuiltIns.isPrimitiveType(returnType)) {
             trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on primitive type properties"))
         }
 

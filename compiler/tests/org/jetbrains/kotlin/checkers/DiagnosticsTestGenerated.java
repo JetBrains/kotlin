@@ -16263,6 +16263,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/properties/localLateinit"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("inapplicableLateinitModifier.kt")
+                public void testInapplicableLateinitModifier() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/localLateinit/inapplicableLateinitModifier.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("localLateinit.kt")
                 public void testLocalLateinit() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/localLateinit/localLateinit.kt");
