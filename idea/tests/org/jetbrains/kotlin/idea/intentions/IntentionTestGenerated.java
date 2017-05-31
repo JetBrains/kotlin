@@ -12896,6 +12896,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeExplicitTypeArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("blockValue.kt")
+        public void testBlockValue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/blockValue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultParamValue.kt")
+        public void testDefaultParamValue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/defaultParamValue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("fourLiterals.kt")
         public void testFourLiterals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/fourLiterals.kt");
@@ -12905,6 +12917,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("functionBodyIsCallWithUnnecessaryTypeArgs.kt")
         public void testFunctionBodyIsCallWithUnnecessaryTypeArgs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/functionBodyIsCallWithUnnecessaryTypeArgs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("getterBody.kt")
+        public void testGetterBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/getterBody.kt");
             doTest(fileName);
         }
 
@@ -13010,9 +13028,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("qualified.kt")
+        public void testQualified() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/qualified.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("returnCallWithUnnecessaryTypeArgs.kt")
         public void testReturnCallWithUnnecessaryTypeArgs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/returnCallWithUnnecessaryTypeArgs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("twoArguments.kt")
+        public void testTwoArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/twoArguments.kt");
             doTest(fileName);
         }
 

@@ -138,7 +138,7 @@
     <file>insideOtherCall.kt</file>
     <line>5</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/insideOtherCall.kt" />
+    <entry_point TYPE="file" FQNAME="insideOtherCall.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary type argument</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -147,7 +147,7 @@
     <file>insideDeepOtherCall.kt</file>
     <line>8</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/insideDeepOtherCall.kt" />
+    <entry_point TYPE="file" FQNAME="insideDeepOtherCall.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary type argument</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -156,9 +156,62 @@
     <file>insideDeepOtherCall.kt</file>
     <line>8</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/insideDeepOtherCall.kt" />
+    <entry_point TYPE="file" FQNAME="insideDeepOtherCall.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary type argument</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
 
+  <problem>
+    <file>twoArguments.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="twoArguments.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary type argument</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
+  <problem>
+    <file>twoArguments.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="twoArguments.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary type argument</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
+  <problem>
+    <file>qualified.kt</file>
+    <line>6</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="qualified.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary type argument</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
+  <problem>
+    <file>getterBody.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="getterBody.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary type argument</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
+  <problem>
+    <file>defaultParamValue.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="defaultParamValue.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary type argument</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
+  <problem>
+    <file>blockValue.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="blockValue.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary type argument</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
 </problems>

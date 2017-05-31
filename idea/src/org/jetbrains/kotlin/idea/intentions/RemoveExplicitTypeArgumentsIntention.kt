@@ -18,17 +18,24 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueDescriptor
+import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
-import org.jetbrains.kotlin.resolve.calls.CallResolver
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -73,29 +80,33 @@ class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentInten
             if (callExpression.typeArguments.isEmpty()) return false
 
             val resolutionFacade = callExpression.getResolutionFacade()
-            val context = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL)
-            val calleeExpression = callExpression.calleeExpression ?: return false
-            val scope = calleeExpression.getResolutionScope(context, resolutionFacade)
-            val originalCall = callExpression.getResolvedCall(context) ?: return false
-            val untypedCall = CallWithoutTypeArgs(originalCall.call)
+            val bindingContext = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL)
+            val originalCall = callExpression.getResolvedCall(bindingContext) ?: return false
 
-            val expectedTypeIsExplicitInCode = callExpression.hasExplicitExpectedType(context)
-            val expectedType = if (expectedTypeIsExplicitInCode) {
-                context[BindingContext.EXPECTED_EXPRESSION_TYPE, callExpression] ?: TypeUtils.NO_EXPECTED_TYPE
-            }
-            else {
-                TypeUtils.NO_EXPECTED_TYPE
-            }
-            val dataFlow = context.getDataFlowInfoBefore(callExpression)
-            val callResolver = resolutionFacade.frontendService<CallResolver>()
-            val resolutionResults = callResolver.resolveFunctionCall(
-                    BindingTraceContext(), scope, untypedCall, expectedType, dataFlow, false)
-            if (!resolutionResults.isSingleResult) {
-                return false
-            }
+            val (contextExpression, expectedType) = findContextToAnalyze(callExpression, bindingContext)
+            val resolutionScope = contextExpression.getResolutionScope(bindingContext, resolutionFacade)
+
+            val key = Key<Unit>("RemoveExplicitTypeArgumentsIntention")
+            callExpression.putCopyableUserData(key, Unit)
+            val expressionToAnalyze = contextExpression.copied()
+            callExpression.putCopyableUserData(key, null)
+
+            val newCallExpression = expressionToAnalyze.findDescendantOfType<KtCallExpression> { it.getCopyableUserData(key) != null }!!
+            newCallExpression.typeArgumentList!!.delete()
+
+            val newBindingContext = expressionToAnalyze.analyzeInContext(
+                    resolutionScope,
+                    contextExpression,
+                    trace = DelegatingBindingTrace(bindingContext, "Temporary trace"),
+                    dataFlowInfo = bindingContext.getDataFlowInfoBefore(contextExpression),
+                    expectedType = expectedType ?: TypeUtils.NO_EXPECTED_TYPE,
+                    isStatement = expectedType == null
+            )
+
+            val newCall = newCallExpression.getResolvedCall(newBindingContext) ?: return false
 
             val args = originalCall.typeArguments
-            val newArgs = resolutionResults.resultingCall.typeArguments
+            val newArgs = newCall.typeArguments
 
             fun equalTypes(type1: KotlinType, type2: KotlinType): Boolean {
                 return if (approximateFlexible) {
@@ -110,15 +121,59 @@ class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentInten
                 equalTypes(argType, newArgType)
             }
         }
+
+        private fun findContextToAnalyze(expression: KtExpression, bindingContext: BindingContext): Pair<KtExpression, KotlinType?> {
+            for (element in expression.parentsWithSelf) {
+                if (element !is KtExpression) continue
+
+                if (element.getQualifiedExpressionForSelector() != null) continue
+                if (!element.isUsedAsExpression(bindingContext)) return element to null
+
+                val parent = element.parent
+                when (parent) {
+                    is KtNamedFunction -> {
+                        val expectedType = if (element == parent.bodyExpression && !parent.hasBlockBody() && parent.hasDeclaredReturnType())
+                            (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent] as? FunctionDescriptor)?.returnType
+                        else
+                            null
+                        return element to expectedType
+                    }
+
+                    is KtVariableDeclaration -> {
+                        val expectedType = if (element == parent.initializer && parent.typeReference != null)
+                            (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent] as? ValueDescriptor)?.type
+                        else
+                            null
+                        return element to expectedType
+                    }
+
+                    is KtParameter -> {
+                        val expectedType = if (element == parent.defaultValue)
+                            (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent] as? ValueDescriptor)?.type
+                        else
+                            null
+                        return element to expectedType
+                    }
+
+                    is KtPropertyAccessor -> {
+                        val property = parent.parent as KtProperty
+                        val expectedType = when {
+                            element != parent.bodyExpression || parent.hasBlockBody() -> null
+                            parent.isSetter -> parent.builtIns.unitType
+                            property.typeReference == null -> null
+                            else -> (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent] as? FunctionDescriptor)?.returnType
+                        }
+                        return element to expectedType
+                    }
+                }
+            }
+
+            return expression to null
+        }
     }
 
     override fun isApplicableTo(element: KtTypeArgumentList): Boolean {
         return isApplicableTo(element, approximateFlexible = false)
-    }
-
-    private class CallWithoutTypeArgs(call: Call) : DelegatingCall(call) {
-        override fun getTypeArguments() = emptyList<KtTypeProjection>()
-        override fun getTypeArgumentList() = null
     }
 
     override fun applyTo(element: KtTypeArgumentList, editor: Editor?) {
