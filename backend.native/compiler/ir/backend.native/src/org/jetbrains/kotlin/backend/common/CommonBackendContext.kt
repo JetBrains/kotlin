@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
+import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -38,7 +39,6 @@ interface CommonBackendContext : BackendContext {
 }
 
 class ReflectionTypes(module: ModuleDescriptor, internalPackage: FqName) {
-    val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
     private val kotlinReflectScope: MemberScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         module.getPackage(KOTLIN_REFLECT_FQ_NAME).memberScope
