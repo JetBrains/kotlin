@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruc
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -43,6 +42,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.processAllUsages
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
 import org.jetbrains.kotlin.psi.*
@@ -89,7 +90,7 @@ private fun KtDeclaration.processVariableAccesses(
 }
 
 private fun KtParameter.canProcess(): Boolean {
-    return !(isLoopParameter || isVarArg || hasValOrVar())
+    return !(isLoopParameter || isVarArg)
 }
 
 abstract class Slicer(
@@ -126,12 +127,7 @@ class InflowSlicer(
 ) : Slicer(element, processor, parentUsage) {
     private fun PsiElement.passToProcessorAsValue(lambdaLevel: Int = parentUsage.lambdaLevel) = passToProcessor(lambdaLevel, true)
 
-    private fun KtProperty.processAssignments() {
-        val analysisScope = parentUsage.scope.toSearchScope()
-        val accessSearchScope = if (isVar) analysisScope else {
-            val containerScope = getStrictParentOfType<KtDeclaration>()?.let { LocalSearchScope(it) } ?: return
-            analysisScope.intersectWith(containerScope)
-        }
+    private fun KtDeclaration.processAssignments(accessSearchScope: SearchScope) {
         processVariableAccesses(accessSearchScope, Access.Write) body@ {
             val refExpression = it.element as? KtExpression ?: return@body
             val rhs = KtPsiUtil.safeDeparenthesize(refExpression).getAssignmentByLHS()?.right ?: return@body
@@ -147,6 +143,15 @@ class InflowSlicer(
             if (!lhs.isBackingFieldReference()) return@body
             rhs.passToProcessor()
         }
+    }
+
+    private fun KtProperty.processPropertyAssignments() {
+        val analysisScope = parentUsage.scope.toSearchScope()
+        val accessSearchScope = if (isVar) analysisScope else {
+            val containerScope = getStrictParentOfType<KtDeclaration>()?.let { LocalSearchScope(it) } ?: return
+            analysisScope.intersectWith(containerScope)
+        }
+        processAssignments(accessSearchScope)
     }
 
     private fun KtProperty.processProperty() {
@@ -166,7 +171,7 @@ class InflowSlicer(
         val isDefaultSetter = setter?.bodyExpression == null
         if (isDefaultGetter) {
             if (isDefaultSetter) {
-                processAssignments()
+                processPropertyAssignments()
             }
             else {
                 setter!!.processBackingFieldAssignments()
@@ -181,11 +186,11 @@ class InflowSlicer(
         if (function.isOverridable()) return
 
         if (function is KtPropertyAccessor && function.isSetter) {
-            function.property.processAssignments()
+            function.property.processPropertyAssignments()
             return
         }
 
-        val parameterDescriptor = resolveToDescriptor() as ValueParameterDescriptor
+        val parameterDescriptor = analyze()[BindingContext.VALUE_PARAMETER, this] ?: return
 
         (function as? KtFunction)?.processCalls(parentUsage.scope.toSearchScope()) body@ {
             val refExpression = it.element as? KtExpression ?: return@body
@@ -198,6 +203,10 @@ class InflowSlicer(
                                       else -> null
                                   } ?: return@body
             flownExpression.passToProcessorAsValue()
+        }
+
+        if (valOrVarKeyword.toValVar() == KotlinValVar.Var) {
+            processAssignments(parentUsage.scope.toSearchScope())
         }
     }
 
@@ -255,7 +264,7 @@ class InflowSlicer(
                 if (accessedDescriptor is SyntheticFieldDescriptor) {
                     val property = accessedDeclaration as? KtProperty ?: return
                     if (accessedDescriptor.propertyDescriptor.setter?.isDefault ?: true) {
-                        property.processAssignments()
+                        property.processPropertyAssignments()
                     }
                     else {
                         property.setter?.processBackingFieldAssignments()
