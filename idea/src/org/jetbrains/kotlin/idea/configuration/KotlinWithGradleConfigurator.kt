@@ -175,7 +175,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
     private fun KtBlockExpression.addCompileStdlibIfMissing(sdk: Sdk?, version: String): KtCallExpression? =
             findCompileStdLib() ?:
-            addExpressionIfMissing(getKotlinScriptDependencySnippet(getStdlibArtifactName(sdk, version))) as? KtCallExpression
+            addExpressionIfMissing(getGSKCompileDependencySnippet(KOTLIN_GROUP_ID, getStdlibArtifactName(sdk, version))) as? KtCallExpression
 
     protected fun addElementsToModuleGroovyFile(file: GroovyFile, version: String): Boolean {
         val oldText = file.text
@@ -281,41 +281,71 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         fun getGroovyApplyPluginDirective(pluginName: String) = "apply plugin: '$pluginName'"
 
         fun addKotlinLibraryToModule(module: Module, scope: DependencyScope, libraryDescriptor: ExternalLibraryDescriptor) {
-            val gradleFile = module.getBuildScriptPsiFile() as? GroovyFile
-            if (gradleFile != null && canConfigureFile(gradleFile)) {
-                gradleFile.project.executeWriteCommand("Add Kotlin library") {
-                    val groovyScope = when (scope) {
-                        DependencyScope.COMPILE -> "compile"
-                        DependencyScope.TEST -> if (KotlinPluginUtil.isAndroidGradleModule(module)) {
-                            // TODO we should add testCompile or androidTestCompile
-                            "compile"
-                        }
-                        else {
-                            "testCompile"
-                        }
-                        DependencyScope.RUNTIME -> "runtime"
-                        DependencyScope.PROVIDED -> "compile"
-                        else -> "compile"
-                    }
-
-                    val dependencyString = String.format(
-                            "%s \"%s:%s:%s\"",
-                            groovyScope, libraryDescriptor.libraryGroupId, libraryDescriptor.libraryArtifactId,
-                            libraryDescriptor.maxVersion)
-
-                    val dependenciesBlock = getDependenciesBlock(gradleFile)
-                    addLastExpressionInBlockIfNeeded(dependencyString, dependenciesBlock)
-
-                    CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(gradleFile)
-                }
-
-                val virtualFile = gradleFile.virtualFile
-                if (virtualFile != null) {
-                    createConfigureKotlinNotificationCollector(gradleFile.project)
-                            .addMessage(virtualFile.path + " was modified")
-                            .showNotification()
-                }
+            val buildScript = module.getBuildScriptPsiFile() ?: return
+            if (!canConfigureFile(buildScript)) {
+                return
             }
+
+            val isAndroidModule = KotlinPluginUtil.isAndroidGradleModule(module)
+            when (buildScript) {
+                is GroovyFile -> addKotlinLibraryToModuleGroovyFile(buildScript, scope, libraryDescriptor, isAndroidModule)
+                is KtFile -> addKotlinLibraryToModuleGSKFile(buildScript, scope, libraryDescriptor, isAndroidModule)
+            }
+
+            buildScript.virtualFile?.let {
+                createConfigureKotlinNotificationCollector(buildScript.project)
+                        .addMessage(it.path + " was modified")
+                        .showNotification()
+            }
+        }
+
+        fun addKotlinLibraryToModuleGroovyFile(
+                gradleFile: GroovyFile,
+                scope: DependencyScope,
+                libraryDescriptor: ExternalLibraryDescriptor,
+                isAndroidModule: Boolean) {
+            gradleFile.project.executeWriteCommand("Add Kotlin library") {
+                val dependencyString = String.format(
+                        "%s \"%s:%s:%s\"",
+                        scope.toGradleCompileScope(isAndroidModule),
+                        libraryDescriptor.libraryGroupId,
+                        libraryDescriptor.libraryArtifactId,
+                        libraryDescriptor.maxVersion)
+
+                val dependenciesBlock = getDependenciesBlock(gradleFile)
+                addLastExpressionInBlockIfNeeded(dependencyString, dependenciesBlock)
+
+                CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(gradleFile)
+            }
+        }
+
+        fun addKotlinLibraryToModuleGSKFile(
+                gradleFile: KtFile,
+                scope: DependencyScope,
+                libraryDescriptor: ExternalLibraryDescriptor,
+                isAndroidModule: Boolean) {
+            gradleFile.project.executeWriteCommand("Add Kotlin library") {
+                val kotlinLibraryVersion = libraryDescriptor.maxVersion.takeIf { it != GSK_KOTLIN_VERSION_PROPERTY_NAME }
+                gradleFile.getDependenciesBlock()?.apply {
+                    addExpressionIfMissing(
+                            getGSKCompileDependencySnippet(
+                                    libraryDescriptor.libraryGroupId,
+                                    libraryDescriptor.libraryArtifactId,
+                                    scope.toGradleCompileScope(isAndroidModule),
+                                    kotlinLibraryVersion))
+                }
+
+                CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(gradleFile)
+            }
+        }
+
+        private fun DependencyScope.toGradleCompileScope(isAndroidModule: Boolean) = when (this) {
+            DependencyScope.COMPILE -> "compile"
+            // TODO we should add testCompile or androidTestCompile
+            DependencyScope.TEST -> if (isAndroidModule) "compile" else "testCompile"
+            DependencyScope.RUNTIME -> "runtime"
+            DependencyScope.PROVIDED -> "compile"
+            else -> "compile"
         }
 
         fun changeCoroutineConfiguration(module: Module, coroutineOption: String): PsiElement? {
@@ -419,7 +449,15 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         }
 
         fun getKotlinStdlibVersion(module: Module): String? {
-            val gradleFile = module.getBuildScriptPsiFile() as? GroovyFile ?: return null
+            val gradleFile = module.getBuildScriptPsiFile() ?: return null
+            return when (gradleFile) {
+                is GroovyFile -> getKotlinStdlibVersion(gradleFile)
+                is KtFile -> gradleFile.getKotlinStdlibVersion()
+                else -> null
+            }
+        }
+
+        private fun getKotlinStdlibVersion(gradleFile: GroovyFile): String? {
             val versionProperty = "\$kotlin_version"
             val block = getBuildScriptBlock(gradleFile)
             if (block.text.contains("ext.kotlin_version = ")) {

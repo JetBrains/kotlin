@@ -24,11 +24,14 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 
-fun getKotlinScriptDependencySnippet(artifactName: String): String =
-        "compile(${getKotlinModuleDependencySnippet(artifactName)})"
+fun getGSKCompileDependencySnippet(groupId: String, artifactId: String, compileScope: String = "compile", version: String? = null): String =
+        if (groupId == KOTLIN_GROUP_ID)
+            "$compileScope(${getKotlinModuleDependencySnippet(artifactId, version)})"
+        else
+            "$compileScope(\"$groupId:$artifactId:$version\")"
 
-fun getKotlinModuleDependencySnippet(artifactName: String): String =
-        "kotlinModule(\"${artifactName.removePrefix("kotlin-")}\", $GSK_KOTLIN_VERSION_PROPERTY_NAME)"
+fun getKotlinModuleDependencySnippet(artifactId: String, version: String? = null): String =
+        "kotlinModule(\"${artifactId.removePrefix("kotlin-")}\", ${version?.let { "\"$it\"" } ?: GSK_KOTLIN_VERSION_PROPERTY_NAME})"
 
 fun KtFile.containsCompileStdLib(): Boolean =
         findScriptInitializer("dependencies")?.getBlock()?.findCompileStdLib() != null
@@ -36,10 +39,28 @@ fun KtFile.containsCompileStdLib(): Boolean =
 fun KtFile.containsApplyKotlinPlugin(pluginName: String): Boolean =
         findScriptInitializer("apply")?.getBlock()?.findPlugin(pluginName) != null
 
+fun KtFile.getKotlinStdlibVersion(): String? {
+    return findScriptInitializer("dependencies")?.getBlock()?.let {
+        val expression = it.findCompileStdLib()?.valueArguments?.firstOrNull()?.getArgumentExpression()
+        when (expression) {
+            is KtCallExpression -> expression.valueArguments[1].text.trim('\"')
+            is KtStringTemplateExpression -> expression.text?.trim('\"')?.substringAfterLast(":")?.removePrefix("$")
+            else -> null
+        }
+    }
+}
+
 fun KtBlockExpression.findCompileStdLib(): KtCallExpression? {
     return PsiTreeUtil.getChildrenOfType(this, KtCallExpression::class.java)?.find {
         it.calleeExpression?.text == "compile" && (it.valueArguments.firstOrNull()?.getArgumentExpression()?.isKotlinStdLib() ?: false)
     }
+}
+
+private fun KtExpression.isKotlinStdLib(): Boolean = when (this) {
+    is KtCallExpression -> calleeExpression?.text == "kotlinModule" &&
+                           valueArguments.firstOrNull()?.getArgumentExpression()?.text?.startsWith("\"stdlib") ?: false
+    is KtStringTemplateExpression -> text.startsWith("\"$STDLIB_ARTIFACT_PREFIX")
+    else -> false
 }
 
 fun KtFile.getRepositoriesBlock(): KtBlockExpression? =
@@ -57,13 +78,6 @@ fun KtFile.createApplyBlock(): KtBlockExpression? {
 }
 
 fun KtFile.getApplyBlock(): KtBlockExpression? = findScriptInitializer("apply")?.getBlock() ?: createApplyBlock()
-
-private fun KtExpression.isKotlinStdLib(): Boolean = when (this) {
-    is KtCallExpression -> calleeExpression?.text == "kotlinModule" &&
-                           valueArguments.firstOrNull()?.getArgumentExpression()?.text == "\"stdlib\""
-    is KtStringTemplateExpression -> text.startsWith("\"org.jetbrains.kotlin:kotlin-stdlib:")
-    else -> false
-}
 
 private fun KtBlockExpression.findPlugin(pluginName: String): KtCallExpression? {
     return PsiTreeUtil.getChildrenOfType(this, KtCallExpression::class.java)?.find {
@@ -215,7 +229,6 @@ fun KtBlockExpression.addDeclarationIfMissing(text: String, first: Boolean = fal
 private inline fun <reified T: PsiElement> KtBlockExpression.addStatementIfMissing(
         text: String,
         crossinline factory: (String) -> PsiElement): T {
-
     statements.find { it.text == text }?.let {
         return it as T
     }
@@ -232,5 +245,7 @@ private val PsiElement.psiFactory: KtPsiFactory
 
 private val MAVEN_CENTRAL = "mavenCentral()"
 private val JCENTER = "jcenter()"
+private val STDLIB_ARTIFACT_PREFIX = "org.jetbrains.kotlin:kotlin-stdlib"
 
+val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
 val GSK_KOTLIN_VERSION_PROPERTY_NAME = "kotlin_version"
