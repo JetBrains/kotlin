@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.konan.lower
+package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
@@ -34,7 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
 
-internal class LateinitLowering(val context: CommonBackendContext): FileLoweringPass {
+class LateinitLowering(val context: CommonBackendContext): FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object: IrElementTransformerVoid() {
             override fun visitProperty(declaration: IrProperty): IrStatement {
