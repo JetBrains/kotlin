@@ -1,4 +1,6 @@
 // WITH_REFLECT
+// IGNORE_BACKEND: JS, NATIVE
+
 import kotlin.UninitializedPropertyAccessException
 
 fun box(): String {
