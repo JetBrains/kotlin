@@ -97,8 +97,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         arguments.libraries.toNonNullList())
 
                 put(LINKER_ARGS, arguments.linkerArguments.toNonNullList())
-                if (arguments.target != null)
-                    put(TARGET, arguments.target)
+
+                arguments.target ?.let{ put(TARGET, it) }
 
                 put(NATIVE_LIBRARY_FILES,
                         arguments.nativeLibraries.toNonNullList())
@@ -122,10 +122,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(CommonConfigurationKeys.MODULE_NAME, output)
                 put(ABI_VERSION, 1)
 
-                if (arguments.runtimeFile != null)
-                    put(RUNTIME_FILE, arguments.runtimeFile)
-                if (arguments.propertyFile != null)
-                    put(PROPERTY_FILE, arguments.propertyFile)
+                arguments.runtimeFile ?.let{ put(RUNTIME_FILE, it) }
+                arguments.propertyFile ?.let{ put(PROPERTY_FILE, it) }
+
                 put(LIST_TARGETS, arguments.listTargets)
                 put(OPTIMIZATION, arguments.optimization)
                 put(DEBUG, arguments.debug)
