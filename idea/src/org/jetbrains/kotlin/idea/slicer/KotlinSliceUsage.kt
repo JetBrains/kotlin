@@ -23,13 +23,23 @@ import com.intellij.util.Processor
 import org.jetbrains.kotlin.psi.KtExpression
 
 open class KotlinSliceUsage : SliceUsage {
-    constructor(element: PsiElement, parent: SliceUsage) : super(element, parent)
-    constructor(element: PsiElement, params: SliceAnalysisParams) : super(element, params)
+    val lambdaLevel: Int
+    val forcedExpressionMode: Boolean
+
+    constructor(element: PsiElement, parent: SliceUsage, lambdaLevel: Int, forcedExpressionMode: Boolean) : super(element, parent) {
+        this.lambdaLevel = lambdaLevel
+        this.forcedExpressionMode = forcedExpressionMode
+    }
+
+    constructor(element: PsiElement, params: SliceAnalysisParams) : super(element, params) {
+        this.lambdaLevel = 0
+        this.forcedExpressionMode = false
+    }
 
     override fun copy(): KotlinSliceUsage {
         val element = usageInfo.element!!
         if (parent == null) return KotlinSliceUsage(element, params)
-        return KotlinSliceUsage(element, parent)
+        return KotlinSliceUsage(element, parent, lambdaLevel, forcedExpressionMode)
     }
 
     public override fun processUsagesFlownDownTo(element: PsiElement, uniqueProcessor: Processor<SliceUsage>) {

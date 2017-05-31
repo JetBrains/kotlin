@@ -18,11 +18,12 @@ package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.analysis.AnalysisScope
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.PsiElement
 import com.intellij.slicer.SliceAnalysisParams
 import com.intellij.slicer.SliceUsage
 import com.intellij.usages.TextChunk
 import com.intellij.util.CommonProcessors
+import com.intellij.util.Processor
+import gnu.trove.THashSet
 import gnu.trove.TObjectHashingStrategy
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -33,9 +34,14 @@ import java.awt.Font
 import java.io.File
 
 abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
-    object SliceUsageHashingStrategy : TObjectHashingStrategy<SliceUsage> {
-        override fun computeHashCode(`object`: SliceUsage) = `object`.usageInfo.hashCode()
-        override fun equals(o1: SliceUsage, o2: SliceUsage) = o1.usageInfo == o2.usageInfo
+    object SliceUsageHashingStrategy : TObjectHashingStrategy<KotlinSliceUsage> {
+        override fun computeHashCode(`object`: KotlinSliceUsage): Int {
+            return `object`.usageInfo.hashCode() * 31 + `object`.forcedExpressionMode.hashCode()
+        }
+
+        override fun equals(o1: KotlinSliceUsage, o2: KotlinSliceUsage): Boolean {
+            return o1.usageInfo == o2.usageInfo && o1.forcedExpressionMode == o2.forcedExpressionMode
+        }
     }
 
     // Based on SliceUsage.processChildren
@@ -44,13 +50,14 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
 
         val element = runReadAction { element }
 
+        @Suppress("UNCHECKED_CAST")
         val uniqueProcessor = CommonProcessors.UniqueProcessor(
                 {
                     processor(it as KotlinSliceUsage)
                     true
                 },
                 SliceUsageHashingStrategy
-        )
+        ) as Processor<SliceUsage>
 
         runReadAction {
             if (params.dataFlowToThis) {
@@ -63,7 +70,7 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     private fun buildTreeRepresentation(rootUsage: KotlinSliceUsage): String {
-        val visitedElements = HashSet<PsiElement>()
+        val visitedUsages = THashSet<KotlinSliceUsage>(SliceUsageHashingStrategy)
 
         fun TextChunk.render(): String {
             var text = text
@@ -74,7 +81,7 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
         }
 
         fun process(usage: KotlinSliceUsage, indent: Int): String {
-            val isDuplicated = !visitedElements.add(usage.element)
+            val isDuplicated = !visitedUsages.add(usage)
 
             return buildString {
                 val chunks = usage.text
@@ -83,6 +90,7 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
                 if (usage is KotlinSliceDereferenceUsage) {
                     append("DEREFERENCE: ")
                 }
+                append("[LAMBDA] ".repeat(usage.lambdaLevel))
                 chunks.slice(1..chunks.size - 1).joinTo(
                         this,
                         separator = "",

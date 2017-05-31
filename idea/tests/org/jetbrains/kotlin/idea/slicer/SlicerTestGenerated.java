@@ -36,9 +36,27 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/slicer"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY);
     }
 
+    @TestMetadata("inflow/anonymousFunBodyExpression.kt")
+    public void testInflow_AnonymousFunBodyExpression() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/anonymousFunBodyExpression.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/anonymousFunReturnExpression.kt")
+    public void testInflow_AnonymousFunReturnExpression() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/anonymousFunReturnExpression.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inflow/cast.kt")
     public void testInflow_Cast() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/cast.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/doubleLambdaResult.kt")
+    public void testInflow_DoubleLambdaResult() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/doubleLambdaResult.kt");
         doTest(fileName);
     }
 
@@ -69,6 +87,30 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("inflow/ifExpression.kt")
     public void testInflow_IfExpression() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/ifExpression.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/lambdaResult.kt")
+    public void testInflow_LambdaResult() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/lambdaResult.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/lambdaResultWithAssignments.kt")
+    public void testInflow_LambdaResultWithAssignments() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/lambdaResultWithAssignments.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/lambdaResultWithDirectCall.kt")
+    public void testInflow_LambdaResultWithDirectCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/lambdaResultWithDirectCall.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/lambdaResultWithDirectCallViaAssignment.kt")
+    public void testInflow_LambdaResultWithDirectCallViaAssignment() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/lambdaResultWithDirectCallViaAssignment.kt");
         doTest(fileName);
     }
 
@@ -105,6 +147,12 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("inflow/memberVarWithSplitInitializer.kt")
     public void testInflow_MemberVarWithSplitInitializer() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/memberVarWithSplitInitializer.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/nonLocalReturn.kt")
+    public void testInflow_NonLocalReturn() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/nonLocalReturn.kt");
         doTest(fileName);
     }
 
@@ -162,6 +210,18 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("outflow/anonymousFunBodyExpression.kt")
+    public void testOutflow_AnonymousFunBodyExpression() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/anonymousFunBodyExpression.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/anonymousFunReturnExpression.kt")
+    public void testOutflow_AnonymousFunReturnExpression() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/anonymousFunReturnExpression.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("outflow/callArgument.kt")
     public void testOutflow_CallArgument() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/callArgument.kt");
@@ -171,6 +231,18 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("outflow/cast.kt")
     public void testOutflow_Cast() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/cast.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/doubleLambdaResult.kt")
+    public void testOutflow_DoubleLambdaResult() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/doubleLambdaResult.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/explicitLambdaReturnExpression.kt")
+    public void testOutflow_ExplicitLambdaReturnExpression() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/explicitLambdaReturnExpression.kt");
         doTest(fileName);
     }
 
@@ -222,6 +294,30 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("outflow/lambdaResult.kt")
+    public void testOutflow_LambdaResult() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/lambdaResult.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/lambdaResultWithAssignments.kt")
+    public void testOutflow_LambdaResultWithAssignments() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/lambdaResultWithAssignments.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/lambdaResultWithDirectCall.kt")
+    public void testOutflow_LambdaResultWithDirectCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/lambdaResultWithDirectCall.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/lambdaResultWithDirectCallViaAssignment.kt")
+    public void testOutflow_LambdaResultWithDirectCallViaAssignment() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/lambdaResultWithDirectCallViaAssignment.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("outflow/localVariableUsages.kt")
     public void testOutflow_LocalVariableUsages() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/localVariableUsages.kt");
@@ -231,6 +327,12 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("outflow/memberPropertyUsages.kt")
     public void testOutflow_MemberPropertyUsages() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/memberPropertyUsages.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/nonLocalReturn.kt")
+    public void testOutflow_NonLocalReturn() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/nonLocalReturn.kt");
         doTest(fileName);
     }
 

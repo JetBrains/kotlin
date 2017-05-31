@@ -1,0 +1,8 @@
+9 if (it < 0) return@foo <bold>0</bold>
+8 	val x = foo <bold>{</bold>
+8 		[LAMBDA] val x = foo <bold>{</bold>
+3 			[LAMBDA] fun foo(<bold>f: (Int) -> Int</bold>): Int {
+4 				return <bold>f(1)</bold>
+3 					fun <bold>foo(f: (Int) -> Int): Int {</bold>
+8 						val x = <bold>foo {</bold>
+8 							val <bold>x = foo {</bold>

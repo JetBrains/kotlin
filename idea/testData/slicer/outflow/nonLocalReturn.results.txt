@@ -1,0 +1,4 @@
+5 fun bar(a: Int): Int = foo(a) { if (it > 0) it else return <bold>0</bold> }
+5 	fun <bold>bar(a: Int): Int = foo(a) { if (it > 0) it else return 0 }</bold>
+8 		val x = <bold>bar(1)</bold>
+8 			val <bold>x = bar(1)</bold>
