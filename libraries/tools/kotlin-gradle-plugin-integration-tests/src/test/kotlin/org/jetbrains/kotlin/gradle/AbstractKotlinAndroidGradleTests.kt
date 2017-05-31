@@ -7,10 +7,9 @@ import org.junit.Test
 import java.io.File
 
 
-class KotlinAndroidGradleCLIOnly : AbstractKotlinAndroidGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.0")
-class KotlinAndroid30GradleCLIOnly : AbstractKotlinAndroidGradleTests(gradleVersion = "4.0-rc-1", androidGradlePluginVersion = "3.0.0-alpha2")
-
-class KotlinAndroidWithJackGradleCLIOnly : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.+")
+class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.0")
+class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "4.0-rc-1", androidGradlePluginVersion = "3.0.0-alpha2")
+class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.+")
 
 const val ANDROID_HOME_PATH = "../../../dependencies/androidSDK"
 
