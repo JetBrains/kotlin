@@ -23,8 +23,9 @@ import com.intellij.util.Processor
 
 class KotlinSliceDereferenceUsage(
         element: PsiElement,
-        parent: KotlinSliceUsage
-) : KotlinSliceUsage(element, parent) {
+        parent: KotlinSliceUsage,
+        lambdaLevel: Int
+) : KotlinSliceUsage(element, parent, lambdaLevel, false) {
     override fun processChildren(processor: Processor<SliceUsage>) {
         // no children
     }
