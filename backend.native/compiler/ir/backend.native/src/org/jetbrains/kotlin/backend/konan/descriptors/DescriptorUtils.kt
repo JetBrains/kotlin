@@ -116,12 +116,6 @@ private val konanInternalPackageName = FqName.fromSegments(listOf("konan", "inte
 internal val KonanBuiltIns.konanInternal: MemberScope
     get() = this.builtInsModule.getPackage(konanInternalPackageName).memberScope
 
-internal val KotlinType.isFunctionOrKFunctionType: Boolean
-    get() {
-        val kind = constructor.declarationDescriptor?.getFunctionalClassKind()
-        return kind == FunctionClassDescriptor.Kind.Function || kind == FunctionClassDescriptor.Kind.KFunction
-    }
-
 internal val KotlinType.isKFunctionType: Boolean
     get() {
         val kind = constructor.declarationDescriptor?.getFunctionalClassKind()
