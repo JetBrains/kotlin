@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -33,7 +34,7 @@ interface CommonBackendContext : BackendContext {
 
     fun log(message: () -> String)
 
-    val compilerConfiguration: CompilerConfiguration
+    val messageCollector: MessageCollector
 }
 
 class ReflectionTypes(module: ModuleDescriptor, internalPackage: FqName) {

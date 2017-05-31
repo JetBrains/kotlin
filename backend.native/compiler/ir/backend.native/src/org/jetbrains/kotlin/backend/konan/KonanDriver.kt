@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.common.messageCollector
 import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
