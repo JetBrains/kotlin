@@ -170,6 +170,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             betweenInside(TYPE_REFERENCE, DOT, FUN).spacing(0, 0, 0, false, 0)
             betweenInside(DOT, IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)
             afterInside(IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)
+            aroundInside(DOT, USER_TYPE).spaces(0)
 
             around(AS_KEYWORD).spaces(1)
             around(IS_KEYWORD).spaces(1)
@@ -211,6 +212,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             beforeInside(RPAR, VALUE_ARGUMENT_LIST).spaces(0)
             afterInside(LT, TYPE_ARGUMENT_LIST).spaces(0)
             beforeInside(GT, TYPE_ARGUMENT_LIST).spaces(0)
+            before(TYPE_ARGUMENT_LIST).spaces(0)
 
             betweenInside(FOR_KEYWORD, LPAR, FOR).spacing(1, 1, 0, false, 0)
             betweenInside(IF_KEYWORD, LPAR, IF).spacing(1, 1, 0, false, 0)

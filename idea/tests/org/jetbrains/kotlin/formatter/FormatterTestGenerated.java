@@ -572,6 +572,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("SpaceAroundDotInUserReference.after.kt")
+        public void testSpaceAroundDotInUserReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundDotInUserReference.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SpaceAroundExtendColon.after.kt")
         public void testSpaceAroundExtendColon() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColon.after.kt");
@@ -599,6 +605,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("SpaceBeforeIndices.after.kt")
         public void testSpaceBeforeIndices() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeIndices.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SpaceBeforeTypeArgumentList.after.kt")
+        public void testSpaceBeforeTypeArgumentList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeTypeArgumentList.after.kt");
             doTest(fileName);
         }
 
