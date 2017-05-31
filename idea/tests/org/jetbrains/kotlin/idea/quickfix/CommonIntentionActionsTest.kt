@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.JvmCommonIntentionActionsFactory
-import com.intellij.codeInsight.intention.NewCallableMemberInfo
+import com.intellij.codeInsight.intention.MethodInsertionInfo
 import com.intellij.lang.Language
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiModifier
@@ -92,7 +92,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddCallableMemberActions(NewCallableMemberInfo.simpleMethodInfo(
+        myFixture.launchAction(codeModifications.createAddCallableMemberActions(MethodInsertionInfo.simpleMethodInfo(
                 atCaret<UClass>(myFixture), "baz", PsiModifier.PRIVATE, PsiType.VOID, emptyList())).first())
         myFixture.checkResult("""
         |class Foo {
@@ -111,7 +111,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddCallableMemberActions(NewCallableMemberInfo.simpleMethodInfo(
+        myFixture.launchAction(codeModifications.createAddCallableMemberActions(MethodInsertionInfo.simpleMethodInfo(
                 atCaret<UClass>(myFixture), "baz", PsiModifier.PUBLIC, PsiType.INT, makeParams(PsiType.INT))).first())
         myFixture.checkResult("""
         |class Foo {
@@ -129,7 +129,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddCallableMemberActions(NewCallableMemberInfo.constructorInfo(
+        myFixture.launchAction(codeModifications.createAddCallableMemberActions(MethodInsertionInfo.constructorInfo(
                 atCaret<UClass>(myFixture), makeParams(PsiType.INT))).findWithText("Add primary constructor to 'Foo'"))
         myFixture.checkResult("""
         |class Foo(param0: Int) {
@@ -143,7 +143,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddCallableMemberActions(NewCallableMemberInfo.constructorInfo(
+        myFixture.launchAction(codeModifications.createAddCallableMemberActions(MethodInsertionInfo.constructorInfo(
                 atCaret<UClass>(myFixture), makeParams(PsiType.INT))).findWithText("Add secondary constructor to 'Foo'"))
         myFixture.checkResult("""
         |class Foo() {
@@ -160,7 +160,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin())
 
-        myFixture.launchAction(codeModifications.createAddCallableMemberActions(NewCallableMemberInfo.constructorInfo(
+        myFixture.launchAction(codeModifications.createAddCallableMemberActions(MethodInsertionInfo.constructorInfo(
                 atCaret<UClass>(myFixture), makeParams(PsiType.INT))).findWithText("Add 'int' as 1st parameter to method 'Foo'"))
         myFixture.checkResult("""
         |class Foo(param0: Int) {

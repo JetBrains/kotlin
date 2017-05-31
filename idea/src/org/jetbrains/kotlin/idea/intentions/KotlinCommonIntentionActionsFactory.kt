@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.codeInsight.intention.JvmCommonIntentionActionsFactory
-import com.intellij.codeInsight.intention.NewCallableMemberInfo
-import com.intellij.codeInsight.intention.QuickFixFactory
+import com.intellij.codeInsight.intention.*
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -62,7 +59,12 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
             RemoveModifierFix(kModifierOwner, kToken, false)
     }
 
-    override fun createAddBeanPropertyActions(uClass: UClass, propertyName: String, visibilityModifier: String, propertyType: PsiType, setterRequired: Boolean, getterRequired: Boolean): Array<IntentionAction> {
+    override fun createAddBeanPropertyActions(uClass: UClass,
+                                              propertyName: String,
+                                              visibilityModifier: String,
+                                              propertyType: PsiType,
+                                              setterRequired: Boolean,
+                                              getterRequired: Boolean): List<IntentionAction> {
 
         fun addPropertyFix(lateinit: Boolean = false) =
                 Fix(uClass,
@@ -84,17 +86,17 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
                 }
 
         if (setterRequired)
-            return arrayOf(addPropertyFix(), addPropertyFix(lateinit = true))
+            return listOf(addPropertyFix(), addPropertyFix(lateinit = true))
         else
-            return arrayOf(addPropertyFix())
+            return listOf(addPropertyFix())
     }
 
-    override fun createAddCallableMemberActions(info: NewCallableMemberInfo): List<IntentionAction> =
-            when (info.kind) {
-                NewCallableMemberInfo.CallableKind.FUNCTION ->
+    override fun createAddCallableMemberActions(info: MethodInsertionInfo): List<IntentionAction> =
+            when (info) {
+                is MethodInsertionInfo.Method ->
                     createAddMethodAction(info)?.let { listOf(it) } ?: emptyList()
 
-                NewCallableMemberInfo.CallableKind.CONSTRUCTOR ->
+                is MethodInsertionInfo.Constructor ->
                     createAddConstructorActions(info)
             }
 
@@ -136,24 +138,24 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
     private inline fun <reified T : KtElement> UElement.asKtElement(): T? =
             (psi as? KtLightElement<*, *>?)?.kotlinOrigin as? T
 
-    private fun CallableBuilder.paramsFromInfo(info: NewCallableMemberInfo) {
+    private fun CallableBuilder.paramsFromInfo(info: MethodInsertionInfo) {
         for ((index, param) in info.parameters.withIndex()) {
             param(param.name ?: "arg${index + 1}", typeString(param.type))
         }
     }
 
-    private fun createAddMethodAction(info: NewCallableMemberInfo): IntentionAction? {
+    private fun createAddMethodAction(info: MethodInsertionInfo.Method): IntentionAction? {
         val visibilityStr = info.modifiers.map { javaVisibilityMapping.get(it) ?: it }.joinToString(" ")
         val functionString = CallableBuilder(FUNCTION).apply {
             modifier(visibilityStr)
             typeParams()
-            name(info.name!!)
+            name(info.name)
             paramsFromInfo(info)
-            info.returnType.let { returnType ->
-                if (returnType == null || returnType == PsiType.VOID)
-                    noReturnType()
-                else
-                    returnType(typeString(returnType))
+            info.returnType.let {
+                when (it) {
+                    PsiType.VOID -> noReturnType()
+                    else -> returnType(typeString(it))
+                }
             }
             blockBody("")
         }
@@ -168,7 +170,7 @@ class KotlinCommonIntentionActionsFactory : JvmCommonIntentionActionsFactory() {
 
     }
 
-    private fun createAddConstructorActions(info: NewCallableMemberInfo): List<IntentionAction> {
+    private fun createAddConstructorActions(info: MethodInsertionInfo.Constructor): List<IntentionAction> {
         val constructorString = CallableBuilder(CONSTRUCTOR).apply {
             modifier("")
             typeParams()
