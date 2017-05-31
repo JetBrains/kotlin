@@ -121,8 +121,6 @@ public class TranslationContext {
                         Annotations.Companion.getEMPTY(),
                         Name.identifier("continuation"),
                         continuationDescriptor.getDefaultType(),
-                        /* mutable = */ false,
-                        /* delegated = */ false,
                         SourceElement.NO_SOURCE);
             }
         }

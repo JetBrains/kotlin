@@ -57,8 +57,6 @@ public interface PropertyDescriptor extends VariableDescriptorWithAccessors, Cal
     @Override
     PropertyDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
-    boolean isLateInit();
-
     @NotNull
     @Override
     CopyBuilder<? extends PropertyDescriptor> newCopyBuilder();

@@ -29,7 +29,8 @@ class SyntheticFieldDescriptor private constructor(
         accessorDescriptor: PropertyAccessorDescriptor,
         property: KtProperty
 ): LocalVariableDescriptor(accessorDescriptor, Annotations.EMPTY, SyntheticFieldDescriptor.NAME,
-                           propertyDescriptor.type, propertyDescriptor.isVar, false, property.toSourceElement()) {
+                           propertyDescriptor.type, propertyDescriptor.isVar, false, false,
+                           property.toSourceElement()) {
 
     constructor(accessorDescriptor: PropertyAccessorDescriptor,
                 property: KtProperty): this(accessorDescriptor.correspondingProperty, accessorDescriptor, property)

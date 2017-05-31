@@ -275,6 +275,8 @@ class TypeResolver(
 
                     override fun isVar() = false
 
+                    override fun isLateInit() = false
+
                     override fun getCompileTimeInitializer() = null
 
                     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {

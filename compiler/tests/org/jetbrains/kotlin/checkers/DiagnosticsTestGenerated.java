@@ -16268,6 +16268,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/localLateinit/localLateinit.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("uninitialized.kt")
+                public void testUninitialized() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/localLateinit/uninitialized.kt");
+                    doTest(fileName);
+                }
             }
         }
 
