@@ -17,8 +17,15 @@
 package org.jetbrains.kotlin.ir.symbols.impl
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.impl.IrContainerExpressionBase
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.types.KotlinType
 
 abstract class IrSymbolBase<out D : DeclarationDescriptor>(override val descriptor: D) : IrSymbol
 
@@ -111,3 +118,7 @@ fun createFunctionSymbol(descriptor: CallableMemberDescriptor): IrFunctionSymbol
             is FunctionDescriptor -> IrSimpleFunctionSymbolImpl(descriptor.original)
             else -> throw IllegalArgumentException("Unexpected descriptor kind: $descriptor")
         }
+
+class IrReturnableBlockSymbolImpl(descriptor: FunctionDescriptor) :
+        IrBindableSymbolBase<FunctionDescriptor, IrReturnableBlock>(descriptor),
+        IrReturnableBlockSymbol

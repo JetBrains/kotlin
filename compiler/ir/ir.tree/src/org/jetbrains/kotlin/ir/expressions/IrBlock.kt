@@ -16,6 +16,10 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+
 interface IrContainerExpression : IrExpression, IrStatementContainer {
     val origin: IrStatementOrigin?
     val isTransparentScope: Boolean
@@ -29,4 +33,10 @@ interface IrBlock : IrContainerExpression {
 interface IrComposite : IrContainerExpression {
     override val isTransparentScope: Boolean
         get() = true
+}
+
+interface IrReturnableBlock: IrBlock, IrSymbolOwner {
+    override val symbol: IrReturnableBlockSymbol
+    val descriptor: FunctionDescriptor
+    val sourceFileName: String
 }
