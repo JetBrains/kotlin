@@ -74,6 +74,7 @@ import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractKeywordComplet
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractSmartCompletionHandlerTest
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractBasicCompletionWeigherTest
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractSmartCompletionWeigherTest
+import org.jetbrains.kotlin.idea.configuration.AbstractGradleConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralKotlinToKotlinCopyPasteTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralTextToKotlinCopyPasteTest
@@ -791,8 +792,9 @@ fun main(args: Array<String>) {
             model("multiFileInspections", extension = "test", singleClass = true)
         }
 
-        testClass<org.jetbrains.kotlin.idea.configuration.AbstractGradleConfigureProjectByChangingFileTest> {
+        testClass<AbstractGradleConfigureProjectByChangingFileTest> {
             model("configuration/gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestGradle")
+            model("configuration/gsk", pattern = """(\w+)_before\.gradle.kts$""", testMethod = "doTestGradle")
         }
 
         testClass<AbstractFormatterTest> {
@@ -1334,6 +1336,7 @@ fun main(args: Array<String>) {
     testGroup("idea/idea-android/tests", "idea/testData") {
         testClass<AbstractConfigureProjectTest> {
             model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
+            model("configuration/android-gsk", pattern = """(\w+)_before\.gradle.kts$""", testMethod = "doTestAndroidGradle")
         }
 
         testClass<AbstractAndroidIntentionTest> {

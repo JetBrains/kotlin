@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.gradle
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
+import org.jetbrains.kotlin.idea.configuration.changeCoroutineConfiguration
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 
 class KotlinWithGradleConfiguratorTest : LightCodeInsightFixtureTestCase() {
@@ -35,6 +37,19 @@ class KotlinWithGradleConfiguratorTest : LightCodeInsightFixtureTestCase() {
                   |    }
                   |}
                   |""".trimMargin("|"))
+    }
+
+    fun testAddCoroutinesSupportGSK() {
+        val buildGradle = myFixture.configureByText("build.gradle.kts", "") as KtFile
+        myFixture.project.executeWriteCommand("") {
+            changeCoroutineConfiguration(buildGradle, "enable")
+        }
+        myFixture.checkResult(
+                """import org.jetbrains.kotlin.gradle.dsl.Coroutines
+                  |
+                  |kotlin {
+                  |    experimental.coroutines = Coroutines.ENABLE
+                  |}""".trimMargin("|"))
     }
 
     fun testChangeCoroutinesSupport() {
@@ -59,6 +74,26 @@ class KotlinWithGradleConfiguratorTest : LightCodeInsightFixtureTestCase() {
                   |""".trimMargin("|"))
     }
 
+    fun testChangeCoroutinesSupportGSK() {
+        val buildGradle = myFixture.configureByText("build.gradle.kts",
+                """import org.jetbrains.kotlin.gradle.dsl.Coroutines
+                  |
+                  |kotlin {
+                  |    experimental.coroutines = Coroutines.DISABLE
+                  |}
+                  |""".trimMargin("|")) as KtFile
+        myFixture.project.executeWriteCommand("") {
+            changeCoroutineConfiguration(buildGradle, "enable")
+        }
+        myFixture.checkResult(
+                """import org.jetbrains.kotlin.gradle.dsl.Coroutines
+                  |
+                  |kotlin {
+                  |    experimental.coroutines = Coroutines.ENABLE
+                  |}
+                  |""".trimMargin("|"))
+    }
+
     fun testAddLanguageVersion() {
         val buildGradle = myFixture.configureByText("build.gradle", "apply plugin: 'kotlin'\n") as GroovyFile
         myFixture.project.executeWriteCommand("") {
@@ -72,6 +107,20 @@ class KotlinWithGradleConfiguratorTest : LightCodeInsightFixtureTestCase() {
                   |    }
                   |}
                   |""".trimMargin("|"))
+    }
+
+    fun testAddLanguageVersionGSK() {
+        val buildGradle = myFixture.configureByText("build.gradle.kts", "") as KtFile
+        myFixture.project.executeWriteCommand("") {
+            KotlinWithGradleConfigurator.changeLanguageVersion(buildGradle, "1.1", false)
+        }
+        myFixture.checkResult(
+                """import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+                 |
+                 |val compileKotlin: KotlinCompile by tasks
+                 |compileKotlin.kotlinOptions {
+                 |    languageVersion = "1.1"
+                 |}""".trimMargin("|"))
     }
 
     fun testChangeLanguageVersion() {
@@ -94,5 +143,23 @@ class KotlinWithGradleConfiguratorTest : LightCodeInsightFixtureTestCase() {
                   |    }
                   |}
                   |""".trimMargin("|"))
+    }
+
+    fun testChangeLanguageVersionGSK() {
+        val buildGradle = myFixture.configureByText("build.gradle.kts",
+                                                    """val compileKotlin: KotlinCompile by tasks
+                                                     |compileKotlin.kotlinOptions {
+                                                     |   languageVersion = "1.0"
+                                                     |}
+                                                     |""".trimMargin("|")) as KtFile
+        myFixture.project.executeWriteCommand("") {
+            KotlinWithGradleConfigurator.changeLanguageVersion(buildGradle, "1.1", false)
+        }
+        myFixture.checkResult(
+                """val compileKotlin: KotlinCompile by tasks
+                 |compileKotlin.kotlinOptions {
+                 |    languageVersion = "1.1"
+                 |}
+                 |""".trimMargin("|"))
     }
 }

@@ -117,6 +117,67 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
 
     private fun findJsGradleModuleConfigurator() = Extensions.findExtension(KotlinProjectConfigurator.EP_NAME,
                                                                             KotlinJsGradleModuleConfigurator::class.java)
+
+    @Test
+    fun testConfigureGSK() {
+        createProjectSubFile("settings.gradle", "include ':app'")
+        val file = createProjectSubFile("app/build.gradle.kts", """
+        buildscript {
+            repositories {
+                jcenter()
+                mavenCentral()
+            }
+        }
+        """.trimIndent())
+
+        importProject()
+
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.1.2", collector)
+
+                FileDocumentManager.getInstance().saveAllDocuments()
+                val content = LoadTextUtil.loadText(file).toString()
+                assertEquals("""
+                    import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+                    val kotlin_version: String by extra
+                    buildscript {
+                        var kotlin_version: String by extra
+                        kotlin_version = "1.1.2"
+                        repositories {
+                            jcenter()
+                            mavenCentral()
+                        }
+                        dependencies {
+                            classpath(kotlinModule("gradle-plugin", kotlin_version))
+                        }
+                    }
+                    apply {
+                        plugin("kotlin")
+                    }
+                    dependencies {
+                        compile(kotlinModule("stdlib-jre8", kotlin_version))
+                    }
+                    repositories {
+                        mavenCentral()
+                    }
+                    val compileKotlin: KotlinCompile by tasks
+                    compileKotlin.kotlinOptions {
+                        jvmTarget = "1.8"
+                    }
+                    val compileTestKotlin: KotlinCompile by tasks
+                    compileTestKotlin.kotlinOptions {
+                        jvmTarget = "1.8"
+                    }
+                """.trimIndent(), content)
+            }
+        }
+    }
+
     @Test
     fun testListNonConfiguredModules() {
         createProjectSubFile("settings.gradle", "include ':app'")
@@ -137,13 +198,13 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         runReadAction {
             val configurator = findGradleModuleConfigurator()
 
-            val moduleNames = getNonConfiguredModulesWithKotlinFiles(myProject).map { it.name }
+            val moduleNames = getCanBeConfiguredModulesWithKotlinFiles(myProject).map { it.name }
             assertSameElements(moduleNames, "app")
 
-            val moduleNamesFromConfigurator = getNonConfiguredModules(myProject, configurator).map { it.name }
-            assertSameElements(moduleNamesFromConfigurator, "app", "project")
+            val moduleNamesFromConfigurator = getCanBeConfiguredModules(myProject, configurator).map { it.name }
+            assertSameElements(moduleNamesFromConfigurator, "app")
 
-            val moduleNamesWithKotlinFiles = getNonConfiguredModulesWithKotlinFiles(myProject, configurator).map { it.name }
+            val moduleNamesWithKotlinFiles = getCanBeConfiguredModulesWithKotlinFiles(myProject, configurator).map { it.name }
             assertSameElements(moduleNamesWithKotlinFiles, "app")
         }
     }

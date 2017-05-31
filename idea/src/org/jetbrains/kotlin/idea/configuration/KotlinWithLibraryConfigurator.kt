@@ -66,7 +66,7 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         val showPathToJarPanel = needToChooseJarPath(project)
 
         var nonConfiguredModules = if (!ApplicationManager.getApplication().isUnitTestMode)
-            getNonConfiguredModules(project, this)
+            getCanBeConfiguredModules(project, this)
         else
             Arrays.asList(*ModuleManager.getInstance(project).modules)
         nonConfiguredModules -= excludeModules

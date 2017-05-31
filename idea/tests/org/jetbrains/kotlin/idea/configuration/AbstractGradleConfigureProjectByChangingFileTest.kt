@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 
 abstract class AbstractGradleConfigureProjectByChangingFileTest : AbstractConfigureProjectByChangingFileTest<KotlinWithGradleConfigurator>() {
@@ -28,12 +29,12 @@ abstract class AbstractGradleConfigureProjectByChangingFileTest : AbstractConfig
     }
 
     override fun runConfigurator(module: Module, file: PsiFile, configurator: KotlinWithGradleConfigurator, version: String, collector: NotificationMessageCollector) {
-        if (file !is GroovyFile) {
-            fail("file $file is not a GroovyFile")
+        if (file !is GroovyFile && file !is KtFile) {
+            fail("file $file is not a GroovyFile or KtFile")
             return
         }
 
-        configurator.changeGradleFile(file, true, version, collector)
-        configurator.changeGradleFile(file, false, version, collector)
+        configurator.changeBuildScript(file, true, version, collector)
+        configurator.changeBuildScript(file, false, version, collector)
     }
 }

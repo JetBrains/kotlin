@@ -65,7 +65,9 @@ val EAP_12_REPOSITORY = RepositoryDescription(
         "https://bintray.com/kotlin/kotlin-eap-1.2/kotlin/",
         isSnapshot = false)
 
-fun RepositoryDescription.toRepositorySnippet() = "maven {\nurl '$url'\n}"
+fun RepositoryDescription.toGroovyRepositorySnippet() = "maven {\nurl '$url'\n}"
+
+fun RepositoryDescription.toKotlinRepositorySnippet() = "maven {\nsetUrl(\"$url\")\n}"
 
 fun getRepositoryForVersion(version: String): RepositoryDescription? = when {
     isSnapshot(version) -> SNAPSHOT_REPOSITORY
@@ -145,7 +147,7 @@ fun getConfiguratorByName(name: String): KotlinProjectConfigurator? {
 
 fun allConfigurators() = Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME)
 
-fun getNonConfiguredModules(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
+fun getCanBeConfiguredModules(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
     return project.allModules()
             .filter { module -> configurator.canConfigure(module) }
             .excludeSourceRootModules()
@@ -185,12 +187,12 @@ val Module.externalProjectId: String?
 val Module.externalProjectPath: String?
     get() = ExternalSystemApiUtil.getExternalProjectPath(this)
 
-fun getNonConfiguredModulesWithKotlinFiles(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
+fun getCanBeConfiguredModulesWithKotlinFiles(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
     val modules = getConfigurableModulesWithKotlinFiles(project)
     return modules.filter { module -> configurator.getStatus(module) == ConfigureKotlinStatus.CAN_BE_CONFIGURED }
 }
 
-fun getNonConfiguredModulesWithKotlinFiles(project: Project, excludeModules: Collection<Module> = emptyList()): Collection<Module> {
+fun getCanBeConfiguredModulesWithKotlinFiles(project: Project, excludeModules: Collection<Module> = emptyList()): Collection<Module> {
     val modulesWithKotlinFiles = getConfigurableModulesWithKotlinFiles(project) - excludeModules
     val configurators = allConfigurators()
     return modulesWithKotlinFiles.filter { module ->

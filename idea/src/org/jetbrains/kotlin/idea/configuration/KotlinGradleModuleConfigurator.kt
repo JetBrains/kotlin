@@ -32,14 +32,13 @@ class KotlinGradleModuleConfigurator internal constructor() : KotlinWithGradleCo
     override val presentableText: String
         get() = "Gradle"
 
-    override val applyPluginDirective: String
-        get() = APPLY_KOTLIN
+    override val kotlinPluginName: String
+        get() = KOTLIN
 
     override fun getJvmTarget(sdk: Sdk?, version: String) = getDefaultJvmTarget(sdk, version)?.description
 
     companion object {
         val NAME = "gradle"
-
-        val APPLY_KOTLIN = "apply plugin: 'kotlin'"
+        val KOTLIN = "kotlin"
     }
 }

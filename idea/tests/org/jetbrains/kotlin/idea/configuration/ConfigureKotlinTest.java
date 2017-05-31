@@ -91,12 +91,12 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
 
     public void testTwoModulesWithNonDefaultPath_doNotCopyInDefault() throws IOException {
         doTestConfigureModulesWithNonDefaultSetup(JAVA_CONFIGURATOR);
-        assertEmpty(ConfigureKotlinInProjectUtilsKt.getNonConfiguredModules(myProject, JS_CONFIGURATOR));
+        assertEmpty(ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(myProject, JS_CONFIGURATOR));
     }
 
     public void testTwoModulesWithJSNonDefaultPath_doNotCopyInDefault() throws IOException {
         doTestConfigureModulesWithNonDefaultSetup(JS_CONFIGURATOR);
-        assertEmpty(ConfigureKotlinInProjectUtilsKt.getNonConfiguredModules(myProject, JAVA_CONFIGURATOR));
+        assertEmpty(ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(myProject, JAVA_CONFIGURATOR));
     }
 
     public void testNewLibrary_jarExists_js() {

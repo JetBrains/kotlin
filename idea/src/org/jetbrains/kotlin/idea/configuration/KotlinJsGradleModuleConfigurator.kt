@@ -25,15 +25,11 @@ class KotlinJsGradleModuleConfigurator : KotlinWithGradleConfigurator() {
     override val name: String = "gradle-js"
     override val presentableText: String = "Gradle (JavaScript)"
     override val targetPlatform: TargetPlatform = JsPlatform
-
-    override val applyPluginDirective: String = APPLY_KOTLIN_JS
+    override val kotlinPluginName: String = KOTLIN_JS
     override fun getMinimumSupportedVersion() = "1.1.0"
-
-    override fun getDependencyDirective(sdk: Sdk?, version: String): String {
-        return KotlinWithGradleConfigurator.getDependencySnippet(MAVEN_JS_STDLIB_ID)
-    }
+    override fun getStdlibArtifactName(sdk: Sdk?, version: String): String  = MAVEN_JS_STDLIB_ID
 
     companion object {
-        val APPLY_KOTLIN_JS = "apply plugin: 'kotlin2js'"
+        val KOTLIN_JS = "kotlin2js"
     }
 }

@@ -63,7 +63,7 @@ public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implement
     }
 
     @NotNull
-    private KtBlockExpression getBlockExpression() {
+    public KtBlockExpression getBlockExpression() {
         return findNotNullChildByClass(KtBlockExpression.class);
     }
 

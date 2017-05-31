@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
+import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
 import javax.swing.Icon
@@ -50,7 +51,7 @@ abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
         }
 
         if (additionalRepository != null) {
-            val oneLineRepository = additionalRepository.toRepositorySnippet().replace('\n', ' ')
+            val oneLineRepository = additionalRepository.toGroovyRepositorySnippet().replace('\n', ' ')
             buildScriptData.addBuildscriptRepositoriesDefinition(oneLineRepository)
 
             buildScriptData.addRepositoriesDefinition("mavenCentral()")
@@ -74,10 +75,11 @@ abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
 }
 
 class GradleKotlinJavaFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider("KOTLIN", "Kotlin (Java)") {
-    override fun getPluginDefinition() = KotlinGradleModuleConfigurator.APPLY_KOTLIN
+    override fun getPluginDefinition() =
+            KotlinWithGradleConfigurator.getGroovyApplyPluginDirective(KotlinGradleModuleConfigurator.KOTLIN)
 
     override fun getRuntimeLibrary(rootModel: ModifiableRootModel) =
-            KotlinWithGradleConfigurator.getRuntimeLibraryForSdk(rootModel.sdk, bundledRuntimeVersion())
+            KotlinWithGradleConfigurator.getGroovyDependencySnippet(getStdlibArtifactId(rootModel.sdk, bundledRuntimeVersion()))
 
     override fun addSupport(module: Module, rootModel: ModifiableRootModel, modifiableModelsProvider: ModifiableModelsProvider, buildScriptData: BuildScriptDataBuilder) {
         super.addSupport(module, rootModel, modifiableModelsProvider, buildScriptData)
@@ -90,10 +92,9 @@ class GradleKotlinJavaFrameworkSupportProvider : GradleKotlinFrameworkSupportPro
 }
 
 class GradleKotlinJSFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider("KOTLIN_JS", "Kotlin (JavaScript)") {
-    override fun getPluginDefinition(): String {
-        return KotlinJsGradleModuleConfigurator.APPLY_KOTLIN_JS
-    }
+    override fun getPluginDefinition(): String =
+            KotlinWithGradleConfigurator.getGroovyApplyPluginDirective(KotlinJsGradleModuleConfigurator.KOTLIN_JS)
 
     override fun getRuntimeLibrary(rootModel: ModifiableRootModel) =
-            KotlinWithGradleConfigurator.getDependencySnippet(MAVEN_JS_STDLIB_ID)
+            KotlinWithGradleConfigurator.getGroovyDependencySnippet(MAVEN_JS_STDLIB_ID)
 }

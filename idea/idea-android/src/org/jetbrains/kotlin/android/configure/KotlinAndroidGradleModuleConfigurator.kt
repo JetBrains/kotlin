@@ -14,79 +14,70 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.android.configure;
+package org.jetbrains.kotlin.android.configure
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.projectRoots.JavaSdk;
-import com.intellij.openapi.projectRoots.JavaSdkVersion;
-import com.intellij.openapi.projectRoots.Sdk;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.KotlinPluginUtil;
-import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator;
-import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
-import org.jetbrains.kotlin.resolve.TargetPlatform;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.JavaSdkVersion
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
+import org.jetbrains.kotlin.idea.versions.*
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 
-public class KotlinAndroidGradleModuleConfigurator extends KotlinWithGradleConfigurator {
-    public static final String NAME = "android-gradle";
+class KotlinAndroidGradleModuleConfigurator internal constructor() : KotlinWithGradleConfigurator() {
 
-    private static final String APPLY_KOTLIN_ANDROID = "apply plugin: 'kotlin-android'";
+    override val name: String = NAME
 
-    @NotNull
-    @Override
-    public String getName() {
-        return NAME;
-    }
+    override val targetPlatform: TargetPlatform = JvmPlatform
 
-    @NotNull
-    @Override
-    public TargetPlatform getTargetPlatform() {
-        return JvmPlatform.INSTANCE;
-    }
+    override val presentableText: String = "Android with Gradle"
 
-    @NotNull
-    @Override
-    public String getPresentableText() {
-        return "Android with Gradle";
-    }
+    public override fun isApplicable(module: Module): Boolean = KotlinPluginUtil.isAndroidGradleModule(module)
 
-    @Override
-    public boolean isApplicable(@NotNull Module module) {
-        return KotlinPluginUtil.isAndroidGradleModule(module);
-    }
+    override val kotlinPluginName: String = KOTLIN_ANDROID
 
-    @Override
-    protected String getApplyPluginDirective() {
-        return APPLY_KOTLIN_ANDROID;
-    }
-
-    @Override
-    protected boolean addElementsToFile(@NotNull GroovyFile groovyFile, boolean isTopLevelProjectFile, @NotNull String version) {
-        if (isTopLevelProjectFile) {
-            return Companion.addElementsToProjectFile(groovyFile, version);
-        }
-        else {
-            return addElementsToModuleFile(groovyFile, version);
-        }
-    }
-
-    @NotNull
-    @Override
-    public String getRuntimeLibrary(@Nullable Sdk sdk, @NotNull String version) {
-        if (sdk != null && KotlinRuntimeLibraryUtilKt.hasJreSpecificRuntime(version)) {
-            JavaSdkVersion sdkVersion = JavaSdk.getInstance().getVersion(sdk);
-            if (sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
-                // Android dex can't convert our kotlin-stdlib-jre8 artifact, so use jre7 instead (KT-16530)
-                return KotlinWithGradleConfigurator.Companion.getDependencySnippet(
-                        KotlinRuntimeLibraryUtilKt.getMAVEN_STDLIB_ID_JRE7());
+    override fun addElementsToFile(file: PsiFile, isTopLevelProjectFile: Boolean, version: String): Boolean {
+        if (file is GroovyFile) {
+            if (isTopLevelProjectFile) {
+                return addElementsToProjectGroovyFile(file, version)
+            }
+            else {
+                return addElementsToModuleGroovyFile(file, version)
             }
         }
 
-        return super.getRuntimeLibrary(sdk, version);
+        if (file is KtFile) {
+            if (isTopLevelProjectFile) {
+                return addElementsToProjectGSKFile(file, version)
+            }
+            else {
+                return addElementsToModuleGSKFile(file, version)
+            }
+        }
+
+        return false
     }
 
-    KotlinAndroidGradleModuleConfigurator() {
+    override fun getStdlibArtifactName(sdk: Sdk?, version: String): String {
+        if (sdk != null && hasJreSpecificRuntime(version)) {
+            val sdkVersion = JavaSdk.getInstance().getVersion(sdk)
+            if (sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
+                // Android dex can't convert our kotlin-stdlib-jre8 artifact, so use jre7 instead (KT-16530)
+                return MAVEN_STDLIB_ID_JRE7
+            }
+        }
+
+        return super.getStdlibArtifactName(sdk, version)
+    }
+
+    companion object {
+        private val NAME = "android-gradle"
+
+        private val KOTLIN_ANDROID = "kotlin-android"
     }
 }
