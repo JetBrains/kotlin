@@ -22,6 +22,7 @@ fi
 [ -n "$JAVACMD" ] || JAVACMD=java
 
 declare -a java_args
+declare -a java_opts
 declare -a interop_args
 
 OUTPUT_FILE_NAME=nativelib
@@ -64,10 +65,10 @@ findHome() {
 KONAN_HOME="$(findHome)"
 
 NATIVE_LIB="${KONAN_HOME}/konan/nativelib"
-JAVA_OPTS="-ea \
-    -Djava.library.path=${NATIVE_LIB} \
-    -Dkonan.home=${KONAN_HOME} \
-    -Dfile.encoding=UTF-8"
+java_opts=(-ea \
+    "-Djava.library.path=${NATIVE_LIB}" \
+    "-Dkonan.home=${KONAN_HOME}" \
+    -Dfile.encoding=UTF-8)
 
 STUB_GENERATOR_JAR="${KONAN_HOME}/konan/lib/StubGenerator.jar"
 KOTLIN_JAR="${KONAN_HOME}/konan/lib/kotlin-compiler.jar"
@@ -87,8 +88,8 @@ CSTUBSNAME=cstubs
 CSTUBSNAME_ARG="-cstubsname $CSTUBSNAME"
 
 LIBCLANG_DISABLE_CRASH_RECOVERY=1 \
-$JAVACMD $JAVA_OPTS ${java_args[@]} \
-    -cp $INTEROP_CLASSPATH \
+$JAVACMD "${java_opts[@]}" "${java_args[@]}" \
+    -cp "$INTEROP_CLASSPATH" \
     $INTEROP_TOOL \
     $GENERATED_ARG $NATIVES_ARG $CSTUBSNAME_ARG \
     $FLAVOR_ARG -target $TARGET "${interop_args[@]}" \
@@ -97,5 +98,5 @@ $JAVACMD $JAVA_OPTS ${java_args[@]} \
 # Stubs may be rather big, so we may need more heap space.
 XMX_ARG=-J-Xmx3G
 
-$KONAN_HOME/bin/konanc $XMX_ARG "$GENERATED_DIR" -produce library -nativelibrary "$NATIVES_DIR/$CSTUBSNAME.bc" \
+"${KONAN_HOME}/bin/konanc" $XMX_ARG "$GENERATED_DIR" -produce library -nativelibrary "$NATIVES_DIR/$CSTUBSNAME.bc" \
     -o "$OUTPUT_FILE_NAME" -target "$TARGET"
