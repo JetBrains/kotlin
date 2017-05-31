@@ -6,5 +6,5 @@ annotation class Ann
 fun foo(y: IntArray) {
     // Currently it calls reformatting of base expression, but it seems to be a minor issue
     @Ann
-    y [0 + 9 * 4] = y[y [1]]
+    y[0 + 9 * 4] = y[y [1]]
 }
