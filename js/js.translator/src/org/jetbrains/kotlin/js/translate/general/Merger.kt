@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.exportedPackage
 import org.jetbrains.kotlin.js.backend.ast.metadata.exportedTag
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.definePackageAlias
 
 class Merger(private val rootFunction: JsFunction, val internalModuleName: JsName, val module: ModuleDescriptor) {
     // Maps unique signature (see generateSignature) to names
@@ -134,8 +135,8 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
         fragment.inlineModuleMap.forEach { (_, value) -> rename(value) }
     }
 
-    private fun <T: JsNode> Map<JsName, JsName>.rename(node: T): T {
-        node.accept(object : RecursiveJsVisitor() {
+    private fun <T: JsNode> Map<JsName, JsName>.rename(rootNode: T): T {
+        rootNode.accept(object : RecursiveJsVisitor() {
             override fun visitElement(node: JsNode) {
                 super.visitElement(node)
                 if (node is HasName) {
@@ -152,12 +153,13 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
                 }
             }
         })
-        return node
+        return rootNode
     }
 
     // Adds different boilerplate code (like imports, class prototypes, etc) to resulting program.
     fun merge() {
         rootFunction.body.statements.apply {
+            addImportForInlineDeclarationIfNecessary()
             this += importBlock.statements
             addClassPrototypes(this)
             this += declarationBlock.statements
@@ -165,6 +167,12 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
             addClassPostDeclarations(this)
             this += initializerBlock.statements
         }
+    }
+
+    private fun MutableList<JsStatement>.addImportForInlineDeclarationIfNecessary() {
+        val importsForInlineName = nameTable[Namer.IMPORTS_FOR_INLINE_PROPERTY] ?: return
+        this += definePackageAlias(Namer.IMPORTS_FOR_INLINE_PROPERTY, importsForInlineName, Namer.IMPORTS_FOR_INLINE_PROPERTY,
+                                   JsNameRef(Namer.getRootPackageName()))
     }
 
     private fun addClassPrototypes(statements: MutableList<JsStatement>) {

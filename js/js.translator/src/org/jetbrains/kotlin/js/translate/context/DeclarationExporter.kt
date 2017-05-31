@@ -19,17 +19,13 @@ package org.jetbrains.kotlin.js.translate.context
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.exportedPackage
 import org.jetbrains.kotlin.js.backend.ast.metadata.exportedTag
 import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment
-import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
@@ -138,13 +134,9 @@ internal class DeclarationExporter(val context: StaticContext) {
         var name = localPackageNames[packageName]
         if (name == null) {
             name = JsScope.declareTemporaryName("package$" + packageName.shortName().asString())
-            localPackageNames.put(packageName, name)
-
-            val parentRef = getLocalPackageReference(packageName.parent())
-            val selfRef = JsNameRef(packageName.shortName().asString(), parentRef)
-            val rhs = JsAstUtils.or(selfRef, assignment(selfRef.deepCopy(), JsObjectLiteral(false)))
-
-            statements.add(JsAstUtils.newVar(name, rhs).apply { exportedPackage = packageName.asString() })
+            localPackageNames[packageName] = name
+            statements += definePackageAlias(packageName.shortName().asString(), name, packageName.asString(),
+                                             getLocalPackageReference(packageName.parent()))
         }
         return name.makeRef()
     }

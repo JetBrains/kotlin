@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.CoroutineMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
+import org.jetbrains.kotlin.js.backend.ast.metadata.exportedPackage
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
@@ -192,4 +193,11 @@ fun JsFunction.fillCoroutineMetadata(
             hasReceiver = descriptor.dispatchReceiverParameter != null,
             psiElement = descriptor.source.getPsi()
     )
+}
+
+fun definePackageAlias(name: String, varName: JsName, tag: String, parentRef: JsExpression): JsStatement {
+    val selfRef = JsNameRef(name, parentRef)
+    val rhs = JsAstUtils.or(selfRef, JsAstUtils.assignment(selfRef.deepCopy(), JsObjectLiteral(false)))
+
+    return JsAstUtils.newVar(varName, rhs).apply { exportedPackage = tag }
 }

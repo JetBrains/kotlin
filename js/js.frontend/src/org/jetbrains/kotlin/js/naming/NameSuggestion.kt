@@ -349,25 +349,30 @@ class NameSuggestion {
             val first = name.first().let { if (it.isES5IdentifierStart()) it else '_' }
             return first.toString() + name.drop(1).map { if (it.isES5IdentifierPart()) it else '_' }.joinToString("")
         }
-
-        // See ES 5.1 spec: https://www.ecma-international.org/ecma-262/5.1/#sec-7.6
-        private fun Char.isES5IdentifierStart() =
-                Character.isLetter(this) ||   // Lu | Ll | Lt | Lm | Lo
-                Character.getType(this).toByte() == Character.LETTER_NUMBER ||
-                    // Nl which is missing in Character.isLetter, but present in UnicodeLetter in spec
-                this == '_' ||
-                this == '$'
-
-        private fun Char.isES5IdentifierPart() =
-                isES5IdentifierStart() ||
-                when (Character.getType(this).toByte()) {
-                    Character.NON_SPACING_MARK,
-                    Character.COMBINING_SPACING_MARK,
-                    Character.DECIMAL_DIGIT_NUMBER,
-                    Character.CONNECTOR_PUNCTUATION -> true
-                    else -> false
-                } ||
-                this == '\u200C' ||   // Zero-width non-joiner
-                this == '\u200D'      // Zero-width joiner
     }
 }
+
+// See ES 5.1 spec: https://www.ecma-international.org/ecma-262/5.1/#sec-7.6
+fun Char.isES5IdentifierStart() =
+        Character.isLetter(this) ||   // Lu | Ll | Lt | Lm | Lo
+        Character.getType(this).toByte() == Character.LETTER_NUMBER ||
+        // Nl which is missing in Character.isLetter, but present in UnicodeLetter in spec
+        this == '_' ||
+        this == '$'
+
+fun Char.isES5IdentifierPart() =
+        isES5IdentifierStart() ||
+        when (Character.getType(this).toByte()) {
+            Character.NON_SPACING_MARK,
+            Character.COMBINING_SPACING_MARK,
+            Character.DECIMAL_DIGIT_NUMBER,
+            Character.CONNECTOR_PUNCTUATION -> true
+            else -> false
+        } ||
+        this == '\u200C' ||   // Zero-width non-joiner
+        this == '\u200D'      // Zero-width joiner
+
+fun String.isValidES5Identifier() =
+        isNotEmpty() &&
+        first().isES5IdentifierStart() &&
+        drop(1).all { it.isES5IdentifierPart() }

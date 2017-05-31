@@ -53,7 +53,10 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.js.config.JsConfig.UNKNOWN_EXTERNAL_MODULE_NAME;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject;
@@ -134,6 +137,9 @@ public final class StaticContext {
 
     @NotNull
     private final ClassModelGenerator classModelGenerator;
+
+    @Nullable
+    private JsName nameForImportsForInline;
 
     public StaticContext(
             @NotNull BindingTrace bindingTrace,
@@ -230,6 +236,11 @@ public final class StaticContext {
         return fqn.deepCopy();
     }
 
+    @Nullable
+    public SuggestedName suggestName(@NotNull DeclarationDescriptor descriptor) {
+        return nameSuggestion.suggest(descriptor);
+    }
+
     @NotNull
     private JsExpression buildQualifiedExpression(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
@@ -265,7 +276,7 @@ public final class StaticContext {
             }
         }
 
-        SuggestedName suggested = nameSuggestion.suggest(descriptor);
+        SuggestedName suggested = suggestName(descriptor);
         if (suggested == null) {
             ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
             JsExpression result = getModuleExpressionFor(module);
@@ -686,14 +697,7 @@ public final class StaticContext {
         if (currentModule == module) {
             return rootScope.declareName(Namer.getRootPackageName());
         }
-        String moduleName;
-        if (module == module.getBuiltIns().getBuiltInsModule()) {
-            moduleName = Namer.KOTLIN_LOWER_NAME;
-        }
-        else {
-            moduleName = module.getName().asString();
-            moduleName = moduleName.substring(1, moduleName.length() - 1);
-        }
+        String moduleName = suggestModuleName(module);
 
         if (UNKNOWN_EXTERNAL_MODULE_NAME.equals(moduleName)) return null;
 
@@ -701,7 +705,18 @@ public final class StaticContext {
     }
 
     @NotNull
-    private JsImportedModule getImportedModule(@NotNull String baseName, @Nullable DeclarationDescriptor descriptor) {
+    public static String suggestModuleName(@NotNull ModuleDescriptor module) {
+        if (module == module.getBuiltIns().getBuiltInsModule()) {
+            return Namer.KOTLIN_LOWER_NAME;
+        }
+        else {
+            String moduleName = module.getName().asString();
+            return moduleName.substring(1, moduleName.length() - 1);
+        }
+    }
+
+    @NotNull
+    public JsImportedModule getImportedModule(@NotNull String baseName, @Nullable DeclarationDescriptor descriptor) {
         String plainName = descriptor != null && config.getModuleKind() == ModuleKind.UMD ? getPlainId(descriptor) : null;
         JsImportedModuleKey key = new JsImportedModuleKey(baseName, plainName);
 
@@ -784,5 +799,18 @@ public final class StaticContext {
     public void addInlineCall(@NotNull CallableDescriptor descriptor) {
         String tag = Namer.getFunctionTag(descriptor, config);
         fragment.getInlineModuleMap().put(tag, getModuleExpressionFor(descriptor));
+    }
+
+    @NotNull
+    public JsName getNameForImportsForInline() {
+        if (nameForImportsForInline == null) {
+            JsName name = JsScope.declareTemporaryName(Namer.IMPORTS_FOR_INLINE_PROPERTY);
+            fragment.getNameBindings().add(new JsNameBinding(Namer.IMPORTS_FOR_INLINE_PROPERTY, name));
+            nameForImportsForInline = name;
+            return name;
+        }
+        else {
+            return nameForImportsForInline;
+        }
     }
 }

@@ -821,6 +821,30 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlineJsModule.kt")
+        public void testInlineJsModule() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/inlineJsModule.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineJsModulePackage.kt")
+        public void testInlineJsModulePackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/inlineJsModulePackage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineModule.kt")
+        public void testInlineModule() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/inlineModule.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineModuleNonIndentifier.kt")
+        public void testInlineModuleNonIndentifier() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/inlineModuleNonIndentifier.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambda.kt")
         public void testLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/lambda.kt");
@@ -3494,6 +3518,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("multipleExport.kt")
         public void testMultipleExport() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/incremental/multipleExport.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleReimport.kt")
+        public void testMultipleReimport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/incremental/multipleReimport.kt");
             doTest(fileName);
         }
 
