@@ -258,6 +258,18 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inflow/valParameter.kt")
+    public void testInflow_ValParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/valParameter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/varParameter.kt")
+    public void testInflow_VarParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/varParameter.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inflow/whenExpression.kt")
     public void testInflow_WhenExpression() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/whenExpression.kt");
@@ -465,6 +477,18 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("outflow/topLevelPropertyUsages.kt")
     public void testOutflow_TopLevelPropertyUsages() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/topLevelPropertyUsages.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/valParameter.kt")
+    public void testOutflow_ValParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/valParameter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/varParameter.kt")
+    public void testOutflow_VarParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/varParameter.kt");
         doTest(fileName);
     }
 
