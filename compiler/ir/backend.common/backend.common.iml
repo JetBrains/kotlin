@@ -10,5 +10,7 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="ir.tree" />
     <orderEntry type="module" module-name="descriptors" />
+    <orderEntry type="module" module-name="frontend" />
+    <orderEntry type="module" module-name="cli-common" />
   </component>
 </module>
