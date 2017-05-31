@@ -114,7 +114,8 @@ void setupCompilationFlags() {
         ext.host = "mingw"
         ext.targetArgs <<
                 [(ext.host):
-                         ["-target", "x86_64-w64-mingw32", "--sysroot=${mingwWithLlvmDir}", "-DOMIT_BACKTRACE"]]
+                         ["-target", "x86_64-w64-mingw32", "--sysroot=${mingwWithLlvmDir}",
+                          "-DOMIT_BACKTRACE", "-DKONAN_WINDOWS=1"]]
     } else {
          ext.host = "macbook"
          ext.targetArgs <<

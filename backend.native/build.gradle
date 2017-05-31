@@ -157,8 +157,9 @@ targetList.each { target ->
         classpath = project.configurations.cli_bc
         jvmArgs "-ea", 
             "-Dkonan.home=${project.parent.file('dist')}",
-            "-Djava.library.path=${project.buildDir}/nativelibs"
-        args('-output', project(':runtime').file("build/${target}Stdlib"), 
+            "-Djava.library.path=${project.buildDir}/nativelibs",
+            "-Dfile.encoding=UTF-8"
+        args('-output', project(':runtime').file("build/${target}Stdlib"),
             '-nopack', '-nostdlib','-ea',
             '-produce', 'library', '-target', target,
             '-runtime', project(':runtime').file("build/${target}/runtime.bc"),

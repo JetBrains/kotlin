@@ -106,7 +106,7 @@ abstract class KonanTest extends JavaExec {
             errorOutput = log
             super.exec()
         } finally {
-            def logString = log.toString()
+            def logString = log.toString("UTF-8")
             project.file("${output}.compilation.log").write(logString)
             println(logString)
         }
@@ -231,15 +231,16 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
 
             ignoreExitValue = true
         }
-        println(out.toString())
+        def result = out.toString("UTF-8")
+        println(result)
 
         if (execResult.exitValue != expectedExitStatus) {
             throw new TestFailedException(
                     "Test failed. Expected exit status: $expectedExitStatus, actual: ${execResult.exitValue}")
         }
 
-        if (goldValue != null && goldValue != out.toString().replace(System.lineSeparator(), "\n")) {
-            throw new TestFailedException("Test failed. Expected output: $goldValue, actual output: ${out.toString()}")
+        if (goldValue != null && goldValue != result.replace(System.lineSeparator(), "\n")) {
+            throw new TestFailedException("Test failed. Expected output: $goldValue, actual output: $result")
         }
     }
 }
@@ -290,7 +291,7 @@ class RunDriverKonanTest extends KonanTest {
             standardOutput = log
             errorOutput = log
         }
-        def logString = log.toString()
+        def logString = log.toString("UTF-8")
         project.file("${output}.compilation.log").write(logString)
         println(logString)
     }

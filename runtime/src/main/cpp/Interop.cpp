@@ -46,7 +46,7 @@ ffi_type* convertFfiTypeKindToType(FfiTypeKind typeKind) {
         case FFI_TYPE_KIND_DOUBLE: return &ffi_type_double;
         case FFI_TYPE_KIND_POINTER: return &ffi_type_pointer;
 
-        default: assert(false);
+        default: assert(false); return nullptr;
     }
 }
 

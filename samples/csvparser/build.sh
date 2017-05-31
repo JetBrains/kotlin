@@ -7,6 +7,7 @@ if [ x$TARGET == x ]; then
 case "$OSTYPE" in
   darwin*)  TARGET=macbook ;;
   linux*)   TARGET=linux ;;
+  msys*)    TARGET=mingw ;;
   *)        echo "unknown: $OSTYPE" && exit 1;;
 esac
 fi

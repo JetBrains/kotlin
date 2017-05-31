@@ -66,7 +66,8 @@ KONAN_HOME="$(findHome)"
 NATIVE_LIB="${KONAN_HOME}/konan/nativelib"
 JAVA_OPTS="-ea \
     -Djava.library.path=${NATIVE_LIB} \
-    -Dkonan.home=${KONAN_HOME}"
+    -Dkonan.home=${KONAN_HOME} \
+    -Dfile.encoding=UTF-8"
 
 STUB_GENERATOR_JAR="${KONAN_HOME}/konan/lib/StubGenerator.jar"
 KOTLIN_JAR="${KONAN_HOME}/konan/lib/kotlin-compiler.jar"
