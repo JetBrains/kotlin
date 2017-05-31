@@ -179,7 +179,11 @@ object J2KPostProcessingRegistrar {
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) return null
 
-            return { element.delete() }
+            return {
+                if (RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) {
+                    element.delete()
+                }
+            }
         }
     }
 
