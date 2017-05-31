@@ -283,7 +283,7 @@
     <target name="preloader">
         <cleandir dir="${output}/classes/preloader"/>
         <javac destdir="${output}/classes/preloader" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
-               source="${java.target}" target="${java.target}">
+               source="1.6" target="1.6">
             <src location="${basedir}/compiler/preloader/src"/>
         </javac>
 
