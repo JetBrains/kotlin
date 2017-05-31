@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.common.lower.at
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
@@ -39,7 +41,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 /**
  * This lowering pass lowers some [IrTypeOperatorCall]s.
  */
-internal class TypeOperatorLowering(val context: Context) : FunctionLoweringPass {
+internal class TypeOperatorLowering(val context: CommonBackendContext) : FunctionLoweringPass {
     override fun lower(irFunction: IrFunction) {
         val transformer = TypeOperatorTransformer(context, irFunction.symbol)
         irFunction.transformChildrenVoid(transformer)
@@ -47,7 +49,7 @@ internal class TypeOperatorLowering(val context: Context) : FunctionLoweringPass
 }
 
 
-private class TypeOperatorTransformer(val context: Context, val function: IrFunctionSymbol) : IrElementTransformerVoid() {
+private class TypeOperatorTransformer(val context: CommonBackendContext, val function: IrFunctionSymbol) : IrElementTransformerVoid() {
 
     private val builder = context.createIrBuilder(function)
 

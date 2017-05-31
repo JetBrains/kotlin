@@ -23,19 +23,19 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-fun validateIrFile(context: BackendContext, irFile: IrFile) {
+fun validateIrFile(context: CommonBackendContext, irFile: IrFile) {
     val visitor = IrValidator(context, false)
     irFile.acceptVoid(visitor)
 }
 
-fun validateIrModule(context: BackendContext, irModule: IrModuleFragment) {
+fun validateIrModule(context: CommonBackendContext, irModule: IrModuleFragment) {
     val visitor = IrValidator(context, true) // TODO: consider taking the boolean from settings.
     irModule.acceptVoid(visitor)
 
     // TODO: also check that all referenced symbol targets are reachable.
 }
 
-private fun BackendContext.reportIrValidationError(message: String, irFile: IrFile, irElement: IrElement) {
+private fun CommonBackendContext.reportIrValidationError(message: String, irFile: IrFile, irElement: IrElement) {
     try {
         this.reportWarning("[IR VALIDATION] $message", irFile, irElement)
     } catch (e: Throwable) {
@@ -45,7 +45,7 @@ private fun BackendContext.reportIrValidationError(message: String, irFile: IrFi
     // TODO: throw an exception after fixing bugs leading to invalid IR.
 }
 
-private class IrValidator(val context: BackendContext, performHeavyValidations: Boolean) : IrElementVisitorVoid {
+private class IrValidator(val context: CommonBackendContext, performHeavyValidations: Boolean) : IrElementVisitorVoid {
 
     val builtIns = context.builtIns
     lateinit var currentFile: IrFile

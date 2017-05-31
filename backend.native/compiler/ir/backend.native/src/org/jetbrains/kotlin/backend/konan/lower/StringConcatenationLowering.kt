@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.util.atMostOne
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.types.KotlinType
 /**
  * This lowering pass replaces [IrStringConcatenation]s with StringBuilder appends.
  */
-internal class StringConcatenationLowering(val context: Context) : FileLoweringPass {
+internal class StringConcatenationLowering(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(StringConcatenationTransformer(this))
     }

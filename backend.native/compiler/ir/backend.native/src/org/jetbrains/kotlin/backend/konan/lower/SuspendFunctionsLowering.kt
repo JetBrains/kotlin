@@ -16,41 +16,52 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
-import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
-import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
+import org.jetbrains.kotlin.backend.common.descriptors.getFunction
+import org.jetbrains.kotlin.backend.common.descriptors.replace
+import org.jetbrains.kotlin.backend.common.ir.createFakeOverrideDescriptor
+import org.jetbrains.kotlin.backend.common.ir.createOverriddenDescriptor
+import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.util.atMostOne
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.backend.common.descriptors.*
-import org.jetbrains.kotlin.ir.util.*
 
 internal class SuspendFunctionsLowering(val context: Context): DeclarationContainerLoweringPass {
+
+    private object STATEMENT_ORIGIN_COROUTINE_IMPL : IrStatementOriginImpl("COROUTINE_IMPL")
+    private object DECLARATION_ORIGIN_COROUTINE_IMPL : IrDeclarationOriginImpl("COROUTINE_IMPL")
 
     private val builtCoroutines = mutableMapOf<FunctionDescriptor, BuiltCoroutine>()
     private val suspendLambdas = mutableMapOf<FunctionDescriptor, IrFunctionReference>()
@@ -202,7 +213,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
 
     private val symbols = context.ir.symbols
     private val getContinuationSymbol = symbols.getContinuation
-    private val returnIfSuspendedDescriptor = context.builtIns.getKonanInternalFunctions("returnIfSuspended").single()
+    private val returnIfSuspendedDescriptor = context.getInternalFunctions("returnIfSuspended").single()
 
     private fun removeReturnIfSuspendedCall(irFunction: IrFunction) {
         irFunction.transformChildrenVoid(object: IrElementTransformerVoid() {
@@ -1075,9 +1086,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
             private val IrExpression.isSuspendCall: Boolean
                 get() = this is IrCall && this.descriptor.isSuspend
 
-            private object STATEMENT_ORIGIN_COROUTINE_IMPL :
-                    IrStatementOriginImpl("COROUTINE_IMPL")
-
             private fun IrElement.isSpecialBlock()
                     = this is IrBlock && this.origin == STATEMENT_ORIGIN_COROUTINE_IMPL
 
@@ -1116,8 +1124,6 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                 get() = this is IrCall && this.descriptor.original == returnIfSuspendedDescriptor
         }
 
-        private object DECLARATION_ORIGIN_COROUTINE_IMPL :
-                IrDeclarationOriginImpl("COROUTINE_IMPL")
 
         private fun IrBuilderWithScope.irVar(descriptor: VariableDescriptor, initializer: IrExpression?) =
                 IrVariableImpl(startOffset, endOffset, DECLARATION_ORIGIN_COROUTINE_IMPL, descriptor, initializer)

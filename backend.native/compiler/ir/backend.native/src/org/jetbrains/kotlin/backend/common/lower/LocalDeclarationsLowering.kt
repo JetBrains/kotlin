@@ -39,6 +39,13 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContainerLoweringPass {
+
+    private object DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE :
+            IrDeclarationOriginImpl("FIELD_FOR_CAPTURED_VALUE") {}
+
+    private object STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE :
+            IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE") {}
+
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         if (irDeclarationContainer is IrDeclaration &&
                 irDeclarationContainer.descriptor.parents.any { it is CallableDescriptor }) {
@@ -337,12 +344,6 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
         private fun rewriteFunctionBody(irDeclaration: IrDeclaration, localContext: LocalContext?) {
             irDeclaration.transformChildrenVoid(FunctionBodiesRewriter(localContext))
         }
-
-        private object DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE :
-                IrDeclarationOriginImpl("FIELD_FOR_CAPTURED_VALUE") {}
-
-        private object STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE :
-                IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE") {}
 
         private fun rewriteClassMembers(irClass: IrClass, localClassContext: LocalClassContext) {
             irClass.transformChildrenVoid(FunctionBodiesRewriter(localClassContext))

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
 import org.jetbrains.kotlin.backend.konan.descriptors.target
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
@@ -228,7 +227,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         get() = this.classFqName.shortName()
 
     private fun getBoxType(valueType: ValueType) =
-            context.builtIns.getKonanInternalClass("${valueType.shortName}Box").defaultType
+            context.getInternalClass("${valueType.shortName}Box").defaultType
 
     private fun IrExpression.box(valueType: ValueType): IrExpression {
         val boxFunction = symbols.boxFunctions[valueType]!!

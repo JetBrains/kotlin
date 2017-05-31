@@ -116,27 +116,6 @@ private val konanInternalPackageName = FqName.fromSegments(listOf("konan", "inte
 internal val KonanBuiltIns.konanInternal: MemberScope
     get() = this.builtInsModule.getPackage(konanInternalPackageName).memberScope
 
-/**
- * @return built-in class `konan.internal.$name` or
- * `null` if no such class is available (e.g. when compiling `link` test without stdlib).
- *
- * TODO: remove this workaround after removing compilation without stdlib.
- */
-internal fun KonanBuiltIns.getKonanInternalClassOrNull(name: String): ClassDescriptor? {
-    val classifier = konanInternal.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
-    return classifier as? ClassDescriptor
-}
-
-/**
- * @return built-in class `konan.internal.$name`
- */
-internal fun KonanBuiltIns.getKonanInternalClass(name: String): ClassDescriptor =
-        getKonanInternalClassOrNull(name) ?: TODO(name)
-
-internal fun KonanBuiltIns.getKonanInternalFunctions(name: String): List<FunctionDescriptor> {
-    return konanInternal.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).toList()
-}
-
 internal val KotlinType.isFunctionOrKFunctionType: Boolean
     get() {
         val kind = constructor.declarationDescriptor?.getFunctionalClassKind()

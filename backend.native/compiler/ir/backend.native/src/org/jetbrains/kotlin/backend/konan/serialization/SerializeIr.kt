@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.backend.common.DeepCopyIrTreeWithDescriptors
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.deserializedPropertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.descriptors.isDeserializableCallable
-import org.jetbrains.kotlin.backend.konan.ir.ir2string
-import org.jetbrains.kotlin.backend.konan.ir.ir2stringWhole
+import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
 import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
 import org.jetbrains.kotlin.backend.konan.llvm.base64Encode
 import org.jetbrains.kotlin.descriptors.*

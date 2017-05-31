@@ -36,21 +36,6 @@ fun nTabs(amount: Int): String {
     return String.format("%1$-${(amount+1)*4}s", "") 
 }
 
-fun <T> Collection<T>.atMostOne(): T? {
-    return when (this.size) {
-        0 -> null
-        1 -> this.iterator().next()
-        else -> throw IllegalArgumentException("Collection has more than one element.")
-    }
-}
-
-inline fun <T> Iterable<T>.atMostOne(predicate: (T) -> Boolean): T? = this.filter(predicate).atMostOne()
-
-fun <T: Any> T.onlyIf(condition: T.()->Boolean, then: (T)->Unit): T {
-    if (this.condition()) then(this)
-    return this
-}
-
 fun String.suffixIfNot(suffix: String) =
     if (this.endsWith(suffix)) this else "$this$suffix"
 

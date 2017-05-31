@@ -16,18 +16,33 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.KonanSharedVariablesManager
-import org.jetbrains.kotlin.backend.konan.ir.Ir
+import org.jetbrains.kotlin.backend.konan.descriptors.konanInternal
+import org.jetbrains.kotlin.backend.konan.ir.KonanIr
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.Name
 
-abstract internal class KonanBackendContext(val config: KonanConfig) : BackendContext {
+abstract internal class KonanBackendContext(val config: KonanConfig) : CommonBackendContext {
     abstract override val builtIns: KonanBuiltIns
 
-    abstract val ir: Ir
+    abstract override val ir: KonanIr
 
     override val sharedVariablesManager by lazy {
         // Creating lazily because builtIns module seems to be incomplete during `link` test;
         // TODO: investigate this.
         KonanSharedVariablesManager(this)
     }
+
+    override fun getInternalClass(name: String): ClassDescriptor =
+            builtIns.konanInternal.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+
+    override fun getInternalFunctions(name: String): List<FunctionDescriptor> =
+            builtIns.konanInternal.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).toList()
+
+    override val compilerConfiguration: CompilerConfiguration
+        get() = config.configuration
 }

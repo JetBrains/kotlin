@@ -1,5 +1,6 @@
-package org.jetbrains.kotlin.backend.konan.ir
+package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockImpl
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement

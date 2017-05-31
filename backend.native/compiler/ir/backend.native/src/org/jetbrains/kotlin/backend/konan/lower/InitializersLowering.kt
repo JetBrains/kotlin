@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
@@ -37,7 +40,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.descriptorUtils.hasPrimaryConstructor
 
-internal class InitializersLowering(val context: Context) : ClassLoweringPass {
+internal class InitializersLowering(val context: CommonBackendContext) : ClassLoweringPass {
+
+    object STATEMENT_ORIGIN_ANONYMOUS_INITIALIZER : IrStatementOriginImpl("ANONYMOUS_INITIALIZER")
+
+    object DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER : IrDeclarationOriginImpl("ANONYMOUS_INITIALIZER")
+
     override fun lower(irClass: IrClass) {
         InitializersTransformer(irClass).lowerInitializers()
     }
@@ -50,12 +58,6 @@ internal class InitializersLowering(val context: Context) : ClassLoweringPass {
             val initializerMethodSymbol = createInitializerMethod()
             lowerConstructors(initializerMethodSymbol)
         }
-
-        object STATEMENT_ORIGIN_ANONYMOUS_INITIALIZER :
-                IrStatementOriginImpl("ANONYMOUS_INITIALIZER")
-
-        object DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER :
-                IrDeclarationOriginImpl("ANONYMOUS_INITIALIZER")
 
         private fun collectAndRemoveInitializers() {
             // Do with one traversal in order to preserve initializers order.

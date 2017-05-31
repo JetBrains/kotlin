@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.backend.jvm.descriptors.createValueParameter
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_ENUM
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.ir.createArrayOfExpression
-import org.jetbrains.kotlin.backend.konan.ir.createFakeOverrideDescriptor
-import org.jetbrains.kotlin.backend.konan.ir.addSimpleDelegatingConstructor
-import org.jetbrains.kotlin.backend.konan.ir.createSimpleDelegatingConstructorDescriptor
+import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
+import org.jetbrains.kotlin.backend.common.ir.createFakeOverrideDescriptor
+import org.jetbrains.kotlin.backend.common.ir.addSimpleDelegatingConstructor
+import org.jetbrains.kotlin.backend.common.ir.createSimpleDelegatingConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl

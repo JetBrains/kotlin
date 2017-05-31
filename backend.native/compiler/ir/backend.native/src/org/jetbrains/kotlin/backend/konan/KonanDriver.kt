@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.messageCollector
 import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
-import org.jetbrains.kotlin.backend.konan.ir.Symbols
 import org.jetbrains.kotlin.backend.konan.llvm.emitLLVM
 import org.jetbrains.kotlin.backend.konan.serialization.KonanSerializationUtil
 import org.jetbrains.kotlin.backend.konan.serialization.markBackingFields
@@ -85,7 +85,7 @@ public fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEn
         val generatorContext = translator.createGeneratorContext(context.moduleDescriptor, bindingContext)
         context.psi2IrGeneratorContext = generatorContext
 
-        val symbols = Symbols(context, generatorContext.symbolTable)
+        val symbols = KonanSymbols(context, generatorContext.symbolTable)
 
         val module = translator.generateModuleFragment(generatorContext, environment.getSourceFiles())
 
