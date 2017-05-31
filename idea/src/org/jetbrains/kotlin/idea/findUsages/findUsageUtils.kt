@@ -20,7 +20,7 @@ import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.psi.KtDeclaration
 
-fun KtDeclaration.processAllUsages(
+fun KtDeclaration.processAllExactUsages(
         options: () -> FindUsagesOptions,
         processor: (UsageInfo) -> Unit
 ) {
@@ -28,7 +28,9 @@ fun KtDeclaration.processAllUsages(
     findUsagesHandler.processElementUsages(
             this,
             {
-                processor(it)
+                if (it.reference?.isReferenceTo(this) ?: false) {
+                    processor(it)
+                }
                 true
             },
             options()

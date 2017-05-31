@@ -66,6 +66,24 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inflow/diamondHierarchyMiddleClassFun.kt")
+    public void testInflow_DiamondHierarchyMiddleClassFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyMiddleClassFun.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/diamondHierarchyMiddleInterfaceFun.kt")
+    public void testInflow_DiamondHierarchyMiddleInterfaceFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyMiddleInterfaceFun.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/diamondHierarchyRootInterfaceFun.kt")
+    public void testInflow_DiamondHierarchyRootInterfaceFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyRootInterfaceFun.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inflow/doubleLambdaResult.kt")
     public void testInflow_DoubleLambdaResult() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/doubleLambdaResult.kt");
@@ -216,6 +234,30 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inflow/overridingFunctionResult.kt")
+    public void testInflow_OverridingFunctionResult() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/overridingFunctionResult.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/overridingParameter.kt")
+    public void testInflow_OverridingParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/overridingParameter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/overridingPropertyGetterResult.kt")
+    public void testInflow_OverridingPropertyGetterResult() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/overridingPropertyGetterResult.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/overridingPropertyResult.kt")
+    public void testInflow_OverridingPropertyResult() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/overridingPropertyResult.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inflow/primaryConstructorParameter.kt")
     public void testInflow_PrimaryConstructorParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/primaryConstructorParameter.kt");
@@ -300,6 +342,24 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("outflow/diamondHierarchyLeafClassFun.kt")
+    public void testOutflow_DiamondHierarchyLeafClassFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/diamondHierarchyLeafClassFun.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/diamondHierarchyMiddleClassFun.kt")
+    public void testOutflow_DiamondHierarchyMiddleClassFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/diamondHierarchyMiddleClassFun.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/diamondHierarchyMiddleInterfaceFun.kt")
+    public void testOutflow_DiamondHierarchyMiddleInterfaceFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/diamondHierarchyMiddleInterfaceFun.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("outflow/doubleLambdaResult.kt")
     public void testOutflow_DoubleLambdaResult() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/doubleLambdaResult.kt");
@@ -360,6 +420,12 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("outflow/getFunCalls.kt")
+    public void testOutflow_GetFunCalls() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/getFunCalls.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("outflow/getterExpressionBody.kt")
     public void testOutflow_GetterExpressionBody() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/getterExpressionBody.kt");
@@ -369,12 +435,6 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("outflow/getterReturnExpression.kt")
     public void testOutflow_GetterReturnExpression() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/getterReturnExpression.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("outflow/getFunCalls.kt")
-    public void testOutflow_GetFunCalls() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/getFunCalls.kt");
         doTest(fileName);
     }
 
@@ -438,15 +498,39 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("outflow/operatorCallDereferences.kt")
+    public void testOutflow_OperatorCallDereferences() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/operatorCallDereferences.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("outflow/operatorFunCalls.kt")
     public void testOutflow_OperatorFunCalls() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/operatorFunCalls.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("outflow/operatorCallDereferences.kt")
-    public void testOutflow_OperatorCallDereferences() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/operatorCallDereferences.kt");
+    @TestMetadata("outflow/overridingFunctionResult.kt")
+    public void testOutflow_OverridingFunctionResult() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/overridingFunctionResult.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/overridingParameter.kt")
+    public void testOutflow_OverridingParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/overridingParameter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/overridingPropertyGetterResult.kt")
+    public void testOutflow_OverridingPropertyGetterResult() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/overridingPropertyGetterResult.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/overridingPropertyResult.kt")
+    public void testOutflow_OverridingPropertyResult() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/overridingPropertyResult.kt");
         doTest(fileName);
     }
 
