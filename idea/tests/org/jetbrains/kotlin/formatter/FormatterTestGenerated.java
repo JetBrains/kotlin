@@ -596,6 +596,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("SpaceBeforeIndices.after.kt")
+        public void testSpaceBeforeIndices() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeIndices.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SpacedInsideParans.after.kt")
         public void testSpacedInsideParans() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpacedInsideParans.after.kt");
