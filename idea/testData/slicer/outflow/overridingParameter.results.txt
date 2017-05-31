@@ -1,0 +1,5 @@
+10 override val foo = <bold>3</bold>
+10 	override val <bold>foo = 3</bold>
+16 		val <bold>z = c.foo</bold>
+14 		val <bold>x = a.foo</bold>
+15 		val <bold>y = b.foo</bold>

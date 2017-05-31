@@ -1,0 +1,4 @@
+10 get() = <bold>2</bold>
+10 	<bold>get() = 2</bold>
+20 		val <bold>y = b.foo</bold>
+19 		val <bold>x = a.foo</bold>
