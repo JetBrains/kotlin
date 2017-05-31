@@ -174,6 +174,12 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("outflow/extensionIndexingDereferences.kt")
+    public void testOutflow_ExtensionIndexingDereferences() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/extensionIndexingDereferences.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("outflow/funBodyExpression.kt")
     public void testOutflow_FunBodyExpression() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/funBodyExpression.kt");
@@ -204,6 +210,12 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("outflow/indexingDereferences.kt")
+    public void testOutflow_IndexingDereferences() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/indexingDereferences.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("outflow/localVariableUsages.kt")
     public void testOutflow_LocalVariableUsages() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/localVariableUsages.kt");
@@ -222,6 +234,12 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("outflow/operatorCallDereferences.kt")
+    public void testOutflow_OperatorCallDereferences() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/operatorCallDereferences.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("outflow/primaryConstructorCalls.kt")
     public void testOutflow_PrimaryConstructorCalls() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/primaryConstructorCalls.kt");
@@ -237,6 +255,12 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("outflow/secondaryConstructorCalls.kt")
     public void testOutflow_SecondaryConstructorCalls() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/secondaryConstructorCalls.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/simpleCallDereferences.kt")
+    public void testOutflow_SimpleCallDereferences() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/simpleCallDereferences.kt");
         doTest(fileName);
     }
 

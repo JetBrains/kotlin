@@ -28,6 +28,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 class KotlinReadWriteAccessDetector : ReadWriteAccessDetector() {
+    companion object {
+        val INSTANCE = KotlinReadWriteAccessDetector()
+    }
+
     override fun isReadWriteAccessible(element: PsiElement) = element is KtVariableDeclaration || element is KtParameter
 
     override fun isDeclarationWriteAccess(element: PsiElement) = isReadWriteAccessible(element)
