@@ -77,8 +77,12 @@ class MainClassRunner(override val className: String) : AbstractRunner() {
 class JarRunner(private val path: String) : AbstractRunner() {
     override val className: String =
             try {
-                JarFile(path).use { jar ->
+                val jar = JarFile(path)
+                try {
                     jar.manifest.mainAttributes.getValue(Attributes.Name.MAIN_CLASS)
+                }
+                finally {
+                    jar.close()
                 }
             }
             catch (e: IOException) {
