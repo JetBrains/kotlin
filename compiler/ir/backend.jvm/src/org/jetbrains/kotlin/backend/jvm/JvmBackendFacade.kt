@@ -37,7 +37,9 @@ object JvmBackendFacade {
         val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext)
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files)
 
-        val jvmBackendContext = JvmBackendContext(state, psi2irContext.sourceManager, psi2irContext.irBuiltIns)
+        val jvmBackendContext = JvmBackendContext(
+                state, psi2irContext.sourceManager, psi2irContext.irBuiltIns, irModuleFragment, psi2irContext.symbolTable
+        )
         val jvmBackend = JvmBackend(jvmBackendContext)
 
         for (irFile in irModuleFragment.files) {

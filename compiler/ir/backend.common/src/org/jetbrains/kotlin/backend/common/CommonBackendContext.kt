@@ -28,6 +28,8 @@ interface CommonBackendContext : BackendContext {
     //TODO move to builtins
     fun getInternalClass(name: String): ClassDescriptor
 
+    fun getClass(fqName: FqName): ClassDescriptor
+
     //TODO move to builtins
     fun getInternalFunctions(name: String): List<FunctionDescriptor>
 
