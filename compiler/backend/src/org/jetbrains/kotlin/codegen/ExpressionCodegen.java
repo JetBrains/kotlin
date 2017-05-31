@@ -1828,10 +1828,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             Type sharedVarType = typeMapper.getSharedVarType(descriptor);
             Type varType = getVariableTypeNoSharing(variableDescriptor);
             if (sharedVarType != null) {
-                return StackValue.shared(index, varType);
+                return StackValue.shared(index, varType, variableDescriptor);
             }
             else {
-                return adjustVariableValue(StackValue.local(index, varType), variableDescriptor);
+                return adjustVariableValue(StackValue.local(index, varType, variableDescriptor), variableDescriptor);
             }
         }
         else {
@@ -3496,6 +3496,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         else if (delegateExpression != null) {
             initializeLocalVariable(property, gen(delegateExpression));
         }
+        else if (property.hasModifier(KtTokens.LATEINIT_KEYWORD)) {
+            initializeLocalVariable(property, null);
+        }
 
         return StackValue.none();
     }
@@ -3592,7 +3595,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     private void initializeLocalVariable(
             @NotNull KtVariableDeclaration variableDeclaration,
-            @NotNull StackValue initializer
+            @Nullable StackValue initializer
     ) {
         LocalVariableDescriptor variableDescriptor = (LocalVariableDescriptor) getVariableDescriptorNotNull(variableDeclaration);
 
@@ -3612,6 +3615,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         StackValue storeTo = sharedVarType == null ? StackValue.local(index, varType) : StackValue.shared(index, varType);
 
         storeTo.putReceiver(v, false);
+        if (variableDescriptor.isLateInit()) {
+            assert initializer == null : "Initializer should be null for lateinit var " + variableDescriptor + ": " + initializer;
+            v.aconst(null);
+            storeTo.storeSelector(storeTo.type, v);
+            return;
+        }
+
+        assert initializer != null : "Initializer should be not null for " + variableDescriptor;
         initializer.put(initializer.type, v);
 
         markLineNumber(variableDeclaration, false);

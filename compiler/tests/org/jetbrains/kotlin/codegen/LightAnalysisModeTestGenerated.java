@@ -13374,6 +13374,51 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/visibility.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/codegen/box/properties/lateinit/local")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Local extends AbstractLightAnalysisModeTest {
+                public void testAllFilesPresentInLocal() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/local"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("capturedLocalLateinit.kt")
+                public void testCapturedLocalLateinit() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/local/capturedLocalLateinit.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localLateinit.kt")
+                public void testLocalLateinit() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/local/localLateinit.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("uninitializedCapturedMemberAccess.kt")
+                public void testUninitializedCapturedMemberAccess() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/local/uninitializedCapturedMemberAccess.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("uninitializedCapturedRead.kt")
+                public void testUninitializedCapturedRead() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/local/uninitializedCapturedRead.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("uninitializedMemberAccess.kt")
+                public void testUninitializedMemberAccess() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/local/uninitializedMemberAccess.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("uninitializedRead.kt")
+                public void testUninitializedRead() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/local/uninitializedRead.kt");
+                    doTest(fileName);
+                }
+            }
         }
     }
 
