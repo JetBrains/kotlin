@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
@@ -672,6 +673,9 @@ public abstract class StackValue {
         public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
             v.store(index, this.type);
+            if (isLateinit) {
+                PseudoInsnsKt.storeNotNull(v);
+            }
         }
     }
 

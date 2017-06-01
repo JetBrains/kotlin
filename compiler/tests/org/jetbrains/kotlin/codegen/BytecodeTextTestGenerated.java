@@ -1891,6 +1891,33 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/trivialInstanceOf.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LocalLateinit extends AbstractBytecodeTextTest {
+            public void testAllFilesPresentInLocalLateinit() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("checkedAlways.kt")
+            public void testCheckedAlways() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit/checkedAlways.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("checkedOnce.kt")
+            public void testCheckedOnce() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit/checkedOnce.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("initialized.kt")
+            public void testInitialized() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit/initialized.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/ranges")

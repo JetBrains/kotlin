@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.codegen.optimization.common
 
 import org.jetbrains.kotlin.codegen.inline.insnText
+import org.jetbrains.kotlin.codegen.optimization.removeNodeGetNext
+import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Opcodes.*
@@ -48,6 +50,8 @@ class InsnSequence(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Sequ
 fun InsnList.asSequence() = InsnSequence(this)
 
 fun MethodNode.prepareForEmitting() {
+    stripOptimizationMarkers()
+
     removeEmptyCatchBlocks()
 
     // local variables with live ranges starting after last meaningful instruction lead to VerifyError
@@ -68,6 +72,21 @@ fun MethodNode.prepareForEmitting() {
         current = prev
     }
 }
+
+fun MethodNode.stripOptimizationMarkers() {
+    var insn = instructions.first
+    while (insn != null) {
+        if (isOptimizationMarker(insn)) {
+            insn = instructions.removeNodeGetNext(insn)
+        }
+        else {
+            insn = insn.next
+        }
+    }
+}
+
+private fun isOptimizationMarker(insn: AbstractInsnNode) =
+        PseudoInsn.STORE_NOT_NULL.isa(insn)
 
 fun MethodNode.removeEmptyCatchBlocks() {
     tryCatchBlocks = tryCatchBlocks.filter { tcb ->
