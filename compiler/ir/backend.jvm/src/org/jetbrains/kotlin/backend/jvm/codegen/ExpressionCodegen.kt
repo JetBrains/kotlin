@@ -124,6 +124,9 @@ class ExpressionCodegen(
             //for implicit return
             mv.areturn(Type.VOID_TYPE)
         }
+        else if (irFunction.body is IrExpressionBody) {
+            mv.areturn(returnType)
+        }
         writeLocalVariablesInTable(info)
         mv.visitEnd()
     }
@@ -365,6 +368,10 @@ class ExpressionCodegen(
         val type = expression.asmType
         StackValue.constant(value, type).put(type, mv)
         return expression.onStack
+    }
+
+    override fun visitExpressionBody(body: IrExpressionBody, data: BlockInfo): StackValue {
+        return body.expression.accept(this, data)
     }
 
     override fun visitElement(element: IrElement, data: BlockInfo): StackValue {
