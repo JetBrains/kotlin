@@ -19,11 +19,13 @@ package org.jetbrains.kotlin.resolve.jvm.modules
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.compactIfPossible
+/*
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.ModuleVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_TRANSITIVE
+import org.jetbrains.org.objectweb.asm.Opcodes.*
+*/
 import java.io.IOException
 
 class JavaModuleInfo(
@@ -32,7 +34,8 @@ class JavaModuleInfo(
         val exports: List<Exports>
 ) {
     data class Requires(val moduleName: String, val flags: Int) {
-        val isTransitive get() = (flags and ACC_TRANSITIVE) != 0
+        val isTransitive get() = false // fix to compile
+//        val isTransitive get() = (flags and ACC_TRANSITIVE) != 0
     }
 
     data class Exports(val packageFqName: FqName, val flags: Int, val toModules: List<String>)
@@ -41,6 +44,8 @@ class JavaModuleInfo(
             "Module $moduleName (${requires.size} requires, ${exports.size} exports)"
 
     companion object {
+        fun read(file: VirtualFile): JavaModuleInfo? = null // unsupported with this version of ASM
+/*
         fun read(file: VirtualFile): JavaModuleInfo? {
             val contents = try { file.contentsToByteArray() } catch (e: IOException) { return null }
 
@@ -68,5 +73,6 @@ class JavaModuleInfo(
                 JavaModuleInfo(moduleName!!, requires.compactIfPossible(), exports.compactIfPossible())
             else null
         }
+*/
     }
 }

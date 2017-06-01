@@ -480,6 +480,7 @@ class KotlinCoreEnvironment private constructor(
             Extensions.cleanRootArea(parentDisposable)
             registerAppExtensionPoints()
             val applicationEnvironment = object : JavaCoreApplicationEnvironment(parentDisposable) {
+                @Suppress("NOTHING_TO_OVERRIDE")
                 override fun createJrtFileSystem(): VirtualFileSystem? {
                     val jdkHome = configuration[JVMConfigurationKeys.JDK_HOME] ?: return null
                     return CoreJrtFileSystem.create(jdkHome)
