@@ -17,19 +17,23 @@
 package org.jetbrains.kotlin.cli.jvm.modules
 
 import com.intellij.openapi.vfs.VirtualFileSystem
-import com.intellij.psi.PsiJavaModule
+//import com.intellij.psi.PsiJavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 
 internal class CliJavaModuleFinder(val jrtFileSystem: VirtualFileSystem?) : JavaModuleFinder {
     internal fun computeAllSystemModules(): Map<String, JavaModuleInfo> {
+        return emptyMap()
+/*
         return jrtFileSystem?.findFileByPath("/modules")?.children.orEmpty()
                 .mapNotNull { root -> root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE) }
                 .mapNotNull((JavaModuleInfo)::read)
                 .associateBy { moduleInfo -> moduleInfo.moduleName }
+*/
     }
 
     override fun findModule(name: String): JavaModuleInfo? {
+        /*
         val file = jrtFileSystem?.findFileByPath("/modules/$name/${PsiJavaModule.MODULE_INFO_CLS_FILE}")
         if (file != null) {
             val moduleInfo = JavaModuleInfo.read(file)
@@ -37,6 +41,7 @@ internal class CliJavaModuleFinder(val jrtFileSystem: VirtualFileSystem?) : Java
                 return moduleInfo
             }
         }
+        */
         return null
     }
 }
