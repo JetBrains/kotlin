@@ -57,7 +57,8 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
         for (overriddenDescriptor in getAllDeclaredNonOverridableOverriddenDescriptors(descriptor)) {
             assert(overriddenDescriptor.kind == DECLARATION) { "Can only be applied to declarations." }
             val overriddenMember = DescriptorToSourceUtils.descriptorToDeclaration(overriddenDescriptor)
-            if (overriddenMember == null || !overriddenMember.canRefactor() || overriddenMember !is KtCallableDeclaration) {
+            if (overriddenMember == null || !overriddenMember.canRefactor() || overriddenMember !is KtCallableDeclaration ||
+                overriddenMember.modifierList?.hasModifier(OPEN_KEYWORD) == true) {
                 return false
             }
             val containingDeclarationName = overriddenDescriptor.containingDeclaration.name.asString()
