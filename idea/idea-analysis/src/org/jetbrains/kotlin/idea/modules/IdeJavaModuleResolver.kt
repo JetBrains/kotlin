@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 class IdeJavaModuleResolver(private val project: Project) : JavaModuleResolver {
     private fun findJavaModule(file: VirtualFile): PsiJavaModule? =
             ModuleHighlightUtil2.getModuleDescriptor(file, project)
+
     /*private val psiManager = PsiManager.getInstance(project)
 
     private fun findJavaModule(file: VirtualFile): PsiJavaModule? {
