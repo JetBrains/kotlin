@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructorKt;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -318,7 +319,7 @@ public class TypeSubstitutor {
             return o.toString();
         }
         catch (Throwable e) {
-            if (e.getClass().getName().equals("com.intellij.openapi.progress.ProcessCanceledException")) {
+            if (ExceptionUtilsKt.isProcessCanceledException(e)) {
                 //noinspection ConstantConditions
                 throw (RuntimeException) e;
             }

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.utils.isProcessCanceledException
 import java.rmi.server.UnicastRemoteObject
 import kotlin.reflect.full.allSuperclasses
 
@@ -87,7 +88,7 @@ open class CompilerCallbackServicesFacadeServer(
         catch (e: Exception) {
             // avoid passing exceptions that may have different serialVersionUID on across rmi border
             // removing dependency from openapi (this is obsolete part anyway, and will be removed soon)
-            if ((e::class.allSuperclasses + e::class).any { it.qualifiedName == "com.intellij.openapi.progress.ProcessCanceledException" })
+            if (e.isProcessCanceledException())
                 throw RmiFriendlyCompilationCanceledException()
             else throw e
         }

@@ -16,9 +16,6 @@
 
 package com.android.tools.klint.client.api;
 
-import static com.android.SdkConstants.ANDROID_PKG;
-import static com.android.SdkConstants.R_CLASS;
-
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.annotations.VisibleForTesting;
@@ -31,90 +28,13 @@ import com.android.tools.klint.detector.api.Detector.XmlScanner;
 import com.android.tools.klint.detector.api.JavaContext;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import lombok.ast.*;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import lombok.ast.AlternateConstructorInvocation;
-import lombok.ast.Annotation;
-import lombok.ast.AnnotationDeclaration;
-import lombok.ast.AnnotationElement;
-import lombok.ast.AnnotationMethodDeclaration;
-import lombok.ast.AnnotationValueArray;
-import lombok.ast.ArrayAccess;
-import lombok.ast.ArrayCreation;
-import lombok.ast.ArrayDimension;
-import lombok.ast.ArrayInitializer;
-import lombok.ast.Assert;
-import lombok.ast.AstVisitor;
-import lombok.ast.BinaryExpression;
-import lombok.ast.Block;
-import lombok.ast.BooleanLiteral;
-import lombok.ast.Break;
-import lombok.ast.Case;
-import lombok.ast.Cast;
-import lombok.ast.Catch;
-import lombok.ast.CharLiteral;
-import lombok.ast.ClassDeclaration;
-import lombok.ast.ClassLiteral;
-import lombok.ast.Comment;
-import lombok.ast.CompilationUnit;
-import lombok.ast.ConstructorDeclaration;
-import lombok.ast.ConstructorInvocation;
-import lombok.ast.Continue;
-import lombok.ast.Default;
-import lombok.ast.DoWhile;
-import lombok.ast.EmptyDeclaration;
-import lombok.ast.EmptyStatement;
-import lombok.ast.EnumConstant;
-import lombok.ast.EnumDeclaration;
-import lombok.ast.EnumTypeBody;
-import lombok.ast.Expression;
-import lombok.ast.ExpressionStatement;
-import lombok.ast.FloatingPointLiteral;
-import lombok.ast.For;
-import lombok.ast.ForEach;
-import lombok.ast.ForwardingAstVisitor;
-import lombok.ast.Identifier;
-import lombok.ast.If;
-import lombok.ast.ImportDeclaration;
-import lombok.ast.InlineIfExpression;
-import lombok.ast.InstanceInitializer;
-import lombok.ast.InstanceOf;
-import lombok.ast.IntegralLiteral;
-import lombok.ast.InterfaceDeclaration;
-import lombok.ast.KeywordModifier;
-import lombok.ast.LabelledStatement;
-import lombok.ast.MethodDeclaration;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Modifiers;
-import lombok.ast.Node;
-import lombok.ast.NormalTypeBody;
-import lombok.ast.NullLiteral;
-import lombok.ast.PackageDeclaration;
-import lombok.ast.Return;
-import lombok.ast.Select;
-import lombok.ast.StaticInitializer;
-import lombok.ast.StringLiteral;
-import lombok.ast.Super;
-import lombok.ast.SuperConstructorInvocation;
-import lombok.ast.Switch;
-import lombok.ast.Synchronized;
-import lombok.ast.This;
-import lombok.ast.Throw;
-import lombok.ast.Try;
-import lombok.ast.TypeReference;
-import lombok.ast.TypeReferencePart;
-import lombok.ast.TypeVariable;
-import lombok.ast.UnaryExpression;
-import lombok.ast.VariableDeclaration;
-import lombok.ast.VariableDefinition;
-import lombok.ast.VariableDefinitionEntry;
-import lombok.ast.VariableReference;
-import lombok.ast.While;
+import static com.android.SdkConstants.ANDROID_PKG;
+import static com.android.SdkConstants.R_CLASS;
 
 /**
  * Specialized visitor for running detectors on a Java AST.
@@ -291,7 +211,7 @@ public class JavaVisitor {
                 // Attempting to access PSI during startup before indices are ready; ignore these.
                 // See http://b.android.com/176644 for an example.
                 return;
-            } else if (e.getClass().getSimpleName().equals("ProcessCanceledException")) {
+            } else if (ExceptionUtilsKt.isProcessCanceledException(e)) {
                 // Cancelling inspections in the IDE
                 context.getDriver().cancel();
                 return;

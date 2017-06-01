@@ -13,5 +13,6 @@
     <orderEntry type="module" module-name="android-annotations" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="library" exported="" name="uast-java" level="project" />
+    <orderEntry type="module" module-name="util.runtime" scope="PROVIDED" />
   </component>
 </module>
