@@ -74,7 +74,7 @@ object ModifierCheckerCore {
             REIFIED_KEYWORD   to EnumSet.of(TYPE_PARAMETER),
             VARARG_KEYWORD    to EnumSet.of(VALUE_PARAMETER, PROPERTY_PARAMETER),
             COMPANION_KEYWORD to EnumSet.of(OBJECT),
-            LATEINIT_KEYWORD  to EnumSet.of(MEMBER_PROPERTY, LOCAL_VARIABLE),
+            LATEINIT_KEYWORD  to EnumSet.of(MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, LOCAL_VARIABLE),
             DATA_KEYWORD      to EnumSet.of(CLASS_ONLY, LOCAL_CLASS),
             INLINE_KEYWORD    to EnumSet.of(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER),
             NOINLINE_KEYWORD  to EnumSet.of(VALUE_PARAMETER),
@@ -165,6 +165,9 @@ object ModifierCheckerCore {
         // 2. subclasses of a non-top-level sealed class must be declared inside the class
         // (see the KEEP https://github.com/Kotlin/KEEP/blob/master/proposals/sealed-class-inheritance.md)
         result += incompatibilityRegister(SEALED_KEYWORD, INNER_KEYWORD)
+
+        // lateinit is incompatible with header
+        result += incompatibilityRegister(LATEINIT_KEYWORD, HEADER_KEYWORD)
 
         return result
     }
