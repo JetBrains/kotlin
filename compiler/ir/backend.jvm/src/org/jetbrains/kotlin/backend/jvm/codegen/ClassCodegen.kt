@@ -135,7 +135,7 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
     }
 
     fun generateMethod(method: IrFunction) {
-        if (method.descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) return
+        if (method.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
         FunctionCodegen(method, this).generate()
     }
 
