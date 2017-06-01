@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -107,12 +106,12 @@ class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInterceptor
 
                 private fun generateClearCacheMethodCall() {
                     if (name != AndroidExpressionCodegenExtension.ON_DESTROY_METHOD_NAME || currentClass == null) return
-                    if (Type.getArgumentTypes(desc).size != 0) return
+                    if (Type.getArgumentTypes(desc).isNotEmpty()) return
                     if (Type.getReturnType(desc) != Type.VOID_TYPE) return
 
                     val classType = currentClassName?.let { Type.getObjectType(it) } ?: return
 
-                    val descriptor = bindingContext.get(BindingContext.CLASS, currentClass) as? ClassDescriptor ?: return
+                    val descriptor = bindingContext.get(BindingContext.CLASS, currentClass) ?: return
                     val androidClassType = AndroidClassType.getClassType(descriptor)
                     if (!androidClassType.fragment) return
 

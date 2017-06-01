@@ -29,15 +29,17 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import java.util.*
 
-class AndroidVariantData(val variant: AndroidVariant, private val layouts: Map<String, List<PsiFile>>): Map<String, List<PsiFile>> by layouts
-class AndroidModuleData(val module: AndroidModule, private val variants: List<AndroidVariantData>): Iterable<AndroidVariantData> by variants {
+class AndroidVariantData(val variant: AndroidVariant, val layouts: Map<String, List<PsiFile>>)
+
+class AndroidModuleData(val module: AndroidModule, val variants: List<AndroidVariantData>) {
     companion object {
         val EMPTY = AndroidModuleData(AndroidModule("android", listOf()), listOf())
     }
 }
 
-abstract class AndroidLayoutXmlFileManager(val project: Project) {
+data class AndroidLayoutGroupData(val name: String, val layouts: List<PsiFile>)
 
+abstract class AndroidLayoutXmlFileManager(val project: Project) {
     abstract val androidModule: AndroidModule?
 
     open fun propertyToXmlAttributes(propertyDescriptor: PropertyDescriptor): List<PsiElement> = listOf()
@@ -47,7 +49,7 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
         return AndroidModuleData(androidModule, androidModule.variants.map { getVariantData(it) })
     }
 
-    fun getVariantData(variant: AndroidVariant): AndroidVariantData {
+    private fun getVariantData(variant: AndroidVariant): AndroidVariantData {
         val psiManager = PsiManager.getInstance(project)
         val fileManager = VirtualFileManager.getInstance()
 
@@ -84,11 +86,11 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
         return AndroidVariantData(variant, layoutNameToXmlFiles)
     }
 
-    fun extractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidResource> {
-        return filterDuplicates(doExtractResources(files, module))
+    fun extractResources(layoutGroupFiles: AndroidLayoutGroupData, module: ModuleDescriptor): List<AndroidResource> {
+        return filterDuplicates(doExtractResources(layoutGroupFiles, module))
     }
 
-    protected abstract fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidLayoutGroup>
+    protected abstract fun doExtractResources(layoutGroup: AndroidLayoutGroupData, module: ModuleDescriptor): AndroidLayoutGroup
 
     protected fun parseAndroidResource(id: ResourceIdentifier, tag: String, sourceElement: PsiElement?): AndroidResource {
         return when (tag) {
@@ -98,41 +100,39 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
         }
     }
 
-    private fun filterDuplicates(layoutGroups: List<AndroidLayoutGroup>): List<AndroidResource> {
+    private fun filterDuplicates(layoutGroup: AndroidLayoutGroup): List<AndroidResource> {
         val resourceMap = linkedMapOf<String, AndroidResource>()
         val resourcesToExclude = hashSetOf<String>()
 
-        for (layoutGroup in layoutGroups) {
-            val resources = layoutGroup.layouts.flatMap { it.resources }.groupBy {
-                val id = it.id
-                if (id.packageName == null) id.name else id.packageName + "/" + id.name
-            }
+        val resourcesByName = layoutGroup.layouts.flatMap { it.resources }.groupBy {
+            val id = it.id
+            if (id.packageName == null) id.name else id.packageName + "/" + id.name
+        }
 
-            for (resources in resources.values) {
-                val isPartiallyDefined = resources.size < layoutGroup.layouts.size
+        for (resources in resourcesByName.values) {
+            val isPartiallyDefined = resources.size < layoutGroup.layouts.size
 
-                for (res in resources) {
-                    if (resourceMap.contains(res.id.name)) {
-                        val existing = resourceMap[res.id.name]!!
+            for (res in resources) {
+                if (res.id.name in resourceMap) {
+                    val existing = resourceMap[res.id.name]!!
 
-                        if (!res.sameClass(existing) || res.id.packageName != existing.id.packageName) {
-                            resourcesToExclude.add(res.id.name)
-                        }
-                        else if (res is AndroidResource.Widget && existing is AndroidResource.Widget) {
-                            // Widgets with the same id but different types exist.
-                            if (res.xmlType != existing.xmlType && existing.xmlType != AndroidConst.VIEW_FQNAME) {
-                                val mergedWidget = AndroidResource.Widget(
-                                        res.id, AndroidConst.VIEW_FQNAME, res.sourceElement, isPartiallyDefined)
-                                resourceMap.put(res.id.name, mergedWidget)
-                            }
+                    if (!res.sameClass(existing) || res.id.packageName != existing.id.packageName) {
+                        resourcesToExclude.add(res.id.name)
+                    }
+                    else if (res is AndroidResource.Widget && existing is AndroidResource.Widget) {
+                        // Widgets with the same id but different types exist.
+                        if (res.xmlType != existing.xmlType && existing.xmlType != AndroidConst.VIEW_FQNAME) {
+                            val mergedWidget = AndroidResource.Widget(
+                                    res.id, AndroidConst.VIEW_FQNAME, res.sourceElement, isPartiallyDefined)
+                            resourceMap.put(res.id.name, mergedWidget)
                         }
                     }
-                    else if (isPartiallyDefined) {
-                        resourceMap.put(res.id.name, res.partiallyDefined())
-                    }
-                    else {
-                        resourceMap.put(res.id.name, res)
-                    }
+                }
+                else if (isPartiallyDefined) {
+                    resourceMap.put(res.id.name, res.partiallyDefined())
+                }
+                else {
+                    resourceMap.put(res.id.name, res)
                 }
             }
         }
@@ -141,12 +141,10 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
         return resourceMap.values.toList()
     }
 
-
     companion object {
         fun getInstance(module: Module): AndroidLayoutXmlFileManager? {
             val service = ModuleServiceManager.getService(module, AndroidLayoutXmlFileManager::class.java)
             return service ?: module.getComponent(AndroidLayoutXmlFileManager::class.java)
         }
     }
-
 }

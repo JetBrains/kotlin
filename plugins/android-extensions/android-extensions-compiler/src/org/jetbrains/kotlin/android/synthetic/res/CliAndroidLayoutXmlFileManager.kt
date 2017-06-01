@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.android.synthetic.res
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.android.synthetic.AndroidXmlHandler
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import java.io.ByteArrayInputStream
@@ -33,24 +32,19 @@ class CliAndroidLayoutXmlFileManager(
 
     private val saxParser: SAXParser = initSAX()
 
-    override fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidLayoutGroup> {
-        val layoutGroupFiles = files.groupBy { it.name }
-        val layoutGroups = mutableListOf<AndroidLayoutGroup>()
+    override fun doExtractResources(layoutGroup: AndroidLayoutGroupData, module: ModuleDescriptor): AndroidLayoutGroup {
+        val layouts = layoutGroup.layouts.map { layout ->
+            val resources = arrayListOf<AndroidResource>()
 
-        for ((name, layouts) in layoutGroupFiles) {
-            layoutGroups += AndroidLayoutGroup(name, layouts.map { layout ->
-                val resources = arrayListOf<AndroidResource>()
-
-                val inputStream = ByteArrayInputStream(layout.virtualFile.contentsToByteArray())
-                saxParser.parse(inputStream, AndroidXmlHandler { id, tag ->
-                    resources += parseAndroidResource(id, tag, null)
-                })
-
-                AndroidLayout(resources)
+            val inputStream = ByteArrayInputStream(layout.virtualFile.contentsToByteArray())
+            saxParser.parse(inputStream, AndroidXmlHandler { id, tag ->
+                resources += parseAndroidResource(id, tag, null)
             })
+
+            AndroidLayout(resources)
         }
 
-        return layoutGroups
+        return AndroidLayoutGroup(layoutGroup.name, layouts)
     }
 
     private fun initSAX(): SAXParser {

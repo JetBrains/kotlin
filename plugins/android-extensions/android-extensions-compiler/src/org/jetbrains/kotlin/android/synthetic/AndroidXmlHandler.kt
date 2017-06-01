@@ -22,7 +22,6 @@ import org.xml.sax.helpers.DefaultHandler
 import java.util.HashMap
 
 class AndroidXmlHandler(private val elementCallback: (ResourceIdentifier, String) -> Unit) : DefaultHandler() {
-
     override fun startDocument() {
         super.startDocument()
     }
@@ -40,13 +39,10 @@ class AndroidXmlHandler(private val elementCallback: (ResourceIdentifier, String
         if (name != null) elementCallback(name, widgetType)
     }
 
-    override fun endElement(uri: String?, localName: String, qName: String) {
-
-    }
-
+    override fun endElement(uri: String?, localName: String, qName: String) {}
 }
 
-fun Attributes.toMap(): HashMap<String, String> {
+private fun Attributes.toMap(): HashMap<String, String> {
     val res = HashMap<String, String>()
     for (index in 0..length - 1) {
         val attrName = getLocalName(index)!!
