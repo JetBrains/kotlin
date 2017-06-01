@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.lower.KCallableNamePropertyLowering
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
+import org.jetbrains.kotlin.backend.common.lower.TailrecLowering
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -44,5 +45,7 @@ class JvmLower(val context: JvmBackendContext) {
         SingletonReferencesLowering(context).runOnFilePostfix(irFile)
         SyntheticAccessorLowering(context.state).lower(irFile)
         BridgeLowering(context.state).runOnFilePostfix(irFile)
+
+        TailrecLowering(context).runOnFilePostfix(irFile)
     }
 }

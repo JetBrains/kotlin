@@ -605,8 +605,21 @@ class ExpressionCodegen(
         val continueLabel = markNewLabel()
         val endLabel = Label()
         val condition = loop.condition
-        gen(condition, data)
-        BranchedValue.condJump(StackValue.onStack(condition.asmType), endLabel, true, mv)
+
+        // Avoid true condition generation for tailrec
+        // ASM and Java verifier assumes that L1 is reachable that cause several verification to fail,
+        // to avoid them trivial jump elumination is required
+        // L0
+        // ICONST_1 //could be eliminated
+        // IFEQ L1 //could be eliminated
+        // .... // no jumps
+        // GOTO L0
+        // L1
+        //TODO: write elimination lower
+        if (!(condition is IrConst<*> && condition.value == true)) {
+            gen(condition, data)
+            BranchedValue.condJump(StackValue.onStack(condition.asmType), endLabel, true, mv)
+        }
 
         with(LoopInfo(loop, continueLabel, endLabel)) {
             data.addInfo(this)
