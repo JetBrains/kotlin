@@ -371,6 +371,25 @@ task hello4(type: RunKonanTest) {
     source = "runtime/basic/hello4.kt"
 }
 
+task entry0(type: RunKonanTest) {
+    goldValue = "Hello.\n"
+    source = "runtime/basic/entry0.kt"
+    flags = ["-entry", "koko.lala.main"] 
+}
+
+task entry1(type: RunKonanTest) {
+    goldValue = "Hello.\n"
+    source = "runtime/basic/entry1.kt"
+    flags = ["-entry", "foo"] 
+}
+
+task entry2(type: LinkKonanTest) {
+    goldValue = "Hello.\n"
+    source = "runtime/basic/entry2.kt"
+    lib = "runtime/basic/libentry2.kt"
+    flags = ["-entry", "foo"] 
+}
+
 task tostring0(type: RunKonanTest) {
     goldValue = "127\n-1\n239\nA\nЁ\nト\n1122334455\n112233445566778899\n3.14159265358\n1.0E27\n1.0E-300\ntrue\nfalse\n"
     source = "runtime/basic/tostring0.kt"

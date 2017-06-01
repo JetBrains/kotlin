@@ -16,14 +16,18 @@
 
 import konan.internal.ExportForCppRuntime
 
-external fun main(args: Array<String>)
+// This function is produced by the code generator given
+// the '-entry foo.bar.main' flag. 
+// It calls the requested entry point.
+// The default is main(Array<String>):Unit in the root package.
+@ExportForCppRuntime
+external fun EntryPointSelector(args: Array<String>)
 
 @ExportForCppRuntime
 private fun Konan_start(args: Array<String>): Int {
     try {
 
-        // This is kotlin program main entry point
-        main(args)
+        EntryPointSelector(args)
 
         // Successfully finished:
         return 0
