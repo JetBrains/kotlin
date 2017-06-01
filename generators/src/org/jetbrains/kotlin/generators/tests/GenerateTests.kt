@@ -157,9 +157,9 @@ import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.kdoc.AbstractKDocLexerTest
-import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
-import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
-import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidSyntheticPropertyDescriptorTest
+import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
+import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
+import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 import org.jetbrains.kotlin.noarg.AbstractBlackBoxCodegenTestForNoArg
