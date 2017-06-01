@@ -167,6 +167,7 @@ object KotlinBuilderModuleScriptGenerator {
     }
 
     private fun findModularJdkRoot(target: ModuleBuildTarget): File? {
+        /*
         // List of paths to JRE modules in the following format:
         // jrt:///Library/Java/JavaVirtualMachines/jdk-9.jdk/Contents/Home!/java.base
         val urls = JpsJavaExtensionService.dependencies(target.module)
@@ -176,6 +177,8 @@ object KotlinBuilderModuleScriptGenerator {
         val url = urls.firstOrNull { it.startsWith(StandardFileSystems.JRT_PROTOCOL_PREFIX) } ?: return null
 
         return File(url.substringAfter(StandardFileSystems.JRT_PROTOCOL_PREFIX).substringBeforeLast(URLUtil.JAR_SEPARATOR))
+        */
+        return null
     }
 
     private fun findSourceRoots(context: CompileContext, target: ModuleBuildTarget): List<JvmSourceRoot> {

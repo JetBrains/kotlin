@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.modules
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiJavaModule
+//import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.compact
@@ -43,6 +43,7 @@ class JavaModuleInfo(
             "Module $moduleName (${requires.size} requires, ${exports.size} exports)"
 
     companion object {
+        /*
         fun create(psiJavaModule: PsiJavaModule): JavaModuleInfo {
             return JavaModuleInfo(
                     psiJavaModule.name,
@@ -58,6 +59,7 @@ class JavaModuleInfo(
                     }
             )
         }
+        */
 
         fun read(file: VirtualFile): JavaModuleInfo? = null // unsupported with this version of ASM
 /*
