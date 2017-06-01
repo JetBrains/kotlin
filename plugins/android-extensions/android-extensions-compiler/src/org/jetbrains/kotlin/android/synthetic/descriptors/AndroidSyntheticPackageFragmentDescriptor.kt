@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.utils.Printer
 import java.util.*
 
 class AndroidSyntheticPackageData(
-        val layoutName: String,
         val moduleData: AndroidModuleData,
         val forView: Boolean,
         val isDeprecated: Boolean,
