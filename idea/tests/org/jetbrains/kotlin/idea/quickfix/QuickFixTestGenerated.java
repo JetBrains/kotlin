@@ -7505,6 +7505,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("overridingOpenMethodInFinalClass.kt")
+        public void testOverridingOpenMethodInFinalClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/override/overridingOpenMethodInFinalClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("parameterNameChangedAmbiguousRename.kt")
         public void testParameterNameChangedAmbiguousRename() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/override/parameterNameChangedAmbiguousRename.kt");
