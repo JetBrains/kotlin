@@ -215,13 +215,13 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
 
     private fun generatePrimaryConstructor(irClass: IrClass, ktClassOrObject: KtClassOrObject): IrConstructor? {
         val classDescriptor = irClass.descriptor
-        if (DescriptorUtils.isAnnotationClass(classDescriptor)) return null
-
         val primaryConstructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return null
 
         val irPrimaryConstructor = FunctionGenerator(declarationGenerator).generatePrimaryConstructor(primaryConstructorDescriptor, ktClassOrObject)
 
-        irClass.addMember(irPrimaryConstructor)
+        if (!DescriptorUtils.isAnnotationClass(classDescriptor)) {
+            irClass.addMember(irPrimaryConstructor)
+        }
 
         return irPrimaryConstructor
     }
