@@ -92,7 +92,7 @@ class CommonModificationsTest : LightPlatformCodeInsightFixtureTestCase() {
     }
 
     private val codeModifications: JvmCommonIntentionActionsFactory
-        get() = JvmCommonIntentionActionsFactory.forLanguage(Language.findLanguageByID("kotlin")!!)
+        get() = JvmCommonIntentionActionsFactory.forLanguage(Language.findLanguageByID("kotlin")!!)!!
 
 }
 
