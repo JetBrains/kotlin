@@ -159,7 +159,7 @@ private object KotlinResolveDataProvider {
             }
 
             val resolveSession = componentProvider.get<ResolveSession>()
-            val trace = DelegatingBindingTrace(resolveSession.bindingContext, "Trace for resolution of " + analyzableElement)
+            val trace = DelegatingBindingTrace(resolveSession.bindingContext, "Trace for resolution of " + analyzableElement, allowSliceRewrite = true)
 
             val targetPlatform = TargetPlatformDetector.getPlatform(analyzableElement.containingKtFile)
 

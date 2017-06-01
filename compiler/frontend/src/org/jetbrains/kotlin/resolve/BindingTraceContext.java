@@ -79,12 +79,16 @@ public class BindingTraceContext implements BindingTrace {
     };
 
     public BindingTraceContext() {
-        this(BindingTraceFilter.Companion.getACCEPT_ALL());
+        this(false);
     }
 
-    public BindingTraceContext(BindingTraceFilter filter) {
+    public BindingTraceContext(boolean allowSliceRewrite) {
+        this(BindingTraceFilter.Companion.getACCEPT_ALL(), allowSliceRewrite);
+    }
+
+    public BindingTraceContext(BindingTraceFilter filter, boolean allowSliceRewrite) {
         //noinspection ConstantConditions
-        this(TRACK_REWRITES ? new TrackingSlicedMap(TRACK_WITH_STACK_TRACES) : SlicedMapImpl.create(), filter);
+        this(TRACK_REWRITES && !allowSliceRewrite ? new TrackingSlicedMap(TRACK_WITH_STACK_TRACES) : new SlicedMapImpl(allowSliceRewrite), filter);
     }
 
 

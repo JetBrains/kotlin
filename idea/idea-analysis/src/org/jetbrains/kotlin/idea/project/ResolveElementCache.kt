@@ -344,7 +344,7 @@ class ResolveElementCache(
             }
         }
 
-        val controlFlowTrace = DelegatingBindingTrace(trace.bindingContext, "Element control flow resolve", resolveElement)
+        val controlFlowTrace = DelegatingBindingTrace(trace.bindingContext, "Element control flow resolve", resolveElement, allowSliceRewrite = true)
         ControlFlowInformationProvider(resolveElement, controlFlowTrace, resolveElement.languageVersionSettings).checkDeclaration()
         controlFlowTrace.addOwnDataTo(trace, null, false)
 
@@ -595,7 +595,7 @@ class ResolveElementCache(
     // All additional resolve should be done to separate trace
     private fun createDelegatingTrace(resolveElement: KtElement, filter: BindingTraceFilter): BindingTrace {
         return resolveSession.storageManager.createSafeTrace(
-                DelegatingBindingTrace(resolveSession.bindingContext, "trace to resolve element", resolveElement, filter))
+                DelegatingBindingTrace(resolveSession.bindingContext, "trace to resolve element", resolveElement, filter, allowSliceRewrite = true))
     }
 
     private class BodyResolveContextForLazy(

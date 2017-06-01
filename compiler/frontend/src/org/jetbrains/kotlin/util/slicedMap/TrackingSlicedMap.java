@@ -29,6 +29,7 @@ public class TrackingSlicedMap extends SlicedMapImpl {
     private final boolean trackWithStackTraces;
 
     public TrackingSlicedMap(boolean trackWithStackTraces) {
+        super(false);
         this.trackWithStackTraces = trackWithStackTraces;
     }
 

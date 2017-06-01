@@ -31,12 +31,13 @@ import java.util.Map;
 
 public class SlicedMapImpl implements MutableSlicedMap {
 
-    public static SlicedMapImpl create() {
-        return new SlicedMapImpl();
-    }
-
+    private final boolean alwaysAllowRewrite;
     private final Map<Object, KeyFMap> map = new THashMap<>(0);
     private Multimap<WritableSlice<?, ?>, Object> collectiveSliceKeys = null;
+
+    public SlicedMapImpl(boolean alwaysAllowRewrite) {
+        this.alwaysAllowRewrite = alwaysAllowRewrite;
+    }
 
     @Override
     public <K, V> void put(WritableSlice<K, V> slice, K key, V value) {
@@ -52,7 +53,7 @@ public class SlicedMapImpl implements MutableSlicedMap {
         Key<V> sliceKey = slice.getKey();
 
         RewritePolicy rewritePolicy = slice.getRewritePolicy();
-        if (rewritePolicy.rewriteProcessingNeeded(key)) {
+        if (!alwaysAllowRewrite && rewritePolicy.rewriteProcessingNeeded(key)) {
             V oldValue = holder.get(sliceKey);
             if (oldValue != null) {
                 //noinspection unchecked
