@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.lower.KCallableNamePropertyLowering
+import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
@@ -28,6 +29,7 @@ class JvmLower(val context: JvmBackendContext) {
         // TODO run lowering passes as callbacks in bottom-up visitor
         FileClassLowering(context).lower(irFile)
         KCallableNamePropertyLowering(context).lower(irFile)
+        LateinitLowering(context).lower(irFile)
         ConstAndJvmFieldPropertiesLowering().lower(irFile)
         PropertiesLowering().lower(irFile)
         InterfaceLowering(context.state).runOnFilePostfix(irFile)
