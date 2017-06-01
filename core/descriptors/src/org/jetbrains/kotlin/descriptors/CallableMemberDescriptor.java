@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.types.TypeSubstitution;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface CallableMemberDescriptor extends CallableDescriptor, MemberDescriptor {
     @NotNull
@@ -69,6 +70,9 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
 
         @NotNull
         CopyBuilder<D> setKind(@NotNull Kind kind);
+
+        @NotNull
+        CopyBuilder<D> setTypeParameters(@NotNull List<TypeParameterDescriptor> parameters);
 
         @NotNull
         CopyBuilder<D> setDispatchReceiverParameter(@Nullable ReceiverParameterDescriptor dispatchReceiverParameter);

@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 public class LocalVariableDescriptor extends VariableDescriptorWithInitializerImpl implements VariableDescriptorWithAccessors {
     private final boolean isDelegated;
-    private VariableAccessorDescriptor getter;
-    private VariableAccessorDescriptor setter;
+    private LocalVariableAccessorDescriptor.Getter getter;
+    private LocalVariableAccessorDescriptor.Setter setter;
 
     public LocalVariableDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -73,13 +73,13 @@ public class LocalVariableDescriptor extends VariableDescriptorWithInitializerIm
 
     @Nullable
     @Override
-    public VariableAccessorDescriptor getGetter() {
+    public LocalVariableAccessorDescriptor.Getter getGetter() {
         return getter;
     }
 
     @Nullable
     @Override
-    public VariableAccessorDescriptor getSetter() {
+    public LocalVariableAccessorDescriptor.Setter getSetter() {
         return setter;
     }
 

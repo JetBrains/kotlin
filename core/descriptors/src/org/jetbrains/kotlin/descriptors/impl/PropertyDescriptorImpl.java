@@ -237,24 +237,20 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
 
         return newCopyBuilder()
                 .setSubstitution(originalSubstitutor.getSubstitution())
-                .setOwner(getContainingDeclaration())
-                .setModality(modality)
-                .setVisibility(visibility)
                 .setOriginal(getOriginal())
-                .setCopyOverrides(true)
-                .setKind(getKind())
                 .build();
     }
 
     public class CopyConfiguration implements PropertyDescriptor.CopyBuilder<PropertyDescriptor> {
-        private DeclarationDescriptor owner;
-        private Modality modality;
-        private Visibility visibility;
+        private DeclarationDescriptor owner = getContainingDeclaration();
+        private Modality modality = getModality();
+        private Visibility visibility = getVisibility();
         private PropertyDescriptor original = null;
-        private Kind kind;
+        private Kind kind = getKind();
         private TypeSubstitution substitution = TypeSubstitution.EMPTY;
         private boolean copyOverrides = true;
         private ReceiverParameterDescriptor dispatchReceiverParameter = PropertyDescriptorImpl.this.dispatchReceiverParameter;
+        private List<TypeParameterDescriptor> newTypeParameters = null;
 
         @NotNull
         @Override
@@ -287,6 +283,13 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         @Override
         public CopyConfiguration setKind(@NotNull Kind kind) {
             this.kind = kind;
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public CopyBuilder<PropertyDescriptor> setTypeParameters(@NotNull List<TypeParameterDescriptor> typeParameters) {
+            this.newTypeParameters = typeParameters;
             return this;
         }
 
@@ -330,7 +333,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
                 copyConfiguration.owner, copyConfiguration.modality, copyConfiguration.visibility,
                 copyConfiguration.original, copyConfiguration.kind);
 
-        List<TypeParameterDescriptor> originalTypeParameters = getTypeParameters();
+        List<TypeParameterDescriptor> originalTypeParameters =
+                copyConfiguration.newTypeParameters == null ? getTypeParameters() : copyConfiguration.newTypeParameters;
         List<TypeParameterDescriptor> substitutedTypeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(
                 originalTypeParameters, copyConfiguration.substitution, substitutedDescriptor, substitutedTypeParameters

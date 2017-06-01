@@ -18,10 +18,13 @@
 
 package kotlin.reflect.jvm
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
+import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfoTable
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
@@ -44,12 +47,32 @@ fun <R> Function<R>.reflect(): KFunction<R>? {
     val stringTableTypes = JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
     val nameResolver = JvmNameResolver(stringTableTypes, annotation.d2)
     val proto = ProtoBuf.Function.parseFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
-    val moduleData = javaClass.getOrCreateModule()
-    val context = DeserializationContext(
-            moduleData.deserialization, nameResolver, moduleData.module, TypeTable(proto.typeTable), SinceKotlinInfoTable.EMPTY,
-            containerSource = null, parentTypeDeserializer = null, typeParameters = proto.typeParameterList
-    )
-    val descriptor = MemberDeserializer(context).loadFunction(proto)
+
+    val descriptor = deserializeToDescriptor(javaClass, proto, nameResolver, TypeTable(proto.typeTable), MemberDeserializer::loadFunction)
+                     ?: return null
+
     @Suppress("UNCHECKED_CAST")
     return KFunctionImpl(EmptyContainerForLocal, descriptor) as KFunction<R>
+}
+
+internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
+        moduleAnchor: Class<*>,
+        proto: M,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        createDescriptor: MemberDeserializer.(M) -> D
+): D? {
+    val moduleData = moduleAnchor.getOrCreateModule()
+
+    val typeParameters = when (proto) {
+        is ProtoBuf.Function -> proto.typeParameterList
+        is ProtoBuf.Property -> proto.typeParameterList
+        else -> error("Unsupported message: $proto")
+    }
+
+    val context = DeserializationContext(
+            moduleData.deserialization, nameResolver, moduleData.module, typeTable, SinceKotlinInfoTable.EMPTY,
+            containerSource = null, parentTypeDeserializer = null, typeParameters = typeParameters
+    )
+    return MemberDeserializer(context).createDescriptor(proto)
 }

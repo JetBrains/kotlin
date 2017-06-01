@@ -268,6 +268,11 @@ internal abstract class FunctionCaller<out M : Member?>(
         }
     }
 
+    object ThrowingCaller : FunctionCaller<Nothing?>(null, Void.TYPE, null, emptyArray()) {
+        override fun call(args: Array<*>): Any? {
+            throw UnsupportedOperationException("call/callBy are not supported for this declaration.")
+        }
+    }
 
     companion object {
         // TODO lazily allocate array at bound callers?
