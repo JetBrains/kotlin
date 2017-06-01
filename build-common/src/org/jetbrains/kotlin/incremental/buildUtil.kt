@@ -21,10 +21,7 @@ package org.jetbrains.kotlin.incremental
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.build.GeneratedFile
-import org.jetbrains.kotlin.build.GeneratedJvmClass
-import org.jetbrains.kotlin.build.JvmSourceRoot
-import org.jetbrains.kotlin.build.isModuleMappingFile
+import org.jetbrains.kotlin.build.*
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
@@ -53,7 +50,6 @@ fun makeModuleFile(name: String, isTest: Boolean, outputDir: File, sourcesToComp
             sourcesToCompile,
             javaSourceRoots.map { JvmSourceRoot(it) },
             classpath,
-            null,
             "java-production",
             isTest,
             // this excludes the output directories from the class path, to be removed for true incremental compilation
