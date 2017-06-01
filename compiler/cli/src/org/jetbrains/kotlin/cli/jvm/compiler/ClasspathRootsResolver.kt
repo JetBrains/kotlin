@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiJavaModule
+import com.intellij.openapi.vfs.VirtualFileManager
+//import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.light.LightJavaModule
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -91,22 +92,22 @@ class ClasspathRootsResolver(
 
         for ((root, packagePrefix) in javaSourceRoots) {
             val modularRoot = modularSourceRoot(root, hasOutputDirectoryInClasspath)
-            if (modularRoot != null) {
-                modules += modularRoot
-            }
-            else {
-                result += JavaRoot(root, JavaRoot.RootType.SOURCE, packagePrefix?.let { prefix ->
-                    if (isValidJavaFqName(prefix)) FqName(prefix)
-                    else null.also {
-                        report(STRONG_WARNING, "Invalid package prefix name is ignored: $prefix")
+                    if (modularRoot != null) {
+                        modules += modularRoot
                     }
-                })
-            }
-        }
+                    else {
+                result += JavaRoot(root, JavaRoot.RootType.SOURCE, packagePrefix?.let { prefix ->
+                            if (isValidJavaFqName(prefix)) FqName(prefix)
+                            else null.also {
+                                report(STRONG_WARNING, "Invalid package prefix name is ignored: $prefix")
+                            }
+                        })
+                    }
+                }
 
         for (root in jvmClasspathRoots) {
-            result += JavaRoot(root, JavaRoot.RootType.BINARY)
-        }
+                    result += JavaRoot(root, JavaRoot.RootType.BINARY)
+                }
 
         val outputDirectoryAddedAsPartOfModule = modules.any { module -> module.moduleRoots.any { it.file == outputDirectory } }
 
@@ -116,10 +117,10 @@ class ClasspathRootsResolver(
             if (outputDirectoryAddedAsPartOfModule && root == outputDirectory) continue
 
             val module = modularBinaryRoot(root)
-            if (module != null) {
-                modules += module
-            }
-        }
+                    if (module != null) {
+                        modules += module
+                    }
+                }
 
         addModularRoots(modules, result)
 
@@ -127,6 +128,8 @@ class ClasspathRootsResolver(
     }
 
     private fun findSourceModuleInfo(root: VirtualFile): Pair<VirtualFile, PsiJavaModule>? {
+        return null
+        /*
         val moduleInfoFile =
                 when {
                     root.isDirectory -> root.findChild(PsiJavaModule.MODULE_INFO_FILE)
@@ -138,6 +141,7 @@ class ClasspathRootsResolver(
         val psiJavaModule = psiFile.children.singleOrNull { it is PsiJavaModule } as? PsiJavaModule ?: return null
 
         return moduleInfoFile to psiJavaModule
+        */
     }
 
     private fun modularSourceRoot(root: VirtualFile, hasOutputDirectoryInClasspath: Boolean): JavaModule.Explicit? {
@@ -151,16 +155,10 @@ class ClasspathRootsResolver(
     }
 
     private fun modularBinaryRoot(root: VirtualFile): JavaModule? {
-        val isJar = root.fileSystem.protocol == StandardFileSystems.JAR_PROTOCOL
-        val manifest: Attributes? by lazy(NONE) { readManifestAttributes(root) }
-
-        val moduleInfoFile =
-                root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
-                ?: root.takeIf { isJar }?.findFileByRelativePath(MULTI_RELEASE_MODULE_INFO_CLS_FILE)?.takeIf {
-                    manifest?.getValue(IS_MULTI_RELEASE)?.equals("true", ignoreCase = true) == true
-                }
-
-        if (moduleInfoFile != null) {
+        return null
+        /*
+        val moduleInfoFile = root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
+        return if (moduleInfoFile != null) {
             val moduleInfo = JavaModuleInfo.read(moduleInfoFile) ?: return null
             return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(root, isBinary = true)), moduleInfoFile)
         }
@@ -182,8 +180,6 @@ class ClasspathRootsResolver(
             }
             return JavaModule.Automatic(moduleName, moduleRoot)
         }
-
-        return null
     }
 
     private fun readManifestAttributes(jarRoot: VirtualFile): Attributes? {
@@ -194,6 +190,7 @@ class ClasspathRootsResolver(
         catch (e: IOException) {
             null
         }
+        */
     }
 
     private fun addModularRoots(modules: List<JavaModule>, result: MutableList<JavaRoot>) {
@@ -261,8 +258,8 @@ class ClasspathRootsResolver(
             else {
                 for ((root, isBinary) in module.moduleRoots) {
                     result.add(JavaRoot(root, if (isBinary) JavaRoot.RootType.BINARY else JavaRoot.RootType.SOURCE))
-                }
             }
+        }
         }
 
         if (requireStdlibModule && sourceModule != null && KOTLIN_STDLIB_MODULE_NAME !in allDependencies) {
@@ -320,7 +317,6 @@ class ClasspathRootsResolver(
     }
 
     private companion object {
-        const val MULTI_RELEASE_MODULE_INFO_CLS_FILE = "META-INF/versions/9/${PsiJavaModule.MODULE_INFO_CLS_FILE}"
         const val AUTOMATIC_MODULE_NAME = "Automatic-Module-Name"
         const val IS_MULTI_RELEASE = "Multi-Release"
     }
