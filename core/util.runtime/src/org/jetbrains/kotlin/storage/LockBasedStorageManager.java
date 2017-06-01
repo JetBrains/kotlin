@@ -326,6 +326,12 @@ public class LockBasedStorageManager implements StorageManager {
                     return typedValue;
                 }
                 catch (Throwable throwable) {
+                    if (ExceptionUtilsKt.isProcessCanceledException(throwable)) {
+                        value = NotValue.NOT_COMPUTED;
+                        //noinspection ConstantConditions
+                        throw (RuntimeException)throwable;
+                    }
+
                     if (value == NotValue.COMPUTING) {
                         // Store only if it's a genuine result, not something thrown through recursionDetected()
                         value = WrappedValues.escapeThrowable(throwable);
@@ -414,7 +420,14 @@ public class LockBasedStorageManager implements StorageManager {
                     return typedValue;
                 }
                 catch (Throwable throwable) {
-                    if (throwable == error) throw storageManager.exceptionHandlingStrategy.handleException(throwable);
+                    if (ExceptionUtilsKt.isProcessCanceledException(throwable)) {
+                        cache.remove(input);
+                        //noinspection ConstantConditions
+                        throw (RuntimeException)throwable;
+                    }
+                    if (throwable == error) {
+                        throw storageManager.exceptionHandlingStrategy.handleException(throwable);
+                    }
 
                     Object oldValue = cache.put(input, WrappedValues.escapeThrowable(throwable));
                     if (oldValue != NotValue.COMPUTING) {
