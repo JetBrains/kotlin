@@ -122,6 +122,18 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
                         "                else -> 0\n"+
                         "            })\n"+
                         "        }\n"+
+                        "        if (true) { }\n" +
+                        "        while (true) { " +
+                        "          break" +
+                        "        }\n" +
+                        "        try {\n" +
+                        "          when (test) {\n" +
+                        "            12 -> println(\"foo\")\n" +
+                        "            else -> println(\"bar\")\n" +
+                        "          }\n" +
+                        "        } catch (e: Exception) {\n" +
+                        "        } finally {\n" +
+                        "        }\n" +
                         "        return test\n"+
                         "    }\n"+
                         "    private fun <T>foo2(): Int where T : List<T> {\n"+
@@ -129,7 +141,6 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
                         "    }\n"+
                         "}\n"+
                         "class AnotherClass<T : Any> : Some()\n";
-
         }
     }
 
@@ -151,7 +162,11 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
                         "SPACE_AROUND_MULTIPLICATIVE_OPERATORS",
                         "SPACE_AROUND_UNARY_OPERATOR",
                         "SPACE_AFTER_COMMA",
-                        "SPACE_BEFORE_COMMA"
+                        "SPACE_BEFORE_COMMA",
+                        "SPACE_BEFORE_IF_PARENTHESES",
+                        "SPACE_BEFORE_WHILE_PARENTHESES",
+                        "SPACE_BEFORE_FOR_PARENTHESES",
+                        "SPACE_BEFORE_CATCH_PARENTHESES"
                 );
 
                 consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_AROUND_RANGE", "Around range (..)",
@@ -188,6 +203,10 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
                 consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_BEFORE_LAMBDA_ARROW",
                                           "Before lambda arrow",
                                           CodeStyleSettingsCustomizable.SPACES_OTHER);
+
+                consumer.showCustomOption(KotlinCodeStyleSettings.class, "SPACE_BEFORE_WHEN_PARENTHESES",
+                                          "'when' parentheses",
+                                          CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES);
 
                 break;
             case WRAPPING_AND_BRACES_SETTINGS:

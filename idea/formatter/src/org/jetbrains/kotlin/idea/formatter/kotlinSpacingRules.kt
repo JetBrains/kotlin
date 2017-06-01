@@ -214,11 +214,12 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             beforeInside(GT, TYPE_ARGUMENT_LIST).spaces(0)
             before(TYPE_ARGUMENT_LIST).spaces(0)
 
-            betweenInside(FOR_KEYWORD, LPAR, FOR).spacing(1, 1, 0, false, 0)
-            betweenInside(IF_KEYWORD, LPAR, IF).spacing(1, 1, 0, false, 0)
-            betweenInside(WHILE_KEYWORD, LPAR, WHILE).spacing(1, 1, 0, false, 0)
-            betweenInside(WHILE_KEYWORD, LPAR, DO_WHILE).spacing(1, 1, 0, false, 0)
-            betweenInside(WHEN_KEYWORD, LPAR, WHEN).spacing(1, 1, 0, false, 0)
+            betweenInside(FOR_KEYWORD, LPAR, FOR).lineBreakOrForceSpace(false, kotlinCommonSettings.SPACE_BEFORE_FOR_PARENTHESES)
+            betweenInside(IF_KEYWORD, LPAR, IF).lineBreakOrForceSpace(false, kotlinCommonSettings.SPACE_BEFORE_IF_PARENTHESES)
+            betweenInside(WHILE_KEYWORD, LPAR, WHILE).lineBreakOrForceSpace(false, kotlinCommonSettings.SPACE_BEFORE_WHILE_PARENTHESES)
+            betweenInside(WHILE_KEYWORD, LPAR, DO_WHILE).lineBreakOrForceSpace(false, kotlinCommonSettings.SPACE_BEFORE_WHILE_PARENTHESES)
+            betweenInside(WHEN_KEYWORD, LPAR, WHEN).lineBreakOrForceSpace(false, kotlinSettings.SPACE_BEFORE_WHEN_PARENTHESES)
+            betweenInside(CATCH_KEYWORD, VALUE_PARAMETER_LIST, CATCH).lineBreakOrForceSpace(false, kotlinCommonSettings.SPACE_BEFORE_CATCH_PARENTHESES)
 
             betweenInside(LPAR, VALUE_PARAMETER, FOR).spaces(0)
             betweenInside(LPAR, DESTRUCTURING_DECLARATION, FOR).spaces(0)
