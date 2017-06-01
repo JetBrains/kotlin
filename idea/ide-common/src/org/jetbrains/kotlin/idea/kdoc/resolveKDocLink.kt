@@ -161,10 +161,10 @@ private fun getClassInnerScope(outerScope: LexicalScope, descriptor: ClassDescri
 fun getKDocLinkResolutionScope(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LexicalScope {
     return when (descriptor) {
         is PackageFragmentDescriptor ->
-            LexicalScope.Empty(getPackageInnerScope(descriptor).memberScopeAsImportingScope(), descriptor)
+            LexicalScope.Base(getPackageInnerScope(descriptor).memberScopeAsImportingScope(), descriptor)
 
         is PackageViewDescriptor ->
-            LexicalScope.Empty(descriptor.memberScope.memberScopeAsImportingScope(), descriptor)
+            LexicalScope.Base(descriptor.memberScope.memberScopeAsImportingScope(), descriptor)
 
         is ClassDescriptor ->
             getClassInnerScope(getOuterScope(descriptor, resolutionFacade), descriptor)

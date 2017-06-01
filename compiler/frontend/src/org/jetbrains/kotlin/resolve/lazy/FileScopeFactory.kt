@@ -89,7 +89,7 @@ class FileScopeFactory(
             }
         }
 
-        val lexicalScope = LexicalScope.Empty(lazyImportingScope, topLevelDescriptorProvider.getPackageFragment(file.packageFqName)!!)
+        val lexicalScope = LexicalScope.Base(lazyImportingScope, topLevelDescriptorProvider.getPackageFragment(file.packageFqName)!!)
 
         val importResolver = object : ImportResolver {
             override fun forceResolveAllImports() {

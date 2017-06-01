@@ -29,7 +29,7 @@ interface HierarchicalScope : ResolutionScope {
     fun printStructure(p: Printer)
 }
 
-interface LexicalScope: HierarchicalScope {
+interface LexicalScope : HierarchicalScope {
     override val parent: HierarchicalScope
 
     val ownerDescriptor: DeclarationDescriptor
@@ -39,7 +39,7 @@ interface LexicalScope: HierarchicalScope {
 
     val kind: LexicalScopeKind
 
-    class Empty(
+    class Base(
             parent: HierarchicalScope,
             override val ownerDescriptor: DeclarationDescriptor
     ) : BaseHierarchicalScope(parent), LexicalScope {
@@ -56,7 +56,7 @@ interface LexicalScope: HierarchicalScope {
             get() = LexicalScopeKind.EMPTY
 
         override fun printStructure(p: Printer) {
-            p.println("Empty lexical scope with owner = $ownerDescriptor and parent = $parent")
+            p.println("Base lexical scope with owner = $ownerDescriptor and parent = $parent")
         }
     }
 }

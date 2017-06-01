@@ -162,8 +162,10 @@ object ReplaceWithAnnotationAnalyzer {
                 getResolutionScope(moduleDescriptor.getPackage(descriptor.fqName), ownerDescriptor, additionalScopes)
             }
 
-            is PackageViewDescriptor ->
-                LexicalScope.Empty(chainImportingScopes(listOf(descriptor.memberScope.memberScopeAsImportingScope()) + additionalScopes)!!, ownerDescriptor)
+            is PackageViewDescriptor -> LexicalScope.Base(
+                    chainImportingScopes(listOf(descriptor.memberScope.memberScopeAsImportingScope()) + additionalScopes)!!,
+                    ownerDescriptor
+            )
 
             is ClassDescriptor -> {
                 val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
