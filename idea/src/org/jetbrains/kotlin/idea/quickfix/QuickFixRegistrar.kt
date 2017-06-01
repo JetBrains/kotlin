@@ -496,5 +496,7 @@ class QuickFixRegistrar : QuickFixContributor {
         RETURN_NOT_ALLOWED.registerFactory(ChangeToLabeledReturnFix)
 
         INAPPLICABLE_RECEIVER_TARGET.registerFactory(MoveReceiverAnnotationFix)
+
+        NO_CONSTRUCTOR.registerFactory(RemoveNoConstructorFix)
     }
 }
