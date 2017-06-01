@@ -100,11 +100,11 @@ void setupCompilationFlags() {
     ext.targetArgs <<
         [(ext.host):
            ["--sysroot=${gccToolchainDir}/${gnuTriplet}/sysroot",
-            "-DUSE_GCC_UNWIND=1", "-DELFSIZE=64"],
+            "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64"],
          "raspberrypi":
            ["-target", getTargetArg("raspberrypi"),
             "-mfpu=vfp", "-mfloat-abi=hard",
-            "-DUSE_GCC_UNWIND=1", "-DELFSIZE=32",
+            "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32",
             "--sysroot=$raspberrypiSysrootDir",
             // TODO: those two are hacks.
             "-I$raspberrypiSysrootDir/usr/include/c++/4.8.3",
@@ -115,7 +115,7 @@ void setupCompilationFlags() {
         ext.targetArgs <<
                 [(ext.host):
                          ["-target", "x86_64-w64-mingw32", "--sysroot=${mingwWithLlvmDir}",
-                          "-DOMIT_BACKTRACE", "-DKONAN_WINDOWS=1"]]
+                          "-DUSE_GCC_UNWIND=1", "-DUSE_PE_COFF_SYMBOLS=1", "-DKONAN_WINDOWS=1"]]
     } else {
          ext.host = "macbook"
          ext.targetArgs <<
@@ -135,7 +135,7 @@ void setupCompilationFlags() {
                  "android_arm32":
                          ["-target", getTargetArg("android_arm32"),
                           "--sysroot=$android_arm32SysrootDir",
-                          "-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DELFSIZE=32",
+                          "-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32",
                           // HACKS!
                           "-I$android_arm32SysrootDir/usr/include/c++/4.9.x",
                           "-I$android_arm32SysrootDir/usr/include/c++/4.9.x/arm-linux-androideabi"]

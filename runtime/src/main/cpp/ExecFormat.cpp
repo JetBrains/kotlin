@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-#if USE_GCC_UNWIND
+#include "ExecFormat.h"
+
+#if USE_ELF_SYMBOLS
 
 #include <dlfcn.h>
 #include <elf.h>
@@ -93,14 +95,12 @@ void initSymbols() {
   }
 }
 
-}  // namespace
-
-extern "C" const char* AddressToSymbol(unsigned long address) {
-  if (address == 0) return nullptr;
+const char* addressToSymbol(const void* address) {
+  if (address == nullptr) return nullptr;
 
   // First, look up in dynamically loaded symbols.
   Dl_info info;
-  if (dladdr((const void*)address, &info) != 0 && info.dli_sname != nullptr) {
+  if (dladdr(address, &info) != 0 && info.dli_sname != nullptr) {
     return info.dli_sname;
   }
 
@@ -109,12 +109,14 @@ extern "C" const char* AddressToSymbol(unsigned long address) {
     initSymbols();
   }
 
+  unsigned long addressValue = (unsigned long)address;
+
   for (auto record : *symbols) {
     auto begin = record.symtabBegin;
     auto end = record.symtabEnd;
     while (begin < end) {
       // st_value is load address adjusted.
-      if (address >= begin->st_value && address < begin->st_value + begin->st_size) {
+      if (addressValue >= begin->st_value && addressValue < begin->st_value + begin->st_size) {
 	return &record.strtab[begin->st_name];
       }
       begin++;
@@ -123,10 +125,198 @@ extern "C" const char* AddressToSymbol(unsigned long address) {
   return nullptr;
 }
 
-#else
+}  // namespace
 
-extern "C" const char* AddressToSymbol(unsigned long address) {
-  return nullptr;
+extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize) {
+  const char* result = addressToSymbol(address);
+  if (result == nullptr) {
+    return false;
+  } else {
+    strncpy(resultBuffer, result, resultBufferSize);
+    resultBuffer[resultBufferSize - 1] = '\0';
+    return true;
+  }
 }
 
-#endif // USE_GCC_UNWIND
+#elif USE_PE_COFF_SYMBOLS
+
+#include <windows.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "Assert.h"
+
+namespace {
+
+static void* mapModuleFile(HMODULE hModule) {
+  int bufferLength = 64;
+  wchar_t* buffer = nullptr;
+  for (;;) {
+    buffer = (wchar_t*)realloc(buffer, sizeof(wchar_t) * bufferLength);
+    RuntimeAssert(buffer != nullptr, "Out of memory");
+
+    DWORD res = GetModuleFileNameW(hModule, buffer, bufferLength);
+    if (res != 0 && res < bufferLength) {
+      break;
+    }
+    const int MAX_BUFFER_SIZE = 32768; // Max path length + 1.
+    if (res == bufferLength && bufferLength < MAX_BUFFER_SIZE) {
+      // Buffer is too small, continue:
+      bufferLength *= 2;
+      continue;
+    }
+
+    // Invalid result.
+    free(buffer);
+    return nullptr;
+  }
+
+  HANDLE hFile = CreateFileW(
+      /* lpFileName = */ buffer,
+      /* dwDesiredAccess = */ GENERIC_READ,
+      /* dwShareMode =  */ FILE_SHARE_READ,
+      /* lpSecurityAttributes = */ nullptr,
+      /* dwCreationDisposition = */ OPEN_EXISTING,
+      /* dwFlagsAndAttributes = */ FILE_ATTRIBUTE_NORMAL,
+      /* hTemplateFile = */ nullptr
+  );
+  free(buffer);
+  if (hFile == INVALID_HANDLE_VALUE) {
+    // Can't open module file.
+    return nullptr;
+  }
+
+  HANDLE hFileMappingObject = CreateFileMapping(
+      hFile,
+      /* lpAttributes =  */ nullptr,
+      /* flProtect = */ PAGE_READONLY,
+      /* dwMaximumSizeHigh = */ 0,
+      /* dwMaximumSizeLow =  */ 0,
+      /* lpName = */ nullptr
+  );
+  if (hFileMappingObject == nullptr) {
+    // Can't create file mapping.
+    CloseHandle(hFile);
+    return nullptr;
+  }
+
+  LPVOID mapAddress = MapViewOfFile(
+      hFileMappingObject,
+      /* dwDesiredAccess = */ FILE_MAP_READ,
+      /* dwFileOffsetHigh = */ 0,
+      /* dwFileOffsetLow = */ 0,
+      /* dwNumberOfBytesToMap = */ 0
+  );
+  if (mapAddress == nullptr) {
+    // Failed to create map view.
+    CloseHandle(hFileMappingObject);
+    CloseHandle(hFile);
+    return nullptr;
+  }
+
+  return mapAddress;
+}
+
+class SymbolTable {
+ private:
+
+  char* imageBase = nullptr;
+  IMAGE_SECTION_HEADER* sectionHeaders = nullptr;
+  IMAGE_SYMBOL* symbols = nullptr;
+  DWORD numberOfSymbols = 0;
+
+  // Note: it doesn't free resources yet.
+  ~SymbolTable() {}
+
+  static const int SYMBOL_SHORT_NAME_LENGTH = 8;
+
+  void getSymbolName(IMAGE_SYMBOL* sym, char* resultBuffer, size_t resultBufferSize) {
+    if (sym->N.Name.Short != 0) {
+      // ShortName is not zero-terminated if its length exactly equals SYMBOL_SHORT_NAME_LENGTH.
+      // Copy it to the buffer and zero-terminate explicitly:
+      size_t bytesToCopy = SYMBOL_SHORT_NAME_LENGTH;
+      if (bytesToCopy > resultBufferSize - 1) bytesToCopy = resultBufferSize - 1;
+
+      memcpy(resultBuffer, sym->N.ShortName, bytesToCopy);
+      resultBuffer[bytesToCopy] = '\0';
+    } else {
+      const char* strTable = (const char*)(symbols + numberOfSymbols);
+      const char* result = strTable + sym->N.Name.Long;
+      strncpy(resultBuffer, result, resultBufferSize);
+      resultBuffer[resultBufferSize - 1] = '\0';
+    }
+  }
+
+  const void* getSymbolAddress(IMAGE_SYMBOL* symbol) {
+    IMAGE_SECTION_HEADER* sectionHeader = &sectionHeaders[symbol->SectionNumber - 1];
+    return (const void*)(imageBase + sectionHeader->VirtualAddress + symbol->Value);
+  }
+
+  IMAGE_SYMBOL* findFunctionSymbol(const void* address) {
+    for (DWORD i = 0; i < numberOfSymbols; ++i) {
+      IMAGE_SYMBOL* symbol = &symbols[i];
+      if (symbol->Type == 0x20 && address == getSymbolAddress(symbol)) {
+        return symbol;
+      }
+    }
+    return nullptr;
+  }
+
+ public:
+
+  explicit SymbolTable(HMODULE hModule) {
+    imageBase = (char*)hModule;
+    IMAGE_DOS_HEADER* dosHeader = (IMAGE_DOS_HEADER*)imageBase;
+    RuntimeAssert(dosHeader->e_magic == IMAGE_DOS_SIGNATURE, "PE executable e_magic mismatch");
+
+    IMAGE_NT_HEADERS* ntHeaders = (IMAGE_NT_HEADERS*)(imageBase + dosHeader->e_lfanew);
+    RuntimeAssert(ntHeaders->Signature == IMAGE_NT_SIGNATURE, "PE executable NT signature mismatch");
+
+    IMAGE_FILE_HEADER* fileHeader = &ntHeaders->FileHeader;
+
+    sectionHeaders = (IMAGE_SECTION_HEADER*)(((char*)(fileHeader + 1)) + fileHeader->SizeOfOptionalHeader);
+    if (fileHeader->PointerToSymbolTable == 0 || fileHeader->NumberOfSymbols == 0) {
+      // No symbols.
+      return;
+    }
+
+    // Symbol table doesn't get mapped to the memory, so we have to load it ourselves:
+    char* mappedModuleFile = (char*)mapModuleFile(hModule);
+    if (mappedModuleFile != nullptr) {
+      symbols = (IMAGE_SYMBOL*)(mappedModuleFile + fileHeader->PointerToSymbolTable);
+      numberOfSymbols = fileHeader->NumberOfSymbols;
+    }
+  }
+
+  bool functionAddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize) {
+    IMAGE_SYMBOL* symbol = findFunctionSymbol(address);
+    if (symbol == nullptr) {
+      return false;
+    } else {
+      getSymbolName(symbol, resultBuffer, resultBufferSize);
+      return true;
+    }
+  }
+
+};
+
+SymbolTable* theExeSymbolTable = nullptr;
+
+}  // namespace
+
+extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize) {
+  if (theExeSymbolTable == nullptr) {
+    // Note: do not protecting the lazy initialization by critical sections for simplicity;
+    // this doesn't have any serious consequences.
+    theExeSymbolTable = new SymbolTable(GetModuleHandle(nullptr));
+  }
+  return theExeSymbolTable->functionAddressToSymbol(address, resultBuffer, resultBufferSize);
+}
+
+#else
+
+extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize) {
+  return false;
+}
+
+#endif // USE_ELF_SYMBOLS

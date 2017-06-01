@@ -17,9 +17,11 @@
 #ifndef RUNTIME_EXECFORMAT_H
 #define RUNTIME_EXECFORMAT_H
 
+#include <stddef.h>
+
 extern "C" {
 
-const char* AddressToSymbol(unsigned long address);
+bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize);
 
 }  // extern "C"
 
