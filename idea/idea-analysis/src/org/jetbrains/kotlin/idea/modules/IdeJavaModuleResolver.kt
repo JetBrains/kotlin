@@ -16,27 +16,27 @@
 
 package org.jetbrains.kotlin.idea.modules
 
-import com.intellij.codeInsight.daemon.impl.analysis.JavaModuleGraphUtil
+//import com.intellij.codeInsight.daemon.impl.analysis.JavaModuleGraphUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiJavaModule
+//import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
-import com.intellij.psi.impl.light.LightJavaModule
+//import com.intellij.psi.impl.light.LightJavaModule
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 class IdeJavaModuleResolver(project: Project) : JavaModuleResolver {
-    private val psiManager = PsiManager.getInstance(project)
+    /*private val psiManager = PsiManager.getInstance(project)
 
     private fun findJavaModule(file: VirtualFile): PsiJavaModule? {
         return psiManager.findFile(file)?.let(JavaModuleGraphUtil::findDescriptorByElement)
-    }
+    }*/
 
     override fun checkAccessibility(
             fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?
     ): JavaModuleResolver.AccessError? {
-        val ourModule = fileFromOurModule?.let(this::findJavaModule)
+        /*val ourModule = fileFromOurModule?.let(this::findJavaModule)
         val theirModule = this.findJavaModule(referencedFile)
 
         // If we're both in the unnamed module, it's OK, no error should be reported
@@ -58,13 +58,13 @@ class IdeJavaModuleResolver(project: Project) : JavaModuleResolver {
         val fqName = referencedPackage?.asString() ?: return null
         if (!exports(theirModule, fqName, ourModule)) {
             return JavaModuleResolver.AccessError.ModuleDoesNotExportPackage(theirModule.name)
-        }
+        }*/
 
         return null
     }
 
     // Returns whether or not [source] exports [packageName] to [target]
-    private fun exports(source: PsiJavaModule, packageName: String, target: PsiJavaModule?): Boolean {
+    /*private fun exports(source: PsiJavaModule, packageName: String, target: PsiJavaModule?): Boolean {
         if (source is LightJavaModule) {
             return true
         }
@@ -76,5 +76,5 @@ class IdeJavaModuleResolver(project: Project) : JavaModuleResolver {
         return source.exports.any { statement ->
             statement.moduleNames.isEmpty() && statement.packageName == packageName
         }
-    }
+    }*/
 }
