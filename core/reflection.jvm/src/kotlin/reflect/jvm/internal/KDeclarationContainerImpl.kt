@@ -45,6 +45,8 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     abstract fun getFunctions(name: Name): Collection<FunctionDescriptor>
 
+    abstract fun getLocalProperty(index: Int): PropertyDescriptor?
+
     protected fun getMembers(scope: MemberScope, belonginess: MemberBelonginess): Collection<KCallableImpl<*>> {
         val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallableImpl<*>, Unit>() {
             override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallableImpl<*> =
@@ -95,9 +97,15 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     fun findPropertyDescriptor(name: String, signature: String): PropertyDescriptor {
+        val match = LOCAL_PROPERTY_SIGNATURE.matchEntire(signature)
+        if (match != null) {
+            val (number) = match.destructured
+            return getLocalProperty(number.toInt())
+                   ?: throw KotlinReflectionInternalError("Local property #$number not found in $jClass")
+        }
+
         val properties = getProperties(Name.identifier(name))
                 .filter { descriptor ->
-                    descriptor is PropertyDescriptor &&
                     RuntimeTypeMapper.mapPropertySignature(descriptor).asString() == signature
                 }
 
@@ -279,5 +287,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     companion object {
         private val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")
+
+        internal val LOCAL_PROPERTY_SIGNATURE = "<v#(\\d+)>".toRegex()
     }
 }
