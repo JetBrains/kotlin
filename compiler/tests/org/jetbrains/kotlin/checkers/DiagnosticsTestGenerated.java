@@ -23642,9 +23642,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("LateInit.kts")
+        public void testLateInit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/script/LateInit.kts");
+            doTest(fileName);
+        }
+
         @TestMetadata("NestedInnerClass.kts")
         public void testNestedInnerClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/script/NestedInnerClass.kts");
+            doTest(fileName);
+        }
+
+        @TestMetadata("PrivateVal.kts")
+        public void testPrivateVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/script/PrivateVal.kts");
             doTest(fileName);
         }
 
