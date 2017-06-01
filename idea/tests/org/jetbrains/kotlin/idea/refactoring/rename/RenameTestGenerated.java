@@ -216,6 +216,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("javaClassImportAliasByRef/javaClassImportAliasByRef.test")
+    public void testJavaClassImportAliasByRef_JavaClassImportAliasByRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/javaClassImportAliasByRef/javaClassImportAliasByRef.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("labeledAnonymousFunByLabel/labeledLambdaByLabel.test")
     public void testLabeledAnonymousFunByLabel_LabeledLambdaByLabel() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledAnonymousFunByLabel/labeledLambdaByLabel.test");
