@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Comparing
 import com.intellij.psi.*
 import com.intellij.refactoring.rename.inplace.MemberInplaceRenameHandler
 import com.intellij.refactoring.rename.inplace.MemberInplaceRenamer
+import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.unquote
@@ -31,6 +32,14 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinMemberInplaceRenameHandler : MemberInplaceRenameHandler() {
+    companion object {
+        private val variableInplaceHandler = object : VariableInplaceRenameHandler() {
+            override public fun isAvailable(element: PsiElement?, editor: Editor?, file: PsiFile?): Boolean {
+                return super.isAvailable(element, editor, file)
+            }
+        }
+    }
+
     private class RenamerImpl(
             elementToRename: PsiNamedElement,
             substitutedElement: PsiElement?,
@@ -56,6 +65,7 @@ class KotlinMemberInplaceRenameHandler : MemberInplaceRenameHandler() {
     }
 
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
+        if (variableInplaceHandler.isAvailable(element, editor, file)) return false
         if (element !is KtElement) return false
         if (!super.isAvailable(element, editor, file)) return false
 
