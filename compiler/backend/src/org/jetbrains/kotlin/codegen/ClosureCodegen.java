@@ -229,9 +229,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     @Override
     protected void generateKotlinMetadataAnnotation() {
         FunctionDescriptor frontendFunDescriptor = CodegenUtilKt.unwrapFrontendVersion(funDescriptor);
-        FunctionDescriptor freeLambdaDescriptor = createFreeLambdaDescriptor(frontendFunDescriptor);
         Method method = v.getSerializationBindings().get(METHOD_FOR_FUNCTION, frontendFunDescriptor);
         assert method != null : "No method for " + frontendFunDescriptor;
+
+        FunctionDescriptor freeLambdaDescriptor = FakeDescriptorsForReferencesKt.createFreeFakeLambdaDescriptor(frontendFunDescriptor);
         v.getSerializationBindings().put(METHOD_FOR_FUNCTION, freeLambdaDescriptor, method);
 
         DescriptorSerializer serializer =
@@ -243,30 +244,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             writeAnnotationData(av, serializer, functionProto);
             return Unit.INSTANCE;
         });
-    }
-
-    /**
-     * Given a function descriptor, creates another function descriptor with type parameters copied from outer context(s).
-     * This is needed because once we're serializing this to a proto, there's no place to store information about external type parameters.
-     */
-    @NotNull
-    public static FunctionDescriptor createFreeLambdaDescriptor(@NotNull FunctionDescriptor descriptor) {
-        FunctionDescriptor.CopyBuilder<? extends FunctionDescriptor> builder = descriptor.newCopyBuilder();
-        List<TypeParameterDescriptor> typeParameters = new ArrayList<>(0);
-        builder.setTypeParameters(typeParameters);
-
-        DeclarationDescriptor container = descriptor.getContainingDeclaration();
-        while (container != null) {
-            if (container instanceof ClassDescriptor) {
-                typeParameters.addAll(((ClassDescriptor) container).getDeclaredTypeParameters());
-            }
-            else if (container instanceof CallableDescriptor && !(container instanceof ConstructorDescriptor)) {
-                typeParameters.addAll(((CallableDescriptor) container).getTypeParameters());
-            }
-            container = container.getContainingDeclaration();
-        }
-
-        return typeParameters.isEmpty() ? descriptor : builder.build();
     }
 
     @Override
