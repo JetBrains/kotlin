@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.name.FqName
 /*
+import org.jetbrains.kotlin.utils.compact
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.ModuleVisitor
