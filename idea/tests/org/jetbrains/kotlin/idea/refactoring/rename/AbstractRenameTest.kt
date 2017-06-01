@@ -349,7 +349,7 @@ abstract class AbstractRenameTest : KotlinLightCodeInsightFixtureTestCase() {
                     else -> null
                 }
             }
-            val handler = RenameHandlerRegistry.getInstance().getRenameHandler(dataContext)!!
+            val handler = RenameHandlerRegistry.getInstance().getRenameHandler(dataContext) ?: return@doTestCommittingDocuments
             Assert.assertTrue(handler.isAvailableOnDataContext(dataContext))
             handler.invoke(project, editor, psiFile, dataContext)
         }
