@@ -938,6 +938,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         KotlinTestUtils.assertEqualsToFile(expectedFile, actual.toString())
     }
 
+    /*
     fun testJre9() {
         val path = KotlinTestUtils.getJdk9HomeIfPossible()?.absolutePath ?: return
 
@@ -949,6 +950,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         buildAllModules().assertSuccessful()
     }
+    */
 
     fun testCustomDestination() {
         loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")

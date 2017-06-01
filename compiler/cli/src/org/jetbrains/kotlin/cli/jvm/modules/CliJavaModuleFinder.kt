@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cli.jvm.modules
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
-import com.intellij.psi.PsiJavaModule
+//import com.intellij.psi.PsiJavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
@@ -41,8 +41,11 @@ internal class CliJavaModuleFinder(private val jrtFileSystem: VirtualFileSystem?
             ?: userModules[name]
 
     private fun findSystemModule(moduleRoot: VirtualFile): JavaModule.Explicit? {
+        return null
+        /*
         val file = moduleRoot.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE) ?: return null
         val moduleInfo = JavaModuleInfo.read(file) ?: return null
         return JavaModule.Explicit(moduleInfo, moduleRoot, file, isBinary = true)
+        */
     }
 }
