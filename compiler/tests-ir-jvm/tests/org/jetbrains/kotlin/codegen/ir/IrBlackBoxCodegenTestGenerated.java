@@ -15834,6 +15834,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                     doTest(fileName);
                 }
             }
+
+            @TestMetadata("compiler/testData/codegen/box/reflection/properties/localDelegated")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class LocalDelegated extends AbstractIrBlackBoxCodegenTest {
+                public void testAllFilesPresentInLocalDelegated() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/localDelegated"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("localDelegatedProperty.kt")
+                public void testLocalDelegatedProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/localDelegated/localDelegatedProperty.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("multiFileClass.kt")
+                public void testMultiFileClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/localDelegated/multiFileClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("variableOfGenericType.kt")
+                public void testVariableOfGenericType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/localDelegated/variableOfGenericType.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/reflection/specialBuiltIns")

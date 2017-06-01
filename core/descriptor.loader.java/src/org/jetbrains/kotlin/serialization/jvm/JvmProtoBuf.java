@@ -14,7 +14,9 @@ public final class JvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeParameterAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.classModuleName);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.classLocalVariable);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.packageModuleName);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.packageLocalVariable);
   }
   public interface StringTableTypesOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.jvm.StringTableTypes)
@@ -3901,6 +3903,22 @@ public final class JvmProtoBuf {
         101,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
         java.lang.Integer.class);
+  public static final int CLASS_LOCAL_VARIABLE_FIELD_NUMBER = 102;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Class { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Class,
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Property>> classLocalVariable = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newRepeatedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Class.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Property.getDefaultInstance(),
+        null,
+        102,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
+        false,
+        org.jetbrains.kotlin.serialization.ProtoBuf.Property.class);
   public static final int PACKAGE_MODULE_NAME_FIELD_NUMBER = 101;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Package { ... }</code>
@@ -3917,6 +3935,22 @@ public final class JvmProtoBuf {
         101,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
         java.lang.Integer.class);
+  public static final int PACKAGE_LOCAL_VARIABLE_FIELD_NUMBER = 102;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Package { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Package,
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Property>> packageLocalVariable = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newRepeatedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Package.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Property.getDefaultInstance(),
+        null,
+        102,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
+        false,
+        org.jetbrains.kotlin.serialization.ProtoBuf.Property.class);
 
   static {
   }

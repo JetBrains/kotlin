@@ -14,7 +14,9 @@ public final class DebugJvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.typeParameterAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.classModuleName);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.classLocalVariable);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.packageModuleName);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.packageLocalVariable);
   }
   public interface StringTableTypesOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.jvm.StringTableTypes)
@@ -4586,6 +4588,17 @@ public final class DebugJvmProtoBuf {
           .newFileScopedGeneratedExtension(
         java.lang.Integer.class,
         null);
+  public static final int CLASS_LOCAL_VARIABLE_FIELD_NUMBER = 102;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Class { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Class,
+      java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Property>> classLocalVariable = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.class,
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.getDefaultInstance());
   public static final int PACKAGE_MODULE_NAME_FIELD_NUMBER = 101;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Package { ... }</code>
@@ -4597,6 +4610,17 @@ public final class DebugJvmProtoBuf {
           .newFileScopedGeneratedExtension(
         java.lang.Integer.class,
         null);
+  public static final int PACKAGE_LOCAL_VARIABLE_FIELD_NUMBER = 102;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Package { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Package,
+      java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Property>> packageLocalVariable = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.class,
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.getDefaultInstance());
   private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_descriptor;
   private static
@@ -4678,9 +4702,15 @@ public final class DebugJvmProtoBuf {
       "g.jetbrains.kotlin.serialization.Annotat" +
       "ion:J\n\021class_module_name\022).org.jetbrains" +
       ".kotlin.serialization.Class\030e \001(\005B\004\230\265\030\001:" +
-      "N\n\023package_module_name\022+.org.jetbrains.k" +
-      "otlin.serialization.Package\030e \001(\005B\004\230\265\030\001B" +
-      "\022B\020DebugJvmProtoBuf"
+      "u\n\024class_local_variable\022).org.jetbrains." +
+      "kotlin.serialization.Class\030f \003(\0132,.org.j" +
+      "etbrains.kotlin.serialization.Property:N",
+      "\n\023package_module_name\022+.org.jetbrains.ko" +
+      "tlin.serialization.Package\030e \001(\005B\004\230\265\030\001:y" +
+      "\n\026package_local_variable\022+.org.jetbrains" +
+      ".kotlin.serialization.Package\030f \003(\0132,.or" +
+      "g.jetbrains.kotlin.serialization.Propert" +
+      "yB\022B\020DebugJvmProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4733,7 +4763,9 @@ public final class DebugJvmProtoBuf {
     isRaw.internalInit(descriptor.getExtensions().get(4));
     typeParameterAnnotation.internalInit(descriptor.getExtensions().get(5));
     classModuleName.internalInit(descriptor.getExtensions().get(6));
-    packageModuleName.internalInit(descriptor.getExtensions().get(7));
+    classLocalVariable.internalInit(descriptor.getExtensions().get(7));
+    packageModuleName.internalInit(descriptor.getExtensions().get(8));
+    packageLocalVariable.internalInit(descriptor.getExtensions().get(9));
     org.jetbrains.kotlin.protobuf.ExtensionRegistry registry =
         org.jetbrains.kotlin.protobuf.ExtensionRegistry.newInstance();
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);

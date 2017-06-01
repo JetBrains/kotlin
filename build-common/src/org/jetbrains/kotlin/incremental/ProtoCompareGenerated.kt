@@ -56,6 +56,12 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkStringEquals(old.getExtension(JvmProtoBuf.packageModuleName), new.getExtension(JvmProtoBuf.packageModuleName))) return false
         }
 
+        if (old.getExtensionCount(JvmProtoBuf.packageLocalVariable) != new.getExtensionCount(JvmProtoBuf.packageLocalVariable)) return false
+
+        for(i in 0..old.getExtensionCount(JvmProtoBuf.packageLocalVariable) - 1) {
+            if (!checkEquals(old.getExtension(JvmProtoBuf.packageLocalVariable, i), new.getExtension(JvmProtoBuf.packageLocalVariable, i))) return false
+        }
+
         return true
     }
     enum class ProtoBufPackageKind {
@@ -64,7 +70,8 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         TYPE_ALIAS_LIST,
         TYPE_TABLE,
         SINCE_KOTLIN_INFO_TABLE,
-        PACKAGE_MODULE_NAME
+        PACKAGE_MODULE_NAME,
+        PACKAGE_LOCAL_VARIABLE_LIST
     }
 
     fun difference(old: ProtoBuf.Package, new: ProtoBuf.Package): EnumSet<ProtoBufPackageKind> {
@@ -89,6 +96,12 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (old.hasExtension(JvmProtoBuf.packageModuleName) != new.hasExtension(JvmProtoBuf.packageModuleName)) result.add(ProtoBufPackageKind.PACKAGE_MODULE_NAME)
         if (old.hasExtension(JvmProtoBuf.packageModuleName)) {
             if (!checkStringEquals(old.getExtension(JvmProtoBuf.packageModuleName), new.getExtension(JvmProtoBuf.packageModuleName))) result.add(ProtoBufPackageKind.PACKAGE_MODULE_NAME)
+        }
+
+        if (old.getExtensionCount(JvmProtoBuf.packageLocalVariable) != new.getExtensionCount(JvmProtoBuf.packageLocalVariable)) result.add(ProtoBufPackageKind.PACKAGE_LOCAL_VARIABLE_LIST)
+
+        for(i in 0..old.getExtensionCount(JvmProtoBuf.packageLocalVariable) - 1) {
+            if (!checkEquals(old.getExtension(JvmProtoBuf.packageLocalVariable, i), new.getExtension(JvmProtoBuf.packageLocalVariable, i))) result.add(ProtoBufPackageKind.PACKAGE_LOCAL_VARIABLE_LIST)
         }
 
         return result
@@ -147,6 +160,12 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkStringEquals(old.getExtension(JvmProtoBuf.classModuleName), new.getExtension(JvmProtoBuf.classModuleName))) return false
         }
 
+        if (old.getExtensionCount(JvmProtoBuf.classLocalVariable) != new.getExtensionCount(JvmProtoBuf.classLocalVariable)) return false
+
+        for(i in 0..old.getExtensionCount(JvmProtoBuf.classLocalVariable) - 1) {
+            if (!checkEquals(old.getExtension(JvmProtoBuf.classLocalVariable, i), new.getExtension(JvmProtoBuf.classLocalVariable, i))) return false
+        }
+
         return true
     }
     enum class ProtoBufClassKind {
@@ -166,7 +185,8 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         TYPE_TABLE,
         SINCE_KOTLIN_INFO,
         SINCE_KOTLIN_INFO_TABLE,
-        CLASS_MODULE_NAME
+        CLASS_MODULE_NAME,
+        CLASS_LOCAL_VARIABLE_LIST
     }
 
     fun difference(old: ProtoBuf.Class, new: ProtoBuf.Class): EnumSet<ProtoBufClassKind> {
@@ -222,6 +242,12 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (old.hasExtension(JvmProtoBuf.classModuleName) != new.hasExtension(JvmProtoBuf.classModuleName)) result.add(ProtoBufClassKind.CLASS_MODULE_NAME)
         if (old.hasExtension(JvmProtoBuf.classModuleName)) {
             if (!checkStringEquals(old.getExtension(JvmProtoBuf.classModuleName), new.getExtension(JvmProtoBuf.classModuleName))) result.add(ProtoBufClassKind.CLASS_MODULE_NAME)
+        }
+
+        if (old.getExtensionCount(JvmProtoBuf.classLocalVariable) != new.getExtensionCount(JvmProtoBuf.classLocalVariable)) result.add(ProtoBufClassKind.CLASS_LOCAL_VARIABLE_LIST)
+
+        for(i in 0..old.getExtensionCount(JvmProtoBuf.classLocalVariable) - 1) {
+            if (!checkEquals(old.getExtension(JvmProtoBuf.classLocalVariable, i), new.getExtension(JvmProtoBuf.classLocalVariable, i))) result.add(ProtoBufClassKind.CLASS_LOCAL_VARIABLE_LIST)
         }
 
         return result
@@ -1053,6 +1079,10 @@ fun ProtoBuf.Package.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) 
         hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.packageModuleName))
     }
 
+    for(i in 0..getExtensionCount(JvmProtoBuf.packageLocalVariable) - 1) {
+        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.packageLocalVariable, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
     return hashCode
 }
 
@@ -1123,6 +1153,10 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
 
     if (hasExtension(JvmProtoBuf.classModuleName)) {
         hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.classModuleName))
+    }
+
+    for(i in 0..getExtensionCount(JvmProtoBuf.classLocalVariable) - 1) {
+        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.classLocalVariable, i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode

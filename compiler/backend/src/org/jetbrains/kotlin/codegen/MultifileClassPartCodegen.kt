@@ -175,8 +175,11 @@ class MultifileClassPartCodegen(
             }
         }
 
-        val serializer = DescriptorSerializer.createTopLevel(JvmSerializerExtension(v.serializationBindings, state))
-        val packageProto = serializer.packagePartProto(packageFragment.fqName, members).build()
+        val extension = JvmSerializerExtension(v.serializationBindings, state)
+        val serializer = DescriptorSerializer.createTopLevel(extension)
+        val builder = serializer.packagePartProto(packageFragment.fqName, members)
+        extension.serializeJvmPackage(builder, partType)
+        val packageProto = builder.build()
 
         val extraFlags = if (shouldGeneratePartHierarchy) JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG else 0
 

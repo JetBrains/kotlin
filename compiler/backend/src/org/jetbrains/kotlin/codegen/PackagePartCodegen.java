@@ -119,9 +119,11 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
             }
         }
 
-        DescriptorSerializer serializer =
-                DescriptorSerializer.createTopLevel(new JvmSerializerExtension(v.getSerializationBindings(), state));
-        ProtoBuf.Package packageProto = serializer.packagePartProto(element.getPackageFqName(), members).build();
+        JvmSerializerExtension extension = new JvmSerializerExtension(v.getSerializationBindings(), state);
+        DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(extension);
+        ProtoBuf.Package.Builder builder = serializer.packagePartProto(element.getPackageFqName(), members);
+        extension.serializeJvmPackage(builder, packagePartType);
+        ProtoBuf.Package packageProto = builder.build();
 
         WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.FILE_FACADE, 0, av -> {
             writeAnnotationData(av, serializer, packageProto);

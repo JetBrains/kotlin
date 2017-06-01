@@ -117,6 +117,7 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
         CopyBuilder<D> setValueParameters(@NotNull List<ValueParameterDescriptor> parameters);
 
         @NotNull
+        @Override
         CopyBuilder<D> setTypeParameters(@NotNull List<TypeParameterDescriptor> parameters);
 
         @NotNull

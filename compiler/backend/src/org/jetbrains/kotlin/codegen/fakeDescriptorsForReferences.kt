@@ -17,14 +17,25 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.descriptors.*
-import java.util.ArrayList
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
+import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import java.util.*
 
 /**
  * Given a function descriptor, creates another function descriptor with type parameters copied from outer context(s).
  * This is needed because once we're serializing this to a proto, there's no place to store information about external type parameters.
  */
 fun createFreeFakeLambdaDescriptor(descriptor: FunctionDescriptor): FunctionDescriptor {
-    val builder = descriptor.newCopyBuilder()
+    return createFreeDescriptor(descriptor)
+}
+
+private fun <D : CallableMemberDescriptor> createFreeDescriptor(descriptor: D): D {
+    @Suppress("UNCHECKED_CAST")
+    val builder = descriptor.newCopyBuilder() as CallableMemberDescriptor.CopyBuilder<D>
+
     val typeParameters = ArrayList<TypeParameterDescriptor>(0)
     builder.setTypeParameters(typeParameters)
 
@@ -40,4 +51,33 @@ fun createFreeFakeLambdaDescriptor(descriptor: FunctionDescriptor): FunctionDesc
     }
 
     return if (typeParameters.isEmpty()) descriptor else builder.build()!!
+}
+
+/**
+ * Given a local delegated variable descriptor, creates a descriptor of a property that should be observed
+ * when using reflection on that local variable at runtime.
+ * Only members used by [DescriptorSerializer.propertyProto] are implemented correctly in this property descriptor.
+ */
+fun createFreeFakeLocalPropertyDescriptor(descriptor: LocalVariableDescriptor): PropertyDescriptor {
+    val property = PropertyDescriptorImpl.create(
+            descriptor.containingDeclaration, descriptor.annotations, Modality.FINAL, descriptor.visibility, descriptor.isVar,
+            descriptor.name, CallableMemberDescriptor.Kind.DECLARATION, descriptor.source, false, descriptor.isConst,
+            false, false, false, @Suppress("DEPRECATION") descriptor.isDelegated
+    )
+    property.setType(descriptor.type, descriptor.typeParameters, descriptor.dispatchReceiverParameter, descriptor.extensionReceiverParameter)
+
+    property.initialize(
+            descriptor.getter?.run {
+                PropertyGetterDescriptorImpl(property, annotations, modality, visibility, true, isExternal, isInline, kind, null, source).apply {
+                    initialize(this@run.returnType)
+                }
+            },
+            descriptor.setter?.run {
+                PropertySetterDescriptorImpl(property, annotations, modality, visibility, true, isExternal, isInline, kind, null, source).apply {
+                    initialize(this@run.valueParameters.single())
+                }
+            }
+    )
+
+    return createFreeDescriptor(property)
 }
