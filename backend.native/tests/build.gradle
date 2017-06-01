@@ -372,11 +372,6 @@ task hello4(type: RunKonanTest) {
 }
 
 task tostring0(type: RunKonanTest) {
-    if (isWindows()) {
-        // ト is misprinted for now (as 0x3f).
-        // TODO: investigate.
-        disabled = true
-    }
     goldValue = "127\n-1\n239\nA\nЁ\nト\n1122334455\n112233445566778899\n3.14159265358\n1.0E27\n1.0E-300\ntrue\nfalse\n"
     source = "runtime/basic/tostring0.kt"
 }
