@@ -37,8 +37,9 @@ class CliJavaModuleFinder(jrtFileSystemRoot: VirtualFile?) : JavaModuleFinder {
     val systemModules: Sequence<JavaModule.Explicit>
         get() = modulesRoot?.children.orEmpty().asSequence().mapNotNull(this::findSystemModule)
 
-    override fun findModule(name: String): JavaModule? =
-            modulesRoot?.findChild(name)?.let(this::findSystemModule) ?: userModules[name]
+    override fun findModule(name: String): JavaModule? = null
+//            jrtFileSystem?.findFileByPath("/modules/$name")?.let(this::findSystemModule)
+//            ?: userModules[name]
 
     private fun findSystemModule(moduleRoot: VirtualFile): JavaModule.Explicit? {
         return null
