@@ -188,16 +188,6 @@ object KotlinToJVMBytecodeCompiler {
             }
         }
 
-        for (module in chunk) {
-            val modularJdkRoot = module.modularJdkRoot
-            if (modularJdkRoot != null) {
-                // We use the SDK of the first module in the chunk, which is not always correct because some other module in the chunk
-                // might depend on a different SDK
-                configuration.put(JVMConfigurationKeys.JDK_HOME, File(modularJdkRoot))
-                break
-            }
-        }
-
         configuration.addAll(JVMConfigurationKeys.MODULES, chunk)
     }
 

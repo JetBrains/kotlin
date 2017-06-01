@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.checkers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
 import java.io.File;
@@ -44,8 +43,8 @@ public abstract class AbstractDiagnosticsWithJdk9Test extends AbstractDiagnostic
             @NotNull Map<String, ModuleAndDependencies> modules,
             @NotNull List<TestFile> testFiles
     ) {
-        if (KotlinTestUtils.getJre9HomeIfPossible() == null) {
-            // Skip this test if no Java 9 is found
+        if (System.getenv("JDK_19") == null) {
+            // Skip this test if no environment variable JDK_19 is set up
             return;
         }
         super.doMultiFileTest(file, modules, testFiles);
