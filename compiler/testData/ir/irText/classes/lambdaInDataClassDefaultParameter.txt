@@ -1,0 +1,198 @@
+FILE /lambdaInDataClassDefaultParameter.kt
+  CLASS CLASS A
+    $this: VALUE_PARAMETER this@A: A
+    CONSTRUCTOR public constructor A(runA: A.(kotlin.String) -> kotlin.Unit = ...)
+      VALUE_PARAMETER value-parameter runA: A.(kotlin.String) -> kotlin.Unit = ...
+        EXPRESSION_BODY
+          BLOCK type=A.(kotlin.String) -> kotlin.Unit origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun A.<anonymous>(it: kotlin.String): kotlin.Unit
+              $receiver: VALUE_PARAMETER this@<anonymous>: A
+              VALUE_PARAMETER value-parameter it: kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='<anonymous>(String) on A: Unit'
+                  GET_OBJECT 'Unit' type=kotlin.Unit
+            FUNCTION_REFERENCE '<anonymous>(String) on A: Unit' type=A.(kotlin.String) -> kotlin.Unit origin=LAMBDA
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='A'
+    PROPERTY public final val runA: A.(kotlin.String) -> kotlin.Unit
+      FIELD PROPERTY_BACKING_FIELD public final val runA: A.(kotlin.String) -> kotlin.Unit
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter runA: A.(String) -> Unit = ...' type=A.(kotlin.String) -> kotlin.Unit origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-runA>(): A.(kotlin.String) -> kotlin.Unit
+        $this: VALUE_PARAMETER this@A: A
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-runA>(): A.(String) -> Unit'
+            GET_FIELD 'runA: A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=null
+              receiver: GET_VAR 'this@A: A' type=A origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component1(): A.(kotlin.String) -> kotlin.Unit
+      $this: VALUE_PARAMETER this@A: A
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component1(): A.(String) -> Unit'
+          CALL '<get-runA>(): A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=GET_PROPERTY
+            $this: GET_VAR 'this@A: A' type=A origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(runA: A.(kotlin.String) -> kotlin.Unit = ...): A
+      $this: VALUE_PARAMETER this@A: A
+      VALUE_PARAMETER value-parameter runA: A.(kotlin.String) -> kotlin.Unit = ...
+        EXPRESSION_BODY
+          CALL '<get-runA>(): A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=GET_PROPERTY
+            $this: GET_VAR 'this@A: A' type=A origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='copy(A.(String) -> Unit = ...): A'
+          CALL 'constructor A(A.(String) -> Unit = ...)' type=A origin=null
+            runA: GET_VAR 'value-parameter runA: A.(String) -> Unit = ...' type=A.(kotlin.String) -> kotlin.Unit origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@A: A
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='toString(): String'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value='A('
+            CONST String type=kotlin.String value='runA='
+            CALL '<get-runA>(): A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=GET_PROPERTY
+              $this: GET_VAR 'this@A: A' type=A origin=null
+            CONST String type=kotlin.String value=')'
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@A: A
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE var tmp0_result: kotlin.Int
+          CONST Int type=kotlin.Int value='0'
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'hashCode(): Int' type=kotlin.Int origin=null
+            $this: CALL '<get-runA>(): A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=GET_PROPERTY
+              $this: GET_VAR 'this@A: A' type=A origin=null
+        RETURN type=kotlin.Nothing from='hashCode(): Int'
+          GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@A: A
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
+              arg0: GET_VAR 'this@A: A' type=A origin=null
+              arg1: GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='true'
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=A
+              GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        VAR IR_TEMPORARY_VARIABLE val tmp0_other_with_cast: A
+          TYPE_OP type=A origin=CAST typeOperand=A
+            GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-runA>(): A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=GET_PROPERTY
+                  $this: GET_VAR 'this@A: A' type=A origin=null
+                arg1: CALL '<get-runA>(): A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: A' type=A origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+          CONST Boolean type=kotlin.Boolean value='true'
+  CLASS CLASS B
+    $this: VALUE_PARAMETER this@B: B
+    CONSTRUCTOR public constructor B(x: kotlin.Any = ...)
+      VALUE_PARAMETER value-parameter x: kotlin.Any = ...
+        EXPRESSION_BODY
+          BLOCK type=B.<init>.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS <no name provided>
+              $this: VALUE_PARAMETER this@<no name provided>: <no name provided>
+              CONSTRUCTOR public constructor <no name provided>()
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
+              FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+                $this: VALUE_PARAMETER this@Any: Any
+                VALUE_PARAMETER value-parameter other: kotlin.Any?
+              FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+                $this: VALUE_PARAMETER this@Any: Any
+              FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+                $this: VALUE_PARAMETER this@Any: Any
+            CALL 'constructor <no name provided>()' type=B.<init>.<no name provided> origin=OBJECT_LITERAL
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='B'
+    PROPERTY public final val x: kotlin.Any
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Any
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: Any = ...' type=kotlin.Any origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Any
+        $this: VALUE_PARAMETER this@B: B
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Any'
+            GET_FIELD 'x: Any' type=kotlin.Any origin=null
+              receiver: GET_VAR 'this@B: B' type=B origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component1(): kotlin.Any
+      $this: VALUE_PARAMETER this@B: B
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component1(): Any'
+          CALL '<get-x>(): Any' type=kotlin.Any origin=GET_PROPERTY
+            $this: GET_VAR 'this@B: B' type=B origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(x: kotlin.Any = ...): B
+      $this: VALUE_PARAMETER this@B: B
+      VALUE_PARAMETER value-parameter x: kotlin.Any = ...
+        EXPRESSION_BODY
+          CALL '<get-x>(): Any' type=kotlin.Any origin=GET_PROPERTY
+            $this: GET_VAR 'this@B: B' type=B origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='copy(Any = ...): B'
+          CALL 'constructor B(Any = ...)' type=B origin=null
+            x: GET_VAR 'value-parameter x: Any = ...' type=kotlin.Any origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER this@B: B
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='toString(): String'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value='B('
+            CONST String type=kotlin.String value='x='
+            CALL '<get-x>(): Any' type=kotlin.Any origin=GET_PROPERTY
+              $this: GET_VAR 'this@B: B' type=B origin=null
+            CONST String type=kotlin.String value=')'
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER this@B: B
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE var tmp0_result: kotlin.Int
+          CONST Int type=kotlin.Int value='0'
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'hashCode(): Int' type=kotlin.Int origin=null
+            $this: CALL '<get-x>(): Any' type=kotlin.Any origin=GET_PROPERTY
+              $this: GET_VAR 'this@B: B' type=B origin=null
+        RETURN type=kotlin.Nothing from='hashCode(): Int'
+          GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER this@B: B
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
+              arg0: GET_VAR 'this@B: B' type=B origin=null
+              arg1: GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='true'
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=B
+              GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        VAR IR_TEMPORARY_VARIABLE val tmp0_other_with_cast: B
+          TYPE_OP type=B origin=CAST typeOperand=B
+            GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-x>(): Any' type=kotlin.Any origin=GET_PROPERTY
+                  $this: GET_VAR 'this@B: B' type=B origin=null
+                arg1: CALL '<get-x>(): Any' type=kotlin.Any origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: B' type=B origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+          CONST Boolean type=kotlin.Boolean value='true'
