@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.android.synthetic.descriptors.AndroidSyntheticPackageFragmentDescriptor
 import org.jetbrains.kotlin.android.synthetic.diagnostic.ErrorsAndroid.*
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticProperty
+import org.jetbrains.kotlin.android.synthetic.res.isErrorType
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
