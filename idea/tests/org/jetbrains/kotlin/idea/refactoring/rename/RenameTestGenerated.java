@@ -240,6 +240,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("labeledLambdaByLabelRefAfterLabel/labeledLambdaByLabelRefAfterLabel.test")
+    public void testLabeledLambdaByLabelRefAfterLabel_LabeledLambdaByLabelRefAfterLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabelRefAfterLabel/labeledLambdaByLabelRefAfterLabel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledLambdaByLabelRefBeforeLabel/labeledLambdaByLabelRefBeforeLabel.test")
+    public void testLabeledLambdaByLabelRefBeforeLabel_LabeledLambdaByLabelRefBeforeLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabelRefBeforeLabel/labeledLambdaByLabelRefBeforeLabel.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("labeledLambdaByLabelWithParens/labeledLambdaByLabelWithParens.test")
     public void testLabeledLambdaByLabelWithParens_LabeledLambdaByLabelWithParens() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledLambdaByLabelWithParens/labeledLambdaByLabelWithParens.test");
@@ -291,6 +303,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("labeledReturnInLambda/labeledReturnInLambda.test")
     public void testLabeledReturnInLambda_LabeledReturnInLambda() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledReturnInLambda/labeledReturnInLambda.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledReturnInLambdaAfterLabel/labeledReturnInLambdaAfterLabel.test")
+    public void testLabeledReturnInLambdaAfterLabel_LabeledReturnInLambdaAfterLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledReturnInLambdaAfterLabel/labeledReturnInLambdaAfterLabel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledReturnInLambdaBeforeLabel/labeledReturnInLambdaBeforeLabel.test")
+    public void testLabeledReturnInLambdaBeforeLabel_LabeledReturnInLambdaBeforeLabel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledReturnInLambdaBeforeLabel/labeledReturnInLambdaBeforeLabel.test");
         doTest(fileName);
     }
 

@@ -28,8 +28,10 @@ import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.refactoring.rename.RenameHandler
 import com.intellij.refactoring.rename.inplace.MemberInplaceRenameHandler
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 abstract class AbstractReferenceSubstitutionRenameHandler(
@@ -37,11 +39,13 @@ abstract class AbstractReferenceSubstitutionRenameHandler(
 ) : PsiElementRenameHandler() {
     companion object {
         fun getReferenceExpression(file: PsiFile, offset: Int): KtSimpleNameExpression? {
-            var elementAtCaret = file.findElementAt(offset)
+            var elementAtCaret = file.findElementAt(offset) ?: return null
+            if (elementAtCaret.node?.elementType == KtTokens.AT) return null
             if (elementAtCaret is PsiWhiteSpace) {
-                elementAtCaret = CodeInsightUtils.getElementAtOffsetIgnoreWhitespaceAfter(file, offset)
+                elementAtCaret = CodeInsightUtils.getElementAtOffsetIgnoreWhitespaceAfter(file, offset) ?: return null
+                if (offset != elementAtCaret.endOffset) return null
             }
-            return elementAtCaret?.getNonStrictParentOfType<KtSimpleNameExpression>()
+            return elementAtCaret.getNonStrictParentOfType<KtSimpleNameExpression>()
         }
 
         fun getReferenceExpression(dataContext: DataContext): KtSimpleNameExpression? {
