@@ -334,6 +334,10 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     override fun doGetProjectDir(): File = workDir
 
+    protected fun buildAllModules(): BuildResult {
+        return this.doBuild(CompileScopeTestBuilder.make().allModules())
+    }
+
     protected fun initProject(libraryDependency: LibraryDependency = NONE) {
         addJdk(JDK_NAME)
         loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
