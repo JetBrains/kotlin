@@ -10,5 +10,6 @@
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
+    <orderEntry type="module" module-name="plugin-api" />
   </component>
 </module>
