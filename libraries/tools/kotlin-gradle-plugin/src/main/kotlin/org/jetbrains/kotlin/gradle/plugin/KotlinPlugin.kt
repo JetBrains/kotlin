@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.plugins.InvalidPluginException
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
@@ -423,9 +424,12 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
 
         project.afterEvaluate { project ->
             if (project != null) {
-                val plugin = (project.plugins.findPlugin("android")
-                              ?: project.plugins.findPlugin("android-library")
-                              ?: project.plugins.findPlugin("com.android.test")) as BasePlugin
+                val plugin = sequenceOf("android", "android-library", "com.android.test", "com.android.feature")
+                                     .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin }
+                                     .firstOrNull()
+                             ?: throw InvalidPluginException("The Kotlin Android plugin cannot be used without " +
+                                                             "the Android Gradle plugin applied to the project.")
+
                 val subpluginEnvironment = loadSubplugins(project)
 
                 forEachVariant(project) {
