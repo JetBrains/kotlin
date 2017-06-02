@@ -28,6 +28,8 @@ open class DefaultValues(val defaultValue: String, val possibleValues: List<Stri
 
     object StringNullDefault : DefaultValues("null")
 
+    object ListEmptyDefault : DefaultValues("<empty list>")
+
     object LanguageVersions : DefaultValues(
             "null",
             LanguageVersion.values().map { "\"${it.description}\"" }

@@ -4,16 +4,6 @@ package org.jetbrains.kotlin.gradle.dsl
 
 internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions {
 
-    private var apiVersionField: kotlin.String?? = null
-    override var apiVersion: kotlin.String?
-        get() = apiVersionField ?: null
-        set(value) { apiVersionField = value }
-
-    private var languageVersionField: kotlin.String?? = null
-    override var languageVersion: kotlin.String?
-        get() = languageVersionField ?: null
-        set(value) { languageVersionField = value }
-
     private var suppressWarningsField: kotlin.Boolean? = null
     override var suppressWarnings: kotlin.Boolean
         get() = suppressWarningsField ?: false
@@ -23,6 +13,16 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
     override var verbose: kotlin.Boolean
         get() = verboseField ?: false
         set(value) { verboseField = value }
+
+    private var apiVersionField: kotlin.String?? = null
+    override var apiVersion: kotlin.String?
+        get() = apiVersionField ?: null
+        set(value) { apiVersionField = value }
+
+    private var languageVersionField: kotlin.String?? = null
+    override var languageVersion: kotlin.String?
+        get() = languageVersionField ?: null
+        set(value) { languageVersionField = value }
 
     private var friendModulesDisabledField: kotlin.Boolean? = null
     override var friendModulesDisabled: kotlin.Boolean
@@ -80,10 +80,10 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
         set(value) { typedArraysField = value }
 
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments) {
-        apiVersionField?.let { args.apiVersion = it }
-        languageVersionField?.let { args.languageVersion = it }
         suppressWarningsField?.let { args.suppressWarnings = it }
         verboseField?.let { args.verbose = it }
+        apiVersionField?.let { args.apiVersion = it }
+        languageVersionField?.let { args.languageVersion = it }
         friendModulesDisabledField?.let { args.friendModulesDisabled = it }
         mainField?.let { args.main = it }
         metaInfoField?.let { args.metaInfo = it }
@@ -99,10 +99,10 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
 }
 
 internal fun org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments.fillDefaultValues() {
-    apiVersion = null
-    languageVersion = null
     suppressWarnings = false
     verbose = false
+    apiVersion = null
+    languageVersion = null
     friendModulesDisabled = false
     main = "call"
     metaInfo = true

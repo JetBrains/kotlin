@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: "kotlin2js"
+apply plugin: "kotlin-dce-js"
+
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+    compile project(":libraryProject")
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    compile "org.mozilla:rhino:1.7.7.1"
+}
+
+compileKotlin2Js.kotlinOptions.sourceMap = true
+compileKotlin2Js.kotlinOptions.outputFile = "${buildDir}/exampleapp.js"
+compileKotlin2Js.kotlinOptions.suppressWarnings = true
+compileKotlin2Js.kotlinOptions.verbose = true
+runDceKotlinJs.keep("exampleapp.exampleapp.status")
+
+task runRhino(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir = "${buildDir}"
+    main = 'org.mozilla.javascript.tools.shell.Main'
+    args = ["-opt", "-1", "-f", "min/kotlin.js", "-f", "min/examplelib.js", "-f", "min/exampleapp.js", "-f", "../check.js"]
+}
+
+runRhino.dependsOn(runDceKotlinJs)

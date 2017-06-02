@@ -4,16 +4,6 @@ package org.jetbrains.kotlin.gradle.dsl
 
 internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions {
 
-    private var apiVersionField: kotlin.String?? = null
-    override var apiVersion: kotlin.String?
-        get() = apiVersionField ?: null
-        set(value) { apiVersionField = value }
-
-    private var languageVersionField: kotlin.String?? = null
-    override var languageVersion: kotlin.String?
-        get() = languageVersionField ?: null
-        set(value) { languageVersionField = value }
-
     private var suppressWarningsField: kotlin.Boolean? = null
     override var suppressWarnings: kotlin.Boolean
         get() = suppressWarningsField ?: false
@@ -23,6 +13,16 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
     override var verbose: kotlin.Boolean
         get() = verboseField ?: false
         set(value) { verboseField = value }
+
+    private var apiVersionField: kotlin.String?? = null
+    override var apiVersion: kotlin.String?
+        get() = apiVersionField ?: null
+        set(value) { apiVersionField = value }
+
+    private var languageVersionField: kotlin.String?? = null
+    override var languageVersion: kotlin.String?
+        get() = languageVersionField ?: null
+        set(value) { languageVersionField = value }
 
     private var includeRuntimeField: kotlin.Boolean? = null
     override var includeRuntime: kotlin.Boolean
@@ -60,10 +60,10 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         set(value) { noStdlibField = value }
 
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments) {
-        apiVersionField?.let { args.apiVersion = it }
-        languageVersionField?.let { args.languageVersion = it }
         suppressWarningsField?.let { args.suppressWarnings = it }
         verboseField?.let { args.verbose = it }
+        apiVersionField?.let { args.apiVersion = it }
+        languageVersionField?.let { args.languageVersion = it }
         includeRuntimeField?.let { args.includeRuntime = it }
         javaParametersField?.let { args.javaParameters = it }
         jdkHomeField?.let { args.jdkHome = it }
@@ -75,10 +75,10 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
 }
 
 internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fillDefaultValues() {
-    apiVersion = null
-    languageVersion = null
     suppressWarnings = false
     verbose = false
+    apiVersion = null
+    languageVersion = null
     includeRuntime = false
     javaParameters = false
     jdkHome = null

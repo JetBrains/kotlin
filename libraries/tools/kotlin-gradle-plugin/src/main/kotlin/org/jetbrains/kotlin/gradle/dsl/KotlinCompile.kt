@@ -40,3 +40,20 @@ interface KotlinCompile<T : KotlinCommonOptions> : Task, CompilerArgumentAware {
 interface KotlinJsCompile : KotlinCompile<KotlinJsOptions>
 
 interface KotlinJvmCompile : KotlinCompile<KotlinJvmOptions>
+
+interface KotlinJsDce : Task {
+    val dceOptions: KotlinJsDceOptions
+
+    val keep: MutableList<String>
+
+    fun dceOptions(fn: KotlinJsDceOptions.() -> Unit) {
+        dceOptions.fn()
+    }
+
+    fun dceOptions(fn: Closure<*>) {
+        fn.delegate = dceOptions
+        fn.call()
+    }
+
+    fun keep(vararg fqn: String)
+}

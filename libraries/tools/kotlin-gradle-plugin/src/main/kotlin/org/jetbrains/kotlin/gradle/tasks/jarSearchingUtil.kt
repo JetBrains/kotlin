@@ -30,6 +30,7 @@ import java.util.zip.ZipFile
 
 private val K2JVM_COMPILER_CLASS = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
 private val K2JS_COMPILER_CLASS = "org.jetbrains.kotlin.cli.js.K2JSCompiler"
+private val K2JS_DCE_CLASS = "org.jetbrains.kotlin.cli.js.dce.K2JSDce"
 private val K2METADATA_COMPILER_CLASS = "org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler"
 private val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
 private val KOTLIN_GRADLE_PLUGIN = "kotlin-gradle-plugin"
@@ -43,6 +44,9 @@ internal fun findKotlinJsCompilerJar(project: Project): File? =
 
 internal fun findKotlinMetadataCompilerJar(project: Project): File? =
         findKotlinCompilerJar(project, K2METADATA_COMPILER_CLASS)
+
+internal fun findKotlinJsDceJar(project: Project): File? =
+        findKotlinCompilerJar(project, K2JS_DCE_CLASS)
 
 internal fun findToolsJar(): File? =
         Class.forName("com.sun.tools.javac.util.Context")?.let(::findJarByClass)
