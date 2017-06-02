@@ -284,6 +284,9 @@ task distCompiler(type: Copy) {
     from(file('cmd')) {
         fileMode(0755)
         into('bin')
+        if (!isWindows()) {
+            exclude('**/*.bat')
+        }
     }
     from(konanPropertiesFile) {
         into('konan')
