@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.codeInsight.ExternalAnnotationsManager
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 
 class MockExternalAnnotationsManager : ExternalAnnotationsManager() {
+    override fun hasAnnotationRootsForFile(file: VirtualFile) = false
+
     override fun chooseAnnotationsPlace(element: PsiElement): AnnotationPlace? = null
 
     override fun isExternalAnnotationWritable(listOwner: PsiModifierListOwner, annotationFQN: String): Boolean = false
