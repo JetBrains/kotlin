@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VALUE -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
+// !LANGUAGE: +LateinitLocalVariables
 
 import kotlin.reflect.KProperty
 

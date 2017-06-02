@@ -29,6 +29,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
@@ -328,6 +329,9 @@ object KeywordCompletion {
         fun isKeywordCorrectlyApplied(keywordTokenType: KtKeywordToken, file: KtFile): Boolean {
             val elementAt = file.findElementAt(prefixText.length)!!
 
+            val languageVersionSettings = ModuleUtilCore.findModuleForPsiElement(position)?.languageVersionSettings
+                                          ?: LanguageVersionSettingsImpl.DEFAULT
+
             when {
                 !elementAt.node!!.elementType.matchesKeyword(keywordTokenType) -> return false
 
@@ -335,7 +339,7 @@ object KeywordCompletion {
 
                 isErrorElementBefore(elementAt) -> return false
 
-                !isSupportedAtLanguageLevel(keywordTokenType, position) -> return false
+                !isModifierSupportedAtLanguageLevel(keywordTokenType, languageVersionSettings) -> return false
 
                 keywordTokenType !is KtModifierKeywordToken -> return true
 
@@ -358,10 +362,13 @@ object KeywordCompletion {
 
                         is KtFile -> listOf(CLASS_ONLY, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY, FUNCTION, PROPERTY)
 
-                        else -> null
+                        else -> listOf()
                     }
-                    val modifierTargets = ModifierCheckerCore.possibleTargetMap[keywordTokenType]
-                    if (modifierTargets != null && possibleTargets != null && possibleTargets.none { it in modifierTargets }) return false
+                    val modifierTargets = ModifierCheckerCore.possibleTargetMap[keywordTokenType]?.intersect(possibleTargets)
+                    if (modifierTargets != null && possibleTargets.isNotEmpty() &&
+                        !modifierTargets.any {
+                            isModifierTargetSupportedAtLanguageLevel(keywordTokenType, it, languageVersionSettings)
+                        }) return false
 
                     val ownerDeclaration = container?.getParentOfType<KtDeclaration>(strict = true)
                     val parentTarget = when (ownerDeclaration) {
@@ -416,9 +423,7 @@ object KeywordCompletion {
         }
     }
 
-    private fun isSupportedAtLanguageLevel(keyword: KtKeywordToken, position: PsiElement): Boolean {
-        val languageVersionSettings = ModuleUtilCore.findModuleForPsiElement(position)?.languageVersionSettings
-                                      ?: LanguageVersionSettingsImpl.DEFAULT
+    private fun isModifierSupportedAtLanguageLevel(keyword: KtKeywordToken, languageVersionSettings: LanguageVersionSettings): Boolean {
         val feature = when (keyword) {
             KtTokens.TYPE_ALIAS_KEYWORD -> LanguageFeature.TypeAliases
             KtTokens.HEADER_KEYWORD, KtTokens.IMPL_KEYWORD -> LanguageFeature.MultiPlatformProjects
@@ -426,6 +431,24 @@ object KeywordCompletion {
             else -> return true
         }
         return languageVersionSettings.supportsFeature(feature)
+    }
+
+    private fun isModifierTargetSupportedAtLanguageLevel(
+            keyword: KtKeywordToken,
+            target: KotlinTarget,
+            languageVersionSettings: LanguageVersionSettings
+    ): Boolean {
+        if (keyword == KtTokens.LATEINIT_KEYWORD) {
+            val feature = when (target) {
+                TOP_LEVEL_PROPERTY -> LanguageFeature.LateinitTopLevelProperties
+                LOCAL_VARIABLE -> LanguageFeature.LateinitLocalVariables
+                else -> return true
+            }
+            return languageVersionSettings.supportsFeature(feature)
+        }
+        else {
+            return true
+        }
     }
 
     // builds text within scope (or from the start of the file) before position element excluding almost all declarations

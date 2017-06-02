@@ -57,6 +57,8 @@ enum class LanguageFeature(
     SafeCastCheckBoundSmartCasts(KOTLIN_1_2),
     BooleanElvisBoundSmartCasts(KOTLIN_1_2),
     CapturedInClosureSmartCasts(KOTLIN_1_2),
+    LateinitTopLevelProperties(KOTLIN_1_2),
+    LateinitLocalVariables(KOTLIN_1_2),
 
     // Experimental features
 

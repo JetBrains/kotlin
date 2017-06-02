@@ -1,3 +1,5 @@
+// !LANGUAGE: +LateinitLocalVariables
+
 fun test1() {
     lateinit var s: String
     s.length
