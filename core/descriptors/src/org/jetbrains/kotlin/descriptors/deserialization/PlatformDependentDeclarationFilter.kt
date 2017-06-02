@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization.deserialization
+package org.jetbrains.kotlin.descriptors.deserialization
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
 interface PlatformDependentDeclarationFilter {
 
-    fun isFunctionAvailable(classDescriptor: DeserializedClassDescriptor, functionDescriptor: SimpleFunctionDescriptor): Boolean
+    fun isFunctionAvailable(classDescriptor: ClassDescriptor, functionDescriptor: SimpleFunctionDescriptor): Boolean
 
     object All : PlatformDependentDeclarationFilter {
-        override fun isFunctionAvailable(classDescriptor: DeserializedClassDescriptor, functionDescriptor: SimpleFunctionDescriptor) = true
+        override fun isFunctionAvailable(classDescriptor: ClassDescriptor, functionDescriptor: SimpleFunctionDescriptor) = true
     }
 
     object NoPlatformDependent : PlatformDependentDeclarationFilter {
-        override fun isFunctionAvailable(classDescriptor: DeserializedClassDescriptor, functionDescriptor: SimpleFunctionDescriptor) =
+        override fun isFunctionAvailable(classDescriptor: ClassDescriptor, functionDescriptor: SimpleFunctionDescriptor) =
                 !functionDescriptor.annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)
     }
 }

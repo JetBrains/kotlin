@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,12 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
+import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
+import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.*
@@ -37,7 +41,7 @@ fun createBuiltInPackageFragmentProvider(
     val packageFragments = packageFqNames.map { fqName ->
         val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)
         val inputStream = loadResource(resourcePath) ?: throw IllegalStateException("Resource not found in classpath: $resourcePath")
-        BuiltInsPackageFragment(fqName, storageManager, module, inputStream)
+        BuiltInsPackageFragmentImpl(fqName, storageManager, module, inputStream)
     }
     val provider = PackageFragmentProviderImpl(packageFragments)
 

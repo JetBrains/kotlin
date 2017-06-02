@@ -24,10 +24,10 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
-import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 
 class AndroidVariant(val name: String, val resDirectories: List<String>) {
     val packageName: String = name

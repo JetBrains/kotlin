@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.platform
 import org.jetbrains.kotlin.builtins.JvmBuiltInClassDescriptorFactory
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.load.kotlin.JvmBuiltInsSettings
-import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider
-import org.jetbrains.kotlin.serialization.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.sure

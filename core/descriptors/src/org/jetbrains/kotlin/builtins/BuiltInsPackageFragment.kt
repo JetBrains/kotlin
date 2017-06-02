@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,6 @@
 
 package org.jetbrains.kotlin.builtins
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragmentImpl
-import org.jetbrains.kotlin.storage.StorageManager
-import java.io.InputStream
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 
-class BuiltInsPackageFragment(
-        fqName: FqName,
-        storageManager: StorageManager,
-        module: ModuleDescriptor,
-        inputStream: InputStream
-) : DeserializedPackageFragmentImpl(fqName, storageManager, module, inputStream.use { stream ->
-    val version = BuiltInsBinaryVersion.readFrom(stream)
-
-    if (!version.isCompatible()) {
-        // TODO: report a proper diagnostic
-        throw UnsupportedOperationException(
-                "Kotlin built-in definition format version is not supported: " +
-                "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
-                "Please update Kotlin"
-        )
-    }
-
-    ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
-}, containerSource = null)
+interface BuiltInsPackageFragment : PackageFragmentDescriptor
