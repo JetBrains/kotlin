@@ -167,4 +167,16 @@ public class CopyTestGenerated extends AbstractCopyTest {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyTopLevelPropertyWithRename/copyTopLevelPropertyWithRename.test");
         doTest(fileName);
     }
+
+    @TestMetadata("refToImportJavaStaticField/refToImportedJavaStaticField.test")
+    public void testRefToImportJavaStaticField_RefToImportedJavaStaticField() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/refToImportJavaStaticField/refToImportedJavaStaticField.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("refToImportJavaStaticMethod/refToImportedJavaStaticMethod.test")
+    public void testRefToImportJavaStaticMethod_RefToImportedJavaStaticMethod() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/refToImportJavaStaticMethod/refToImportedJavaStaticMethod.test");
+        doTest(fileName);
+    }
 }
