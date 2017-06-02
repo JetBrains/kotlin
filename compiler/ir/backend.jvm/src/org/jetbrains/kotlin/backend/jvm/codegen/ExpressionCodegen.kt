@@ -898,6 +898,9 @@ class ExpressionCodegen(
             //TODO where is best to unwrap?
             descriptor = descriptor.underlyingConstructorDescriptor
         }
+        if (descriptor is PropertyDescriptor) {
+            descriptor = descriptor.getter!!
+        }
         if (descriptor is CallableMemberDescriptor && JvmCodegenUtil.getDirectMember(descriptor) is SyntheticJavaPropertyDescriptor) {
             val propertyDescriptor = JvmCodegenUtil.getDirectMember(descriptor) as SyntheticJavaPropertyDescriptor
             if (descriptor is PropertyGetterDescriptor) {
