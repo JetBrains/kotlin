@@ -264,6 +264,8 @@ if (isLinux() || isMac()) {
 
     dependencyTask("android_arm32", SYSROOT)
     dependencyTask("android_arm32", LIBFFI)
+    dependencyTask("android_arm64", SYSROOT)
+    dependencyTask("android_arm64", LIBFFI)
 }
 
 task update(type: Copy) {
