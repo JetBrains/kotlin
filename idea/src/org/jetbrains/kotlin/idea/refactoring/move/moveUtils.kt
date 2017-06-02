@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -123,6 +124,17 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
         val isExtension = isCallable && refExpr.isExtensionRef(bindingContext)
         val isCallableReference = isCallableReference(refExpr.mainReference)
 
+        val declaration by lazy {
+            var result = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: return@lazy null
+
+            if (descriptor.isCompanionObject()
+                && bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, refExpr] != null) {
+                result = (result as KtObjectDeclaration).containingClassOrObject ?: result
+            }
+
+            result
+        }
+
         if (isCallable) {
             if (!isCallableReference) {
                 if (isExtension && containingDescriptor is ClassDescriptor) {
@@ -137,15 +149,9 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
 
             if (!isExtension) {
                 if (!(containingDescriptor is PackageFragmentDescriptor
-                      || containingDescriptor is ClassDescriptor && containingDescriptor.kind == ClassKind.OBJECT)) return null
+                      || containingDescriptor is ClassDescriptor && containingDescriptor.kind == ClassKind.OBJECT
+                      || descriptor is JavaCallableMemberDescriptor && ((declaration as? PsiMember)?.hasModifierProperty(PsiModifier.STATIC) ?: false))) return null
             }
-        }
-
-        var declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: return null
-
-        if (descriptor.isCompanionObject()
-            && bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, refExpr] != null) {
-            declaration = (declaration as KtObjectDeclaration).containingClassOrObject ?: declaration
         }
 
         if (!DescriptorUtils.getFqName(descriptor).isSafe) return null
@@ -165,6 +171,8 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
 
         val isImported = isImported(descriptor)
         if (isImported && this is KtFile) return null
+
+        if (declaration == null) return null
 
         if (isExtension || containerFqName != null || isImported) return {
             createMoveUsageInfoIfPossible(it.mainReference, declaration, false, true)
