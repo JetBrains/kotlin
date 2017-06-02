@@ -24,9 +24,10 @@ import org.jetbrains.org.objectweb.asm.Type
 
 class ArrayGet : IntrinsicMethod() {
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        val type = AsmUtil.correctElementType(calcReceiverType(expression, context))
-        return IrIntrinsicFunction.create(expression, signature, context, listOf(calcReceiverType(expression, context), Type.INT_TYPE)) {
-            it.aload(type)
+        val arrayType = calcReceiverType(expression, context)
+        val elementType = AsmUtil.correctElementType(arrayType)
+        return IrIntrinsicFunction.create(expression, signature.newReturnType(elementType), context, listOf(arrayType, Type.INT_TYPE)) {
+            it.aload(elementType)
         }
     }
 }
