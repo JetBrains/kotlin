@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate.classLoading
 
+import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
-import com.intellij.psi.PsiFile
-import com.sun.jdi.ClassLoaderReference
+import com.intellij.debugger.impl.DebuggerUtilsEx
+import com.sun.jdi.ArrayReference
+import com.sun.jdi.ArrayType
+import com.sun.jdi.Value
 
 interface ClassLoadingAdapter {
     companion object {
@@ -41,4 +44,18 @@ interface ClassLoadingAdapter {
     fun isApplicable(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): Boolean
 
     fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderHandler
+
+    fun mirrorOfByteArray(bytes: ByteArray, context: EvaluationContextImpl, process: DebugProcessImpl): ArrayReference {
+        val arrayClass = process.findClass(context, "byte[]", context.classLoader) as ArrayType
+        val reference = process.newInstance(arrayClass, bytes.size)
+        DebuggerUtilsEx.keep(reference, context)
+
+        val mirrors = ArrayList<Value>(bytes.size)
+        for (byte in bytes) {
+            mirrors += process.virtualMachineProxy.mirrorOf(byte)
+        }
+        reference.values = mirrors
+
+        return reference
+    }
 }

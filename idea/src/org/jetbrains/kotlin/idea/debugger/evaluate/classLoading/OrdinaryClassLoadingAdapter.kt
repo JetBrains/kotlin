@@ -16,14 +16,15 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate.classLoading
 
-import com.intellij.debugger.engine.DebugProcess
+import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.evaluation.EvaluateException
-import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.ClassLoadingUtils
+import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.openapi.projectRoots.JdkVersionUtil
 import com.intellij.openapi.util.SystemInfo
 import com.sun.jdi.ClassLoaderReference
+import com.sun.jdi.ClassType
 import org.jetbrains.kotlin.idea.debugger.evaluate.CompilingEvaluatorUtils
 
 class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
@@ -72,8 +73,8 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
 
     private fun defineClasses(
             classes: Collection<ClassToLoad>,
-            context: EvaluationContext,
-            process: DebugProcess,
+            context: EvaluationContextImpl,
+            process: DebugProcessImpl,
             classLoader: ClassLoaderReference
     ) {
         val classesToLoad = if (classes.size == 1) {
@@ -89,8 +90,33 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
 
         for ((className, _, bytes) in classesToLoad) {
             val patchedBytes = CompilingEvaluatorUtils.changeSuperToMagicAccessor(bytes)
-            ClassLoadingUtils.defineClass(className, patchedBytes, context, process, classLoader)
+            defineClass(className, patchedBytes, context, process, classLoader)
         }
+    }
+
+    fun defineClass(
+            name: String,
+            bytes: ByteArray,
+            context: EvaluationContextImpl,
+            process: DebugProcessImpl,
+            classLoader: ClassLoaderReference
+    ) {
+        try {
+            val vm = process.virtualMachineProxy
+            val classLoaderType = classLoader.referenceType() as ClassType
+            val defineMethod = classLoaderType.concreteMethodByName("defineClass", "(Ljava/lang/String;[BII)Ljava/lang/Class;")
+            val nameObj = vm.mirrorOf(name)
+
+            DebuggerUtilsEx.keep(nameObj, context)
+
+            process.invokeMethod(
+                    context, classLoader, defineMethod,
+                    listOf(nameObj, mirrorOfByteArray(bytes, context, process), vm.mirrorOf(0), vm.mirrorOf(bytes.size)))
+        }
+        catch (e: Exception) {
+            throw EvaluateException("Error during class $name definition: $e", e)
+        }
+
     }
 
     private class ClassBytes(val name: String) {
