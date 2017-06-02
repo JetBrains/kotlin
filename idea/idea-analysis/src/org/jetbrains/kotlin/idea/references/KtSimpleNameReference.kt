@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -241,13 +242,15 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         }
 
     fun getImportAlias(): KtImportAlias? {
+        fun DeclarationDescriptor.unwrap() = if (this is ImportedFromObjectCallableDescriptor<*>) callableFromObject else this
+
         val element = element
         val name = element.getReferencedName()
         val file = element.containingKtFile
         val importDirective = file.findImportByAlias(name) ?: return null
         val fqName = importDirective.importedFqName ?: return null
-        val importedDescriptors = file.resolveImportReference(fqName)
-        if (getTargetDescriptors(element.analyze(BodyResolveMode.PARTIAL)).any { it.getImportableDescriptor() in importedDescriptors }) {
+        val importedDescriptors = file.resolveImportReference(fqName).map { it.unwrap() }
+        if (getTargetDescriptors(element.analyze(BodyResolveMode.PARTIAL)).any { it.unwrap().getImportableDescriptor() in importedDescriptors }) {
             return importDirective.alias
         }
         return null
