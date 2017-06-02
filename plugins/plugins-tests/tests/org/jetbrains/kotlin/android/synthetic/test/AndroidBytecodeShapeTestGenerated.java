@@ -173,4 +173,10 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape/viewStub/");
         doTest(fileName);
     }
+
+    @TestMetadata("viewWithCache")
+    public void testViewWithCache() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape/viewWithCache/");
+        doTest(fileName);
+    }
 }
