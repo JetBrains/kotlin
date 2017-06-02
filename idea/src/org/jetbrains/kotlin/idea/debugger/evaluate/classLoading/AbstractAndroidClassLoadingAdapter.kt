@@ -19,24 +19,11 @@ package org.jetbrains.kotlin.idea.debugger.evaluate.classLoading
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
-import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.sun.jdi.*
 
 abstract class AbstractAndroidClassLoadingAdapter : ClassLoadingAdapter {
     protected fun dex(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ByteArray? {
         return AndroidDexer.getInstances(context.project).single().dex(classes)
-    }
-
-    protected fun mirrorOfByteArray(bytes: ByteArray, context: EvaluationContextImpl, process: DebugProcessImpl): ArrayReference {
-        val arrayClass = process.findClass(context, "byte[]", context.classLoader) as ArrayType
-        val reference = process.newInstance(arrayClass, bytes.size)
-        DebuggerUtilsEx.keep(reference, context)
-
-        for (i in 0..bytes.lastIndex) {
-            reference.setValue(i, process.virtualMachineProxy.mirrorOf(bytes[i]))
-        }
-
-        return reference
     }
 
     protected fun wrapToByteBuffer(bytes: ArrayReference, context: EvaluationContext, process: DebugProcessImpl): ObjectReference {
