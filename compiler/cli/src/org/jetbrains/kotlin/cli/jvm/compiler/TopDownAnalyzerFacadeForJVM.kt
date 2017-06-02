@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.ComponentProvider
+import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContext
@@ -41,6 +43,9 @@ import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerFo
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.frontend.java.di.initialize
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.javac.components.JavacBasedClassFinder
+import org.jetbrains.kotlin.javac.components.JavacBasedSourceElementFactory
+import org.jetbrains.kotlin.javac.components.StubJavaResolverCache
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
@@ -144,7 +149,15 @@ object TopDownAnalyzerFacadeForJVM {
                 }
                 else null
 
-        val useJavac = configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC)
+        fun StorageComponentContainer.useJavac() {
+            useImpl<JavacBasedClassFinder>()
+            useImpl<StubJavaResolverCache>()
+            useImpl<JavacBasedSourceElementFactory>()
+        }
+
+        val configureJavaClassFinder =
+                if (configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC)) StorageComponentContainer::useJavac
+                else null
 
         val dependencyModule = if (separateModules) {
             val dependenciesContext = ContextForNewModule(
@@ -157,7 +170,7 @@ object TopDownAnalyzerFacadeForJVM {
 
             val dependenciesContainer = createContainerForTopDownAnalyzerForJvm(
                     dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, lookupTracker,
-                    packagePartProvider(dependencyScope), moduleClassResolver, jvmTarget, languageVersionSettings, useJavac
+                    packagePartProvider(dependencyScope), moduleClassResolver, jvmTarget, languageVersionSettings, configureJavaClassFinder
             )
 
             StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(dependenciesContainer, null) }
@@ -184,7 +197,7 @@ object TopDownAnalyzerFacadeForJVM {
         // TODO: get rid of duplicate invocation of CodeAnalyzerInitializer#initialize, or refactor CliLightClassGenerationSupport
         val container = createContainerForTopDownAnalyzerForJvm(
                 moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, lookupTracker,
-                partProvider, moduleClassResolver, jvmTarget, languageVersionSettings, useJavac
+                partProvider, moduleClassResolver, jvmTarget, languageVersionSettings, configureJavaClassFinder
         ).apply {
             initJvmBuiltInsForTopDownAnalysis()
             (partProvider as? IncrementalPackagePartProvider)?.deserializationConfiguration = get<DeserializationConfiguration>()
