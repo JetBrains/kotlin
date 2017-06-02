@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.javac
+package org.jetbrains.kotlin.cli.jvm.javac
 
 import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Log
@@ -24,10 +24,12 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import java.io.PrintWriter
 import java.io.Writer
 
-class JavacLogger(context: Context,
-               errorWriter: PrintWriter,
-               warningWriter: PrintWriter,
-               infoWriter: PrintWriter) : Log(context, errorWriter, warningWriter, infoWriter) {
+class JavacLogger(
+        context: Context,
+        errorWriter: PrintWriter,
+        warningWriter: PrintWriter,
+        infoWriter: PrintWriter
+) : Log(context, errorWriter, warningWriter, infoWriter) {
     init {
         context.put(Log.outKey, infoWriter)
     }
@@ -44,12 +46,12 @@ class JavacLogger(context: Context,
             })
         }
     }
-
 }
 
-private class MessageCollectorAdapter(private val messageCollector: MessageCollector,
-                                      private val severity: CompilerMessageSeverity) : Writer() {
-
+private class MessageCollectorAdapter(
+        private val messageCollector: MessageCollector,
+        private val severity: CompilerMessageSeverity
+) : Writer() {
     override fun write(buffer: CharArray, offset: Int, length: Int) {
         if (length == 1 && buffer[0] == '\n') return
 
@@ -61,5 +63,4 @@ private class MessageCollectorAdapter(private val messageCollector: MessageColle
     }
 
     override fun close() = flush()
-
 }

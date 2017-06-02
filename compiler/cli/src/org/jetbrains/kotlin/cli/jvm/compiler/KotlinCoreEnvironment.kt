@@ -73,6 +73,7 @@ import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
+import org.jetbrains.kotlin.cli.jvm.javac.JavacWrapperRegistrar
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
@@ -83,7 +84,6 @@ import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.javac.JavacWrapperRegistrar
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -243,10 +243,12 @@ class KotlinCoreEnvironment private constructor(
                 .flatMap { it.javaFiles }
                 .map { File(it.canonicalPath) }
 
-    fun registerJavac(javaFiles: List<File> = allJavaFiles,
-                      kotlinFiles: List<KtFile> = sourceFiles,
-                      arguments: Array<String>? = null): Boolean {
-        return JavacWrapperRegistrar.registerJavac(this, javaFiles, kotlinFiles, arguments)
+    fun registerJavac(
+            javaFiles: List<File> = allJavaFiles,
+            kotlinFiles: List<KtFile> = sourceFiles,
+            arguments: Array<String>? = null
+    ): Boolean {
+        return JavacWrapperRegistrar.registerJavac(projectEnvironment.project, configuration, javaFiles, kotlinFiles, arguments)
     }
 
     private val applicationEnvironment: CoreApplicationEnvironment
@@ -381,9 +383,7 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 
-    fun findLocalFile(path: String) = applicationEnvironment.localFileSystem.findFileByPath(path)
-
-    fun findJarFile(path: String) = applicationEnvironment.jarFileSystem.findFileByPath(path)
+    internal fun findLocalFile(path: String) = applicationEnvironment.localFileSystem.findFileByPath(path)
 
     private fun findLocalFile(root: JvmContentRoot): VirtualFile? {
         val path = root.file

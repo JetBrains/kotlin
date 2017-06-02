@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.javac
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.CommonClassNames
 import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
@@ -35,29 +37,24 @@ import com.sun.tools.javac.model.JavacElements
 import com.sun.tools.javac.model.JavacTypes
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.Context
-import com.sun.tools.javac.util.List as JavacList
+import com.sun.tools.javac.util.Log
 import com.sun.tools.javac.util.Names
 import com.sun.tools.javac.util.Options
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedClass
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedClassifierType
 import org.jetbrains.kotlin.javac.wrappers.symbols.SymbolBasedPackage
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.isSubpackageOf
-import org.jetbrains.kotlin.name.parentOrNull
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.javac.wrappers.trees.TreeBasedClass
 import org.jetbrains.kotlin.javac.wrappers.trees.TreeBasedPackage
 import org.jetbrains.kotlin.javac.wrappers.trees.TreePathResolverCache
 import org.jetbrains.kotlin.javac.wrappers.trees.computeClassId
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.isSubpackageOf
+import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.psi.KtFile
 import java.io.Closeable
 import java.io.File
 import javax.lang.model.element.Element
@@ -65,11 +62,18 @@ import javax.lang.model.type.TypeMirror
 import javax.tools.JavaFileManager
 import javax.tools.JavaFileObject
 import javax.tools.StandardLocation
+import com.sun.tools.javac.util.List as JavacList
 
-class JavacWrapper(javaFiles: Collection<File>,
-                   kotlinFiles: Collection<KtFile>,
-                   arguments: Array<String>?,
-                   private val environment: KotlinCoreEnvironment) : Closeable {
+class JavacWrapper(
+        javaFiles: Collection<File>,
+        kotlinFiles: Collection<KtFile>,
+        arguments: Array<String>?,
+        jvmClasspathRoots: List<File>,
+        private val outputDirectory: File?,
+        private val context: Context
+) : Closeable {
+    private val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)!!
+    private val jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL)!!
 
     companion object {
         fun getInstance(project: Project): JavacWrapper = ServiceManager.getService(project, JavacWrapper::class.java)
@@ -92,12 +96,7 @@ class JavacWrapper(javaFiles: Collection<File>,
         createCommonClassifierType(CommonClassNames.JAVA_LANG_ANNOTATION_ANNOTATION)
     }
 
-    private val messageCollector = environment.configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]
-
-    private val context = Context()
-
     init {
-        messageCollector?.let { JavacLogger.preRegister(context, it) }
         arguments?.toList()?.let { JavacOptionsMapper.map(Options.instance(context), it) }
     }
 
@@ -110,7 +109,7 @@ class JavacWrapper(javaFiles: Collection<File>,
     init {
         // use rt.jar instead of lib/ct.sym
         fileManager.setSymbolFileEnabled(false)
-        fileManager.setLocation(StandardLocation.CLASS_PATH, environment.configuration.jvmClasspathRoots)
+        fileManager.setLocation(StandardLocation.CLASS_PATH, jvmClasspathRoots)
     }
 
     private val names = Names.instance(context)
@@ -155,9 +154,8 @@ class JavacWrapper(javaFiles: Collection<File>,
         if (javaFilesNumber == 0) return true
 
         fileManager.setClassPathForCompilation(outDir)
-        messageCollector?.report(CompilerMessageSeverity.INFO,
-                                 "Compiling $javaFilesNumber Java source files" +
-                                 " to [${fileManager.getLocation(StandardLocation.CLASS_OUTPUT)?.firstOrNull()?.path}]")
+        context.get(Log.outKey)?.println("Compiling $javaFilesNumber Java source files" +
+                                         " to [${fileManager.getLocation(StandardLocation.CLASS_OUTPUT)?.firstOrNull()?.path}]")
         compile(fileObjects)
         errorCount() == 0
     }
@@ -251,10 +249,10 @@ class JavacWrapper(javaFiles: Collection<File>,
     fun toVirtualFile(javaFileObject: JavaFileObject): VirtualFile? =
             javaFileObject.toUri().let { uri ->
                 if (uri.scheme == "jar") {
-                    environment.findJarFile(uri.schemeSpecificPart.substring("file:".length))
+                    jarFileSystem.findFileByPath(uri.schemeSpecificPart.substring("file:".length))
                 }
                 else {
-                    environment.findLocalFile(uri.schemeSpecificPart)
+                    localFileSystem.findFileByPath(uri.schemeSpecificPart)
                 }
             }
 
@@ -283,7 +281,7 @@ class JavacWrapper(javaFiles: Collection<File>,
     }
 
     private fun JavacFileManager.setClassPathForCompilation(outDir: File?) = apply {
-        (outDir ?: environment.configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY])?.let { outputDir ->
+        (outDir ?: outputDirectory)?.let { outputDir ->
             outputDir.mkdirs()
             fileManager.setLocation(StandardLocation.CLASS_OUTPUT, listOf(outputDir))
         }
