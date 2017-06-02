@@ -28,7 +28,7 @@ enum class AndroidClassType(className: String, val supportsCache: Boolean = fals
     DIALOG(AndroidConst.DIALOG_FQNAME, supportsCache = false),
     SUPPORT_FRAGMENT_ACTIVITY(AndroidConst.SUPPORT_FRAGMENT_ACTIVITY_FQNAME, supportsCache = true),
     SUPPORT_FRAGMENT(AndroidConst.SUPPORT_FRAGMENT_FQNAME, supportsCache = true, fragment = true),
-    VIEW(AndroidConst.VIEW_FQNAME),
+    VIEW(AndroidConst.VIEW_FQNAME, supportsCache = true),
     UNKNOWN("");
 
     val internalClassName: String = className.replace('.', '/')
