@@ -10,6 +10,7 @@
     <orderEntry type="library" name="protobuf-java" level="project" />
     <orderEntry type="library" name="javax.inject" level="project" />
     <orderEntry type="module" module-name="descriptors" exported="" />
+    <orderEntry type="module" module-name="deserialization" exported="" />
     <orderEntry type="module" module-name="util" />
   </component>
 </module>
