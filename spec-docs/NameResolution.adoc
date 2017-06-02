@@ -197,7 +197,7 @@ Note that only an extension receiver (`String` in this example) may be explicit.
 The reference to `Builder` will always be an implicit receiver.
 ====
 
-For now we suppose that `foo` in the call `a.foo()` is a regular function, not a variable of a function type.
+For now, we suppose that `foo` in the call `a.foo()` is a regular function and not a variable of a function type.
 The latter case will be covered in the section "Name resolution for the `invoke` convention".
 
 Several `foo` functions might be available in the context: members, extensions and member extensions.
@@ -224,7 +224,7 @@ Even though the extension function is more precise for the call (it takes `Strin
 If it was, it would be too easy to break existing code without noticing that by adding an extension.
 
 You see now that members go before extensions, but what about member extensions?
-They have higher priority compared to top-level extensions, but lower then local extensions.
+They have higher priority compared to top-level extensions, but lower than local extensions.
 Below we'll cover the details.
 
 [NOTE]
@@ -710,7 +710,7 @@ fun test(a: A, b: B, c: C) {
 In this example `foo` is declared as an extension property to `B` that has type `C.() -> Unit`.
 Its getter returns a lambda with receiver.
 Inside this lambda we can access its receiver of type `C` simply by `this`.
-Also we can access property's receiver of type `B` by specifying a label `this@foo` and the instance of outer class by writing `this@A`.
+Also, we can access property's receiver of type `B` by specifying a label `this@foo` and the instance of outer class by writing `this@A`.
 
 While resolving the call `foo` the compiler has to ensure that all necessary receivers are available: `A` and `B` to resolve a property `foo`, and `C` to call the hidden invoke function.
 ====
@@ -785,7 +785,7 @@ Step 1.
 
 The most specific candidate is found for the group consisting of both members and syntactic members.
 If such candidate exists, it's the result.
-Otherwise the result is determined in the step 2.
+Otherwise, the result is determined in the step 2.
 
 Step 2.
 `members -> most specific`
@@ -796,7 +796,7 @@ If no appropriate member is found, the name resolution algorithm proceeds as des
 (tries to find the appropriate function among local extensions, member extensions, etc.).
 
 Now we can see how this process works for `J` and `J1` classes defined above.
-For `j.foo()` call the first step returns the result, because the syntactic member for `foo` is chosen as the the most specific candidate.
+For `j.foo()` call the first step returns the result, because the syntactic member for `foo` is chosen as the most specific candidate.
 However, for `j1.foo()` the first step finishes with ambiguity, because two `foo` methods (1-syntactic and 2-declared explicitly) have the same signature.
 Then the second step produces the result, which is the foo-2 method, because only declared methods are considered.
 
