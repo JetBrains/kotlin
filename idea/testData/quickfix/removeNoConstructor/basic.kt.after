@@ -1,4 +1,4 @@
-// "Remove no constructor" "true"
+// "Remove constructor call" "true"
 
 interface Base
 class Derived : Base
