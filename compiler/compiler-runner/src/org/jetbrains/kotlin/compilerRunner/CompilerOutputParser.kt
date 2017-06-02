@@ -52,7 +52,7 @@ object CompilerOutputParser {
                 // Do nothing:
                 // If the SAX parser sees a syntax error, it throws an exception
                 // and calls close() on the reader.
-                // We prevent hte reader from being closed here, and close it later,
+                // We prevent the reader from being closed here, and close it later,
                 // when all the text is read from it
             }
         }
