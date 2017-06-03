@@ -29,16 +29,16 @@ import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.getSourceRoot
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class MoveDeclarationsProcessor(
         val project: Project,
-        private val sourcePsiFile: KtFile,
+        private val sourceContainer: KtDeclarationContainer,
         private val targetPsiFile: KtFile,
-        private val pastedDeclarations: List<KtNamedDeclaration>,
+        val pastedDeclarations: List<KtNamedDeclaration>,
         private val stubTexts: List<String>
 ) {
     companion object {
@@ -57,22 +57,29 @@ class MoveDeclarationsProcessor(
             val targetPsiFile = psiDocumentManager.getPsiFile(editor.document) as? KtFile ?: return null
             if (targetPsiFile.virtualFile.getSourceRoot(project) == null) return null
             val sourcePsiFile = PsiManager.getInstance(project).findFile(sourceFile) as? KtFile ?: return null
-            if (targetPsiFile == sourcePsiFile) return null
+
+            val sourceObject = data.sourceObjectFqName?.let { fqName ->
+                sourcePsiFile.findDescendantOfType<KtObjectDeclaration> { it.fqName?.asString() == fqName } ?: return null
+            }
+            val sourceContainer: KtDeclarationContainer = sourceObject ?: sourcePsiFile
+
+            if (targetPsiFile == sourceContainer) return null
 
             val declarations = MoveDeclarationsCopyPasteProcessor.rangeToDeclarations(targetPsiFile, range.startOffset, range.endOffset)
             if (declarations.isEmpty() || declarations.any { it.parent !is KtFile }) return null
 
-            if (sourcePsiFile.packageFqName == targetPsiFile.packageFqName) return null
+            if (sourceContainer == sourcePsiFile && sourcePsiFile.packageFqName == targetPsiFile.packageFqName) return null
 
             // check that declarations were cut (not copied)
-            val filteredDeclarations = sourcePsiFile.declarations.filter { it.name in data.declarationNames }
+            val filteredDeclarations = sourceContainer.declarations.filter { it.name in data.declarationNames }
             val stubs = data.stubTexts.toSet()
             if (filteredDeclarations.any { MoveDeclarationsTransferableData.STUB_RENDERER.render(it.resolveToDescriptor()) in stubs }) return null
 
-            return MoveDeclarationsProcessor(project, sourcePsiFile, targetPsiFile, declarations, data.stubTexts)
+            return MoveDeclarationsProcessor(project, sourceContainer, targetPsiFile, declarations, data.stubTexts)
         }
     }
 
+    private val sourcePsiFile = (sourceContainer as KtElement).containingKtFile
     private val psiDocumentManager = PsiDocumentManager.getInstance(project)
     private val sourceDocument = psiDocumentManager.getDocument(sourcePsiFile)!!
 
@@ -111,12 +118,8 @@ class MoveDeclarationsProcessor(
         )
 
         val declarationUsages = declarationProcessor.findUsages().toList()
-//                val changeInfo = ContainerChangeInfo(ContainerInfo.Package(sourcePackageName), ContainerInfo.Package(targetPackageName))
-//                val internalUsages = file.getInternalReferencesToUpdateOnPackageNameChange(changeInfo)
 
         project.executeWriteCommand(commandName, commandGroupId) {
-
-            //                    postProcessMoveUsages(internalUsages) //TODO?
             project.runRefactoringAndKeepDelayedRequests { declarationProcessor.execute(declarationUsages) }
 
             psiDocumentManager.doPostponedOperationsAndUnblockDocument(sourceDocument)
@@ -126,7 +129,12 @@ class MoveDeclarationsProcessor(
     }
 
     private fun insertStubDeclarations(): RangeMarker {
-        val insertionOffset = sourcePsiFile.declarations.firstOrNull()?.startOffset ?: sourcePsiFile.textLength
+        val insertionOffset = sourceContainer.declarations.firstOrNull()?.startOffset
+                              ?: when (sourceContainer) {
+                                  is KtFile -> sourceContainer.textLength
+                                  is KtObjectDeclaration -> sourceContainer.getBody()?.rBrace?.startOffset ?: sourceContainer.endOffset
+                                  else -> error("Unknown sourceContainer: $sourceContainer")
+                              }
         val textToInsert = "\n//start\n\n" + stubTexts.joinToString(separator = "\n") + "\n//end\n"
         sourceDocument.insertString(insertionOffset, textToInsert)
         return sourceDocument.createRangeMarker(TextRange(insertionOffset, insertionOffset + textToInsert.length))

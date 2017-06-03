@@ -48,6 +48,30 @@ public class MoveOnCutPasteTestGenerated extends AbstractMoveOnCutPasteTest {
         doTest(fileName);
     }
 
+    @TestMetadata("FromAnonymousObject.kt")
+    public void testFromAnonymousObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/moveDeclarations/FromAnonymousObject.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FromCompanionObjectToTopLevel.kt")
+    public void testFromCompanionObjectToTopLevel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/moveDeclarations/FromCompanionObjectToTopLevel.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FromObjectToSameFile.kt")
+    public void testFromObjectToSameFile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/moveDeclarations/FromObjectToSameFile.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FromObjectToTopLevel.kt")
+    public void testFromObjectToTopLevel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/moveDeclarations/FromObjectToTopLevel.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("OptimizeImportsAfterCut.kt")
     public void testOptimizeImportsAfterCut() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/moveDeclarations/OptimizeImportsAfterCut.kt");

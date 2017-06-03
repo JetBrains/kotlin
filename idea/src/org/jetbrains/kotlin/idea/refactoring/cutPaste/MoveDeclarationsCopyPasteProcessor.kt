@@ -29,8 +29,10 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import java.awt.datatransfer.Transferable
 
@@ -58,13 +60,20 @@ class MoveDeclarationsCopyPasteProcessor : CopyPastePostProcessor<MoveDeclaratio
         if (startOffsets.size != 1) return emptyList()
 
         val declarations = rangeToDeclarations(file, startOffsets[0], endOffsets[0])
-        if (declarations.isEmpty() || declarations.any { it.parent !is KtFile }) return emptyList()
-        
+        if (declarations.isEmpty()) return emptyList()
+
+        val parent = declarations.map { it.parent }.distinct().singleOrNull() ?: return emptyList()
+        val sourceObjectFqName = when (parent) {
+            is KtFile -> null
+            is KtClassBody -> (parent.parent as? KtObjectDeclaration)?.fqName?.asString() ?: return emptyList()
+            else -> return emptyList()
+        }
+
         if (declarations.any { it.name == null }) return emptyList()
         val declarationNames = declarations.map { it.name!! }.toSet()
 
         val stubTexts = declarations.map { MoveDeclarationsTransferableData.STUB_RENDERER.render(it.resolveToDescriptor()) }
-        return listOf(MoveDeclarationsTransferableData(file.virtualFile.url, stubTexts, declarationNames))
+        return listOf(MoveDeclarationsTransferableData(file.virtualFile.url, sourceObjectFqName, stubTexts, declarationNames))
     }
 
     override fun extractTransferableData(content: Transferable): List<MoveDeclarationsTransferableData> {

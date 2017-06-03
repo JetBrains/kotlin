@@ -22,8 +22,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
+import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsEditorCookie
-import org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsIntentionAction
 import org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsProcessor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
@@ -51,7 +51,9 @@ abstract class AbstractMoveOnCutPasteTest : AbstractCopyPasteTest() {
         val dependencyPsiFile = configureByDependencyIfExists(dependencyFileName) as KtFile?
         val sourcePsiFile = myFixture.configureByFile(sourceFileName) as KtFile
         val useCopy = InTextDirectivesUtils.isDirectiveDefined(testFileText, COPY_DIRECTIVE)
+        val caretMarker = myFixture.editor.document.createRangeMarker(myFixture.caretOffset, myFixture.caretOffset)
         myFixture.performEditorAction(if (useCopy) IdeActions.ACTION_COPY else IdeActions.ACTION_CUT)
+        myFixture.editor.moveCaret(caretMarker.startOffset)
         PsiDocumentManager.getInstance(project).commitAllDocuments()
 
         if (InTextDirectivesUtils.isDirectiveDefined(testFileText, OPTIMIZE_IMPORTS_AFTER_CUT_DIRECTIVE)) {
@@ -61,7 +63,8 @@ abstract class AbstractMoveOnCutPasteTest : AbstractCopyPasteTest() {
         editor.putUserData(MoveDeclarationsEditorCookie.KEY, null) // because editor is reused
 
         val targetFileName = sourceFileName.replace(".kt", ".to.kt")
-        val targetPsiFile = configureTargetFile(targetFileName)
+        val targetFileExists = File(testDataPath + File.separator + targetFileName).exists()
+        val targetPsiFile = if (targetFileExists) configureTargetFile(targetFileName) else null
         performNotWriteEditorAction(IdeActions.ACTION_PASTE)
 
         val shouldBeAvailable = InTextDirectivesUtils.getPrefixedBoolean(testFileText, IS_AVAILABLE_DIRECTIVE) ?: true
@@ -82,8 +85,10 @@ abstract class AbstractMoveOnCutPasteTest : AbstractCopyPasteTest() {
 
             KotlinTestUtils.assertEqualsToFile(File(BASE_PATH, sourceFileName.replace(".kt", ".expected.kt")),
                                                sourcePsiFile.dumpTextWithErrors())
-            KotlinTestUtils.assertEqualsToFile(File(BASE_PATH, targetFileName.replace(".kt", ".expected.kt")),
-                                               targetPsiFile.dumpTextWithErrors())
+            if (targetPsiFile != null) {
+                KotlinTestUtils.assertEqualsToFile(File(BASE_PATH, targetFileName.replace(".kt", ".expected.kt")),
+                                                   targetPsiFile.dumpTextWithErrors())
+            }
         }
     }
 }

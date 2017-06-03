@@ -34,9 +34,12 @@ class MoveDeclarationsIntentionAction(
         private val bounds: RangeMarker,
         private val modificationCount: Long
 ) : BaseRefactoringIntentionAction(), HintAction {
+
+    private val isSingleDeclaration = processor.pastedDeclarations.size == 1
+
     override fun startInWriteAction() = false
 
-    override fun getText() = "Update usages to reflect package name change"
+    override fun getText() = "Update usages to reflect declaration${if (isSingleDeclaration) "s" else ""} move"
     override fun getFamilyName() = "Update usages on declarations cut/paste"
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
