@@ -9,7 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="light-classes" />
     <orderEntry type="module" module-name="frontend" />
-    <orderEntry type="module" module-name="annotation-processing" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
   </component>
 </module>

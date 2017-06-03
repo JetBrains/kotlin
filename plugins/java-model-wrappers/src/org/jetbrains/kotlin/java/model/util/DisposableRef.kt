@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.annotation.processing.impl
+package org.jetbrains.kotlin.java.model.util
 
 import com.intellij.openapi.Disposable
 
@@ -31,6 +31,6 @@ class DisposableRef<out T : Any>(initialValue: T): Disposable {
 
 fun <T : Any> T.toDisposable() = DisposableRef(this)
 
-fun dispose(vararg refs: DisposableRef<*>?) {
+fun disposeAll(vararg refs: DisposableRef<*>?) {
     refs.forEach { it?.dispose() }
 }

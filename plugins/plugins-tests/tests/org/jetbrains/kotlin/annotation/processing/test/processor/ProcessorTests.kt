@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.annotation.processing.test.processor
 
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.annotation.processing.impl.DisposableRef
 import org.jetbrains.kotlin.annotation.processing.impl.KotlinProcessingEnvironment
 import org.jetbrains.kotlin.java.model.elements.*
 import org.jetbrains.kotlin.java.model.types.JeDeclaredType
 import org.jetbrains.kotlin.java.model.types.JeMethodExecutableTypeMirror
+import org.jetbrains.kotlin.java.model.util.DisposableRef
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import javax.annotation.processing.ProcessingEnvironment
