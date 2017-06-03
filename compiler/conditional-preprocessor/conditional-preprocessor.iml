@@ -8,7 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="util" />
-    <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="cli" />
     <orderEntry type="module" module-name="frontend" />
   </component>

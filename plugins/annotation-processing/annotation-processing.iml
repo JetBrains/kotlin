@@ -9,7 +9,6 @@
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="java-model-wrappers" />
-    <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="plugin-api" />
     <orderEntry type="module" module-name="frontend.java" />
