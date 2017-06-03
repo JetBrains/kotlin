@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen.descriptors
 
-public enum OwnerKind {
-    PACKAGE,
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 
-    IMPLEMENTATION,
-
-    DEFAULT_IMPLS
-}
+interface FileClassDescriptor : ClassDescriptor

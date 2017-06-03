@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen.state
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.`when`.MappingsClassesForWhenByEnum
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -56,6 +55,7 @@ class GenerationState @JvmOverloads constructor(
         val files: List<KtFile>,
         val configuration: CompilerConfiguration,
         val generateDeclaredClassFilter: GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
+        val codegenFactory: CodegenFactory = DefaultCodegenFactory,
         // For incremental compilation
         val targetId: TargetId? = null,
         moduleName: String? = configuration.get(CommonConfigurationKeys.MODULE_NAME),
@@ -64,7 +64,6 @@ class GenerationState @JvmOverloads constructor(
         // TODO: get rid of it with the proper module infrastructure
         val outDirectory: File? = null,
         private val onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING,
-        val codegenFactory: CodegenFactory = if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory,
         wantsDiagnostics: Boolean = true
 ) {
     abstract class GenerateClassFilter {

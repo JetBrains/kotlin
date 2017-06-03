@@ -16,12 +16,11 @@
 
 package org.jetbrains.kotlin.backend.jvm.descriptors
 
+import org.jetbrains.kotlin.codegen.descriptors.FileClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
-
-interface FileClassDescriptor : ClassDescriptor
 
 class FileClassDescriptorImpl(
         name: Name,

@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
-import org.jetbrains.kotlin.backend.jvm.descriptors.FileClassDescriptor
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -244,7 +243,7 @@ private fun MemberDescriptor.calcModalityFlag(): Int {
     return flags
 }
 
-val MemberDescriptor.effectiveModality: Modality
+private val MemberDescriptor.effectiveModality: Modality
     get() {
         if (this is ClassDescriptor && kind == ClassKind.ENUM_CLASS) {
             if (JvmCodegenUtil.hasAbstractMembers(this)) {
@@ -260,21 +259,11 @@ val MemberDescriptor.effectiveModality: Modality
         return modality
     }
 
-val DeclarationDescriptorWithSource.psiElement: PsiElement?
+private val DeclarationDescriptorWithSource.psiElement: PsiElement?
     get() = (source as? PsiSourceElement)?.psi
 
-val IrField.OtherOrigin: JvmDeclarationOrigin
+private val IrField.OtherOrigin: JvmDeclarationOrigin
     get() = OtherOrigin(descriptor.psiElement, this.descriptor)
 
-val IrFunction.OtherOrigin: JvmDeclarationOrigin
+internal val IrFunction.OtherOrigin: JvmDeclarationOrigin
     get() = OtherOrigin(descriptor.psiElement, this.descriptor)
-
-fun DeclarationDescriptor.getMemberOwnerKind(): OwnerKind = when (this) {
-    is FileClassDescriptor,
-    is PackageFragmentDescriptor ->
-        OwnerKind.PACKAGE
-    is ClassDescriptor ->
-        OwnerKind.IMPLEMENTATION
-    else ->
-        throw AssertionError("Unexpected declaration container: $this")
-}

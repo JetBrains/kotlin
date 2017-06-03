@@ -24,5 +24,6 @@
     <orderEntry type="module" module-name="frontend.script" />
     <orderEntry type="module" module-name="javac-wrapper" />
     <orderEntry type="module" module-name="js.dce" />
+    <orderEntry type="module" module-name="backend.jvm" />
   </component>
 </module>
