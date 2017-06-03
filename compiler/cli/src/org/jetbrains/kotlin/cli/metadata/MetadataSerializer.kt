@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization
+package org.jetbrains.kotlin.cli.metadata
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade
@@ -39,7 +39,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializerExtension
+import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment.Companion.DOT_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.ByteArrayOutputStream
@@ -130,6 +132,8 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
         kotlinModuleFile.writeBytes(packageTableBytes)
     }
 
+    protected open fun createSerializerExtension(): KotlinSerializerExtensionBase = MetadataSerializerExtension()
+
     private fun getPackageFilePath(packageFqName: FqName, fileName: String): String =
             packageFqName.asString().replace('.', '/') + "/" +
             PackagePartClassUtils.getFilePartShortName(fileName) + DOT_METADATA_FILE_EXTENSION
@@ -144,7 +148,7 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
             private val destFile: File
     ) {
         private val proto = ProtoBuf.PackageFragment.newBuilder()
-        private val extension = BuiltInsSerializerExtension()
+        private val extension = createSerializerExtension()
 
         fun run() {
             serializeClasses(classes)
