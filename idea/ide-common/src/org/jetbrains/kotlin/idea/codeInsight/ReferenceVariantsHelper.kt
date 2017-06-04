@@ -206,7 +206,7 @@ class ReferenceVariantsHelper(
             // add non-instance members
             descriptors.addAll(resolutionScope.collectDescriptorsFiltered(filterWithoutExtensions, nameFilter))
             descriptors.addAll(resolutionScope.collectAllFromMeAndParent { scope ->
-                scope.collectSyntheticStaticMembers(resolutionFacade, kindFilter, nameFilter)
+                scope.collectSyntheticStaticMembersAndConstructors(resolutionFacade, kindFilter, nameFilter)
             })
         }
 
@@ -405,14 +405,15 @@ private fun MemberScope.collectStaticMembers(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean
 ): Collection<DeclarationDescriptor> {
-    return getDescriptorsFiltered(kindFilter, nameFilter) + collectSyntheticStaticMembers(resolutionFacade, kindFilter, nameFilter)
+    return getDescriptorsFiltered(kindFilter, nameFilter) + collectSyntheticStaticMembersAndConstructors(resolutionFacade, kindFilter, nameFilter)
 }
 
-fun ResolutionScope.collectSyntheticStaticMembers(
+fun ResolutionScope.collectSyntheticStaticMembersAndConstructors(
         resolutionFacade: ResolutionFacade,
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean
 ): List<FunctionDescriptor> {
     val syntheticScopes = resolutionFacade.getFrontendService(SyntheticScopes::class.java)
-    return syntheticScopes.collectSyntheticStaticFunctions(this).filter { kindFilter.accepts(it) && nameFilter(it.name) }
+    return (syntheticScopes.collectSyntheticStaticFunctions(this) + syntheticScopes.collectSyntheticConstructors(this))
+            .filter { kindFilter.accepts(it) && nameFilter(it.name) }
 }

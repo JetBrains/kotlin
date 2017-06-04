@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.codeInsight.collectSyntheticStaticMembers
+import org.jetbrains.kotlin.idea.codeInsight.collectSyntheticStaticMembersAndConstructors
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -84,7 +84,7 @@ class StaticMembersCompletion(
             val memberScope = if (container.kind == ClassKind.OBJECT) container.unsubstitutedMemberScope else container.staticScope
             val members =
                     memberScope.getDescriptorsFiltered(kindFilter, nameFilter) +
-                    memberScope.collectSyntheticStaticMembers(resolutionFacade, kindFilter, nameFilter)
+                    memberScope.collectSyntheticStaticMembersAndConstructors(resolutionFacade, kindFilter, nameFilter)
             members.filterTo(result) { it is CallableDescriptor && it !in alreadyAdded }
         }
         return result

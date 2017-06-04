@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.codeInsight.collectSyntheticStaticMembers
+import org.jetbrains.kotlin.idea.codeInsight.collectSyntheticStaticMembersAndConstructors
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
@@ -312,7 +312,7 @@ class TypeInstantiationItems(
                     is ClassDescriptor -> container.unsubstitutedMemberScope
                     else -> return
                 }
-                scope.collectSyntheticStaticMembers(resolutionFacade, DescriptorKindFilter.FUNCTIONS, { classifier.name == it })
+                scope.collectSyntheticStaticMembersAndConstructors(resolutionFacade, DescriptorKindFilter.FUNCTIONS, { classifier.name == it })
                         .filterIsInstance<SamConstructorDescriptor>()
                         .singleOrNull() ?: return
             }
