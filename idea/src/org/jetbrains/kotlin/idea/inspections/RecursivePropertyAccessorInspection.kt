@@ -20,6 +20,8 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -96,6 +98,9 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
             val bindingContext = element.analyze()
             val target = bindingContext[REFERENCE_TARGET, element]
             if (target != bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, propertyAccessor.property]) return false
+            (element.parent as? KtQualifiedExpression)?.let {
+                if (it.receiverExpression.text != KtTokens.THIS_KEYWORD.value && !it.hasObjectReceiver(bindingContext)) return false
+            }
             return isSameAccessor(element, propertyAccessor.isGetter)
         }
 
@@ -113,6 +118,11 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
             if (namedFunctionDescriptor != syntheticDescriptor.getMethod &&
                 namedFunctionDescriptor != syntheticDescriptor.setMethod) return false
             return isSameAccessor(element, isGetter)
+        }
+
+        private fun KtQualifiedExpression.hasObjectReceiver(context: BindingContext) : Boolean {
+            val receiver = receiverExpression as? KtReferenceExpression ?: return false
+            return (context[REFERENCE_TARGET, receiver] as? ClassDescriptor)?.kind == ClassKind.OBJECT
         }
     }
 }

@@ -39,3 +39,13 @@ class A {
             }
     }
 }
+
+object Obj {
+    val s: String
+        get() = Obj.s
+}
+
+class Node(val next: Node?) {
+    val last: Node
+        get() = if (next != null) next.last else this
+}

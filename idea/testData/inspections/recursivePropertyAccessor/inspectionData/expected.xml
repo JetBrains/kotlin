@@ -116,4 +116,13 @@
         <description>Recursive property accessor</description>
     </problem>
 
+    <problem>
+        <file>recursivePropertyAccessors.kt</file>
+        <line>45</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/recursivePropertyAccessors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Recursive property accessor</problem_class>
+        <description>Recursive property accessor</description>
+    </problem>
+
 </problems>
