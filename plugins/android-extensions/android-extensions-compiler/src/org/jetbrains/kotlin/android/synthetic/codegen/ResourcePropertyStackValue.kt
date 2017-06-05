@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.android.synthetic.codegen
 
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
+import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension.Companion.shouldCacheResource
+import org.jetbrains.kotlin.android.synthetic.descriptors.ContainerOptionsProxy
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticProperty
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -29,22 +31,23 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 class ResourcePropertyStackValue(
         val receiver: StackValue,
         val typeMapper: KotlinTypeMapper,
-        val propertyDescriptor: PropertyDescriptor,
-        val receiverDescriptor: ClassDescriptor,
-        val androidClassType: AndroidClassType,
+        val resource: PropertyDescriptor,
+        val container: ClassDescriptor,
+        val containerOptions: ContainerOptionsProxy,
         val androidPackage: String
-) : StackValue(typeMapper.mapType(propertyDescriptor.returnType!!)) {
+) : StackValue(typeMapper.mapType(resource.returnType!!)) {
+    private val androidClassType get() = containerOptions.classType
 
     override fun putSelector(type: Type, v: InstructionAdapter) {
-        val returnTypeString = typeMapper.mapType(propertyDescriptor.type.lowerIfFlexible()).className
+        val returnTypeString = typeMapper.mapType(resource.type.lowerIfFlexible()).className
         if (AndroidConst.FRAGMENT_FQNAME == returnTypeString || AndroidConst.SUPPORT_FRAGMENT_FQNAME == returnTypeString) {
             return putSelectorForFragment(v)
         }
 
-        val syntheticProperty = propertyDescriptor as AndroidSyntheticProperty
+        val syntheticProperty = resource as AndroidSyntheticProperty
 
-        if (androidClassType.supportsCache && AndroidExpressionCodegenExtension.shouldCacheResource(receiverDescriptor, propertyDescriptor)) {
-            val declarationDescriptorType = typeMapper.mapType(receiverDescriptor)
+        if (containerOptions.cache.hasCache && shouldCacheResource(resource)) {
+            val declarationDescriptorType = typeMapper.mapType(container)
             receiver.put(declarationDescriptorType, v)
 
             val resourceId = syntheticProperty.resource.id
@@ -55,12 +58,12 @@ class ResourcePropertyStackValue(
         }
         else {
             when (androidClassType) {
-                AndroidClassType.ACTIVITY, AndroidClassType.SUPPORT_FRAGMENT_ACTIVITY, AndroidClassType.VIEW, AndroidClassType.DIALOG -> {
+                AndroidContainerType.ACTIVITY, AndroidContainerType.SUPPORT_FRAGMENT_ACTIVITY, AndroidContainerType.VIEW, AndroidContainerType.DIALOG -> {
                     receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
                     getResourceId(v)
                     v.invokevirtual(androidClassType.internalClassName, "findViewById", "(I)Landroid/view/View;", false)
                 }
-                AndroidClassType.FRAGMENT, AndroidClassType.SUPPORT_FRAGMENT -> {
+                AndroidContainerType.FRAGMENT, AndroidContainerType.SUPPORT_FRAGMENT -> {
                     receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
                     v.invokevirtual(androidClassType.internalClassName, "getView", "()Landroid/view/View;", false)
                     getResourceId(v)
@@ -77,17 +80,17 @@ class ResourcePropertyStackValue(
         receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
 
         when (androidClassType) {
-            AndroidClassType.ACTIVITY, AndroidClassType.FRAGMENT -> {
+            AndroidContainerType.ACTIVITY, AndroidContainerType.FRAGMENT -> {
                 v.invokevirtual(androidClassType.internalClassName, "getFragmentManager", "()Landroid/app/FragmentManager;", false)
                 getResourceId(v)
                 v.invokevirtual("android/app/FragmentManager", "findFragmentById", "(I)Landroid/app/Fragment;", false)
             }
-            AndroidClassType.SUPPORT_FRAGMENT -> {
+            AndroidContainerType.SUPPORT_FRAGMENT -> {
                 v.invokevirtual(androidClassType.internalClassName, "getFragmentManager", "()Landroid/support/v4/app/FragmentManager;", false)
                 getResourceId(v)
                 v.invokevirtual("android/support/v4/app/FragmentManager", "findFragmentById", "(I)Landroid/support/v4/app/Fragment;", false)
             }
-            AndroidClassType.SUPPORT_FRAGMENT_ACTIVITY -> {
+            AndroidContainerType.SUPPORT_FRAGMENT_ACTIVITY -> {
                 v.invokevirtual(androidClassType.internalClassName, "getSupportFragmentManager", "()Landroid/support/v4/app/FragmentManager;", false)
                 getResourceId(v)
                 v.invokevirtual("android/support/v4/app/FragmentManager", "findFragmentById", "(I)Landroid/support/v4/app/Fragment;", false)
@@ -99,6 +102,6 @@ class ResourcePropertyStackValue(
     }
 
     fun getResourceId(v: InstructionAdapter) {
-        v.getstatic(androidPackage.replace(".", "/") + "/R\$id", propertyDescriptor.name.asString(), "I")
+        v.getstatic(androidPackage.replace(".", "/") + "/R\$id", resource.name.asString(), "I")
     }
 }

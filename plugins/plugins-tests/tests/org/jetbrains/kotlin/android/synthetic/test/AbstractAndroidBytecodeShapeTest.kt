@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.android.synthetic.test
 
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import java.io.File
 
 abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
 
@@ -30,7 +32,10 @@ abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
         val layoutPaths = getResPaths(path)
-        myEnvironment = createTestEnvironment(configuration, layoutPaths)
+        myEnvironment = createTestEnvironment(configuration, layoutPaths).apply {
+            val runtimeLibrary = File("out/production/android-extensions-runtime")
+            updateClasspath(listOf(JvmClasspathRoot(runtimeLibrary)))
+        }
     }
 
     override fun doTest(path: String) {
