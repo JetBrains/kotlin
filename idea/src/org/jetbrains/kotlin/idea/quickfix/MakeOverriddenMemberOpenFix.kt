@@ -21,11 +21,15 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
 import org.jetbrains.kotlin.descriptors.isOverridable
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.core.util.CachedValue
+import org.jetbrains.kotlin.idea.core.util.getValue
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.lexer.KtTokens.OPEN_KEYWORD
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -39,8 +43,8 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 private typealias DeclPtr = SmartPsiElementPointer<KtCallableDeclaration>
 class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAction<KtDeclaration>(declaration) {
 
-    private val myQuickFixInfo: QuickFixInfo by lazy {
-        computeState()
+    private val myQuickFixInfo: QuickFixInfo by CachedValue(declaration.project) {
+        CachedValueProvider.Result.createSingleDependency(computeInfo(), PsiModificationTracker.MODIFICATION_COUNT)
     }
 
     private val containingDeclarationsNames
@@ -49,7 +53,7 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
     private val overriddenNonOverridableMembers
         get() = myQuickFixInfo.declarations
 
-    private fun computeState(): QuickFixInfo {
+    private fun computeInfo(): QuickFixInfo {
         val element = element ?: return QUICKFIX_UNAVAILABLE
         val overriddenNonOverridableMembers = mutableListOf<DeclPtr>()
         val containingDeclarationsNames = mutableListOf<String>()
