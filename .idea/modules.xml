@@ -9,7 +9,7 @@
       <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-compiler/android-extensions-compiler.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-compiler/android-extensions-compiler.iml" group="plugins/android-extensions" />
       <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-idea/android-extensions-idea.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-idea/android-extensions-idea.iml" group="plugins/android-extensions" />
       <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-jps/android-extensions-jps.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-jps/android-extensions-jps.iml" group="plugins/android-extensions" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-runtime/android-extensions-runtime.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-runtime/android-extensions-runtime.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-runtime/android-extensions-runtime.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-runtime/android-extensions-runtime.iml" group="plugins/android-extensions" />
       <module fileurl="file://$PROJECT_DIR$/android-studio/android-studio.iml" filepath="$PROJECT_DIR$/android-studio/android-studio.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/android-tests/android-tests.iml" filepath="$PROJECT_DIR$/compiler/android-tests/android-tests.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/plugins/annotation-based-compiler-plugins-ide-support/annotation-based-compiler-plugins-ide-support.iml" filepath="$PROJECT_DIR$/plugins/annotation-based-compiler-plugins-ide-support/annotation-based-compiler-plugins-ide-support.iml" group="plugins" />
@@ -75,14 +75,14 @@
       <module fileurl="file://$PROJECT_DIR$/js/js.tests/js.tests.iml" filepath="$PROJECT_DIR$/js/js.tests/js.tests.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/js/js.translator/js.translator.iml" filepath="$PROJECT_DIR$/js/js.translator/js.translator.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" filepath="$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" group="ide/jps" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/kapt3/kapt3.iml" filepath="$PROJECT_DIR$/plugins/kapt3/kapt3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/kapt3/kapt3.iml" filepath="$PROJECT_DIR$/plugins/kapt3/kapt3.iml" group="plugins" />
       <module fileurl="file://$PROJECT_DIR$/idea/kotlin-gradle-tooling/kotlin-gradle-tooling.iml" filepath="$PROJECT_DIR$/idea/kotlin-gradle-tooling/kotlin-gradle-tooling.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/light-classes/light-classes.iml" filepath="$PROJECT_DIR$/compiler/light-classes/light-classes.iml" group="compiler/java" />
       <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-api/lint-api.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-api/lint-api.iml" group="plugins/lint" />
       <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-checks/lint-checks.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-checks/lint-checks.iml" group="plugins/lint" />
       <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-idea/lint-idea.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-idea/lint-idea.iml" group="plugins/lint" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/noarg/noarg-cli/noarg-cli.iml" filepath="$PROJECT_DIR$/plugins/noarg/noarg-cli/noarg-cli.iml" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/noarg/noarg-ide/noarg-ide.iml" filepath="$PROJECT_DIR$/plugins/noarg/noarg-ide/noarg-ide.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/noarg/noarg-cli/noarg-cli.iml" filepath="$PROJECT_DIR$/plugins/noarg/noarg-cli/noarg-cli.iml" group="plugins/noarg" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/noarg/noarg-ide/noarg-ide.iml" filepath="$PROJECT_DIR$/plugins/noarg/noarg-ide/noarg-ide.iml" group="plugins/noarg" />
       <module fileurl="file://$PROJECT_DIR$/non-compiler-tests/non-compiler-tests.iml" filepath="$PROJECT_DIR$/non-compiler-tests/non-compiler-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" filepath="$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/plugins/plugins-tests/plugins-tests.iml" filepath="$PROJECT_DIR$/plugins/plugins-tests/plugins-tests.iml" group="plugins" />
@@ -90,8 +90,8 @@
       <module fileurl="file://$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" filepath="$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/compiler/resolution/resolution.iml" filepath="$PROJECT_DIR$/compiler/resolution/resolution.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" filepath="$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" group="core" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/sam-with-receiver/sam-with-receiver-cli/sam-with-receiver-cli.iml" filepath="$PROJECT_DIR$/plugins/sam-with-receiver/sam-with-receiver-cli/sam-with-receiver-cli.iml" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/sam-with-receiver/sam-with-receiver-ide/sam-with-receiver-ide.iml" filepath="$PROJECT_DIR$/plugins/sam-with-receiver/sam-with-receiver-ide/sam-with-receiver-ide.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/sam-with-receiver/sam-with-receiver-cli/sam-with-receiver-cli.iml" filepath="$PROJECT_DIR$/plugins/sam-with-receiver/sam-with-receiver-cli/sam-with-receiver-cli.iml" group="plugins/sam-with-receiver" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/sam-with-receiver/sam-with-receiver-ide/sam-with-receiver-ide.iml" filepath="$PROJECT_DIR$/plugins/sam-with-receiver/sam-with-receiver-ide/sam-with-receiver-ide.iml" group="plugins/sam-with-receiver" />
       <module fileurl="file://$PROJECT_DIR$/core/script.runtime/script.runtime.iml" filepath="$PROJECT_DIR$/core/script.runtime/script.runtime.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/compiler/serialization/serialization.iml" filepath="$PROJECT_DIR$/compiler/serialization/serialization.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/plugins/source-sections/source-sections-compiler/source-sections-compiler.iml" filepath="$PROJECT_DIR$/plugins/source-sections/source-sections-compiler/source-sections-compiler.iml" group="plugins" />
