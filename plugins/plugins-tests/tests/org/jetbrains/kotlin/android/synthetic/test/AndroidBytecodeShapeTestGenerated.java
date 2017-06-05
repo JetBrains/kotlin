@@ -32,6 +32,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeShapeTest {
+    @TestMetadata("activityWithEntityOptionsNoCache")
+    public void testActivityWithEntityOptionsNoCache() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape/activityWithEntityOptionsNoCache/");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInBytecodeShape() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
@@ -108,6 +114,12 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
         doTest(fileName);
     }
 
+    @TestMetadata("fragmentWithEntityOptionsNoCache")
+    public void testFragmentWithEntityOptionsNoCache() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape/fragmentWithEntityOptionsNoCache/");
+        doTest(fileName);
+    }
+
     @TestMetadata("multiFile")
     public void testMultiFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape/multiFile/");
@@ -177,6 +189,18 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
     @TestMetadata("viewWithCache")
     public void testViewWithCache() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape/viewWithCache/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("viewWithDefaultNoCache")
+    public void testViewWithDefaultNoCache() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape/viewWithDefaultNoCache/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("viewWithEntityOptionsNoCache")
+    public void testViewWithEntityOptionsNoCache() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape/viewWithEntityOptionsNoCache/");
         doTest(fileName);
     }
 }
