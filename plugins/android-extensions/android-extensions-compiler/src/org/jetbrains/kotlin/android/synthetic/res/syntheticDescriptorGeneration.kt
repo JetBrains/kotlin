@@ -69,7 +69,7 @@ internal fun genPropertyForWidget(
             KotlinTypeFactory.simpleNotNullType(
                     Annotations.EMPTY, classDescriptor, defaultType.constructor.parameters.map(::StarProjectionImpl))
         }
-    } ?: context.viewType
+    } ?: context.view
 
     return genProperty(resolvedWidget.widget, receiverType, type, packageFragmentDescriptor, sourceEl, resolvedWidget.errorType)
 }

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidPackageFragmentProviderExtension
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -50,7 +51,16 @@ fun KtUsefulTestCase.createTestEnvironment(configuration: CompilerConfiguration,
     ClassBuilderInterceptorExtension.registerExtension(project, AndroidOnDestroyClassBuilderInterceptorExtension())
     PackageFragmentProviderExtension.registerExtension(project, CliAndroidPackageFragmentProviderExtension())
 
+    addAERuntimeLibrary(myEnvironment)
+
     return myEnvironment
+}
+
+fun addAERuntimeLibrary(environment: KotlinCoreEnvironment) {
+    environment.apply {
+        val runtimeLibrary = File("out/production/android-extensions-runtime")
+        updateClasspath(listOf(JvmClasspathRoot(runtimeLibrary)))
+    }
 }
 
 fun getResPaths(path: String): List<String> {

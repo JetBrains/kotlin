@@ -38,6 +38,10 @@ class ResourcePropertyStackValue(
 ) : StackValue(typeMapper.mapType(resource.returnType!!)) {
     private val androidClassType get() = containerOptions.classType
 
+    init {
+        assert(containerOptions.classType != AndroidContainerType.UNKNOWN)
+    }
+
     override fun putSelector(type: Type, v: InstructionAdapter) {
         val returnTypeString = typeMapper.mapType(resource.type.lowerIfFlexible()).className
         if (AndroidConst.FRAGMENT_FQNAME == returnTypeString || AndroidConst.SUPPORT_FRAGMENT_FQNAME == returnTypeString) {
@@ -66,6 +70,12 @@ class ResourcePropertyStackValue(
                 AndroidContainerType.FRAGMENT, AndroidContainerType.SUPPORT_FRAGMENT -> {
                     receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
                     v.invokevirtual(androidClassType.internalClassName, "getView", "()Landroid/view/View;", false)
+                    getResourceId(v)
+                    v.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
+                }
+                AndroidContainerType.LAYOUT_CONTAINER -> {
+                    receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
+                    v.invokevirtual(androidClassType.internalClassName, "getEntityView", "()Landroid/view/View;", false)
                     getResourceId(v)
                     v.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
                 }
