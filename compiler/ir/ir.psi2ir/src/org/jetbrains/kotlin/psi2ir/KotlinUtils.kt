@@ -48,10 +48,8 @@ fun KtElement.deparenthesize(): KtElement =
 fun ResolvedCall<*>.isValueArgumentReorderingRequired(): Boolean {
     var lastValueParameterIndex = -1
     for (valueArgument in call.valueArguments) {
-        val argumentMapping = getArgumentMapping(valueArgument)
-        if (argumentMapping !is ArgumentMatch || argumentMapping.isError()) {
-            throw Exception("Value argument in function call is mapped with error")
-        }
+        val argumentMapping = getArgumentMapping(valueArgument) as? ArgumentMatch ?:
+                              throw Exception("Value argument in function call is mapped with error")
         val argumentIndex = argumentMapping.valueParameter.index
         if (argumentIndex < lastValueParameterIndex) {
             return true

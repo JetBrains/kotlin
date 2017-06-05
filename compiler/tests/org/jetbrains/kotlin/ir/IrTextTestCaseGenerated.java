@@ -467,6 +467,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/expressions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("argumentMappedWithError.kt")
+        public void testArgumentMappedWithError() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/argumentMappedWithError.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("arrayAccess.kt")
         public void testArrayAccess() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/arrayAccess.kt");
