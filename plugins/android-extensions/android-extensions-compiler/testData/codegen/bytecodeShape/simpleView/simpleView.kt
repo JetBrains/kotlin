@@ -9,7 +9,7 @@ public class MyActivity : Activity() {
 }
 
 // 1 public _\$_findCachedViewById
-// 1 INVOKEVIRTUAL test/MyActivity\.findViewById
+// 1 INVOKEVIRTUAL android/app/Activity\.findViewById
 // 1 public _\$_clearFindViewByIdCache
 // 1 GETSTATIC test/R\$id\.login
 // 1 INVOKEVIRTUAL android/view/View\.findViewById

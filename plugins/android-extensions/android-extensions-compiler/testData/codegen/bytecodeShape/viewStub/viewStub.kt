@@ -13,6 +13,6 @@ public class MyActivity : Activity() {
 
 // 1 GETSTATIC test/R\$id\.stub
 // 0 INVOKEVIRTUAL test/MyActivity\._\$_findCachedViewById
-// 1 INVOKEVIRTUAL android/app/Activity\.findViewById
+// 2 INVOKEVIRTUAL android/app/Activity\.findViewById
 // 1 CHECKCAST android/view/ViewStub
 // 2 CHECKCAST android/view/View
