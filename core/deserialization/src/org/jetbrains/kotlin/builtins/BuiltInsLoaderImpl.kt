@@ -29,7 +29,28 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
-class BuiltInsLoaderImpl {
+class BuiltInsLoaderImpl : BuiltInsLoader {
+    private val classLoader = this::class.java.classLoader
+
+    override fun createPackageFragmentProvider(
+            storageManager: StorageManager,
+            builtInsModule: ModuleDescriptor,
+            classDescriptorFactories: Iterable<ClassDescriptorFactory>,
+            platformDependentDeclarationFilter: PlatformDependentDeclarationFilter,
+            additionalClassPartsProvider: AdditionalClassPartsProvider
+    ): PackageFragmentProvider {
+        return createBuiltInPackageFragmentProvider(
+                storageManager,
+                builtInsModule,
+                KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAMES,
+                classDescriptorFactories,
+                platformDependentDeclarationFilter,
+                additionalClassPartsProvider
+        ) { path ->
+            classLoader?.getResourceAsStream(path) ?: ClassLoader.getSystemResourceAsStream(path)
+        }
+    }
+
     fun createBuiltInPackageFragmentProvider(
             storageManager: StorageManager,
             module: ModuleDescriptor,

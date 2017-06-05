@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
-import java.io.InputStream;
 import java.util.*;
 
 import static kotlin.collections.SetsKt.setOf;
@@ -135,21 +134,10 @@ public abstract class KotlinBuiltIns {
 
     protected void createBuiltInsModule() {
         builtInsModule = new ModuleDescriptorImpl(BUILTINS_MODULE_NAME, storageManager, this, null);
-        PackageFragmentProvider packageFragmentProvider = BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider(
-                storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
-                getClassDescriptorFactories(),
-                getPlatformDependentDeclarationFilter(),
-                getAdditionalClassPartsProvider(),
-                new Function1<String, InputStream>() {
-                    @Override
-                    public InputStream invoke(String path) {
-                        ClassLoader classLoader = KotlinBuiltIns.class.getClassLoader();
-                        return classLoader != null ? classLoader.getResourceAsStream(path) : ClassLoader.getSystemResourceAsStream(path);
-                    }
-                }
-        );
-
-        builtInsModule.initialize(packageFragmentProvider);
+        builtInsModule.initialize(BuiltInsLoader.Companion.getInstance().createPackageFragmentProvider(
+                storageManager, builtInsModule,
+                getClassDescriptorFactories(), getPlatformDependentDeclarationFilter(), getAdditionalClassPartsProvider()
+        ));
         builtInsModule.setDependencies(builtInsModule);
     }
 
