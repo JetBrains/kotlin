@@ -135,9 +135,9 @@ internal open class LinuxBasedPlatform(distribution: Distribution)
             "-L${llvmLib}", "-L${libGcc}") +
             specificLibs +
             listOf("-L${targetSysRoot}/../lib", "-L${targetSysRoot}/lib", "-L${targetSysRoot}/usr/lib") + 
-            if (optimize) listOf("-plugin", "$llvmLib/LLVMgold.so") + pluginOptimizationFlags else emptyList<String>() +
+            (if (optimize) listOf("-plugin", "$llvmLib/LLVMgold.so") + pluginOptimizationFlags else emptyList<String>()) +
             objectFiles +
-            if (optimize) linkerOptimizationFlags else emptyList<String>() +
+            (if (optimize) linkerOptimizationFlags else emptyList<String>()) +
             linkerKonanFlags +
             listOf("-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed", 
             "-lc", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
