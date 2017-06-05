@@ -17,6 +17,7 @@
 package kotlinx.android.extensions
 
 public enum class CacheImplementation {
+    SPARSE_ARRAY,
     HASH_MAP,
     NO_CACHE;
 
