@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -826,8 +827,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 call, ResolveConstruct.EXCL_EXCL, Collections.singletonList("baseExpr"), Collections.singletonList(true), context, null);
         KotlinTypeInfo baseTypeInfo = BindingContextUtils.getRecordedTypeInfo(baseExpression, context.trace.getBindingContext());
 
-        if (ArgumentTypeResolver.isFunctionLiteralArgument(baseExpression, context)) {
-            context.trace.report(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION.on(operationSign));
+        boolean isFunctionLiteral = ArgumentTypeResolver.isFunctionLiteralArgument(baseExpression, context);
+        boolean isCallableReference = ArgumentTypeResolver.isCallableReferenceArgument(baseExpression, context);
+        if (isFunctionLiteral || isCallableReference) {
+            DiagnosticFactory0<PsiElement> diagnosticFactory =
+                    isFunctionLiteral ? NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION : NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE;
+            context.trace.report(diagnosticFactory.on(operationSign));
             if (baseTypeInfo == null) {
                 return TypeInfoFactoryKt.createTypeInfo(ErrorUtils.createErrorType("Unresolved lambda expression"), context);
             }
@@ -1218,9 +1223,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 call, ResolveConstruct.ELVIS, Lists.newArrayList("left", "right"),
                 Lists.newArrayList(true, false), contextWithExpectedType, null);
         KotlinTypeInfo leftTypeInfo = BindingContextUtils.getRecordedTypeInfo(left, context.trace.getBindingContext());
-        if (ArgumentTypeResolver.isFunctionLiteralArgument(left, context)) {
-            context.trace.report(USELESS_ELVIS_ON_LAMBDA_EXPRESSION.on(expression.getOperationReference()));
-            if (leftTypeInfo == null) return TypeInfoFactoryKt.noTypeInfo(context);
+        boolean isLeftFunctionLiteral = ArgumentTypeResolver.isFunctionLiteralArgument(left, context);
+        boolean isLeftCallableReference = ArgumentTypeResolver.isCallableReferenceArgument(left, context);
+        if (leftTypeInfo == null && (isLeftFunctionLiteral || isLeftCallableReference)) {
+            DiagnosticFactory0<PsiElement> diagnosticFactory =
+                    isLeftFunctionLiteral ? USELESS_ELVIS_ON_LAMBDA_EXPRESSION : USELESS_ELVIS_ON_CALLABLE_REFERENCE;
+            context.trace.report(diagnosticFactory.on(expression.getOperationReference()));
+            return TypeInfoFactoryKt.noTypeInfo(context);
         }
         assert leftTypeInfo != null : "Left expression was not processed: " + expression;
         KotlinType leftType = leftTypeInfo.getType();
@@ -1231,7 +1240,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(USELESS_ELVIS_RIGHT_IS_NULL.on(expression));
         }
         KotlinTypeInfo rightTypeInfo = BindingContextUtils.getRecordedTypeInfo(right, context.trace.getBindingContext());
-        if (rightTypeInfo == null && ArgumentTypeResolver.isFunctionLiteralArgument(right, context)) {
+        if (rightTypeInfo == null && ArgumentTypeResolver.isFunctionLiteralOrCallableReference(right, context)) {
             // the type is computed later in call completer according to the '?:' semantics as a function
             return TypeInfoFactoryKt.noTypeInfo(context);
         }
