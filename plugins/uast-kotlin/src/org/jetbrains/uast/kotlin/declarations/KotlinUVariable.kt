@@ -20,8 +20,10 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.uast.*
+import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.java.AbstractJavaUVariable
 import org.jetbrains.uast.java.JavaAbstractUExpression
 import org.jetbrains.uast.java.JavaUAnnotation
@@ -29,6 +31,7 @@ import org.jetbrains.uast.java.annotations
 import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
+import org.jetbrains.uast.visitor.UastVisitor
 
 abstract class AbstractKotlinUVariable : AbstractJavaUVariable() {
     override val uastInitializer: UExpression?
@@ -49,6 +52,17 @@ abstract class AbstractKotlinUVariable : AbstractJavaUVariable() {
             } ?: return null
             return getLanguagePlugin().convertElement(initializerExpression, this) as? UExpression ?: UastEmptyExpression
         }
+
+    val delegateExpression: UExpression? by lz {
+        val psi = psi
+        val expression = when (psi) {
+            is KtLightElement<*, *> -> (psi.kotlinOrigin as? KtProperty)?.delegateExpression
+            is UastKotlinPsiVariable -> (psi.ktElement as? KtProperty)?.delegateExpression
+            else -> null
+        }
+
+        expression?.let { getLanguagePlugin().convertElement(it, this) as? UExpression }
+    }
 
     override fun getNameIdentifier(): PsiIdentifier {
         val kotlinOrigin = (psi as? KtLightElement<*, *>)?.kotlinOrigin
@@ -136,6 +150,14 @@ open class KotlinUField(
     }
 
     override fun getContainingFile(): PsiFile? = (psi as? KtLightElement<*, *>)?.kotlinOrigin?.containingFile ?: psi.containingFile
+
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitField(this)) return
+        annotations.acceptList(visitor)
+        uastInitializer?.accept(visitor)
+        delegateExpression?.accept(visitor)
+        visitor.afterVisitField(this)
+    }
 }
 
 open class KotlinULocalVariable(
@@ -155,6 +177,14 @@ open class KotlinULocalVariable(
 
     override fun getNameIdentifier(): PsiIdentifier {
         return super.getNameIdentifier()
+    }
+
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitLocalVariable(this)) return
+        annotations.acceptList(visitor)
+        uastInitializer?.accept(visitor)
+        delegateExpression?.accept(visitor)
+        visitor.afterVisitLocalVariable(this)
     }
 }
 

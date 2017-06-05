@@ -26,4 +26,6 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
     @Test fun testStringTemplate() = doTest("StringTemplate")
 
     @Test fun testQualifiedConstructorCall() = doTest("QualifiedConstructorCall")
+
+    @Test fun testPropertyDelegate() = doTest("PropertyDelegate")
 }
