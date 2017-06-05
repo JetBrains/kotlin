@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.ModifierCheckerCore;
 import org.jetbrains.kotlin.resolve.ModifiersChecker;
+import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -132,10 +133,35 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 Lists.newArrayList(false, false),
                 contextWithExpectedType, dataFlowInfoForArguments);
 
+        return processBranches(
+                ifExpression, contextWithExpectedType, context, conditionDataFlowInfo,
+                loopBreakContinuePossibleInCondition, elseBranch, thenBranch, resolvedCall);
+    }
+
+    @NotNull
+    private KotlinTypeInfo processBranches(
+            KtIfExpression ifExpression,
+            ExpressionTypingContext contextWithExpectedType,
+            ExpressionTypingContext context,
+            DataFlowInfo conditionDataFlowInfo,
+            boolean loopBreakContinuePossibleInCondition,
+            KtExpression elseBranch,
+            KtExpression thenBranch,
+            ResolvedCall<FunctionDescriptor> resolvedCall
+    ) {
         BindingContext bindingContext = context.trace.getBindingContext();
         KotlinTypeInfo thenTypeInfo = BindingContextUtils.getRecordedTypeInfo(thenBranch, bindingContext);
         KotlinTypeInfo elseTypeInfo = BindingContextUtils.getRecordedTypeInfo(elseBranch, bindingContext);
-        assert thenTypeInfo != null || elseTypeInfo != null : "Both branches of if expression were not processed: " + ifExpression.getText();
+
+        boolean isThenPostponed = ArgumentTypeResolver.isFunctionLiteralOrCallableReference(thenBranch, context);
+        boolean isElsePostponed = ArgumentTypeResolver.isFunctionLiteralOrCallableReference(thenBranch, context);
+
+        assert thenTypeInfo != null || elseTypeInfo != null ||
+               isThenPostponed || isElsePostponed : "Both branches of if expression were not processed: " + ifExpression.getText();
+
+        if (thenTypeInfo == null && elseTypeInfo == null) {
+            return TypeInfoFactoryKt.noTypeInfo(context);
+        }
 
         KotlinType resultType = resolvedCall.getResultingDescriptor().getReturnType();
         boolean loopBreakContinuePossible = loopBreakContinuePossibleInCondition;
@@ -184,6 +210,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 return TypeInfoFactoryKt.noTypeInfo(resultDataFlowInfo);
             }
         }
+
         // If break or continue was possible, take condition check info as the jump info
         return TypeInfoFactoryKt.createTypeInfo(
                 components.dataFlowAnalyzer.checkType(resultType, ifExpression, contextWithExpectedType),

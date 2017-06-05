@@ -162,6 +162,18 @@ public class ArgumentTypeResolver {
         return getFunctionLiteralArgumentIfAny(expression, context) != null;
     }
 
+    public static boolean isCallableReferenceArgument(
+            @NotNull KtExpression expression, @NotNull ResolutionContext context
+    ) {
+        return getCallableReferenceExpressionIfAny(expression, context) != null;
+    }
+
+    public static boolean isFunctionLiteralOrCallableReference(
+            @NotNull KtExpression expression, @NotNull ResolutionContext context
+    ) {
+        return isFunctionLiteralArgument(expression, context) || isCallableReferenceArgument(expression, context);
+    }
+
     @NotNull
     public static KtFunction getFunctionLiteralArgument(
             @NotNull KtExpression expression, @NotNull ResolutionContext context
@@ -188,7 +200,7 @@ public class ArgumentTypeResolver {
     @Nullable
     public static KtCallableReferenceExpression getCallableReferenceExpressionIfAny(
             @NotNull KtExpression expression,
-            @NotNull CallResolutionContext<?> context
+            @NotNull ResolutionContext context
     ) {
         KtExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context.statementFilter);
         if (deparenthesizedExpression instanceof KtCallableReferenceExpression) {
