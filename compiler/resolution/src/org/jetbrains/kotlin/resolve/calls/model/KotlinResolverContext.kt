@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.resolve.calls.components.CheckArguments
-import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
@@ -78,7 +76,7 @@ class SimpleCandidateFactory(val callContext: KotlinCallContext, val kotlinCall:
         }
 
         return SimpleKotlinResolutionCandidate(callContext, kotlinCall, explicitReceiverKind, dispatchArgumentReceiver, extensionArgumentReceiver,
-                                               towerCandidate.descriptor, towerCandidate.diagnostics)
+                                               towerCandidate.descriptor, null, towerCandidate.diagnostics)
     }
 }
 

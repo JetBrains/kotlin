@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
 
@@ -38,6 +39,9 @@ class ArgumentConstraintPosition(val argument: KotlinCallArgument) : ConstraintP
 }
 class FixVariableConstraintPosition(val variable: NewTypeVariable) : ConstraintPosition() {
     override fun toString() = "Fix variable $variable"
+}
+class KnownTypeParameterConstraintPosition(val typeArgument: KotlinType) : ConstraintPosition() {
+    override fun toString() = "TypeArgument $typeArgument"
 }
 
 class IncorporationConstraintPosition(val from: ConstraintPosition, val initialConstraint: InitialConstraint) : ConstraintPosition() {

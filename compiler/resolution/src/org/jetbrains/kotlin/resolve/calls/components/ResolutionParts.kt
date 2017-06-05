@@ -22,13 +22,15 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExplicitTypeParameterConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.KnownTypeParameterConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.RUNTIME_ERROR
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -119,7 +121,7 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
         }
 
         // optimization
-        if (typeArgumentMappingByOriginal == NoExplicitArguments) {
+        if (typeArgumentMappingByOriginal == NoExplicitArguments && knownTypeParametersResultingSubstitutor == null) {
             descriptorWithFreshTypes = candidateDescriptor.substitute(toFreshVariables)
             csBuilder.simplify().let { assert(it.isEmpty) { "Substitutor should be empty: $it, call: $kotlinCall" } }
             return emptyList()
@@ -128,6 +130,13 @@ internal object CreateDescriptorWithFreshTypeVariables : ResolutionPart {
         val typeParameters = candidateDescriptor.typeParameters
         for (index in typeParameters.indices) {
             val typeParameter = typeParameters[index]
+            val knownTypeArgument = knownTypeParametersResultingSubstitutor?.substitute(typeParameter.defaultType)
+            if (knownTypeArgument != null) {
+                val freshVariable = toFreshVariables.freshVariables[index]
+                csBuilder.addEqualityConstraint(freshVariable.defaultType, knownTypeArgument.unwrap(), KnownTypeParameterConstraintPosition(knownTypeArgument))
+                continue
+            }
+
             val typeArgument = typeArgumentMappingByOriginal.getTypeArgument(typeParameter)
 
             if (typeArgument is SimpleTypeArgument) {
