@@ -6,7 +6,7 @@ import java.io.File
 
 class Kapt3Android30IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: String
-        get() = "3.0.0-alpha1"
+        get() = "3.0.0-alpha3"
 }
 
 open class Kapt3AndroidIT : Kapt3BaseIT() {
@@ -104,6 +104,19 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
             assertFileExists("build/generated/source/kapt/release/io/realm/CatRealmProxyInterface.java")
             assertFileExists("build/generated/source/kapt/release/io/realm/DefaultRealmModule.java")
             assertFileExists("build/generated/source/kapt/release/io/realm/DefaultRealmModuleMediator.java")
+        }
+    }
+
+    @Test
+    open fun testDatabinding() {
+        val project = Project("android-databinding", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val options = androidBuildOptions()
+
+        project.build("compileReleaseSources", options = options) {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertFileExists("app/build/generated/source/kapt/release/com/example/databinding/BR.java")
+            assertFileExists("app/build/generated/source/kapt/release/com/example/databinding/databinding/ActivityTestBinding.java")
         }
     }
 }

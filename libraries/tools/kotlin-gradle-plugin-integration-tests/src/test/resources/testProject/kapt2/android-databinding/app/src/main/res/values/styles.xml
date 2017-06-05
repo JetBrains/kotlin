@@ -1,0 +1,17 @@
+<resources>
+
+   <!-- Base application theme. -->
+   <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
+      <!-- Customize your theme here. -->
+   </style>
+
+   <style name="EditProfileRow">
+      <item name="android:layout_marginBottom">18dp</item>
+      <item name="android:layout_column">0</item>
+   </style>
+
+   <style name="EditProfileRowColumn" parent="EditProfileRow">
+      <item name="android:layout_marginEnd">5dp</item>
+   </style>
+
+</resources>
