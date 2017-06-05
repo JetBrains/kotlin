@@ -50,6 +50,8 @@ internal abstract class PlatformFlags(val distribution: Distribution) {
    abstract fun linkCommand(objectFiles: List<ObjectFile>,
         executable: ExecutableFile, optimize: Boolean): List<String>
 
+    open fun linkCommandSuffix(): List<String> = emptyList()
+
     protected fun propertyHostString(name: String)
         = properties.propertyString(name, hostSuffix)!!
     protected fun propertyHostList(name: String)
@@ -133,9 +135,9 @@ internal open class LinuxBasedPlatform(distribution: Distribution)
             "-L${llvmLib}", "-L${libGcc}") +
             specificLibs +
             listOf("-L${targetSysRoot}/../lib", "-L${targetSysRoot}/lib", "-L${targetSysRoot}/usr/lib") + 
-            if (optimize) listOf("-plugin", "$llvmLib/LLVMgold.so") + pluginOptimizationFlags else {listOf<String>()} +
+            if (optimize) listOf("-plugin", "$llvmLib/LLVMgold.so") + pluginOptimizationFlags else emptyList<String>() +
             objectFiles +
-            if (optimize) linkerOptimizationFlags else {listOf<String>()} +
+            if (optimize) linkerOptimizationFlags else emptyList<String>() +
             linkerKonanFlags +
             listOf("-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed", 
             "-lc", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
@@ -154,9 +156,10 @@ internal open class MingwPlatform(distribution: Distribution)
     override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
         return listOf(linker, "-o", executable) +
                 objectFiles +
-                (if (optimize) linkerOptimizationFlags else {listOf<String>()}) +
-                linkerKonanFlags
+                (if (optimize) linkerOptimizationFlags else emptyList())
     }
+
+    override fun linkCommandSuffix() = linkerKonanFlags
 }
 
 internal class LinkStage(val context: Context) {
@@ -234,7 +237,8 @@ internal class LinkStage(val context: Context) {
         val linkCommand = platform.linkCommand(objectFiles, executable, optimize) +
                 distribution.libffi +
                 asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
-                entryPointSelector
+                entryPointSelector +
+                platform.linkCommandSuffix()
 
         runTool(*linkCommand.toTypedArray())
         if (platform is MacOSBasedPlatform && context.shouldContainDebugInfo()) {
@@ -278,13 +282,7 @@ internal class LinkStage(val context: Context) {
 
         val phaser = PhaseManager(context)
         phaser.phase(KonanPhase.OBJECT_FILES) {
-            objectFiles = if (optimize) {
-                listOf( llvmLto(bitcodeFiles ) )
-            } else {
-                listOf( llvmLto(bitcodeFiles ) )
-                // Or, alternatively, go through llc bitcode compiler.
-                //bitcodeFiles.map{ it -> llvmLlc(it) }
-            }
+            objectFiles = listOf( llvmLto(bitcodeFiles ) )
         }
         phaser.phase(KonanPhase.LINKER) {
             link(objectFiles)
