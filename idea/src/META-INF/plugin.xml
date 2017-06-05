@@ -410,10 +410,6 @@
         id="kotlinClass"
         implementation="org.jetbrains.kotlin.idea.refactoring.copy.CopyKotlinDeclarationsHandler"
         order="first" />
-    <refactoring.copyHandler
-        id="kotlinFile"
-        implementation="org.jetbrains.kotlin.idea.refactoring.copy.CopyKotlinFileHandler"
-        order="after kotlinClass" />
     <refactoring.changeSignatureUsageProcessor
         implementation="org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureUsageProcessor"
         order="after javaProcessor" />
