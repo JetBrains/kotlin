@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#
+
 # Copyright 2010-2017 JetBrains s.r.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,70 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [ -z "$JAVACMD" -a -n "$JAVA_HOME" -a -x "$JAVA_HOME/bin/java" ]; then
-    JAVACMD="$JAVA_HOME/bin/java"
-else
-    JAVACMD=java
-fi
-[ -n "$JAVACMD" ] || JAVACMD=java
+DIR="${BASH_SOURCE[0]%/*}"
+: ${DIR:="."}
 
-declare -a java_args
-declare -a java_opts
-declare -a konan_args
-
-while [ $# -gt 0 ]; do
-  case "$1" in
-    -D*)
-      java_args=("${java_args[@]}" "$1")
-      shift
-      ;;
-    -J*)
-      java_args=("${java_args[@]}" "${1:2}")
-      shift
-      ;;
-    -X*)
-      echo "TODO: need to pass arguments to all the tools somehow."
-      shift
-      ;;
-    --time)
-      konan_args=("${konan_args[@]}" --time)
-      java_args=("${java_args[@]}" -agentlib:hprof=cpu=samples -Dkonan.profile=true)
-      JAVACMD="time $JAVACMD"
-      shift
-      ;;
-     *)
-      konan_args[${#konan_args[@]}]=$1
-      shift
-      ;;
-  esac
-done
-
-findHome() {
-    local source="${BASH_SOURCE[0]}"
-    while [ -h "$source" ] ; do
-        local linked="$(readlink "$source")"
-        local dir="$(cd -P $(dirname "$source") && cd -P $(dirname "$linked") && pwd)"
-        source="$dir/$(basename "$linked")"
-    done
-    (cd -P "$(dirname "$source")/.." && pwd)
-}
-
-KONAN_HOME="$(findHome)"
-
-KONAN_JAR="${KONAN_HOME}/konan/lib/backend.native.jar"
-KOTLIN_JAR="${KONAN_HOME}/konan/lib/kotlin-compiler.jar"
-INTEROP_JAR="${KONAN_HOME}/konan/lib/Runtime.jar"
-HELPERS_JAR="${KONAN_HOME}/konan/lib/helpers.jar"
-NATIVE_LIB="${KONAN_HOME}/konan/nativelib"
-KONAN_CLASSPATH="$KOTLIN_JAR:$INTEROP_JAR:$KONAN_JAR:$HELPERS_JAR"
-KONAN_COMPILER=org.jetbrains.kotlin.cli.bc.K2NativeKt
-java_opts=(-ea -Dfile.encoding=UTF-8)
-
-#
-# KONAN BACKEND INVOCATION
-#
-
-java_args=("${java_args[@]}" -noverify "-Dkonan.home=${KONAN_HOME}" "-Djava.library.path=${NATIVE_LIB}")
-
-"$JAVACMD" "${java_opts[@]}" "${java_args[@]}" -cp "$KONAN_CLASSPATH" "$KONAN_COMPILER" "${konan_args[@]}"
-
+"${DIR}"/run_konan konanc "$@"

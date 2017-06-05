@@ -249,6 +249,7 @@ task list_dist(dependsOn: "listDist")
 task distCompiler(type: Copy) {
     dependsOn ':backend.native:jars'
     dependsOn ':tools:helpers:jar'
+    dependsOn ':utilities:jar'
 
     destinationDir file('dist')
 
@@ -288,6 +289,9 @@ task distCompiler(type: Copy) {
         into('konan/nativelib')
     }
 
+    from(project(':utilities').file('build/libs')) {
+        into('konan/lib')
+    }
 
     from(file('cmd')) {
         fileMode(0755)

@@ -1,5 +1,5 @@
-#!/usr/bin/env bash 
-#
+#!/usr/bin/env bash
+
 # Copyright 2010-2017 JetBrains s.r.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,89 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [ -z "$JAVACMD" -a -n "$JAVA_HOME" -a -x "$JAVA_HOME/bin/java" ]; then
-    JAVACMD="$JAVA_HOME/bin/java"
-else
-    JAVACMD=java
-fi
-[ -n "$JAVACMD" ] || JAVACMD=java
+DIR="${BASH_SOURCE[0]%/*}"
+: ${DIR:="."}
 
-declare -a java_args
-declare -a java_opts
-declare -a interop_args
-
-OUTPUT_FILE_NAME=nativelib
-TARGET=host
-
-while [ $# -gt 0 ]; do
-  case "$1" in
-    -D*)
-      java_args=("${java_args[@]}" "$1")
-      shift
-      ;;
-    -J*)
-      java_args=("${java_args[@]}" "${1:2}")
-      shift
-      ;;
-    -o)
-      OUTPUT_FILE_NAME="$2"
-      shift 2
-      ;;
-    -target)
-      TARGET="$2"
-      shift 2
-      ;;
-     *)
-      interop_args=("${interop_args[@]}" "$1")
-      shift
-      ;;
-  esac
-done
-
-findHome() {
-    local source="${BASH_SOURCE[0]}"
-    while [ -h "$source" ] ; do
-	local linked="$(readlink "$source")"
-	local dir="$(cd -P $(dirname "$source") && cd -P $(dirname "$linked") && pwd)"
-	source="$dir/$(basename "$linked")"
-    done
-    (cd -P "$(dirname "$source")/.." && pwd)
-}
-KONAN_HOME="$(findHome)"
-
-NATIVE_LIB="${KONAN_HOME}/konan/nativelib"
-java_opts=(-ea \
-    "-Djava.library.path=${NATIVE_LIB}" \
-    "-Dkonan.home=${KONAN_HOME}" \
-    -Dfile.encoding=UTF-8)
-
-STUB_GENERATOR_JAR="${KONAN_HOME}/konan/lib/StubGenerator.jar"
-KOTLIN_JAR="${KONAN_HOME}/konan/lib/kotlin-compiler.jar"
-INTEROP_INDEXER_JAR="${KONAN_HOME}/konan/lib/Indexer.jar"
-INTEROP_RUNTIME_JAR="${KONAN_HOME}/konan/lib/Runtime.jar"
-HELPERS_JAR="${KONAN_HOME}/konan/lib/helpers.jar"
-INTEROP_CLASSPATH="$STUB_GENERATOR_JAR:$KOTLIN_JAR:$INTEROP_INDEXER_JAR:$INTEROP_RUNTIME_JAR:$HELPERS_JAR"
-INTEROP_TOOL=org.jetbrains.kotlin.native.interop.gen.jvm.MainKt
-
-FLAVOR_ARG="-flavor native"
-
-GENERATED_DIR="$OUTPUT_FILE_NAME-build/kotlin"
-GENERATED_ARG="-generated $GENERATED_DIR"
-NATIVES_DIR="$OUTPUT_FILE_NAME-build/natives"
-NATIVES_ARG="-natives $NATIVES_DIR"
-CSTUBSNAME=cstubs
-CSTUBSNAME_ARG="-cstubsname $CSTUBSNAME"
-
-LIBCLANG_DISABLE_CRASH_RECOVERY=1 \
-$JAVACMD "${java_opts[@]}" "${java_args[@]}" \
-    -cp "$INTEROP_CLASSPATH" \
-    $INTEROP_TOOL \
-    $GENERATED_ARG $NATIVES_ARG $CSTUBSNAME_ARG \
-    $FLAVOR_ARG -target $TARGET "${interop_args[@]}" \
-    || exit 1
-
-# Stubs may be rather big, so we may need more heap space.
-XMX_ARG=-J-Xmx3G
-
-"${KONAN_HOME}/bin/konanc" $XMX_ARG "$GENERATED_DIR" -produce library -nativelibrary "$NATIVES_DIR/$CSTUBSNAME.bc" \
-    -o "$OUTPUT_FILE_NAME" -target "$TARGET"
+"${DIR}"/run_konan cinterop "$@"
