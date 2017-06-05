@@ -1,0 +1,9 @@
+8 fun bar(n: Int) = <bold>n</bold>
+8 	fun <bold>bar(n: Int) = n</bold>
+9 		[LAMBDA] val f = <bold>::bar</bold>
+9 			[LAMBDA] val <bold>f = ::bar</bold>
+3 				[LAMBDA] fun foo(<bold>f: (Int) -> Int</bold>): Int {
+4 					return <bold>f(1)</bold>
+3 						fun <bold>foo(f: (Int) -> Int): Int {</bold>
+10 							val x = <bold>foo(f)</bold>
+10 								val <bold>x = foo(f)</bold>

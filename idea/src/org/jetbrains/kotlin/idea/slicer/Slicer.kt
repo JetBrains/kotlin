@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.idea.findUsages.processAllUsages
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
@@ -211,6 +213,12 @@ class InflowSlicer(
 
             is MagicInstruction -> when (createdAt.kind) {
                 MagicKind.NOT_NULL_ASSERTION, MagicKind.CAST -> createdAt.passInputsToProcessor()
+                MagicKind.BOUND_CALLABLE_REFERENCE, MagicKind.UNBOUND_CALLABLE_REFERENCE -> {
+                    val callableRefExpr = expressionValue.element as? KtCallableReferenceExpression ?: return
+                    val referencedDescriptor = analyze()[BindingContext.REFERENCE_TARGET, callableRefExpr.callableReference] ?: return
+                    val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() ?: return
+                    referencedDeclaration.passToProcessor(parentUsage.lambdaLevel - 1)
+                }
                 else -> return
             }
 
@@ -277,10 +285,17 @@ class OutflowSlicer(
         return null
     }
 
+    private fun PsiElement.getCallableReferenceForExactCallee(): KtCallableReferenceExpression? {
+        val callableRef = getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference } ?: return null
+        val callee = KtPsiUtil.safeDeparenthesize(callableRef.callableReference)
+        return if (callee == this) callableRef else null
+    }
+
     private fun KtFunction.processFunction() {
         if (this is KtConstructor<*> || this is KtNamedFunction && name != null) {
             processCalls(parentUsage.scope.toSearchScope()) {
                 it.element?.getCallElementForExactCallee()?.passToProcessor()
+                it.element?.getCallableReferenceForExactCallee()?.passToProcessor(parentUsage.lambdaLevel + 1)
             }
             return
         }

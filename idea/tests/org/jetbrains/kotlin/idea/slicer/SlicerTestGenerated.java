@@ -72,6 +72,24 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inflow/funResultViaCallableRef.kt")
+    public void testInflow_FunResultViaCallableRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/funResultViaCallableRef.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/funResultViaCallableRefWithAssignment.kt")
+    public void testInflow_FunResultViaCallableRefWithAssignment() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/funResultViaCallableRefWithAssignment.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inflow/funResultViaCallableRefWithDirectCall.kt")
+    public void testInflow_FunResultViaCallableRefWithDirectCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/funResultViaCallableRefWithDirectCall.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inflow/funWithExpressionBody.kt")
     public void testInflow_FunWithExpressionBody() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/funWithExpressionBody.kt");
@@ -267,6 +285,24 @@ public class SlicerTestGenerated extends AbstractSlicerTest {
     @TestMetadata("outflow/funParameterUsages.kt")
     public void testOutflow_FunParameterUsages() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/funParameterUsages.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/funResultViaCallableRef.kt")
+    public void testOutflow_FunResultViaCallableRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/funResultViaCallableRef.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/funResultViaCallableRefWithAssignment.kt")
+    public void testOutflow_FunResultViaCallableRefWithAssignment() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/funResultViaCallableRefWithAssignment.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outflow/funResultViaCallableRefWithDirectCall.kt")
+    public void testOutflow_FunResultViaCallableRefWithDirectCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/outflow/funResultViaCallableRefWithDirectCall.kt");
         doTest(fileName);
     }
 
