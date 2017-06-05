@@ -16,26 +16,21 @@
 
 package org.jetbrains.kotlin.android.synthetic.test
 
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import java.io.File
 
 abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
-
     private fun createAndroidAPIEnvironment(path: String) {
         return createEnvironmentForConfiguration(KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.ANDROID_API), path)
     }
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
         val layoutPaths = getResPaths(path)
-        myEnvironment = createTestEnvironment(configuration, layoutPaths).apply {
-            val runtimeLibrary = File("out/production/android-extensions-runtime")
-            updateClasspath(listOf(JvmClasspathRoot(runtimeLibrary)))
-        }
+        myEnvironment = createTestEnvironment(configuration, layoutPaths)
+        addAERuntimeLibrary(myEnvironment)
     }
 
     override fun doTest(path: String) {

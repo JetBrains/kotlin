@@ -69,7 +69,7 @@ abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
     }
 
     private fun doMultiFileTest(path: String, additionalFiles: Collection<String>? = null) {
-        val files = ArrayList<String>(2)
+        val files = mutableListOf<String>()
         FileUtil.processFilesRecursively(File(path), object : Processor<File> {
             override fun process(file: File?): Boolean {
                 when (file!!.name) {
@@ -86,6 +86,11 @@ abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
                 return true
             }
         })
+
+        for (file in File("plugins/android-extensions/android-extensions-runtime/src").walk()) {
+            if (file.extension == "kt") files += relativePath(file.absoluteFile)
+        }
+
         Collections.sort(files)
         if (additionalFiles != null) {
             files.addAll(additionalFiles)
