@@ -39,3 +39,8 @@ class A {
             }
     }
 }
+
+class Node(val next: Node?) {
+    val last: Node
+        get() = if (next != null) next.last else this
+}
