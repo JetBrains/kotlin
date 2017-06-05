@@ -4,7 +4,9 @@ import com.android.build.gradle.*
 import com.android.build.gradle.api.*
 import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.com.intellij.util.ReflectionUtil
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptTask
@@ -131,8 +133,15 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         ) {
             val kaptSourceOutput = project.fileTree(kaptTask.destinationDir).builtBy(kaptTask)
             variantData.registerExternalAptJavaOutput(kaptSourceOutput)
+            variantData.dataBindingDependencyArtifactsIfSupported?.let { kaptTask.dependsOn(it) }
         }
     }
+
+    //TODO once the Android plugin reaches its 3.0.0 release, consider compiling against it (remove the reflective call)
+    private val BaseVariant.dataBindingDependencyArtifactsIfSupported: FileCollection?
+        get() = ReflectionUtil.findMethod(
+                this::class.java.methods.toList(),
+                "getDataBindingDependencyArtifacts")?.invoke(this) as? FileCollection
 
     override fun wrapVariantDataForKapt(variantData: BaseVariant): KaptVariantData<BaseVariant> =
             KaptVariant(variantData)
