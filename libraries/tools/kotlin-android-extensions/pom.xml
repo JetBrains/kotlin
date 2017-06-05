@@ -8,6 +8,7 @@
         <maven-plugin-anno.version>1.4.1</maven-plugin-anno.version>
         <maven.version>3.0.4</maven.version>
         <android-extensions.src>${basedir}/../../../plugins/android-extensions/android-extensions-compiler/src</android-extensions.src>
+        <android-extensions-runtime.src>${basedir}/../../../plugins/android-extensions/android-extensions-runtime/src</android-extensions-runtime.src>
         <android-extensions.target-src>${basedir}/target/src</android-extensions.target-src>
         <android-extensions.target-resource>${basedir}/target/resource</android-extensions.target-resource>
     </properties>
@@ -29,6 +30,12 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-compiler-embeddable</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <version>2.3.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -55,6 +62,7 @@
                             <outputDirectory>${android-extensions.target-src}</outputDirectory>
                             <resources>
                                 <resource><directory>${android-extensions.src}</directory></resource>
+                                <resource><directory>${android-extensions-runtime.src}</directory></resource>
                             </resources>
                         </configuration>
                     </execution>

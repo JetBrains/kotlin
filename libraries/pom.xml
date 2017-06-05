@@ -99,6 +99,7 @@
 
         <module>tools/kotlin-script-util</module>
         <module>tools/kotlin-android-extensions</module>
+        <module>tools/kotlin-android-extensions-runtime</module>
         <module>tools/kotlin-maven-plugin-test</module>
 
         <module>examples/annotation-processor-example</module>
