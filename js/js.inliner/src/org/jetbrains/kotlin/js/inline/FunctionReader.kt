@@ -49,7 +49,12 @@ private val JS_IDENTIFIER="[$JS_IDENTIFIER_START][$JS_IDENTIFIER_PART]*"
 private val DEFINE_MODULE_PATTERN = ("($JS_IDENTIFIER)\\.defineModule\\(\\s*(['\"])([^'\"]+)\\2\\s*,\\s*(\\w+)\\s*\\)").toRegex().toPattern()
 private val DEFINE_MODULE_FIND_PATTERN = ".defineModule("
 
-class FunctionReader(private val config: JsConfig, private val currentModuleName: JsName, fragments: List<JsProgramFragment>) {
+class FunctionReader(
+        private val reporter: JsConfig.Reporter,
+        private val config: JsConfig,
+        private val currentModuleName: JsName,
+        fragments: List<JsProgramFragment>
+) {
     /**
      * fileContent: .js file content, that contains this module definition.
      *     One file can contain more than one module definition.
@@ -98,7 +103,10 @@ class FunctionReader(private val config: JsConfig, private val currentModuleName
                     val result = SourceMapParser.parse(StringReader(it))
                     when (result) {
                         is SourceMapSuccess -> result.value
-                        is SourceMapError -> throw RuntimeException("Error parsing source map file: ${result.message}\n$it")
+                        is SourceMapError -> {
+                            reporter.warning("Error parsing source map file for $path: ${result.message}")
+                            null
+                        }
                     }
                 }
 

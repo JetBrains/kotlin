@@ -66,40 +66,44 @@ public final class K2JSTranslator {
 
     @NotNull
     public TranslationResult translate(
+            @NotNull JsConfig.Reporter reporter,
             @NotNull List<KtFile> files,
             @NotNull MainCallParameters mainCallParameters
     ) throws TranslationException {
-        return translate(files, mainCallParameters, null);
+        return translate(reporter, files, mainCallParameters, null);
     }
 
     @NotNull
     public TranslationResult translate(
+            @NotNull JsConfig.Reporter reporter,
             @NotNull List<KtFile> files,
             @NotNull MainCallParameters mainCallParameters,
             @Nullable JsAnalysisResult analysisResult
     ) throws TranslationException {
-        List<TranslationUnit> units = new ArrayList<TranslationUnit>();
+        List<TranslationUnit> units = new ArrayList<>();
         for (KtFile file : files) {
             units.add(new TranslationUnit.SourceFile(file));
         }
-        return translateUnits(units, mainCallParameters, analysisResult);
+        return translateUnits(reporter, units, mainCallParameters, analysisResult);
     }
 
     @NotNull
     public TranslationResult translateUnits(
+            @NotNull JsConfig.Reporter reporter,
             @NotNull List<TranslationUnit> units,
             @NotNull MainCallParameters mainCallParameters
     ) throws TranslationException {
-        return translateUnits(units, mainCallParameters, null);
+        return translateUnits(reporter, units, mainCallParameters, null);
     }
 
     @NotNull
     public TranslationResult translateUnits(
+            @NotNull JsConfig.Reporter reporter,
             @NotNull List<TranslationUnit> units,
             @NotNull MainCallParameters mainCallParameters,
             @Nullable JsAnalysisResult analysisResult
     ) throws TranslationException {
-        List<KtFile> files = new ArrayList<KtFile>();
+        List<KtFile> files = new ArrayList<>();
         for (TranslationUnit unit : units) {
             if (unit instanceof TranslationUnit.SourceFile) {
                 files.add(((TranslationUnit.SourceFile) unit).getFile());
@@ -120,10 +124,11 @@ public final class K2JSTranslator {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
 
-        List<JsProgramFragment> newFragments = new ArrayList<JsProgramFragment>(translationResult.getNewFragments());
-        List<JsProgramFragment> allFragments = new ArrayList<JsProgramFragment>(translationResult.getFragments());
+        List<JsProgramFragment> newFragments = new ArrayList<>(translationResult.getNewFragments());
+        List<JsProgramFragment> allFragments = new ArrayList<>(translationResult.getFragments());
 
-        JsInliner.process(config, analysisResult.getBindingTrace(), translationResult.getInnerModuleName(), allFragments, newFragments);
+        JsInliner.process(reporter, config, analysisResult.getBindingTrace(), translationResult.getInnerModuleName(),
+                          allFragments, newFragments);
 
         LabeledBlockToDoWhileTransformation.INSTANCE.apply(newFragments);
 
@@ -139,7 +144,7 @@ public final class K2JSTranslator {
         ExpandIsCallsKt.expandIsCalls(newFragments);
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        Map<KtFile, FileTranslationResult> fileMap = new HashMap<KtFile, FileTranslationResult>();
+        Map<KtFile, FileTranslationResult> fileMap = new HashMap<>();
         JsAstSerializer serializer = new JsAstSerializer();
         byte[] metadataHeader = null;
         boolean serializeFragments = config.getConfiguration().get(JSConfigurationKeys.SERIALIZE_FRAGMENTS, false);

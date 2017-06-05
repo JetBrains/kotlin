@@ -135,7 +135,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         configuration.put(CommonConfigurationKeys.MODULE_NAME, FileUtil.getNameWithoutExtension(outputFile));
 
         JsConfig config = new JsConfig(project, configuration);
-        if (config.checkLibFilesAndReportErrors(new JsConfig.Reporter() {
+        JsConfig.Reporter reporter = new JsConfig.Reporter() {
             @Override
             public void error(@NotNull String message) {
                 messageCollector.report(ERROR, message, null);
@@ -145,7 +145,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             public void warning(@NotNull String message) {
                 messageCollector.report(STRONG_WARNING, message, null);
             }
-        })) {
+        };
+        if (config.checkLibFilesAndReportErrors(reporter)) {
             return COMPILATION_ERROR;
         }
 
@@ -184,7 +185,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         K2JSTranslator translator = new K2JSTranslator(config);
         try {
             //noinspection unchecked
-            translationResult = translator.translate(sourcesFiles, mainCallParameters, jsAnalysisResult);
+            translationResult = translator.translate(reporter, sourcesFiles, mainCallParameters, jsAnalysisResult);
         }
         catch (Exception e) {
             throw ExceptionUtilsKt.rethrow(e);

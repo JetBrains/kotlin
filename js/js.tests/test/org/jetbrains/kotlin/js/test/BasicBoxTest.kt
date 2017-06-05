@@ -331,7 +331,7 @@ abstract class BasicBoxTest(
             outputPostfixFile: File?,
             mainCallParameters: MainCallParameters) {
         val translator = K2JSTranslator(config)
-        val translationResult = translator.translateUnits(units, mainCallParameters)
+        val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
 
         if (translationResult !is TranslationResult.Success) {
             val outputStream = ByteArrayOutputStream()

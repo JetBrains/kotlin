@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationResult
 import org.jetbrains.kotlin.js.facade.TranslationUnit
+import org.jetbrains.kotlin.js.test.utils.ExceptionThrowingReporter
 import org.jetbrains.kotlin.js.test.utils.LineCollector
 import org.jetbrains.kotlin.js.test.utils.LineOutputToStringVisitor
 import org.jetbrains.kotlin.js.util.TextOutputImpl
@@ -69,7 +70,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
 
                 val translator = K2JSTranslator(createConfig(module, file, modules))
                 val units = module.files.map { TranslationUnit.SourceFile(createPsiFile(it.fileName)) }
-                val translationResult = translator.translateUnits(units, MainCallParameters.noCall())
+                val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, MainCallParameters.noCall())
 
                 if (translationResult !is TranslationResult.Success) {
                     val outputStream = ByteArrayOutputStream()
