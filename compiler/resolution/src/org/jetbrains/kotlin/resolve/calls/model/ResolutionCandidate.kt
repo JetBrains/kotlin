@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.Candidate
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
@@ -111,6 +112,7 @@ open class SimpleKotlinResolutionCandidate(
         val dispatchReceiverArgument: SimpleKotlinCallArgument?,
         val extensionReceiver: SimpleKotlinCallArgument?,
         val candidateDescriptor: CallableDescriptor,
+        val knownTypeParametersResultingSubstitutor: TypeSubstitutor?,
         initialDiagnostics: Collection<KotlinCallDiagnostic>
 ) : AbstractSimpleKotlinResolutionCandidate(NewConstraintSystemImpl(callContext.constraintInjector, callContext.resultTypeResolver), initialDiagnostics) {
     val csBuilder: ConstraintSystemBuilder get() = constraintSystem.getBuilder()
@@ -139,7 +141,7 @@ class ErrorKotlinResolutionCandidate(
         dispatchReceiverArgument: SimpleKotlinCallArgument?,
         extensionReceiver: SimpleKotlinCallArgument?,
         candidateDescriptor: CallableDescriptor
-) : SimpleKotlinResolutionCandidate(callContext, kotlinCall, explicitReceiverKind, dispatchReceiverArgument, extensionReceiver, candidateDescriptor, listOf()) {
+) : SimpleKotlinResolutionCandidate(callContext, kotlinCall, explicitReceiverKind, dispatchReceiverArgument, extensionReceiver, candidateDescriptor, null, listOf()) {
     override val resolutionSequence: List<ResolutionPart> get() = emptyList()
 
     init {
