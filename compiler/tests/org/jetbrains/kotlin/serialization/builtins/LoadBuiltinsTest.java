@@ -21,6 +21,7 @@ import com.intellij.util.containers.ContainerUtil;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.builtins.BuiltInsLoaderImpl;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
@@ -52,7 +53,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.builtins.BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.*;
 
 public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
@@ -106,7 +106,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
         ModuleDescriptorImpl builtInsModule =
                 new ModuleDescriptorImpl(KotlinBuiltIns.BUILTINS_MODULE_NAME, storageManager, DefaultBuiltIns.getInstance());
 
-        PackageFragmentProvider packageFragmentProvider = createBuiltInPackageFragmentProvider(
+        PackageFragmentProvider packageFragmentProvider = new BuiltInsLoaderImpl().createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
                 Collections.singletonList(new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule)),
                 PlatformDependentDeclarationFilter.All.INSTANCE,

@@ -29,44 +29,46 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
-fun createBuiltInPackageFragmentProvider(
-        storageManager: StorageManager,
-        module: ModuleDescriptor,
-        packageFqNames: Set<FqName>,
-        classDescriptorFactories: Iterable<ClassDescriptorFactory>,
-        platformDependentDeclarationFilter: PlatformDependentDeclarationFilter,
-        additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
-        loadResource: (String) -> InputStream?
-): PackageFragmentProvider {
-    val packageFragments = packageFqNames.map { fqName ->
-        val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)
-        val inputStream = loadResource(resourcePath) ?: throw IllegalStateException("Resource not found in classpath: $resourcePath")
-        BuiltInsPackageFragmentImpl(fqName, storageManager, module, inputStream)
+class BuiltInsLoaderImpl {
+    fun createBuiltInPackageFragmentProvider(
+            storageManager: StorageManager,
+            module: ModuleDescriptor,
+            packageFqNames: Set<FqName>,
+            classDescriptorFactories: Iterable<ClassDescriptorFactory>,
+            platformDependentDeclarationFilter: PlatformDependentDeclarationFilter,
+            additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
+            loadResource: (String) -> InputStream?
+    ): PackageFragmentProvider {
+        val packageFragments = packageFqNames.map { fqName ->
+            val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)
+            val inputStream = loadResource(resourcePath) ?: throw IllegalStateException("Resource not found in classpath: $resourcePath")
+            BuiltInsPackageFragmentImpl(fqName, storageManager, module, inputStream)
+        }
+        val provider = PackageFragmentProviderImpl(packageFragments)
+
+        val notFoundClasses = NotFoundClasses(storageManager, module)
+
+        val components = DeserializationComponents(
+                storageManager,
+                module,
+                DeserializationConfiguration.Default,
+                DeserializedClassDataFinder(provider),
+                AnnotationAndConstantLoaderImpl(module, notFoundClasses, BuiltInSerializerProtocol),
+                provider,
+                LocalClassifierTypeSettings.Default,
+                ErrorReporter.DO_NOTHING,
+                LookupTracker.DO_NOTHING,
+                FlexibleTypeDeserializer.ThrowException,
+                classDescriptorFactories,
+                notFoundClasses,
+                additionalClassPartsProvider = additionalClassPartsProvider,
+                platformDependentDeclarationFilter = platformDependentDeclarationFilter
+        )
+
+        for (packageFragment in packageFragments) {
+            packageFragment.components = components
+        }
+
+        return provider
     }
-    val provider = PackageFragmentProviderImpl(packageFragments)
-
-    val notFoundClasses = NotFoundClasses(storageManager, module)
-
-    val components = DeserializationComponents(
-            storageManager,
-            module,
-            DeserializationConfiguration.Default,
-            DeserializedClassDataFinder(provider),
-            AnnotationAndConstantLoaderImpl(module, notFoundClasses, BuiltInSerializerProtocol),
-            provider,
-            LocalClassifierTypeSettings.Default,
-            ErrorReporter.DO_NOTHING,
-            LookupTracker.DO_NOTHING,
-            FlexibleTypeDeserializer.ThrowException,
-            classDescriptorFactories,
-            notFoundClasses,
-            additionalClassPartsProvider = additionalClassPartsProvider,
-            platformDependentDeclarationFilter = platformDependentDeclarationFilter
-    )
-
-    for (packageFragment in packageFragments) {
-        packageFragment.components = components
-    }
-
-    return provider
 }
