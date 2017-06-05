@@ -33,7 +33,7 @@ class ContainerOptionsProxy(val classType: AndroidContainerType, val cache: Cach
         private val CONTAINER_OPTIONS_FQNAME = FqName(ContainerOptions::class.java.canonicalName)
         private val CACHE_NAME = ContainerOptions::cache.name
 
-        private val DEFAULT_CACHE_IMPL = HASH_MAP
+        private val DEFAULT_CACHE_IMPL = SPARSE_ARRAY
 
         fun get(container: ClassDescriptor): ContainerOptionsProxy {
             if (container.kind != ClassKind.CLASS) {
@@ -52,7 +52,7 @@ class ContainerOptionsProxy(val classType: AndroidContainerType, val cache: Cach
                         if (supportsCache) DEFAULT_CACHE_IMPL else NO_CACHE)
             }
 
-            val cache = anno.getEnumValue(CACHE_NAME, HASH_MAP) { valueOf(it) }
+            val cache = anno.getEnumValue(CACHE_NAME, DEFAULT_CACHE_IMPL) { valueOf(it) }
 
             return ContainerOptionsProxy(classType, cache)
         }

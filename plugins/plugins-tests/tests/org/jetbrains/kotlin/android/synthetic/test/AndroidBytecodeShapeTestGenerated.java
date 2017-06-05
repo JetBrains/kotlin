@@ -156,6 +156,12 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
         doTest(fileName);
     }
 
+    @TestMetadata("simpleHashMapCacheImplementation")
+    public void testSimpleHashMapCacheImplementation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape/simpleHashMapCacheImplementation/");
+        doTest(fileName);
+    }
+
     @TestMetadata("simpleView")
     public void testSimpleView() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape/simpleView/");
