@@ -1,0 +1,4 @@
+>>> for (n in 1..10) foo@ { break@foo }
+error: the label '@foo' does not denote a loop
+for (n in 1..10) foo@ { break@foo }
+                        ^

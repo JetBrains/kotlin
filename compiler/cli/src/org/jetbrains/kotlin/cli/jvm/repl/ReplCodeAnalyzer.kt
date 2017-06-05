@@ -73,7 +73,7 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         this.scriptDeclarationFactory = container.get<ScriptMutableDeclarationProviderFactory>()
         this.resolveSession = container.get<ResolveSession>()
         this.topDownAnalysisContext = TopDownAnalysisContext(
-                TopDownAnalysisMode.LocalDeclarations, DataFlowInfoFactory.EMPTY, resolveSession.declarationScopeProvider
+                TopDownAnalysisMode.TopLevelDeclarations, DataFlowInfoFactory.EMPTY, resolveSession.declarationScopeProvider
         )
         this.topDownAnalyzer = container.get<LazyTopDownAnalyzer>()
     }

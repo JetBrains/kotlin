@@ -213,6 +213,51 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         }
     }
 
+    @TestMetadata("compiler/testData/repl/controlFlow")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ControlFlow extends AbstractReplInterpreterTest {
+        public void testAllFilesPresentInControlFlow() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/controlFlow"), Pattern.compile("^(.+)\\.repl$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("functionWithoutReturn.repl")
+        public void testFunctionWithoutReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/controlFlow/functionWithoutReturn.repl");
+            doTest(fileName);
+        }
+
+        @TestMetadata("incompleteIf.repl")
+        public void testIncompleteIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/controlFlow/incompleteIf.repl");
+            doTest(fileName);
+        }
+
+        @TestMetadata("incompleteWhen.repl")
+        public void testIncompleteWhen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/controlFlow/incompleteWhen.repl");
+            doTest(fileName);
+        }
+
+        @TestMetadata("loopWithWrongLabel.repl")
+        public void testLoopWithWrongLabel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/controlFlow/loopWithWrongLabel.repl");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mutateVal.repl")
+        public void testMutateVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/controlFlow/mutateVal.repl");
+            doTest(fileName);
+        }
+
+        @TestMetadata("useUninitializedVal.repl")
+        public void testUseUninitializedVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/controlFlow/useUninitializedVal.repl");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/repl/modules")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
