@@ -95,6 +95,7 @@ task reflectShadowJar(type: ShadowJar) {
     configurations = [project.configurations.shadows]
     relocate 'org.jetbrains.kotlin', 'kotlin.reflect.jvm.internal.impl'
     relocate 'javax.inject', 'kotlin.reflect.jvm.internal.impl.javax.inject'
+    mergeServiceFiles()
 }
 
 createScriptTask(project, "stripMetadata") {

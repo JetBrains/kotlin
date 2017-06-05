@@ -13,6 +13,8 @@
 
 -keep class kotlin.reflect.jvm.internal.ReflectionFactoryImpl { public protected *; }
 
+-keep class * implements kotlin.reflect.jvm.internal.impl.resolve.ExternalOverridabilityCondition { public protected *; }
+
 -keepclassmembers enum * {
     public static **[] values();
     public static ** valueOf(java.lang.String);
