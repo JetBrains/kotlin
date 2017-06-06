@@ -26,13 +26,12 @@ import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.model.LambdaKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.prepareReceiverRegardingCaptureTypes
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.checker.prepareArgumentTypeRegardingCaptureTypes
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 
 class SimpleTypeArgumentImpl(
@@ -172,16 +171,13 @@ internal fun createSimplePSICallArgument(
         bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)
     }
     val baseType = onlyResolvedCall?.currentReturnType ?: typeInfoForArgument.type?.unwrap() ?: return null
-    val preparedType = prepareArgumentTypeRegardingCaptureTypes(baseType) ?: baseType
 
     // we should use DFI after this argument, because there can be some useful smartcast. Popular case: if branches.
     val receiverToCast = transformToReceiverWithSmartCastInfo(
             ownerDescriptor, bindingContext,
             typeInfoForArgument.dataFlowInfo,
             ExpressionReceiver.create(ktExpression, baseType, bindingContext)
-    ).let {
-        ReceiverValueWithSmartCastInfo(it.receiverValue.replaceType(preparedType), it.possibleTypes, it.isStable)
-    }
+    ).prepareReceiverRegardingCaptureTypes()
 
     return if (onlyResolvedCall == null) {
         ExpressionKotlinCallArgumentImpl(valueArgument, dataFlowInfoBeforeThisArgument, typeInfoForArgument.dataFlowInfo, receiverToCast)
