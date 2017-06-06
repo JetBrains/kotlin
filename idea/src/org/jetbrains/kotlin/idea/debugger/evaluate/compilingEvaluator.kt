@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator
 
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
+import org.jetbrains.kotlin.idea.debugger.evaluate.LOG
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassLoaderHandler
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassLoadingAdapter
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
@@ -25,14 +26,15 @@ fun loadClassesSafely(evaluationContext: EvaluationContextImpl, classes: Collect
     try {
         return loadClasses(evaluationContext, classes)
     } catch (e: Throwable) {
+        LOG.debug("Failed to evaluate expression", e)
         return null
     }
 }
 
-fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderHandler {
+fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderHandler? {
     if (classes.isEmpty()) return ClassLoaderHandler(evaluationContext.classLoader)
 
-    return ClassLoadingAdapter.loadClasses(evaluationContext, classes).apply {
+    return ClassLoadingAdapter.loadClasses(evaluationContext, classes)?.apply {
         evaluationContext.classLoader = this.reference
     }
 }

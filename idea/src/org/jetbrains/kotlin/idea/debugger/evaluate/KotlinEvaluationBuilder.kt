@@ -73,6 +73,7 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -159,7 +160,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 try {
                     return runEval4j(context, extractAndCompile(codeFragment, sourcePosition, context)).toJdiValue(context)
                 } finally {
-                    classLoaderHandler.dispose()
+                    classLoaderHandler?.dispose()
                 }
             }
 
@@ -255,20 +256,24 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             return fileName.substringBeforeLast(".class").replace("/", ".")
         }
 
+        private val CompiledDataDescriptor.mainClass
+            get() = classes.firstOrNull() ?: error(
+                    "Can't find main class for " + sourcePosition.elementAt.getParentOfType<KtDeclaration>(strict = false))
+
         private fun evaluateWithCompilation(context: EvaluationContextImpl, compiledData: CompiledDataDescriptor): Any? {
             val vm = context.debugProcess.virtualMachineProxy.virtualMachine
             val classLoader = context.classLoader ?: return null
-            val mainClassBytecode = compiledData.classes[0].bytes
+            val mainClassBytecode = compiledData.mainClass.bytes
 
             try {
-                val mainClassAsmNode = ClassNode().apply { ClassReader(mainClassBytecode).accept(this, ClassReader.EXPAND_FRAMES) }
+                val mainClassAsmNode = ClassNode().apply { ClassReader(mainClassBytecode).accept(this, ClassReader.SKIP_CODE) }
                 val mainClassJdiName = mainClassAsmNode.name.replace('/', '.')
                 assert(mainClassAsmNode.methods.size == 1)
 
                 val methodToInvoke = mainClassAsmNode.methods[0]
                 assert(methodToInvoke.parameters == null || methodToInvoke.parameters.isEmpty())
 
-                val mainClass = classByName(context, mainClassJdiName, classLoader).reflectedType() as ClassType
+                val mainClass = context.debugProcess.findClass(context, mainClassJdiName, classLoader) as ClassType
 
                 val thread = context.suspendContext.thread?.threadReference!!
                 val invokePolicy = context.suspendContext.getInvokePolicy()
@@ -296,23 +301,12 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             }
         }
 
-        private fun classByName(context: EvaluationContextImpl, className: String, classLoader: ClassLoaderReference): ClassObjectReference {
-            val process = context.debugProcess
-            val vm = process.virtualMachineProxy
-            val classClass = process.findClass(context, Class::class.java.canonicalName, classLoader) as ClassType
-            val forNameMethod = classClass.concreteMethodByName(
-                    "forName", "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;") ?: error("'forName' method not found")
-            return process.invokeMethod(context, classClass, forNameMethod, listOf(
-                    vm.mirrorOf(className),
-                    vm.mirrorOf(true),
-                    classLoader)) as ClassObjectReference
-        }
-
         private fun runEval4j(context: EvaluationContextImpl, compiledData: CompiledDataDescriptor): InterpreterResult {
             val virtualMachine = context.debugProcess.virtualMachineProxy.virtualMachine
             var resultValue: InterpreterResult? = null
 
-            val mainClassBytecode = compiledData.classes[0].bytes
+            // assert [0] with some context
+            val mainClassBytecode = compiledData.mainClass.bytes
 
             ClassReader(mainClassBytecode).accept(object : ClassVisitor(ASM5) {
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
