@@ -214,4 +214,13 @@
     <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary type argument</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
+
+  <problem>
+    <file>lambdaValue.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="lambdaValue.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary type argument</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
 </problems>

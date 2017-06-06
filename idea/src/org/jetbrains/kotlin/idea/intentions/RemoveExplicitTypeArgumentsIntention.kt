@@ -128,6 +128,7 @@ class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentInten
                 if (element !is KtExpression) continue
 
                 if (element.getQualifiedExpressionForSelector() != null) continue
+                if (element is KtFunctionLiteral) continue
                 if (!element.isUsedAsExpression(bindingContext)) return element to null
 
                 val parent = element.parent
