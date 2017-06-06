@@ -132,7 +132,7 @@ class LazyJavaAnnotationDescriptor(
         // Class type is never nullable in 'Foo.class' in Java
         val type = TypeUtils.makeNotNullable(c.typeResolver.transformJavaType(
                 javaType,
-                TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false))
+                TypeUsage.COMMON.toAttributes(allowFlexible = false))
         )
 
         val jlClass = c.module.resolveTopLevelClass(FqName("java.lang.Class"), NoLookupLocation.FOR_NON_TRACKED_SCOPE) ?: return null

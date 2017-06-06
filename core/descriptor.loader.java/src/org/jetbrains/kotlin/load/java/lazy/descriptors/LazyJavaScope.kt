@@ -286,7 +286,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         val allowFlexible = !(field.isFinalStatic && field.hasConstantNotNullInitializer)
         val propertyType = c.typeResolver.transformJavaType(
                 field.type,
-                LazyJavaTypeAttributes(TypeUsage.MEMBER_SIGNATURE_INVARIANT, annotations, allowFlexible)
+                LazyJavaTypeAttributes(TypeUsage.COMMON, annotations, allowFlexible)
         )
         if (!allowFlexible) {
             return TypeUtils.makeNotNullable(propertyType)

@@ -23,7 +23,6 @@ package org.jetbrains.kotlin.load.java.components;
 public enum TypeUsage {
     MEMBER_SIGNATURE_COVARIANT,
     MEMBER_SIGNATURE_CONTRAVARIANT,
-    MEMBER_SIGNATURE_INVARIANT,
     SUPERTYPE,
     COMMON
 }
