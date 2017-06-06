@@ -1474,7 +1474,7 @@ public class KotlinTypeMapper {
         while (true) {
             ResolvedCall<ConstructorDescriptor> next = getDelegationConstructorCall(bindingContext, descriptor);
             if (next == null) return null;
-            descriptor = next.getResultingDescriptor();
+            descriptor = next.getResultingDescriptor().getOriginal();
             if (descriptor.getContainingDeclaration() != constructorOwner) return next;
         }
     }
