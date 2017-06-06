@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
-import org.jetbrains.kotlin.types.checker.prepareArgumentTypeRegardingCaptureTypes
+import org.jetbrains.kotlin.resolve.scopes.receivers.prepareReceiverRegardingCaptureTypes
 
 
 class FakeKotlinCallArgumentForCallableReference(
@@ -45,14 +45,7 @@ class ReceiverExpressionKotlinCallArgument private constructor(
                 receiver: ReceiverValueWithSmartCastInfo,
                    isSafeCall: Boolean = false,
                    isVariableReceiverForInvoke: Boolean = false
-        ): ReceiverExpressionKotlinCallArgument {
-            val newType = prepareArgumentTypeRegardingCaptureTypes(receiver.receiverValue.type.unwrap())
-            val newReceiver = if (newType != null) {
-                ReceiverValueWithSmartCastInfo(receiver.receiverValue.replaceType(newType), receiver.possibleTypes, receiver.isStable)
-            } else receiver
-
-            return ReceiverExpressionKotlinCallArgument(newReceiver, isSafeCall, isVariableReceiverForInvoke)
-        }
+        ) = ReceiverExpressionKotlinCallArgument(receiver.prepareReceiverRegardingCaptureTypes(), isSafeCall, isVariableReceiverForInvoke)
     }
 }
 
