@@ -424,11 +424,14 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
 
         project.afterEvaluate { project ->
             if (project != null) {
-                val plugin = sequenceOf("android", "android-library", "com.android.test", "com.android.feature")
+                val androidPluginIds = listOf("android", "com.android.application", "android-library", "com.android.library",
+                        "com.android.test", "com.android.feature")
+                val plugin = androidPluginIds.asSequence()
                                      .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin }
                                      .firstOrNull()
-                             ?: throw InvalidPluginException("The Kotlin Android plugin cannot be used without " +
-                                                             "the Android Gradle plugin applied to the project.")
+                             ?: throw InvalidPluginException("'kotlin-android' expects one of the Android Gradle " +
+                                                             "plugins to be applied to the project: \n" +
+                                                             androidPluginIds.joinToString("\n\t") { "* $it" })
 
                 val subpluginEnvironment = loadSubplugins(project)
 
