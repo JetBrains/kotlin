@@ -278,9 +278,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries);
 
 
-        if (arguments.typedArrays) {
-            configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true);
-        }
+        configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, arguments.typedArrays);
 
         configuration.put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, arguments.friendModulesDisabled);
 
