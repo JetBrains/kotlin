@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isBinaryRemOperator
 import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
@@ -59,11 +61,8 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.expressions.*
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ControlStructureDataFlowInfo
-import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
-import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.*
 
@@ -93,14 +92,24 @@ class PSICallResolver(
             resolutionKind: NewResolutionOldInference.ResolutionKind<D>,
             tracingStrategy: TracingStrategy
     ) : OverloadResolutionResults<D> {
-        val kotlinCall = toKotlinCall(context, resolutionKind.kotlinCallKind, context.call, name, tracingStrategy)
+        val isBinaryRemOperator = isBinaryRemOperator(context.call)
+        val refinedName = refineNameForRemOperator(isBinaryRemOperator, name)
+
+        val kotlinCall = toKotlinCall(context, resolutionKind.kotlinCallKind, context.call, refinedName, tracingStrategy)
         val scopeTower = ASTScopeTower(context)
         val lambdaAnalyzer = createLambdaAnalyzer(context)
 
         val callContext = createCallContext(scopeTower, lambdaAnalyzer)
         val factoryProviderForInvoke = FactoryProviderForInvoke(context, callContext, kotlinCall)
 
-        val result = kotlinCallResolver.resolveCall(callContext, kotlinCall, calculateExpectedType(context), factoryProviderForInvoke)
+        val expectedType = calculateExpectedType(context)
+        var result = kotlinCallResolver.resolveCall(callContext, kotlinCall, expectedType, factoryProviderForInvoke)
+
+        val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
+        if (isBinaryRemOperator && shouldUseOperatorRem && (result.isEmpty() || result.areAllCompletedAndInapplicable())) {
+            result = resolveToDeprecatedMod(name, context, resolutionKind, tracingStrategy, callContext, expectedType)
+        }
+
         if (result.isEmpty() && reportAdditionalDiagnosticIfNoCandidates(context, scopeTower, resolutionKind.kotlinCallKind, kotlinCall)) {
             return OverloadResolutionResultsImpl.nameNotFound()
         }
@@ -130,6 +139,24 @@ class PSICallResolver(
         val result = kotlinCallResolver.resolveGivenCandidates(callContext, kotlinCall, calculateExpectedType(context), givenCandidates)
         return convertToOverloadResolutionResults(context, result, tracingStrategy)
 
+    }
+
+    private fun <D : CallableDescriptor> resolveToDeprecatedMod(
+            remOperatorName: Name,
+            context: BasicCallResolutionContext,
+            resolutionKind: NewResolutionOldInference.ResolutionKind<D>,
+            tracingStrategy: TracingStrategy, callContext: KotlinCallContext,
+            expectedType: UnwrappedType?
+    ): Collection<ResolvedKotlinCall> {
+        val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[remOperatorName]!!
+        val callWithDeprecatedName = toKotlinCall(context, resolutionKind.kotlinCallKind, context.call, deprecatedName, tracingStrategy)
+        val refinedProviderForInvokeFactory = FactoryProviderForInvoke(context, callContext, callWithDeprecatedName)
+        return kotlinCallResolver.resolveCall(callContext, callWithDeprecatedName, expectedType, refinedProviderForInvokeFactory)
+    }
+
+    private fun refineNameForRemOperator(isBinaryRemOperator: Boolean, name: Name): Name {
+        val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
+        return if (isBinaryRemOperator && !shouldUseOperatorRem) OperatorConventions.REM_TO_MOD_OPERATION_NAMES[name]!! else name
     }
 
     private fun createLambdaAnalyzer(context: BasicCallResolutionContext) =
@@ -193,6 +220,17 @@ class PSICallResolver(
             all {
                 it is ResolvedKotlinCall.CompletedResolvedKotlinCall &&
                 !it.completedCall.resolutionStatus.resultingApplicability.isSuccess
+            }
+
+    private fun Collection<ResolvedKotlinCall>.areAllCompletedAndInapplicable() =
+            all {
+                val applicability = when (it) {
+                    is ResolvedKotlinCall.CompletedResolvedKotlinCall ->
+                        it.completedCall.resolutionStatus.resultingApplicability
+                    is ResolvedKotlinCall.OnlyResolvedKotlinCall ->
+                            it.candidate.status.resultingApplicability
+                }
+                applicability == ResolutionCandidateApplicability.INAPPLICABLE || applicability == ResolutionCandidateApplicability.HIDDEN
             }
 
     // true if we found something
