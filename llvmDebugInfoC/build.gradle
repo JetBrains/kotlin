@@ -21,9 +21,12 @@ model {
   components {
     debugInfo(NativeLibrarySpec) {
       sources.cpp.source.srcDirs "src/main/cpp"
-        binaries.all {
+        binaries.withType(StaticLibraryBinarySpec) { binary ->
           cppCompiler.args "--std=c++11", "-g", "-fPIC", "-I${llvmDir}/include", "-I${projectDir}/src/main/include"
           linker.args "-L${llvmDir}/lib", "-lLLVMCore", "-lLLVMSupport"
+        }
+        binaries.withType(SharedLibraryBinarySpec) { binary ->
+            buildable = false
         }
     }
 
