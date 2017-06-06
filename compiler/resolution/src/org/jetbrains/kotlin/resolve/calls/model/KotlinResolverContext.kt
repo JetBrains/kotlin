@@ -94,6 +94,7 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
     FUNCTION(
             CheckInstantiationOfAbstractClass,
             CheckVisibility,
+            CheckInfixResolutionPart,
             MapTypeArguments,
             MapArguments,
             CreateDescriptorWithFreshTypeVariables,
