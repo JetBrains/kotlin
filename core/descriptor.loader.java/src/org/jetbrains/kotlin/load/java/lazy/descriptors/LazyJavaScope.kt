@@ -146,7 +146,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
     protected fun computeMethodReturnType(method: JavaMethod, annotations: Annotations, c: LazyJavaResolverContext): KotlinType {
         val annotationMethod = method.containingClass.isAnnotationType
         val returnTypeAttrs = LazyJavaTypeAttributes(
-                TypeUsage.MEMBER_SIGNATURE_COVARIANT, annotations,
+                TypeUsage.COMMON, annotations,
                 allowFlexible = !annotationMethod,
                 isForAnnotationParameter = annotationMethod
         )

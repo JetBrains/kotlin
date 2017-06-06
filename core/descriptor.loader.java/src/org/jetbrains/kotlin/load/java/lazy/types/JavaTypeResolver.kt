@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.load.java.ANNOTATIONS_COPIED_TO_TYPES
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.components.TypeUsage.*
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaAnnotations
@@ -150,24 +151,12 @@ class JavaTypeResolver(
 
         val javaToKotlin = JavaToKotlinClassMap
 
-        val howThisTypeIsUsedEffectively = when {
-            attr.flexibility == FLEXIBLE_LOWER_BOUND -> MEMBER_SIGNATURE_COVARIANT
-            attr.flexibility == FLEXIBLE_UPPER_BOUND -> MEMBER_SIGNATURE_CONTRAVARIANT
-
-            // This case has to be checked before isMarkedReadOnly/isMarkedMutable, because those two are slow
-            // not mapped, we don't care about being marked mutable/read-only
-            !javaToKotlin.isJavaPlatformClass(fqName) -> attr.howThisTypeIsUsed
-
-            // Read (possibly external) annotations
-            else -> attr.howThisTypeIsUsedAccordingToAnnotations
-        }
-
         val kotlinDescriptor = javaToKotlin.mapJavaToKotlin(fqName, c.module.builtIns) ?: return null
 
         if (javaToKotlin.isReadOnly(kotlinDescriptor)) {
-            if (howThisTypeIsUsedEffectively == MEMBER_SIGNATURE_COVARIANT
-                || howThisTypeIsUsedEffectively == SUPERTYPE
-                || javaType.argumentsMakeSenseOnlyForMutableContainer(readOnlyContainer = kotlinDescriptor)) {
+            if (attr.flexibility == FLEXIBLE_LOWER_BOUND ||
+                attr.howThisTypeIsUsed == SUPERTYPE ||
+                javaType.argumentsMakeSenseOnlyForMutableContainer(readOnlyContainer = kotlinDescriptor)) {
                 return javaToKotlin.convertReadOnlyToMutable(kotlinDescriptor)
             }
         }
@@ -293,7 +282,6 @@ internal fun makeStarProjection(
 
 interface JavaTypeAttributes {
     val howThisTypeIsUsed: TypeUsage
-    val howThisTypeIsUsedAccordingToAnnotations: TypeUsage
     val isMarkedNotNull: Boolean
     val flexibility: JavaTypeFlexibility
         get() = INFLEXIBLE
@@ -328,16 +316,7 @@ class LazyJavaTypeAttributes(
         override val isForAnnotationParameter: Boolean = false
 ): JavaTypeAttributes {
     override val typeAnnotations = FilteredAnnotations(annotations) { it in ANNOTATIONS_COPIED_TO_TYPES }
-
-    override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage get() =
-            if (hasAnnotation(JETBRAINS_READONLY_ANNOTATION) && !hasAnnotation(JETBRAINS_MUTABLE_ANNOTATION))
-                TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT
-            else
-                TypeUsage.MEMBER_SIGNATURE_COVARIANT
-
     override val isMarkedNotNull: Boolean get() = typeAnnotations.isMarkedNotNull()
-
-    private fun hasAnnotation(fqName: FqName) = typeAnnotations.findAnnotation(fqName) != null
 }
 
 fun Annotations.isMarkedNotNull() = findAnnotation(JETBRAINS_NOT_NULL_ANNOTATION) != null
@@ -349,8 +328,6 @@ fun TypeUsage.toAttributes(
         upperBoundForTypeParameter: TypeParameterDescriptor? = null
 ) = object : JavaTypeAttributes {
     override val howThisTypeIsUsed: TypeUsage = this@toAttributes
-    override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage
-            get() = howThisTypeIsUsed
     override val isMarkedNotNull: Boolean = false
     override val allowFlexible: Boolean = allowFlexible
 

@@ -21,7 +21,6 @@ package org.jetbrains.kotlin.load.java.components;
  * This enum encodes the kinds of occurrences
  */
 public enum TypeUsage {
-    MEMBER_SIGNATURE_COVARIANT,
     MEMBER_SIGNATURE_CONTRAVARIANT,
     SUPERTYPE,
     COMMON
