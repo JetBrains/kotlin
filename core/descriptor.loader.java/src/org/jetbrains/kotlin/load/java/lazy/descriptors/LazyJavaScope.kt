@@ -168,7 +168,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
             val (index, javaParameter) = pair
 
             val annotations = c.resolveAnnotations(javaParameter)
-            val typeUsage = LazyJavaTypeAttributes(TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT, annotations)
+            val typeUsage = LazyJavaTypeAttributes(TypeUsage.COMMON, annotations)
             val (outType, varargElementType) =
                     if (javaParameter.isVararg) {
                         val paramType = javaParameter.type as? JavaArrayType

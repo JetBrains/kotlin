@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.load.java.ANNOTATIONS_COPIED_TO_TYPES
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
 import org.jetbrains.kotlin.load.java.components.TypeUsage
-import org.jetbrains.kotlin.load.java.components.TypeUsage.*
+import org.jetbrains.kotlin.load.java.components.TypeUsage.COMMON
+import org.jetbrains.kotlin.load.java.components.TypeUsage.SUPERTYPE
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaAnnotations
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.TypeParameterResolver
@@ -82,7 +83,7 @@ class JavaTypeResolver(
                         c.module.builtIns.getArrayType(OUT_VARIANCE, componentType).makeNullableAsSpecified(true))
             }
 
-            val projectionKind = if (attr.howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT || isVararg) OUT_VARIANCE else INVARIANT
+            val projectionKind = if (isVararg) OUT_VARIANCE else INVARIANT
             val result = c.module.builtIns.getArrayType(projectionKind, componentType)
             return@run result.makeNullableAsSpecified(!attr.isMarkedNotNull)
         }.replaceAnnotations(attr.typeAnnotations)
