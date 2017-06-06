@@ -31,12 +31,27 @@ fun ignore(name: String, testFn: () -> Unit) {
     currentAdapter.ignore(name, testFn)
 }
 
+@JsName("only")
+fun only(name: String, testFn: () -> Unit) {
+    currentAdapter.only(name, testFn)
+}
+
 
 internal var currentAdapter: FrameworkAdapter = DefaultAdapters.AUTODETECT
 
 @JsName("setAdapter")
-fun setAdapter(adapter: FrameworkAdapter) {
-    currentAdapter = adapter
+fun setAdapter(adapter: dynamic) {
+    if (js("typeof adapter === 'string'")) {
+        if (adapter in DefaultAdapters.NAME_TO_ADAPTER) {
+            setAdapter(DefaultAdapters.NAME_TO_ADAPTER[adapter])
+        }
+        else {
+            throw IllegalArgumentException("Unsupported test framework adapter: '$adapter'")
+        }
+    }
+    else {
+        currentAdapter = adapter
+    }
 }
 
 @JsName("setOkFun")
@@ -50,6 +65,8 @@ external interface FrameworkAdapter {
     fun test(name: String, testFn: () -> Unit)
 
     fun ignore(name: String, testFn: () -> Unit)
+
+    fun only(name: String, testFn: () -> Unit)
 }
 
 
@@ -73,6 +90,13 @@ enum class DefaultAdapters : FrameworkAdapter {
                 testFn()
             }
         }
+
+        override fun only(name: String, testFn: () -> Unit) {
+            QUnit.only(name) { assert ->
+                okFun = { actual, message -> assert.ok(actual, message) }
+                testFn()
+            }
+        }
     },
 
     JASMINE {
@@ -87,17 +111,19 @@ enum class DefaultAdapters : FrameworkAdapter {
         override fun ignore(name: String, testFn: () -> Unit) {
             xit(name, testFn)
         }
+
+        override fun only(name: String, testFn: () -> Unit) {
+            fit(name, testFn)
+        }
     },
 
     AUTODETECT {
         private fun detect(): FrameworkAdapter {
             if (js("typeof QUnit !== 'undefined'")) {
                 return QUNIT
-            }
-            else if (js("typeof describe === 'function' && typeof it === 'function'")) {
+            } else if (js("typeof describe === 'function' && typeof it === 'function'")) {
                 return JASMINE
-            }
-            else throw Error("Couldn't detect testing framework")
+            } else throw Error("Couldn't detect testing framework")
         }
 
         override fun suite(name: String, suiteFn: () -> Unit) {
@@ -112,6 +138,17 @@ enum class DefaultAdapters : FrameworkAdapter {
             detect().ignore(name, testFn)
         }
 
+        override fun only(name: String, testFn: () -> Unit) {
+            detect().only(name, testFn)
+        }
+    };
+
+    companion object {
+        val NAME_TO_ADAPTER = mapOf(
+                "qunit" to QUNIT,
+                "jasmine" to JASMINE,
+                "mocha" to JASMINE,
+                "auto" to AUTODETECT)
     }
 }
 
@@ -122,11 +159,14 @@ external object QUnit {
     fun module(name: String, testFn: () -> Unit): Unit
     fun test(name: String, testFn: (dynamic) -> Unit): Unit
     fun skip(name: String, testFn: (dynamic) -> Unit): Unit
+    fun only(name: String, testFn: (dynamic) -> Unit): Unit
 }
 
 /**
  * Jasmine/Mocha API
  */
 external fun describe(name: String, fn: () -> Unit)
+
 external fun it(name: String, fn: () -> Unit)
 external fun xit(name: String, fn: () -> Unit)
+external fun fit(name: String, fn: () -> Unit)

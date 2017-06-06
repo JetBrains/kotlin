@@ -42,10 +42,6 @@ class JSTestGenerator(val context: TranslationContext) {
         return JsNameRef(name, JsNameRef("Kotlin"))
     }
 
-    private val suiteRef: JsExpression = findFunction("suite")
-    private val testRef: JsExpression = findFunction("test")
-    private val ignoreRef: JsExpression = findFunction("ignore")
-
     fun generateTestCalls(moduleDescriptor: ModuleDescriptor) = generateTestCalls(moduleDescriptor, FqName.ROOT)
 
     private fun generateTestCalls(moduleDescriptor: ModuleDescriptor, packageName: FqName) {
@@ -84,7 +80,7 @@ class JSTestGenerator(val context: TranslationContext) {
     private fun generateCodeForTestMethod(functionDescriptor: FunctionDescriptor, classDescriptor: ClassDescriptor, parentFun: JsFunction) {
         val functionToTest = generateTestFunction(functionDescriptor, classDescriptor, parentFun.scope)
 
-        val ref = if (isIgnore(functionDescriptor)) ignoreRef else testRef
+        val ref = getRef(functionDescriptor)
 
         val testName = context.program().getStringLiteral(functionDescriptor.name.toString())
         parentFun.body.statements += JsInvocation(ref, testName, functionToTest).makeStmt()
@@ -100,6 +96,19 @@ class JSTestGenerator(val context: TranslationContext) {
         return functionToTest
     }
 
+    private val suiteRef: JsExpression = findFunction("suite")
+    private val testRef: JsExpression = findFunction("test")
+    private val ignoreRef: JsExpression = findFunction("ignore")
+    private val onlyRef: JsExpression = findFunction("only")
+
+    private fun getRef(descriptor: FunctionDescriptor): JsExpression {
+        return when {
+            isIgnore(descriptor) -> ignoreRef
+            isOnly(descriptor) -> onlyRef
+            else -> testRef
+        }
+    }
+
     /**
      * JUnit3 style:
      * if (function.getName().startsWith("test")) {
@@ -112,6 +121,9 @@ class JSTestGenerator(val context: TranslationContext) {
 
     private fun isIgnore(functionDescriptor: FunctionDescriptor)
             = functionDescriptor.annotations.any(annotationFinder("Ignore", "kotlin.test.Ignore"))
+
+    private fun isOnly(functionDescriptor: FunctionDescriptor)
+            = functionDescriptor.annotations.any(annotationFinder("Only", "kotlin.test.Only"))
 
     private fun annotationFinder(shortName: String, fqName: String) = { annotation: AnnotationDescriptor ->
         annotation.type.toString() == shortName && run {
