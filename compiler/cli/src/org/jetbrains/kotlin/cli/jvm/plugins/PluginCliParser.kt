@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm
+package org.jetbrains.kotlin.cli.jvm.plugins
 
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.jvm.BundledCompilerPlugins
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
 import java.net.URL
-import java.net.URLClassLoader
 import java.util.*
 
-
 object PluginCliParser {
-
     @JvmStatic
     fun loadPlugins(arguments: CommonCompilerArguments, configuration: CompilerConfiguration) {
         val classLoader = PluginURLClassLoader(
@@ -64,9 +62,7 @@ object PluginCliParser {
 
             for (optionValue in optionValuesByPlugin[processor.pluginId].orEmpty()) {
                 val option = declaredOptions[optionValue!!.optionName]
-                if (option == null) {
-                    throw CliOptionProcessingException("Unsupported plugin option: $optionValue")
-                }
+                             ?: throw CliOptionProcessingException("Unsupported plugin option: $optionValue")
                 optionsToValues.putValue(option, optionValue)
             }
 
@@ -89,40 +85,6 @@ object PluginCliParser {
                     processor.processOption(option, value.value, configuration)
                 }
             }
-        }
-    }
-}
-
-private class PluginURLClassLoader(urls: Array<URL>, parent: ClassLoader) : ClassLoader(Thread.currentThread().contextClassLoader) {
-    private val childClassLoader: SelfThenParentURLClassLoader = SelfThenParentURLClassLoader(urls, parent)
-
-    @Synchronized
-    override fun loadClass(name: String, resolve: Boolean): Class<*> {
-        return try {
-            childClassLoader.findClass(name)
-        }
-        catch (e: ClassNotFoundException) {
-            super.loadClass(name, resolve)
-        }
-    }
-
-    override fun getResources(name: String) = childClassLoader.getResources(name)
-
-    private class SelfThenParentURLClassLoader(urls: Array<URL>, val onFail: ClassLoader) : URLClassLoader(urls, null) {
-
-        public override fun findClass(name: String): Class<*> {
-            val loaded = findLoadedClass(name)
-            if (loaded != null) {
-                return loaded
-            }
-
-            return try {
-                super.findClass(name)
-            }
-            catch (e: ClassNotFoundException) {
-                onFail.loadClass(name)
-            }
-
         }
     }
 }
