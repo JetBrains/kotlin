@@ -1697,6 +1697,8 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun retainAll (Ljava/util/List;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun reverse (Ljava/util/List;)V
 	public static final fun reversed (Ljava/lang/Iterable;)Ljava/util/List;
+	public static final fun shuffled (Ljava/lang/Iterable;)Ljava/util/List;
+	public static final fun shuffled (Ljava/lang/Iterable;Ljava/util/Random;)Ljava/util/List;
 	public static final fun single (Ljava/lang/Iterable;)Ljava/lang/Object;
 	public static final fun single (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun single (Ljava/util/List;)Ljava/lang/Object;
