@@ -352,7 +352,7 @@ targetList.each { target ->
 
         from(project(':runtime').file("build/$target")) {
             include("*.bc")
-            into("klib/stdlib/$target/native")
+            into("klib/stdlib/targets/$target/native")
         }
         from(project(':runtime').file("build/${target}Stdlib")) {
             include('**')
@@ -360,7 +360,7 @@ targetList.each { target ->
         }
         from(project(':runtime').file("build/${target}Start.bc")) {
             rename("${target}Start.bc", 'start.bc')
-            into("klib/stdlib/$target/native")
+            into("klib/stdlib/targets/$target/native")
         }
     }
 }

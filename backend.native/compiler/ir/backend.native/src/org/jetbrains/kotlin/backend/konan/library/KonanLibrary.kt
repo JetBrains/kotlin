@@ -73,8 +73,10 @@ interface SplitLibraryScheme {
         get() = File(libDir, "manifest")
     val resourcesDir 
         get() = File(libDir, "resources")
+    val targetsDir
+        get() = File(libDir, "targets")
     val targetDir 
-        get() = File(libDir, target!!)
+        get() = File(targetsDir, target!!)
     val kotlinDir 
         get() = File(targetDir, "kotlin")
     val nativeDir 

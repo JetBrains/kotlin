@@ -78,6 +78,8 @@ class Library(val name: String, val repository: String, val target: String) {
         val moduleName = header.getProperty("module_name")!!
         println("Module name: $moduleName")
         println("ABI version: $headerAbiVersion")
+        val targets = splitLibrary.targetsDir.listFiles.map{it.name}.joinToString(", ")
+        print("Available targets: $targets\n")
     }
 
     fun install() {

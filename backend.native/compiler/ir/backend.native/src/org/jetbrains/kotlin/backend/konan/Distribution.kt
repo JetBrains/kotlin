@@ -49,7 +49,7 @@ class Distribution(val config: CompilerConfiguration) {
 
     val stdlib = "$klib/stdlib"
     val runtime = config.get(KonanConfigKeys.RUNTIME_FILE) 
-        ?: "$stdlib/$target/native/runtime.bc"
+        ?: "$stdlib/targets/$target/native/runtime.bc"
 
     val llvmHome = "$dependenciesDir/${properties.propertyString("llvmHome.$hostSuffix")}"
     val hostSysRoot = "$dependenciesDir/${properties.propertyString("targetSysRoot.$hostSuffix")}"
