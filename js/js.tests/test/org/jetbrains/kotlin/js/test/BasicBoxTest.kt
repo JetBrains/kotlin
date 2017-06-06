@@ -67,7 +67,7 @@ import java.util.regex.Pattern
 abstract class BasicBoxTest(
         protected val pathToTestDir: String,
         private val pathToOutputDir: String,
-        private val typedArraysEnabled: Boolean = false,
+        private val typedArraysEnabled: Boolean = true,
         private val generateSourceMap: Boolean = false,
         private val generateNodeJsRunner: Boolean = true
 ) : KotlinTestWithEnvironment() {
@@ -508,9 +508,7 @@ abstract class BasicBoxTest(
             configuration.put(JSConfigurationKeys.FALLBACK_METADATA, metadata)
         }
 
-        if (typedArraysEnabled) {
-            configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true)
-        }
+        configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, typedArraysEnabled)
 
         return JsConfig(project, configuration, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet())
     }

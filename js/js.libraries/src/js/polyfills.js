@@ -37,3 +37,65 @@ if (typeof ArrayBuffer.isView === "undefined") {
         return a != null && a.__proto__ != null && a.__proto__.__proto__ === Int8Array.prototype.__proto__;
     };
 }
+
+(function() {
+    function normalizeOffset(offset, length) {
+        if (offset < 0) return Math.max(0, offset + length);
+        return Math.min(offset, length);
+    }
+    function typedArraySlice(begin, end) {
+        if (typeof end === "undefined") {
+            end = this.length;
+        }
+        begin = normalizeOffset(begin || 0, this.length);
+        end = Math.max(begin, normalizeOffset(end, this.length));
+        return new this.constructor(this.subarray(begin, end));
+    }
+
+    var arrays = [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array];
+    for (var i = 0; i < arrays.length; ++i) {
+        var TypedArray = arrays[i];
+        if (typeof TypedArray.prototype.slice === "undefined") {
+            Object.defineProperty(TypedArray.prototype, 'slice', {
+                value: typedArraySlice
+            });
+        }
+    }
+
+    // Patch apply to work with TypedArrays if needed.
+    try {
+        (function() {}).apply(null, new Int32Array(0))
+    } catch (e) {
+        var apply = Function.prototype.apply;
+        Object.defineProperty(Function.prototype, 'apply', {
+            value: function(self, array) {
+                return apply.call(this, self, [].slice.call(array));
+            }
+        });
+    }
+
+
+    // Patch map to work with TypedArrays if needed.
+    for (var i = 0; i < arrays.length; ++i) {
+        var TypedArray = arrays[i];
+        if (typeof TypedArray.prototype.map === "undefined") {
+            Object.defineProperty(TypedArray.prototype, 'map', {
+                value: function(callback, self) {
+                    return [].slice.call(this).map(callback, self);
+                }
+            });
+        }
+    }
+
+    // Patch sort to work with TypedArrays if needed.
+    for (var i = 0; i < arrays.length; ++i) {
+        var TypedArray = arrays[i];
+        if (typeof TypedArray.prototype.sort === "undefined") {
+            Object.defineProperty(TypedArray.prototype, 'sort', {
+                value: function(compareFunction) {
+                    return Array.prototype.sort.call(this, compareFunction);
+                }
+            });
+        }
+    }
+})();

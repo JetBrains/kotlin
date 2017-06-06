@@ -70,7 +70,7 @@ interface KotlinJsOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 
     /**
      * Translate primitive arrays to JS typed arrays
-     * Default value: false
+     * Default value: true
      */
      var typedArrays: kotlin.Boolean
 }
