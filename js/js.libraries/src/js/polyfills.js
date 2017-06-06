@@ -32,13 +32,13 @@ if (typeof String.prototype.endsWith === "undefined") {
     };
 }
 // For HtmlUnit and PhantomJs
-(function() {
-    if (typeof ArrayBuffer.isView === "undefined") {
-        ArrayBuffer.isView = function(a) {
-            return a != null && a.__proto__ != null && a.__proto__.__proto__ === Int8Array.prototype.__proto__;
-        };
-    }
+if (typeof ArrayBuffer.isView === "undefined") {
+    ArrayBuffer.isView = function(a) {
+        return a != null && a.__proto__ != null && a.__proto__.__proto__ === Int8Array.prototype.__proto__;
+    };
+}
 
+(function() {
     function normalizeOffset(offset, length) {
         if (offset < 0) return Math.max(0, offset + length);
         return Math.min(offset, length);
@@ -81,7 +81,7 @@ if (typeof String.prototype.endsWith === "undefined") {
         if (typeof TypedArray.prototype.map === "undefined") {
             Object.defineProperty(TypedArray.prototype, 'map', {
                 value: function(callback, self) {
-                    return typedArraySlice.call([].map.call(this, callback, self));
+                    return [].slice.call(this).map(callback, self);
                 }
             });
         }
