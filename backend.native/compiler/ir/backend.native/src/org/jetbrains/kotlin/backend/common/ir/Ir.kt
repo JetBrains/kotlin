@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi2ir.generators.SymbolTable
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 // This is what Context collects about IR.

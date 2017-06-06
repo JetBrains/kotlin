@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.*
-import org.jetbrains.kotlin.psi2ir.generators.ModuleDependenciesGenerator
-import org.jetbrains.kotlin.psi2ir.generators.SymbolTable
 
 @Deprecated("")
 internal fun IrModuleFragment.replaceUnboundSymbols(context: Context) {
@@ -41,7 +39,8 @@ internal fun IrModuleFragment.replaceUnboundSymbols(context: Context) {
     this.transformChildrenVoid(IrUnboundSymbolReplacer(symbolTable, collector.descriptorToSymbol))
 
     // Generate missing external stubs:
-    ModuleDependenciesGenerator(context.psi2IrGeneratorContext).generateUnboundSymbolsAsDependencies(this)
+    // TODO: ModuleGenerator::generateUnboundSymbolsAsDependencies(IRModuleFragment) is private function :/
+    ExternalDependenciesGenerator(symbolTable = context.psi2IrGeneratorContext.symbolTable, irBuiltIns = context.irBuiltIns).generateUnboundSymbolsAsDependencies(this)
 
     // Merge duplicated module and package declarations:
     this.acceptVoid(object : IrElementVisitorVoid {

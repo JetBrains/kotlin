@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.psi2ir.generators.SymbolTable
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import kotlin.properties.Delegates
 
 // This is what Context collects about IR.
