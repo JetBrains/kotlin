@@ -95,4 +95,39 @@ class MutableCollectionTest {
         }
     }
 
+    @JvmVersion
+    @Test fun listFill() {
+        val list = MutableList(3) { it }
+        list.fill(42)
+        assertEquals(listOf(42, 42, 42), list)
+    }
+
+    @JvmVersion
+    @Test fun shuffled() {
+        val list = MutableList(100) { it }
+        val shuffled = list.shuffled()
+
+        assertNotEquals(list, shuffled)
+        assertEquals(list.toSet(), shuffled.toSet())
+        assertEquals(list.size, shuffled.distinct().size)
+    }
+
+    @JvmVersion
+    @Test fun shuffledRnd() {
+        val rnd1 = java.util.Random(42L)
+        val rnd2 = java.util.Random(42L)
+
+        val list = MutableList(100) { it }
+        val shuffled1 = list.shuffled(rnd1)
+        val shuffled2 = list.shuffled(rnd2)
+
+
+        assertNotEquals(list, shuffled1)
+        assertEquals(list.toSet(), shuffled1.toSet())
+        assertEquals(list.size, shuffled1.distinct().size)
+
+        assertEquals(shuffled1, shuffled2)
+    }
+
+
 }
