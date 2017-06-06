@@ -447,6 +447,11 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         if (CastDiagnosticsUtil.isCastErased(subjectType, targetType, KotlinTypeChecker.DEFAULT)) {
             context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(typeReferenceAfterIs, targetType))
         }
+
+        if (targetType.constructor.declarationDescriptor.let { it is ClassDescriptor && it.isProtocol }) {
+            context.trace.report(PROTOCOL_NOT_ALLOWED.on(typeReferenceAfterIs))
+        }
+
         return context.dataFlowInfo.let {
             ConditionalDataFlowInfo(it.establishSubtyping(subjectDataFlowValue, targetType, components.languageVersionSettings), it)
         }

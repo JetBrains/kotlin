@@ -146,6 +146,7 @@ open class KnownClassDescriptor(
     override fun isHeader(): Boolean = false
     override fun isImpl(): Boolean = false
     override fun isExternal(): Boolean = false
+    override fun isProtocol(): Boolean = false
 
     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
         return visitor.visitClassDescriptor(this, data)

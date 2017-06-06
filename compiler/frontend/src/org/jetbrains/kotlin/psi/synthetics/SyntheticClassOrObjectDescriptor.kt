@@ -73,6 +73,7 @@ class SyntheticClassOrObjectDescriptor(
     override fun isCompanionObject() = isCompanionObject
     override fun isInner() = false
     override fun isData() = false
+    override fun isProtocol() = false
     override fun isHeader() = false
     override fun isImpl() = false
 

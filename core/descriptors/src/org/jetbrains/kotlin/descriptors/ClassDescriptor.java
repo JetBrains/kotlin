@@ -79,6 +79,8 @@ public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters,
 
     boolean isData();
 
+    boolean isProtocol();
+
     @NotNull
     ReceiverParameterDescriptor getThisAsReceiverParameter();
 

@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.types.checker
 
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
+import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SupertypesPolicy
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
@@ -98,6 +99,8 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         // we should add constraints with flexible types, otherwise we never get flexible type as answer in constraint system
         addSubtypeConstraint(newSubType, newSuperType)?.let { return it }
 
+        checkProtocolSubtype(newSubType, newSuperType)?.let { return it }
+
         return isSubtypeOfForSingleClassifierType(newSubType.lowerIfFlexible(), newSuperType.upperIfFlexible())
     }
 
@@ -166,15 +169,50 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         return null
     }
 
-    private fun TypeCheckerContext.hasNothingSupertype(type: SimpleType) = // todo add tests
-        anySupertype(type, KotlinBuiltIns::isNothingOrNullableNothing) {
-            if (it.isClassType) {
-                SupertypesPolicy.None
-            }
-            else {
-                SupertypesPolicy.LowerIfFlexible
-            }
+    private fun checkProtocolSubtype(candidate: UnwrappedType, protocol: UnwrappedType): Boolean? {
+        val protocolDescriptor = protocol.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+        val candidateDescriptor = candidate.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+
+        if (!protocolDescriptor.isProtocol) {
+            return null
         }
+
+        if (candidateDescriptor == protocolDescriptor) {
+            return true
+        }
+
+        val protocolFields = protocol
+                .memberScope
+                .getDescriptorsFiltered()
+                .map { it as? CallableDescriptor }
+                .filterNotNull()
+
+        val candidateFields = candidate
+                .memberScope
+                .getDescriptorsFiltered()
+                .map { it as? CallableDescriptor }
+                .filterNotNull()
+                .groupBy { it.name }
+
+        return protocolFields.stream().allMatch { superType ->
+            candidateFields[superType.name]?.any({ checkDeclarationSubtype(it, superType) }) ?: false
+        }
+    }
+
+    private fun checkDeclarationSubtype(subType: CallableDescriptor, superType: CallableDescriptor): Boolean {
+        val info = OverridingUtil.DEFAULT.isOverridableByWithoutExternalConditions(superType, subType, true)
+        return info.result == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
+    }
+
+    private fun TypeCheckerContext.hasNothingSupertype(type: SimpleType) = // todo add tests
+            anySupertype(type, KotlinBuiltIns::isNothingOrNullableNothing) {
+                if (it.isClassType) {
+                    SupertypesPolicy.None
+                }
+                else {
+                    SupertypesPolicy.LowerIfFlexible
+                }
+            }
 
     private fun TypeCheckerContext.isSubtypeOfForSingleClassifierType(subType: SimpleType, superType: SimpleType): Boolean {
         assert(subType.isSingleClassifierType || subType.isIntersectionType || subType.isAllowedTypeVariable) {

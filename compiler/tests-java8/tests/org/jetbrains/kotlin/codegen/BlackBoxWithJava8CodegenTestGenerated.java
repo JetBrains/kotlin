@@ -588,6 +588,117 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/java8/box/protocols")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Protocols extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInProtocols() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/protocols"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("assignment.kt")
+        public void testAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/assignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("collections.kt")
+        public void testCollections() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/collections.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexCast.kt")
+        public void testComplexCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/complexCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("downcast.kt")
+        public void testDowncast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/downcast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expressionReceiver.kt")
+        public void testExpressionReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/expressionReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extension.kt")
+        public void testExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/extension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fields.kt")
+        public void testFields() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/fields.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("genericMethods.kt")
+        public void testGenericMethods() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/genericMethods.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("generics.kt")
+        public void testGenerics() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/generics.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implements.kt")
+        public void testImplements() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/implements.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methods.kt")
+        public void testMethods() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/methods.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multifile.kt")
+        public void testMultifile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/multifile.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectExpression.kt")
+        public void testObjectExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/objectExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("override.kt")
+        public void testOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/override.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("recursiveType.kt")
+        public void testRecursiveType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/recursiveType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("return.kt")
+        public void testReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/return.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varargs.kt")
+        public void testVarargs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/varargs.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/java8/box/reflection")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -15926,6 +15926,51 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/protocols")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Protocols extends AbstractDiagnosticsTest {
+            public void testAllFilesPresentInProtocols() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/protocols"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("casts.kt")
+            public void testCasts() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/protocols/casts.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("defaults.kt")
+            public void testDefaults() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/protocols/defaults.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("fieldExists.kt")
+            public void testFieldExists() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/protocols/fieldExists.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("generics.kt")
+            public void testGenerics() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/protocols/generics.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("methods.kt")
+            public void testMethods() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/protocols/methods.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("subtypes.kt")
+            public void testSubtypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/protocols/subtypes.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/qualifiedExpression")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

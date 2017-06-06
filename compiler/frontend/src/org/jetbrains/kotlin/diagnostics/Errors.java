@@ -823,6 +823,7 @@ public interface Errors {
     DiagnosticFactory0<KtTypeReference> DYNAMIC_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> IS_ENUM_ENTRY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtSimpleNameExpression> ENUM_ENTRY_AS_TYPE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtTypeReference> PROTOCOL_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory2<KtExpression, KotlinType, KotlinType> IMPLICIT_CAST_TO_ANY = DiagnosticFactory2.create(WARNING);
 

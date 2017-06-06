@@ -306,9 +306,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Set<String> kotlinMarkerInterfaces = new LinkedHashSet<>();
 
         for (KotlinType supertype : descriptor.getTypeConstructor().getSupertypes()) {
-            if (isJvmInterface(supertype.getConstructor().getDeclarationDescriptor())) {
+            if (isJvmInterface(supertype.getConstructor().getDeclarationDescriptor()) && !isProtocol(supertype)) {
                 FqName kotlinInterfaceName = DescriptorUtils.getFqName(supertype.getConstructor().getDeclarationDescriptor()).toSafe();
-
                 sw.writeInterface();
                 Type jvmInterfaceType = typeMapper.mapSupertype(supertype, sw);
                 sw.writeInterfaceEnd();

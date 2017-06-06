@@ -46,6 +46,7 @@ object CastDiagnosticsUtil {
         val lhsNullable = TypeUtils.isNullableType(lhsType)
         if (KotlinBuiltIns.isNullableNothing(lhsType) && !rhsNullable) return false
         if (KotlinBuiltIns.isNothing(rhsType)) return false
+        if (isProtocol(rhsType)) return false
         if (KotlinBuiltIns.isNullableNothing(rhsType)) return lhsNullable
         if (lhsNullable && rhsNullable) return true
         if (lhsType.isError) return true
@@ -54,6 +55,7 @@ object CastDiagnosticsUtil {
         // we consider any type parameter capable of taking any value, which may be made more precise if we considered bounds
         if (TypeUtils.isTypeParameter(lhsType) || TypeUtils.isTypeParameter(rhsType)) return true
 
+        if (isProtocol(lhsType)) return true
         if (isFinal(lhsType) || isFinal(rhsType)) return false
         if (isTrait(lhsType) || isTrait(rhsType)) return true
         return false
@@ -88,6 +90,9 @@ object CastDiagnosticsUtil {
 
     private fun isTrait(type: KotlinType) =
             type.constructor.declarationDescriptor.let { it is ClassDescriptor && it.kind == ClassKind.INTERFACE }
+
+    private fun isProtocol(type: KotlinType): Boolean =
+        type.constructor.declarationDescriptor.let { it is ClassDescriptor &&  it.isProtocol }
 
     /**
      * Check if cast from supertype to subtype is erased.
