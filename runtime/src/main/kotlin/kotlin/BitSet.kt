@@ -89,8 +89,7 @@ class BitSet(size: Int = ELEMENT_SIZE) {
     }
 
     // Transforms a size in bits to a size in elements of the `bits` array.
-    private fun bitToElementSize(bitSize: Int): Int =
-            if (bitSize % ELEMENT_SIZE == 0) bitSize / ELEMENT_SIZE else bitSize / ELEMENT_SIZE + 1
+    private fun bitToElementSize(bitSize: Int): Int = (bitSize + ELEMENT_SIZE - 1) / ELEMENT_SIZE
 
     // Transforms a pair of an element index and a bit offset to a bit index.
     private fun bitIndex(elementIndex: Int, bitOffset: Int) =
