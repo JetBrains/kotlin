@@ -1,0 +1,19 @@
+>>> fun f1(): String {
+...
+...     return "1"
+... }
+>>> fun f2(): String { // comment
+...     return "2" // comment
+... } // comment
+>>> fun f3(): String {
+...     /* comment */
+...
+...     // comment
+...     return "3"
+... }
+>>> fun f4(): String {     
+...     return "4"
+... }    
+>>>
+>>> f1() + f2() + f3() + f4()
+1234

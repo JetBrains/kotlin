@@ -281,6 +281,12 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/multiline"), Pattern.compile("^(.+)\\.repl$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("blankLinesAndComments.repl")
+        public void testBlankLinesAndComments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/multiline/blankLinesAndComments.repl");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionOnSeveralLines.repl")
         public void testFunctionOnSeveralLines() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/multiline/functionOnSeveralLines.repl");
