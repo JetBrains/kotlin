@@ -283,12 +283,12 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
     private fun getPropertyType(field: JavaField, annotations: Annotations): KotlinType {
         // Fields do not have their own generic parameters.
         // Simple static constants should not have flexible types.
-        val allowFlexible = !(field.isFinalStatic && field.hasConstantNotNullInitializer)
+        val isNotNullable = !(field.isFinalStatic && field.hasConstantNotNullInitializer)
         val propertyType = c.typeResolver.transformJavaType(
                 field.type,
-                LazyJavaTypeAttributes(TypeUsage.COMMON, annotations, allowFlexible)
+                LazyJavaTypeAttributes(TypeUsage.COMMON, annotations)
         )
-        if (!allowFlexible) {
+        if (!isNotNullable) {
             return TypeUtils.makeNotNullable(propertyType)
         }
 
