@@ -280,8 +280,7 @@ class BitSet(size: Int = ELEMENT_SIZE) {
     /**
      * Returns the biggest index of a bit which value is [lookFor] before [startIndex] (inclusive).
      * Returns -1 if there is no such bits before [startIndex].
-     * If [startIndex] >= [size] will search from [size] - 1 (if [lookFor] == true)
-     * or return [startIndex] (if [lookFor == false]).
+     * If [startIndex] >= [size] returns -1
      */
     fun previousBit(startIndex: Int, lookFor: Boolean): Int {
         var correctStartIndex = startIndex
@@ -326,6 +325,7 @@ class BitSet(size: Int = ELEMENT_SIZE) {
     /**
      * Returns the biggest index of a bit which value is `true` before [startIndex] (inclusive).
      * Returns -1 if there is no such bits before [startIndex] or if [startIndex] == -1.
+     * If [startIndex] >= size will search from (size - 1)-th bit.
      * Throws IndexOutOfBoundException if [startIndex] < -1.
      */
     fun previousSetBit(startIndex: Int): Int = previousBit(startIndex, true)
@@ -351,35 +351,39 @@ class BitSet(size: Int = ELEMENT_SIZE) {
         return bits[elementIndex] and offset.asMask != 0L
     }
 
-    /** Performs a logical and operation over corresponding bits of this and [another] BitSets. The result is saved in this BitSet. */
-    fun and(another: BitSet) {
+    private inline fun doOperation(another: BitSet, operation: Long.(Long) -> Long) {
         ensureCapacity(another.lastIndex)
-        for (index in bits.indices) {
-            bits[index] = bits[index] and another.bits[index]
+        var index = 0
+        while (index < another.bits.size) {
+            bits[index] = operation(bits[index], another.bits[index])
+            index++
+        }
+        while (index < bits.size) {
+            bits[index] = operation(bits[index], ALL_FALSE)
+            index++
         }
     }
 
+    /** Performs a logical and operation over corresponding bits of this and [another] BitSets. The result is saved in this BitSet. */
+    fun and(another: BitSet) = doOperation(another, Long::and)
+
     /** Performs a logical or operation over corresponding bits of this and [another] BitSets. The result is saved in this BitSet. */
-    fun or(another: BitSet) {
-        ensureCapacity(another.lastIndex)
-        for (index in bits.indices) {
-            bits[index] = bits[index] or another.bits[index]
-        }
-    }
+    fun or(another: BitSet) = doOperation(another, Long::or)
+
+    /** Performs a logical xor operation over corresponding bits of this and [another] BitSets. The result is saved in this BitSet. */
+    fun xor(another: BitSet) = doOperation(another, Long::xor)
 
     /** Performs a logical and + not operations over corresponding bits of this and [another] BitSets. The result is saved in this BitSet. */
     fun andNot(another: BitSet) {
         ensureCapacity(another.lastIndex)
-        for (index in bits.indices) {
+        var index = 0
+        while (index < another.bits.size) {
             bits[index] = bits[index] and another.bits[index].inv()
+            index++
         }
-    }
-
-    /** Performs a logical xor operation over corresponding bits of this and [another] BitSets. The result is saved in this BitSet. */
-    fun xor(another: BitSet) {
-        ensureCapacity(another.lastIndex)
-        for (index in bits.indices) {
-            bits[index] = bits[index] xor another.bits[index]
+        while (index < bits.size) {
+            bits[index] = bits[index] and ALL_TRUE
+            index++
         }
     }
 

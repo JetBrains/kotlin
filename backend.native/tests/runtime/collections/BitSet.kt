@@ -344,11 +344,18 @@ fun testLogic() {
             65, 67,
             70, 72)
 
+    // and
     var b1 = BitSet(73)
     b1.set(2..3); b1.set(62..63); b1.set(66..67); b1.set(71..72)
     b1.and(b2)
     assertContainsOnly(b1, setOf(3, 63, 67, 72), 76)
+    b1 = BitSet(73)
+    b1.set(2..3); b1.set(62..63); b1.set(66..67); b1.set(71..72)
+    b1.set(128)
+    b1.and(b2)
+    assertContainsOnly(b1, setOf(3, 63, 67, 72), 129)
 
+    // or
     b1 = BitSet(73)
     b1.set(2..3); b1.set(62..63); b1.set(66..67); b1.set(71..72)
     b1.or(b2)
@@ -356,14 +363,35 @@ fun testLogic() {
 
     b1 = BitSet(73)
     b1.set(2..3); b1.set(62..63); b1.set(66..67); b1.set(71..72)
+    b1.set(128)
+    b1.or(b2)
+    assertContainsOnly(b1, setOf(1, 2, 3, 61, 62, 63, 65, 66, 67, 70, 71, 72, 128), 129)
+
+    // xor
+    b1 = BitSet(73)
+    b1.set(2..3); b1.set(62..63); b1.set(66..67); b1.set(71..72)
     b1.xor(b2)
     assertContainsOnly(b1, setOf(1, 2, 61, 62, 65, 66, 70, 71), 76)
 
     b1 = BitSet(73)
     b1.set(2..3); b1.set(62..63); b1.set(66..67); b1.set(71..72)
+    b1.set(128)
+    b1.xor(b2)
+    assertContainsOnly(b1, setOf(1, 2, 61, 62, 65, 66, 70, 71, 128), 129)
+
+    // andNot
+    b1 = BitSet(73)
+    b1.set(2..3); b1.set(62..63); b1.set(66..67); b1.set(71..72)
     b1.andNot(b2)
     assertContainsOnly(b1, setOf(2, 62, 66, 71), 76)
 
+    b1 = BitSet(73)
+    b1.set(2..3); b1.set(62..63); b1.set(66..67); b1.set(71..72)
+    b1.set(128)
+    b1.andNot(b2)
+    assertContainsOnly(b1, setOf(2, 62, 66, 71, 128), 129)
+
+    // intersects
     b1 = BitSet(73)
     b1.set(0..1); b1.set(62..63); b1.set(64..65); b1.set(71..72)
     b2.clear(); b2.set(0)
@@ -373,6 +401,8 @@ fun testLogic() {
     b2.clear(); b2.set(72)
     assertTrue(b1.intersects(b2))
     b2.clear()
+    assertFalse(b1.intersects(b2))
+    b2.set(128)
     assertFalse(b1.intersects(b2))
 }
 
