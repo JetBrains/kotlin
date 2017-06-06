@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeResolver
@@ -49,7 +50,8 @@ class JavaResolverComponents(
         val supertypeLoopChecker: SupertypeLoopChecker,
         val lookupTracker: LookupTracker,
         val module: ModuleDescriptor,
-        val reflectionTypes: ReflectionTypes
+        val reflectionTypes: ReflectionTypes,
+        val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver
 ) {
     fun replace(
             javaResolverCache: JavaResolverCache = this.javaResolverCache
@@ -57,7 +59,9 @@ class JavaResolverComponents(
             storageManager, finder, kotlinClassFinder, deserializedDescriptorResolver,
             externalAnnotationResolver, signaturePropagator, errorReporter, javaResolverCache,
             javaPropertyInitializerEvaluator, samConversionResolver, sourceElementFactory,
-            moduleClassResolver, packageMapper, supertypeLoopChecker, lookupTracker, module, reflectionTypes)
+            moduleClassResolver, packageMapper, supertypeLoopChecker, lookupTracker, module, reflectionTypes,
+            annotationTypeQualifierResolver
+    )
 }
 
 class LazyJavaResolverContext(
