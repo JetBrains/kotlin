@@ -39,6 +39,11 @@ fun setAdapter(adapter: FrameworkAdapter) {
     currentAdapter = adapter
 }
 
+@JsName("setOkFun")
+fun setOkFun(adapter: (Boolean, String?) -> Unit) {
+    okFun = adapter
+}
+
 external interface FrameworkAdapter {
     fun suite(name: String, suiteFn: () -> Unit)
 
