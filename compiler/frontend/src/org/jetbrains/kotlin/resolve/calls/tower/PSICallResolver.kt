@@ -447,7 +447,8 @@ class PSICallResolver(
             startDataFlowInfo: DataFlowInfo,
             valueArgument: ValueArgument
     ): PSIKotlinCallArgument {
-        val parseErrorArgument = ParseErrorKotlinCallArgument(valueArgument, startDataFlowInfo, outerCallContext.scope.ownerDescriptor.builtIns)
+        val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
+        val parseErrorArgument = ParseErrorKotlinCallArgument(valueArgument, startDataFlowInfo, builtIns)
         val ktExpression = KtPsiUtil.deparenthesize(valueArgument.getArgumentExpression()) ?:
                            return parseErrorArgument
 
@@ -460,7 +461,8 @@ class PSICallResolver(
             is KtNamedFunction -> {
                 val receiverType = resolveType(outerCallContext, ktExpression.receiverTypeReference)
                 val parametersTypes = resolveParametersTypes(outerCallContext, ktExpression) ?: emptyArray()
-                val returnType = resolveType(outerCallContext, ktExpression.typeReference)
+                val returnType = resolveType(outerCallContext, ktExpression.typeReference) ?:
+                                 if (ktExpression.hasBlockBody()) builtIns.unitType else null
                 FunctionExpressionImpl(outerCallContext, valueArgument, startDataFlowInfo, ktExpression, argumentName, receiverType, parametersTypes, returnType)
             }
             else -> null
