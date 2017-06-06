@@ -66,11 +66,13 @@ class KotlinCallResolver(
     ): Collection<ResolvedKotlinCall> {
         kotlinCall.checkCallInvariants()
 
+        val isSafeCall = (kotlinCall.explicitReceiver as? SimpleKotlinCallArgument)?.isSafeCall ?: false
+
         val resolutionCandidates = givenCandidates.map {
             SimpleKotlinResolutionCandidate(callContext,
                                             kotlinCall,
                                             if (it.dispatchReceiver == null) ExplicitReceiverKind.NO_EXPLICIT_RECEIVER else ExplicitReceiverKind.DISPATCH_RECEIVER,
-                                            it.dispatchReceiver?.let { ReceiverExpressionKotlinCallArgument(it) },
+                                            it.dispatchReceiver?.let { ReceiverExpressionKotlinCallArgument(it, isSafeCall) },
                                             null,
                                             it.descriptor,
                                             it.knownTypeParametersResultingSubstitutor,
