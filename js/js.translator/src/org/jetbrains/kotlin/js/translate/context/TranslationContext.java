@@ -274,8 +274,8 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsNameRef getQualifiedReference(@NotNull DeclarationDescriptor descriptor) {
-        JsNameRef result = staticContext.getQualifiedReference(descriptor);
+    public JsExpression getQualifiedReference(@NotNull DeclarationDescriptor descriptor) {
+        JsExpression result = staticContext.getQualifiedReference(descriptor);
         if (isPublicInlineFunction()) {
             if (isFromCurrentModule(descriptor)) {
                 if (descriptor instanceof MemberDescriptor) {
@@ -299,9 +299,9 @@ public class TranslationContext {
     }
 
     @NotNull
-    private JsNameRef exportModuleForInline(
+    private JsExpression exportModuleForInline(
             @NotNull ModuleDescriptor currentModule, @NotNull ModuleDescriptor module,
-            @NotNull JsNameRef fqn
+            @NotNull JsExpression fqn
     ) {
         if (currentModule.getBuiltIns().getBuiltInsModule() == module) return fqn;
 
@@ -311,10 +311,10 @@ public class TranslationContext {
         return exportModuleForInline(currentModule, moduleName, staticContext.getInnerNameForDescriptor(module), fqn);
     }
 
-    private JsNameRef exportModuleForInline(
+    private JsExpression exportModuleForInline(
             @NotNull ModuleDescriptor currentModule,
             @NotNull String moduleId, @NotNull JsName moduleName,
-            @NotNull JsNameRef fqn) {
+            @NotNull JsExpression fqn) {
         JsExpression currentModuleRef = pureFqn(staticContext.getInnerNameForDescriptor(currentModule), null);
         JsExpression importsRef = pureFqn(Namer.IMPORTS_FOR_INLINE_PROPERTY, currentModuleRef);
         JsExpression currentImports = pureFqn(staticContext.getNameForImportsForInline(), null);
@@ -331,7 +331,7 @@ public class TranslationContext {
             lhsModuleRef = new JsArrayAccess(currentImports, new JsStringLiteral(moduleId));
         }
 
-        fqn = (JsNameRef) replaceModuleReference(fqn, moduleName, moduleRef);
+        fqn = replaceModuleReference(fqn, moduleName, moduleRef);
 
         if (modulesImportedForInline.add(moduleId)) {
             JsExpressionStatement importStmt = new JsExpressionStatement(JsAstUtils.assignment(lhsModuleRef, moduleName.makeRef()));
@@ -370,14 +370,15 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsNameRef getInnerReference(@NotNull DeclarationDescriptor descriptor) {
-        JsNameRef result = pureFqn(getInnerNameForDescriptor(descriptor), null);
+    public JsExpression getInnerReference(@NotNull DeclarationDescriptor descriptor) {
+        JsName name = getInnerNameForDescriptor(descriptor);
+        JsExpression result = pureFqn(name, null);
 
         SuggestedName suggested = staticContext.suggestName(descriptor);
         if (suggested != null && getConfig().getModuleKind() != ModuleKind.PLAIN && isPublicInlineFunction()) {
             String moduleId = AnnotationsUtils.getModuleName(suggested.getDescriptor());
-            if (moduleId != null && result.getName() != null && result.getQualifier() == null) {
-                result = exportModuleForInline(getCurrentModule(), moduleId, result.getName(), result);
+            if (moduleId != null) {
+                result = exportModuleForInline(getCurrentModule(), moduleId, name, result);
             }
             else if (isNativeObject(suggested.getDescriptor()) && DescriptorUtils.isTopLevelDeclaration(suggested.getDescriptor())) {
                 String fileModuleId = AnnotationsUtils.getFileModuleName(bindingContext(), suggested.getDescriptor());

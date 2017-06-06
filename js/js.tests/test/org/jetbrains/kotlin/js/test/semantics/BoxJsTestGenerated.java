@@ -827,6 +827,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlineJsModuleNonIdentifier.kt")
+        public void testInlineJsModuleNonIdentifier() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/inlineJsModuleNonIdentifier.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineJsModulePackage.kt")
         public void testInlineJsModulePackage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/inlineJsModulePackage.kt");
