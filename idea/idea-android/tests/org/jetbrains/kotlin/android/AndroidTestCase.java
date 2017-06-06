@@ -28,7 +28,6 @@ import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.impl.ComponentManagerImpl;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.LanguageLevelProjectExtension;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
@@ -54,6 +53,7 @@ import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.formatter.AndroidXmlCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.picocontainer.MutablePicoContainer;
 
 import java.io.File;
@@ -78,6 +78,8 @@ public abstract class AndroidTestCase extends AndroidTestBase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
 
         TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName());
         myFixture = JavaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(projectBuilder.getFixture());
@@ -164,6 +166,7 @@ public abstract class AndroidTestCase extends AndroidTestBase {
         }
         finally {
             super.tearDown();
+            VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
         }
     }
 

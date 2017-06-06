@@ -29,7 +29,6 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
         ConfigLibraryUtil.configureKotlinRuntime(myModule)
         AndroidLintInspectionBase.invalidateInspectionShortName2IssueMap()
         // needs access to .class files in kotlin runtime jar
-        myFixture.allowTreeAccessForAllFiles()
     }
 
     override fun tearDown() {
