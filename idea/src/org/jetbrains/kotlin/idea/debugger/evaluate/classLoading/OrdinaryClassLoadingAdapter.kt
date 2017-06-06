@@ -26,6 +26,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.sun.jdi.ClassLoaderReference
 import com.sun.jdi.ClassType
 import org.jetbrains.kotlin.idea.debugger.evaluate.CompilingEvaluatorUtils
+import org.jetbrains.kotlin.idea.debugger.isDexDebug
 
 class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
     private companion object {
@@ -36,9 +37,8 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
         private val LAMBDA_SUPERCLASSES = listOf(ClassBytes("kotlin.jvm.internal.Lambda"))
     }
 
-    override fun isApplicable(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): Boolean {
-        val classLoader = context.classLoader
-        return classLoader != null && !classLoader.isDalvikClassLoader
+    override fun isApplicable(context: EvaluationContextImpl, hasAdditionalClasses: Boolean, hasLoops: Boolean): Boolean {
+        return (hasAdditionalClasses || hasLoops) && context.classLoader != null && !context.debugProcess.isDexDebug()
     }
 
     override fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderHandler {

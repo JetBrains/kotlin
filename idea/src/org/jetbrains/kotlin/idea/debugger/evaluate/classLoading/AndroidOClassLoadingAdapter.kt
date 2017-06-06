@@ -21,15 +21,11 @@ import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.sun.jdi.*
+import org.jetbrains.kotlin.idea.debugger.isDexDebug
 
 class AndroidOClassLoadingAdapter : AbstractAndroidClassLoadingAdapter() {
-    override fun isApplicable(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): Boolean {
-        if (classes.size <= 1) {
-            // Dex takes significant amount of time so we load classes only if we have some non-inline lambdas
-            return false
-        }
-
-        return context.classLoader?.isDalvikClassLoader ?: false
+    override fun isApplicable(context: EvaluationContextImpl, hasAdditionalClasses: Boolean, hasLoops: Boolean): Boolean {
+        return (hasAdditionalClasses || hasLoops) && context.debugProcess.isDexDebug()
     }
 
     private fun resolveClassLoaderClass(context: EvaluationContextImpl): ClassType? {
