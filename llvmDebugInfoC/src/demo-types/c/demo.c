@@ -103,7 +103,7 @@ main() {
   DITypeOpaqueRef int_type  = TYPE(DICreateBasicType(g_codegen.di_builder, "int", 32, 4, 0));
   DIDerivedTypeRef elements_int_type[2];
   file             = DICreateFile(g_codegen.di_builder, "<stdin>", "");
-  DICompositeTypeRef tempA = DICreateReplaceableCompositeType(g_codegen.di_builder, "A", SCOPE(g_codegen.di_compile_unit), file, 2);
+  DICompositeTypeRef tempA = DICreateReplaceableCompositeType(g_codegen.di_builder, "A", SCOPE(g_codegen.di_compile_unit), file, 2, 0);
   elements_int_type[0] = DICreateMemberType(
                                 /* builder      = */ g_codegen.di_builder,
                                 /* scope        = */ SCOPE(tempA), /* note: here dump points to structure ???*/
