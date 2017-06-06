@@ -43,6 +43,11 @@ class FixVariableConstraintPosition(val variable: NewTypeVariable) : ConstraintP
 class KnownTypeParameterConstraintPosition(val typeArgument: KotlinType) : ConstraintPosition() {
     override fun toString() = "TypeArgument $typeArgument"
 }
+class LambdaArgumentConstraintPosition(val lambdaArgument: ResolvedLambdaArgument) : ConstraintPosition() {
+    override fun toString(): String {
+        return "LambdaArgument $lambdaArgument"
+    }
+}
 
 class IncorporationConstraintPosition(val from: ConstraintPosition, val initialConstraint: InitialConstraint) : ConstraintPosition() {
     override fun toString() = "Incorporate $initialConstraint from position $from"
