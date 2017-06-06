@@ -153,9 +153,7 @@ object LightClassUtil {
 
         if (parent is KtFile) {
             // top-level declaration
-            val fqName = parent.javaFileFacadeFqName
-            val project = declaration.project
-            return JavaElementFinder.getInstance(project).findClass(fqName.asString(), GlobalSearchScope.allScope(project))
+            return findFileFacade(parent)
         }
         else if (parent is KtClassBody) {
             assert(parent.parent is KtClassOrObject)
@@ -163,6 +161,17 @@ object LightClassUtil {
         }
 
         return null
+    }
+
+    private fun findFileFacade(ktFile: KtFile): PsiClass? {
+        val fqName = ktFile.javaFileFacadeFqName
+        val project = ktFile.project
+        val classesWithMatchingFqName = JavaElementFinder.getInstance(project).findClasses(fqName.asString(), GlobalSearchScope.allScope(project))
+        return classesWithMatchingFqName.singleOrNull() ?:
+               classesWithMatchingFqName.find {
+                   // NOTE: for multipart facades this works via FakeLightClassForFileOfPackage
+                   it.containingFile?.virtualFile == ktFile.virtualFile
+               }
     }
 
     private fun getWrappingClasses(declaration: KtDeclaration): Sequence<PsiClass> {
