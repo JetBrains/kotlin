@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
@@ -100,7 +101,7 @@ class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentInten
                     trace = DelegatingBindingTrace(bindingContext, "Temporary trace"),
                     dataFlowInfo = bindingContext.getDataFlowInfoBefore(contextExpression),
                     expectedType = expectedType ?: TypeUtils.NO_EXPECTED_TYPE,
-                    isStatement = expectedType == null
+                    isStatement = contextExpression.isUsedAsStatement(bindingContext)
             )
 
             val newCall = newCallExpression.getResolvedCall(newBindingContext) ?: return false
