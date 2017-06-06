@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import net.rubygrapefruit.platform.Native
-import net.rubygrapefruit.platform.ProcessLauncher
 import org.gradle.api.Project
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -37,8 +35,9 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.plugin.ParentLastURLClassLoader
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.incremental.*
-
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintStream
 import kotlin.concurrent.thread
 
 internal const val KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY = "kotlin.compiler.execution.strategy"
@@ -286,25 +285,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             compilerClassName: String,
             environment: GradleCompilerEnvironment
     ): ExitCode {
-        val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
-        val classpathString = environment.compilerClasspath.map {it.absolutePath}.joinToString(separator = File.pathSeparator)
-        val builder = ProcessBuilder(javaBin, "-cp", classpathString, compilerClassName, *argsArray)
-        val process = launchProcessWithFallback(builder, DaemonReportingTargets(messageCollector = loggingMessageCollector))
-
-        // important to read inputStream, otherwise the process may hang on some systems
-        val readErrThread = thread {
-            process.errorStream!!.bufferedReader().forEachLine {
-                System.err.println(it)
-            }
-        }
-        process.inputStream!!.bufferedReader().forEachLine {
-            System.out.println(it)
-        }
-        readErrThread.join()
-
-        val exitCode = process.waitFor()
-        logFinish(OUT_OF_PROCESS_EXECUTION_STRATEGY)
-        return exitCodeFromProcessExitCode(exitCode)
+        return runToolInSeparateProcess(argsArray, compilerClassName, environment.compilerClasspath, log, loggingMessageCollector)
     }
 
     private fun compileInProcess(
@@ -334,9 +315,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         return exitCode
     }
 
-    private fun logFinish(strategy: String) {
-        log.debug("Finished executing kotlin compiler using $strategy strategy")
-    }
+    private fun logFinish(strategy: String) = log.logFinish(strategy)
 
     override fun getDaemonConnection(environment: GradleCompilerEnvironment): CompileServiceSession? {
         val compilerId = CompilerId.makeCompilerId(environment.compilerClasspath)

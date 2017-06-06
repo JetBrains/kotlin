@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.compilerRunner.GradleKotlinLogger
+import org.jetbrains.kotlin.compilerRunner.createLoggingMessageCollector
+import org.jetbrains.kotlin.compilerRunner.runToolInSeparateProcess
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptionsImpl
@@ -53,7 +55,11 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
         dceOptionsImpl.updateArguments(args)
         args.declarationsToKeep = keep.toTypedArray()
         val argsArray = ArgumentUtils.convertArgumentsToStringList(args).toTypedArray()
-        val exitCode = CLITool.doMainNoExit(K2JSDce(), argsArray + outputDirArgs + inputFiles)
+
+        val log = GradleKotlinLogger(project.logger)
+        val allArgs = argsArray + outputDirArgs + inputFiles
+        val exitCode = runToolInSeparateProcess(allArgs, K2JSDce::class.java.name, listOf(compilerJar),
+                log, createLoggingMessageCollector(log))
         throwGradleExceptionIfError(exitCode)
     }
 }
