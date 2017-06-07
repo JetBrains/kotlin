@@ -85,20 +85,6 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
         c.maxTypeDepthFromInitialConstraints = Math.max(c.maxTypeDepthFromInitialConstraints, initialType.typeDepth())
     }
 
-    private fun UnwrappedType.typeDepth() =
-            when (this) {
-                is SimpleType -> typeDepth()
-                is FlexibleType -> Math.max(lowerBound.typeDepth(), upperBound.typeDepth())
-            }
-
-    private fun SimpleType.typeDepth(): Int {
-        val maxInArguments = arguments.asSequence().map {
-            if (it.isStarProjection) 1 else it.type.unwrap().typeDepth()
-        }.max() ?: 0
-
-        return maxInArguments + 1
-    }
-
     private fun Context.shouldWeSkipConstraint(typeVariable: NewTypeVariable, constraint: Constraint): Boolean {
         assert(constraint.kind != ConstraintKind.EQUALITY)
 
