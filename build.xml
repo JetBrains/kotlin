@@ -306,7 +306,8 @@
         <kotlinc output="${output}/classes/runner">
             <src location="${basedir}/compiler/cli/cli-runner/src"/>
             <compilerarg line="-jvm-target 1.6"/>
-            <compilerarg line="-jdk-home ${env.JDK_16}"/>
+            <compilerarg value="-jdk-home"/>
+            <compilerarg value="${env.JDK_16}"/>
         </kotlinc>
 
         <local name="runtime.jar"/>
