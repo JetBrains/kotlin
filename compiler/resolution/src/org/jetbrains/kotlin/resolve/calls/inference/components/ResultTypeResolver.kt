@@ -16,17 +16,15 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.FixationOrderCalculator.ResolveDirection
-import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.inference.model.checkConstraint
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.intersectTypes
-import java.util.*
+import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 class ResultTypeResolver(
         val typeApproximator: TypeApproximator
@@ -83,7 +81,8 @@ class ResultTypeResolver(
     private fun findSubType(c: Context, variableWithConstraints: VariableWithConstraints): UnwrappedType? {
         val lowerConstraints = variableWithConstraints.constraints.filter { it.kind == ConstraintKind.LOWER && c.isProperType(it.type) }
         if (lowerConstraints.isNotEmpty()) {
-            val commonSupertype = NewCommonSuperTypeCalculator.commonSuperType(convertLowerTypesWithKnowledgeOfNumberTypes(lowerConstraints))
+            val commonSuperType = NewCommonSuperTypeCalculator.commonSuperType(lowerConstraints.map { it.type })
+            val adjustedCommonSuperType = adjustCommonSupertypeWithKnowledgeOfNumberTypes(commonSuperType)
             /**
              *
              * fun <T> Array<out T>.intersect(other: Iterable<T>) {
@@ -102,10 +101,38 @@ class ResultTypeResolver(
              *
              */
 
-            return typeApproximator.approximateToSuperType(commonSupertype, TypeApproximatorConfiguration.CapturedTypesApproximation) ?: commonSupertype
+            return typeApproximator.approximateToSuperType(adjustedCommonSuperType, TypeApproximatorConfiguration.CapturedTypesApproximation)
+                   ?: adjustedCommonSuperType
         }
 
         return null
+    }
+
+    private fun adjustCommonSupertypeWithKnowledgeOfNumberTypes(commonSuperType: UnwrappedType): UnwrappedType {
+        val constructor = commonSuperType.constructor
+
+        return when (constructor) {
+            is IntegerValueTypeConstructor,
+            is IntersectionTypeConstructor -> {
+                val newSupertypes = arrayListOf<UnwrappedType>()
+                val numberSupertypes = arrayListOf<KotlinType>()
+                for (supertype in constructor.supertypes.map { it.unwrap() }) {
+                    if (supertype.isPrimitiveNumberType())
+                        numberSupertypes.add(supertype)
+                    else
+                        newSupertypes.add(supertype)
+                }
+
+                TypeUtils.getDefaultPrimitiveNumberType(numberSupertypes)?.let {
+                    newSupertypes.add(it.unwrap())
+                }
+
+                intersectTypes(newSupertypes).makeNullableAsSpecified(commonSuperType.isMarkedNullable)
+            }
+
+            else ->
+                commonSuperType
+        }
     }
 
     private fun findSuperType(c: Context, variableWithConstraints: VariableWithConstraints): UnwrappedType? {
@@ -137,46 +164,5 @@ class ResultTypeResolver(
 
         // may be we should just firstOrNull
         return notProperEqualsConstraint.singleOrNull()?.type
-    }
-
-
-    private fun convertLowerTypesWithKnowledgeOfNumberTypes(lowerConstraints: Collection<Constraint>): List<UnwrappedType> {
-        if (lowerConstraints.isEmpty()) return emptyList()
-
-        val (numberLowerBounds, generalLowerBounds) = lowerConstraints.map { it.type }.partition { it.isNumberValueType() }
-
-        val numberType = commonSupertypeForNumberTypes(numberLowerBounds) ?: return generalLowerBounds
-        return generalLowerBounds + numberType
-    }
-
-    private fun KotlinType.isNumberValueType() =
-            constructor is IntegerValueTypeConstructor ||
-            (constructor is IntersectionTypeConstructor && constructor.supertypes.all { it.isPrimitiveIntegerType() } )
-
-    private fun KotlinType.isPrimitiveIntegerType() =
-            KotlinBuiltIns.isByte(this) ||
-            KotlinBuiltIns.isShort(this) ||
-            KotlinBuiltIns.isInt(this) ||
-            KotlinBuiltIns.isLong(this)
-
-    private fun commonSupertypeForNumberTypes(numberLowerBounds: List<UnwrappedType>): UnwrappedType? {
-        if (numberLowerBounds.isEmpty()) return null
-        val intersectionOfSupertypes = getIntersectionOfSupertypes(numberLowerBounds)
-        return TypeUtils.getDefaultPrimitiveNumberType(intersectionOfSupertypes)?.unwrap() ?:
-               NewCommonSuperTypeCalculator.commonSuperType(numberLowerBounds)
-    }
-
-    private fun getIntersectionOfSupertypes(types: Collection<UnwrappedType>): Set<UnwrappedType> {
-        val upperBounds = HashSet<UnwrappedType>()
-        for (type in types) {
-            val supertypes = type.constructor.supertypes.map { it.unwrap() }
-            if (upperBounds.isEmpty()) {
-                upperBounds.addAll(supertypes)
-            }
-            else {
-                upperBounds.retainAll(supertypes)
-            }
-        }
-        return upperBounds
     }
 }
