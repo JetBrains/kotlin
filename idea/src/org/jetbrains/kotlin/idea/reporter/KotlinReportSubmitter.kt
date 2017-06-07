@@ -24,6 +24,7 @@ import com.intellij.util.Consumer
 import org.jetbrains.kotlin.idea.KotlinPluginUpdater
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.PluginUpdateStatus
+import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import java.awt.Component
 
 /**
@@ -33,10 +34,13 @@ class KotlinReportSubmitter : ITNReporter() {
     private var hasUpdate = false
     private var hasLatestVersion = false
 
-    override fun showErrorInRelease(event: IdeaLoggingEvent) = !hasUpdate
+    override fun showErrorInRelease(event: IdeaLoggingEvent) = !hasUpdate || KotlinInternalMode.enabled
 
     override fun submit(events: Array<IdeaLoggingEvent>, additionalInfo: String?, parentComponent: Component, consumer: Consumer<SubmittedReportInfo>): Boolean {
         if (hasUpdate) {
+            if (KotlinInternalMode.enabled) {
+                return super.submit(events, additionalInfo, parentComponent, consumer)
+            }
             return true
         }
 
@@ -47,9 +51,14 @@ class KotlinReportSubmitter : ITNReporter() {
         KotlinPluginUpdater.getInstance().runUpdateCheck { status ->
             if (status is PluginUpdateStatus.Update) {
                 hasUpdate = true
+
+                if (KotlinInternalMode.enabled) {
+                    super.submit(events, additionalInfo, parentComponent, consumer)
+                }
+
                 val rc = Messages.showDialog(parentComponent,
                                              "You're running Kotlin plugin version ${KotlinPluginUtil.getPluginVersion()}, " +
-                                                 "while the latest version is ${status.pluginDescriptor.version}",
+                                             "while the latest version is ${status.pluginDescriptor.version}",
                                              "Update Kotlin Plugin",
                                              arrayOf("Update", "Ignore"),
                                              0, Messages.getInformationIcon())
