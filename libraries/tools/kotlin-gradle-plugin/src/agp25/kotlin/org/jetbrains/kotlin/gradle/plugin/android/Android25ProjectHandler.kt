@@ -135,7 +135,7 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
 
             val kaptSourceOutput = project.fileTree(task.destinationDir).builtBy(task)
             variantData.registerExternalAptJavaOutput(kaptSourceOutput)
-            variantData.dataBindingDependencyArtifactsIfSupported?.let { kaptTask.dependsOn(it) }
+            variantData.dataBindingDependencyArtifactsIfSupported?.let { task.dependsOn(it) }
         }
     }
 
