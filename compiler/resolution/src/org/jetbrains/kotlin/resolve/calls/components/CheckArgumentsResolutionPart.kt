@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.components.CreateDescriptorWithFreshTy
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -82,7 +83,7 @@ internal object CheckArguments : ResolutionPart {
     }
 
     // if expected type isn't function type, then may be it is Function<R>, Any or just `T`
-    fun processLambdaArgument(
+    private fun processLambdaArgument(
             kotlinCall: KotlinCall,
             csBuilder: ConstraintSystemBuilder,
             argument: LambdaKotlinCallArgument,
@@ -117,7 +118,7 @@ internal object CheckArguments : ResolutionPart {
             parameters = argument.parametersTypes?.map { it ?: builtIns.nothingType } ?: emptyList()
             returnType = (argument as? FunctionExpression)?.returnType ?:
                          expectedType.arguments.singleOrNull()?.type?.unwrap()?.takeIf { isFunctionSupertype } ?:
-                         builtIns.nullableAnyType
+                         createFreshTypeVariableForLambdaReturnType(csBuilder, argument, builtIns)
 
             // what about case where expected type is type variable? In old TY such cases was not supported. => do nothing for now. todo design
         }
@@ -130,7 +131,17 @@ internal object CheckArguments : ResolutionPart {
         return null
     }
 
-    fun checkCallableExpectedType(
+    private fun createFreshTypeVariableForLambdaReturnType(
+            csBuilder: ConstraintSystemBuilder,
+            argument: LambdaKotlinCallArgument,
+            builtIns: KotlinBuiltIns
+    ): UnwrappedType {
+        val typeVariable = TypeVariableForLambdaReturnType(argument, builtIns, "_L")
+        csBuilder.registerVariable(typeVariable)
+        return typeVariable.defaultType
+    }
+
+    private fun checkCallableExpectedType(
             csBuilder: ConstraintSystemBuilder,
             argument: CallableReferenceKotlinCallArgument,
             expectedType: UnwrappedType
