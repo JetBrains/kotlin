@@ -416,6 +416,18 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("wrongScriptWithDirectory.args")
+        public void testWrongScriptWithDirectory() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongScriptWithDirectory.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("wrongScriptWithKtSource.args")
+        public void testWrongScriptWithKtSource() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongScriptWithKtSource.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("wrongScriptWithNoSource.args")
         public void testWrongScriptWithNoSource() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongScriptWithNoSource.args");
