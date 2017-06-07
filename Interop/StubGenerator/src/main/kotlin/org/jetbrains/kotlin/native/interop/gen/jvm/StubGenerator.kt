@@ -60,6 +60,8 @@ class StubGenerator(
             "true", "try", "typealias", "val", "var", "when", "while"
     )
 
+    val platformWStringTypes = setOf("LPCWSTR")
+
     /**
      * For this identifier constructs the string to be parsed by Kotlin as `SimpleName`
      * defined [here](https://kotlinlang.org/docs/reference/grammar.html#SimpleName).
@@ -516,17 +518,38 @@ class StubGenerator(
         return pointeeType
     }
 
+    private fun Type.isAliasOf(names: Set<String>): Boolean {
+        var type = this
+        while (type is Typedef) {
+            if (names.contains(type.def.name)) return true
+            type = type.def.aliased
+        }
+        return false
+    }
+
     fun representCFunctionParameterAsString(type: Type): Boolean {
         val unwrappedType = type.unwrapTypedefs()
         return unwrappedType is PointerType && unwrappedType.pointeeIsConst &&
                 unwrappedType.pointeeType.unwrapTypedefs() == CharType
     }
 
+    // We take this approach as generic 'const short*' shall not be used as String.
+    fun representCFunctionParameterAsWString(type: Type)= type.isAliasOf(platformWStringTypes)
+
     fun getCFunctionParamBinding(type: Type): OutValueBinding {
         if (representCFunctionParameterAsString(type)) {
             return OutValueBinding(
                     kotlinType = "String?", // TODO: mention the C type (e.g. with annotation).
                     kotlinConv = { name -> "$name?.cstr?.getPointer(memScope).rawValue" },
+                    memScoped = true,
+                    kotlinJniBridgeType = "NativePtr"
+            )
+        }
+
+        if (representCFunctionParameterAsWString(type)) {
+            return OutValueBinding(
+                    kotlinType = "String?", // TODO: mention the C type (e.g. with annotation).
+                    kotlinConv = { name -> "$name?.wcstr?.getPointer(memScope).rawValue" },
                     memScoped = true,
                     kotlinJniBridgeType = "NativePtr"
             )

@@ -1,0 +1,3 @@
+headers = windows.h
+headerFilter = win**.h
+compilerOpts = -DUNICODE -Wno-incompatible-pointer-types -Wno-deprecated-declarations

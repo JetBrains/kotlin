@@ -76,6 +76,18 @@ object nativeMemUtils {
         unsafe.copyMemory(source, baseOffset, null, dest.address, length.toLong())
     }
 
+    fun getCharArray(source: NativePointed, dest: CharArray, length: Int) {
+        val clazz = CharArray::class.java
+        val baseOffset = unsafe.arrayBaseOffset(clazz).toLong();
+        unsafe.copyMemory(null, source.address, dest, baseOffset, length.toLong() * 2)
+    }
+
+    fun putCharArray(source: CharArray, dest: NativePointed, length: Int) {
+        val clazz = CharArray::class.java
+        val baseOffset = unsafe.arrayBaseOffset(clazz).toLong();
+        unsafe.copyMemory(source, baseOffset, null, dest.address, length.toLong() * 2)
+    }
+
     fun zeroMemory(dest: NativePointed, length: Int): Unit = unsafe.setMemory(dest.address, length.toLong(), 0)
 
     internal class NativeAllocated(override val rawPtr: NativePtr) : NativePointed

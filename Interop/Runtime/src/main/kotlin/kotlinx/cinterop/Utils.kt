@@ -147,10 +147,11 @@ inline fun <reified T : CPointer<*>>
         NativePlacement.allocArrayOf(elements: List<T?>): CArrayPointer<CPointerVarOf<T>> {
 
     val res = allocArray<CPointerVarOf<T>>(elements.size)
-    elements.forEachIndexed { index, value ->
-        res[index] = value
+    var index = 0
+    while (index < elements.size) {
+        res[index] = elements[index]
+        ++index
     }
-
     return res
 }
 
@@ -163,8 +164,9 @@ fun NativePlacement.allocArrayOf(elements: ByteArray): CArrayPointer<ByteVar> {
 fun NativePlacement.allocArrayOf(vararg elements: Float): CArrayPointer<FloatVar> {
     val res = allocArray<FloatVar>(elements.size)
     var index = 0
-    for (element in elements) {
-        res[index++] = element
+    while (index < elements.size) {
+        res[index] = elements[index]
+        ++index
     }
     return res
 }
@@ -287,8 +289,6 @@ fun <T : CPointed> Array<CPointer<T>?>.toCValues() = cValuesOf(*this)
 fun <T : CPointed> List<CPointer<T>?>.toCValues() = this.toTypedArray().toCValues()
 
 /**
- * TODO: should the name of the function reflect the encoding?
- *
  * @return the value of zero-terminated UTF-8-encoded C string constructed from given [kotlin.String].
  */
 val String.cstr: CValues<ByteVar>
@@ -302,6 +302,21 @@ val String.cstr: CValues<ByteVar>
                 val result = placement.allocArray<ByteVar>(bytes.size + 1)
                 nativeMemUtils.putByteArray(bytes, result.pointed, bytes.size)
                 result[bytes.size] = 0.toByte()
+                return result
+            }
+        }
+    }
+
+val String.wcstr: CValues<ShortVar>
+    get() {
+        val chars = CharArray(this.length, { i -> this.get(i)})
+        return object : CValues<ShortVar>() {
+            override val size get() = chars.size + 1
+
+            override fun getPointer(placement: NativePlacement): CPointer<ShortVar> {
+                val result = placement.allocArray<ShortVar>(chars.size + 1)
+                nativeMemUtils.putCharArray(chars, result.pointed, chars.size)
+                result[chars.size] = 0.toShort()
                 return result
             }
         }
