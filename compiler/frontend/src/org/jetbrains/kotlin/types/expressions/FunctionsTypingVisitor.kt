@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
+import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
@@ -130,7 +131,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
 
             val resultType = functionDescriptor.createFunctionType(suspendFunctionTypeExpected)
 
-            if (functionalTypeExpected)
+            if (USE_NEW_INFERENCE && functionalTypeExpected)
                 createTypeInfo(resultType, context)
             else
                 components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, function)
