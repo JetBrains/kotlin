@@ -30,10 +30,13 @@ import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
 import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
-class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
+open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
+    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/"
+
     override fun setUp() {
         super.setUp()
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
@@ -142,7 +145,7 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     }
 
     class MultiPlatform : AbstractMultiModuleHighlightingTest() {
-        override val testPath get() = super.testPath + "multiplatform/"
+        override fun getTestDataPath() = "${PluginTestCaseBase.getTestDataPathBase()}/multiModuleHighlighting/multiplatform/"
 
         fun testBasic() {
             doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])

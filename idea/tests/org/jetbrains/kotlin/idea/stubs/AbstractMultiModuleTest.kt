@@ -42,10 +42,10 @@ import java.io.File
 
 abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
-    protected open val testPath = PluginTestCaseBase.getTestDataPathBase()
+    abstract override fun getTestDataPath(): String
 
     protected fun module(name: String, hasTestRoot: Boolean = false, useFullJdk: Boolean = false): Module {
-        val srcDir = testPath + "${getTestName(true)}/$name"
+        val srcDir = testDataPath + "${getTestName(true)}/$name"
         val moduleWithSrcRootSet = createModuleFromTestData(srcDir, name, StdModuleTypes.JAVA, true)!!
         if (hasTestRoot) {
             setTestRoot(moduleWithSrcRootSet, name)
@@ -58,7 +58,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
     }
 
     private fun setTestRoot(module: Module, name: String) {
-        val testDir = testPath + "${getTestName(true)}/${name}Test"
+        val testDir = testDataPath + "${getTestName(true)}/${name}Test"
         val testRootDirInTestData = File(testDir)
         val testRootDir = createTempDirectory()!!
         FileUtil.copyDir(testRootDirInTestData, testRootDir)

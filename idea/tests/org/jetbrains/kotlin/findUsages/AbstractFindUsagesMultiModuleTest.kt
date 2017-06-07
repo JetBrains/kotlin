@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 abstract class AbstractFindUsagesMultiModuleTest : AbstractMultiModuleTest() {
 
-    override val testPath = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleFindUsages/"
+    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleFindUsages/"
 
     protected fun doFindUsagesTest() {
         val allFilesInProject = PluginJetFilesProvider.allFilesInProject(myProject!!)

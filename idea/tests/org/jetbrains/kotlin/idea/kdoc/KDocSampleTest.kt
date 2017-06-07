@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest.wrapToFileComparisonFailure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
@@ -34,8 +35,7 @@ import java.io.File
 
 class KDocSampleTest : AbstractMultiModuleTest() {
 
-    override val testPath: String = "${super.testPath}/kdoc/multiModuleSamples/"
-    override fun getTestDataPath() = testPath
+    override fun getTestDataPath() = "${PluginTestCaseBase.getTestDataPathBase()}/kdoc/multiModuleSamples/"
 
     override fun setUp() {
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
@@ -90,7 +90,7 @@ class KDocSampleTest : AbstractMultiModuleTest() {
     }
 
     fun doInfoTest(path: String) {
-        val testDataFile = File(testPath, path)
+        val testDataFile = File(testDataPath, path)
         configureByFile(path)
         val documentationManager = DocumentationManager.getInstance(myProject)
         val targetElement = documentationManager.findTargetElement(myEditor, file)

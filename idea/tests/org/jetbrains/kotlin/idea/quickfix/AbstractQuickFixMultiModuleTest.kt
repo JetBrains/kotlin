@@ -38,9 +38,7 @@ import java.util.regex.Pattern
 
 abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
 
-    override val testPath = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleQuickFix/"
-
-    override fun getTestDataPath() = testPath
+    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleQuickFix/"
 
     protected fun shouldBeAvailableAfterExecution(file: KtFile) =
             InTextDirectivesUtils.isDirectiveDefined(file.text, "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION")
@@ -74,8 +72,8 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
                 doAction(text, actionShouldBeAvailable, actionFileName, actionFile)
 
                 if (actionShouldBeAvailable) {
-                    val testDirectory = File(testPath)
-                    val projectDirectory = File("$testPath${getTestName(true)}")
+                    val testDirectory = File(testDataPath)
+                    val projectDirectory = File("$testDataPath${getTestName(true)}")
                     for (moduleDirectory in projectDirectory.listFiles()) {
                         for (file in moduleDirectory.walkTopDown()) {
                             if (!file.path.endsWith(".after")) continue

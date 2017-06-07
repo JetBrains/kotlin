@@ -18,8 +18,17 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
-class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
+class MultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
+
+    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleLineMarker/"
+
+    override val shouldCheckLineMarkers = true
+
+    override val shouldCheckResult = false
+
+    override fun doTestLineMarkers() = true
 
     fun testFromCommonToJvmHeader() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
