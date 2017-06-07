@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
+import org.jetbrains.kotlin.resolve.calls.model.LambdaKotlinCallArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
@@ -55,3 +56,9 @@ class TypeVariableFromCallableDescriptor(
         val originalTypeParameter: TypeParameterDescriptor,
         val call: KotlinCall? = null
 ) : NewTypeVariable(originalTypeParameter.builtIns, originalTypeParameter.name.identifier)
+
+class TypeVariableForLambdaReturnType(
+        val lambdaArgument: LambdaKotlinCallArgument,
+        builtIns: KotlinBuiltIns,
+        name: String
+) : NewTypeVariable(builtIns, name)
