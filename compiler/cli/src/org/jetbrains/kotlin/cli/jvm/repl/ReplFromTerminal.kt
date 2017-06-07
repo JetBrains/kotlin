@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.cli.jvm.repl
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.cli.jvm.repl.messages.unescapeLineBreaks
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -34,7 +37,6 @@ class ReplFromTerminal(
         compilerConfiguration: CompilerConfiguration,
         replConfiguration: ReplConfiguration
 ) : ReplConfiguration by replConfiguration {
-
     private val replInitializer: Future<ReplInterpreter> = Executors.newSingleThreadExecutor().submit(Callable {
         ReplInterpreter(disposable, compilerConfiguration, replConfiguration)
     })
@@ -42,11 +44,19 @@ class ReplFromTerminal(
     private val replInterpreter: ReplInterpreter
         get() = replInitializer.get()
 
+    private val messageCollector: MessageCollector = compilerConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
     private fun doRun() {
         try {
             writer.printlnWelcomeMessage("Welcome to Kotlin version ${KotlinCompilerVersion.VERSION} " +
                                          "(JRE ${System.getProperty("java.runtime.version")})")
             writer.printlnWelcomeMessage("Type :help for help, :quit for quit")
+
+            // Display compiler messages related to configuration and CLI arguments, quit if there are errors
+            val hasErrors = messageCollector.hasErrors()
+            (messageCollector as? GroupingMessageCollector)?.flush()
+            if (hasErrors) return
+
             var next = WhatNextAfterOneLine.READ_LINE
             while (true) {
                 next = one(next)
