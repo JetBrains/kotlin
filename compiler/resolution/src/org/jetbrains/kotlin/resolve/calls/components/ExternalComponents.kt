@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
 interface IsDescriptorFromSourcePredicate: (CallableDescriptor) -> Boolean
@@ -26,7 +25,7 @@ interface IsDescriptorFromSourcePredicate: (CallableDescriptor) -> Boolean
 // This components hold state (trace). Work with this carefully.
 interface KotlinResolutionCallbacks {
     fun analyzeAndGetLambdaResultArguments(
-            topLevelCall: KotlinCall,
+            outerCall: KotlinCall,
             lambdaArgument: LambdaKotlinCallArgument,
             isSuspend: Boolean,
             receiverType: UnwrappedType?,

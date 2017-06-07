@@ -67,7 +67,7 @@ class KotlinResolutionCallbacksImpl(
     }
 
     override fun analyzeAndGetLambdaResultArguments(
-            topLevelCall: KotlinCall,
+            outerCall: KotlinCall,
             lambdaArgument: LambdaKotlinCallArgument,
             isSuspend: Boolean,
             receiverType: UnwrappedType?,
@@ -100,9 +100,11 @@ class KotlinResolutionCallbacksImpl(
 
         val approximatesExpectedType = typeApproximator.approximateToSubType(expectedType, TypeApproximatorConfiguration.LocalDeclaration) ?: expectedType
 
-        val actualContext = outerCallContext.replaceBindingTrace(trace).
-                replaceContextDependency(lambdaInfo.contextDependency).replaceExpectedType(approximatesExpectedType)
-
+        val actualContext = outerCallContext
+                .replaceBindingTrace(trace)
+                .replaceContextDependency(lambdaInfo.contextDependency)
+                .replaceExpectedType(approximatesExpectedType)
+                .replaceDataFlowInfo(outerCall.psiKotlinCall.resultDataFlowInfo)
 
         val functionTypeInfo = expressionTypingServices.getTypeInfo(expression, actualContext)
         trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, ktFunction, LambdaInfo.STUB_EMPTY)
