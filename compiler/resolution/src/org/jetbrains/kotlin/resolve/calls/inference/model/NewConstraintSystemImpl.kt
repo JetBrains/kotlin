@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallableReferenceArgument
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -156,6 +153,11 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         storage.callableReferenceArguments.add(resolvedCallableReferenceArgument)
     }
 
+    override fun addCollectionLiteralArgument(collectionLiteralArgument: ResolvedCollectionLiteralArgument) {
+        checkState(State.BUILDING, State.COMPLETION)
+        storage.collectionLiteralArguments.add(collectionLiteralArgument)
+    }
+
     private fun getVariablesForFixation(): Map<NewTypeVariable, UnwrappedType> {
         val fixedVariables = LinkedHashMap<NewTypeVariable, UnwrappedType>()
 
@@ -254,6 +256,12 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         get() {
             checkState(State.COMPLETION)
             return storage.callableReferenceArguments
+        }
+
+    override val collectionLiteralArguments: List<ResolvedCollectionLiteralArgument>
+        get() {
+            checkState(State.COMPLETION)
+            return storage.collectionLiteralArguments
         }
 
     // KotlinCallCompleter.Context

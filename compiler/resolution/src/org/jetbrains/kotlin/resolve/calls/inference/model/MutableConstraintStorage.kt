@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.resolve.calls.inference.trimToSize
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallableReferenceArgument
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import java.util.*
@@ -86,5 +83,6 @@ internal class MutableConstraintStorage : ConstraintStorage {
     override val fixedTypeVariables: MutableMap<TypeConstructor, UnwrappedType> = LinkedHashMap()
     override val lambdaArguments: MutableList<ResolvedLambdaArgument> = ArrayList()
     override val callableReferenceArguments: MutableList<ResolvedCallableReferenceArgument> = ArrayList()
+    override val collectionLiteralArguments: MutableList<ResolvedCollectionLiteralArgument> = ArrayList()
     override val innerCalls: MutableList<ResolvedKotlinCall.OnlyResolvedKotlinCall> = ArrayList()
 }
