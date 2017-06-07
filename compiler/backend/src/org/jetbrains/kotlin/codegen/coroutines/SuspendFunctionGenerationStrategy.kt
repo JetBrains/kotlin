@@ -57,6 +57,7 @@ class SuspendFunctionGenerationStrategy(
         return CoroutineTransformerMethodVisitor(
                 mv, access, name, desc, null, null, containingClassInternalName, this::classBuilderForCoroutineState,
                 isForNamedFunction = true,
+                element = declaration,
                 needDispatchReceiver = originalSuspendDescriptor.dispatchReceiverParameter != null,
                 internalNameForDispatchReceiver = containingClassInternalNameOrNull()
         ).also {

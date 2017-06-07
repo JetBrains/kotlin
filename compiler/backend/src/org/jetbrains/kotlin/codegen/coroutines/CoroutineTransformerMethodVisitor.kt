@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.util.containers.Stack
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.sure
@@ -50,6 +52,7 @@ class CoroutineTransformerMethodVisitor(
         private val containingClassInternalName: String,
         obtainClassBuilderForCoroutineState: () -> ClassBuilder,
         private val isForNamedFunction: Boolean,
+        private val element: KtElement,
         // It's only matters for named functions, may differ from '!isStatic(access)' in case of DefaultImpls
         private val needDispatchReceiver: Boolean = false,
         // May differ from containingClassInternalName in case of DefaultImpls
@@ -59,8 +62,8 @@ class CoroutineTransformerMethodVisitor(
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
 
     private val continuationIndex = if (isForNamedFunction) getLastParameterIndex(desc, access) else 0
-    var dataIndex = if (isForNamedFunction) -1 else 1
-    var exceptionIndex = if (isForNamedFunction) -1 else 2
+    private var dataIndex = if (isForNamedFunction) -1 else 1
+    private var exceptionIndex = if (isForNamedFunction) -1 else 2
 
     override fun performTransformations(methodNode: MethodNode) {
         val suspensionPoints = collectSuspensionPoints(methodNode)
@@ -107,10 +110,16 @@ class CoroutineTransformerMethodVisitor(
             val startLabel = LabelNode()
             val defaultLabel = LabelNode()
             val firstToInsertBefore = actualCoroutineStart
+            val tableSwitchLabel = LabelNode()
+            val lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0
+
             // tableswitch(this.label)
             insertBefore(firstToInsertBefore,
                          insnListOf(
                                  *withInstructionAdapter { loadCoroutineSuspendedMarker() }.toArray(),
+                                 tableSwitchLabel,
+                                 // Allow debugger to stop on enter into suspend function
+                                 LineNumberNode(lineNumber, tableSwitchLabel),
                                  VarInsnNode(Opcodes.ASTORE, suspendMarkerVarIndex),
                                  VarInsnNode(Opcodes.ALOAD, continuationIndex),
                                  createInsnForReadingLabel(),
@@ -463,6 +472,8 @@ class CoroutineTransformerMethodVisitor(
     ): LabelNode {
         val continuationLabel = LabelNode()
         val continuationLabelAfterLoadedResult = LabelNode()
+        val suspendElementLineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0
+        val nextLineNumberNode = suspension.suspensionCallEnd.findNextOrNull { it is LineNumberNode } as? LineNumberNode
         with(methodNode.instructions) {
             // Save state
             insertBefore(suspension.suspensionCallBegin,
@@ -479,6 +490,10 @@ class CoroutineTransformerMethodVisitor(
                 ifacmpne(continuationLabelAfterLoadedResult.label)
 
                 // Exit
+                val returnLabel = LabelNode()
+                visitLabel(returnLabel.label)
+                // Special line number to stop in debugger before suspend return
+                visitLineNumber(suspendElementLineNumber, returnLabel.label)
                 load(suspendMarkerVarIndex, AsmTypes.OBJECT_TYPE)
                 areturn(AsmTypes.OBJECT_TYPE)
                 // Mark place for continuation
@@ -503,6 +518,11 @@ class CoroutineTransformerMethodVisitor(
                 load(dataIndex, AsmTypes.OBJECT_TYPE)
 
                 visitLabel(continuationLabelAfterLoadedResult.label)
+
+                // Extend next instruction linenumber. Can't use line number of suspension point here because both non-suspended execution
+                // and re-entering after suspension passes this label.
+                val afterSuspensionPointLineNumber = nextLineNumberNode?.line ?: suspendElementLineNumber
+                visitLineNumber(afterSuspensionPointLineNumber, continuationLabelAfterLoadedResult.label)
             })
         }
 

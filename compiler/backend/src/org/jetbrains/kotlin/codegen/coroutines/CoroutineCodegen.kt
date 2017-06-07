@@ -310,6 +310,7 @@ class CoroutineCodegenForLambda private constructor(
                         return CoroutineTransformerMethodVisitor(
                                 mv, access, name, desc, null, null,
                                 obtainClassBuilderForCoroutineState = { v },
+                                element = element,
                                 containingClassInternalName = v.thisName,
                                 isForNamedFunction = false
                         )
