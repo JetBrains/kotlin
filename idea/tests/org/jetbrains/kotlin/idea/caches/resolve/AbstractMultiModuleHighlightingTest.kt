@@ -19,22 +19,16 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiHighlightingTest
-import org.junit.Assert
 
 abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTest() {
 
-    protected fun checkHighlightingInAllFiles(nameFilter: (fileName: String) -> Boolean = { true }) {
-        var atLeastOneFile = false
-        PluginJetFilesProvider.allFilesInProject(myProject!!).forEach { file ->
-            if (nameFilter(file.name) && !file.text.contains("// !CHECK_HIGHLIGHTING")) {
-                atLeastOneFile = true
-                configureByExistingFile(file.virtualFile!!)
-                checkHighlighting(myEditor, true, false)
-            }
+    protected fun checkHighlightingInAllFiles(
+            shouldCheckFile: () -> Boolean = { !file.text.contains("// !CHECK_HIGHLIGHTING") }
+    ) {
+        checkFiles(shouldCheckFile) {
+            checkHighlighting(myEditor, true, false)
         }
-        Assert.assertTrue(atLeastOneFile)
     }
 
     protected fun doMultiPlatformTest(

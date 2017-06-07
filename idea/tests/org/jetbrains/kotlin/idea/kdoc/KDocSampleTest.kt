@@ -37,11 +37,6 @@ class KDocSampleTest : AbstractMultiModuleTest() {
 
     override fun getTestDataPath() = "${PluginTestCaseBase.getTestDataPathBase()}/kdoc/multiModuleSamples/"
 
-    override fun setUp() {
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
-        super.setUp()
-    }
-
     fun testSimple() {
 
         val code = module("code")

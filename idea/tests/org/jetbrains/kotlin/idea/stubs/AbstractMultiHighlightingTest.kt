@@ -58,5 +58,4 @@ abstract class AbstractMultiHighlightingTest : AbstractMultiModuleTest() {
         }
         return infos
     }
-
 }

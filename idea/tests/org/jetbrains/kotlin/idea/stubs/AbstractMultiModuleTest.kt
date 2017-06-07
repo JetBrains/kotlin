@@ -29,20 +29,29 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEdito
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
+import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.Assert
 import java.io.File
 
 abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
     abstract override fun getTestDataPath(): String
+
+    override fun setUp() {
+        super.setUp()
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+    }
 
     protected fun module(name: String, hasTestRoot: Boolean = false, useFullJdk: Boolean = false): Module {
         val srcDir = testDataPath + "${getTestName(true)}/$name"
@@ -106,5 +115,17 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         facetSettings.compilerSettings = CompilerSettings().apply {
             additionalArguments += " -Xmulti-platform"
         }
+    }
+
+    protected fun checkFiles(shouldCheckFile: () -> Boolean = { true }, check: () -> Unit) {
+        var atLeastOneFile = false
+        PluginJetFilesProvider.allFilesInProject(myProject!!).forEach { file ->
+            configureByExistingFile(file.virtualFile!!)
+            if (shouldCheckFile()) {
+                atLeastOneFile = true
+                check()
+            }
+        }
+        Assert.assertTrue(atLeastOneFile)
     }
 }

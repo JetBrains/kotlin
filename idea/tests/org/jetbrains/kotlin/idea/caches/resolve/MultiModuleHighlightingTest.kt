@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.facet.FacetManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.DependencyScope
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForModuleComputationTracker
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -32,15 +31,9 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.test.KotlinTestUtils
 
 open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/"
-
-    override fun setUp() {
-        super.setUp()
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
-    }
 
     fun testVisibility() {
         val module1 = module("m1")
@@ -96,7 +89,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             assertTrue(module2 !in resolversComputed)
             assertTrue(module3 !in resolversComputed)
 
-            checkHighlightingInAllFiles { "m3" in it }
+            checkHighlightingInAllFiles { "m3" in file.name }
 
             assertTrue(module1 in resolversComputed)
             assertTrue(module2 !in resolversComputed)

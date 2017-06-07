@@ -16,20 +16,18 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModuleRootModificationUtil
-import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
 import com.intellij.openapi.roots.libraries.Library
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.ModuleTestCase
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.test.util.addDependency
+import org.jetbrains.kotlin.test.util.jarRoot
+import org.jetbrains.kotlin.test.util.projectLibrary
 import org.junit.Assert
-import java.io.File
 
 class IdeaModuleInfoTest : ModuleTestCase() {
 
@@ -304,12 +302,6 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     private val Library.classes: LibraryInfo
         get() = LibraryInfo(project!!, this)
 
-    private fun Module.addDependency(
-            lib: Library,
-            dependencyScope: DependencyScope = DependencyScope.COMPILE,
-            exported: Boolean = false
-    ) = ModuleRootModificationUtil.addDependency(this, lib, dependencyScope, exported)
-
     private fun module(name: String): Module {
         return createModuleFromTestData(createTempDirectory()!!.absolutePath, name, StdModuleTypes.JAVA, false)!!
     }
@@ -330,22 +322,9 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         UsefulTestCase.assertSameElements(this.getDependentModules(), expected.toList())
     }
 
-    private fun projectLibrary(name: String = "lib", vararg roots: File): Library {
-        val libraryTable = ProjectLibraryTable.getInstance(myProject)!!
-        return WriteCommandAction.runWriteCommandAction<Library>(myProject) {
-            libraryTable.createLibrary(name).apply {
-                for (root in roots) {
-                    val model = modifiableModel
-                    model.addRoot(VfsUtil.getUrlForLibraryRoot(root), OrderRootType.CLASSES)
-                    model.commit()
-                }
-            }
-        }!!
-    }
+    private fun stdlibCommon(): Library = projectLibrary("kotlin-stdlib-common", ForTestCompileRuntime.stdlibCommonForTests().jarRoot)
 
-    private fun stdlibCommon(): Library = projectLibrary("kotlin-stdlib-common", ForTestCompileRuntime.stdlibCommonForTests())
+    private fun stdlibJvm(): Library = projectLibrary("kotlin-stdlib", ForTestCompileRuntime.runtimeJarForTests().jarRoot)
 
-    private fun stdlibJvm(): Library = projectLibrary("kotlin-stdlib", ForTestCompileRuntime.runtimeJarForTests())
-
-    private fun stdlibJs(): Library = projectLibrary("kotlin-stdlib-js", ForTestCompileRuntime.runtimeJarForTests())
+    private fun stdlibJs(): Library = projectLibrary("kotlin-stdlib-js", ForTestCompileRuntime.runtimeJarForTests().jarRoot)
 }
