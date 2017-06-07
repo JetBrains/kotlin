@@ -63,7 +63,8 @@ class DokkaBootstrapImpl : DokkaBootstrap {
                         impliedPlatforms,
                         perPackageOptions,
                         externalDocumentationLinks,
-                        noStdlibLink
+                        noStdlibLink,
+                        cacheRoot
                 )
         )
     }
