@@ -128,10 +128,14 @@ class InitialConstraint(
 fun InitialConstraint.checkConstraint(substitutor: TypeSubstitutor): Boolean {
     val newA = substitutor.substitute(a)
     val newB = substitutor.substitute(a)
+    return checkConstraint(newB, constraintKind, newA)
+}
+
+fun checkConstraint(constraintType: UnwrappedType, constraintKind: ConstraintKind, resultType: UnwrappedType): Boolean {
     val typeChecker = KotlinTypeChecker.DEFAULT
     return when (constraintKind) {
-        ConstraintKind.EQUALITY -> typeChecker.equalTypes(newA, newB)
-        ConstraintKind.UPPER -> typeChecker.isSubtypeOf(newA, newB)
-        ConstraintKind.LOWER -> typeChecker.isSubtypeOf(newB, newA)
+        ConstraintKind.EQUALITY -> typeChecker.equalTypes(constraintType, resultType)
+        ConstraintKind.LOWER -> typeChecker.isSubtypeOf(constraintType, resultType)
+        ConstraintKind.UPPER -> typeChecker.isSubtypeOf(resultType, constraintType)
     }
 }
