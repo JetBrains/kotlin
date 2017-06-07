@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.UsefulTestCase
@@ -797,7 +798,8 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         result.assertSuccessful()
         val warning = result.getMessages(BuildMessage.Kind.WARNING).single()
 
-        Assert.assertEquals(Usage.render(K2JVMCompiler(), K2JVMCompilerArguments()), warning.messageText)
+        val expectedText = StringUtil.convertLineSeparators(Usage.render(K2JVMCompiler(), K2JVMCompilerArguments()))
+        Assert.assertEquals(expectedText, warning.messageText)
     }
 
     fun testWrongArgument() {
