@@ -18,6 +18,9 @@
 import kotlin.text.*
 import kotlin.test.*
 
+fun assertTrue(msg: String, value: Boolean) = assertTrue(value, msg)
+fun assertFalse(msg: String, value: Boolean) = assertFalse(value, msg)
+
 internal var testPatterns = arrayOf("(a|b)*abb", "(1*2*3*4*)*567", "(a|b|c|d)*aab", "(1|2|3|4|5|6|7|8|9|0)(1|2|3|4|5|6|7|8|9|0)*", "(abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ)*", "(a|b)*(a|b)*A(a|b)*lice.*", "(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z)(a|b|c|d|e|f|g|h|" + "i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z)*(1|2|3|4|5|6|7|8|9|0)*|while|for|struct|if|do")
 
 internal var groupPatterns = arrayOf("(a|b)*aabb", "((a)|b)*aabb", "((a|b)*)a(abb)", "(((a)|(b))*)aabb", "(((a)|(b))*)aa(b)b", "(((a)|(b))*)a(a(b)b)")
@@ -78,7 +81,7 @@ fun testGroupint() {
         val regex = Regex(groupPatterns[i])
         val result = regex.matchEntire(positiveTestString)!!
         for (j in 0..groupResults[i].size - 1) {
-            assertEquals("i: $i j: $j", groupResults[i][j], result.groupValues[j + 1])
+            assertEquals(groupResults[i][j], result.groupValues[j + 1], "i: $i j: $j")
         }
     }
 
@@ -411,42 +414,6 @@ fun testFindDollar() {
     assertEquals("a", result!!.groupValues[0])
 }
 
-
-fun testAllCodePoints() {
-    // Regression for HARMONY-3145
-    val codePoint = IntArray(1)
-    var p = Regex("(\\p{all})+")
-    var res = true
-    var cnt = 0
-    var s: String
-    for (i in 0..1114111) {
-        codePoint[0] = i
-        s = String(codePoint, 0, 1)
-        if (!s.matches(p.toString().toRegex())) {
-            cnt++
-            res = false
-        }
-    }
-    assertTrue(res)
-    assertEquals(0, cnt)
-
-    p = Regex("(\\P{all})+")
-    res = true
-    cnt = 0
-
-    for (i in 0..1114111) {
-        codePoint[0] = i
-        s = String(codePoint, 0, 1)
-        if (!s.matches(p.toString().toRegex())) {
-            cnt++
-            res = false
-        }
-    }
-
-    assertFalse(res)
-    assertEquals(0x110000, cnt)
-}
-
 /*
  * Regression test for HARMONY-674
  */
@@ -501,7 +468,6 @@ fun box() {
     testUnicodeCategory()
     testSplitEmpty()
     testFindDollar()
-    testAllCodePoints()
     testPatternMatcher()
     test3360()
     testGeneralPunctuationCategory()

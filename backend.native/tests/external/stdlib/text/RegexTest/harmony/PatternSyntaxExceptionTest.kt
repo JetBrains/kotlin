@@ -21,7 +21,7 @@ fun testCase() {
     val regex = "("
     try {
         Regex(regex)
-        Assert.fail("PatternSyntaxException expected")
+        fail("PatternSyntaxException expected")
     } catch (e: PatternSyntaxException) {
         // TODO: Check the exception's properties.
     }
@@ -32,7 +32,7 @@ fun testCase2() {
     val regex = "[4-"
     try {
         Regex(regex)
-        Assert.fail("PatternSyntaxException expected")
+        fail("PatternSyntaxException expected")
     } catch (e: PatternSyntaxException) {
     }
 

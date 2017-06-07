@@ -18,71 +18,74 @@
 import kotlin.text.*
 import kotlin.test.*
 
+fun assertTrue(msg: String, value: Boolean) = assertTrue(value, msg)
+fun assertFalse(msg: String, value: Boolean) = assertFalse(value, msg)
+
 internal var testPatterns = arrayOf("(a|b)*abb", "(1*2*3*4*)*567", "(a|b|c|d)*aab", "(1|2|3|4|5|6|7|8|9|0)(1|2|3|4|5|6|7|8|9|0)*", "(abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ)*", "(a|b)*(a|b)*A(a|b)*lice.*", "(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z)(a|b|c|d|e|f|g|h|" + "i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z)*(1|2|3|4|5|6|7|8|9|0)*|while|for|struct|if|do", "x(?c)y", "x(?cc)y", "x(?:c)y")
 
 fun testCommentsInPattern() {
     val p = Regex("ab# this is a comment\ncd", RegexOption.COMMENTS)
-    Assert.assertTrue(p.matches("abcd"))
+    assertTrue(p.matches("abcd"))
 }
 
 fun testSplitCharSequenceint() {
     // Splitting CharSequence which ends with pattern.
     // Harmony regress tests.
-    Assert.assertEquals(",,".split(",".toRegex(), 3).toTypedArray().size, 3)
-    Assert.assertEquals(",,".split(",".toRegex(), 4).toTypedArray().size, 3)
-    Assert.assertEquals(Regex("o").split("boo:and:foo", 5).size, 5)
-    Assert.assertEquals(Regex("b").split("ab", 0).size, 2)
+    assertEquals(",,".split(",".toRegex(), 3).toTypedArray().size, 3)
+    assertEquals(",,".split(",".toRegex(), 4).toTypedArray().size, 3)
+    assertEquals(Regex("o").split("boo:and:foo", 5).size, 5)
+    assertEquals(Regex("b").split("ab", 0).size, 2)
     var s: List<String>
     var regex = Regex("x")
     s = regex.split("zxx:zzz:zxx", 10)
-    Assert.assertEquals(s.size, 5)
+    assertEquals(s.size, 5)
     s = regex.split("zxx:zzz:zxx", 3)
-    Assert.assertEquals(s.size, 3)
+    assertEquals(s.size, 3)
     s = regex.split("zxx:zzz:zxx", 0)
-    Assert.assertEquals(s.size, 5)
+    assertEquals(s.size, 5)
 
     // Other splitting.
     // Negative limit
     regex = Regex("b")
     s = regex.split("abccbadfebb", 0)
-    Assert.assertEquals(s.size, 5)
+    assertEquals(s.size, 5)
     s = regex.split("", 0)
-    Assert.assertEquals(s.size, 1)
+    assertEquals(s.size, 1)
     regex = Regex("")
     s = regex.split("", 0)
-    Assert.assertEquals(s.size, 1)
+    assertEquals(s.size, 1)
     s = regex.split("abccbadfe", 0)
-    Assert.assertEquals(s.size, 11)
+    assertEquals(s.size, 11)
 
     // positive limit
     regex = Regex("b")
     s = regex.split("abccbadfebb", 12)
-    Assert.assertEquals(s.size, 5)
+    assertEquals(s.size, 5)
     s = regex.split("", 6)
-    Assert.assertEquals(s.size, 1)
+    assertEquals(s.size, 1)
     regex = Regex("")
     s = regex.split("", 11)
-    Assert.assertEquals(s.size, 1)
+    assertEquals(s.size, 1)
     s = regex.split("abccbadfe", 15)
-    Assert.assertEquals(s.size, 11)
+    assertEquals(s.size, 11)
 
     regex = Regex("b")
     s = regex.split("abccbadfebb", 5)
-    Assert.assertEquals(s.size, 5)
+    assertEquals(s.size, 5)
     s = regex.split("", 1)
-    Assert.assertEquals(s.size, 1)
+    assertEquals(s.size, 1)
     regex = Regex("")
     s = regex.split("", 1)
-    Assert.assertEquals(s.size, 1)
+    assertEquals(s.size, 1)
     s = regex.split("abccbadfe", 11)
-    Assert.assertEquals(s.size, 11)
+    assertEquals(s.size, 11)
 
     regex = Regex("b")
     s = regex.split("abccbadfebb", 3)
-    Assert.assertEquals(s.size, 3)
+    assertEquals(s.size, 3)
     regex = Regex("")
     s = regex.split("abccbadfe", 5)
-    Assert.assertEquals(s.size, 5)
+    assertEquals(s.size, 5)
 }
 
 fun testFlags() {
@@ -93,98 +96,98 @@ fun testFlags() {
     baseString = "((?i)|b)a"
     testString = "A"
     regex = Regex(baseString)
-    Assert.assertFalse(regex.matches(testString))
+    assertFalse(regex.matches(testString))
 
     baseString = "(?i)a|b"
     testString = "A"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "(?i)a|b"
     testString = "B"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "c|(?i)a|b"
     testString = "B"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "(?i)a|(?s)b"
     testString = "B"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "(?i)a|(?-i)b"
     testString = "B"
     regex = Regex(baseString)
-    Assert.assertFalse(regex.matches(testString))
+    assertFalse(regex.matches(testString))
 
     baseString = "(?i)a|(?-i)c|b"
     testString = "B"
     regex = Regex(baseString)
-    Assert.assertFalse(regex.matches(testString))
+    assertFalse(regex.matches(testString))
 
     baseString = "(?i)a|(?-i)c|(?i)b"
     testString = "B"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "(?i)a|(?-i)b"
     testString = "A"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "((?i))a"
     testString = "A"
     regex = Regex(baseString)
-    Assert.assertFalse(regex.matches(testString))
+    assertFalse(regex.matches(testString))
 
     baseString = "|(?i)|a"
     testString = "A"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "(?i)((?s)a.)"
     testString = "A\n"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "(?i)((?-i)a)"
     testString = "A"
     regex = Regex(baseString)
-    Assert.assertFalse(regex.matches(testString))
+    assertFalse(regex.matches(testString))
 
     baseString = "(?i)(?s:a.)"
     testString = "A\n"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "(?i)fgh(?s:aa)"
     testString = "fghAA"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "(?i)((?-i))a"
     testString = "A"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "abc(?i)d"
     testString = "ABCD"
     regex = Regex(baseString)
-    Assert.assertFalse(regex.matches(testString))
+    assertFalse(regex.matches(testString))
 
     testString = "abcD"
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "a(?i)a(?-i)a(?i)a(?-i)a"
     testString = "aAaAa"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "aAAAa"
-    Assert.assertFalse(regex.matches(testString))
+    assertFalse(regex.matches(testString))
 }
 
 fun Set<RegexOption>.containsOnly(vararg options: RegexOption): Boolean {
@@ -202,26 +205,26 @@ fun testFlagsMethod() {
 
     baseString = "(?idmsux)abc(?-i)vg(?-dmu)"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.options.containsOnly(RegexOption.DOT_MATCHES_ALL, RegexOption.COMMENTS))
+    assertTrue(regex.options.containsOnly(RegexOption.DOT_MATCHES_ALL, RegexOption.COMMENTS))
 
     baseString = "(?idmsux)abc|(?-i)vg|(?-dmu)"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.options.containsOnly(RegexOption.DOT_MATCHES_ALL, RegexOption.COMMENTS))
+    assertTrue(regex.options.containsOnly(RegexOption.DOT_MATCHES_ALL, RegexOption.COMMENTS))
 
     baseString = "(?is)a((?x)b.)"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.options.containsOnly(RegexOption.DOT_MATCHES_ALL, RegexOption.IGNORE_CASE))
+    assertTrue(regex.options.containsOnly(RegexOption.DOT_MATCHES_ALL, RegexOption.IGNORE_CASE))
 
     baseString = "(?i)a((?-i))"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.options.containsOnly(RegexOption.IGNORE_CASE))
+    assertTrue(regex.options.containsOnly(RegexOption.IGNORE_CASE))
 
     baseString = "((?i)a)"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.options.isEmpty())
+    assertTrue(regex.options.isEmpty())
 
     regex = Regex("(?is)abc")
-    Assert.assertTrue(regex.options.containsOnly(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL))
+    assertTrue(regex.options.containsOnly(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL))
 }
 
 fun testCompileStringint() {
@@ -231,7 +234,7 @@ fun testCompileStringint() {
     var pattern = "b)a"
     try {
         Regex(pattern)
-        Assert.fail("Expected a PatternSyntaxException when compiling pattern: " + pattern)
+        fail("Expected a PatternSyntaxException when compiling pattern: " + pattern)
     } catch (e: PatternSyntaxException) {
         // pass
     }
@@ -239,7 +242,7 @@ fun testCompileStringint() {
     pattern = "bcde)a"
     try {
         Regex(pattern)
-        Assert.fail("Expected a PatternSyntaxException when compiling pattern: " + pattern)
+        fail("Expected a PatternSyntaxException when compiling pattern: " + pattern)
     } catch (e: PatternSyntaxException) {
         // pass
     }
@@ -247,7 +250,7 @@ fun testCompileStringint() {
     pattern = "bbg())a"
     try {
         Regex(pattern)
-        Assert.fail("Expected a PatternSyntaxException when compiling pattern: " + pattern)
+        fail("Expected a PatternSyntaxException when compiling pattern: " + pattern)
     } catch (e: PatternSyntaxException) {
         // pass
     }
@@ -255,7 +258,7 @@ fun testCompileStringint() {
     pattern = "cdb(?i))a"
     try {
         Regex(pattern)
-        Assert.fail("Expected a PatternSyntaxException when compiling pattern: " + pattern)
+        fail("Expected a PatternSyntaxException when compiling pattern: " + pattern)
     } catch (e: PatternSyntaxException) {
         // pass
     }
@@ -279,7 +282,7 @@ fun testQuantCompileNeg() {
     for (element in patterns) {
         try {
             Regex(element)
-            Assert.fail("PatternSyntaxException was expected, but compilation succeeds")
+            fail("PatternSyntaxException was expected, but compilation succeeds")
         } catch (pse: PatternSyntaxException) {
             continue
         }
@@ -298,19 +301,19 @@ fun testQuantComposition() {
     val pattern = "(a{1,3})aab"
     val regex = Regex(pattern)
     val result = regex.matchEntire("aaab")
-    Assert.assertNotNull(result)
-    Assert.assertEquals(result!!.groups[1]!!.range.start, 0)
-    Assert.assertEquals(result.groupValues[1], "a")
+    assertNotNull(result)
+    assertEquals(result!!.groups[1]!!.range.start, 0)
+    assertEquals(result.groupValues[1], "a")
 }
 
 fun testTimeZoneIssue() {
     val regex = Regex("GMT(\\+|\\-)(\\d+)(:(\\d+))?")
     val result = regex.matchEntire("GMT-9:45")
-    Assert.assertNotNull(result)
-    Assert.assertEquals("-", result!!.groupValues[1])
-    Assert.assertEquals("9", result.groupValues[2])
-    Assert.assertEquals(":45", result.groupValues[3])
-    Assert.assertEquals("45", result.groupValues[4])
+    assertNotNull(result)
+    assertEquals("-", result!!.groupValues[1])
+    assertEquals("9", result.groupValues[2])
+    assertEquals(":45", result.groupValues[3])
+    assertEquals("45", result.groupValues[4])
 }
 
 fun testCompileRanges() {
@@ -323,7 +326,7 @@ fun testCompileRanges() {
             "jhfkjhaSDFGHJkdfhHNJMjkhfabb", "+*??+*abb", "sdfghjkabb")
 
     for (i in correctTestPatterns.indices) {
-        Assert.assertTrue("pattern: " + correctTestPatterns[i] + " input: " + inputSecuence[i],
+        assertTrue("pattern: " + correctTestPatterns[i] + " input: " + inputSecuence[i],
                 Regex(correctTestPatterns[i]).matches(inputSecuence[i]))
     }
 
@@ -332,7 +335,7 @@ fun testCompileRanges() {
             "jhfkjhaSDFGHJk;dfhHNJMjkhfabb", "+*?a?+*abb", "sdf+ghjkabb")
 
     for (i in correctTestPatterns.indices) {
-        Assert.assertFalse("pattern: " + correctTestPatterns[i] + " input: " + wrongInputSecuence[i],
+        assertFalse("pattern: " + correctTestPatterns[i] + " input: " + wrongInputSecuence[i],
                 Regex(correctTestPatterns[i]).matches(wrongInputSecuence[i]))
     }
 }
@@ -343,7 +346,7 @@ fun testRangesSpecialCases() {
     for (element in neg_patterns) {
         try {
             Regex(element)
-            Assert.fail("PatternSyntaxException was expected: " + element)
+            fail("PatternSyntaxException was expected: " + element)
         } catch (pse: PatternSyntaxException) {
         }
 
@@ -355,18 +358,18 @@ fun testRangesSpecialCases() {
     while (i < pos_patterns.size) {
         val pat = pos_patterns[i++]
         val inp = pos_patterns[i]
-        Assert.assertTrue("pattern: $pat input: $inp", Regex(pat).matches(inp))
+        assertTrue("pattern: $pat input: $inp", Regex(pat).matches(inp))
         i++
     }
 }
 
 fun testZeroSymbols() {
-    Assert.assertTrue(Regex("[\u0000]*abb").matches("\u0000\u0000\u0000\u0000\u0000\u0000abb"))
+    assertTrue(Regex("[\u0000]*abb").matches("\u0000\u0000\u0000\u0000\u0000\u0000abb"))
 }
 
 fun testEscapes() {
     val regex = Regex("\\Q{]()*?")
-    Assert.assertTrue(regex.matches("{]()*?"))
+    assertTrue(regex.matches("{]()*?"))
 }
 
 fun testRegressions() {
@@ -386,7 +389,7 @@ fun testRegressions() {
 fun testOrphanQuantifiers() {
     try {
         Regex("+++++")
-        Assert.fail("PatternSyntaxException expected")
+        fail("PatternSyntaxException expected")
     } catch (pse: PatternSyntaxException) {
     }
 
@@ -395,7 +398,7 @@ fun testOrphanQuantifiers() {
 fun testOrphanQuantifiers2() {
     try {
         Regex("\\d+*")
-        Assert.fail("PatternSyntaxException expected")
+        fail("PatternSyntaxException expected")
     } catch (pse: PatternSyntaxException) {
     }
 
@@ -417,10 +420,10 @@ fun testBug197() {
         val res = Regex(vals[i++].toString()).split("boo:and:foo", (vals[i++] as Int))
         val expectedRes = vals[i++] as Array<String>
 
-        Assert.assertEquals(expectedRes.size, res.size)
+        assertEquals(expectedRes.size, res.size)
 
         for (j in expectedRes.indices) {
-            Assert.assertEquals(expectedRes[j], res[j])
+            assertEquals(expectedRes[j], res[j])
         }
     }
 }
@@ -447,16 +450,16 @@ fun testFindBoundaryCases1() {
     val regex = Regex(".*\n")
     val result = regex.find("a\n")
 
-    Assert.assertNotNull(result)
-    Assert.assertEquals("a\n", result!!.value)
+    assertNotNull(result)
+    assertEquals("a\n", result!!.value)
 }
 
 fun testFindBoundaryCases2() {
     val regex = Regex(".*A")
     val result = regex.find("aAa")
 
-    Assert.assertNotNull(result)
-    Assert.assertEquals("aA", result!!.value)
+    assertNotNull(result)
+    assertEquals("aA", result!!.value)
 
 }
 
@@ -464,8 +467,8 @@ fun testFindBoundaryCases3() {
     val regex = Regex(".*A")
     val result = regex.find("a\naA\n")
 
-    Assert.assertNotNull(result)
-    Assert.assertEquals("aA", result!!.value)
+    assertNotNull(result)
+    assertEquals("aA", result!!.value)
 
 }
 
@@ -473,8 +476,8 @@ fun testFindBoundaryCases4() {
     val regex = Regex("A.*")
     val result = regex.find("A\n")
 
-    Assert.assertNotNull(result)
-    Assert.assertEquals("A", result!!.value)
+    assertNotNull(result)
+    assertEquals("A", result!!.value)
 
 }
 
@@ -485,7 +488,7 @@ fun testFindBoundaryCases5() {
 
     var k = 0
     while (result != null) {
-        Assert.assertEquals(expected[k], result.value)
+        assertEquals(expected[k], result.value)
         result = result.next()
         k++
     }
@@ -498,7 +501,7 @@ fun testFindBoundaryCases6() {
 
     var k = 0
     while (result != null) {
-        Assert.assertEquals(expected[k], result.value)
+        assertEquals(expected[k], result.value)
         k++
         result = result.next()
     }
@@ -510,16 +513,16 @@ fun testBackReferences() {
 
     var k = 1
     while (result != null) {
-        Assert.assertEquals("start" + k, result.groupValues[2])
-        Assert.assertEquals(" word ", result.groupValues[3])
-        Assert.assertEquals("start" + k, result.groupValues[4])
+        assertEquals("start" + k, result.groupValues[2])
+        assertEquals(" word ", result.groupValues[3])
+        assertEquals("start" + k, result.groupValues[4])
         k++
         result = result.next()
     }
 
-    Assert.assertEquals(3, k)
+    assertEquals(3, k)
     regex = Regex(".*(.)\\1")
-    Assert.assertTrue(regex.matches("saa"))
+    assertTrue(regex.matches("saa"))
 }
 
 fun testNewLine() {
@@ -530,14 +533,14 @@ fun testNewLine() {
         counter++
         result = result.next()
     }
-    Assert.assertEquals(2, counter)
+    assertEquals(2, counter)
 }
 
 fun testFindGreedy() {
     val regex = Regex(".*aaa", RegexOption.DOT_MATCHES_ALL)
     val result = regex.matchEntire("aaaa\naaa\naaaaaa")
-    Assert.assertNotNull(result)
-    Assert.assertEquals(14, result!!.range.endInclusive)
+    assertNotNull(result)
+    assertEquals(14, result!!.range.endInclusive)
 }
 
 fun testSOLQuant() {
@@ -548,13 +551,13 @@ fun testSOLQuant() {
         counter++
         result = result.next()
     }
-    Assert.assertEquals(3, counter)
+    assertEquals(3, counter)
 }
 
 fun testIllegalEscape() {
     try {
         Regex("\\y")
-        Assert.fail("PatternSyntaxException expected")
+        fail("PatternSyntaxException expected")
     } catch (pse: PatternSyntaxException) {
     }
 }
@@ -566,164 +569,164 @@ fun testEmptyFamily() {
 fun testNonCaptConstr() {
     // Flags
     var regex = Regex("(?i)b*(?-i)a*")
-    Assert.assertTrue(regex.matches("bBbBaaaa"))
-    Assert.assertFalse(regex.matches("bBbBAaAa"))
+    assertTrue(regex.matches("bBbBaaaa"))
+    assertFalse(regex.matches("bBbBAaAa"))
 
     // Non-capturing groups
     regex = Regex("(?i:b*)a*")
-    Assert.assertTrue(regex.matches("bBbBaaaa"))
-    Assert.assertFalse(regex.matches("bBbBAaAa"))
+    assertTrue(regex.matches("bBbBaaaa"))
+    assertFalse(regex.matches("bBbBAaAa"))
 
     // 1 2 3 4 5 6 7 8 9 10 11
     regex = Regex("(?:-|(-?\\d+\\d\\d\\d))?(?:-|-(\\d\\d))?(?:-|-(\\d\\d))?(T)?(?:(\\d\\d):(\\d\\d):(\\d\\d)(\\.\\d+)?)?(?:(?:((?:\\+|\\-)\\d\\d):(\\d\\d))|(Z))?")
     val result = regex.matchEntire("-1234-21-31T41:51:61.789+71:81")
-    Assert.assertNotNull(result)
-    Assert.assertEquals("-1234", result!!.groupValues[1])
-    Assert.assertEquals("21", result.groupValues[2])
-    Assert.assertEquals("31", result.groupValues[3])
-    Assert.assertEquals("T", result.groupValues[4])
-    Assert.assertEquals("41", result.groupValues[5])
-    Assert.assertEquals("51", result.groupValues[6])
-    Assert.assertEquals("61", result.groupValues[7])
-    Assert.assertEquals(".789", result.groupValues[8])
-    Assert.assertEquals("+71", result.groupValues[9])
-    Assert.assertEquals("81", result.groupValues[10])
+    assertNotNull(result)
+    assertEquals("-1234", result!!.groupValues[1])
+    assertEquals("21", result.groupValues[2])
+    assertEquals("31", result.groupValues[3])
+    assertEquals("T", result.groupValues[4])
+    assertEquals("41", result.groupValues[5])
+    assertEquals("51", result.groupValues[6])
+    assertEquals("61", result.groupValues[7])
+    assertEquals(".789", result.groupValues[8])
+    assertEquals("+71", result.groupValues[9])
+    assertEquals("81", result.groupValues[10])
 
     // positive lookahead
     regex = Regex(".*\\.(?=log$).*$")
-    Assert.assertTrue(regex.matches("a.b.c.log"))
-    Assert.assertFalse(regex.matches("a.b.c.log."))
+    assertTrue(regex.matches("a.b.c.log"))
+    assertFalse(regex.matches("a.b.c.log."))
 
     // negative lookahead
     regex = Regex(".*\\.(?!log$).*$")
-    Assert.assertFalse(regex.matches("abc.log"))
-    Assert.assertTrue(regex.matches("abc.logg"))
+    assertFalse(regex.matches("abc.log"))
+    assertTrue(regex.matches("abc.logg"))
 
     // positive lookbehind
     regex = Regex(".*(?<=abc)\\.log$")
-    Assert.assertFalse(regex.matches("cde.log"))
-    Assert.assertTrue(regex.matches("abc.log"))
+    assertFalse(regex.matches("cde.log"))
+    assertTrue(regex.matches("abc.log"))
 
     // negative lookbehind
     regex = Regex(".*(?<!abc)\\.log$")
-    Assert.assertTrue(regex.matches("cde.log"))
-    Assert.assertFalse(regex.matches("abc.log"))
+    assertTrue(regex.matches("cde.log"))
+    assertFalse(regex.matches("abc.log"))
 
     // atomic group
     regex = Regex("(?>a*)abb")
-    Assert.assertFalse(regex.matches("aaabb"))
+    assertFalse(regex.matches("aaabb"))
     regex = Regex("(?>a*)bb")
-    Assert.assertTrue(regex.matches("aaabb"))
+    assertTrue(regex.matches("aaabb"))
 
     regex = Regex("(?>a|aa)aabb")
-    Assert.assertTrue(regex.matches("aaabb"))
+    assertTrue(regex.matches("aaabb"))
     regex = Regex("(?>aa|a)aabb")
-    Assert.assertFalse(regex.matches("aaabb"))
+    assertFalse(regex.matches("aaabb"))
 
     // quantifiers over look ahead
     regex = Regex(".*(?<=abc)*\\.log$")
-    Assert.assertTrue(regex.matches("cde.log"))
+    assertTrue(regex.matches("cde.log"))
     regex = Regex(".*(?<=abc)+\\.log$")
-    Assert.assertFalse(regex.matches("cde.log"))
+    assertFalse(regex.matches("cde.log"))
 }
 
 fun testCompilePatternWithTerminatorMark() {
     val regex = Regex("a\u0000\u0000cd")
-    Assert.assertTrue(regex.matches("a\u0000\u0000cd"))
+    assertTrue(regex.matches("a\u0000\u0000cd"))
 }
 
 fun testAlternations() {
     var baseString = "|a|bc"
     var regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(""))
+    assertTrue(regex.matches(""))
 
     baseString = "a||bc"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(""))
+    assertTrue(regex.matches(""))
 
     baseString = "a|bc|"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(""))
+    assertTrue(regex.matches(""))
 
     baseString = "a|b|"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(""))
+    assertTrue(regex.matches(""))
 
     baseString = "a(|b|cd)e"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches("ae"))
+    assertTrue(regex.matches("ae"))
 
     baseString = "a(b||cd)e"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches("ae"))
+    assertTrue(regex.matches("ae"))
 
     baseString = "a(b|cd|)e"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches("ae"))
+    assertTrue(regex.matches("ae"))
 
     baseString = "a(b|c|)e"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches("ae"))
+    assertTrue(regex.matches("ae"))
 
     baseString = "a(|)e"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches("ae"))
+    assertTrue(regex.matches("ae"))
 
     baseString = "|"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(""))
+    assertTrue(regex.matches(""))
 
     baseString = "a(?:|)e"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches("ae"))
+    assertTrue(regex.matches("ae"))
 
     baseString = "a||||bc"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(""))
+    assertTrue(regex.matches(""))
 
     baseString = "(?i-is)|a"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches("a"))
+    assertTrue(regex.matches("a"))
 }
 
 fun testMatchWithGroups() {
     var baseString = "jwkerhjwehrkwjehrkwjhrwkjehrjwkehrjkwhrkwehrkwhrkwrhwkhrwkjehr"
     var pattern = ".*(..).*\\1.*"
-    Assert.assertTrue(Regex(pattern).matches(baseString))
+    assertTrue(Regex(pattern).matches(baseString))
 
     baseString = "saa"
     pattern = ".*(.)\\1"
-    Assert.assertTrue(Regex(pattern).matches(baseString))
-    Assert.assertTrue(Regex(pattern).containsMatchIn(baseString))
+    assertTrue(Regex(pattern).matches(baseString))
+    assertTrue(Regex(pattern).containsMatchIn(baseString))
 }
 
 fun testSplitEmptyCharSequence() {
     val s1 = ""
     val arr = s1.split(":".toRegex())
-    Assert.assertEquals(arr.size, 1)
+    assertEquals(arr.size, 1)
 }
 
 fun testSplitEndsWithPattern() {
-    Assert.assertEquals(",,".split(",".toRegex(), 3).toTypedArray().size, 3)
-    Assert.assertEquals(",,".split(",".toRegex(), 4).toTypedArray().size, 3)
+    assertEquals(",,".split(",".toRegex(), 3).toTypedArray().size, 3)
+    assertEquals(",,".split(",".toRegex(), 4).toTypedArray().size, 3)
 
-    Assert.assertEquals(Regex("o").split("boo:and:foo", 5).size, 5)
-    Assert.assertEquals(Regex("b").split("ab", 0).size, 2)
+    assertEquals(Regex("o").split("boo:and:foo", 5).size, 5)
+    assertEquals(Regex("b").split("ab", 0).size, 2)
 }
 
 fun testCaseInsensitiveFlag() {
-    Assert.assertTrue(Regex("(?i-:AbC)").matches("ABC"))
+    assertTrue(Regex("(?i-:AbC)").matches("ABC"))
 }
 
 fun testEmptyGroups() {
     var regex = Regex("ab(?>)cda")
-    Assert.assertTrue(regex.matches("abcda"))
+    assertTrue(regex.matches("abcda"))
 
     regex = Regex("ab()")
-    Assert.assertTrue(regex.matches("ab"))
+    assertTrue(regex.matches("ab"))
 
     regex = Regex("abc(?:)(..)")
-    Assert.assertTrue(regex.matches("abcgf"))
+    assertTrue(regex.matches("abcgf"))
 }
 
 fun testCompileNonCaptGroup() {
@@ -738,34 +741,34 @@ fun testCompileNonCaptGroup() {
     } catch (e: PatternSyntaxException) {
         println(e)
     }
-    Assert.assertTrue(isCompiled)
+    assertTrue(isCompiled)
 }
 
 fun testEmbeddedFlags() {
     var baseString = "(?i)((?s)a)"
     var testString = "A"
     var regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "(?x)(?i)(?s)(?d)a"
     testString = "A"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "(?x)(?i)(?s)(?d)a."
     testString = "a\n"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "abc(?x:(?i)(?s)(?d)a.)"
     testString = "abcA\n"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "abc((?x)d)(?i)(?s)a"
     testString = "abcdA"
     regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 }
 
 fun testAltWithFlags() {
@@ -776,7 +779,7 @@ fun testRestoreFlagsAfterGroup() {
     val baseString = "abc((?x)d)   a"
     val testString = "abcd   a"
     val regex = Regex(baseString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 }
 
 fun testCanonEqFlag() {
@@ -805,50 +808,50 @@ fun testCanonEqFlag() {
     baseString = "\u01E0\u00CCcdb(ac)"
     testString = "\u0226\u0304\u0049\u0300cdbac"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "\u01E0cdb(a\u00CCc)"
     testString = "\u0041\u0307\u0304cdba\u0049\u0300c"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "a\u00CC"
     testString = "a\u0049\u0300"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "\u0226\u0304cdb(ac\u0049\u0300)"
     testString = "\u01E0cdbac\u00CC"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "cdb(?:\u0041\u0307\u0304\u00CC)"
     testString = "cdb\u0226\u0304\u0049\u0300"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "\u01E0[a-c]\u0049\u0300cdb(ac)"
     testString = "\u01E0b\u00CCcdbac"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "\u01E0|\u00CCcdb(ac)"
     testString = "\u0041\u0307\u0304"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "\u00CC?cdb(ac)*(\u01E0)*[a-c]"
     testString = "cdb\u0041\u0307\u0304b"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "a\u0300"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.containsMatchIn("a\u00E0a"))
+    assertTrue(regex.containsMatchIn("a\u00E0a"))
 
     baseString = "\u7B20\uF9F8abc"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches("\uF9F8\uF9F8abc"))
+    assertTrue(regex.matches("\uF9F8\uF9F8abc"))
 
     // \u01F9 -> \u006E\u0300
     // \u00C3 -> \u0041\u0303
@@ -856,7 +859,7 @@ fun testCanonEqFlag() {
     baseString = "cdb(?:\u00C3\u006E\u0300)"
     testString = "cdb\u0041\u0303\u01F9"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     // \u014C -> \u004F\u0304
     // \u0163 -> \u0074\u0327
@@ -864,7 +867,7 @@ fun testCanonEqFlag() {
     baseString = "cdb(?:\u0163\u004F\u0304)"
     testString = "cdb\u0074\u0327\u014C"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     // \u00E1->a\u0301
     // canonical ordering takes place \u0301\u0327 -> \u0327\u0301
@@ -872,7 +875,7 @@ fun testCanonEqFlag() {
     baseString = "c\u0327\u0301"
     testString = "c\u0301\u0327"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     /*
      * Hangul decompositions
@@ -893,60 +896,60 @@ fun testCanonEqFlag() {
     baseString = "\uD4DB\uD21E\u1110\u1170cdb(ac)"
     testString = "\u1111\u1171\u11B6\u1110\u116D\u11B5\uD264cdbac"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "\uD4DB\uD264cdb(a\uD21Ec)"
     testString = "\u1111\u1171\u11B6\u1110\u1170cdba\u1110\u116D\u11B5c"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "a\uD4DB"
     testString = "a\u1111\u1171\u11B6"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "a\uD21E"
     testString = "a\u1110\u116D\u11B5"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "\u1111\u1171\u11B6cdb(ac\u1110\u116D\u11B5)"
     testString = "\uD4DBcdbac\uD21E"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "cdb(?:\u1111\u1171\u11B6\uD21E)"
     testString = "cdb\uD4DB\u1110\u116D\u11B5"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "\uD4DB[a-c]\u1110\u116D\u11B5cdb(ac)"
     testString = "\uD4DBb\uD21Ecdbac"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "\uD4DB|\u00CCcdb(ac)"
     testString = "\u1111\u1171\u11B6"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "\uD4DB|\u00CCcdb(ac)"
     testString = "\u1111\u1171"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertFalse(regex.matches(testString))
+    assertFalse(regex.matches(testString))
 
     baseString = "\u00CC?cdb(ac)*(\uD4DB)*[a-c]"
     testString = "cdb\u1111\u1171\u11B6b"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     baseString = "\uD4DB"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.containsMatchIn("a\u1111\u1171\u11B6a"))
+    assertTrue(regex.containsMatchIn("a\u1111\u1171\u11B6a"))
 
     baseString = "\u1111"
     regex = Regex(baseString, RegexOption.CANON_EQ)
-    Assert.assertFalse(regex.containsMatchIn("bcda\uD4DBr"))
+    assertFalse(regex.containsMatchIn("bcda\uD4DBr"))
 }
 
 fun testIndexesCanonicalEq() {
@@ -959,25 +962,25 @@ fun testIndexesCanonicalEq() {
     testString = "bcda\u1111\u1171\u11B6awr"
     regex = Regex(baseString, RegexOption.CANON_EQ)
     result = regex.find(testString)
-    Assert.assertNotNull(result)
-    Assert.assertEquals(result!!.range.start, 4)
-    Assert.assertEquals(result.range.endInclusive, 6)
+    assertNotNull(result)
+    assertEquals(result!!.range.start, 4)
+    assertEquals(result.range.endInclusive, 6)
 
     baseString = "\uD4DB\u1111\u1171\u11B6"
     testString = "bcda\u1111\u1171\u11B6\uD4DBawr"
     regex = Regex(baseString, RegexOption.CANON_EQ)
     result = regex.find(testString) // Use the same testString
-    Assert.assertNotNull(result)
-    Assert.assertEquals(result!!.range.start, 4)
-    Assert.assertEquals(result.range.endInclusive, 7)
+    assertNotNull(result)
+    assertEquals(result!!.range.start, 4)
+    assertEquals(result.range.endInclusive, 7)
 
     baseString = "\uD4DB\uD21E\u1110\u1170"
     testString = "abcabc\u1111\u1171\u11B6\u1110\u116D\u11B5\uD264cdbac"
     regex = Regex(baseString, RegexOption.CANON_EQ)
     result = regex.find(testString)
-    Assert.assertNotNull(result)
-    Assert.assertEquals(result!!.range.start, 6)
-    Assert.assertEquals(result.range.endInclusive, 12)
+    assertNotNull(result)
+    assertEquals(result!!.range.start, 6)
+    assertEquals(result.range.endInclusive, 12)
 }
 
 fun testCanonEqFlagWithSupplementaryCharacters() {
@@ -990,26 +993,26 @@ fun testCanonEqFlagWithSupplementaryCharacters() {
     var patString = "abc\uD834\uDDBFef"
     var testString = "abc\uD834\uDDB9\uD834\uDD65\uD834\uDD6Fef"
     var regex = Regex(patString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "abc\uD834\uDDBB\uD834\uDD6Fef"
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     patString = "abc\uD834\uDDBB\uD834\uDD6Fef"
     testString = "abc\uD834\uDDBFef"
     regex = Regex(patString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "abc\uD834\uDDB9\uD834\uDD65\uD834\uDD6Fef"
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     patString = "abc\uD834\uDDB9\uD834\uDD65\uD834\uDD6Fef"
     testString = "abc\uD834\uDDBFef"
     regex = Regex(patString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "abc\uD834\uDDBB\uD834\uDD6Fef"
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     /*
      * testSupplementary characters with no decomposition
@@ -1017,128 +1020,128 @@ fun testCanonEqFlagWithSupplementaryCharacters() {
     patString = "a\uD9A0\uDE8Ebc\uD834\uDDBB\uD834\uDD6Fe\uDE8Ef"
     testString = "a\uD9A0\uDE8Ebc\uD834\uDDBFe\uDE8Ef"
     regex = Regex(patString, RegexOption.CANON_EQ)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 }
 
 fun testRangesWithSurrogatesSupplementary() {
     var patString = "[abc\uD8D2]"
     var testString = "\uD8D2"
     var regex = Regex(patString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "a"
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "ef\uD8D2\uDD71gh"
-    Assert.assertFalse(regex.containsMatchIn(testString))
+    assertFalse(regex.containsMatchIn(testString))
 
     testString = "ef\uD8D2gh"
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     patString = "[abc\uD8D3&&[c\uD8D3]]"
     testString = "c"
     regex = Regex(patString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "a"
-    Assert.assertFalse(regex.matches(testString))
+    assertFalse(regex.matches(testString))
 
     testString = "ef\uD8D3\uDD71gh"
-    Assert.assertFalse(regex.containsMatchIn(testString))
+    assertFalse(regex.containsMatchIn(testString))
 
     testString = "ef\uD8D3gh"
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     patString = "[abc\uD8D3\uDBEE\uDF0C&&[c\uD8D3\uDBEE\uDF0C]]"
     testString = "c"
     regex = Regex(patString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "\uDBEE\uDF0C"
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "ef\uD8D3\uDD71gh"
-    Assert.assertFalse(regex.containsMatchIn(testString))
+    assertFalse(regex.containsMatchIn(testString))
 
     testString = "ef\uD8D3gh"
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     patString = "[abc\uDBFC]\uDDC2cd"
     testString = "\uDBFC\uDDC2cd"
     regex = Regex(patString)
-    Assert.assertFalse(regex.matches(testString))
+    assertFalse(regex.matches(testString))
 
     testString = "a\uDDC2cd"
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 }
 
 fun testSequencesWithSurrogatesSupplementary() {
     var patString = "abcd\uD8D3"
     var testString = "abcd\uD8D3\uDFFC"
     var regex = Regex(patString)
-    Assert.assertFalse(regex.containsMatchIn(testString))
+    assertFalse(regex.containsMatchIn(testString))
 
     testString = "abcd\uD8D3abc"
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     patString = "ab\uDBEFcd"
     testString = "ab\uDBEFcd"
     regex = Regex(patString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     patString = "\uDFFCabcd"
     testString = "\uD8D3\uDFFCabcd"
     regex = Regex(patString)
-    Assert.assertFalse(regex.containsMatchIn(testString))
+    assertFalse(regex.containsMatchIn(testString))
 
     testString = "abc\uDFFCabcdecd"
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     patString = "\uD8D3\uDFFCabcd"
     testString = "abc\uD8D3\uD8D3\uDFFCabcd"
     regex = Regex(patString)
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 }
 
 fun testPredefinedClassesWithSurrogatesSupplementary() {
     var patString = "[123\\D]"
     var testString = "a"
     var regex = Regex(patString)
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     testString = "5"
-    Assert.assertFalse(regex.containsMatchIn(testString))
+    assertFalse(regex.containsMatchIn(testString))
 
     testString = "3"
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     // low surrogate
     testString = "\uDFC4"
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     // high surrogate
     testString = "\uDADA"
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     testString = "\uDADA\uDFC4"
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     testString = "5"
-    Assert.assertFalse(regex.containsMatchIn(testString))
+    assertFalse(regex.containsMatchIn(testString))
 
     testString = "3"
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     // low surrogate
     testString = "\uDFC4"
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     // high surrogate
     testString = "\uDADA"
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     testString = "\uDADA\uDFC4"
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     // surrogate characters
     patString = "\\p{Cs}"
@@ -1151,86 +1154,86 @@ fun testPredefinedClassesWithSurrogatesSupplementary() {
      * consisting of two code units (two surrogate characters) so we find
      * nothing
      */
-    Assert.assertFalse(regex.containsMatchIn(testString))
+    assertFalse(regex.containsMatchIn(testString))
 
     // swap low and high surrogates
     testString = "\uDE27\uD916"
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     patString = "[\uD916\uDE271\uD91623&&[^\\p{Cs}]]"
     testString = "1"
     regex = Regex(patString)
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     testString = "\uD916"
     regex = Regex(patString)
-    Assert.assertFalse(regex.containsMatchIn(testString))
+    assertFalse(regex.containsMatchIn(testString))
 
     testString = "\uD916\uDE27"
     regex = Regex(patString)
-    Assert.assertTrue(regex.containsMatchIn(testString))
+    assertTrue(regex.containsMatchIn(testString))
 
     // \uD9A0\uDE8E=\u7828E
     // \u78281=\uD9A0\uDE81
     patString = "[a-\uD9A0\uDE8E]"
     testString = "\uD9A0\uDE81"
     regex = Regex(patString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 }
 
 fun testDotConstructionWithSurrogatesSupplementary() {
     var patString = "."
     var testString = "\uD9A0\uDE81"
     var regex = Regex(patString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "\uDE81"
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "\uD9A0"
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "\n"
-    Assert.assertFalse(regex.matches(testString))
+    assertFalse(regex.matches(testString))
 
     patString = ".*\uDE81"
     testString = "\uD9A0\uDE81\uD9A0\uDE81\uD9A0\uDE81"
     regex = Regex(patString)
-    Assert.assertFalse(regex.matches(testString))
+    assertFalse(regex.matches(testString))
 
     testString = "\uD9A0\uDE81\uD9A0\uDE81\uDE81"
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     patString = ".*"
     testString = "\uD9A0\uDE81\n\uD9A0\uDE81\uD9A0\n\uDE81"
     regex = Regex(patString, RegexOption.DOT_MATCHES_ALL)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 }
 
 fun testQuantifiersWithSurrogatesSupplementary() {
     val patString = "\uD9A0\uDE81*abc"
     var testString = "\uD9A0\uDE81\uD9A0\uDE81abc"
     val regex = Regex(patString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "abc"
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 }
 
 fun testAlternationsWithSurrogatesSupplementary() {
     val patString = "\uDE81|\uD9A0\uDE81|\uD9A0"
     var testString = "\uD9A0"
     val regex = Regex(patString)
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "\uDE81"
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "\uD9A0\uDE81"
-    Assert.assertTrue(regex.matches(testString))
+    assertTrue(regex.matches(testString))
 
     testString = "\uDE81\uD9A0"
-    Assert.assertFalse(regex.matches(testString))
+    assertFalse(regex.matches(testString))
 }
 
 fun testGroupsWithSurrogatesSupplementary() {
@@ -1239,12 +1242,12 @@ fun testGroupsWithSurrogatesSupplementary() {
     var patString = "(\uD9A0)\uDE81"
     var testString = "\uD9A0\uDE81"
     var regex = Regex(patString)
-    Assert.assertFalse(regex.matches(testString))
+    assertFalse(regex.matches(testString))
 
     patString = "(\uD9A0)"
     testString = "\uD9A0\uDE81"
     regex = Regex(patString, RegexOption.DOT_MATCHES_ALL)
-    Assert.assertFalse(regex.containsMatchIn(testString))
+    assertFalse(regex.containsMatchIn(testString))
 }
 
 fun box() {

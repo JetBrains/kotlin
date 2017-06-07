@@ -647,35 +647,31 @@ public fun String.replaceBeforeLast(delimiter: String, replacement: String, miss
  * The [replacement] can consist of any combination of literal text and $-substitutions. To treat the replacement string
  * literally escape it with the [kotlin.text.Regex.Companion.escapeReplacement] method.
  */
-//@FixmeRegex
-//@kotlin.internal.InlineOnly
-//public inline fun CharSequence.replace(regex: Regex, replacement: String): String = regex.replace(this, replacement)
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.replace(regex: Regex, replacement: String): String = regex.replace(this, replacement)
 
 /**
  * Returns a new string obtained by replacing each substring of this char sequence that matches the given regular expression
  * with the result of the given function [transform] that takes [MatchResult] and returns a string to be used as a
  * replacement for that match.
  */
-//@FixmeRegex
-//@kotlin.internal.InlineOnly
-//public inline fun CharSequence.replace(regex: Regex, noinline transform: (MatchResult) -> CharSequence): String = regex.replace(this, transform)
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.replace(regex: Regex, noinline transform: (MatchResult) -> CharSequence): String = regex.replace(this, transform)
 
 /**
  * Replaces the first occurrence of the given regular expression [regex] in this char sequence with specified [replacement] expression.
  *
  * @param replacement A replacement expression that can include substitutions. See [Regex.replaceFirst] for details.
  */
-//@FixmeRegex
-//@kotlin.internal.InlineOnly
-//public inline fun CharSequence.replaceFirst(regex: Regex, replacement: String): String = regex.replaceFirst(this, replacement)
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.replaceFirst(regex: Regex, replacement: String): String = regex.replaceFirst(this, replacement)
 
 
 /**
  * Returns `true` if this char sequence matches the given regular expression.
  */
-//@FixmeRegex
-//@kotlin.internal.InlineOnly
-//public inline fun CharSequence.matches(regex: Regex): Boolean = regex.matches(this)
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.matches(regex: Regex): Boolean = regex.matches(this)
 
 /**
  * Implementation of [regionMatches] for CharSequences.
@@ -1017,9 +1013,8 @@ public operator fun CharSequence.contains(char: Char, ignoreCase: Boolean = fals
 /**
  * Returns `true` if this char sequence contains at least one match of the specified regular expression [regex].
  */
-//@FixmeRegex
-//@kotlin.internal.InlineOnly
-//public inline operator fun CharSequence.contains(regex: Regex): Boolean = regex.containsMatchIn(this)
+@kotlin.internal.InlineOnly
+public inline operator fun CharSequence.contains(regex: Regex): Boolean = regex.containsMatchIn(this)
 
 
 // rangesDelimitedBy
@@ -1177,9 +1172,8 @@ public fun CharSequence.split(vararg delimiters: Char, ignoreCase: Boolean = fal
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
  */
-//@FixmeRegex
-//@kotlin.internal.InlineOnly
-//public inline fun CharSequence.split(regex: Regex, limit: Int = 0): List<String> = regex.split(this, limit)
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.split(regex: Regex, limit: Int = 0): List<String> = regex.split(this, limit)
 
 /**
  * Splits this char sequence to a sequence of lines delimited by any of the following character sequences: CRLF, LF or CR.
@@ -2391,3 +2385,22 @@ public fun CharSequence.repeat(n: Int): String {
         }
     }
 }
+
+
+/**
+ * Converts the string into a regular expression [Regex] with the default options.
+ */
+@kotlin.internal.InlineOnly
+public inline fun String.toRegex(): Regex = Regex(this)
+
+/**
+ * Converts the string into a regular expression [Regex] with the specified single [option].
+ */
+@kotlin.internal.InlineOnly
+public inline fun String.toRegex(option: RegexOption): Regex = Regex(this, option)
+
+/**
+ * Converts the string into a regular expression [Regex] with the specified set of [options].
+ */
+@kotlin.internal.InlineOnly
+public inline fun String.toRegex(options: Set<RegexOption>): Regex = Regex(this, options)

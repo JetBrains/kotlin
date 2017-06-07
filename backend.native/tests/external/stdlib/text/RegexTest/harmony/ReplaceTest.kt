@@ -28,8 +28,8 @@ fun testSimpleReplace() {
 
     val regex = Regex(pattern)
 
-    Assert.assertEquals("foobarxxxarfoofo1", regex.replaceFirst(target, repl))
-    Assert.assertEquals("foobarxxxarfooxxx", regex.replace(target, repl))
+    assertEquals("foobarxxxarfoofo1", regex.replaceFirst(target, repl))
+    assertEquals("foobarxxxarfooxxx", regex.replace(target, repl))
 }
 
 fun testCaptureReplace() {
@@ -45,18 +45,18 @@ fun testCaptureReplace() {
 
     regex = Regex(pattern)
     s = regex.replaceFirst(target, repl)
-    Assert.assertEquals("foo[31];bar[42];[99]xyz", s)
+    assertEquals("foo[31];bar[42];[99]xyz", s)
     s = regex.replace(target, repl)
-    Assert.assertEquals("foo[31];bar[42];xyz[99]", s)
+    assertEquals("foo[31];bar[42];xyz[99]", s)
 
     target = "[31]foo(42)bar{63}zoo;[12]abc(34)def{56}ghi;{99}xyz[88]xyz(77)xyz;"
     pattern = "\\[([0-9]+)\\]([a-z]+)\\(([0-9]+)\\)([a-z]+)\\{([0-9]+)\\}([a-z]+)"
     repl = "[$5]$6($3)$4{$1}$2"
     regex = Regex(pattern)
     s = regex.replaceFirst(target, repl)
-    Assert.assertEquals("[63]zoo(42)bar{31}foo;[12]abc(34)def{56}ghi;{99}xyz[88]xyz(77)xyz;", s)
+    assertEquals("[63]zoo(42)bar{31}foo;[12]abc(34)def{56}ghi;{99}xyz[88]xyz(77)xyz;", s)
     s = regex.replace(target, repl)
-    Assert.assertEquals("[63]zoo(42)bar{31}foo;[56]ghi(34)def{12}abc;{99}xyz[88]xyz(77)xyz;", s)
+    assertEquals("[63]zoo(42)bar{31}foo;[56]ghi(34)def{12}abc;{99}xyz[88]xyz(77)xyz;", s)
 }
 
 fun testEscapeReplace() {
@@ -69,13 +69,13 @@ fun testEscapeReplace() {
     pattern = "'"
     repl = "\\'"
     s = target.replace(pattern.toRegex(), repl)
-    Assert.assertEquals("foo'bar''foo", s)
+    assertEquals("foo'bar''foo", s)
     repl = "\\\\'"
     s = target.replace(pattern.toRegex(), repl)
-    Assert.assertEquals("foo\\'bar\\'\\'foo", s)
+    assertEquals("foo\\'bar\\'\\'foo", s)
     repl = "\\$3"
     s = target.replace(pattern.toRegex(), repl)
-    Assert.assertEquals("foo$3bar$3$3foo", s)
+    assertEquals("foo$3bar$3$3foo", s)
 }
 
 fun box() {

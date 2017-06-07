@@ -22,77 +22,77 @@ fun testErrorConditions2() {
     val regex = Regex("(foo[0-9])(bar[a-z])")
     var result = regex.find("foo1barzfoo2baryfoozbar5")
 
-    Assert.assertTrue(result != null)
-    Assert.assertEquals(0, result!!.range.start)
-    Assert.assertEquals(7, result.range.endInclusive)
-    Assert.assertEquals(0, result.groups[0]!!.range.start)
-    Assert.assertEquals(7, result.groups[0]!!.range.endInclusive)
-    Assert.assertEquals(0, result.groups[1]!!.range.start)
-    Assert.assertEquals(3, result.groups[1]!!.range.endInclusive)
-    Assert.assertEquals(4, result.groups[2]!!.range.start)
-    Assert.assertEquals(7, result.groups[2]!!.range.endInclusive)
+    assertTrue(result != null)
+    assertEquals(0, result!!.range.start)
+    assertEquals(7, result.range.endInclusive)
+    assertEquals(0, result.groups[0]!!.range.start)
+    assertEquals(7, result.groups[0]!!.range.endInclusive)
+    assertEquals(0, result.groups[1]!!.range.start)
+    assertEquals(3, result.groups[1]!!.range.endInclusive)
+    assertEquals(4, result.groups[2]!!.range.start)
+    assertEquals(7, result.groups[2]!!.range.endInclusive)
 
     try {
         result.groups[3]
-        Assert.fail("IndexOutOfBoundsException expected")
+        fail("IndexOutOfBoundsException expected")
     } catch (e: IndexOutOfBoundsException) {
     }
 
     try {
         result.groupValues[3]
-        Assert.fail("IndexOutOfBoundsException expected")
+        fail("IndexOutOfBoundsException expected")
     } catch (e: IndexOutOfBoundsException) {
     }
 
     try {
         result.groups[-1]
-        Assert.fail("IndexOutOfBoundsException expected")
+        fail("IndexOutOfBoundsException expected")
     } catch (e: IndexOutOfBoundsException) {
     }
 
     try {
         result.groupValues[-1]
-        Assert.fail("IndexOutOfBoundsException expected")
+        fail("IndexOutOfBoundsException expected")
     } catch (e: IndexOutOfBoundsException) {
     }
 
     result = result.next()
-    Assert.assertTrue(result != null)
-    Assert.assertEquals(8,  result!!.range.start)
-    Assert.assertEquals(15, result.range.endInclusive)
-    Assert.assertEquals(8,  result.groups[0]!!.range.start)
-    Assert.assertEquals(15, result.groups[0]!!.range.endInclusive)
-    Assert.assertEquals(8,  result.groups[1]!!.range.start)
-    Assert.assertEquals(11, result.groups[1]!!.range.endInclusive)
-    Assert.assertEquals(12, result.groups[2]!!.range.start)
-    Assert.assertEquals(15, result.groups[2]!!.range.endInclusive)
+    assertTrue(result != null)
+    assertEquals(8,  result!!.range.start)
+    assertEquals(15, result.range.endInclusive)
+    assertEquals(8,  result.groups[0]!!.range.start)
+    assertEquals(15, result.groups[0]!!.range.endInclusive)
+    assertEquals(8,  result.groups[1]!!.range.start)
+    assertEquals(11, result.groups[1]!!.range.endInclusive)
+    assertEquals(12, result.groups[2]!!.range.start)
+    assertEquals(15, result.groups[2]!!.range.endInclusive)
 
     try {
         result.groups[3]
-        Assert.fail("IndexOutOfBoundsException expected")
+        fail("IndexOutOfBoundsException expected")
     } catch (e: IndexOutOfBoundsException) {
     }
 
     try {
         result.groupValues[3]
-        Assert.fail("IndexOutOfBoundsException expected")
+        fail("IndexOutOfBoundsException expected")
     } catch (e: IndexOutOfBoundsException) {
     }
 
     try {
         result.groups[-1]
-        Assert.fail("IndexOutOfBoundsException expected")
+        fail("IndexOutOfBoundsException expected")
     } catch (e: IndexOutOfBoundsException) {
     }
 
     try {
         result.groupValues[-1]
-        Assert.fail("IndexOutOfBoundsException expected")
+        fail("IndexOutOfBoundsException expected")
     } catch (e: IndexOutOfBoundsException) {
     }
 
     result = result.next()
-    Assert.assertFalse(result != null)
+    assertFalse(result != null)
 }
 
 /*
@@ -105,7 +105,7 @@ fun testReplacementBackSlash() {
     val regex = Regex(replacedString)
     try {
         regex.replace(str, substitutionString)
-        Assert.fail("IllegalArgumentException should be thrown")
+        fail("IllegalArgumentException should be thrown")
     } catch (e: IllegalArgumentException) {
     }
 }
