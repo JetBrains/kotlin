@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
@@ -233,16 +234,23 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
 
         val expectedType = expectedReturnType ?: NO_EXPECTED_TYPE
         val functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace, components.overloadChecker)
-        val newContext = context.replaceScope(functionInnerScope).replaceExpectedType(expectedType)
+        var newContext = context.replaceScope(functionInnerScope).replaceExpectedType(expectedType)
 
         // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
         context.trace.record(EXPECTED_RETURN_TYPE, functionLiteral, expectedType)
+
+        val newInferenceLambdaInfo = context.trace[BindingContext.NEW_INFERENCE_LAMBDA_INFO, expression.functionLiteral]
+
+        // i.e. this lambda isn't call arguments
+        if (newInferenceLambdaInfo == null && USE_NEW_INFERENCE) {
+            newContext = newContext.replaceContextDependency(ContextDependency.INDEPENDENT)
+        }
 
         // Type-check the body
         val blockReturnedType = components.expressionTypingServices.getBlockReturnedType(functionLiteral.bodyExpression!!, COERCION_TO_UNIT, newContext)
         val typeOfBodyExpression = blockReturnedType.type
 
-        context.trace[BindingContext.NEW_INFERENCE_LAMBDA_INFO, expression.functionLiteral]?.let {
+        newInferenceLambdaInfo?.let {
             it.dataFlowInfoAfter = blockReturnedType.dataFlowInfo
             return null
         }
