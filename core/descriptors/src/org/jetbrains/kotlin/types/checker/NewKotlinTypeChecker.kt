@@ -159,12 +159,14 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             return StrictEqualityTypeChecker.strictEqualTypes(subType.makeNullableAsSpecified(false), superType.makeNullableAsSpecified(false))
         }
 
-        if (superType is NewCapturedType &&
-            superType.lowerType != null &&
-            allowSubtypeViaLowerTypeForCapturedType(subType, superType) &&
-            isSubtypeOf(subType, superType.lowerType))
-        {
-            return true
+        if (superType is NewCapturedType && superType.lowerType != null) {
+            val subtypeOfLowerType = isSubtypeOf(subType, superType.lowerType)
+            if (shouldCheckOnlyLowerBoundForCapturedType(subType, superType)) {
+                return subtypeOfLowerType
+            }
+            else if (subtypeOfLowerType) {
+                return true
+            }
         }
 
         (superType.constructor as? IntersectionTypeConstructor)?.let {

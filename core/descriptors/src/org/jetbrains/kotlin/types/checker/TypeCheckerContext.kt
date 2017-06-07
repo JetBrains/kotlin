@@ -33,7 +33,7 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean, val allowe
         return a == b
     }
 
-    open fun allowSubtypeViaLowerTypeForCapturedType(subType: SimpleType, superType: NewCapturedType): Boolean = true
+    open fun shouldCheckOnlyLowerBoundForCapturedType(subType: SimpleType, superType: NewCapturedType): Boolean = false
     open val sameConstructorPolicy get() = SeveralSupertypesWithSameConstructorPolicy.INTERSECT_ARGUMENTS_AND_CHECK_AGAIN
 
     internal inline fun <T> runWithArgumentsSettings(subArgument: UnwrappedType, f: TypeCheckerContext.() -> T): T {
