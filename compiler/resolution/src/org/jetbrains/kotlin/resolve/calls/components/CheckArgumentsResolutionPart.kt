@@ -78,6 +78,7 @@ internal object CheckArguments : ResolutionPart {
                     checkCallableExpectedType(csBuilder, argument, expectedType)
                 }
             }
+            is CollectionLiteralKotlinCallArgument -> processCollectionLiteralArgument(kotlinCall, csBuilder, argument, expectedType)
             else -> error("Incorrect argument type: $argument, ${argument.javaClass.canonicalName}.")
         }
     }
@@ -178,6 +179,16 @@ internal object CheckArguments : ResolutionPart {
         val resolvedCallableReference = ResolvedCallableReferenceArgument(kotlinCall, argument, toFreshSubstitutor.freshVariables, chosenCandidate)
         csBuilder.addCallableReferenceArgument(resolvedCallableReference)
 
+        return null
+    }
+
+    fun processCollectionLiteralArgument(
+            kotlinCall: KotlinCall,
+            csBuilder: ConstraintSystemBuilder,
+            collectionLiteralArgument: CollectionLiteralKotlinCallArgument,
+            expectedType: UnwrappedType
+    ): KotlinCallDiagnostic? {
+        csBuilder.addCollectionLiteralArgument(ResolvedCollectionLiteralArgument(kotlinCall, collectionLiteralArgument, expectedType))
         return null
     }
 }

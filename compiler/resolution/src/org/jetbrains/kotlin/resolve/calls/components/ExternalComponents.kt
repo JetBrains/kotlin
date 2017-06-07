@@ -39,4 +39,5 @@ interface KotlinResolutionCallbacks {
     fun completeCallableReference(callableReferenceArgument: ResolvedCallableReferenceArgument,
                                   resultTypeParameters: List<UnwrappedType>)
 
+    fun completeCollectionLiteralCalls(collectionLiteralArgument: ResolvedCollectionLiteralArgument)
 }

@@ -115,6 +115,17 @@ class CallableReferenceKotlinCallArgumentImpl(
         override val rhsName: Name
 ) : CallableReferenceKotlinCallArgument, PSIKotlinCallArgument()
 
+class CollectionLiteralKotlinCallArgumentImpl(
+        override val valueArgument: ValueArgument,
+        override val argumentName: Name?,
+        override val dataFlowInfoBeforeThisArgument: DataFlowInfo,
+        override val dataFlowInfoAfterThisArgument: DataFlowInfo,
+        val collectionLiteralExpression: KtCollectionLiteralExpression,
+        val outerCallContext: BasicCallResolutionContext
+) : CollectionLiteralKotlinCallArgument, PSIKotlinCallArgument() {
+    override val isSpread: Boolean get() = valueArgument.getSpreadElement() != null
+}
+
 class SubKotlinCallArgumentImpl(
         override val valueArgument: ValueArgument,
         override val dataFlowInfoBeforeThisArgument: DataFlowInfo,

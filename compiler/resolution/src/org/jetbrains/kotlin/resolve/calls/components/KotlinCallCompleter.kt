@@ -52,6 +52,7 @@ class KotlinCallCompleter(
         fun buildResultingSubstitutor(): NewTypeSubstitutor
         val lambdaArguments: List<ResolvedLambdaArgument>
         val callableReferenceArguments: List<ResolvedCallableReferenceArgument>
+        val collectionLiteralArguments: List<ResolvedCollectionLiteralArgument>
 
         // type can be proper if it not contains not fixed type variables
         fun canBeProper(type: UnwrappedType): Boolean
@@ -120,6 +121,9 @@ class KotlinCallCompleter(
         }
         c.callableReferenceArguments.forEach {
             resolutionCallbacks.completeCallableReference(it, it.myTypeVariables.map { currentSubstitutor.safeSubstitute(it.defaultType) })
+        }
+        c.collectionLiteralArguments.forEach {
+            resolutionCallbacks.completeCollectionLiteralCalls(it)
         }
         return ResolvedKotlinCall.CompletedResolvedKotlinCall(completedCall, competedCalls, c.lambdaArguments)
     }

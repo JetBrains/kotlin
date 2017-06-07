@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstituto
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallableReferenceArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCollectionLiteralArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedKotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaArgument
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -41,6 +42,7 @@ interface ConstraintSystemBuilder : ConstraintSystemOperation {
     fun addInnerCall(innerCall: ResolvedKotlinCall.OnlyResolvedKotlinCall)
     fun addLambdaArgument(resolvedLambdaArgument: ResolvedLambdaArgument)
     fun addCallableReferenceArgument(resolvedCallableReferenceArgument: ResolvedCallableReferenceArgument)
+    fun addCollectionLiteralArgument(collectionLiteralArgument: ResolvedCollectionLiteralArgument)
 
     // if runOperations return true, then this operation will be applied, and function return true
     fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean

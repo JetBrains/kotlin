@@ -119,6 +119,7 @@ interface CallableReferenceKotlinCallArgument : KotlinCallArgument {
     val rhsName: Name
 }
 
+interface CollectionLiteralKotlinCallArgument : KotlinCallArgument
 
 interface TypeArgument
 

@@ -510,6 +510,11 @@ class PSICallResolver(
             return lambdaArgument
         }
 
+        if (ktExpression is KtCollectionLiteralExpression) {
+            return CollectionLiteralKotlinCallArgumentImpl(
+                    valueArgument, argumentName, startDataFlowInfo, startDataFlowInfo, ktExpression, outerCallContext)
+        }
+
         val context = outerCallContext.replaceContextDependency(ContextDependency.DEPENDENT)
                 .replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceDataFlowInfo(startDataFlowInfo)
 

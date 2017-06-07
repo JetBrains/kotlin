@@ -194,4 +194,16 @@ class KotlinResolutionCallbacksImpl(
 
         doubleColonExpressionResolver.checkReferenceIsToAllowedMember(callableCandidate.candidate, topLevelCallContext.trace, callableReferenceExpression)
     }
+
+    override fun completeCollectionLiteralCalls(collectionLiteralArgument: ResolvedCollectionLiteralArgument) {
+        val psiCallArgument = collectionLiteralArgument.argument.psiCallArgument as CollectionLiteralKotlinCallArgumentImpl
+        val context = psiCallArgument.outerCallContext
+
+        val actualContext = context
+                .replaceBindingTrace(trace)
+                .replaceExpectedType(collectionLiteralArgument.expectedType)
+                .replaceContextDependency(ContextDependency.INDEPENDENT)
+
+        expressionTypingServices.getTypeInfo(psiCallArgument.collectionLiteralExpression, actualContext)
+    }
 }
