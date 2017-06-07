@@ -123,7 +123,17 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             createTypeInfo(components.dataFlowAnalyzer.checkStatementType(function, context), context)
         }
         else {
-            components.dataFlowAnalyzer.createCheckedTypeInfo(functionDescriptor.createFunctionType(), context, function)
+            val expectedType = context.expectedType
+
+            val functionalTypeExpected = expectedType.isBuiltinFunctionalType()
+            val suspendFunctionTypeExpected = expectedType.isSuspendFunctionType()
+
+            val resultType = functionDescriptor.createFunctionType(suspendFunctionTypeExpected)
+
+            if (functionalTypeExpected)
+                createTypeInfo(resultType, context)
+            else
+                components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, function)
         }
     }
 
@@ -144,8 +154,8 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         if (!expression.functionLiteral.hasBody()) return null
 
         val expectedType = context.expectedType
-        val functionTypeExpected = !noExpectedType(expectedType) && expectedType.isBuiltinFunctionalType
-        val suspendFunctionTypeExpected = !noExpectedType(expectedType) && expectedType.isSuspendFunctionType
+        val functionTypeExpected = expectedType.isBuiltinFunctionalType()
+        val suspendFunctionTypeExpected = expectedType.isSuspendFunctionType()
 
         val functionDescriptor = createFunctionLiteralDescriptor(expression, context)
         expression.valueParameters.forEach {
@@ -174,10 +184,10 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     ): AnonymousFunctionDescriptor {
         val functionLiteral = expression.functionLiteral
         val functionDescriptor = AnonymousFunctionDescriptor(
-            context.scope.ownerDescriptor,
-            components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace),
-            CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement(),
-            !noExpectedType(context.expectedType) && context.expectedType.isSuspendFunctionType
+                context.scope.ownerDescriptor,
+                components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace),
+                CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement(),
+                context.expectedType.isSuspendFunctionType()
         )
         components.functionDescriptorResolver.
                 initializeFunctionDescriptorAndExplicitReturnType(context.scope.ownerDescriptor, context.scope, functionLiteral,
@@ -188,6 +198,12 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         BindingContextUtils.recordFunctionDeclarationToDescriptor(context.trace, functionLiteral, functionDescriptor)
         return functionDescriptor
     }
+
+    private fun KotlinType.isBuiltinFunctionalType() =
+            !noExpectedType(this) && isBuiltinFunctionalType
+
+    private fun KotlinType.isSuspendFunctionType() =
+            !noExpectedType(this) && isSuspendFunctionType
 
     private fun computeReturnType(
             expression: KtLambdaExpression,

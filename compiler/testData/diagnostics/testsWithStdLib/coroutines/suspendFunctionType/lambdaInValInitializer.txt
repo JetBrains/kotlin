@@ -1,7 +1,11 @@
 package
 
 public val test1: suspend () -> kotlin.Unit
+public val test1f: suspend () -> kotlin.Unit
 public val test2: suspend kotlin.Any.() -> kotlin.Unit
+public val test2f: suspend kotlin.Any.() -> kotlin.Unit
 public val test3: suspend kotlin.Any.(kotlin.Int) -> kotlin.Int
+public val test3f: suspend kotlin.Any.(kotlin.Int) -> kotlin.Int
 public val test4: SuspendFn /* = suspend () -> kotlin.Unit */
+public val test4f: SuspendFn /* = suspend () -> kotlin.Unit */
 public typealias SuspendFn = suspend () -> kotlin.Unit
