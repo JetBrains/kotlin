@@ -162,8 +162,11 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         val fixedVariables = LinkedHashMap<NewTypeVariable, UnwrappedType>()
 
         for (variableWithConstrains in storage.notFixedTypeVariables.values) {
-            val resultType = resultTypeResolver.findResultIfThereIsEqualsConstraint(apply { checkState(State.BUILDING) }, variableWithConstrains,
-                                                                                                allowedFixToNotProperType = false)
+            val resultType = resultTypeResolver.findResultIfThereIsEqualsConstraint(
+                    apply { checkState(State.BUILDING) },
+                    variableWithConstrains,
+                    allowedFixToNotProperType = false
+            )
             if (resultType != null) {
                 fixedVariables[variableWithConstrains.typeVariable] = resultType
             }
