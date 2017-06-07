@@ -1,4 +1,4 @@
-fun main(args: Array<String>) {
+fun foo(args: Array<String>) {
     try {
     } finally {
         try {
