@@ -311,7 +311,7 @@ val String.wcstr: CValues<ShortVar>
     get() {
         val chars = CharArray(this.length, { i -> this.get(i)})
         return object : CValues<ShortVar>() {
-            override val size get() = chars.size + 1
+            override val size get() = 2 * (chars.size + 1)
 
             override fun getPointer(placement: NativePlacement): CPointer<ShortVar> {
                 val result = placement.allocArray<ShortVar>(chars.size + 1)
