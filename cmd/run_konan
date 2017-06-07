@@ -45,7 +45,7 @@ while [ $# -gt 0 ]; do
     --time)
       konan_args=("${konan_args[@]}" --time)
       java_args=("${java_args[@]}" -agentlib:hprof=cpu=samples -Dkonan.profile=true)
-      JAVACMD="time $JAVACMD"
+      TIMECMD=time
       shift
       ;;
      *)
@@ -86,5 +86,5 @@ KONAN_CLASSPATH="$KOTLIN_JAR:$INTEROP_JAR:$STUB_GENERATOR_JAR:$INTEROP_INDEXER_J
 TOOL_CLASS=org.jetbrains.kotlin.cli.utilities.MainKt
 
 LIBCLANG_DISABLE_CRASH_RECOVERY=1 \
-"$JAVACMD" "${java_opts[@]}" "${java_args[@]}" -cp "$KONAN_CLASSPATH" "$TOOL_CLASS" "$TOOL_NAME" "${konan_args[@]}"
+$TIMECMD "$JAVACMD" "${java_opts[@]}" "${java_args[@]}" -cp "$KONAN_CLASSPATH" "$TOOL_CLASS" "$TOOL_NAME" "${konan_args[@]}"
 
