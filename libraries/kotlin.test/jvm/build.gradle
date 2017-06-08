@@ -6,6 +6,10 @@ apply plugin: 'kotlin-platform-jvm'
 configureJvmProject(project)
 configurePublishing(project)
 
+configurations {
+    compile.extendsFrom implement
+}
+
 dependencies {
     implement project(':kotlin-test:kotlin-test-common')
     compile project(':kotlin-stdlib')
