@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.lexer.KtToken
@@ -206,7 +207,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
                 val typeText = "$text${elementToReplace.typeArgumentList?.text ?: ""}"
                 elementToReplace.replace(psiFactory.createType(typeText).typeElement!!)
             }
-            else -> elementToReplace.replace(psiFactory.createExpression(text))
+            else -> KtPsiUtil.safeDeparenthesize(elementToReplace.replaced(psiFactory.createExpression(text)))
         } as KtElement
 
         val selector = (newElement as? KtCallableReferenceExpression)?.callableReference

@@ -562,7 +562,11 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         }
 
         override fun shortenElement(element: KtDotQualifiedExpression): KtElement {
-            return element.replace(element.selectorExpression!!) as KtElement
+            val parens = element.parent as? KtParenthesizedExpression
+            val requiredParens = parens != null && !KtPsiUtil.areParenthesesUseless(parens)
+            val shortenedElement = element.replace(element.selectorExpression!!) as KtElement
+            if (requiredParens) return shortenedElement.parent.replaced(shortenedElement)
+            return shortenedElement
         }
     }
 

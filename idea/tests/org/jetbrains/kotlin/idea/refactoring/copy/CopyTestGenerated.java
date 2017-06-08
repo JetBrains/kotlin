@@ -72,6 +72,12 @@ public class CopyTestGenerated extends AbstractCopyTest {
         doTest(fileName);
     }
 
+    @TestMetadata("copyFunCallQualificationWithParentheses/copyFunCallQualificationWithParentheses.test")
+    public void testCopyFunCallQualificationWithParentheses_CopyFunCallQualificationWithParentheses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyFunCallQualificationWithParentheses/copyFunCallQualificationWithParentheses.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("copyLocalClass/copyLocalClass.test")
     public void testCopyLocalClass_CopyLocalClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyLocalClass/copyLocalClass.test");
