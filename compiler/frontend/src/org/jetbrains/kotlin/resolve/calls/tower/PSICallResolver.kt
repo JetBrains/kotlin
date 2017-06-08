@@ -345,8 +345,17 @@ class PSICallResolver(
         }
 
         // todo: review
-        private fun createReceiverCallArgument(variable: SimpleKotlinResolutionCandidate): ExpressionKotlinCallArgument =
-                ReceiverExpressionKotlinCallArgument(createReceiverValueWithSmartCastInfo(variable), isVariableReceiverForInvoke = true)
+        private fun createReceiverCallArgument(variable: SimpleKotlinResolutionCandidate): SimpleKotlinCallArgument {
+            val variableReceiver = createReceiverValueWithSmartCastInfo(variable)
+            if (variableReceiver.possibleTypes.isNotEmpty()) {
+                return ReceiverExpressionKotlinCallArgument(createReceiverValueWithSmartCastInfo(variable), isVariableReceiverForInvoke = true)
+            }
+
+            val psiKotlinCall = variable.kotlinCall.psiKotlinCall
+            return SubKotlinCallArgumentImpl(CallMaker.makeExternalValueArgument((variableReceiver.receiverValue as ExpressionReceiver).expression),
+                                      psiKotlinCall.resultDataFlowInfo, psiKotlinCall.resultDataFlowInfo, variableReceiver,
+                                      ResolvedKotlinCall.OnlyResolvedKotlinCall(variable))
+        }
 
         // todo: decrease hacks count
         private fun createReceiverValueWithSmartCastInfo(variable: SimpleKotlinResolutionCandidate): ReceiverValueWithSmartCastInfo {
