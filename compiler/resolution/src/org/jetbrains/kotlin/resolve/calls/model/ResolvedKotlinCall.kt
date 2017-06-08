@@ -31,11 +31,7 @@ sealed class ResolvedKotlinCall {
             val lambdaArguments: List<ResolvedLambdaArgument>
     ): ResolvedKotlinCall()
 
-    class OnlyResolvedKotlinCall(
-            val candidate: KotlinResolutionCandidate
-    ) : ResolvedKotlinCall() {
-        val currentReturnType: UnwrappedType = candidate.lastCall.descriptorWithFreshTypes.returnTypeOrNothing
-    }
+    class OnlyResolvedKotlinCall(val candidate: KotlinResolutionCandidate) : ResolvedKotlinCall()
 }
 
 sealed class CompletedKotlinCall {
