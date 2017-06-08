@@ -98,6 +98,8 @@ fun String.indexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = 
 fun String.lastIndexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? =
         lastIndexOf(char, startIndex, ignoreCase).takeIf { it >= 0 }
 
+fun <T> Iterable<T>.indexOfOrNull(element: T): Int? = withIndex().find { it.value == element }?.index
+
 inline fun <T, R : Any> Iterable<T>.firstNotNullResult(transform: (T) -> R?): R? {
     for (element in this) {
         val result = transform(element)
