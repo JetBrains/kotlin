@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.test.util
 
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartFMap
@@ -48,7 +47,7 @@ fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String>
                                     comment,
                                     PsiWhiteSpace::class.java, PsiComment::class.java, KtPackageDirective::class.java
                             )
-                        } as? PsiElement ?: return
+                        } ?: return
 
                         result = result.plus(elementToAdd, commentText.substring(prefix.length).trim())
                     }
@@ -58,17 +57,6 @@ fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String>
     return result
 }
 
-fun lastModificationDate(dir: File): Long {
-    var lastModified: Long = -1L
-
-    FileUtil.processFilesRecursively(dir) { file ->
-        val fileModified = file.lastModified()
-        if (fileModified > lastModified) {
-            lastModified = fileModified
-        }
-
-        true
-    }
-
-    return lastModified
+fun findLastModifiedFile(dir: File, skipFile: (File) -> Boolean): File {
+    return dir.walk().filterNot(skipFile).maxBy { it.lastModified() }!!
 }
