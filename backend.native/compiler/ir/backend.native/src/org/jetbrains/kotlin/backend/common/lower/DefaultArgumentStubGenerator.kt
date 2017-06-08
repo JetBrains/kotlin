@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.konan.lower
+package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.ir2string
@@ -52,7 +50,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-class DefaultArgumentStubGenerator internal constructor(val context: CommonBackendContext): DeclarationContainerLoweringPass {
+open class DefaultArgumentStubGenerator constructor(val context: CommonBackendContext): DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat { memberDeclaration ->
             if (memberDeclaration is IrFunction)
@@ -222,7 +220,7 @@ private fun nullConst(expression: IrElement, type: KotlinType): IrExpression? {
     }
 }
 
-class DefaultParameterInjector internal constructor(val context: Context): BodyLoweringPass {
+class DefaultParameterInjector constructor(val context: CommonBackendContext): BodyLoweringPass {
     override fun lower(irBody: IrBody) {
 
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
