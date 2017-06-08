@@ -10,7 +10,7 @@ public class A: B() {
         this.bar()
         this.foo()
         B().foo().bar()
-        B().foo().bar()
+        library.B().foo().bar()
         B().bar().foo()
     }
 }

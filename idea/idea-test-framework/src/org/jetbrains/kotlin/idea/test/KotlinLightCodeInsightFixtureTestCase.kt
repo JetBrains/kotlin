@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.test
 
+import com.intellij.codeInsight.CodeInsightTestCase
 import com.intellij.codeInsight.daemon.impl.EditorTracker
 import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.actionSystem.ActionPlaces
@@ -67,6 +68,8 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
                 super.processError(message, t, details, logger)
             }
         })
+
+        CodeInsightTestCase.fixTemplates()
     }
 
     override fun tearDown() {
