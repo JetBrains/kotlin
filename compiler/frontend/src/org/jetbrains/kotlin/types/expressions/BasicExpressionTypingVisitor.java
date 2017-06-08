@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
+import org.jetbrains.kotlin.resolve.calls.KotlinResolutionConfigurationKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.checkers.*;
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
@@ -823,7 +824,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         // See also CallExpressionResolver.getSimpleNameExpressionTypeInfo, .getQualifiedExpressionTypeInfo
         Call call = createCallForSpecialConstruction(
                 expression, expression.getOperationReference(), Collections.singletonList(baseExpression));
-        components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
+        ResolvedCall<FunctionDescriptor> resolvedCall = components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
                 call, ResolveConstruct.EXCL_EXCL, Collections.singletonList("baseExpr"), Collections.singletonList(true), context, null);
         KotlinTypeInfo baseTypeInfo = BindingContextUtils.getRecordedTypeInfo(baseExpression, context.trace.getBindingContext());
 
@@ -852,7 +853,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             baseTypeInfo = baseTypeInfo.replaceDataFlowInfo(dataFlowInfo.disequate(value, DataFlowValue.nullValue(components.builtIns),
                                                                                    components.languageVersionSettings));
         }
-        KotlinType resultingType = TypeUtils.makeNotNullable(baseType);
+        KotlinType resultingType = KotlinResolutionConfigurationKt.getUSE_NEW_INFERENCE()
+                                   ? resolvedCall.getResultingDescriptor().getReturnType()
+                                   : TypeUtils.makeNotNullable(baseType);
         if (context.contextDependency == DEPENDENT) {
             return baseTypeInfo.replaceType(resultingType);
         }
