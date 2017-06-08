@@ -16,9 +16,11 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 // This is what Context collects about IR.
 abstract class Ir<out T: CommonBackendContext>(val context: T, val irModule: IrModuleFragment) {
 
+    abstract val symbols: Symbols<T>
+
     val defaultParameterDeclarationsCache = mutableMapOf<FunctionDescriptor, IrFunction>()
 
-    abstract val symbols: Symbols<T>
+    open fun shouldGenerateHandlerParameterForDefaultBodyFun() = false
 }
 
 open class Symbols<out T: CommonBackendContext>(val context: T, private val symbolTable: SymbolTable) {

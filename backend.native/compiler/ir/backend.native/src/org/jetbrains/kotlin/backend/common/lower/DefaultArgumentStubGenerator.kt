@@ -368,6 +368,12 @@ private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendCo
                     kConstructorMarkerName,
                     context.ir.symbols.defaultConstructorMarker.owner.defaultType)
         }
+        else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {
+            syntheticParameters += valueParameter(descriptor, syntheticParameters.last().index + 1,
+                    "handler".synthesizedName,
+                    context.ir.symbols.any.owner.defaultType)
+        }
+
         descriptor.initialize(
                 /* receiverParameterType         = */ extensionReceiverParameter?.type,
                 /* dispatchReceiverParameter     = */ dispatchReceiverParameter,
