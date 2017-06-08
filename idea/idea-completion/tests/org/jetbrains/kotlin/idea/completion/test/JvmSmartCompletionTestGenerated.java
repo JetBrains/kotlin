@@ -204,6 +204,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("ImplicitInvoke.kt")
+    public void testImplicitInvoke() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitInvoke.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ImplicitlyTypedFunBody.kt")
     public void testImplicitlyTypedFunBody() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedFunBody.kt");

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
+import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.callUtil.allArgumentsMapped
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -231,6 +232,10 @@ class ExpectedInfos(
     }
 
     private fun calculateForArgument(call: Call, callExpectedType: KotlinType, argument: ValueArgument): Collection<ExpectedInfo> {
+
+        if (call is CallTransformer.CallForImplicitInvoke)
+            return calculateForArgument(call.outerCall, callExpectedType, argument)
+
         val argumentIndex = call.valueArguments.indexOf(argument)
         assert(argumentIndex >= 0) {
             "Could not find argument '$argument(${argument.asElement().text})' among arguments of call: $call. Call element text: '${call.callElement.text}'"
