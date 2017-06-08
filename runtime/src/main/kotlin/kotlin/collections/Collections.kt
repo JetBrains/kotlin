@@ -1276,6 +1276,17 @@ public fun <T : Comparable<T>> MutableList<T>.sortDescending(): Unit {
 }
 
 /**
+ * Replaces each element in the list with a result of a transformation specified.
+ */
+public fun <T> MutableList<T>.replaceAll(transformation: (T) -> T) {
+    val it = listIterator()
+    while (it.hasNext()) {
+        val element = it.next()
+        it.set(transformation(element))
+    }
+}
+
+/**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {

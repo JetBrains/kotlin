@@ -163,7 +163,6 @@ enum CharacterClass {
     OTHER_SYMBOL = 28,
     /**
      * Unicode category constant Pi.
-     *
      */
     INITIAL_QUOTE_PUNCTUATION = 29,
     /**
@@ -971,6 +970,10 @@ KChar Kotlin_Char_toLowerCase(KChar ch) {
 
 KChar Kotlin_Char_toUpperCase(KChar ch) {
   return towupper_Konan(ch);
+}
+
+KInt Kotlin_Char_getType(KChar ch) {
+  return getType(ch);
 }
 
 constexpr KInt digits[] = {

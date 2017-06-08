@@ -29,8 +29,6 @@ fun assertException(body: () -> Unit) {
     } catch (e: IndexOutOfBoundsException) {}
 }
 
-fun String.toCharArray(): CharArray = CharArray(length) { i -> this[i] }
-
 // Insert ===================================================================================================
 fun testInsertString(initial: String, index: Int, toInsert: String, expected: String) {
     assertEquals(StringBuilder(initial).insert(index, toInsert),                 expected)

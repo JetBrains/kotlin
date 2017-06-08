@@ -173,6 +173,12 @@ external public fun String.toUpperCase(): String
 external public inline fun String.toLowerCase(): String
 
 /**
+ * Returns an array containing all characters of the specified string.
+ */
+@SymbolName("Kotlin_String_toCharArray")
+external public fun String.toCharArray() : CharArray
+
+/**
  * Returns a copy of this string having its first letter uppercased, or the original string,
  * if it's empty or already starts with an upper case letter.
  *

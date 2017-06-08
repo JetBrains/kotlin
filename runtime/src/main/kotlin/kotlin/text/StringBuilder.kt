@@ -26,9 +26,6 @@ external fun toUtf8Array(string: String, start: Int, size: Int) : ByteArray
 @SymbolName("Kotlin_String_fromCharArray")
 external fun fromCharArray(array: CharArray, start: Int, size: Int) : String
 
-@SymbolName("Kotlin_String_toCharArray")
-external fun toCharArray(string: String) : CharArray
-
 /**
  * Builds new string by populating newly created [StringBuilder] using provided [builderAction]
  * and then converting it to [String].
@@ -59,7 +56,7 @@ class StringBuilder private constructor (
 
     constructor(capacity: Int) : this(CharArray(capacity))
 
-    constructor(string: String) : this(toCharArray(string)) {
+    constructor(string: String) : this(string.toCharArray()) {
         length = array.size
     }
 
@@ -217,7 +214,7 @@ class StringBuilder private constructor (
         return this
     }
 
-    fun insert(index: Int, string: String): StringBuilder = insert(index, toCharArray(string))
+    fun insert(index: Int, string: String): StringBuilder = insert(index, string.toCharArray())
 
     fun insert(index: Int, value: Boolean) = insert(index, value.toString())
     fun insert(index: Int, value: Byte)    = insert(index, value.toString())
@@ -260,7 +257,7 @@ class StringBuilder private constructor (
         return this
     }
 
-    fun append(it: String): StringBuilder = append(toCharArray(it))
+    fun append(it: String): StringBuilder = append(it.toCharArray())
 
     fun append(it: Boolean) = append(it.toString())
     fun append(it: Byte) = append(it.toString())

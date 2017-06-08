@@ -1268,6 +1268,11 @@ task to_string0(type: RunKonanTest) {
     source = "runtime/text/to_string0.kt"
 }
 
+task chars0(type: RunKonanTest) {
+    source = "runtime/text/chars0.kt"
+    expectedExitStatus = 0
+}
+
 task catch1(type: RunKonanTest) {
     goldValue = "Before\nCaught Throwable\nDone\n"
     source = "runtime/exceptions/catch1.kt"

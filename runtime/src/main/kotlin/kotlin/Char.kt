@@ -107,6 +107,21 @@ public final class Char : Comparable<Char> {
         public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
 
         /**
+         * The minimum value of a supplementary code point, `\u0x10000`. Kotlin/Native specific.
+         */
+        public const val MIN_SUPPLEMENTARY_CODE_POINT: Int = 0x10000
+
+        /**
+         * The minimum value of a Unicode code point. Kotlin/Native specific.
+         */
+        public const val MIN_CODE_POINT = 0x000000
+
+        /**
+         * The maximum value of a Unicode code point. Kotlin/Native specific.
+         */
+        public const val MAX_CODE_POINT = 0X10FFFF
+
+        /**
          * The minimum radix available for conversion to and from strings.
          */
         public const val MIN_RADIX: Int = 2
