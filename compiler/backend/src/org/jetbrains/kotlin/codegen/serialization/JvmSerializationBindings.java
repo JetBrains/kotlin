@@ -21,7 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.util.slicedMap.*;
+import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice;
+import org.jetbrains.kotlin.util.slicedMap.MutableSlicedMap;
+import org.jetbrains.kotlin.util.slicedMap.SlicedMapImpl;
+import org.jetbrains.kotlin.util.slicedMap.Slices;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
@@ -44,17 +47,6 @@ public final class JvmSerializationBindings {
         }
     }
 
-    private static final class SerializationMappingSetSlice<K> extends SetSlice<K> {
-        public SerializationMappingSetSlice() {
-            super(Slices.ONLY_REWRITE_TO_EQUAL, false);
-        }
-
-        @NotNull
-        public static <K> SerializationMappingSetSlice<K> create() {
-            return new SerializationMappingSetSlice<>();
-        }
-    }
-
     static {
         BasicWritableSlice.initSliceDebugNames(JvmSerializationBindings.class);
     }
@@ -65,16 +57,8 @@ public final class JvmSerializationBindings {
         map.put(slice, key, value);
     }
 
-    public <K> void put(@NotNull SerializationMappingSetSlice<K> slice, @NotNull K key) {
-        map.put(slice, key, true);
-    }
-
     @Nullable
     public <K, V> V get(@NotNull SerializationMappingSlice<K, V> slice, @NotNull K key) {
         return map.get(slice, key);
-    }
-
-    public <K> boolean get(@NotNull SerializationMappingSetSlice<K> slice, @NotNull K key) {
-        return Boolean.TRUE.equals(map.get(slice, key));
     }
 }

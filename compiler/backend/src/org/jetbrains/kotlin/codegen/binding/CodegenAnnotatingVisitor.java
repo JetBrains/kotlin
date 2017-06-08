@@ -370,9 +370,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     @NotNull
     private MutableClosure recordClosure(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
-        return CodegenBinding.recordClosure(
-                bindingTrace, classDescriptor, peekFromStack(classStack), Type.getObjectType(name), fileClassesProvider
-        );
+        return CodegenBinding.recordClosure(bindingTrace, classDescriptor, peekFromStack(classStack), Type.getObjectType(name));
     }
 
     private void recordLocalVariablePropertyMetadata(LocalVariableDescriptor variableDescriptor) {

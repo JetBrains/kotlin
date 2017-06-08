@@ -205,11 +205,8 @@ class MultifileClassCodegenImpl(
         val packageFragment = this.packageFragment
                               ?: throw AssertionError("File part $file of $facadeFqName: no package fragment")
 
-        val partClassFqName = file.getFileClassFqName()
-        val partInitializerClassFqName = FqName(partClassFqName.asString() + "__Init")
-        val partType = partClassFqName.toAsmType()
-        val partInitializerType = partInitializerClassFqName.toAsmType()
-        val partContext = state.rootContext.intoMultifileClassPart(packageFragment, facadeClassType, partType, partInitializerType, file)
+        val partType = file.getFileClassFqName().toAsmType()
+        val partContext = state.rootContext.intoMultifileClassPart(packageFragment, facadeClassType, partType, file)
 
         generateNonPartClassDeclarations(file, partContext)
 
