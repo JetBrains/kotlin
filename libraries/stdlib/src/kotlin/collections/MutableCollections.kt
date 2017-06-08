@@ -291,6 +291,7 @@ public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
  */
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
+@SinceKotlin("1.2")
 public inline fun <T> MutableList<T>.fill(value: T) {
     java.util.Collections.fill(this, value)
 }
@@ -301,6 +302,7 @@ public inline fun <T> MutableList<T>.fill(value: T) {
  */
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
+@SinceKotlin("1.2")
 public inline fun <T> MutableList<T>.shuffle() {
     java.util.Collections.shuffle(this)
 }
@@ -310,6 +312,7 @@ public inline fun <T> MutableList<T>.shuffle() {
  */
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
+@SinceKotlin("1.2")
 public inline fun <T> MutableList<T>.shuffle(random: java.util.Random) {
     java.util.Collections.shuffle(this, random)
 }
@@ -318,6 +321,7 @@ public inline fun <T> MutableList<T>.shuffle(random: java.util.Random) {
  * Returns a new list with the elements of this list randomly shuffled.
  */
 @kotlin.jvm.JvmVersion
+@SinceKotlin("1.2")
 public fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
 
 /**
@@ -325,4 +329,5 @@ public fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle
  * using the specified [random] instance as the source of randomness.
  */
 @kotlin.jvm.JvmVersion
+@SinceKotlin("1.2")
 public fun <T> Iterable<T>.shuffled(random: java.util.Random): List<T> = toMutableList().apply { shuffle(random) }

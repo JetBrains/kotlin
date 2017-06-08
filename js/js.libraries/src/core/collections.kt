@@ -80,6 +80,18 @@ public fun <T> setOf(element: T): Set<T> = hashSetOf(element)
 public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
 
 /**
+ * Fills the list with the provided [value].
+ *
+ * Each element in the list gets replaced with the [value].
+ */
+@SinceKotlin("1.2")
+public fun <T> MutableList<T>.fill(value: T) {
+    for (index in 0..lastIndex) {
+        this[index] = value
+    }
+}
+
+/**
  * Sorts elements in the list in-place according to their natural sort order.
  */
 public fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
