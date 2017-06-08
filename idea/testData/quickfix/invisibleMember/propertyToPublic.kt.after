@@ -1,0 +1,11 @@
+// "Make 'foo' public" "true"
+
+open class A {
+    val foo = 1
+}
+
+class B : A() {
+    fun bar() {
+        foo
+    }
+}
