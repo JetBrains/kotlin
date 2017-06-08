@@ -245,23 +245,25 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
 
                     val targetFile: KtFile
                     if (singleElementToCopy is KtFile) {
-                        targetFile = runWriteAction { targetDirectory.copyFileFrom(targetFileName, singleElementToCopy) as KtFile }
+                        targetFile = runWriteAction {
+                            val copiedFile = targetDirectory.copyFileFrom(targetFileName, singleElementToCopy) as KtFile
+                            performDelayedRefactoringRequests(project)
+                            copiedFile
+                        }
                     }
                     else {
                         targetFile = getOrCreateTargetFile(originalFile, targetDirectory, targetFileName, commandName) ?: return@executeCommand
                         runWriteAction {
                             val newElements = elementsToCopy.map { targetFile.add(it.copy()) as KtNamedDeclaration }
                             elementsToCopy.zip(newElements).toMap(oldToNewElementsMapping)
-                        }
-                    }
 
-                    runWriteAction {
-                        for (newElement in oldToNewElementsMapping.values) {
-                            restoredInternalUsages += restoreInternalUsages(newElement as KtElement, oldToNewElementsMapping, true)
-                            postProcessMoveUsages(restoredInternalUsages, oldToNewElementsMapping)
-                        }
+                            for (newElement in oldToNewElementsMapping.values) {
+                                restoredInternalUsages += restoreInternalUsages(newElement as KtElement, oldToNewElementsMapping, true)
+                                postProcessMoveUsages(restoredInternalUsages, oldToNewElementsMapping)
+                            }
 
-                        performDelayedRefactoringRequests(project)
+                            performDelayedRefactoringRequests(project)
+                        }
                     }
 
                     (oldToNewElementsMapping.values.singleOrNull() as? KtNamedDeclaration)?.let { newDeclaration ->

@@ -1,0 +1,5 @@
+{
+  "mainFile": "refactor/copy/test.kt",
+  "targetPackage": "refactor.copy2",
+  "withRuntime": "true"
+}
