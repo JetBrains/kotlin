@@ -18,6 +18,18 @@ internal class A {
 
     protected /*it's protected*/ fun foo(c: Char) {}
 
+    /**
+     * Method description.
+     * Multi-line method description.
+     *
+     *
+     * @param param1 param1 description
+     * @param param2 param2 description
+     *
+     * @param param3 param3 description
+     */
+    fun foo(param1: String, param2: String, param3: String) {}
+
     companion object {
 
         /*it's public*//*and static*//*and final*/ val C = 1
