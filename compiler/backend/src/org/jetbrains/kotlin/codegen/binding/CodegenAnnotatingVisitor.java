@@ -417,6 +417,20 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                     runtimeTypes.getSupertypeForPropertyReference(variableDescriptor, variableDescriptor.isVar(), /* bound = */ false);
             ClassDescriptor classDescriptor = recordClassForCallable(delegate, variableDescriptor, Collections.singleton(supertype), name);
             recordClosure(classDescriptor, name);
+
+            if (!(variableDescriptor instanceof LocalVariableDescriptor)) {
+                ClassDescriptor containerClass = peekFromStack(classStack);
+                Type containerType =
+                        containerClass != null
+                        ? CodegenBinding.getAsmType(bindingContext, containerClass)
+                        : Type.getObjectType(FileClasses.getFileClassInternalName(fileClassesProvider, property.getContainingKtFile()));
+                List<VariableDescriptorWithAccessors> descriptors = bindingTrace.get(DELEGATED_PROPERTIES, containerType);
+                if (descriptors == null) {
+                    descriptors = new ArrayList<>(1);
+                    bindingTrace.record(DELEGATED_PROPERTIES, containerType, descriptors);
+                }
+                descriptors.add(variableDescriptor);
+            }
         }
 
         super.visitProperty(property);
