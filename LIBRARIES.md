@@ -47,13 +47,13 @@ The **klib** library management utility allows one to inspect and install the li
 
 The following commands are available.
 
+To list library contents:
+
+        $ klib contents foo
+
 To ask the details of the library 
 
         $ klib info foo
-
-To list library contents:
-
-        $ klib list foo
 
 To install the library to the default location use
 

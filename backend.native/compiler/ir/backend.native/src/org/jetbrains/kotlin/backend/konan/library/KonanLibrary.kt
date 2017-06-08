@@ -50,15 +50,15 @@ abstract open class FileBasedLibraryReader(
     override val moduleName: String
         get() = namedModuleData.name
 
-    protected val tableOfContentsAsString : String
+    val tableOfContents : Base64
         get() = namedModuleData.base64
 
-    protected fun packageMetadata(fqName: String): Base64 =
+    fun packageMetadata(fqName: String): Base64 =
         reader.loadSerializedPackageFragment(fqName)
 
     override fun moduleDescriptor(specifics: LanguageVersionSettings) 
         = deserializeModule(specifics, {packageMetadata(it)}, 
-            tableOfContentsAsString, moduleName)
+            tableOfContents, moduleName)
 }
 
 // This scheme describes the Konan Library (klib) layout.

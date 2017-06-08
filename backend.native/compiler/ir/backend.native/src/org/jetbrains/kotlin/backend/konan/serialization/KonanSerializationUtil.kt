@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
 import org.jetbrains.kotlin.serialization.KonanLinkData
+import org.jetbrains.kotlin.serialization.KonanLinkData.*
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -123,11 +124,13 @@ fun createKonanPackageFragmentProvider(
     return provider
 }
 
-internal fun deserializePackageFragment(base64: Base64): KonanLinkData.PackageFragment {
-    return KonanLinkData.PackageFragment
-        .parseFrom(base64ToStream(base64), 
-            KonanSerializerProtocol.extensionRegistry)
-}
+public fun parsePackageFragment(base64: Base64): PackageFragment =
+    PackageFragment.parseFrom(base64ToStream(base64),
+        KonanSerializerProtocol.extensionRegistry)
+
+public fun parseModuleHeader(base64: Base64): Library =
+    Library.parseFrom(base64ToStream(base64),
+        KonanSerializerProtocol.extensionRegistry)
 
 internal fun deserializeModule(languageVersionSettings: LanguageVersionSettings,
     packageLoader:(String)->Base64, library: Base64,  moduleName: String): ModuleDescriptorImpl {
@@ -139,13 +142,11 @@ internal fun deserializeModule(languageVersionSettings: LanguageVersionSettings,
     builtIns.builtInsModule = moduleDescriptor
     val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 
-    val libraryProto = KonanLinkData.Library
-        .parseFrom(base64ToStream(library), 
-            KonanSerializerProtocol.extensionRegistry)
+    val libraryProto = parseModuleHeader(library)
 
     val provider = createKonanPackageFragmentProvider(
         libraryProto.packageFragmentNameList,
-        {it -> deserializePackageFragment(packageLoader(it))},
+        {it -> parsePackageFragment(packageLoader(it))},
         storageManager, 
         moduleDescriptor, deserializationConfiguration)
 

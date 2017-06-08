@@ -13,7 +13,7 @@ fun printUsage() {
     println("where the commands are:")
     println("\tinfo\tgeneral information about the library")
     println("\tinstall\tinstall the library to the local repository")
-    println("\tlist\tcontents of the library")
+    println("\tcontents\tlist contents of the library")
     println("\tremove\tremove the library from the local repository")
     println("and the options are:")
     println("\t-repository <path>\twork with the specified repository")
@@ -66,8 +66,8 @@ class Library(val name: String, val repository: String, val target: String) {
     // TODO: need to do something here.
     val currentAbiVersion = 1
 
-    val splitLibrary = SplitLibraryReader(file, currentAbiVersion, target)
-    val manifestFile = splitLibrary.manifestFile
+    val library = SplitLibraryReader(file, currentAbiVersion, target)
+    val manifestFile = library.manifestFile
 
     fun info() {
         val header = Properties()
@@ -78,29 +78,34 @@ class Library(val name: String, val repository: String, val target: String) {
         val moduleName = header.getProperty("module_name")!!
         println("Module name: $moduleName")
         println("ABI version: $headerAbiVersion")
-        val targets = splitLibrary.targetsDir.listFiles.map{it.name}.joinToString(", ")
+        val targets = library.targetsDir.listFiles.map{it.name}.joinToString(", ")
         print("Available targets: $targets\n")
     }
 
     fun install() {
         remove()
-        val baseName = splitLibrary.klibFile.name
+        val baseName = library.klibFile.name
         val newKlibName = File(repositoryFile, baseName)
-        splitLibrary.klibFile.copyTo(newKlibName)
+        library.klibFile.copyTo(newKlibName)
     }
 
     fun remove() {
         repositoryFile.mkdirs()
-        val baseName = splitLibrary.klibFile.name
-        val newDirName = File(repositoryFile, splitLibrary.libDir.name)
+        val baseName = library.klibFile.name
+        val newDirName = File(repositoryFile, library.libDir.name)
         val newKlibName = File(repositoryFile, baseName)
         newKlibName.deleteRecursively()
         newDirName.deleteRecursively()
     }
 
-    fun list() {
-        // TODO: implement printing deserialized module protobuf.
-        println("Module listing not implemented yet.")
+    fun contents() {
+        val moduleName = library.moduleName
+        val printer = PrettyPrinter(
+            library.tableOfContents, {name -> library.packageMetadata(name)})
+        
+        printer.packageFragmentNameList.forEach{ 
+            printer.printPackageFragment(it)
+        }
     }
 }
 
@@ -122,9 +127,9 @@ fun main(args: Array<String>) {
     warn("IMPORTANT: the library format is unstable now. It can change with any new git commit without warning!")
 
     when (command.verb) {
+        "contents"  -> library.contents()
         "info"      -> library.info()
         "install"   -> library.install()
-        "list"      -> library.list()
         "remove"    -> library.remove()
         else        -> error("Unknown command ${command.verb}.")
     }

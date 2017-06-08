@@ -45,8 +45,8 @@ override fun loadSerializedModule(currentAbiVersion: Int): NamedModuleData  {
         throw Error("Expected ABI version ${currentAbiVersion}, but the binary is ${abiVersion}")
     }
     val moduleName = string(nameNode)
-    val tableOfContentsAsString = string(dataNode)
-    return NamedModuleData(moduleName, tableOfContentsAsString)
+    val tableOfContents = string(dataNode)
+    return NamedModuleData(moduleName, tableOfContents)
 }
 
 override fun loadSerializedPackageFragment(fqName: String): String {
