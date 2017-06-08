@@ -372,7 +372,17 @@ public abstract class StackValue {
         }
         else if (toType.getSort() == Type.OBJECT) {
             if (fromType.getSort() == Type.OBJECT || fromType.getSort() == Type.ARRAY) {
-                if (!toType.equals(OBJECT_TYPE)) {
+                // The compiler sometimes unnecessarily casts things like ArrayList to Collection.  This prevents that.
+                boolean unnecessaryCast = false;
+                try {
+                    Class fromClass = Class.forName(fromType.getClassName());
+                    Class toClass = Class.forName(toType.getClassName());
+                    unnecessaryCast = toClass.isAssignableFrom(fromClass);
+                }
+                catch (ClassNotFoundException e) {
+                    // This is expected if fromType or toType are custom classes.
+                }
+                if (!unnecessaryCast && !toType.equals(OBJECT_TYPE)) {
                     v.checkcast(toType);
                 }
             }
