@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * Note: it currently can't handle local functions and classes declared in default arguments.
  * See [deepCopyWithVariables].
  */
-internal class TailrecLowering(val context: BackendContext) : FunctionLoweringPass {
+class TailrecLowering(val context: BackendContext) : FunctionLoweringPass {
     override fun lower(irFunction: IrFunction) {
         lowerTailRecursionCalls(context, irFunction)
     }
