@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightPlatformCodeInsightFixtureTestC
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.ReferenceUtils
+import org.jetbrains.kotlin.test.util.renderAsGotoImplementation
 import org.junit.Assert
 import kotlin.test.assertTrue
 
@@ -82,7 +82,7 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
 
             val actualResolvedTo = Lists.newArrayList<String>()
             for (result in results) {
-                actualResolvedTo.add(ReferenceUtils.renderAsGotoImplementation(result.element!!))
+                actualResolvedTo.add(result.element!!.renderAsGotoImplementation())
             }
 
             UsefulTestCase.assertOrderedEquals("Not matching for reference #$index", actualResolvedTo.sorted(), expectedReferences.sorted())
@@ -138,7 +138,7 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
                 val resolvedTo = psiReference.resolve()
                 if (resolvedTo != null) {
                     checkResolvedTo(resolvedTo)
-                    val resolvedToElementStr = replacePlaceholders(ReferenceUtils.renderAsGotoImplementation(resolvedTo))
+                    val resolvedToElementStr = replacePlaceholders(resolvedTo.renderAsGotoImplementation())
                     assertEquals("Found reference to '$resolvedToElementStr', but '$expectedString' was expected", expectedString, resolvedToElementStr)
                 }
                 else {

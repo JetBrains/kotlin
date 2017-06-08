@@ -25,12 +25,13 @@ import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.kotlin.checkers.AbstractPsiCheckerTest
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
+import org.jetbrains.kotlin.idea.navigation.GotoCheck
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.script.ScriptTemplatesProvider
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
-import org.jetbrains.kotlin.test.ReferenceUtils
+import org.jetbrains.kotlin.test.util.renderAsGotoImplementation
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import java.io.File
@@ -56,12 +57,12 @@ abstract class AbstractScriptConfigurationNavigationTest : AbstractScriptConfigu
         val resolved = reference.resolve()!!.navigationElement!!
 
         val expectedReference = InTextDirectivesUtils.findStringWithPrefixes(myFixture.file.text, "// REF:")
-        val actualReference = ReferenceUtils.renderAsGotoImplementation(resolved)
+        val actualReference = resolved.renderAsGotoImplementation()
 
         Assert.assertEquals(expectedReference, actualReference)
 
         val expectedFile = InTextDirectivesUtils.findStringWithPrefixes(myFixture.file.text, "// FILE:")
-        val actualFile = ReferenceUtils.getFileWithDir(resolved)
+        val actualFile = GotoCheck.getFileWithDir(resolved)
 
         Assert.assertEquals(expectedFile, actualFile)
     }

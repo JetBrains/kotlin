@@ -36,7 +36,7 @@ import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.ReferenceUtils;
+import org.jetbrains.kotlin.test.util.ReferenceUtils;
 import org.junit.Assert;
 
 import java.util.*;
