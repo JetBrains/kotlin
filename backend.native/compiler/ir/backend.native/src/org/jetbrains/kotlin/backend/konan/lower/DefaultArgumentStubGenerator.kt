@@ -316,7 +316,7 @@ class DefaultParameterInjector internal constructor(val context: Context): BodyL
                             value       = maskValue)
                 }
                 if (expression.descriptor is ClassConstructorDescriptor) {
-                    val defaultArgumentMarker = context.ir.symbols.defaultArgumentMarker
+                    val defaultArgumentMarker = context.ir.symbols.defaultConstructorMarker
                     params += markerParameterDescriptor(realDescriptor) to IrGetObjectValueImpl(
                             startOffset = irBody.startOffset,
                             endOffset   = irBody.endOffset,
@@ -368,7 +368,7 @@ private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendCo
         if (this is ClassConstructorDescriptor) {
             syntheticParameters += valueParameter(descriptor, syntheticParameters.last().index + 1,
                     kConstructorMarkerName,
-                    context.ir.symbols.defaultArgumentMarker.owner.defaultType)
+                    context.ir.symbols.defaultConstructorMarker.owner.defaultType)
         }
         descriptor.initialize(
                 /* receiverParameterType         = */ extensionReceiverParameter?.type,
