@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.descriptors.DefaultImplsClassDescriptorImpl
 import org.jetbrains.kotlin.backend.jvm.lower.InitializersLowering.Companion.clinitName
@@ -36,11 +37,10 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-
 class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid(), ClassLoweringPass {
-
 
     override fun lower(irClass: IrClass) {
         if (!DescriptorUtils.isInterface(irClass.descriptor)) {
@@ -58,18 +58,8 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
             val descriptor = it.descriptor
             if (descriptor.modality != Modality.ABSTRACT) {
                 val functionDescriptorImpl = createDefaultImplFunDescriptor(defaultImplsDescriptor, descriptor, interfaceDescriptor, state.typeMapper)
-
-                val newFunction = IrFunctionImpl(it.startOffset, it.endOffset, it.origin, functionDescriptorImpl, it.body)
-                members.add(newFunction)
+                members.add(functionDescriptorImpl.createFunctionAndMapVariables(it))
                 it.body = null
-
-                val mapping: Map<ValueDescriptor, ValueDescriptor> =
-                        (
-                                listOf(it.descriptor.dispatchReceiverParameter!!, it.descriptor.extensionReceiverParameter).filterNotNull() +
-                                it.descriptor.valueParameters
-                        ).zip(functionDescriptorImpl.valueParameters).toMap()
-
-                newFunction.body?.transform(VariableRemapper(mapping), null)
             }
         }
 
@@ -84,7 +74,12 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
             }
             else null
         }
+
+        val defaultBodies = irClass.declarations.filterIsInstance<IrFunction>().filter {
+            it.origin == DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
+        }
         irClass.declarations.removeAll(privateToRemove)
+        irClass.declarations.removeAll(defaultBodies)
     }
 
     companion object {
@@ -100,33 +95,49 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
                 descriptor: FunctionDescriptor,
                 interfaceDescriptor: ClassDescriptor, typeMapper: KotlinTypeMapper
         ): SimpleFunctionDescriptorImpl {
-
-            val newFunction = SimpleFunctionDescriptorImpl.create(
-                    defaultImplsDescriptor, AnnotationsImpl(emptyList()),
-                    Name.identifier(typeMapper.mapAsmMethod(descriptor).name),
-                    CallableMemberDescriptor.Kind.DECLARATION, descriptor.source
-            )
-
-            val dispatchReceiver =
-                        ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-                                newFunction, null, 0, AnnotationsImpl(emptyList()), Name.identifier("this"),
-                                interfaceDescriptor.defaultType, false, false, false, null, interfaceDescriptor.source, null)
-            val oldExtensionReceiver = descriptor.extensionReceiverParameter
-            val extensionReceiver = if (oldExtensionReceiver != null )
-                    ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-                            newFunction, null, 1, AnnotationsImpl(emptyList()), Name.identifier("receiver"),
-                            oldExtensionReceiver.value.type, false, false, false, null, oldExtensionReceiver.source, null)
-            else null
-
-            val valueParameters = listOf(dispatchReceiver, extensionReceiver).filterNotNull() +
-                                  descriptor.valueParameters.map { it.copy(newFunction, it.name, it.index + 1) }
-
-            newFunction.initialize(
-                    null, null, emptyList()/*TODO: type parameters*/,
-                    valueParameters, descriptor.returnType, Modality.FINAL, descriptor.visibility
-            )
-            return newFunction
+            val name = Name.identifier(typeMapper.mapAsmMethod(descriptor).name)
+            return createStaticFunctionWithReceivers(defaultImplsDescriptor, name, descriptor, interfaceDescriptor.defaultType)
         }
     }
-
 }
+
+
+internal fun createStaticFunctionWithReceivers(owner: ClassOrPackageFragmentDescriptor, name: Name, descriptor: FunctionDescriptor, dispatchReceiverType: KotlinType): SimpleFunctionDescriptorImpl {
+    val newFunction = SimpleFunctionDescriptorImpl.create(
+            owner,
+            AnnotationsImpl(emptyList()),
+            name,
+            CallableMemberDescriptor.Kind.DECLARATION, descriptor.source
+    )
+
+    val dispatchReceiver =
+            ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
+                    newFunction, null, 0, AnnotationsImpl(emptyList()), Name.identifier("this"),
+                    dispatchReceiverType, false, false, false, null, descriptor.source, null)
+    val extensionReceiver =
+            descriptor.extensionReceiverParameter?.let { extensionReceiver ->
+                ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
+                        newFunction, null, 1, AnnotationsImpl(emptyList()), Name.identifier("receiver"),
+                        extensionReceiver.value.type, false, false, false, null, extensionReceiver.source, null)
+            }
+
+    val valueParameters = listOf(dispatchReceiver, extensionReceiver).filterNotNull() +
+                          descriptor.valueParameters.map { it.copy(newFunction, it.name, it.index + 1) }
+
+    newFunction.initialize(
+            null, null, emptyList()/*TODO: type parameters*/,
+            valueParameters, descriptor.returnType, Modality.FINAL, descriptor.visibility
+    )
+    return newFunction
+}
+
+internal fun FunctionDescriptor.createFunctionAndMapVariables(oldFunction: IrFunction) =
+        IrFunctionImpl(oldFunction.startOffset, oldFunction.endOffset, oldFunction.origin, this, oldFunction.body).also {
+            val mapping: Map<ValueDescriptor, ValueDescriptor> =
+                    (
+                            listOf(oldFunction.descriptor.dispatchReceiverParameter!!, oldFunction.descriptor.extensionReceiverParameter).filterNotNull() +
+                            oldFunction.descriptor.valueParameters
+                    ).zip(this.valueParameters).toMap()
+
+            it.body?.transform(VariableRemapper(mapping), null)
+        }
