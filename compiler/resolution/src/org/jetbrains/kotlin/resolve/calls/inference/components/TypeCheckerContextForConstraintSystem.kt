@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,6 +115,25 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
         // todo: may be we can do better then that.
         if (notTypeVariables.isNotEmpty() && NewKotlinTypeChecker.isSubtypeOf(intersectTypes(notTypeVariables), superType)) {
             return true
+        }
+
+//       Consider the following example:
+//      fun <T> id(x: T): T = x
+//      fun <S> id2(x: S?, y: S): S = y
+//
+//      fun checkLeftAssoc(a: Int?) : Int {
+//          return id2(id(a), 3)
+//      }
+//
+//      fun box() : String {
+//          return "OK"
+//      }
+//
+//      here we try to add constraint {Any & T} <: S from `id(a)`
+//      Previously we thought that if `Any` isn't a subtype of S => T <: S, which is wrong, now we use weaker upper constraint
+//      TODO: rethink, maybe we should take nullability into account somewhere else
+        if (notTypeVariables.any { NullabilityChecker.isSubtypeOfAny(it) }) {
+            return typeVariables.all { simplifyUpperConstraint(it, superType.makeNullableAsSpecified(true)) }
         }
 
         return typeVariables.all { simplifyUpperConstraint(it, superType) }
