@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.common.lower.TailrecLowering
+import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -33,6 +34,11 @@ class JvmLower(val context: JvmBackendContext) {
         LateinitLowering(context).lower(irFile)
         ConstAndJvmFieldPropertiesLowering().lower(irFile)
         PropertiesLowering().lower(irFile)
+
+        //Should be before interface lowering
+        DefaultArgumentStubGenerator(context).runOnFilePostfix(irFile)
+        StaticDefaultFunctionLowering(context.state).runOnFilePostfix(irFile)
+
         InterfaceLowering(context.state).runOnFilePostfix(irFile)
         InterfaceDelegationLowering(context.state).runOnFilePostfix(irFile)
         SharedVariablesLowering(context).runOnFilePostfix(irFile)
