@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import java.util.*
 
 
@@ -227,7 +228,6 @@ class KotlinToResolvedCallTransformer(
 
             val argumentExpression = valueArgument.getArgumentExpression() ?: continue
             updateRecordedType(argumentExpression, newContext)
-//            dataFlowAnalyzer.checkType(updatedType, deparenthesized, newContext)
         }
 
     }
@@ -243,10 +243,7 @@ class KotlinToResolvedCallTransformer(
         val recordedType = context.trace.getType(deparenthesized)
         var updatedType = recordedType
 
-        val resolvedCall = deparenthesized.getResolvedCall(context.trace.bindingContext)
-        if (resolvedCall != null) {
-            updatedType = resolvedCall.resultingDescriptor.returnType ?: updatedType
-        }
+        updatedType = getResolvedCallForArgumentExpression(deparenthesized, context)?.run { resultingDescriptor.returnType } ?: updatedType
 
         // For the cases like 'foo(1)' the type of '1' depends on expected type (it can be Int, Byte, etc.),
         // so while the expected type is not known, it's IntegerValueType(1), and should be updated when the expected type is known.
@@ -254,8 +251,18 @@ class KotlinToResolvedCallTransformer(
             updatedType = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, deparenthesized) ?: updatedType
         }
 
-        return updateRecordedTypeForArgument(updatedType, recordedType, expression, context)
+        updatedType = updateRecordedTypeForArgument(updatedType, recordedType, expression, context)
+
+        dataFlowAnalyzer.checkType(updatedType, deparenthesized, context)
+
+        return updatedType
     }
+
+    private fun getResolvedCallForArgumentExpression(expression: KtExpression, context: BasicCallResolutionContext) =
+            if (!ExpressionTypingUtils.dependsOnExpectedType(expression))
+                null
+            else
+                expression.getResolvedCall(context.trace.bindingContext)
 
     // See CallCompleter#updateRecordedTypeForArgument
     private fun updateRecordedTypeForArgument(
