@@ -147,6 +147,27 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/removeToStringInStringTemplate")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveToStringInStringTemplate extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInRemoveToStringInStringTemplate() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/removeToStringInStringTemplate"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("caretInReceiver.kt")
+        public void testCaretInReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeToStringInStringTemplate/caretInReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("caretInSelector.kt")
+        public void testCaretInSelector() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/removeToStringInStringTemplate/caretInSelector.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
