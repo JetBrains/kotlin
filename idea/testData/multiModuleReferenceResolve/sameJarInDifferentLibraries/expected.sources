@@ -1,0 +1,2 @@
+ lib.kt
+fun <1>foo() {}
