@@ -1392,11 +1392,11 @@ public class KotlinTypeMapper {
                 Type sharedVarType = getSharedVarType(variableDescriptor);
                 if (sharedVarType == null) {
                     if (isDelegatedLocalVariable(variableDescriptor)) {
-                        VariableDescriptor delegateVariableDescriptor = bindingContext.get(LOCAL_VARIABLE_DELEGATE,
-                                                                                           (VariableDescriptor) variableDescriptor);
-                        assert delegateVariableDescriptor != null :
-                                "Local delegated property " + variableDescriptor + " delegate descriptor should be not null";
-                        sharedVarType = mapType(delegateVariableDescriptor.getType());
+                        //noinspection CastConflictsWithInstanceof
+                        KotlinType delegateType =
+                                JvmCodegenUtil.getPropertyDelegateType((LocalVariableDescriptor) variableDescriptor, bindingContext);
+                        assert delegateType != null : "Local delegated property type should not be null: " + variableDescriptor;
+                        sharedVarType = mapType(delegateType);
                     }
                     else {
                         sharedVarType = mapType(((VariableDescriptor) variableDescriptor).getType());

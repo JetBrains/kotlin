@@ -55,9 +55,12 @@ public interface LocalLookup {
                 boolean idx = localLookup != null && localLookup.lookupLocal(vd);
                 if (!idx) return null;
 
-                VariableDescriptor delegateVariableDescriptor = state.getBindingContext().get(LOCAL_VARIABLE_DELEGATE, vd);
+                KotlinType delegateType =
+                        vd instanceof VariableDescriptorWithAccessors
+                        ? JvmCodegenUtil.getPropertyDelegateType((VariableDescriptorWithAccessors) vd, state.getBindingContext())
+                        : null;
                 Type sharedVarType = state.getTypeMapper().getSharedVarType(vd);
-                Type localType = state.getTypeMapper().mapType(delegateVariableDescriptor != null ? delegateVariableDescriptor : vd);
+                Type localType = state.getTypeMapper().mapType(delegateType != null ? delegateType : vd.getType());
                 Type type = sharedVarType != null ? sharedVarType : localType;
 
                 String fieldName = "$" + vd.getName();

@@ -379,17 +379,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         KotlinType delegateType = JvmCodegenUtil.getPropertyDelegateType(variableDescriptor, bindingContext);
         if (delegateType == null) return;
 
-        LocalVariableDescriptor delegateVariableDescriptor = new LocalVariableDescriptor(
-                variableDescriptor.getContainingDeclaration(),
-                Annotations.Companion.getEMPTY(),
-                variableDescriptor.getName(),
-                delegateType,
-                false,
-                false,
-                SourceElement.NO_SOURCE
-        );
-        bindingTrace.record(LOCAL_VARIABLE_DELEGATE, variableDescriptor, delegateVariableDescriptor);
-
         LocalVariableDescriptor metadataVariableDescriptor = new LocalVariableDescriptor(
                 variableDescriptor.getContainingDeclaration(),
                 Annotations.Companion.getEMPTY(),
