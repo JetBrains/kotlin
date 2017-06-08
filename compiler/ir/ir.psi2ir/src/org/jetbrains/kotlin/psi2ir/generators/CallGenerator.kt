@@ -118,7 +118,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         return call.callReceiver.call { dispatchReceiver, extensionReceiver ->
             if (dispatchReceiver != null) throw AssertionError("Dispatch receiver should be null: $dispatchReceiver")
             if (extensionReceiver != null) throw AssertionError("Extension receiver should be null: $extensionReceiver")
-            val constructorSymbol = context.symbolTable.referenceConstructor(constructorDescriptor)
+            val constructorSymbol = context.symbolTable.referenceConstructor(constructorDescriptor.original)
             val irCall = IrEnumConstructorCallImpl(startOffset, endOffset, constructorSymbol)
             addParametersToCall(startOffset, endOffset, call, irCall, constructorDescriptor.returnType)
         }
