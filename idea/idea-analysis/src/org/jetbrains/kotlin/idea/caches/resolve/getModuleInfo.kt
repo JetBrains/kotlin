@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.JdkOrderEntry
-import com.intellij.openapi.roots.LibraryOrderEntry
-import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.roots.*
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage
@@ -108,27 +105,10 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
         }
     }
 
-    val orderEntries = projectFileIndex.getOrderEntriesForFile(virtualFile)
-
-    entries@ for (orderEntry in orderEntries) {
-        if (!orderEntry.isValid) continue@entries
-
-        when (orderEntry) {
-            is LibraryOrderEntry -> {
-                val library = orderEntry.library ?: continue@entries
-                if (ProjectRootsUtil.isLibraryClassFile(project, virtualFile) && !treatAsLibrarySource) {
-                    return LibraryInfo(project, library)
-                }
-                else if (ProjectRootsUtil.isLibraryFile(project, virtualFile) || treatAsLibrarySource) {
-                    return LibrarySourceInfo(project, library)
-                }
+    projectFileIndex.getOrderEntriesForFile(virtualFile)
+            .process(project, virtualFile, treatAsLibrarySource) { correspondingModuleInfo ->
+                return correspondingModuleInfo
             }
-            is JdkOrderEntry -> {
-                val sdk = orderEntry.jdk ?: continue@entries
-                return SdkInfo(project, sdk)
-            }
-        }
-    }
 
     val scriptDefinition = getScriptDefinition(virtualFile, project)
     if (scriptDefinition != null) {
@@ -167,4 +147,48 @@ private fun KtLightElement<*, *>.getModuleInfoForLightElement(onFailure: (String
         else -> return onFailure("Light element without origin is referenced by resolve:\n$this\n${this.clsDelegate.text}")
     }
     return element.getModuleInfo()
+}
+
+fun getBinaryLibrariesModuleInfos(project: Project, virtualFile: VirtualFile) = collectModuleInfosByType<BinaryModuleInfo>(project, virtualFile)
+fun getLibrarySourcesModuleInfos(project: Project, virtualFile: VirtualFile) = collectModuleInfosByType<LibrarySourceInfo>(project, virtualFile)
+
+private inline fun <reified T : IdeaModuleInfo> collectModuleInfosByType(project: Project, virtualFile: VirtualFile): Collection<T> {
+    val orderEntries = ProjectFileIndex.SERVICE.getInstance(project).getOrderEntriesForFile(virtualFile)
+
+    val result = linkedSetOf<T?>()
+    orderEntries.process(project, virtualFile, treatAsLibrarySource = false) {
+        result.add(it as? T)
+    }
+    // NOTE: non idea model infos can be obtained this way, like script related infos
+    // only one though, luckily it covers existing cases
+    result.add(getModuleInfoByVirtualFile(project, virtualFile) as? T)
+
+    return result.filterNotNull()
+}
+
+private inline fun List<OrderEntry>.process(
+        project: Project,
+        virtualFile: VirtualFile,
+        treatAsLibrarySource: Boolean = false,
+        body: (IdeaModuleInfo) -> Unit
+) {
+    entries@ for (orderEntry in this) {
+        if (!orderEntry.isValid) continue
+
+        when (orderEntry) {
+            is LibraryOrderEntry -> {
+                val library = orderEntry.library ?: continue@entries
+                if (ProjectRootsUtil.isLibraryClassFile(project, virtualFile) && !treatAsLibrarySource) {
+                    body(LibraryInfo(project, library))
+                }
+                else if (ProjectRootsUtil.isLibraryFile(project, virtualFile) || treatAsLibrarySource) {
+                    body(LibrarySourceInfo(project, library))
+                }
+            }
+            is JdkOrderEntry -> {
+                val sdk = orderEntry.jdk ?: continue@entries
+                body(SdkInfo(project, sdk))
+            }
+        }
+    }
 }

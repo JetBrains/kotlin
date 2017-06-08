@@ -31,10 +31,7 @@ import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.BinaryModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.SourceForBinaryModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfoByVirtualFile
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
@@ -65,13 +62,17 @@ object SourceNavigationHelper {
     private fun targetScope(declaration: KtNamedDeclaration, navigationKind: NavigationKind): GlobalSearchScope? {
         val containingFile = declaration.containingKtFile
         val vFile = containingFile.virtualFile ?: return null
-        val fromModuleInfo = getModuleInfoByVirtualFile(declaration.project, vFile)
 
         return when (navigationKind) {
-            NavigationKind.CLASS_FILES_TO_SOURCES -> (fromModuleInfo as? BinaryModuleInfo)?.sourcesModuleInfo?.sourceScope()
-            NavigationKind.SOURCES_TO_CLASS_FILES -> (fromModuleInfo as? SourceForBinaryModuleInfo)?.binariesModuleInfo?.binariesScope()
+            NavigationKind.CLASS_FILES_TO_SOURCES -> getBinaryLibrariesModuleInfos(declaration.project, vFile)
+                    .mapNotNull { it.sourcesModuleInfo?.sourceScope() }.union()
+
+            NavigationKind.SOURCES_TO_CLASS_FILES -> getLibrarySourcesModuleInfos(declaration.project, vFile)
+                    .mapNotNull { it.binariesModuleInfo.binariesScope() }.union()
         }
     }
+
+    private fun Collection<GlobalSearchScope>.union() = GlobalSearchScope.union(this.toTypedArray())
 
     private fun haveRenamesInImports(files: Collection<KtFile>) = files.any { it.importDirectives.any { it.aliasName != null } }
 
