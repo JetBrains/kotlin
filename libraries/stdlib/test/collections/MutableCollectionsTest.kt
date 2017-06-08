@@ -95,7 +95,6 @@ class MutableCollectionTest {
         }
     }
 
-    @JvmVersion
     @Test fun listFill() {
         val list = MutableList(3) { it }
         list.fill(42)
