@@ -4,6 +4,10 @@ apply plugin: 'kotlin-platform-js'
 
 configurePublishing(project)
 
+configurations {
+    compile.extendsFrom implement
+}
+
 dependencies {
     implement project(':kotlin-test:kotlin-test-common')
     compile project(':kotlin-stdlib-js')
