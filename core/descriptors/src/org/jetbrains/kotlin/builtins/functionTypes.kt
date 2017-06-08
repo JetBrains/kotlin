@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.DFS
@@ -122,21 +119,27 @@ private fun FqNameUnsafe.getFunctionalClassKind(): FunctionClassDescriptor.Kind?
 
 
 fun KotlinType.getReceiverTypeFromFunctionType(): KotlinType? {
-    assert(isBuiltinFunctionalType) { "Not a function type: ${this}" }
+    assert(isBuiltinFunctionalType) { "Not a function type: $this" }
     return if (isTypeAnnotatedWithExtensionFunctionType) arguments.first().type else null
 }
 
 fun KotlinType.getReturnTypeFromFunctionType(): KotlinType {
-    assert(isBuiltinFunctionalType) { "Not a function type: ${this}" }
+    assert(isBuiltinFunctionalType) { "Not a function type: $this" }
     return arguments.last().type
 }
 
+fun KotlinType.replaceReturnType(newReturnType: KotlinType): KotlinType {
+    assert(isBuiltinFunctionalType) { "Not a function type: $this"}
+    val argumentsWithNewReturnType = arguments.toMutableList().apply { set(size - 1, TypeProjectionImpl(newReturnType)) }
+    return replace(newArguments = argumentsWithNewReturnType)
+}
+
 fun KotlinType.getValueParameterTypesFromFunctionType(): List<TypeProjection> {
-    assert(isBuiltinFunctionalType) { "Not a function type: ${this}" }
+    assert(isBuiltinFunctionalType) { "Not a function type: $this" }
     val arguments = arguments
     val first = if (isBuiltinExtensionFunctionalType) 1 else 0
     val last = arguments.size - 1
-    assert(first <= last) { "Not an exact function type: ${this}" }
+    assert(first <= last) { "Not an exact function type: $this" }
     return arguments.subList(first, last)
 }
 

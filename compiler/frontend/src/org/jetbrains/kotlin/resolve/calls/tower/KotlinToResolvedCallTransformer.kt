@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.replaceReturnType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
@@ -40,9 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import java.util.*
 
@@ -162,16 +162,7 @@ class KotlinToResolvedCallTransformer(
         for (lambdaArgument in lambdaArguments) {
             val returnType = lambdaArgument.finalReturnType
 
-            val psiCallArgument = lambdaArgument.argument.psiCallArgument
-            val ktFunction = when (psiCallArgument) {
-                is LambdaKotlinCallArgumentImpl -> psiCallArgument.ktLambdaExpression.functionLiteral
-                is FunctionExpressionImpl -> psiCallArgument.ktFunction
-                else -> throw AssertionError("Unexpected psiCallArgument for resolved lambda argument: $psiCallArgument")
-            }
-
-            val functionDescriptor = trace.bindingContext.get(BindingContext.FUNCTION, ktFunction) as? FunctionDescriptorImpl ?:
-                                     throw AssertionError("No function descriptor for resolved lambda argument")
-            functionDescriptor.setReturnType(returnType)
+            updateTraceForLambdaReturnType(lambdaArgument, trace, returnType)
 
             for (lambdaResult in lambdaArgument.resultArguments) {
                 val resultValueArgument = lambdaResult.psiCallArgument
@@ -184,6 +175,31 @@ class KotlinToResolvedCallTransformer(
                 updateRecordedType(argumentExpression, newContext)
             }
         }
+    }
+
+    private fun updateTraceForLambdaReturnType(lambdaArgument: ResolvedLambdaArgument, trace: BindingTrace, returnType: UnwrappedType) {
+        val psiCallArgument = lambdaArgument.argument.psiCallArgument
+
+        val ktArgumentExpression: KtExpression
+        val ktFunction: KtElement
+        when (psiCallArgument) {
+            is LambdaKotlinCallArgumentImpl -> {
+                ktArgumentExpression = psiCallArgument.ktLambdaExpression
+                ktFunction = ktArgumentExpression.functionLiteral
+            }
+            is FunctionExpressionImpl -> {
+                ktArgumentExpression = psiCallArgument.ktFunction
+                ktFunction = ktArgumentExpression
+            }
+            else -> throw AssertionError("Unexpected psiCallArgument for resolved lambda argument: $psiCallArgument")
+        }
+
+        val functionDescriptor = trace.bindingContext.get(BindingContext.FUNCTION, ktFunction) as? FunctionDescriptorImpl ?:
+                                 throw AssertionError("No function descriptor for resolved lambda argument")
+        functionDescriptor.setReturnType(returnType)
+
+        val existingLambdaType = trace.getType(ktArgumentExpression) ?: throw AssertionError("No type for resolved lambda argument")
+        trace.recordType(ktArgumentExpression, existingLambdaType.replaceReturnType(returnType))
     }
 
     // todo very beginning code
