@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.resolve.calls.components.CreateDescriptorWithFreshTy
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ReceiverConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
@@ -203,7 +205,7 @@ internal fun checkExpressionArgument(
     val argumentType = captureFromTypeParameterUpperBoundIfNeeded(expressionArgument.stableType, expectedType)
 
     fun unstableSmartCastOrSubtypeError(
-            unstableType: UnwrappedType?, expectedType: UnwrappedType, position: ArgumentConstraintPosition
+            unstableType: UnwrappedType?, expectedType: UnwrappedType, position: ConstraintPosition
     ): KotlinCallDiagnostic? {
         if (unstableType != null) {
             if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
@@ -215,7 +217,7 @@ internal fun checkExpressionArgument(
     }
 
     val expectedNullableType = expectedType.makeNullableAsSpecified(true)
-    val position = ArgumentConstraintPosition(expressionArgument)
+    val position = if (isReceiver) ReceiverConstraintPosition(expressionArgument) else ArgumentConstraintPosition(expressionArgument)
     if (expressionArgument.isSafeCall) {
         if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedNullableType, position)) {
             return unstableSmartCastOrSubtypeError(expressionArgument.unstableType, expectedNullableType, position)?.let { return it }
