@@ -1,16 +1,17 @@
 # Sockets demo
 
-Compile the echo server (in EAP only supported on Mac host):
-
-    ./build.sh
-
-You also may use Gradle to build the server:
-
-    ../gradlew build
+To build use `../gradlew build` or `./build.sh`.
 
 Run the server:
 
-    ./EchoServer.kexe 3000 &
+    ../gradlew run
+    
+To change run arguments, change property runArgs in gradle.propeties file 
+or pass `-PrunArgs="3000"` to gradle run. 
+
+Alternatively you can run artifact directly 
+
+    ./build/konan/bin/EchoServer/EchoServer.kexe 3000 &
 
 Test the server by conecting to it, for example with telnet:
 

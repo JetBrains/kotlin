@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-DIR=.
-PATH=../../dist/bin:../../bin:$PATH
-DEPS=$(dirname `type -p konanc`)/../dependencies
+
+DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )
+PATH=$DIR/../../dist/bin:$DIR/../../bin:$PATH
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -12,19 +12,22 @@ case "$OSTYPE" in
 esac
 fi
 
-CLANG_linux=$DEPS/clang-llvm-3.9.0-linux-x86-64/bin/clang++
-CLANG_macbook=$DEPS/clang-llvm-3.9.0-darwin-macos/bin/clang++
-
 var=CFLAGS_${TARGET}
 CFLAGS=${!var}
 var=LINKER_ARGS_${TARGET}
 LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
-var=CLANG_${TARGET}
-CLANG=${!var}
 
-$CLANG -std=c++11 -c $DIR/MessageChannel.cpp -o $DIR/MessageChannel.bc -emit-llvm || exit 1
-cinterop -def $DIR/MessageChannel.def -compilerOpts "-I$DIR" -target $TARGET -o $DIR/MessageChannel || exit 1
-konanc $DIR/Concurrent.kt -library $DIR/MessageChannel \
-       -nativelibrary $DIR/MessageChannel.bc -o Concurrent || exit 1
+mkdir -p $DIR/build/c_interop
+mkdir -p $DIR/build/bin
+
+$DIR/buildCpp.sh
+
+cinterop -def $DIR/src/main/c_interop/MessageChannel.def -copt "-I$DIR/src/main/cpp" -target $TARGET \
+         -o $DIR/build/c_interop/MessageChannel.kt.bc || exit 1
+
+konanc $DIR/src/main/kotlin/Concurrent.kt -library $DIR/build/c_interop/MessageChannel.kt.bc \
+       -nativelibrary $DIR/build/clang/MessageChannel.bc -o $DIR/build/bin/Concurrent.kexe || exit 1
+
+echo "Artifact path is $DIR/build/bin/Concurrent.kexe"

@@ -10,14 +10,20 @@ showing how a TensorFlow client in Kotlin/Native could look like.
 
 ## Installation
 
-    ./build.sh
+    ./downloadTensorflow.sh
 
 will install [TensorFlow for C](https://www.tensorflow.org/versions/r1.1/install/install_c) into
-`$HOME/.konan/third-party/tensorflow` (if not yet done) and build the example.
+`$HOME/.konan/third-party/tensorflow` (if not yet done). 
 
-    ./HelloTensorflow.kexe
+To build use `../gradlew build` or `./build.sh`.
+    
+Then run 
 
-will then run the example.
+    ../gradlew run
+    
+Alternatively you can run artifact directly 
+
+    ./build/konan/bin/Tensorflow/Tensorflow.kexe
 
 You may need to specify `LD_LIBRARY_PATH` or `DYLD_LIBRARY_PATH` to `$HOME/.konan/third-party/tensorflow/lib`
 if the TensorFlow dynamic library cannot be found.

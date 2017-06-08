@@ -6,5 +6,6 @@ include ':nonBlockingEchoServer'
 include ':opengl'
 include ':socket'
 include ':tetris'
-
+include ':tensorflow'
+include ':concurrent'
 includeBuild '../'

@@ -1,75 +1,14 @@
 apply plugin: 'konan'
 
-
 konanInterop {
     libgit2 {
-        defFile 'libgit2.def'
         includeDirs '/opt/local/include', '/usr/include', '/usr/local/include'
     }
 }
 
 konanArtifacts {
     GitChurn {
-        inputFiles project.fileTree('src')
         useInterop 'libgit2'
         linkerOpts "-L/opt/local/lib -L/usr/lib/x86_64-linux-gnu -L/usr/local/lib -lgit2"
-    }
-}
-
-build {
-    project.ext { outputFile = "${projectDir.canonicalPath}/${file(compileKonanGitChurn.artifactPath).name}" }
-    doLast {
-        copy {
-            from compileKonanGitChurn.artifactPath
-            into projectDir.canonicalPath
-        }
-    }
-}
-
-void dumpCompilationTask(Task task) {
-    println()
-    println("Compilation task: ${task.name}")
-    println("outputDir          : ${task.outputDir}")
-    println("artifactPath       : ${task.artifactPath}")
-    println("inputFiles         : ${task.inputFiles.files}")
-    println("libraries          : ${task.libraries}")
-    println("nativeLibraries    : ${task.nativeLibraries}")
-    println("linkerOpts         : ${task.linkerOpts}")
-    println("produce            : ${task.produce}")
-    println("noStdLib           : ${task.noStdLib}")
-    println("noMain             : ${task.noMain}")
-    println("enableOptimization : ${task.enableOptimization}")
-    println("enableAssertions   : ${task.enableAssertions}")
-    println("target             : ${task.target}")
-    println("languageVersion    : ${task.languageVersion}")
-    println("apiVersion         : ${task.apiVersion}")
-}
-
-void dumpInteropTask(Task task) {
-    println()
-    println("Stub generation task: ${task.name}")
-    println("stubsDir           : ${task.stubsDir}")
-    println("libsDir            : ${task.libsDir}")
-    println("defFile            : ${task.defFile}")
-    println("target             : ${task.target}")
-    println("pkg                : ${task.pkg}")
-    println("linker             : ${task.linker}")
-    println("compilerOpts       : ${task.compilerOpts}")
-    println("linkerOpts         : ${task.linkerOpts}")
-    println("headers            : ${task.headers.files}")
-    println("linkFiles          : ${task.linkFiles}")
-}
-
-task dumpParameters(type: DefaultTask) {
-    doLast {
-        dumpCompilationTask(konanArtifacts['GitChurn'].compilationTask)
-        dumpInteropTask(konanInterop['libgit2'].generateStubsTask)
-        dumpCompilationTask(konanInterop['libgit2'].compileStubsTask)
-    }
-}
-
-clean {
-    doLast {
-        delete outputFile
     }
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-DIR=.
-PATH=../../dist/bin:../../bin:$PATH
+DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )
+PATH=$DIR/../../dist/bin:$DIR/../../bin:$PATH
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -19,5 +19,12 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-cinterop -def $DIR/stdio.def -compilerOpts "$CFLAGS" -target $TARGET -o stdio || exit 1
-konanc $COMPILER_ARGS -target $TARGET $DIR/CsvParser.kt -library stdio -o CsvParser || exit 1
+mkdir -p $DIR/build/c_interop/
+mkdir -p $DIR/build/bin/
+
+cinterop -def $DIR/src/main/c_interop/stdio.def -compilerOpts "$CFLAGS" -target $TARGET -o $DIR/build/c_interop/stdio.kt.bc || exit 1
+
+konanc $COMPILER_ARGS -target $TARGET $DIR/src/main/kotlin/CsvParser.kt -library $DIR/build/c_interop/stdio.kt.bc \
+       -o $DIR/build/bin/CsvParser.kexe || exit 1
+
+echo "Artifact path is ./build/bin/CsvParser.kexe"

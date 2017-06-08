@@ -1,0 +1,14 @@
+apply plugin: 'konan'
+
+konanInterop {
+    tensorflow {
+        includeDirs "${System.getProperty("user.home")}/.konan/third-party/tensorflow/include"
+    }
+}
+
+konanArtifacts {
+    Tensorflow {
+        useInterop "tensorflow"
+        linkerOpts "-L${System.getProperty("user.home")}/.konan/third-party/tensorflow/lib -ltensorflow"
+    }
+}

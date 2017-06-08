@@ -2,31 +2,13 @@ apply plugin: 'konan'
 
 konanInterop {
     libcurl {
-        defFile 'libcurl.def'
         includeDirs '/usr/include', '/opt/local/include', '/usr/local/opt/curl/include', '.'
     }
 }
 
 konanArtifacts {
     Curl {
-        inputFiles project.fileTree('src')
         useInterop 'libcurl'
         linkerOpts "-L/opt/local/lib -L/usr/lib/x86_64-linux-gnu -L/usr/local/opt/curl/lib -lcurl"
-    }
-}
-
-build {
-    project.ext { outputFile = "${projectDir.canonicalPath}/${file(compileKonanCurl.artifactPath).name}" }
-    doLast {
-        copy {
-            from compileKonanCurl.artifactPath
-            into projectDir.canonicalPath
-        }
-    }
-}
-
-clean {
-    doLast {
-        delete outputFile
     }
 }

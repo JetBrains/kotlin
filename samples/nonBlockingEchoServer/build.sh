@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-PATH=../../dist/bin:../../bin:$PATH
-DIR=.
+DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )
+PATH=$DIR/../../dist/bin:$DIR/../../bin:$PATH
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -18,5 +18,13 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-cinterop -def $DIR/sockets.def -copt "$CFLAGS" -target $TARGET -o sockets || exit 1
-konanc $COMPILER_ARGS -target $TARGET $DIR/EchoServer.kt -library sockets -o EchoServer || exit 1
+mkdir -p $DIR/build/c_interop/
+mkdir -p $DIR/build/bin/
+
+cinterop -def $DIR/src/main/c_interop/sockets.def -copt "$CFLAGS" -target $TARGET \
+         -o $DIR/build/c_interop/sockets.kt.bc || exit 1
+
+konanc $COMPILER_ARGS -target $TARGET $DIR/src/main/kotlin/EchoServer.kt \
+       -library $DIR/build/c_interop/sockets.kt.bc -o $DIR/build/bin/EchoServer.kexe || exit 1
+
+echo "Artifact path is ./build/bin/EchoServer.kexe"

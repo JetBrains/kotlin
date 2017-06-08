@@ -1,0 +1,14 @@
+apply plugin: 'konan'
+
+konanInterop {
+    MessageChannel {
+        includeDirs "${project.projectDir}/src/main/cpp"
+    }
+}
+
+konanArtifacts {
+    MessageChannel {
+        useInterop "MessageChannel"
+        nativeLibrary "${project.buildDir.canonicalPath}/clang/MessageChannel.bc"
+    }
+}
