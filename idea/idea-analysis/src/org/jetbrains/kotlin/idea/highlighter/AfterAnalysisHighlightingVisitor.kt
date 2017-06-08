@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.highlighter;
+package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.lang.annotation.AnnotationHolder;
-import org.jetbrains.kotlin.psi.KtVisitorVoid;
+import com.intellij.lang.annotation.AnnotationHolder
+import org.jetbrains.kotlin.resolve.BindingContext
 
-public abstract class HighlightingVisitor extends KtVisitorVoid {
-    protected AnnotationHolder holder;
-
-    protected HighlightingVisitor(AnnotationHolder holder) {
-        this.holder = holder;
-    }
-}
+internal abstract class AfterAnalysisHighlightingVisitor protected constructor(
+        holder: AnnotationHolder, protected var bindingContext: BindingContext
+) : HighlightingVisitor(holder)
