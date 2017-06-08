@@ -66,24 +66,23 @@ class JSTestGenerator(val context: TranslationContext) {
         val suiteFunction = JsFunction(context.scope(), JsBlock(), "suite function")
 
         classDescriptor.unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS, MemberScope.ALL_NAME_FILTER).forEach {
-            if (it is FunctionDescriptor && isTest(it)) {
+            if (it is FunctionDescriptor && it.isTest) {
                 generateCodeForTestMethod(it, classDescriptor, suiteFunction)
             }
         }
 
         if (!suiteFunction.body.isEmpty) {
             val suiteName = context.program().getStringLiteral(classDescriptor.name.toString())
-            context.addTopLevelStatement(JsInvocation(suiteRef, suiteName, suiteFunction).makeStmt())
+
+            context.addTopLevelStatement(JsInvocation(classDescriptor.ref, suiteName, suiteFunction).makeStmt())
         }
     }
 
     private fun generateCodeForTestMethod(functionDescriptor: FunctionDescriptor, classDescriptor: ClassDescriptor, parentFun: JsFunction) {
         val functionToTest = generateTestFunction(functionDescriptor, classDescriptor, parentFun.scope)
 
-        val ref = getRef(functionDescriptor)
-
         val testName = context.program().getStringLiteral(functionDescriptor.name.toString())
-        parentFun.body.statements += JsInvocation(ref, testName, functionToTest).makeStmt()
+        parentFun.body.statements += JsInvocation(functionDescriptor.ref, testName, functionToTest).makeStmt()
     }
 
     private fun generateTestFunction(functionDescriptor: FunctionDescriptor, classDescriptor: ClassDescriptor, scope: JsScope): JsFunction {
@@ -97,17 +96,25 @@ class JSTestGenerator(val context: TranslationContext) {
     }
 
     private val suiteRef: JsExpression = findFunction("suite")
+    private val fsuiteRef: JsExpression = findFunction("fsuite")
+    private val xsuiteRef: JsExpression = findFunction("xsuite")
     private val testRef: JsExpression = findFunction("test")
     private val ignoreRef: JsExpression = findFunction("ignore")
     private val onlyRef: JsExpression = findFunction("only")
 
-    private fun getRef(descriptor: FunctionDescriptor): JsExpression {
-        return when {
-            isIgnore(descriptor) -> ignoreRef
-            isOnly(descriptor) -> onlyRef
+    private val ClassDescriptor.ref: JsExpression
+        get() = when {
+            isIgnored -> xsuiteRef
+            isFocused -> fsuiteRef
+            else -> suiteRef
+        }
+
+    private val FunctionDescriptor.ref: JsExpression
+        get() = when {
+            isIgnored -> ignoreRef
+            isFocused -> onlyRef
             else -> testRef
         }
-    }
 
     /**
      * JUnit3 style:
@@ -116,19 +123,19 @@ class JSTestGenerator(val context: TranslationContext) {
      *   return parameters.size() == 0;
      * }
      */
-    private fun isTest(functionDescriptor: FunctionDescriptor)
-            = functionDescriptor.annotations.any(annotationFinder("Test", "kotlin.test.Test"))
+    private val FunctionDescriptor.isTest
+            get() = annotationFinder("Test", "kotlin.test", "org.junit")
 
-    private fun isIgnore(functionDescriptor: FunctionDescriptor)
-            = functionDescriptor.annotations.any(annotationFinder("Ignore", "kotlin.test.Ignore"))
+    private val DeclarationDescriptor.isIgnored
+            get() = annotationFinder("Ignore", "kotlin.test")
 
-    private fun isOnly(functionDescriptor: FunctionDescriptor)
-            = functionDescriptor.annotations.any(annotationFinder("Only", "kotlin.test.Only"))
+    private val DeclarationDescriptor.isFocused
+            get() = annotationFinder("Only", "kotlin.test")
 
-    private fun annotationFinder(shortName: String, fqName: String) = { annotation: AnnotationDescriptor ->
-        annotation.type.toString() == shortName && run {
+    private fun DeclarationDescriptor.annotationFinder(shortName: String, vararg packages: String) = this.annotations.any { annotation: AnnotationDescriptor ->
+        annotation.type.toString() == shortName && packages.any { packageName ->
             val descriptor = annotation.type.constructor.declarationDescriptor
-            descriptor != null && FqNameUnsafe(fqName) == DescriptorUtils.getFqName(descriptor)
+            descriptor != null && FqNameUnsafe("$packageName.$shortName") == DescriptorUtils.getFqName(descriptor)
         }
     }
 }
