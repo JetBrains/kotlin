@@ -168,8 +168,11 @@ The best way to submit a patch is to [fork the project on github](https://help.g
 [pull request](https://help.github.com/articles/creating-a-pull-request/) via [github](https://github.com).
 
 If you create your own fork, it might help to enable rebase by default
-when you pull by executing `git config --global pull.rebase
-true`. This will avoid your local repo having too many merge commits
+when you pull by executing
+``` bash
+git config --global pull.rebase true
+```
+This will avoid your local repo having too many merge commits
 which will help keep your pull request simple and easy to apply.
 
 ## Commit comments
