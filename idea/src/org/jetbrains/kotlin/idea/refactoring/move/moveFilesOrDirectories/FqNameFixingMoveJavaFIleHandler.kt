@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.util.FileTypeUtils
-import com.intellij.psi.util.PsiUtil
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveJavaFileHandler
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFileHandler
 import com.intellij.usageView.UsageInfo
@@ -40,7 +39,7 @@ class FqNameFixingMoveJavaFileHandler : MoveFileHandler() {
         delegate.prepareMovedFile(file, moveDestination, oldToNewMap)
         if (file is PsiJavaFile && file.shouldFixFqName) {
             val newPackage = JavaDirectoryService.getInstance().getPackage(moveDestination) ?: return
-            if (!FileTypeUtils.isInServerPageFile(file) && !PsiUtil.isModuleFile(file)) {
+            if (!FileTypeUtils.isInServerPageFile(file)) {
                 file.packageName = newPackage.qualifiedName
             }
         }
