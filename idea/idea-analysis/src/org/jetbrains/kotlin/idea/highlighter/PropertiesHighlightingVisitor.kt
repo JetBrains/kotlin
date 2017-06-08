@@ -38,7 +38,7 @@ internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingCo
         }
         val target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression)
         if (target is SyntheticFieldDescriptor) {
-            holder.highlightName(expression, BACKING_FIELD_VARIABLE)
+            highlightName(expression, BACKING_FIELD_VARIABLE)
             return
         }
         if (target !is PropertyDescriptor) {
@@ -85,6 +85,6 @@ internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingCo
             else ->
                 INSTANCE_PROPERTY
         }
-        holder.highlightName(elementToHighlight, attributesKey)
+        highlightName(elementToHighlight, attributesKey)
     }
 }

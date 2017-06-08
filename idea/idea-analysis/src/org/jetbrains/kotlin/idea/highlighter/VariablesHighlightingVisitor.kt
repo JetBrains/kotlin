@@ -42,7 +42,7 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
         val target = bindingContext.get(REFERENCE_TARGET, expression) ?: return
         if (target is ValueParameterDescriptor) {
             if (bindingContext.get(AUTO_CREATED_IT, target) == true) {
-                holder.createInfoAnnotation(expression, "Automatically declared based on the expected type")
+                createInfoAnnotation(expression, "Automatically declared based on the expected type")
                         .textAttributes = FUNCTION_LITERAL_DEFAULT_PARAMETER
             }
         }
@@ -89,15 +89,15 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
                     is ImplicitClassReceiver -> "Implicit receiver"
                     else -> "Unknown receiver"
                 }
-                holder.createInfoAnnotation(expression,
-                                            "$receiverName smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type))
+                createInfoAnnotation(expression,
+                                     "$receiverName smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type))
                         .textAttributes = SMART_CAST_RECEIVER
             }
         }
 
         val nullSmartCast = bindingContext.get(SMARTCAST_NULL, expression) == true
         if (nullSmartCast) {
-            holder.createInfoAnnotation(expression, "Always null")
+            createInfoAnnotation(expression, "Always null")
                     .textAttributes = SMART_CONSTANT
         }
 
@@ -105,14 +105,14 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
         if (smartCast != null) {
             val defaultType = smartCast.defaultType
             if (defaultType != null) {
-                holder.createInfoAnnotation(getSmartCastTarget(expression),
-                                            "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(defaultType))
+                createInfoAnnotation(getSmartCastTarget(expression),
+                                     "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(defaultType))
                         .textAttributes = SMART_CAST_VALUE
             }
             else if (smartCast is MultipleSmartCasts) {
                 for ((call, type) in smartCast.map) {
-                    holder.createInfoAnnotation(getSmartCastTarget(expression),
-                                                "Smart cast to ${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)} (for $call call)")
+                    createInfoAnnotation(getSmartCastTarget(expression),
+                                         "Smart cast to ${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)} (for $call call)")
                             .textAttributes = SMART_CAST_VALUE
                 }
             }
@@ -133,12 +133,12 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
         if (descriptor is VariableDescriptor) {
 
             if (descriptor.isDynamic()) {
-                holder.highlightName(elementToHighlight, DYNAMIC_PROPERTY_CALL)
+                highlightName(elementToHighlight, DYNAMIC_PROPERTY_CALL)
                 return
             }
 
             if (descriptor.isVar) {
-                holder.highlightName(elementToHighlight, MUTABLE_VARIABLE)
+                highlightName(elementToHighlight, MUTABLE_VARIABLE)
             }
 
             if (bindingContext.get(CAPTURED_IN_CLOSURE, descriptor) == CaptureKind.NOT_INLINE) {
@@ -149,16 +149,16 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
 
                 val parent = elementToHighlight.parent
                 if (!(parent is PsiNameIdentifierOwner && parent.nameIdentifier == elementToHighlight)) {
-                    holder.createInfoAnnotation(elementToHighlight, msg).textAttributes = WRAPPED_INTO_REF
+                    createInfoAnnotation(elementToHighlight, msg).textAttributes = WRAPPED_INTO_REF
                 }
             }
 
             if (descriptor is LocalVariableDescriptor && descriptor !is SyntheticFieldDescriptor) {
-                holder.highlightName(elementToHighlight, LOCAL_VARIABLE)
+                highlightName(elementToHighlight, LOCAL_VARIABLE)
             }
 
             if (descriptor is ValueParameterDescriptor) {
-                holder.highlightName(elementToHighlight, PARAMETER)
+                highlightName(elementToHighlight, PARAMETER)
             }
         }
     }

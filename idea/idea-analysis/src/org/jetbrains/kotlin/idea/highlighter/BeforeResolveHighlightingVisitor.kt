@@ -30,11 +30,10 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtExpressionWithLabel
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtValueArgument
-import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-internal class BeforeResolveHighlightingVisitor(private val holder: AnnotationHolder) : KtVisitorVoid() {
+internal class BeforeResolveHighlightingVisitor(holder: AnnotationHolder) : HighlightingVisitor(holder) {
 
     override fun visitElement(element: PsiElement) {
         val elementType = element.node.elementType
@@ -51,7 +50,7 @@ internal class BeforeResolveHighlightingVisitor(private val holder: AnnotationHo
             else -> return
         }
 
-        holder.createInfoAnnotation(element, null).textAttributes = attributes
+        createInfoAnnotation(element, null).textAttributes = attributes
     }
 
     private fun willApplyRainbowHighlight(element: KDocLink): Boolean {
@@ -66,29 +65,29 @@ internal class BeforeResolveHighlightingVisitor(private val holder: AnnotationHo
         if (ApplicationManager.getApplication().isUnitTestMode) return
 
         val functionLiteral = lambdaExpression.functionLiteral
-        holder.createInfoAnnotation(functionLiteral.lBrace, null).textAttributes = KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW
+        createInfoAnnotation(functionLiteral.lBrace, null).textAttributes = KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW
 
         val closingBrace = functionLiteral.rBrace
         if (closingBrace != null) {
-            holder.createInfoAnnotation(closingBrace, null).textAttributes = KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW
+            createInfoAnnotation(closingBrace, null).textAttributes = KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW
         }
 
         val arrow = functionLiteral.arrow
         if (arrow != null) {
-            holder.createInfoAnnotation(arrow, null).textAttributes = KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW
+            createInfoAnnotation(arrow, null).textAttributes = KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW
         }
     }
 
     override fun visitArgument(argument: KtValueArgument) {
         val argumentName = argument.getArgumentName() ?: return
         val eq = argument.equalsToken ?: return
-        holder.createInfoAnnotation(TextRange(argumentName.startOffset, eq.endOffset), null).textAttributes = KotlinHighlightingColors.NAMED_ARGUMENT
+        createInfoAnnotation(TextRange(argumentName.startOffset, eq.endOffset), null).textAttributes = KotlinHighlightingColors.NAMED_ARGUMENT
     }
 
     override fun visitExpressionWithLabel(expression: KtExpressionWithLabel) {
         val targetLabel = expression.getTargetLabel()
         if (targetLabel != null) {
-            holder.highlightName(targetLabel, KotlinHighlightingColors.LABEL)
+            highlightName(targetLabel, KotlinHighlightingColors.LABEL)
         }
     }
 }
