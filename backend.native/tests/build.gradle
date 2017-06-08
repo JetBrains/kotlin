@@ -1833,13 +1833,13 @@ kotlinNativeInterop {
     }
 
     sockets {
-        defFile '../../samples/socket/src/c_interop/sockets.def'
+        defFile '../../samples/socket/src/main/c_interop/sockets.def'
         flavor 'native'
     }
 
     if (isMac()) {
         opengl {
-            defFile '../../samples/opengl/src/c_interop/opengl.def'
+            defFile '../../samples/opengl/src/main/c_interop/opengl.def'
             linkerOpts '-framework', 'OpenGL', '-framework', 'GLUT'
             flavor 'native'
         }
