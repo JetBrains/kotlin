@@ -57,27 +57,38 @@ internal val Project.konanCompilerDownloadTask  get() = tasks.getByName(KonanPlu
 internal val Project.konanVersion
     get() = findProperty(KonanPlugin.KONAN_VERSION_PROPERTY_NAME) as String? ?: KonanPlugin.DEFAULT_KONAN_VERSION
 
-internal val Project.supportedCompileTasks: TaskCollection<KonanCompileTask>
-    get() = project.tasks.withType(KonanCompileTask::class.java).matching { it.target?.isSupported() ?: true }
-
-internal val Project.supportedInteropTasks: TaskCollection<KonanInteropTask>
-    get() = project.tasks.withType(KonanInteropTask::class.java).matching { it.target?.isSupported() ?: true }
-
-private fun String.isSupported(): Boolean {
-    val os = CompilerDownloadTask.simpleOsName()
-    return when (os) {
-        "macos" -> this == "macbook" || this == "iphone"
-        "linux" -> this == "linux" || this == "raspberrypi"
-        else -> false
+internal fun Project.isTargetSupported(target: String?): Boolean {
+    val targets = extensions.extraProperties.get(KonanPlugin.KONAN_BUILD_TARGETS).toString().trim().split(' ')
+    if (targets.contains("all")) {
+        return target?.isSupported() ?: true
+    } else {
+        return target == null || targets.contains(target)
     }
 }
 
-class KonanArtifactsContainer(val project: ProjectInternal): AbstractNamedDomainObjectContainer<KonanCompilerConfig>(
-        KonanCompilerConfig::class.java,
+internal val Project.supportedCompileTasks: TaskCollection<KonanCompileTask>
+    get() {
+
+        return project.tasks.withType(KonanCompileTask::class.java).matching { isTargetSupported(it.target) }
+    }
+
+internal val Project.supportedInteropTasks: TaskCollection<KonanInteropTask>
+    get() {
+        return project.tasks.withType(KonanInteropTask::class.java).matching { isTargetSupported(it.target) }
+    }
+
+internal fun Project.konanCompilerName(): String =
+        "kotlin-native-${KonanCompilerDownloadTask.simpleOsName()}-${this.konanVersion}"
+
+internal fun Project.konanCompilerDownloadDir(): String =
+        KonanCompilerDownloadTask.KONAN_PARENT_DIR + "/" + project.konanCompilerName()
+
+class KonanArtifactsContainer(val project: ProjectInternal): AbstractNamedDomainObjectContainer<KonanCompileConfig>(
+        KonanCompileConfig::class.java,
         project.gradle.services.get(Instantiator::class.java)) {
 
-    override fun doCreate(name: String): KonanCompilerConfig =
-            KonanCompilerConfig(name, project)
+    override fun doCreate(name: String): KonanCompileConfig =
+            KonanCompileConfig(name, project)
 }
 
 class KonanInteropContainer(val project: ProjectInternal): AbstractNamedDomainObjectContainer<KonanInteropConfig>(
@@ -125,6 +136,58 @@ internal fun MutableList<String>.addListArg(parameter: String, values: List<Stri
     }
 }
 
+internal fun dumpProperties(task: Task) {
+    when (task) {
+        is KonanCompileTask -> {
+            println()
+            println("Compilation task: ${task.name}")
+            println("outputDir          : ${task.outputDir}")
+            println("artifactPath       : ${task.artifactPath}")
+            println("inputFiles         : ${task.inputFiles.joinToString(prefix = "[", separator = ", ", postfix = "]")}")
+            println("libraries          : ${task.libraries}")
+            println("nativeLibraries    : ${task.nativeLibraries}")
+            println("linkerOpts         : ${task.linkerOpts}")
+            println("noStdLib           : ${task.noStdLib}")
+            println("noMain             : ${task.noMain}")
+            println("enableOptimization : ${task.enableOptimization}")
+            println("enableAssertions   : ${task.enableAssertions}")
+            println("target             : ${task.target}")
+            println("languageVersion    : ${task.languageVersion}")
+            println("apiVersion         : ${task.apiVersion}")
+            println()
+        }
+        is KonanInteropTask -> {
+            println()
+            println("Stub generation task: ${task.name}")
+            println("stubsDir           : ${task.stubsDir}")
+            println("libsDir            : ${task.libsDir}")
+            println("defFile            : ${task.defFile}")
+            println("target             : ${task.target}")
+            println("pkg                : ${task.pkg}")
+            println("linker             : ${task.linker}")
+            println("compilerOpts       : ${task.compilerOpts}")
+            println("linkerOpts         : ${task.linkerOpts}")
+            println("headers            : ${task.headers.joinToString(prefix = "[", separator = ", ", postfix = "]")}")
+            println("linkFiles          : ${task.linkFiles}")
+            println()
+        }
+        else -> {
+            println("Unsupported task.")
+        }
+    }
+}
+
+private fun String.isSupported(): Boolean {
+    val os = KonanCompilerDownloadTask.simpleOsName()
+    return when (os) {
+        "macos" -> this == "macbook" || this == "iphone"
+        "linux" -> this == "linux" || this == "raspberrypi"
+        "windows" -> this == "mingw"
+        else -> false
+    }
+}
+
+
 class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderRegistry)
     : Plugin<ProjectInternal> {
 
@@ -135,6 +198,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
 
         internal const val KONAN_HOME_PROPERTY_NAME = "konan.home"
         internal const val KONAN_VERSION_PROPERTY_NAME = "konan.version"
+        internal const val KONAN_BUILD_TARGETS = "konan.build.targets"
 
         internal const val DEFAULT_KONAN_VERSION = "0.2"
     }
@@ -157,15 +221,44 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
     override fun apply(project: ProjectInternal?) {
         if (project == null) { return }
         registry.register(KonanToolingModelBuilder)
-        project.tasks.create(KONAN_DOWNLOAD_TASK_NAME, CompilerDownloadTask::class.java)
+        project.tasks.create(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
         project.extensions.add(COMPILER_EXTENSION_NAME, KonanArtifactsContainer(project))
         project.extensions.add(INTEROP_EXTENSION_NAME, KonanInteropContainer(project))
+        if (!project.extensions.extraProperties.has(KonanPlugin.KONAN_HOME_PROPERTY_NAME)) {
+            project.extensions.extraProperties.set(KonanPlugin.KONAN_HOME_PROPERTY_NAME, project.konanCompilerDownloadDir())
+        }
+        val hostTarget =  when (KonanCompilerDownloadTask.simpleOsName()) {
+            "macos" -> "macbook"
+            "linux" -> "linux"
+            "windows" -> "mingw"
+            else -> throw IllegalStateException("Unsupported platform")
+        }
+        if (!project.extensions.extraProperties.has(KonanPlugin.KONAN_BUILD_TARGETS)) {
+            project.extensions.extraProperties.set(KonanPlugin.KONAN_BUILD_TARGETS, hostTarget)
+        }
         getTask(project, "clean").doLast {
             project.delete(project.konanBuildRoot)
         }
         getTask(project, "build").apply {
             dependsOn(project.supportedCompileTasks)
-            dependsOn(project.supportedInteropTasks)
+        }
+
+        getTask(project, "run").apply {
+            dependsOn(getTask(project, "build"))
+            doLast {
+                for (task in project.tasks.withType(KonanCompileTask::class.java).matching { it.target?.equals(hostTarget) ?: true}) {
+                    if (task.artifactPath.endsWith("kexe")) {
+                        project.exec {
+                            with(it) {
+                                commandLine(task.artifactPath)
+                                if (project.extensions.extraProperties.has("runArgs")) {
+                                    args(project.extensions.extraProperties.get("runArgs").toString().split(' '))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
