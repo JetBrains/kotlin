@@ -13388,6 +13388,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("notApplicable_hasDestructuringDeclaration.kt")
+        public void testNotApplicable_hasDestructuringDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_hasDestructuringDeclaration.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notApplicable_hasMultipleParameters.kt")
         public void testNotApplicable_hasMultipleParameters() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_hasMultipleParameters.kt");
