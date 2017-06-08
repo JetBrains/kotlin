@@ -37,6 +37,11 @@ class DeclaredUpperBoundConstraintPosition(val typeParameterDescriptor: TypePara
 class ArgumentConstraintPosition(val argument: KotlinCallArgument) : ConstraintPosition() {
     override fun toString() = "Argument $argument"
 }
+
+class ReceiverConstraintPosition(val argument: KotlinCallArgument) : ConstraintPosition() {
+    override fun toString() = "Receiver $argument"
+}
+
 class FixVariableConstraintPosition(val variable: NewTypeVariable) : ConstraintPosition() {
     override fun toString() = "Fix variable $variable"
 }
@@ -57,8 +62,11 @@ class IncorporationConstraintPosition(val from: ConstraintPosition, val initialC
 object SimpleConstraintSystemConstraintPosition : ConstraintPosition()
 
 
-class NewConstraintError(val lowerType: UnwrappedType, val upperType: UnwrappedType, val position: IncorporationConstraintPosition):
-        KotlinCallDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE) {
+class NewConstraintError(val lowerType: UnwrappedType, val upperType: UnwrappedType, val position: IncorporationConstraintPosition) :
+        KotlinCallDiagnostic(
+                if (position.from is ReceiverConstraintPosition) ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+                else ResolutionCandidateApplicability.INAPPLICABLE
+        ) {
     override fun report(reporter: DiagnosticReporter) = reporter.constraintError(this)
 }
 

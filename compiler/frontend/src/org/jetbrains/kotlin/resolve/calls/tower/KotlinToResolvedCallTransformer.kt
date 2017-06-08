@@ -479,6 +479,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
 
     fun ResolutionCandidateApplicability.toResolutionStatus(): ResolutionStatus = when (this) {
         ResolutionCandidateApplicability.RESOLVED, ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY -> ResolutionStatus.SUCCESS
+        ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ResolutionStatus.RECEIVER_TYPE_ERROR
         else -> ResolutionStatus.OTHER_ERROR
     }
 }

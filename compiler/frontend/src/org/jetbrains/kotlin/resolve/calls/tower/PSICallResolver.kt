@@ -194,7 +194,10 @@ class PSICallResolver(
             }
             1 -> {
                 val singleCandidate = result.single()
-                val resolvedCall = kotlinToResolvedCallTransformer.transformAndReport<D>(singleCandidate, context, trace)
+
+                val reportToTrace = singleCandidate.currentStatus.resultingApplicability != ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+
+                val resolvedCall = kotlinToResolvedCallTransformer.transformAndReport<D>(singleCandidate, context, trace.takeIf { reportToTrace })
                 return SingleOverloadResolutionResult(resolvedCall)
             }
             else -> {
@@ -225,12 +228,7 @@ class PSICallResolver(
 
     private fun Collection<ResolvedKotlinCall>.areAllCompletedAndInapplicable() =
             all {
-                val applicability = when (it) {
-                    is ResolvedKotlinCall.CompletedResolvedKotlinCall ->
-                        it.completedCall.resolutionStatus.resultingApplicability
-                    is ResolvedKotlinCall.OnlyResolvedKotlinCall ->
-                            it.candidate.status.resultingApplicability
-                }
+                val applicability = it.currentStatus.resultingApplicability
                 applicability == ResolutionCandidateApplicability.INAPPLICABLE || applicability == ResolutionCandidateApplicability.HIDDEN
             }
 
