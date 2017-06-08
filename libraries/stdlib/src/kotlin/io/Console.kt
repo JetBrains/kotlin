@@ -134,7 +134,6 @@ public inline fun println() {
 
 // Since System.in can change its value on the course of program running,
 // we should always delegate to current value and cannot just pass it to InputStreamReader constructor.
-// We could use "by" implementation, but we can only use "by" with interfaces and InputStream is abstract class.
 private val stdin: BufferedReader by lazy { BufferedReader(InputStreamReader(object : InputStream() {
     public override fun read(): Int {
         return System.`in`.read()
