@@ -8,9 +8,14 @@
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
+    <orderEntry type="module" module-name="plugin-api" />
     <orderEntry type="module" module-name="sam-with-receiver-cli" />
     <orderEntry type="module" module-name="frontend" />
+    <orderEntry type="module" module-name="idea" />
+    <orderEntry type="module" module-name="idea-maven" />
     <orderEntry type="module" module-name="idea-analysis" />
     <orderEntry type="module" module-name="frontend.java" />
+    <orderEntry type="module" module-name="annotation-based-compiler-plugins-ide-support" />
+    <orderEntry type="module" module-name="util" />
   </component>
 </module>

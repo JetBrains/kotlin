@@ -25,10 +25,10 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.allopen.AbstractAllOpenDeclarationAttributeAltererExtension
-import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.allopen.AllOpenCommandLineProcessor.Companion.PLUGIN_ID
 import org.jetbrains.kotlin.allopen.AllOpenCommandLineProcessor.Companion.ANNOTATION_OPTION
+import org.jetbrains.kotlin.annotation.plugin.ide.getSpecialAnnotations
 import java.util.*
 
 class IdeAllOpenDeclarationAttributeAltererExtension(val project: Project) : AbstractAllOpenDeclarationAttributeAltererExtension() {
@@ -48,14 +48,7 @@ class IdeAllOpenDeclarationAttributeAltererExtension(val project: Project) : Abs
         if (modifierListOwner == null) return emptyList()
         val module = ModuleUtilCore.findModuleForPsiElement(modifierListOwner) ?: return emptyList()
 
-        return cache.value.getOrPut(module) {
-            val kotlinFacet = KotlinFacet.get(module) ?: return@getOrPut emptyList()
-            val commonArgs = kotlinFacet.configuration.settings.compilerArguments ?: return@getOrPut emptyList()
-
-            commonArgs.pluginOptions?.filter { it.startsWith(ANNOTATION_OPTION_PREFIX) }
-                                    ?.map { it.substring(ANNOTATION_OPTION_PREFIX.length) }
-                                    ?: emptyList()
-        }
+        return cache.value.getOrPut(module) { module.getSpecialAnnotations(ANNOTATION_OPTION_PREFIX) }
     }
 
     private fun <T> cachedValue(project: Project, result: () -> CachedValueProvider.Result<T>): CachedValue<T> {

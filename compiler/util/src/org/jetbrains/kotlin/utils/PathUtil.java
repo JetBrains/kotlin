@@ -33,6 +33,7 @@ public class PathUtil {
     public static final String JS_LIB_10_JAR_NAME = "kotlin-jslib.jar";
     public static final String ALLOPEN_PLUGIN_JAR_NAME = "allopen-compiler-plugin.jar";
     public static final String NOARG_PLUGIN_JAR_NAME = "noarg-compiler-plugin.jar";
+    public static final String SAM_WITH_RECEIVER_PLUGIN_JAR_NAME = "sam-with-receiver-compiler-plugin.jar";
     public static final String JS_LIB_SRC_JAR_NAME = "kotlin-stdlib-js-sources.jar";
     public static final String KOTLIN_JAVA_RUNTIME_JAR = "kotlin-runtime.jar";
     public static final String KOTLIN_JAVA_RUNTIME_JRE7_JAR = "kotlin-stdlib-jre7.jar";

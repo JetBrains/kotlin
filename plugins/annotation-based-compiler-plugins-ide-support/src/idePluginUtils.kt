@@ -16,9 +16,20 @@
 
 package org.jetbrains.kotlin.annotation.plugin.ide
 
+import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import java.io.File
+
+fun Module.getSpecialAnnotations(prefix: String): List<String> {
+    val kotlinFacet = org.jetbrains.kotlin.idea.facet.KotlinFacet.get(this) ?: return emptyList()
+    val commonArgs = kotlinFacet.configuration.settings.compilerArguments ?: return emptyList()
+
+    return commonArgs.pluginOptions
+            ?.filter { it.startsWith(prefix) }
+            ?.map { it.substring(prefix.length) }
+    ?: emptyList()
+}
 
 internal class AnnotationBasedCompilerPluginSetup(val annotationFqNames: List<String>, val classpath: List<String>)
 

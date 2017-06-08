@@ -64,6 +64,9 @@ public interface KotlinPaths {
     File getNoArgPluginJarPath();
 
     @NotNull
+    File getSamWithReceiverJarPath();
+
+    @NotNull
     File getCompilerPath();
 
     @NotNull

@@ -23,7 +23,7 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.annotation.plugin.ide.getSpecialAnnotations
 import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.ANNOTATION_OPTION
 import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.PLUGIN_ID
 import org.jetbrains.kotlin.noarg.diagnostic.AbstractNoArgDeclarationChecker
@@ -43,15 +43,7 @@ class IdeNoArgDeclarationChecker(val project: Project) : AbstractNoArgDeclaratio
         if (modifierListOwner == null) return emptyList()
         val module = ModuleUtilCore.findModuleForPsiElement(modifierListOwner) ?: return emptyList()
 
-        return cache.value.getOrPut(module) {
-            val kotlinFacet = KotlinFacet.get(module) ?: return@getOrPut emptyList()
-            val commonArgs = kotlinFacet.configuration.settings.compilerArguments ?: return@getOrPut emptyList()
-
-            commonArgs.pluginOptions
-                    ?.filter { it.startsWith(ANNOTATION_OPTION_PREFIX) }
-                    ?.map { it.substring(ANNOTATION_OPTION_PREFIX.length) }
-                    ?: emptyList()
-        }
+        return cache.value.getOrPut(module) { module.getSpecialAnnotations(ANNOTATION_OPTION_PREFIX) }
     }
 
     private fun <T> cachedValue(project: Project, result: () -> CachedValueProvider.Result<T>): CachedValue<T> {

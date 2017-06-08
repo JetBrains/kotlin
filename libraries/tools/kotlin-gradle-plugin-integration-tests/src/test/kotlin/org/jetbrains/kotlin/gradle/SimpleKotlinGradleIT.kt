@@ -163,4 +163,11 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             checkClass("Test2")
         }
     }
+
+    @Test
+    fun testSamWithReceiverSimple() {
+        Project("samWithReceiverSimple", GRADLE_VERSION).build("build") {
+            assertSuccessful()
+        }
+    }
 }

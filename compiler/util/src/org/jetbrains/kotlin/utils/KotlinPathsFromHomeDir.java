@@ -108,6 +108,12 @@ public class KotlinPathsFromHomeDir implements KotlinPaths {
 
     @NotNull
     @Override
+    public File getSamWithReceiverJarPath() {
+        return getLibraryFile(PathUtil.SAM_WITH_RECEIVER_PLUGIN_JAR_NAME);
+    }
+
+    @NotNull
+    @Override
     public File getCompilerPath() {
         return getLibraryFile(PathUtil.KOTLIN_COMPILER_JAR);
     }
