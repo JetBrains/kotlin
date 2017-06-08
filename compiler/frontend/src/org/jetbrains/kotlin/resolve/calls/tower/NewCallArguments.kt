@@ -181,7 +181,7 @@ internal fun createSimplePSICallArgument(
     val onlyResolvedCall = ktExpression.getCall(bindingContext)?.let {
         bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)
     }
-    val baseType = onlyResolvedCall?.currentReturnType ?: typeInfoForArgument.type?.unwrap() ?: return null
+    val baseType = typeInfoForArgument.type?.unwrap() ?: return null
 
     // we should use DFI after this argument, because there can be some useful smartcast. Popular case: if branches.
     val receiverToCast = transformToReceiverWithSmartCastInfo(
