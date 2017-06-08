@@ -131,7 +131,7 @@ open class Symbols<out T: CommonBackendContext>(val context: T, private val symb
                     .single().getter!!
     )
 
-    val kFunctionImpl = symbolTable.referenceClass(context.getInternalClass("KFunctionImpl"))
+    val kFunctionImpl = symbolTable.referenceClass(context.reflectionTypes.kFunctionImpl)
 
     val kProperty0Impl = symbolTable.referenceClass(context.reflectionTypes.kProperty0Impl)
     val kProperty1Impl = symbolTable.referenceClass(context.reflectionTypes.kProperty1Impl)

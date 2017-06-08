@@ -84,6 +84,7 @@ class ReflectionTypes(module: ModuleDescriptor, internalPackage: FqName) {
     val kMutableProperty0: ClassDescriptor by ClassLookup(kotlinReflectScope)
     val kMutableProperty1: ClassDescriptor by ClassLookup(kotlinReflectScope)
     val kMutableProperty2: ClassDescriptor by ClassLookup(kotlinReflectScope)
+    val kFunctionImpl: ClassDescriptor by ClassLookup(internalScope)
     val kProperty0Impl: ClassDescriptor by ClassLookup(internalScope)
     val kProperty1Impl: ClassDescriptor by ClassLookup(internalScope)
     val kProperty2Impl: ClassDescriptor by ClassLookup(internalScope)
