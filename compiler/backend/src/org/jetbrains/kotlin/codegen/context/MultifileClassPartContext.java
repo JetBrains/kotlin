@@ -24,30 +24,22 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 public class MultifileClassPartContext extends MultifileClassContextBase implements DelegatingToPartContext, FacadePartWithSourceFile {
     private final KtFile sourceFile;
-    private final Type partInitializerType;
 
     public MultifileClassPartContext(
             PackageFragmentDescriptor descriptor,
             CodegenContext parent,
             Type multifileClassType,
             Type filePartType,
-            Type partInitializerType,
             @NotNull KtFile sourceFile
     ) {
         super(descriptor, parent, multifileClassType, filePartType);
         this.sourceFile = sourceFile;
-        this.partInitializerType = partInitializerType;
     }
 
     @Nullable
     @Override
     public Type getImplementationOwnerClassType() {
         return getFilePartType();
-    }
-
-    @NotNull
-    public Type getPartInitializerType() {
-        return partInitializerType;
     }
 
     @NotNull

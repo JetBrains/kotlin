@@ -248,10 +248,9 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             @NotNull PackageFragmentDescriptor descriptor,
             @NotNull Type multifileClassType,
             @NotNull Type filePartType,
-            @NotNull Type filePartInitializerType,
             @NotNull KtFile sourceFile
     ) {
-        return new MultifileClassPartContext(descriptor, this, multifileClassType, filePartType, filePartInitializerType, sourceFile);
+        return new MultifileClassPartContext(descriptor, this, multifileClassType, filePartType, sourceFile);
     }
 
     @NotNull
