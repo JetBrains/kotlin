@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolve
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateFactory
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateWithBoundDispatchReceiver
+import org.jetbrains.kotlin.resolve.calls.tower.HiddenDescriptor
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -75,8 +76,13 @@ class SimpleCandidateFactory(val callContext: KotlinCallContext, val kotlinCall:
             return ErrorKotlinResolutionCandidate(callContext, kotlinCall, explicitReceiverKind, dispatchArgumentReceiver, extensionArgumentReceiver, towerCandidate.descriptor)
         }
 
+        val candidateDiagnostics = towerCandidate.diagnostics.toMutableList()
+        if (callContext.resolutionCallbacks.isHiddenInResolution(towerCandidate.descriptor, kotlinCall.isSuperOrDelegatingConstructorCall)) {
+            candidateDiagnostics.add(HiddenDescriptor)
+        }
+
         return SimpleKotlinResolutionCandidate(callContext, kotlinCall, explicitReceiverKind, dispatchArgumentReceiver, extensionArgumentReceiver,
-                                               towerCandidate.descriptor, null, towerCandidate.diagnostics)
+                                               towerCandidate.descriptor, null, candidateDiagnostics)
     }
 }
 

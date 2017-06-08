@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.createFunctionType
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -39,6 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
@@ -53,7 +56,8 @@ class KotlinResolutionCallbacksImpl(
         val typeApproximator: TypeApproximator,
         val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
         val argumentTypeResolver: ArgumentTypeResolver,
-        val doubleColonExpressionResolver: DoubleColonExpressionResolver
+        val doubleColonExpressionResolver: DoubleColonExpressionResolver,
+        val languageVersionSettings: LanguageVersionSettings
 ): KotlinResolutionCallbacks {
     val trace: BindingTrace = topLevelCallContext.trace
 
@@ -205,5 +209,9 @@ class KotlinResolutionCallbacksImpl(
                 .replaceContextDependency(ContextDependency.INDEPENDENT)
 
         expressionTypingServices.getTypeInfo(psiCallArgument.collectionLiteralExpression, actualContext)
+    }
+
+    override fun isHiddenInResolution(descriptor: DeclarationDescriptor, isSuperCall: Boolean): Boolean {
+        return descriptor.isHiddenInResolution(languageVersionSettings, isSuperCall)
     }
 }
