@@ -69,6 +69,9 @@ public class CodegenBinding {
     public static final WritableSlice<ValueParameterDescriptor, ValueParameterDescriptor> PARAMETER_SYNONYM =
             Slices.createSimpleSlice();
 
+    public static final WritableSlice<Type, List<VariableDescriptorWithAccessors>> DELEGATED_PROPERTIES =
+            Slices.createSimpleSlice();
+
     static {
         BasicWritableSlice.initSliceDebugNames(CodegenBinding.class);
     }
