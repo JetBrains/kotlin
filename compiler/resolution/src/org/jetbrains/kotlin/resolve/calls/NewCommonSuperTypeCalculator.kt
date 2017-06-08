@@ -64,12 +64,23 @@ object NewCommonSuperTypeCalculator {
         return if (anyMarkedNullable) commonSuperTypes.makeNullableAsSpecified(true) else commonSuperTypes
     }
 
+    private fun List<SimpleType>.uniquify(): List<SimpleType> {
+        val result = ArrayList<SimpleType>()
+        for (type in this) {
+            if (!result.any { NewKotlinTypeChecker.equalTypes(it, type) }) {
+                result.add(type)
+            }
+        }
+        return result
+    }
+
     private fun commonSuperTypeForNotNullTypes(types: List<SimpleType>): SimpleType {
-        val filteredType = types.filterNot { targetType ->
-            types.any { other -> targetType != other && NewKotlinTypeChecker.isSubtypeOf(targetType, other)}
+        val uniqueTypes = types.uniquify()
+        val filteredType = uniqueTypes.filterNot { type ->
+            uniqueTypes.any { other -> type != other && NewKotlinTypeChecker.isSubtypeOf(type, other)}
         }
         // seems like all types are equal
-        if (filteredType.isEmpty()) return types.first()
+        if (filteredType.isEmpty()) return uniqueTypes.first()
 
         filteredType.singleOrNull()?.let { return it }
 
