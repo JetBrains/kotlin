@@ -301,17 +301,17 @@ class KotlinFacetEditorGeneralTab(
                 useProjectSettings = editor.useProjectSettingsCheckBox.isSelected
                 (editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?)?.let {
                     if (it != targetPlatformKind) {
-                        val newCompilerArguments = it.createCompilerArguments()
                         val platformArguments = when (it) {
                             is TargetPlatformKind.Jvm -> editor.compilerConfigurable.k2jvmCompilerArguments
                             is TargetPlatformKind.JavaScript -> editor.compilerConfigurable.k2jsCompilerArguments
                             else -> null
                         }
-                        if (platformArguments != null) {
-                            mergeBeans(platformArguments, newCompilerArguments)
+                        compilerArguments = it.createCompilerArguments {
+                            if (platformArguments != null) {
+                                mergeBeans(platformArguments, this)
+                            }
+                            copyInheritedFields(compilerArguments!!, this)
                         }
-                        copyInheritedFields(compilerArguments!!, newCompilerArguments)
-                        compilerArguments = newCompilerArguments
                     }
                 }
             }
