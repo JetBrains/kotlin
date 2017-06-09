@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import kotlin.test.okFun
+import kotlin.test.assertHook
 
 @JsName("suite")
 fun suite(name: String, suiteFn: () -> Unit) {
