@@ -83,6 +83,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
 
     private fun canCopyFiles(elements: Array<out PsiElement>, fromUpdate: Boolean): Boolean {
         val sourceFiles = getSourceFiles(elements) ?: return false
+        if (!sourceFiles.any { it is KtFile }) return false
         return copyFilesHandler.canCopy(sourceFiles, fromUpdate)
     }
 
