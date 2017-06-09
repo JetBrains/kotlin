@@ -163,6 +163,7 @@ val jvmUIExposedFields = commonUIExposedFields + jvmSpecificUIExposedFields
 private val jvmPrimaryFields = commonPrimaryFields + jvmSpecificUIExposedFields
 
 private val jsSpecificUIExposedFields = listOf(K2JSCompilerArguments::sourceMap.name,
+                                               K2JSCompilerArguments::sourceMapPrefix.name,
                                                K2JSCompilerArguments::outputPrefix.name,
                                                K2JSCompilerArguments::outputPostfix.name,
                                                K2JSCompilerArguments::moduleKind.name)

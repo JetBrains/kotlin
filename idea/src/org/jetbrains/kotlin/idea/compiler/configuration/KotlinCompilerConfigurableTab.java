@@ -112,6 +112,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JLabel labelForOutputPrefixFile;
     private JLabel labelForOutputPostfixFile;
     private JLabel warningLabel;
+    private JTextField sourceMapPrefix;
+    private JLabel labelForSourceMapPrefix;
     private boolean isEnabled = true;
 
     public KotlinCompilerConfigurableTab(
@@ -189,6 +191,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                 warningLabel.setText(buildOverridingModulesWarning(modulesOverridingProjectSettings));
             }
         }
+
+        generateSourceMapsCheckBox.addActionListener(event -> sourceMapPrefix.setEnabled(generateSourceMapsCheckBox.isSelected()));
 
         updateOutputDirEnabled();
     }
@@ -404,6 +408,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                ComparingUtils.isModified(outputPrefixFile, k2jsCompilerArguments.outputPrefix) ||
                ComparingUtils.isModified(outputPostfixFile, k2jsCompilerArguments.outputPostfix) ||
                !getSelectedModuleKind().equals(getModuleKindOrDefault(k2jsCompilerArguments.moduleKind)) ||
+               ComparingUtils.isModified(sourceMapPrefix, k2jsCompilerArguments.sourceMapPrefix) ||
 
                !getSelectedJvmVersion().equals(getJvmVersionOrDefault(k2jvmCompilerArguments.jvmTarget));
     }
@@ -493,6 +498,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         k2jsCompilerArguments.outputPostfix = StringUtil.nullize(outputPostfixFile.getText(), true);
         k2jsCompilerArguments.moduleKind = getSelectedModuleKind();
 
+        k2jsCompilerArguments.sourceMapPrefix = sourceMapPrefix.getText();
+
         k2jvmCompilerArguments.jvmTarget = getSelectedJvmVersion();
 
         if (isProjectSettings) {
@@ -533,6 +540,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         outputPostfixFile.setText(k2jsCompilerArguments.outputPostfix);
 
         moduleKindComboBox.setSelectedItem(getModuleKindOrDefault(k2jsCompilerArguments.moduleKind));
+        sourceMapPrefix.setText(k2jsCompilerArguments.sourceMapPrefix);
+        sourceMapPrefix.setEnabled(k2jsCompilerArguments.sourceMap);
 
         jvmVersionComboBox.setSelectedItem(getJvmVersionOrDefault(k2jvmCompilerArguments.jvmTarget));
     }
