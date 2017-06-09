@@ -829,6 +829,11 @@ task lateinit_notInitialized(type: RunKonanTest) {
     source = "codegen/lateinit/notInitialized.kt"
 }
 
+task lateinit_inBaseClass(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/lateinit/inBaseClass.kt"
+}
+
 task coroutines_simple(type: RunKonanTest) {
     goldValue = "42\n"
     source = "codegen/coroutines/simple.kt"
