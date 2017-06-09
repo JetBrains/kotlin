@@ -252,50 +252,55 @@ task sum2(type: RunKonanTest) {
     source = "codegen/function/sum_imm.kt"
 }
 
-task defaults(type: RunKonanTest) {
+task function_defaults(type: RunKonanTest) {
     source = "codegen/function/defaults.kt"
 }
 
-task defaults1(type: RunKonanTest) {
+task function_defaults1(type: RunKonanTest) {
     source = "codegen/function/defaults1.kt"
 }
 
-task defaults2(type: RunKonanTest) {
+task function_defaults2(type: RunKonanTest) {
     source = "codegen/function/defaults2.kt"
 }
 
-task defaults3(type: RunKonanTest) {
+task function_defaults3(type: RunKonanTest) {
     source = "codegen/function/defaults3.kt"
 }
 
-task defaults4(type: RunKonanTest) {
+task function_defaults4(type: RunKonanTest) {
     goldValue = "43\n"
     source = "codegen/function/defaults4.kt"
 }
 
-task defaults5(type: RunKonanTest) {
+task function_defaults5(type: RunKonanTest) {
     goldValue = "5\n6\n"
     source = "codegen/function/defaults5.kt"
 }
 
-task defaults6(type: RunKonanTest) {
+task function_defaults6(type: RunKonanTest) {
     goldValue = "42\n"
     source = "codegen/function/defaults6.kt"
 }
 
-task defaults7(type: RunKonanTest) {
+task function_defaults7(type: RunKonanTest) {
     goldValue = "42\n"
     source = "codegen/function/defaults7.kt"
 }
 
-task defaults8(type: RunKonanTest) {
+task function_defaults8(type: RunKonanTest) {
     goldValue = "2\n"
     source = "codegen/function/defaults8.kt"
 }
 
-task defaults9(type: RunKonanTest) {
+task function_defaults9(type: RunKonanTest) {
     goldValue = "1\n"
     source = "codegen/function/defaults9.kt"
+}
+
+task function_defaults10(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/function/defaults10.kt"
 }
 
 task sum_3const(type: RunKonanTest) {
