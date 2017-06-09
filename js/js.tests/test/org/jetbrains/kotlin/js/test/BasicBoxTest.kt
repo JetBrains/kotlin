@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.js.facade.*
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.test.utils.*
 import org.jetbrains.kotlin.js.util.TextOutputImpl
@@ -409,7 +410,8 @@ abstract class BasicBoxTest(
         generatedProgram.accept(AmbiguousAstSourcePropagation())
 
         val output = TextOutputImpl()
-        val sourceMapBuilder = SourceMap3Builder(outputFile, output, SourceMapBuilderConsumer())
+        val pathResolver = SourceFilePathResolver(mutableListOf(File(".")))
+        val sourceMapBuilder = SourceMap3Builder(outputFile, output, "", SourceMapBuilderConsumer(pathResolver))
         generatedProgram.accept(JsSourceGenerationVisitor(output, sourceMapBuilder))
         val code = output.toString()
         val generatedSourceMap = sourceMapBuilder.build()

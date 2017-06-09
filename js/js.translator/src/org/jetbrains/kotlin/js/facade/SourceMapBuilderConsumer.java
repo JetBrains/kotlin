@@ -20,21 +20,40 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.PairConsumer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.backend.ast.JsLocation;
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder;
 
+import java.io.File;
+import java.io.IOException;
+
 public class SourceMapBuilderConsumer implements PairConsumer<SourceMapBuilder, Object> {
+    @NotNull
+    private final SourceFilePathResolver pathResolver;
+
+    public SourceMapBuilderConsumer(@NotNull SourceFilePathResolver pathResolver) {
+        this.pathResolver = pathResolver;
+    }
+
     @Override
     public void consume(SourceMapBuilder builder, Object sourceInfo) {
         if (sourceInfo instanceof PsiElement) {
             PsiElement element = (PsiElement) sourceInfo;
-            PsiFile file = element.getContainingFile();
+            PsiFile psiFile = element.getContainingFile();
             int offset = element.getNode().getStartOffset();
-            Document document = file.getViewProvider().getDocument();
+            Document document = psiFile.getViewProvider().getDocument();
             assert document != null;
             int line = document.getLineNumber(offset);
             int column = offset - document.getLineStartOffset(line);
-            builder.addMapping(file.getViewProvider().getVirtualFile().getPath(), line, column);
+
+            File file = new File(psiFile.getViewProvider().getVirtualFile().getPath());
+            try {
+                builder.addMapping(pathResolver.getPathRelativeToSourceRoots(file), line, column);
+            }
+            catch (IOException e) {
+                throw new RuntimeException("IO error occurred generating source maps", e);
+            }
         }
         else if (sourceInfo instanceof JsLocation) {
             JsLocation location = (JsLocation) sourceInfo;

@@ -41,6 +41,18 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "-source-map", description = "Generate source map")
     public boolean sourceMap;
 
+    @GradleOption(DefaultValues.StringNullDefault.class)
+    @Argument(value = "-source-map-prefix", description = "Prefix for paths in a source map")
+    public String sourceMapPrefix;
+
+    @GradleOption(DefaultValues.StringNullDefault.class)
+    @Argument(
+            value = "-source-map-source-roots",
+            valueDescription = "<path>",
+            description = "Base directories which are used to calculate relative paths to source files in source map"
+    )
+    public String sourceMapSourceRoots;
+
     @GradleOption(DefaultValues.BooleanTrueDefault.class)
     @Argument(value = "-meta-info", description = "Generate .meta.js and .kjsm files with metadata. Use to create a library")
     public boolean metaInfo;

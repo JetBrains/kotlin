@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder
 import org.jetbrains.kotlin.js.translate.general.FileTranslationResult
@@ -58,9 +59,14 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
         fun getOutputFiles(outputFile: File, outputPrefixFile: File?, outputPostfixFile: File?): OutputFileCollection {
             val output = TextOutputImpl()
             val sourceMapBuilder =
-                    if (config.configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP))
-                        SourceMap3Builder(outputFile, output, SourceMapBuilderConsumer())
-                    else null
+                    if (config.configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
+                        val sourceRoots = config.sourceMapRoots.map { File(it) }
+                        val pathResolver = SourceFilePathResolver(sourceRoots)
+                        SourceMap3Builder(outputFile, output, config.sourceMapPrefix, SourceMapBuilderConsumer(pathResolver))
+                    }
+                    else {
+                        null
+                    }
 
             val code = getCode(output, sourceMapBuilder)
             val prefix = outputPrefixFile?.readText() ?: ""

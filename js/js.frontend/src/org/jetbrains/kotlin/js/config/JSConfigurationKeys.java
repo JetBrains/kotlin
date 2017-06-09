@@ -29,6 +29,12 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> SOURCE_MAP =
             CompilerConfigurationKey.create("generate source map");
 
+    public static final CompilerConfigurationKey<String> SOURCE_MAP_PREFIX =
+            CompilerConfigurationKey.create("prefix to add to paths in source map");
+
+    public static final CompilerConfigurationKey<List<String>> SOURCE_MAP_SOURCE_ROOTS =
+            CompilerConfigurationKey.create("base directories used to calculate relative paths for source map");
+
     public static final CompilerConfigurationKey<Boolean> META_INFO =
             CompilerConfigurationKey.create("generate .meta.js and .kjsm files");
 

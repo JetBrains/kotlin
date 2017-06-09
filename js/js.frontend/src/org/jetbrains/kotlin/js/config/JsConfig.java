@@ -104,6 +104,16 @@ public class JsConfig {
     }
 
     @NotNull
+    public String getSourceMapPrefix() {
+        return configuration.get(JSConfigurationKeys.SOURCE_MAP_PREFIX, "");
+    }
+
+    @NotNull
+    public List<String> getSourceMapRoots() {
+        return configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, Collections.singletonList("."));
+    }
+
+    @NotNull
     public List<String> getFriends() {
         if (getConfiguration().getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)) return Collections.emptyList();
         return getConfiguration().getList(JSConfigurationKeys.FRIEND_PATHS);

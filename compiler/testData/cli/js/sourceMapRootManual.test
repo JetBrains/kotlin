@@ -1,0 +1,3 @@
+// EXISTS: out.js
+// CONTAINS: out.js.map, "sourceMapRoot/foo/file1.kt"
+// CONTAINS: out.js.map, "sourceMapRoot/bar/file2.kt"

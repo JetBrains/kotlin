@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.js.inline.JsInliner;
 import org.jetbrains.kotlin.js.inline.clean.LabeledBlockToDoWhileTransformation;
 import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedImportsKt;
 import org.jetbrains.kotlin.js.inline.clean.ResolveTemporaryNamesKt;
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.translate.general.AstGenerationResult;
 import org.jetbrains.kotlin.js.translate.general.FileTranslationResult;
 import org.jetbrains.kotlin.js.translate.general.Translation;
@@ -45,10 +46,13 @@ import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 import org.jetbrains.kotlin.serialization.js.ast.JsAstSerializer;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError;
 
@@ -144,8 +148,18 @@ public final class K2JSTranslator {
         ExpandIsCallsKt.expandIsCalls(newFragments);
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
+        List<File> sourceRoots = config.getSourceMapRoots().stream().map(File::new).collect(Collectors.toList());
+        SourceFilePathResolver pathResolver = new SourceFilePathResolver(sourceRoots);
+
         Map<KtFile, FileTranslationResult> fileMap = new HashMap<>();
-        JsAstSerializer serializer = new JsAstSerializer();
+        JsAstSerializer serializer = new JsAstSerializer(file -> {
+            try {
+                return pathResolver.getPathRelativeToSourceRoots(file);
+            }
+            catch (IOException e) {
+                throw new RuntimeException("IO error occurred resolving path to source file", e);
+            }
+        });
         byte[] metadataHeader = null;
         boolean serializeFragments = config.getConfiguration().get(JSConfigurationKeys.SERIALIZE_FRAGMENTS, false);
         for (KtFile file : files) {

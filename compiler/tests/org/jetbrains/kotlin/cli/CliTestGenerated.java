@@ -515,6 +515,42 @@ public class CliTestGenerated extends AbstractCliTest {
             doJsTest(fileName);
         }
 
+        @TestMetadata("sourceMap.args")
+        public void testSourceMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/sourceMap.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("sourceMapPrefix.args")
+        public void testSourceMapPrefix() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/sourceMapPrefix.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("sourceMapRootAuto.args")
+        public void testSourceMapRootAuto() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/sourceMapRootAuto.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("sourceMapRootManual.args")
+        public void testSourceMapRootManual() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/sourceMapRootManual.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("sourceMapRootMissing.args")
+        public void testSourceMapRootMissing() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/sourceMapRootMissing.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("sourceMapRootMultiple.args")
+        public void testSourceMapRootMultiple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/sourceMapRootMultiple.args");
+            doJsTest(fileName);
+        }
+
         @TestMetadata("suppressAllWarningsJS.args")
         public void testSuppressAllWarningsJS() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/suppressAllWarningsJS.args");

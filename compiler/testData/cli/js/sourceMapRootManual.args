@@ -1,0 +1,8 @@
+$TESTDATA_DIR$/sourceMapRoot/foo/file1.kt
+$TESTDATA_DIR$/sourceMapRoot/bar/file2.kt
+-no-stdlib
+-source-map
+-source-map-source-roots
+$TESTDATA_DIR$/
+-output
+$TEMP_DIR$/out.js

@@ -4,6 +4,9 @@ where possible options include:
   -no-stdlib                 Don't use bundled Kotlin stdlib
   -libraries <path>          Paths to Kotlin libraries with .meta.js and .kjsm files, separated by system path separator
   -source-map                Generate source map
+  -source-map-prefix         Prefix for paths in a source map
+  -source-map-source-roots <path>
+                             Base directories which are used to calculate relative paths to source files in source map
   -meta-info                 Generate .meta.js and .kjsm files with metadata. Use to create a library
   -target { v5 }             Generate JS files for specific ECMA version
   -module-kind { plain, amd, commonjs, umd }

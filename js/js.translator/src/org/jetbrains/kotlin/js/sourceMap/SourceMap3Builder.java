@@ -30,6 +30,7 @@ public class SourceMap3Builder implements SourceMapBuilder {
     private final StringBuilder out = new StringBuilder(8192);
     private final File generatedFile;
     private final TextOutput textOutput;
+    private final String pathPrefix;
     private final PairConsumer<SourceMapBuilder, Object> sourceInfoConsumer;
 
     private String lastSource;
@@ -50,9 +51,11 @@ public class SourceMap3Builder implements SourceMapBuilder {
     private int previousSourceLine;
     private int previousSourceColumn;
 
-    public SourceMap3Builder(File generatedFile, TextOutput textOutput, PairConsumer<SourceMapBuilder, Object> sourceInfoConsumer) {
+    public SourceMap3Builder(File generatedFile, TextOutput textOutput, String pathPrefix,
+            PairConsumer<SourceMapBuilder, Object> sourceInfoConsumer) {
         this.generatedFile = generatedFile;
         this.textOutput = textOutput;
+        this.pathPrefix = pathPrefix;
         this.sourceInfoConsumer = sourceInfoConsumer;
     }
 
@@ -83,7 +86,7 @@ public class SourceMap3Builder implements SourceMapBuilder {
             else {
                 isNotFirst = true;
             }
-            sb.append('"').append("file://").append(source).append('"');
+            sb.append('"').append(pathPrefix).append(source).append('"');
         }
         sb.append(']');
     }

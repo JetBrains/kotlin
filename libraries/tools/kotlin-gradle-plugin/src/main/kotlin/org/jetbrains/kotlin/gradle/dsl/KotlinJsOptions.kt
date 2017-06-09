@@ -49,6 +49,18 @@ interface KotlinJsOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
      var sourceMap: kotlin.Boolean
 
     /**
+     * Prefix for paths in a source map
+     * Default value: null
+     */
+     var sourceMapPrefix: kotlin.String?
+
+    /**
+     * Base directories which are used to calculate relative paths to source files in source map
+     * Default value: null
+     */
+     var sourceMapSourceRoots: kotlin.String?
+
+    /**
      * Generate JS files for specific ECMA version
      * Possible values: "v5"
      * Default value: "v5"

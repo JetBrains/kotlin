@@ -22,11 +22,12 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.BinaryOperation.Type.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.UnaryOperation.Type.*
+import java.io.File
 import java.io.OutputStream
 import java.util.*
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy as KotlinInlineStrategy
 
-class JsAstSerializer {
+class JsAstSerializer(private val pathResolver: (File) -> String) {
     private val nameTableBuilder = NameTable.newBuilder()
     private val stringTableBuilder = StringTable.newBuilder()
     private val nameMap = mutableMapOf<JsName, Int>()
@@ -567,9 +568,9 @@ class JsAstSerializer {
         if (location != null) {
             val lastFile = fileStack.peek()
             val newFile = location.file
-            fileChanged = lastFile != newFile && newFile != null
+            fileChanged = lastFile != newFile
             if (fileChanged) {
-                fileConsumer(serialize(newFile!!))
+                fileConsumer(serialize(newFile))
                 fileStack.push(location.file)
             }
             val locationBuilder = Location.newBuilder()
@@ -598,7 +599,7 @@ class JsAstSerializer {
         val file = element.containingFile
         val document = file.viewProvider.document!!
 
-        val path = file.viewProvider.virtualFile.path
+        val path = pathResolver(File(file.viewProvider.virtualFile.path))
 
         val startOffset = element.node.startOffset
         val startLine = document.getLineNumber(startOffset)
