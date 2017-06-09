@@ -127,6 +127,9 @@ public class SourceMap3Builder implements SourceMapBuilder {
 
     @Override
     public void addMapping(String source, int sourceLine, int sourceColumn) {
+        if (File.separatorChar != '/') {
+            source = source.replace(File.separatorChar, '/');
+        }
         boolean newGroupStarted = previousGeneratedColumn == -1;
         if (newGroupStarted) {
             previousGeneratedColumn = 0;
