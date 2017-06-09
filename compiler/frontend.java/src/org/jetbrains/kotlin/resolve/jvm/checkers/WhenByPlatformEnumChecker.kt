@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.cfg.WhenChecker
-import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNotNull
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -37,7 +36,7 @@ class WhenByPlatformEnumChecker : AdditionalTypeChecker {
             // Check for conditionally-exhaustive when on platform enums, see KT-6399
             val subjectExpression = expression.subjectExpression ?: return
             val type = c.trace.getType(subjectExpression) ?: return
-            if (type.isFlexible() && TypeUtils.isNullableType(type.asFlexibleType().upperBound) && !type.annotations.isMarkedNotNull()) {
+            if (type.isFlexible() && TypeUtils.isNullableType(type.asFlexibleType().upperBound)) {
                 val dataFlowValue = DataFlowValueFactory.createDataFlowValue(subjectExpression, type, c)
                 val dataFlowInfo = c.trace[BindingContext.EXPRESSION_TYPE_INFO, subjectExpression]?.dataFlowInfo
                 if (dataFlowInfo != null && !dataFlowInfo.getStableNullability(dataFlowValue).canBeNull()) {
