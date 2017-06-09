@@ -33,7 +33,8 @@ abstract class KonanTest extends JavaExec {
     def launcherBc = new File("${dist.canonicalPath}/lib/launcher.bc").absolutePath
     def startKtBc = new File("${dist.canonicalPath}/lib/start.kt.bc").absolutePath
     def stdlibKtBc = new File("${dist.canonicalPath}/lib/stdlib.kt.bc").absolutePath
-    def konanc = new File("${dist.canonicalPath}/bin/konanc").absolutePath
+    def konancDriver = project.isWindows() ? "konanc.bat" : "konanc"
+    def konanc = new File("${dist.canonicalPath}/bin/$konancDriver").absolutePath
     def mainC = 'main.c'
     def outputSourceSetName = "testOutputLocal"
     String outputDirectory = null
@@ -267,9 +268,6 @@ class RunDriverKonanTest extends KonanTest {
     RunDriverKonanTest() {
         super()
         dependsOn(project.rootProject.tasks['cross_dist'])
-        if (project.isWindows()) {
-            this.disabled = true
-        }
     }
 
     void compileTest(List<String> filesToCompile, String exe) {
