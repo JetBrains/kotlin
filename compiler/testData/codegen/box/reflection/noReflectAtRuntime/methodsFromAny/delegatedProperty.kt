@@ -13,8 +13,8 @@ object Delegate {
     }
 
     operator fun getValue(x: Any?, p: KProperty<*>) {
-        assertEquals(prop, p)
-        assertEquals(p, prop)
+        assertEquals(prop as Any, p)
+        assertEquals(p as Any, prop)
         assertEquals(p.hashCode(), prop.hashCode())
         assertEquals("property x (Kotlin reflection is not available)", p.toString())
     }
