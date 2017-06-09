@@ -27,10 +27,15 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
  * Functions in this file are intended to create type info instances in different circumstances
  */
 
-fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo): KotlinTypeInfo = KotlinTypeInfo(type, dataFlowInfo)
+fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo): KotlinTypeInfo {
+    LastInferredTypeHolder.inferredType.set(type)
+    return KotlinTypeInfo(type, dataFlowInfo)
+}
 
-fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo, jumpPossible: Boolean, jumpFlowInfo: DataFlowInfo): KotlinTypeInfo =
-        KotlinTypeInfo(type, dataFlowInfo, jumpPossible, jumpFlowInfo)
+fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo, jumpPossible: Boolean, jumpFlowInfo: DataFlowInfo): KotlinTypeInfo {
+    LastInferredTypeHolder.inferredType.set(type)
+    return KotlinTypeInfo(type, dataFlowInfo, jumpPossible, jumpFlowInfo)
+}
 
 fun createTypeInfo(type: KotlinType?): KotlinTypeInfo = createTypeInfo(type, DataFlowInfo.EMPTY)
 
@@ -39,3 +44,7 @@ fun createTypeInfo(type: KotlinType?, context: ResolutionContext<*>): KotlinType
 fun noTypeInfo(dataFlowInfo: DataFlowInfo): KotlinTypeInfo = createTypeInfo(null, dataFlowInfo)
 
 fun noTypeInfo(context: ResolutionContext<*>): KotlinTypeInfo = noTypeInfo(context.dataFlowInfo)
+
+object LastInferredTypeHolder {
+    var inferredType: ThreadLocal<KotlinType?> = ThreadLocal()
+}

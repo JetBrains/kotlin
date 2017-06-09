@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.common.repl
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.LastInferredTypeHolder
 import java.io.File
 import java.io.Serializable
 import java.util.*
@@ -111,7 +112,9 @@ interface ReplEvalAction {
 
 sealed class ReplEvalResult : Serializable {
     class ValueResult(val value: Any?) : ReplEvalResult() {
-        override fun toString(): String = "Result: $value"
+        val type = LastInferredTypeHolder.inferredType.get()
+
+        override fun toString(): String = "$value : $type"
     }
 
     class UnitResult : ReplEvalResult()
