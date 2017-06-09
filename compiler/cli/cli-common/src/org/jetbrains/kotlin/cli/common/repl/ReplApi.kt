@@ -84,7 +84,9 @@ sealed class ReplCompileResult : Serializable {
                           val mainClassName: String,
                           val classes: List<CompiledClassData>,
                           val hasResult: Boolean,
-                          val classpathAddendum: List<File>) : ReplCompileResult()
+                          val classpathAddendum: List<File>) : ReplCompileResult() {
+        val type = LastInferredTypeHolder.inferredType.get()
+    }
 
     class Incomplete : ReplCompileResult()
 
