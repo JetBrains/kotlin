@@ -42,7 +42,7 @@ class ConvertCamelCaseTestFunctionToSpacedIntention : SelfTargetingRangeIntentio
 
         val name = element.name ?: return null
         val newName = decamelize(name)
-        if (newName == name) return null
+        if (newName == name.quoteIfNeeded()) return null
 
         val lightMethod = element.toLightMethods().firstOrNull() ?: return null
         if (!TestFrameworks.getInstance().isTestMethod(lightMethod)) return null
