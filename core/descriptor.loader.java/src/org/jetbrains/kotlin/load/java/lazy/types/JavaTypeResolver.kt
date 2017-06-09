@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.load.java.ANNOTATIONS_COPIED_TO_TYPES
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.components.TypeUsage.COMMON
 import org.jetbrains.kotlin.load.java.components.TypeUsage.SUPERTYPE
@@ -267,7 +265,7 @@ class JavaTypeResolver(
         if (flexibility == FLEXIBLE_LOWER_BOUND) return false
         if (flexibility == FLEXIBLE_UPPER_BOUND) return true
 
-        return !isMarkedNotNull && !isForAnnotationParameter && howThisTypeIsUsed != SUPERTYPE
+        return !isForAnnotationParameter && howThisTypeIsUsed != SUPERTYPE
     }
 }
 
@@ -283,7 +281,6 @@ internal fun makeStarProjection(
 
 interface JavaTypeAttributes {
     val howThisTypeIsUsed: TypeUsage
-    val isMarkedNotNull: Boolean
     val flexibility: JavaTypeFlexibility
         get() = INFLEXIBLE
     val typeAnnotations: Annotations
@@ -314,18 +311,13 @@ class LazyJavaTypeAttributes(
         override val isForAnnotationParameter: Boolean = false
 ): JavaTypeAttributes {
     override val typeAnnotations = FilteredAnnotations(annotations) { it in ANNOTATIONS_COPIED_TO_TYPES }
-    override val isMarkedNotNull: Boolean get() = typeAnnotations.isMarkedNotNull()
 }
-
-fun Annotations.isMarkedNotNull() = findAnnotation(JETBRAINS_NOT_NULL_ANNOTATION) != null
-fun Annotations.isMarkedNullable() = findAnnotation(JETBRAINS_NULLABLE_ANNOTATION) != null
 
 fun TypeUsage.toAttributes(
         isForAnnotationParameter: Boolean = false,
         upperBoundForTypeParameter: TypeParameterDescriptor? = null
 ) = object : JavaTypeAttributes {
     override val howThisTypeIsUsed: TypeUsage = this@toAttributes
-    override val isMarkedNotNull: Boolean = false
 
     override val typeAnnotations: Annotations = Annotations.EMPTY
 
