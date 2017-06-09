@@ -6,8 +6,8 @@
     <property name="ideaVersion" value="171-SNAPSHOT"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
-    <property name="android.studio.version" value="3.0.0.1"/>
-    <property name="android.studio.build.number" value="171.4041253"/>
+    <property name="android.studio.version" value="3.0.0.2"/>
+    <property name="android.studio.build.number" value="171.4056697"/>
 
     <!-- how to find this version in AndroidStudioApplicationInfo.xml: https://jetbrains.quip.com/4IQyAOhyghPb -->
     <property name="android.studio.intellij-core.build.number" value="171.4249.39"/>
