@@ -316,7 +316,7 @@ public class KtPsiUtil {
         return isBooleanConstant(condition) && condition.getNode().findChildByType(KtTokens.FALSE_KEYWORD) != null;
     }
 
-    private static boolean isBooleanConstant(@Nullable KtExpression condition) {
+    public static boolean isBooleanConstant(@Nullable KtExpression condition) {
         return condition != null && condition.getNode().getElementType() == KtNodeTypes.BOOLEAN_CONSTANT;
     }
 

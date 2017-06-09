@@ -147,6 +147,45 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/nullableBooleanElvis")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class NullableBooleanElvis extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInNullableBooleanElvis() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/nullableBooleanElvis"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("inIf.kt")
+        public void testInIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullableBooleanElvis/inIf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inIf2.kt")
+        public void testInIf2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullableBooleanElvis/inIf2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inIf3.kt")
+        public void testInIf3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullableBooleanElvis/inIf3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notInIf.kt")
+        public void testNotInIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullableBooleanElvis/notInIf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notInIfWithTrue.kt")
+        public void testNotInIfWithTrue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/nullableBooleanElvis/notInIfWithTrue.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/removeToStringInStringTemplate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

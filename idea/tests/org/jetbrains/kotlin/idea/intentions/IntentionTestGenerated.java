@@ -11868,6 +11868,45 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/nullableBooleanEqualityCheckToElvis")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class NullableBooleanEqualityCheckToElvis extends AbstractIntentionTest {
+        public void testAllFilesPresentInNullableBooleanEqualityCheckToElvis() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/nullableBooleanEqualityCheckToElvis"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("eqFalse.kt")
+        public void testEqFalse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/nullableBooleanEqualityCheckToElvis/eqFalse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("eqTrue.kt")
+        public void testEqTrue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/nullableBooleanEqualityCheckToElvis/eqTrue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("flexible.kt")
+        public void testFlexible() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/nullableBooleanEqualityCheckToElvis/flexible.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notEqFalse.kt")
+        public void testNotEqFalse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/nullableBooleanEqualityCheckToElvis/notEqFalse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notEqTrue.kt")
+        public void testNotEqTrue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/nullableBooleanEqualityCheckToElvis/notEqTrue.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/objectLiteralToLambda")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

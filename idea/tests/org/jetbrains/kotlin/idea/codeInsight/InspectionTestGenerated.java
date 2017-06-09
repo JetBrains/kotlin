@@ -227,6 +227,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nullableBooleanElvis/inspectionData/inspections.test")
+        public void testNullableBooleanElvis_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/nullableBooleanElvis/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("overridingDeprecatedMember/inspectionData/inspections.test")
         public void testOverridingDeprecatedMember_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/overridingDeprecatedMember/inspectionData/inspections.test");
