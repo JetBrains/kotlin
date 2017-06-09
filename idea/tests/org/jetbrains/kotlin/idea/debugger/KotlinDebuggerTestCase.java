@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.test.MockLibraryUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.kotlin.test.util.JetTestUtilsKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.utils.PathUtil;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
 
@@ -129,12 +130,16 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         super.setUp();
     }
 
-    private static long cachedDirLastModifiedTimeStamp() {
-        File lastModifiedFile = JetTestUtilsKt.findLastModifiedFile(
+    private static long cachedDataTimeStamp() {
+        File testDataLastModifiedFile = JetTestUtilsKt.findLastModifiedFile(
                 TINY_APP_SRC,
                 file -> FilesKt.getExtension(file).equals("out") || file.isDirectory()
         );
-        return lastModifiedFile.lastModified();
+
+        File distLibLastModifiedFile = JetTestUtilsKt.findLastModifiedFile(
+                PathUtil.getKotlinPathsForDistDirectory().getLibPath(), file -> false);
+
+        return Math.max(testDataLastModifiedFile.lastModified(), distLibLastModifiedFile.lastModified());
     }
 
     private static boolean isLocalCacheOutdated() {
@@ -149,7 +154,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         }
 
         long cachedFor = Long.parseLong(text);
-        long currentLastDate = cachedDirLastModifiedTimeStamp();
+        long currentLastDate = cachedDataTimeStamp();
 
         return currentLastDate != cachedFor;
     }
@@ -170,7 +175,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
                 boolean createFileResult = LOCAL_CACHE_LAST_MODIFIED_FILE.createNewFile();
                 Assert.assertTrue("Failure on " + LOCAL_CACHE_LAST_MODIFIED_FILE.getName() + " creation", createFileResult);
 
-                long lastModificationDate = cachedDirLastModifiedTimeStamp();
+                long lastModificationDate = cachedDataTimeStamp();
                 FileUtil.writeToFile(LOCAL_CACHE_LAST_MODIFIED_FILE, Long.toString(lastModificationDate));
             }
 
