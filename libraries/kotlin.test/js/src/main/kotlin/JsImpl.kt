@@ -46,10 +46,40 @@ internal impl fun lookupAsserter(): Asserter = qunitAsserter
 
 private val qunitAsserter = QUnitAsserter()
 
-internal var okFun: (Boolean, String?) -> Unit = { _, _ -> }
+internal var assertHook: (Boolean, String?, Any?, Any?) -> Unit = { _,_,_,_ -> }
 
 // TODO: make object in 1.2
 class QUnitAsserter : Asserter {
+
+    val innerAsserter = object: Asserter {
+
+        override fun fail(message: String?): Nothing {
+            failWithMessage(message)
+        }
+
+        private fun failWithMessage(message: String?): Nothing {
+            if (message == null)
+                throw AssertionError()
+            else
+                throw AssertionError(message)
+        }
+    }
+
+    override fun assertEquals(message: String?, expected: Any?, actual: Any?) {
+        innerAsserter.assertEquals(message, expected, actual)
+    }
+
+    override fun assertNotEquals(message: String?, illegal: Any?, actual: Any?) {
+        super.assertNotEquals(message, illegal, actual)
+    }
+
+    override fun assertNull(message: String?, actual: Any?) {
+        super.assertNull(message, actual)
+    }
+
+    override fun assertNotNull(message: String?, actual: Any?) {
+        super.assertNotNull(message, actual)
+    }
 
     override fun assertTrue(lazyMessage: () -> String?, actual: Boolean) {
         assertTrue(actual, lazyMessage())
@@ -63,12 +93,5 @@ class QUnitAsserter : Asserter {
     override fun fail(message: String?): Nothing {
         okFun(false, message)
         failWithMessage(message)
-    }
-
-    private fun failWithMessage(message: String?): Nothing {
-        if (message == null)
-            throw AssertionError()
-        else
-            throw AssertionError(message)
     }
 }
