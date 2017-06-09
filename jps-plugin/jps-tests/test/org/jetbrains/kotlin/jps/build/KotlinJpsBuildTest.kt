@@ -298,6 +298,15 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
     }
 
+    fun testKotlinJavaScriptProjectWithSourceMap() {
+        initProject(JS_STDLIB)
+        buildAllModules().assertSuccessful()
+
+        val sourceMapContent = File(getOutputDir(PROJECT_NAME), "$PROJECT_NAME.js.map").readText()
+        val expectedPath = "prefix-dir/pkg/test1.kt"
+        assertTrue("Source map file should contain relative path ($expectedPath)", sourceMapContent.contains("\"$expectedPath\""))
+    }
+
     fun testKotlinJavaScriptProjectWithTwoModules() {
         initProject(JS_STDLIB)
         buildAllModules().assertSuccessful()
@@ -690,8 +699,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     private fun contentOfOutputDir(moduleName: String): Set<String> {
-        val outputDir = "out/production/$moduleName"
-        val baseDir = File(workDir, outputDir)
+        val baseDir = getOutputDir(moduleName)
         val files = FileUtil.findFilesByMask(Pattern.compile(".*"), baseDir)
         val result = HashSet<String>()
         for (file in files) {
@@ -701,6 +709,8 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         }
         return result
     }
+
+    private fun getOutputDir(moduleName: String): File = File(workDir, "out/production/$moduleName")
 
     fun testReexportedDependency() {
         initProject()

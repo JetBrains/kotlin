@@ -124,7 +124,7 @@ public class KotlinSourceFileCollector {
         return result;
     }
 
-    private static Iterable<JpsModuleSourceRoot> getRelevantSourceRoots(ModuleBuildTarget target) {
+    public static Iterable<JpsModuleSourceRoot> getRelevantSourceRoots(ModuleBuildTarget target) {
         JavaSourceRootType sourceRootType = target.isTests() ? JavaSourceRootType.TEST_SOURCE : JavaSourceRootType.SOURCE;
 
         //noinspection unchecked
