@@ -65,16 +65,17 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     }
 
     override fun collectTransferableData(file: PsiFile, editor: Editor, startOffsets: IntArray, endOffsets: IntArray): List<TextBlockTransferableData> {
+        if (file is KtFile) return listOf(CopiedKotlinCode(file.text, startOffsets, endOffsets))
         return emptyList()
     }
 
     override fun extractTransferableData(content: Transferable): List<TextBlockTransferableData> {
         try {
             if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                // check if it's copied from within IDEA
-                if (!Companion.convertOnCopyInsideIDE && content.transferDataFlavors.any { TextBlockTransferableData::class.java.isAssignableFrom(it.representationClass) }) {
-                    return emptyList()
-                }
+
+                if (content.isDataFlavorSupported(CopiedKotlinCode.DATA_FLAVOR) ||
+                    /* Handled by ConvertJavaCopyPasteProcessor */
+                    content.isDataFlavorSupported(CopiedJavaCode.DATA_FLAVOR)) return emptyList()
 
                 val text = content.getTransferData(DataFlavor.stringFlavor) as String
                 return listOf(MyTransferableData(text))
@@ -284,6 +285,5 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
 
     companion object {
         @TestOnly var conversionPerformed: Boolean = false
-        @TestOnly var convertOnCopyInsideIDE: Boolean = false
     }
 }
