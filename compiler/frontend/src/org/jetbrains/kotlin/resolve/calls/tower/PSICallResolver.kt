@@ -229,7 +229,9 @@ class PSICallResolver(
     private fun Collection<ResolvedKotlinCall>.areAllCompletedAndInapplicable() =
             all {
                 val applicability = it.currentStatus.resultingApplicability
-                applicability == ResolutionCandidateApplicability.INAPPLICABLE || applicability == ResolutionCandidateApplicability.HIDDEN
+                applicability == ResolutionCandidateApplicability.INAPPLICABLE ||
+                applicability == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER ||
+                applicability == ResolutionCandidateApplicability.HIDDEN
             }
 
     // true if we found something
