@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateCapt
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateStatus
+import org.jetbrains.kotlin.types.TypeApproximator
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -153,7 +155,8 @@ class KotlinCallCompleter(
         }
 
         val typeArguments = descriptorWithFreshTypes.typeParameters.map {
-            substitutor.safeSubstitute(typeVariablesForFreshTypeParameters[it.index].defaultType)
+            val substituted = substitutor.safeSubstitute(typeVariablesForFreshTypeParameters[it.index].defaultType)
+            TypeApproximator().approximateToSuperType(substituted, TypeApproximatorConfiguration.CapturedTypesApproximation) ?: substituted
         }
 
         val status = computeStatus(this, resultingDescriptor)
