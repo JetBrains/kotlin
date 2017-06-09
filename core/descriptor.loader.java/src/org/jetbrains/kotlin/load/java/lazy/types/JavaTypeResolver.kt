@@ -96,12 +96,13 @@ class JavaTypeResolver(
             return computeSimpleJavaClassifierType(javaType, attr) ?: errorType()
         }
 
-        fun computeBound(lower: Boolean) = computeSimpleJavaClassifierType(javaType, attr.computeAttributes(useFlexible, isRaw, forLower = lower))
+        fun computeBound(flexibility: JavaTypeFlexibility) =
+                computeSimpleJavaClassifierType(javaType, attr.withFlexibility(flexibility))
 
-        val lower = computeBound(lower = true) ?: return errorType()
-        val upper = computeBound(lower = false) ?: return errorType()
+        val lower = computeBound(FLEXIBLE_LOWER_BOUND) ?: return errorType()
+        val upper = computeBound(FLEXIBLE_UPPER_BOUND) ?: return errorType()
 
-        return if (javaType.isRaw) {
+        return if (isRaw) {
             RawTypeImpl(lower, upper)
         }
         else {
@@ -179,15 +180,18 @@ class JavaTypeResolver(
         return mutableLastParameterVariance != OUT_VARIANCE
     }
 
-    fun computeArguments(javaType: JavaClassifierType, attr: JavaTypeAttributes, constructor: TypeConstructor): List<TypeProjection> {
-        val eraseTypeParameters = run {
-            if (attr.rawBound != RawBound.NOT_RAW) return@run true
-
-            // This option is needed because sometimes we get weird versions of JDK classes in the class path,
-            // such as collections with no generics, so the Java types are not raw, formally, but they don't match with
-            // their Kotlin analogs, so we treat them as raw to avoid exceptions
-            javaType.typeArguments.isEmpty() && !constructor.parameters.isEmpty()
-        }
+    private fun computeArguments(
+            javaType: JavaClassifierType,
+            attr: JavaTypeAttributes,
+            constructor: TypeConstructor
+    ): List<TypeProjection> {
+        val isRaw = javaType.isRaw
+        val eraseTypeParameters =
+                isRaw ||
+                // This option is needed because sometimes we get weird versions of JDK classes in the class path,
+                // such as collections with no generics, so the Java types are not raw, formally, but they don't match with
+                // their Kotlin analogs, so we treat them as raw to avoid exceptions
+                (javaType.typeArguments.isEmpty() && !constructor.parameters.isEmpty())
 
         val typeParameters = constructor.parameters
         if (eraseTypeParameters) {
@@ -212,7 +216,12 @@ class JavaTypeResolver(
                             }
                         }
 
-                RawSubstitution.computeProjection(parameter, attr, erasedUpperBound)
+                RawSubstitution.computeProjection(
+                        parameter,
+                        // if erasure happens due to invalid arguments number, use star projections instead
+                        if (isRaw) attr else attr.withFlexibility(INFLEXIBLE),
+                        erasedUpperBound
+                )
             }.toList()
         }
 
@@ -263,8 +272,8 @@ class JavaTypeResolver(
 
     private fun JavaTypeAttributes.isNullable(): Boolean {
         if (flexibility == FLEXIBLE_LOWER_BOUND) return false
-        if (flexibility == FLEXIBLE_UPPER_BOUND) return true
 
+        // even if flexibility is FLEXIBLE_UPPER_BOUND it's still can be not nullable for supetypes and annotation parameters
         return !isForAnnotationParameter && howThisTypeIsUsed != SUPERTYPE
     }
 }
@@ -289,14 +298,6 @@ interface JavaTypeAttributes {
     // Current type is upper bound of this type parameter
     val upperBoundOfTypeParameter: TypeParameterDescriptor?
         get() = null
-    val rawBound: RawBound
-        get() = RawBound.NOT_RAW
-}
-
-enum class RawBound {
-    LOWER,
-    UPPER,
-    NOT_RAW
 }
 
 enum class JavaTypeFlexibility {
@@ -325,10 +326,9 @@ fun TypeUsage.toAttributes(
     override val upperBoundOfTypeParameter: TypeParameterDescriptor? = upperBoundForTypeParameter
 }
 
-fun JavaTypeAttributes.computeAttributes(allowFlexible: Boolean, isRaw: Boolean, forLower: Boolean) =
+fun JavaTypeAttributes.withFlexibility(flexibility: JavaTypeFlexibility) =
         object : JavaTypeAttributes by this {
-            override val flexibility = if (!allowFlexible) INFLEXIBLE else if(forLower) FLEXIBLE_LOWER_BOUND else FLEXIBLE_UPPER_BOUND
-            override val rawBound = if (!isRaw) RawBound.NOT_RAW else if(forLower) RawBound.LOWER else RawBound.UPPER
+            override val flexibility = flexibility
         }
 
 
