@@ -1,3 +1,5 @@
+// !LANGUAGE: -SoundSmartCastsAfterTry
+
 fun foo() {
     var s: String?
     s = "Test"
