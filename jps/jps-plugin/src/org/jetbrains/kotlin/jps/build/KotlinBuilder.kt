@@ -662,13 +662,16 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(representativeModule)
         val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(representativeModule)
 
+        val sourceRoots = KotlinSourceFileCollector.getRelevantSourceRoots(representativeTarget).map { it.file }
+
         val friendPaths = KotlinBuilderModuleScriptGenerator.getProductionModulesWhichInternalsAreVisible(representativeTarget).mapNotNull {
             val file = getOutputMetaFile(it, false)
             if (file.exists()) file.absolutePath.toString() else null
         }
 
         val compilerRunner = JpsKotlinCompilerRunner()
-        compilerRunner.runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, environment, sourceFiles, libraries, friendPaths, outputFile)
+        compilerRunner.runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, environment, sourceFiles, sourceRoots,
+                                       libraries, friendPaths, outputFile)
         return environment.outputItemsCollector
     }
 
