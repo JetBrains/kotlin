@@ -40,7 +40,9 @@ fun prepareArgumentTypeRegardingCaptureTypes(argumentType: UnwrappedType): Unwra
     }
     if (simpleType is NewCapturedType) {
         // todo may be we should respect flexible capture types also...
-        return simpleType.constructor.supertypes.takeIf { it.isNotEmpty() }?.let{ intersectTypes(it) } ?: argumentType.builtIns.nullableAnyType
+        return simpleType.constructor.supertypes.takeIf { it.isNotEmpty() }?.let {
+            intersectTypes(it).makeNullableAsSpecified(simpleType.isMarkedNullable)
+        } ?: argumentType.builtIns.nullableAnyType
     }
     return captureFromExpression(simpleType)
 }
