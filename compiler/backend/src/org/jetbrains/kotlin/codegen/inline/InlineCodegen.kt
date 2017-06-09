@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.*
 import org.jetbrains.kotlin.codegen.intrinsics.bytecode
 import org.jetbrains.kotlin.codegen.intrinsics.classId
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.isInlineOnly
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
@@ -71,24 +70,44 @@ class InlineCodegen(
         private val callElement: KtElement,
         private val typeParameterMappings: TypeParameterMappings
 ) : CallGenerator() {
-    private val typeMapper: KotlinTypeMapper
+    init {
+        assert(InlineUtil.isInline(function) || InlineUtil.isArrayConstructorWithLambda(function)) {
+            "InlineCodegen can inline only inline functions and array constructors: " + function
+        }
+    }
 
-    private val functionDescriptor: FunctionDescriptor
-    private val jvmSignature: JvmMethodSignature
-    private val context: MethodContext
+    // TODO: implement AS_FUNCTION inline strategy
+    private val asFunctionInline = false
 
-    private val asFunctionInline: Boolean
-    private val initialFrameSize: Int
-    private val isSameModule: Boolean
+    private val typeMapper = state.typeMapper
+
+    private val initialFrameSize = codegen.frameMap.currentSize
+
+    private val reifiedTypeInliner = ReifiedTypeInliner(typeParameterMappings)
+
+    private val functionDescriptor: FunctionDescriptor =
+            if (InlineUtil.isArrayConstructorWithLambda(function))
+                FictitiousArrayConstructor.create(function as ConstructorDescriptor)
+            else
+                function.original
+
+    private val context =
+            getContext(
+                    functionDescriptor, state,
+                    DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)?.containingFile as? KtFile
+            ) as MethodContext
+
+    private val jvmSignature = typeMapper.mapSignatureWithGeneric(functionDescriptor, context.contextKind)
+
+    private val isSameModule = JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), state.outDirectory)
 
     private val invocationParamBuilder = ParametersBuilder.newBuilder()
-    private val expressionMap = LinkedHashMap<Int, LambdaInfo>()
 
-    private val reifiedTypeInliner: ReifiedTypeInliner
+    private val expressionMap = linkedMapOf<Int, LambdaInfo>()
 
     private var activeLambda: LambdaInfo? = null
 
-    private val sourceMapper: SourceMapper
+    private val sourceMapper = codegen.parentCodegen.orCreateSourceMapper
 
     private var delayedHiddenWriting: Function0<Unit>? = null
 
@@ -97,28 +116,6 @@ class InlineCodegen(
     private var methodHandleInDefaultMethodIndex = -1
 
     init {
-        assert(InlineUtil.isInline(function) || InlineUtil.isArrayConstructorWithLambda(function)) { "InlineCodegen can inline only inline functions and array constructors: " + function }
-        this.typeMapper = state.typeMapper
-        this.functionDescriptor = if (InlineUtil.isArrayConstructorWithLambda(function))
-            FictitiousArrayConstructor.create(function as ConstructorDescriptor)
-        else
-            function.original
-
-        reifiedTypeInliner = ReifiedTypeInliner(typeParameterMappings)
-
-        initialFrameSize = codegen.frameMap.currentSize
-
-        val element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)
-        context = getContext(functionDescriptor, state, element?.containingFile as? KtFile) as MethodContext
-        jvmSignature = typeMapper.mapSignatureWithGeneric(functionDescriptor, context.contextKind)
-
-        // TODO: implement AS_FUNCTION inline strategy
-        this.asFunctionInline = false
-
-        isSameModule = JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), state.outDirectory)
-
-        sourceMapper = codegen.parentCodegen.orCreateSourceMapper
-
         if (functionDescriptor !is FictitiousArrayConstructor) {
             reportIncrementalInfo(functionDescriptor, codegen.getContext().functionDescriptor.original, jvmSignature, state)
             val functionOrAccessorName = typeMapper.mapAsmMethod(function).name
@@ -206,7 +203,7 @@ class InlineCodegen(
             for (lambda in defaultLambdas) {
                 invocationParamBuilder.buildParameters().getParameterByDeclarationSlot(lambda.offset).lambda = lambda
                 val prev = expressionMap.put(lambda.offset, lambda)
-                assert(prev == null) { "Lambda with offset " + lambda.offset + " already exists: " + prev }
+                assert(prev == null) { "Lambda with offset ${lambda.offset} already exists: $prev" }
             }
         }
         val reificationResult = reifiedTypeInliner.reifyInstructions(node)
@@ -351,18 +348,14 @@ class InlineCodegen(
     }
 
     private fun recordParameterValueInLocalVal(delayedWritingToLocals: Boolean, skipStore: Boolean, vararg infos: ParameterInfo): Function0<Unit>? {
-        val index = IntArray(infos.size)
-        for (i in infos.indices) {
-            val info = infos[i]
-            if (!info.isSkippedOrRemapped) {
-                index[i] = codegen.frameMap.enterTemp(info.getType())
+        val index = IntArray(infos.size) { i ->
+            if (!infos[i].isSkippedOrRemapped) {
+                codegen.frameMap.enterTemp(infos[i].getType())
             }
-            else {
-                index[i] = -1
-            }
+            else -1
         }
 
-        val runnable = {
+        val possibleLazyTask = {
             for (i in infos.indices.reversed()) {
                 val info = infos[i]
                 if (!info.isSkippedOrRemapped) {
@@ -379,8 +372,8 @@ class InlineCodegen(
             }
         }
 
-        if (delayedWritingToLocals) return runnable
-        runnable()
+        if (delayedWritingToLocals) return possibleLazyTask
+        possibleLazyTask()
         return null
     }
 
@@ -403,10 +396,8 @@ class InlineCodegen(
     }
 
     private fun leaveTemps() {
-        val infos = invocationParamBuilder.listAllParams()
-        val iterator = infos.listIterator(infos.size)
-        while (iterator.hasPrevious()) {
-            val param = iterator.previous()
+        invocationParamBuilder.listAllParams().asReversed().forEach {
+            param ->
             if (!param.isSkippedOrRemapped || CapturedParamInfo.isSynthetic(param)) {
                 codegen.frameMap.leaveTemp(param.type)
             }
@@ -414,15 +405,16 @@ class InlineCodegen(
     }
 
     private fun rememberClosure(expression: KtExpression, type: Type, parameter: ValueParameterDescriptor): LambdaInfo {
-        val lambda = KtPsiUtil.deparenthesize(expression)
-        assert(isInlinableParameterExpression(lambda)) { "Couldn't find inline expression in " + expression.text }
+        val ktLambda = KtPsiUtil.deparenthesize(expression)
+        assert(isInlinableParameterExpression(ktLambda)) { "Couldn't find inline expression in ${expression.text}" }
 
-        val info = ExpressionLambda(lambda!!, typeMapper, parameter.isCrossinline, getBoundCallableReferenceReceiver(expression) != null)
-
-        val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
-        closureInfo.lambda = info
-        expressionMap.put(closureInfo.index, info)
-        return info
+        return ExpressionLambda(
+                ktLambda!!, typeMapper, parameter.isCrossinline, getBoundCallableReferenceReceiver(expression) != null
+        ).also { lambda ->
+            val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
+            closureInfo.lambda = lambda
+            expressionMap.put(closureInfo.index, lambda)
+        }
     }
 
     private fun putClosureParametersOnStack() {
@@ -442,15 +434,13 @@ class InlineCodegen(
             rememberCapturedForDefaultLambda(next)
         }
         else {
-            throw RuntimeException("Unknown lambda: " + next)
+            throw RuntimeException("Unknown lambda: $next")
         }
         activeLambda = null
     }
 
     private fun rememberCapturedForDefaultLambda(defaultLambda: DefaultLambda) {
-        val vars = defaultLambda.capturedVars
-        var paramIndex = 0
-        for (captured in vars) {
+        for ((paramIndex, captured) in defaultLambda.capturedVars.withIndex()) {
             putArgumentOrCapturedToLocalVal(
                     captured.type,
                     //HACK: actually parameter would be placed on stack in default function
@@ -461,7 +451,6 @@ class InlineCodegen(
                     ValueKind.DEFAULT_LAMBDA_CAPTURED_PARAMETER
             )
 
-            paramIndex++
             defaultLambda.parameterOffsetsInDefault.add(invocationParamBuilder.nextParameterOffset)
         }
     }
