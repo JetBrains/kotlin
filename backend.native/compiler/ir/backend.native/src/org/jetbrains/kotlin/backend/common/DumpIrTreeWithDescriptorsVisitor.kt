@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockImpl
+import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlock
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -231,7 +231,7 @@ class DumpIrTreeWithDescriptorsVisitor(out: Appendable): IrElementVisitor<Unit, 
     }
 
     override fun visitBlock(expression: IrBlock, data: String) {
-        if (expression is IrReturnableBlockImpl) {
+        if (expression is IrReturnableBlock) {
             printer.println("RETURNABLE BLOCK " + expression.descriptor)
             indented { super.visitBlock(expression, data) }
             return

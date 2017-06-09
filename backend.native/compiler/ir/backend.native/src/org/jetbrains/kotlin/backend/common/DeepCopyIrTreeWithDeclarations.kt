@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.konan.ir.DeepCopyKonanIrTreeWithSymbols
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -42,7 +41,7 @@ fun IrElement.deepCopyWithVariablesImpl(): IrElement {
     acceptVoid(symbolsRemapper)
 
     return this.transform(
-            object : DeepCopyKonanIrTreeWithSymbols(symbolsRemapper) {
+            object : DeepCopyIrTreeWithReturnableBlockSymbols(symbolsRemapper) {
                 override fun getNonTransformedLoop(irLoop: IrLoop): IrLoop {
                     return irLoop
                 }

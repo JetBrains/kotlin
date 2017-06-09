@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.konan.ir
+package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlock
+import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockImpl
+import org.jetbrains.kotlin.backend.konan.ir.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrReturn
@@ -23,12 +26,12 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
 
-internal open class DeepCopyKonanIrTreeWithSymbols(
+open class DeepCopyIrTreeWithReturnableBlockSymbols(
         private val symbolRemapper: SymbolRemapper
 ) : DeepCopyIrTreeWithSymbols(symbolRemapper) {
 
     private inline fun <reified T : IrElement> T.transform() =
-            transform(this@DeepCopyKonanIrTreeWithSymbols, null) as T
+            transform(this@DeepCopyIrTreeWithReturnableBlockSymbols, null) as T
 
     private val transformedReturnableBlocks = mutableMapOf<IrReturnableBlock, IrReturnableBlock>()
 
