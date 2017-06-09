@@ -23,6 +23,8 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
                     androidGradlePluginVersion = androidGradlePluginVersion,
                     freeCommandLineArgs = listOf("-Pkapt.verbose=true"))
 
+    override fun defaultBuildOptions() = androidBuildOptions()
+
     @Test
     fun testButterKnife() {
         val project = Project("android-butterknife", GRADLE_VERSION, directoryPrefix = "kapt2")
