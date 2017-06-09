@@ -38,7 +38,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.IdeaTestUtil;
-import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xdebugger.XDebugSession;
 import kotlin.io.FilesKt;
@@ -207,12 +206,9 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             NoStrataPositionManagerHelperKt.setEmulateDexDebugInTests(false);
         }
 
-        EdtTestUtil.runInEdtAndWait(new ThrowableRunnable<Throwable>() {
-            @Override
-            public void run() throws Throwable {
-                ConfigLibraryUtil.removeLibrary(getModule(), CUSTOM_LIBRARY_NAME);
-                ConfigLibraryUtil.removeLibrary(getModule(), KOTLIN_LIBRARY_NAME);
-            }
+        EdtTestUtil.runInEdtAndWait(() -> {
+            ConfigLibraryUtil.removeLibrary(getModule(), CUSTOM_LIBRARY_NAME);
+            ConfigLibraryUtil.removeLibrary(getModule(), KOTLIN_LIBRARY_NAME);
         });
 
         super.tearDown();
@@ -264,19 +260,16 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
         CompilerUtil.refreshOutputRoots(Lists.newArrayList(outputDirPath));
 
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
-                configureLibrary(model, CUSTOM_LIBRARY_NAME, CUSTOM_LIBRARY_JAR, CUSTOM_LIBRARY_SOURCES);
-                configureLibrary(model, KOTLIN_LIBRARY_NAME, ForTestCompileRuntime.runtimeJarForTests(), new File("libraries/stdlib/src"));
-                model.commit();
-            }
+        ApplicationManager.getApplication().runWriteAction(() -> {
+            ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+            configureLibrary(model, CUSTOM_LIBRARY_NAME, CUSTOM_LIBRARY_JAR, CUSTOM_LIBRARY_SOURCES);
+            configureLibrary(model, KOTLIN_LIBRARY_NAME, ForTestCompileRuntime.runtimeJarForTests(), new File("libraries/stdlib/src"));
+            model.commit();
         });
     }
 
     private static List<File> findJavaFiles(@NotNull File directory) {
-        List<File> result = new ArrayList<File>();
+        List<File> result = new ArrayList<>();
         if (directory.isDirectory()) {
             File[] files = directory.listFiles();
             if (files != null) {
@@ -302,13 +295,10 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     }
 
     @Override
-    protected void createBreakpoints(final String className) {
-        PsiClass[] psiClasses = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass[]>() {
-            @Override
-            public PsiClass[] compute() {
-                return JavaPsiFacade.getInstance(myProject).findClasses(className, GlobalSearchScope.allScope(myProject));
-            }
-        });
+    protected void createBreakpoints(String className) {
+        PsiClass[] psiClasses = ApplicationManager.getApplication().runReadAction(
+                (Computable<PsiClass[]>) () -> JavaPsiFacade.getInstance(myProject)
+                        .findClasses(className, GlobalSearchScope.allScope(myProject)));
 
         for (PsiClass psiClass : psiClasses) {
             if (psiClass instanceof KtLightClassForFacade) {
