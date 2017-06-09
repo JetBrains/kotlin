@@ -23,7 +23,9 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 
-abstract class HighlightingVisitor protected constructor(private var holder: AnnotationHolder) : KtVisitorVoid() {
+abstract class HighlightingVisitor protected constructor(
+        private val holder: AnnotationHolder
+) : KtVisitorVoid() {
 
     protected fun createInfoAnnotation(element: PsiElement, message: String? = null): Annotation =
             createInfoAnnotation(element.textRange, message)
