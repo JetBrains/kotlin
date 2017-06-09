@@ -48,10 +48,3 @@ class ReceiverExpressionKotlinCallArgument private constructor(
         ) = ReceiverExpressionKotlinCallArgument(receiver.prepareReceiverRegardingCaptureTypes(), isSafeCall, isVariableReceiverForInvoke)
     }
 }
-
-class EmptyLabeledReturn(builtIns: KotlinBuiltIns) : ExpressionKotlinCallArgument {
-    override val isSpread: Boolean get() = false
-    override val argumentName: Name? get() = null
-    override val receiver = ReceiverValueWithSmartCastInfo(TransientReceiver(builtIns.unitType), emptySet(), true)
-    override val isSafeCall: Boolean get() = false
-}

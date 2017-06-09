@@ -681,6 +681,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (!noExpectedType(expectedType) && !KotlinBuiltIns.isUnit(expectedType) && !isDontCarePlaceholder(expectedType)) {
                 context.trace.report(RETURN_TYPE_MISMATCH.on(expression, expectedType));
             }
+            if (newInferenceLambdaInfo != null) {
+                newInferenceLambdaInfo.getReturnStatements().add(new kotlin.Pair<>(expression, null));
+            }
         }
         return components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, expression);
     }

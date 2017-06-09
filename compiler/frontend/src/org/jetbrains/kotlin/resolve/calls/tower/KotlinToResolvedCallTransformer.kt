@@ -166,7 +166,7 @@ class KotlinToResolvedCallTransformer(
             updateTraceForLambdaReturnType(lambdaArgument, trace, returnType)
 
             for (lambdaResult in lambdaArgument.resultArguments) {
-                val resultValueArgument = lambdaResult.psiCallArgument
+                val resultValueArgument = lambdaResult as? PSIKotlinCallArgument ?: continue
                 val newContext =
                         context.replaceDataFlowInfo(resultValueArgument.dataFlowInfoAfterThisArgument)
                                 .replaceExpectedType(returnType)
