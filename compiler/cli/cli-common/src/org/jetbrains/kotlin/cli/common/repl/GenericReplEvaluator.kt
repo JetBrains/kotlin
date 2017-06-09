@@ -110,7 +110,7 @@ open class GenericReplEvaluator(val baseClasspath: Iterable<File>,
             val resultField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME).apply { isAccessible = true }
             val resultValue: Any? = resultField.get(scriptInstance)
 
-            return if (compileResult.hasResult) ReplEvalResult.ValueResult(resultValue)
+            return if (compileResult.hasResult) ReplEvalResult.ValueResult(resultValue, compileResult.type)
             else ReplEvalResult.UnitResult()
         }
     }
