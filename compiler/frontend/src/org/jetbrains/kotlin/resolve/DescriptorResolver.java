@@ -1158,8 +1158,9 @@ public class DescriptorResolver {
             KotlinType type = expressionTypingServices.getBodyExpressionType(
                     trace, scope, dataFlowInfo, function, functionDescriptor);
             KotlinType result = transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace);
-            functionsTypingVisitor.checkTypesForReturnStatements(function, trace, result);
-            return result;
+            UnwrappedType approximatedType = typeApproximator.approximateDeclarationType(result, false);
+            functionsTypingVisitor.checkTypesForReturnStatements(function, trace, approximatedType);
+            return approximatedType;
         });
     }
 
