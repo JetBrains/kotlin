@@ -110,7 +110,11 @@ private fun configureFacetByGradleModule(
         modelsProvider: IdeModifiableModelsProvider
 ): KotlinFacet? {
     if (!moduleNode.hasKotlinPlugin) {
-        KotlinFacet.get(ideModule)?.let { modelsProvider.getModifiableFacetModel(ideModule).removeFacet(it) }
+        val facetModel = modelsProvider.getModifiableFacetModel(ideModule)
+        val facet = facetModel.getFacetByType(KotlinFacetType.TYPE_ID)
+        if (facet != null) {
+            facetModel.removeFacet(facet)
+        }
         return null
     }
 
