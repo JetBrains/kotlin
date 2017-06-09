@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.TypeCheckerContext.LowerCapturedTypePolicy.*
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SeveralSupertypesWithSameConstructorPolicy.*
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SupertypesPolicy
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
@@ -160,12 +161,10 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         }
 
         if (superType is NewCapturedType && superType.lowerType != null) {
-            val subtypeOfLowerType = isSubtypeOf(subType, superType.lowerType)
-            if (shouldCheckOnlyLowerBoundForCapturedType(subType, superType)) {
-                return subtypeOfLowerType
-            }
-            else if (subtypeOfLowerType) {
-                return true
+            when (getLowerCapturedTypePolicy(subType, superType)) {
+                CHECK_ONLY_LOWER -> return isSubtypeOf(subType, superType.lowerType)
+                CHECK_SUBTYPE_AND_LOWER -> if(isSubtypeOf(subType, superType.lowerType)) return true
+                SKIP_LOWER -> { /*do nothing*/ }
             }
         }
 

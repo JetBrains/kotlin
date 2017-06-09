@@ -29,8 +29,11 @@ abstract class TypeCheckerContextForConstraintSystem : TypeCheckerContext(errorT
     abstract fun addUpperConstraint(typeVariable: TypeConstructor, superType: UnwrappedType)
     abstract fun addLowerConstraint(typeVariable: TypeConstructor, subType: UnwrappedType)
 
-    override fun shouldCheckOnlyLowerBoundForCapturedType(subType: SimpleType, superType: NewCapturedType) =
-            subType.contains { it.anyBound(this::isMyTypeVariable) }
+    override fun getLowerCapturedTypePolicy(subType: SimpleType, superType: NewCapturedType) = when {
+        isMyTypeVariable(subType) -> LowerCapturedTypePolicy.SKIP_LOWER
+        subType.contains { it.anyBound(this::isMyTypeVariable) } -> LowerCapturedTypePolicy.CHECK_ONLY_LOWER
+        else -> LowerCapturedTypePolicy.CHECK_SUBTYPE_AND_LOWER
+    }
 
     /**
      * todo: possible we should override this method, because otherwise OR in subtyping transformed to AND in constraint system
