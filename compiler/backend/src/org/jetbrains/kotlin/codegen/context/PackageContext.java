@@ -44,11 +44,6 @@ public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor>
     }
 
     @Nullable
-    public Type getPackagePartType() {
-        return packagePartType;
-    }
-
-    @Nullable
     @Override
     public Type getImplementationOwnerClassType() {
         return packagePartType;

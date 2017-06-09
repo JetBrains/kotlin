@@ -1305,10 +1305,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type type = getVariableType(variableDescriptor);
         int index = myFrameMap.enter(variableDescriptor, type);
 
-        if (isDelegatedLocalVariable(variableDescriptor)) {
-            myFrameMap.enter(getDelegatedLocalVariableMetadata(variableDescriptor, bindingContext), AsmTypes.K_PROPERTY0_TYPE);
-        }
-
         if (isSharedVarType(type)) {
             markLineNumber(statement, false);
             v.anew(type);
@@ -1356,10 +1352,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         v.mark(scopeStart);
 
         leaveTasks.add(answer -> {
-            if (isDelegatedLocalVariable(variableDescriptor)) {
-                myFrameMap.leave(getDelegatedLocalVariableMetadata(variableDescriptor, bindingContext));
-            }
-
             int index = myFrameMap.leave(variableDescriptor);
 
             v.visitLocalVariable(variableDescriptor.getName().asString(), type.getDescriptor(), null, scopeStart, blockEnd, index);
@@ -1772,31 +1764,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return lookupCapturedValueInConstructorParameters(descriptor);
         }
 
-        return lookupValuaAndLocalVariableMetadata(descriptor, StackValue.LOCAL_0, state, false, context, this);
-    }
+        StackValue value = context.lookupInContext(descriptor, StackValue.LOCAL_0, state, false);
+        if (value == null) return null;
 
-    @Nullable
-    static StackValue lookupValuaAndLocalVariableMetadata(
-            @NotNull DeclarationDescriptor descriptor,
-            @NotNull StackValue prefix,
-            @NotNull GenerationState state,
-            boolean ignoreNoOuter,
-            @NotNull CodegenContext context,
-            @Nullable ExpressionCodegen codegen
-    ) {
-        StackValue value = context.lookupInContext(descriptor, prefix, state, ignoreNoOuter);
-        if(!isDelegatedLocalVariable(descriptor) || value == null) {
-            return value;
-        }
-
-
-        VariableDescriptor metadata = getDelegatedLocalVariableMetadata((VariableDescriptor) descriptor, state.getBindingContext());
-        StackValue metadataValue = context.lookupInContext(metadata, prefix, state, ignoreNoOuter);
-        assert metadataValue != null : "Metadata stack value should be non-null for local delegated property";
-        //required for ImplementationBodyCodegen.lookupConstructorExpressionsInClosureIfPresent
-        if (codegen == null) return null;
-        return codegen.delegatedVariableValue(value, metadataValue, (VariableDescriptorWithAccessors) descriptor,
-                                              state.getTypeMapper());
+        return adjustVariableValue(value, descriptor);
     }
 
     @Nullable
@@ -1807,7 +1778,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         int parameterOffsetInConstructor = context.closure.getCapturedParameterOffsetInConstructor(descriptor);
         // when captured parameter is singleton
         // see compiler/testData/codegen/box/objects/objectInLocalAnonymousObject.kt (fun local() captured in A)
-        if (parameterOffsetInConstructor == -1) return adjustVariableValue(parentResult , descriptor);
+        if (parameterOffsetInConstructor == -1) return adjustVariableValue(parentResult, descriptor);
 
         assert parentResult instanceof StackValue.Field || parentResult instanceof StackValue.FieldForSharedVar
                 : "Part of closure should be either Field or FieldForSharedVar";
@@ -3564,18 +3535,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private StackValue getVariableMetadataValue(VariableDescriptor variableDescriptor) {
-        StackValue value = findLocalOrCapturedValue(getDelegatedLocalVariableMetadata(variableDescriptor, bindingContext));
-        assert value != null : "Can't find stack value for local delegated variable metadata: " + variableDescriptor;
-        return value;
-    }
-
-    @NotNull
     private StackValue adjustVariableValue(@NotNull StackValue varValue, DeclarationDescriptor descriptor) {
         if (!isDelegatedLocalVariable(descriptor)) return varValue;
 
         VariableDescriptorWithAccessors variableDescriptor = (VariableDescriptorWithAccessors) descriptor;
-        StackValue metadataValue = getVariableMetadataValue(variableDescriptor);
+        StackValue metadataValue = PropertyCodegen.getDelegatedPropertyMetadata(variableDescriptor, bindingContext);
         return delegatedVariableValue(varValue, metadataValue, variableDescriptor, typeMapper);
     }
 
@@ -3607,8 +3571,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type resultType = initializer.type;
 
         if (isDelegatedLocalVariable(variableDescriptor)) {
-            StackValue metadataValue = getVariableMetadataValue(variableDescriptor);
-            initializePropertyMetadata((KtProperty) variableDeclaration, variableDescriptor, metadataValue);
+            StackValue metadataValue = PropertyCodegen.getDelegatedPropertyMetadata(variableDescriptor, bindingContext);
 
             ResolvedCall<FunctionDescriptor> provideDelegateResolvedCall = bindingContext.get(PROVIDE_DELEGATE_RESOLVED_CALL, variableDescriptor);
             if (provideDelegateResolvedCall != null) {

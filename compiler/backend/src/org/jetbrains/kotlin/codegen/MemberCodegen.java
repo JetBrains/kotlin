@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -518,7 +520,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         StackValue provideDelegateReceiver = codegen.gen(initializer);
 
         StackValue delegateValue = PropertyCodegen.invokeDelegatedPropertyConventionMethod(
-                codegen, typeMapper, provideDelegateResolvedCall, provideDelegateReceiver, propertyDescriptor
+                codegen, provideDelegateResolvedCall, provideDelegateReceiver, propertyDescriptor
         );
 
         propValue.store(delegateValue, codegen.v);
@@ -621,10 +623,12 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             Type implType = property.isVar() ? MUTABLE_PROPERTY_REFERENCE_IMPL[receiverCount] : PROPERTY_REFERENCE_IMPL[receiverCount];
             iv.anew(implType);
             iv.dup();
+
             // TODO: generate the container once and save to a local field instead (KT-10495)
             ClosureCodegen.generateCallableReferenceDeclarationContainer(iv, property, state);
             iv.aconst(property.getName().asString());
             PropertyReferenceCodegen.generateCallableReferenceSignature(iv, property, state);
+
             iv.invokespecial(
                     implType.getInternalName(), "<init>",
                     Type.getMethodDescriptor(Type.VOID_TYPE, K_DECLARATION_CONTAINER_TYPE, JAVA_STRING_TYPE, JAVA_STRING_TYPE), false

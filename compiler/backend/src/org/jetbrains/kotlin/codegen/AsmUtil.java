@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.protobuf.MessageLite;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -867,6 +868,11 @@ public class AsmUtil {
     @NotNull
     public static Type asmTypeByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
         return Type.getObjectType(internalNameByFqNameWithoutInnerClasses(fqName));
+    }
+
+    @NotNull
+    public static Type asmTypeByClassId(@NotNull ClassId classId) {
+        return Type.getObjectType(classId.asString().replace('.', '$'));
     }
 
     @NotNull
