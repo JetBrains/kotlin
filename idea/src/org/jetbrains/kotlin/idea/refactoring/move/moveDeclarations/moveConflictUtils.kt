@@ -16,12 +16,16 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.module.impl.scopes.JdkScope
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.RefactoringBundle
@@ -42,6 +46,8 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.move.KotlinMoveUsage
+import org.jetbrains.kotlin.idea.search.and
+import org.jetbrains.kotlin.idea.search.not
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
@@ -55,6 +61,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -219,13 +226,25 @@ class MoveConflictChecker(
         }
     }
 
+    private fun Module.getScopeWithPlatformAwareDependencies(): SearchScope {
+        val baseScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(this)
+
+        val targetPlatform = TargetPlatformDetector.getPlatform(this)
+        if (targetPlatform is JvmPlatform) return baseScope
+
+        return ModuleRootManager.getInstance(this)
+                .orderEntries
+                .filterIsInstance<JdkOrderEntry>()
+                .fold(baseScope as SearchScope) { scope, jdkEntry -> scope and !JdkScope(project, jdkEntry) }
+    }
+
     fun checkModuleConflictsInDeclarations(
             internalUsages: MutableSet<UsageInfo>,
             conflicts: MultiMap<PsiElement, String>
     ) {
         val sourceRoot = moveTarget.targetFile ?: return
         val targetModule = ModuleUtilCore.findModuleForFile(sourceRoot, project) ?: return
-        val resolveScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(targetModule)
+        val resolveScope = targetModule.getScopeWithPlatformAwareDependencies()
 
         fun isInScope(targetElement: PsiElement, targetDescriptor: DeclarationDescriptor): Boolean {
             if (targetElement in resolveScope) return true

@@ -78,6 +78,12 @@ public class MultiModuleMoveTestGenerated extends AbstractMultiModuleMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("moveJdkDependentToJsModule/moveJdkDependentToJsModule.test")
+    public void testMoveJdkDependentToJsModule_MoveJdkDependentToJsModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/moveMultiModule/moveJdkDependentToJsModule/moveJdkDependentToJsModule.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("moveMultipleFilesToUnrelatedModuleConflict/moveMultipleFilesToUnrelatedModuleConflict.test")
     public void testMoveMultipleFilesToUnrelatedModuleConflict_MoveMultipleFilesToUnrelatedModuleConflict() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/moveMultiModule/moveMultipleFilesToUnrelatedModuleConflict/moveMultipleFilesToUnrelatedModuleConflict.test");
