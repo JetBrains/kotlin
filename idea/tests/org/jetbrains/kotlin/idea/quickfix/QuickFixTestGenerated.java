@@ -8679,6 +8679,45 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/replaceNullableBooleanElvisWithEqualityCheck")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceNullableBooleanElvisWithEqualityCheck extends AbstractQuickFixTest {
+        public void testAllFilesPresentInReplaceNullableBooleanElvisWithEqualityCheck() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceNullableBooleanElvisWithEqualityCheck"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("inIf.kt")
+        public void testInIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceNullableBooleanElvisWithEqualityCheck/inIf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inIf2.kt")
+        public void testInIf2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceNullableBooleanElvisWithEqualityCheck/inIf2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inIf3.kt")
+        public void testInIf3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceNullableBooleanElvisWithEqualityCheck/inIf3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notInIf.kt")
+        public void testNotInIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceNullableBooleanElvisWithEqualityCheck/notInIf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notInIfWithTrue.kt")
+        public void testNotInIfWithTrue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceNullableBooleanElvisWithEqualityCheck/notInIfWithTrue.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/replaceWithDotCall")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

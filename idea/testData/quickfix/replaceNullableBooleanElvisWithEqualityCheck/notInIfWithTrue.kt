@@ -1,0 +1,6 @@
+// "Replace elvis with equality check" "true"
+
+fun foo() {
+    var b: Boolean? = null
+    val x = !(b <caret>?: true)
+}

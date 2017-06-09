@@ -1590,6 +1590,11 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.NullableBooleanEqualityCheckToElvisIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupName="Kotlin"
@@ -2195,6 +2200,14 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MemberVisibilityCanPrivateInspection"
                      displayName="Class member can have 'private' visibility"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.NullableBooleanElvisInspection"
+                     displayName="Equality check can be used instead of elvis"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
