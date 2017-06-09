@@ -150,6 +150,7 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
                 val parent = elementToHighlight.parent
                 if (!(parent is PsiNameIdentifierOwner && parent.nameIdentifier == elementToHighlight)) {
                     createInfoAnnotation(elementToHighlight, msg).textAttributes = WRAPPED_INTO_REF
+                    return
                 }
             }
 
