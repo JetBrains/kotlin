@@ -11,7 +11,7 @@ interface T {
 
 class C : T {
     override val a1: Byte
-        get() = <selection><caret>TODO("not implemented")</selection> //To change initializer of created properties use File | Settings | File Templates.
+        get() = <selection><caret>TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.</selection>
     override val a2: Short
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val a3: Int

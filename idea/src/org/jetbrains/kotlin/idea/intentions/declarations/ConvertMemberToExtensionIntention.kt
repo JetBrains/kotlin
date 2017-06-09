@@ -22,6 +22,7 @@ import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiMethodCallExpression
 import com.intellij.psi.PsiReferenceExpression
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.SmartList
@@ -36,6 +37,8 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Convert member to extension"), LowPriorityAction {
@@ -60,9 +63,17 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
             unblockDocument()
 
             if (bodyToSelect != null) {
-                val range = bodyToSelect!!.textRange
+                val range = bodyToSelect.textRange
                 moveCaret(range.startOffset, ScrollType.CENTER)
-                selectionModel.setSelection(range.startOffset, range.endOffset)
+
+                val parent = bodyToSelect.parent
+                val lastSibling =
+                        if (parent is KtBlockExpression)
+                            parent.rBrace?.siblings(forward = false, withItself = false)?.first { it !is PsiWhiteSpace }
+                        else
+                            bodyToSelect.siblings(forward = true, withItself = false).lastOrNull()
+                val endOffset = lastSibling?.endOffset ?: range.endOffset
+                selectionModel.setSelection(range.startOffset, endOffset)
             }
             else {
                 moveCaret(extension.textOffset, ScrollType.CENTER)
