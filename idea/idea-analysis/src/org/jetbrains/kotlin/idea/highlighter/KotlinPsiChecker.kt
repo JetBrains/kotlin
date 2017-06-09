@@ -148,7 +148,6 @@ private object NoDeclarationDescriptorsChecker {
             checkType(field.genericType, field)
         }
 
-        @Suppress("UNNECESSARY_SAFE_CALL") // Wrong UNNECESSARY_SAFE_CALL
         quickFixClass.superclass?.let { check(it) }
     }
 
