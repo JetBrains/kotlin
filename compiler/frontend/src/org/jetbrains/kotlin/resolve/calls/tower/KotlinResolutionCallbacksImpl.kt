@@ -63,7 +63,7 @@ class KotlinResolutionCallbacksImpl(
 
     class LambdaInfo(val expectedType: UnwrappedType, val contextDependency: ContextDependency) {
         var dataFlowInfoAfter: DataFlowInfo? = null
-        val returnStatements = ArrayList<Pair<KtReturnExpression, KotlinTypeInfo>>()
+        val returnStatements = ArrayList<Pair<KtReturnExpression, KotlinTypeInfo?>>()
 
         companion object {
             val STUB_EMPTY = LambdaInfo(TypeUtils.NO_EXPECTED_TYPE, ContextDependency.INDEPENDENT)
@@ -85,7 +85,6 @@ class KotlinResolutionCallbacksImpl(
         fun createCallArgument(ktExpression: KtExpression, typeInfo: KotlinTypeInfo) =
                 createSimplePSICallArgument(trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
                                             CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo)
-
 
         val expression: KtExpression = (psiCallArgument as? LambdaKotlinCallArgumentImpl)?.ktLambdaExpression ?:
                                (psiCallArgument as FunctionExpressionImpl).ktFunction
@@ -113,19 +112,31 @@ class KotlinResolutionCallbacksImpl(
         val functionTypeInfo = expressionTypingServices.getTypeInfo(expression, actualContext)
         trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, ktFunction, LambdaInfo.STUB_EMPTY)
 
-        val lastExpressionArgument = getLastDeparentesizedExpression(psiCallArgument)?.let { lastExpression ->
-            if (expectedReturnType?.isUnit() == true) return@let null // coercion to Unit
-
-            val lastExpressionType = trace.getType(lastExpression)
-            val lastExpressionTypeInfo = KotlinTypeInfo(lastExpressionType, lambdaInfo.dataFlowInfoAfter ?: functionTypeInfo.dataFlowInfo)
-            createCallArgument(lastExpression, lastExpressionTypeInfo)
-        }
-
+        var hasReturnWithoutExpression = false
         val returnArguments = lambdaInfo.returnStatements.mapNotNullTo(ArrayList()) { (expression, typeInfo) ->
-            expression.returnedExpression?.let { createCallArgument(it, typeInfo) }
+            val returnedExpression = expression.returnedExpression
+            if (returnedExpression != null) {
+                createCallArgument(
+                        returnedExpression,
+                        typeInfo ?: throw AssertionError("typeInfo should be non-null for return with expression")
+                )
+            }
+            else {
+                hasReturnWithoutExpression = true
+                EmptyLabeledReturn(expression, builtIns)
+            }
         }
 
-        returnArguments.addIfNotNull(lastExpressionArgument)
+        if (!hasReturnWithoutExpression) {
+            val lastExpressionArgument = getLastDeparentesizedExpression(psiCallArgument)?.let { lastExpression ->
+                if (expectedReturnType?.isUnit() == true) return@let null // coercion to Unit
+
+                val lastExpressionType = trace.getType(lastExpression)
+                val lastExpressionTypeInfo = KotlinTypeInfo(lastExpressionType, lambdaInfo.dataFlowInfoAfter ?: functionTypeInfo.dataFlowInfo)
+                createCallArgument(lastExpression, lastExpressionTypeInfo)
+            }
+            returnArguments.addIfNotNull(lastExpressionArgument)
+        }
 
         return returnArguments
     }

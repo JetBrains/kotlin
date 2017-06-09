@@ -18,6 +18,16 @@ fun test2() {
     }
 }
 
+// TODO we don't see 'return@lambda' inside internal lambda when we analyze an external lambda,
+// so type information from NI is actually incorrect, see KT-18392
+fun test3() {
+    run lambda@{
+        run {
+            return@lambda
+        }
+    }
+}
+
 fun testLrmFoo1(ints: List<Int>) {
     ints.forEach lit@ {
         if (it == 0) return@lit
