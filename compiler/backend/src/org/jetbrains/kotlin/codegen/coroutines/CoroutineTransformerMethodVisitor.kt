@@ -524,6 +524,12 @@ class CoroutineTransformerMethodVisitor(
                 val afterSuspensionPointLineNumber = nextLineNumberNode?.line ?: suspendElementLineNumber
                 visitLineNumber(afterSuspensionPointLineNumber, continuationLabelAfterLoadedResult.label)
             })
+
+            if (nextLineNumberNode != null) {
+                // Remove the line number instruction as it now covered with line number on continuation label.
+                // If both linenumber are present in bytecode, debugger will trigger line specific events twice.
+                remove(nextLineNumberNode)
+            }
         }
 
         return continuationLabel
@@ -713,6 +719,7 @@ private fun findSafelyReachableReturns(methodNode: MethodNode): Array<Set<Int>?>
         for (index in 0 until insns.size()) {
             if (insns[index].opcode == Opcodes.ARETURN) continue
 
+            @Suppress("RemoveExplicitTypeArguments")
             val newResult =
                     controlFlowGraph
                             .getSuccessorsIndices(index).plus(index)
