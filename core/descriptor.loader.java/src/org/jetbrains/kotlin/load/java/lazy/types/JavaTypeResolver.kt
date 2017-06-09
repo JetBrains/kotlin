@@ -69,36 +69,36 @@ class JavaTypeResolver(
             val primitiveType = (javaComponentType as? JavaPrimitiveType)?.type
             if (primitiveType != null) {
                 val jetType = c.module.builtIns.getPrimitiveArrayKotlinType(primitiveType)
-                return@run if (attr.allowFlexible)
-                    KotlinTypeFactory.flexibleType(jetType, jetType.makeNullableAsSpecified(true))
-                else jetType.makeNullableAsSpecified(!attr.isMarkedNotNull)
+                return@run if (attr.isForAnnotationParameter)
+                    jetType
+                else KotlinTypeFactory.flexibleType(jetType, jetType.makeNullableAsSpecified(true))
             }
 
             val componentType = transformJavaType(javaComponentType,
-                                                  COMMON.toAttributes(attr.allowFlexible, attr.isForAnnotationParameter))
+                                                  COMMON.toAttributes(attr.isForAnnotationParameter))
 
-            if (attr.allowFlexible) {
-                return@run KotlinTypeFactory.flexibleType(
-                        c.module.builtIns.getArrayType(INVARIANT, componentType),
-                        c.module.builtIns.getArrayType(OUT_VARIANCE, componentType).makeNullableAsSpecified(true))
+            if (attr.isForAnnotationParameter) {
+                val projectionKind = if (isVararg) OUT_VARIANCE else INVARIANT
+                return@run c.module.builtIns.getArrayType(projectionKind, componentType)
             }
 
-            val projectionKind = if (isVararg) OUT_VARIANCE else INVARIANT
-            val result = c.module.builtIns.getArrayType(projectionKind, componentType)
-            return@run result.makeNullableAsSpecified(!attr.isMarkedNotNull)
+            KotlinTypeFactory.flexibleType(
+                    c.module.builtIns.getArrayType(INVARIANT, componentType),
+                    c.module.builtIns.getArrayType(OUT_VARIANCE, componentType).makeNullableAsSpecified(true)
+            )
         }.replaceAnnotations(attr.typeAnnotations)
     }
 
     private fun transformJavaClassifierType(javaType: JavaClassifierType, attr: JavaTypeAttributes): KotlinType {
         fun errorType() = ErrorUtils.createErrorType("Unresolved java class ${javaType.presentableText}")
 
-        val allowFlexible = attr.allowFlexible && attr.howThisTypeIsUsed != SUPERTYPE
+        val useFlexible = !attr.isForAnnotationParameter && attr.howThisTypeIsUsed != SUPERTYPE
         val isRaw = javaType.isRaw
-        if (!isRaw && !allowFlexible) {
+        if (!isRaw && !useFlexible) {
             return computeSimpleJavaClassifierType(javaType, attr) ?: errorType()
         }
 
-        fun computeBound(lower: Boolean) = computeSimpleJavaClassifierType(javaType, attr.computeAttributes(allowFlexible, isRaw, forLower = lower))
+        fun computeBound(lower: Boolean) = computeSimpleJavaClassifierType(javaType, attr.computeAttributes(useFlexible, isRaw, forLower = lower))
 
         val lower = computeBound(lower = true) ?: return errorType()
         val upper = computeBound(lower = false) ?: return errorType()
@@ -286,8 +286,6 @@ interface JavaTypeAttributes {
     val isMarkedNotNull: Boolean
     val flexibility: JavaTypeFlexibility
         get() = INFLEXIBLE
-    val allowFlexible: Boolean
-        get() = true
     val typeAnnotations: Annotations
     val isForAnnotationParameter: Boolean
         get() = false
@@ -313,7 +311,6 @@ enum class JavaTypeFlexibility {
 class LazyJavaTypeAttributes(
         override val howThisTypeIsUsed: TypeUsage,
         annotations: Annotations,
-        override val allowFlexible: Boolean = true,
         override val isForAnnotationParameter: Boolean = false
 ): JavaTypeAttributes {
     override val typeAnnotations = FilteredAnnotations(annotations) { it in ANNOTATIONS_COPIED_TO_TYPES }
@@ -324,13 +321,11 @@ fun Annotations.isMarkedNotNull() = findAnnotation(JETBRAINS_NOT_NULL_ANNOTATION
 fun Annotations.isMarkedNullable() = findAnnotation(JETBRAINS_NULLABLE_ANNOTATION) != null
 
 fun TypeUsage.toAttributes(
-        allowFlexible: Boolean = true,
         isForAnnotationParameter: Boolean = false,
         upperBoundForTypeParameter: TypeParameterDescriptor? = null
 ) = object : JavaTypeAttributes {
     override val howThisTypeIsUsed: TypeUsage = this@toAttributes
     override val isMarkedNotNull: Boolean = false
-    override val allowFlexible: Boolean = allowFlexible
 
     override val typeAnnotations: Annotations = Annotations.EMPTY
 

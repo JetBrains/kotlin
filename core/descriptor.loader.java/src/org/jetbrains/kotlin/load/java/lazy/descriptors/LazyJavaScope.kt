@@ -147,13 +147,9 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         val annotationMethod = method.containingClass.isAnnotationType
         val returnTypeAttrs = LazyJavaTypeAttributes(
                 TypeUsage.COMMON, annotations,
-                allowFlexible = !annotationMethod,
                 isForAnnotationParameter = annotationMethod
         )
-        return c.typeResolver.transformJavaType(method.returnType, returnTypeAttrs).let {
-            // Annotation arguments are never null in Java
-            if (annotationMethod) TypeUtils.makeNotNullable(it) else it
-        }
+        return c.typeResolver.transformJavaType(method.returnType, returnTypeAttrs)
     }
 
     protected class ResolvedValueParameters(val descriptors: List<ValueParameterDescriptor>, val hasSynthesizedNames: Boolean)
