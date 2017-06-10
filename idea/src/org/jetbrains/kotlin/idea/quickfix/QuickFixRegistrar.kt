@@ -229,6 +229,7 @@ class QuickFixRegistrar : QuickFixContributor {
         UNSAFE_INFIX_CALL.registerFactory(ReplaceInfixOrOperatorCallFix)
         UNSAFE_CALL.registerFactory(ReplaceInfixOrOperatorCallFix) // [] only
         UNSAFE_IMPLICIT_INVOKE_CALL.registerFactory(ReplaceInfixOrOperatorCallFix)
+        UNSAFE_CALL.registerFactory(ReplaceWithSafeCallForScopeFunctionFix)
 
         AMBIGUOUS_ANONYMOUS_TYPE_INFERRED.registerActions(SpecifyTypeExplicitlyFix())
         PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.registerActions(SpecifyTypeExplicitlyFix())

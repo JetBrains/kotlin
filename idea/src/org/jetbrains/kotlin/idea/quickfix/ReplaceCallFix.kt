@@ -24,8 +24,11 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 abstract class ReplaceCallFix(
         expression: KtQualifiedExpression,
@@ -77,6 +80,55 @@ class ReplaceWithSafeCallFix(expression: KtDotQualifiedExpression): ReplaceCallF
                 }
                 return null
             }
+        }
+    }
+}
+
+class ReplaceWithSafeCallForScopeFunctionFix(expression: KtDotQualifiedExpression) : ReplaceCallFix(expression, "?.") {
+
+    override fun getText() = "Replace scope function with safe (?.) call"
+
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
+            val element = diagnostic.psiElement
+            val scopeFunctionLiteral = element.getStrictParentOfType<KtFunctionLiteral>() ?: return null
+            val scopeCallExpression = scopeFunctionLiteral.getStrictParentOfType<KtCallExpression>() ?: return null
+            val scopeDotQualifiedExpression = scopeCallExpression.getStrictParentOfType<KtDotQualifiedExpression>() ?: return null
+
+            val context = scopeCallExpression.analyze()
+            val scopeFunctionLiteralDescriptor = context[BindingContext.FUNCTION, scopeFunctionLiteral] ?: return null
+            val scopeFunctionKind = scopeCallExpression.scopeFunctionKind(context) ?: return null
+
+            val internalReceiver = (element.parent as? KtDotQualifiedExpression)?.receiverExpression
+            val internalReceiverDescriptor = internalReceiver.getResolvedCall(context)?.candidateDescriptor
+            val internalResolvedCall = (element.getParentOfType<KtElement>(strict = false))?.getResolvedCall(context)
+                                       ?: return null
+
+            when (scopeFunctionKind) {
+                ScopeFunctionKind.WITH_PARAMETER -> {
+                    if (internalReceiverDescriptor != scopeFunctionLiteralDescriptor.valueParameters.singleOrNull()) {
+                        return null
+                    }
+                }
+                ScopeFunctionKind.WITH_RECEIVER -> {
+                    if (internalReceiverDescriptor != scopeFunctionLiteralDescriptor.extensionReceiverParameter &&
+                        internalResolvedCall.getImplicitReceiverValue() == null) {
+                        return null
+                    }
+                }
+            }
+
+            return ReplaceWithSafeCallForScopeFunctionFix(scopeDotQualifiedExpression)
+        }
+
+        private fun KtCallExpression.scopeFunctionKind(context: BindingContext): ScopeFunctionKind? {
+            val methodName = getResolvedCall(context)?.resultingDescriptor?.fqNameUnsafe?.asString()
+            return ScopeFunctionKind.values().firstOrNull { kind -> kind.names.contains(methodName) }
+        }
+
+        private enum class ScopeFunctionKind(vararg val names: String) {
+            WITH_PARAMETER("kotlin.let", "kotlin.also"),
+            WITH_RECEIVER("kotlin.apply", "kotlin.run")
         }
     }
 }
