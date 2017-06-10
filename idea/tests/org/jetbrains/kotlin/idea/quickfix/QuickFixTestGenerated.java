@@ -8763,6 +8763,57 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/replaceWithSafeCallForScopeFunction")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceWithSafeCallForScopeFunction extends AbstractQuickFixTest {
+        public void testAllFilesPresentInReplaceWithSafeCallForScopeFunction() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceWithSafeCallForScopeFunction"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("also.kt")
+        public void testAlso() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCallForScopeFunction/also.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("applyWithThis.kt")
+        public void testApplyWithThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCallForScopeFunction/applyWithThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("applyWithoutThis.kt")
+        public void testApplyWithoutThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCallForScopeFunction/applyWithoutThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("applyWithoutThisMethodCall.kt")
+        public void testApplyWithoutThisMethodCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCallForScopeFunction/applyWithoutThisMethodCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("let.kt")
+        public void testLet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCallForScopeFunction/let.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notInsideScope.kt")
+        public void testNotInsideScope() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCallForScopeFunction/notInsideScope.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("run.kt")
+        public void testRun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/replaceWithSafeCallForScopeFunction/run.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/simplifyComparison")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
