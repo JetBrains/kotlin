@@ -395,9 +395,9 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("wrapMinusUnaryOperator/inspectionData/inspections.test")
-        public void testWrapMinusUnaryOperator_inspectionData_Inspections_test() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/wrapMinusUnaryOperator/inspectionData/inspections.test");
+        @TestMetadata("wrapUnaryOperator/inspectionData/inspections.test")
+        public void testWrapUnaryOperator_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/wrapUnaryOperator/inspectionData/inspections.test");
             doTest(fileName);
         }
     }
