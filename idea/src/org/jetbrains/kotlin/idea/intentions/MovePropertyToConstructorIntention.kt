@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -53,14 +54,20 @@ class MovePropertyToConstructorIntention :
         applyTo(property, null)
     }
 
-    override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean =
-            !element.isLocal
-            && !element.hasDelegate()
-            && element.getter == null
-            && element.setter == null
-            && !element.hasModifier(LATEINIT_KEYWORD)
-            && element.getStrictParentOfType<KtClassOrObject>() is KtClass
-            && (element.initializer?.isValidInConstructor() ?: true)
+    override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
+        fun KtProperty.isDeclaredInClass() : Boolean {
+            val parent = element.getStrictParentOfType<KtClassOrObject>()
+            return parent != null && !parent.isInterfaceClass()
+        }
+
+        return !element.isLocal
+               && !element.hasDelegate()
+               && element.getter == null
+               && element.setter == null
+               && !element.hasModifier(LATEINIT_KEYWORD)
+               && (element.isDeclaredInClass())
+               && (element.initializer?.isValidInConstructor() ?: true)
+    }
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
         val parentClass = PsiTreeUtil.getParentOfType(element, KtClass::class.java) ?: return
