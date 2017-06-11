@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.intentions.MovePropertyToConstructorIntention
+import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtReferenceExpression
@@ -55,6 +56,8 @@ class CanBePrimaryConstructorPropertyInspection : AbstractKotlinInspection() {
 
                 val assignedParameter = DescriptorToSourceUtils.descriptorToDeclaration(assignedDescriptor) as? KtParameter ?: return
                 if (property.containingClassOrObject !== assignedParameter.containingClassOrObject) return
+
+                if (property.containingClassOrObject?.isInterfaceClass() ?: false) return
 
                 holder.registerProblem(holder.manager.createProblemDescriptor(
                         nameIdentifier,
