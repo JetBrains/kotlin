@@ -320,4 +320,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/inspectionsLocal/wrapUnaryOperator")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WrapUnaryOperator extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInWrapUnaryOperator() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/wrapUnaryOperator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/wrapUnaryOperator/simple.kt");
+            doTest(fileName);
+        }
+    }
 }

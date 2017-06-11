@@ -400,5 +400,11 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/unusedSymbol/typeParameter/inspectionData/inspections.test");
             doTest(fileName);
         }
+
+        @TestMetadata("wrapUnaryOperator/inspectionData/inspections.test")
+        public void testWrapUnaryOperator_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/wrapUnaryOperator/inspectionData/inspections.test");
+            doTest(fileName);
+        }
     }
 }
