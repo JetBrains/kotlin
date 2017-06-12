@@ -78,6 +78,7 @@ class NewKotlinFileAction
         builder.setTitle("New Kotlin File/Class")
                 .addKind("File", KotlinFileType.INSTANCE.icon, "Kotlin File")
                 .addKind("Class", KotlinIcons.CLASS, "Kotlin Class")
+                .addKind("Data Class", KotlinIcons.CLASS, "Kotlin Data Class")
                 .addKind("Interface", KotlinIcons.INTERFACE, "Kotlin Interface")
                 .addKind("Enum class", KotlinIcons.ENUM, "Kotlin Enum")
                 .addKind("Object", KotlinIcons.OBJECT, "Kotlin Object")
