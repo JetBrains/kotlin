@@ -105,6 +105,8 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isInt;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.CodegenUtilKt.extractReificationArgument;
+import static org.jetbrains.kotlin.codegen.CodegenUtilKt.unwrapInitialSignatureDescriptor;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.*;
@@ -2296,12 +2298,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private static FunctionDescriptor unwrapInitialSignatureDescriptor(@NotNull FunctionDescriptor function) {
-        if (function.getInitialSignatureDescriptor() != null) return function.getInitialSignatureDescriptor();
-        return function;
-    }
-
-    @NotNull
     protected CallGenerator getOrCreateCallGeneratorForDefaultImplBody(@NotNull FunctionDescriptor descriptor, @Nullable KtNamedFunction function) {
         return getOrCreateCallGenerator(descriptor, function, null, true);
     }
@@ -2368,22 +2364,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         return typeArgumentsMap;
-    }
-
-
-    @Nullable
-    private static Pair<TypeParameterDescriptor, ReificationArgument> extractReificationArgument(@NotNull KotlinType type) {
-        int arrayDepth = 0;
-        boolean isNullable = type.isMarkedNullable();
-        while (KotlinBuiltIns.isArray(type)) {
-            arrayDepth++;
-            type = type.getArguments().get(0).getType();
-        }
-
-        TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type);
-        if (parameterDescriptor == null) return null;
-
-        return new Pair<>(parameterDescriptor, new ReificationArgument(parameterDescriptor.getName().asString(), isNullable, arrayDepth));
     }
 
     @NotNull

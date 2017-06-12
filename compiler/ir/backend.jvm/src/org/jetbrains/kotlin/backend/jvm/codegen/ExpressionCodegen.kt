@@ -22,8 +22,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.StackValue.*
+import org.jetbrains.kotlin.codegen.inline.NameGenerator
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
+import org.jetbrains.kotlin.codegen.inline.TypeParameterMappings
 import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
+import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -34,13 +38,17 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_THROWABLE_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -93,7 +101,7 @@ class ExpressionCodegen(
         val frame: FrameMap,
         val mv: InstructionAdapter,
         val classCodegen: ClassCodegen
-) : IrElementVisitor<StackValue, BlockInfo> {
+) : IrElementVisitor<StackValue, BlockInfo>, BaseExpressionCodegen {
 
     /*TODO*/
     val intrinsics = IrIntrinsicMethods(classCodegen.context.irBuiltIns)
@@ -101,6 +109,8 @@ class ExpressionCodegen(
     val typeMapper = classCodegen.typeMapper
 
     val returnType = typeMapper.mapReturnType(irFunction.descriptor)
+
+    val state = classCodegen.state
 
     fun generate() {
         mv.visitCode()
@@ -205,44 +215,52 @@ class ExpressionCodegen(
         if (callable is IrIntrinsicFunction) {
             return callable.invoke(mv, this, data)
         } else {
+            val callGenerator = getOrCreateCallGenerator(expression, expression.descriptor)
+
             val receiver = expression.dispatchReceiver
             receiver?.apply {
-                gen(receiver, callable.dispatchReceiverType!!, data)
+                //gen(receiver, callable.dispatchReceiverType!!, data)
+                callGenerator.genValueAndPut(null, this, callable.dispatchReceiverType!!, -1, this@ExpressionCodegen, data)
             }
 
             expression.extensionReceiver?.apply {
-                gen(this, callable.extensionReceiverType!!, data)
+                //gen(this, callable.extensionReceiverType!!, data)
+                callGenerator.genValueAndPut(null, this, callable.extensionReceiverType!!, -1, this@ExpressionCodegen, data)
             }
 
-            val args = expression.descriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
-                           expression.getValueArgument(i) ?:
-                           if (valueParameterDescriptor.hasDefaultValue()) DefaultArg(i) else Vararg(i)
-                       }
-
             val defaultMask = DefaultCallArgs(callable.valueParameterTypes.size)
-            args.forEachIndexed { i, expression ->
-                when (expression) {
-                    is IrExpression -> {
-                        gen(expression, callable.valueParameterTypes[i], data)
+            expression.descriptor.valueParameters.forEachIndexed { i, parameterDescriptor ->
+                val arg = expression.getValueArgument(i)
+                val parameterType = callable.valueParameterTypes[i]
+                when {
+                    arg != null -> {
+                        callGenerator.genValueAndPut(parameterDescriptor, arg, parameterType, i, this@ExpressionCodegen, data)
                     }
-                    is DefaultArg -> {
-                        pushDefaultValueOnStack(callable.valueParameterTypes[i], mv)
-                        defaultMask.mark(expression.index)
+                    parameterDescriptor.hasDefaultValue() -> {
+                        callGenerator.putValueIfNeeded(parameterType, StackValue.createDefaulValue(parameterType), ValueKind.DEFAULT_PARAMETER, i, this@ExpressionCodegen)
+                        defaultMask.mark(i)
                     }
-                    is Vararg -> {
-                        mv.aconst(null)
+                    else -> {
+                        assert(parameterDescriptor.varargElementType != null)
                         //empty vararg
+
+                        callGenerator.putValueIfNeeded(
+                                parameterType,
+                                StackValue.operation(parameterType) {
+                                    it.aconst(0)
+                                    it.newarray(correctElementType(parameterType))
+                                },
+                                ValueKind.GENERAL_VARARG, i, this@ExpressionCodegen)
                     }
-                    else -> TODO()
                 }
             }
 
+            callGenerator.genCall(
+                    callable,
+                    defaultMask.generateOnStackIfNeeded(callGenerator, expression.descriptor is ConstructorDescriptor, this),
+                    this
+            )
 
-            if (!defaultMask.generateOnStackIfNeeded(mv, expression.descriptor is ConstructorDescriptor)) {
-                callable.genInvokeInstruction(mv)
-            } else {
-                (callable as CallableMethod).genInvokeDefaultInstruction(mv)
-            }
             val returnType = expression.descriptor.returnType
             if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
                 mv.aconst(null)
@@ -897,8 +915,102 @@ class ExpressionCodegen(
 
     private val CallableDescriptor.asmType: Type
         get() = typeMapper.mapType(this)
+
+
+    private fun getOrCreateCallGenerator(
+            descriptor: CallableDescriptor,
+            element: IrMemberAccessExpression?,
+            typeParameterMappings: TypeParameterMappings?,
+            isDefaultCompilation: Boolean
+    ): IrCallGenerator {
+        if (element == null) return IrCallGenerator.DefaultCallGenerator
+
+        // We should inline callable containing reified type parameters even if inline is disabled
+        // because they may contain something to reify and straight call will probably fail at runtime
+        val isInline = (!state.isInlineDisabled || InlineUtil.containsReifiedTypeParameters(descriptor)) && (InlineUtil.isInline(descriptor) || InlineUtil.isArrayConstructorWithLambda(descriptor))
+
+        if (!isInline) return IrCallGenerator.DefaultCallGenerator
+
+        val original = unwrapInitialSignatureDescriptor(DescriptorUtils.unwrapFakeOverride(descriptor.original as FunctionDescriptor))
+        if (isDefaultCompilation) {
+            return TODO()
+        }
+        else {
+            return IrInlineCodegen(this, state, original, typeParameterMappings!!, IrSourceCompilerForInline(state, element))
+        }
+    }
+
+    internal fun getOrCreateCallGenerator(memberAccessExpression: IrMemberAccessExpression, descriptor: CallableDescriptor): IrCallGenerator {
+        val typeArguments = descriptor.typeParameters.keysToMap { memberAccessExpression.getTypeArgumentOrDefault(it) }
+
+        val mappings = TypeParameterMappings()
+        for (entry in typeArguments.entries) {
+            val key = entry.key
+            val type = entry.value
+
+            val isReified = key.isReified || InlineUtil.isArrayConstructorWithLambda(descriptor)
+
+            val typeParameterAndReificationArgument = extractReificationArgument(type)
+            if (typeParameterAndReificationArgument == null) {
+                val approximatedType = approximateCapturedTypes(entry.value).upper
+                // type is not generic
+                val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
+                val asmType = typeMapper.mapTypeParameter(approximatedType, signatureWriter)
+
+                mappings.addParameterMappingToType(
+                        key.name.identifier, approximatedType, asmType, signatureWriter.toString(), isReified
+                )
+            }
+            else {
+                mappings.addParameterMappingForFurtherReification(
+                        key.name.identifier, type, typeParameterAndReificationArgument.second, isReified
+                )
+            }
+        }
+
+        return getOrCreateCallGenerator(descriptor, memberAccessExpression, mappings, false)
+    }
+
+    override val frameMap: FrameMap
+        get() = frame
+    override val visitor: InstructionAdapter
+        get() = mv
+    override val inlineNameGenerator: NameGenerator = NameGenerator("${classCodegen.type.internalName}\$todo")
+
+    override val lastLineNumber: Int
+        get() = -1 //TODO
+
+    override fun consumeReifiedOperationMarker(typeParameterDescriptor: TypeParameterDescriptor) {
+        //TODO
+    }
+
+    override fun propagateChildReifiedTypeParametersUsages(reifiedTypeParametersUsages: ReifiedTypeParametersUsages) {
+        //TODO
+    }
+
+    override fun pushClosureOnStack(classDescriptor: ClassDescriptor, putThis: Boolean, callGenerator: CallGenerator, functionReferenceReceiver: StackValue?) {
+        //TODO
+    }
+
+    override fun markLineNumberAfterInlineIfNeeded() {
+        //TODO
+    }
 }
 
 private class DefaultArg(val index: Int)
 
 private class Vararg(val index: Int)
+
+
+fun DefaultCallArgs.generateOnStackIfNeeded(callGenerator: IrCallGenerator, isConstructor: Boolean, codegen: ExpressionCodegen): Boolean {
+    val toInts = toInts()
+    if (!toInts.isEmpty()) {
+        for (mask in toInts) {
+            callGenerator.putValueIfNeeded(Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE), ValueKind.DEFAULT_MASK, -1, codegen)
+        }
+
+        val parameterType = if (isConstructor) AsmTypes.DEFAULT_CONSTRUCTOR_MARKER else AsmTypes.OBJECT_TYPE
+        callGenerator.putValueIfNeeded(parameterType, StackValue.constant(null, parameterType), ValueKind.METHOD_HANDLE_IN_DEFAULT, -1, codegen)
+    }
+    return toInts.isNotEmpty()
+}

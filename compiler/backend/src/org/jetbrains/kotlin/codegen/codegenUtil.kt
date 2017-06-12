@@ -17,17 +17,20 @@
 
 package org.jetbrains.kotlin.codegen
 
+import com.google.common.collect.Maps
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.PackageContext
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
+import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
@@ -44,6 +47,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -396,3 +400,20 @@ fun InstructionAdapter.generateNewInstanceDupAndPlaceBeforeStackTop(
         load(index, topStackType)
     }
 }
+
+fun extractReificationArgument(type: KotlinType): Pair<TypeParameterDescriptor, ReificationArgument>? {
+    var type = type
+    var arrayDepth = 0
+    val isNullable = type.isMarkedNullable
+    while (KotlinBuiltIns.isArray(type)) {
+        arrayDepth++
+        type = type.arguments[0].type
+    }
+
+    val parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type) ?: return null
+
+    return Pair(parameterDescriptor, ReificationArgument(parameterDescriptor.name.asString(), isNullable, arrayDepth))
+}
+
+fun unwrapInitialSignatureDescriptor(function: FunctionDescriptor): FunctionDescriptor =
+        function.initialSignatureDescriptor ?: function
