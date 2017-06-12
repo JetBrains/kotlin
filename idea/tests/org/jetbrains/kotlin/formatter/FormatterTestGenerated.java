@@ -422,6 +422,18 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("LineBreakBeforeExtendsColon.after.kt")
+        public void testLineBreakBeforeExtendsColon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LineBreakBeforeExtendsColon.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LineBreakBeforeExtendsColonWrap.after.kt")
+        public void testLineBreakBeforeExtendsColonWrap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LineBreakBeforeExtendsColonWrap.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("LoopParameterWithExplicitType.after.kt")
         public void testLoopParameterWithExplicitType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LoopParameterWithExplicitType.after.kt");
