@@ -46,7 +46,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
-import org.jetbrains.kotlin.codegen.inline.getInsnText
+import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -146,10 +146,10 @@ open class MethodAnalyzer<V : Value>(
 
             }
             catch (e: AnalyzerException) {
-                throw AnalyzerException(e.node, "Error at instruction #" + insn + " ${getInsnText(insnNode)}: " + e.message, e)
+                throw AnalyzerException(e.node, "Error at instruction #" + insn + " ${insnNode.insnText}: " + e.message, e)
             }
             catch (e: Exception) {
-                throw AnalyzerException(insnNode, "Error at instruction #" + insn + " ${getInsnText(insnNode)}: " + e.message, e)
+                throw AnalyzerException(insnNode, "Error at instruction #" + insn + " ${insnNode.insnText}: " + e.message, e)
             }
 
         }

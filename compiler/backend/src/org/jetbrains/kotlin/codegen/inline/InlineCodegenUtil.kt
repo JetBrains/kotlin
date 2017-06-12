@@ -346,15 +346,16 @@ fun getNodeText(node: MethodNode?): String {
     return node.name + " " + node.desc + ":\n" + sw.buffer.toString()
 }
 
-fun getInsnText(node: AbstractInsnNode?): String {
-    if (node == null) return "<null>"
-    val textifier = Textifier()
-    node.accept(TraceMethodVisitor(textifier))
-    val sw = StringWriter()
-    textifier.print(PrintWriter(sw))
-    sw.flush()
-    return sw.toString().trim { it <= ' ' }
-}
+val AbstractInsnNode?.insnText: String
+    get() {
+        if (this == null) return "<null>"
+        val textifier = Textifier()
+        accept(TraceMethodVisitor(textifier))
+        val sw = StringWriter()
+        textifier.print(PrintWriter(sw))
+        sw.flush()
+        return sw.toString().trim { it <= ' ' }
+    }
 
 fun getInsnOpcodeText(node: AbstractInsnNode?): String {
     return if (node == null) "null" else Printer.OPCODES[node.opcode]

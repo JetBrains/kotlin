@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import com.intellij.openapi.util.Pair
 import org.jetbrains.kotlin.codegen.inline.getInsnOpcodeText
-import org.jetbrains.kotlin.codegen.inline.getInsnText
+import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.optimization.common.*
@@ -325,7 +325,7 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
     }
 
     private fun throwCannotAdaptInstruction(insn: AbstractInsnNode): Nothing =
-            throw AssertionError("Cannot adapt instruction: ${getInsnText(insn)}")
+            throw AssertionError("Cannot adapt instruction: ${insn.insnText}")
 
     private fun adaptAreEqualIntrinsic(
             node: MethodNode,
