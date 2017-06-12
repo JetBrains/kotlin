@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.MemberCodegen
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
@@ -34,7 +35,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fileClasses.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -55,6 +60,8 @@ import java.io.StringWriter
 
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.ENUM_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_CLASS_TYPE
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 
 
 const val GENERATE_SMAP = true
@@ -545,4 +552,56 @@ fun createSpecialEnumMethodBody(
 
 fun getSpecialEnumFunDescriptor(type: Type, isValueOf: Boolean): String {
     return if (isValueOf) Type.getMethodDescriptor(type, AsmTypes.JAVA_STRING_TYPE) else Type.getMethodDescriptor(AsmUtil.getArrayType(type))
+}
+
+
+val FunctionDescriptor.sourceFilePath: String
+    get() {
+        val source = source as PsiSourceElement
+        val containingFile = source.psi?.containingFile
+        return containingFile?.virtualFile?.canonicalPath!!
+    }
+
+fun FunctionDescriptor.getClassFilePath(typeMapper: KotlinTypeMapper, cache: IncrementalCache): String {
+    val container = containingDeclaration as? DeclarationDescriptorWithSource
+    val source = container?.source
+
+    return when (source) {
+        is KotlinJvmBinaryPackageSourceElement -> {
+            val directMember = JvmCodegenUtil.getDirectMember(this)
+            if (directMember !is DeserializedCallableMemberDescriptor) {
+                throw AssertionError("Expected DeserializedCallableMemberDescriptor, got: $this")
+            }
+            val kotlinClass = source.getContainingBinaryClass(directMember) ?:
+                              throw AssertionError("Descriptor $this is not found, in: $source")
+            if (kotlinClass !is VirtualFileKotlinClass) {
+                throw AssertionError("Expected VirtualFileKotlinClass, got $kotlinClass")
+            }
+            kotlinClass.file.canonicalPath!!
+        }
+        is KotlinJvmBinarySourceElement -> {
+            val directMember = JvmCodegenUtil.getDirectMember(this)
+            assert(directMember is DeserializedCallableMemberDescriptor) { "Expected DeserializedSimpleFunctionDescriptor, got: $this" }
+            val kotlinClass = source.binaryClass as VirtualFileKotlinClass
+            kotlinClass.file.canonicalPath!!
+        }
+        else -> {
+            val implementationOwnerType = typeMapper.mapImplementationOwner(this)
+            val className = implementationOwnerType.internalName
+            cache.getClassFilePath(className)
+        }
+    }
+}
+
+class InlineOnlySmapSkipper(codegen: ExpressionCodegen) {
+
+    val callLineNumber = codegen.lastLineNumber
+
+    fun markCallSiteLineNumber(mv: MethodVisitor) {
+        if (callLineNumber >= 0) {
+            val label = Label()
+            mv.visitLabel(label)
+            mv.visitLineNumber(callLineNumber, label)
+        }
+    }
 }

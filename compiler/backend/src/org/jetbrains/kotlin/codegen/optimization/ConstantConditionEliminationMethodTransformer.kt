@@ -113,6 +113,7 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
             actions.add {
                 methodNode.instructions.run {
                     insertBefore(insn, InsnNode(Opcodes.POP))
+
                     insertBefore(insn, InsnNode(Opcodes.POP))
                     if (constCondition)
                         set(insn, JumpInsnNode(Opcodes.GOTO, insn.label))
