@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtExpression
 import java.util.*
 
 private val QUALIFIED_OPERATION = TokenSet.create(DOT, SAFE_ACCESS)
@@ -361,6 +363,18 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                 .within(KtNodeTypes.THEN, KtNodeTypes.ELSE).notForType(KtNodeTypes.BLOCK)
                 .set(Indent.getNormalIndent()),
 
+        strategy("Expression body")
+                .within(KtNodeTypes.FUN)
+                .forElement {
+                    it.psi is KtExpression && it.psi !is KtBlockExpression
+                }
+                .set { settings ->
+                    if (settings.kotlinSettings.CONTINUATION_INDENT_FOR_EXPRESSION_BODIES)
+                        Indent.getContinuationIndent()
+                    else
+                        Indent.getNormalIndent()
+                },
+
         strategy("Indent for parts")
                 .within(KtNodeTypes.PROPERTY, KtNodeTypes.FUN, KtNodeTypes.DESTRUCTURING_DECLARATION, KtNodeTypes.SECONDARY_CONSTRUCTOR)
                 .notForType(KtNodeTypes.BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, CONSTRUCTOR_KEYWORD)
@@ -406,7 +420,7 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                 .notForType(KtNodeTypes.BLOCK, KtNodeTypes.WHEN_CONDITION_EXPRESSION, KtNodeTypes.WHEN_CONDITION_IN_RANGE, KtNodeTypes.WHEN_CONDITION_IS_PATTERN, ELSE_KEYWORD, ARROW)
                 .set(Indent.getNormalIndent()),
 
-         strategy("Parameter list")
+        strategy("Parameter list")
                 .within(KtNodeTypes.VALUE_PARAMETER_LIST)
                 .forElement { it.elementType == KtNodeTypes.VALUE_PARAMETER && it.psi.prevSibling != null }
                 .set { settings ->
@@ -415,6 +429,7 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                     else
                         Indent.getNormalIndent()
                 })
+
 
 private fun getOperationType(node: ASTNode): IElementType? = node.findChildByType(KtNodeTypes.OPERATION_REFERENCE)?.firstChildNode?.elementType
 

@@ -126,6 +126,9 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                            bar: String
                        ) {
                        }
+
+                       fun expressionBodyMethod() =
+                               "abc"
                    }
                    class AnotherClass<T : Any> : Some()
                    """.trimIndent()

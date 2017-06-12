@@ -25,10 +25,12 @@ import javax.swing.JCheckBox
 
 class KotlinIndentOptionsEditor : SmartIndentOptionsEditor() {
     private val useContinuationIndentInParameterList = JCheckBox("Use continuation indent in parameter lists")
+    private val useContinuationIndentForExpressionBodies = JCheckBox("Use continuation indent for expression bodies")
 
     override fun addComponents() {
         super.addComponents()
         add(useContinuationIndentInParameterList)
+        add(useContinuationIndentForExpressionBodies)
     }
 
     override fun isModified(settings: CodeStyleSettings, options: CommonCodeStyleSettings.IndentOptions): Boolean {
@@ -36,6 +38,8 @@ class KotlinIndentOptionsEditor : SmartIndentOptionsEditor() {
         val kotlinSettings = settings.getCustomSettings(KotlinCodeStyleSettings::class.java)
         isModified = isModified || IndentOptionsEditor.isFieldModified(useContinuationIndentInParameterList,
                                                                        kotlinSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS)
+        isModified = isModified || IndentOptionsEditor.isFieldModified(useContinuationIndentForExpressionBodies,
+                                                                       kotlinSettings.CONTINUATION_INDENT_FOR_EXPRESSION_BODIES)
         return isModified
     }
 
@@ -43,16 +47,19 @@ class KotlinIndentOptionsEditor : SmartIndentOptionsEditor() {
         super.apply(settings, options)
         val kotlinSettings = settings.getCustomSettings(KotlinCodeStyleSettings::class.java)
         kotlinSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS = useContinuationIndentInParameterList.isSelected
+        kotlinSettings.CONTINUATION_INDENT_FOR_EXPRESSION_BODIES = useContinuationIndentForExpressionBodies.isSelected
     }
 
     override fun reset(settings: CodeStyleSettings, options: CommonCodeStyleSettings.IndentOptions) {
         super.reset(settings, options)
         val kotlinSettings = settings.getCustomSettings(KotlinCodeStyleSettings::class.java)
         useContinuationIndentInParameterList.isSelected = kotlinSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS
+        useContinuationIndentForExpressionBodies.isSelected = kotlinSettings.CONTINUATION_INDENT_FOR_EXPRESSION_BODIES
     }
 
     override fun setEnabled(enabled: Boolean) {
         super.setEnabled(enabled)
         useContinuationIndentInParameterList.isEnabled = enabled
+        useContinuationIndentForExpressionBodies.isEnabled = enabled
     }
 }

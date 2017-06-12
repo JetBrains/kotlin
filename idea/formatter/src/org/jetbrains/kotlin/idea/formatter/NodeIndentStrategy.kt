@@ -41,6 +41,7 @@ abstract class NodeIndentStrategy {
         private val notIn = ArrayList<IElementType>()
         private val forElement = ArrayList<IElementType>()
         private val notForElement = ArrayList<IElementType>()
+        private var forElementCallback: ((ASTNode) -> Boolean)? = null
 
         override fun toString(): String {
             return "PositionStrategy " + (debugInfo ?: "No debug info")
@@ -98,14 +99,22 @@ abstract class NodeIndentStrategy {
             return this
         }
 
+        fun forElement(callback: (ASTNode) -> Boolean): PositionStrategy {
+            forElementCallback = callback
+            return this
+        }
+
         override fun getIndent(node: ASTNode, settings: CodeStyleSettings): Indent? {
             if (!forElement.isEmpty()) {
                 if (!forElement.contains(node.elementType)) {
                     return null
                 }
             }
-
             if (notForElement.contains(node.elementType)) {
+                return null
+            }
+
+            if (forElementCallback?.invoke(node) == false) {
                 return null
             }
 

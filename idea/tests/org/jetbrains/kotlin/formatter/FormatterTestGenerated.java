@@ -1040,6 +1040,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTestInverted(fileName);
         }
 
+        @TestMetadata("ContinuationIndentForExpressionBodies.after.inv.kt")
+        public void testContinuationIndentForExpressionBodies() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ContinuationIndentForExpressionBodies.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
         @TestMetadata("DelegationList.after.inv.kt")
         public void testDelegationList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/DelegationList.after.inv.kt");
