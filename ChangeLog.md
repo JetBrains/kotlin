@@ -3,6 +3,26 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.1.2-5
+
+- [`KT-18026`](https://youtrack.jetbrains.com/issue/KT-18026) Fixed regression with coroutine support in 1.1.2-4
+- Fix for the Databinding issue where the kapt task started too early, not letting the Databinding pre-process the project
+- Add support for com.android.feature plugin
+- Fix UnsupportedOperationException caused by mutation of FileCollection in Gradle builds
+
+## 1.1.2-4
+
+- Compatibility with Android Build Tools 3.0.0-alpha1 and Android Studio 3.0 Canary 1
+
+## 1.1.2-3
+
+- [`KT-17596`](https://youtrack.jetbrains.com/issue/KT-17596) Fixed display of compilation errors in Android Studio
+
+## 1.1.2-2
+
+- [`KT-17610`](https://youtrack.jetbrains.com/issue/KT-17610) Fixed enabling Android Extensions IDE support for non-Gradle projects
+- [`KT-17597`](https://youtrack.jetbrains.com/issue/KT-17597) Fixed regression in method reference overload resolution
+
 ## 1.1.2
 
 ### Compiler
