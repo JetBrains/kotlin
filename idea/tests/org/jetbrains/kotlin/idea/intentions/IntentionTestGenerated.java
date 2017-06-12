@@ -11624,6 +11624,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("declaredInInterface.kt")
+        public void testDeclaredInInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToConstructor/declaredInInterface.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("delegated.kt")
         public void testDelegated() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToConstructor/delegated.kt");
