@@ -618,7 +618,7 @@ class MethodInliner(
             return InlineException("$errorPrefix: $errorSuffix", originalException)
         }
         else {
-            return InlineException("$errorPrefix: $errorSuffix\nCause: ${getNodeText(node)}", originalException)
+            return InlineException("$errorPrefix: $errorSuffix\nCause: ${node.nodeText}", originalException)
         }
     }
 

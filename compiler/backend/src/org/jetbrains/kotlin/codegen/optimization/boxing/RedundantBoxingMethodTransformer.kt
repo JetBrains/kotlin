@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import com.intellij.openapi.util.Pair
-import org.jetbrains.kotlin.codegen.inline.getInsnOpcodeText
+import org.jetbrains.kotlin.codegen.inline.insnOpcodeText
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
@@ -393,7 +393,7 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
                 next.getOpcode() == Opcodes.IFNE ->
                     insertBefore(insn, JumpInsnNode(ifNotEqualOpcode, nextLabel))
                 else ->
-                    throw AssertionError("IFEQ or IFNE expected: " + getInsnOpcodeText(next))
+                    throw AssertionError("IFEQ or IFNE expected: ${next.insnOpcodeText}")
             }
         }
     }

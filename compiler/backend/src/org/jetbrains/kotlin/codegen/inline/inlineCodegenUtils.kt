@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.codegen.MemberCodegen
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.CodegenContextUtil
@@ -325,17 +324,18 @@ fun firstLabelInChain(node: LabelNode): LabelNode {
     return curNode
 }
 
-fun getNodeText(node: MethodNode?): String {
-    val textifier = Textifier()
-    if (node == null) {
-        return "Not generated"
+val MethodNode?.nodeText: String
+    get() {
+        if (this == null) {
+            return "Not generated"
+        }
+        val textifier = Textifier()
+        accept(TraceMethodVisitor(textifier))
+        val sw = StringWriter()
+        textifier.print(PrintWriter(sw))
+        sw.flush()
+        return name + " " + desc + ":\n" + sw.buffer.toString()
     }
-    node.accept(TraceMethodVisitor(textifier))
-    val sw = StringWriter()
-    textifier.print(PrintWriter(sw))
-    sw.flush()
-    return node.name + " " + node.desc + ":\n" + sw.buffer.toString()
-}
 
 val AbstractInsnNode?.insnText: String
     get() {
@@ -348,11 +348,12 @@ val AbstractInsnNode?.insnText: String
         return sw.toString().trim { it <= ' ' }
     }
 
-fun getInsnOpcodeText(node: AbstractInsnNode?): String {
-    return if (node == null) "null" else Printer.OPCODES[node.opcode]
-}
+val AbstractInsnNode?.insnOpcodeText: String
+    get() {
+        return if (this == null) "null" else Printer.OPCODES[opcode]
+    }
 
-internal /* package */ fun buildClassReaderByInternalName(state: GenerationState, internalName: String): ClassReader {
+internal fun buildClassReaderByInternalName(state: GenerationState, internalName: String): ClassReader {
     //try to find just compiled classes then in dependencies
     try {
         val outputFile = state.factory.get(internalName + ".class")

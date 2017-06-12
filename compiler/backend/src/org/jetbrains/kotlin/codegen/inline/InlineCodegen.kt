@@ -167,7 +167,7 @@ class InlineCodegen(
                 "Couldn't inline method call '" + functionDescriptor.name + "' into\n" +
                 DescriptorRenderer.DEBUG_TEXT.render(contextDescriptor) + "\n" +
                 (element?.text ?: "<no source>") +
-                if (generateNodeText) "\nCause: " + getNodeText(node) else "",
+                if (generateNodeText) "\nCause: " + node.nodeText else "",
                 e, callElement
         )
     }
