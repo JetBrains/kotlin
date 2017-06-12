@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.formatting.*
-import com.intellij.formatting.ChildAttributes.DELEGATE_TO_NEXT_CHILD
 import com.intellij.lang.ASTNode
 import com.intellij.psi.TokenType
 import com.intellij.psi.codeStyle.CodeStyleSettings
@@ -26,7 +25,7 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
-import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.strategy
+import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.Companion.strategy
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -330,21 +329,21 @@ abstract class KotlinCommonBlock(
 
 private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
         strategy("No indent for braces in blocks")
-                .`in`(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_BODY, KtNodeTypes.FUNCTION_LITERAL)
+                .within(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_BODY, KtNodeTypes.FUNCTION_LITERAL)
                 .forType(RBRACE, LBRACE)
                 .set(Indent.getNoneIndent()),
 
         strategy("Indent for block content")
-                .`in`(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_BODY, KtNodeTypes.FUNCTION_LITERAL)
+                .within(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_BODY, KtNodeTypes.FUNCTION_LITERAL)
                 .notForType(RBRACE, LBRACE, KtNodeTypes.BLOCK)
                 .set(Indent.getNormalIndent(false)),
 
         strategy("Indent for property accessors")
-                .`in`(KtNodeTypes.PROPERTY).forType(KtNodeTypes.PROPERTY_ACCESSOR)
+                .within(KtNodeTypes.PROPERTY).forType(KtNodeTypes.PROPERTY_ACCESSOR)
                 .set(Indent.getNormalIndent()),
 
         strategy("For a single statement in 'for'")
-                .`in`(KtNodeTypes.BODY).notForType(KtNodeTypes.BLOCK)
+                .within(KtNodeTypes.BODY).notForType(KtNodeTypes.BLOCK)
                 .set(Indent.getNormalIndent()),
 
         strategy("For the entry in when")
@@ -352,51 +351,51 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                 .set(Indent.getNormalIndent()),
 
         strategy("For single statement in THEN and ELSE")
-                .`in`(KtNodeTypes.THEN, KtNodeTypes.ELSE).notForType(KtNodeTypes.BLOCK)
+                .within(KtNodeTypes.THEN, KtNodeTypes.ELSE).notForType(KtNodeTypes.BLOCK)
                 .set(Indent.getNormalIndent()),
 
         strategy("Indent for parts")
-                .`in`(KtNodeTypes.PROPERTY, KtNodeTypes.FUN, KtNodeTypes.DESTRUCTURING_DECLARATION, KtNodeTypes.SECONDARY_CONSTRUCTOR)
+                .within(KtNodeTypes.PROPERTY, KtNodeTypes.FUN, KtNodeTypes.DESTRUCTURING_DECLARATION, KtNodeTypes.SECONDARY_CONSTRUCTOR)
                 .notForType(KtNodeTypes.BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, CONSTRUCTOR_KEYWORD)
                 .set(Indent.getContinuationWithoutFirstIndent()),
 
         strategy("Chained calls")
-                .`in`(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.SAFE_ACCESS_EXPRESSION)
+                .within(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.SAFE_ACCESS_EXPRESSION)
                 .set(Indent.getContinuationWithoutFirstIndent(false)),
 
         strategy("Colon of delegation list")
-                .`in`(KtNodeTypes.CLASS, KtNodeTypes.OBJECT_DECLARATION)
+                .within(KtNodeTypes.CLASS, KtNodeTypes.OBJECT_DECLARATION)
                 .forType(KtTokens.COLON)
                 .set(Indent.getNormalIndent(false)),
 
         strategy("Delegation list")
-                .`in`(KtNodeTypes.SUPER_TYPE_LIST, KtNodeTypes.INITIALIZER_LIST)
+                .within(KtNodeTypes.SUPER_TYPE_LIST, KtNodeTypes.INITIALIZER_LIST)
                 .set(Indent.getContinuationIndent(false)),
 
         strategy("Indices")
-                .`in`(KtNodeTypes.INDICES)
+                .within(KtNodeTypes.INDICES)
                 .set(Indent.getContinuationIndent(false)),
 
         strategy("Binary expressions")
-                .`in`(BINARY_EXPRESSIONS)
+                .within(BINARY_EXPRESSIONS)
                 .set(Indent.getContinuationWithoutFirstIndent(false)),
 
         strategy("Parenthesized expression")
-                .`in`(KtNodeTypes.PARENTHESIZED)
+                .within(KtNodeTypes.PARENTHESIZED)
                 .set(Indent.getContinuationWithoutFirstIndent(false)),
 
         strategy("Round Brackets around conditions")
                 .forType(LPAR, RPAR)
-                .`in`(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
+                .within(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
                 .set(Indent.getContinuationWithoutFirstIndent(true)),
 
         strategy("KDoc comment indent")
-                .`in`(KDOC_CONTENT)
+                .within(KDOC_CONTENT)
                 .forType(KDocTokens.LEADING_ASTERISK, KDocTokens.END)
                 .set(Indent.getSpaceIndent(KDOC_COMMENT_INDENT)),
 
         strategy("Block in when entry")
-                .`in`(KtNodeTypes.WHEN_ENTRY)
+                .within(KtNodeTypes.WHEN_ENTRY)
                 .notForType(KtNodeTypes.BLOCK, KtNodeTypes.WHEN_CONDITION_EXPRESSION, KtNodeTypes.WHEN_CONDITION_IN_RANGE, KtNodeTypes.WHEN_CONDITION_IS_PATTERN, ELSE_KEYWORD, ARROW)
                 .set(Indent.getNormalIndent()))
 

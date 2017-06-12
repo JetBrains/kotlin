@@ -14,151 +14,130 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.formatter;
+package org.jetbrains.kotlin.idea.formatter
 
-import com.intellij.formatting.Indent;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.formatting.Indent
+import com.intellij.lang.ASTNode
+import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+abstract class NodeIndentStrategy {
 
-@SuppressWarnings("UnusedDeclaration")
-public abstract class NodeIndentStrategy {
-    public static NodeIndentStrategy constIndent(Indent indent) {
-        return new ConstIndentStrategy(indent);
-    }
+    abstract fun getIndent(node: ASTNode): Indent?
 
-    public static PositionStrategy strategy(@Nullable String debugInfo) {
-        return new PositionStrategy(debugInfo);
-    }
+    class ConstIndentStrategy(private val indent: Indent) : NodeIndentStrategy() {
 
-    @Nullable
-    public abstract Indent getIndent(@NotNull ASTNode node);
-
-    public static class ConstIndentStrategy extends NodeIndentStrategy {
-        private final Indent indent;
-
-        public ConstIndentStrategy(Indent indent) {
-            this.indent = indent;
-        }
-
-        @Nullable
-        @Override
-        public Indent getIndent(@NotNull ASTNode node) {
-            return indent;
+        override fun getIndent(node: ASTNode): Indent? {
+            return indent
         }
     }
 
-    public static class PositionStrategy extends NodeIndentStrategy {
-        private Indent defaultIndent = Indent.getNoneIndent();
+    class PositionStrategy(private val debugInfo: String?) : NodeIndentStrategy() {
+        private var defaultIndent = Indent.getNoneIndent()
 
-        private final List<IElementType> in = new ArrayList<IElementType>();
-        private final List<IElementType> notIn = new ArrayList<IElementType>();
-        private final List<IElementType> forElement = new ArrayList<IElementType>();
-        private final List<IElementType> notForElement = new ArrayList<IElementType>();
+        private val within = ArrayList<IElementType>()
+        private val notIn = ArrayList<IElementType>()
+        private val forElement = ArrayList<IElementType>()
+        private val notForElement = ArrayList<IElementType>()
 
-        private final String debugInfo;
-
-        public PositionStrategy(@Nullable String debugInfo) {
-            this.debugInfo = debugInfo;
+        override fun toString(): String {
+            return "PositionStrategy " + (debugInfo ?: "No debug info")
         }
 
-        @Override
-        public String toString() {
-            return "PositionStrategy " + (debugInfo != null ? debugInfo : "No debug info");
+        fun set(indent: Indent): PositionStrategy {
+            defaultIndent = indent
+            return this
         }
 
-        public PositionStrategy set(Indent indent) {
-            defaultIndent = indent;
-            return this;
-        }
-
-        public PositionStrategy in(@NotNull TokenSet parents) {
-            IElementType[] types = parents.getTypes();
-            if (types.length == 0) {
-                throw new IllegalArgumentException("Empty token set is unexpected");
+        fun within(parents: TokenSet): PositionStrategy {
+            val types = parents.types
+            if (types.isEmpty()) {
+                throw IllegalArgumentException("Empty token set is unexpected")
             }
 
-            fillTypes(in, types[0], Arrays.copyOfRange(types, 1, types.length));
-            return this;
+            fillTypes(within, types[0], Arrays.copyOfRange(types, 1, types.size))
+            return this
         }
 
-        public PositionStrategy in(@NotNull IElementType parentType, @NotNull IElementType... orParentTypes) {
-            fillTypes(in, parentType, orParentTypes);
-            return this;
+        fun within(parentType: IElementType, vararg orParentTypes: IElementType): PositionStrategy {
+            fillTypes(within, parentType, orParentTypes)
+            return this
         }
 
-        public PositionStrategy notIn(@NotNull IElementType parentType, @NotNull IElementType... orParentTypes) {
-            fillTypes(notIn, parentType, orParentTypes);
-            return this;
+        fun notWithin(parentType: IElementType, vararg orParentTypes: IElementType): PositionStrategy {
+            fillTypes(notIn, parentType, orParentTypes)
+            return this
         }
 
-        public PositionStrategy inAny() {
-            in.clear();
-            notIn.clear();
-            return this;
+        fun withinAny(): PositionStrategy {
+            within.clear()
+            notIn.clear()
+            return this
         }
 
-        public PositionStrategy forType(@NotNull IElementType elementType, @NotNull IElementType... otherTypes) {
-            fillTypes(forElement, elementType, otherTypes);
-            return this;
+        fun forType(elementType: IElementType, vararg otherTypes: IElementType): PositionStrategy {
+            fillTypes(forElement, elementType, otherTypes)
+            return this
         }
 
-        public PositionStrategy notForType(@NotNull IElementType elementType, @NotNull IElementType... otherTypes) {
-            fillTypes(notForElement, elementType, otherTypes);
-            return this;
+        fun notForType(elementType: IElementType, vararg otherTypes: IElementType): PositionStrategy {
+            fillTypes(notForElement, elementType, otherTypes)
+            return this
         }
 
-        public PositionStrategy forAny() {
-            forElement.clear();
-            notForElement.clear();
-            return this;
+        fun forAny(): PositionStrategy {
+            forElement.clear()
+            notForElement.clear()
+            return this
         }
 
-        @Nullable
-        @Override
-        public Indent getIndent(@NotNull ASTNode node) {
+        override fun getIndent(node: ASTNode): Indent? {
             if (!forElement.isEmpty()) {
-                if (!forElement.contains(node.getElementType())) {
-                    return null;
+                if (!forElement.contains(node.elementType)) {
+                    return null
                 }
             }
 
-            if (notForElement.contains(node.getElementType())) {
-                return null;
+            if (notForElement.contains(node.elementType)) {
+                return null
             }
 
-            ASTNode parent = node.getTreeParent();
+            val parent = node.treeParent
             if (parent != null) {
-                if (!in.isEmpty()) {
-                    if (!in.contains(parent.getElementType())) {
-                        return null;
+                if (!within.isEmpty()) {
+                    if (!within.contains(parent.elementType)) {
+                        return null
                     }
                 }
 
-                if (notIn.contains(parent.getElementType())) {
-                    return null;
+                if (notIn.contains(parent.elementType)) {
+                    return null
                 }
             }
             else {
-                if (!in.isEmpty()) {
-                    return null;
+                if (!within.isEmpty()) {
+                    return null
                 }
             }
 
-            return defaultIndent;
+            return defaultIndent
         }
 
-        private static void fillTypes(List<IElementType> resultCollection, IElementType singleType, IElementType[] otherTypes) {
-            resultCollection.clear();
-            resultCollection.add(singleType);
-            Collections.addAll(resultCollection, otherTypes);
+        private fun fillTypes(resultCollection: MutableList<IElementType>, singleType: IElementType, otherTypes: Array<out IElementType>) {
+            resultCollection.clear()
+            resultCollection.add(singleType)
+            Collections.addAll(resultCollection, *otherTypes)
+        }
+    }
+
+    companion object {
+        fun constIndent(indent: Indent): NodeIndentStrategy {
+            return ConstIndentStrategy(indent)
+        }
+
+        fun strategy(debugInfo: String?): PositionStrategy {
+            return PositionStrategy(debugInfo)
         }
     }
 }
