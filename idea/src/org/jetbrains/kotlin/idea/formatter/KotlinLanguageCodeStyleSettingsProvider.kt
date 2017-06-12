@@ -164,31 +164,31 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                                  CodeStyleSettingsCustomizable.SPACES_AROUND_OPERATORS)
 
                 showCustomOption(KotlinCodeStyleSettings::SPACE_BEFORE_TYPE_COLON,
-                                 "Space before colon, after declaration name",
+                                 "Before colon, after declaration name",
                                  CodeStyleSettingsCustomizable.SPACES_OTHER)
 
                 showCustomOption(KotlinCodeStyleSettings::SPACE_AFTER_TYPE_COLON,
-                                 "Space after colon, before declaration type",
+                                 "After colon, before declaration type",
                                  CodeStyleSettingsCustomizable.SPACES_OTHER)
 
                 showCustomOption(KotlinCodeStyleSettings::SPACE_BEFORE_EXTEND_COLON,
-                                 "Space before colon in new type definition",
+                                 "Before colon in new type definition",
                                  CodeStyleSettingsCustomizable.SPACES_OTHER)
 
                 showCustomOption(KotlinCodeStyleSettings::SPACE_AFTER_EXTEND_COLON,
-                                "Space after colon in new type definition",
+                                "After colon in new type definition",
                                  CodeStyleSettingsCustomizable.SPACES_OTHER)
 
                 showCustomOption(KotlinCodeStyleSettings::INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD,
-                                 "Insert whitespaces in simple one line methods",
+                                 "In simple one line methods",
                                  CodeStyleSettingsCustomizable.SPACES_OTHER)
 
                 showCustomOption(KotlinCodeStyleSettings::SPACE_AROUND_FUNCTION_TYPE_ARROW,
-                                 "Surround arrow in function types with spaces",
+                                 "Around arrow in function types",
                                  CodeStyleSettingsCustomizable.SPACES_OTHER)
 
                 showCustomOption(KotlinCodeStyleSettings::SPACE_AROUND_WHEN_ARROW,
-                                "Surround arrow in \"when\" clause with spaces",
+                                "Around arrow in \"when\" clause",
                                  CodeStyleSettingsCustomizable.SPACES_OTHER)
 
                 showCustomOption(KotlinCodeStyleSettings::SPACE_BEFORE_LAMBDA_ARROW,
