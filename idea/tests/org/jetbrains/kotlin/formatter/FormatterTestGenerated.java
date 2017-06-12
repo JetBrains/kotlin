@@ -404,6 +404,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("KeepLineBreak.after.kt")
+        public void testKeepLineBreak() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KeepLineBreak.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("LabeledExpression.after.kt")
         public void testLabeledExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LabeledExpression.after.kt");
@@ -1073,6 +1079,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("IfElseWithTrickyComments.after.inv.kt")
         public void testIfElseWithTrickyComments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfElseWithTrickyComments.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
+        @TestMetadata("KeepLineBreak.after.inv.kt")
+        public void testKeepLineBreak() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KeepLineBreak.after.inv.kt");
             doTestInverted(fileName);
         }
 
