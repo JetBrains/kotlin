@@ -25,7 +25,9 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getLoadStoreArgSize;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.API;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.GENERATE_SMAP;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.getLoadStoreArgSize;
 
 public class InlineAdapter extends InstructionAdapter {
     private final SourceMapper sourceMapper;
@@ -36,7 +38,7 @@ public class InlineAdapter extends InstructionAdapter {
     private int nextLocalIndexBeforeInline = -1;
 
     public InlineAdapter(@NotNull MethodVisitor mv, int localsSize, @NotNull SourceMapper sourceMapper) {
-        super(InlineCodegenUtil.API, mv);
+        super(API, mv);
         this.nextLocalIndex = localsSize;
         this.sourceMapper = sourceMapper;
     }
@@ -86,7 +88,7 @@ public class InlineAdapter extends InstructionAdapter {
 
     @Override
     public void visitLineNumber(int line, @NotNull Label start) {
-        if (InlineCodegenUtil.GENERATE_SMAP) {
+        if (GENERATE_SMAP) {
             line = sourceMapper.mapLineNumber(line);
         }
         //skip not mapped lines

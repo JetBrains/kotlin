@@ -25,7 +25,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedSimple;
 import org.jetbrains.kotlin.codegen.context.*;
-import org.jetbrains.kotlin.codegen.inline.*;
+import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper;
+import org.jetbrains.kotlin.codegen.inline.NameGenerator;
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages;
+import org.jetbrains.kotlin.codegen.inline.SourceMapper;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
@@ -71,6 +74,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8InterfaceWithDefaultsMember;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.getInlineName;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -437,7 +441,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     @NotNull
     public NameGenerator getInlineNameGenerator() {
         if (inlineNameGenerator == null) {
-            String prefix = InlineCodegenUtil.getInlineName(context, typeMapper, fileClassesProvider);
+            String prefix = getInlineName(context, typeMapper, fileClassesProvider);
             inlineNameGenerator = new NameGenerator(prefix);
         }
         return inlineNameGenerator;

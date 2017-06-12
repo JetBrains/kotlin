@@ -121,7 +121,7 @@ fun MethodNode.findCapturedFieldAssignmentInstructions(): Sequence<FieldInsnNode
                 val prevPrev = fieldNode.previous?.previous as? VarInsnNode
 
                 fieldNode.opcode == Opcodes.PUTFIELD &&
-                InlineCodegenUtil.isCapturedFieldName(fieldNode.name) &&
+                isCapturedFieldName(fieldNode.name) &&
                 fieldNode.previous is VarInsnNode && prevPrev != null && prevPrev.`var` == 0
             }
 }

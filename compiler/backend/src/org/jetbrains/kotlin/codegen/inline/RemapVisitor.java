@@ -24,6 +24,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
 
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.CAPTURED_FIELD_FOLD_PREFIX;
+
 public class RemapVisitor extends MethodBodyVisitor {
     private final LocalVarRemapper remapper;
     private final FieldRemapper nodeRemapper;
@@ -59,7 +61,7 @@ public class RemapVisitor extends MethodBodyVisitor {
 
     @Override
     public void visitFieldInsn(int opcode, @NotNull String owner, @NotNull String name, @NotNull String desc) {
-        if (name.startsWith(InlineCodegenUtil.CAPTURED_FIELD_FOLD_PREFIX) &&
+        if (name.startsWith(CAPTURED_FIELD_FOLD_PREFIX) &&
             (nodeRemapper instanceof RegeneratedLambdaFieldRemapper || nodeRemapper.isRoot())) {
             FieldInsnNode fin = new FieldInsnNode(opcode, owner, name, desc);
             StackValue inline = nodeRemapper.getFieldForInline(fin, null);

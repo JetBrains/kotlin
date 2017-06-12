@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.OwnerKind
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.DEFAULT_LAMBDA_FAKE_CALL
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getConstant
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.isNeedClassReificationMarker
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence

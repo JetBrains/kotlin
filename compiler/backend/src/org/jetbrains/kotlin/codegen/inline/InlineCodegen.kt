@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.context.*
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineOrReturn
 import org.jetbrains.kotlin.codegen.coroutines.isBuiltInSuspendCoroutineOrReturnInJvm
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.*
 import org.jetbrains.kotlin.codegen.intrinsics.bytecode
 import org.jetbrains.kotlin.codegen.intrinsics.classId
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -168,7 +167,7 @@ class InlineCodegen(
                 "Couldn't inline method call '" + functionDescriptor.name + "' into\n" +
                 DescriptorRenderer.DEBUG_TEXT.render(contextDescriptor) + "\n" +
                 (element?.text ?: "<no source>") +
-                if (generateNodeText) "\nCause: " + InlineCodegenUtil.getNodeText(node) else "",
+                if (generateNodeText) "\nCause: " + getNodeText(node) else "",
                 e, callElement
         )
     }
@@ -230,7 +229,7 @@ class InlineCodegen(
 
         val remapper = LocalVarRemapper(parameters, initialFrameSize)
 
-        val adapter = InlineCodegenUtil.createEmptyMethodNode()
+        val adapter = createEmptyMethodNode()
         //hack to keep linenumber info, otherwise jdi will skip begin of linenumber chain
         adapter.visitInsn(Opcodes.NOP)
 
@@ -245,8 +244,8 @@ class InlineCodegen(
                 adapter, infos, (remapper.remap(parameters.argsSizeOnStack + 1).value as StackValue.Local).index
         )
         removeStaticInitializationTrigger(adapter)
-        if (!InlineCodegenUtil.isFinallyMarkerRequired(codegen.getContext())) {
-            InlineCodegenUtil.removeFinallyMarkers(adapter)
+        if (!isFinallyMarkerRequired(codegen.getContext())) {
+            removeFinallyMarkers(adapter)
         }
 
         adapter.accept(MethodBodyVisitor(codegen.v))
@@ -539,7 +538,7 @@ class InlineCodegen(
         var curInstr: AbstractInsnNode? = intoNode.instructions.first
         while (curInstr != null) {
             processor.processInstruction(curInstr, true)
-            if (InlineCodegenUtil.isFinallyStart(curInstr)) {
+            if (isFinallyStart(curInstr)) {
                 //TODO depth index calc could be more precise
                 curFinallyDepth = getConstant(curInstr.previous)
             }
@@ -548,7 +547,7 @@ class InlineCodegen(
             if (extension != null) {
                 val start = Label()
 
-                val finallyNode = InlineCodegenUtil.createEmptyMethodNode()
+                val finallyNode = createEmptyMethodNode()
                 finallyNode.visitLabel(start)
 
                 val finallyCodegen = ExpressionCodegen(finallyNode, codegen.frameMap, codegen.returnType,
@@ -569,7 +568,7 @@ class InlineCodegen(
                 finallyCodegen.generateFinallyBlocksIfNeeded(extension.returnType, extension.finallyIntervalEnd.label)
 
                 //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
-                InlineCodegenUtil.insertNodeBefore(finallyNode, intoNode, curInstr)
+                insertNodeBefore(finallyNode, intoNode, curInstr)
 
                 val splitBy = SimpleInterval(start.info as LabelNode, extension.finallyIntervalEnd)
                 processor.tryBlocksMetaInfo.splitCurrentIntervals(splitBy, true)
@@ -620,12 +619,12 @@ class InlineCodegen(
                 callDefault: Boolean,
                 resolvedCall: ResolvedCall<*>?
         ): SMAPAndMethodNode {
-            if (InlineCodegenUtil.isSpecialEnumMethod(functionDescriptor)) {
+            if (isSpecialEnumMethod(functionDescriptor)) {
                 assert(resolvedCall != null) { "Resolved call for $functionDescriptor should be not null" }
                 val arguments = resolvedCall!!.typeArguments
                 assert(arguments.size == 1) { "Resolved call for $functionDescriptor should have 1 type argument" }
 
-                val node = InlineCodegenUtil.createSpecialEnumMethodBody(
+                val node = createSpecialEnumMethodBody(
                         codegen,
                         functionDescriptor.name.asString(),
                         arguments.keys.iterator().next().defaultType,
@@ -689,7 +688,7 @@ class InlineCodegen(
             if (isBuiltInArrayIntrinsic(callableDescriptor)) {
                 val classId = classId
                 val bytes = state.inlineCache.classBytes.getOrPut(classId) { bytecode }
-                return InlineCodegenUtil.getMethodNode(bytes, asmMethod.name, asmMethod.descriptor, classId.asString())
+                return getMethodNode(bytes, asmMethod.name, asmMethod.descriptor, classId.asString())
             }
 
             assert(callableDescriptor is DeserializedCallableMemberDescriptor) { "Not a deserialized function or proper: " + callableDescriptor }
@@ -699,7 +698,7 @@ class InlineCodegen(
             val containerId = containingClasses.implClassId
 
             val bytes = state.inlineCache.classBytes.getOrPut(containerId) {
-                val file = InlineCodegenUtil.findVirtualFile(state, containerId) ?: throw IllegalStateException("Couldn't find declaration file for " + containerId)
+                val file = findVirtualFile(state, containerId) ?: throw IllegalStateException("Couldn't find declaration file for " + containerId)
                 try {
                     file.contentsToByteArray()
                 }
@@ -708,7 +707,7 @@ class InlineCodegen(
                 }
             }
 
-            return InlineCodegenUtil.getMethodNode(bytes, asmMethod.name, asmMethod.descriptor, containerId.asString())
+            return getMethodNode(bytes, asmMethod.name, asmMethod.descriptor, containerId.asString())
         }
 
         private fun doCreateMethodNodeFromSource(
@@ -728,14 +727,14 @@ class InlineCodegen(
             val inliningFunction = element as KtDeclarationWithBody?
 
             val node = MethodNode(
-                    InlineCodegenUtil.API,
+                    API,
                     getMethodAsmFlags(callableDescriptor, context.contextKind, state) or if (callDefault) Opcodes.ACC_STATIC else 0,
                     asmMethod.name,
                     asmMethod.descriptor, null, null
             )
 
             //for maxLocals calculation
-            val maxCalcAdapter = InlineCodegenUtil.wrapWithMaxLocalCalc(node)
+            val maxCalcAdapter = wrapWithMaxLocalCalc(node)
             val parentContext = context.parentContext ?: error("Context has no parent: " + context)
             val methodContext = parentContext.intoFunction(callableDescriptor)
 
@@ -919,7 +918,7 @@ class InlineCodegen(
                 if (!descriptor.name.isSpecial) {
                     result.add(descriptor.name.asString())
                 }
-                result.add(InlineCodegenUtil.FIRST_FUN_LABEL)
+                result.add(FIRST_FUN_LABEL)
             }
             return result
         }

@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -34,7 +33,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 
-import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.*;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.*;
 import static org.jetbrains.kotlin.codegen.inline.MethodInlinerUtilKt.getNextMeaningful;
 
 public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
@@ -106,7 +105,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
     private int initAndGetVarIndexForNonLocalReturnValue() {
         MaxLocalsCalculator tempCalcNode = new MaxLocalsCalculator(
-                InlineCodegenUtil.API,
+                API,
                 inlineFun.access, inlineFun.desc, null
         );
         inlineFun.accept(tempCalcNode);
@@ -126,8 +125,8 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             processInstruction(curIns, false);
 
             //At this point only global return is possible, local one already substituted with: goto endLabel
-            if (!InlineCodegenUtil.isReturnOpcode(curIns.getOpcode()) ||
-                !InlineCodegenUtil.isMarkedReturn(curIns)) {
+            if (!isReturnOpcode(curIns.getOpcode()) ||
+                !isMarkedReturn(curIns)) {
                 curIns = curIns.getPrevious();
                 continue;
             }
@@ -147,7 +146,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             AbstractInsnNode nextPrev = instrInsertFinallyBefore.getPrevious();
             assert markedReturn.getNext() instanceof LabelNode : "Label should be occurred after non-local return";
             LabelNode newFinallyEnd = (LabelNode) markedReturn.getNext();
-            Type nonLocalReturnType = InlineCodegenUtil.getReturnType(markedReturn.getOpcode());
+            Type nonLocalReturnType = getReturnType(markedReturn.getOpcode());
 
             //Generally there could be several tryCatch blocks (group) on one code interval (same start and end labels, but maybe different handlers) -
             // all of them refer to one try/*catches*/finally or try/catches.
@@ -216,7 +215,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                 finallyBlockCopy.visitLabel(insertedBlockEnd);
 
                 //Copying finally body before non-local return instruction
-                InlineCodegenUtil.insertNodeBefore(finallyBlockCopy, inlineFun, instrInsertFinallyBefore);
+                insertNodeBefore(finallyBlockCopy, inlineFun, instrInsertFinallyBefore);
 
                 updateExceptionTable(clusterBlocks, newFinallyStart, newFinallyEnd,
                                      tryCatchBlockInlinedInFinally, labelsInsideFinally, (LabelNode) insertedBlockEnd.info);
@@ -251,7 +250,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             int depthShift
     ) {
         if (isInsOrJumpInsideFinally) {
-            if (InlineCodegenUtil.isFinallyMarker(currentIns.getNext())) {
+            if (isFinallyMarker(currentIns.getNext())) {
                 Integer constant = getConstant(currentIns);
                 finallyBlockCopy.visitLdcInsn(constant + depthShift);
             } else {
@@ -455,7 +454,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         AbstractInsnNode current = meaningful.getNext();
         while (endFinallyChainExclusive != current) {
             current = current.getNext();
-            if (InlineCodegenUtil.isFinallyEnd(current)) {
+            if (isFinallyEnd(current)) {
                 Integer currentDepth = getConstant(current.getPrevious());
                 if (currentDepth.equals(finallyDepth)) {
                     endFinallyChainExclusive = current.getNext();

@@ -107,7 +107,7 @@ import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isInt;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
-import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.addInlineMarker;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
@@ -1414,14 +1414,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             Label finallyStart = new Label();
             v.mark(finallyStart);
             finallyBlockStackElement.addGapLabel(finallyStart);
-            if (InlineCodegenUtil.isFinallyMarkerRequired(context)) {
-                InlineCodegenUtil.generateFinallyMarker(v, finallyDepth, true);
+            if (isFinallyMarkerRequired(context)) {
+                generateFinallyMarker(v, finallyDepth, true);
             }
             //noinspection ConstantConditions
             gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
 
-            if (InlineCodegenUtil.isFinallyMarkerRequired(context)) {
-                InlineCodegenUtil.generateFinallyMarker(v, finallyDepth, false);
+            if (isFinallyMarkerRequired(context)) {
+                generateFinallyMarker(v, finallyDepth, false);
             }
         }
 
@@ -1464,7 +1464,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             generateFinallyBlocksIfNeeded(returnType, afterReturnLabel);
 
             if (isNonLocalReturn) {
-                InlineCodegenUtil.generateGlobalReturnFlag(v, nonLocalReturn.labelName);
+                generateGlobalReturnFlag(v, nonLocalReturn.labelName);
                 v.visitInsn(returnType.getOpcode(Opcodes.IRETURN));
             }
             else {
@@ -1502,7 +1502,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     FunctionDescriptor containingFunction =
                             BindingContextUtils.getContainingFunctionSkipFunctionLiterals(descriptor, true).getFirst();
                     //FIRST_FUN_LABEL to prevent clashing with existing labels
-                    return new NonLocalReturnInfo(typeMapper.mapReturnType(containingFunction), InlineCodegenUtil.FIRST_FUN_LABEL);
+                    return new NonLocalReturnInfo(typeMapper.mapReturnType(containingFunction), FIRST_FUN_LABEL);
                 } else {
                     //local
                     return null;
@@ -4217,8 +4217,8 @@ The "returned" value of try expression with no finally is either the last expres
     public NameGenerator getInlineNameGenerator() {
         NameGenerator nameGenerator = getParentCodegen().getInlineNameGenerator();
         Name name = context.getContextDescriptor().getName();
-        String inlinedName = name.isSpecial() ? InlineCodegenUtil.SPECIAL_TRANSFORMATION_NAME : name.asString();
-        return nameGenerator.subGenerator(inlinedName + InlineCodegenUtil.INLINE_CALL_TRANSFORMATION_SUFFIX);
+        String inlinedName = name.isSpecial() ? SPECIAL_TRANSFORMATION_NAME : name.asString();
+        return nameGenerator.subGenerator(inlinedName + INLINE_CALL_TRANSFORMATION_SUFFIX);
     }
 
     public Type getReturnType() {

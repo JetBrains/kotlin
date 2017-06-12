@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.ClosureCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.*
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
@@ -87,7 +86,7 @@ class MethodInliner(
         transformedNode.instructions.resetLabels()
 
         val resultNode = MethodNode(
-                InlineCodegenUtil.API, transformedNode.access, transformedNode.name, transformedNode.desc,
+                API, transformedNode.access, transformedNode.name, transformedNode.desc,
                 transformedNode.signature, transformedNode.exceptions?.toTypedArray()
         )
         val visitor = RemapVisitor(resultNode, remapper, nodeRemapper)
@@ -130,7 +129,7 @@ class MethodInliner(
                 AsmTypeRemapper(remapper, result)
         )
 
-        val markerShift = InlineCodegenUtil.calcMarkerShift(parameters, node)
+        val markerShift = calcMarkerShift(parameters, node)
         val lambdaInliner = object : InlineAdapter(remappingMethodAdapter, parameters.argsSizeOnStack, sourceMapper) {
             private var transformationInfo: TransformationInfo? = null
 
@@ -312,11 +311,11 @@ class MethodInliner(
         val realParametersSize = parameters.realParametersSizeOnStack
 
         val transformedNode = object : MethodNode(
-                InlineCodegenUtil.API, node.access, node.name,
+                API, node.access, node.name,
                 Type.getMethodDescriptor(Type.getReturnType(node.desc), *(Type.getArgumentTypes(node.desc) + parameters.capturedTypes)),
                 node.signature, node.exceptions?.toTypedArray()
         ) {
-            private val GENERATE_DEBUG_INFO = InlineCodegenUtil.GENERATE_SMAP && inlineOnlySmapSkipper == null
+            private val GENERATE_DEBUG_INFO = GENERATE_SMAP && inlineOnlySmapSkipper == null
 
             private val isInliningLambda = nodeRemapper.isInsideInliningLambda
 
@@ -343,8 +342,8 @@ class MethodInliner(
             }
 
             override fun visitMethodInsn(opcode: Int, owner: String, name: String, desc: String, itf: Boolean) {
-                if (InlineCodegenUtil.DEFAULT_LAMBDA_FAKE_CALL == owner) {
-                    val index = name.substringAfter(InlineCodegenUtil.DEFAULT_LAMBDA_FAKE_CALL).toInt()
+                if (DEFAULT_LAMBDA_FAKE_CALL == owner) {
+                    val index = name.substringAfter(DEFAULT_LAMBDA_FAKE_CALL).toInt()
                     val lambda = getLambdaIfExists(index) as DefaultLambda
                     lambda.parameterOffsetsInDefault.zip(lambda.capturedVars).asReversed().forEach {
                         (_, captured) ->
@@ -362,7 +361,7 @@ class MethodInliner(
                     name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
             ) {
                 if (isInliningLambda || GENERATE_DEBUG_INFO) {
-                    val varSuffix = if (inliningContext.isRoot && !InlineCodegenUtil.isFakeLocalVariableForInline(name)) INLINE_FUN_VAR_SUFFIX else ""
+                    val varSuffix = if (inliningContext.isRoot && !isFakeLocalVariableForInline(name)) INLINE_FUN_VAR_SUFFIX else ""
                     val varName = if (!varSuffix.isEmpty() && name == "this") name + "_" else name
                     super.visitLocalVariable(varName + varSuffix, desc, signature, start, end, getNewIndex(index))
                 }
@@ -400,9 +399,9 @@ class MethodInliner(
                     awaitClassReification = true
                 }
                 else if (cur is MethodInsnNode) {
-                    if (InlineCodegenUtil.isFinallyStart(cur)) {
+                    if (isFinallyStart(cur)) {
                         //TODO deep index calc could be more precise
-                        currentFinallyDeep = InlineCodegenUtil.getConstant(cur.previous)
+                        currentFinallyDeep = getConstant(cur.previous)
                     }
 
                     val owner = cur.owner
@@ -668,7 +667,7 @@ class MethodInliner(
                 insertBeforeInsn: AbstractInsnNode,
                 sourceValueFrame: Frame<SourceValue>
         ) {
-            assert(InlineCodegenUtil.isReturnOpcode(returnInsn.opcode)) { "return instruction expected" }
+            assert(isReturnOpcode(returnInsn.opcode)) { "return instruction expected" }
             assert(returnOpcode < 0 || returnOpcode == returnInsn.opcode) { "Return op should be " + Printer.OPCODES[returnOpcode] + ", got " + Printer.OPCODES[returnInsn.opcode] }
             returnOpcode = returnInsn.opcode
 
@@ -771,9 +770,9 @@ class MethodInliner(
 
             var cur: AbstractInsnNode? = node.instructions.first
             while (cur != null) {
-                if (cur is MethodInsnNode && InlineCodegenUtil.isFinallyMarker(cur)) {
+                if (cur is MethodInsnNode && isFinallyMarker(cur)) {
                     val constant = cur.previous
-                    val curDeep = InlineCodegenUtil.getConstant(constant)
+                    val curDeep = getConstant(constant)
                     node.instructions.insert(constant, LdcInsnNode(curDeep + finallyDeepShift))
                     node.instructions.remove(constant)
                 }
@@ -829,9 +828,9 @@ class MethodInliner(
             val instructions = node.instructions
             var insnNode: AbstractInsnNode? = instructions.first
             while (insnNode != null) {
-                if (InlineCodegenUtil.isReturnOpcode(insnNode.opcode)) {
+                if (isReturnOpcode(insnNode.opcode)) {
                     var isLocalReturn = true
-                    val labelName = InlineCodegenUtil.getMarkedReturnLabelOrNull(insnNode)
+                    val labelName = getMarkedReturnLabelOrNull(insnNode)
 
                     if (labelName != null) {
                         isLocalReturn = labelOwner.isMyLabel(labelName)

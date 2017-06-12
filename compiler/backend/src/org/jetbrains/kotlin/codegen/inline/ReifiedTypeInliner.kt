@@ -169,7 +169,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
     ) = rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { stubCheckcast: AbstractInsnNode ->
         if (stubCheckcast !is TypeInsnNode) return false
 
-        val newMethodNode = MethodNode(InlineCodegenUtil.API)
+        val newMethodNode = MethodNode(API)
         generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe)
 
         instructions.insert(insn, newMethodNode.instructions)
@@ -189,7 +189,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
     ) = rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { stubInstanceOf: AbstractInsnNode ->
         if (stubInstanceOf !is TypeInsnNode) return false
 
-        val newMethodNode = MethodNode(InlineCodegenUtil.API)
+        val newMethodNode = MethodNode(API)
         generateIsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType)
 
         instructions.insert(insn, newMethodNode.instructions)
@@ -231,14 +231,14 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
             if (next3 is MethodInsnNode && next3.name == "valueOf") {
                 instructions.remove(next1)
                 next3.owner = parameter.internalName
-                next3.desc = InlineCodegenUtil.getSpecialEnumFunDescriptor(parameter, true)
+                next3.desc = getSpecialEnumFunDescriptor(parameter, true)
                 return true
             }
         }
         else if (next1.opcode == Opcodes.ICONST_0 && next2.opcode == Opcodes.ANEWARRAY) {
             instructions.remove(next1)
             instructions.remove(next2)
-            val desc = InlineCodegenUtil.getSpecialEnumFunDescriptor(parameter, false)
+            val desc = getSpecialEnumFunDescriptor(parameter, false)
             instructions.insert(insn, MethodInsnNode(Opcodes.INVOKESTATIC, parameter.internalName, "values", desc, false))
             return true
         }

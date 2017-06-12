@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.codegen.inline.GENERATE_SMAP
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
@@ -433,7 +433,7 @@ class CompileKotlinAgainstCustomBinariesTest : TestCaseWithTmpdir() {
             *E
         """.trimIndent() + "\n"
 
-        if (InlineCodegenUtil.GENERATE_SMAP) {
+        if (GENERATE_SMAP) {
             assertEquals(expected, debugInfo)
         }
         else {

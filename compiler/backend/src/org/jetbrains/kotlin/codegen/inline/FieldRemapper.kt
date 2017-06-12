@@ -35,7 +35,7 @@ open class FieldRemapper(
     protected open fun canProcess(fieldOwner: String, fieldName: String, isFolding: Boolean): Boolean {
         return fieldOwner == originalLambdaInternalName &&
                //don't process general field of anonymous objects
-               InlineCodegenUtil.isCapturedFieldName(fieldName)
+               isCapturedFieldName(fieldName)
     }
 
     fun foldFieldAccessChainIfNeeded(capturedFieldAccess: List<AbstractInsnNode>, node: MethodNode): AbstractInsnNode? =
@@ -68,7 +68,7 @@ open class FieldRemapper(
 
         val insnNode = capturedFieldAccess[currentInstruction] as FieldInsnNode
         if (canProcess(insnNode.owner, insnNode.name, true)) {
-            insnNode.name = InlineCodegenUtil.CAPTURED_FIELD_FOLD_PREFIX + getFieldNameForFolding(insnNode)
+            insnNode.name = CAPTURED_FIELD_FOLD_PREFIX + getFieldNameForFolding(insnNode)
             insnNode.opcode = Opcodes.GETSTATIC
 
             node.remove(InsnSequence(capturedFieldAccess[0], insnNode))

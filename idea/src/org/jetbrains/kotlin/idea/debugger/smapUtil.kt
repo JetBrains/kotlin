@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.codegen.inline.API
 import org.jetbrains.kotlin.codegen.inline.FileMapping
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.codegen.inline.SMAP
 import org.jetbrains.kotlin.codegen.inline.SMAPParser
 import org.jetbrains.kotlin.psi.KtFile
@@ -62,7 +62,7 @@ fun mapStacktraceLineToSource(smapData: SmapData,
 fun readDebugInfo(bytes: ByteArray): SmapData? {
     val cr = ClassReader(bytes)
     var debugInfo: String? = null
-    cr.accept(object : ClassVisitor(InlineCodegenUtil.API) {
+    cr.accept(object : ClassVisitor(API) {
         override fun visitSource(source: String?, debug: String?) {
             debugInfo = debug
         }

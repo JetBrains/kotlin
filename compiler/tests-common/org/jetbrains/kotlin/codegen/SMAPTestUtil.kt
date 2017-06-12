@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFile
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.codegen.inline.GENERATE_SMAP
 import org.jetbrains.kotlin.codegen.inline.RangeMapping
 import org.jetbrains.kotlin.codegen.inline.SMAPParser
 import org.jetbrains.kotlin.codegen.inline.toRange
@@ -61,7 +61,7 @@ object SMAPTestUtil {
     }
 
     fun checkSMAP(inputFiles: List<CodegenTestCase.TestFile>, outputFiles: Iterable<OutputFile>) {
-        if (!InlineCodegenUtil.GENERATE_SMAP) return
+        if (!GENERATE_SMAP) return
 
         val sourceData = inputFiles.mapNotNull { extractSmapFromTestDataFile(it) }
         val compiledSmaps = extractSMAPFromClasses(outputFiles)

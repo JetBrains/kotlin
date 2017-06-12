@@ -103,7 +103,7 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
         val remapInfo = remap(`var`)
         val value = remapInfo.value
         if (value is StackValue.Local) {
-            val isStore = InlineCodegenUtil.isStoreInstruction(opcode)
+            val isStore = isStoreInstruction(opcode)
             if (remapInfo.parameterInfo != null) {
                 //All remapped value parameters can't be rewritten except case of default ones.
                 //On remapping default parameter to actual value there is only one instruction that writes to it according to mask value

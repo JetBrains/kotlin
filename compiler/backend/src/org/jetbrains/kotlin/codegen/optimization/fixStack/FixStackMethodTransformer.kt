@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.codegen.inline.isAfterInlineMarker
+import org.jetbrains.kotlin.codegen.inline.isBeforeInlineMarker
+import org.jetbrains.kotlin.codegen.inline.isInlineMarker
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
@@ -33,7 +35,7 @@ class FixStackMethodTransformer : MethodTransformer() {
         // If inline method markers are inconsistent, remove them now
         if (!context.consistentInlineMarkers) {
             InsnSequence(methodNode.instructions).forEach { insnNode ->
-                if (InlineCodegenUtil.isInlineMarker(insnNode))
+                if (isInlineMarker(insnNode))
                     methodNode.instructions.remove(insnNode)
             }
         }
@@ -131,9 +133,9 @@ class FixStackMethodTransformer : MethodTransformer() {
                     transformSaveStackMarker(methodNode, actions, analyzer, marker, localVariablesManager)
                 pseudoInsn == PseudoInsn.RESTORE_STACK_IN_TRY_CATCH ->
                     transformRestoreStackMarker(methodNode, actions, marker, localVariablesManager)
-                InlineCodegenUtil.isBeforeInlineMarker(marker) ->
+                isBeforeInlineMarker(marker) ->
                     transformBeforeInlineCallMarker(methodNode, actions, analyzer, marker, localVariablesManager)
-                InlineCodegenUtil.isAfterInlineMarker(marker) ->
+                isAfterInlineMarker(marker) ->
                     transformAfterInlineCallMarker(methodNode, actions, analyzer, marker, localVariablesManager)
             }
         }

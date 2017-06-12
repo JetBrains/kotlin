@@ -14,580 +14,534 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.inline;
+package org.jetbrains.kotlin.codegen.inline
 
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import kotlin.text.StringsKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.codegen.AsmUtil;
-import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.codegen.MemberCodegen;
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
-import org.jetbrains.kotlin.codegen.context.CodegenContext;
-import org.jetbrains.kotlin.codegen.context.CodegenContextUtil;
-import org.jetbrains.kotlin.codegen.context.InlineLambdaContext;
-import org.jetbrains.kotlin.codegen.context.MethodContext;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.fileClasses.FileClasses;
-import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
-import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
-import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.util.OperatorNameConventions;
-import org.jetbrains.org.objectweb.asm.*;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
-import org.jetbrains.org.objectweb.asm.tree.*;
-import org.jetbrains.org.objectweb.asm.util.Printer;
-import org.jetbrains.org.objectweb.asm.util.Textifier;
-import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.MemberCodegen
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.context.CodegenContext
+import org.jetbrains.kotlin.codegen.context.CodegenContextUtil
+import org.jetbrains.kotlin.codegen.context.InlineLambdaContext
+import org.jetbrains.kotlin.codegen.context.MethodContext
+import org.jetbrains.kotlin.codegen.intrinsics.*
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.fileClasses.*
+import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.util.Printer
+import org.jetbrains.org.objectweb.asm.util.Textifier
+import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.List;
-import java.util.ListIterator;
+import java.io.IOException
+import java.io.PrintWriter
+import java.io.StringWriter
 
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.ENUM_TYPE;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_CLASS_TYPE;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.ENUM_TYPE
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_CLASS_TYPE
 
-public class InlineCodegenUtil {
-    public static final boolean GENERATE_SMAP = true;
-    public static final int API = Opcodes.ASM5;
 
-    private static final String CAPTURED_FIELD_PREFIX = "$";
-    private static final String NON_CAPTURED_FIELD_PREFIX = "$$";
-    public static final String THIS$0 = "this$0";
-    public static final String THIS = "this";
-    private static final String RECEIVER$0 = "receiver$0";
-    private static final String NON_LOCAL_RETURN = "$$$$$NON_LOCAL_RETURN$$$$$";
-    public static final String FIRST_FUN_LABEL = "$$$$$ROOT$$$$$";
-    public static final String NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function";
-    private static final String INLINE_MARKER_CLASS_NAME = "kotlin/jvm/internal/InlineMarker";
-    private static final String INLINE_MARKER_BEFORE_METHOD_NAME = "beforeInlineCall";
-    private static final String INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall";
-    private static final String INLINE_MARKER_FINALLY_START = "finallyStart";
-    private static final String INLINE_MARKER_FINALLY_END = "finallyEnd";
-    public static final String SPECIAL_TRANSFORMATION_NAME = "$special";
-    public static final String INLINE_TRANSFORMATION_SUFFIX = "$inlined";
-    public static final String INLINE_CALL_TRANSFORMATION_SUFFIX = "$" + INLINE_TRANSFORMATION_SUFFIX;
-    public static final String INLINE_FUN_THIS_0_SUFFIX = "$inline_fun";
-    public static final String INLINE_FUN_VAR_SUFFIX = "$iv";
+const val GENERATE_SMAP = true
+const val API = Opcodes.ASM5
+const val THIS = "this"
+const val THIS_0 = "this$0"
+const val FIRST_FUN_LABEL = "$$$$\$ROOT$$$$$"
+const val NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function"
+const val SPECIAL_TRANSFORMATION_NAME = "\$special"
+const val INLINE_TRANSFORMATION_SUFFIX = "\$inlined"
+const val INLINE_CALL_TRANSFORMATION_SUFFIX = "$" + INLINE_TRANSFORMATION_SUFFIX
+const val INLINE_FUN_THIS_0_SUFFIX = "\$inline_fun"
+const val INLINE_FUN_VAR_SUFFIX = "\$iv"
+const val DEFAULT_LAMBDA_FAKE_CALL = "$$\$DEFAULT_LAMBDA_FAKE_CALL$$$"
 
-    public static final String DEFAULT_LAMBDA_FAKE_CALL = "$$$DEFAULT_LAMBDA_FAKE_CALL$$$";
-    public static final String CAPTURED_FIELD_FOLD_PREFIX = "$$$";
-    
-    @Nullable
-    public static SMAPAndMethodNode getMethodNode(
-            byte[] classData,
-            @NotNull String methodName,
-            @NotNull String methodDescriptor,
-            @NotNull String classInternalName
-    ) {
-        ClassReader cr = new ClassReader(classData);
-        MethodNode[] node = new MethodNode[1];
-        String[] debugInfo = new String[2];
-        int[] lines = new int[2];
-        lines[0] = Integer.MAX_VALUE;
-        lines[1] = Integer.MIN_VALUE;
-        //noinspection PointlessBitwiseExpression
-        cr.accept(new ClassVisitor(API) {
+const val CAPTURED_FIELD_FOLD_PREFIX = "$$$"
+private const val `RECEIVER$0` = "receiver$0"
+private const val NON_LOCAL_RETURN = "$$$$\$NON_LOCAL_RETURN$$$$$"
+private const val CAPTURED_FIELD_PREFIX = "$"
+private const val NON_CAPTURED_FIELD_PREFIX = "$$"
+private const val INLINE_MARKER_CLASS_NAME = "kotlin/jvm/internal/InlineMarker"
+private const val INLINE_MARKER_BEFORE_METHOD_NAME = "beforeInlineCall"
+private const val INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall"
+private const val INLINE_MARKER_FINALLY_START = "finallyStart"
 
-            @Override
-            public void visitSource(String source, String debug) {
-                super.visitSource(source, debug);
-                debugInfo[0] = source;
-                debugInfo[1] = debug;
-            }
+private const val INLINE_MARKER_FINALLY_END = "finallyEnd"
 
-            @Override
-            public MethodVisitor visitMethod(
-                    int access,
-                    @NotNull String name,
-                    @NotNull String desc,
-                    String signature,
-                    String[] exceptions
-            ) {
-                if (methodName.equals(name) && methodDescriptor.equals(desc)) {
-                    node[0] = new MethodNode(API, access, name, desc, signature, exceptions) {
-                        @Override
-                        public void visitLineNumber(int line, @NotNull Label start) {
-                            super.visitLineNumber(line, start);
-                            lines[0] = Math.min(lines[0], line);
-                            lines[1] = Math.max(lines[1], line);
-                        }
-                    };
-                    return node[0];
+fun getMethodNode(
+        classData: ByteArray,
+        methodName: String,
+        methodDescriptor: String,
+        classInternalName: String
+): SMAPAndMethodNode? {
+    val cr = ClassReader(classData)
+    var node: MethodNode? = null
+    val debugInfo = arrayOfNulls<String>(2)
+    val lines = IntArray(2)
+    lines[0] = Integer.MAX_VALUE
+    lines[1] = Integer.MIN_VALUE
+
+    cr.accept(object : ClassVisitor(API) {
+
+        override fun visitSource(source: String?, debug: String?) {
+            super.visitSource(source, debug)
+            debugInfo[0] = source
+            debugInfo[1] = debug
+        }
+
+        override fun visitMethod(
+                access: Int,
+                name: String,
+                desc: String,
+                signature: String?,
+                exceptions: Array<String>?
+        ): MethodVisitor? {
+            if (methodName == name && methodDescriptor == desc) {
+                node = object : MethodNode(API, access, name, desc, signature, exceptions) {
+                    override fun visitLineNumber(line: Int, start: Label) {
+                        super.visitLineNumber(line, start)
+                        lines[0] = Math.min(lines[0], line)
+                        lines[1] = Math.max(lines[1], line)
+                    }
                 }
-                return null;
+                return node
             }
-        }, ClassReader.SKIP_FRAMES | (GENERATE_SMAP ? 0 : ClassReader.SKIP_DEBUG));
-
-        if (node[0] == null) {
-            return null;
+            return null
         }
+    }, ClassReader.SKIP_FRAMES or if (GENERATE_SMAP) 0 else ClassReader.SKIP_DEBUG)
 
-        if (IntrinsicArrayConstructorsKt.getClassId().asString().equals(classInternalName)) {
-            // Don't load source map for intrinsic array constructors
-            debugInfo[0] = null;
+    if (node == null) {
+        return null
+    }
+
+    if (classId.asString() == classInternalName) {
+        // Don't load source map for intrinsic array constructors
+        debugInfo[0] = null
+    }
+
+    val smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classInternalName, lines[0], lines[1])
+    return SMAPAndMethodNode(node!!, smap)
+}
+
+fun initDefaultSourceMappingIfNeeded(
+        context: CodegenContext<*>, codegen: MemberCodegen<*>, state: GenerationState
+) {
+    if (state.isInlineDisabled) return
+
+    var parentContext: CodegenContext<*>? = context.parentContext
+    while (parentContext != null) {
+        if (parentContext.isInlineMethodContext) {
+            //just init default one to one mapping
+            codegen.orCreateSourceMapper
+            break
         }
-
-        SMAP smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classInternalName, lines[0], lines[1]);
-        return new SMAPAndMethodNode(node[0], smap);
-    }
-
-    public static void initDefaultSourceMappingIfNeeded(
-            @NotNull CodegenContext context, @NotNull MemberCodegen codegen, @NotNull GenerationState state
-    ) {
-        if (state.isInlineDisabled()) return;
-
-        CodegenContext<?> parentContext = context.getParentContext();
-        while (parentContext != null) {
-            if (parentContext.isInlineMethodContext()) {
-                //just init default one to one mapping
-                codegen.getOrCreateSourceMapper();
-                break;
-            }
-            parentContext = parentContext.getParentContext();
-        }
-    }
-
-    @Nullable
-    public static VirtualFile findVirtualFile(@NotNull GenerationState state, @NotNull ClassId classId) {
-        return VirtualFileFinder.SERVICE.getInstance(state.getProject()).findVirtualFileWithHeader(classId);
-    }
-
-    @Nullable
-    public static VirtualFile findVirtualFileImprecise(@NotNull GenerationState state, @NotNull String internalClassName) {
-        FqName packageFqName = JvmClassName.byInternalName(internalClassName).getPackageFqName();
-        String classNameWithDollars = StringsKt.substringAfterLast(internalClassName, "/", internalClassName);
-        //TODO: we cannot construct proper classId at this point, we need to read InnerClasses info from class file
-        // we construct valid.package.name/RelativeClassNameAsSingleName that should work in compiler, but fails for inner classes in IDE
-        return findVirtualFile(state, new ClassId(packageFqName, Name.identifier(classNameWithDollars)));
-    }
-
-    @NotNull
-    public static String getInlineName(
-            @NotNull CodegenContext codegenContext,
-            @NotNull KotlinTypeMapper typeMapper,
-            @NotNull JvmFileClassesProvider fileClassesManager
-    ) {
-        return getInlineName(codegenContext, codegenContext.getContextDescriptor(), typeMapper, fileClassesManager);
-    }
-
-    @NotNull
-    private static String getInlineName(
-            @NotNull CodegenContext codegenContext,
-            @NotNull DeclarationDescriptor currentDescriptor,
-            @NotNull KotlinTypeMapper typeMapper,
-            @NotNull JvmFileClassesProvider fileClassesProvider
-    ) {
-        if (currentDescriptor instanceof PackageFragmentDescriptor) {
-            PsiFile file = DescriptorToSourceUtils.getContainingFile(codegenContext.getContextDescriptor());
-
-            Type implementationOwnerType;
-            if (file == null) {
-                implementationOwnerType = CodegenContextUtil.getImplementationOwnerClassType(codegenContext);
-            }
-            else {
-                implementationOwnerType = FileClasses.getFileClassType(fileClassesProvider, (KtFile) file);
-            }
-
-            if (implementationOwnerType == null) {
-                DeclarationDescriptor contextDescriptor = codegenContext.getContextDescriptor();
-                //noinspection ConstantConditions
-                throw new RuntimeException(
-                        "Couldn't find declaration for " +
-                        contextDescriptor.getContainingDeclaration().getName() + "." + contextDescriptor.getName() +
-                        "; context: " + codegenContext
-                );
-            }
-
-            return implementationOwnerType.getInternalName();
-        }
-        else if (currentDescriptor instanceof ClassifierDescriptor) {
-            Type type = typeMapper.mapType((ClassifierDescriptor) currentDescriptor);
-            return type.getInternalName();
-        }
-        else if (currentDescriptor instanceof FunctionDescriptor) {
-            ClassDescriptor descriptor =
-                    typeMapper.getBindingContext().get(CodegenBinding.CLASS_FOR_CALLABLE, (FunctionDescriptor) currentDescriptor);
-            if (descriptor != null) {
-                return typeMapper.mapType(descriptor).getInternalName();
-            }
-        }
-
-        //TODO: add suffix for special case
-        String suffix = currentDescriptor.getName().isSpecial() ? "" : currentDescriptor.getName().asString();
-
-        //noinspection ConstantConditions
-        return getInlineName(codegenContext, currentDescriptor.getContainingDeclaration(), typeMapper, fileClassesProvider) + "$" + suffix;
-    }
-
-    public static boolean isInvokeOnLambda(@NotNull String owner, @NotNull String name) {
-        return OperatorNameConventions.INVOKE.asString().equals(name) &&
-               owner.startsWith(NUMBERED_FUNCTION_PREFIX) &&
-               isInteger(owner.substring(NUMBERED_FUNCTION_PREFIX.length()));
-    }
-
-    public static boolean isAnonymousConstructorCall(@NotNull String internalName, @NotNull String methodName) {
-        return "<init>".equals(methodName) && isAnonymousClass(internalName);
-    }
-
-    public static boolean isWhenMappingAccess(@NotNull String internalName, @NotNull String fieldName) {
-        return fieldName.startsWith(WhenByEnumsMapping.MAPPING_ARRAY_FIELD_PREFIX) &&
-               internalName.endsWith(WhenByEnumsMapping.MAPPINGS_CLASS_NAME_POSTFIX);
-    }
-
-    public static boolean isAnonymousSingletonLoad(@NotNull String internalName, @NotNull String fieldName) {
-        return JvmAbi.INSTANCE_FIELD.equals(fieldName) && isAnonymousClass(internalName);
-    }
-
-    public static boolean isAnonymousClass(@NotNull String internalName) {
-        String shortName = getLastNamePart(internalName);
-        int index = shortName.lastIndexOf("$");
-
-        if (index < 0) {
-            return false;
-        }
-
-        String suffix = shortName.substring(index + 1);
-        return isInteger(suffix);
-    }
-
-    @NotNull
-    private static String getLastNamePart(@NotNull String internalName) {
-        int index = internalName.lastIndexOf("/");
-        return index < 0 ? internalName : internalName.substring(index + 1);
-    }
-
-    @NotNull
-    public static MethodVisitor wrapWithMaxLocalCalc(@NotNull MethodNode methodNode) {
-        return new MaxStackFrameSizeAndLocalsCalculator(API, methodNode.access, methodNode.desc, methodNode);
-    }
-
-    private static boolean isInteger(@NotNull String string) {
-        if (string.isEmpty()) {
-            return false;
-        }
-
-        for (int i = 0; i < string.length(); i++) {
-             if (!Character.isDigit(string.charAt(i))) {
-                 return false;
-             }
-        }
-
-        return true;
-    }
-
-    public static boolean isCapturedFieldName(@NotNull String fieldName) {
-        // TODO: improve this heuristic
-        return fieldName.startsWith(CAPTURED_FIELD_PREFIX) &&
-               !fieldName.startsWith(NON_CAPTURED_FIELD_PREFIX) ||
-               THIS$0.equals(fieldName) ||
-               RECEIVER$0.equals(fieldName);
-    }
-
-    public static boolean isReturnOpcode(int opcode) {
-        return opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN;
-    }
-
-    //marked return could be either non-local or local in case of labeled lambda self-returns
-    public static boolean isMarkedReturn(@NotNull AbstractInsnNode returnIns) {
-        return getMarkedReturnLabelOrNull(returnIns) != null;
-    }
-
-    @Nullable
-    public static String getMarkedReturnLabelOrNull(@NotNull AbstractInsnNode returnInsn) {
-        if (!isReturnOpcode(returnInsn.getOpcode())) {
-            return null;
-        }
-        AbstractInsnNode previous = returnInsn.getPrevious();
-        if (previous instanceof MethodInsnNode) {
-            MethodInsnNode marker = (MethodInsnNode) previous;
-            if (NON_LOCAL_RETURN.equals(marker.owner)) {
-                return marker.name;
-            }
-        }
-        return null;
-    }
-
-    public static void generateGlobalReturnFlag(@NotNull InstructionAdapter iv, @NotNull String labelName) {
-        iv.invokestatic(NON_LOCAL_RETURN, labelName, "()V", false);
-    }
-
-    @NotNull
-    public static Type getReturnType(int opcode) {
-        switch (opcode) {
-            case Opcodes.RETURN:
-                return Type.VOID_TYPE;
-            case Opcodes.IRETURN:
-                return Type.INT_TYPE;
-            case Opcodes.DRETURN:
-                return Type.DOUBLE_TYPE;
-            case Opcodes.FRETURN:
-                return Type.FLOAT_TYPE;
-            case Opcodes.LRETURN:
-                return Type.LONG_TYPE;
-            default:
-                return AsmTypes.OBJECT_TYPE;
-        }
-    }
-
-    public static void insertNodeBefore(@NotNull MethodNode from, @NotNull MethodNode to, @NotNull AbstractInsnNode beforeNode) {
-        ListIterator<AbstractInsnNode> iterator = from.instructions.iterator();
-        while (iterator.hasNext()) {
-            AbstractInsnNode next = iterator.next();
-            to.instructions.insertBefore(beforeNode, next);
-        }
-    }
-
-    @NotNull
-    public static MethodNode createEmptyMethodNode() {
-        return new MethodNode(API, 0, "fake", "()V", null, null);
-    }
-
-    @NotNull
-    public static LabelNode firstLabelInChain(@NotNull LabelNode node) {
-        LabelNode curNode = node;
-        while (curNode.getPrevious() instanceof LabelNode) {
-            curNode = (LabelNode) curNode.getPrevious();
-        }
-        return curNode;
-    }
-
-    @NotNull
-    public static String getNodeText(@Nullable MethodNode node) {
-        Textifier textifier = new Textifier();
-        if (node == null) {
-            return "Not generated";
-        }
-        node.accept(new TraceMethodVisitor(textifier));
-        StringWriter sw = new StringWriter();
-        textifier.print(new PrintWriter(sw));
-        sw.flush();
-        return node.name + " " + node.desc + ":\n" + sw.getBuffer().toString();
-    }
-
-    @NotNull
-    public static String getInsnText(@Nullable AbstractInsnNode node) {
-        if (node == null) return "<null>";
-        Textifier textifier = new Textifier();
-        node.accept(new TraceMethodVisitor(textifier));
-        StringWriter sw = new StringWriter();
-        textifier.print(new PrintWriter(sw));
-        sw.flush();
-        return sw.toString().trim();
-    }
-
-    @NotNull
-    public static String getInsnOpcodeText(@Nullable AbstractInsnNode node) {
-        return node == null ? "null" : Printer.OPCODES[node.getOpcode()];
-    }
-
-    @NotNull
-    /* package */ static ClassReader buildClassReaderByInternalName(@NotNull GenerationState state, @NotNull String internalName) {
-        //try to find just compiled classes then in dependencies
-        try {
-            OutputFile outputFile = state.getFactory().get(internalName + ".class");
-            if (outputFile != null) {
-                return new ClassReader(outputFile.asByteArray());
-            }
-            VirtualFile file = findVirtualFileImprecise(state, internalName);
-            if (file != null) {
-                return new ClassReader(file.contentsToByteArray());
-            }
-            throw new RuntimeException("Couldn't find virtual file for " + internalName);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void generateFinallyMarker(@NotNull InstructionAdapter v, int depth, boolean start) {
-        v.iconst(depth);
-        v.invokestatic(INLINE_MARKER_CLASS_NAME, start ? INLINE_MARKER_FINALLY_START : INLINE_MARKER_FINALLY_END, "(I)V", false);
-    }
-
-    public static boolean isFinallyEnd(@NotNull AbstractInsnNode node) {
-        return isFinallyMarker(node, INLINE_MARKER_FINALLY_END);
-    }
-
-    public static boolean isFinallyStart(@NotNull AbstractInsnNode node) {
-        return isFinallyMarker(node, INLINE_MARKER_FINALLY_START);
-    }
-
-    public static boolean isFinallyMarker(@Nullable AbstractInsnNode node) {
-        return node != null && (isFinallyStart(node) || isFinallyEnd(node));
-    }
-
-    private static boolean isFinallyMarker(@NotNull AbstractInsnNode node, String name) {
-        if (!(node instanceof MethodInsnNode)) return false;
-        MethodInsnNode method = (MethodInsnNode) node;
-        return INLINE_MARKER_CLASS_NAME.equals(method.owner) && name.equals(method.name);
-    }
-
-    public static boolean isFinallyMarkerRequired(@NotNull MethodContext context) {
-        return context.isInlineMethodContext() || context instanceof InlineLambdaContext;
-    }
-
-    public static int getConstant(@NotNull AbstractInsnNode ins) {
-        int opcode = ins.getOpcode();
-        if (opcode >= Opcodes.ICONST_0 && opcode <= Opcodes.ICONST_5) {
-            return opcode - Opcodes.ICONST_0;
-        }
-        else if (opcode == Opcodes.BIPUSH || opcode == Opcodes.SIPUSH) {
-            return ((IntInsnNode) ins).operand;
-        }
-        else {
-            LdcInsnNode index = (LdcInsnNode) ins;
-            return (Integer) index.cst;
-        }
-    }
-
-    public static void removeFinallyMarkers(@NotNull MethodNode intoNode) {
-        InsnList instructions = intoNode.instructions;
-        AbstractInsnNode curInstr = instructions.getFirst();
-        while (curInstr != null) {
-            if (isFinallyMarker(curInstr)) {
-                AbstractInsnNode marker = curInstr;
-                //just to assert
-                getConstant(marker.getPrevious());
-                curInstr = curInstr.getNext();
-                instructions.remove(marker.getPrevious());
-                instructions.remove(marker);
-                continue;
-            }
-            curInstr = curInstr.getNext();
-        }
-    }
-
-    public static void addInlineMarker(@NotNull InstructionAdapter v, boolean isStartNotEnd) {
-        v.visitMethodInsn(
-                Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
-                isStartNotEnd ? INLINE_MARKER_BEFORE_METHOD_NAME : INLINE_MARKER_AFTER_METHOD_NAME,
-                "()V", false
-        );
-    }
-
-    public static boolean isInlineMarker(@NotNull AbstractInsnNode insn) {
-        return isInlineMarker(insn, null);
-    }
-
-    private static boolean isInlineMarker(@NotNull AbstractInsnNode insn, @Nullable String name) {
-        if (!(insn instanceof MethodInsnNode)) {
-            return false;
-        }
-
-        MethodInsnNode methodInsnNode = (MethodInsnNode) insn;
-        return insn.getOpcode() == Opcodes.INVOKESTATIC &&
-               methodInsnNode.owner.equals(INLINE_MARKER_CLASS_NAME) &&
-               (name != null ? methodInsnNode.name.equals(name)
-                             : methodInsnNode.name.equals(INLINE_MARKER_BEFORE_METHOD_NAME) ||
-                               methodInsnNode.name.equals(INLINE_MARKER_AFTER_METHOD_NAME));
-    }
-
-    public static boolean isBeforeInlineMarker(@NotNull AbstractInsnNode insn) {
-        return isInlineMarker(insn, INLINE_MARKER_BEFORE_METHOD_NAME);
-    }
-
-    public static boolean isAfterInlineMarker(@NotNull AbstractInsnNode insn) {
-        return isInlineMarker(insn, INLINE_MARKER_AFTER_METHOD_NAME);
-    }
-
-    public static int getLoadStoreArgSize(int opcode) {
-        return opcode == Opcodes.DSTORE || opcode == Opcodes.LSTORE || opcode == Opcodes.DLOAD || opcode == Opcodes.LLOAD ? 2 : 1;
-    }
-
-    public static boolean isStoreInstruction(int opcode) {
-        return opcode >= Opcodes.ISTORE && opcode <= Opcodes.ASTORE;
-    }
-
-    public static int calcMarkerShift(@NotNull Parameters parameters, @NotNull MethodNode node) {
-        int markerShiftTemp = getIndexAfterLastMarker(node);
-        return markerShiftTemp - parameters.getRealParametersSizeOnStack() + parameters.getArgsSizeOnStack();
-    }
-
-    private static int getIndexAfterLastMarker(@NotNull MethodNode node) {
-        int result = -1;
-        for (LocalVariableNode variable : node.localVariables) {
-            if (isFakeLocalVariableForInline(variable.name)) {
-                result = Math.max(result, variable.index + 1);
-            }
-        }
-        return result;
-    }
-
-    public static boolean isFakeLocalVariableForInline(@NotNull String name) {
-        return name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) ||
-               name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT);
-    }
-
-    public static boolean isThis0(@NotNull String name) {
-        return THIS$0.equals(name);
-    }
-
-    public static boolean isSpecialEnumMethod(@NotNull FunctionDescriptor functionDescriptor) {
-        DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
-        if (!(containingDeclaration instanceof PackageFragmentDescriptor)) {
-            return false;
-        }
-        if (!((PackageFragmentDescriptor) containingDeclaration).getFqName().equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)) {
-            return false;
-        }
-        if (functionDescriptor.getTypeParameters().size() != 1) {
-            return false;
-        }
-        String name = functionDescriptor.getName().asString();
-        List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
-        return "enumValues".equals(name) && parameters.size() == 0 ||
-               "enumValueOf".equals(name) && parameters.size() == 1 && KotlinBuiltIns.isString(parameters.get(0).getType());
-    }
-
-    public static MethodNode createSpecialEnumMethodBody(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull String name,
-            @NotNull KotlinType type,
-            @NotNull KotlinTypeMapper typeMapper
-    ) {
-        boolean isValueOf = "enumValueOf".equals(name);
-        Type invokeType = typeMapper.mapType(type);
-        String desc = getSpecialEnumFunDescriptor(invokeType, isValueOf);
-        MethodNode node = new MethodNode(API, Opcodes.ACC_STATIC, "fake", desc, null, null);
-        codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.ENUM_REIFIED, new InstructionAdapter(node));
-        if (isValueOf) {
-            node.visitInsn(Opcodes.ACONST_NULL);
-            node.visitVarInsn(Opcodes.ALOAD, 0);
-
-            node.visitMethodInsn(Opcodes.INVOKESTATIC, ENUM_TYPE.getInternalName(), "valueOf",
-                                 Type.getMethodDescriptor(ENUM_TYPE, JAVA_CLASS_TYPE, AsmTypes.JAVA_STRING_TYPE), false);
-        }
-        else {
-            node.visitInsn(Opcodes.ICONST_0);
-            node.visitTypeInsn(Opcodes.ANEWARRAY, ENUM_TYPE.getInternalName());
-        }
-        node.visitInsn(Opcodes.ARETURN);
-        node.visitMaxs(isValueOf ? 3 : 2, isValueOf ? 1 : 0);
-        return node;
-    }
-
-    @NotNull
-    public static String getSpecialEnumFunDescriptor(@NotNull Type type, boolean isValueOf) {
-        return isValueOf ? Type.getMethodDescriptor(type, AsmTypes.JAVA_STRING_TYPE) : Type.getMethodDescriptor(AsmUtil.getArrayType(type));
+        parentContext = parentContext.parentContext
     }
 }
 
+fun findVirtualFile(state: GenerationState, classId: ClassId): VirtualFile? {
+    return VirtualFileFinder.getInstance(state.project).findVirtualFileWithHeader(classId)
+}
+
+fun findVirtualFileImprecise(state: GenerationState, internalClassName: String): VirtualFile? {
+    val packageFqName = JvmClassName.byInternalName(internalClassName).packageFqName
+    val classNameWithDollars = internalClassName.substringAfterLast("/", internalClassName)
+    //TODO: we cannot construct proper classId at this point, we need to read InnerClasses info from class file
+    // we construct valid.package.name/RelativeClassNameAsSingleName that should work in compiler, but fails for inner classes in IDE
+    return findVirtualFile(state, ClassId(packageFqName, Name.identifier(classNameWithDollars)))
+}
+
+fun getInlineName(
+        codegenContext: CodegenContext<*>,
+        typeMapper: KotlinTypeMapper,
+        fileClassesManager: JvmFileClassesProvider
+): String {
+    return getInlineName(codegenContext, codegenContext.contextDescriptor, typeMapper, fileClassesManager)
+}
+
+private fun getInlineName(
+        codegenContext: CodegenContext<*>,
+        currentDescriptor: DeclarationDescriptor,
+        typeMapper: KotlinTypeMapper,
+        fileClassesProvider: JvmFileClassesProvider
+): String {
+    if (currentDescriptor is PackageFragmentDescriptor) {
+        val file = DescriptorToSourceUtils.getContainingFile(codegenContext.contextDescriptor)
+
+        val implementationOwnerType: Type? =
+                if (file == null) {
+                    CodegenContextUtil.getImplementationOwnerClassType(codegenContext)
+                }
+                else fileClassesProvider.getFileClassType(file)
+
+        if (implementationOwnerType == null) {
+            val contextDescriptor = codegenContext.contextDescriptor
+            throw RuntimeException(
+                    "Couldn't find declaration for " +
+                    contextDescriptor.containingDeclaration!!.name + "." + contextDescriptor.name +
+                    "; context: " + codegenContext
+            )
+        }
+
+        return implementationOwnerType.internalName
+    }
+    else if (currentDescriptor is ClassifierDescriptor) {
+        return typeMapper.mapType(currentDescriptor).internalName
+    }
+    else if (currentDescriptor is FunctionDescriptor) {
+        val descriptor = typeMapper.bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, currentDescriptor)
+        if (descriptor != null) {
+            return typeMapper.mapType(descriptor).internalName
+        }
+    }
+
+    //TODO: add suffix for special case
+    val suffix = if (currentDescriptor.name.isSpecial) "" else currentDescriptor.name.asString()
+
+
+    return getInlineName(codegenContext, currentDescriptor.containingDeclaration!!, typeMapper, fileClassesProvider) + "$" + suffix
+}
+
+fun isInvokeOnLambda(owner: String, name: String): Boolean {
+    return OperatorNameConventions.INVOKE.asString() == name &&
+           owner.startsWith(NUMBERED_FUNCTION_PREFIX) &&
+           isInteger(owner.substring(NUMBERED_FUNCTION_PREFIX.length))
+}
+
+fun isAnonymousConstructorCall(internalName: String, methodName: String): Boolean {
+    return "<init>" == methodName && isAnonymousClass(internalName)
+}
+
+fun isWhenMappingAccess(internalName: String, fieldName: String): Boolean {
+    return fieldName.startsWith(WhenByEnumsMapping.MAPPING_ARRAY_FIELD_PREFIX) && internalName.endsWith(WhenByEnumsMapping.MAPPINGS_CLASS_NAME_POSTFIX)
+}
+
+fun isAnonymousSingletonLoad(internalName: String, fieldName: String): Boolean {
+    return JvmAbi.INSTANCE_FIELD == fieldName && isAnonymousClass(internalName)
+}
+
+fun isAnonymousClass(internalName: String): Boolean {
+    val shortName = getLastNamePart(internalName)
+    val index = shortName.lastIndexOf("$")
+
+    if (index < 0) {
+        return false
+    }
+
+    val suffix = shortName.substring(index + 1)
+    return isInteger(suffix)
+}
+
+private fun getLastNamePart(internalName: String): String {
+    val index = internalName.lastIndexOf("/")
+    return if (index < 0) internalName else internalName.substring(index + 1)
+}
+
+fun wrapWithMaxLocalCalc(methodNode: MethodNode): MethodVisitor {
+    return MaxStackFrameSizeAndLocalsCalculator(API, methodNode.access, methodNode.desc, methodNode)
+}
+
+private fun isInteger(string: String): Boolean {
+    if (string.isEmpty()) {
+        return false
+    }
+
+    for (i in 0..string.length - 1) {
+        if (!Character.isDigit(string[i])) {
+            return false
+        }
+    }
+
+    return true
+}
+
+fun isCapturedFieldName(fieldName: String): Boolean {
+    // TODO: improve this heuristic
+    return fieldName.startsWith(CAPTURED_FIELD_PREFIX) && !fieldName.startsWith(NON_CAPTURED_FIELD_PREFIX) ||
+           THIS_0 == fieldName ||
+           `RECEIVER$0` == fieldName
+}
+
+fun isReturnOpcode(opcode: Int): Boolean {
+    return opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN
+}
+
+//marked return could be either non-local or local in case of labeled lambda self-returns
+fun isMarkedReturn(returnIns: AbstractInsnNode): Boolean {
+    return getMarkedReturnLabelOrNull(returnIns) != null
+}
+
+fun getMarkedReturnLabelOrNull(returnInsn: AbstractInsnNode): String? {
+    if (!isReturnOpcode(returnInsn.opcode)) {
+        return null
+    }
+    val previous = returnInsn.previous
+    if (previous is MethodInsnNode) {
+        val marker = previous
+        if (NON_LOCAL_RETURN == marker.owner) {
+            return marker.name
+        }
+    }
+    return null
+}
+
+fun generateGlobalReturnFlag(iv: InstructionAdapter, labelName: String) {
+    iv.invokestatic(NON_LOCAL_RETURN, labelName, "()V", false)
+}
+
+fun getReturnType(opcode: Int): Type {
+    when (opcode) {
+        Opcodes.RETURN -> return Type.VOID_TYPE
+        Opcodes.IRETURN -> return Type.INT_TYPE
+        Opcodes.DRETURN -> return Type.DOUBLE_TYPE
+        Opcodes.FRETURN -> return Type.FLOAT_TYPE
+        Opcodes.LRETURN -> return Type.LONG_TYPE
+        else -> return AsmTypes.OBJECT_TYPE
+    }
+}
+
+fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: AbstractInsnNode) {
+    val iterator = from.instructions.iterator()
+    while (iterator.hasNext()) {
+        val next = iterator.next()
+        to.instructions.insertBefore(beforeNode, next)
+    }
+}
+
+fun createEmptyMethodNode(): MethodNode {
+    return MethodNode(API, 0, "fake", "()V", null, null)
+}
+
+fun firstLabelInChain(node: LabelNode): LabelNode {
+    var curNode = node
+    while (curNode.previous is LabelNode) {
+        curNode = curNode.previous as LabelNode
+    }
+    return curNode
+}
+
+fun getNodeText(node: MethodNode?): String {
+    val textifier = Textifier()
+    if (node == null) {
+        return "Not generated"
+    }
+    node.accept(TraceMethodVisitor(textifier))
+    val sw = StringWriter()
+    textifier.print(PrintWriter(sw))
+    sw.flush()
+    return node.name + " " + node.desc + ":\n" + sw.buffer.toString()
+}
+
+fun getInsnText(node: AbstractInsnNode?): String {
+    if (node == null) return "<null>"
+    val textifier = Textifier()
+    node.accept(TraceMethodVisitor(textifier))
+    val sw = StringWriter()
+    textifier.print(PrintWriter(sw))
+    sw.flush()
+    return sw.toString().trim { it <= ' ' }
+}
+
+fun getInsnOpcodeText(node: AbstractInsnNode?): String {
+    return if (node == null) "null" else Printer.OPCODES[node.opcode]
+}
+
+internal /* package */ fun buildClassReaderByInternalName(state: GenerationState, internalName: String): ClassReader {
+    //try to find just compiled classes then in dependencies
+    try {
+        val outputFile = state.factory.get(internalName + ".class")
+        if (outputFile != null) {
+            return ClassReader(outputFile.asByteArray())
+        }
+        val file = findVirtualFileImprecise(state, internalName)
+        if (file != null) {
+            return ClassReader(file.contentsToByteArray())
+        }
+        throw RuntimeException("Couldn't find virtual file for " + internalName)
+    }
+    catch (e: IOException) {
+        throw RuntimeException(e)
+    }
+
+}
+
+fun generateFinallyMarker(v: InstructionAdapter, depth: Int, start: Boolean) {
+    v.iconst(depth)
+    v.invokestatic(INLINE_MARKER_CLASS_NAME, if (start) INLINE_MARKER_FINALLY_START else INLINE_MARKER_FINALLY_END, "(I)V", false)
+}
+
+fun isFinallyEnd(node: AbstractInsnNode): Boolean {
+    return isFinallyMarker(node, INLINE_MARKER_FINALLY_END)
+}
+
+fun isFinallyStart(node: AbstractInsnNode): Boolean {
+    return isFinallyMarker(node, INLINE_MARKER_FINALLY_START)
+}
+
+fun isFinallyMarker(node: AbstractInsnNode?): Boolean {
+    return node != null && (isFinallyStart(node) || isFinallyEnd(node))
+}
+
+private fun isFinallyMarker(node: AbstractInsnNode, name: String): Boolean {
+    if (node !is MethodInsnNode) return false
+    val method = node
+    return INLINE_MARKER_CLASS_NAME == method.owner && name == method.name
+}
+
+fun isFinallyMarkerRequired(context: MethodContext): Boolean {
+    return context.isInlineMethodContext || context is InlineLambdaContext
+}
+
+fun getConstant(ins: AbstractInsnNode): Int {
+    val opcode = ins.opcode
+    if (opcode >= Opcodes.ICONST_0 && opcode <= Opcodes.ICONST_5) {
+        return opcode - Opcodes.ICONST_0
+    }
+    else if (opcode == Opcodes.BIPUSH || opcode == Opcodes.SIPUSH) {
+        return (ins as IntInsnNode).operand
+    }
+    else {
+        val index = ins as LdcInsnNode
+        return index.cst as Int
+    }
+}
+
+fun removeFinallyMarkers(intoNode: MethodNode) {
+    val instructions = intoNode.instructions
+    var curInstr: AbstractInsnNode? = instructions.first
+    while (curInstr != null) {
+        if (isFinallyMarker(curInstr)) {
+            val marker = curInstr
+            //just to assert
+            getConstant(marker.previous)
+            curInstr = curInstr.next
+            instructions.remove(marker.previous)
+            instructions.remove(marker)
+            continue
+        }
+        curInstr = curInstr.next
+    }
+}
+
+fun addInlineMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
+    v.visitMethodInsn(
+            Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
+            if (isStartNotEnd) INLINE_MARKER_BEFORE_METHOD_NAME else INLINE_MARKER_AFTER_METHOD_NAME,
+            "()V", false
+    )
+}
+
+fun isInlineMarker(insn: AbstractInsnNode): Boolean {
+    return isInlineMarker(insn, null)
+}
+
+private fun isInlineMarker(insn: AbstractInsnNode, name: String?): Boolean {
+    if (insn !is MethodInsnNode) {
+        return false
+    }
+
+    val methodInsnNode = insn
+    return insn.getOpcode() == Opcodes.INVOKESTATIC &&
+           methodInsnNode.owner == INLINE_MARKER_CLASS_NAME &&
+           if (name != null)
+               methodInsnNode.name == name
+           else
+               methodInsnNode.name == INLINE_MARKER_BEFORE_METHOD_NAME || methodInsnNode.name == INLINE_MARKER_AFTER_METHOD_NAME
+}
+
+fun isBeforeInlineMarker(insn: AbstractInsnNode): Boolean {
+    return isInlineMarker(insn, INLINE_MARKER_BEFORE_METHOD_NAME)
+}
+
+fun isAfterInlineMarker(insn: AbstractInsnNode): Boolean {
+    return isInlineMarker(insn, INLINE_MARKER_AFTER_METHOD_NAME)
+}
+
+fun getLoadStoreArgSize(opcode: Int): Int {
+    return if (opcode == Opcodes.DSTORE || opcode == Opcodes.LSTORE || opcode == Opcodes.DLOAD || opcode == Opcodes.LLOAD) 2 else 1
+}
+
+fun isStoreInstruction(opcode: Int): Boolean {
+    return opcode >= Opcodes.ISTORE && opcode <= Opcodes.ASTORE
+}
+
+fun calcMarkerShift(parameters: Parameters, node: MethodNode): Int {
+    val markerShiftTemp = getIndexAfterLastMarker(node)
+    return markerShiftTemp - parameters.realParametersSizeOnStack + parameters.argsSizeOnStack
+}
+
+private fun getIndexAfterLastMarker(node: MethodNode): Int {
+    var result = -1
+    for (variable in node.localVariables) {
+        if (isFakeLocalVariableForInline(variable.name)) {
+            result = Math.max(result, variable.index + 1)
+        }
+    }
+    return result
+}
+
+fun isFakeLocalVariableForInline(name: String): Boolean {
+    return name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) || name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)
+}
+
+fun isThis0(name: String): Boolean {
+    return THIS_0 == name
+}
+
+fun isSpecialEnumMethod(functionDescriptor: FunctionDescriptor): Boolean {
+    val containingDeclaration = functionDescriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
+    if (containingDeclaration.fqName != KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) {
+        return false
+    }
+    if (functionDescriptor.typeParameters.size != 1) {
+        return false
+    }
+    val name = functionDescriptor.name.asString()
+    val parameters = functionDescriptor.valueParameters
+    return "enumValues" == name && parameters.size == 0 || "enumValueOf" == name && parameters.size == 1 && KotlinBuiltIns.isString(parameters[0].type)
+}
+
+fun createSpecialEnumMethodBody(
+        codegen: ExpressionCodegen,
+        name: String,
+        type: KotlinType,
+        typeMapper: KotlinTypeMapper
+): MethodNode {
+    val isValueOf = "enumValueOf" == name
+    val invokeType = typeMapper.mapType(type)
+    val desc = getSpecialEnumFunDescriptor(invokeType, isValueOf)
+    val node = MethodNode(API, Opcodes.ACC_STATIC, "fake", desc, null, null)
+    codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.ENUM_REIFIED, InstructionAdapter(node))
+    if (isValueOf) {
+        node.visitInsn(Opcodes.ACONST_NULL)
+        node.visitVarInsn(Opcodes.ALOAD, 0)
+
+        node.visitMethodInsn(Opcodes.INVOKESTATIC, ENUM_TYPE.internalName, "valueOf",
+                             Type.getMethodDescriptor(ENUM_TYPE, JAVA_CLASS_TYPE, AsmTypes.JAVA_STRING_TYPE), false)
+    }
+    else {
+        node.visitInsn(Opcodes.ICONST_0)
+        node.visitTypeInsn(Opcodes.ANEWARRAY, ENUM_TYPE.internalName)
+    }
+    node.visitInsn(Opcodes.ARETURN)
+    node.visitMaxs(if (isValueOf) 3 else 2, if (isValueOf) 1 else 0)
+    return node
+}
+
+fun getSpecialEnumFunDescriptor(type: Type, isValueOf: Boolean): String {
+    return if (isValueOf) Type.getMethodDescriptor(type, AsmTypes.JAVA_STRING_TYPE) else Type.getMethodDescriptor(AsmUtil.getArrayType(type))
+}

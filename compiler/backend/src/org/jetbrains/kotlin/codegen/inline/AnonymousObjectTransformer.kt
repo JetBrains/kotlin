@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_IMPL_ASM_TYPE
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.isThis0
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
 import org.jetbrains.org.objectweb.asm.*
@@ -49,7 +48,7 @@ class AnonymousObjectTransformer(
         val classBuilder = createRemappingClassBuilderViaFactory(inliningContext)
         val methodsToTransform = ArrayList<MethodNode>()
 
-        createClassReader().accept(object : ClassVisitor(InlineCodegenUtil.API, classBuilder.visitor) {
+        createClassReader().accept(object : ClassVisitor(API, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
                 classBuilder.defineClass(null, version, access, name, signature, superName, interfaces)
                 if (COROUTINE_IMPL_ASM_TYPE.internalName == superName) {
@@ -79,7 +78,7 @@ class AnonymousObjectTransformer(
 
             override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
                 addUniqueField(name)
-                if (InlineCodegenUtil.isCapturedFieldName(name)) {
+                if (isCapturedFieldName(name)) {
                     return null
                 }
                 else {
@@ -103,7 +102,7 @@ class AnonymousObjectTransformer(
                 //seems we can't do any clever mapping cause we don't know any about original class name
                 sourceMapper = IdenticalSourceMapper
             }
-            if (sourceInfo != null && !InlineCodegenUtil.GENERATE_SMAP) {
+            if (sourceInfo != null && !GENERATE_SMAP) {
                 classBuilder.visitSource(sourceInfo!!, debugInfo)
             }
         }
@@ -139,7 +138,7 @@ class AnonymousObjectTransformer(
         }
 
         deferringMethods.forEach { method ->
-            InlineCodegenUtil.removeFinallyMarkers(method.intermediate)
+            removeFinallyMarkers(method.intermediate)
             method.visitEnd()
         }
 
@@ -286,7 +285,7 @@ class AnonymousObjectTransformer(
 
         val intermediateMethodNode = MethodNode(constructor!!.access, "<init>", constructorDescriptor, null, ArrayUtil.EMPTY_STRING_ARRAY)
         inlineMethodAndUpdateGlobalResult(parentRemapper, intermediateMethodNode, constructor!!, constructorInlineBuilder, true)
-        InlineCodegenUtil.removeFinallyMarkers(intermediateMethodNode)
+        removeFinallyMarkers(intermediateMethodNode)
 
         val first = intermediateMethodNode.instructions.first
         val oldStartLabel = if (first is LabelNode) first.label else null
@@ -429,8 +428,8 @@ class AnonymousObjectTransformer(
             val parent = parentFieldRemapper.parent as? RegeneratedLambdaFieldRemapper ?:
                          throw AssertionError("Expecting RegeneratedLambdaFieldRemapper, but ${parentFieldRemapper.parent}")
             val ownerType = Type.getObjectType(parent.originalLambdaInternalName)
-            val desc = CapturedParamDesc(ownerType, InlineCodegenUtil.THIS, ownerType)
-            val recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, InlineCodegenUtil.`THIS$0`/*outer lambda/object*/, false)
+            val desc = CapturedParamDesc(ownerType, THIS, ownerType)
+            val recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, THIS_0/*outer lambda/object*/, false)
             val composed = StackValue.LOCAL_0
             recapturedParamInfo.remapValue = composed
             allRecapturedParameters.add(desc)
@@ -458,16 +457,16 @@ class AnonymousObjectTransformer(
     }
 
     private fun getNewFieldName(oldName: String, originalField: Boolean): String {
-        if (InlineCodegenUtil.`THIS$0` == oldName) {
+        if (THIS_0 == oldName) {
             if (!originalField) {
                 return oldName
             }
             else {
                 //rename original 'this$0' in declaration site lambda (inside inline function) to use this$0 only for outer lambda/object access on call site
-                return addUniqueField(oldName + InlineCodegenUtil.INLINE_FUN_THIS_0_SUFFIX)
+                return addUniqueField(oldName + INLINE_FUN_THIS_0_SUFFIX)
             }
         }
-        return addUniqueField(oldName + InlineCodegenUtil.INLINE_TRANSFORMATION_SUFFIX)
+        return addUniqueField(oldName + INLINE_TRANSFORMATION_SUFFIX)
     }
 
     private fun addUniqueField(name: String): String {

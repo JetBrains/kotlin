@@ -38,7 +38,7 @@ abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
 
     open fun processInstruction(curInstr: AbstractInsnNode, directOrder: Boolean) {
         if (curInstr is VarInsnNode || curInstr is IincInsnNode) {
-            val argSize = InlineCodegenUtil.getLoadStoreArgSize(curInstr.opcode)
+            val argSize = getLoadStoreArgSize(curInstr.opcode)
             val varIndex = if (curInstr is VarInsnNode) curInstr.`var` else (curInstr as IincInsnNode).`var`
             nextFreeLocalIndex = Math.max(nextFreeLocalIndex, varIndex + argSize)
         }

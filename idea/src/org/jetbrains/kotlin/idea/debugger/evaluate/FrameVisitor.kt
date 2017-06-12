@@ -26,7 +26,8 @@ import org.jetbrains.eval4j.jdi.asJdiValue
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.eval4j.obj
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
+import org.jetbrains.kotlin.codegen.inline.NUMBERED_FUNCTION_PREFIX
 import org.jetbrains.kotlin.idea.debugger.isInsideInlineFunctionBody
 import org.jetbrains.kotlin.idea.debugger.numberOfInlinedFunctions
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -128,12 +129,12 @@ class FrameVisitor(context: EvaluationContextImpl) {
     }
 
     private fun findLocalVariableForInlineArgument(name: String, number: Int, asmType: Type?, checkType: Boolean): Value? {
-        return findLocalVariable(name + InlineCodegenUtil.INLINE_FUN_VAR_SUFFIX.repeat(number), asmType, checkType)
+        return findLocalVariable(name + INLINE_FUN_VAR_SUFFIX.repeat(number), asmType, checkType)
     }
 
     private fun isFunctionType(type: Type?): Boolean {
         return type?.sort == Type.OBJECT &&
-               type.internalName.startsWith(InlineCodegenUtil.NUMBERED_FUNCTION_PREFIX)
+               type.internalName.startsWith(NUMBERED_FUNCTION_PREFIX)
     }
 
     private fun findLocalVariable(name: String, asmType: Type?, checkType: Boolean): Value? {

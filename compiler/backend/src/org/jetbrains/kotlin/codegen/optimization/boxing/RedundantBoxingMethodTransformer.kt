@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import com.intellij.openapi.util.Pair
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.codegen.inline.getInsnOpcodeText
+import org.jetbrains.kotlin.codegen.inline.getInsnText
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.optimization.common.*
@@ -324,7 +325,7 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
     }
 
     private fun throwCannotAdaptInstruction(insn: AbstractInsnNode): Nothing =
-            throw AssertionError("Cannot adapt instruction: ${InlineCodegenUtil.getInsnText(insn)}")
+            throw AssertionError("Cannot adapt instruction: ${getInsnText(insn)}")
 
     private fun adaptAreEqualIntrinsic(
             node: MethodNode,
@@ -392,7 +393,7 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
                 next.getOpcode() == Opcodes.IFNE ->
                     insertBefore(insn, JumpInsnNode(ifNotEqualOpcode, nextLabel))
                 else ->
-                    throw AssertionError("IFEQ or IFNE expected: " + InlineCodegenUtil.getInsnOpcodeText(next))
+                    throw AssertionError("IFEQ or IFNE expected: " + getInsnOpcodeText(next))
             }
         }
     }

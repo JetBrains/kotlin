@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
 import com.intellij.util.containers.Stack
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.codegen.inline.isAfterInlineMarker
+import org.jetbrains.kotlin.codegen.inline.isBeforeInlineMarker
+import org.jetbrains.kotlin.codegen.inline.isMarkedReturn
 import org.jetbrains.kotlin.codegen.optimization.common.MethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
@@ -103,11 +105,11 @@ internal class FixStackAnalyzer(
                         executeSaveStackBeforeTry(insn)
                     PseudoInsn.RESTORE_STACK_IN_TRY_CATCH.isa(insn) ->
                         executeRestoreStackInTryCatch(insn)
-                    InlineCodegenUtil.isBeforeInlineMarker(insn) ->
+                    isBeforeInlineMarker(insn) ->
                         executeBeforeInlineCallMarker(insn)
-                    InlineCodegenUtil.isAfterInlineMarker(insn) ->
+                    isAfterInlineMarker(insn) ->
                         executeAfterInlineCallMarker(insn)
-                    InlineCodegenUtil.isMarkedReturn(insn) -> {
+                    isMarkedReturn(insn) -> {
                         // KT-9644: might throw "Incompatible return type" on non-local return, in fact we don't care.
                         if (insn.opcode == Opcodes.RETURN) return
                     }

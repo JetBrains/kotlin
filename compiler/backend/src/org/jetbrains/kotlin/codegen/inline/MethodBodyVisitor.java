@@ -23,10 +23,12 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.TypePath;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.API;
+
 public class MethodBodyVisitor extends InstructionAdapter {
 
     public MethodBodyVisitor(MethodVisitor mv) {
-        super(InlineCodegenUtil.API, mv);
+        super(API, mv);
     }
 
     @Override

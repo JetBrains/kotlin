@@ -106,10 +106,10 @@ class DefaultLambda(
     override fun isMyLabel(name: String): Boolean = false
 
     override fun generateLambdaBody(codegen: ExpressionCodegen, reifiedTypeInliner: ReifiedTypeInliner) {
-        val classReader = InlineCodegenUtil.buildClassReaderByInternalName(codegen.state, lambdaClassType.internalName)
+        val classReader = buildClassReaderByInternalName(codegen.state, lambdaClassType.internalName)
         var isPropertyReference = false
         var isFunctionReference = false
-        classReader.accept(object: ClassVisitor(InlineCodegenUtil.API){
+        classReader.accept(object: ClassVisitor(API){
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<out String>?) {
                 isPropertyReference = superName?.startsWith("kotlin/jvm/internal/PropertyReference") ?: false
                 isFunctionReference = "kotlin/jvm/internal/FunctionReference" == superName
@@ -128,7 +128,7 @@ class DefaultLambda(
                         }
 
         val descriptor = Type.getMethodDescriptor(Type.VOID_TYPE, *capturedArgs)
-        val constructor = InlineCodegenUtil.getMethodNode(
+        val constructor = getMethodNode(
                 classReader.b,
                 "<init>",
                 descriptor,
@@ -156,7 +156,7 @@ class DefaultLambda(
                 codegen.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod.descriptor
         )
 
-        node = InlineCodegenUtil.getMethodNode(
+        node = getMethodNode(
                 classReader.b,
                 invokeMethod.name,
                 invokeMethod.descriptor,
@@ -271,11 +271,11 @@ class ExpressionLambda(
         val jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor)
         val asmMethod = jvmMethodSignature.asmMethod
         val methodNode = MethodNode(
-                InlineCodegenUtil.API, AsmUtil.getMethodAsmFlags(invokeMethodDescriptor, context.contextKind, codegen.state),
+                API, AsmUtil.getMethodAsmFlags(invokeMethodDescriptor, context.contextKind, codegen.state),
                 asmMethod.name, asmMethod.descriptor, null, null
         )
 
-        node = InlineCodegenUtil.wrapWithMaxLocalCalc(methodNode).let { adapter ->
+        node = wrapWithMaxLocalCalc(methodNode).let { adapter ->
             val smap = InlineCodegen.generateMethodBody(
                     adapter, invokeMethodDescriptor, context, functionWithBodyOrCallableReference, jvmMethodSignature, codegen, this
             )

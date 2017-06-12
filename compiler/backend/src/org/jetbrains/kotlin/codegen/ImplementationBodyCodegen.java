@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -79,6 +78,7 @@ import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isGenericToArray;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isNonGenericToArray;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.initDefaultSourceMappingIfNeeded;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
@@ -217,7 +217,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         v.visitSource(myClass.getContainingKtFile().getName(), null);
 
-        InlineCodegenUtil.initDefaultSourceMappingIfNeeded(context, this, state);
+        initDefaultSourceMappingIfNeeded(context, this, state);
 
         writeEnclosingMethod();
 

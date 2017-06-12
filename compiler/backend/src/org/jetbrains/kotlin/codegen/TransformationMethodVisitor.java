@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.tree.LocalVariableNode;
@@ -28,6 +27,9 @@ import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.getNodeText;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.wrapWithMaxLocalCalc;
 
 public abstract class TransformationMethodVisitor extends MethodVisitor {
 
@@ -46,7 +48,7 @@ public abstract class TransformationMethodVisitor extends MethodVisitor {
         this.delegate = delegate;
         this.methodNode = new MethodNode(access, name, desc, signature, exceptions);
         this.methodNode.localVariables = new ArrayList<>(5);
-        this.mv = InlineCodegenUtil.wrapWithMaxLocalCalc(methodNode);
+        this.mv = wrapWithMaxLocalCalc(methodNode);
     }
 
     @Override
@@ -83,7 +85,7 @@ public abstract class TransformationMethodVisitor extends MethodVisitor {
             delegate.visitEnd();
         }
         catch (Throwable t) {
-            throw new CompilationException("Couldn't transform method node: " + InlineCodegenUtil.getNodeText(methodNode), t, null);
+            throw new CompilationException("Couldn't transform method node: " + getNodeText(methodNode), t, null);
         }
     }
 

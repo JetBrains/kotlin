@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen.optimization.common;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.AsmUtil;
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.org.objectweb.asm.Handle;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -30,6 +29,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter;
 
 import java.util.List;
 
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.getInsnOpcodeText;
 import static org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue.*;
 
 public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implements Opcodes {
@@ -137,7 +137,7 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
             case NEW:
                 return newValue(Type.getObjectType(((TypeInsnNode) insn).desc));
             default:
-                throw new IllegalArgumentException("Unexpected instruction: " + InlineCodegenUtil.getInsnOpcodeText(insn));
+                throw new IllegalArgumentException("Unexpected instruction: " + getInsnOpcodeText(insn));
         }
     }
 
@@ -222,7 +222,7 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
             case PUTFIELD:
                 return null;
             default:
-                throw new IllegalArgumentException("Unexpected instruction: " + InlineCodegenUtil.getInsnOpcodeText(insn));
+                throw new IllegalArgumentException("Unexpected instruction: " + getInsnOpcodeText(insn));
         }
     }
 
@@ -341,7 +341,7 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
             case IFNONNULL:
                 return null;
             default:
-                throw new IllegalArgumentException("Unexpected instruction: " + InlineCodegenUtil.getInsnOpcodeText(insn));
+                throw new IllegalArgumentException("Unexpected instruction: " + getInsnOpcodeText(insn));
         }
     }
 

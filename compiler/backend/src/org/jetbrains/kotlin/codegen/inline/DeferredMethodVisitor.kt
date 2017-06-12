@@ -22,7 +22,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 class DeferredMethodVisitor(
         val intermediate: MethodNode,
         val resultNode: () -> MethodVisitor
-) : MethodVisitor(InlineCodegenUtil.API, intermediate) {
+) : MethodVisitor(API, intermediate) {
 
     override fun visitEnd() {
         super.visitEnd()
